@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <taglib/audioproperties.h>
 
 #include <QString>
@@ -30,7 +32,7 @@ class QPixmap;
 namespace Fooyin {
 class Track;
 
-class TagReader
+class FYCORE_EXPORT TagReader
 {
 public:
     enum class Quality

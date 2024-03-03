@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 #include "widgets/dummy.h"
+#include "widgets/menuheader.h"
 #include "widgets/splitterwidget.h"
 
 #include <gui/guiconstants.h>
@@ -29,7 +30,6 @@
 #include <gui/layoutprovider.h>
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
-#include <gui/widgets/menuheader.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/id.h>

@@ -27,8 +27,6 @@
 
 // clazy:excludeall=returning-void-expression
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace {
 void fileValid(const Fooyin::Testing::TempResource& resource, const QString& file)
 {
@@ -69,203 +67,203 @@ protected:
 
 TEST_F(TagReaderTest, AiffRead)
 {
-    const TempResource file{u":/audio/audiotest.aiff"_s};
-    fileValid(file, u":/audio/audiotest.aiff"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.aiff")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.aiff"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::AIFF);
-    EXPECT_EQ(track.title(), "AIFF Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 1);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, FlacRead)
 {
-    const TempResource file{u":/audio/audiotest.flac"_s};
-    fileValid(file, u":/audio/audiotest.flac"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.flac")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.flac"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::FLAC);
-    EXPECT_EQ(track.title(), "FLAC Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 2);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, M4aRead)
 {
-    const TempResource file{u":/audio/audiotest.m4a"_s};
-    fileValid(file, u":/audio/audiotest.m4a"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.m4a")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.m4a"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::MP4);
-    EXPECT_EQ(track.title(), "M4A Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 3);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, Mp3Read)
 {
-    const TempResource file{u":/audio/audiotest.mp3"_s};
-    fileValid(file, u":/audio/audiotest.mp3"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.mp3")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.mp3"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::MPEG);
-    EXPECT_EQ(track.title(), "MP3 Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 4);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, OggRead)
 {
-    const TempResource file{u":/audio/audiotest.ogg"_s};
-    fileValid(file, u":/audio/audiotest.ogg"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.ogg")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.ogg"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::OggVorbis);
-    EXPECT_EQ(track.title(), "OGG Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 5);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, OpusRead)
 {
-    const TempResource file{u":/audio/audiotest.opus"_s};
-    fileValid(file, u":/audio/audiotest.opus"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.opus")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.opus"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::OggOpus);
-    EXPECT_EQ(track.title(), "OPUS Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 6);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 
 TEST_F(TagReaderTest, WavRead)
 {
-    const TempResource file{u":/audio/audiotest.wav"_s};
-    fileValid(file, u":/audio/audiotest.wav"_s);
+    const TempResource file{QStringLiteral(":/audio/audiotest.wav")};
+    fileValid(file, QStringLiteral(":/audio/audiotest.wav"));
 
     Track track{file.fileName()};
     m_tagReader.readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::WAV);
-    EXPECT_EQ(track.title(), "WAV Test");
-    EXPECT_EQ(track.album(), "Fooyin Audio Tests");
-    EXPECT_EQ(track.albumArtist(), "Fooyin");
-    EXPECT_EQ(track.artist(), "Fooyin");
-    EXPECT_EQ(track.date(), "2023");
+    EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));
+    EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
+    EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.artist(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.date(), QStringLiteral("2023"));
     EXPECT_EQ(track.trackNumber(), 7);
     EXPECT_EQ(track.trackTotal(), 7);
     EXPECT_EQ(track.discNumber(), 1);
     EXPECT_EQ(track.discTotal(), 1);
-    EXPECT_EQ(track.genre(), "Testing");
-    EXPECT_EQ(track.performer(), "Fooyin");
-    EXPECT_EQ(track.composer(), "Fooyin");
-    EXPECT_EQ(track.comment(), "A fooyin test");
+    EXPECT_EQ(track.genre(), QStringLiteral("Testing"));
+    EXPECT_EQ(track.performer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.composer(), QStringLiteral("Fooyin"));
+    EXPECT_EQ(track.comment(), QStringLiteral("A fooyin test"));
     EXPECT_GT(track.duration(), 0);
 
-    const auto testTag = track.extraTag(u"TEST"_s);
+    const auto testTag = track.extraTag(QStringLiteral("TEST"));
     ASSERT_TRUE(!testTag.isEmpty());
-    EXPECT_EQ(testTag.front(), "A custom tag");
+    EXPECT_EQ(testTag.front(), QStringLiteral("A custom tag"));
 }
 } // namespace Fooyin::Testing

@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/plugins/coreplugincontext.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class Application : public QObject
+class FYCORE_EXPORT Application : public QObject
 {
     Q_OBJECT
 

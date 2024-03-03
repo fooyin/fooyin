@@ -21,6 +21,7 @@
 
 #include "corepaths.h"
 #include "database/database.h"
+#include "engine/enginehandler.h"
 #include "engine/output/alsaoutput.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
@@ -30,7 +31,6 @@
 #include "plugins/pluginmanager.h"
 #include "translations.h"
 
-#include <core/engine/enginehandler.h>
 #include <core/engine/outputplugin.h>
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>

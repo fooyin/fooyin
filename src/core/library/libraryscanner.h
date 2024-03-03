@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include <core/library/libraryinfo.h>
+#include "library/libraryinfo.h"
+
 #include <core/trackfwd.h>
 #include <utils/worker.h>
 

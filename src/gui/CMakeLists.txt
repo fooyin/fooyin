@@ -1,5 +1,6 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
+
     fywidget.cpp
     guiapplication.cpp
     mainmenubar.cpp
@@ -11,23 +12,29 @@ set(SOURCES
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
+
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp
     controls/seekbar.cpp
     controls/volumecontrol.cpp
+
     dialog/propertiesdialog.cpp
+
     info/infodelegate.cpp
     info/infomodel.cpp
     info/infowidget.cpp
+
     library/coverprovider.cpp
     library/coverwidget.cpp
     library/statuswidget.cpp
+
     librarytree/librarytreegroupregistry.cpp
     librarytree/librarytreeitem.cpp
     librarytree/librarytreemodel.cpp
     librarytree/librarytreepopulator.cpp
     librarytree/librarytreeview.cpp
     librarytree/librarytreewidget.cpp
+
     menu/aboutdialog.cpp
     menu/editmenu.cpp
     menu/filemenu.cpp
@@ -35,31 +42,37 @@ set(SOURCES
     menu/librarymenu.cpp
     menu/playbackmenu.cpp
     menu/viewmenu.cpp
+
     playlist/playlistcolumnregistry.cpp
     playlist/playlistcontroller.cpp
-    playlist/playlistview.cpp
-    playlist/playlistmodel.cpp
-    playlist/playlistmodel_p.cpp
-    playlist/playlistitem.cpp
-    playlist/playlistitemmodels.cpp
     playlist/playlistdelegate.cpp
     playlist/playlisthistory.cpp
+    playlist/playlistitem.cpp
+    playlist/playlistitemmodels.cpp
+    playlist/playlistmodel.cpp
+    playlist/playlistmodel_p.cpp
     playlist/playlistpopulator.cpp
     playlist/playlistpreset.cpp
+    playlist/playlistscriptregistry.cpp
     playlist/playlisttabs.cpp
+    playlist/playlistview.cpp
     playlist/playlistwidget.cpp
     playlist/presetregistry.cpp
-    playlist/playlistscriptregistry.cpp
+
     playlist/organiser/playlistorganiser.cpp
     playlist/organiser/playlistorganiseritem.cpp
     playlist/organiser/playlistorganisermodel.cpp
+
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupmodel.cpp
+
     sandbox/expressiontreemodel.cpp
     sandbox/sandboxdialog.cpp
     sandbox/scripthighlighter.cpp
+
     search/searchcontroller.cpp
     search/searchwidget.cpp
+
     settings/enginepage.cpp
     settings/generalpage.cpp
     settings/guigeneralpage.cpp
@@ -69,9 +82,9 @@ set(SOURCES
     settings/library/librarymodel.cpp
     settings/library/librarysortingpage.cpp
     settings/library/sortingmodel.cpp
-    settings/librarytree/librarytreepage.cpp
-    settings/librarytree/librarytreeguipage.cpp
     settings/librarytree/librarytreegroupmodel.cpp
+    settings/librarytree/librarytreeguipage.cpp
+    settings/librarytree/librarytreepage.cpp
     settings/playlist/playlistcolumnmodel.cpp
     settings/playlist/playlistcolumnpage.cpp
     settings/playlist/playlistgeneralpage.cpp
@@ -79,12 +92,13 @@ set(SOURCES
     settings/shortcuts/shortcutsmodel.cpp
     settings/shortcuts/shortcutspage.cpp
     settings/widgets/statuswidgetpage.cpp
-    widgets/dummy.cpp
-    widgets/spacer.cpp
+
     widgets/customisableinput.cpp
+    widgets/dummy.cpp
     widgets/hovermenu.cpp
     widgets/logslider.cpp
     widgets/menuheader.cpp
+    widgets/spacer.cpp
     widgets/splitterwidget.cpp
     widgets/tabstackwidget.cpp
     widgets/toolbutton.cpp

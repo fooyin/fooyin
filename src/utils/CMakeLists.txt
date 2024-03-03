@@ -1,16 +1,14 @@
-set(HEADERS
+set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
-)
 
-set(SOURCES
     clickablelabel.cpp
     crypto.cpp
     expandableinputbox.cpp
-    expandingcombobox.cpp
     extendabletableview.cpp
+    expandingcombobox.cpp
     fileutils.cpp
     id.cpp
     multilinedelegate.cpp
@@ -21,17 +19,20 @@ set(SOURCES
     slider.cpp
     utils.cpp
     worker.cpp
+
     actions/actioncommand.cpp
-    actions/menucontainer.cpp
-    actions/widgetcontext.cpp
     actions/actionmanager.cpp
+    actions/menucontainer.cpp
     actions/proxyaction.cpp
+    actions/widgetcontext.cpp
+
     settings/settingsdialog.cpp
     settings/settingsdialogcontroller.cpp
-    settings/settingspage.cpp
+    settings/settingsentry.cpp
     settings/settingsmodel.cpp
     settings/settingsmanager.cpp
-    settings/settingsentry.cpp
+    settings/settingspage.cpp
+
     widgets/autoheaderview.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
@@ -42,7 +43,7 @@ set(SOURCES
 create_fooyin_library(
     fooyin_utils
     EXPORT_NAME Utils
-    SOURCES ${HEADERS} ${SOURCES}
+    SOURCES ${SOURCES}
 )
 
 target_link_libraries(

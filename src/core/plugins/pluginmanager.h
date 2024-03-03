@@ -19,12 +19,14 @@
 
 #pragma once
 
-#include <core/plugins/plugininfo.h>
+#include "fycore_export.h"
+
+#include "plugininfo.h"
 
 namespace Fooyin {
 using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 
-class PluginManager
+class FYCORE_EXPORT PluginManager
 {
 public:
     PluginManager();

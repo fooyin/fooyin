@@ -15,9 +15,9 @@ endmacro()
 function(create_fooyin_library name)
     cmake_parse_arguments(
             LIB
-            ""
+            "ADD_PRIVATE_TARGET"
             "EXPORT_NAME"
-            "SOURCES;PRIVATE_SOURCES"
+            "SOURCES"
             ${ARGN}
     )
 
@@ -54,8 +54,8 @@ function(create_fooyin_library name)
             ${name}
             PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
             PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-            $<INSTALL_INTERFACE:${${base_name}_paths}>
+                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+                   $<INSTALL_INTERFACE:${${base_name}_paths}>
     )
 
     target_include_directories(
@@ -79,16 +79,15 @@ function(create_fooyin_library name)
     target_compile_options(${name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(${name} INTERFACE ${FOOYIN_LINK_OPTIONS})
 
-    if(LIB_PRIVATE_SOURCES)
+    if(LIB_ADD_PRIVATE_TARGET)
         set(private_name "${name}_private")
 
-        add_library(${private_name} STATIC ${PRIVATE_SOURCES})
+        add_library(${private_name} INTERFACE)
         add_library(Fooyin::${LIB_EXPORT_NAME}Private ALIAS ${private_name})
 
         target_include_directories(
                 ${private_name}
-                PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+                INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
         )
 
         set_target_properties(
@@ -97,12 +96,10 @@ function(create_fooyin_library name)
                 VISIBILITY_INLINES_HIDDEN YES
                 POSITION_INDEPENDENT_CODE ON
         )
-        target_compile_features(${private_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
-        target_compile_definitions(${private_name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
-        target_compile_options(${private_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
+        target_compile_features(${private_name} INTERFACE ${FOOYIN_REQUIRED_CXX_FEATURES})
+        target_compile_definitions(${private_name} INTERFACE ${FOOYIN_COMPILE_DEFINITIONS})
+        target_compile_options(${private_name} INTERFACE ${FOOYIN_COMPILE_OPTIONS})
         target_link_options(${private_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
-
-        target_link_libraries(${private_name} PRIVATE ${name})
 
         if(BUILD_PCH)
             target_precompile_headers(${private_name} REUSE_FROM fooyin_pch)

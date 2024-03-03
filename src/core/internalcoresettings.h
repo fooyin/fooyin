@@ -19,13 +19,15 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <utils/settings/settingsentry.h>
 
 namespace Fooyin {
 class SettingsManager;
 
 namespace Settings::Core::Internal {
-Q_NAMESPACE
+Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
 enum CoreInternalSettings : uint32_t
 {

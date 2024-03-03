@@ -5,67 +5,73 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
     ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
-    track.cpp
-    engine/audiobuffer.cpp
-    engine/audioformat.cpp
-    engine/audioconverter.cpp
-    library/trackfilter.cpp
-    library/tracksort.cpp
-    player/playbackqueue.cpp
-    scripting/scriptregistry.cpp
-    scripting/scriptparser.cpp
-    scripting/scriptscanner.cpp
-    scripting/functions/controlfuncs.cpp
-    scripting/functions/mathfuncs.cpp
-    scripting/functions/stringfuncs.cpp
-    scripting/functions/timefuncs.cpp
-    scripting/functions/tracklistfuncs.cpp
-)
 
-set(PRIVATE_SOURCES
     application.cpp
     corepaths.cpp
     internalcoresettings.cpp
+    track.cpp
     translations.cpp
+
     database/database.cpp
-    database/librarydatabase.cpp
-    database/trackdatabase.cpp
-    database/databasemodule.cpp
-    database/playlistdatabase.cpp
     database/databasequery.cpp
+    database/databasemodule.cpp
+    database/librarydatabase.cpp
+    database/playlistdatabase.cpp
+    database/trackdatabase.cpp
+
+    engine/audiobuffer.cpp
+    engine/audioconverter.cpp
     engine/audioclock.cpp
+    engine/audioformat.cpp
     engine/audioplaybackengine.cpp
     engine/audiorenderer.cpp
     engine/enginehandler.cpp
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegdecoder.cpp
+    engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegpacket.cpp
     engine/ffmpeg/ffmpegstream.cpp
-    engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegutils.cpp
     engine/output/alsaoutput.cpp
-    library/libraryscanner.cpp
-    library/librarythreadhandler.cpp
+
     library/libraryinfo.h
     library/librarymanager.cpp
+    library/libraryscanner.cpp
+    library/librarythreadhandler.cpp
     library/librarywatcher.cpp
     library/sortingregistry.cpp
     library/trackdatabasemanager.cpp
+    library/trackfilter.cpp
+    library/tracksort.cpp
     library/unifiedmusiclibrary.cpp
+
     player/playercontroller.cpp
-    playlist/fyplaylist.cpp
-    playlist/playlisthandler.cpp
+    player/playbackqueue.cpp
+
     plugins/plugininfo.cpp
     plugins/pluginmanager.cpp
+
+    playlist/fyplaylist.cpp
+    playlist/playlisthandler.cpp
+
+    scripting/functions/controlfuncs.cpp
+    scripting/functions/mathfuncs.cpp
+    scripting/functions/stringfuncs.cpp
+    scripting/functions/timefuncs.cpp
+    scripting/functions/tracklistfuncs.cpp
+    scripting/scriptparser.cpp
+    scripting/scriptregistry.cpp
+    scripting/scriptscanner.cpp
+
     tagging/tagreader.cpp
     tagging/tagwriter.cpp
 )
 
 create_fooyin_library(
     fooyin_core
+    ADD_PRIVATE_TARGET
     EXPORT_NAME Core
     SOURCES ${SOURCES}
-    PRIVATE_SOURCES ${PRIVATE_SOURCES}
 )
 
 target_link_libraries(
@@ -79,17 +85,12 @@ target_link_libraries(
            QCoro6::Core
            Taglib::Taglib
            Fooyin::Utils
-)
-
-target_link_libraries(
-    fooyin_core_private
-    PRIVATE fooyin_version
-            ${FFMPEG_LIBRARIES}
-            ${ALSA_LIBRARIES}
+           ${FFMPEG_LIBRARIES}
+           ${ALSA_LIBRARIES}
 )
 
 target_include_directories(
-    fooyin_core_private
+    fooyin_core
     PRIVATE ${FFMPEG_INCLUDE_DIRS}
             ${ALSA_INCLUDE_DIRS}
 )

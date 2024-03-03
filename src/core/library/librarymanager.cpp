@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/library/librarymanager.h>
+#include "librarymanager.h"
 
 #include "database/database.h"
 #include "database/librarydatabase.h"

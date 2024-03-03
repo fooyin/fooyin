@@ -21,13 +21,11 @@
 
 #include <QDir>
 
-using namespace Qt::Literals::StringLiterals;
-
 namespace Fooyin::Testing {
 TempResource::TempResource(const QString& filename, QObject* parent)
     : QTemporaryFile{parent}
 {
-    setFileTemplate(QDir::tempPath() + u"/fooyin_test_XXXXXXXXXXXXXXX"_s);
+    setFileTemplate(QDir::tempPath() + QStringLiteral("/fooyin_test_XXXXXXXXXXXXXXX"));
 
     open();
 

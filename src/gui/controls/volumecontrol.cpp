@@ -19,11 +19,12 @@
 
 #include "volumecontrol.h"
 
+#include "widgets/hovermenu.h"
+#include "widgets/logslider.h"
+
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/widgets/hovermenu.h>
-#include <gui/widgets/logslider.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>

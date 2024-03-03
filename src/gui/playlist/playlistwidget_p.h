@@ -25,7 +25,7 @@
 #include "presetregistry.h"
 
 #include <core/player/playbackqueue.h>
-#include "core/library/sortingregistry.h"
+#include <core/library/sortingregistry.h>
 
 #include <QCoro/QCoroTask>
 

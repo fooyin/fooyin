@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/tagging/tagreader.h>
+#include "tagreader.h"
 
 #include "tagdefs.h"
 

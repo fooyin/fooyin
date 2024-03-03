@@ -17,7 +17,7 @@
  *
  */
 
-#include <core/tagging/tagwriter.h>
+#include "tagwriter.h"
 
 #include "tagdefs.h"
 

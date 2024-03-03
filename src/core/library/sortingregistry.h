@@ -19,13 +19,16 @@
 
 #pragma once
 
-#include <core/library/librarysort.h>
+#include "fycore_export.h"
+
+#include "librarysort.h"
+
 #include <utils/itemregistry.h>
 
 namespace Fooyin {
 class SettingsManager;
 
-class SortingRegistry : public ItemRegistry<SortScript>
+class FYCORE_EXPORT SortingRegistry : public ItemRegistry<SortScript>
 {
     Q_OBJECT
 
