@@ -33,7 +33,8 @@ class FYCORE_EXPORT PlaylistManager : public QObject
 
 public:
     explicit PlaylistManager(QObject* parent = nullptr)
-        : QObject{parent} {};
+        : QObject{parent}
+    { }
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
     [[nodiscard]] virtual Playlist* playlistById(int id) const = 0;

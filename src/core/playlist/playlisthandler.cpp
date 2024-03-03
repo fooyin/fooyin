@@ -50,7 +50,7 @@ std::vector<int> updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::Tra
             return trackIt->id() == updatedTrack.id();
         });
         if(updatedIt != updatedTracks.end()) {
-            indexes.push_back(std::distance(tracks.begin(), trackIt));
+            indexes.push_back(static_cast<int>(std::distance(tracks.begin(), trackIt)));
             if(operation == CommonOperation::Update) {
                 result.push_back(*updatedIt);
             }
@@ -74,13 +74,13 @@ struct PlaylistHandler::Private
     SettingsManager* settings;
     PlaylistDatabase playlistConnector;
 
-    std::vector<std::unique_ptr<FyPlaylist>> playlists;
-    std::vector<std::unique_ptr<FyPlaylist>> removedPlaylists;
+    std::vector<std::unique_ptr<Playlist>> playlists;
+    std::vector<std::unique_ptr<Playlist>> removedPlaylists;
 
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self_, Database* database, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(PlaylistHandler* self_, const Database* database, PlayerManager* playerManager_, SettingsManager* settings_)
         : self{self_}
         , playerManager{playerManager_}
         , settings{settings_}
@@ -119,7 +119,7 @@ struct PlaylistHandler::Private
 
         const Track nextTrack = activePlaylist->nextTrack(delta, playerManager->playMode());
 
-        if(!nextTrack.isValid() || !activePlaylist) {
+        if(!nextTrack.isValid()) {
             playerManager->stop();
             return;
         }
@@ -159,7 +159,7 @@ struct PlaylistHandler::Private
         if(name.isEmpty()) {
             return -1;
         }
-        auto it = std::ranges::find_if(std::as_const(playlists), [name](const auto& playlist) {
+        auto it = std::ranges::find_if(playlists, [name](const auto& playlist) {
             return playlist->name().compare(name, Qt::CaseInsensitive) == 0;
         });
         if(it == playlists.cend()) {
