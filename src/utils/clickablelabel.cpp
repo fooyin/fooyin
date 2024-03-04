@@ -20,6 +20,7 @@
 #include <utils/clickablelabel.h>
 
 #include <QHBoxLayout>
+#include <QMouseEvent>
 
 namespace Fooyin {
 ClickableLabel::ClickableLabel(QWidget* parent)
@@ -28,20 +29,25 @@ ClickableLabel::ClickableLabel(QWidget* parent)
 
 void ClickableLabel::mousePressEvent(QMouseEvent* event)
 {
-    emit clicked();
     QLabel::mousePressEvent(event);
+
+    if(event->button() == Qt::LeftButton) {
+        emit clicked();
+    }
 }
 
 void ClickableLabel::enterEvent(QEnterEvent* event)
 {
-    emit entered();
     QLabel::enterEvent(event);
+
+    emit mouseEntered();
 }
 
 void ClickableLabel::leaveEvent(QEvent* event)
 {
-    emit mouseLeft();
     QLabel::leaveEvent(event);
+
+    emit mouseLeft();
 }
 } // namespace Fooyin
 

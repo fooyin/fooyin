@@ -34,7 +34,7 @@ public:
 
 signals:
     void clicked();
-    void entered();
+    void mouseEntered();
     void mouseLeft();
 
 protected:
