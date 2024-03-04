@@ -33,7 +33,7 @@ class CoverWidget : public FyWidget
 public:
     explicit CoverWidget(PlayerManager* playerManager, TrackSelectionController* trackSelection,
                          QWidget* parent = nullptr);
-    ~CoverWidget();
+    ~CoverWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

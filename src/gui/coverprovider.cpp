@@ -19,9 +19,9 @@
 
 #include <gui/coverprovider.h>
 
+#include "core/tagging/tagreader.h"
 #include "guipaths.h"
 
-#include <core/tagging/tagreader.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <utils/async.h>

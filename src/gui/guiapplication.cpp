@@ -26,8 +26,6 @@
 #include "core/internalcoresettings.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
-#include "library/coverwidget.h"
-#include "library/statuswidget.h"
 #include "librarytree/librarytreewidget.h"
 #include "mainmenubar.h"
 #include "mainwindow.h"
@@ -56,8 +54,10 @@
 #include "settings/plugins/pluginspage.h"
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
+#include "widgets/coverwidget.h"
 #include "widgets/spacer.h"
 #include "widgets/splitterwidget.h"
+#include "widgets/statuswidget.h"
 #include "widgets/tabstackwidget.h"
 
 #include <core/coresettings.h>

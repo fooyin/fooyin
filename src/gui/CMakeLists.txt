@@ -1,6 +1,7 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
 
+    coverprovider.cpp
     fywidget.cpp
     guiapplication.cpp
     mainmenubar.cpp
@@ -23,10 +24,6 @@ set(SOURCES
     info/infodelegate.cpp
     info/infomodel.cpp
     info/infowidget.cpp
-
-    library/coverprovider.cpp
-    library/coverwidget.cpp
-    library/statuswidget.cpp
 
     librarytree/librarytreegroupregistry.cpp
     librarytree/librarytreeitem.cpp
@@ -93,6 +90,7 @@ set(SOURCES
     settings/shortcuts/shortcutspage.cpp
     settings/widgets/statuswidgetpage.cpp
 
+    widgets/coverwidget.cpp
     widgets/customisableinput.cpp
     widgets/dummy.cpp
     widgets/hovermenu.cpp
@@ -100,6 +98,7 @@ set(SOURCES
     widgets/menuheader.cpp
     widgets/spacer.cpp
     widgets/splitterwidget.cpp
+    widgets/statuswidget.cpp
     widgets/tabstackwidget.cpp
     widgets/toolbutton.cpp
     widgets/widgetcontainer.cpp
