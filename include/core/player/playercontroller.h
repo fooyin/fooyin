@@ -42,61 +42,61 @@ public:
     ~PlayerController() override;
 
     /** Returns the current state (playing, paused or stopped). */
-    [[nodiscard]] virtual PlayState playState() const;
+    [[nodiscard]] PlayState playState() const;
 
     /** Returns the current playlist mode (shuffle and repeat flags). */
-    [[nodiscard]] virtual Playlist::PlayModes playMode() const;
+    [[nodiscard]] Playlist::PlayModes playMode() const;
 
     /** Returns the current playback position in ms. */
-    [[nodiscard]] virtual uint64_t currentPosition() const;
+    [[nodiscard]] uint64_t currentPosition() const;
 
     /*!
      * Returns the currently playing track.
      * @note the track will be invalid if the state is 'Stopped'.
      */
-    [[nodiscard]] virtual Track currentTrack() const;
+    [[nodiscard]] Track currentTrack() const;
     /*!
      * Returns the currently playing playlist track.
      * @note the track will be invalid if the state is 'Stopped'.
      */
-    [[nodiscard]] virtual PlaylistTrack currentPlaylistTrack() const;
+    [[nodiscard]] PlaylistTrack currentPlaylistTrack() const;
 
     /** Starts playback of the current playlist. */
-    virtual void play();
+    void play();
 
     /** Toggles playback. */
-    virtual void playPause();
+    void playPause();
 
-    virtual void pause();
-    virtual void previous();
-    virtual void next();
-    virtual void stop();
+    void pause();
+    void previous();
+    void next();
+    void stop();
 
     /** Stops playback and clears position and current track. */
-    virtual void reset();
+    void reset();
 
-    virtual void setPlayMode(Playlist::PlayModes mode);
-    virtual void setCurrentPosition(uint64_t ms);
-    virtual void changePosition(uint64_t ms);
-    virtual void changeCurrentTrack(const Track& track);
-    virtual void changeCurrentTrack(const PlaylistTrack& track);
-    virtual void updateCurrentTrackIndex(int index);
+    void setPlayMode(Playlist::PlayModes mode);
+    void setCurrentPosition(uint64_t ms);
+    void changePosition(uint64_t ms);
+    void changeCurrentTrack(const Track& track);
+    void changeCurrentTrack(const PlaylistTrack& track);
+    void updateCurrentTrackIndex(int index);
 
-    [[nodiscard]] virtual PlaybackQueue playbackQueue() const;
+    [[nodiscard]] PlaybackQueue playbackQueue() const;
 
     /** Queues the @p track to be played at the end of the current track. */
-    virtual void queueTrack(const Track& track);
-    virtual void queueTrack(const PlaylistTrack& track);
-    virtual void queueTracks(const TrackList& tracks);
-    virtual void queueTracks(const QueueTracks& tracks);
+    void queueTrack(const Track& track);
+    void queueTrack(const PlaylistTrack& track);
+    void queueTracks(const TrackList& tracks);
+    void queueTracks(const QueueTracks& tracks);
 
-    virtual void dequeueTrack(const Track& track);
-    virtual void dequeueTrack(const PlaylistTrack& track);
-    virtual void dequeueTracks(const TrackList& tracks);
-    virtual void dequeueTracks(const QueueTracks& tracks);
+    void dequeueTrack(const Track& track);
+    void dequeueTrack(const PlaylistTrack& track);
+    void dequeueTracks(const TrackList& tracks);
+    void dequeueTracks(const QueueTracks& tracks);
 
-    virtual void replaceTracks(const QueueTracks& tracks);
-    virtual void clearPlaylistQueue(int playlistId);
+    void replaceTracks(const QueueTracks& tracks);
+    void clearPlaylistQueue(int playlistId);
 
 signals:
     void playStateChanged(PlayState state);
