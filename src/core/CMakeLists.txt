@@ -1,68 +1,123 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
+    ${CMAKE_SOURCE_DIR}/include/core/track.h
+    ${CMAKE_SOURCE_DIR}/include/core/trackfwd.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioconverter.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audiodecoder.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioformat.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audiooutput.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
-
+    ${CMAKE_SOURCE_DIR}/include/core/library/trackfilter.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
+    ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
+    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlist.h
+    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlisthandler.h
+    ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugin.h
+    ${CMAKE_SOURCE_DIR}/include/core/plugins/coreplugincontext.h
+    ${CMAKE_SOURCE_DIR}/include/core/plugins/plugin.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/expression.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptparser.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
+    ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
     application.cpp
+    application.h
     corepaths.cpp
+    corepaths.h
     internalcoresettings.cpp
+    internalcoresettings.h
     track.cpp
     translations.cpp
-
+    translations.h
     database/database.cpp
-    database/databasequery.cpp
+    database/database.h
     database/databasemodule.cpp
+    database/databasemodule.h
+    database/databasequery.cpp
+    database/databasequery.h
     database/librarydatabase.cpp
+    database/librarydatabase.h
     database/playlistdatabase.cpp
+    database/playlistdatabase.h
     database/trackdatabase.cpp
-
+    database/trackdatabase.h
     engine/audiobuffer.cpp
-    engine/audioconverter.cpp
     engine/audioclock.cpp
+    engine/audioclock.h
+    engine/audioconverter.cpp
     engine/audioformat.cpp
     engine/audioplaybackengine.cpp
+    engine/audioplaybackengine.h
     engine/audiorenderer.cpp
+    engine/audiorenderer.h
     engine/enginehandler.cpp
+    engine/enginehandler.h
     engine/ffmpeg/ffmpegcodec.cpp
+    engine/ffmpeg/ffmpegcodec.h
     engine/ffmpeg/ffmpegdecoder.cpp
+    engine/ffmpeg/ffmpegdecoder.h
     engine/ffmpeg/ffmpegframe.cpp
+    engine/ffmpeg/ffmpegframe.h
     engine/ffmpeg/ffmpegpacket.cpp
+    engine/ffmpeg/ffmpegpacket.h
     engine/ffmpeg/ffmpegstream.cpp
+    engine/ffmpeg/ffmpegstream.h
     engine/ffmpeg/ffmpegutils.cpp
+    engine/ffmpeg/ffmpegutils.h
     engine/output/alsaoutput.cpp
-
+    engine/output/alsaoutput.h
     library/libraryinfo.h
     library/librarymanager.cpp
+    library/librarymanager.h
     library/libraryscanner.cpp
+    library/libraryscanner.h
+    library/librarysort.h
     library/librarythreadhandler.cpp
+    library/librarythreadhandler.h
     library/librarywatcher.cpp
+    library/librarywatcher.h
     library/sortingregistry.cpp
+    library/sortingregistry.h
     library/trackdatabasemanager.cpp
+    library/trackdatabasemanager.h
     library/trackfilter.cpp
     library/tracksort.cpp
     library/unifiedmusiclibrary.cpp
-
-    player/playercontroller.cpp
+    library/unifiedmusiclibrary.h
     player/playbackqueue.cpp
-
-    plugins/plugininfo.cpp
-    plugins/pluginmanager.cpp
-
+    player/playercontroller.cpp
     playlist/fyplaylist.cpp
+    playlist/fyplaylist.h
     playlist/playlisthandler.cpp
-
+    plugins/plugininfo.cpp
+    plugins/plugininfo.h
+    plugins/pluginmanager.cpp
+    plugins/pluginmanager.h
     scripting/functions/controlfuncs.cpp
+    scripting/functions/controlfuncs.h
     scripting/functions/mathfuncs.cpp
+    scripting/functions/mathfuncs.h
     scripting/functions/stringfuncs.cpp
+    scripting/functions/stringfuncs.h
     scripting/functions/timefuncs.cpp
+    scripting/functions/timefuncs.h
     scripting/functions/tracklistfuncs.cpp
+    scripting/functions/tracklistfuncs.h
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
-
+    tagging/tagdefs.h
     tagging/tagreader.cpp
+    tagging/tagreader.h
     tagging/tagwriter.cpp
+    tagging/tagwriter.h
 )
 
 create_fooyin_library(
@@ -74,8 +129,7 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_core
-    PRIVATE fooyin_version
-            fooyin_config
+    PRIVATE fooyin_version fooyin_config
     PUBLIC Qt6::Core
            Qt6::Widgets
            Qt6::Sql
@@ -88,7 +142,5 @@ target_link_libraries(
 )
 
 target_include_directories(
-    fooyin_core
-    PRIVATE ${FFMPEG_INCLUDE_DIRS}
-            ${ALSA_INCLUDE_DIRS}
+    fooyin_core PRIVATE ${FFMPEG_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS}
 )

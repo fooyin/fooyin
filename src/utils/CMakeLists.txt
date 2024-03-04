@@ -1,38 +1,74 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/utils/async.h
+    ${CMAKE_SOURCE_DIR}/include/utils/clickablelabel.h
+    ${CMAKE_SOURCE_DIR}/include/utils/crypto.h
+    ${CMAKE_SOURCE_DIR}/include/utils/enum.h
+    ${CMAKE_SOURCE_DIR}/include/utils/expandableinputbox.h
+    ${CMAKE_SOURCE_DIR}/include/utils/expandingcombobox.h
+    ${CMAKE_SOURCE_DIR}/include/utils/extendabletableview.h
+    ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
+    ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
-    ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
+    ${CMAKE_SOURCE_DIR}/include/utils/math.h
+    ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/paths.h
+    ${CMAKE_SOURCE_DIR}/include/utils/recursiveselectionmodel.h
+    ${CMAKE_SOURCE_DIR}/include/utils/slider.h
+    ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
+    ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
+    ${CMAKE_SOURCE_DIR}/include/utils/treeitem.h
+    ${CMAKE_SOURCE_DIR}/include/utils/treemodel.h
+    ${CMAKE_SOURCE_DIR}/include/utils/treestatusitem.h
+    ${CMAKE_SOURCE_DIR}/include/utils/utils.h
+    ${CMAKE_SOURCE_DIR}/include/utils/worker.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/actioncontainer.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/actionmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
+    ${CMAKE_SOURCE_DIR}/include/utils/actions/proxyaction.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
-
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
+    ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/autoheaderview.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabbar.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
     clickablelabel.cpp
     crypto.cpp
     expandableinputbox.cpp
-    extendabletableview.cpp
     expandingcombobox.cpp
+    extendabletableview.cpp
     fileutils.cpp
     id.cpp
     multilinedelegate.cpp
     paths.cpp
     recursiveselectionmodel.cpp
-    simpletreeview.cpp
     scrollarea.cpp
+    scrollarea.h
+    simpletreeview.cpp
+    simpletreeview.h
     slider.cpp
     utils.cpp
     worker.cpp
-
     actions/actioncommand.cpp
+    actions/actioncommand.h
     actions/actionmanager.cpp
     actions/menucontainer.cpp
+    actions/menucontainer.h
     actions/proxyaction.cpp
     actions/widgetcontext.cpp
-
+    settings/settingscategory.h
     settings/settingsdialog.cpp
+    settings/settingsdialog.h
     settings/settingsdialogcontroller.cpp
     settings/settingsentry.cpp
-    settings/settingsmodel.cpp
     settings/settingsmanager.cpp
+    settings/settingsmodel.cpp
+    settings/settingsmodel.h
     settings/settingspage.cpp
-
     widgets/autoheaderview.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp

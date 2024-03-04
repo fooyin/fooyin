@@ -1,106 +1,188 @@
 set(SOURCES
+    ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
+    ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
-
+    ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
+    ${CMAKE_SOURCE_DIR}/include/gui/trackselectioncontroller.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
+    ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     coverprovider.cpp
+    editablelayout.cpp
     fywidget.cpp
     guiapplication.cpp
-    mainwindow.cpp
-    editablelayout.cpp
+    guiapplication.h
     guipaths.cpp
+    guipaths.h
     internalguisettings.cpp
+    internalguisettings.h
     layoutprovider.cpp
+    mainwindow.cpp
+    mainwindow.h
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
-
     controls/playercontrol.cpp
     controls/playlistcontrol.cpp
+    controls/playlistcontrol.h
     controls/seekbar.cpp
+    controls/seekbar.h
     controls/volumecontrol.cpp
-
+    controls/volumecontrol.h
     dialog/aboutdialog.cpp
+    dialog/aboutdialog.h
     dialog/propertiesdialog.cpp
-
     info/infodelegate.cpp
+    info/infodelegate.h
     info/infomodel.cpp
+    info/infomodel.h
     info/infowidget.cpp
-
+    info/infowidget.h
+    librarytree/librarytreeappearance.h
+    librarytree/librarytreegroup.h
     librarytree/librarytreegroupregistry.cpp
+    librarytree/librarytreegroupregistry.h
     librarytree/librarytreeitem.cpp
+    librarytree/librarytreeitem.h
     librarytree/librarytreemodel.cpp
+    librarytree/librarytreemodel.h
     librarytree/librarytreepopulator.cpp
+    librarytree/librarytreepopulator.h
     librarytree/librarytreeview.cpp
+    librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
-
+    librarytree/librarytreewidget.h
     menubar/editmenu.cpp
+    menubar/editmenu.h
     menubar/filemenu.cpp
+    menubar/filemenu.h
     menubar/helpmenu.cpp
+    menubar/helpmenu.h
     menubar/librarymenu.cpp
+    menubar/librarymenu.h
     menubar/mainmenubar.cpp
+    menubar/mainmenubar.h
     menubar/playbackmenu.cpp
+    menubar/playbackmenu.h
     menubar/viewmenu.cpp
-
-    playlist/playlistcolumnregistry.cpp
-    playlist/playlistcommands.cpp
-    playlist/playlistcontroller.cpp
-    playlist/playlistdelegate.cpp
-    playlist/playlistitem.cpp
-    playlist/playlistitemmodels.cpp
-    playlist/playlistmodel.cpp
-    playlist/playlistpopulator.cpp
-    playlist/playlistpreset.cpp
-    playlist/playlistscriptregistry.cpp
-    playlist/playlisttabs.cpp
-    playlist/playlistview.cpp
-    playlist/playlistwidget.cpp
-    playlist/presetregistry.cpp
-
+    menubar/viewmenu.h
     playlist/organiser/playlistorganiser.cpp
+    playlist/organiser/playlistorganiser.h
     playlist/organiser/playlistorganiseritem.cpp
+    playlist/organiser/playlistorganiseritem.h
     playlist/organiser/playlistorganisermodel.cpp
-
+    playlist/organiser/playlistorganisermodel.h
+    playlist/playlistcolumn.h
+    playlist/playlistcolumnregistry.cpp
+    playlist/playlistcolumnregistry.h
+    playlist/playlistcommands.cpp
+    playlist/playlistcommands.h
+    playlist/playlistcontroller.cpp
+    playlist/playlistcontroller.h
+    playlist/playlistdelegate.cpp
+    playlist/playlistdelegate.h
+    playlist/playlistitem.cpp
+    playlist/playlistitem.h
+    playlist/playlistitemmodels.cpp
+    playlist/playlistitemmodels.h
+    playlist/playlistmodel.cpp
+    playlist/playlistmodel.h
+    playlist/playlistpopulator.cpp
+    playlist/playlistpopulator.h
+    playlist/playlistpreset.cpp
+    playlist/playlistpreset.h
+    playlist/playlistscriptregistry.cpp
+    playlist/playlistscriptregistry.h
+    playlist/playlisttabs.cpp
+    playlist/playlisttabs.h
+    playlist/playlistview.cpp
+    playlist/playlistview.h
+    playlist/playlistwidget.cpp
+    playlist/playlistwidget.h
+    playlist/playlistwidget_p.h
+    playlist/presetregistry.cpp
+    playlist/presetregistry.h
     quicksetup/quicksetupdialog.cpp
+    quicksetup/quicksetupdialog.h
     quicksetup/quicksetupmodel.cpp
-
+    quicksetup/quicksetupmodel.h
     sandbox/expressiontreemodel.cpp
+    sandbox/expressiontreemodel.h
     sandbox/sandboxdialog.cpp
+    sandbox/sandboxdialog.h
     sandbox/scripthighlighter.cpp
-
+    sandbox/scripthighlighter.h
     search/searchcontroller.cpp
+    search/searchcontroller.h
     search/searchwidget.cpp
-
+    search/searchwidget.h
     settings/enginepage.cpp
+    settings/enginepage.h
     settings/generalpage.cpp
+    settings/generalpage.h
     settings/guigeneralpage.cpp
-    settings/plugins/pluginsmodel.cpp
-    settings/plugins/pluginspage.cpp
+    settings/guigeneralpage.h
     settings/library/librarygeneralpage.cpp
+    settings/library/librarygeneralpage.h
     settings/library/librarymodel.cpp
+    settings/library/librarymodel.h
     settings/library/librarysortingpage.cpp
+    settings/library/librarysortingpage.h
     settings/library/sortingmodel.cpp
+    settings/library/sortingmodel.h
     settings/librarytree/librarytreegroupmodel.cpp
+    settings/librarytree/librarytreegroupmodel.h
     settings/librarytree/librarytreeguipage.cpp
+    settings/librarytree/librarytreeguipage.h
     settings/librarytree/librarytreepage.cpp
+    settings/librarytree/librarytreepage.h
     settings/playlist/playlistcolumnmodel.cpp
+    settings/playlist/playlistcolumnmodel.h
     settings/playlist/playlistcolumnpage.cpp
+    settings/playlist/playlistcolumnpage.h
     settings/playlist/playlistgeneralpage.cpp
+    settings/playlist/playlistgeneralpage.h
     settings/playlist/playlistpresetspage.cpp
+    settings/playlist/playlistpresetspage.h
+    settings/plugins/pluginsmodel.cpp
+    settings/plugins/pluginsmodel.h
+    settings/plugins/pluginspage.cpp
+    settings/plugins/pluginspage.h
     settings/shortcuts/shortcutsmodel.cpp
+    settings/shortcuts/shortcutsmodel.h
     settings/shortcuts/shortcutspage.cpp
+    settings/shortcuts/shortcutspage.h
     settings/widgets/statuswidgetpage.cpp
-
+    settings/widgets/statuswidgetpage.h
     widgets/coverwidget.cpp
+    widgets/coverwidget.h
     widgets/customisableinput.cpp
     widgets/dummy.cpp
+    widgets/dummy.h
     widgets/hovermenu.cpp
+    widgets/hovermenu.h
     widgets/logslider.cpp
+    widgets/logslider.h
     widgets/menuheader.cpp
+    widgets/menuheader.h
     widgets/spacer.cpp
+    widgets/spacer.h
     widgets/splitterwidget.cpp
+    widgets/splitterwidget.h
     widgets/statuswidget.cpp
+    widgets/statuswidget.h
     widgets/tabstackwidget.cpp
+    widgets/tabstackwidget.h
     widgets/toolbutton.cpp
     widgets/widgetcontainer.cpp
+controls/playercontrol.h
 )
 
 create_fooyin_library(
@@ -111,8 +193,6 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_gui
-    PUBLIC Fooyin::Core
-           Fooyin::Utils
-    PRIVATE Fooyin::CorePrivate
-            Qt::Svg
+    PUBLIC Fooyin::Core Fooyin::Utils
+    PRIVATE Fooyin::CorePrivate Qt::Svg
 )
