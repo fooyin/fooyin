@@ -109,12 +109,13 @@ struct EditableLayout::Private
         layoutEditing = editing;
         if(editing) {
             overlay = new OverlayWidget(self);
-
             qApp->installEventFilter(self);
         }
         else {
             qApp->removeEventFilter(self);
-            overlay->deleteLater();
+            if(overlay) {
+                overlay->deleteLater();
+            }
         }
     }
 
