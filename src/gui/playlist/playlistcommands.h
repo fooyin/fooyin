@@ -26,16 +26,15 @@
 #include <QUndoCommand>
 
 namespace Fooyin {
-class Playlist;
-class PlaylistController;
+class PlayerController;
 
 class PlaylistCommand : public QUndoCommand
 {
 public:
-    PlaylistCommand(PlayerManager* playerManager, PlaylistModel* model, int playlistId);
+    PlaylistCommand(PlayerController* playerController, PlaylistModel* model, int playlistId);
 
 protected:
-    PlayerManager* m_playerManager;
+    PlayerController* m_playerController;
     PlaylistModel* m_model;
     int m_playlistId;
 };
@@ -43,7 +42,7 @@ protected:
 class InsertTracks : public PlaylistCommand
 {
 public:
-    InsertTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, TrackGroups groups);
+    InsertTracks(PlayerController* playerController, PlaylistModel* model, int playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
@@ -55,7 +54,7 @@ private:
 class RemoveTracks : public PlaylistCommand
 {
 public:
-    RemoveTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, TrackGroups groups);
+    RemoveTracks(PlayerController* playerController, PlaylistModel* model, int playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
@@ -67,7 +66,7 @@ private:
 class MoveTracks : public PlaylistCommand
 {
 public:
-    explicit MoveTracks(PlayerManager* playerManager, PlaylistModel* model, int playlistId, MoveOperation operation);
+    explicit MoveTracks(PlayerController* playerController, PlaylistModel* model, int playlistId, MoveOperation operation);
 
     void undo() override;
     void redo() override;

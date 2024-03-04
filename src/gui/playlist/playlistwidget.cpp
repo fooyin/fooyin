@@ -28,7 +28,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -115,12 +115,12 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , settings{settings_}
     , settingsDialog{settings->settingsDialog()}
     , playlistController{playlistController_}
-    , playerManager{playlistController->playerManager()}
+    , playerController{playlistController->playerController()}
     , columnRegistry{settings}
     , presetRegistry{settings}
     , sortRegistry{settings}
     , layout{new QHBoxLayout(self)}
-    , model{new PlaylistModel(library, playerManager, settings, self)}
+    , model{new PlaylistModel(library, playerController, settings, self)}
     , playlistView{new PlaylistView(self)}
     , header{new AutoHeaderView(Qt::Horizontal, self)}
     , singleMode{false}
@@ -475,7 +475,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     addToQueueAction->setEnabled(true);
 
     const auto queuedTracks
-        = playerManager->playbackQueue().indexesForPlaylist(playlistController->currentPlaylist()->id());
+        = playerController->playbackQueue().indexesForPlaylist(playlistController->currentPlaylist()->id());
     const bool canDeque = std::ranges::any_of(
         queuedTracks, [&trackIndexes](const auto& track) { return trackIndexes.contains(track.first); });
     removeFromQueueAction->setVisible(canDeque);
@@ -501,7 +501,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     playlistController->playlistHandler()->clearSchedulePlaylist();
 
     playlistController->aboutToChangeTracks();
-    playerManager->updateCurrentTrackIndex(playingIndex);
+    playerController->updateCurrentTrackIndex(playingIndex);
     playlistController->playlistHandler()->replacePlaylistTracks(playlistController->currentPlaylist()->id(), tracks);
     playlistController->changedTracks();
 
@@ -532,7 +532,7 @@ void PlaylistWidgetPrivate::queueSelectedTracks() const
         }
     }
 
-    playerManager->queueTracks(tracks);
+    playerController->queueTracks(tracks);
 }
 
 void PlaylistWidgetPrivate::dequeueSelectedTracks() const
@@ -555,7 +555,7 @@ void PlaylistWidgetPrivate::dequeueSelectedTracks() const
         }
     }
 
-    playerManager->dequeueTracks(tracks);
+    playerController->dequeueTracks(tracks);
 }
 
 void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index)
@@ -568,7 +568,7 @@ void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index
 
     playlistController->filesToTracks(urls, [this, index](const TrackList& tracks) {
         auto* insertCmd
-            = new InsertTracks(playerManager, model, playlistController->currentPlaylist()->id(), {{index, tracks}});
+            = new InsertTracks(playerController, model, playlistController->currentPlaylist()->id(), {{index, tracks}});
         playlistController->addToHistory(insertCmd);
     });
 }
@@ -579,7 +579,7 @@ void PlaylistWidgetPrivate::tracksInserted(const TrackGroups& tracks) const
         return;
     }
 
-    auto* insertCmd = new InsertTracks(playerManager, model, playlistController->currentPlaylist()->id(), tracks);
+    auto* insertCmd = new InsertTracks(playerController, model, playlistController->currentPlaylist()->id(), tracks);
     playlistController->addToHistory(insertCmd);
 
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
@@ -606,7 +606,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
     playlistController->playlistHandler()->clearSchedulePlaylist();
     playlistController->playlistHandler()->removePlaylistTracks(playlistController->currentPlaylist()->id(), indexes);
 
-    auto* delCmd = new RemoveTracks(playerManager, model, playlistController->currentPlaylist()->id(),
+    auto* delCmd = new RemoveTracks(playerController, model, playlistController->currentPlaylist()->id(),
                                     model->saveTrackGroups(trackSelection));
     playlistController->addToHistory(delCmd);
 
@@ -619,7 +619,7 @@ void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
         return;
     }
 
-    auto* moveCmd = new MoveTracks(playerManager, model, playlistController->currentPlaylist()->id(), operation);
+    auto* moveCmd = new MoveTracks(playerController, model, playlistController->currentPlaylist()->id(), operation);
     playlistController->addToHistory(moveCmd);
 
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
@@ -628,7 +628,7 @@ void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
 void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int index) const
 {
     auto* insertCmd
-        = new InsertTracks(playerManager, model, playlistController->currentPlaylist()->id(), {{index, tracks}});
+        = new InsertTracks(playerController, model, playlistController->currentPlaylist()->id(), {{index, tracks}});
     playlistController->addToHistory(insertCmd);
 }
 

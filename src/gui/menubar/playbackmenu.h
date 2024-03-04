@@ -19,20 +19,20 @@
 
 #pragma once
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class ActionManager;
-class PlayerManager;
+class PlayerController;
 
 class PlaybackMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    PlaybackMenu(ActionManager* actionManager, PlayerManager* playerManager, QObject* parent = nullptr);
+    PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, QObject* parent = nullptr);
     ~PlaybackMenu();
 
 private:

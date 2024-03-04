@@ -96,7 +96,7 @@ struct GuiApplication::Private
 
     PluginManager* pluginManager;
     EngineController* engine;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     LibraryManager* libraryManager;
     MusicLibrary* library;
     PlaylistHandler* playlistHandler;
@@ -143,7 +143,7 @@ struct GuiApplication::Private
         , actionManager{new ActionManager(settingsManager, self)}
         , pluginManager{core.pluginManager}
         , engine{core.engine}
-        , playerManager{core.playerManager}
+        , playerController{core.playerController}
         , libraryManager{core.libraryManager}
         , library{core.library}
         , playlistHandler{core.playlistHandler}
@@ -154,14 +154,14 @@ struct GuiApplication::Private
         , menubar{std::make_unique<MainMenuBar>(actionManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, menubar.get(), settingsManager)}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerManager, library,
+        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerController, library,
                                                                   &selectionController, settingsManager)}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, settingsManager, self)}
         , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
-        , playbackMenu{new PlaybackMenu(actionManager, playerManager, self)}
+        , playbackMenu{new PlaybackMenu(actionManager, playerController, self)}
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
         , propertiesDialog{new PropertiesDialog(settingsManager, self)}
@@ -228,7 +228,7 @@ struct GuiApplication::Private
         QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
         QObject::connect(engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
             if(status == InvalidTrack) {
-                const Track track = playerManager->currentTrack();
+                const Track track = playerController->currentTrack();
                 if(track.isValid() && !QFileInfo::exists(track.filepath())) {
                     showTrackNotFoundMessage(track);
                 }
@@ -356,13 +356,13 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("PlayerControls"),
-            [this]() { return new PlayerControl(actionManager, playerManager, settingsManager, mainWindow.get()); },
+            [this]() { return new PlayerControl(actionManager, playerController, settingsManager, mainWindow.get()); },
             QStringLiteral("Player Controls"));
         widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistControls"),
-            [this]() { return new PlaylistControl(playerManager, settingsManager, mainWindow.get()); },
+            [this]() { return new PlaylistControl(playerController, settingsManager, mainWindow.get()); },
             QStringLiteral("Playlist Controls"));
         widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {QStringLiteral("Controls")});
 
@@ -374,18 +374,18 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("SeekBar"),
-            [this]() { return new SeekBar(playerManager, settingsManager, mainWindow.get()); },
+            [this]() { return new SeekBar(playerController, settingsManager, mainWindow.get()); },
             QStringLiteral("SeekBar"));
         widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {QStringLiteral("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SelectionInfo"),
-            [this]() { return new InfoWidget(playerManager, &selectionController, settingsManager, mainWindow.get()); },
+            [this]() { return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get()); },
             QStringLiteral("Selection Info"));
 
         widgetProvider.registerWidget(
             QStringLiteral("ArtworkPanel"),
-            [this]() { return new CoverWidget(playerManager, &selectionController, mainWindow.get()); },
+            [this]() { return new CoverWidget(playerController, &selectionController, mainWindow.get()); },
             QStringLiteral("Artwork Panel"));
 
         widgetProvider.registerWidget(QStringLiteral("Playlist"), [this]() {
@@ -400,7 +400,7 @@ struct GuiApplication::Private
             QStringLiteral("StatusBar"),
             [this]() {
                 auto* statusWidget
-                    = new StatusWidget(playerManager, &selectionController, settingsManager, mainWindow.get());
+                    = new StatusWidget(playerController, &selectionController, settingsManager, mainWindow.get());
                 QObject::connect(library, &MusicLibrary::scanProgress, statusWidget,
                                  &StatusWidget::libraryScanProgress);
                 return statusWidget;
@@ -416,7 +416,7 @@ struct GuiApplication::Private
     void createPropertiesTabs()
     {
         propertiesDialog->addTab(QStringLiteral("Details"), [this]() {
-            return new InfoWidget(playerManager, &selectionController, settingsManager);
+            return new InfoWidget(playerController, &selectionController, settingsManager);
         });
     }
 
@@ -435,10 +435,10 @@ struct GuiApplication::Private
         message.exec();
 
         if(message.clickedButton() == stopButton) {
-            playerManager->stop();
+            playerController->stop();
         }
         else {
-            playerManager->next();
+            playerController->next();
         }
     }
 

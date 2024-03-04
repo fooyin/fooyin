@@ -19,7 +19,7 @@
 
 #include "playercontrol.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
@@ -37,7 +37,7 @@ struct PlayerControl::Private
     PlayerControl* self;
 
     ActionManager* actionManager;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
 
     ToolButton* stop;
@@ -45,11 +45,11 @@ struct PlayerControl::Private
     ToolButton* playPause;
     ToolButton* next;
 
-    Private(PlayerControl* self_, ActionManager* actionManager_, PlayerManager* playerManager_,
+    Private(PlayerControl* self_, ActionManager* actionManager_, PlayerController* playerController_,
             SettingsManager* settings_)
         : self{self_}
         , actionManager{actionManager_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , stop{new ToolButton(self)}
         , prev{new ToolButton(self)}
@@ -82,7 +82,7 @@ struct PlayerControl::Private
         stop->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
         prev->setIcon(Utils::iconFromTheme(Constants::Icons::Prev));
         next->setIcon(Utils::iconFromTheme(Constants::Icons::Next));
-        stateChanged(playerManager->playState());
+        stateChanged(playerController->playState());
     }
 
     void stateChanged(PlayState state) const
@@ -104,10 +104,10 @@ struct PlayerControl::Private
     }
 };
 
-PlayerControl::PlayerControl(ActionManager* actionManager, PlayerManager* playerManager, SettingsManager* settings,
+PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
                              QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, playerManager, settings)}
+    , p{std::make_unique<Private>(this, actionManager, playerController, settings)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -117,7 +117,7 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerManager* player
     layout->addWidget(p->playPause);
     layout->addWidget(p->next);
 
-    QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
+    QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->updateIcons(); });

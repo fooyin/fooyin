@@ -20,7 +20,7 @@
 #include "playlistcontrol.h"
 
 #include <core/coresettings.h>
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
@@ -40,7 +40,7 @@ struct PlaylistControl::Private
 {
     PlaylistControl* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
 
     ToolButton* repeat;
@@ -49,9 +49,9 @@ struct PlaylistControl::Private
     QIcon repeatActiveIcon;
     QIcon shuffleActiveIcon;
 
-    Private(PlaylistControl* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(PlaylistControl* self_, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , repeat{new ToolButton(self)}
         , shuffle{new ToolButton(self)}
@@ -73,7 +73,7 @@ struct PlaylistControl::Private
         repeat->setAutoRaise(true);
         shuffle->setAutoRaise(true);
 
-        setMode(playerManager->playMode());
+        setMode(playerController->playMode());
 
         setupMenus();
     }
@@ -92,7 +92,7 @@ struct PlaylistControl::Private
         repeatPlaylist->setCheckable(true);
         repeatTrack->setCheckable(true);
 
-        auto playMode = playerManager->playMode();
+        auto playMode = playerController->playMode();
 
         if(playMode & Playlist::RepeatAll) {
             repeatPlaylist->setChecked(true);
@@ -105,15 +105,15 @@ struct PlaylistControl::Private
         }
 
         QObject::connect(defaultAction, &QAction::triggered, self, [this, playMode]() {
-            playerManager->setPlayMode(playMode & ~Playlist::Repeat & ~Playlist::RepeatAll);
+            playerController->setPlayMode(playMode & ~Playlist::Repeat & ~Playlist::RepeatAll);
         });
 
         QObject::connect(repeatPlaylist, &QAction::triggered, self, [this, playMode]() {
-            playerManager->setPlayMode((playMode & ~Playlist::Repeat) | Playlist::RepeatAll);
+            playerController->setPlayMode((playMode & ~Playlist::Repeat) | Playlist::RepeatAll);
         });
 
         QObject::connect(repeatTrack, &QAction::triggered, self, [this, playMode]() {
-            playerManager->setPlayMode((playMode & ~Playlist::RepeatAll) | Playlist::Repeat);
+            playerController->setPlayMode((playMode & ~Playlist::RepeatAll) | Playlist::Repeat);
         });
 
         menu->addAction(defaultAction);
@@ -125,7 +125,7 @@ struct PlaylistControl::Private
 
     void repeatClicked() const
     {
-        Playlist::PlayModes mode = playerManager->playMode();
+        Playlist::PlayModes mode = playerController->playMode();
 
         if(mode & Playlist::RepeatAll) {
             mode &= ~Playlist::RepeatAll;
@@ -138,12 +138,12 @@ struct PlaylistControl::Private
             mode |= Playlist::RepeatAll;
         }
 
-        playerManager->setPlayMode(mode);
+        playerController->setPlayMode(mode);
     }
 
     void shuffleClicked() const
     {
-        Playlist::PlayModes mode = playerManager->playMode();
+        Playlist::PlayModes mode = playerController->playMode();
 
         if(mode & Playlist::Shuffle) {
             mode &= ~Playlist::Shuffle;
@@ -152,7 +152,7 @@ struct PlaylistControl::Private
             mode |= Playlist::Shuffle;
         }
 
-        playerManager->setPlayMode(mode);
+        playerController->setPlayMode(mode);
     }
 
     void setMode(Playlist::PlayModes mode) const
@@ -173,9 +173,9 @@ struct PlaylistControl::Private
     }
 };
 
-PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
+PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, settings)}
+    , p{std::make_unique<Private>(this, playerController, settings)}
 
 {
     auto* layout = new QHBoxLayout(this);
@@ -185,10 +185,10 @@ PlaylistControl::PlaylistControl(PlayerManager* playerManager, SettingsManager* 
     layout->addWidget(p->shuffle);
 
     QObject::connect(p->shuffle, &QToolButton::clicked, this, [this]() { p->shuffleClicked(); });
-    QObject::connect(playerManager, &PlayerManager::playModeChanged, this,
+    QObject::connect(playerController, &PlayerController::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { p->setMode(mode); });
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->setMode(p->playerManager->playMode()); });
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->setMode(p->playerController->playMode()); });
 }
 
 PlaylistControl::~PlaylistControl() = default;

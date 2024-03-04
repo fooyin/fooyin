@@ -32,7 +32,7 @@ class QUndoCommand;
 namespace Fooyin {
 class SettingsManager;
 class SortingRegistry;
-class PlayerManager;
+class PlayerController;
 enum class PlayState;
 enum class TrackAction;
 class Playlist;
@@ -51,12 +51,12 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistHandler* handler, PlayerManager* playerManager, MusicLibrary* library,
+    PlaylistController(PlaylistHandler* handler, PlayerController* playerController, MusicLibrary* library,
                        TrackSelectionController* selectionController, SettingsManager* settings,
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
-    [[nodiscard]] PlayerManager* playerManager() const;
+    [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] PlaylistHandler* playlistHandler() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 

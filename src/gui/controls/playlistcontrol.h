@@ -25,14 +25,14 @@ class QHBoxLayout;
 
 namespace Fooyin {
 class SettingsManager;
-class PlayerManager;
+class PlayerController;
 
 class PlaylistControl : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistControl(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistControl() override;
 
     QString name() const override;

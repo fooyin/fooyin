@@ -22,6 +22,7 @@
 #include "playlistpreset.h"
 #include "playlistscriptregistry.h"
 
+#include <core/player/playercontroller.h>
 #include <utils/crypto.h>
 
 #include <QCryptographicHash>
@@ -35,7 +36,7 @@ namespace Fooyin {
 struct PlaylistPopulator::Private
 {
     PlaylistPopulator* self;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
 
     PlaylistPreset currentPreset;
     PlaylistColumnList columns;
@@ -55,9 +56,9 @@ struct PlaylistPopulator::Private
     ContainerKeyMap headers;
     TrackList pendingTracks;
 
-    explicit Private(PlaylistPopulator* self_, PlayerManager* playerManager_)
+    explicit Private(PlaylistPopulator* self_, PlayerController* playerController_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , registry{std::make_unique<PlaylistScriptRegistry>()}
         , parser{registry.get()}
     { }
@@ -334,9 +335,9 @@ struct PlaylistPopulator::Private
     }
 };
 
-PlaylistPopulator::PlaylistPopulator(PlayerManager* playerManager, QObject* parent)
+PlaylistPopulator::PlaylistPopulator(PlayerController* playerController, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, playerManager)}
+    , p{std::make_unique<Private>(this, playerController)}
 {
     qRegisterMetaType<PendingData>();
 }
@@ -352,7 +353,7 @@ void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const 
     p->currentPreset   = preset;
     p->columns         = columns;
     p->pendingTracks   = tracks;
-    p->registry->setup(playlistId, p->playerManager->playbackQueue());
+    p->registry->setup(playlistId, p->playerController->playbackQueue());
 
     p->updateScripts();
     p->runBatch(TrackPreloadSize, 0);
@@ -372,7 +373,7 @@ void PlaylistPopulator::runTracks(int playlistId, const PlaylistPreset& preset, 
     p->data.playlistId = playlistId;
     p->currentPreset   = preset;
     p->columns         = columns;
-    p->registry->setup(playlistId, p->playerManager->playbackQueue());
+    p->registry->setup(playlistId, p->playerController->playbackQueue());
 
     p->updateScripts();
     p->runTracksGroup(tracks);

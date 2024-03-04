@@ -25,7 +25,7 @@
 
 namespace Fooyin {
 class SettingsManager;
-class PlayerManager;
+class PlayerController;
 struct AudioOutputBuilder;
 
 using OutputNames = std::vector<QString>;
@@ -35,7 +35,7 @@ class EngineHandler : public EngineController
     Q_OBJECT
 
 public:
-    explicit EngineHandler(PlayerManager* playerManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit EngineHandler(PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
     ~EngineHandler() override;
 
     void setup();

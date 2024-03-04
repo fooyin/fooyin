@@ -21,7 +21,7 @@
 
 #include "playlist/playlistcontroller.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
@@ -120,7 +120,7 @@ struct TrackSelectionController::Private
         QObject::connect(addToQueue, &QAction::triggered, tracksQueueMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
-                playlistController->playerManager()->queueTracks(selection.tracks);
+                playlistController->playerController()->queueTracks(selection.tracks);
             }
         });
         tracksQueueMenu->addAction(actionManager->registerAction(addToQueue, Constants::Actions::AddToQueue));
@@ -128,7 +128,7 @@ struct TrackSelectionController::Private
         QObject::connect(removeFromQueue, &QAction::triggered, tracksQueueMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
-                playlistController->playerManager()->dequeueTracks(selection.tracks);
+                playlistController->playerController()->dequeueTracks(selection.tracks);
             }
         });
         tracksQueueMenu->addAction(actionManager->registerAction(removeFromQueue, Constants::Actions::RemoveFromQueue));

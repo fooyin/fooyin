@@ -32,7 +32,7 @@
 namespace Fooyin {
 class SettingsManager;
 class MusicLibrary;
-class PlayerManager;
+class PlayerController;
 class Playlist;
 struct PlaylistPreset;
 struct PlaylistTrack;
@@ -70,7 +70,7 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    PlaylistModel(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
+    PlaylistModel(MusicLibrary* library, PlayerController* playerController, SettingsManager* settings,
                   QObject* parent = nullptr);
     ~PlaylistModel() override;
 

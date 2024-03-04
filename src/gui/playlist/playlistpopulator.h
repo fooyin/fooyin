@@ -27,7 +27,7 @@
 #include <utils/worker.h>
 
 namespace Fooyin {
-class PlayerManager;
+class PlayerController;
 struct PlaylistPreset;
 
 using ItemList        = std::vector<PlaylistItem>;
@@ -67,7 +67,7 @@ class PlaylistPopulator : public Worker
     Q_OBJECT
 
 public:
-    explicit PlaylistPopulator(PlayerManager* playerManager, QObject* parent = nullptr);
+    explicit PlaylistPopulator(PlayerController* playerController, QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
     void run(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);

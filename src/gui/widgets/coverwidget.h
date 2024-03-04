@@ -23,7 +23,7 @@
 
 namespace Fooyin {
 class MusicLibrary;
-class PlayerManager;
+class PlayerController;
 class TrackSelectionController;
 
 class CoverWidget : public FyWidget
@@ -31,7 +31,7 @@ class CoverWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit CoverWidget(PlayerManager* playerManager, TrackSelectionController* trackSelection,
+    explicit CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
                          QWidget* parent = nullptr);
     ~CoverWidget() override;
 

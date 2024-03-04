@@ -26,11 +26,11 @@
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
-#include "player/playercontroller.h"
 #include "plugins/pluginmanager.h"
 #include "translations.h"
 
 #include <core/engine/outputplugin.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
@@ -42,7 +42,7 @@ struct Application::Private
     CoreSettings coreSettings;
     Translations translations;
     Database database;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     EngineHandler engine;
     LibraryManager* libraryManager;
     UnifiedMusicLibrary* library;
@@ -56,12 +56,12 @@ struct Application::Private
         , coreSettings{settingsManager}
         , translations{settingsManager}
         , database{settingsManager}
-        , playerManager{new PlayerController(settingsManager, parent)}
-        , engine{playerManager, settingsManager}
+        , playerController{new PlayerController(settingsManager, parent)}
+        , engine{playerController, settingsManager}
         , libraryManager{new LibraryManager(&database, settingsManager, parent)}
         , library{new UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , playlistHandler{new PlaylistHandler(&database, playerManager, settingsManager, parent)}
-        , corePluginContext{&pluginManager, &engine,         playerManager,  libraryManager,
+        , playlistHandler{new PlaylistHandler(&database, playerController, settingsManager, parent)}
+        , corePluginContext{&pluginManager, &engine,         playerController,  libraryManager,
                             library,        playlistHandler, settingsManager}
     {
         registerTypes();
@@ -108,7 +108,7 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    QObject::connect(p->playerManager, &PlayerManager::trackPlayed, p->library, &UnifiedMusicLibrary::trackWasPlayed);
+    QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library, &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
     QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
                      &PlaylistHandler::savePlaylists);

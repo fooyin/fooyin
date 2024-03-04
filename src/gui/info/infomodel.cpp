@@ -19,7 +19,7 @@
 
 #include "infomodel.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <utils/enum.h>
 #include <utils/utils.h>

@@ -120,7 +120,7 @@ public:
     SettingsDialogController* settingsDialog;
 
     PlaylistController* playlistController;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     PlaylistColumnRegistry columnRegistry;
     PresetRegistry presetRegistry;
     SortingRegistry sortRegistry;

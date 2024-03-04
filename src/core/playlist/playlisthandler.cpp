@@ -23,7 +23,7 @@
 #include "database/playlistdatabase.h"
 
 #include <core/coresettings.h>
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
@@ -70,7 +70,7 @@ struct PlaylistHandler::Private
 {
     PlaylistHandler* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
     PlaylistDatabase playlistConnector;
 
@@ -80,9 +80,9 @@ struct PlaylistHandler::Private
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self_, const Database* database, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(PlaylistHandler* self_, const Database* database, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , playlistConnector{database->connectionName()}
     { }
@@ -102,8 +102,8 @@ struct PlaylistHandler::Private
             return;
         }
 
-        playerManager->changeCurrentTrack({track, activePlaylist->id(), index});
-        playerManager->play();
+        playerController->changeCurrentTrack({track, activePlaylist->id(), index});
+        playerController->play();
     }
 
     void nextTrack(int delta)
@@ -114,14 +114,14 @@ struct PlaylistHandler::Private
         }
 
         if(!activePlaylist) {
-            playerManager->stop();
+            playerController->stop();
             return;
         }
 
-        const Track nextTrack = activePlaylist->nextTrack(delta, playerManager->playMode());
+        const Track nextTrack = activePlaylist->nextTrack(delta, playerController->playMode());
 
         if(!nextTrack.isValid()) {
-            playerManager->stop();
+            playerController->stop();
             return;
         }
 
@@ -135,8 +135,8 @@ struct PlaylistHandler::Private
 
     void previous()
     {
-        if(settings->value<Settings::Core::RewindPreviousTrack>() && playerManager->currentPosition() > 5000) {
-            playerManager->changePosition(0);
+        if(settings->value<Settings::Core::RewindPreviousTrack>() && playerController->currentPosition() > 5000) {
+            playerController->changePosition(0);
         }
         else {
             nextTrack(-1);
@@ -228,10 +228,10 @@ struct PlaylistHandler::Private
     }
 };
 
-PlaylistHandler::PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
+PlaylistHandler::PlaylistHandler(Database* database, PlayerController* playerController, SettingsManager* settings,
                                  QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, database, playerManager, settings)}
+    , p{std::make_unique<Private>(this, database, playerController, settings)}
 {
     p->reloadPlaylists();
 
@@ -239,8 +239,8 @@ PlaylistHandler::PlaylistHandler(Database* database, PlayerManager* playerManage
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
     }
 
-    QObject::connect(p->playerManager, &PlayerManager::nextTrack, this, [this]() { p->next(); });
-    QObject::connect(p->playerManager, &PlayerManager::previousTrack, this, [this]() { p->previous(); });
+    QObject::connect(p->playerController, &PlayerController::nextTrack, this, [this]() { p->next(); });
+    QObject::connect(p->playerController, &PlayerController::previousTrack, this, [this]() { p->previous(); });
 }
 
 PlaylistHandler::~PlaylistHandler()

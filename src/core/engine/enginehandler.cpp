@@ -27,7 +27,7 @@
 #include <core/engine/outputplugin.h>
 #include <core/track.h>
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QThread>
@@ -43,7 +43,7 @@ struct EngineHandler::Private
 {
     EngineHandler* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
 
     QThread engineThread;
@@ -52,19 +52,20 @@ struct EngineHandler::Private
     std::map<QString, OutputCreator> outputs;
     CurrentOutput currentOutput;
 
-    Private(EngineHandler* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(EngineHandler* self_, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , engine{new AudioPlaybackEngine(settings)}
     {
         engine->moveToThread(&engineThread);
         engineThread.start();
 
-        QObject::connect(playerManager, &PlayerManager::currentTrackChanged, engine, &AudioEngine::changeTrack);
-        QObject::connect(playerManager, &PlayerManager::positionMoved, engine, &AudioEngine::seek);
+        QObject::connect(playerController, &PlayerController::currentTrackChanged, engine, &AudioEngine::changeTrack);
+        QObject::connect(playerController, &PlayerController::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
-        QObject::connect(engine, &AudioEngine::positionChanged, playerManager, &PlayerManager::setCurrentPosition);
+        QObject::connect(engine, &AudioEngine::positionChanged, playerController,
+                         &PlayerController::setCurrentPosition);
         QObject::connect(engine, &AudioEngine::trackStatusChanged, self,
                          [this](TrackStatus status) { handleTrackStatus(status); });
 
@@ -75,10 +76,10 @@ struct EngineHandler::Private
     {
         switch(status) {
             case(TrackStatus::EndOfTrack):
-                playerManager->next();
+                playerController->next();
                 break;
             case(NoTrack):
-                playerManager->stop();
+                playerController->stop();
                 break;
             case(InvalidTrack):
             case(LoadingTrack):
@@ -156,11 +157,11 @@ struct EngineHandler::Private
     }
 };
 
-EngineHandler::EngineHandler(PlayerManager* playerManager, SettingsManager* settings, QObject* parent)
+EngineHandler::EngineHandler(PlayerController* playerController, SettingsManager* settings, QObject* parent)
     : EngineController{parent}
-    , p{std::make_unique<Private>(this, playerManager, settings)}
+    , p{std::make_unique<Private>(this, playerController, settings)}
 {
-    QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
+    QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->playStateChanged(state); });
 
     QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output) {

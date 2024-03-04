@@ -25,13 +25,13 @@
 
 namespace Fooyin {
 class SettingsManager;
-class PlayerManager;
+class PlayerController;
 class TrackSelectionController;
 
 class InfoWidget : public PropertiesTabWidget
 {
 public:
-    explicit InfoWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+    explicit InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                         SettingsManager* settings, QWidget* parent = nullptr);
     ~InfoWidget() override;
 

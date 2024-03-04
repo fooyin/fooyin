@@ -17,7 +17,7 @@
  *
  */
 
-#include "playercontroller.h"
+#include <core/player/playercontroller.h>
 
 #include <core/player/playbackqueue.h>
 
@@ -49,7 +49,7 @@ struct PlayerController::Private
 };
 
 PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
-    : PlayerManager{parent}
+    : QObject{parent}
     , p{std::make_unique<Private>(this, settings)}
 {
     settings->subscribe<Settings::Core::PlayMode>(this, [this]() {
@@ -290,4 +290,4 @@ void PlayerController::clearPlaylistQueue(int playlistId)
 }
 } // namespace Fooyin
 
-#include "moc_playercontroller.cpp"
+#include "core/player/moc_playercontroller.cpp"

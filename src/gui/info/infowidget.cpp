@@ -23,7 +23,7 @@
 #include "infomodel.h"
 #include "internalguisettings.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -40,17 +40,17 @@ struct InfoWidget::Private
     InfoWidget* self;
 
     TrackSelectionController* selectionController;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
 
     QTreeView* view;
     InfoModel* model;
 
-    Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerManager* playerManager_,
+    Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerController* playerController_,
             SettingsManager* settings_)
         : self{self_}
         , selectionController{selectionController_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , view{new QTreeView(self)}
         , model{new InfoModel(self)}
@@ -116,14 +116,14 @@ struct InfoWidget::Private
 
     void resetModel() const
     {
-        model->resetModel(selectionController->selectedTracks(), playerManager->currentTrack());
+        model->resetModel(selectionController->selectedTracks(), playerController->currentTrack());
     }
 };
 
-InfoWidget::InfoWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                        SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , p{std::make_unique<Private>(this, selectionController, playerManager, settings)}
+    , p{std::make_unique<Private>(this, selectionController, playerController, settings)}
 {
     setObjectName(InfoWidget::name());
 

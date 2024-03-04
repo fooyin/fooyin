@@ -21,7 +21,7 @@
 
 #include "internalguisettings.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
@@ -38,7 +38,7 @@ struct SeekBar::Private
 {
     SeekBar* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     SettingsManager* settings;
 
     Slider* slider;
@@ -47,9 +47,9 @@ struct SeekBar::Private
     uint64_t max{0};
     bool elapsedTotal;
 
-    Private(SeekBar* self_, PlayerManager* playerManager_, SettingsManager* settings_)
+    Private(SeekBar* self_, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , settings{settings_}
         , slider{new Slider(Qt::Horizontal, self)}
         , elapsed{new ClickableLabel(self)}
@@ -143,13 +143,13 @@ struct SeekBar::Private
     void sliderDropped() const
     {
         const auto pos = static_cast<uint64_t>(slider->value());
-        playerManager->changePosition(pos);
+        playerController->changePosition(pos);
     }
 };
 
-SeekBar::SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent)
+SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, settings)}
+    , p{std::make_unique<Private>(this, playerController, settings)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(10, 0, 10, 0);
@@ -158,22 +158,22 @@ SeekBar::SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidge
     layout->addWidget(p->slider, 0, Qt::AlignVCenter);
     layout->addWidget(p->total, 0, Qt::AlignVCenter | Qt::AlignLeft);
 
-    p->slider->setEnabled(p->playerManager->currentTrack().isValid());
+    p->slider->setEnabled(p->playerController->currentTrack().isValid());
 
     QObject::connect(p->total, &ClickableLabel::clicked, this,
                      [this]() { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(!p->elapsedTotal); });
     QObject::connect(p->slider, &Slider::sliderReleased, this, [this]() { p->sliderDropped(); });
 
-    QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
+    QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(p->playerManager, &PlayerManager::currentTrackChanged, this,
+    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { p->trackChanged(track); });
-    QObject::connect(p->playerManager, &PlayerManager::positionChanged, this,
+    QObject::connect(p->playerController, &PlayerController::positionChanged, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
-    QObject::connect(p->playerManager, &PlayerManager::positionMoved, this,
+    QObject::connect(p->playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
 
-    p->trackChanged(p->playerManager->currentTrack());
+    p->trackChanged(p->playerController->currentTrack());
 }
 
 Fooyin::SeekBar::~SeekBar() = default;

@@ -29,14 +29,14 @@
 namespace Fooyin {
 class SettingsManager;
 class Database;
-class PlayerManager;
+class PlayerController;
 
 class FYCORE_EXPORT PlaylistHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
+    explicit PlaylistHandler(Database* database, PlayerController* playerController, SettingsManager* settings,
                              QObject* parent = nullptr);
     ~PlaylistHandler() override;
 

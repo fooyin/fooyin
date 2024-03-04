@@ -23,14 +23,14 @@
 
 namespace Fooyin {
 class SettingsManager;
-class PlayerManager;
+class PlayerController;
 
 class SeekBar : public FyWidget
 {
     Q_OBJECT
 
 public:
-    SeekBar(PlayerManager* playerManager, SettingsManager* settings, QWidget* parent = nullptr);
+    SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
     ~SeekBar() override;
 
     QString name() const override;

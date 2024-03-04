@@ -19,7 +19,7 @@
 
 #include "coverwidget.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -33,16 +33,16 @@ struct CoverWidget::Private
 {
     CoverWidget* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     TrackSelectionController* trackSelection;
     CoverProvider* coverProvider;
 
     QLabel* coverLabel;
     QPixmap cover;
 
-    Private(CoverWidget* self_, PlayerManager* playerManager_, TrackSelectionController* trackSelection_)
+    Private(CoverWidget* self_, PlayerController* playerController_, TrackSelectionController* trackSelection_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , trackSelection{trackSelection_}
         , coverProvider{new CoverProvider(self)}
         , coverLabel{new QLabel(self)}
@@ -78,9 +78,9 @@ struct CoverWidget::Private
     }
 };
 
-CoverWidget::CoverWidget(PlayerManager* playerManager, TrackSelectionController* trackSelection, QWidget* parent)
+CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, trackSelection)}
+    , p{std::make_unique<Private>(this, playerController, trackSelection)}
 {
     setObjectName(CoverWidget::name());
 
@@ -89,12 +89,12 @@ CoverWidget::CoverWidget(PlayerManager* playerManager, TrackSelectionController*
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(p->coverLabel);
 
-    QObject::connect(p->playerManager, &PlayerManager::currentTrackChanged, this,
+    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { p->reloadCover(track); });
     QObject::connect(p->coverProvider, &CoverProvider::coverAdded, this,
                      [this](const Track& track) { p->reloadCover(track); });
 
-    p->reloadCover(p->playerManager->currentTrack());
+    p->reloadCover(p->playerController->currentTrack());
 }
 
 CoverWidget::~CoverWidget() = default;

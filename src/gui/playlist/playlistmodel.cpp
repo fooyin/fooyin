@@ -26,7 +26,7 @@
 #include "playlistscriptregistry.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
@@ -43,6 +43,7 @@
 #include <QPalette>
 
 #include <queue>
+#include <span>
 #include <stack>
 
 constexpr auto CellMargin = 5;
@@ -488,7 +489,7 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 } // namespace
 
 namespace Fooyin {
-PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerManager* playerManager, SettingsManager* settings,
+PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerController, SettingsManager* settings,
                              QObject* parent)
     : TreeModel{parent}
     , m_library{library}
@@ -498,7 +499,7 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerManager* playerManager
     , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , m_coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
                   settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
-    , m_populator{playerManager}
+    , m_populator{playerController}
     , m_playlistLoaded{false}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{PlayState::Stopped}

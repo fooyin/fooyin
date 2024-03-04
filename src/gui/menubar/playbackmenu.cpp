@@ -19,7 +19,7 @@
 
 #include "playbackmenu.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
@@ -36,7 +36,7 @@ struct PlaybackMenu::Private
     PlaybackMenu* self;
 
     ActionManager* actionManager;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
 
     QAction* stop{nullptr};
     QAction* playPause{nullptr};
@@ -51,10 +51,10 @@ struct PlaybackMenu::Private
     QIcon playIcon;
     QIcon pauseIcon;
 
-    Private(PlaybackMenu* self_, ActionManager* actionManager_, PlayerManager* playerManager_)
+    Private(PlaybackMenu* self_, ActionManager* actionManager_, PlayerController* playerController_)
         : self{self_}
         , actionManager{actionManager_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
         , pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
     { }
@@ -90,7 +90,7 @@ struct PlaybackMenu::Private
 
     void setPlayMode(Playlist::PlayMode mode) const
     {
-        auto currentMode    = playerManager->playMode();
+        auto currentMode    = playerController->playMode();
         const bool noChange = currentMode == mode;
 
         if(mode == Playlist::Default) {
@@ -107,40 +107,40 @@ struct PlaybackMenu::Private
         else {
             currentMode |= mode;
         }
-        playerManager->setPlayMode(currentMode);
+        playerController->setPlayMode(currentMode);
 
         if(noChange) {
-            updatePlayMode(playerManager->playMode());
+            updatePlayMode(playerController->playMode());
         }
     }
 };
 
-PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerManager* playerManager, QObject* parent)
+PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, actionManager, playerManager)}
+    , p{std::make_unique<Private>(this, actionManager, playerController)}
 {
     auto* playbackMenu = p->actionManager->actionContainer(Constants::Menus::Playback);
 
-    QObject::connect(p->playerManager, &PlayerManager::playStateChanged, this,
+    QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->updatePlayPause(state); });
-    QObject::connect(p->playerManager, &PlayerManager::playModeChanged, this,
+    QObject::connect(p->playerController, &PlayerController::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { p->updatePlayMode(mode); });
 
     p->stop = new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("&Stop"), this);
     playbackMenu->addAction(actionManager->registerAction(p->stop, Constants::Actions::Stop));
-    QObject::connect(p->stop, &QAction::triggered, playerManager, &PlayerManager::stop);
+    QObject::connect(p->stop, &QAction::triggered, playerController, &PlayerController::stop);
 
     p->playPause = new QAction(p->playIcon, tr("&Play"), this);
     playbackMenu->addAction(actionManager->registerAction(p->playPause, Constants::Actions::PlayPause));
-    QObject::connect(p->playPause, &QAction::triggered, playerManager, &PlayerManager::playPause);
+    QObject::connect(p->playPause, &QAction::triggered, playerController, &PlayerController::playPause);
 
     p->next = new QAction(Utils::iconFromTheme(Constants::Icons::Next), tr("&Next"), this);
     playbackMenu->addAction(actionManager->registerAction(p->next, Constants::Actions::Next));
-    QObject::connect(p->next, &QAction::triggered, playerManager, &PlayerManager::next);
+    QObject::connect(p->next, &QAction::triggered, playerController, &PlayerController::next);
 
     p->previous = new QAction(Utils::iconFromTheme(Constants::Icons::Prev), tr("Pre&vious"), this);
     playbackMenu->addAction(actionManager->registerAction(p->previous, Constants::Actions::Previous));
-    QObject::connect(p->previous, &QAction::triggered, playerManager, &PlayerManager::previous);
+    QObject::connect(p->previous, &QAction::triggered, playerController, &PlayerController::previous);
 
     auto* orderMenu = p->actionManager->createMenu(Constants::Menus::PlaybackOrder);
     orderMenu->menu()->setTitle(tr("&Order"));
@@ -167,8 +167,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerManager* playerMa
     orderMenu->addAction(actionManager->registerAction(p->shuffle, Constants::Actions::Shuffle));
     QObject::connect(p->shuffle, &QAction::triggered, this, [this]() { p->setPlayMode(Playlist::PlayMode::Shuffle); });
 
-    p->updatePlayPause(p->playerManager->playState());
-    p->updatePlayMode(p->playerManager->playMode());
+    p->updatePlayPause(p->playerController->playState());
+    p->updatePlayMode(p->playerController->playMode());
 }
 
 PlaybackMenu::~PlaybackMenu() = default;

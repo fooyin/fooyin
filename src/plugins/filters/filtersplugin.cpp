@@ -37,7 +37,7 @@ struct FiltersPlugin::Private
     ActionManager* actionManager;
     SettingsManager* settings;
     MusicLibrary* library;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     LayoutProvider* layoutProvider;
     WidgetProvider* widgetProvider;
     TrackSelectionController* trackSelection;
@@ -88,7 +88,7 @@ FiltersPlugin::~FiltersPlugin() = default;
 void FiltersPlugin::initialise(const CorePluginContext& context)
 {
     p->library       = context.library;
-    p->playerManager = context.playerManager;
+    p->playerController = context.playerController;
     p->settings      = context.settingsManager;
 
     p->filterSettings = std::make_unique<FiltersSettings>(p->settings);

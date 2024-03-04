@@ -20,7 +20,7 @@
 #pragma once
 
 #include <core/player/playerdefs.h>
-#include <core/player/playermanager.h>
+#include <core/player/playbackqueue.h>
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {

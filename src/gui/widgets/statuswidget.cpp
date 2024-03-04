@@ -21,7 +21,7 @@
 
 #include "internalguisettings.h"
 
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/track.h>
@@ -46,7 +46,7 @@ struct StatusWidget::Private
 {
     StatusWidget* self;
 
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -63,10 +63,10 @@ struct StatusWidget::Private
 
     QTimer clearTimer;
 
-    Private(StatusWidget* self_, PlayerManager* playerManager_, TrackSelectionController* selectionController_,
+    Private(StatusWidget* self_, PlayerController* playerController_, TrackSelectionController* selectionController_,
             SettingsManager* settings_)
         : self{self_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , selectionController{selectionController_}
         , settings{settings_}
         , scriptParser{&scriptRegistry}
@@ -91,7 +91,7 @@ struct StatusWidget::Private
 
     void labelClicked() const
     {
-        const PlayState ps = playerManager->playState();
+        const PlayState ps = playerController->playState();
         if(ps == PlayState::Playing || ps == PlayState::Paused) {
             QMetaObject::invokeMethod(self, &StatusWidget::clicked);
         }
@@ -99,16 +99,16 @@ struct StatusWidget::Private
 
     void updatePlayingText()
     {
-        const PlayState ps = playerManager->playState();
+        const PlayState ps = playerController->playState();
         if(ps == PlayState::Playing || ps == PlayState::Paused) {
-            statusText->setText(scriptParser.evaluate(playingScript, playerManager->currentTrack()));
+            statusText->setText(scriptParser.evaluate(playingScript, playerController->currentTrack()));
         }
     }
 
     void updateScanText(int progress)
     {
         QString scanText   = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
-        const PlayState ps = playerManager->playState();
+        const PlayState ps = playerController->playState();
         if(ps == PlayState::Stopped) {
             statusText->setText(scanText);
             if(progress == 100) {
@@ -141,10 +141,10 @@ struct StatusWidget::Private
     }
 };
 
-StatusWidget::StatusWidget(PlayerManager* playerManager, TrackSelectionController* selectionController,
+StatusWidget::StatusWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                            SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerManager, selectionController, settings)}
+    , p{std::make_unique<Private>(this, playerController, selectionController, settings)}
 {
     setObjectName(StatusWidget::name());
 
@@ -166,9 +166,9 @@ StatusWidget::StatusWidget(PlayerManager* playerManager, TrackSelectionControlle
     p->selectionText->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowSelection>());
 
     QObject::connect(p->statusText, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
-    QObject::connect(playerManager, &PlayerManager::playStateChanged, this,
+    QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(playerManager, &PlayerManager::positionChanged, this,
+    QObject::connect(playerController, &PlayerController::positionChanged, this,
                      [this](uint64_t /*pos*/) { p->updatePlayingText(); });
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->updateSelectionText(); });

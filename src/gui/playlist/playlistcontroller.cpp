@@ -20,7 +20,7 @@
 #include "playlistcontroller.h"
 
 #include <core/library/musiclibrary.h>
-#include <core/player/playermanager.h>
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
@@ -39,7 +39,7 @@ struct PlaylistController::Private
     PlaylistController* self;
 
     PlaylistHandler* handler;
-    PlayerManager* playerManager;
+    PlayerController* playerController;
     MusicLibrary* library;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
@@ -52,11 +52,11 @@ struct PlaylistController::Private
     std::unordered_map<int, QUndoStack> histories;
     std::unordered_map<int, PlaylistViewState> states;
 
-    Private(PlaylistController* self_, PlaylistHandler* handler_, PlayerManager* playerManager_, MusicLibrary* library_,
-            TrackSelectionController* selectionController_, SettingsManager* settings_)
+    Private(PlaylistController* self_, PlaylistHandler* handler_, PlayerController* playerController_,
+            MusicLibrary* library_, TrackSelectionController* selectionController_, SettingsManager* settings_)
         : self{self_}
         , handler{handler_}
-        , playerManager{playerManager_}
+        , playerController{playerController_}
         , library{library_}
         , selectionController{selectionController_}
         , settings{settings_}
@@ -130,7 +130,7 @@ struct PlaylistController::Private
             }
         }
 
-        const auto queuedTracks = playerManager->playbackQueue().indexesForPlaylist(currentPlaylist->id());
+        const auto queuedTracks = playerController->playbackQueue().indexesForPlaylist(currentPlaylist->id());
         for(const auto& trackIndex : queuedTracks | std::views::keys) {
             uniqueIndexes.emplace(trackIndex);
         }
@@ -178,7 +178,7 @@ struct PlaylistController::Private
             states.erase(playlist->id());
 
             clearingQueue = true;
-            playerManager->clearPlaylistQueue(playlist->id());
+            playerController->clearPlaylistQueue(playlist->id());
             clearingQueue = false;
         }
 
@@ -303,11 +303,11 @@ struct PlaylistController::Private
     }
 };
 
-PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerManager* playerManager, MusicLibrary* library,
-                                       TrackSelectionController* selectionController, SettingsManager* settings,
-                                       QObject* parent)
+PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerController* playerController,
+                                       MusicLibrary* library, TrackSelectionController* selectionController,
+                                       SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, playerManager, library, selectionController, settings)}
+    , p{std::make_unique<Private>(this, handler, playerController, library, selectionController, settings)}
 {
     p->restoreStates();
 
@@ -324,16 +324,17 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerManager* 
     QObject::connect(handler, &PlaylistHandler::playlistRemoved, this,
                      [this](const Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
 
-    QObject::connect(playerManager, &PlayerManager::playlistTrackChanged, this,
+    QObject::connect(playerController, &PlayerController::playlistTrackChanged, this,
                      [this](const PlaylistTrack& track) { p->handlePlayingTrackChanged(track); });
-    QObject::connect(playerManager, &PlayerManager::tracksQueued, this,
+    QObject::connect(playerController, &PlayerController::tracksQueued, this,
                      [this](const QueueTracks& tracks) { p->handleTracksQueued(tracks); });
     QObject::connect(
-        playerManager, &PlayerManager::trackQueueChanged, this,
+        playerController, &PlayerController::trackQueueChanged, this,
         [this](const QueueTracks& removed, const QueueTracks& added) { p->handleQueueChanged(removed, added); });
-    QObject::connect(playerManager, &PlayerManager::tracksDequeued, this,
+    QObject::connect(playerController, &PlayerController::tracksDequeued, this,
                      [this](const QueueTracks& tracks) { p->handleTracksDequeued(tracks); });
-    QObject::connect(playerManager, &PlayerManager::playStateChanged, this, &PlaylistController::playStateChanged);
+    QObject::connect(playerController, &PlayerController::playStateChanged, this,
+                     &PlaylistController::playStateChanged);
 }
 
 PlaylistController::~PlaylistController()
@@ -344,9 +345,9 @@ PlaylistController::~PlaylistController()
     }
 }
 
-PlayerManager* PlaylistController::playerManager() const
+PlayerController* PlaylistController::playerController() const
 {
-    return p->playerManager;
+    return p->playerController;
 }
 
 PlaylistHandler* PlaylistController::playlistHandler() const
@@ -371,12 +372,12 @@ PlaylistList PlaylistController::playlists() const
 
 PlaylistTrack PlaylistController::currentTrack() const
 {
-    return p->playerManager->currentPlaylistTrack();
+    return p->playerController->currentPlaylistTrack();
 }
 
 PlayState PlaylistController::playState() const
 {
-    return p->playerManager->playState();
+    return p->playerController->playState();
 }
 
 void PlaylistController::aboutToChangeTracks()

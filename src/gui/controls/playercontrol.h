@@ -24,14 +24,14 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class PlayerManager;
+class PlayerController;
 
 class PlayerControl : public FyWidget
 {
     Q_OBJECT
 
 public:
-    PlayerControl(ActionManager* actionManager, PlayerManager* playerManager, SettingsManager* settings,
+    PlayerControl(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
                   QWidget* parent = nullptr);
     ~PlayerControl() override;
 

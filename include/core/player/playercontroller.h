@@ -28,74 +28,75 @@
 #include <QObject>
 
 namespace Fooyin {
+class SettingsManager;
+
 /*!
  * Handles track playback
  */
-class FYCORE_EXPORT PlayerManager : public QObject
+class FYCORE_EXPORT PlayerController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlayerManager(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    explicit PlayerController(SettingsManager* settings, QObject* parent = nullptr);
+    ~PlayerController() override;
 
     /** Returns the current state (playing, paused or stopped). */
-    [[nodiscard]] virtual PlayState playState() const = 0;
+    [[nodiscard]] virtual PlayState playState() const;
 
     /** Returns the current playlist mode (shuffle and repeat flags). */
-    [[nodiscard]] virtual Playlist::PlayModes playMode() const = 0;
+    [[nodiscard]] virtual Playlist::PlayModes playMode() const;
 
     /** Returns the current playback position in ms. */
-    [[nodiscard]] virtual uint64_t currentPosition() const = 0;
+    [[nodiscard]] virtual uint64_t currentPosition() const;
 
     /*!
      * Returns the currently playing track.
      * @note the track will be invalid if the state is 'Stopped'.
      */
-    [[nodiscard]] virtual Track currentTrack() const = 0;
+    [[nodiscard]] virtual Track currentTrack() const;
     /*!
      * Returns the currently playing playlist track.
      * @note the track will be invalid if the state is 'Stopped'.
      */
-    [[nodiscard]] virtual PlaylistTrack currentPlaylistTrack() const = 0;
+    [[nodiscard]] virtual PlaylistTrack currentPlaylistTrack() const;
 
     /** Starts playback of the current playlist. */
-    virtual void play() = 0;
+    virtual void play();
 
     /** Toggles playback. */
-    virtual void playPause() = 0;
+    virtual void playPause();
 
-    virtual void pause()    = 0;
-    virtual void previous() = 0;
-    virtual void next()     = 0;
-    virtual void stop()     = 0;
+    virtual void pause();
+    virtual void previous();
+    virtual void next();
+    virtual void stop();
 
     /** Stops playback and clears position and current track. */
-    virtual void reset() = 0;
+    virtual void reset();
 
-    virtual void setPlayMode(Playlist::PlayModes mode)          = 0;
-    virtual void setCurrentPosition(uint64_t ms)                = 0;
-    virtual void changePosition(uint64_t ms)                    = 0;
-    virtual void changeCurrentTrack(const Track& track)         = 0;
-    virtual void changeCurrentTrack(const PlaylistTrack& track) = 0;
-    virtual void updateCurrentTrackIndex(int index)             = 0;
+    virtual void setPlayMode(Playlist::PlayModes mode);
+    virtual void setCurrentPosition(uint64_t ms);
+    virtual void changePosition(uint64_t ms);
+    virtual void changeCurrentTrack(const Track& track);
+    virtual void changeCurrentTrack(const PlaylistTrack& track);
+    virtual void updateCurrentTrackIndex(int index);
 
-    [[nodiscard]] virtual PlaybackQueue playbackQueue() const = 0;
+    [[nodiscard]] virtual PlaybackQueue playbackQueue() const;
 
     /** Queues the @p track to be played at the end of the current track. */
-    virtual void queueTrack(const Track& track)         = 0;
-    virtual void queueTrack(const PlaylistTrack& track) = 0;
-    virtual void queueTracks(const TrackList& tracks)   = 0;
-    virtual void queueTracks(const QueueTracks& tracks) = 0;
+    virtual void queueTrack(const Track& track);
+    virtual void queueTrack(const PlaylistTrack& track);
+    virtual void queueTracks(const TrackList& tracks);
+    virtual void queueTracks(const QueueTracks& tracks);
 
-    virtual void dequeueTrack(const Track& track)         = 0;
-    virtual void dequeueTrack(const PlaylistTrack& track) = 0;
-    virtual void dequeueTracks(const TrackList& tracks)   = 0;
-    virtual void dequeueTracks(const QueueTracks& tracks) = 0;
+    virtual void dequeueTrack(const Track& track);
+    virtual void dequeueTrack(const PlaylistTrack& track);
+    virtual void dequeueTracks(const TrackList& tracks);
+    virtual void dequeueTracks(const QueueTracks& tracks);
 
-    virtual void replaceTracks(const QueueTracks& tracks) = 0;
-    virtual void clearPlaylistQueue(int playlistId)       = 0;
+    virtual void replaceTracks(const QueueTracks& tracks);
+    virtual void clearPlaylistQueue(int playlistId);
 
 signals:
     void playStateChanged(PlayState state);
@@ -115,5 +116,9 @@ signals:
     void tracksQueued(const QueueTracks& tracks);
     void tracksDequeued(const QueueTracks& tracks);
     void trackQueueChanged(const QueueTracks& removed, const QueueTracks& added);
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin
