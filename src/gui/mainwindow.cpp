@@ -19,7 +19,7 @@
 
 #include "mainwindow.h"
 
-#include "mainmenubar.h"
+#include "menubar/mainmenubar.h"
 
 #include <core/constants.h>
 #include <gui/editablelayout.h>

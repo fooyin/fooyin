@@ -4,7 +4,6 @@ set(SOURCES
     coverprovider.cpp
     fywidget.cpp
     guiapplication.cpp
-    mainmenubar.cpp
     mainwindow.cpp
     editablelayout.cpp
     guipaths.cpp
@@ -19,6 +18,7 @@ set(SOURCES
     controls/seekbar.cpp
     controls/volumecontrol.cpp
 
+    dialog/aboutdialog.cpp
     dialog/propertiesdialog.cpp
 
     info/infodelegate.cpp
@@ -32,13 +32,13 @@ set(SOURCES
     librarytree/librarytreeview.cpp
     librarytree/librarytreewidget.cpp
 
-    menu/aboutdialog.cpp
-    menu/editmenu.cpp
-    menu/filemenu.cpp
-    menu/helpmenu.cpp
-    menu/librarymenu.cpp
-    menu/playbackmenu.cpp
-    menu/viewmenu.cpp
+    menubar/editmenu.cpp
+    menubar/filemenu.cpp
+    menubar/helpmenu.cpp
+    menubar/librarymenu.cpp
+    menubar/mainmenubar.cpp
+    menubar/playbackmenu.cpp
+    menubar/viewmenu.cpp
 
     playlist/playlistcolumnregistry.cpp
     playlist/playlistcontroller.cpp

@@ -19,7 +19,7 @@
 
 #include "helpmenu.h"
 
-#include "aboutdialog.h"
+#include "dialog/aboutdialog.h"
 
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
