@@ -22,7 +22,7 @@
 #include "playlist/playlistcontroller.h"
 #include "playlistorganisermodel.h"
 
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -269,15 +269,15 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
                      [this]() { p->selectionChanged(); });
 
     QObject::connect(
-        p->playlistController->playlistHandler(), &PlaylistManager::playlistAdded, this, [this](Playlist* playlist) {
+        p->playlistController->playlistHandler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
             if(!p->creatingPlaylist) {
                 QMetaObject::invokeMethod(
                     p->model, [this, playlist]() { p->model->playlistAdded(playlist); }, Qt::QueuedConnection);
             }
         });
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistManager::playlistRemoved, p->model,
+    QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRemoved, p->model,
                      &PlaylistOrganiserModel::playlistRemoved);
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistManager::playlistRenamed, p->model,
+    QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, p->model,
                      &PlaylistOrganiserModel::playlistRenamed);
     QObject::connect(
         p->playlistController, &PlaylistController::currentPlaylistChanged, this, [this](Playlist* playlist) {

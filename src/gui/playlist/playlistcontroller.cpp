@@ -21,7 +21,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/player/playermanager.h>
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
@@ -29,6 +29,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
+#include <QMenu>
 #include <QProgressDialog>
 #include <QUndoStack>
 
@@ -37,7 +38,7 @@ struct PlaylistController::Private
 {
     PlaylistController* self;
 
-    PlaylistManager* handler;
+    PlaylistHandler* handler;
     PlayerManager* playerManager;
     MusicLibrary* library;
     TrackSelectionController* selectionController;
@@ -46,11 +47,12 @@ struct PlaylistController::Private
     bool loaded{false};
     Playlist* currentPlaylist{nullptr};
     bool clearingQueue{false};
+    bool changingTracks{false};
 
     std::unordered_map<int, QUndoStack> histories;
     std::unordered_map<int, PlaylistViewState> states;
 
-    Private(PlaylistController* self_, PlaylistManager* handler_, PlayerManager* playerManager_, MusicLibrary* library_,
+    Private(PlaylistController* self_, PlaylistHandler* handler_, PlayerManager* playerManager_, MusicLibrary* library_,
             TrackSelectionController* selectionController_, SettingsManager* settings_)
         : self{self_}
         , handler{handler_}
@@ -63,16 +65,20 @@ struct PlaylistController::Private
     void restoreLastPlaylist()
     {
         const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
+
         if(lastId >= 0) {
             Playlist* playlist = handler->playlistById(lastId);
             if(!playlist) {
                 playlist = handler->playlistByIndex(0);
             }
+
             if(playlist) {
                 currentPlaylist = playlist;
-                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, playlist));
+                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, nullptr),
+                                          Q_ARG(Playlist*, playlist));
             }
         }
+
         loaded = true;
         QMetaObject::invokeMethod(self, &PlaylistController::playlistsLoaded);
     }
@@ -85,15 +91,100 @@ struct PlaylistController::Private
         }
     }
 
+    void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
+    {
+        if(playlist == currentPlaylist) {
+            QMetaObject::invokeMethod(self, "currentPlaylistTracksAdded", Q_ARG(const TrackList&, tracks),
+                                      Q_ARG(int, index));
+        }
+    }
+
+    void handleTracksQueued(const QueueTracks& tracks) const
+    {
+        std::set<int> uniqueIndexes;
+
+        for(const auto& track : tracks) {
+            if(track.playlistId == currentPlaylist->id()) {
+                uniqueIndexes.emplace(track.indexInPlaylist);
+            }
+        }
+
+        const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+        if(!indexes.empty()) {
+            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+        }
+    }
+
+    void handleTracksDequeued(const QueueTracks& tracks) const
+    {
+        if(clearingQueue) {
+            return;
+        }
+
+        std::set<int> uniqueIndexes;
+
+        for(const auto& track : tracks) {
+            if(track.playlistId == currentPlaylist->id()) {
+                uniqueIndexes.emplace(track.indexInPlaylist);
+            }
+        }
+
+        const auto queuedTracks = playerManager->playbackQueue().indexesForPlaylist(currentPlaylist->id());
+        for(const auto& trackIndex : queuedTracks | std::views::keys) {
+            uniqueIndexes.emplace(trackIndex);
+        }
+
+        const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+        if(!indexes.empty()) {
+            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+        }
+    }
+
+    void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added)
+    {
+        std::set<int> uniqueIndexes;
+
+        auto gatherIndexes = [this, &uniqueIndexes](const QueueTracks& tracks) {
+            for(const auto& track : tracks) {
+                if(track.playlistId == currentPlaylist->id()) {
+                    uniqueIndexes.emplace(track.indexInPlaylist);
+                }
+            }
+        };
+
+        gatherIndexes(removed);
+        gatherIndexes(added);
+
+        const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+        if(!indexes.empty()) {
+            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+        }
+    }
+
     void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes)
     {
+        if(changingTracks) {
+            return;
+        }
+
+        bool allNew{false};
+
         if(playlist && std::cmp_equal(indexes.size(), playlist->trackCount())) {
+            allNew = true;
             histories.erase(playlist->id());
             states.erase(playlist->id());
 
             clearingQueue = true;
             playerManager->clearPlaylistQueue(playlist->id());
             clearingQueue = false;
+        }
+
+        if(playlist == currentPlaylist) {
+            QMetaObject::invokeMethod(self, "currentPlaylistTracksChanged", Q_ARG(const std::vector<int>&, indexes),
+                                      Q_ARG(bool, allNew));
         }
     }
 
@@ -112,7 +203,7 @@ struct PlaylistController::Private
 
         if(handler->playlistCount() == 0) {
             QObject::connect(
-                handler, &PlaylistManager::playlistAdded, self,
+                handler, &PlaylistHandler::playlistAdded, self,
                 [this](Playlist* newPlaylist) {
                     if(newPlaylist) {
                         self->changeCurrentPlaylist(newPlaylist);
@@ -125,6 +216,13 @@ struct PlaylistController::Private
             if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
                 self->changeCurrentPlaylist(nextPlaylist);
             }
+        }
+    }
+
+    void handlePlayingTrackChanged(const PlaylistTrack& track) const
+    {
+        if(currentPlaylist && currentPlaylist->id() == track.playlistId) {
+            QMetaObject::invokeMethod(self, "playingTrackChanged", Q_ARG(const PlaylistTrack&, track));
         }
     }
 
@@ -205,7 +303,7 @@ struct PlaylistController::Private
     }
 };
 
-PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
+PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerManager* playerManager, MusicLibrary* library,
                                        TrackSelectionController* selectionController, SettingsManager* settings,
                                        QObject* parent)
     : QObject{parent}
@@ -213,22 +311,28 @@ PlaylistController::PlaylistController(PlaylistManager* handler, PlayerManager* 
 {
     p->restoreStates();
 
-    QObject::connect(handler, &PlaylistManager::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
-    QObject::connect(handler, &PlaylistManager::playlistAdded, this,
+    QObject::connect(handler, &PlaylistHandler::playlistsPopulated, this, [this]() { p->restoreLastPlaylist(); });
+    QObject::connect(handler, &PlaylistHandler::playlistAdded, this,
                      [this](Playlist* playlist) { p->handlePlaylistAdded(playlist); });
     QObject::connect(
-        handler, &PlaylistManager::playlistTracksChanged, this,
+        handler, &PlaylistHandler::playlistTracksChanged, this,
         [this](Playlist* playlist, const std::vector<int>& indexes) { p->handlePlaylistUpdated(playlist, indexes); });
-    QObject::connect(handler, &PlaylistManager::playlistRemoved, this,
+    QObject::connect(handler, &PlaylistHandler::playlistTracksAdded, this,
+                     [this](Playlist* playlist, const TrackList& tracks, int index) {
+                         p->handlePlaylistTracksAdded(playlist, tracks, index);
+                     });
+    QObject::connect(handler, &PlaylistHandler::playlistRemoved, this,
                      [this](const Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
 
     QObject::connect(playerManager, &PlayerManager::playlistTrackChanged, this,
-                     &PlaylistController::currentTrackChanged);
-    QObject::connect(playerManager, &PlayerManager::tracksDequeued, this, [this](const QueueTracks& tracks) {
-        if(!p->clearingQueue) {
-            emit tracksDequeued(tracks);
-        }
-    });
+                     [this](const PlaylistTrack& track) { p->handlePlayingTrackChanged(track); });
+    QObject::connect(playerManager, &PlayerManager::tracksQueued, this,
+                     [this](const QueueTracks& tracks) { p->handleTracksQueued(tracks); });
+    QObject::connect(
+        playerManager, &PlayerManager::trackQueueChanged, this,
+        [this](const QueueTracks& removed, const QueueTracks& added) { p->handleQueueChanged(removed, added); });
+    QObject::connect(playerManager, &PlayerManager::tracksDequeued, this,
+                     [this](const QueueTracks& tracks) { p->handleTracksDequeued(tracks); });
     QObject::connect(playerManager, &PlayerManager::playStateChanged, this, &PlaylistController::playStateChanged);
 }
 
@@ -245,7 +349,7 @@ PlayerManager* PlaylistController::playerManager() const
     return p->playerManager;
 }
 
-PlaylistManager* PlaylistController::playlistHandler() const
+PlaylistHandler* PlaylistController::playlistHandler() const
 {
     return p->handler;
 }
@@ -275,6 +379,38 @@ PlayState PlaylistController::playState() const
     return p->playerManager->playState();
 }
 
+void PlaylistController::aboutToChangeTracks()
+{
+    p->changingTracks = true;
+}
+
+void PlaylistController::changedTracks()
+{
+    p->changingTracks = false;
+}
+
+void PlaylistController::addPlaylistMenu(QMenu* menu)
+{
+    if(!p->currentPlaylist) {
+        return;
+    }
+
+    auto* playlistMenu = new QMenu(tr("Playlists"), menu);
+
+    const auto playlists = this->playlists();
+
+    for(const auto& playlist : playlists) {
+        if(playlist != p->currentPlaylist) {
+            auto* switchPl = new QAction(playlist->name(), playlistMenu);
+            const int id   = playlist->id();
+            QObject::connect(switchPl, &QAction::triggered, playlistMenu, [this, id]() { changeCurrentPlaylist(id); });
+            playlistMenu->addAction(switchPl);
+        }
+    }
+
+    menu->addMenu(playlistMenu);
+}
+
 Playlist* PlaylistController::currentPlaylist() const
 {
     return p->currentPlaylist;
@@ -291,14 +427,17 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
         return;
     }
 
-    if(std::exchange(p->currentPlaylist, playlist) == playlist) {
+    auto* prevPlaylist = std::exchange(p->currentPlaylist, playlist);
+
+    if(prevPlaylist == playlist) {
         p->histories.erase(playlist->id());
         p->states.erase(playlist->id());
+
         emit playlistHistoryChanged();
         return;
     }
 
-    emit currentPlaylistChanged(playlist);
+    emit currentPlaylistChanged(prevPlaylist, playlist);
 }
 
 void PlaylistController::changeCurrentPlaylist(int id)
@@ -311,6 +450,13 @@ void PlaylistController::changeCurrentPlaylist(int id)
 void PlaylistController::changePlaylistIndex(int playlistId, int index)
 {
     p->handler->changePlaylistIndex(playlistId, index);
+}
+
+void PlaylistController::clearCurrentPlaylist()
+{
+    if(p->currentPlaylist) {
+        p->handler->clearPlaylistTracks(p->currentPlaylist->id());
+    }
 }
 
 std::optional<PlaylistViewState> PlaylistController::playlistState(int playlistId) const

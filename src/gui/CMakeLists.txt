@@ -41,13 +41,12 @@ set(SOURCES
     menubar/viewmenu.cpp
 
     playlist/playlistcolumnregistry.cpp
+    playlist/playlistcommands.cpp
     playlist/playlistcontroller.cpp
     playlist/playlistdelegate.cpp
-    playlist/playlisthistory.cpp
     playlist/playlistitem.cpp
     playlist/playlistitemmodels.cpp
     playlist/playlistmodel.cpp
-    playlist/playlistmodel_p.cpp
     playlist/playlistpopulator.cpp
     playlist/playlistpreset.cpp
     playlist/playlistscriptregistry.cpp

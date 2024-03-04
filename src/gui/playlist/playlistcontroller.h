@@ -26,6 +26,7 @@
 
 #include <QObject>
 
+class QMenu;
 class QUndoCommand;
 
 namespace Fooyin {
@@ -35,7 +36,7 @@ class PlayerManager;
 enum class PlayState;
 enum class TrackAction;
 class Playlist;
-class PlaylistManager;
+class PlaylistHandler;
 class TrackSelectionController;
 struct PlaylistTrack;
 
@@ -50,19 +51,24 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistManager* handler, PlayerManager* playerManager, MusicLibrary* library,
+    PlaylistController(PlaylistHandler* handler, PlayerManager* playerManager, MusicLibrary* library,
                        TrackSelectionController* selectionController, SettingsManager* settings,
                        QObject* parent = nullptr);
     ~PlaylistController() override;
 
     [[nodiscard]] PlayerManager* playerManager() const;
-    [[nodiscard]] PlaylistManager* playlistHandler() const;
+    [[nodiscard]] PlaylistHandler* playlistHandler() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
 
     [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;
     [[nodiscard]] PlaylistTrack currentTrack() const;
     [[nodiscard]] PlayState playState() const;
+
+    void aboutToChangeTracks();
+    void changedTracks();
+
+    void addPlaylistMenu(QMenu* menu);
 
     void startPlayback() const;
 
@@ -73,8 +79,9 @@ public:
     void changeCurrentPlaylist(Playlist* playlist);
     void changeCurrentPlaylist(int id);
     void changePlaylistIndex(int playlistId, int index);
+    void clearCurrentPlaylist();
 
-    std::optional<PlaylistViewState> playlistState(int playlistId) const;
+    [[nodiscard]] std::optional<PlaylistViewState> playlistState(int playlistId) const;
     void savePlaylistState(int playlistId, const PlaylistViewState& state);
 
     void addToHistory(QUndoCommand* command);
@@ -89,11 +96,15 @@ public:
 
 signals:
     void playlistsLoaded();
-    void currentPlaylistChanged(Playlist* playlist);
+    void currentPlaylistChanged(Playlist* prevPlaylist, Playlist* playlist);
+    void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);
+    void currentPlaylistTracksAdded(const TrackList& tracks, int index);
+    void currentPlaylistTracksRemoved(const std::vector<int>& indexes);
+    void currentPlaylistQueueChanged(const std::vector<int>& tracks);
+
     void playStateChanged(PlayState state);
     void playlistHistoryChanged();
-    void currentTrackChanged(const PlaylistTrack& track);
-    void tracksDequeued(const QueueTracks& tracks);
+    void playingTrackChanged(const PlaylistTrack& track);
 
 public slots:
     void handleTrackSelectionAction(TrackAction action);

@@ -45,7 +45,7 @@ public:
     [[nodiscard]] QString name() const override;
 
     [[nodiscard]] TrackList tracks() const override;
-    [[nodiscard]] std::optional<Track> track(int index) const override;
+    [[nodiscard]] Track track(int index) const override;
     [[nodiscard]] int trackCount() const override;
 
     [[nodiscard]] int currentTrackIndex() const override;
@@ -58,20 +58,20 @@ public:
 
     Track nextTrack(int delta, PlayModes mode) override;
 
-    void setIndex(int index) override;
-    void setName(const QString& name) override;
-
-    void replaceTracks(const TrackList& tracks) override;
-    void replaceTracksSilently(const TrackList& tracks) override;
-    void appendTracks(const TrackList& tracks) override;
-    void appendTracksSilently(const TrackList& tracks) override;
-    void removeTracks(const IndexSet& indexes) override;
-
-    void clear() override;
     void reset() override;
     void resetFlags() override;
 
     void changeCurrentTrack(int index) override;
+
+protected:
+    void setIndex(int index) override;
+    void setName(const QString& name) override;
+
+    void replaceTracks(const TrackList& tracks) override;
+    void appendTracks(const TrackList& tracks) override;
+    std::vector<int> removeTracks(const std::vector<int>& indexes) override;
+
+    void clear() override;
 
 private:
     struct Private;

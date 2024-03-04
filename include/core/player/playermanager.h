@@ -79,6 +79,7 @@ public:
     virtual void changePosition(uint64_t ms)                    = 0;
     virtual void changeCurrentTrack(const Track& track)         = 0;
     virtual void changeCurrentTrack(const PlaylistTrack& track) = 0;
+    virtual void updateCurrentTrackIndex(int index)             = 0;
 
     [[nodiscard]] virtual PlaybackQueue playbackQueue() const = 0;
 
@@ -108,6 +109,7 @@ signals:
 
     void currentTrackChanged(const Track& track);
     void playlistTrackChanged(const PlaylistTrack& track);
+    void playlistTrackIndexChanged(const PlaylistTrack& track);
     void trackPlayed(const Track& track);
 
     void tracksQueued(const QueueTracks& tracks);

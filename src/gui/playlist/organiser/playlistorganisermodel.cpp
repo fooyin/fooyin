@@ -19,7 +19,7 @@
 
 #include "playlistorganisermodel.h"
 
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 
 #include <QIODevice>
@@ -108,13 +108,13 @@ struct PlaylistOrganiserModel::Private
 {
     PlaylistOrganiserModel* self;
 
-    PlaylistManager* playlistManager;
+    PlaylistHandler* playlistHandler;
 
     std::unordered_map<QString, PlaylistOrganiserItem> nodes;
 
-    explicit Private(PlaylistOrganiserModel* self_, PlaylistManager* playlistManager_)
+    explicit Private(PlaylistOrganiserModel* self_, PlaylistHandler* playlistHandler_)
         : self{self_}
-        , playlistManager{playlistManager_}
+        , playlistHandler{playlistHandler_}
     { }
 
     QByteArray saveIndexes(const QModelIndexList& indexes) const
@@ -159,7 +159,7 @@ struct PlaylistOrganiserModel::Private
         if(itemType == static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
             int playlistId;
             stream >> playlistId;
-            if(Playlist* playlist = playlistManager->playlistById(playlistId)) {
+            if(Playlist* playlist = playlistHandler->playlistById(playlistId)) {
                 auto* item = &nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, currParent})
                                   .first->second;
                 currParent->appendChild(item);
@@ -207,13 +207,13 @@ struct PlaylistOrganiserModel::Private
         }
         else if(node->type() == PlaylistOrganiserItem::PlaylistItem) {
             nodes.erase(playlistKey(node->title()));
-            playlistManager->removePlaylist(node->playlist()->id());
+            playlistHandler->removePlaylist(node->playlist()->id());
         }
     }
 };
 
-PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistManager* playlistManager)
-    : p{std::make_unique<Private>(this, playlistManager)}
+PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler)
+    : p{std::make_unique<Private>(this, playlistHandler)}
 { }
 
 PlaylistOrganiserModel::~PlaylistOrganiserModel() = default;
@@ -224,7 +224,7 @@ void PlaylistOrganiserModel::populate()
     resetRoot();
     p->nodes.clear();
 
-    const PlaylistList playlists = p->playlistManager->playlists();
+    const PlaylistList playlists = p->playlistHandler->playlists();
 
     for(const auto& playlist : playlists) {
         auto* item = &p->nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()})
@@ -237,7 +237,7 @@ void PlaylistOrganiserModel::populate()
 
 void PlaylistOrganiserModel::populateMissing()
 {
-    const PlaylistList playlists = p->playlistManager->playlists();
+    const PlaylistList playlists = p->playlistHandler->playlists();
 
     for(const auto& playlist : playlists) {
         const QString key = playlistKey(playlist->name());
@@ -479,7 +479,7 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
     if(type == PlaylistOrganiserItem::PlaylistItem) {
         const QString name = value.toString();
         if(item->title() != name) {
-            p->playlistManager->renamePlaylist(item->playlist()->id(), name);
+            p->playlistHandler->renamePlaylist(item->playlist()->id(), name);
         }
     }
     else if(type == PlaylistOrganiserItem::GroupItem) {

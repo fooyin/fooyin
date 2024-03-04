@@ -20,6 +20,7 @@
 #include "playlistview.h"
 
 #include "playlistitem.h"
+#include "playlistmodel.h"
 
 #include <QDrag>
 #include <QHeaderView>
@@ -35,6 +36,8 @@ namespace Fooyin {
 struct PlaylistView::Private
 {
     PlaylistView* self;
+
+    bool waitForLoad{false};
 
     QRect dropIndicatorRect;
     DropIndicatorPosition dropIndicatorPos{OnViewport};
@@ -205,6 +208,11 @@ PlaylistView::PlaylistView(QWidget* parent)
     QObject::connect(&p->autoScrollTimer, &QTimer::timeout, this, &PlaylistView::doAutoScroll);
 }
 
+void PlaylistView::setWaitForLoad(bool enabled)
+{
+    p->waitForLoad = enabled;
+}
+
 PlaylistView::~PlaylistView() = default;
 
 void PlaylistView::focusInEvent(QFocusEvent* /*event*/)
@@ -367,28 +375,40 @@ void PlaylistView::paintEvent(QPaintEvent* event)
 {
     QPainter painter{viewport()};
 
-    if(model() && model()->rowCount() > 0) {
-        drawTree(&painter, event->region());
+    if(auto* playlistModel = qobject_cast<PlaylistModel*>(model())) {
+        if(playlistModel->haveTracks()) {
+            if(playlistModel->playlistIsLoaded() || !p->waitForLoad) {
+                drawTree(&painter, event->region());
 
-        if(state() == QAbstractItemView::DraggingState) {
-            QStyleOptionFrame opt;
-            initStyleOption(&opt);
-            opt.rect = p->dropIndicatorRect;
-            //            painter.setRenderHint(QPainter::Antialiasing, true);
-            //            const QBrush brush(Qt::green);
-            //            const QPen pen{brush, 4, Qt::DashLine};
-            //            painter.setPen(pen);
-            style()->drawPrimitive(QStyle::PE_IndicatorItemViewItemDrop, &opt, &painter);
+                if(state() == QAbstractItemView::DraggingState) {
+                    QStyleOptionFrame opt;
+                    initStyleOption(&opt);
+                    opt.rect = p->dropIndicatorRect;
+                    //            painter.setRenderHint(QPainter::Antialiasing, true);
+                    //            const QBrush brush(Qt::green);
+                    //            const QPen pen{brush, 4, Qt::DashLine};
+                    //            painter.setPen(pen);
+                    style()->drawPrimitive(QStyle::PE_IndicatorItemViewItemDrop, &opt, &painter);
+                }
+
+                return;
+            }
+
+            const QString text{tr("Loading Playlist…")};
+
+            QRect textRect = painter.fontMetrics().boundingRect(text);
+            textRect.moveCenter(viewport()->rect().center());
+            painter.drawText(textRect, Qt::AlignCenter, text);
+
+            return;
         }
     }
-    else {
-        // Empty playlist
-        const QString text{tr("Empty Playlist")};
 
-        QRect textRect = painter.fontMetrics().boundingRect(text);
-        textRect.moveCenter(viewport()->rect().center());
-        painter.drawText(textRect, Qt::AlignCenter, text);
-    }
+    const QString text{tr("Empty Playlist")};
+
+    QRect textRect = painter.fontMetrics().boundingRect(text);
+    textRect.moveCenter(viewport()->rect().center());
+    painter.drawText(textRect, Qt::AlignCenter, text);
 }
 } // namespace Fooyin
 

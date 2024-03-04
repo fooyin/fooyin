@@ -22,7 +22,7 @@
 #include "internalguisettings.h"
 #include "playlistcontroller.h"
 
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
@@ -53,7 +53,7 @@ struct PlaylistTabs::Private
     ActionManager* actionManager;
     WidgetProvider* widgetProvider;
     PlaylistController* playlistController;
-    PlaylistManager* playlistHandler;
+    PlaylistHandler* playlistHandler;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -150,11 +150,12 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
-    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     [this](const Playlist* playlist) { p->playlistChanged(playlist); });
-    QObject::connect(p->playlistHandler, &PlaylistManager::playlistAdded, this, &PlaylistTabs::addPlaylist);
-    QObject::connect(p->playlistHandler, &PlaylistManager::playlistRemoved, this, &PlaylistTabs::removePlaylist);
-    QObject::connect(p->playlistHandler, &PlaylistManager::playlistRenamed, this,
+    QObject::connect(
+        p->playlistController, &PlaylistController::currentPlaylistChanged, this,
+        [this](const Playlist* /*prevPlaylist*/, const Playlist* playlist) { p->playlistChanged(playlist); });
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRenamed, this,
                      [this](const Playlist* playlist) { p->playlistRenamed(playlist); });
 
     p->settings->subscribe<Settings::Gui::Internal::PlaylistTabsHide>(

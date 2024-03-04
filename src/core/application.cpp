@@ -27,11 +27,11 @@
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
 #include "player/playercontroller.h"
-#include "playlist/playlisthandler.h"
 #include "plugins/pluginmanager.h"
 #include "translations.h"
 
 #include <core/engine/outputplugin.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
 

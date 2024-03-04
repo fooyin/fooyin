@@ -28,8 +28,7 @@
 #include <set>
 
 namespace Fooyin {
-using IndexSet        = std::set<int>;
-using PlaylistIndexes = std::map<int, IndexSet>;
+using PlaylistIndexes = std::map<int, std::vector<int>>;
 using QueueTracks     = std::vector<PlaylistTrack>;
 
 class FYCORE_EXPORT PlaybackQueue

@@ -17,7 +17,7 @@
  *
  */
 
-#include "playlisthandler.h"
+#include <core/playlist/playlisthandler.h>
 
 #include "database/database.h"
 #include "database/playlistdatabase.h"
@@ -31,9 +31,9 @@
 #include <ranges>
 
 namespace {
-enum class CommonOperation
+enum class CommonOperation : uint8_t
 {
-    Update,
+    Update = 0,
     Remove
 };
 
@@ -90,6 +90,7 @@ struct PlaylistHandler::Private
     void reloadPlaylists()
     {
         const auto infos = playlistConnector.getAllPlaylists();
+
         for(const auto& info : infos) {
             playlists.emplace_back(std::make_unique<FyPlaylist>(info));
         }
@@ -159,12 +160,15 @@ struct PlaylistHandler::Private
         if(name.isEmpty()) {
             return -1;
         }
+
         auto it = std::ranges::find_if(playlists, [name](const auto& playlist) {
             return playlist->name().compare(name, Qt::CaseInsensitive) == 0;
         });
+
         if(it == playlists.cend()) {
             return -1;
         }
+
         return static_cast<int>(std::ranges::distance(playlists.cbegin(), it));
     }
 
@@ -179,6 +183,7 @@ struct PlaylistHandler::Private
         auto maxIndex = std::ranges::max_element(indices);
 
         const int nextValidIndex = *maxIndex + 1;
+
         return nextValidIndex;
     }
 
@@ -225,7 +230,7 @@ struct PlaylistHandler::Private
 
 PlaylistHandler::PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
                                  QObject* parent)
-    : PlaylistManager{parent}
+    : QObject{parent}
     , p{std::make_unique<Private>(this, database, playerManager, settings)}
 {
     p->reloadPlaylists();
@@ -245,37 +250,38 @@ PlaylistHandler::~PlaylistHandler()
 
 Playlist* PlaylistHandler::playlistById(int id) const
 {
-    auto playlist = std::ranges::find_if(std::as_const(p->playlists), [id](const auto& pl) { return pl->id() == id; });
+    auto playlist = std::ranges::find_if(p->playlists, [id](const auto& pl) { return pl->id() == id; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
+
     return nullptr;
 }
 
 Playlist* PlaylistHandler::playlistByIndex(int index) const
 {
-    auto playlist
-        = std::ranges::find_if(std::as_const(p->playlists), [index](const auto& pl) { return pl->index() == index; });
+    auto playlist = std::ranges::find_if(p->playlists, [index](const auto& pl) { return pl->index() == index; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
+
     return nullptr;
 }
 
 Playlist* PlaylistHandler::playlistByName(const QString& name) const
 {
-    auto playlist
-        = std::ranges::find_if(std::as_const(p->playlists), [name](const auto& pl) { return pl->name() == name; });
+    auto playlist = std::ranges::find_if(p->playlists, [name](const auto& pl) { return pl->name() == name; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
     }
+
     return nullptr;
 }
 
 PlaylistList PlaylistHandler::playlists() const
 {
     PlaylistList playlists;
-    std::ranges::transform(std::as_const(p->playlists), std::back_inserter(playlists),
+    std::ranges::transform(p->playlists, std::back_inserter(playlists),
                            [](const auto& playlist) { return playlist.get(); });
     return playlists;
 }
@@ -290,9 +296,11 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name)
 {
     const bool isNew = p->indexFromName(name) < 0;
     auto* playlist   = p->addNewPlaylist(name);
+
     if(playlist && isNew) {
         emit playlistAdded(playlist);
     }
+
     return playlist;
 }
 
@@ -300,6 +308,7 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
 {
     const bool isNew = p->indexFromName(name) < 0;
     auto* playlist   = p->addNewPlaylist(name);
+
     if(playlist) {
         playlist->replaceTracks(tracks);
         if(isNew) {
@@ -311,6 +320,7 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
             emit playlistTracksChanged(playlist, changedIndexes);
         }
     }
+
     return playlist;
 }
 
@@ -321,6 +331,31 @@ void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
         playlist->appendTracks(tracks);
         emit playlistTracksAdded(playlist, tracks, index);
     }
+}
+
+void PlaylistHandler::replacePlaylistTracks(int id, const TrackList& tracks)
+{
+    if(auto* playlist = playlistById(id)) {
+        playlist->replaceTracks(tracks);
+
+        std::vector<int> changedIndexes(tracks.size());
+        std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
+
+        emit playlistTracksChanged(playlist, changedIndexes);
+    }
+}
+
+void PlaylistHandler::removePlaylistTracks(int id, const std::vector<int>& indexes)
+{
+    if(auto* playlist = playlistById(id)) {
+        const auto removedIndexes = playlist->removeTracks(indexes);
+        emit playlistTracksRemoved(playlist, removedIndexes);
+    }
+}
+
+void PlaylistHandler::clearPlaylistTracks(int id)
+{
+    replacePlaylistTracks(id, {});
 }
 
 void PlaylistHandler::changePlaylistIndex(int id, int index)
@@ -370,16 +405,19 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
     if(playlistCount() < 1) {
         return;
     }
+
     auto* playlist = playlistById(id);
     if(!playlist) {
         qDebug() << QString{QStringLiteral("Playlist %1 could not be found")}.arg(id);
         return;
     }
+
     const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
     if(!p->playlistConnector.renamePlaylist(playlist->id(), newName)) {
         qDebug() << QString{QStringLiteral("Playlist %1 could not be renamed to %2")}.arg(id).arg(name);
         return;
     }
+
     playlist->setName(newName);
 
     emit playlistRenamed(playlist);
@@ -465,7 +503,10 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
         idTracks.emplace(track.id(), track);
     }
 
-    p->playlistConnector.getPlaylistTracks(playlists(), idTracks);
+    for(const auto& playlist : p->playlists) {
+        const TrackList playlistTracks = p->playlistConnector.getPlaylistTracks(*playlist, idTracks);
+        playlist->replaceTracks(playlistTracks);
+    }
 
     const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();
     if(lastId >= 0) {
@@ -480,6 +521,7 @@ void PlaylistHandler::tracksUpdated(const TrackList& tracks)
     for(auto& playlist : p->playlists) {
         TrackList playlistTracks  = playlist->tracks();
         const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Update);
+
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
             emit playlistTracksChanged(playlist.get(), updatedIndexes);
@@ -492,6 +534,7 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
     for(auto& playlist : p->playlists) {
         TrackList playlistTracks  = playlist->tracks();
         const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Remove);
+
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
             emit playlistTracksChanged(playlist.get(), updatedIndexes);
@@ -500,4 +543,4 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
 }
 } // namespace Fooyin
 
-#include "moc_playlisthandler.cpp"
+#include "core/playlist/moc_playlisthandler.cpp"

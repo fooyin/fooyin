@@ -60,18 +60,19 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
     return true;
 }
 
-bool populatePlaylistTracks(Fooyin::DatabaseModule* module, const auto& playlist, const Fooyin::TrackIdMap& tracks)
+Fooyin::TrackList populatePlaylistTracks(Fooyin::DatabaseModule* module, const Fooyin::Playlist& playlist,
+                                         const Fooyin::TrackIdMap& tracks)
 {
     const static QString query
         = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");
 
     Fooyin::DatabaseQuery q{module};
     q.prepareQuery(query);
-    q.bindQueryValue(QStringLiteral(":playlistId"), playlist->id());
+    q.bindQueryValue(QStringLiteral(":playlistId"), playlist.id());
 
     if(!q.execQuery()) {
         q.error(QStringLiteral("Cannot fetch playlist tracks"));
-        return false;
+        return {};
     }
 
     Fooyin::TrackList playlistTracks;
@@ -83,8 +84,7 @@ bool populatePlaylistTracks(Fooyin::DatabaseModule* module, const auto& playlist
         }
     }
 
-    playlist->appendTracksSilently(playlistTracks);
-    return true;
+    return playlistTracks;
 }
 } // namespace
 
@@ -119,13 +119,9 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
     return playlists;
 }
 
-bool PlaylistDatabase::getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks)
+TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks)
 {
-    for(const auto& playlist : playlists) {
-        populatePlaylistTracks(this, playlist, tracks);
-    }
-
-    return true;
+    return populatePlaylistTracks(this, playlist, tracks);
 }
 
 int PlaylistDatabase::insertPlaylist(const QString& name, int index)

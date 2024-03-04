@@ -55,6 +55,7 @@ public:
     void changePosition(uint64_t ms) override;
     void changeCurrentTrack(const Track& track) override;
     void changeCurrentTrack(const PlaylistTrack& track) override;
+    void updateCurrentTrackIndex(int index) override;
 
     PlaybackQueue playbackQueue() const override;
 

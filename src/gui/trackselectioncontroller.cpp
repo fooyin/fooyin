@@ -22,7 +22,7 @@
 #include "playlist/playlistcontroller.h"
 
 #include <core/player/playermanager.h>
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
@@ -54,7 +54,7 @@ struct TrackSelectionController::Private
     ActionManager* actionManager;
     SettingsManager* settings;
     PlaylistController* playlistController;
-    PlaylistManager* playlistHandler;
+    PlaylistHandler* playlistHandler;
 
     std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
     std::unordered_map<WidgetContext*, WidgetSelection> contextSelection;
@@ -256,7 +256,7 @@ struct TrackSelectionController::Private
 
             if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
                 keepActivePlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
-                keepActivePlaylist->replaceTracks(activePlaylist->tracks());
+                playlistHandler->createPlaylist(keepActivePlaylist->name(), activePlaylist->tracks());
 
                 playlistHandler->changeActivePlaylist(keepActivePlaylist->id());
             }

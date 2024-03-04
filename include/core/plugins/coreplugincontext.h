@@ -24,7 +24,7 @@ class PluginManager;
 class SettingsManager;
 class EngineController;
 class PlayerManager;
-class PlaylistManager;
+class PlaylistHandler;
 class LibraryManager;
 class MusicLibrary;
 
@@ -34,7 +34,7 @@ class MusicLibrary;
 struct CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager_, EngineController* engine_, PlayerManager* playerManager_,
-                      LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistManager* playlistHandler_,
+                      LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistHandler* playlistHandler_,
                       SettingsManager* settingsManager_)
         : pluginManager{pluginManager_}
         , playerManager{playerManager_}
@@ -49,7 +49,7 @@ struct CorePluginContext
     PlayerManager* playerManager;
     LibraryManager* libraryManager;
     MusicLibrary* library;
-    PlaylistManager* playlistHandler;
+    PlaylistHandler* playlistHandler;
     SettingsManager* settingsManager;
     EngineController* engine;
 };

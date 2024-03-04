@@ -64,7 +64,7 @@
 #include <core/engine/enginehandler.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
-#include <core/playlist/playlistmanager.h>
+#include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/editablelayout.h>
@@ -99,7 +99,7 @@ struct GuiApplication::Private
     PlayerManager* playerManager;
     LibraryManager* libraryManager;
     MusicLibrary* library;
-    PlaylistManager* playlistHandler;
+    PlaylistHandler* playlistHandler;
 
     WidgetProvider widgetProvider;
     GuiSettings guiSettings;

@@ -24,8 +24,8 @@
 #include "playlistpreset.h"
 #include "presetregistry.h"
 
-#include <core/player/playbackqueue.h>
 #include <core/library/sortingregistry.h>
+#include <core/player/playbackqueue.h>
 
 #include <QCoro/QCoroTask>
 
@@ -65,16 +65,16 @@ public:
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
-    void changePlaylist(Playlist* playlist, bool saveState = true);
+    void changePlaylist(Playlist* prevPlaylist, Playlist* playlist);
 
     void resetTree() const;
-    [[nodiscard]] PlaylistViewState getState() const;
-    void saveState() const;
-    void restoreState() const;
+    [[nodiscard]] PlaylistViewState getState(Playlist* playlist) const;
+    void saveState(Playlist* playlist) const;
+    void restoreState(Playlist* playlist) const;
     void resetModel() const;
 
     std::vector<int> selectedPlaylistIndexes() const;
-    void restoreSelectedPlaylistIndexes(const std::vector<int>& indexes);
+    void restoreSelectedPlaylistIndexes(const std::vector<int>& indexes) const;
 
     [[nodiscard]] bool isHeaderHidden() const;
     [[nodiscard]] bool isScrollbarHidden() const;
@@ -83,20 +83,18 @@ public:
 
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex) const;
-    void queueSelectedTracks();
-    void dequeueSelectedTracks();
+    void queueSelectedTracks() const;
+    void dequeueSelectedTracks() const;
 
     void scanDroppedTracks(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;
 
-    void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const;
-    void handleTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
-    void handleTracksQueued(const QueueTracks& tracks);
-    void handleTracksDequeued(const QueueTracks& tracks);
+    void playlistTracksAdded(const TrackList& tracks, int index) const;
+    void handleTracksChanged(const std::vector<int>& indexes, bool allNew);
     void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
-    void handlePlayingTrackChanged(const PlaylistTrack& track);
+    void handlePlayingTrackChanged(const PlaylistTrack& track) const;
 
     void setSingleMode(bool enabled);
     void customHeaderMenuRequested(const QPoint& pos);
@@ -112,7 +110,6 @@ public:
 
     void addSortMenu(QMenu* parent);
     void addPresetMenu(QMenu* parent);
-    void addPlaylistMenu(QMenu* parent);
 
     PlaylistWidget* self;
 
@@ -133,7 +130,6 @@ public:
     PlaylistView* playlistView;
     AutoHeaderView* header;
 
-    Playlist* currentPlaylist;
     PlaylistPreset currentPreset;
     bool singleMode;
     PlaylistColumnList columns;

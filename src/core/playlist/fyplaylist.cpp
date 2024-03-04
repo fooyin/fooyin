@@ -116,7 +116,7 @@ TrackList FyPlaylist::tracks() const
     return p->tracks;
 }
 
-std::optional<Track> FyPlaylist::track(int index) const
+Track FyPlaylist::track(int index) const
 {
     if(p->tracks.empty() || index < 0 || index >= trackCount()) {
         return {};
@@ -204,6 +204,23 @@ Track FyPlaylist::nextTrack(int delta, PlayModes mode)
     return currentTrack();
 }
 
+void FyPlaylist::reset()
+{
+    p->shuffleOrder.clear();
+}
+
+void FyPlaylist::resetFlags()
+{
+    p->modified       = false;
+    p->tracksModified = false;
+}
+
+void FyPlaylist::changeCurrentTrack(int index)
+{
+    p->currentTrackIndex = index;
+    p->nextTrackIndex    = -1;
+}
+
 void FyPlaylist::setIndex(int index)
 {
     if(std::exchange(p->index, index) != index) {
@@ -227,11 +244,6 @@ void FyPlaylist::replaceTracks(const TrackList& tracks)
     }
 }
 
-void FyPlaylist::replaceTracksSilently(const TrackList& tracks)
-{
-    p->tracks = tracks;
-}
-
 void FyPlaylist::appendTracks(const TrackList& tracks)
 {
     if(tracks.empty()) {
@@ -243,30 +255,30 @@ void FyPlaylist::appendTracks(const TrackList& tracks)
     p->shuffleOrder.clear();
 }
 
-void FyPlaylist::appendTracksSilently(const TrackList& tracks)
+std::vector<int> FyPlaylist::removeTracks(const std::vector<int>& indexes)
 {
-    std::ranges::copy(tracks, std::back_inserter(p->tracks));
-    p->shuffleOrder.clear();
-}
+    std::vector<int> removedIndexes;
 
-void FyPlaylist::removeTracks(const IndexSet& indexes)
-{
+    std::set<int> indexesToRemove{indexes.cbegin(), indexes.cend()};
+
     auto prevHistory = p->shuffleOrder | std::views::take(p->shuffleIndex + 1);
     for(const int index : prevHistory) {
-        if(indexes.contains(index)) {
+        if(indexesToRemove.contains(index)) {
             p->shuffleIndex -= 1;
         }
     }
 
     int adjustedTrackIndex = p->currentTrackIndex;
 
-    for(const int index : indexes | std::views::reverse) {
+    for(const int index : indexesToRemove | std::views::reverse) {
         if(index <= p->currentTrackIndex) {
             adjustedTrackIndex = std::max(adjustedTrackIndex - 1, 0);
         }
 
-        if(index >= 0 && index < static_cast<int>(p->tracks.size())) {
+        if(index >= 0 && std::cmp_less(index, p->tracks.size())) {
             p->tracks.erase(p->tracks.begin() + index);
+            removedIndexes.emplace_back(index);
+
             std::erase_if(p->shuffleOrder, [index](int num) { return num == index; });
             std::ranges::transform(p->shuffleOrder, p->shuffleOrder.begin(),
                                    [index](int num) { return num > index ? num - 1 : num; });
@@ -277,10 +289,13 @@ void FyPlaylist::removeTracks(const IndexSet& indexes)
 
     p->currentTrackIndex = adjustedTrackIndex;
 
-    if(indexes.contains(p->nextTrackIndex)) {
+    if(indexesToRemove.contains(p->nextTrackIndex)) {
         p->nextTrackIndex = -1;
     }
+
     p->tracksModified = true;
+
+    return removedIndexes;
 }
 
 void FyPlaylist::clear()
@@ -290,22 +305,5 @@ void FyPlaylist::clear()
         p->tracksModified = true;
         p->shuffleOrder.clear();
     }
-}
-
-void FyPlaylist::reset()
-{
-    p->shuffleOrder.clear();
-}
-
-void FyPlaylist::resetFlags()
-{
-    p->modified       = false;
-    p->tracksModified = false;
-}
-
-void FyPlaylist::changeCurrentTrack(int index)
-{
-    p->currentTrackIndex = index;
-    p->nextTrackIndex    = -1;
 }
 } // namespace Fooyin

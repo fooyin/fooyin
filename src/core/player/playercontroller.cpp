@@ -169,6 +169,13 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
     emit playlistTrackChanged(p->currentTrack);
 }
 
+void PlayerController::updateCurrentTrackIndex(int index)
+{
+    p->currentTrack.indexInPlaylist = index;
+
+    emit playlistTrackIndexChanged(p->currentTrack);
+}
+
 PlaybackQueue PlayerController::playbackQueue() const
 {
     return p->queue;

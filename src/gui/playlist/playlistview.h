@@ -31,6 +31,8 @@ public:
     explicit PlaylistView(QWidget* parent = nullptr);
     ~PlaylistView() override;
 
+    void setWaitForLoad(bool enabled);
+
 protected:
     void focusInEvent(QFocusEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;

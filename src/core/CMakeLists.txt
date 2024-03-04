@@ -4,7 +4,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playermanager.h
-    ${CMAKE_SOURCE_DIR}/include/core/playlist/playlistmanager.h
 
     application.cpp
     corepaths.cpp

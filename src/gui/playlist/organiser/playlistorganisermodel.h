@@ -25,14 +25,14 @@
 
 namespace Fooyin {
 class Playlist;
-class PlaylistManager;
+class PlaylistHandler;
 
 class PlaylistOrganiserModel : public TreeModel<PlaylistOrganiserItem>
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistOrganiserModel(PlaylistManager* playlistManager);
+    explicit PlaylistOrganiserModel(PlaylistHandler* playlistManager);
     ~PlaylistOrganiserModel() override;
 
     void populate();

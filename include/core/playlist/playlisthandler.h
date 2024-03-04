@@ -27,62 +27,85 @@
 #include <QObject>
 
 namespace Fooyin {
-class FYCORE_EXPORT PlaylistManager : public QObject
+class SettingsManager;
+class Database;
+class PlayerManager;
+
+class FYCORE_EXPORT PlaylistHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistManager(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    explicit PlaylistHandler(Database* database, PlayerManager* playerManager, SettingsManager* settings,
+                             QObject* parent = nullptr);
+    ~PlaylistHandler() override;
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
-    [[nodiscard]] virtual Playlist* playlistById(int id) const = 0;
+    [[nodiscard]] Playlist* playlistById(int id) const;
     /** Returns the playlist with the @p index if it exists, otherwise nullptr. */
-    [[nodiscard]] virtual Playlist* playlistByIndex(int index) const = 0;
+    [[nodiscard]] Playlist* playlistByIndex(int index) const;
     /** Returns the playlist with the @p name if it exists, otherwise nullptr. */
-    [[nodiscard]] virtual Playlist* playlistByName(const QString& name) const = 0;
+    [[nodiscard]] Playlist* playlistByName(const QString& name) const;
 
-    [[nodiscard]] virtual PlaylistList playlists() const = 0;
+    [[nodiscard]] PlaylistList playlists() const;
 
     /** Creates and returns an empty playlist with a default name. */
-    virtual Playlist* createEmptyPlaylist() = 0;
+    Playlist* createEmptyPlaylist();
     /** Returns the playlist called @p name if it exists, otherwise creates it. */
-    virtual Playlist* createPlaylist(const QString& name) = 0;
+    Playlist* createPlaylist(const QString& name);
     /** Returns the playlist called @p name if it exists, otherwise creates it using @p tracks. */
-    virtual Playlist* createPlaylist(const QString& name, const TrackList& tracks) = 0;
+    Playlist* createPlaylist(const QString& name, const TrackList& tracks);
     /** Adds @p tracks to the end of the playlist with @p id if found. */
-    virtual void appendToPlaylist(int id, const TrackList& tracks) = 0;
+    void appendToPlaylist(int id, const TrackList& tracks);
+    /** Replaces the @p tracks of the playlist with @p id if found. */
+    void replacePlaylistTracks(int id, const TrackList& tracks);
+    /** Removes the tracks at @p indexes of the playlist with @p id if found. */
+    void removePlaylistTracks(int id, const std::vector<int>& indexes);
+    /** Clears all tracks of the playlist with @p id if found. */
+    void clearPlaylistTracks(int id);
 
-    virtual void changePlaylistIndex(int id, int index)   = 0;
-    virtual void changeActivePlaylist(int id)             = 0;
-    virtual void changeActivePlaylist(Playlist* playlist) = 0;
+    void changePlaylistIndex(int id, int index);
+    void changeActivePlaylist(int id);
+    void changeActivePlaylist(Playlist* playlist);
 
     /** Schedules the playlist with @p id to be played once the current track is finished. */
-    virtual void schedulePlaylist(int id) = 0;
+    void schedulePlaylist(int id);
     /** Schedules @p playlist to be played once the current track is finished. */
-    virtual void schedulePlaylist(Playlist* playlist) = 0;
+    void schedulePlaylist(Playlist* playlist);
     /** Clears any scheduled playlist. */
-    virtual void clearSchedulePlaylist() = 0;
+    void clearSchedulePlaylist();
 
-    virtual void renamePlaylist(int id, const QString& name) = 0;
-    virtual void removePlaylist(int id)                      = 0;
+    void renamePlaylist(int id, const QString& name);
+    void removePlaylist(int id);
 
     /** Returns the playlist currently being played (nullptr if not playing) */
-    [[nodiscard]] virtual Playlist* activePlaylist() const = 0;
+    [[nodiscard]] Playlist* activePlaylist() const;
 
-    [[nodiscard]] virtual int playlistCount() const = 0;
+    [[nodiscard]] int playlistCount() const;
 
     /** Changes the active playlist to @ playlistId and starts playback */
-    virtual void startPlayback(int playlistId) = 0;
+    void startPlayback(int playlistId);
+
+    void savePlaylists();
+    void savePlaylist(int id);
 
 signals:
     void playlistsPopulated();
     void playlistAdded(Playlist* playlist);
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
     void playlistTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
+    void playlistTracksRemoved(Playlist* playlist, const std::vector<int>& indexes);
     void playlistRemoved(Playlist* playlist);
     void playlistRenamed(Playlist* playlist);
     void activePlaylistChanged(Playlist* playlist);
+
+public slots:
+    void populatePlaylists(const TrackList& tracks);
+    void tracksUpdated(const TrackList& tracks);
+    void tracksRemoved(const TrackList& tracks);
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

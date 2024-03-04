@@ -31,7 +31,7 @@ public:
     explicit PlaylistDatabase(const QString& connectionName);
 
     std::vector<PlaylistInfo> getAllPlaylists();
-    bool getPlaylistTracks(const PlaylistList& playlists, const TrackIdMap& tracks);
+    TrackList getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
 
     int insertPlaylist(const QString& name, int index);
 

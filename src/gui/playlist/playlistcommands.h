@@ -27,13 +27,15 @@
 
 namespace Fooyin {
 class Playlist;
+class PlaylistController;
 
 class PlaylistCommand : public QUndoCommand
 {
 public:
-    explicit PlaylistCommand(PlaylistModel* model, int playlistId);
+    PlaylistCommand(PlayerManager* playerManager, PlaylistModel* model, int playlistId);
 
 protected:
+    PlayerManager* m_playerManager;
     PlaylistModel* m_model;
     int m_playlistId;
 };
@@ -47,7 +49,6 @@ public:
     void redo() override;
 
 private:
-    PlayerManager* m_playerManager;
     TrackGroups m_trackGroups;
 };
 
@@ -60,7 +61,6 @@ public:
     void redo() override;
 
 private:
-    PlayerManager* m_playerManager;
     TrackGroups m_trackGroups;
 };
 
@@ -73,7 +73,6 @@ public:
     void redo() override;
 
 private:
-    PlayerManager* m_playerManager;
     MoveOperation m_operation;
     MoveOperation m_undoOperation;
 };

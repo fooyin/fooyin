@@ -357,6 +357,8 @@ void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const 
     p->updateScripts();
     p->runBatch(TrackPreloadSize, 0);
 
+    emit finished();
+
     setState(Idle);
 }
 

@@ -54,7 +54,7 @@ PlaylistIndexes PlaybackQueue::indexesForPlaylist(int id) const
 
     for(auto i{0}; const auto& track : m_tracks) {
         if(track.playlistId == id) {
-            indexes[track.indexInPlaylist].emplace(i);
+            indexes[track.indexInPlaylist].emplace_back(i);
         }
         ++i;
     }

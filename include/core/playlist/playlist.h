@@ -26,8 +26,6 @@
 #include <set>
 
 namespace Fooyin {
-using IndexSet = std::set<int>;
-
 class Playlist
 {
 public:
@@ -49,9 +47,9 @@ public:
     virtual int index() const    = 0;
     virtual QString name() const = 0;
 
-    virtual TrackList tracks() const                    = 0;
-    virtual std::optional<Track> track(int index) const = 0;
-    virtual int trackCount() const                      = 0;
+    virtual TrackList tracks() const     = 0;
+    virtual Track track(int index) const = 0;
+    virtual int trackCount() const       = 0;
 
     virtual int currentTrackIndex() const = 0;
     virtual Track currentTrack() const    = 0;
@@ -75,23 +73,25 @@ public:
      */
     virtual Track nextTrack(int delta, PlayModes mode) = 0;
 
-    virtual void setIndex(int index)          = 0;
-    virtual void setName(const QString& name) = 0;
+    virtual void changeCurrentTrack(int index) = 0;
 
-    virtual void replaceTracks(const TrackList& tracks)         = 0;
-    virtual void replaceTracksSilently(const TrackList& tracks) = 0;
-    virtual void appendTracks(const TrackList& tracks)          = 0;
-    virtual void appendTracksSilently(const TrackList& tracks)  = 0;
-    virtual void removeTracks(const IndexSet& indexes)          = 0;
-
-    /** Removes all tracks, including all shuffle order history */
-    virtual void clear() = 0;
     /** Clears the shuffle order history */
     virtual void reset() = 0;
     /** Resets the modified and tracksModified flags. */
     virtual void resetFlags() = 0;
 
-    virtual void changeCurrentTrack(int index) = 0;
+protected:
+    friend class PlaylistHandler;
+
+    virtual void setIndex(int index)          = 0;
+    virtual void setName(const QString& name) = 0;
+
+    virtual void replaceTracks(const TrackList& tracks)                    = 0;
+    virtual void appendTracks(const TrackList& tracks)                     = 0;
+    virtual std::vector<int> removeTracks(const std::vector<int>& indexes) = 0;
+
+    /** Removes all tracks, including all shuffle order history */
+    virtual void clear() = 0;
 };
 using PlaylistList = std::vector<Playlist*>;
 } // namespace Fooyin
