@@ -98,18 +98,18 @@ struct PlaylistControl::Private
         }
 
         QObject::connect(defaultAction, &QAction::triggered, self, [this]() {
-            auto playMode = playerController->playMode();
-            playerController->setPlayMode(playMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
+            const auto pMode = playerController->playMode();
+            playerController->setPlayMode(pMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
         });
 
         QObject::connect(repeatPlaylist, &QAction::triggered, self, [this]() {
-            auto playMode = playerController->playMode();
-            playerController->setPlayMode((playMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
+            const auto pMode = playerController->playMode();
+            playerController->setPlayMode((pMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
         });
 
         QObject::connect(repeatTrack, &QAction::triggered, self, [this]() {
-            auto playMode = playerController->playMode();
-            playerController->setPlayMode((playMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
+            const auto pMode = playerController->playMode();
+            playerController->setPlayMode((pMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
         });
 
         menu->addAction(defaultAction);
