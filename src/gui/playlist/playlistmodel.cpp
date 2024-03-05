@@ -795,13 +795,16 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
         const int targetRow            = end ? rowCount({}) : targetItem->row();
         PlaylistItem* targetParentItem = end ? rootItem() : targetItem->parent();
         QModelIndex targetParent       = indexOfItem(targetParentItem);
-        int targetIndex                = targetParentItem->child(targetRow)->index();
+        int targetIndex{0};
 
         if(end) {
             targetIndex = targetItem->index() + 1;
         }
         else if(targetRow >= targetParentItem->childCount()) {
             targetIndex = targetParentItem->childCount();
+        }
+        else {
+            targetIndex = targetParentItem->child(targetRow)->index();
         }
 
         int row = targetRow;
