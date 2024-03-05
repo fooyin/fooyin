@@ -89,8 +89,10 @@ public:
 
     [[nodiscard]] int playlistCount() const;
 
-    /** Changes the active playlist to @ playlistId and starts playback */
+    /** Changes the active playlist to the playlist with @p playlistId and starts playback. */
     void startPlayback(int playlistId);
+    /** Changes the active playlist to @p playlist and starts playback. */
+    void startPlayback(Playlist* playlist);
 
     void savePlaylists();
     void savePlaylist(int id);

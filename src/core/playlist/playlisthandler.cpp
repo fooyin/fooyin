@@ -349,9 +349,11 @@ void PlaylistHandler::addPlaylist(Playlist* playlist)
     if(p->indexFromName(playlist->name()) >= 0) {
         return;
     }
+
     if(playlist->isVisible()) {
         playlist->setIndex(p->nextValidIndex());
     }
+
     if(playlist->saveToDb()) {
         playlist->setId(p->playlistConnector.insertPlaylist(playlist->name(), playlist->index()));
     }
@@ -539,6 +541,22 @@ void PlaylistHandler::startPlayback(int playlistId)
         playlist->reset();
         p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
     }
+}
+
+void PlaylistHandler::startPlayback(Playlist* playlist)
+{
+    if(!playlist) {
+        return;
+    }
+
+    if(std::ranges::find_if(std::as_const(p->playlists), [playlist](const auto& pl) { return pl.get() == playlist; })
+       == p->playlists.cend()) {
+        return;
+    }
+
+    changeActivePlaylist(playlist);
+    playlist->reset();
+    p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
 }
 
 void PlaylistHandler::populatePlaylists(const TrackList& tracks)
