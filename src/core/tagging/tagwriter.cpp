@@ -424,19 +424,8 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track)
 }
 } // namespace
 
-namespace Fooyin {
-struct TagWriter::Private
-{
-    QMimeDatabase mimeDb;
-};
-
-TagWriter::TagWriter()
-    : p{std::make_unique<Private>()}
-{ }
-
-TagWriter::~TagWriter() = default;
-
-bool TagWriter::writeMetaData(const Track& track)
+namespace Fooyin::Tagging {
+bool writeMetaData(const Track& track)
 {
     const QString filepath = track.filepath();
 
@@ -452,12 +441,13 @@ bool TagWriter::writeMetaData(const Track& track)
         file.setProperties(savedProperties);
     };
 
-    QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const QMimeDatabase mimeDb;
+    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == QStringLiteral("audio/mpeg") || mimeType == QStringLiteral("audio/mpeg3")
        || mimeType == QStringLiteral("audio/x-mpeg")) {
@@ -579,4 +569,4 @@ bool TagWriter::writeMetaData(const Track& track)
     }
     return true;
 }
-} // namespace Fooyin
+} // namespace Fooyin::Tagging

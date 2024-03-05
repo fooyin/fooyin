@@ -104,7 +104,6 @@ struct CoverProvider::Private
 {
     CoverProvider* self;
 
-    TagReader tagReader;
     std::set<QString> pendingCovers;
 
     explicit Private(CoverProvider* self_)
@@ -116,8 +115,7 @@ struct CoverProvider::Private
         QPixmap cover;
 
         if(track.hasEmbeddedCover()) {
-            const QByteArray coverData
-                = co_await Utils::asyncExec([this, &track]() { return tagReader.readCover(track); });
+            const QByteArray coverData = co_await Utils::asyncExec([track]() { return Tagging::readCover(track); });
             if(!cover.loadFromData(coverData)) {
                 co_return;
             }

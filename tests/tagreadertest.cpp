@@ -62,7 +62,6 @@ namespace Fooyin::Testing {
 class TagReaderTest : public ::testing::Test
 {
 protected:
-    TagReader m_tagReader;
 };
 
 TEST_F(TagReaderTest, AiffRead)
@@ -71,7 +70,7 @@ TEST_F(TagReaderTest, AiffRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.aiff"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::AIFF);
     EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
@@ -100,7 +99,7 @@ TEST_F(TagReaderTest, FlacRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.flac"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::FLAC);
     EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
@@ -129,7 +128,7 @@ TEST_F(TagReaderTest, M4aRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.m4a"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::MP4);
     EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
@@ -157,7 +156,7 @@ TEST_F(TagReaderTest, Mp3Read)
     fileValid(file, QStringLiteral(":/audio/audiotest.mp3"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::MPEG);
     EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
@@ -186,7 +185,7 @@ TEST_F(TagReaderTest, OggRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.ogg"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::OggVorbis);
     EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
@@ -215,7 +214,7 @@ TEST_F(TagReaderTest, OpusRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.opus"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::OggOpus);
     EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
@@ -244,7 +243,7 @@ TEST_F(TagReaderTest, WavRead)
     fileValid(file, QStringLiteral(":/audio/audiotest.wav"));
 
     Track track{file.fileName()};
-    m_tagReader.readMetaData(track);
+    Tagging::readMetaData(track);
 
     EXPECT_EQ(track.type(), Track::Type::WAV);
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));

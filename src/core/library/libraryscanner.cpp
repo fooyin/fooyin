@@ -67,8 +67,6 @@ struct LibraryScanner::Private
     LibraryInfo currentLibrary;
     TrackDatabase trackDatabase;
 
-    TagReader tagReader;
-
     int tracksProcessed{0};
     double totalTracks{0};
     int currentProgress{-1};
@@ -173,7 +171,7 @@ struct LibraryScanner::Private
                 if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != currentLibrary.id
                    || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
-                    if(tagReader.readMetaData(changedTrack)) {
+                    if(Tagging::readMetaData(changedTrack)) {
                         changedTrack.generateHash();
                         setTrackProps(changedTrack);
 
@@ -186,7 +184,7 @@ struct LibraryScanner::Private
             else {
                 Track track{filepath};
 
-                if(tagReader.readMetaData(track)) {
+                if(Tagging::readMetaData(track)) {
                     Track refoundTrack = matchMissingTrack(missingFiles, missingHashes, track);
 
                     if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
@@ -362,7 +360,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
         if(trackMap.contains(track.filepath())) {
             tracksScanned.push_back(trackMap.at(track.filepath()));
         }
-        else if(p->tagReader.readMetaData(track)) {
+        else if(Tagging::readMetaData(track)) {
             track.generateHash();
             tracksToStore.push_back(track);
         }

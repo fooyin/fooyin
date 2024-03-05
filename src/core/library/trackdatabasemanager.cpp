@@ -21,6 +21,7 @@
 
 #include "database/database.h"
 #include "database/trackdatabase.h"
+#include "tagging/tagwriter.h"
 
 #include <core/track.h>
 
@@ -47,7 +48,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
     TrackList tracksUpdated;
 
     for(const Track& track : tracks) {
-        if(m_tagWriter.writeMetaData(track) && m_trackDatabase.updateTrack(track)) {
+        if(Tagging::writeMetaData(track) && m_trackDatabase.updateTrack(track)) {
             Track updatedTrack{track};
 
             if(m_trackDatabase.updateTrackStats(updatedTrack)) {

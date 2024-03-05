@@ -20,7 +20,6 @@
 #pragma once
 
 #include "database/trackdatabase.h"
-#include "tagging/tagwriter.h"
 
 #include <utils/worker.h>
 
@@ -49,6 +48,5 @@ public slots:
 private:
     Database* m_database;
     TrackDatabase m_trackDatabase;
-    TagWriter m_tagWriter;
 };
 } // namespace Fooyin

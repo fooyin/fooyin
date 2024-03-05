@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <core/trackfwd.h>
+
 #include <taglib/audioproperties.h>
 
 #include <QString>
@@ -29,27 +31,14 @@
 
 class QPixmap;
 
-namespace Fooyin {
-class Track;
-
-class FYCORE_EXPORT TagReader
+namespace Fooyin::Tagging {
+enum class Quality : uint8_t
 {
-public:
-    enum class Quality
-    {
-        Fast     = TagLib::AudioProperties::Fast,
-        Average  = TagLib::AudioProperties::Average,
-        Accurate = TagLib::AudioProperties::Accurate,
-    };
-
-    TagReader();
-    ~TagReader();
-
-    bool readMetaData(Track& track, Quality quality = Quality::Average);
-    QByteArray readCover(const Track& track);
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    Fast = 0,
+    Average,
+    Accurate,
 };
-} // namespace Fooyin
+
+FYCORE_EXPORT bool readMetaData(Track& track, Quality quality = Quality::Average);
+FYCORE_EXPORT QByteArray readCover(const Track& track);
+} // namespace Fooyin::Tagging

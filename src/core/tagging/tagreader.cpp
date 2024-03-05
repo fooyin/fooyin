@@ -201,14 +201,14 @@ Fooyin::Track::Type typeForMime(const QString& mimeType)
     return Fooyin::Track::Type::Unknown;
 }
 
-TagLib::AudioProperties::ReadStyle readStyle(Fooyin::TagReader::Quality quality)
+TagLib::AudioProperties::ReadStyle readStyle(Fooyin::Tagging::Quality quality)
 {
     switch(quality) {
-        case(Fooyin::TagReader::Quality::Fast):
+        case(Fooyin::Tagging::Quality::Fast):
             return TagLib::AudioProperties::Fast;
-        case(Fooyin::TagReader::Quality::Average):
+        case(Fooyin::Tagging::Quality::Average):
             return TagLib::AudioProperties::Average;
-        case(Fooyin::TagReader::Quality::Accurate):
+        case(Fooyin::Tagging::Quality::Accurate):
             return TagLib::AudioProperties::Accurate;
         default:
             return TagLib::AudioProperties::Average;
@@ -631,20 +631,9 @@ void handleCover(const QByteArray& cover, Fooyin::Track& track)
 }
 } // namespace
 
-namespace Fooyin {
-struct TagReader::Private
-{
-    QMimeDatabase mimeDb;
-};
-
-TagReader::TagReader()
-    : p{std::make_unique<Private>()}
-{ }
-
-TagReader::~TagReader() = default;
-
+namespace Fooyin::Tagging {
 // TODO: Implement a file/mime type resolver
-bool TagReader::readMetaData(Track& track, Quality quality)
+bool readMetaData(Track& track, Quality quality)
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -665,7 +654,8 @@ bool TagReader::readMetaData(Track& track, Quality quality)
         return false;
     }
 
-    QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const QMimeDatabase mimeDb;
+    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
     const auto style = readStyle(quality);
 
     const auto readProperties = [&track](const TagLib::File& file, bool skipExtra = false) {
@@ -675,7 +665,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
 
     if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == QStringLiteral("audio/mpeg") || mimeType == QStringLiteral("audio/mpeg3")
        || mimeType == QStringLiteral("audio/x-mpeg")) {
@@ -806,7 +796,7 @@ bool TagReader::readMetaData(Track& track, Quality quality)
     return true;
 }
 
-QByteArray TagReader::readCover(const Track& track)
+QByteArray readCover(const Track& track)
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -821,12 +811,13 @@ QByteArray TagReader::readCover(const Track& track)
         return {};
     }
 
-    QString mimeType = p->mimeDb.mimeTypeForFile(filepath).name();
+    const QMimeDatabase mimeDb;
+    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = p->mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
     }
     if(mimeType == QStringLiteral("audio/mpeg") || mimeType == QStringLiteral("audio/mpeg3")
        || mimeType == QStringLiteral("audio/x-mpeg")) {
@@ -907,4 +898,4 @@ QByteArray TagReader::readCover(const Track& track)
 
     return {};
 }
-} // namespace Fooyin
+} // namespace Fooyin::Tagging

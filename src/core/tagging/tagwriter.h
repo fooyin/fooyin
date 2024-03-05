@@ -25,17 +25,6 @@
 
 #include <memory>
 
-namespace Fooyin {
-class FYCORE_EXPORT TagWriter
-{
-public:
-    TagWriter();
-    ~TagWriter();
-
-    bool writeMetaData(const Track& track);
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
-};
-} // namespace Fooyin
+namespace Fooyin::Tagging {
+FYCORE_EXPORT bool writeMetaData(const Track& track);
+} // namespace Fooyin::Tagging
