@@ -521,7 +521,7 @@ void PlaylistHandler::savePlaylist(int id)
 {
     if(auto* playlistToSave = playlistById(id)) {
         p->updateIndices();
-        p->playlistConnector.savePlaylist(*playlistById(id));
+        p->playlistConnector.savePlaylist(*playlistToSave);
     }
 }
 
