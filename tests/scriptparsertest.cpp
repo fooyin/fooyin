@@ -95,12 +95,12 @@ TEST_F(ScriptParserTest, MetadataTest)
 
     EXPECT_EQ(u"A Test - A Test Album", m_parser.evaluate(QStringLiteral("%title%[ - %album%]"), track));
 
-    track.setGenres({u"Pop", u"Rock"});
+    track.setGenres({QStringLiteral("Pop"), QStringLiteral("Rock")});
 
     EXPECT_EQ(u"Pop, Rock", m_parser.evaluate(QStringLiteral("%genre%"), track));
     EXPECT_EQ(u"Pop\037Rock", m_parser.evaluate(QStringLiteral("%<genre>%"), track));
 
-    track.setArtists({u"Me", u"You"});
+    track.setArtists({QStringLiteral("Me"), QStringLiteral("You")});
 
     EXPECT_EQ(u"Pop, Rock - Me, You", m_parser.evaluate(QStringLiteral("%genre% - %artist%"), track));
     EXPECT_EQ(u"Pop - Me\037Rock - Me\037Pop - You\037Rock - You",
