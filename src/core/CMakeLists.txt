@@ -93,8 +93,7 @@ set(SOURCES
     library/unifiedmusiclibrary.h
     player/playbackqueue.cpp
     player/playercontroller.cpp
-    playlist/fyplaylist.cpp
-    playlist/fyplaylist.h
+    playlist/playlist.cpp
     playlist/playlisthandler.cpp
     plugins/plugininfo.cpp
     plugins/plugininfo.h

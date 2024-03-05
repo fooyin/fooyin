@@ -19,56 +19,59 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/trackfwd.h>
 
 #include <QObject>
 
-#include <set>
-
 namespace Fooyin {
-class Playlist
+class FYCORE_EXPORT Playlist
 {
 public:
-    enum PlayMode
+    enum PlayMode : uint32_t
     {
-        Default   = 0,
-        RepeatAll = 1 << 0,
-        Repeat    = 1 << 1,
-        Shuffle   = 1 << 2,
+        Default        = 0,
+        RepeatPlaylist = 1 << 0,
+        RepeatAlbum    = 1 << 1, // Not implemented
+        RepeatTrack    = 1 << 2,
+        ShuffleAlbums  = 1 << 3, // Not implemented
+        ShuffleTracks  = 1 << 4,
+        Random         = 1 << 5, // Not implemented
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-    virtual ~Playlist() = default;
+    Playlist();
+    Playlist(int id, QString name, int index);
+    ~Playlist();
 
     /** Returns @c true if this playlist has a valid id, index and name. */
-    [[nodiscard]] virtual bool isValid() const = 0;
+    [[nodiscard]] bool isValid() const;
 
-    [[nodiscard]] virtual int id() const       = 0;
-    [[nodiscard]] virtual int index() const    = 0;
-    [[nodiscard]] virtual QString name() const = 0;
+    [[nodiscard]] int id() const;
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] int index() const;
 
-    [[nodiscard]] virtual TrackList tracks() const     = 0;
-    [[nodiscard]] virtual Track track(int index) const = 0;
-    [[nodiscard]] virtual int trackCount() const       = 0;
+    [[nodiscard]] TrackList tracks() const;
+    [[nodiscard]] Track track(int index) const;
+    [[nodiscard]] int trackCount() const;
 
-    [[nodiscard]] virtual int currentTrackIndex() const = 0;
-    [[nodiscard]] virtual Track currentTrack() const    = 0;
+    [[nodiscard]] int currentTrackIndex() const;
+    [[nodiscard]] Track currentTrack() const;
 
     /** Returns @c true if this playlist's index or name have been changed. */
-    [[nodiscard]] virtual bool modified() const = 0;
+    [[nodiscard]] bool modified() const;
     /** Returns @c true if this playlist's tracks have been changed. */
-    [[nodiscard]] virtual bool tracksModified() const = 0;
+    [[nodiscard]] bool tracksModified() const;
 
-    /** Returns @c true if this playlist is visible to other widgets. */
-    [[nodiscard]] virtual bool isVisible() const = 0;
-    /** Returns @c true if this playlist should be saved to db (and restored on startup). */
-    [[nodiscard]] virtual bool saveToDb() const = 0;
+    /** Returns @c true if this playlist is visible. */
+    [[nodiscard]] bool isVisible() const;
 
     /*!
      * Schedules the track to be played after the current track is finished.
      * @note this will be cancelled if tracks are replaced using @fn replaceTracks.
      */
-    virtual void scheduleNextIndex(int index) = 0;
+    void scheduleNextIndex(int index);
 
     /*!
      * Returns the next track to be played based on the @p delta from the current
@@ -76,28 +79,35 @@ public:
      * @note this will return an invalid track if @p mode is 'Default' and
      * the index +- delta is out of range.
      */
-    virtual Track nextTrack(int delta, PlayModes mode) = 0;
+    Track nextTrack(int delta, PlayModes mode);
 
-    virtual void changeCurrentTrack(int index) = 0;
+    void changeCurrentIndex(int index);
 
     /** Clears the shuffle order history */
-    virtual void reset() = 0;
+    void reset();
     /** Resets the modified and tracksModified flags. */
-    virtual void resetFlags() = 0;
+    void resetFlags();
 
 protected:
     friend class PlaylistHandler;
 
-    virtual void setId(int id)                = 0;
-    virtual void setIndex(int index)          = 0;
-    virtual void setName(const QString& name) = 0;
+    void setId(int id);
+    void setName(const QString& name);
+    void setIndex(int index);
 
-    virtual void replaceTracks(const TrackList& tracks)                    = 0;
-    virtual void appendTracks(const TrackList& tracks)                     = 0;
-    virtual std::vector<int> removeTracks(const std::vector<int>& indexes) = 0;
+    void setModified(bool modified);
+    void setTracksModified(bool modified);
+
+    void replaceTracks(const TrackList& tracks);
+    void appendTracks(const TrackList& tracks);
+    std::vector<int> removeTracks(const std::vector<int>& indexes);
 
     /** Removes all tracks, including all shuffle order history */
-    virtual void clear() = 0;
+    void clear();
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 using PlaylistList = std::vector<Playlist*>;
 } // namespace Fooyin

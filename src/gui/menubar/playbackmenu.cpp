@@ -73,9 +73,9 @@ struct PlaybackMenu::Private
 
     void updatePlayMode(Playlist::PlayModes mode) const
     {
-        repeat->setChecked(mode & Playlist::Repeat);
-        repeatAll->setChecked(mode & Playlist::RepeatAll);
-        shuffle->setChecked(mode & Playlist::Shuffle);
+        repeat->setChecked(mode & Playlist::RepeatTrack);
+        repeatAll->setChecked(mode & Playlist::RepeatPlaylist);
+        shuffle->setChecked(mode & Playlist::ShuffleTracks);
 
         if(mode == 0) {
             defaultPlayback->setChecked(true);
@@ -96,17 +96,18 @@ struct PlaybackMenu::Private
         if(mode == Playlist::Default) {
             currentMode = mode;
         }
-        else if(mode & Playlist::Repeat) {
-            currentMode |= Playlist::Repeat;
-            currentMode &= ~Playlist::RepeatAll;
+        else if(mode & Playlist::RepeatTrack) {
+            currentMode |= Playlist::RepeatTrack;
+            currentMode &= ~Playlist::RepeatPlaylist;
         }
-        else if(mode & Playlist::RepeatAll) {
-            currentMode |= Playlist::RepeatAll;
-            currentMode &= ~Playlist::Repeat;
+        else if(mode & Playlist::RepeatPlaylist) {
+            currentMode |= Playlist::RepeatPlaylist;
+            currentMode &= ~Playlist::RepeatTrack;
         }
         else {
             currentMode |= mode;
         }
+
         playerController->setPlayMode(currentMode);
 
         if(noChange) {
@@ -153,19 +154,21 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 
     p->repeat = new QAction(tr("&Repeat Track"), this);
     p->repeat->setCheckable(true);
-    orderMenu->addAction(p->actionManager->registerAction(p->repeat, Constants::Actions::Repeat));
-    QObject::connect(p->repeat, &QAction::triggered, this, [this]() { p->setPlayMode(Playlist::PlayMode::Repeat); });
+    orderMenu->addAction(p->actionManager->registerAction(p->repeat, Constants::Actions::RepeatTrack));
+    QObject::connect(p->repeat, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Playlist::PlayMode::RepeatTrack); });
 
     p->repeatAll = new QAction(tr("Repeat &Playlist"), this);
     p->repeatAll->setCheckable(true);
-    orderMenu->addAction(actionManager->registerAction(p->repeatAll, Constants::Actions::RepeatAll));
+    orderMenu->addAction(actionManager->registerAction(p->repeatAll, Constants::Actions::RepeatPlaylist));
     QObject::connect(p->repeatAll, &QAction::triggered, this,
-                     [this]() { p->setPlayMode(Playlist::PlayMode::RepeatAll); });
+                     [this]() { p->setPlayMode(Playlist::PlayMode::RepeatPlaylist); });
 
-    p->shuffle = new QAction(tr("&Shuffle"), this);
+    p->shuffle = new QAction(tr("&Shuffle Tracks"), this);
     p->shuffle->setCheckable(true);
-    orderMenu->addAction(actionManager->registerAction(p->shuffle, Constants::Actions::Shuffle));
-    QObject::connect(p->shuffle, &QAction::triggered, this, [this]() { p->setPlayMode(Playlist::PlayMode::Shuffle); });
+    orderMenu->addAction(actionManager->registerAction(p->shuffle, Constants::Actions::ShuffleTracks));
+    QObject::connect(p->shuffle, &QAction::triggered, this,
+                     [this]() { p->setPlayMode(Playlist::PlayMode::ShuffleTracks); });
 
     p->updatePlayPause(p->playerController->playState());
     p->updatePlayMode(p->playerController->playMode());

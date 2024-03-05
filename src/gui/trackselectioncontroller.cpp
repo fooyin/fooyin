@@ -255,7 +255,7 @@ struct TrackSelectionController::Private
             const QString keepActiveName = newName + QStringLiteral(" (") + tr("Playback") + QStringLiteral(")");
 
             if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
-                keepActivePlaylist->changeCurrentTrack(activePlaylist->currentTrackIndex());
+                keepActivePlaylist->changeCurrentIndex(activePlaylist->currentTrackIndex());
                 playlistHandler->createPlaylist(keepActivePlaylist->name(), activePlaylist->tracks());
 
                 playlistHandler->changeActivePlaylist(keepActivePlaylist->id());
@@ -421,7 +421,7 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
                 if(auto* playlist = p->playlistController->currentPlaylist()) {
                     const auto& selection = p->contextSelection.at(p->activeContext);
                     if(selection.firstIndex >= 0) {
-                        playlist->changeCurrentTrack(selection.firstIndex);
+                        playlist->changeCurrentIndex(selection.firstIndex);
                     }
                     p->playlistHandler->startPlayback(playlist->id());
                 }

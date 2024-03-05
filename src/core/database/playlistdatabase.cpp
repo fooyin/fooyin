@@ -92,7 +92,7 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
     : DatabaseModule{connectionName}
 { }
 
-std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
+std::vector<std::unique_ptr<Playlist>> PlaylistDatabase::getAllPlaylists()
 {
     const QString query
         = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
@@ -105,14 +105,14 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
         return {};
     }
 
-    std::vector<PlaylistInfo> playlists;
+    std::vector<std::unique_ptr<Playlist>> playlists;
 
     while(q.next()) {
         const int id       = q.value(0).toInt();
         const QString name = q.value(1).toString();
         const int index    = q.value(2).toInt();
 
-        playlists.emplace_back(id, name, index);
+        playlists.emplace_back(std::make_unique<Playlist>(id, name, index));
     }
 
     return playlists;

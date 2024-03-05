@@ -577,7 +577,7 @@ void PlaylistController::filesToNewPlaylist(const QString& playlistName, const Q
         if(playlist) {
             const int indexToPlay = playlist->trackCount();
             p->handler->appendToPlaylist(playlist->id(), scannedTracks);
-            playlist->changeCurrentTrack(indexToPlay);
+            playlist->changeCurrentIndex(indexToPlay);
         }
         else {
             playlist = p->handler->createPlaylist(playlistName, scannedTracks);

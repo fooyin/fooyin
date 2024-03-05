@@ -46,19 +46,12 @@ struct PlaylistControl::Private
     ToolButton* repeat;
     ToolButton* shuffle;
 
-    QIcon repeatActiveIcon;
-    QIcon shuffleActiveIcon;
-
     Private(PlaylistControl* self_, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
         , playerController{playerController_}
         , settings{settings_}
         , repeat{new ToolButton(self)}
         , shuffle{new ToolButton(self)}
-        , repeatActiveIcon{Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
-                                                     self->palette().highlight().color())}
-        , shuffleActiveIcon{Utils::changePixmapColour(
-              Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}), self->palette().highlight().color())}
     {
         repeat->setPopupMode(QToolButton::InstantPopup);
 
@@ -94,26 +87,29 @@ struct PlaylistControl::Private
 
         auto playMode = playerController->playMode();
 
-        if(playMode & Playlist::RepeatAll) {
+        if(playMode & Playlist::RepeatPlaylist) {
             repeatPlaylist->setChecked(true);
         }
-        else if(playMode & Playlist::Repeat) {
+        else if(playMode & Playlist::RepeatTrack) {
             repeatTrack->setChecked(true);
         }
         else {
             defaultAction->setChecked(true);
         }
 
-        QObject::connect(defaultAction, &QAction::triggered, self, [this, playMode]() {
-            playerController->setPlayMode(playMode & ~Playlist::Repeat & ~Playlist::RepeatAll);
+        QObject::connect(defaultAction, &QAction::triggered, self, [this]() {
+            auto playMode = playerController->playMode();
+            playerController->setPlayMode(playMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
         });
 
-        QObject::connect(repeatPlaylist, &QAction::triggered, self, [this, playMode]() {
-            playerController->setPlayMode((playMode & ~Playlist::Repeat) | Playlist::RepeatAll);
+        QObject::connect(repeatPlaylist, &QAction::triggered, self, [this]() {
+            auto playMode = playerController->playMode();
+            playerController->setPlayMode((playMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
         });
 
-        QObject::connect(repeatTrack, &QAction::triggered, self, [this, playMode]() {
-            playerController->setPlayMode((playMode & ~Playlist::RepeatAll) | Playlist::Repeat);
+        QObject::connect(repeatTrack, &QAction::triggered, self, [this]() {
+            auto playMode = playerController->playMode();
+            playerController->setPlayMode((playMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
         });
 
         menu->addAction(defaultAction);
@@ -123,33 +119,15 @@ struct PlaylistControl::Private
         repeat->setMenu(menu);
     }
 
-    void repeatClicked() const
-    {
-        Playlist::PlayModes mode = playerController->playMode();
-
-        if(mode & Playlist::RepeatAll) {
-            mode &= ~Playlist::RepeatAll;
-            mode |= Playlist::Repeat;
-        }
-        else if(mode & Playlist::Repeat) {
-            mode &= ~Playlist::Repeat;
-        }
-        else {
-            mode |= Playlist::RepeatAll;
-        }
-
-        playerController->setPlayMode(mode);
-    }
-
     void shuffleClicked() const
     {
         Playlist::PlayModes mode = playerController->playMode();
 
-        if(mode & Playlist::Shuffle) {
-            mode &= ~Playlist::Shuffle;
+        if(mode & Playlist::ShuffleTracks) {
+            mode &= ~Playlist::ShuffleTracks;
         }
         else {
-            mode |= Playlist::Shuffle;
+            mode |= Playlist::ShuffleTracks;
         }
 
         playerController->setPlayMode(mode);
@@ -157,15 +135,18 @@ struct PlaylistControl::Private
 
     void setMode(Playlist::PlayModes mode) const
     {
-        if(mode & Playlist::Repeat || mode & Playlist::RepeatAll) {
-            repeat->setIcon(repeatActiveIcon);
+        if(mode & Playlist::RepeatTrack || mode & Playlist::RepeatPlaylist) {
+            repeat->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
+                                                      self->palette().highlight().color()));
         }
         else {
             repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
         }
 
-        if(mode & Playlist::Shuffle) {
-            shuffle->setIcon(shuffleActiveIcon);
+        if(mode & Playlist::ShuffleTracks) {
+            shuffle->setIcon(
+                Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
+                                          self->palette().highlight().color()));
         }
         else {
             shuffle->setIcon(Utils::iconFromTheme(Constants::Icons::Shuffle));

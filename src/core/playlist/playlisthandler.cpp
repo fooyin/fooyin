@@ -90,11 +90,7 @@ struct PlaylistHandler::Private
 
     void reloadPlaylists()
     {
-        const auto infos = playlistConnector.getAllPlaylists();
-
-        for(const auto& info : infos) {
-            playlists.emplace_back(std::make_unique<FyPlaylist>(info));
-        }
+        playlists = playlistConnector.getAllPlaylists();
     }
 
     void startNextTrack(const Track& track, int index) const
@@ -211,19 +207,17 @@ struct PlaylistHandler::Private
 
     Playlist* addNewPlaylist(const QString& name)
     {
-        auto index = indexFromName(name);
+        auto existingIndex = indexFromName(name);
 
-        if(index >= 0) {
-            return playlists.at(index).get();
+        if(existingIndex >= 0) {
+            return playlists.at(existingIndex).get();
         }
 
-        PlaylistInfo info;
+        const int index = nextValidIndex();
+        const int id    = playlistConnector.insertPlaylist(name, index);
 
-        info.index = nextValidIndex();
-        info.name  = name;
-        info.id    = playlistConnector.insertPlaylist(name, info.index);
-        if(info.id >= 0) {
-            auto* playlist = playlists.emplace_back(std::make_unique<FyPlaylist>(info)).get();
+        if(id >= 0) {
+            auto* playlist = playlists.emplace_back(std::make_unique<Playlist>(id, name, index)).get();
             return playlist;
         }
 
@@ -354,9 +348,7 @@ void PlaylistHandler::addPlaylist(Playlist* playlist)
         playlist->setIndex(p->nextValidIndex());
     }
 
-    if(playlist->saveToDb()) {
-        playlist->setId(p->playlistConnector.insertPlaylist(playlist->name(), playlist->index()));
-    }
+    playlist->setId(p->playlistConnector.insertPlaylist(playlist->name(), playlist->index()));
 
     p->playlists.emplace_back(playlist);
 
@@ -451,13 +443,14 @@ void PlaylistHandler::renamePlaylist(int id, const QString& name)
 
     auto* playlist = playlistById(id);
     if(!playlist) {
-        qDebug() << QString{QStringLiteral("Playlist %1 could not be found")}.arg(id);
+        qDebug() << QString{QStringLiteral("Playlist could not be renamed to %1")}.arg(name);
         return;
     }
 
     const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
+
     if(!p->playlistConnector.renamePlaylist(playlist->id(), newName)) {
-        qDebug() << QString{QStringLiteral("Playlist %1 could not be renamed to %2")}.arg(id).arg(name);
+        qDebug() << QString{QStringLiteral("Playlist could not be renamed to %1")}.arg(name);
         return;
     }
 
@@ -473,7 +466,7 @@ void PlaylistHandler::removePlaylist(int id)
         return;
     }
 
-    if(!p->playlistConnector.removePlaylist(id)) {
+    if(!p->playlistConnector.removePlaylist(playlist->id())) {
         return;
     }
 
@@ -512,14 +505,14 @@ void PlaylistHandler::savePlaylists()
     PlaylistList playlistsToSave;
 
     for(const auto& playlist : p->playlists) {
-        if(playlist->saveToDb() && (playlist->modified() || playlist->tracksModified())) {
+        if(playlist->modified() || playlist->tracksModified()) {
             playlistsToSave.emplace_back(playlist.get());
         }
     }
 
     p->playlistConnector.saveModifiedPlaylists(playlistsToSave);
 
-    if(p->activePlaylist && p->activePlaylist->saveToDb()) {
+    if(p->activePlaylist) {
         p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
     }
 }
@@ -528,9 +521,7 @@ void PlaylistHandler::savePlaylist(int id)
 {
     if(auto* playlistToSave = playlistById(id)) {
         p->updateIndices();
-        if(playlistToSave->saveToDb()) {
-            p->playlistConnector.savePlaylist(*playlistById(id));
-        }
+        p->playlistConnector.savePlaylist(*playlistById(id));
     }
 }
 
@@ -567,10 +558,8 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
     }
 
     for(const auto& playlist : p->playlists) {
-        if(playlist->saveToDb()) {
-            const TrackList playlistTracks = p->playlistConnector.getPlaylistTracks(*playlist, idTracks);
-            playlist->replaceTracks(playlistTracks);
-        }
+        const TrackList playlistTracks = p->playlistConnector.getPlaylistTracks(*playlist, idTracks);
+        playlist->replaceTracks(playlistTracks);
     }
 
     const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();

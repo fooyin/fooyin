@@ -462,7 +462,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     if(settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
         if(playlistController->currentPlaylist()->currentTrackIndex() != firstIndex) {
             if(playlistController->playState() != PlayState::Playing) {
-                playlistController->currentPlaylist()->changeCurrentTrack(firstIndex);
+                playlistController->currentPlaylist()->changeCurrentIndex(firstIndex);
             }
             else {
                 playlistController->currentPlaylist()->scheduleNextIndex(firstIndex);
@@ -506,7 +506,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     playlistController->changedTracks();
 
     if(playingIndex >= 0) {
-        playlistController->currentPlaylist()->changeCurrentTrack(playingIndex);
+        playlistController->currentPlaylist()->changeCurrentIndex(playingIndex);
     }
 
     model->updateHeader(playlistController->currentPlaylist());

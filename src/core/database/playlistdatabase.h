@@ -20,8 +20,8 @@
 #pragma once
 
 #include "databasemodule.h"
-#include "playlist/fyplaylist.h"
 
+#include <core/playlist/playlist.h>
 #include <core/track.h>
 
 namespace Fooyin {
@@ -30,7 +30,7 @@ class PlaylistDatabase : private DatabaseModule
 public:
     explicit PlaylistDatabase(const QString& connectionName);
 
-    std::vector<PlaylistInfo> getAllPlaylists();
+    std::vector<std::unique_ptr<Playlist>> getAllPlaylists();
     TrackList getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
 
     int insertPlaylist(const QString& name, int index);
