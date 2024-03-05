@@ -46,7 +46,9 @@ struct PlaylistView::Private
 
     explicit Private(PlaylistView* self_)
         : self{self_}
-    { }
+    {
+        QObject::connect(&autoScrollTimer, &QTimer::timeout, self, [this]() { doAutoScroll(); });
+    }
 
     QAbstractItemView::DropIndicatorPosition position(const QPoint& pos, const QRect& rect,
                                                       const QModelIndex& index) const
@@ -204,8 +206,6 @@ PlaylistView::PlaylistView(QWidget* parent)
     viewport()->setAcceptDrops(true);
     header()->setSectionsClickable(true);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    QObject::connect(&p->autoScrollTimer, &QTimer::timeout, this, &PlaylistView::doAutoScroll);
 }
 
 void PlaylistView::setWaitForLoad(bool enabled)
@@ -291,7 +291,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
     viewport()->update();
 
     if(p->shouldAutoScroll(pos)) {
-        startAutoScroll();
+        p->startAutoScroll();
     }
 }
 
