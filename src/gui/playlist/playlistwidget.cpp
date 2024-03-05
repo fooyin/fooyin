@@ -634,8 +634,6 @@ void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int ind
 
 void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes, bool allNew)
 {
-    std::vector<int> selected;
-
     saveState(playlistController->currentPlaylist());
 
     auto restoreSelection = [this](const std::vector<int>& selectedIndexes) {
@@ -651,11 +649,11 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
 
         if(!allNew) {
             selectedIndexes = selectedPlaylistIndexes();
-        }
 
-        QObject::connect(
-            model, &PlaylistModel::playlistTracksChanged, this,
-            [restoreSelection, selectedIndexes]() { restoreSelection(selectedIndexes); }, Qt::SingleShotConnection);
+            QObject::connect(
+                model, &PlaylistModel::playlistTracksChanged, this,
+                [restoreSelection, selectedIndexes]() { restoreSelection(selectedIndexes); }, Qt::SingleShotConnection);
+        }
 
         resetModel();
     }
