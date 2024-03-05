@@ -25,9 +25,9 @@ namespace {
 bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const Fooyin::Track& track, int index)
 {
     auto q = module->insert(QStringLiteral("PlaylistTracks"),
-                            {{QStringLiteral("PlaylistID"), QString::number(playlistId)},
-                             {QStringLiteral("TrackID"), QString::number(track.id())},
-                             {QStringLiteral("TrackIndex"), QString::number(index)}},
+                            {{QStringLiteral("PlaylistID"), playlistId},
+                             {QStringLiteral("TrackID"), track.id()},
+                             {QStringLiteral("TrackIndex"), index}},
                             QString{QStringLiteral("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)")}
                                 .arg(playlistId)
                                 .arg(track.id()));
@@ -41,9 +41,8 @@ bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::
         return false;
     }
 
-    auto delTracksQuery
-        = module->remove(QStringLiteral("PlaylistTracks"), {{QStringLiteral("PlaylistID"), QString::number(id)}},
-                         QString{QStringLiteral("Cannot remove old playlist %1 tracks")}.arg(id));
+    auto delTracksQuery = module->remove(QStringLiteral("PlaylistTracks"), {{QStringLiteral("PlaylistID"), id}},
+                                         QString{QStringLiteral("Cannot remove old playlist %1 tracks")}.arg(id));
 
     if(delTracksQuery.hasError()) {
         return false;
@@ -131,7 +130,7 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
     }
 
     auto q = insert(QStringLiteral("Playlists"),
-                    {{QStringLiteral("Name"), name}, {QStringLiteral("PlaylistIndex"), QString::number(index)}},
+                    {{QStringLiteral("Name"), name}, {QStringLiteral("PlaylistIndex"), index}},
                     QString{QStringLiteral("Cannot insert playlist (name: %1, index: %2)")}.arg(name).arg(index));
 
     return (q.hasError()) ? -1 : q.lastInsertId().toInt();
@@ -146,12 +145,11 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     bool updated{false};
 
     if(playlist.modified()) {
-        const auto q = update(QStringLiteral("Playlists"),
-                              {{QStringLiteral("Name"), playlist.name()},
-                               {QStringLiteral("PlaylistIndex"), QString::number(playlist.index())}},
-                              {QStringLiteral("PlaylistID"), QString::number(playlist.id())},
-                              QStringLiteral("Cannot update playlist ") + QString::number(playlist.id()));
-        updated      = !q.hasError();
+        const auto q = update(
+            QStringLiteral("Playlists"),
+            {{QStringLiteral("Name"), playlist.name()}, {QStringLiteral("PlaylistIndex"), playlist.index()}},
+            {QStringLiteral("PlaylistID"), playlist.id()}, QStringLiteral("Cannot update playlist ") + playlist.name());
+        updated = !q.hasError();
 
         if(!updated) {
             return false;
@@ -191,7 +189,7 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 
 bool PlaylistDatabase::removePlaylist(int id)
 {
-    auto q = remove(QStringLiteral("Playlists"), {{QStringLiteral("PlaylistID"), QString::number(id)}},
+    auto q = remove(QStringLiteral("Playlists"), {{QStringLiteral("PlaylistID"), id}},
                     QStringLiteral("Cannot remove playlist ") + QString::number(id));
     return !q.hasError();
 }
@@ -202,9 +200,8 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    auto q = update(QStringLiteral("Playlists"), {{QStringLiteral("Name"), name}},
-                    {QStringLiteral("PlaylistID"), QString::number(id)},
-                    QStringLiteral("Cannot update playlist ") + QString::number(id));
+    auto q = update(QStringLiteral("Playlists"), {{QStringLiteral("Name"), name}}, {QStringLiteral("PlaylistID"), id},
+                    QStringLiteral("Cannot update playlist ") + name);
     return !q.hasError();
 }
 } // namespace Fooyin

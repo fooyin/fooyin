@@ -62,7 +62,7 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
 
 bool LibraryDatabase::removeLibrary(int id)
 {
-    auto q = remove(QStringLiteral("Libraries"), {{QStringLiteral("LibraryID"), QString::number(id)}},
+    auto q = remove(QStringLiteral("Libraries"), {{QStringLiteral("LibraryID"), id}},
                     QStringLiteral("Cannot remove library ") + QString::number(id));
     return !q.hasError();
 }
@@ -73,9 +73,8 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    auto q = update(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}},
-                    {QStringLiteral("LibraryID"), QString::number(id)},
-                    QStringLiteral("Cannot update library ") + QString::number(id));
+    auto q = update(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}}, {QStringLiteral("LibraryID"), id},
+                    QStringLiteral("Cannot update library ") + name);
     return !q.hasError();
 }
 } // namespace Fooyin

@@ -73,28 +73,28 @@ Fooyin::BindingsMap trackBindings(const Fooyin::Track& track)
 {
     return {{QStringLiteral("FilePath"), Fooyin::Utils::File::cleanPath(track.filepath())},
             {QStringLiteral("Title"), track.title()},
-            {QStringLiteral("TrackNumber"), QString::number(track.trackNumber())},
-            {QStringLiteral("TrackTotal"), QString::number(track.trackTotal())},
+            {QStringLiteral("TrackNumber"), track.trackNumber()},
+            {QStringLiteral("TrackTotal"), track.trackTotal()},
             {QStringLiteral("Artists"), track.artists().join(u"\037")},
             {QStringLiteral("AlbumArtist"), track.albumArtist()},
             {QStringLiteral("Album"), track.album()},
             {QStringLiteral("CoverPath"), track.coverPath()},
-            {QStringLiteral("DiscNumber"), QString::number(track.discNumber())},
-            {QStringLiteral("DiscTotal"), QString::number(track.discTotal())},
+            {QStringLiteral("DiscNumber"), track.discNumber()},
+            {QStringLiteral("DiscTotal"), track.discTotal()},
             {QStringLiteral("Date"), track.date()},
             {QStringLiteral("Composer"), track.composer()},
             {QStringLiteral("Performer"), track.performer()},
             {QStringLiteral("Genres"), track.genres().join(u"\037")},
             {QStringLiteral("Comment"), track.comment()},
-            {QStringLiteral("Duration"), QString::number(track.duration())},
-            {QStringLiteral("FileSize"), QString::number(track.fileSize())},
-            {QStringLiteral("BitRate"), QString::number(track.bitrate())},
-            {QStringLiteral("SampleRate"), QString::number(track.sampleRate())},
-            {QStringLiteral("ExtraTags"), QString::fromUtf8(track.serialiseExtrasTags())},
-            {QStringLiteral("Type"), QString::number(static_cast<int>(track.type()))},
-            {QStringLiteral("ModifiedDate"), QString::number(track.modifiedTime())},
+            {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
+            {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
+            {QStringLiteral("BitRate"), track.bitrate()},
+            {QStringLiteral("SampleRate"), track.sampleRate()},
+            {QStringLiteral("ExtraTags"), track.serialiseExtrasTags()},
+            {QStringLiteral("Type"), static_cast<int>(track.type())},
+            {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime())},
             {QStringLiteral("TrackHash"), track.hash()},
-            {QStringLiteral("LibraryID"), QString::number(track.libraryId())}};
+            {QStringLiteral("LibraryID"), track.libraryId()}};
 }
 
 void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
@@ -156,9 +156,8 @@ struct TrackDatabase::Private
         const auto queryText
             = QStringLiteral("UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
                              "(SELECT TrackHash FROM Tracks);");
-        const auto q = self->runQuery(
-            queryText, {{QStringLiteral(":lastSeen"), QString::number(QDateTime::currentMSecsSinceEpoch())}},
-            QStringLiteral("Error updating LastSeen"));
+        const auto q = self->runQuery(queryText, {{QStringLiteral(":lastSeen"), QDateTime::currentMSecsSinceEpoch()}},
+                                      QStringLiteral("Error updating LastSeen"));
     }
 
     void deleteExpiredStats() const
@@ -166,11 +165,10 @@ struct TrackDatabase::Private
         const auto queryText
             = QStringLiteral("DELETE FROM TrackStats WHERE LastSeen IS NOT NULL AND LastSeen <= :clearInterval AND "
                              "TrackHash NOT IN (SELECT TrackHash FROM Tracks);");
-        const auto q
-            = self->runQuery(queryText,
-                             {{QStringLiteral(":clearInterval"),
-                               QString::number(QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch())}},
-                             QStringLiteral("Error deleting expired track stats"));
+        const auto q = self->runQuery(
+            queryText,
+            {{QStringLiteral(":clearInterval"), QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch()}},
+            QStringLiteral("Error deleting expired track stats"));
     }
 
     int trackCount() const
@@ -226,9 +224,9 @@ struct TrackDatabase::Private
         }
 
         if(exists.next()) {
-            const auto added       = static_cast<uint64_t>(exists.value(0).toULongLong());
-            const auto firstPlayed = static_cast<uint64_t>(exists.value(1).toULongLong());
-            const auto lastPlayed  = static_cast<uint64_t>(exists.value(2).toULongLong());
+            const auto added       = exists.value(0).toULongLong();
+            const auto firstPlayed = exists.value(1).toULongLong();
+            const auto lastPlayed  = exists.value(2).toULongLong();
             const int playCount    = exists.value(3).toInt();
 
             bool changed{false};
@@ -242,7 +240,7 @@ struct TrackDatabase::Private
             if(trackAdded != added) {
                 if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
                     changed = true;
-                    bindings.emplace(QStringLiteral("AddedDate"), QString::number(trackAdded));
+                    bindings.emplace(QStringLiteral("AddedDate"), QVariant::fromValue(trackAdded));
                 }
                 else {
                     track.setAddedTime(added);
@@ -251,7 +249,7 @@ struct TrackDatabase::Private
             if(trackFirstPlayed != firstPlayed) {
                 if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
                     changed = true;
-                    bindings.emplace(QStringLiteral("FirstPlayed"), QString::number(trackFirstPlayed));
+                    bindings.emplace(QStringLiteral("FirstPlayed"), QVariant::fromValue(trackFirstPlayed));
                 }
                 else {
                     track.setFirstPlayed(firstPlayed);
@@ -260,7 +258,7 @@ struct TrackDatabase::Private
             if(trackLastPlayed != lastPlayed) {
                 if(trackLastPlayed > lastPlayed) {
                     changed = true;
-                    bindings.emplace(QStringLiteral("LastPlayed"), QString::number(trackLastPlayed));
+                    bindings.emplace(QStringLiteral("LastPlayed"), QVariant::fromValue(trackLastPlayed));
                 }
                 else {
                     track.setLastPlayed(lastPlayed);
@@ -269,7 +267,7 @@ struct TrackDatabase::Private
             if(trackPlayCount != playCount) {
                 if(trackPlayCount > playCount) {
                     changed = true;
-                    bindings.emplace(QStringLiteral("PlayCount"), QString::number(trackPlayCount));
+                    bindings.emplace(QStringLiteral("PlayCount"), trackPlayCount);
                 }
                 else {
                     track.setPlayCount(playCount);
@@ -287,10 +285,10 @@ struct TrackDatabase::Private
         }
 
         const BindingsMap bindings = {{QStringLiteral("TrackHash"), track.hash()},
-                                      {QStringLiteral("AddedDate"), QString::number(track.addedTime())},
-                                      {QStringLiteral("FirstPlayed"), QString::number(track.firstPlayed())},
-                                      {QStringLiteral("LastPlayed"), QString::number(track.lastPlayed())},
-                                      {QStringLiteral("PlayCount"), QString::number(track.playCount())}};
+                                      {QStringLiteral("AddedDate"), QVariant::fromValue(track.addedTime())},
+                                      {QStringLiteral("FirstPlayed"), QVariant::fromValue(track.firstPlayed())},
+                                      {QStringLiteral("LastPlayed"), QVariant::fromValue(track.lastPlayed())},
+                                      {QStringLiteral("PlayCount"), track.playCount()}};
 
         const auto q = self->insert(QStringLiteral("TrackStats"), bindings,
                                     QStringLiteral("Cannot insert stats for track ") + track.filepath());
@@ -438,7 +436,7 @@ bool TrackDatabase::updateTrack(const Track& track)
     }
 
     auto bindings = trackBindings(track);
-    const auto q  = update(QStringLiteral("Tracks"), bindings, {QStringLiteral("TrackID"), QString::number(track.id())},
+    const auto q  = update(QStringLiteral("Tracks"), bindings, {QStringLiteral("TrackID"), track.id()},
                            QStringLiteral("Cannot update track ") + track.filepath());
 
     return !q.hasError();
@@ -452,7 +450,7 @@ bool TrackDatabase::updateTrackStats(Track& track)
 bool TrackDatabase::deleteTrack(int id)
 {
     const QString queryText = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :trackID;");
-    const auto q            = runQuery(queryText, {{QStringLiteral(":trackID"), QString::number(id)}},
+    const auto q            = runQuery(queryText, {{QStringLiteral(":trackID"), id}},
                                        QStringLiteral("Cannot delete track ") + QString::number(id));
 
     return !q.hasError();
@@ -481,7 +479,7 @@ std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
 {
     auto selectToRemove = runQuery(QStringLiteral("SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID "
                                                   "NOT IN (SELECT TrackID FROM PlaylistTracks);"),
-                                   {{QStringLiteral(":libraryId"), QString::number(libraryId)}},
+                                   {{QStringLiteral(":libraryId"), libraryId}},
                                    QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
 
     if(selectToRemove.hasError()) {
@@ -497,13 +495,12 @@ std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
     auto deleteTracks = runQuery(
         QStringLiteral(
             "DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"),
-        {{QStringLiteral(":libraryId"), QString::number(libraryId)}},
+        {{QStringLiteral(":libraryId"), libraryId}},
         QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
 
     auto updateTracks
         = runQuery(QStringLiteral("UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;"),
-                   {{QStringLiteral(":nonLibraryId"), QStringLiteral("-1")},
-                    {QStringLiteral(":libraryId"), QString::number(libraryId)}},
+                   {{QStringLiteral(":nonLibraryId"), QStringLiteral("-1")}, {QStringLiteral(":libraryId"), libraryId}},
                    QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
 
     return tracksToRemove;

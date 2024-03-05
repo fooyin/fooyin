@@ -26,7 +26,7 @@
 namespace Fooyin {
 class DatabaseQuery;
 
-using BindingsMap = std::map<QString, QString>;
+using BindingsMap = std::map<QString, QVariant>;
 
 class DatabaseModule
 {
@@ -42,8 +42,8 @@ public:
                                          const QString& errorText) const;
 
     DatabaseQuery update(const QString& tableName, const BindingsMap& fieldBindings,
-                         const std::pair<QString, QString>& whereBinding, const QString& errorMessage);
-    DatabaseQuery remove(const QString& tableName, const std::vector<std::pair<QString, QString>>& whereBinding,
+                         const std::pair<QString, QVariant>& whereBinding, const QString& errorMessage);
+    DatabaseQuery remove(const QString& tableName, const std::vector<std::pair<QString, QVariant>>& whereBinding,
                          const QString& errorMessage);
     DatabaseQuery insert(const QString& tableName, const BindingsMap& fieldBindings, const QString& errorMessage);
 

@@ -29,9 +29,9 @@ class DatabaseQuery : public QSqlQuery
 public:
     explicit DatabaseQuery(const DatabaseModule* module);
 
-    explicit DatabaseQuery(QSqlResult* result)                           = delete;
-    explicit DatabaseQuery(const QString& query, const QSqlDatabase& db) = delete;
-    DatabaseQuery(const DatabaseQuery& other)                            = delete;
+    explicit DatabaseQuery(QSqlResult* result)                  = delete;
+    DatabaseQuery(const QString& query, const QSqlDatabase& db) = delete;
+    DatabaseQuery(const DatabaseQuery& other)                   = delete;
 
     DatabaseQuery(DatabaseQuery&& other) noexcept = default;
 

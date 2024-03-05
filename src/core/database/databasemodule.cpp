@@ -140,7 +140,7 @@ void DatabaseModule::runPragma(const QString& pragma, const QString& value) cons
 }
 
 DatabaseQuery DatabaseModule::update(const QString& tableName, const BindingsMap& fieldBindings,
-                                     const std::pair<QString, QString>& whereBinding, const QString& errorMessage)
+                                     const std::pair<QString, QVariant>& whereBinding, const QString& errorMessage)
 {
     auto query = QString{QStringLiteral("UPDATE %1 SET ")}.arg(tableName);
 
@@ -174,7 +174,7 @@ DatabaseQuery DatabaseModule::update(const QString& tableName, const BindingsMap
 }
 
 DatabaseQuery DatabaseModule::remove(const QString& tableName,
-                                     const std::vector<std::pair<QString, QString>>& whereBinding,
+                                     const std::vector<std::pair<QString, QVariant>>& whereBinding,
                                      const QString& errorMessage)
 {
     auto query = QString{QStringLiteral("DELETE FROM %1 WHERE (")}.arg(tableName);
@@ -184,7 +184,7 @@ DatabaseQuery DatabaseModule::remove(const QString& tableName,
         if(!firstIteration) {
             query += QStringLiteral(" AND ");
         }
-        query += field + QStringLiteral(" = ") + binding;
+        query += field + QStringLiteral(" = ") + binding.toString();
         firstIteration = false;
     }
     query += QStringLiteral(");");
