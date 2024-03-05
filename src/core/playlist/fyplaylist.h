@@ -54,6 +54,9 @@ public:
     [[nodiscard]] bool modified() const override;
     [[nodiscard]] bool tracksModified() const override;
 
+    [[nodiscard]] bool isVisible() const override;
+    [[nodiscard]] bool saveToDb() const override;
+
     void scheduleNextIndex(int index) override;
 
     Track nextTrack(int delta, PlayModes mode) override;
@@ -64,6 +67,7 @@ public:
     void changeCurrentTrack(int index) override;
 
 protected:
+    void setId(int id) override;
     void setIndex(int index) override;
     void setName(const QString& name) override;
 

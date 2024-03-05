@@ -41,23 +41,28 @@ public:
     virtual ~Playlist() = default;
 
     /** Returns @c true if this playlist has a valid id, index and name. */
-    virtual bool isValid() const = 0;
+    [[nodiscard]] virtual bool isValid() const = 0;
 
-    virtual int id() const       = 0;
-    virtual int index() const    = 0;
-    virtual QString name() const = 0;
+    [[nodiscard]] virtual int id() const       = 0;
+    [[nodiscard]] virtual int index() const    = 0;
+    [[nodiscard]] virtual QString name() const = 0;
 
-    virtual TrackList tracks() const     = 0;
-    virtual Track track(int index) const = 0;
-    virtual int trackCount() const       = 0;
+    [[nodiscard]] virtual TrackList tracks() const     = 0;
+    [[nodiscard]] virtual Track track(int index) const = 0;
+    [[nodiscard]] virtual int trackCount() const       = 0;
 
-    virtual int currentTrackIndex() const = 0;
-    virtual Track currentTrack() const    = 0;
+    [[nodiscard]] virtual int currentTrackIndex() const = 0;
+    [[nodiscard]] virtual Track currentTrack() const    = 0;
 
     /** Returns @c true if this playlist's index or name have been changed. */
-    virtual bool modified() const = 0;
+    [[nodiscard]] virtual bool modified() const = 0;
     /** Returns @c true if this playlist's tracks have been changed. */
-    virtual bool tracksModified() const = 0;
+    [[nodiscard]] virtual bool tracksModified() const = 0;
+
+    /** Returns @c true if this playlist is visible to other widgets. */
+    [[nodiscard]] virtual bool isVisible() const = 0;
+    /** Returns @c true if this playlist should be saved to db (and restored on startup). */
+    [[nodiscard]] virtual bool saveToDb() const = 0;
 
     /*!
      * Schedules the track to be played after the current track is finished.
@@ -83,6 +88,7 @@ public:
 protected:
     friend class PlaylistHandler;
 
+    virtual void setId(int id)                = 0;
     virtual void setIndex(int index)          = 0;
     virtual void setName(const QString& name) = 0;
 

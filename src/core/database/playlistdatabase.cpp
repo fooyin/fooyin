@@ -138,10 +138,6 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
 
 bool PlaylistDatabase::savePlaylist(Playlist& playlist)
 {
-    if(!playlist.modified() && !playlist.tracksModified()) {
-        return true;
-    }
-
     bool updated{false};
 
     if(playlist.modified()) {

@@ -155,6 +155,16 @@ bool FyPlaylist::tracksModified() const
     return p->tracksModified;
 }
 
+bool FyPlaylist::isVisible() const
+{
+    return true;
+}
+
+bool FyPlaylist::saveToDb() const
+{
+    return true;
+}
+
 void FyPlaylist::scheduleNextIndex(int index)
 {
     if(index >= 0 && index < trackCount()) {
@@ -219,6 +229,11 @@ void FyPlaylist::changeCurrentTrack(int index)
 {
     p->currentTrackIndex = index;
     p->nextTrackIndex    = -1;
+}
+
+void FyPlaylist::setId(int id)
+{
+    p->id = id;
 }
 
 void FyPlaylist::setIndex(int index)

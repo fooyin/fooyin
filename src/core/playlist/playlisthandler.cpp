@@ -80,7 +80,8 @@ struct PlaylistHandler::Private
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self_, const Database* database, PlayerController* playerController_, SettingsManager* settings_)
+    Private(PlaylistHandler* self_, const Database* database, PlayerController* playerController_,
+            SettingsManager* settings_)
         : self{self_}
         , playerController{playerController_}
         , settings{settings_}
@@ -146,7 +147,9 @@ struct PlaylistHandler::Private
     void updateIndices()
     {
         for(int index{0}; auto& playlist : playlists) {
-            playlist->setIndex(index++);
+            if(playlist->isVisible()) {
+                playlist->setIndex(index++);
+            }
         }
     }
 
@@ -250,6 +253,10 @@ PlaylistHandler::~PlaylistHandler()
 
 Playlist* PlaylistHandler::playlistById(int id) const
 {
+    if(id < 0) {
+        return nullptr;
+    }
+
     auto playlist = std::ranges::find_if(p->playlists, [id](const auto& pl) { return pl->id() == id; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
@@ -260,6 +267,10 @@ Playlist* PlaylistHandler::playlistById(int id) const
 
 Playlist* PlaylistHandler::playlistByIndex(int index) const
 {
+    if(index < 0) {
+        return nullptr;
+    }
+
     auto playlist = std::ranges::find_if(p->playlists, [index](const auto& pl) { return pl->index() == index; });
     if(playlist != p->playlists.cend()) {
         return playlist->get();
@@ -281,8 +292,13 @@ Playlist* PlaylistHandler::playlistByName(const QString& name) const
 PlaylistList PlaylistHandler::playlists() const
 {
     PlaylistList playlists;
-    std::ranges::transform(p->playlists, std::back_inserter(playlists),
-                           [](const auto& playlist) { return playlist.get(); });
+
+    for(const auto& playlist : p->playlists) {
+        if(playlist->isVisible()) {
+            playlists.emplace_back(playlist.get());
+        }
+    }
+
     return playlists;
 }
 
@@ -324,6 +340,29 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
     return playlist;
 }
 
+void PlaylistHandler::addPlaylist(Playlist* playlist)
+{
+    if(!playlist) {
+        return;
+    }
+
+    if(p->indexFromName(playlist->name()) >= 0) {
+        return;
+    }
+    if(playlist->isVisible()) {
+        playlist->setIndex(p->nextValidIndex());
+    }
+    if(playlist->saveToDb()) {
+        playlist->setId(p->playlistConnector.insertPlaylist(playlist->name(), playlist->index()));
+    }
+
+    p->playlists.emplace_back(playlist);
+
+    if(playlist->isVisible()) {
+        emit playlistAdded(playlist);
+    }
+}
+
 void PlaylistHandler::appendToPlaylist(int id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
@@ -361,8 +400,10 @@ void PlaylistHandler::clearPlaylistTracks(int id)
 void PlaylistHandler::changePlaylistIndex(int id, int index)
 {
     if(auto* playlist = playlistById(id)) {
-        Utils::move(p->playlists, playlist->index(), index);
-        p->updateIndices();
+        if(playlist->isVisible()) {
+            Utils::move(p->playlists, playlist->index(), index);
+            p->updateIndices();
+        }
     }
 }
 
@@ -466,29 +507,33 @@ void PlaylistHandler::savePlaylists()
 {
     p->updateIndices();
 
-    p->playlistConnector.saveModifiedPlaylists(playlists());
+    PlaylistList playlistsToSave;
 
-    if(p->activePlaylist) {
+    for(const auto& playlist : p->playlists) {
+        if(playlist->saveToDb() && (playlist->modified() || playlist->tracksModified())) {
+            playlistsToSave.emplace_back(playlist.get());
+        }
+    }
+
+    p->playlistConnector.saveModifiedPlaylists(playlistsToSave);
+
+    if(p->activePlaylist && p->activePlaylist->saveToDb()) {
         p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->id());
     }
 }
 
 void PlaylistHandler::savePlaylist(int id)
 {
-    if(!p->validId(id)) {
-        return;
+    if(auto* playlistToSave = playlistById(id)) {
+        p->updateIndices();
+        if(playlistToSave->saveToDb()) {
+            p->playlistConnector.savePlaylist(*playlistById(id));
+        }
     }
-
-    p->updateIndices();
-
-    p->playlistConnector.savePlaylist(*playlistById(id));
 }
 
 void PlaylistHandler::startPlayback(int playlistId)
 {
-    if(!p->validId(playlistId)) {
-        return;
-    }
     if(auto* playlist = playlistById(playlistId)) {
         changeActivePlaylist(playlistId);
         playlist->reset();
@@ -504,8 +549,10 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
     }
 
     for(const auto& playlist : p->playlists) {
-        const TrackList playlistTracks = p->playlistConnector.getPlaylistTracks(*playlist, idTracks);
-        playlist->replaceTracks(playlistTracks);
+        if(playlist->saveToDb()) {
+            const TrackList playlistTracks = p->playlistConnector.getPlaylistTracks(*playlist, idTracks);
+            playlist->replaceTracks(playlistTracks);
+        }
     }
 
     const int lastId = p->settings->value<Settings::Core::ActivePlaylistId>();

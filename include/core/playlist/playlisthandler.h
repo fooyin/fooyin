@@ -55,6 +55,12 @@ public:
     Playlist* createPlaylist(const QString& name);
     /** Returns the playlist called @p name if it exists, otherwise creates it using @p tracks. */
     Playlist* createPlaylist(const QString& name, const TrackList& tracks);
+    /*!
+     * Adds the @p playlist if it doesn't exist, or does nothing.
+     * @note this will take ownership.
+     */
+    void addPlaylist(Playlist* playlist);
+
     /** Adds @p tracks to the end of the playlist with @p id if found. */
     void appendToPlaylist(int id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
