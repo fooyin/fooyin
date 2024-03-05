@@ -1828,19 +1828,19 @@ void PlaylistModel::removeEmptyHeaders()
 
 void PlaylistModel::mergeHeaders()
 {
-    std::queue<PlaylistItem*> headers;
-    headers.emplace(rootItem());
+    std::deque<PlaylistItem*> headers;
+    headers.emplace_back(rootItem());
 
     auto addChildren = [&headers](PlaylistItem* parent) {
         const auto children = parent->children();
         for(PlaylistItem* child : children) {
-            headers.push(child);
+            headers.emplace_back(child);
         }
     };
 
     while(!headers.empty()) {
         const PlaylistItem* parent = headers.front();
-        headers.pop();
+        headers.pop_front();
 
         if(!parent || parent->childCount() < 1) {
             continue;
@@ -1854,7 +1854,7 @@ void PlaylistModel::mergeHeaders()
             PlaylistItem* rightSibling = parent->child(row + 1);
 
             if(leftSibling) {
-                headers.push(leftSibling);
+                headers.emplace_back(leftSibling);
                 addChildren(leftSibling);
             }
 
@@ -1874,8 +1874,10 @@ void PlaylistModel::mergeHeaders()
                 const int targetRow      = leftSibling->childCount();
                 const int lastRow        = rightSibling->childCount() - 1;
 
-                movePlaylistRows(rightIndex, 0, lastRow, leftIndex, targetRow, rightChildren);
-                removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
+                if(movePlaylistRows(rightIndex, 0, lastRow, leftIndex, targetRow, rightChildren)) {
+                    std::erase(headers, rightSibling);
+                    removePlaylistRows(rightSibling->row(), 1, rightIndex.parent());
+                }
             }
             else {
                 ++row;
