@@ -43,6 +43,8 @@ set(SOURCES
     dirbrowser/dirbrowser.h
     dirbrowser/dirproxymodel.cpp
     dirbrowser/dirproxymodel.h
+    dirbrowser/dirtree.cpp
+    dirbrowser/dirtree.h
     info/infodelegate.cpp
     info/infodelegate.h
     info/infomodel.cpp

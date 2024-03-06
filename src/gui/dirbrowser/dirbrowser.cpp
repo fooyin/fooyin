@@ -19,6 +19,7 @@
 
 #include "dirbrowser.h"
 
+#include "dirtree.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 
@@ -49,7 +50,7 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     , m_selectionController{selectionController}
     , m_settings{settings}
     , m_iconProvider{std::make_unique<QFileIconProvider>()}
-    , m_dirTree{new QTreeView(this)}
+    , m_dirTree{new DirTree(this)}
     , m_model{new QFileSystemModel(this)}
     , m_proxyModel{new DirProxyModel(m_iconProvider.get(), this)}
     , m_playlist{nullptr}
@@ -68,13 +69,9 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     m_model->setNameFilters(Track::supportedFileExtensions());
     m_model->setNameFilterDisables(false);
     m_model->setReadOnly(true);
-
     m_model->setIconProvider(m_iconProvider.get());
 
     m_dirTree->setModel(m_proxyModel);
-    m_dirTree->setIndentation(0);
-    m_dirTree->setExpandsOnDoubleClick(false);
-    m_dirTree->setHeaderHidden(true);
 
     QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
     if(rootPath.isEmpty()) {

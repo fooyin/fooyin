@@ -26,13 +26,13 @@
 #include <QFileIconProvider>
 
 class QFileSystemModel;
-class QTreeView;
 
 namespace Fooyin {
 class PlaylistController;
 class SettingsManager;
 class TrackSelectionController;
 class Playlist;
+class DirTree;
 
 class DirBrowser : public FyWidget
 {
@@ -59,7 +59,7 @@ private:
 
     std::unique_ptr<QFileIconProvider> m_iconProvider;
 
-    QTreeView* m_dirTree;
+    DirTree* m_dirTree;
     QFileSystemModel* m_model;
     DirProxyModel* m_proxyModel;
 
