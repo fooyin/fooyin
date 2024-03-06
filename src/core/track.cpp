@@ -124,6 +124,12 @@ bool Track::isInDatabase() const
     return p->id >= 0;
 }
 
+bool Track::metadataWasRead() const
+{
+    // Assume read if basic properties are valid
+    return p->type != Type::Unknown && p->filesize > 0 && p->modifiedTime > 0;
+}
+
 int Track::libraryId() const
 {
     return p->libraryId;
