@@ -31,6 +31,7 @@ DirProxyModel::DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* p
     , m_iconProvider{iconProvider}
     , m_playingState{PlayState::Stopped}
     , m_currentPlayingIndex{-1}
+    , m_showIcons{true}
     , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
     , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
 { }
@@ -107,7 +108,7 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         if(role == Qt::TextAlignmentRole) {
             return Qt::AlignBottom;
         }
-        if(role == Qt::DecorationRole) {
+        if(m_showIcons && role == Qt::DecorationRole) {
             return m_iconProvider->icon(QAbstractFileIconProvider::IconType::Folder);
         }
     }
@@ -123,6 +124,10 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
                     break;
             }
         }
+    }
+
+    if(!m_showIcons && role == Qt::DecorationRole) {
+        return {};
     }
 
     const QModelIndex sourceIndex = mapToSource(proxyIndex);
@@ -194,6 +199,12 @@ QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
 bool DirProxyModel::canGoUp() const
 {
     return !m_goUpPath.isEmpty();
+}
+
+void DirProxyModel::setIconsEnabled(bool enabled)
+{
+    m_showIcons = enabled;
+    emit dataChanged({}, {}, {Qt::DecorationRole});
 }
 
 void DirProxyModel::setPlayState(PlayState state)

@@ -79,7 +79,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                            QStringLiteral("LibraryTree/Appearance"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
     m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
-    m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""),
-                                                              QStringLiteral("DirectoryBrowser/Path"));
+    m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));
+    m_settings->createSetting<Internal::DirBrowserIcons>(true, QStringLiteral("DirectoryBrowser/Icons"));
 }
 } // namespace Fooyin

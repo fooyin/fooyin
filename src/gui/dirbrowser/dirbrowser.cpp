@@ -62,6 +62,7 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     layout->addWidget(m_dirTree);
 
     m_proxyModel->setSourceModel(m_model);
+    m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
 
     m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     m_model->setNameFilters(Track::supportedFileExtensions());
@@ -100,6 +101,9 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
                              m_proxyModel->setPlayingIndex(track.indexInPlaylist);
                          }
                      });
+
+    m_settings->subscribe<Settings::Gui::Internal::DirBrowserIcons>(
+        this, [this](bool enabled) { m_proxyModel->setIconsEnabled(enabled); });
 }
 
 DirBrowser::~DirBrowser()
@@ -121,6 +125,14 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* showIcons = new QAction(tr("Show icons"), menu);
+    showIcons->setCheckable(true);
+    showIcons->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
+    QObject::connect(showIcons, &QAction::triggered, this,
+                     [this](bool checked) { m_settings->set<Settings::Gui::Internal::DirBrowserIcons>(checked); });
+
+    menu->addAction(showIcons);
 
     menu->popup(event->globalPos());
 }

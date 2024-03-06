@@ -61,6 +61,7 @@ public:
 
     [[nodiscard]] bool canGoUp() const;
 
+    void setIconsEnabled(bool enabled);
     void setPlayState(PlayState state);
     void setPlayingIndex(int index);
 
@@ -78,6 +79,8 @@ private:
 
     PlayState m_playingState;
     int m_currentPlayingIndex;
+
+    bool m_showIcons;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
 };
