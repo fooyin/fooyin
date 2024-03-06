@@ -56,6 +56,10 @@
 namespace {
 void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
 {
+    if(first < 0 || last < 0) {
+        return;
+    }
+
     while(first <= last) {
         const QModelIndex child = model->index(first, 0, parent);
         view->expand(child);

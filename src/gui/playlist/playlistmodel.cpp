@@ -907,17 +907,23 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
 {
-    if(fetch) {
-        while(!m_trackIndexes.contains(index) && canFetchMore({})) {
-            fetchMore({});
-        }
+    if(m_trackIndexes.empty()) {
+        return {};
     }
 
-    if(m_trackIndexes.contains(index)) {
-        const QString key = m_trackIndexes.at(index);
-        if(m_nodes.contains(key)) {
-            auto& item = m_nodes.at(key);
-            return {indexOfItem(&item), false};
+    if(index >= 0) {
+        if(fetch) {
+            while(!m_trackIndexes.contains(index) && canFetchMore({})) {
+                fetchMore({});
+            }
+        }
+
+        if(m_trackIndexes.contains(index)) {
+            const QString key = m_trackIndexes.at(index);
+            if(m_nodes.contains(key)) {
+                auto& item = m_nodes.at(key);
+                return {indexOfItem(&item), false};
+            }
         }
     }
 
@@ -1501,7 +1507,7 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
     // Create parents for dropped rows
     for(PlaylistItem* parent : sourceParents) {
         const QModelIndex prevParent = indexOfItem(prevParentItem);
-        PlaylistItem* newParent      = cloneParent(m_nodes, parent);
+        PlaylistItem* newParent      = parent->pending() ? parent : cloneParent(m_nodes, parent);
 
         insertPlaylistRows(prevParent, newParentRow, newParentRow, {newParent});
 
