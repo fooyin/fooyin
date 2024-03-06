@@ -22,6 +22,7 @@
 #include "dirproxymodel.h"
 
 #include <gui/fywidget.h>
+#include <gui/trackselectioncontroller.h>
 
 #include <QFileIconProvider>
 
@@ -30,7 +31,6 @@ class QFileSystemModel;
 namespace Fooyin {
 class PlaylistController;
 class SettingsManager;
-class TrackSelectionController;
 class Playlist;
 class DirTree;
 
@@ -50,7 +50,11 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    void handleAction(TrackAction action);
     void handleDoubleClick(const QModelIndex& index);
+    void handleMiddleClick();
+
+    void startPlayback(const TrackList& tracks, int row);
     void updateDir(const QString& dir);
 
     PlaylistController* m_playlistController;
@@ -65,5 +69,8 @@ private:
 
     Playlist* m_playlist;
     QString m_playlistDir;
+
+    TrackAction m_doubleClickAction;
+    TrackAction m_middleClickAction;
 };
 } // namespace Fooyin

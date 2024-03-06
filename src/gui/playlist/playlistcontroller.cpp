@@ -550,7 +550,7 @@ void PlaylistController::redoPlaylistChanges()
     }
 }
 
-void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls)
+void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls, bool replace)
 {
     const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
     if(filepaths.empty()) {
@@ -560,9 +560,14 @@ void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls)
     TrackList tracks;
     std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
-    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
+    p->scanTracks(tracks, [this, replace](const TrackList& scannedTracks) {
         if(p->currentPlaylist) {
-            p->handler->appendToPlaylist(p->currentPlaylist->id(), scannedTracks);
+            if(replace) {
+                p->handler->replacePlaylistTracks(p->currentPlaylist->id(), scannedTracks);
+            }
+            else {
+                p->handler->appendToPlaylist(p->currentPlaylist->id(), scannedTracks);
+            }
         }
     });
 }
@@ -595,6 +600,27 @@ void PlaylistController::filesToNewPlaylist(const QString& playlistName, const Q
     };
 
     p->scanTracks(tracks, handleScanResult);
+}
+
+void PlaylistController::filesToActivePlaylist(const QList<QUrl>& urls)
+{
+    if(!p->handler->activePlaylist()) {
+        return;
+    }
+
+    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
+    if(filepaths.empty()) {
+        return;
+    }
+
+    TrackList tracks;
+    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
+
+    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
+        if(p->handler->activePlaylist()) {
+            p->handler->appendToPlaylist(p->handler->activePlaylist()->id(), scannedTracks);
+        }
+    });
 }
 
 void PlaylistController::filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func)

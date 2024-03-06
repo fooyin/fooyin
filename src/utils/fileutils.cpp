@@ -114,6 +114,25 @@ QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExte
     return ret;
 }
 
+QList<QUrl> getUrlsInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
+{
+    QList<QUrl> ret;
+    QList<QDir> stack{baseDirectory};
+
+    while(!stack.isEmpty()) {
+        const QDir dir              = stack.takeFirst();
+        const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for(const auto& subDir : subDirs) {
+            stack.append(QDir{subDir.absoluteFilePath()});
+        }
+        const QFileInfoList files = dir.entryInfoList(fileExtensions, QDir::Files);
+        for(const auto& file : files) {
+            ret.append(QUrl::fromLocalFile(file.absoluteFilePath()));
+        }
+    }
+    return ret;
+}
+
 QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions)
 {
     QStringList files;

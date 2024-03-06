@@ -42,6 +42,7 @@
 #include "playlist/playlistwidget.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
+#include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/enginepage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -131,6 +132,7 @@ struct GuiApplication::Private
     PlaylistPresetsPage playlistPresetsPage;
     PlaylistColumnPage playlistColumnPage;
     EnginePage enginePage;
+    DirBrowserPage dirBrowserPage;
     LibraryTreePage libraryTreePage;
     LibraryTreeGuiPage libraryTreeGuiPage;
     StatusWidgetPage statusWidgetPage;
@@ -175,6 +177,7 @@ struct GuiApplication::Private
         , playlistPresetsPage{settingsManager}
         , playlistColumnPage{actionManager, settingsManager}
         , enginePage{settingsManager, engine}
+        , dirBrowserPage{settingsManager}
         , libraryTreePage{actionManager, settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
@@ -381,7 +384,9 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("SelectionInfo"),
-            [this]() { return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get()); },
+            [this]() {
+                return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get());
+            },
             QStringLiteral("Selection Info"));
 
         widgetProvider.registerWidget(
@@ -417,7 +422,7 @@ struct GuiApplication::Private
             QStringLiteral("DirectoryBrowser"),
             [this]() {
                 return new DirBrowser(&selectionController, playlistController.get(), settingsManager,
-                                            mainWindow.get());
+                                      mainWindow.get());
             },
             QStringLiteral("Directory Browser"));
         widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);

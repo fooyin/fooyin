@@ -135,6 +135,8 @@ set(SOURCES
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/dirbrowser/dirbrowserpage.cpp
+    settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymodel.cpp

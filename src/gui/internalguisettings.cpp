@@ -81,5 +81,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
     m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));
     m_settings->createSetting<Internal::DirBrowserIcons>(true, QStringLiteral("DirectoryBrowser/Icons"));
+    m_settings->createSetting<Internal::DirBrowserDoubleClick>(1,
+                                                               QStringLiteral("DirectoryBrowser/DoubleClickBehaviour"));
+    m_settings->createSetting<Internal::DirBrowserMiddleClick>(
+        0, QStringLiteral("DirectoryBrowser/MiddleClickkBehaviour"));
 }
 } // namespace Fooyin
