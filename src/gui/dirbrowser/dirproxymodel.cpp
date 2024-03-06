@@ -23,6 +23,7 @@
 #include <utils/utils.h>
 
 #include <QAbstractFileIconProvider>
+#include <QApplication>
 #include <QFileSystemModel>
 
 namespace Fooyin {
@@ -32,9 +33,12 @@ DirProxyModel::DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* p
     , m_playingState{PlayState::Stopped}
     , m_currentPlayingIndex{-1}
     , m_showIcons{true}
+    , m_playingColour{QApplication::palette().highlight().color()}
     , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
     , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
-{ }
+{
+    m_playingColour.setAlpha(90);
+}
 
 void DirProxyModel::reset(const QModelIndex& root)
 {
@@ -114,6 +118,9 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
     }
 
     if(proxyIndex.row() == m_currentPlayingIndex) {
+        if(role == Qt::BackgroundRole) {
+            return m_playingColour;
+        }
         if(role == Qt::DecorationRole) {
             switch(m_playingState) {
                 case(PlayState::Playing):

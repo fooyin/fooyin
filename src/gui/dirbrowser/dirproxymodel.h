@@ -81,6 +81,7 @@ private:
     int m_currentPlayingIndex;
 
     bool m_showIcons;
+    QColor m_playingColour;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
 };

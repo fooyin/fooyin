@@ -19,6 +19,7 @@
 
 #include "dirbrowser.h"
 
+#include "dirdelegate.h"
 #include "dirtree.h"
 #include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
@@ -73,6 +74,7 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     m_model->setReadOnly(true);
     m_model->setIconProvider(m_iconProvider.get());
 
+    m_dirTree->setItemDelegate(new DirDelegate(this));
     m_dirTree->setModel(m_proxyModel);
 
     QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();

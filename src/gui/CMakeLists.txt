@@ -41,6 +41,8 @@ set(SOURCES
     dialog/propertiesdialog.cpp
     dirbrowser/dirbrowser.cpp
     dirbrowser/dirbrowser.h
+    dirbrowser/dirdelegate.cpp
+    dirbrowser/dirdelegate.h
     dirbrowser/dirproxymodel.cpp
     dirbrowser/dirproxymodel.h
     dirbrowser/dirtree.cpp
