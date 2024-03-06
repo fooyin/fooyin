@@ -442,7 +442,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     std::set<int> trackIndexes;
     int firstIndex{-1};
 
-    const QModelIndexList indexes = playlistView->selectionModel()->selectedIndexes();
+    const QModelIndexList indexes = playlistView->selectionModel()->selectedRows();
 
     for(const QModelIndex& index : indexes) {
         const auto type = index.data(PlaylistItem::Type).toInt();
@@ -494,7 +494,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     const TrackList tracks = getAllTracks(model, {QModelIndex{}});
 
     if(!tracks.empty()) {
-        const QModelIndexList selected = playlistView->selectionModel()->selectedIndexes();
+        const QModelIndexList selected = playlistView->selectionModel()->selectedRows();
         if(!selected.empty()) {
             const int firstIndex           = selected.front().data(PlaylistItem::Role::Index).toInt();
             const TrackList selectedTracks = getAllTracks(model, selected);
@@ -595,7 +595,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
         return;
     }
 
-    const auto selected = playlistView->selectionModel()->selectedIndexes();
+    const auto selected = playlistView->selectionModel()->selectedRows();
 
     QModelIndexList trackSelection;
     std::vector<int> indexes;
