@@ -25,7 +25,7 @@
 
 namespace {
 std::map<int, QPersistentModelIndex> saveQueuedIndexes(Fooyin::PlayerController* playerController,
-                                                       Fooyin::PlaylistModel* model, int playlistId)
+                                                       Fooyin::PlaylistModel* model, const Fooyin::Id& playlistId)
 {
     std::map<int, QPersistentModelIndex> indexes;
 
@@ -67,14 +67,14 @@ void restoreQueuedIndexes(Fooyin::PlayerController* playerController,
 } // namespace
 
 namespace Fooyin {
-PlaylistCommand::PlaylistCommand(PlayerController* playerController, PlaylistModel* model, int playlistId)
+PlaylistCommand::PlaylistCommand(PlayerController* playerController, PlaylistModel* model, const Id& playlistId)
     : QUndoCommand{nullptr}
     , m_playerController{playerController}
     , m_model{model}
     , m_playlistId{playlistId}
 { }
 
-InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, int playlistId, TrackGroups groups)
+InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
 { }
@@ -103,7 +103,7 @@ void InsertTracks::redo()
     m_model->insertTracks(m_trackGroups);
 }
 
-RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, int playlistId, TrackGroups groups)
+RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
 { }
@@ -132,8 +132,7 @@ void RemoveTracks::redo()
     restoreQueuedIndexes(m_playerController, queuedIndexes);
 }
 
-MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, int playlistId,
-                       MoveOperation operation)
+MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, MoveOperation operation)
     : PlaylistCommand{playerController, model, playlistId}
     , m_operation{std::move(operation)}
 { }

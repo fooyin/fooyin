@@ -24,7 +24,7 @@ struct PlaylistScriptRegistry::Private
 {
     PlaylistIndexes playlistQueue;
 
-    int playlistId{0};
+    Id playlistId;
     int trackIndex{0};
 
     using QueueVar = std::function<QString()>;
@@ -82,10 +82,12 @@ PlaylistScriptRegistry::PlaylistScriptRegistry()
 
 PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;
 
-void PlaylistScriptRegistry::setup(int playlistId, const PlaybackQueue& queue)
+void PlaylistScriptRegistry::setup(const Id& playlistId, const PlaybackQueue& queue)
 {
-    p->playlistQueue = queue.indexesForPlaylist(playlistId);
-    p->playlistId    = playlistId;
+    p->playlistId = playlistId;
+    if(playlistId.isValid()) {
+        p->playlistQueue = queue.indexesForPlaylist(playlistId);
+    }
 }
 
 void PlaylistScriptRegistry::setTrackIndex(int index)

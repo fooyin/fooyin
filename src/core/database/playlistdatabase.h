@@ -25,12 +25,19 @@
 #include <core/track.h>
 
 namespace Fooyin {
+struct PlaylistInfo
+{
+    int dbId{-1};
+    QString name;
+    int index{-1};
+};
+
 class PlaylistDatabase : private DatabaseModule
 {
 public:
     explicit PlaylistDatabase(const QString& connectionName);
 
-    std::vector<std::unique_ptr<Playlist>> getAllPlaylists();
+    std::vector<PlaylistInfo> getAllPlaylists();
     TrackList getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
 
     int insertPlaylist(const QString& name, int index);

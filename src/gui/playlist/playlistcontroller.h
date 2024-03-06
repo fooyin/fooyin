@@ -74,15 +74,15 @@ public:
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
-    [[nodiscard]] int currentPlaylistId() const;
+    [[nodiscard]] Id currentPlaylistId() const;
 
     void changeCurrentPlaylist(Playlist* playlist);
-    void changeCurrentPlaylist(int id);
-    void changePlaylistIndex(int playlistId, int index);
+    void changeCurrentPlaylist(const Id& id);
+    void changePlaylistIndex(const Id& playlistId, int index);
     void clearCurrentPlaylist();
 
-    [[nodiscard]] std::optional<PlaylistViewState> playlistState(int playlistId) const;
-    void savePlaylistState(int playlistId, const PlaylistViewState& state);
+    [[nodiscard]] std::optional<PlaylistViewState> playlistState(Playlist* playlist) const;
+    void savePlaylistState(Playlist* playlist, const PlaylistViewState& state);
 
     void addToHistory(QUndoCommand* command);
     [[nodiscard]] bool canUndo() const;

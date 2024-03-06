@@ -96,7 +96,7 @@ public:
     void dequeueTracks(const QueueTracks& tracks);
 
     void replaceTracks(const QueueTracks& tracks);
-    void clearPlaylistQueue(int playlistId);
+    void clearPlaylistQueue(const Id& playlistId);
 
 signals:
     void playStateChanged(PlayState state);

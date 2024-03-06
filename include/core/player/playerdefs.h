@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/track.h>
+#include <utils/id.h>
 
 namespace Fooyin {
 enum class PlayState
@@ -32,12 +33,17 @@ enum class PlayState
 struct PlaylistTrack
 {
     Track track;
-    int playlistId{-1};
+    Id playlistId;
     int indexInPlaylist{-1};
 
-    bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return track.isValid();
+    }
+
+    [[nodiscard]] bool isInPlaylist() const
+    {
+        return playlistId.isValid();
     }
 
     bool operator==(const PlaylistTrack& other) const

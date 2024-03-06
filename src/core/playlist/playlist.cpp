@@ -27,9 +27,16 @@
 #include <set>
 
 namespace Fooyin {
+struct Playlist::PrivateKey
+{
+    PrivateKey() { }
+    PrivateKey(PrivateKey const&) = default;
+};
+
 struct Playlist::Private
 {
-    int id{-1};
+    Id id;
+    int dbId{-1};
     QString name;
     int index{-1};
     TrackList tracks;
@@ -40,12 +47,19 @@ struct Playlist::Private
     int shuffleIndex{-1};
     std::vector<int> shuffleOrder;
 
-    bool isVisible{true};
+    bool isTemporary{false};
     bool modified{false};
     bool tracksModified{false};
 
-    Private(int id_, QString name_, int index_)
-        : id{id_}
+    explicit Private(QString name_)
+        : id{Utils::generateUniqueHash()}
+        , name{std::move(name_)}
+        , isTemporary{true}
+    { }
+
+    Private(int dbId_, QString name_, int index_)
+        : id{Utils::generateUniqueHash()}
+        , dbId{dbId_}
         , name{std::move(name_)}
         , index{index_}
     { }
@@ -88,24 +102,24 @@ struct Playlist::Private
     }
 };
 
-Playlist::Playlist()
-    : Playlist{-1, QStringLiteral(""), -1}
+Playlist::Playlist(PrivateKey /*key*/, QString name)
+    : p{std::make_unique<Private>(std::move(name))}
 { }
 
-Playlist::Playlist(int id, QString name, int index)
-    : p{std::make_unique<Private>(id, name, index)}
+Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index)
+    : p{std::make_unique<Private>(dbId, std::move(name), index)}
 { }
-
-bool Playlist::isValid() const
-{
-    return p->id >= 0 && p->index >= 0 && !p->name.isEmpty();
-}
 
 Playlist::~Playlist() = default;
 
-int Playlist::id() const
+Id Playlist::id() const
 {
     return p->id;
+}
+
+int Playlist::dbId() const
+{
+    return p->dbId;
 }
 
 QString Playlist::name() const
@@ -165,9 +179,9 @@ bool Playlist::tracksModified() const
     return p->tracksModified;
 }
 
-bool Playlist::isVisible() const
+bool Playlist::isTemporary() const
 {
-    return p->isVisible;
+    return p->isTemporary;
 }
 
 void Playlist::scheduleNextIndex(int index)
@@ -235,9 +249,14 @@ void Playlist::resetFlags()
     p->tracksModified = false;
 }
 
-void Playlist::setId(int id)
+std::unique_ptr<Playlist> Playlist::create(const QString& name)
 {
-    p->id = id;
+    return std::make_unique<Playlist>(PrivateKey{}, name);
+}
+
+std::unique_ptr<Playlist> Playlist::create(int dbId, const QString& name, int index)
+{
+    return std::make_unique<Playlist>(PrivateKey{}, dbId, name, index);
 }
 
 void Playlist::setName(const QString& name)
@@ -267,7 +286,7 @@ void Playlist::setTracksModified(bool modified)
 void Playlist::replaceTracks(const TrackList& tracks)
 {
     if(std::exchange(p->tracks, tracks) != tracks) {
-        setTracksModified(true);
+        p->tracksModified = true;
         p->shuffleOrder.clear();
         p->nextTrackIndex = -1;
     }
@@ -280,7 +299,7 @@ void Playlist::appendTracks(const TrackList& tracks)
     }
 
     std::ranges::copy(tracks, std::back_inserter(p->tracks));
-    setTracksModified(true);
+    p->tracksModified = true;
     p->shuffleOrder.clear();
 }
 
@@ -322,7 +341,7 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
         p->nextTrackIndex = -1;
     }
 
-    setTracksModified(true);
+    p->tracksModified = true;
 
     return removedIndexes;
 }
@@ -331,7 +350,7 @@ void Playlist::clear()
 {
     if(!p->tracks.empty()) {
         p->tracks.clear();
-        setTracksModified(true);
+        p->tracksModified = true;
         p->shuffleOrder.clear();
     }
 }

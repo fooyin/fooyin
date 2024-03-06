@@ -41,7 +41,9 @@ public:
     ~PlaylistHandler() override;
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
-    [[nodiscard]] Playlist* playlistById(int id) const;
+    [[nodiscard]] Playlist* playlistById(Id id) const;
+    /** Returns the playlist with the db @p id if it exists, otherwise nullptr. */
+    [[nodiscard]] Playlist* playlistByDbId(int id) const;
     /** Returns the playlist with the @p index if it exists, otherwise nullptr. */
     [[nodiscard]] Playlist* playlistByIndex(int index) const;
     /** Returns the playlist with the @p name if it exists, otherwise nullptr. */
@@ -51,38 +53,39 @@ public:
 
     /** Creates and returns an empty playlist with a default name. */
     Playlist* createEmptyPlaylist();
+    /** Creates and returns an empty hidden playlist with a default name. */
+    Playlist* createTempEmptyPlaylist();
     /** Returns the playlist called @p name if it exists, otherwise creates it. */
     Playlist* createPlaylist(const QString& name);
-    /** Returns the playlist called @p name if it exists, otherwise creates it using @p tracks. */
+    /** Returns the temporary playlist called @p name if it exists, otherwise creates it. */
+    Playlist* createTempPlaylist(const QString& name);
+    /** Returns the playlist called @p name and replaces it's tracks if it exists, otherwise creates it. */
     Playlist* createPlaylist(const QString& name, const TrackList& tracks);
-    /*!
-     * Adds the @p playlist if it doesn't exist, or does nothing.
-     * @note this will take ownership.
-     */
-    void addPlaylist(Playlist* playlist);
+    /** Returns the temporary playlist called @p name and replaces it's tracks if it exists, otherwise creates it. */
+    Playlist* createTempPlaylist(const QString& name, const TrackList& tracks);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
-    void appendToPlaylist(int id, const TrackList& tracks);
+    void appendToPlaylist(Id id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
-    void replacePlaylistTracks(int id, const TrackList& tracks);
+    void replacePlaylistTracks(Id id, const TrackList& tracks);
     /** Removes the tracks at @p indexes of the playlist with @p id if found. */
-    void removePlaylistTracks(int id, const std::vector<int>& indexes);
+    void removePlaylistTracks(Id id, const std::vector<int>& indexes);
     /** Clears all tracks of the playlist with @p id if found. */
-    void clearPlaylistTracks(int id);
+    void clearPlaylistTracks(Id id);
 
-    void changePlaylistIndex(int id, int index);
-    void changeActivePlaylist(int id);
+    void changePlaylistIndex(Id id, int index);
+    void changeActivePlaylist(Id id);
     void changeActivePlaylist(Playlist* playlist);
 
     /** Schedules the playlist with @p id to be played once the current track is finished. */
-    void schedulePlaylist(int id);
+    void schedulePlaylist(Id id);
     /** Schedules @p playlist to be played once the current track is finished. */
     void schedulePlaylist(Playlist* playlist);
     /** Clears any scheduled playlist. */
     void clearSchedulePlaylist();
 
-    void renamePlaylist(int id, const QString& name);
-    void removePlaylist(int id);
+    void renamePlaylist(Id id, const QString& name);
+    void removePlaylist(Id id);
 
     /** Returns the playlist currently being played (nullptr if not playing) */
     [[nodiscard]] Playlist* activePlaylist() const;
@@ -90,12 +93,12 @@ public:
     [[nodiscard]] int playlistCount() const;
 
     /** Changes the active playlist to the playlist with @p playlistId and starts playback. */
-    void startPlayback(int playlistId);
+    void startPlayback(Id id);
     /** Changes the active playlist to @p playlist and starts playback. */
     void startPlayback(Playlist* playlist);
 
     void savePlaylists();
-    void savePlaylist(int id);
+    void savePlaylist(Id id);
 
 signals:
     void playlistsPopulated();

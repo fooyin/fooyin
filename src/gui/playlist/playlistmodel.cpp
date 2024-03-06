@@ -422,7 +422,7 @@ bool dropOnSamePlaylist(QByteArray data, Fooyin::Playlist* playlist)
 
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    int playlistId;
+    Fooyin::Id playlistId;
     stream >> playlistId;
 
     return playlistId == playlist->id();
@@ -437,7 +437,7 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyi
     QModelIndexList result;
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    int playlistId;
+    Fooyin::Id playlistId;
     stream >> playlistId;
 
     if(playlistId != playlist->id()) {

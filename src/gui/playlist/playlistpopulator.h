@@ -24,6 +24,7 @@
 #include "playlistitemmodels.h"
 
 #include <core/trackfwd.h>
+#include <utils/id.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
@@ -39,7 +40,7 @@ using IndexGroupMap   = std::map<int, std::vector<QString>>;
 
 struct PendingData
 {
-    int playlistId{-1};
+    Id playlistId;
     ItemKeyMap items;
     NodeKeyMap nodes;
     std::vector<QString> containerOrder;
@@ -52,7 +53,7 @@ struct PendingData
 
     void clear()
     {
-        playlistId = -1;
+        playlistId = {};
         items.clear();
         nodes.clear();
         containerOrder.clear();
@@ -70,8 +71,8 @@ public:
     explicit PlaylistPopulator(PlayerController* playerController, QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
-    void runTracks(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
+    void runTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                    const std::map<int, TrackList>& tracks);
     void updateHeaders(const ItemList& headers);
 

@@ -126,7 +126,7 @@ struct PlaylistOrganiser::Private
     QAction* newPlaylist;
     Command* newPlaylistCmd;
 
-    int currentPlaylistId{-1};
+    Id currentPlaylistId;
     bool creatingPlaylist{false};
 
     Private(PlaylistOrganiser* self_, ActionManager* actionManager_, PlaylistController* playlistController_,
@@ -194,8 +194,8 @@ struct PlaylistOrganiser::Private
             return;
         }
 
-        auto* playlist       = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
-        const int playlistId = playlist->id();
+        auto* playlist      = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
+        const Id playlistId = playlist->id();
 
         if(std::exchange(currentPlaylistId, playlistId) != playlistId) {
             playlistController->changeCurrentPlaylist(playlist);
@@ -208,7 +208,7 @@ struct PlaylistOrganiser::Private
             return;
         }
 
-        const int playlistId = playlist->id();
+        const Id playlistId = playlist->id();
         if(std::exchange(currentPlaylistId, playlistId) != playlistId) {
             const QModelIndex index = model->indexForPlaylist(playlist);
             if(index.isValid()) {
@@ -279,11 +279,12 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, p->model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(
-        p->playlistController, &PlaylistController::currentPlaylistChanged, this, [this](Playlist* playlist) {
-            QMetaObject::invokeMethod(
-                p->model, [this, playlist]() { p->selectCurrentPlaylist(playlist); }, Qt::QueuedConnection);
-        });
+    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
+                     [this](Playlist* /*prevPlaylist*/, Playlist* playlist) {
+                         QMetaObject::invokeMethod(
+                             p->model, [this, playlist]() { p->selectCurrentPlaylist(playlist); },
+                             Qt::QueuedConnection);
+                     });
 
     if(p->model->restoreModel(p->settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
         const auto state = p->settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();

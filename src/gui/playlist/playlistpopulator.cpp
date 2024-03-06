@@ -342,7 +342,7 @@ PlaylistPopulator::PlaylistPopulator(PlayerController* playerController, QObject
     qRegisterMetaType<PendingData>();
 }
 
-void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+void PlaylistPopulator::run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                             const TrackList& tracks)
 {
     setState(Running);
@@ -363,7 +363,7 @@ void PlaylistPopulator::run(int playlistId, const PlaylistPreset& preset, const 
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(int playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+void PlaylistPopulator::runTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                                   const std::map<int, TrackList>& tracks)
 {
     setState(Running);

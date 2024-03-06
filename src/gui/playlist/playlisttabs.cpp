@@ -93,8 +93,8 @@ struct PlaylistTabs::Private
     {
         if(std::exchange(currentTab, index) != index) {
             tabs->closeEditor();
-            const int id = tabs->tabData(index).toInt();
-            if(id >= 0) {
+            const Id id = tabs->tabData(index).value<Id>();
+            if(id.isValid()) {
                 playlistController->changeCurrentPlaylist(id);
             }
         }
@@ -102,8 +102,8 @@ struct PlaylistTabs::Private
 
     void tabMoved(int /*from*/, int to) const
     {
-        const int id = tabs->tabData(to).toInt();
-        if(id >= 0) {
+        const Id id = tabs->tabData(to).value<Id>();
+        if(id.isValid()) {
             playlistController->changePlaylistIndex(id, to);
         }
     }
@@ -111,10 +111,10 @@ struct PlaylistTabs::Private
     void playlistChanged(const Playlist* playlist)
     {
         const int count = tabs->count();
-        const int id    = playlist->id();
+        const Id id     = playlist->id();
 
-        for(int i = 0; i < count; ++i) {
-            if(tabs->tabData(i).toInt() == id) {
+        for(int i{0}; i < count; ++i) {
+            if(tabs->tabData(i).value<Id>() == id) {
                 tabs->setCurrentIndex(i);
                 currentTab = i;
             }
@@ -125,8 +125,8 @@ struct PlaylistTabs::Private
     {
         const int count = tabs->count();
 
-        for(int i = 0; i < count; ++i) {
-            if(tabs->tabData(i).toInt() == playlist->id()) {
+        for(int i{0}; i < count; ++i) {
+            if(tabs->tabData(i).value<Id>() == playlist->id()) {
                 tabs->setTabText(i, playlist->name());
             }
         }
@@ -145,7 +145,7 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     setupTabs();
 
     QObject::connect(p->tabs, &EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
-        const int id = p->tabs->tabData(index).toInt();
+        const Id id = p->tabs->tabData(index).value<Id>();
         p->playlistHandler->renamePlaylist(id, text);
     });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
@@ -178,7 +178,7 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
 {
     const int index = addNewTab(playlist->name());
     if(index >= 0) {
-        p->tabs->setTabData(index, playlist->id());
+        p->tabs->setTabData(index, QVariant::fromValue(playlist->id()));
         if(playlist->id() == p->playlistController->currentPlaylistId()) {
             p->tabs->setCurrentIndex(index);
         }
@@ -189,7 +189,7 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
 void PlaylistTabs::removePlaylist(const Playlist* playlist)
 {
     for(int i = 0; i < p->tabs->count(); ++i) {
-        if(p->tabs->tabData(i).toInt() == playlist->id()) {
+        if(p->tabs->tabData(i).value<Id>() == playlist->id()) {
             p->tabs->removeTab(i);
         }
     }
@@ -232,7 +232,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     const QPoint point = event->pos();
     const int index    = p->tabs->tabAt(point);
     if(index >= 0) {
-        const int id = p->tabs->tabData(index).toInt();
+        const Id id = p->tabs->tabData(index).value<Id>();
 
         auto* renamePlAction = new QAction(QStringLiteral("Rename Playlist"), menu);
         QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &EditableTabBar::showEditor);

@@ -155,7 +155,7 @@ void PlayerController::changePosition(uint64_t ms)
 
 void PlayerController::changeCurrentTrack(const Track& track)
 {
-    changeCurrentTrack(PlaylistTrack{track});
+    changeCurrentTrack(PlaylistTrack{track, {}});
 }
 
 void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
@@ -213,7 +213,7 @@ PlaylistTrack PlayerController::currentPlaylistTrack() const
 
 void PlayerController::queueTrack(const Track& track)
 {
-    queueTrack(PlaylistTrack{track});
+    queueTrack(PlaylistTrack{track, {}});
 }
 
 void PlayerController::queueTrack(const PlaylistTrack& track)
@@ -239,7 +239,7 @@ void PlayerController::queueTracks(const QueueTracks& tracks)
 
 void PlayerController::dequeueTrack(const Track& track)
 {
-    dequeueTrack(PlaylistTrack{track});
+    dequeueTrack(PlaylistTrack{track, {}});
 }
 
 void PlayerController::dequeueTrack(const PlaylistTrack& track)
@@ -281,7 +281,7 @@ void PlayerController::replaceTracks(const QueueTracks& tracks)
     emit trackQueueChanged(removed, tracks);
 }
 
-void PlayerController::clearPlaylistQueue(int playlistId)
+void PlayerController::clearPlaylistQueue(const Id& playlistId)
 {
     const auto removedTracks = p->queue.removePlaylistTracks(playlistId);
     if(!removedTracks.empty()) {

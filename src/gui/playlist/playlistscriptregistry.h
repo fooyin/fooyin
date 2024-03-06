@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <core/player/playerdefs.h>
 #include <core/player/playbackqueue.h>
+#include <core/player/playerdefs.h>
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
@@ -35,7 +35,7 @@ public:
     using ScriptRegistry::isVariable;
     using ScriptRegistry::value;
 
-    void setup(int playlistId, const PlaybackQueue& queue);
+    void setup(const Id& playlistId, const PlaybackQueue& queue);
     void setTrackIndex(int index);
 
     bool isVariable(const QString& var, const Track& track) const override;
@@ -43,6 +43,6 @@ public:
 
 private:
     struct Private;
-    std::unique_ptr<Private>p;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

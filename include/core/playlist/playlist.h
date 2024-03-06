@@ -22,12 +22,20 @@
 #include "fycore_export.h"
 
 #include <core/trackfwd.h>
+#include <utils/id.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class FYCORE_EXPORT Playlist
+/*!
+ * Represents a list of tracks for playback.
+ * Playlists are saved to the database and restored
+ * on startup unless marked temporary.
+ */
+class FYCORE_EXPORT Playlist final
 {
+    struct PrivateKey;
+
 public:
     enum PlayMode : uint32_t
     {
@@ -41,14 +49,16 @@ public:
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-    Playlist();
-    Playlist(int id, QString name, int index);
+    Playlist(PrivateKey, QString name);
+    Playlist(PrivateKey, int dbId, QString name, int index);
+
+    Playlist(const Playlist&)            = delete;
+    Playlist& operator=(const Playlist&) = delete;
+
     ~Playlist();
 
-    /** Returns @c true if this playlist has a valid id, index and name. */
-    [[nodiscard]] bool isValid() const;
-
-    [[nodiscard]] int id() const;
+    [[nodiscard]] Id id() const;
+    [[nodiscard]] int dbId() const;
     [[nodiscard]] QString name() const;
     [[nodiscard]] int index() const;
 
@@ -63,9 +73,8 @@ public:
     [[nodiscard]] bool modified() const;
     /** Returns @c true if this playlist's tracks have been changed. */
     [[nodiscard]] bool tracksModified() const;
-
-    /** Returns @c true if this playlist is visible. */
-    [[nodiscard]] bool isVisible() const;
+    /** Returns @c true if this playlist does not persist (saved to db). */
+    [[nodiscard]] bool isTemporary() const;
 
     /*!
      * Schedules the track to be played after the current track is finished.
@@ -88,10 +97,12 @@ public:
     /** Resets the modified and tracksModified flags. */
     void resetFlags();
 
-protected:
+private:
     friend class PlaylistHandler;
 
-    void setId(int id);
+    static std::unique_ptr<Playlist> create(const QString& name);
+    static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index);
+
     void setName(const QString& name);
     void setIndex(int index);
 
@@ -105,7 +116,6 @@ protected:
     /** Removes all tracks, including all shuffle order history */
     void clear();
 
-private:
     struct Private;
     std::unique_ptr<Private> p;
 };

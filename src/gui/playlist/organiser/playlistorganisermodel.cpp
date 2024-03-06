@@ -159,7 +159,7 @@ struct PlaylistOrganiserModel::Private
         if(itemType == static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
             int playlistId;
             stream >> playlistId;
-            if(Playlist* playlist = playlistHandler->playlistById(playlistId)) {
+            if(Playlist* playlist = playlistHandler->playlistByDbId(playlistId)) {
                 auto* item = &nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, currParent})
                                   .first->second;
                 currParent->appendChild(item);
@@ -268,7 +268,7 @@ QByteArray PlaylistOrganiserModel::saveModel()
         stream << static_cast<int>(item->type());
 
         if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
-            stream << item->playlist()->id();
+            stream << item->playlist()->dbId();
         }
         else if(item->type() == PlaylistOrganiserItem::GroupItem) {
             stream << item->title();

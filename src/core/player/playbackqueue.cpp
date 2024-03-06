@@ -48,7 +48,7 @@ int PlaybackQueue::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-PlaylistIndexes PlaybackQueue::indexesForPlaylist(int id) const
+PlaylistIndexes PlaybackQueue::indexesForPlaylist(const Id& id) const
 {
     PlaylistIndexes indexes;
 
@@ -94,7 +94,7 @@ QueueTracks PlaybackQueue::removeTracks(const QueueTracks& tracks)
     return removedTracks;
 }
 
-QueueTracks PlaybackQueue::removePlaylistTracks(int playlistId)
+QueueTracks PlaybackQueue::removePlaylistTracks(const Id& playlistId)
 {
     QueueTracks removedTracks;
 

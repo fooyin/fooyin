@@ -41,13 +41,13 @@ public:
     [[nodiscard]] QueueTracks tracks() const;
     [[nodiscard]] PlaylistTrack track(int index) const;
     [[nodiscard]] int trackCount() const;
-    [[nodiscard]] PlaylistIndexes indexesForPlaylist(int id) const;
+    [[nodiscard]] PlaylistIndexes indexesForPlaylist(const Id& id) const;
 
     PlaylistTrack nextTrack();
 
     void addTracks(const QueueTracks& tracks);
     QueueTracks removeTracks(const QueueTracks& tracks);
-    QueueTracks removePlaylistTracks(int playlistId);
+    QueueTracks removePlaylistTracks(const Id& playlistId);
 
     void clear();
 

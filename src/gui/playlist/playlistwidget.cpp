@@ -319,7 +319,7 @@ void PlaylistWidgetPrivate::saveState(Playlist* playlist) const
     const auto state = getState(playlist);
     // Don't save state if still populating model
     if(playlist->trackCount() == 0 || (playlist->trackCount() > 0 && state.topIndex >= 0)) {
-        playlistController->savePlaylistState(playlist->id(), state);
+        playlistController->savePlaylistState(playlist, state);
     }
 }
 
@@ -339,7 +339,7 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
         return;
     }
 
-    const auto state = playlistController->playlistState(playlist->id());
+    const auto state = playlistController->playlistState(playlist);
 
     if(!state) {
         restoreDefaultState();
@@ -518,8 +518,8 @@ void PlaylistWidgetPrivate::queueSelectedTracks() const
         return;
     }
 
-    const auto selected  = playlistView->selectionModel()->selectedRows();
-    const int playlistId = playlistController->currentPlaylist()->id();
+    const auto selected = playlistView->selectionModel()->selectedRows();
+    const Id playlistId = playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
 
@@ -541,8 +541,8 @@ void PlaylistWidgetPrivate::dequeueSelectedTracks() const
         return;
     }
 
-    const auto selected  = playlistView->selectionModel()->selectedRows();
-    const int playlistId = playlistController->currentPlaylist()->id();
+    const auto selected = playlistView->selectionModel()->selectedRows();
+    const Id playlistId = playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
 
@@ -924,7 +924,7 @@ PlaylistWidget::~PlaylistWidget()
     }
 
     if(p->settings->value<Settings::Gui::RememberPlaylistState>()) {
-        p->playlistController->savePlaylistState(p->playlistController->currentPlaylist()->id(),
+        p->playlistController->savePlaylistState(p->playlistController->currentPlaylist(),
                                                  p->getState(p->playlistController->currentPlaylist()));
     }
 }

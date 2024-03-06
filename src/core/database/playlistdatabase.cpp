@@ -67,7 +67,7 @@ Fooyin::TrackList populatePlaylistTracks(Fooyin::DatabaseModule* module, const F
 
     Fooyin::DatabaseQuery q{module};
     q.prepareQuery(query);
-    q.bindQueryValue(QStringLiteral(":playlistId"), playlist.id());
+    q.bindQueryValue(QStringLiteral(":playlistId"), playlist.dbId());
 
     if(!q.execQuery()) {
         q.error(QStringLiteral("Cannot fetch playlist tracks"));
@@ -92,7 +92,7 @@ PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
     : DatabaseModule{connectionName}
 { }
 
-std::vector<std::unique_ptr<Playlist>> PlaylistDatabase::getAllPlaylists()
+std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
     const QString query
         = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
@@ -105,14 +105,16 @@ std::vector<std::unique_ptr<Playlist>> PlaylistDatabase::getAllPlaylists()
         return {};
     }
 
-    std::vector<std::unique_ptr<Playlist>> playlists;
+    std::vector<PlaylistInfo> playlists;
 
     while(q.next()) {
-        const int id       = q.value(0).toInt();
-        const QString name = q.value(1).toString();
-        const int index    = q.value(2).toInt();
+        PlaylistInfo playlist;
 
-        playlists.emplace_back(std::make_unique<Playlist>(id, name, index));
+        playlist.dbId  = q.value(0).toInt();
+        playlist.name  = q.value(1).toString();
+        playlist.index = q.value(2).toInt();
+
+        playlists.emplace_back(playlist);
     }
 
     return playlists;
@@ -141,10 +143,11 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     bool updated{false};
 
     if(playlist.modified()) {
-        const auto q = update(
-            QStringLiteral("Playlists"),
-            {{QStringLiteral("Name"), playlist.name()}, {QStringLiteral("PlaylistIndex"), playlist.index()}},
-            {QStringLiteral("PlaylistID"), playlist.id()}, QStringLiteral("Cannot update playlist ") + playlist.name());
+        const auto q
+            = update(QStringLiteral("Playlists"),
+                     {{QStringLiteral("Name"), playlist.name()}, {QStringLiteral("PlaylistIndex"), playlist.index()}},
+                     {QStringLiteral("PlaylistID"), playlist.dbId()},
+                     QStringLiteral("Cannot update playlist ") + playlist.name());
         updated = !q.hasError();
 
         if(!updated) {
@@ -153,7 +156,7 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     }
 
     if(playlist.tracksModified()) {
-        updated = insertPlaylistTracks(this, playlist.id(), playlist.tracks());
+        updated = insertPlaylistTracks(this, playlist.dbId(), playlist.tracks());
     }
 
     if(updated) {
