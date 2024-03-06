@@ -19,6 +19,8 @@
 
 #include <core/playlist/playlist.h>
 
+#include "tagging/tagreader.h"
+
 #include <core/track.h>
 #include <utils/crypto.h>
 
@@ -63,6 +65,18 @@ struct Playlist::Private
         , name{std::move(name_)}
         , index{index_}
     { }
+
+    void readCurrentTrack()
+    {
+        if(currentTrackIndex < 0 || std::cmp_greater_equal(currentTrackIndex, tracks.size())) {
+            return;
+        }
+
+        Track& track = tracks.at(currentTrackIndex);
+        if(!track.metadataWasRead()) {
+            Tagging::readMetaData(track);
+        }
+    }
 
     void createShuffleOrder()
     {
@@ -236,6 +250,7 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 void Playlist::changeCurrentIndex(int index)
 {
     p->currentTrackIndex = index;
+    p->readCurrentTrack();
 }
 
 void Playlist::reset()
