@@ -180,6 +180,11 @@ void PlaylistWidgetPrivate::setupConnections()
                          expandTree(playlistView, model, parent, first, last);
                      });
 
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this, [this]() {
+        if(!playlistController->currentIsActive()) {
+            model->playingTrackChanged({});
+        }
+    });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksChanged, this,
                      &PlaylistWidgetPrivate::handleTracksChanged);
     QObject::connect(playlistController, &PlaylistController::currentPlaylistQueueChanged, this,

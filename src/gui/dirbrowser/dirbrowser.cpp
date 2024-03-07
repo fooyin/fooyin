@@ -96,7 +96,12 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
 
     QObject::connect(m_playlistController->playerController(), &PlayerController::playStateChanged, this,
                      [this](PlayState state) { m_proxyModel->setPlayState(state); });
-
+    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
+                     [this](Playlist* playlist) {
+                         if(m_playlist && playlist->id() != m_playlist->id()) {
+                             m_proxyModel->setPlayingIndex(-1);
+                         }
+                     });
     QObject::connect(m_playlistController->playerController(), &PlayerController::playlistTrackChanged, this,
                      [this](const PlaylistTrack& track) {
                          if(m_playlist && m_playlist->id() == track.playlistId) {
