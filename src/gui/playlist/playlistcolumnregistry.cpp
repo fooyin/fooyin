@@ -44,7 +44,10 @@ void PlaylistColumnRegistry::loadDefaults()
                     .field = QStringLiteral("[$if2(%albumartist%,%artist%) - ]%album%")});
     addDefaultItem({.id = 3, .index = 3, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
     addDefaultItem({.id = 4, .index = 4, .name = tr("Album"), .field = QStringLiteral("%album%")});
-    addDefaultItem({.id = 5, .index = 5, .name = tr("Playcount"), .field = QStringLiteral("%playcount%")});
+    addDefaultItem({.id    = 5,
+                    .index = 5,
+                    .name  = tr("Playcount"),
+                    .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
     addDefaultItem({.id = 6, .index = 6, .name = tr("Duration"), .field = QStringLiteral("$timems(%duration%)")});
     addDefaultItem({.id = 7, .index = 7, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon)});
 }
