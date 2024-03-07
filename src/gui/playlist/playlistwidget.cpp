@@ -696,24 +696,25 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
             columns.push_back(columnRegistry.itemByName(QStringLiteral("Duration")));
         }
 
-        auto formatColumns = [this]() {
+        auto resetColumns = [this]() {
+            header->resetSectionPositions();
             header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
             header->setHeaderSectionAlignment(0, Qt::AlignCenter);
             header->setHeaderSectionAlignment(4, Qt::AlignRight);
         };
 
         if(std::cmp_equal(header->count(), columns.size())) {
-            formatColumns();
+            resetColumns();
         }
         else {
             QObject::connect(
                 model, &QAbstractItemModel::modelReset, self,
-                [this, formatColumns]() {
+                [this, resetColumns]() {
                     if(!headerState.isEmpty()) {
                         header->restoreHeaderState(headerState);
                     }
                     else {
-                        formatColumns();
+                        resetColumns();
                     }
                 },
                 Qt::SingleShotConnection);
@@ -960,7 +961,7 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
     }
 
     if(!p->singleMode || !p->headerState.isEmpty()) {
-        QByteArray state = !p->headerState.isEmpty() ? p->headerState : p->header->saveHeaderState();
+        QByteArray state = p->singleMode && !p->headerState.isEmpty() ? p->headerState : p->header->saveHeaderState();
         state            = qCompress(state, 9);
         layout[QStringLiteral("HeaderState")] = QString::fromUtf8(state.toBase64());
     }
@@ -1002,15 +1003,16 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             return;
         }
 
-        p->headerState = qUncompress(state);
-    }
+        state = qUncompress(state);
 
-    if(!p->singleMode) {
-        // Workaround to ensure QHeaderView section count is updated before restoring state
-        QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
-                                  Q_ARG(int, 0));
-
-        p->header->restoreHeaderState(p->headerState);
+        if(p->singleMode) {
+            p->headerState = state;
+        }
+        else if(!p->columns.empty()) {
+            QObject::connect(
+                p->model, &QAbstractItemModel::modelReset, this,
+                [this, state]() { p->header->restoreHeaderState(state); }, Qt::SingleShotConnection);
+        }
     }
 }
 

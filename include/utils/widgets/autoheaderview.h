@@ -33,13 +33,14 @@ public:
     ~AutoHeaderView() override;
 
     void resetSections();
+    void resetSectionPositions();
 
     void hideHeaderSection(int logical);
     void showHeaderSection(int logical);
     void setHeaderSectionHidden(int logical, bool hidden);
 
     void setHeaderSectionWidth(int logical, double width);
-    void setHeaderSectionWidths(const std::map<int , double>& widths);
+    void setHeaderSectionWidths(const std::map<int, double>& widths);
     void setHeaderSectionAlignment(int logical, Qt::Alignment alignment);
 
     [[nodiscard]] bool isStretchEnabled() const;

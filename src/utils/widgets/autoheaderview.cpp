@@ -293,6 +293,16 @@ void AutoHeaderView::resetSections()
     }
 }
 
+void AutoHeaderView::resetSectionPositions()
+{
+    const int sectionCount = count();
+
+    for(int section{0}; section < sectionCount; ++section) {
+        setSectionHidden(section, false);
+        moveSection(visualIndex(section), section);
+    }
+}
+
 void AutoHeaderView::hideHeaderSection(int logical)
 {
     const int sectionCount = count();
