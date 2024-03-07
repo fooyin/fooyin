@@ -162,6 +162,7 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(sendNew, &QAction::triggered, this, [this]() { handleAction(TrackAction::SendNewPlaylist); });
 
     menu->addAction(playAction);
+    menu->addSeparator();
     menu->addAction(addCurrent);
     menu->addAction(addActive);
     menu->addAction(sendCurrent);
