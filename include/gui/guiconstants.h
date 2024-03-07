@@ -150,5 +150,6 @@ constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearan
 constexpr auto StatusWidget          = "Fooyin.Page.Widgets.Status";
 constexpr auto Plugins               = "Fooyin.Page.Plugins";
 constexpr auto Shortcuts             = "Fooyin.Page.Shortcuts";
+constexpr auto DirBrowser            = "Fooyin.Page.Widgets.DirBrowser";
 } // namespace Page
 } // namespace Fooyin::Constants

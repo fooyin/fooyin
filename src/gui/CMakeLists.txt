@@ -39,6 +39,14 @@ set(SOURCES
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
     dialog/propertiesdialog.cpp
+    dirbrowser/dirbrowser.cpp
+    dirbrowser/dirbrowser.h
+    dirbrowser/dirdelegate.cpp
+    dirbrowser/dirdelegate.h
+    dirbrowser/dirproxymodel.cpp
+    dirbrowser/dirproxymodel.h
+    dirbrowser/dirtree.cpp
+    dirbrowser/dirtree.h
     info/infodelegate.cpp
     info/infodelegate.h
     info/infomodel.cpp
@@ -129,6 +137,8 @@ set(SOURCES
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/dirbrowser/dirbrowserpage.cpp
+    settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp
     settings/library/librarygeneralpage.h
     settings/library/librarymodel.cpp

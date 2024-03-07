@@ -24,6 +24,7 @@
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
 #include "core/internalcoresettings.h"
+#include "dirbrowser/dirbrowser.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
 #include "librarytree/librarytreewidget.h"
@@ -41,6 +42,7 @@
 #include "playlist/playlistwidget.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
+#include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/enginepage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
@@ -130,6 +132,7 @@ struct GuiApplication::Private
     PlaylistPresetsPage playlistPresetsPage;
     PlaylistColumnPage playlistColumnPage;
     EnginePage enginePage;
+    DirBrowserPage dirBrowserPage;
     LibraryTreePage libraryTreePage;
     LibraryTreeGuiPage libraryTreeGuiPage;
     StatusWidgetPage statusWidgetPage;
@@ -174,6 +177,7 @@ struct GuiApplication::Private
         , playlistPresetsPage{settingsManager}
         , playlistColumnPage{actionManager, settingsManager}
         , enginePage{settingsManager, engine}
+        , dirBrowserPage{settingsManager}
         , libraryTreePage{actionManager, settingsManager}
         , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
@@ -380,7 +384,9 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("SelectionInfo"),
-            [this]() { return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get()); },
+            [this]() {
+                return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get());
+            },
             QStringLiteral("Selection Info"));
 
         widgetProvider.registerWidget(
@@ -411,6 +417,15 @@ struct GuiApplication::Private
             QStringLiteral("SearchBar"),
             [this]() { return new SearchWidget(searchController, settingsManager, mainWindow.get()); },
             QStringLiteral("Search Bar"));
+
+        widgetProvider.registerWidget(
+            QStringLiteral("DirectoryBrowser"),
+            [this]() {
+                return new DirBrowser(&selectionController, playlistController.get(), settingsManager,
+                                      mainWindow.get());
+            },
+            QStringLiteral("Directory Browser"));
+        widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
     }
 
     void createPropertiesTabs()

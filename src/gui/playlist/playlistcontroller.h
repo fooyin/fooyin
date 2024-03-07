@@ -90,8 +90,9 @@ public:
     void undoPlaylistChanges();
     void redoPlaylistChanges();
 
-    void filesToCurrentPlaylist(const QList<QUrl>& urls);
+    void filesToCurrentPlaylist(const QList<QUrl>& urls, bool replace = false);
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls);
+    void filesToActivePlaylist(const QList<QUrl>& urls);
     void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func);
 
 signals:
