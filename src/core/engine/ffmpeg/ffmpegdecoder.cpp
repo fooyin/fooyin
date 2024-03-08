@@ -263,9 +263,15 @@ struct FFmpegDecoder::Private
         auto avFrame     = FramePtr(av_frame_alloc());
         const int result = avcodec_receive_frame(codec.context(), avFrame.get());
 
-        if(result == AVERROR_EOF || result == AVERROR(EAGAIN)) {
+        if(result == AVERROR_EOF) {
             return;
         }
+
+        if(result == AVERROR(EAGAIN)) {
+            readNext();
+            return;
+        }
+
         if(result < 0) {
             qWarning() << "Error receiving decoded frame";
             return;
