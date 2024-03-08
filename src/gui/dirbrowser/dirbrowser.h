@@ -51,6 +51,7 @@ protected:
 
 private:
     void handleAction(TrackAction action);
+    void handlePlayAction(const QString& path);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();
 

@@ -32,7 +32,6 @@ DirProxyModel::DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* p
     : QAbstractProxyModel{parent}
     , m_iconProvider{iconProvider}
     , m_playingState{PlayState::Stopped}
-    , m_currentPlayingIndex{-1}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
@@ -118,7 +117,10 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         }
     }
 
-    if(proxyIndex.row() == m_currentPlayingIndex) {
+    const QModelIndex sourceIndex = mapToSource(proxyIndex);
+    const QString sourcePath      = sourceModel()->data(sourceIndex, QFileSystemModel::FilePathRole).toString();
+
+    if(!m_playingTrackPath.isEmpty() && sourcePath == m_playingTrackPath) {
         if(role == Qt::BackgroundRole) {
             return m_playingColour;
         }
@@ -137,8 +139,6 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
     if(!m_showIcons && role == Qt::DecorationRole) {
         return {};
     }
-
-    const QModelIndex sourceIndex = mapToSource(proxyIndex);
 
     return sourceModel()->data(sourceIndex, role);
 }
@@ -218,18 +218,13 @@ void DirProxyModel::setIconsEnabled(bool enabled)
 void DirProxyModel::setPlayState(PlayState state)
 {
     m_playingState = state;
-    emit dataChanged({}, {}, {Qt::DecorationRole});
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
-void DirProxyModel::setPlayingIndex(int index)
+void DirProxyModel::setPlayingPath(const QString& path)
 {
-    m_currentPlayingIndex = index;
-
-    if(index >= 0 && canGoUp()) {
-        ++m_currentPlayingIndex;
-    }
-
-    emit dataChanged({}, {}, {Qt::DecorationRole});
+    m_playingTrackPath = path;
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
 void DirProxyModel::populate()

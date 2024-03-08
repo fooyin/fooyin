@@ -99,13 +99,13 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
                      [this](Playlist* playlist) {
                          if(m_playlist && playlist->id() != m_playlist->id()) {
-                             m_proxyModel->setPlayingIndex(-1);
+                             m_proxyModel->setPlayingPath({});
                          }
                      });
     QObject::connect(m_playlistController->playerController(), &PlayerController::playlistTrackChanged, this,
                      [this](const PlaylistTrack& track) {
                          if(m_playlist && m_playlist->id() == track.playlistId) {
-                             m_proxyModel->setPlayingIndex(track.indexInPlaylist);
+                             m_proxyModel->setPlayingPath(track.track.filepath());
                          }
                      });
 
@@ -184,7 +184,7 @@ void DirBrowser::handleAction(TrackAction action)
         return;
     }
 
-    int row{-1};
+    QString firstPath;
     QString playlistName;
     QList<QUrl> files;
 
@@ -198,8 +198,8 @@ void DirBrowser::handleAction(TrackAction action)
         }
         else {
             files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
-            if(row < 0) {
-                row = index.row();
+            if(firstPath.isEmpty()) {
+                firstPath = filePath.absoluteFilePath();
             }
         }
     }
@@ -214,14 +214,7 @@ void DirBrowser::handleAction(TrackAction action)
 
     switch(action) {
         case(TrackAction::Play): {
-            const QString currentRoot = QFileInfo{m_model->rootPath()}.absoluteFilePath();
-            const auto rootFiles      = Utils::File::getUrlsInDir(currentRoot, Track::supportedFileExtensions());
-            TrackList tracks;
-            std::ranges::transform(rootFiles, std::back_inserter(tracks),
-                                   [](const QUrl& file) { return Track{file.toLocalFile()}; });
-            const int playRow = row - (m_proxyModel->canGoUp() ? 1 : 0);
-            m_playlistDir     = currentRoot;
-            startPlayback(tracks, playRow);
+            handlePlayAction(firstPath);
             break;
         }
         case(TrackAction::AddCurrentPlaylist):
@@ -240,6 +233,23 @@ void DirBrowser::handleAction(TrackAction action)
         case(TrackAction::Expand):
             break;
     }
+}
+
+void DirBrowser::handlePlayAction(const QString& path)
+{
+    const QString currentRoot = QFileInfo{m_model->rootPath()}.absoluteFilePath();
+    const auto rootFiles      = Utils::File::getUrlsInDir(currentRoot, Track::supportedFileExtensions());
+    TrackList tracks;
+    std::ranges::transform(rootFiles, std::back_inserter(tracks),
+                           [](const QUrl& file) { return Track{file.toLocalFile()}; });
+    int playRow{0};
+    auto rowIt
+        = std::ranges::find_if(std::as_const(tracks), [&path](const Track& track) { return track.filepath() == path; });
+    if(rowIt != tracks.cend()) {
+        playRow = static_cast<int>(std::distance(tracks.cbegin(), rowIt));
+    }
+    m_playlistDir = currentRoot;
+    startPlayback(tracks, playRow);
 }
 
 void DirBrowser::handleDoubleClick(const QModelIndex& index)
@@ -282,10 +292,10 @@ void DirBrowser::updateDir(const QString& dir)
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
 
     if(dir != m_playlistDir) {
-        m_proxyModel->setPlayingIndex(-1);
+        m_proxyModel->setPlayingPath({});
     }
     else if(m_playlist) {
-        m_proxyModel->setPlayingIndex(m_playlist->currentTrackIndex());
+        m_proxyModel->setPlayingPath(m_playlist->currentTrack().filepath());
     }
 }
 } // namespace Fooyin

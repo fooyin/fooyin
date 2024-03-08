@@ -63,7 +63,7 @@ public:
 
     void setIconsEnabled(bool enabled);
     void setPlayState(PlayState state);
-    void setPlayingIndex(int index);
+    void setPlayingPath(const QString& path);
 
 private:
     void populate();
@@ -78,7 +78,7 @@ private:
     std::vector<std::unique_ptr<DirNode>> m_nodes;
 
     PlayState m_playingState;
-    int m_currentPlayingIndex;
+    QString m_playingTrackPath;
 
     bool m_showIcons;
     QColor m_playingColour;
