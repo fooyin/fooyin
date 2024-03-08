@@ -31,10 +31,26 @@ QString num(const QStringList& vec)
     if(vec.empty() || count > 2) {
         return {};
     }
+
+    bool isInt{false};
+    const int number = vec.at(0).toInt(&isInt);
+
+    if(!isInt) {
+        return {};
+    }
+
     if(count == 1) {
         return vec.at(0);
     }
-    return Utils::addLeadingZero(vec.at(0).toInt(), vec.at(1).toInt());
+
+    isInt            = false;
+    const int prefix = vec.at(1).toInt(&isInt);
+
+    if(!isInt) {
+        return vec.at(0);
+    }
+
+    return Utils::addLeadingZero(number, prefix);
 }
 
 QString replace(const QStringList& vec)
