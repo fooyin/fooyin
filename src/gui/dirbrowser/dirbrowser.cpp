@@ -92,6 +92,8 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
 
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
 
+    updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+
     QObject::connect(m_dirTree, &QTreeView::doubleClicked, this, &DirBrowser::handleDoubleClick);
     QObject::connect(m_dirTree, &DirTree::middleClicked, this, &DirBrowser::handleMiddleClick);
 
@@ -119,6 +121,7 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
 
     m_settings->subscribe<Settings::Gui::Internal::DirBrowserIcons>(
         this, [this](bool enabled) { m_proxyModel->setIconsEnabled(enabled); });
+    m_settings->subscribe<Settings::Gui::Internal::DirBrowserListIndent>(this, &DirBrowser::updateIndent);
     settings->subscribe<Settings::Gui::Internal::DirBrowserDoubleClick>(
         this, [this](int action) { m_doubleClickAction = static_cast<TrackAction>(action); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserMiddleClick>(
@@ -280,6 +283,16 @@ void DirBrowser::handleDoubleClick(const QModelIndex& index)
 void DirBrowser::handleMiddleClick()
 {
     handleAction(m_middleClickAction);
+}
+
+void DirBrowser::updateIndent(bool show)
+{
+    if(show) {
+        m_dirTree->resetIndentation();
+    }
+    else {
+        m_dirTree->setIndentation(0);
+    }
 }
 
 void DirBrowser::startPlayback(const TrackList& tracks, int row)

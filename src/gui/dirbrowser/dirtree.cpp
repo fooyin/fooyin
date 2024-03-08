@@ -31,7 +31,6 @@ DirTree::DirTree(QWidget* parent)
     setDragDropMode(QAbstractItemView::DragOnly);
     setDefaultDropAction(Qt::CopyAction);
     setDropIndicatorShown(true);
-    setIndentation(0);
     setExpandsOnDoubleClick(false);
     setHeaderHidden(true);
     setTextElideMode(Qt::ElideRight);

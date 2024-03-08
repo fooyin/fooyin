@@ -55,6 +55,8 @@ private:
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();
 
+    void updateIndent(bool show);
+
     void startPlayback(const TrackList& tracks, int row);
     void updateDir(const QString& dir);
 

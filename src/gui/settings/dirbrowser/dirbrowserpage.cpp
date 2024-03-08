@@ -52,6 +52,7 @@ private:
     SettingsManager* m_settings;
 
     QCheckBox* m_showIcons;
+    QCheckBox* m_indentList;
 
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
@@ -60,6 +61,7 @@ private:
 DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_showIcons{new QCheckBox(tr("Show icons"), this)}
+    , m_indentList{new QCheckBox(tr("Show indent"), this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
 {
@@ -76,7 +78,8 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_showIcons, 0, 0, 1, 3);
-    mainLayout->addWidget(clickBehaviour, 1, 0);
+    mainLayout->addWidget(m_indentList, 1, 0, 1, 3);
+    mainLayout->addWidget(clickBehaviour, 2, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     using ActionIndexMap = std::map<int, int>;
@@ -115,6 +118,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
 void DirBrowserPageWidget::load()
 {
     m_showIcons->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
+    m_indentList->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
 }
 
 void DirBrowserPageWidget::apply()
@@ -122,6 +126,7 @@ void DirBrowserPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::DirBrowserDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::DirBrowserMiddleClick>(m_middleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::DirBrowserIcons>(m_showIcons->isChecked());
+    m_settings->set<Settings::Gui::Internal::DirBrowserListIndent>(m_indentList->isChecked());
 }
 
 void DirBrowserPageWidget::reset()
@@ -129,6 +134,7 @@ void DirBrowserPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::DirBrowserDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserMiddleClick>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserIcons>();
+    m_settings->reset<Settings::Gui::Internal::DirBrowserListIndent>();
 }
 
 DirBrowserPage::DirBrowserPage(SettingsManager* settings)
