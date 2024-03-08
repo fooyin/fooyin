@@ -162,9 +162,14 @@ struct ScriptParser::Private
         const QString var   = std::get<QString>(exp.value);
         ScriptResult result = registry->value(var, tracks);
 
+        if(!result.cond) {
+            return {};
+        }
+
         if(result.value.contains(u"\037")) {
             result.value = result.value.replace(QStringLiteral("\037"), QStringLiteral(", "));
         }
+
         return result;
     }
 
