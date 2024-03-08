@@ -278,6 +278,8 @@ struct GuiApplication::Private
                 QIcon::setThemeName(QString::fromLatin1(Constants::DarkIconTheme));
                 break;
         }
+
+        QIcon::setFallbackThemeName(settingsManager->value<SystemIconTheme>());
     }
 
     void registerLayouts()
