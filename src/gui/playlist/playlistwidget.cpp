@@ -151,8 +151,6 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     setHeaderHidden(!settings->value<PlaylistHeader>());
     setScrollbarHidden(settings->value<PlaylistScrollBar>());
 
-    changePreset(presetRegistry.itemById(settings->value<PlaylistCurrentPreset>()));
-
     setupConnections();
     setupActions();
 
@@ -999,8 +997,6 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         }
     }
 
-    p->resetModel();
-
     if(layout.contains(QStringLiteral("HeaderState"))) {
         auto state = QByteArray::fromBase64(layout.value(QStringLiteral("HeaderState")).toString().toUtf8());
 
@@ -1008,24 +1004,23 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             return;
         }
 
-        state = qUncompress(state);
-
-        if(p->singleMode) {
-            p->headerState = state;
-        }
-        else if(!p->columns.empty()) {
-            QObject::connect(
-                p->model, &QAbstractItemModel::modelReset, this,
-                [this, state]() { p->header->restoreHeaderState(state); }, Qt::SingleShotConnection);
-        }
+        p->headerState = qUncompress(state);
     }
 }
 
 void PlaylistWidget::finalise()
 {
-    if(!p->singleMode && p->columns.empty()) {
-        p->headerState.clear();
-        p->setSingleMode(false);
+    p->currentPreset = p->presetRegistry.itemById(p->settings->value<PlaylistCurrentPreset>());
+
+    if(!p->singleMode) {
+        if(!p->columns.empty() && !p->headerState.isEmpty()) {
+            QObject::connect(
+                p->model, &QAbstractItemModel::modelReset, this,
+                [this]() { p->header->restoreHeaderState(p->headerState); }, Qt::SingleShotConnection);
+        }
+        if(p->columns.empty()) {
+            p->setSingleMode(false);
+        }
     }
 
     p->header->setSectionsClickable(!p->singleMode);
