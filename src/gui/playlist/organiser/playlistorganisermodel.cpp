@@ -202,12 +202,15 @@ struct PlaylistOrganiserModel::Private
             }
         }
 
+        const QString title = node->title();
+
         if(node->type() == PlaylistOrganiserItem::GroupItem) {
-            nodes.erase(groupKey(node->title()));
+            nodes.erase(groupKey(title));
         }
         else if(node->type() == PlaylistOrganiserItem::PlaylistItem) {
-            nodes.erase(playlistKey(node->title()));
-            playlistHandler->removePlaylist(node->playlist()->id());
+            const Id id = node->playlist()->id();
+            nodes.erase(playlistKey(title));
+            playlistHandler->removePlaylist(id);
         }
     }
 };
@@ -603,9 +606,9 @@ void PlaylistOrganiserModel::removeItems(const QModelIndexList& indexes)
 
     const auto indexGroups = determineTrackIndexGroups(indexes);
 
-    for(const auto& group : indexGroups) {
-        const auto children = std::views::transform(std::as_const(group),
-                                                    [this](const QModelIndex& index) { return itemForIndex(index); });
+    for(const auto& group : indexGroups | std::views::reverse) {
+        const auto children
+            = std::views::transform(group, [this](const QModelIndex& index) { return itemForIndex(index); });
 
         const QModelIndex parent = group.constFirst().parent();
         auto* parentItem         = children.front()->parent();
@@ -615,15 +618,12 @@ void PlaylistOrganiserModel::removeItems(const QModelIndexList& indexes)
 
         beginRemoveRows(parent, firstRow, lastRow);
         while(lastRow >= firstRow) {
+            p->deleteNodes(itemForIndex(index(lastRow, 0, parent)));
             parentItem->removeChild(lastRow);
             --lastRow;
         }
         parentItem->resetChildren();
         endRemoveRows();
-
-        for(auto* child : children) {
-            p->deleteNodes(child);
-        }
     }
 }
 } // namespace Fooyin
