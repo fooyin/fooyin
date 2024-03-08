@@ -19,6 +19,8 @@
 
 #include "dirtree.h"
 
+#include <QMouseEvent>
+
 namespace Fooyin {
 DirTree::DirTree(QWidget* parent)
     : QTreeView{parent}

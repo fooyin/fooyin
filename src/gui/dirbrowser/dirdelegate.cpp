@@ -20,6 +20,7 @@
 #include "dirdelegate.h"
 
 #include <QApplication>
+#include <QPainter>
 
 namespace Fooyin {
 void DirDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const

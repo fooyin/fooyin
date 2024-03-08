@@ -25,6 +25,7 @@
 #include <QAbstractFileIconProvider>
 #include <QApplication>
 #include <QFileSystemModel>
+#include <QPalette>
 
 namespace Fooyin {
 DirProxyModel::DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* parent)
