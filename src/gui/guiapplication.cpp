@@ -302,6 +302,13 @@ struct GuiApplication::Private
             "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},
             {"PlaylistOrganiser":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAwAD/////AQAAAAIA",
             "Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
+
+        layoutProvider.registerLayout(
+            R"({"Browser":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcgAABRoAAAA2AAAAGAD/////AQAAAAEA",
+            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==x","Widgets":[{"DirectoryBrowser":{}},
+            {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
     }
 
     void registerWidgets()
