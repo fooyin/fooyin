@@ -148,6 +148,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::ModifiedTime)] = &Track::modifiedTime;
         metadata[QString::fromLatin1(MetaData::FilePath)]     = &Track::filepath;
         metadata[QString::fromLatin1(MetaData::RelativePath)] = &Track::relativePath;
+        metadata[QString::fromLatin1(MetaData::FileName)]     = &Track::filename;
 
         setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
         setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);

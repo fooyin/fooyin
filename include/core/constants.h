@@ -47,5 +47,6 @@ constexpr auto AddedTime    = "addedtime";
 constexpr auto ModifiedTime = "modifiedtime";
 constexpr auto FilePath     = "filepath";
 constexpr auto RelativePath = "relativepath";
+constexpr auto FileName     = "filename";
 } // namespace MetaData
 } // namespace Fooyin::Constants
