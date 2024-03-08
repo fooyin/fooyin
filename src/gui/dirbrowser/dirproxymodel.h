@@ -42,7 +42,7 @@ class DirProxyModel : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    explicit DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* parent = nullptr);
+    explicit DirProxyModel(QObject* parent = nullptr);
 
     void reset(const QModelIndex& root);
 

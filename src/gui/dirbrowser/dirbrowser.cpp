@@ -53,7 +53,7 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     , m_iconProvider{std::make_unique<QFileIconProvider>()}
     , m_dirTree{new DirTree(this)}
     , m_model{new QFileSystemModel(this)}
-    , m_proxyModel{new DirProxyModel(m_iconProvider.get(), this)}
+    , m_proxyModel{new DirProxyModel(this)}
     , m_playlist{nullptr}
     , m_doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
@@ -65,14 +65,22 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
 
     layout->addWidget(m_dirTree);
 
-    m_proxyModel->setSourceModel(m_model);
-    m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
+    {
+        auto* iconProvider = m_model->iconProvider();
+        if(!iconProvider || iconProvider->icon(QFileIconProvider::Folder).isNull()
+           || iconProvider->icon(QFileIconProvider::File).isNull()) {
+            m_iconProvider = std::make_unique<QFileIconProvider>();
+            m_model->setIconProvider(m_iconProvider.get());
+        }
+    }
 
     m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     m_model->setNameFilters(Track::supportedFileExtensions());
     m_model->setNameFilterDisables(false);
     m_model->setReadOnly(true);
-    m_model->setIconProvider(m_iconProvider.get());
+
+    m_proxyModel->setSourceModel(m_model);
+    m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
 
     m_dirTree->setItemDelegate(new DirDelegate(this));
     m_dirTree->setModel(m_proxyModel);

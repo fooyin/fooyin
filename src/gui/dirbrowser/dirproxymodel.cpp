@@ -28,9 +28,8 @@
 #include <QPalette>
 
 namespace Fooyin {
-DirProxyModel::DirProxyModel(QAbstractFileIconProvider* iconProvider, QObject* parent)
+DirProxyModel::DirProxyModel(QObject* parent)
     : QAbstractProxyModel{parent}
-    , m_iconProvider{iconProvider}
     , m_playingState{PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
@@ -66,9 +65,8 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
         disconnect(sourceModel(), nullptr, this, nullptr);
     }
 
-    if(!qobject_cast<QFileSystemModel*>(model)) {
-        qDebug() << "sourceModel expected be of type QFileSystemModel";
-        return;
+    if(auto* fileModel = qobject_cast<QFileSystemModel*>(model)) {
+        m_iconProvider = fileModel->iconProvider();
     }
 
     QAbstractProxyModel::setSourceModel(model);
