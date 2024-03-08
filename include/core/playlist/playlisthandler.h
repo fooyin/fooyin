@@ -41,7 +41,7 @@ public:
     ~PlaylistHandler() override;
 
     /** Returns the playlist with the @p id if it exists, otherwise nullptr. */
-    [[nodiscard]] Playlist* playlistById(Id id) const;
+    [[nodiscard]] Playlist* playlistById(const Id& id) const;
     /** Returns the playlist with the db @p id if it exists, otherwise nullptr. */
     [[nodiscard]] Playlist* playlistByDbId(int id) const;
     /** Returns the playlist with the @p index if it exists, otherwise nullptr. */
@@ -65,27 +65,27 @@ public:
     Playlist* createTempPlaylist(const QString& name, const TrackList& tracks);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
-    void appendToPlaylist(Id id, const TrackList& tracks);
+    void appendToPlaylist(const Id& id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
-    void replacePlaylistTracks(Id id, const TrackList& tracks);
+    void replacePlaylistTracks(const Id& id, const TrackList& tracks);
     /** Removes the tracks at @p indexes of the playlist with @p id if found. */
-    void removePlaylistTracks(Id id, const std::vector<int>& indexes);
+    void removePlaylistTracks(const Id& id, const std::vector<int>& indexes);
     /** Clears all tracks of the playlist with @p id if found. */
-    void clearPlaylistTracks(Id id);
+    void clearPlaylistTracks(const Id& id);
 
-    void changePlaylistIndex(Id id, int index);
-    void changeActivePlaylist(Id id);
+    void changePlaylistIndex(const Id& id, int index);
+    void changeActivePlaylist(const Id& id);
     void changeActivePlaylist(Playlist* playlist);
 
     /** Schedules the playlist with @p id to be played once the current track is finished. */
-    void schedulePlaylist(Id id);
+    void schedulePlaylist(const Id& id);
     /** Schedules @p playlist to be played once the current track is finished. */
     void schedulePlaylist(Playlist* playlist);
     /** Clears any scheduled playlist. */
     void clearSchedulePlaylist();
 
-    void renamePlaylist(Id id, const QString& name);
-    void removePlaylist(Id id);
+    void renamePlaylist(const Id& id, const QString& name);
+    void removePlaylist(const Id& id);
 
     /** Returns the playlist currently being played (nullptr if not playing) */
     [[nodiscard]] Playlist* activePlaylist() const;
@@ -93,12 +93,12 @@ public:
     [[nodiscard]] int playlistCount() const;
 
     /** Changes the active playlist to the playlist with @p playlistId and starts playback. */
-    void startPlayback(Id id);
+    void startPlayback(const Id& id);
     /** Changes the active playlist to @p playlist and starts playback. */
     void startPlayback(Playlist* playlist);
 
     void savePlaylists();
-    void savePlaylist(Id id);
+    void savePlaylist(const Id& id);
 
 signals:
     void playlistsPopulated();
