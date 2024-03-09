@@ -47,12 +47,12 @@ struct CoverWidget::Private
         , coverProvider{new CoverProvider(self)}
         , coverLabel{new QLabel(self)}
     {
-        coverLabel->setMinimumSize(100, 100);
-    }
+        auto* layout = new QVBoxLayout(self);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setAlignment(Qt::AlignCenter);
+        layout->addWidget(coverLabel);
 
-    void loadDefaultCover()
-    {
-        cover.load(QString::fromLatin1(Fooyin::Constants::NoCover));
+        coverLabel->setMinimumSize(100, 100);
     }
 
     void rescaleCover() const
@@ -64,16 +64,7 @@ struct CoverWidget::Private
 
     void reloadCover(const Track& track)
     {
-        if(track.isValid() && track.hasCover()) {
-            cover = coverProvider->trackCover(track);
-            if(cover.isNull()) {
-                loadDefaultCover();
-            }
-        }
-        else {
-            loadDefaultCover();
-        }
-
+        cover = coverProvider->trackCover(track);
         rescaleCover();
     }
 };
@@ -84,15 +75,11 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
 {
     setObjectName(CoverWidget::name());
 
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setAlignment(Qt::AlignCenter);
-    layout->addWidget(p->coverLabel);
-
     QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { p->reloadCover(track); });
-    QObject::connect(p->coverProvider, &CoverProvider::coverAdded, this,
-                     [this](const Track& track) { p->reloadCover(track); });
+    QObject::connect(
+        p->coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) { p->reloadCover(track); },
+        Qt::QueuedConnection);
 
     p->reloadCover(p->playerController->currentTrack());
 }
