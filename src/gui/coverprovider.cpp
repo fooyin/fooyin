@@ -110,7 +110,7 @@ struct CoverProvider::Private
         : self{self_}
     { }
 
-    QCoro::Task<void> fetchCover(QString key, Fooyin::Track track, QSize size, bool saveToDisk)
+    QCoro::Task<void> fetchCover(QString key, Track track, QSize size, bool saveToDisk)
     {
         QPixmap cover;
 
@@ -139,8 +139,7 @@ struct CoverProvider::Private
         }
 
         pendingCovers.erase(key);
-        QMetaObject::invokeMethod(self, "coverAdded", Q_ARG(Fooyin::Track, track));
-        co_return;
+        QMetaObject::invokeMethod(self, "coverAdded", Q_ARG(Track, track));
     }
 };
 
@@ -153,7 +152,7 @@ CoverProvider::~CoverProvider() = default;
 
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
 {
-    if(!track.hasCover()) {
+    if(!track.isValid() || !track.hasCover()) {
         return loadNoCover(size);
     }
 
