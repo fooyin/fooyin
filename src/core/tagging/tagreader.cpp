@@ -605,17 +605,26 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
     return {};
 }
 
-QString coverInDirectory(const QString& directory)
+QString coverInDirectory(const QString& filepath)
 {
-    static const QStringList CoverFileTypes{QStringLiteral("*.jpg"), QStringLiteral("*.jpeg"), QStringLiteral("*.png"),
+    if(filepath.isEmpty()) {
+        return {};
+    }
+
+    static const QStringList coverFileTypes{QStringLiteral("*.jpg"), QStringLiteral("*.jpeg"), QStringLiteral("*.png"),
                                             QStringLiteral("*.gif"), QStringLiteral("*.tiff"), QStringLiteral("*.bmp")};
 
-    const QDir baseDirectory{directory};
-    const QStringList fileList = baseDirectory.entryList(CoverFileTypes, QDir::Files);
+    const QFileInfo file{filepath};
+    const QString basePath = file.isDir() ? file.absoluteFilePath() : file.path();
+
+    const QDir baseDirectory{basePath};
+    const QStringList fileList = baseDirectory.entryList(coverFileTypes, QDir::Files);
+
     if(!fileList.isEmpty()) {
         // Use first image found as album cover
         return baseDirectory.absolutePath() + QStringLiteral("/") + fileList.constFirst();
     }
+
     return {};
 }
 
