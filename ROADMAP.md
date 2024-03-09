@@ -8,7 +8,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * ReplayGain support
 * ~~Playback queue~~
 * Query-based language for searching/filtering
-* Album artwork features - downloading and storing in metadata
+* Album artwork features - downloading, storing in metadata/on disk
 * Lyric support - embedded and LRC (including enhanced LRC)
 * Audio conversion
 * Renaming/Copying/Moving files on disk
@@ -22,7 +22,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 
 ## Widgets
 
-* Directory browser
+* ~~Directory browser~~
 * Waveform seekbar
 * Musical spectrum
 * VU meter
