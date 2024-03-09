@@ -216,6 +216,11 @@ void DirProxyModel::setIconsEnabled(bool enabled)
 void DirProxyModel::setPlayState(PlayState state)
 {
     m_playingState = state;
+
+    if(state == PlayState::Stopped) {
+        m_playingTrackPath.clear();
+    }
+
     emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
