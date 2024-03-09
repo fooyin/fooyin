@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <QItemSelection>
 
-class QVBoxLayout;
 class QListView;
 class QPushButton;
 
@@ -42,13 +41,11 @@ signals:
     void layoutChanged(const Layout& layout);
 
 protected:
-    void setupUi();
-    void changeLayout(const QItemSelection& selected, const QItemSelection& deselected);
-
     void showEvent(QShowEvent* event) override;
 
 private:
-    QVBoxLayout* m_layout;
+    void changeLayout(const QItemSelection& selected, const QItemSelection& deselected);
+
     QListView* m_layoutList;
     QuickSetupModel* m_model;
     QPushButton* m_accept;

@@ -31,7 +31,6 @@
 namespace Fooyin {
 QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent)
     : QDialog{parent}
-    , m_layout{new QVBoxLayout(this)}
     , m_layoutList{new QListView(this)}
     , m_model{new QuickSetupModel(layoutProvider, parent)}
     , m_accept{new QPushButton(tr("OK"), this)}
@@ -39,19 +38,17 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
     setObjectName(QStringLiteral("Quick Setup"));
     setWindowTitle(tr("Quick Setup"));
 
-    setupUi();
+    auto* layout = new QVBoxLayout(this);
+
+    m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
     m_layoutList->setModel(m_model);
+
+    layout->addWidget(m_layoutList);
+    layout->addWidget(m_accept);
 
     QObject::connect(m_layoutList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &QuickSetupDialog::changeLayout);
     QObject::connect(m_accept, &QPushButton::pressed, this, &QuickSetupDialog::close);
-}
-
-void QuickSetupDialog::setupUi()
-{
-    m_layoutList->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_layout->addWidget(m_layoutList);
-    m_layout->addWidget(m_accept);
 }
 
 void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemSelection& /*deselected*/)
@@ -59,17 +56,29 @@ void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemS
     if(selected.isEmpty()) {
         return;
     }
-    const auto layout = selected.indexes().constFirst().data(QuickSetupModel::Layout).value<Layout>();
+
+    const auto indexes = selected.indexes();
+
+    if(indexes.isEmpty() || !indexes.constFirst().isValid()) {
+        return;
+    }
+
+    const auto layout = indexes.constFirst().data(QuickSetupModel::Layout).value<Layout>();
+
     emit layoutChanged(layout);
 }
 
 void QuickSetupDialog::showEvent(QShowEvent* event)
 {
     // Centre to parent widget
-    const QRect parentRect{parentWidget()->mapToGlobal(QPoint(0, 0)), parentWidget()->size()};
+    const QRect parentRect{parentWidget()->mapToGlobal(QPoint{0, 0}), parentWidget()->size()};
     move(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), parentRect).topLeft());
 
     QDialog::showEvent(event);
+
+    QSize size = sizeHint();
+    size.setHeight(static_cast<int>(size.height() * 1.2));
+    resize(size);
 }
 } // namespace Fooyin
 
