@@ -19,46 +19,21 @@
 
 #include "filterdelegate.h"
 
-#include "filteritem.h"
-
+#include <QApplication>
 #include <QPainter>
 
 namespace Fooyin::Filters {
-FilterDelegate::FilterDelegate(QObject* parent)
-    : QStyledItemDelegate{parent}
-{ }
-
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    painter->save();
-
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const QString title = index.data(Qt::DisplayRole).toString();
-    const auto font     = index.data(Qt::FontRole).value<QFont>();
-    const auto colour   = index.data(Qt::ForegroundRole).value<QColor>();
-    const int alignment = index.data(Qt::TextAlignmentRole).toInt();
-    const int margin    = index.data(FilterItem::CellMargin).toInt();
+    QStyle* style = option.widget ? option.widget->style() : qApp->style();
 
-    if(font.pixelSize() > 0 || font.pointSize() > 0) {
-        painter->setFont(font);
-    }
+    painter->save();
 
-    if(colour.isValid()) {
-        painter->setPen(colour);
-    }
+    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
-    const auto rect       = opt.rect;
-    const QRect titleRect = {rect.x() + margin, rect.y(), rect.width() - (2 * margin), rect.height()};
-
-    opt.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter);
-
-    const auto textPalette = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
-
-    opt.widget->style()->drawItemText(painter, titleRect, Qt::AlignVCenter | alignment, opt.palette, true,
-                                      painter->fontMetrics().elidedText(title, Qt::ElideRight, titleRect.width()),
-                                      textPalette);
     painter->restore();
 }
 } // namespace Fooyin::Filters

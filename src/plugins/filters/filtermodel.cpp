@@ -285,7 +285,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             return p->colour;
         }
         case(Qt::TextAlignmentRole): {
-            return columnAlignment(col).toInt();
+            return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(col));
         }
         default: {
             return {};

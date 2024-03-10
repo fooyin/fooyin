@@ -27,7 +27,7 @@ class FilterDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    explicit FilterDelegate(QObject* parent = nullptr);
+    using QStyledItemDelegate::QStyledItemDelegate;
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
