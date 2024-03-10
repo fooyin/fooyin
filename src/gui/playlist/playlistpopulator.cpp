@@ -85,11 +85,11 @@ struct PlaylistPopulator::Private
     }
 
     PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
-                                  PlaylistItem* parent, const QString& baseKey = {})
+                                  PlaylistItem* parent, const QString& baseKey)
     {
         auto [node, inserted] = data.items.try_emplace(key, PlaylistItem{type, item, parent});
         if(inserted) {
-            node->second.setBaseKey(baseKey.isEmpty() ? key : baseKey);
+            node->second.setBaseKey(baseKey);
             node->second.setKey(key);
         }
         PlaylistItem* child = &node->second;
@@ -262,9 +262,10 @@ struct PlaylistPopulator::Private
 
         PlaylistTrackItem playlistTrack{trackRow.leftText, trackRow.rightText, track};
 
-        const QString key = Utils::generateHash(parent->key(), track.hash(), QString::number(data.items.size()));
+        const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
+        QString key           = Utils::generateRandomHash();
 
-        auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent);
+        auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);
         data.trackParents[track.id()].push_back(key);
 
         if(parent->type() != PlaylistItem::Header) {
