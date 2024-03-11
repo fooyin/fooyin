@@ -42,14 +42,17 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const QStyle* style = option.widget ? option.widget->style() : qApp->style();
+    const QWidget* widget = opt.widget;
+    const QStyle* style   = widget ? widget->style() : qApp->style();
 
-    const QSize size = index.data(Qt::SizeHintRole).toSize();
+    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, widget);
 
-    const int margin = style->pixelMetric(QStyle::PM_FocusFrameHMargin) * 2;
-    const int width  = opt.fontMetrics.horizontalAdvance(opt.text) + margin;
+    const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
+    if(sizeHint.height() > 0) {
+        size.setHeight(sizeHint.height());
+    }
 
-    return {width, size.height()};
+    return size;
 }
 } // namespace Fooyin::Filters
 

@@ -34,7 +34,7 @@ struct FilterOptions
     bool colourChanged{false};
     QColor colour;
 
-    int rowHeight{25};
+    int rowHeight{0};
 
     FilterOptions()
         : colour{QApplication::palette().text().color()}
