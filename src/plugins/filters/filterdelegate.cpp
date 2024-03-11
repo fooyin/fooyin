@@ -36,6 +36,21 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     painter->restore();
 }
+
+QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    const QStyle* style = option.widget ? option.widget->style() : qApp->style();
+
+    const QSize size = index.data(Qt::SizeHintRole).toSize();
+
+    const int margin = style->pixelMetric(QStyle::PM_FocusFrameHMargin) * 2;
+    const int width  = opt.fontMetrics.horizontalAdvance(opt.text) + margin;
+
+    return {width, size.height()};
+}
 } // namespace Fooyin::Filters
 
 #include "moc_filterdelegate.cpp"

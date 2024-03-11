@@ -33,7 +33,6 @@ public:
     enum FilterItemRole
     {
         Tracks = Qt::UserRole,
-        CellMargin,
     };
 
     FilterItem() = default;
