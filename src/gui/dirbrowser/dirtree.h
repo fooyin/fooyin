@@ -27,7 +27,7 @@ class DirTree : public QTreeView
     Q_OBJECT
 
 public:
-    DirTree(QWidget* parent = nullptr);
+    explicit DirTree(QWidget* parent = nullptr);
 
 signals:
     void middleClicked();
