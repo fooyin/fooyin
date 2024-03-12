@@ -68,7 +68,9 @@ QPixmap loadNoCover(const QSize& size)
         return cover;
     }
 
-    if(cover.load(QString::fromLatin1(Fooyin::Constants::NoCover))) {
+    const static QString noCoverKey = QString::fromLatin1(Fooyin::Constants::NoCover);
+
+    if(cover.load(noCoverKey)) {
         cover = Fooyin::Utils::scalePixmap(cover, size);
         QPixmapCache::insert(key, cover);
         return cover;
