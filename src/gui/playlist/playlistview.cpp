@@ -198,8 +198,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     setDropIndicatorShown(true);
     setIndentation(0);
     setExpandsOnDoubleClick(false);
-    setWordWrap(true);
-    setTextElideMode(Qt::ElideLeft);
+    setTextElideMode(Qt::ElideRight);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     setSortingEnabled(false);
 

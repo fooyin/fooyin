@@ -44,7 +44,7 @@ struct TextBlock
     TextBlock();
     explicit TextBlock(QString script, int fontDelta = 0);
 
-    inline bool operator==(const TextBlock& other) const
+    bool operator==(const TextBlock& other) const
     {
         return std::tie(text, script, fontChanged, font, colourChanged, colour)
             == std::tie(other.text, other.script, other.fontChanged, other.font, other.colourChanged, other.colour);
@@ -60,7 +60,7 @@ struct TextBlock
         return !text.isEmpty();
     }
 
-    inline void cloneProperties(const TextBlock& other)
+    void cloneProperties(const TextBlock& other)
     {
         fontChanged   = other.fontChanged;
         font          = other.font;
@@ -75,11 +75,7 @@ struct TextBlock
 class TextBlockList : public std::vector<TextBlock>
 {
 public:
-    TextBlockList()
-        : std::vector<TextBlock>{}
-    { }
-
-    inline operator QVariant() const
+    operator QVariant() const
     {
         return QVariant::fromValue(*this);
     }
@@ -95,18 +91,18 @@ struct HeaderRow
     TextBlockList sideText;
     TextBlockList info;
 
-    int rowHeight{76};
+    int rowHeight{0};
     bool showCover{true};
     bool simple{false};
 
-    inline bool operator==(const HeaderRow& other) const
+    bool operator==(const HeaderRow& other) const
     {
         return std::tie(title, subtitle, sideText, info, rowHeight, showCover, simple)
             == std::tie(other.title, other.subtitle, other.sideText, other.info, other.rowHeight, other.showCover,
                         other.simple);
     };
 
-    [[nodiscard]] inline bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return !title.empty() || !subtitle.empty() || !sideText.empty() || !info.empty();
     }
@@ -120,14 +116,14 @@ struct SubheaderRow
     TextBlockList leftText;
     TextBlockList rightText;
 
-    int rowHeight{25};
+    int rowHeight{0};
 
-    inline bool operator==(const SubheaderRow& other) const
+    bool operator==(const SubheaderRow& other) const
     {
         return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
     };
 
-    [[nodiscard]] inline bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return !leftText.empty() || !rightText.empty();
     }
@@ -142,14 +138,14 @@ struct TrackRow
     TextBlockList leftText;
     TextBlockList rightText;
 
-    int rowHeight{25};
+    int rowHeight{0};
 
-    inline bool operator==(const TrackRow& other) const
+    bool operator==(const TrackRow& other) const
     {
         return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
     };
 
-    [[nodiscard]] inline bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return !leftText.empty() || !rightText.empty();
     }
@@ -169,13 +165,13 @@ struct PlaylistPreset
     SubheaderRows subHeaders;
     TrackRow track;
 
-    inline bool operator==(const PlaylistPreset& other) const
+    bool operator==(const PlaylistPreset& other) const
     {
         return std::tie(id, index, name, header, subHeaders, track)
             == std::tie(other.id, other.index, other.name, other.header, other.subHeaders, other.track);
     };
 
-    [[nodiscard]] inline bool isValid() const
+    [[nodiscard]] bool isValid() const
     {
         return id >= 0 && !name.isEmpty();
     };

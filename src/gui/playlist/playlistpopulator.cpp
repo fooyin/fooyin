@@ -154,6 +154,7 @@ struct PlaylistPopulator::Private
             header.setSideText(row.sideText);
             header.setInfo(row.info);
             header.setRowHeight(row.rowHeight);
+            header.calculateSize();
 
             auto* headerItem      = getOrInsertItem(key, PlaylistItem::Header, header, parent, baseKey);
             auto& headerContainer = std::get<1>(headerItem->data());
@@ -181,6 +182,7 @@ struct PlaylistPopulator::Private
             currentContainer.setTitle(subheader.leftText);
             currentContainer.setSubtitle(subheader.rightText);
             currentContainer.setRowHeight(subheader.rowHeight);
+            currentContainer.calculateSize();
             subheaders.push_back(currentContainer);
         }
 
@@ -263,7 +265,7 @@ struct PlaylistPopulator::Private
         PlaylistTrackItem playlistTrack{trackRow.leftText, trackRow.rightText, track};
 
         const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
-        QString key           = Utils::generateRandomHash();
+        const QString key     = Utils::generateRandomHash();
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);
         data.trackParents[track.id()].push_back(key);

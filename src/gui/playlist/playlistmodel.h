@@ -209,9 +209,14 @@ private:
 
     bool m_resetting;
     QString m_headerText;
+
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
     QPixmap m_missingIcon;
+
+    QColor m_playingColour;
+    QColor m_disabledColour;
+
     bool m_altColours;
     QSize m_coverSize;
     QThread m_populatorThread;

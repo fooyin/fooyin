@@ -39,6 +39,7 @@ public:
     [[nodiscard]] TextBlockList sideText() const;
     [[nodiscard]] TextBlockList info() const;
     [[nodiscard]] int rowHeight() const;
+    [[nodiscard]] QSize size() const;
 
     void updateGroupText(ScriptParser* parser);
 
@@ -52,6 +53,8 @@ public:
     void addTracks(const TrackList& tracks);
     void clearTracks();
 
+    void calculateSize();
+
 private:
     TrackList m_tracks;
 
@@ -60,6 +63,7 @@ private:
     TextBlockList m_sideText;
     TextBlockList m_info;
 
+    QSize m_size;
     int m_rowHeight;
 };
 

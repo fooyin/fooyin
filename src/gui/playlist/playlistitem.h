@@ -46,18 +46,13 @@ public:
         Left,
         Right,
         Simple,
-        ShowCover,
-        Cover,
-        Playing,
         Path,
         ItemData,
         Type,
         Indentation,
         Index,
         BaseKey,
-        MultiColumnMode,
-        CellMargin,
-        Enabled,
+        SingleColumnMode,
     };
 
     enum class State

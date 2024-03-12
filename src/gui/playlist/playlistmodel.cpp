@@ -36,6 +36,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QFontMetrics>
 #include <QIODevice>
 #include <QIcon>
@@ -45,8 +46,6 @@
 #include <queue>
 #include <span>
 #include <stack>
-
-constexpr auto CellMargin = 5;
 
 namespace {
 bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2, bool reverse = false)
@@ -496,6 +495,8 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     , m_settings{settings}
     , m_coverProvider{new CoverProvider(this)}
     , m_resetting{false}
+    , m_playingColour{QApplication::palette().highlight().color()}
+    , m_disabledColour{Qt::red}
     , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , m_coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
                   settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
@@ -505,6 +506,9 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     , m_currentPlayState{PlayState::Stopped}
     , m_tempCurrentPlayingIndex{-1}
 {
+    m_playingColour.setAlpha(90);
+    m_disabledColour.setAlpha(50);
+
     auto updateIcons = [this]() {
         m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
         m_pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
@@ -525,7 +529,7 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     m_settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(this, [this](int size) {
         m_coverSize = {size, size};
         m_coverProvider->clearCache();
-        emit dataChanged({}, {}, {PlaylistItem::Role::Cover});
+        emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
@@ -606,7 +610,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     const PlaylistItem::ItemType type = item->type();
 
     if(role == Qt::TextAlignmentRole) {
-        return columnAlignment(index.column()).toInt();
+        return QVariant{Qt::AlignVCenter | columnAlignment(index.column())};
     }
 
     if(role == PlaylistItem::Type) {
@@ -621,8 +625,8 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         return item->baseKey();
     }
 
-    if(role == PlaylistItem::MultiColumnMode) {
-        return !m_columns.empty();
+    if(role == PlaylistItem::SingleColumnMode) {
+        return m_columns.empty();
     }
 
     switch(type) {
@@ -635,6 +639,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         case(PlaylistItem::Root):
             return {};
     }
+
     return {};
 }
 
@@ -701,8 +706,6 @@ QHash<int, QByteArray> PlaylistModel::roleNames() const
 
     roles.insert(+PlaylistItem::Role::Id, "ID");
     roles.insert(+PlaylistItem::Role::Subtitle, "Subtitle");
-    roles.insert(+PlaylistItem::Role::Cover, "Cover");
-    roles.insert(+PlaylistItem::Role::Playing, "IsPlaying");
     roles.insert(+PlaylistItem::Role::Path, "Path");
     roles.insert(+PlaylistItem::Role::ItemData, "ItemData");
 
@@ -1082,7 +1085,7 @@ void PlaylistModel::tracksChanged()
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
     m_currentPlayingTrack = track;
-    emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
 void PlaylistModel::playStateChanged(PlayState state)
@@ -1093,7 +1096,7 @@ void PlaylistModel::playStateChanged(PlayState state)
         playingTrackChanged({});
     }
 
-    emit dataChanged({}, {}, {Qt::DecorationRole, PlaylistItem::Role::Playing});
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
 void PlaylistModel::populateModel(PendingData& data)
@@ -1185,15 +1188,14 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
 {
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
-    auto isPlaying = [this, &track, item]() {
-        return m_currentPlaylist && m_currentPlayingTrack.playlistId == m_currentPlaylist->id()
-            && m_currentPlayingTrack.track.id() == track.track().id()
-            && m_currentPlayingTrack.indexInPlaylist == item->index();
-    };
+    const bool singleColumnMode = m_columns.empty();
+    const bool isPlaying        = m_currentPlaylist && m_currentPlayingTrack.playlistId == m_currentPlaylist->id()
+                        && m_currentPlayingTrack.track.id() == track.track().id()
+                        && m_currentPlayingTrack.indexInPlaylist == item->index();
 
     switch(role) {
         case(Qt::DisplayRole): {
-            if(column >= 0 && column < static_cast<int>(track.left().size())) {
+            if(!singleColumnMode && column >= 0 && std::cmp_less(column, track.left().size())) {
                 return track.left().at(column).text;
             }
             return {};
@@ -1204,37 +1206,35 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
         case(PlaylistItem::Role::Right): {
             return track.right();
         }
-        case(PlaylistItem::Role::Playing): {
-            return isPlaying();
-        }
         case(PlaylistItem::Role::ItemData): {
             return QVariant::fromValue<Track>(track.track());
         }
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();
         }
-        case(PlaylistItem::Role::CellMargin): {
-            return CellMargin;
-        }
-        case(PlaylistItem::Role::Enabled): {
-            return track.track().isEnabled();
-        }
         case(Qt::BackgroundRole): {
-            if(!m_altColours) {
-                return QPalette::Base;
+            if(!track.track().isEnabled()) {
+                return m_disabledColour;
             }
-            return item->row() & 1 ? QPalette::Base : QPalette::AlternateBase;
+
+            if(isPlaying) {
+                return m_playingColour;
+            }
+
+            if(m_altColours) {
+                return item->row() & 1 ? qApp->palette().base().color() : qApp->palette().alternateBase().color();
+            }
+
+            break;
         }
         case(Qt::SizeHintRole): {
-            if(!m_columns.empty() && column >= 0 && column < static_cast<int>(track.left().size())) {
-                const QFontMetrics fm{track.left().at(column).font};
-                QRect rect = fm.boundingRect(track.left().at(column).text);
-                rect.setWidth(rect.width() + (2 * CellMargin + 1));
-                rect.setHeight(m_currentPreset.track.rowHeight);
-
-                return rect.size();
-            }
             return QSize{0, m_currentPreset.track.rowHeight};
+        }
+        case(Qt::FontRole): {
+            if(!m_columns.empty() && column >= 0 && column < static_cast<int>(track.left().size())) {
+                return track.left().at(column).font;
+            }
+            break;
         }
         case(Qt::DecorationRole): {
             if(m_columns.empty() || m_columns.at(column).field == QString::fromLatin1(PlayingIcon)) {
@@ -1242,7 +1242,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
                     return m_missingIcon;
                 }
 
-                if(isPlaying()) {
+                if(isPlaying) {
                     switch(m_currentPlayState) {
                         case(PlayState::Playing):
                             return m_playingIcon;
@@ -1254,36 +1254,35 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
                 }
             }
 
-            return {};
+            break;
         }
         default:
             return {};
     }
+    return {};
 }
 
 QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) const
 {
+    const auto& header = std::get<PlaylistContainerItem>(item->data());
+
+    if(role == Qt::SizeHintRole) {
+        if(m_currentPreset.header.simple) {
+            return {};
+        }
+        return header.size();
+    }
+
     if(column != 0) {
         return {};
     }
-
-    const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
             return header.title();
         }
-        case(PlaylistItem::Role::ShowCover): {
-            return m_currentPreset.header.showCover;
-        }
         case(PlaylistItem::Role::Simple): {
             return m_currentPreset.header.simple;
-        }
-        case(PlaylistItem::Role::Cover): {
-            if(!m_currentPreset.header.showCover || !header.trackCount()) {
-                return {};
-            }
-            return m_coverProvider->trackCover(header.tracks().front(), m_coverSize, true);
         }
         case(PlaylistItem::Role::Subtitle): {
             return header.subtitle();
@@ -1294,8 +1293,11 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
         case(PlaylistItem::Role::Right): {
             return header.sideText();
         }
-        case(Qt::SizeHintRole): {
-            return QSize{0, header.rowHeight()};
+        case(Qt::DecorationRole): {
+            if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
+                return {};
+            }
+            return m_coverProvider->trackCover(header.tracks().front(), m_coverSize, true);
         }
         default:
             return {};
@@ -1304,11 +1306,15 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
 
 QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) const
 {
-    if(column != 0) {
+    const auto& header = std::get<PlaylistContainerItem>(item->data());
+
+    if(role == Qt::SizeHintRole) {
         return {};
     }
 
-    const auto& header = std::get<PlaylistContainerItem>(item->data());
+    if(column != 0) {
+        return {};
+    }
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
@@ -1319,9 +1325,6 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
         }
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();
-        }
-        case(Qt::SizeHintRole): {
-            return QSize{0, header.rowHeight()};
         }
         default:
             return {};
@@ -1981,7 +1984,7 @@ void PlaylistModel::coverUpdated(const Track& track)
 
             if(parentItem->type() == PlaylistItem::Header) {
                 const QModelIndex nodeIndex = indexOfItem(parentItem);
-                emit dataChanged(nodeIndex, nodeIndex, {PlaylistItem::Role::Cover});
+                emit dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
             }
         }
     }

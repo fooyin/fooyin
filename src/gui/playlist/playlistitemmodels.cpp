@@ -21,7 +21,7 @@
 
 namespace Fooyin {
 PlaylistContainerItem::PlaylistContainerItem()
-    : m_rowHeight{-1}
+    : m_rowHeight{0}
 { }
 
 TrackList PlaylistContainerItem::tracks() const
@@ -57,6 +57,11 @@ TextBlockList PlaylistContainerItem::info() const
 int PlaylistContainerItem::rowHeight() const
 {
     return m_rowHeight;
+}
+
+QSize PlaylistContainerItem::size() const
+{
+    return m_size;
 }
 
 void PlaylistContainerItem::updateGroupText(ScriptParser* parser)
@@ -120,6 +125,56 @@ void PlaylistContainerItem::addTracks(const TrackList& tracks)
 void PlaylistContainerItem::clearTracks()
 {
     m_tracks.clear();
+}
+
+void PlaylistContainerItem::calculateSize()
+{
+    if(m_rowHeight > 0) {
+        m_size.setHeight(m_rowHeight);
+        return;
+    }
+
+    QSize totalSize;
+
+    auto addSize = [&totalSize](const TextBlockList& blocks, bool addToTotal = true) {
+        QSize blockSize;
+        for(const auto& title : blocks) {
+            const QFontMetrics fm{title.font};
+            const QRect br = fm.boundingRect(title.text);
+            blockSize.setWidth(blockSize.width() + br.width());
+            blockSize.setHeight(std::max(blockSize.height(), br.height()));
+        }
+        if(addToTotal) {
+            totalSize.setWidth(totalSize.width() + blockSize.width());
+            totalSize.setHeight(totalSize.height() + blockSize.height() + 4);
+        }
+        return blockSize;
+    };
+
+    if(!m_title.empty()) {
+        addSize(m_title);
+    }
+
+    QSize subtitleSize;
+
+    if(!m_subtitle.empty()) {
+        subtitleSize = addSize(m_subtitle, false);
+    }
+
+    if(!m_sideText.empty()) {
+        QSize sideSize = addSize(m_sideText, false);
+        subtitleSize.setWidth(subtitleSize.width() + sideSize.width());
+        subtitleSize.setHeight(std::max(subtitleSize.height(), sideSize.height()));
+    }
+
+    totalSize.setWidth(totalSize.width() + subtitleSize.width());
+    totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
+
+    if(!m_info.empty()) {
+        addSize(m_info);
+    }
+
+    m_size = totalSize;
 }
 
 PlaylistTrackItem::PlaylistTrackItem(TextBlockList left, TextBlockList right, const Track& track)
