@@ -51,6 +51,7 @@ void DirProxyModel::reset(const QModelIndex& root)
     m_goUpPath   = path.cdUp() ? path.absolutePath() : QString{};
     m_sourceRoot = root;
     populate();
+        m_rootPath   = path.absolutePath();
 
     endResetModel();
 }
@@ -70,6 +71,9 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
     }
 
     QAbstractProxyModel::setSourceModel(model);
+    // We only need to handle rowsRemoved as layoutChanged is emitted from the sourceModel
+    // for all other changes, which resets this model
+    QObject::connect(model, &QAbstractItemModel::rowsRemoved, this, &DirProxyModel::sourceRowsRemoved);
 }
 
 Qt::ItemFlags DirProxyModel::flags(const QModelIndex& index) const
@@ -257,5 +261,28 @@ void DirProxyModel::populate()
 int DirProxyModel::nodeCount() const
 {
     return static_cast<int>(m_nodes.size());
+}
+
+void DirProxyModel::sourceRowsRemoved(const QModelIndex& parent, int first, int last)
+{
+    const QString path = parent.data(QFileSystemModel::FilePathRole).toString();
+    if(path != m_rootPath) {
+        return;
+    }
+
+    const int firstRow = first + (canGoUp() ? 1 : 0);
+    const int lastRow  = last + (canGoUp() ? 1 : 0);
+
+    if(firstRow < 0 || std::cmp_greater_equal(firstRow, m_nodes.size())) {
+        return;
+    }
+
+    if(lastRow < 0 || std::cmp_greater_equal(lastRow, m_nodes.size())) {
+        return;
+    }
+
+    beginRemoveRows({}, firstRow, lastRow);
+    m_nodes.erase(m_nodes.begin() + firstRow, std::next(m_nodes.begin() + lastRow));
+    endRemoveRows();
 }
 } // namespace Fooyin

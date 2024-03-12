@@ -68,6 +68,7 @@ public:
 private:
     void populate();
     [[nodiscard]] int nodeCount() const;
+    void sourceRowsRemoved(const QModelIndex& parent, int first, int last);
 
     QAbstractFileIconProvider* m_iconProvider;
 
