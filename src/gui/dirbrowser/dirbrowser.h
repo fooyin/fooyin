@@ -51,12 +51,13 @@ protected:
 
 private:
     void handleAction(TrackAction action);
-    void handlePlayAction(const QString& path);
+    void handlePlayAction(const QString& path, const QString& parentPath);
     void handleDoubleClick(const QModelIndex& index);
     void handleMiddleClick();
 
     void updateIndent(bool show);
 
+    void changeMode(Mode mode);
     void startPlayback(const TrackList& tracks, int row);
     void updateDir(const QString& dir);
 

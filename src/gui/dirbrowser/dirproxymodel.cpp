@@ -29,7 +29,8 @@
 
 namespace Fooyin {
 DirProxyModel::DirProxyModel(QObject* parent)
-    : QAbstractProxyModel{parent}
+    : QSortFilterProxyModel{parent}
+    , m_mode{Mode::List}
     , m_playingState{PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
@@ -47,11 +48,16 @@ void DirProxyModel::reset(const QModelIndex& root)
 
     beginResetModel();
 
-    QDir path{root.data(QFileSystemModel::FilePathRole).toString()};
-    m_goUpPath   = path.cdUp() ? path.absolutePath() : QString{};
-    m_sourceRoot = root;
-    populate();
+    m_sourceRoot = QModelIndex{};
+    m_nodes.clear();
+
+    if(m_mode == Mode::List) {
+        QDir path{root.data(QFileSystemModel::FilePathRole).toString()};
         m_rootPath   = path.absolutePath();
+        m_goUpPath   = path.cdUp() ? path.absolutePath() : QString{};
+        m_sourceRoot = root;
+        populate();
+    }
 
     endResetModel();
 }
@@ -70,14 +76,19 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
         m_iconProvider = fileModel->iconProvider();
     }
 
-    QAbstractProxyModel::setSourceModel(model);
     // We only need to handle rowsRemoved as layoutChanged is emitted from the sourceModel
     // for all other changes, which resets this model
     QObject::connect(model, &QAbstractItemModel::rowsRemoved, this, &DirProxyModel::sourceRowsRemoved);
+
+    QSortFilterProxyModel::setSourceModel(model);
 }
 
 Qt::ItemFlags DirProxyModel::flags(const QModelIndex& index) const
 {
+    if(m_mode == Mode::Tree) {
+        return QSortFilterProxyModel::flags(index);
+    }
+
     if(!index.isValid()) {
         return Qt::NoItemFlags;
     }
@@ -104,23 +115,32 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         return {};
     }
 
-    if(canGoUp() && proxyIndex.row() == 0 && proxyIndex.column() == 0) {
-        if(role == Qt::DisplayRole) {
-            return QStringLiteral("…");
-        }
-        if(role == QFileSystemModel::FilePathRole) {
-            return m_goUpPath;
-        }
-        if(role == Qt::TextAlignmentRole) {
-            return Qt::AlignBottom;
-        }
-        if(m_showIcons && role == Qt::DecorationRole) {
-            return m_iconProvider->icon(QAbstractFileIconProvider::IconType::Folder);
-        }
+    if(!m_showIcons && role == Qt::DecorationRole) {
+        return {};
     }
 
-    const QModelIndex sourceIndex = mapToSource(proxyIndex);
-    const QString sourcePath      = sourceModel()->data(sourceIndex, QFileSystemModel::FilePathRole).toString();
+    QString sourcePath;
+
+    if(m_mode == Mode::List) {
+        if(canGoUp() && proxyIndex.row() == 0 && proxyIndex.column() == 0) {
+            if(role == Qt::DisplayRole) {
+                return QStringLiteral("…");
+            }
+            if(role == QFileSystemModel::FilePathRole) {
+                return m_goUpPath;
+            }
+            if(role == Qt::TextAlignmentRole) {
+                return Qt::AlignBottom;
+            }
+            if(m_iconProvider && m_showIcons && role == Qt::DecorationRole) {
+                return m_iconProvider->icon(QAbstractFileIconProvider::IconType::Folder);
+            }
+        }
+        sourcePath = sourceModel()->data(mapToSource(proxyIndex), QFileSystemModel::FilePathRole).toString();
+    }
+    else {
+        sourcePath = QSortFilterProxyModel::data(proxyIndex, QFileSystemModel::FilePathRole).toString();
+    }
 
     if(!m_playingTrackPath.isEmpty() && sourcePath == m_playingTrackPath) {
         if(role == Qt::BackgroundRole) {
@@ -138,25 +158,37 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         }
     }
 
-    if(!m_showIcons && role == Qt::DecorationRole) {
+    if(m_mode == Mode::List) {
+        return sourceModel()->data(mapToSource(proxyIndex), role);
+    }
+
+    return QSortFilterProxyModel::data(proxyIndex, role);
+}
+
+QModelIndex DirProxyModel::parent(const QModelIndex& child) const
+{
+    if(m_mode == Mode::List) {
         return {};
     }
 
-    return sourceModel()->data(sourceIndex, role);
-}
-
-QModelIndex DirProxyModel::parent(const QModelIndex& /*child*/) const
-{
-    return {};
+    return QSortFilterProxyModel::parent(child);
 }
 
 bool DirProxyModel::hasChildren(const QModelIndex& parent) const
 {
-    return !parent.isValid();
+    if(m_mode == Mode::List) {
+        return !parent.isValid();
+    }
+
+    return QSortFilterProxyModel::hasChildren(parent);
 }
 
 QModelIndex DirProxyModel::index(int row, int column, const QModelIndex& parent) const
 {
+    if(m_mode == Mode::Tree) {
+        return QSortFilterProxyModel::index(row, column, parent);
+    }
+
     if(!hasIndex(row, column, parent)) {
         return {};
     }
@@ -170,6 +202,10 @@ QModelIndex DirProxyModel::index(int row, int column, const QModelIndex& parent)
 
 int DirProxyModel::rowCount(const QModelIndex& parent) const
 {
+    if(m_mode == Mode::Tree) {
+        return QSortFilterProxyModel::rowCount(parent);
+    }
+
     return parent.isValid() ? 0 : nodeCount();
 }
 
@@ -180,12 +216,16 @@ int DirProxyModel::columnCount(const QModelIndex& /*index*/) const
 
 QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
 {
+    if(m_mode == Mode::Tree) {
+        return QSortFilterProxyModel::mapFromSource(index);
+    }
+
     if(!index.isValid() || m_nodes.empty()) {
         return {};
     }
 
     const auto indexIt = std::find_if(m_nodes.cbegin(), m_nodes.cend(),
-                                [&index](const auto& node) { return node->sourceIndex == index; });
+                                      [&index](const auto& node) { return node->sourceIndex == index; });
     if(indexIt != m_nodes.cend()) {
         const auto row = static_cast<int>(std::distance(m_nodes.begin(), indexIt));
         return createIndex(row, 0, indexIt->get());
@@ -196,6 +236,10 @@ QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
 
 QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
 {
+    if(m_mode == Mode::Tree) {
+        return QSortFilterProxyModel::mapToSource(index);
+    }
+
     if(!index.isValid() || m_nodes.empty()) {
         return {};
     }
@@ -207,9 +251,23 @@ QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
     return {};
 }
 
+Mode DirProxyModel::mode() const
+{
+    return m_mode;
+}
+
 bool DirProxyModel::canGoUp() const
 {
     return !m_goUpPath.isEmpty();
+}
+
+void DirProxyModel::setMode(Mode mode)
+{
+    m_mode = mode;
+
+    if(auto* fileModel = qobject_cast<QFileSystemModel*>(sourceModel())) {
+        reset(fileModel->index(fileModel->rootPath()));
+    }
 }
 
 void DirProxyModel::setIconsEnabled(bool enabled)

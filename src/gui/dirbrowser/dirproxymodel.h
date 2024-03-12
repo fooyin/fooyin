@@ -21,8 +21,8 @@
 
 #include <core/player/playerdefs.h>
 
-#include <QAbstractProxyModel>
 #include <QPixmap>
+#include <QSortFilterProxyModel>
 
 class QAbstractFileIconProvider;
 class QDir;
@@ -37,7 +37,13 @@ struct DirNode
     { }
 };
 
-class DirProxyModel : public QAbstractProxyModel
+enum class Mode
+{
+    Tree,
+    List,
+};
+
+class DirProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -59,8 +65,10 @@ public:
     [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
 
+    [[nodiscard]] Mode mode() const;
     [[nodiscard]] bool canGoUp() const;
 
+    void setMode(Mode mode);
     void setIconsEnabled(bool enabled);
     void setPlayState(PlayState state);
     void setPlayingPath(const QString& path);
@@ -70,6 +78,7 @@ private:
     [[nodiscard]] int nodeCount() const;
     void sourceRowsRemoved(const QModelIndex& parent, int first, int last);
 
+    Mode m_mode;
     QAbstractFileIconProvider* m_iconProvider;
 
     QString m_rootPath;
