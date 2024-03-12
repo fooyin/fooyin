@@ -244,13 +244,12 @@ void DirProxyModel::populate()
         return;
     }
 
-    const int first = canGoUp() ? 1 : 0;
-    const int last  = rowCount - 1;
+    const int last = rowCount - 1;
 
-    m_nodes.resize(m_nodes.size() + rowCount);
+    m_nodes.reserve(m_nodes.size() + rowCount);
 
-    for(int i{first}, row{0}; row <= last; ++i, ++row) {
-        m_nodes[i] = std::make_unique<DirNode>(sourceModel()->index(row, 0, m_sourceRoot));
+    for(int row{0}; row <= last; ++row) {
+        m_nodes.emplace_back(std::make_unique<DirNode>(sourceModel()->index(row, 0, m_sourceRoot)));
     }
 }
 
