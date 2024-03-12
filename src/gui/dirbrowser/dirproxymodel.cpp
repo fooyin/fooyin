@@ -180,10 +180,11 @@ QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
         return {};
     }
 
-    for(int row{0}; const auto& node : m_nodes) {
-        if(node->sourceIndex == index) {
-            return createIndex(row++, 0, node.get());
-        }
+    const auto indexIt = std::find_if(m_nodes.cbegin(), m_nodes.cend(),
+                                [&index](const auto& node) { return node->sourceIndex == index; });
+    if(indexIt != m_nodes.cend()) {
+        const auto row = static_cast<int>(std::distance(m_nodes.begin(), indexIt));
+        return createIndex(row, 0, indexIt->get());
     }
 
     return {};
