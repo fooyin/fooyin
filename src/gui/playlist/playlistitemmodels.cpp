@@ -19,6 +19,8 @@
 
 #include "playlistitemmodels.h"
 
+#include <QFontMetrics>
+
 namespace Fooyin {
 PlaylistContainerItem::PlaylistContainerItem()
     : m_rowHeight{0}

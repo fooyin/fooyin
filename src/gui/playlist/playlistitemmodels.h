@@ -23,6 +23,8 @@
 
 #include <core/track.h>
 
+#include <QSize>
+
 namespace Fooyin {
 class PlaylistScriptRegistry;
 
