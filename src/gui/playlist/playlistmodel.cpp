@@ -1984,7 +1984,8 @@ void PlaylistModel::coverUpdated(const Track& track)
 
             if(parentItem->type() == PlaylistItem::Header) {
                 const QModelIndex nodeIndex = indexOfItem(parentItem);
-                emit dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
+                emit dataChanged(nodeIndex, nodeIndex.siblingAtColumn(columnCount(nodeIndex) - 1),
+                                 {Qt::DecorationRole});
             }
         }
     }
