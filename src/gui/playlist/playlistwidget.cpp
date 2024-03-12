@@ -733,24 +733,24 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(!singleMode) {
-        auto* filterList = new QActionGroup{menu};
-        filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+        auto* columnsMenu = new QMenu(tr("Columns"), menu);
+        auto* columnGroup = new QActionGroup{menu};
+        columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
         auto hasColumn = [this](int id) {
             return std::ranges::any_of(columns, [id](const PlaylistColumn& column) { return column.id == id; });
         };
 
         for(const auto& column : columnRegistry.items()) {
-            auto* columnAction = new QAction(column.name, menu);
+            auto* columnAction = new QAction(column.name, columnsMenu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
             columnAction->setChecked(hasColumn(column.id));
-            menu->addAction(columnAction);
-            filterList->addAction(columnAction);
+            columnsMenu->addAction(columnAction);
+            columnGroup->addAction(columnAction);
         }
 
-        menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, self, [this](QAction* action) {
+        QObject::connect(columnGroup, &QActionGroup::triggered, self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
                 const PlaylistColumn column = columnRegistry.itemById(action->data().toInt());
@@ -761,11 +761,12 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
             }
             else {
                 std::erase_if(columns,
-                              [columnId](const PlaylistColumn& filterCol) { return filterCol.id == columnId; });
+                              [columnId](const PlaylistColumn& col) { return col.id == columnId; });
                 changePreset(currentPreset);
             }
         });
 
+        menu->addMenu(columnsMenu);
         menu->addSeparator();
         header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
         menu->addSeparator();
