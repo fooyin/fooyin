@@ -70,6 +70,8 @@ enum GuiInternalSettings : uint32_t
     DirBrowserMiddleClick  = 31 | Type::Int,
     DirBrowserMode         = 32 | Type::Int,
     DirBrowserListIndent   = 33 | Type::Bool,
+    DirBrowserControls     = 34 | Type::Bool,
+    DirBrowserLocation     = 35 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

@@ -19,26 +19,24 @@
 
 #pragma once
 
-#include "dirproxymodel.h"
-
 #include <gui/fywidget.h>
-#include <gui/trackselectioncontroller.h>
-
-#include <QFileIconProvider>
-
-class QFileSystemModel;
 
 namespace Fooyin {
 class PlaylistController;
 class SettingsManager;
-class Playlist;
-class DirTree;
+class TrackSelectionController;
 
 class DirBrowser : public FyWidget
 {
     Q_OBJECT
 
 public:
+    enum class Mode
+    {
+        Tree,
+        List,
+    };
+
     explicit DirBrowser(TrackSelectionController* selectionController, PlaylistController* playlistController,
                         SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
@@ -46,35 +44,16 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void updateDir(const QString& dir);
+
+signals:
+    void rootChanged();
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    void handleAction(TrackAction action);
-    void handlePlayAction(const QString& path, const QString& parentPath);
-    void handleDoubleClick(const QModelIndex& index);
-    void handleMiddleClick();
-
-    void updateIndent(bool show);
-
-    void changeMode(Mode mode);
-    void startPlayback(const TrackList& tracks, int row);
-    void updateDir(const QString& dir);
-
-    PlaylistController* m_playlistController;
-    TrackSelectionController* m_selectionController;
-    SettingsManager* m_settings;
-
-    std::unique_ptr<QFileIconProvider> m_iconProvider;
-
-    DirTree* m_dirTree;
-    QFileSystemModel* m_model;
-    DirProxyModel* m_proxyModel;
-
-    Playlist* m_playlist;
-    QString m_playlistDir;
-
-    TrackAction m_doubleClickAction;
-    TrackAction m_middleClickAction;
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

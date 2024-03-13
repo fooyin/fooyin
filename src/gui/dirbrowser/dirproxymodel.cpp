@@ -30,7 +30,7 @@
 namespace Fooyin {
 DirProxyModel::DirProxyModel(QObject* parent)
     : QSortFilterProxyModel{parent}
-    , m_mode{Mode::List}
+    , m_flat{true}
     , m_playingState{PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
@@ -48,14 +48,14 @@ void DirProxyModel::reset(const QModelIndex& root)
 
     beginResetModel();
 
-    m_sourceRoot = QModelIndex{};
+    m_sourceRoot = root;
     m_nodes.clear();
 
-    if(m_mode == Mode::List) {
-        QDir path{root.data(QFileSystemModel::FilePathRole).toString()};
-        m_rootPath   = path.absolutePath();
-        m_goUpPath   = path.cdUp() ? path.absolutePath() : QString{};
-        m_sourceRoot = root;
+    QDir path{root.data(QFileSystemModel::FilePathRole).toString()};
+    m_rootPath = path.absolutePath();
+    m_goUpPath = path.cdUp() ? path.absolutePath() : QString{};
+
+    if(m_flat) {
         populate();
     }
 
@@ -85,7 +85,7 @@ void DirProxyModel::setSourceModel(QAbstractItemModel* model)
 
 Qt::ItemFlags DirProxyModel::flags(const QModelIndex& index) const
 {
-    if(m_mode == Mode::Tree) {
+    if(!m_flat) {
         return QSortFilterProxyModel::flags(index);
     }
 
@@ -121,13 +121,13 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
 
     QString sourcePath;
 
-    if(m_mode == Mode::List) {
+    if(m_flat) {
         if(canGoUp() && proxyIndex.row() == 0 && proxyIndex.column() == 0) {
             if(role == Qt::DisplayRole) {
                 return QStringLiteral("…");
             }
             if(role == QFileSystemModel::FilePathRole) {
-                return m_goUpPath;
+                return {};
             }
             if(role == Qt::TextAlignmentRole) {
                 return Qt::AlignBottom;
@@ -158,7 +158,7 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         }
     }
 
-    if(m_mode == Mode::List) {
+    if(m_flat) {
         return sourceModel()->data(mapToSource(proxyIndex), role);
     }
 
@@ -167,7 +167,7 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
 
 QModelIndex DirProxyModel::parent(const QModelIndex& child) const
 {
-    if(m_mode == Mode::List) {
+    if(m_flat) {
         return {};
     }
 
@@ -176,7 +176,7 @@ QModelIndex DirProxyModel::parent(const QModelIndex& child) const
 
 bool DirProxyModel::hasChildren(const QModelIndex& parent) const
 {
-    if(m_mode == Mode::List) {
+    if(m_flat) {
         return !parent.isValid();
     }
 
@@ -185,7 +185,7 @@ bool DirProxyModel::hasChildren(const QModelIndex& parent) const
 
 QModelIndex DirProxyModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(m_mode == Mode::Tree) {
+    if(!m_flat) {
         return QSortFilterProxyModel::index(row, column, parent);
     }
 
@@ -202,7 +202,7 @@ QModelIndex DirProxyModel::index(int row, int column, const QModelIndex& parent)
 
 int DirProxyModel::rowCount(const QModelIndex& parent) const
 {
-    if(m_mode == Mode::Tree) {
+    if(!m_flat) {
         return QSortFilterProxyModel::rowCount(parent);
     }
 
@@ -216,7 +216,7 @@ int DirProxyModel::columnCount(const QModelIndex& /*index*/) const
 
 QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
 {
-    if(m_mode == Mode::Tree) {
+    if(!m_flat) {
         return QSortFilterProxyModel::mapFromSource(index);
     }
 
@@ -236,7 +236,7 @@ QModelIndex DirProxyModel::mapFromSource(const QModelIndex& index) const
 
 QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
 {
-    if(m_mode == Mode::Tree) {
+    if(!m_flat) {
         return QSortFilterProxyModel::mapToSource(index);
     }
 
@@ -251,19 +251,14 @@ QModelIndex DirProxyModel::mapToSource(const QModelIndex& index) const
     return {};
 }
 
-Mode DirProxyModel::mode() const
-{
-    return m_mode;
-}
-
 bool DirProxyModel::canGoUp() const
 {
     return !m_goUpPath.isEmpty();
 }
 
-void DirProxyModel::setMode(Mode mode)
+void DirProxyModel::setFlat(bool isFlat)
 {
-    m_mode = mode;
+    m_flat = isFlat;
 
     if(auto* fileModel = qobject_cast<QFileSystemModel*>(sourceModel())) {
         reset(fileModel->index(fileModel->rootPath()));

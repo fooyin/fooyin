@@ -85,7 +85,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                QStringLiteral("DirectoryBrowser/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::DirBrowserMiddleClick>(
         0, QStringLiteral("DirectoryBrowser/MiddleClickkBehaviour"));
-    // m_settings->createSetting<Internal::DirBrowserMode>(0, QStringLiteral("DirectoryBrowser/Mode"));
+    m_settings->createSetting<Internal::DirBrowserMode>(1, QStringLiteral("DirectoryBrowser/Mode"));
     m_settings->createSetting<Internal::DirBrowserListIndent>(true, QStringLiteral("DirectoryBrowser/IndentList"));
+    m_settings->createSetting<Internal::DirBrowserControls>(true, QStringLiteral("DirectoryBrowser/Controls"));
+    m_settings->createSetting<Internal::DirBrowserLocation>(true, QStringLiteral("DirectoryBrowser/LocationBar"));
 }
 } // namespace Fooyin
