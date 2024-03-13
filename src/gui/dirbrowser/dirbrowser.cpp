@@ -137,7 +137,6 @@ struct DirBrowser::Private
     QUndoStack dirHistory;
 
     Playlist* playlist{nullptr};
-    QString playlistDir;
 
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
@@ -206,28 +205,37 @@ struct DirBrowser::Private
 
     void handleAction(TrackAction action)
     {
-        const auto selected = dirTree->selectionModel()->selectedRows();
+        QModelIndexList selected = dirTree->selectionModel()->selectedRows();
 
         if(selected.empty()) {
             return;
         }
 
         QString firstPath;
-        QString playlistName;
+
+        if(selected.size() == 1) {
+            const QModelIndex index = selected.front();
+            if(index.isValid()) {
+                const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
+                if(filePath.isFile()) {
+                    // Add all files in same directory
+                    selected  = {proxyModel->mapToSource(selected.front()).parent()};
+                    firstPath = filePath.absoluteFilePath();
+                }
+            }
+        }
+
         QList<QUrl> files;
 
         for(const QModelIndex& index : selected) {
-            const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
-            if(filePath.isDir()) {
-                files.append(Utils::File::getUrlsInDir(filePath.absoluteFilePath(), Track::supportedFileExtensions()));
-                if(playlistName.isEmpty()) {
-                    playlistName = filePath.fileName();
+            if(index.isValid()) {
+                const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
+                if(filePath.isDir()) {
+                    files.append(
+                        Utils::File::getUrlsInDir(filePath.absoluteFilePath(), Track::supportedFileExtensions()));
                 }
-            }
-            else {
-                files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
-                if(firstPath.isEmpty()) {
-                    firstPath = filePath.absoluteFilePath();
+                else {
+                    files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
                 }
             }
         }
@@ -236,15 +244,17 @@ struct DirBrowser::Private
             return;
         }
 
-        QDir parentDir{firstPath};
-        if(playlistName.isEmpty()) {
-            parentDir.cdUp();
-            playlistName = parentDir.dirName();
+        if(firstPath.isEmpty()) {
+            firstPath = files.front().path();
         }
+
+        QDir parentDir{firstPath};
+        parentDir.cdUp();
+        const QString playlistName = parentDir.dirName();
 
         switch(action) {
             case(TrackAction::Play): {
-                handlePlayAction(firstPath, parentDir.absolutePath());
+                handlePlayAction(files, firstPath);
                 break;
             }
             case(TrackAction::AddCurrentPlaylist):
@@ -265,23 +275,23 @@ struct DirBrowser::Private
         }
     }
 
-    void handlePlayAction(const QString& path, const QString& parentPath)
+    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile)
     {
-        const auto rootFiles = Utils::File::getUrlsInDir(parentPath, Track::supportedFileExtensions());
+        int playIndex{0};
 
-        TrackList tracks;
-        std::ranges::transform(rootFiles, std::back_inserter(tracks),
-                               [](const QUrl& file) { return Track{file.toLocalFile()}; });
-
-        int playRow{0};
-        auto rowIt = std::ranges::find_if(std::as_const(tracks),
-                                          [&path](const Track& track) { return track.filepath() == path; });
-        if(rowIt != tracks.cend()) {
-            playRow = static_cast<int>(std::distance(tracks.cbegin(), rowIt));
+        if(!startingFile.isEmpty()) {
+            auto rowIt = std::ranges::find_if(
+                std::as_const(files), [&startingFile](const QUrl& file) { return file.path() == startingFile; });
+            if(rowIt != files.cend()) {
+                playIndex = static_cast<int>(std::distance(files.cbegin(), rowIt));
+            }
         }
 
-        playlistDir = parentPath;
-        startPlayback(tracks, playRow);
+        TrackList tracks;
+        std::ranges::transform(files, std::back_inserter(tracks),
+                               [](const QUrl& file) { return Track{file.toLocalFile()}; });
+
+        startPlayback(tracks, playIndex);
     }
 
     void handleDoubleClick(const QModelIndex& index)
@@ -542,16 +552,8 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const auto selected = p->dirTree->selectionModel()->selectedRows();
-
-    const bool canPlay = std::ranges::any_of(selected, [](const QModelIndex& index) {
-        const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
-        return filePath.isFile();
-    });
-
     auto* playAction = new QAction(tr("Play"), menu);
     QObject::connect(playAction, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::Play); });
-    playAction->setEnabled(canPlay);
 
     auto* addCurrent = new QAction(tr("Add to current playlist"), menu);
     QObject::connect(addCurrent, &QAction::triggered, this,
@@ -576,9 +578,11 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(sendNew);
     menu->addSeparator();
 
-    if(!canPlay) {
-        const QModelIndex index = p->dirTree->indexAt(p->dirTree->mapFromGlobal(event->globalPos()));
-        if(index.isValid()) {
+    const QModelIndex index = p->dirTree->indexAt(p->dirTree->mapFromGlobal(event->globalPos()));
+
+    if(index.isValid()) {
+        const QFileInfo selectedPath{index.data(QFileSystemModel::FilePathRole).toString()};
+        if(selectedPath.isDir()) {
             const QString dir = index.data(QFileSystemModel::FilePathRole).toString();
             auto* setRoot     = new QAction(tr("Set as root"), menu);
             QObject::connect(setRoot, &QAction::triggered, this, [this, dir]() { p->changeRoot(dir); });
