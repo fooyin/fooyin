@@ -42,6 +42,8 @@ constexpr auto Add        = "list-add";
 constexpr auto Remove     = "list-remove";
 constexpr auto Up         = "go-up";
 constexpr auto Down       = "go-down";
+constexpr auto GoNext     = "go-next";
+constexpr auto GoPrevious = "go-previous";
 constexpr auto Close      = "window-close";
 
 constexpr auto ScriptExpression = "script-expression";
