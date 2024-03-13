@@ -174,6 +174,23 @@ QModelIndex DirProxyModel::parent(const QModelIndex& child) const
     return QSortFilterProxyModel::parent(child);
 }
 
+QModelIndex DirProxyModel::sibling(int row, int column, const QModelIndex& index) const
+{
+    if(!m_flat) {
+        return QSortFilterProxyModel::sibling(row, column, index);
+    }
+
+    if(!index.isValid()) {
+        return {};
+    }
+
+    if(row < 0 || std::cmp_greater_equal(row, m_nodes.size())) {
+        return {};
+    }
+
+    return createIndex(row, column, m_nodes.at(row).get());
+}
+
 bool DirProxyModel::hasChildren(const QModelIndex& parent) const
 {
     if(m_flat) {

@@ -57,6 +57,7 @@ public:
     [[nodiscard]] QModelIndex mapFromSource(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex mapToSource(const QModelIndex& index) const override;
     [[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
+    [[nodiscard]] QModelIndex sibling(int row, int column, const QModelIndex& index) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
 
     [[nodiscard]] bool canGoUp() const;
