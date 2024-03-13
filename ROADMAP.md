@@ -7,6 +7,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * CUE support
 * ReplayGain support
 * ~~Playback queue~~
+* MPRIS support
 * Query-based language for searching/filtering
 * Album artwork features - downloading, storing in metadata/on disk
 * Lyric support - embedded and LRC (including enhanced LRC)
@@ -17,6 +18,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 
 ## Enhancements
 * Support custom tags within scripts
+* Add HTML-like tags to FooScript for formatting
 * Enhance playlist functionality - import/export options
 * Add album cover mode to filter widget
 
