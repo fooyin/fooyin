@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+    <interface name="org.mpris.MediaPlayer2.Player">
+        <method name="Next" tp:name-for-bindings="Next" />
+        <method name="Previous" tp:name-for-bindings="Previous" />
+        <method name="Pause" tp:name-for-bindings="Pause" />
+        <method name="PlayPause" tp:name-for-bindings="PlayPause" />
+        <method name="Stop" tp:name-for-bindings="Stop" />
+        <method name="Play" tp:name-for-bindings="Play" />
+        <method name="Seek" tp:name-for-bindings="Seek">
+            <arg direction="in" type="x" name="Offset" tp:type="Time_In_Us" />
+        </method>
+        <method name="SetPosition" tp:name-for-bindings="Set_Position">
+            <arg direction="in" type="o" tp:type="Track_Id" name="TrackId" />
+            <arg direction="in" type="x" tp:type="Time_In_Us" name="Position" />
+        </method>
+        <signal name="Seeked" tp:name-for-bindings="Seeked">
+            <arg name="Position" type="x" tp:type="Time_In_Us" />
+        </signal>
+        <property name="CanGoNext" tp:name-for-bindings="Can_Go_Next" type="b" access="read" />
+        <property name="CanGoPrevious" tp:name-for-bindings="Can_Go_Previous" type="b" access="read" />
+        <property name="CanPlay" tp:name-for-bindings="Can_Play" type="b" access="read" />
+        <property name="CanPause" tp:name-for-bindings="Can_Pause" type="b" access="read" />
+        <property name="CanSeek" tp:name-for-bindings="Can_Seek" type="b" access="read" />
+        <property name="CanControl" tp:name-for-bindings="Can_Control" type="b" access="read" />
+        <property name="PlaybackStatus" tp:name-for-bindings="Playback_Status" type="s" tp:type="Playback_Status" access="read" />
+        <property name="Metadata" tp:name-for-bindings="Metadata" type="a{sv}" tp:type="Metadata_Map" access="read">
+            <annotation name="org.qtproject.QtDBus.QtTypeName" value="QVariantMap" />
+        </property>
+        <property name="Volume" type="d" tp:type="Volume" tp:name-for-bindings="Volume" access="readwrite" />
+        <property name="Position" type="x" tp:type="Time_In_Us" tp:name-for-bindings="Position" access="read" />
+    </interface>
+</node>

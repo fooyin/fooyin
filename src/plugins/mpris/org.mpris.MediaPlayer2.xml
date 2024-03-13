@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+    <interface name="org.mpris.MediaPlayer2">
+        <method name="Raise" tp:name-for-bindings="Raise" />
+        <property name="CanRaise" type="b" tp:name-for-bindings="Can_Raise" access="read" />
+        <property name="Identity" type="s" tp:name-for-bindings="Identity" access="read" />
+        <property name="DesktopEntry" type="s" tp:name-for-bindings="Desktop_Entry" access="read" />
+    </interface>
+</node>
