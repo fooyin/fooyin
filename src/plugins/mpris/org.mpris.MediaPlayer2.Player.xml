@@ -8,14 +8,14 @@
         <method name="Stop" tp:name-for-bindings="Stop" />
         <method name="Play" tp:name-for-bindings="Play" />
         <method name="Seek" tp:name-for-bindings="Seek">
-            <arg direction="in" type="x" name="Offset" tp:type="Time_In_Us" />
+            <arg name="Offset" direction="in" type="x" tp:type="Time_In_Us" />
         </method>
         <method name="SetPosition" tp:name-for-bindings="Set_Position">
-            <arg direction="in" type="o" tp:type="Track_Id" name="TrackId" />
-            <arg direction="in" type="x" tp:type="Time_In_Us" name="Position" />
+            <arg name="TrackId" direction="in" type="o" tp:type="Track_Id" />
+            <arg name="Position" direction="in" type="x" tp:type="Time_In_Us" />
         </method>
         <signal name="Seeked" tp:name-for-bindings="Seeked">
-            <arg name="Position" type="x" tp:type="Time_In_Us" />
+            <arg name="Position" direction="out" type="x" tp:type="Time_In_Us" />
         </signal>
         <property name="CanGoNext" tp:name-for-bindings="Can_Go_Next" type="b" access="read" />
         <property name="CanGoPrevious" tp:name-for-bindings="Can_Go_Previous" type="b" access="read" />
