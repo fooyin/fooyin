@@ -3,6 +3,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
+    ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
     ${CMAKE_SOURCE_DIR}/include/gui/guisettings.h
     ${CMAKE_SOURCE_DIR}/include/gui/layoutprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/propertiesdialog.h
@@ -21,7 +22,6 @@ set(SOURCES
     guiapplication.cpp
     guiapplication.h
     guipaths.cpp
-    guipaths.h
     internalguisettings.cpp
     internalguisettings.h
     layoutprovider.cpp

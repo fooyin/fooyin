@@ -19,8 +19,7 @@
 
 #include <gui/layoutprovider.h>
 
-#include "guipaths.h"
-
+#include <gui/guipaths.h>
 #include <utils/fileutils.h>
 
 #include <QFileDialog>

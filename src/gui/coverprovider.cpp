@@ -20,10 +20,10 @@
 #include <gui/coverprovider.h>
 
 #include "core/tagging/tagreader.h"
-#include "guipaths.h"
 
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guipaths.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
 #include <utils/utils.h>
