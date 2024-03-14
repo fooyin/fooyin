@@ -202,6 +202,14 @@ void CoverProvider::clearCache()
 
     QPixmapCache::clear();
 }
+
+void CoverProvider::removeFromCache(const QString& key)
+{
+    QDir cache{Fooyin::Gui::coverPath()};
+    cache.remove(coverThumbnailPath(key));
+
+    QPixmapCache::remove(key);
+}
 } // namespace Fooyin
 
 #include "gui/moc_coverprovider.cpp"
