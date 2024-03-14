@@ -29,6 +29,7 @@
 #include "mprisroot.h"
 
 #include <QApplication>
+#include <QDBusObjectPath>
 
 constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2";
 constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";
@@ -36,9 +37,10 @@ constexpr auto PlayerEntity    = "org.mpris.MediaPlayer2.Player";
 constexpr auto DbusPath        = "org.freedesktop.DBus.Properties";
 
 namespace {
-QString formatTrackId(int id, int index)
+QDBusObjectPath formatTrackId(int index)
 {
-    return QString{QStringLiteral("/org/fooyin/fooyin/track/%1/%2")}.arg(id, index);
+    const QString trackId = QString{QStringLiteral("/org/fooyin/fooyin/track/%1").arg(index)};
+    return QDBusObjectPath{trackId};
 }
 
 QString formatDateTime(uint64_t time)
@@ -304,7 +306,7 @@ QVariantMap MprisPlugin::metadata() const
 
     QVariantMap metadata;
 
-    metadata[QStringLiteral("mpris:trackid")]     = formatTrackId(track.id(), index);
+    metadata[QStringLiteral("mpris:trackid")]     = formatTrackId(index);
     metadata[QStringLiteral("mpris:length")]      = static_cast<quint64>(track.duration() * 1000);
     metadata[QStringLiteral("xesam:url")]         = track.filepath();
     metadata[QStringLiteral("xesam:title")]       = track.title();
