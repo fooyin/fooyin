@@ -634,6 +634,32 @@ QStringList Track::supportedFileExtensions()
     return supportedExtensions;
 }
 
+QStringList Track::supportedMimeTypes()
+{
+    static const QStringList supportedTypes = {QStringLiteral("audio/ogg"),
+                                               QStringLiteral("audio/x-vorbis+ogg"),
+                                               QStringLiteral("audio/mpeg"),
+                                               QStringLiteral("audio/mpeg3"),
+                                               QStringLiteral("audio/x-mpeg"),
+                                               QStringLiteral("audio/x-aiff"),
+                                               QStringLiteral("audio/x-aifc"),
+                                               QStringLiteral("audio/vnd.wave"),
+                                               QStringLiteral("audio/wav"),
+                                               QStringLiteral("audio/x-wav"),
+                                               QStringLiteral("audio/x-musepack"),
+                                               QStringLiteral("audio/x-ape"),
+                                               QStringLiteral("audio/x-wavpack"),
+                                               QStringLiteral("audio/mp4"),
+                                               QStringLiteral("audio/vnd.audible.aax"),
+                                               QStringLiteral("audio/flac"),
+                                               QStringLiteral("audio/ogg"),
+                                               QStringLiteral("audio/x-vorbis+ogg"),
+                                               QStringLiteral("audio/opus"),
+                                               QStringLiteral("audio/x-opus+ogg"),
+                                               QStringLiteral("audio/x-ms-wma")};
+    return supportedTypes;
+}
+
 size_t qHash(const Track& track)
 {
     return qHash(track.filepath());

@@ -168,6 +168,7 @@ public:
     void setSort(const QString& sort);
 
     static QStringList supportedFileExtensions();
+    static QStringList supportedMimeTypes();
 
 private:
     struct Private;
