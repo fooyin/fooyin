@@ -50,6 +50,8 @@ class MprisPlugin : public QObject,
     Q_PROPERTY(bool CanSeek READ canSeek)
     Q_PROPERTY(double Volume READ volume WRITE setVolume)
     Q_PROPERTY(QString PlaybackStatus READ playbackStatus)
+    Q_PROPERTY(QString LoopStatus READ loopStatus WRITE setLoopStatus)
+    Q_PROPERTY(bool Shuffle READ shuffle WRITE setShuffle)
     Q_PROPERTY(QVariantMap Metadata READ metadata)
     Q_PROPERTY(int64_t Position READ position)
 
@@ -76,6 +78,10 @@ public:
     double volume() const;
     void setVolume(double volume);
     QString playbackStatus() const;
+    QString loopStatus() const;
+    void setLoopStatus(const QString& status);
+    bool shuffle() const;
+    void setShuffle(bool value);
     QVariantMap metadata() const;
     int64_t position() const;
 
@@ -91,7 +97,7 @@ public:
     void Stop();
     void Play();
     void Seek(int64_t offset);
-    void SetPosition(const QDBusObjectPath &path, int64_t position);
+    void SetPosition(const QDBusObjectPath& path, int64_t position);
 
 signals:
     void Seeked(int64_t position);

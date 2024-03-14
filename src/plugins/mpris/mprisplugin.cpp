@@ -62,7 +62,11 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     m_playlistHandler  = context.playlistHandler;
     m_settings         = context.settingsManager;
 
-    connect(m_playerController, &PlayerController::playStateChanged, this,
+    connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
+        notify(QStringLiteral("LoopStatus"), loopStatus());
+        notify(QStringLiteral("Shuffle"), shuffle());
+    });
+    connect(m_playerController, &PlayerController::playModeChanged, this,
             [this]() { notify(QStringLiteral("PlaybackStatus"), playbackStatus()); });
     connect(m_playerController, &PlayerController::currentTrackChanged, this,
             [this]() { notify(QStringLiteral("Metadata"), metadata()); });
@@ -229,6 +233,65 @@ QString MprisPlugin::playbackStatus() const
         default:
             return {};
     }
+}
+
+QString MprisPlugin::loopStatus() const
+{
+    const auto mode = m_playerController->playMode();
+
+    if(mode & Playlist::RepeatPlaylist) {
+        return QStringLiteral("Playlist");
+    }
+
+    if(mode & Playlist::RepeatTrack) {
+        return QStringLiteral("Track");
+    }
+
+    return QStringLiteral("None");
+}
+
+void MprisPlugin::setLoopStatus(const QString& status)
+{
+    auto mode = m_playerController->playMode();
+
+    if(status == u"Playlist") {
+        mode |= Playlist::RepeatPlaylist;
+        mode &= ~Playlist::RepeatAlbum;
+        mode &= ~Playlist::RepeatTrack;
+    }
+    else if(status == u"Track") {
+        mode &= ~Playlist::RepeatPlaylist;
+        mode &= ~Playlist::RepeatAlbum;
+        mode |= Playlist::RepeatTrack;
+    }
+    else if(status == u"None") {
+        mode &= ~Playlist::RepeatPlaylist;
+        mode &= ~Playlist::RepeatAlbum;
+        mode &= ~Playlist::RepeatTrack;
+    }
+
+    m_playerController->setPlayMode(mode);
+}
+
+bool MprisPlugin::shuffle() const
+{
+    const auto mode = m_playerController->playMode();
+    return mode & Playlist::ShuffleAlbums || mode & Playlist::ShuffleTracks;
+}
+
+void MprisPlugin::setShuffle(bool value)
+{
+    auto mode = m_playerController->playMode();
+
+    if(value) {
+        mode |= Playlist::ShuffleTracks;
+    }
+    else {
+        mode &= ~Playlist::ShuffleAlbums;
+        mode &= ~Playlist::ShuffleTracks;
+    }
+
+    m_playerController->setPlayMode(mode);
 }
 
 QVariantMap MprisPlugin::metadata() const

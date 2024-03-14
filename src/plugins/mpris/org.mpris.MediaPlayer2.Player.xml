@@ -24,6 +24,8 @@
         <property name="CanSeek" tp:name-for-bindings="Can_Seek" type="b" access="read" />
         <property name="CanControl" tp:name-for-bindings="Can_Control" type="b" access="read" />
         <property name="PlaybackStatus" tp:name-for-bindings="Playback_Status" type="s" tp:type="Playback_Status" access="read" />
+        <property name="LoopStatus" tp:name-for-bindings="Loop_Status" type="s" tp:type="Loop_Status" access="readwrite" />
+        <property name='Shuffle' tp:name-for-bindings="Shuffle" type='b' access='readwrite'/>
         <property name="Metadata" tp:name-for-bindings="Metadata" type="a{sv}" tp:type="Metadata_Map" access="read">
             <annotation name="org.qtproject.QtDBus.QtTypeName" value="QVariantMap" />
         </property>
