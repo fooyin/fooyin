@@ -44,6 +44,22 @@ public:
     ~CoverProvider() override;
 
     /*!
+     * If @c true, @fn trackCover methods will return a placeholder if tracks don't have covers or
+     * are still being loaded.
+     * @note this is enabled by default.
+     */
+    void setUsePlaceholder(bool enabled);
+    /*!
+     * Sets the key to be used when saving to cache/disk.
+     * Useful for keeping a temporary buffer of a single cover.
+     * @note the album hash of a track is used by default.
+     * @note use @fn resetCoverKey to restore.
+     */
+    void setCoverKey(const QString& name);
+    /** Restores default behaviour of using a track's album hash as the key. */
+    void resetCoverKey();
+
+    /*!
      * This will return either the front cover picture of the @p track if it's either:
      * - Non-embedded.
      * - Exists in QPixmapCache.

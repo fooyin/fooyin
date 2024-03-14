@@ -106,6 +106,8 @@ struct CoverProvider::Private
 {
     CoverProvider* self;
 
+    bool usePlacerholder{true};
+    QString coverKey;
     std::set<QString> pendingCovers;
 
     explicit Private(CoverProvider* self_)
@@ -150,15 +152,30 @@ CoverProvider::CoverProvider(QObject* parent)
     , p{std::make_unique<Private>(this)}
 { }
 
+void CoverProvider::setUsePlaceholder(bool enabled)
+{
+    p->usePlacerholder = enabled;
+}
+
+void CoverProvider::setCoverKey(const QString& name)
+{
+    p->coverKey = name;
+}
+
+void CoverProvider::resetCoverKey()
+{
+    p->coverKey.clear();
+}
+
 CoverProvider::~CoverProvider() = default;
 
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
 {
     if(!track.isValid() || !track.hasCover()) {
-        return loadNoCover(size);
+        return p->usePlacerholder ? loadNoCover(size) : QPixmap{};
     }
 
-    const QString coverKey = generateCoverKey(track.albumHash(), size);
+    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track.albumHash(), size);
 
     if(!p->pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
@@ -170,7 +187,7 @@ QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool sa
         p->fetchCover(coverKey, track, size, saveToDisk);
     }
 
-    return loadNoCover(size);
+    return p->usePlacerholder ? loadNoCover(size) : QPixmap{};
 }
 
 QPixmap CoverProvider::trackCover(const Track& track, bool saveToDisk) const
