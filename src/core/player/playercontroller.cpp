@@ -38,6 +38,7 @@ struct PlayerController::Private
     Playlist::PlayModes playMode;
     uint64_t position{0};
     bool counted{false};
+    bool isQueueTrack{false};
 
     PlaybackQueue queue;
 
@@ -111,10 +112,12 @@ void PlayerController::previous()
 void PlayerController::next()
 {
     if(p->queue.empty()) {
+        p->isQueueTrack = false;
         emit nextTrack();
     }
     else {
         p->currentTrack = {};
+        p->isQueueTrack = true;
         play();
     }
 }
@@ -204,6 +207,16 @@ uint64_t PlayerController::currentPosition() const
 Track PlayerController::currentTrack() const
 {
     return p->currentTrack.track;
+}
+
+int PlayerController::currentTrackId() const
+{
+    return p->currentTrack.isValid() ? p->currentTrack.track.id() : -1;
+}
+
+bool PlayerController::currentIsQueueTrack() const
+{
+    return p->isQueueTrack;
 }
 
 PlaylistTrack PlayerController::currentPlaylistTrack() const

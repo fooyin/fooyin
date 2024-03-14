@@ -512,7 +512,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     playlistController->playlistHandler()->replacePlaylistTracks(playlistController->currentPlaylist()->id(), tracks);
     playlistController->changedTracks();
 
-    if(playingIndex >= 0) {
+    if(playingIndex >= 0 && !playerController->currentIsQueueTrack()) {
         playlistController->currentPlaylist()->changeCurrentIndex(playingIndex);
     }
 
@@ -760,8 +760,7 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
                 }
             }
             else {
-                std::erase_if(columns,
-                              [columnId](const PlaylistColumn& col) { return col.id == columnId; });
+                std::erase_if(columns, [columnId](const PlaylistColumn& col) { return col.id == columnId; });
                 changePreset(currentPreset);
             }
         });

@@ -55,6 +55,10 @@ public:
      * @note the track will be invalid if the state is 'Stopped'.
      */
     [[nodiscard]] Track currentTrack() const;
+    /** Returns the current track id, or -1 if there isn't a valid tracks. */
+    [[nodiscard]] int currentTrackId() const;
+    /** Returns @c true if the current track is part of the queue. */
+    [[nodiscard]] bool currentIsQueueTrack() const;
     /*!
      * Returns the currently playing playlist track.
      * @note the track will be invalid if the state is 'Stopped'.
