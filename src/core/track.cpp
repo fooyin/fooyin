@@ -626,11 +626,10 @@ void Track::setSort(const QString& sort)
 QStringList Track::supportedFileExtensions()
 {
     static const QStringList supportedExtensions
-        = {QString::fromLatin1("*.mp3"),  QString::fromLatin1("*.ogg"), QString::fromLatin1("*.opus"),
-           QString::fromLatin1("*.oga"),  QString::fromLatin1("*.m4a"), QString::fromLatin1("*.wav"),
-           QString::fromLatin1("*.flac"), QString::fromLatin1("*.wma"), QString::fromLatin1("*.mpc"),
-           QString::fromLatin1("*.aiff"), QString::fromLatin1("*.ape"), QString::fromLatin1("*.webm"),
-           QString::fromLatin1("*.mp4")};
+        = {QStringLiteral("*.mp3"), QStringLiteral("*.ogg"),  QStringLiteral("*.opus"), QStringLiteral("*.oga"),
+           QStringLiteral("*.m4a"), QStringLiteral("*.wav"),  QStringLiteral("*.flac"), QStringLiteral("*.wma"),
+           QStringLiteral("*.mpc"), QStringLiteral("*.aiff"), QStringLiteral("*.ape"),  QStringLiteral("*.webm"),
+           QStringLiteral("*.mp4")};
     return supportedExtensions;
 }
 
