@@ -44,6 +44,11 @@ class MprisPlugin : public QObject,
     Q_PROPERTY(QString Identity READ identity)
     Q_PROPERTY(QString DesktopEntry READ desktopEntry)
     Q_PROPERTY(bool CanRaise READ canRaise)
+    Q_PROPERTY(bool CanQuit READ canQuit)
+    Q_PROPERTY(bool Fullscreen READ fullscreen WRITE setFullscreen)
+    Q_PROPERTY(bool CanSetFullscreen READ canSetFullscreen)
+    Q_PROPERTY(QStringList SupportedUriSchemes READ supportedUriSchemes)
+    Q_PROPERTY(QStringList SupportedMimeTypes READ supportedMimeTypes)
 
     // Player
     Q_PROPERTY(bool CanControl READ canControl)
@@ -58,6 +63,8 @@ class MprisPlugin : public QObject,
     Q_PROPERTY(bool Shuffle READ shuffle WRITE setShuffle)
     Q_PROPERTY(QVariantMap Metadata READ metadata)
     Q_PROPERTY(int64_t Position READ position)
+    Q_PROPERTY(double MinimumRate READ minimumRate)
+    Q_PROPERTY(double MaximumRate READ maximumRate)
 
 public:
     MprisPlugin();
@@ -71,6 +78,12 @@ public:
     QString identity() const;
     QString desktopEntry() const;
     bool canRaise() const;
+    bool canQuit() const;
+    bool canSetFullscreen() const;
+    bool fullscreen() const;
+    void setFullscreen(bool fullscreen);
+    QStringList supportedUriSchemes() const;
+    QStringList supportedMimeTypes() const;
 
     // Player
     bool canControl() const;
@@ -88,6 +101,8 @@ public:
     void setShuffle(bool value);
     QVariantMap metadata() const;
     int64_t position() const;
+    double minimumRate() const;
+    double maximumRate() const;
 
     // Root
     void Raise();

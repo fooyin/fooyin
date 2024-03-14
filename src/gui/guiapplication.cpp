@@ -123,7 +123,7 @@ struct GuiApplication::Private
     HelpMenu* helpMenu;
 
     PropertiesDialog* propertiesDialog;
-    WindowController windowController;
+    WindowController* windowController;
 
     GeneralPage generalPage;
     GuiGeneralPage guiGeneralPage;
@@ -170,7 +170,7 @@ struct GuiApplication::Private
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
         , propertiesDialog{new PropertiesDialog(settingsManager, self)}
-        , windowController{mainWindow.get()}
+        , windowController{new WindowController(mainWindow.get())}
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , libraryGeneralPage{actionManager, libraryManager, settingsManager}
@@ -186,7 +186,7 @@ struct GuiApplication::Private
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,
-                           propertiesDialog, &widgetProvider, editableLayout.get(), &windowController}
+                           propertiesDialog, &widgetProvider, editableLayout.get(), windowController}
     {
         setupConnections();
         registerActions();

@@ -2,8 +2,14 @@
 <node xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
     <interface name="org.mpris.MediaPlayer2">
         <method name="Raise" tp:name-for-bindings="Raise" />
+        <method name="Quit" tp:name-for-bindings="Quit" />
         <property name="CanRaise" type="b" tp:name-for-bindings="Can_Raise" access="read" />
+        <property name="CanQuit" type="b" tp:name-for-bindings="Can_Quit" access="read" />
+        <property name="Fullscreen" type="b" tp:name-for-bindings="Fullscreen" access="readwrite" />
+        <property name="CanSetFullscreen" type="b" tp:name-for-bindings="Can_Set_Fullscreen" access="read" />
         <property name="Identity" type="s" tp:name-for-bindings="Identity" access="read" />
         <property name="DesktopEntry" type="s" tp:name-for-bindings="Desktop_Entry" access="read" />
+        <property name="SupportedUriSchemes" type="as" tp:name-for-bindings="Supported_Uri_Schemes" access="read" />
+        <property name="SupportedMimeTypes" type="as" tp:name-for-bindings="Supported_Mime_Types" access="read" />
     </interface>
 </node>

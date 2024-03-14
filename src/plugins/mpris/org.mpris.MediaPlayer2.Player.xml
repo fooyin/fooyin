@@ -23,6 +23,8 @@
         <property name="CanPause" tp:name-for-bindings="Can_Pause" type="b" access="read" />
         <property name="CanSeek" tp:name-for-bindings="Can_Seek" type="b" access="read" />
         <property name="CanControl" tp:name-for-bindings="Can_Control" type="b" access="read" />
+        <property name="MinimumRate" tp:name-for-bindings="Minimum_Rate" type="d" tp:type="Playback_Rate" access="read" />
+        <property name="MaximumRate" tp:name-for-bindings="Maximum_Rate" type="d" tp:type="Playback_Rate" access="read" />
         <property name="PlaybackStatus" tp:name-for-bindings="Playback_Status" type="s" tp:type="Playback_Status" access="read" />
         <property name="LoopStatus" tp:name-for-bindings="Loop_Status" type="s" tp:type="Loop_Status" access="readwrite" />
         <property name='Shuffle' tp:name-for-bindings="Shuffle" type='b' access='readwrite'/>

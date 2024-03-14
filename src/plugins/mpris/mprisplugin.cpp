@@ -98,6 +98,9 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
 {
     m_windowController = context.windowController;
 
+    QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
+                     [this]() { notify(QStringLiteral("Fullscreen"), fullscreen()); });
+
     new MprisRoot(this);
     new MprisPlayer(this);
 
@@ -141,6 +144,36 @@ QString MprisPlugin::desktopEntry() const
 bool MprisPlugin::canRaise() const
 {
     return true;
+}
+
+bool MprisPlugin::canQuit() const
+{
+    return true;
+}
+
+bool MprisPlugin::canSetFullscreen() const
+{
+    return true;
+}
+
+bool MprisPlugin::fullscreen() const
+{
+    return m_windowController->isFullScreen();
+}
+
+void MprisPlugin::setFullscreen(bool fullscreen)
+{
+    m_windowController->setFullScreen(fullscreen);
+}
+
+QStringList MprisPlugin::supportedUriSchemes() const
+{
+    return {QStringLiteral("file")};
+}
+
+QStringList MprisPlugin::supportedMimeTypes() const
+{
+    return Track::supportedMimeTypes();
 }
 
 bool MprisPlugin::canControl() const
@@ -267,6 +300,16 @@ QVariantMap MprisPlugin::metadata() const
 int64_t MprisPlugin::position() const
 {
     return static_cast<int64_t>(m_playerController->currentPosition()) * 1000;
+}
+
+double MprisPlugin::minimumRate() const
+{
+    return 1.0;
+}
+
+double MprisPlugin::maximumRate() const
+{
+    return 1.0;
 }
 
 void MprisPlugin::Raise()

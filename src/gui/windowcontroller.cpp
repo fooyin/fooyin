@@ -19,15 +19,45 @@
 
 #include <gui/windowcontroller.h>
 
+#include <QEvent>
 #include <QMainWindow>
 
 namespace Fooyin {
 WindowController::WindowController(QMainWindow* window)
-    : m_mainWindow{window}
-{ }
+    : QObject{window}
+    , m_mainWindow{window}
+{
+    m_mainWindow->installEventFilter(this);
+}
+
+bool WindowController::isFullScreen() const
+{
+    return m_mainWindow->isFullScreen();
+}
+
+void WindowController::setFullScreen(bool fullscreen)
+{
+    if(fullscreen) {
+        m_mainWindow->setWindowState(m_mainWindow->windowState() | Qt::WindowMaximized);
+    }
+    else {
+        m_mainWindow->setWindowState(m_mainWindow->windowState() &= ~Qt::WindowMaximized);
+    }
+}
 
 void WindowController::raise()
 {
     m_mainWindow->raise();
 }
+
+bool WindowController::eventFilter(QObject* watched, QEvent* event)
+{
+    if(event->type() == QEvent::WindowStateChange) {
+        emit isFullScreenChanged(m_mainWindow->windowState() & Qt::WindowMaximized);
+    }
+
+    return QObject::eventFilter(watched, event);
+}
 } // namespace Fooyin
+
+#include "gui/moc_windowcontroller.cpp"

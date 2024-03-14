@@ -19,15 +19,29 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
+#include <QObject>
+
 class QMainWindow;
 
 namespace Fooyin {
-class WindowController
+class FYGUI_EXPORT WindowController : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit WindowController(QMainWindow* window);
 
+    [[nodiscard]] bool isFullScreen() const;
+    void setFullScreen(bool fullscreen);
+
     void raise();
+
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
+signals:
+    void isFullScreenChanged(bool fullscreen);
 
 private:
     QMainWindow* m_mainWindow;
