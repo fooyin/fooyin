@@ -22,11 +22,15 @@
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <core/track.h>
+#include <gui/coverprovider.h>
 #include <gui/plugins/guiplugin.h>
 
 class QDBusObjectPath;
 
-namespace Fooyin::Mpris {
+namespace Fooyin {
+struct PlaylistTrack;
+
+namespace Mpris {
 class MprisPlugin : public QObject,
                     public Plugin,
                     public CorePlugin,
@@ -104,6 +108,8 @@ signals:
 
 private:
     void notify(const QString& name, const QVariant& value);
+    void trackChanged(const PlaylistTrack& playlistTrack);
+    void loadMetaData(const PlaylistTrack& playlistTrack);
 
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
@@ -111,5 +117,8 @@ private:
     SettingsManager* m_settings;
 
     bool m_registered;
+    QVariantMap m_currentMetaData;
+    CoverProvider m_coverProvider;
 };
-} // namespace Fooyin::Mpris
+} // namespace Mpris
+} // namespace Fooyin

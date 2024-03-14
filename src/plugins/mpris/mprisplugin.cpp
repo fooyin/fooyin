@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
+#include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
@@ -57,7 +58,18 @@ QString formatDateTime(uint64_t time)
 namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
-{ }
+{
+    m_coverProvider.setUsePlaceholder(false);
+    m_coverProvider.setCoverKey(QStringLiteral("MPRISCOVER"));
+
+    QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
+        const auto currentTrack = m_playerController->currentPlaylistTrack();
+        if(track.id() == currentTrack.track.id()) {
+            loadMetaData(currentTrack);
+            notify(QStringLiteral("Metadata"), metadata());
+        }
+    });
+}
 
 void MprisPlugin::initialise(const CorePluginContext& context)
 {
@@ -77,10 +89,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
         notify(QStringLiteral("CanGoPrevious"), canGoPrevious());
         notify(QStringLiteral("CanSeek"), canSeek());
     });
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() {
-        notify(QStringLiteral("Metadata"), metadata());
-        notify(QStringLiteral("CanSeek"), canSeek());
-    });
+    QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
 }
@@ -177,67 +186,6 @@ void MprisPlugin::setVolume(double volume)
     m_settings->set<Settings::Core::OutputVolume>(volume);
 }
 
-void MprisPlugin::Raise()
-{
-    m_windowController->raise();
-}
-
-void MprisPlugin::Quit()
-{
-    QCoreApplication::quit();
-}
-
-void MprisPlugin::Next()
-{
-    m_playerController->next();
-}
-
-void MprisPlugin::Previous()
-{
-    m_playerController->previous();
-}
-
-void MprisPlugin::Pause()
-{
-    m_playerController->pause();
-}
-
-void MprisPlugin::PlayPause()
-{
-    m_playerController->playPause();
-}
-
-void MprisPlugin::Stop()
-{
-    m_playerController->stop();
-}
-
-void MprisPlugin::Play()
-{
-    m_playerController->play();
-}
-
-void MprisPlugin::Seek(int64_t offset)
-{
-    const int64_t newPosition = position() + offset;
-    SetPosition({}, newPosition);
-}
-
-void MprisPlugin::SetPosition(const QDBusObjectPath& /*path*/, int64_t position)
-{
-    m_playerController->changePosition(position / 1000);
-}
-
-void MprisPlugin::notify(const QString& name, const QVariant& value)
-{
-    QDBusMessage msg = QDBusMessage::createSignal(QString::fromLatin1(MprisObjectPath), QString::fromLatin1(DbusPath),
-                                                  QStringLiteral("PropertiesChanged"));
-    QVariantMap map;
-    map.insert(name, value);
-    msg.setArguments({QString::fromLatin1(PlayerEntity), map, QStringList{}});
-    QDBusConnection::sessionBus().send(msg);
-}
-
 QString MprisPlugin::playbackStatus() const
 {
     switch(m_playerController->playState()) {
@@ -313,41 +261,120 @@ void MprisPlugin::setShuffle(bool value)
 
 QVariantMap MprisPlugin::metadata() const
 {
-    const auto [track, _, index] = m_playerController->currentPlaylistTrack();
-
-    if(!track.isValid()) {
-        return {};
-    }
-
-    QVariantMap metadata;
-
-    metadata[QStringLiteral("mpris:trackid")]     = formatTrackId(index);
-    metadata[QStringLiteral("mpris:length")]      = static_cast<quint64>(track.duration() * 1000);
-    metadata[QStringLiteral("xesam:url")]         = track.filepath();
-    metadata[QStringLiteral("xesam:title")]       = track.title();
-    metadata[QStringLiteral("xesam:trackNumber")] = track.trackNumber();
-    metadata[QStringLiteral("xesam:album")]       = track.album();
-    metadata[QStringLiteral("xesam:albumArtist")] = track.albumArtist();
-    metadata[QStringLiteral("xesam:artist")]      = track.artists();
-    metadata[QStringLiteral("xesam:genre")]       = track.genres();
-    metadata[QStringLiteral("xesam:discNumber")]  = track.discNumber();
-    metadata[QStringLiteral("xesam:comment")]     = track.comment();
-    metadata[QStringLiteral("xesam:composer")]    = track.composer();
-    metadata[QStringLiteral("xesam:firstUsed")]   = formatDateTime(track.firstPlayed());
-    metadata[QStringLiteral("xesam:lastUsed")]    = formatDateTime(track.lastPlayed());
-    metadata[QStringLiteral("xesam:useCount")]    = track.playCount();
-
-    // TODO: Support embedded covers - will need to read and save to temp location
-    if(track.hasCover() && !track.hasEmbeddedCover()) {
-        metadata[QStringLiteral("mpris:artUrl")] = track.coverPath();
-    }
-
-    return metadata;
+    return m_currentMetaData;
 }
 
 int64_t MprisPlugin::position() const
 {
     return static_cast<int64_t>(m_playerController->currentPosition()) * 1000;
+}
+
+void MprisPlugin::Raise()
+{
+    m_windowController->raise();
+}
+
+void MprisPlugin::Quit()
+{
+    QCoreApplication::quit();
+}
+
+void MprisPlugin::Next()
+{
+    m_playerController->next();
+}
+
+void MprisPlugin::Previous()
+{
+    m_playerController->previous();
+}
+
+void MprisPlugin::Pause()
+{
+    m_playerController->pause();
+}
+
+void MprisPlugin::PlayPause()
+{
+    m_playerController->playPause();
+}
+
+void MprisPlugin::Stop()
+{
+    m_playerController->stop();
+}
+
+void MprisPlugin::Play()
+{
+    m_playerController->play();
+}
+
+void MprisPlugin::Seek(int64_t offset)
+{
+    const int64_t newPosition = position() + offset;
+    SetPosition({}, newPosition);
+}
+
+void MprisPlugin::SetPosition(const QDBusObjectPath& /*path*/, int64_t position)
+{
+    m_playerController->changePosition(position / 1000);
+}
+
+void MprisPlugin::notify(const QString& name, const QVariant& value)
+{
+    QDBusMessage msg = QDBusMessage::createSignal(QString::fromLatin1(MprisObjectPath), QString::fromLatin1(DbusPath),
+                                                  QStringLiteral("PropertiesChanged"));
+    QVariantMap map;
+    map.insert(name, value);
+    msg.setArguments({QString::fromLatin1(PlayerEntity), map, QStringList{}});
+    QDBusConnection::sessionBus().send(msg);
+}
+
+void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
+{
+    m_coverProvider.removeFromCache(QStringLiteral("MPRISCOVER"));
+    m_currentMetaData.clear();
+
+    if(playlistTrack.isValid()) {
+        loadMetaData(playlistTrack);
+        notify(QStringLiteral("Metadata"), metadata());
+        notify(QStringLiteral("CanSeek"), canSeek());
+    }
+}
+
+void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
+{
+    const auto& [track, _, index] = playlistTrack;
+
+    if(m_currentMetaData.empty()) {
+        m_currentMetaData[QStringLiteral("mpris:trackid")]     = formatTrackId(index);
+        m_currentMetaData[QStringLiteral("mpris:length")]      = static_cast<quint64>(track.duration() * 1000);
+        m_currentMetaData[QStringLiteral("xesam:url")]         = track.filepath();
+        m_currentMetaData[QStringLiteral("xesam:title")]       = track.title();
+        m_currentMetaData[QStringLiteral("xesam:trackNumber")] = track.trackNumber();
+        m_currentMetaData[QStringLiteral("xesam:album")]       = track.album();
+        m_currentMetaData[QStringLiteral("xesam:albumArtist")] = track.albumArtist();
+        m_currentMetaData[QStringLiteral("xesam:artist")]      = track.artists();
+        m_currentMetaData[QStringLiteral("xesam:genre")]       = track.genres();
+        m_currentMetaData[QStringLiteral("xesam:discNumber")]  = track.discNumber();
+        m_currentMetaData[QStringLiteral("xesam:comment")]     = track.comment();
+        m_currentMetaData[QStringLiteral("xesam:composer")]    = track.composer();
+        m_currentMetaData[QStringLiteral("xesam:firstUsed")]   = formatDateTime(track.firstPlayed());
+        m_currentMetaData[QStringLiteral("xesam:lastUsed")]    = formatDateTime(track.lastPlayed());
+        m_currentMetaData[QStringLiteral("xesam:useCount")]    = track.playCount();
+    }
+
+    if(track.hasCover()) {
+        QString coverPath = track.coverPath();
+        if(track.hasEmbeddedCover()) {
+            const QPixmap cover = m_coverProvider.trackCover(track, true);
+            if(cover.isNull()) {
+                return;
+            }
+            coverPath = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
+        }
+        m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
+    }
 }
 } // namespace Fooyin::Mpris
 
