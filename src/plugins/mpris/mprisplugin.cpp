@@ -339,7 +339,7 @@ QVariantMap MprisPlugin::metadata() const
 
     // TODO: Support embedded covers - will need to read and save to temp location
     if(track.hasCover() && !track.hasEmbeddedCover()) {
-        metadata[QStringLiteral("xesam:artUrl")] = track.coverPath();
+        metadata[QStringLiteral("mpris:artUrl")] = track.coverPath();
     }
 
     return metadata;
