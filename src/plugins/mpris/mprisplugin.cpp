@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
+#include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -84,8 +85,10 @@ void MprisPlugin::initialise(const CorePluginContext& context)
                      [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
 }
 
-void MprisPlugin::initialise(const GuiPluginContext& /*context*/)
+void MprisPlugin::initialise(const GuiPluginContext& context)
 {
+    m_windowController = context.windowController;
+
     new MprisRoot(this);
     new MprisPlayer(this);
 
@@ -174,7 +177,10 @@ void MprisPlugin::setVolume(double volume)
     m_settings->set<Settings::Core::OutputVolume>(volume);
 }
 
-void MprisPlugin::Raise() { }
+void MprisPlugin::Raise()
+{
+    m_windowController->raise();
+}
 
 void MprisPlugin::Quit()
 {

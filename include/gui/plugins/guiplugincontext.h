@@ -29,6 +29,7 @@ class PropertiesDialog;
 class SearchController;
 class WidgetProvider;
 class EditableLayout;
+class WindowController;
 
 /*!
  * Passed to gui plugins in GuiPlugin::initialise.
@@ -38,7 +39,7 @@ struct FYGUI_EXPORT GuiPluginContext
     GuiPluginContext(ActionManager* actionManager_, LayoutProvider* layoutProvider_,
                      TrackSelectionController* trackSelection_, SearchController* searchController_,
                      PropertiesDialog* propertiesDialog_, WidgetProvider* widgetProvider_,
-                     EditableLayout* editableLayout_)
+                     EditableLayout* editableLayout_, WindowController* windowController_)
         : actionManager{actionManager_}
         , layoutProvider{layoutProvider_}
         , trackSelection{trackSelection_}
@@ -46,6 +47,7 @@ struct FYGUI_EXPORT GuiPluginContext
         , propertiesDialog{propertiesDialog_}
         , widgetProvider{widgetProvider_}
         , editableLayout{editableLayout_}
+        , windowController{windowController_}
     { }
 
     ActionManager* actionManager;
@@ -55,5 +57,6 @@ struct FYGUI_EXPORT GuiPluginContext
     PropertiesDialog* propertiesDialog;
     WidgetProvider* widgetProvider;
     EditableLayout* editableLayout;
+    WindowController* windowController;
 };
 } // namespace Fooyin

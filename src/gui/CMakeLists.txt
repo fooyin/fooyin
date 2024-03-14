@@ -10,6 +10,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgetcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetfilter.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgetprovider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
@@ -29,7 +30,9 @@ set(SOURCES
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
+    windowcontroller.cpp
     controls/playercontrol.cpp
+    controls/playercontrol.h
     controls/playlistcontrol.cpp
     controls/playlistcontrol.h
     controls/seekbar.cpp
@@ -192,7 +195,6 @@ set(SOURCES
     widgets/tabstackwidget.h
     widgets/toolbutton.cpp
     widgets/widgetcontainer.cpp
-controls/playercontrol.h
 )
 
 create_fooyin_library(

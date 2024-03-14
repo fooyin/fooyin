@@ -107,6 +107,7 @@ private:
 
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
+    WindowController* m_windowController;
     SettingsManager* m_settings;
 
     bool m_registered;
