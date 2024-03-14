@@ -64,16 +64,24 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     m_playlistHandler  = context.playlistHandler;
     m_settings         = context.settingsManager;
 
-    connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
+    QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
         notify(QStringLiteral("LoopStatus"), loopStatus());
         notify(QStringLiteral("Shuffle"), shuffle());
     });
-    connect(m_playerController, &PlayerController::playModeChanged, this,
-            [this]() { notify(QStringLiteral("PlaybackStatus"), playbackStatus()); });
-    connect(m_playerController, &PlayerController::currentTrackChanged, this,
-            [this]() { notify(QStringLiteral("Metadata"), metadata()); });
-    connect(m_playerController, &PlayerController::positionMoved, this,
-            [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
+        notify(QStringLiteral("PlaybackStatus"), playbackStatus());
+        notify(QStringLiteral("CanPause"), canPause());
+        notify(QStringLiteral("CanPlay"), canPlay());
+        notify(QStringLiteral("CanGoNext"), canPlay());
+        notify(QStringLiteral("CanGoPrevious"), canGoPrevious());
+        notify(QStringLiteral("CanSeek"), canSeek());
+    });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() {
+        notify(QStringLiteral("Metadata"), metadata());
+        notify(QStringLiteral("CanSeek"), canSeek());
+    });
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this,
+                     [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
 }
 
 void MprisPlugin::initialise(const GuiPluginContext& /*context*/)
@@ -150,7 +158,8 @@ bool MprisPlugin::canPlay() const
 
 bool MprisPlugin::canSeek() const
 {
-    return canControl();
+    // TODO: Use engine state to detemrine if track is seekable
+    return m_playerController->currentTrack().isValid();
 }
 
 double MprisPlugin::volume() const
