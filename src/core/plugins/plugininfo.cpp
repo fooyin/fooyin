@@ -53,7 +53,7 @@ void PluginInfo::load()
     }
 
     if(!m_loader.load()) {
-        m_error = QString{QStringLiteral("Plugin (%1) couldn't be loaded: ")}.arg(m_name, m_error);
+        m_error = QString{QStringLiteral("Plugin (%1) couldn't be loaded: %2")}.arg(m_name, m_error);
         return;
     }
 
