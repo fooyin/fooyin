@@ -40,7 +40,7 @@ QString createPath(const QString& path, const QString& appendPath)
         }
     }
 
-    auto fullPath = path / appendPath;
+    const QString fullPath = path + QStringLiteral("/") + appendPath;
 
     if(!QFileInfo::exists(fullPath)) {
         if(!QDir().mkpath(fullPath)) {
