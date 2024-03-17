@@ -19,22 +19,23 @@
 
 #include "trackdatabasemanager.h"
 
-#include "database/database.h"
 #include "database/trackdatabase.h"
 #include "tagging/tagwriter.h"
 
 #include <core/track.h>
+#include <utils/database/dbconnectionhandler.h>
 
 namespace Fooyin {
-TrackDatabaseManager::TrackDatabaseManager(Database* database, QObject* parent)
+TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* parent)
     : Worker{parent}
-    , m_database{database}
-    , m_trackDatabase{database->connectionName()}
+    , m_dbPool{dbPool}
 { }
 
-void TrackDatabaseManager::closeThread()
+void TrackDatabaseManager::initialiseThread()
 {
-    m_database->closeDatabase();
+    m_dbHandler = std::make_unique<DbConnectionHandler>(m_dbPool);
+
+    m_trackDatabase.initialise(DbConnectionProvider{m_dbPool});
 }
 
 void TrackDatabaseManager::getAllTracks()

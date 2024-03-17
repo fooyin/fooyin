@@ -22,10 +22,10 @@
 #include "library/libraryinfo.h"
 
 #include <core/trackfwd.h>
+#include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
-class Database;
 class LibraryManager;
 class SettingsManager;
 
@@ -40,10 +40,10 @@ class LibraryScanner : public Worker
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(Database* database, SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryScanner(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
-    void closeThread() override;
+    void initialiseThread() override;
     void stopThread() override;
 
 signals:

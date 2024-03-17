@@ -19,7 +19,7 @@
 
 #include "database.h"
 
-#include "databasequery.h"
+#include "dbschema.h"
 
 #include <core/coresettings.h>
 #include <utils/fileutils.h>
@@ -28,222 +28,75 @@
 
 #include <QFileInfo>
 
+const auto CurrentSchemaVersion = 2;
+
+namespace {
+Fooyin::DbConnection::DbParams dbConnectionParams()
+{
+    Fooyin::DbConnection::DbParams params;
+    params.type           = QStringLiteral("QSQLITE");
+    params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
+    params.filePath       = Fooyin::Utils::sharePath() + QStringLiteral("fooyin.db");
+
+    return params;
+}
+} // namespace
+
 namespace Fooyin {
-Database::Database(SettingsManager* settings)
-    : Database{Utils::sharePath(), QStringLiteral("fooyin.db"), settings}
-{ }
-
-Database::Database(const QString& directory, const QString& filename, SettingsManager* settings)
-    : DatabaseModule{directory + QStringLiteral("/") + filename}
-    , m_settings{settings}
+Database::Database(QObject* parent)
+    : QObject{parent}
+    , m_dbPool(DbConnectionPool::create(dbConnectionParams(), QStringLiteral("fooyin")))
+    , m_connectionHandler{m_dbPool}
+    , m_status{Status::Ok}
 {
-    if(!QFileInfo::exists(directory)) {
-        Utils::File::createDirectories(directory);
+    if(!m_connectionHandler.hasConnection()) {
+        changeStatus(Status::ConnectionError);
+        return;
     }
-    bool success = QFileInfo::exists(connectionName());
 
-    if(!success) {
-        success = createDatabase();
-    }
-    m_initialized = success && db().isOpen();
-
-    if(!Database::isInitialized()) {
-        qCritical() << "Database could not be initialised";
-    }
-    else {
-        update();
-    }
+    initSchema();
 }
 
-bool Database::update()
+DbConnectionPoolPtr Database::connectionPool() const
 {
-    return false;
+    return m_dbPool;
 }
 
-bool Database::createDatabase()
+Database::Status Database::status() const
 {
-    m_initialized = db().isOpen();
-    if(!m_initialized) {
-        return false;
-    }
-
-    checkInsertTable(QStringLiteral("Libraries"), QStringLiteral("CREATE TABLE Libraries ("
-                                                                 "    LibraryID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                                 "    Name TEXT NOT NULL UNIQUE,"
-                                                                 "    Path TEXT NOT NULL UNIQUE);"));
-
-    checkInsertTable(QStringLiteral("Playlists"), QStringLiteral("CREATE TABLE Playlists ("
-                                                                 "    PlaylistID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                                 "    Name TEXT NOT NULL UNIQUE,"
-                                                                 "    PlaylistIndex INTEGER);"));
-
-    checkInsertTable(QStringLiteral("Tracks"), QStringLiteral("CREATE TABLE Tracks ("
-                                                              "    TrackID INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                              "    FilePath TEXT UNIQUE NOT NULL,"
-                                                              "    Title TEXT,"
-                                                              "    TrackNumber INTEGER,"
-                                                              "    TrackTotal INTEGER,"
-                                                              "    Artists TEXT,"
-                                                              "    AlbumArtist TEXT,"
-                                                              "    Album TEXT,"
-                                                              "    CoverPath TEXT,"
-                                                              "    DiscNumber INTEGER,"
-                                                              "    DiscTotal INTEGER,"
-                                                              "    Date TEXT,"
-                                                              "    Composer TEXT,"
-                                                              "    Performer TEXT,"
-                                                              "    Genres TEXT,"
-                                                              "    Comment TEXT,"
-                                                              "    Duration INTEGER DEFAULT 0,"
-                                                              "    FileSize INTEGER DEFAULT 0,"
-                                                              "    BitRate INTEGER DEFAULT 0,"
-                                                              "    SampleRate INTEGER DEFAULT 0,"
-                                                              "    ExtraTags BLOB,"
-                                                              "    Type INTEGER DEFAULT 0,"
-                                                              "    ModifiedDate INTEGER,"
-                                                              "    LibraryID INTEGER DEFAULT -1,"
-                                                              "    TrackHash TEXT);"));
-
-    checkInsertTable(QStringLiteral("TrackStats"), QStringLiteral("CREATE TABLE TrackStats ("
-                                                                  "    TrackHash TEXT PRIMARY KEY,"
-                                                                  "    LastSeen INTEGER,"
-                                                                  "    AddedDate INTEGER,"
-                                                                  "    FirstPlayed INTEGER,"
-                                                                  "    LastPlayed INTEGER,"
-                                                                  "    PlayCount INTEGER DEFAULT 0,"
-                                                                  "    Rating INTEGER DEFAULT 0);"));
-
-    checkInsertTable(QStringLiteral("PlaylistTracks"),
-                     QStringLiteral("CREATE TABLE PlaylistTracks ("
-                                    "    PlaylistID INTEGER NOT NULL REFERENCES Playlists ON DELETE CASCADE,"
-                                    "    TrackID INTEGER NOT NULL REFERENCES Tracks ON DELETE CASCADE,"
-                                    "    TrackIndex INTEGER NOT NULL);"));
-
-    checkInsertTable(QStringLiteral("TrackView"),
-                     QStringLiteral("CREATE VIEW TracksView AS"
-                                    "  SELECT"
-                                    "    Tracks.TrackID,"
-                                    "    Tracks.FilePath,"
-                                    "    SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
-                                    "    Tracks.Title,"
-                                    "    Tracks.TrackNumber,"
-                                    "    Tracks.TrackTotal,"
-                                    "    Tracks.Artists,"
-                                    "    Tracks.AlbumArtist,"
-                                    "    Tracks.Album,"
-                                    "    Tracks.CoverPath,"
-                                    "    Tracks.DiscNumber,"
-                                    "    Tracks.DiscTotal,"
-                                    "    Tracks.Date,"
-                                    "    Tracks.Composer,"
-                                    "    Tracks.Performer,"
-                                    "    Tracks.Genres,"
-                                    "    Tracks.Comment,"
-                                    "    Tracks.Duration,"
-                                    "    Tracks.FileSize,"
-                                    "    Tracks.BitRate,"
-                                    "    Tracks.SampleRate,"
-                                    "    Tracks.ExtraTags,"
-                                    "    Tracks.Type,"
-                                    "    Tracks.ModifiedDate,"
-                                    "    Tracks.LibraryID,"
-                                    "    Tracks.TrackHash,"
-                                    "    TrackStats.AddedDate,"
-                                    "    TrackStats.FirstPlayed,"
-                                    "    TrackStats.LastPlayed,"
-                                    "    TrackStats.PlayCount,"
-                                    "    TrackStats.Rating"
-                                    "  FROM Tracks"
-                                    "  LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID"
-                                    "  LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;"));
-
-    checkInsertIndex(QStringLiteral("TrackIndex"), QStringLiteral("CREATE INDEX TrackIndex ON Tracks(TrackHash);"));
-    checkInsertIndex(QStringLiteral("PlaylistIndex"),
-                     QStringLiteral("CREATE INDEX PlaylistIndex ON Playlists(PlaylistID,Name);"));
-    checkInsertIndex(QStringLiteral("PlaylistTracksIndex"),
-                     QStringLiteral("CREATE INDEX PlaylistTracksIndex ON PlaylistTracks(PlaylistID,TrackIndex);"));
-
-    return true;
+    return m_status;
 }
 
-bool Database::isInitialized()
+bool Database::initSchema()
 {
-    return m_initialized;
-}
+    const DbConnectionProvider dbProvider{m_dbPool};
+    DbSchema schema{dbProvider};
 
-bool Database::closeDatabase()
-{
-    if(!QSqlDatabase::isDriverAvailable(QStringLiteral("QSQLITE"))) {
-        return false;
-    }
+    const auto upgradeResult = schema.upgradeDatabase(CurrentSchemaVersion, QStringLiteral("://dbschema.xml"));
 
-    QString connectionName;
-    {
-        QSqlDatabase database             = db();
-        connectionName                    = database.connectionName();
-        const QStringList connectionNames = QSqlDatabase::connectionNames();
-        if(!connectionNames.contains(connectionName)) {
+    switch(upgradeResult) {
+        case(DbSchema::UpgradeResult::Success):
+        case(DbSchema::UpgradeResult::IsCurrent):
+        case(DbSchema::UpgradeResult::BackwardsCompatible):
+            changeStatus(Status::Ok);
+            return true;
+        case(DbSchema::UpgradeResult::Error):
+            changeStatus(Status::SchemaError);
             return false;
-        }
-
-        if(database.isOpen()) {
-            database.close();
-        }
-    }
-
-    QSqlDatabase::removeDatabase(connectionName);
-
-    return true;
-}
-
-void Database::transaction()
-{
-    if(!db().transaction()) {
-        qDebug() << "Transaction could not be started";
-    }
-}
-
-void Database::commit()
-{
-    if(!db().commit()) {
-        qDebug() << "Transaction could not be commited";
-    }
-}
-
-void Database::rollback()
-{
-    if(!db().rollback()) {
-        qDebug() << "Transaction could not be rolled back";
-    }
-}
-
-bool Database::checkInsertTable(const QString& tableName, const QString& createString)
-{
-    DatabaseQuery q(this);
-    const QString queryText = QStringLiteral("SELECT * FROM ") + tableName + QStringLiteral(";");
-    q.prepareQuery(queryText);
-
-    if(!q.execQuery()) {
-        DatabaseQuery q2(this);
-        q2.prepareQuery(createString);
-
-        if(!q2.execQuery()) {
-            q.error(QStringLiteral("Cannot create table ") + tableName);
+        case(DbSchema::UpgradeResult::Failed):
+            changeStatus(Status::DbError);
             return false;
-        }
+        case(DbSchema::UpgradeResult::Incompatible):
+            changeStatus(Status::Incompatible);
+            return false;
+        default:
+            return false;
     }
-    return true;
 }
 
-bool Database::checkInsertIndex(const QString& indexName, const QString& createString)
+void Database::changeStatus(Status status)
 {
-    DatabaseQuery q(this);
-    q.prepareQuery(createString);
-
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot create index ") + indexName);
-        return false;
-    }
-    return true;
+    m_status = status;
+    emit statusChanged(status);
 }
 } // namespace Fooyin

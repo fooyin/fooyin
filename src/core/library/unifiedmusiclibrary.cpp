@@ -56,20 +56,20 @@ struct UnifiedMusicLibrary::Private
     UnifiedMusicLibrary* self;
 
     LibraryManager* libraryManager;
-    Database* database;
+    DbConnectionPoolPtr dbPool;
     SettingsManager* settings;
 
     LibraryThreadHandler threadHandler;
 
     TrackList tracks;
 
-    Private(UnifiedMusicLibrary* self_, LibraryManager* libraryManager_, Database* database_,
+    Private(UnifiedMusicLibrary* self_, LibraryManager* libraryManager_, DbConnectionPoolPtr dbPool_,
             SettingsManager* settings_)
         : self{self_}
         , libraryManager{libraryManager_}
-        , database{database_}
+        , dbPool{dbPool_}
         , settings{settings_}
-        , threadHandler{database, self, settings}
+        , threadHandler{dbPool, self, settings}
     { }
 
     QCoro::Task<void> loadTracks(TrackList trackToLoad)
@@ -170,10 +170,10 @@ struct UnifiedMusicLibrary::Private
     }
 };
 
-UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, Database* database, SettingsManager* settings,
-                                         QObject* parent)
+UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
+                                         SettingsManager* settings, QObject* parent)
     : MusicLibrary{parent}
-    , p{std::make_unique<Private>(this, libraryManager, database, settings)}
+    , p{std::make_unique<Private>(this, libraryManager, dbPool, settings)}
 {
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     connect(p->libraryManager, &LibraryManager::libraryRemoved, this,

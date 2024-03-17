@@ -27,6 +27,13 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/actions/command.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/proxyaction.h
     ${CMAKE_SOURCE_DIR}/include/utils/actions/widgetcontext.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnection.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionhandler.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionpool.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbconnectionprovider.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbmodule.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbquery.h
+    ${CMAKE_SOURCE_DIR}/include/utils/database/dbtransaction.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
@@ -60,6 +67,12 @@ set(SOURCES
     actions/menucontainer.h
     actions/proxyaction.cpp
     actions/widgetcontext.cpp
+    database/dbconnection.cpp
+    database/dbconnectionhandler.cpp
+    database/dbconnectionpool.cpp
+    database/dbconnectionprovider.cpp
+    database/dbquery.cpp
+    database/dbtransaction.cpp
     settings/settingscategory.h
     settings/settingsdialog.cpp
     settings/settingsdialog.h

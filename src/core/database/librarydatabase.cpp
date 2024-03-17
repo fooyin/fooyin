@@ -19,32 +19,27 @@
 
 #include "librarydatabase.h"
 
-#include "databasequery.h"
+#include <utils/database/dbquery.h>
 
 namespace Fooyin {
-LibraryDatabase::LibraryDatabase(const QString& connectionName)
-    : DatabaseModule{connectionName}
-{ }
-
 bool LibraryDatabase::getAllLibraries(LibraryInfoMap& libraries)
 {
-    const QString query = QStringLiteral("SELECT LibraryID, Name, Path FROM Libraries;");
+    const QString statement = QStringLiteral("SELECT LibraryID, Name, Path FROM Libraries;");
 
-    DatabaseQuery q(this);
-    q.prepareQuery(query);
+    DbQuery query{db(), statement};
 
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot fetch all libraries"));
+    if(!query.exec()) {
         return false;
     }
 
-    while(q.next()) {
-        const int id       = q.value(0).toInt();
-        const QString name = q.value(1).toString();
-        const QString path = q.value(2).toString();
+    while(query.next()) {
+        const int id       = query.value(0).toInt();
+        const QString name = query.value(1).toString();
+        const QString path = query.value(2).toString();
 
         libraries.emplace(id, LibraryInfo{name, path, id});
     }
+
     return true;
 }
 
@@ -54,17 +49,33 @@ int LibraryDatabase::insertLibrary(const QString& path, const QString& name)
         return -1;
     }
 
-    auto q = insert(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}, {QStringLiteral("Path"), path}},
-                    QString{QStringLiteral("Cannot insert library (name: %1, path: %2)")}.arg(name, path));
+    const QString statement = QStringLiteral("INSERT INTO Libraries (Name, Path) VALUES (:name, :path);");
 
-    return (q.hasError()) ? -1 : q.lastInsertId().toInt();
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":name"), name);
+    query.bindValue(QStringLiteral(":path"), path);
+
+    if(!query.exec()) {
+        return -1;
+    }
+
+    return query.lastInsertId().toInt();
 }
 
 bool LibraryDatabase::removeLibrary(int id)
 {
-    auto q = remove(QStringLiteral("Libraries"), {{QStringLiteral("LibraryID"), id}},
-                    QStringLiteral("Cannot remove library ") + QString::number(id));
-    return !q.hasError();
+    if(id < 0) {
+        return false;
+    }
+
+    const QString statement = QStringLiteral("DELETE FROM Libraries WHERE (LibraryID = :id);");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":id"), id);
+
+    return query.exec();
 }
 
 bool LibraryDatabase::renameLibrary(int id, const QString& name)
@@ -73,8 +84,13 @@ bool LibraryDatabase::renameLibrary(int id, const QString& name)
         return false;
     }
 
-    auto q = update(QStringLiteral("Libraries"), {{QStringLiteral("Name"), name}}, {QStringLiteral("LibraryID"), id},
-                    QStringLiteral("Cannot update library ") + name);
-    return !q.hasError();
+    const QString statement = QStringLiteral("UPDATE Libraries SET Name = :name WHERE LibraryId = :id;");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":name"), name);
+    query.bindValue(QStringLiteral(":id"), id);
+
+    return query.exec();
 }
 } // namespace Fooyin

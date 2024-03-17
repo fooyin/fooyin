@@ -21,6 +21,7 @@
 
 #include "database/trackdatabase.h"
 
+#include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
@@ -31,9 +32,9 @@ class TrackDatabaseManager : public Worker
     Q_OBJECT
 
 public:
-    explicit TrackDatabaseManager(Database* database, QObject* parent = nullptr);
+    explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* parent = nullptr);
 
-    void closeThread() override;
+    void initialiseThread() override;
 
 signals:
     void gotTracks(const TrackList& tracks);
@@ -46,7 +47,8 @@ public slots:
     void cleanupTracks();
 
 private:
-    Database* m_database;
+    DbConnectionPoolPtr m_dbPool;
+    std::unique_ptr<DbConnectionHandler> m_dbHandler;
     TrackDatabase m_trackDatabase;
 };
 } // namespace Fooyin

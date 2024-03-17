@@ -19,18 +19,20 @@
 
 #include "trackdatabase.h"
 
-#include "databasequery.h"
-
 #include <core/constants.h>
 #include <core/track.h>
+#include <utils/database/dbquery.h>
+#include <utils/database/dbtransaction.h>
 #include <utils/fileutils.h>
 
 #include <QFileInfo>
 
+using BindingsMap = std::map<QString, QVariant>;
+
 namespace {
-QString fetchQueryTracks()
+QString fetchTrackColumns()
 {
-    static const QStringList fields = {
+    static const QStringList columns = {
         QStringLiteral("TrackID"),      // 0
         QStringLiteral("FilePath"),     // 1
         QStringLiteral("RelativePath"), // 2
@@ -64,41 +66,41 @@ QString fetchQueryTracks()
         QStringLiteral("Rating"),       // 30
     };
 
-    const QString joinedFields = fields.join(QStringLiteral(", "));
-
-    return QString(QStringLiteral("SELECT %1 FROM TracksView")).arg(joinedFields);
+    return columns.join(u", ");
 }
 
-Fooyin::BindingsMap trackBindings(const Fooyin::Track& track)
+BindingsMap trackBindings(const Fooyin::Track& track)
 {
-    return {{QStringLiteral("FilePath"), Fooyin::Utils::File::cleanPath(track.filepath())},
-            {QStringLiteral("Title"), track.title()},
-            {QStringLiteral("TrackNumber"), track.trackNumber()},
-            {QStringLiteral("TrackTotal"), track.trackTotal()},
-            {QStringLiteral("Artists"), track.artists().join(u"\037")},
-            {QStringLiteral("AlbumArtist"), track.albumArtist()},
-            {QStringLiteral("Album"), track.album()},
-            {QStringLiteral("CoverPath"), track.coverPath()},
-            {QStringLiteral("DiscNumber"), track.discNumber()},
-            {QStringLiteral("DiscTotal"), track.discTotal()},
-            {QStringLiteral("Date"), track.date()},
-            {QStringLiteral("Composer"), track.composer()},
-            {QStringLiteral("Performer"), track.performer()},
-            {QStringLiteral("Genres"), track.genres().join(u"\037")},
-            {QStringLiteral("Comment"), track.comment()},
-            {QStringLiteral("Duration"), QVariant::fromValue(track.duration())},
-            {QStringLiteral("FileSize"), QVariant::fromValue(track.fileSize())},
-            {QStringLiteral("BitRate"), track.bitrate()},
-            {QStringLiteral("SampleRate"), track.sampleRate()},
-            {QStringLiteral("ExtraTags"), track.serialiseExtrasTags()},
-            {QStringLiteral("Type"), static_cast<int>(track.type())},
-            {QStringLiteral("ModifiedDate"), QVariant::fromValue(track.modifiedTime())},
-            {QStringLiteral("TrackHash"), track.hash()},
-            {QStringLiteral("LibraryID"), track.libraryId()}};
+    return {{QStringLiteral(":filePath"), Fooyin::Utils::File::cleanPath(track.filepath())},
+            {QStringLiteral(":title"), track.title()},
+            {QStringLiteral(":trackNumber"), track.trackNumber()},
+            {QStringLiteral(":trackTotal"), track.trackTotal()},
+            {QStringLiteral(":artists"), track.artists().join(u"\037")},
+            {QStringLiteral(":albumArtist"), track.albumArtist()},
+            {QStringLiteral(":album"), track.album()},
+            {QStringLiteral(":coverPath"), track.coverPath()},
+            {QStringLiteral(":discNumber"), track.discNumber()},
+            {QStringLiteral(":discTotal"), track.discTotal()},
+            {QStringLiteral(":date"), track.date()},
+            {QStringLiteral(":composer"), track.composer()},
+            {QStringLiteral(":performer"), track.performer()},
+            {QStringLiteral(":genres"), track.genres().join(u"\037")},
+            {QStringLiteral(":comment"), track.comment()},
+            {QStringLiteral(":duration"), QVariant::fromValue(track.duration())},
+            {QStringLiteral(":fileSize"), QVariant::fromValue(track.fileSize())},
+            {QStringLiteral(":bitRate"), track.bitrate()},
+            {QStringLiteral(":sampleRate"), track.sampleRate()},
+            {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
+            {QStringLiteral(":type"), static_cast<int>(track.type())},
+            {QStringLiteral(":modifiedDate"), QVariant::fromValue(track.modifiedTime())},
+            {QStringLiteral(":trackHash"), track.hash()},
+            {QStringLiteral(":libraryID"), track.libraryId()}};
 }
 
-void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
+Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
 {
+    Fooyin::Track track;
+
     track.setId(q.value(0).toInt());
     track.setFilePath(q.value(1).toString());
     track.setRelativePath(q.value(2).toString());
@@ -132,185 +134,21 @@ void readToTrack(const Fooyin::DatabaseQuery& q, Fooyin::Track& track)
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
+
+    return track;
 }
 } // namespace
 
 namespace Fooyin {
-struct TrackDatabase::Private
-{
-    TrackDatabase* self;
-
-    explicit Private(TrackDatabase* self_)
-        : self{self_}
-    { }
-
-    void removeUnmanagedTracks() const
-    {
-        const QString queryText = QStringLiteral(
-            "DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);");
-        const auto q = self->runQuery(queryText, QStringLiteral("Cannot cleanup tracks"));
-    }
-
-    void markUnusedStatsForDelete() const
-    {
-        const auto queryText
-            = QStringLiteral("UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
-                             "(SELECT TrackHash FROM Tracks);");
-        const auto q = self->runQuery(queryText, {{QStringLiteral(":lastSeen"), QDateTime::currentMSecsSinceEpoch()}},
-                                      QStringLiteral("Error updating LastSeen"));
-    }
-
-    void deleteExpiredStats() const
-    {
-        const auto queryText
-            = QStringLiteral("DELETE FROM TrackStats WHERE LastSeen IS NOT NULL AND LastSeen <= :clearInterval AND "
-                             "TrackHash NOT IN (SELECT TrackHash FROM Tracks);");
-        const auto q = self->runQuery(
-            queryText,
-            {{QStringLiteral(":clearInterval"), QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch()}},
-            QStringLiteral("Error deleting expired track stats"));
-    }
-
-    int trackCount() const
-    {
-        auto q
-            = self->runQuery(QStringLiteral("SELECT COUNT(*) FROM Tracks"), QStringLiteral("Cannot fetch track count"));
-
-        if(!q.hasError() && q.next()) {
-            return q.value(0).toInt();
-        }
-        return -1;
-    }
-
-    bool insertTrack(Track& track) const
-    {
-        auto bindings = trackBindings(track);
-        const auto q  = self->insert(QStringLiteral("Tracks"), bindings,
-                                     QStringLiteral("Cannot insert track ") + track.filepath());
-
-        if(q.hasError()) {
-            return false;
-        }
-
-        track.setId(q.lastInsertId().toInt());
-
-        return insertOrUpdateStats(track);
-    }
-
-    bool insertOrUpdateStats(Track& track) const
-    {
-        if(track.hash().isEmpty()) {
-            qDebug() << "Cannot insert/update track stats (Hash empty)";
-            return false;
-        }
-
-        static const QStringList fields = {
-            QStringLiteral("AddedDate"),   // 0
-            QStringLiteral("FirstPlayed"), // 1
-            QStringLiteral("LastPlayed"),  // 2
-            QStringLiteral("PlayCount"),   // 3
-            QStringLiteral("Rating"),      // 4
-        };
-
-        const QString joinedFields = fields.join(QStringLiteral(", "));
-
-        const auto existsQuery
-            = QString{QStringLiteral("SELECT %1 FROM TrackStats WHERE TrackHash = :trackHash;")}.arg(joinedFields);
-        auto exists = self->runQuery(existsQuery, {{QStringLiteral(":trackHash"), track.hash()}},
-                                     QStringLiteral("Couldn't check stats for track ") + track.filepath());
-
-        if(exists.hasError()) {
-            return false;
-        }
-
-        if(exists.next()) {
-            const auto added       = exists.value(0).toULongLong();
-            const auto firstPlayed = exists.value(1).toULongLong();
-            const auto lastPlayed  = exists.value(2).toULongLong();
-            const int playCount    = exists.value(3).toInt();
-
-            bool changed{false};
-            BindingsMap bindings;
-
-            const uint64_t trackAdded       = track.addedTime();
-            const uint64_t trackFirstPlayed = track.firstPlayed();
-            const uint64_t trackLastPlayed  = track.lastPlayed();
-            const int trackPlayCount        = track.playCount();
-
-            if(trackAdded != added) {
-                if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
-                    changed = true;
-                    bindings.emplace(QStringLiteral("AddedDate"), QVariant::fromValue(trackAdded));
-                }
-                else {
-                    track.setAddedTime(added);
-                }
-            }
-            if(trackFirstPlayed != firstPlayed) {
-                if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
-                    changed = true;
-                    bindings.emplace(QStringLiteral("FirstPlayed"), QVariant::fromValue(trackFirstPlayed));
-                }
-                else {
-                    track.setFirstPlayed(firstPlayed);
-                }
-            }
-            if(trackLastPlayed != lastPlayed) {
-                if(trackLastPlayed > lastPlayed) {
-                    changed = true;
-                    bindings.emplace(QStringLiteral("LastPlayed"), QVariant::fromValue(trackLastPlayed));
-                }
-                else {
-                    track.setLastPlayed(lastPlayed);
-                }
-            }
-            if(trackPlayCount != playCount) {
-                if(trackPlayCount > playCount) {
-                    changed = true;
-                    bindings.emplace(QStringLiteral("PlayCount"), trackPlayCount);
-                }
-                else {
-                    track.setPlayCount(playCount);
-                }
-            }
-
-            if(changed) {
-                const auto q
-                    = self->update(QStringLiteral("TrackStats"), bindings, {QStringLiteral("TrackHash"), track.hash()},
-                                   QStringLiteral("Cannot update stats for track ") + track.filepath());
-                return !q.hasError();
-            }
-
-            return changed;
-        }
-
-        const BindingsMap bindings = {{QStringLiteral("TrackHash"), track.hash()},
-                                      {QStringLiteral("AddedDate"), QVariant::fromValue(track.addedTime())},
-                                      {QStringLiteral("FirstPlayed"), QVariant::fromValue(track.firstPlayed())},
-                                      {QStringLiteral("LastPlayed"), QVariant::fromValue(track.lastPlayed())},
-                                      {QStringLiteral("PlayCount"), track.playCount()}};
-
-        const auto q = self->insert(QStringLiteral("TrackStats"), bindings,
-                                    QStringLiteral("Cannot insert stats for track ") + track.filepath());
-        return !q.hasError();
-    }
-};
-
-TrackDatabase::TrackDatabase(const QString& connectionName)
-    : DatabaseModule{connectionName}
-    , p{std::make_unique<Private>(this)}
-{ }
-
-TrackDatabase::~TrackDatabase() = default;
-
 bool TrackDatabase::storeTracks(TrackList& tracks)
 {
     if(tracks.empty()) {
         return true;
     }
 
-    if(!db().transaction()) {
-        qDebug() << "Transaction could not be started";
+    DbTransaction transaction{db()};
+
+    if(!transaction) {
         return false;
     }
 
@@ -319,32 +157,28 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
             updateTrack(track);
         }
         else {
-            p->insertTrack(track);
+            insertTrack(track);
         }
     }
 
-    if(!db().commit()) {
-        qDebug() << "Transaction could not be commited";
-        return false;
-    }
-
-    return true;
+    return transaction.commit();
 }
 
 bool TrackDatabase::reloadTrack(Track& track) const
 {
-    DatabaseQuery q{this};
-    const QString query = fetchQueryTracks() + QStringLiteral(" WHERE TrackID = :trackId;");
-    q.prepareQuery(query);
-    q.bindQueryValue(QStringLiteral("trackId"), track.id());
+    const auto statement
+        = QStringLiteral("SELECT %1 FROM TracksView WHERE TrackID = :trackId;").arg(fetchTrackColumns());
 
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot reload track from database"));
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":trackId"), track.id());
+
+    if(!query.exec()) {
         return false;
     }
 
-    if(q.next()) {
-        readToTrack(q, track);
+    if(query.next()) {
+        track = readToTrack(query);
     }
 
     return true;
@@ -352,27 +186,25 @@ bool TrackDatabase::reloadTrack(Track& track) const
 
 bool TrackDatabase::reloadTracks(TrackList& tracks) const
 {
-    DatabaseQuery q{this};
-    const QString query = fetchQueryTracks() + QStringLiteral(" WHERE TrackID IN (:trackIds);");
-    q.prepareQuery(query);
+    const auto statement
+        = QStringLiteral("SELECT %1 FROM TracksView WHERE TrackID IN (:trackIds);").arg(fetchTrackColumns());
+
+    DbQuery q{db(), statement};
 
     QStringList trackIds;
-    std::ranges::transform(tracks, std::back_inserter(trackIds),
-                           [](const Track& track) { return QString::number(track.id()); });
+    std::transform(tracks.cbegin(), tracks.cend(), std::back_inserter(trackIds),
+                   [](const Track& track) { return QString::number(track.id()); });
 
-    q.bindQueryValue(QStringLiteral("trackIds"), trackIds);
+    q.bindValue(QStringLiteral(":trackIds"), trackIds);
 
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot reload tracks from database"));
+    if(!q.exec()) {
         return false;
     }
 
     tracks.clear();
 
     while(q.next()) {
-        Track track;
-        readToTrack(q, track);
-        tracks.push_back(std::move(track));
+        tracks.emplace_back(readToTrack(q));
     }
 
     return true;
@@ -380,26 +212,23 @@ bool TrackDatabase::reloadTracks(TrackList& tracks) const
 
 TrackList TrackDatabase::getAllTracks() const
 {
-    DatabaseQuery q{this};
-    const QString query = fetchQueryTracks();
-    q.prepareQuery(query);
+    const auto statement = QStringLiteral("SELECT %1 FROM TracksView").arg(fetchTrackColumns());
+
+    DbQuery q{db(), statement};
 
     TrackList tracks;
 
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot fetch tracks from database"));
+    if(!q.exec()) {
         return {};
     }
 
-    const int numRows = p->trackCount();
+    const int numRows = trackCount();
     if(numRows > 0) {
         tracks.reserve(numRows);
     }
 
     while(q.next()) {
-        Track track;
-        readToTrack(q, track);
-        tracks.push_back(std::move(track));
+        tracks.emplace_back(readToTrack(q));
     }
 
     return tracks;
@@ -407,22 +236,21 @@ TrackList TrackDatabase::getAllTracks() const
 
 TrackList TrackDatabase::tracksByHash(const QString& hash) const
 {
-    DatabaseQuery q{this};
-    const QString query = fetchQueryTracks() + QStringLiteral(" WHERE TrackHash = :trackHash");
-    q.prepareQuery(query);
-    q.bindQueryValue(QStringLiteral(":trackHash"), hash);
+    const auto statement
+        = QStringLiteral("SELECT %1 FROM TracksView WHERE TrackHash = :trackHash").arg(fetchTrackColumns());
+
+    DbQuery q{db(), statement};
+
+    q.bindValue(QStringLiteral(":trackHash"), hash);
 
     TrackList tracks;
 
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot fetch tracks from database"));
+    if(!q.exec()) {
         return tracks;
     }
 
     while(q.next()) {
-        Track track;
-        readToTrack(q, track);
-        tracks.push_back(track);
+        tracks.emplace_back(readToTrack(q));
     }
 
     return tracks;
@@ -431,29 +259,63 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
 bool TrackDatabase::updateTrack(const Track& track)
 {
     if(track.id() < 0) {
-        qDebug() << QString{QStringLiteral("Cannot update track %1 (Invalid ID)")}.arg(track.filepath());
+        qDebug() << QStringLiteral("Cannot update track %1 (Invalid ID)").arg(track.filepath());
         return false;
     }
 
-    auto bindings = trackBindings(track);
-    const auto q  = update(QStringLiteral("Tracks"), bindings, {QStringLiteral("TrackID"), track.id()},
-                           QStringLiteral("Cannot update track ") + track.filepath());
+    const auto statement = QStringLiteral("UPDATE TRACKS SET "
+                                          "FilePath = :filePath,"
+                                          "Title = :title, "
+                                          "TrackNumber = :trackNumber,"
+                                          "TrackTotal = :trackTotal,"
+                                          "Artists = :artists,"
+                                          "AlbumArtist = :albumArtist,"
+                                          "Album = :album,"
+                                          "CoverPath = :coverPath,"
+                                          "DiscNumber = :discNumber,"
+                                          "DiscTotal = :discTotal,"
+                                          "Date = :date,"
+                                          "Composer = :composer,"
+                                          "Performer = :performer,"
+                                          "Genres = :genres,"
+                                          "Comment = :comment,"
+                                          "Duration = :duration,"
+                                          "FileSize = :fileSize,"
+                                          "BitRate = :bitRate,"
+                                          "SampleRate = :sampleRate,"
+                                          "ExtraTags = :extraTags,"
+                                          "Type = :type,"
+                                          "ModifiedDate = :modifiedDate,"
+                                          "TrackHash = :trackHash,"
+                                          "LibraryID = :libraryID"
+                                          "WHERE TrackID = :trackId;");
 
-    return !q.hasError();
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":trackId"), track.id());
+
+    const auto bindings = trackBindings(track);
+    for(const auto& [name, value] : bindings) {
+        query.bindValue(name, value);
+    }
+
+    return query.exec();
 }
 
 bool TrackDatabase::updateTrackStats(Track& track)
 {
-    return p->insertOrUpdateStats(track);
+    return insertOrUpdateStats(track);
 }
 
 bool TrackDatabase::deleteTrack(int id)
 {
-    const QString queryText = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :trackID;");
-    const auto q            = runQuery(queryText, {{QStringLiteral(":trackID"), id}},
-                                       QStringLiteral("Cannot delete track ") + QString::number(id));
+    const QString statement = QStringLiteral("DELETE FROM Tracks WHERE TrackID = :trackID;");
 
-    return !q.hasError();
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":trackID"), id);
+
+    return !query.exec();
 }
 
 bool TrackDatabase::deleteTracks(const TrackList& tracks)
@@ -462,54 +324,345 @@ bool TrackDatabase::deleteTracks(const TrackList& tracks)
         return true;
     }
 
-    if(!db().transaction()) {
-        qDebug() << "Transaction could not be started";
+    DbTransaction transaction{db()};
+
+    if(!transaction) {
         return false;
     }
 
     const int fileCount = static_cast<int>(
-        std::ranges::count_if(std::as_const(tracks), [this](const Track& track) { return deleteTrack(track.id()); }));
+        std::count_if(tracks.cbegin(), tracks.cend(), [this](const Track& track) { return deleteTrack(track.id()); }));
 
-    const auto success = db().commit();
+    const auto success = transaction.commit();
 
     return (success && (fileCount == static_cast<int>(tracks.size())));
 }
 
 std::set<int> TrackDatabase::deleteLibraryTracks(int libraryId)
 {
-    auto selectToRemove = runQuery(QStringLiteral("SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID "
-                                                  "NOT IN (SELECT TrackID FROM PlaylistTracks);"),
-                                   {{QStringLiteral(":libraryId"), libraryId}},
-                                   QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
-
-    if(selectToRemove.hasError()) {
-        return {};
-    }
-
     std::set<int> tracksToRemove;
 
-    while(selectToRemove.next()) {
-        tracksToRemove.emplace(selectToRemove.value(0).toInt());
+    {
+        const auto statement = QStringLiteral("SELECT TrackID FROM Tracks WHERE LibraryID = :libraryId AND TrackID "
+                                              "NOT IN (SELECT TrackID FROM PlaylistTracks);");
+
+        DbQuery query{db(), statement};
+
+        query.bindValue(QStringLiteral(":libraryId"), libraryId);
+
+        if(!query.exec()) {
+            return {};
+        }
+
+        while(query.next()) {
+            tracksToRemove.emplace(query.value(0).toInt());
+        }
     }
 
-    auto deleteTracks = runQuery(
-        QStringLiteral(
-            "DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);"),
-        {{QStringLiteral(":libraryId"), libraryId}},
-        QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
+    {
+        const auto statement = QStringLiteral(
+            "DELETE FROM Tracks WHERE LibraryID = :libraryId AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);");
 
-    auto updateTracks
-        = runQuery(QStringLiteral("UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;"),
-                   {{QStringLiteral(":nonLibraryId"), QStringLiteral("-1")}, {QStringLiteral(":libraryId"), libraryId}},
-                   QStringLiteral("Cannot get library tracks for ") + QString::number(libraryId));
+        DbQuery query{db(), statement};
+
+        query.bindValue(QStringLiteral(":libraryId"), libraryId);
+
+        if(!query.exec()) {
+            return {};
+        }
+    }
+
+    const auto statement = QStringLiteral("UPDATE Tracks SET LibraryID = :nonLibraryId WHERE LibraryID = :libraryId;");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":nonLibraryId"), QStringLiteral("-1"));
+    query.bindValue(QStringLiteral(":libraryId"), libraryId);
+
+    if(!query.exec()) {
+        return {};
+    }
 
     return tracksToRemove;
 }
 
 void TrackDatabase::cleanupTracks()
 {
-    p->removeUnmanagedTracks();
-    p->markUnusedStatsForDelete();
-    p->deleteExpiredStats();
+    removeUnmanagedTracks();
+    markUnusedStatsForDelete();
+    deleteExpiredStats();
+}
+
+void TrackDatabase::updateViews(const QSqlDatabase& db)
+{
+    {
+        const auto statement = QStringLiteral("DROP VIEW IF EXISTS TracksView;");
+
+        DbQuery query{db, statement};
+
+        if(!query.exec()) {
+            return;
+        }
+    }
+
+    const auto statement = QStringLiteral("CREATE VIEW IF NOT EXISTS TracksView AS "
+                                          "SELECT "
+                                          "Tracks.TrackID,"
+                                          "Tracks.FilePath,"
+                                          "SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
+                                          "Tracks.Title,"
+                                          "Tracks.TrackNumber,"
+                                          "Tracks.TrackTotal,"
+                                          "Tracks.Artists,"
+                                          "Tracks.AlbumArtist,"
+                                          "Tracks.Album,"
+                                          "Tracks.CoverPath,"
+                                          "Tracks.DiscNumber,"
+                                          "Tracks.DiscTotal,"
+                                          "Tracks.Date,"
+                                          "Tracks.Composer,"
+                                          "Tracks.Performer,"
+                                          "Tracks.Genres,"
+                                          "Tracks.Comment,"
+                                          "Tracks.Duration,"
+                                          "Tracks.FileSize,"
+                                          "Tracks.BitRate,"
+                                          "Tracks.SampleRate,"
+                                          "Tracks.ExtraTags,"
+                                          "Tracks.Type,"
+                                          "Tracks.ModifiedDate,"
+                                          "Tracks.LibraryID,"
+                                          "Tracks.TrackHash,"
+                                          "TrackStats.AddedDate,"
+                                          "TrackStats.FirstPlayed,"
+                                          "TrackStats.LastPlayed,"
+                                          "TrackStats.PlayCount,"
+                                          "TrackStats.Rating"
+                                          " FROM Tracks "
+                                          "LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID "
+                                          "LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;");
+
+    DbQuery query{db, statement};
+
+    query.exec();
+}
+
+int TrackDatabase::trackCount() const
+{
+    const auto statement = QStringLiteral("SELECT COUNT(*) FROM Tracks;");
+
+    DbQuery query{db(), statement};
+
+    if(!query.exec()) {
+        return -1;
+    }
+
+    if(query.next()) {
+        return query.value(0).toInt();
+    }
+
+    return -1;
+}
+
+bool TrackDatabase::insertTrack(Track& track) const
+{
+    const auto statement = QStringLiteral("INSERT INTO Tracks ("
+                                          "FilePath,"
+                                          "Title,"
+                                          "TrackNumber,"
+                                          "TrackTotal,"
+                                          "Artists,"
+                                          "AlbumArtist,"
+                                          "Album,"
+                                          "CoverPath,"
+                                          "DiscNumber,"
+                                          "DiscTotal,"
+                                          "Date,"
+                                          "Composer,"
+                                          "Performer,"
+                                          "Genres,"
+                                          "Comment,"
+                                          "Duration,"
+                                          "FileSize,"
+                                          "BitRate,"
+                                          "SampleRate,"
+                                          "ExtraTags,"
+                                          "Type,"
+                                          "ModifiedDate,"
+                                          "TrackHash,"
+                                          "LibraryID"
+                                          ") "
+                                          "VALUES ("
+                                          ":filePath,"
+                                          ":title, "
+                                          ":trackNumber,"
+                                          ":trackTotal,"
+                                          ":artists,"
+                                          ":albumArtist,"
+                                          ":album,"
+                                          ":coverPath,"
+                                          ":discNumber,"
+                                          ":discTotal,"
+                                          ":date, "
+                                          ":composer,"
+                                          ":performer,"
+                                          ":genres,"
+                                          ":comment,"
+                                          ":duration,"
+                                          ":fileSize,"
+                                          ":bitRate,"
+                                          ":sampleRate,"
+                                          ":extraTags, "
+                                          ":type,"
+                                          ":modifiedDate,"
+                                          ":trackHash,"
+                                          ":libraryID"
+                                          ");");
+
+    DbQuery query{db(), statement};
+
+    const auto bindings = trackBindings(track);
+    for(const auto& [name, value] : bindings) {
+        query.bindValue(name, value);
+    }
+
+    if(!query.exec()) {
+        return false;
+    }
+
+    track.setId(query.lastInsertId().toInt());
+
+    return insertOrUpdateStats(track);
+}
+
+bool TrackDatabase::insertOrUpdateStats(Track& track) const
+{
+    if(track.hash().isEmpty()) {
+        qDebug() << "Cannot insert/update track stats (Hash empty)";
+        return false;
+    }
+
+    uint64_t added{0};
+    uint64_t firstPlayed{0};
+    uint64_t lastPlayed{0};
+    int playCount{0};
+
+    {
+        const auto statement = QStringLiteral("SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating FROM "
+                                              "TrackStats WHERE TrackHash = :trackHash;");
+
+        DbQuery query{db(), statement};
+
+        query.bindValue(QStringLiteral(":trackHash"), track.hash());
+
+        if(!query.exec()) {
+            return false;
+        }
+
+        if(query.next()) {
+            added       = query.value(0).toULongLong();
+            firstPlayed = query.value(1).toULongLong();
+            lastPlayed  = query.value(2).toULongLong();
+            playCount   = query.value(3).toInt();
+        }
+    }
+
+    bool dbNeedsUpdate{false};
+
+    const uint64_t trackAdded       = track.addedTime();
+    const uint64_t trackFirstPlayed = track.firstPlayed();
+    const uint64_t trackLastPlayed  = track.lastPlayed();
+    const int trackPlayCount        = track.playCount();
+
+    if(trackAdded != added) {
+        if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
+            added         = trackAdded;
+            dbNeedsUpdate = true;
+        }
+        else {
+            track.setAddedTime(added);
+        }
+    }
+    if(trackFirstPlayed != firstPlayed) {
+        if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
+            firstPlayed   = trackFirstPlayed;
+            dbNeedsUpdate = true;
+        }
+        else {
+            track.setFirstPlayed(firstPlayed);
+        }
+    }
+    if(trackLastPlayed != lastPlayed) {
+        if(trackLastPlayed > lastPlayed) {
+            lastPlayed    = trackLastPlayed;
+            dbNeedsUpdate = true;
+        }
+        else {
+            track.setLastPlayed(lastPlayed);
+        }
+    }
+    if(trackPlayCount != playCount) {
+        if(trackPlayCount > playCount) {
+            playCount     = trackPlayCount;
+            dbNeedsUpdate = true;
+        }
+        else {
+            track.setPlayCount(playCount);
+        }
+    }
+
+    if(!dbNeedsUpdate) {
+        return true;
+    }
+
+    const auto statement = QStringLiteral(
+        "INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, PlayCount) VALUES "
+        "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount);");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":trackHash"), track.hash());
+    query.bindValue(QStringLiteral(":addedDate"), QVariant::fromValue(added));
+    query.bindValue(QStringLiteral(":firstPlayed"), QVariant::fromValue(firstPlayed));
+    query.bindValue(QStringLiteral(":lastPlayed"), QVariant::fromValue(lastPlayed));
+    query.bindValue(QStringLiteral(":playCount"), playCount);
+
+    return query.exec();
+}
+
+void TrackDatabase::removeUnmanagedTracks() const
+{
+    const auto statement = QStringLiteral(
+        "DELETE FROM Tracks WHERE LibraryID = -1 AND TrackID NOT IN (SELECT TrackID FROM PlaylistTracks);");
+
+    DbQuery query{db(), statement};
+
+    query.exec();
+}
+
+void TrackDatabase::markUnusedStatsForDelete() const
+{
+    const auto statement
+        = QStringLiteral("UPDATE TrackStats SET LastSeen = :lastSeen WHERE LastSeen IS NULL AND TrackHash NOT IN "
+                         "(SELECT TrackHash FROM Tracks);");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":lastSeen"), QDateTime::currentMSecsSinceEpoch());
+
+    query.exec();
+}
+
+void TrackDatabase::deleteExpiredStats() const
+{
+    const auto statement
+        = QStringLiteral("DELETE FROM TrackStats WHERE LastSeen IS NOT NULL AND LastSeen <= :clearInterval AND "
+                         "TrackHash NOT IN (SELECT TrackHash FROM Tracks);");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":clearInterval"), QDateTime::currentDateTime().addDays(-28).toMSecsSinceEpoch());
+
+    query.exec();
 }
 } // namespace Fooyin

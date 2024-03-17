@@ -19,89 +19,18 @@
 
 #include "playlistdatabase.h"
 
-#include "databasequery.h"
-
-namespace {
-bool insertPlaylistTrack(Fooyin::DatabaseModule* module, int playlistId, const Fooyin::Track& track, int index)
-{
-    auto q = module->insert(QStringLiteral("PlaylistTracks"),
-                            {{QStringLiteral("PlaylistID"), playlistId},
-                             {QStringLiteral("TrackID"), track.id()},
-                             {QStringLiteral("TrackIndex"), index}},
-                            QString{QStringLiteral("Cannot insert into PlaylistTracks (PlaylistID: %1, TrackID: %2)")}
-                                .arg(playlistId)
-                                .arg(track.id()));
-
-    return !q.hasError();
-}
-
-bool insertPlaylistTracks(Fooyin::DatabaseModule* module, int id, const Fooyin::TrackList& tracks)
-{
-    if(id < 0) {
-        return false;
-    }
-
-    auto delTracksQuery = module->remove(QStringLiteral("PlaylistTracks"), {{QStringLiteral("PlaylistID"), id}},
-                                         QString{QStringLiteral("Cannot remove old playlist %1 tracks")}.arg(id));
-
-    if(delTracksQuery.hasError()) {
-        return false;
-    }
-
-    for(int i{0}; const auto& track : tracks) {
-        if(track.isValid() && track.isInDatabase()) {
-            if(!insertPlaylistTrack(module, id, track, i++)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-Fooyin::TrackList populatePlaylistTracks(Fooyin::DatabaseModule* module, const Fooyin::Playlist& playlist,
-                                         const Fooyin::TrackIdMap& tracks)
-{
-    const static QString query
-        = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");
-
-    Fooyin::DatabaseQuery q{module};
-    q.prepareQuery(query);
-    q.bindQueryValue(QStringLiteral(":playlistId"), playlist.dbId());
-
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot fetch playlist tracks"));
-        return {};
-    }
-
-    Fooyin::TrackList playlistTracks;
-
-    while(q.next()) {
-        const int trackId = q.value(0).toInt();
-        if(tracks.contains(trackId)) {
-            playlistTracks.push_back(tracks.at(trackId));
-        }
-    }
-
-    return playlistTracks;
-}
-} // namespace
+#include <utils/database/dbquery.h>
+#include <utils/database/dbtransaction.h>
 
 namespace Fooyin {
-PlaylistDatabase::PlaylistDatabase(const QString& connectionName)
-    : DatabaseModule{connectionName}
-{ }
-
 std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
     const QString query
         = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
+    
+    DbQuery q{db(), query};
 
-    DatabaseQuery q{this};
-    q.prepareQuery(query);
-
-    if(!q.execQuery()) {
-        q.error(QStringLiteral("Cannot fetch all playlists"));
+    if(!q.exec()) {
         return {};
     }
 
@@ -122,7 +51,7 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 
 TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks)
 {
-    return populatePlaylistTracks(this, playlist, tracks);
+    return populatePlaylistTracks(playlist, tracks);
 }
 
 int PlaylistDatabase::insertPlaylist(const QString& name, int index)
@@ -131,11 +60,17 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
         return -1;
     }
 
-    auto q = insert(QStringLiteral("Playlists"),
-                    {{QStringLiteral("Name"), name}, {QStringLiteral("PlaylistIndex"), index}},
-                    QString{QStringLiteral("Cannot insert playlist (name: %1, index: %2)")}.arg(name).arg(index));
+    const QString statement = QStringLiteral("INSERT INTO Playlists (Name, PlaylistIndex) VALUES (:name, :index);");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":name"), name);
+    query.bindValue(QStringLiteral(":index"), index);
 
-    return (q.hasError()) ? -1 : q.lastInsertId().toInt();
+    if(!query.exec()) {
+        return -1;
+    }
+
+    return query.lastInsertId().toInt();
 }
 
 bool PlaylistDatabase::savePlaylist(Playlist& playlist)
@@ -143,20 +78,18 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
     bool updated{false};
 
     if(playlist.modified()) {
-        const auto q
-            = update(QStringLiteral("Playlists"),
-                     {{QStringLiteral("Name"), playlist.name()}, {QStringLiteral("PlaylistIndex"), playlist.index()}},
-                     {QStringLiteral("PlaylistID"), playlist.dbId()},
-                     QStringLiteral("Cannot update playlist ") + playlist.name());
-        updated = !q.hasError();
+        const auto statement
+            = QStringLiteral("UPDATE Playlists SET (Name = :name, PlaylistIndex = :index) WHERE (PlaylistID = :id);");
+        
+        DbQuery query{db(), statement};
+        query.bindValue(QStringLiteral(":name"), playlist.name());
+        query.bindValue(QStringLiteral(":id"), playlist.dbId());
 
-        if(!updated) {
-            return false;
-        }
+        updated = query.exec();
     }
 
     if(playlist.tracksModified()) {
-        updated = insertPlaylistTracks(this, playlist.dbId(), playlist.tracks());
+        updated = insertPlaylistTracks(playlist.dbId(), playlist.tracks());
     }
 
     if(updated) {
@@ -169,17 +102,13 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
 
 bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 {
-    if(!db().transaction()) {
-        qDebug() << "Transaction could not be started";
-        return false;
-    }
+    DbTransaction transaction{db()};
 
     for(const auto& playlist : playlists) {
         savePlaylist(*playlist);
     }
 
-    if(!db().commit()) {
-        qDebug() << "Transaction could not be commited";
+    if(!transaction.commit()) {
         return false;
     }
 
@@ -188,9 +117,12 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
 
 bool PlaylistDatabase::removePlaylist(int id)
 {
-    auto q = remove(QStringLiteral("Playlists"), {{QStringLiteral("PlaylistID"), id}},
-                    QStringLiteral("Cannot remove playlist ") + QString::number(id));
-    return !q.hasError();
+    const auto statement = QStringLiteral("DELETE FROM Playlists WHERE (PlaylistID = :id);");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":id"), id);
+
+    return query.exec();
 }
 
 bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
@@ -199,8 +131,76 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    auto q = update(QStringLiteral("Playlists"), {{QStringLiteral("Name"), name}}, {QStringLiteral("PlaylistID"), id},
-                    QStringLiteral("Cannot update playlist ") + name);
-    return !q.hasError();
+    const auto statement = QStringLiteral("UPDATE Playlists SET (Name = :name) WHERE (PlaylistID = :id);");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":name"), name);
+    query.bindValue(QStringLiteral(":id"), id);
+
+    return query.exec();
+}
+
+bool PlaylistDatabase::insertPlaylistTrack(int playlistId, const Track& track, int index)
+{
+    const QString statement = QStringLiteral(
+        "INSERT INTO PlaylistTracks (PlaylistID, TrackID, TrackIndex) VALUES (:playlistId, :trackId, :index);");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":playlistId"), playlistId);
+    query.bindValue(QStringLiteral(":trackId"), track.id());
+    query.bindValue(QStringLiteral(":index"), index);
+
+    return query.exec();
+}
+
+bool PlaylistDatabase::insertPlaylistTracks(int playlistId, const TrackList& tracks)
+{
+    if(playlistId < 0) {
+        return false;
+    }
+
+    // Remove current playlist tracks
+    const auto statement = QStringLiteral("DELETE FROM PlaylistTracks WHERE (PlaylistID = :id);");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":id"), playlistId);
+
+    if(!query.exec()) {
+        return false;
+    }
+
+    for(int i{0}; const auto& track : tracks) {
+        if(track.isValid() && track.isInDatabase()) {
+            if(!insertPlaylistTrack(playlistId, track, i++)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+TrackList PlaylistDatabase::populatePlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks)
+{
+    const auto statement
+        = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");
+    
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":playlistId"), playlist.dbId());
+
+    if(!query.exec()) {
+        return {};
+    }
+
+    TrackList playlistTracks;
+
+    while(query.next()) {
+        const int trackId = query.value(0).toInt();
+        if(tracks.contains(trackId)) {
+            playlistTracks.push_back(tracks.at(trackId));
+        }
+    }
+
+    return playlistTracks;
 }
 } // namespace Fooyin

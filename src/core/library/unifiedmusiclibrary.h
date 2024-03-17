@@ -25,7 +25,6 @@
 
 namespace Fooyin {
 class SettingsManager;
-class Database;
 struct LibraryInfo;
 
 class UnifiedMusicLibrary : public MusicLibrary
@@ -33,7 +32,7 @@ class UnifiedMusicLibrary : public MusicLibrary
     Q_OBJECT
 
 public:
-    UnifiedMusicLibrary(LibraryManager* libraryManager, Database* database, SettingsManager* settings,
+    UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool, SettingsManager* settings,
                         QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 

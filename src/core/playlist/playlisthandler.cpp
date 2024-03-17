@@ -19,7 +19,6 @@
 
 #include <core/playlist/playlisthandler.h>
 
-#include "database/database.h"
 #include "database/playlistdatabase.h"
 
 #include <core/coresettings.h>
@@ -70,6 +69,7 @@ struct PlaylistHandler::Private
 {
     PlaylistHandler* self;
 
+    DbConnectionPoolPtr dbPool;
     PlayerController* playerController;
     SettingsManager* settings;
     PlaylistDatabase playlistConnector;
@@ -80,13 +80,16 @@ struct PlaylistHandler::Private
     Playlist* activePlaylist{nullptr};
     Playlist* scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self_, const Database* database, PlayerController* playerController_,
+    Private(PlaylistHandler* self_, DbConnectionPoolPtr dbPool_, PlayerController* playerController_,
             SettingsManager* settings_)
         : self{self_}
+        , dbPool{dbPool_}
         , playerController{playerController_}
         , settings{settings_}
-        , playlistConnector{database->connectionName()}
-    { }
+    {
+        const DbConnectionProvider dbProvider{dbPool};
+        playlistConnector.initialise(dbProvider);
+    }
 
     void reloadPlaylists()
     {
@@ -247,10 +250,10 @@ struct PlaylistHandler::Private
     }
 };
 
-PlaylistHandler::PlaylistHandler(Database* database, PlayerController* playerController, SettingsManager* settings,
-                                 QObject* parent)
+PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, PlayerController* playerController,
+                                 SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, database, playerController, settings)}
+    , p{std::make_unique<Private>(this, dbPool, playerController, settings)}
 {
     p->reloadPlaylists();
 

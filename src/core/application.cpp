@@ -41,7 +41,7 @@ struct Application::Private
     SettingsManager* settingsManager;
     CoreSettings coreSettings;
     Translations translations;
-    Database database;
+    Database* database;
     PlayerController* playerController;
     EngineHandler engine;
     LibraryManager* libraryManager;
@@ -55,13 +55,13 @@ struct Application::Private
         : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
         , coreSettings{settingsManager}
         , translations{settingsManager}
-        , database{settingsManager}
+        , database{new Database(parent)}
         , playerController{new PlayerController(settingsManager, parent)}
         , engine{playerController, settingsManager}
-        , libraryManager{new LibraryManager(&database, settingsManager, parent)}
-        , library{new UnifiedMusicLibrary(libraryManager, &database, settingsManager, parent)}
-        , playlistHandler{new PlaylistHandler(&database, playerController, settingsManager, parent)}
-        , corePluginContext{&pluginManager, &engine,         playerController,  libraryManager,
+        , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, parent)}
+        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), settingsManager, parent)}
+        , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, parent)}
+        , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
                             library,        playlistHandler, settingsManager}
     {
         registerTypes();
@@ -108,7 +108,8 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
-    QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library, &UnifiedMusicLibrary::trackWasPlayed);
+    QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library,
+                     &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
     QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
                      &PlaylistHandler::savePlaylists);
@@ -132,7 +133,6 @@ void Application::shutdown()
     p->pluginManager.shutdown();
     p->settingsManager->storeSettings();
     p->library->cleanupTracks();
-    p->database.closeDatabase();
 }
 } // namespace Fooyin
 

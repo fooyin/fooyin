@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +19,13 @@
 
 #pragma once
 
-#include <utils/database/dbconnectionhandler.h>
-#include <utils/database/dbconnectionpool.h>
+#include <utils/database/dbmodule.h>
 
 namespace Fooyin {
-class Database : public QObject
+class SettingsDatabase : public DbModule
 {
-    Q_OBJECT
-
 public:
-    enum class Status
-    {
-        Ok,
-        Incompatible,
-        SchemaError,
-        DbError,
-        ConnectionError,
-    };
-
-    explicit Database(QObject* parent = nullptr);
-
-    [[nodiscard]] DbConnectionPoolPtr connectionPool() const;
-
-    [[nodiscard]] Status status() const;
-
-signals:
-    void statusChanged(Status status);
-
-private:
-    bool initSchema();
-    void changeStatus(Status status);
-
-    DbConnectionPoolPtr m_dbPool;
-    DbConnectionHandler m_connectionHandler;
-    Status m_status;
+    QString value(const QString& name, QString defaultValue = {}) const;
+    bool set(const QString& name, const QVariant& value) const;
 };
 } // namespace Fooyin

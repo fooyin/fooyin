@@ -19,19 +19,15 @@
 
 #pragma once
 
-#include "databasemodule.h"
-
 #include <core/trackfwd.h>
+#include <utils/database/dbmodule.h>
 
 #include <set>
 
 namespace Fooyin {
-class TrackDatabase : public DatabaseModule
+class TrackDatabase : public DbModule
 {
 public:
-    explicit TrackDatabase(const QString& connectionName);
-    ~TrackDatabase() override;
-
     bool storeTracks(TrackList& tracksToStore);
 
     bool reloadTrack(Track& track) const;
@@ -48,8 +44,14 @@ public:
 
     void cleanupTracks();
 
+    static void updateViews(const QSqlDatabase& db);
+
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    int trackCount() const;
+    bool insertTrack(Track& track) const;
+    bool insertOrUpdateStats(Track& track) const;
+    void removeUnmanagedTracks() const;
+    void markUnusedStatsForDelete() const;
+    void deleteExpiredStats() const;
 };
 } // namespace Fooyin

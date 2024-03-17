@@ -61,8 +61,10 @@ struct LibraryScanner::Private
 {
     LibraryScanner* self;
 
-    Database* database;
+    DbConnectionPoolPtr dbPool;
     SettingsManager* settings;
+
+    std::unique_ptr<DbConnectionHandler> dbHandler;
 
     LibraryInfo currentLibrary;
     TrackDatabase trackDatabase;
@@ -73,11 +75,10 @@ struct LibraryScanner::Private
 
     std::unordered_map<int, LibraryWatcher> watchers;
 
-    Private(LibraryScanner* self_, Database* database_, SettingsManager* settings_)
+    Private(LibraryScanner* self_, DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
         : self{self_}
-        , database{database_}
+        , dbPool{dbPool_}
         , settings{settings_}
-        , trackDatabase{database->connectionName()}
     { }
 
     void addWatcher(const Fooyin::LibraryInfo& library)
@@ -237,17 +238,18 @@ struct LibraryScanner::Private
     }
 };
 
-LibraryScanner::LibraryScanner(Database* database, SettingsManager* settings, QObject* parent)
+LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, database, settings)}
+    , p{std::make_unique<Private>(this, dbPool, settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
 
-void LibraryScanner::closeThread()
+void LibraryScanner::initialiseThread()
 {
-    stopThread();
-    p->database->closeDatabase();
+    p->dbHandler = std::make_unique<DbConnectionHandler>(p->dbPool);
+
+    p->trackDatabase.initialise(DbConnectionProvider{p->dbPool});
 }
 
 void LibraryScanner::stopThread()
@@ -255,6 +257,7 @@ void LibraryScanner::stopThread()
     if(state() == Running) {
         emit progressChanged(100);
     }
+
     setState(Idle);
 }
 
