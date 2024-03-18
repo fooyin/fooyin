@@ -428,7 +428,7 @@ void PlaylistHandler::clearPlaylistTracks(const Id& id)
 void PlaylistHandler::changePlaylistIndex(const Id& id, int index)
 {
     if(auto* playlist = playlistById(id)) {
-        if(playlist->isTemporary()) {
+        if(!playlist->isTemporary()) {
             Utils::move(p->playlists, playlist->index(), index);
             p->updateIndices();
         }
