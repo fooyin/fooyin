@@ -38,6 +38,7 @@ public:
 
     explicit Worker(QObject* parent = nullptr);
 
+    virtual void initialiseThread();
     virtual void stopThread();
     virtual void pauseThread();
     virtual void closeThread();
