@@ -19,6 +19,8 @@
 
 #include <utils/database/dbtransaction.h>
 
+#include <QDebug>
+
 namespace {
 bool beginTransaction(QSqlDatabase& database)
 {

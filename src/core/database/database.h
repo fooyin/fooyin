@@ -22,6 +22,8 @@
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 
+#include <QObject>
+
 namespace Fooyin {
 class Database : public QObject
 {

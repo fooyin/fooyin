@@ -19,6 +19,8 @@
 
 #include <utils/database/dbconnectionprovider.h>
 
+#include <QDebug>
+
 namespace Fooyin {
 DbConnectionProvider::DbConnectionProvider()
     : DbConnectionProvider{nullptr}

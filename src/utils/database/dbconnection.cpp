@@ -19,6 +19,7 @@
 
 #include <utils/database/dbconnection.h>
 
+#include <QDebug>
 #include <QSqlError>
 
 namespace {
