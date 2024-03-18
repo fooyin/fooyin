@@ -27,7 +27,7 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
 {
     const QString query
         = QStringLiteral("SELECT PlaylistID, Name, PlaylistIndex FROM Playlists ORDER BY PlaylistIndex;");
-    
+
     DbQuery q{db(), query};
 
     if(!q.exec()) {
@@ -61,7 +61,7 @@ int PlaylistDatabase::insertPlaylist(const QString& name, int index)
     }
 
     const QString statement = QStringLiteral("INSERT INTO Playlists (Name, PlaylistIndex) VALUES (:name, :index);");
-    
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":name"), name);
     query.bindValue(QStringLiteral(":index"), index);
@@ -79,10 +79,12 @@ bool PlaylistDatabase::savePlaylist(Playlist& playlist)
 
     if(playlist.modified()) {
         const auto statement
-            = QStringLiteral("UPDATE Playlists SET (Name = :name, PlaylistIndex = :index) WHERE (PlaylistID = :id);");
-        
+            = QStringLiteral("UPDATE Playlists SET Name = :name, PlaylistIndex = :index WHERE PlaylistID = :id;");
+
         DbQuery query{db(), statement};
+
         query.bindValue(QStringLiteral(":name"), playlist.name());
+        query.bindValue(QStringLiteral(":index"), playlist.index());
         query.bindValue(QStringLiteral(":id"), playlist.dbId());
 
         updated = query.exec();
@@ -108,17 +110,13 @@ bool PlaylistDatabase::saveModifiedPlaylists(const PlaylistList& playlists)
         savePlaylist(*playlist);
     }
 
-    if(!transaction.commit()) {
-        return false;
-    }
-
-    return true;
+    return transaction.commit();
 }
 
 bool PlaylistDatabase::removePlaylist(int id)
 {
-    const auto statement = QStringLiteral("DELETE FROM Playlists WHERE (PlaylistID = :id);");
-    
+    const auto statement = QStringLiteral("DELETE FROM Playlists WHERE PlaylistID = :id;");
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":id"), id);
 
@@ -131,8 +129,8 @@ bool PlaylistDatabase::renamePlaylist(int id, const QString& name)
         return false;
     }
 
-    const auto statement = QStringLiteral("UPDATE Playlists SET (Name = :name) WHERE (PlaylistID = :id);");
-    
+    const auto statement = QStringLiteral("UPDATE Playlists SET Name = :name WHERE PlaylistID = :id;");
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":name"), name);
     query.bindValue(QStringLiteral(":id"), id);
@@ -144,7 +142,7 @@ bool PlaylistDatabase::insertPlaylistTrack(int playlistId, const Track& track, i
 {
     const QString statement = QStringLiteral(
         "INSERT INTO PlaylistTracks (PlaylistID, TrackID, TrackIndex) VALUES (:playlistId, :trackId, :index);");
-    
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":playlistId"), playlistId);
     query.bindValue(QStringLiteral(":trackId"), track.id());
@@ -160,8 +158,8 @@ bool PlaylistDatabase::insertPlaylistTracks(int playlistId, const TrackList& tra
     }
 
     // Remove current playlist tracks
-    const auto statement = QStringLiteral("DELETE FROM PlaylistTracks WHERE (PlaylistID = :id);");
-    
+    const auto statement = QStringLiteral("DELETE FROM PlaylistTracks WHERE PlaylistID = :id;");
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":id"), playlistId);
 
@@ -184,7 +182,7 @@ TrackList PlaylistDatabase::populatePlaylistTracks(const Playlist& playlist, con
 {
     const auto statement
         = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");
-    
+
     DbQuery query{db(), statement};
     query.bindValue(QStringLiteral(":playlistId"), playlist.dbId());
 

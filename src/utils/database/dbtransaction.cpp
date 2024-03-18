@@ -52,7 +52,7 @@ DbTransaction::~DbTransaction()
 }
 
 DbTransaction::DbTransaction(DbTransaction&& other) noexcept
-    : m_database(std::move(other.m_database))
+    : m_database(other.m_database)
     , m_isActive(other.m_isActive)
 {
     other.release();

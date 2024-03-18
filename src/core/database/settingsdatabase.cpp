@@ -21,17 +21,10 @@
 
 #include <QSqlQuery>
 
-namespace {
-const QString Table       = QStringLiteral("Settings");
-const QString NameColumn  = QStringLiteral("Name");
-const QString ValueColumn = QStringLiteral("Value");
-} // namespace
-
 namespace Fooyin {
 QString SettingsDatabase::value(const QString& name, QString defaultValue) const
 {
-    const auto statement
-        = QString{QStringLiteral("SELECT %1 FROM %2 WHERE %3=:name")}.arg(ValueColumn, Table, NameColumn);
+    const auto statement = QStringLiteral("SELECT Value FROM Settings WHERE Name = :name");
 
     QSqlQuery query{db()};
 
@@ -60,8 +53,7 @@ bool SettingsDatabase::set(const QString& name, const QVariant& value) const
         return false;
     }
 
-    const auto statement = QString{QStringLiteral("REPLACE INTO %1 ( %2,%3 ) VALUES (:name,:value)")}.arg(
-        Table, NameColumn, ValueColumn);
+    const auto statement = QStringLiteral("INSERT OR REPLACE INTO Settings (Name, Value) VALUES (:name, :value)");
 
     QSqlQuery query{db()};
 

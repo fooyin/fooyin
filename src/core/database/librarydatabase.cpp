@@ -69,7 +69,7 @@ bool LibraryDatabase::removeLibrary(int id)
         return false;
     }
 
-    const QString statement = QStringLiteral("DELETE FROM Libraries WHERE (LibraryID = :id);");
+    const QString statement = QStringLiteral("DELETE FROM Libraries WHERE LibraryID = :id;");
 
     DbQuery query{db(), statement};
 

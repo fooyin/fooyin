@@ -27,7 +27,7 @@ DbConnectionProvider::DbConnectionProvider()
 { }
 
 DbConnectionProvider::DbConnectionProvider(DbConnectionPoolPtr pool)
-    : m_connectionPool{pool}
+    : m_connectionPool{std::move(pool)}
 { }
 
 QSqlDatabase DbConnectionProvider::db() const
