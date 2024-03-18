@@ -30,7 +30,8 @@
 
 namespace Fooyin {
 Translations::Translations(SettingsManager* settings)
-    : m_settings{settings}
+    : QObject{settings}
+    , m_settings{settings}
 {
     initialiseTranslations();
 }
