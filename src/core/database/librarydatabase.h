@@ -19,18 +19,18 @@
 
 #pragma once
 
-#include "databasemodule.h"
-
 #include "library/libraryinfo.h"
 
+#include <utils/database/dbmodule.h>
+
 namespace Fooyin {
-class LibraryDatabase : public DatabaseModule
+class LibraryDatabase : public DbModule
 {
 public:
-    explicit LibraryDatabase(const QString& connectionName);
-
     bool getAllLibraries(LibraryInfoMap& libraries);
+
     int insertLibrary(const QString& path, const QString& name);
+
     bool removeLibrary(int id);
     bool renameLibrary(int id, const QString& name);
 };

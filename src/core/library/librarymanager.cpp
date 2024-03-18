@@ -19,13 +19,16 @@
 
 #include "librarymanager.h"
 
-#include "database/database.h"
 #include "database/librarydatabase.h"
 #include "database/trackdatabase.h"
 #include "libraryinfo.h"
 
+#include <utils/database/dbconnectionhandler.h>
+#include <utils/database/dbconnectionprovider.h>
 #include <utils/fileutils.h>
 #include <utils/helpers.h>
+
+#include <utility>
 
 namespace Fooyin {
 bool checkNewPath(const QString& path, const LibraryInfoMap& libraries, int libraryId = -1)
@@ -49,18 +52,21 @@ void eraseLibrary(LibraryInfoMap& libraries, int id)
 
 struct LibraryManager::Private
 {
-    Database* database;
+    DbConnectionPoolPtr dbPool;
     SettingsManager* settings;
     LibraryDatabase libraryConnector;
     TrackDatabase trackConnector;
     LibraryInfoMap libraries;
 
-    explicit Private(Database* database_, SettingsManager* settings_)
-        : database{database_}
+    explicit Private(DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
+        : dbPool{dbPool_}
         , settings{settings_}
-        , libraryConnector{database->connectionName()}
-        , trackConnector{database->connectionName()}
-    { }
+    {
+        const DbConnectionProvider dbProvider{dbPool};
+
+        libraryConnector.initialise(dbProvider);
+        trackConnector.initialise(dbProvider);
+    }
 
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
@@ -69,9 +75,9 @@ struct LibraryManager::Private
     }
 };
 
-LibraryManager::LibraryManager(Database* database, SettingsManager* settings, QObject* parent)
+LibraryManager::LibraryManager(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(database, settings)}
+    , p{std::make_unique<Private>(dbPool, settings)}
 {
     reset();
 }

@@ -23,12 +23,12 @@
 
 #include <core/playlist/playlist.h>
 #include <core/trackfwd.h>
+#include <utils/database/dbconnectionpool.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class SettingsManager;
-class Database;
 class PlayerController;
 
 class FYCORE_EXPORT PlaylistHandler : public QObject
@@ -36,7 +36,7 @@ class FYCORE_EXPORT PlaylistHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(Database* database, PlayerController* playerController, SettingsManager* settings,
+    explicit PlaylistHandler(DbConnectionPoolPtr dbPool, PlayerController* playerController, SettingsManager* settings,
                              QObject* parent = nullptr);
     ~PlaylistHandler() override;
 

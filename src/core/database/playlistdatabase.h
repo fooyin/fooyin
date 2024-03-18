@@ -19,10 +19,9 @@
 
 #pragma once
 
-#include "databasemodule.h"
-
 #include <core/playlist/playlist.h>
 #include <core/track.h>
+#include <utils/database/dbmodule.h>
 
 namespace Fooyin {
 struct PlaylistInfo
@@ -32,11 +31,9 @@ struct PlaylistInfo
     int index{-1};
 };
 
-class PlaylistDatabase : private DatabaseModule
+class PlaylistDatabase : public DbModule
 {
 public:
-    explicit PlaylistDatabase(const QString& connectionName);
-
     std::vector<PlaylistInfo> getAllPlaylists();
     TrackList getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
 
@@ -46,5 +43,10 @@ public:
     bool saveModifiedPlaylists(const PlaylistList& playlists);
     bool removePlaylist(int id);
     bool renamePlaylist(int id, const QString& name);
+
+private:
+    bool insertPlaylistTrack(int playlistId, const Fooyin::Track& track, int index);
+    bool insertPlaylistTracks(int playlistId, const TrackList& tracks);
+    TrackList populatePlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
 };
 } // namespace Fooyin

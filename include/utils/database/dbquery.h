@@ -19,41 +19,44 @@
 
 #pragma once
 
-#include <utils/database/dbconnectionhandler.h>
-#include <utils/database/dbconnectionpool.h>
+#include "fyutils_export.h"
 
-#include <QObject>
+#include <QSqlQuery>
 
 namespace Fooyin {
-class Database : public QObject
+class FYUTILS_EXPORT DbQuery
 {
-    Q_OBJECT
-
 public:
     enum class Status
     {
-        Ok,
-        Incompatible,
-        SchemaError,
-        DbError,
-        ConnectionError,
+        None,
+        Prepared,
+        Success,
+        Ignored,
+        Error,
     };
 
-    explicit Database(QObject* parent = nullptr);
+    DbQuery();
+    DbQuery(const QSqlDatabase& database, const QString& statement);
 
-    [[nodiscard]] DbConnectionPoolPtr connectionPool() const;
+    DbQuery(const DbQuery& other)       = delete;
+    DbQuery(DbQuery&& other)            = default;
+    DbQuery& operator=(DbQuery&& other) = default;
 
     [[nodiscard]] Status status() const;
+    [[nodiscard]] QSqlError lastError() const;
 
-signals:
-    void statusChanged(Status status);
+    void bindValue(const QString& placeholder, const QVariant& value);
+    [[nodiscard]] QString executedQuery() const;
+    bool exec();
+
+    [[nodiscard]] int numRowsAffected() const;
+    [[nodiscard]] QVariant lastInsertId() const;
+    [[nodiscard]] bool next();
+    [[nodiscard]] QVariant value(int index) const;
 
 private:
-    bool initSchema();
-    void changeStatus(Status status);
-
-    DbConnectionPoolPtr m_dbPool;
-    DbConnectionHandler m_connectionHandler;
+    QSqlQuery m_query;
     Status m_status;
 };
 } // namespace Fooyin

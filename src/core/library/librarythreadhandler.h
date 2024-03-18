@@ -22,11 +22,11 @@
 #include "library/libraryinfo.h"
 
 #include <core/trackfwd.h>
+#include <utils/database/dbconnectionpool.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class Database;
 class SettingsManager;
 class MusicLibrary;
 struct ScanResult;
@@ -37,7 +37,7 @@ class LibraryThreadHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(Database* database, MusicLibrary* library, SettingsManager* settings,
+    explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library, SettingsManager* settings,
                                   QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 

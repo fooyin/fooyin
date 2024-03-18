@@ -29,7 +29,6 @@
 #include <QThread>
 
 #include <deque>
-#include <ranges>
 
 namespace {
 int nextRequestId()
@@ -53,7 +52,7 @@ struct LibraryThreadHandler::Private
 {
     LibraryThreadHandler* self;
 
-    Database* database;
+    DbConnectionPoolPtr dbPool;
     MusicLibrary* library;
     SettingsManager* settings;
 
@@ -64,13 +63,14 @@ struct LibraryThreadHandler::Private
     std::deque<LibraryScanRequest> scanRequests;
     int currentRequestId{-1};
 
-    Private(LibraryThreadHandler* self_, Database* database_, MusicLibrary* library_, SettingsManager* settings_)
+    Private(LibraryThreadHandler* self_, DbConnectionPoolPtr dbPool_, MusicLibrary* library_,
+            SettingsManager* settings_)
         : self{self_}
-        , database{database_}
+        , dbPool{dbPool_}
         , library{library_}
         , settings{settings_}
-        , scanner{database, settings}
-        , trackDatabaseManager{database}
+        , scanner{dbPool, settings}
+        , trackDatabaseManager{dbPool}
     {
         scanner.moveToThread(&thread);
         trackDatabaseManager.moveToThread(&thread);
@@ -221,10 +221,10 @@ struct LibraryThreadHandler::Private
     }
 };
 
-LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* library, SettingsManager* settings,
+LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, database, library, settings)}
+    , p{std::make_unique<Private>(this, dbPool, library, settings)}
 {
     QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);
@@ -240,6 +240,9 @@ LibraryThreadHandler::LibraryThreadHandler(Database* database, MusicLibrary* lib
     QObject::connect(
         &p->scanner, &LibraryScanner::directoryChanged, this,
         [this](const LibraryInfo& libraryInfo, const QString& dir) { p->addDirectoryScanRequest(libraryInfo, dir); });
+
+    QMetaObject::invokeMethod(&p->scanner, &Worker::initialiseThread);
+    QMetaObject::invokeMethod(&p->trackDatabaseManager, &Worker::initialiseThread);
 }
 
 LibraryThreadHandler::~LibraryThreadHandler()

@@ -23,20 +23,21 @@
 
 #include "libraryinfo.h"
 
+#include <utils/database/dbconnectionpool.h>
+
 #include <QObject>
 
 #include <set>
 
 namespace Fooyin {
 class SettingsManager;
-class Database;
 
 class FYCORE_EXPORT LibraryManager : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryManager(Database* database, SettingsManager* settings, QObject* parent = nullptr);
+    LibraryManager(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryManager() override;
 
     void reset();

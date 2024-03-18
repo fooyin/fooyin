@@ -38,14 +38,14 @@ set(SOURCES
     translations.h
     database/database.cpp
     database/database.h
-    database/databasemodule.cpp
-    database/databasemodule.h
-    database/databasequery.cpp
-    database/databasequery.h
+    database/dbschema.cpp
+    database/dbschema.h
     database/librarydatabase.cpp
     database/librarydatabase.h
     database/playlistdatabase.cpp
     database/playlistdatabase.h
+    database/settingsdatabase.cpp
+    database/settingsdatabase.h
     database/trackdatabase.cpp
     database/trackdatabase.h
     engine/audiobuffer.cpp

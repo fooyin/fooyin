@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,43 +17,27 @@
  *
  */
 
-#pragma once
-
 #include <utils/database/dbconnectionhandler.h>
+
 #include <utils/database/dbconnectionpool.h>
 
-#include <QObject>
-
 namespace Fooyin {
-class Database : public QObject
+DbConnectionHandler::DbConnectionHandler(const DbConnectionPoolPtr& dbPool)
 {
-    Q_OBJECT
+    if(dbPool && !dbPool->hasThreadConnection() && dbPool->createThreadConnection()) {
+        m_dbPool = dbPool;
+    }
+}
 
-public:
-    enum class Status
-    {
-        Ok,
-        Incompatible,
-        SchemaError,
-        DbError,
-        ConnectionError,
-    };
+DbConnectionHandler::~DbConnectionHandler()
+{
+    if(m_dbPool && m_dbPool->hasThreadConnection()) {
+        m_dbPool->destroyThreadConnection();
+    }
+}
 
-    explicit Database(QObject* parent = nullptr);
-
-    [[nodiscard]] DbConnectionPoolPtr connectionPool() const;
-
-    [[nodiscard]] Status status() const;
-
-signals:
-    void statusChanged(Status status);
-
-private:
-    bool initSchema();
-    void changeStatus(Status status);
-
-    DbConnectionPoolPtr m_dbPool;
-    DbConnectionHandler m_connectionHandler;
-    Status m_status;
-};
+bool DbConnectionHandler::hasConnection() const
+{
+    return static_cast<bool>(m_dbPool);
+}
 } // namespace Fooyin

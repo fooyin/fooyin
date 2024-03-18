@@ -330,6 +330,7 @@ endif()
 
 set(SOURCES ${SOURCES} src/app/main.cpp src/app/commandline.cpp)
 
+qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
 
 add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
