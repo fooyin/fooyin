@@ -216,8 +216,8 @@ DbSchema::Revision DbSchema::readRevision()
 {
     Revision revision;
 
-    revision.version          = m_xmlReader.attributes().value("version").toInt();
-    revision.minCompatVersion = m_xmlReader.attributes().value("minCompatVersion").toInt();
+    revision.version          = m_xmlReader.attributes().value(u"version").toInt();
+    revision.minCompatVersion = m_xmlReader.attributes().value(u"minCompatVersion").toInt();
 
     while(m_xmlReader.readNextStartElement()) {
         if(m_xmlReader.name() == u"description") {
