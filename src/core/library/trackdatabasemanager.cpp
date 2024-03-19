@@ -28,7 +28,7 @@
 namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* parent)
     : Worker{parent}
-    , m_dbPool{dbPool}
+    , m_dbPool{std::move(dbPool)}
 { }
 
 void TrackDatabaseManager::initialiseThread()

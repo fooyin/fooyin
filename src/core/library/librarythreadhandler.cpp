@@ -66,7 +66,7 @@ struct LibraryThreadHandler::Private
     Private(LibraryThreadHandler* self_, DbConnectionPoolPtr dbPool_, MusicLibrary* library_,
             SettingsManager* settings_)
         : self{self_}
-        , dbPool{dbPool_}
+        , dbPool{std::move(dbPool_)}
         , library{library_}
         , settings{settings_}
         , scanner{dbPool, settings}
@@ -224,7 +224,7 @@ struct LibraryThreadHandler::Private
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, dbPool, library, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), library, settings)}
 {
     QObject::connect(&p->trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);

@@ -59,7 +59,7 @@ struct LibraryManager::Private
     LibraryInfoMap libraries;
 
     explicit Private(DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
-        : dbPool{dbPool_}
+        : dbPool{std::move(dbPool_)}
         , settings{settings_}
     {
         const DbConnectionProvider dbProvider{dbPool};
@@ -77,7 +77,7 @@ struct LibraryManager::Private
 
 LibraryManager::LibraryManager(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(dbPool, settings)}
+    , p{std::make_unique<Private>(std::move(dbPool), settings)}
 {
     reset();
 }

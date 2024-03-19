@@ -67,7 +67,7 @@ struct UnifiedMusicLibrary::Private
             SettingsManager* settings_)
         : self{self_}
         , libraryManager{libraryManager_}
-        , dbPool{dbPool_}
+        , dbPool{std::move(dbPool_)}
         , settings{settings_}
         , threadHandler{dbPool, self, settings}
     { }
@@ -173,7 +173,7 @@ struct UnifiedMusicLibrary::Private
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                          SettingsManager* settings, QObject* parent)
     : MusicLibrary{parent}
-    , p{std::make_unique<Private>(this, libraryManager, dbPool, settings)}
+    , p{std::make_unique<Private>(this, libraryManager, std::move(dbPool), settings)}
 {
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     connect(p->libraryManager, &LibraryManager::libraryRemoved, this,

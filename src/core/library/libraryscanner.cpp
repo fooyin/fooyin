@@ -77,7 +77,7 @@ struct LibraryScanner::Private
 
     Private(LibraryScanner* self_, DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
         : self{self_}
-        , dbPool{dbPool_}
+        , dbPool{std::move(dbPool_)}
         , settings{settings_}
     { }
 
@@ -240,7 +240,7 @@ struct LibraryScanner::Private
 
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, dbPool, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
