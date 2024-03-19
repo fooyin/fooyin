@@ -89,6 +89,13 @@ public:
      * the index +- delta is out of range.
      */
     Track nextTrack(int delta, PlayModes mode);
+    /*!
+     * Changes to and returns the next track to be played based on the @p delta from the current
+     * index and the @p mode.
+     * @note this will return an invalid track if @p mode is 'Default' and
+     * the index +- delta is out of range.
+     */
+    Track nextTrackChange(int delta, PlayModes mode);
 
     void changeCurrentIndex(int index);
 

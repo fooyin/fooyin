@@ -83,6 +83,10 @@ public:
     void schedulePlaylist(Playlist* playlist);
     /** Clears any scheduled playlist. */
     void clearSchedulePlaylist();
+    /** Returns the next track to be played, or an invalid track if the playlist will end. */
+    Track nextTrack();
+    /** Returns the previous track to be played, or an invalid track if the playlist will end. */
+    Track previousTrack();
 
     void renamePlaylist(const Id& id, const QString& name);
     void removePlaylist(const Id& id);
@@ -114,6 +118,7 @@ public slots:
     void populatePlaylists(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
+    void trackAboutToFinish();
 
 private:
     struct Private;

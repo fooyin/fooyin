@@ -64,6 +64,7 @@ struct EngineHandler::Private
         QObject::connect(playerController, &PlayerController::currentTrackChanged, engine, &AudioEngine::changeTrack);
         QObject::connect(playerController, &PlayerController::positionMoved, engine, &AudioEngine::seek);
         QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
+        QObject::connect(engine, &AudioEngine::trackAboutToFinish, self, &EngineHandler::trackAboutToFinish);
         QObject::connect(engine, &AudioEngine::positionChanged, playerController,
                          &PlayerController::setCurrentPosition);
         QObject::connect(engine, &AudioEngine::trackStatusChanged, self,

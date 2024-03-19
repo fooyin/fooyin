@@ -28,6 +28,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <ranges>
+#include <utility>
 
 namespace {
 enum class CommonOperation : uint8_t
@@ -83,7 +84,7 @@ struct PlaylistHandler::Private
     Private(PlaylistHandler* self_, DbConnectionPoolPtr dbPool_, PlayerController* playerController_,
             SettingsManager* settings_)
         : self{self_}
-        , dbPool{dbPool_}
+        , dbPool{std::move(dbPool_)}
         , playerController{playerController_}
         , settings{settings_}
     {
@@ -110,7 +111,7 @@ struct PlaylistHandler::Private
         playerController->play();
     }
 
-    void nextTrack(int delta)
+    void nextTrackChange(int delta)
     {
         if(scheduledPlaylist) {
             activePlaylist    = scheduledPlaylist;
@@ -122,7 +123,7 @@ struct PlaylistHandler::Private
             return;
         }
 
-        const Track nextTrack = activePlaylist->nextTrack(delta, playerController->playMode());
+        const Track nextTrack = activePlaylist->nextTrackChange(delta, playerController->playMode());
 
         if(!nextTrack.isValid()) {
             playerController->stop();
@@ -132,9 +133,21 @@ struct PlaylistHandler::Private
         startNextTrack(nextTrack, activePlaylist->currentTrackIndex());
     }
 
+    Track nextTrack(int delta)
+    {
+        auto* playlist = scheduledPlaylist ? scheduledPlaylist : activePlaylist;
+
+        if(!playlist) {
+            playerController->stop();
+            return {};
+        }
+
+        return activePlaylist->nextTrack(delta, playerController->playMode());
+    }
+
     void next()
     {
-        nextTrack(1);
+        nextTrackChange(1);
     }
 
     void previous()
@@ -143,7 +156,7 @@ struct PlaylistHandler::Private
             playerController->changePosition(0);
         }
         else {
-            nextTrack(-1);
+            nextTrackChange(-1);
         }
     }
 
@@ -253,7 +266,7 @@ struct PlaylistHandler::Private
 PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, PlayerController* playerController,
                                  SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, dbPool, playerController, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), playerController, settings)}
 {
     p->reloadPlaylists();
 
@@ -472,6 +485,16 @@ void PlaylistHandler::clearSchedulePlaylist()
     p->scheduledPlaylist = nullptr;
 }
 
+Track PlaylistHandler::nextTrack()
+{
+    return p->nextTrack(1);
+}
+
+Track PlaylistHandler::previousTrack()
+{
+    return p->nextTrack(-1);
+}
+
 void PlaylistHandler::renamePlaylist(const Id& id, const QString& name)
 {
     if(playlistCount() < 1) {
@@ -628,6 +651,11 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
             emit playlistTracksChanged(playlist.get(), updatedIndexes);
         }
     }
+}
+
+void PlaylistHandler::trackAboutToFinish()
+{
+    p->nextTrack(1);
 }
 } // namespace Fooyin
 

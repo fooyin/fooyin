@@ -59,5 +59,6 @@ signals:
     void outputChanged(const QString& output);
     void deviceChanged(const QString& device);
     void trackStatusChanged(TrackStatus status);
+    void trackAboutToFinish();
 };
 } // namespace Fooyin

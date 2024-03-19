@@ -66,13 +66,13 @@ struct Playlist::Private
         , index{index_}
     { }
 
-    void readCurrentTrack()
+    void readTrack(int trackIndex)
     {
-        if(currentTrackIndex < 0 || std::cmp_greater_equal(currentTrackIndex, tracks.size())) {
+        if(trackIndex < 0 || std::cmp_greater_equal(trackIndex, tracks.size())) {
             return;
         }
 
-        Track& track = tracks.at(currentTrackIndex);
+        Track& track = tracks.at(trackIndex);
         if(!track.metadataWasRead()) {
             Tagging::readMetaData(track);
         }
@@ -113,6 +113,42 @@ struct Playlist::Private
         }
 
         return -1;
+    }
+
+    int getNextIndex(int delta, PlayModes mode)
+    {
+        int nextIndex = currentTrackIndex;
+
+        if(nextTrackIndex >= 0) {
+            nextIndex = nextTrackIndex;
+        }
+        else {
+            const int count = static_cast<int>(tracks.size());
+
+            if(mode & ShuffleTracks) {
+                if(!(mode & RepeatTrack)) {
+                    shuffleIndex += delta;
+                }
+                nextIndex = getRandomIndex(mode);
+            }
+            else if(mode & RepeatPlaylist) {
+                nextIndex += delta;
+                if(nextIndex < 0) {
+                    nextIndex = count - 1;
+                }
+                else if(nextIndex >= count) {
+                    nextIndex = 0;
+                }
+            }
+            else if(mode == Default) {
+                nextIndex += delta;
+                if(nextIndex < 0 || nextIndex >= count) {
+                    nextIndex = -1;
+                }
+            }
+        }
+
+        return nextIndex;
     }
 };
 
@@ -207,39 +243,23 @@ void Playlist::scheduleNextIndex(int index)
 
 Track Playlist::nextTrack(int delta, PlayModes mode)
 {
-    int index = currentTrackIndex();
+    const int index = p->getNextIndex(delta, mode);
 
-    if(p->nextTrackIndex >= 0) {
-        index = p->nextTrackIndex;
+    if(index < 0) {
+        return {};
     }
-    else {
-        const int count = trackCount();
 
-        if(mode & ShuffleTracks) {
-            if(!(mode & RepeatTrack)) {
-                p->shuffleIndex += delta;
-            }
-            index = p->getRandomIndex(mode);
-        }
-        else if(mode & RepeatPlaylist) {
-            index += delta;
-            if(index < 0) {
-                index = count - 1;
-            }
-            else if(index >= count) {
-                index = 0;
-            }
-        }
-        else if(mode == Default) {
-            index += delta;
-            if(index < 0 || index >= count) {
-                index = -1;
-            }
-        }
+    p->readTrack(index);
 
-        if(index < 0) {
-            return {};
-        }
+    return p->tracks.at(index);
+}
+
+Track Playlist::nextTrackChange(int delta, PlayModes mode)
+{
+    const int index = p->getNextIndex(delta, mode);
+
+    if(index < 0) {
+        return {};
     }
 
     changeCurrentIndex(index);
@@ -250,7 +270,7 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 void Playlist::changeCurrentIndex(int index)
 {
     p->currentTrackIndex = index;
-    p->readCurrentTrack();
+    p->readTrack(index);
 }
 
 void Playlist::reset()

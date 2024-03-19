@@ -113,6 +113,7 @@ struct AudioPlaybackEngine::Private
         else {
             bufferTimer->stop();
             renderer->queueBuffer({});
+            QMetaObject::invokeMethod(self, &AudioEngine::trackAboutToFinish);
         }
     }
 
