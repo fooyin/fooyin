@@ -33,10 +33,6 @@ public:
     ~AudioPlaybackEngine() override;
 
 public slots:
-    [[nodiscard]] PlaybackState state() const override;
-    [[nodiscard]] TrackStatus trackStatus() const override;
-    [[nodiscard]] uint64_t position() const override;
-
     void seek(uint64_t pos) override;
 
     void changeTrack(const Track& track) override;

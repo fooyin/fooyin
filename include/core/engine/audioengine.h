@@ -52,10 +52,6 @@ public:
         : QObject{parent}
     { }
 
-    virtual PlaybackState state() const     = 0;
-    virtual TrackStatus trackStatus() const = 0;
-    virtual uint64_t position() const       = 0;
-
     virtual void seek(uint64_t pos) = 0;
 
     virtual void changeTrack(const Track& track) = 0;

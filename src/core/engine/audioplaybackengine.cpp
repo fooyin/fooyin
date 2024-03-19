@@ -221,21 +221,6 @@ AudioPlaybackEngine::~AudioPlaybackEngine()
     }
 }
 
-PlaybackState AudioPlaybackEngine::state() const
-{
-    return p->state;
-}
-
-TrackStatus AudioPlaybackEngine::trackStatus() const
-{
-    return p->status;
-}
-
-uint64_t AudioPlaybackEngine::position() const
-{
-    return p->lastPosition;
-}
-
 void AudioPlaybackEngine::seek(uint64_t pos)
 {
     if(!p->decoder->isSeekable()) {
@@ -247,7 +232,7 @@ void AudioPlaybackEngine::seek(uint64_t pos)
     p->decoder->seek(pos);
     p->clock.sync(pos);
 
-    if(state() == PlayingState) {
+    if(p->state == PlayingState) {
         p->clock.setPaused(false);
         p->bufferTimer->start();
         p->renderer->start();
@@ -305,11 +290,11 @@ void AudioPlaybackEngine::setState(PlaybackState state)
 
 void AudioPlaybackEngine::play()
 {
-    if(trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
+    if(p->status == NoTrack || p->status == InvalidTrack) {
         return;
     }
 
-    if(trackStatus() == EndOfTrack && state() == StoppedState) {
+    if(p->status == EndOfTrack && p->state == StoppedState) {
         seek(0);
         emit positionChanged(0);
     }
@@ -321,11 +306,11 @@ void AudioPlaybackEngine::play()
 
 void AudioPlaybackEngine::pause()
 {
-    if(trackStatus() == NoTrack || trackStatus() == InvalidTrack) {
+    if(p->status == NoTrack || p->status == InvalidTrack) {
         return;
     }
 
-    if(trackStatus() == EndOfTrack && state() == StoppedState) {
+    if(p->status == EndOfTrack && p->state == StoppedState) {
         seek(0);
         emit positionChanged(0);
     }
@@ -351,7 +336,7 @@ void AudioPlaybackEngine::setVolume(double volume)
 
 void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
 {
-    const bool playing = (state() == PlayingState || state() == PausedState);
+    const bool playing = (p->state == PlayingState || p->state == PausedState);
 
     p->clock.setPaused(playing);
     p->renderer->pause(playing);
@@ -378,7 +363,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
         return;
     }
 
-    const bool playing = state() == PlayingState || state() == PausedState;
+    const bool playing = p->state == PlayingState || p->state == PausedState;
 
     p->clock.setPaused(playing);
     p->renderer->pause(playing);
