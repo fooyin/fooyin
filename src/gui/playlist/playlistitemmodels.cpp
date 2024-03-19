@@ -36,22 +36,22 @@ int PlaylistContainerItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-TextBlockList PlaylistContainerItem::title() const
+FormattedScript PlaylistContainerItem::title() const
 {
     return m_title;
 }
 
-TextBlockList PlaylistContainerItem::subtitle() const
+FormattedScript PlaylistContainerItem::subtitle() const
 {
     return m_subtitle;
 }
 
-TextBlockList PlaylistContainerItem::sideText() const
+FormattedScript PlaylistContainerItem::sideText() const
 {
     return m_sideText;
 }
 
-TextBlockList PlaylistContainerItem::info() const
+FormattedScript PlaylistContainerItem::info() const
 {
     return m_info;
 }
@@ -66,21 +66,20 @@ QSize PlaylistContainerItem::size() const
     return m_size;
 }
 
-void PlaylistContainerItem::updateGroupText(ScriptParser* parser)
+void PlaylistContainerItem::updateGroupText(ScriptParser* parser, ScriptFormatter* formatter)
 {
     if(m_tracks.empty()) {
         return;
     }
 
-    if(!parser) {
+    if(!parser || !formatter) {
         return;
     }
 
-    auto evaluateBlocks = [this, parser](TextBlockList& blocks) {
-        std::erase_if(blocks, [parser, this](TextBlock& block) {
-            block.text = parser->evaluate(block.script, m_tracks);
-            return block.text.isNull();
-        });
+    auto evaluateBlocks = [this, parser, formatter](FormattedScript& script) {
+        script.text.clear();
+        const auto evalScript = parser->evaluate(script.script, m_tracks);
+        script.text           = formatter->evaluate(evalScript);
     };
 
     evaluateBlocks(m_title);
@@ -89,22 +88,22 @@ void PlaylistContainerItem::updateGroupText(ScriptParser* parser)
     evaluateBlocks(m_sideText);
 }
 
-void PlaylistContainerItem::setTitle(const TextBlockList& title)
+void PlaylistContainerItem::setTitle(const FormattedScript& title)
 {
     m_title = title;
 }
 
-void PlaylistContainerItem::setSubtitle(const TextBlockList& subtitle)
+void PlaylistContainerItem::setSubtitle(const FormattedScript& subtitle)
 {
     m_subtitle = subtitle;
 }
 
-void PlaylistContainerItem::setSideText(const TextBlockList& text)
+void PlaylistContainerItem::setSideText(const FormattedScript& text)
 {
     m_sideText = text;
 }
 
-void PlaylistContainerItem::setInfo(const TextBlockList& info)
+void PlaylistContainerItem::setInfo(const FormattedScript& info)
 {
     m_info = info;
 }
@@ -138,10 +137,10 @@ void PlaylistContainerItem::calculateSize()
 
     QSize totalSize;
 
-    auto addSize = [&totalSize](const TextBlockList& blocks, bool addToTotal = true) {
+    auto addSize = [&totalSize](const FormattedScript& script, bool addToTotal = true) {
         QSize blockSize;
-        for(const auto& title : blocks) {
-            const QFontMetrics fm{title.font};
+        for(const auto& title : script.text) {
+            const QFontMetrics fm{title.format.font};
             const QRect br = fm.boundingRect(title.text);
             blockSize.setWidth(blockSize.width() + br.width());
             blockSize.setHeight(std::max(blockSize.height(), br.height()));
@@ -153,17 +152,17 @@ void PlaylistContainerItem::calculateSize()
         return blockSize;
     };
 
-    if(!m_title.empty()) {
+    if(!m_title.text.empty()) {
         addSize(m_title);
     }
 
     QSize subtitleSize;
 
-    if(!m_subtitle.empty()) {
+    if(!m_subtitle.text.empty()) {
         subtitleSize = addSize(m_subtitle, false);
     }
 
-    if(!m_sideText.empty()) {
+    if(!m_sideText.text.empty()) {
         QSize sideSize = addSize(m_sideText, false);
         subtitleSize.setWidth(subtitleSize.width() + sideSize.width());
         subtitleSize.setHeight(std::max(subtitleSize.height(), sideSize.height()));
@@ -172,25 +171,44 @@ void PlaylistContainerItem::calculateSize()
     totalSize.setWidth(totalSize.width() + subtitleSize.width());
     totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
 
-    if(!m_info.empty()) {
+    if(!m_info.text.empty()) {
         addSize(m_info);
     }
 
     m_size = totalSize;
 }
 
-PlaylistTrackItem::PlaylistTrackItem(TextBlockList left, TextBlockList right, const Track& track)
+PlaylistTrackItem::PlaylistTrackItem(FormattedScript left, FormattedScript right, const Track& track)
     : m_left{std::move(left)}
     , m_right{std::move(right)}
     , m_track{track}
 { }
 
-TextBlockList PlaylistTrackItem::left() const
+std::vector<FormattedScript> PlaylistTrackItem::columns() const
+{
+    return m_columns;
+}
+
+FormattedScript PlaylistTrackItem::column(int column) const
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
+        return {};
+    }
+
+    return m_columns.at(column);
+}
+
+PlaylistTrackItem::PlaylistTrackItem(std::vector<FormattedScript> columns, const Track& track)
+    : m_columns{std::move(columns)}
+    , m_track{track}
+{ }
+
+FormattedScript PlaylistTrackItem::left() const
 {
     return m_left;
 }
 
-TextBlockList PlaylistTrackItem::right() const
+FormattedScript PlaylistTrackItem::right() const
 {
     return m_right;
 }

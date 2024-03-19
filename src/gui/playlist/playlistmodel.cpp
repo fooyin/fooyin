@@ -1204,17 +1204,17 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
                         && m_currentPlayingTrack.indexInPlaylist == item->index();
 
     switch(role) {
-        case(Qt::DisplayRole): {
-            if(!singleColumnMode && column >= 0 && std::cmp_less(column, track.left().size())) {
-                return track.left().at(column).text;
+        case(PlaylistItem::Role::Column): {
+            if(!singleColumnMode) {
+                return QVariant::fromValue(track.column(column).text);
             }
-            return {};
+            break;
         }
         case(PlaylistItem::Role::Left): {
-            return track.left();
+            return QVariant::fromValue(track.left().text);
         }
         case(PlaylistItem::Role::Right): {
-            return track.right();
+            return QVariant::fromValue(track.right().text);
         }
         case(PlaylistItem::Role::ItemData): {
             return QVariant::fromValue<Track>(track.track());
@@ -1239,12 +1239,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
         }
         case(Qt::SizeHintRole): {
             return QSize{0, m_currentPreset.track.rowHeight};
-        }
-        case(Qt::FontRole): {
-            if(!m_columns.empty() && column >= 0 && column < static_cast<int>(track.left().size())) {
-                return track.left().at(column).font;
-            }
-            break;
         }
         case(Qt::DecorationRole): {
             if(m_columns.empty() || m_columns.at(column).field == QString::fromLatin1(PlayingIcon)) {
@@ -1289,19 +1283,19 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
-            return header.title();
+            return QVariant::fromValue(header.title().text);
         }
         case(PlaylistItem::Role::Simple): {
             return m_currentPreset.header.simple;
         }
         case(PlaylistItem::Role::Subtitle): {
-            return header.subtitle();
+            return QVariant::fromValue(header.subtitle().text);
         }
         case(PlaylistItem::Role::Info): {
-            return header.info();
+            return QVariant::fromValue(header.info().text);
         }
         case(PlaylistItem::Role::Right): {
-            return header.sideText();
+            return QVariant::fromValue(header.sideText().text);
         }
         case(Qt::DecorationRole): {
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
@@ -1328,10 +1322,10 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
 
     switch(role) {
         case(PlaylistItem::Role::Title): {
-            return header.title();
+            return QVariant::fromValue(header.title().text);
         }
         case(PlaylistItem::Role::Subtitle): {
-            return header.subtitle();
+            return QVariant::fromValue(header.subtitle().text);
         }
         case(PlaylistItem::Role::Indentation): {
             return item->indentation();

@@ -3,18 +3,20 @@ enable_testing(true)
 include(GoogleTest)
 
 function(fooyin_add_test name)
-add_executable(${name} ${ARGN} testutils.cpp)
+    add_executable(${name} ${ARGN} testutils.cpp)
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
     target_link_libraries(
             ${name}
             PRIVATE Fooyin::Core
                     Fooyin::CorePrivate
+                    Fooyin::Gui
                     GTest::gtest_main
     )
     gtest_discover_tests(${name})
 endfunction()
 
 fooyin_add_test(test_scriptparser scriptparsertest.cpp)
+fooyin_add_test(test_scriptformatter scriptformattertest.cpp)
 
 qt_add_resources(TEST_SOURCES data/audio.qrc)
 add_library(fooyin_test_data ${TEST_SOURCES})

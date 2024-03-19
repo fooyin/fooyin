@@ -23,70 +23,15 @@
 #include <QPalette>
 
 namespace Fooyin {
-TextBlock::TextBlock()
-    : TextBlock{QStringLiteral("")}
-{ }
-
-TextBlock::TextBlock(QString script_, int fontDelta)
-    : script{std::move(script_)}
-    , colour{QApplication::palette().text().color()}
+QDataStream& operator<<(QDataStream& stream, const FormattedScript& script)
 {
-    font.setPointSize(font.pointSize() + fontDelta);
-}
-
-QDataStream& operator<<(QDataStream& stream, const TextBlock& block)
-{
-    stream << block.script;
-    stream << block.fontChanged;
-    if(block.fontChanged) {
-        stream << block.font;
-    }
-    stream << block.colourChanged;
-    if(block.colourChanged) {
-        stream << block.colour;
-    }
+    stream << script.script;
     return stream;
 }
 
-QDataStream& operator>>(QDataStream& stream, TextBlock& block)
+QDataStream& operator>>(QDataStream& stream, FormattedScript& script)
 {
-    stream >> block.script;
-    stream >> block.fontChanged;
-    if(block.fontChanged) {
-        stream >> block.font;
-    }
-    stream >> block.colourChanged;
-    if(block.colourChanged) {
-        stream >> block.colour;
-    }
-    return stream;
-}
-
-QDataStream& operator<<(QDataStream& stream, const TextBlockList& blocks)
-{
-    stream << static_cast<int>(blocks.size());
-
-    for(const auto& block : blocks) {
-        stream << block;
-    }
-
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, TextBlockList& blocks)
-{
-    int size;
-    stream >> size;
-
-    while(size > 0) {
-        --size;
-
-        TextBlock block;
-        stream >> block;
-
-        blocks.push_back(block);
-    }
-
+    stream >> script.script;
     return stream;
 }
 

@@ -22,6 +22,7 @@
 #include "playlistpreset.h"
 
 #include <core/track.h>
+#include <gui/scripting/scriptformatter.h>
 
 #include <QSize>
 
@@ -36,19 +37,19 @@ public:
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
-    [[nodiscard]] TextBlockList title() const;
-    [[nodiscard]] TextBlockList subtitle() const;
-    [[nodiscard]] TextBlockList sideText() const;
-    [[nodiscard]] TextBlockList info() const;
+    [[nodiscard]] FormattedScript title() const;
+    [[nodiscard]] FormattedScript subtitle() const;
+    [[nodiscard]] FormattedScript sideText() const;
+    [[nodiscard]] FormattedScript info() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
 
-    void updateGroupText(ScriptParser* parser);
+    void updateGroupText(ScriptParser* parser, ScriptFormatter* formatter);
 
-    void setTitle(const TextBlockList& title);
-    void setSubtitle(const TextBlockList& subtitle);
-    void setSideText(const TextBlockList& text);
-    void setInfo(const TextBlockList& info);
+    void setTitle(const FormattedScript& title);
+    void setSubtitle(const FormattedScript& subtitle);
+    void setSideText(const FormattedScript& text);
+    void setInfo(const FormattedScript& info);
     void setRowHeight(int height);
 
     void addTrack(const Track& track);
@@ -60,10 +61,10 @@ public:
 private:
     TrackList m_tracks;
 
-    TextBlockList m_title;
-    TextBlockList m_subtitle;
-    TextBlockList m_sideText;
-    TextBlockList m_info;
+    FormattedScript m_title;
+    FormattedScript m_subtitle;
+    FormattedScript m_sideText;
+    FormattedScript m_info;
 
     QSize m_size;
     int m_rowHeight;
@@ -73,15 +74,19 @@ class PlaylistTrackItem
 {
 public:
     PlaylistTrackItem() = default;
-    PlaylistTrackItem(TextBlockList left, TextBlockList right, const Track& track);
+    PlaylistTrackItem(std::vector<FormattedScript> columns, const Track& track);
+    PlaylistTrackItem(FormattedScript left, FormattedScript right, const Track& track);
 
-    [[nodiscard]] TextBlockList left() const;
-    [[nodiscard]] TextBlockList right() const;
+    [[nodiscard]] std::vector<FormattedScript> columns() const;
+    [[nodiscard]] FormattedScript column(int column) const;
+    [[nodiscard]] FormattedScript left() const;
+    [[nodiscard]] FormattedScript right() const;
     [[nodiscard]] Track track() const;
 
 private:
-    TextBlockList m_left;
-    TextBlockList m_right;
+    std::vector<FormattedScript> m_columns;
+    FormattedScript m_left;
+    FormattedScript m_right;
 
     Track m_track;
 };

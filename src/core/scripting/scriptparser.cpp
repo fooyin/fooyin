@@ -50,6 +50,8 @@ QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringLi
 namespace Fooyin {
 struct ScriptParser::Private
 {
+    ScriptParser* self;
+
     ScriptScanner scanner;
     ScriptRegistry* registry;
 
@@ -60,15 +62,16 @@ struct ScriptParser::Private
     std::unordered_map<QString, ParsedScript> parsedScripts;
     QStringList currentResult;
 
-    explicit Private(ScriptRegistry* registry_)
-        : registry{registry_}
+    explicit Private(ScriptParser* self_, ScriptRegistry* registry_)
+        : self{self_}
+        , registry{registry_}
     { }
 
     void advance()
     {
         previous = current;
 
-        current = scanner.scanNext();
+        current = scanner.next();
         if(current.type == TokenType::TokError) {
             errorAtCurrent(current.value.toString());
         }
@@ -128,137 +131,6 @@ struct ScriptParser::Private
         errorAt(previous, message);
     }
 
-    ScriptResult evalExpression(const Expression& exp, const auto& tracks) const
-    {
-        switch(exp.type) {
-            case(Expr::Literal):
-                return evalLiteral(exp);
-            case(Expr::Variable):
-                return evalVariable(exp, tracks);
-            case(Expr::VariableList):
-                return evalVariableList(exp, tracks);
-            case(Expr::Function):
-                return evalFunction(exp, tracks);
-            case(Expr::FunctionArg):
-                return evalFunctionArg(exp, tracks);
-            case(Expr::Conditional):
-                return evalConditional(exp, tracks);
-            case(Expr::Null):
-            default:
-                return {};
-        }
-    }
-
-    ScriptResult evalLiteral(const Expression& exp) const
-    {
-        ScriptResult result;
-        result.value = std::get<QString>(exp.value);
-        result.cond  = true;
-        return result;
-    }
-
-    ScriptResult evalVariable(const Expression& exp, const auto& tracks) const
-    {
-        const QString var   = std::get<QString>(exp.value);
-        ScriptResult result = registry->value(var, tracks);
-
-        if(!result.cond) {
-            return {};
-        }
-
-        if(result.value.contains(u"\037")) {
-            result.value = result.value.replace(QStringLiteral("\037"), QStringLiteral(", "));
-        }
-
-        return result;
-    }
-
-    ScriptResult evalVariableList(const Expression& exp, const auto& tracks) const
-    {
-        const QString var = std::get<QString>(exp.value);
-        return registry->value(var, tracks);
-    }
-
-    ScriptResult evalFunction(const Expression& exp, const auto& tracks) const
-    {
-        auto func = std::get<FuncValue>(exp.value);
-        ScriptValueList args;
-        std::ranges::transform(func.args, std::back_inserter(args),
-                               [this, &tracks](const Expression& arg) { return evalExpression(arg, tracks); });
-        return registry->function(func.name, args);
-    }
-
-    ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const
-    {
-        ScriptResult result;
-        bool allPassed{true};
-
-        auto arg = std::get<ExpressionList>(exp.value);
-        for(const Expression& subArg : arg) {
-            const auto subExpr = evalExpression(subArg, tracks);
-            if(!subExpr.cond) {
-                allPassed = false;
-            }
-            if(subExpr.value.contains(u"\037")) {
-                QStringList newResult;
-                const auto values = subExpr.value.split(QStringLiteral("\037"));
-                std::ranges::transform(values, std::back_inserter(newResult),
-                                       [&](const auto& value) { return result.value + value; });
-                result.value = newResult.join(u"\037");
-            }
-            else {
-                result.value = result.value + subExpr.value;
-            }
-        }
-        result.cond = allPassed;
-        return result;
-    }
-
-    ScriptResult evalConditional(const Expression& exp, const auto& tracks) const
-    {
-        ScriptResult result;
-        QStringList exprResult;
-        result.cond = true;
-
-        auto arg = std::get<ExpressionList>(exp.value);
-        for(const Expression& subArg : arg) {
-            const auto subExpr = evalExpression(subArg, tracks);
-
-            // Literals return false
-            if(subArg.type != Expr::Literal) {
-                if(!subExpr.cond || subExpr.value.isEmpty()) {
-                    // No need to evaluate rest
-                    result.value.clear();
-                    result.cond = false;
-                    return result;
-                }
-            }
-            if(subExpr.value.contains(u"\037")) {
-                const QStringList evalList = evalStringList(subExpr, exprResult);
-                if(!evalList.empty()) {
-                    exprResult = evalList;
-                }
-            }
-            else {
-                if(exprResult.empty()) {
-                    exprResult.append(subExpr.value);
-                }
-                else {
-                    std::ranges::transform(exprResult, exprResult.begin(), [&](const QString& retValue) -> QString {
-                        return retValue + subExpr.value;
-                    });
-                }
-            }
-        }
-        if(exprResult.size() == 1) {
-            result.value = exprResult.constFirst();
-        }
-        else if(exprResult.size() > 1) {
-            result.value = exprResult.join(u"\037");
-        }
-        return result;
-    }
-
     Expression expression(const auto& tracks)
     {
         advance();
@@ -280,6 +152,9 @@ struct ScriptParser::Private
             case(TokenType::TokLeftParen):
             case(TokenType::TokRightParen):
             case(TokenType::TokRightSquare):
+            case(TokenType::TokSlash):
+            case(TokenType::TokColon):
+            case(TokenType::TokEquals):
             case(TokenType::TokLiteral):
                 return literal();
             case(TokenType::TokEos):
@@ -436,7 +311,7 @@ struct ScriptParser::Private
 
         const ExpressionList expressions = input.expressions;
         for(const auto& expr : expressions) {
-            const auto evalExpr = evalExpression(expr, tracks);
+            const auto evalExpr = self->evalExpression(expr, tracks);
 
             if(evalExpr.value.isNull()) {
                 continue;
@@ -475,7 +350,7 @@ struct ScriptParser::Private
 };
 
 ScriptParser::ScriptParser(ScriptRegistry* registry)
-    : p{std::make_unique<Private>(registry)}
+    : p{std::make_unique<Private>(this, registry)}
 { }
 
 ScriptParser::~ScriptParser() = default;
@@ -530,5 +405,135 @@ QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& track
 void ScriptParser::clearCache()
 {
     p->parsedScripts.clear();
+}
+
+ScriptResult ScriptParser::evalExpression(const Expression& exp, const auto& tracks) const
+{
+    switch(exp.type) {
+        case(Expr::Literal):
+            return evalLiteral(exp);
+        case(Expr::Variable):
+            return evalVariable(exp, tracks);
+        case(Expr::VariableList):
+            return evalVariableList(exp, tracks);
+        case(Expr::Function):
+            return evalFunction(exp, tracks);
+        case(Expr::FunctionArg):
+            return evalFunctionArg(exp, tracks);
+        case(Expr::Conditional):
+            return evalConditional(exp, tracks);
+        case(Expr::Null):
+        default:
+            return {};
+    }
+}
+
+ScriptResult ScriptParser::evalLiteral(const Expression& exp) const
+{
+    ScriptResult result;
+    result.value = std::get<QString>(exp.value);
+    result.cond  = true;
+    return result;
+}
+
+ScriptResult ScriptParser::evalVariable(const Expression& exp, const auto& tracks) const
+{
+    const QString var   = std::get<QString>(exp.value);
+    ScriptResult result = p->registry->value(var, tracks);
+
+    if(!result.cond) {
+        return {};
+    }
+
+    if(result.value.contains(u"\037")) {
+        result.value = result.value.replace(QStringLiteral("\037"), QStringLiteral(", "));
+    }
+
+    return result;
+}
+
+ScriptResult ScriptParser::evalVariableList(const Expression& exp, const auto& tracks) const
+{
+    const QString var = std::get<QString>(exp.value);
+    return p->registry->value(var, tracks);
+}
+
+ScriptResult ScriptParser::evalFunction(const Expression& exp, const auto& tracks) const
+{
+    auto func = std::get<FuncValue>(exp.value);
+    ScriptValueList args;
+    std::ranges::transform(func.args, std::back_inserter(args),
+                           [this, &tracks](const Expression& arg) { return evalExpression(arg, tracks); });
+    return p->registry->function(func.name, args);
+}
+
+ScriptResult ScriptParser::evalFunctionArg(const Expression& exp, const auto& tracks) const
+{
+    ScriptResult result;
+    bool allPassed{true};
+
+    auto arg = std::get<ExpressionList>(exp.value);
+    for(const Expression& subArg : arg) {
+        const auto subExpr = evalExpression(subArg, tracks);
+        if(!subExpr.cond) {
+            allPassed = false;
+        }
+        if(subExpr.value.contains(u"\037")) {
+            QStringList newResult;
+            const auto values = subExpr.value.split(QStringLiteral("\037"));
+            std::ranges::transform(values, std::back_inserter(newResult),
+                                   [&](const auto& value) { return result.value + value; });
+            result.value = newResult.join(u"\037");
+        }
+        else {
+            result.value = result.value + subExpr.value;
+        }
+    }
+    result.cond = allPassed;
+    return result;
+}
+
+ScriptResult ScriptParser::evalConditional(const Expression& exp, const auto& tracks) const
+{
+    ScriptResult result;
+    QStringList exprResult;
+    result.cond = true;
+
+    auto arg = std::get<ExpressionList>(exp.value);
+    for(const Expression& subArg : arg) {
+        const auto subExpr = evalExpression(subArg, tracks);
+
+        // Literals return false
+        if(subArg.type != Expr::Literal) {
+            if(!subExpr.cond || subExpr.value.isEmpty()) {
+                // No need to evaluate rest
+                result.value.clear();
+                result.cond = false;
+                return result;
+            }
+        }
+        if(subExpr.value.contains(u"\037")) {
+            const QStringList evalList = evalStringList(subExpr, exprResult);
+            if(!evalList.empty()) {
+                exprResult = evalList;
+            }
+        }
+        else {
+            if(exprResult.empty()) {
+                exprResult.append(subExpr.value);
+            }
+            else {
+                std::ranges::transform(exprResult, exprResult.begin(),
+                                       [&](const QString& retValue) -> QString { return retValue + subExpr.value; });
+            }
+        }
+    }
+    if(exprResult.size() == 1) {
+        result.value = exprResult.constFirst();
+    }
+    else if(exprResult.size() > 1) {
+        result.value = exprResult.join(u"\037");
+    }
+    return result;
 }
 } // namespace Fooyin
