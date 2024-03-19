@@ -47,7 +47,7 @@ namespace Fooyin::Sdl {
 struct SdlOutput::Private
 {
     AudioFormat format;
-    int bufferSize{8196};
+    int bufferSize{8192};
     bool initialised{false};
 
     SDL_AudioSpec desiredSpec;
