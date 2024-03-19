@@ -380,6 +380,13 @@ void FilterModel::updateTracks(const TrackList& tracks)
         return;
     }
 
+    for(const Track& track : tracks) {
+        const int id = track.id();
+        if(p->trackParents.contains(id)) {
+            p->trackParents.erase(id);
+        }
+    }
+
     p->tracksPendingRemoval = tracks;
     addTracks(tracks);
 }
