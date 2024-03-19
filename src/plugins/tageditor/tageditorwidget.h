@@ -29,8 +29,11 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
+class WidgetContext;
 
 namespace TagEditor {
+class TagEditorModel;
+
 class TagEditorView : public ExtendableTableView
 {
     Q_OBJECT
@@ -62,8 +65,16 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void saveState() const;
+    void restoreState() const;
+
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+
+    WidgetContext* m_context;
+
+    TagEditorView* m_view;
+    TagEditorModel* m_model;
 };
 } // namespace TagEditor
 } // namespace Fooyin

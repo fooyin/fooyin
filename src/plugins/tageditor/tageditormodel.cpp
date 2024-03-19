@@ -89,6 +89,7 @@ struct TagEditorModel::Private
 
     void reset()
     {
+        root = {};
         tags.clear();
         customTags.clear();
     }
@@ -209,7 +210,6 @@ TagEditorModel::~TagEditorModel() = default;
 void TagEditorModel::reset(const TrackList& tracks)
 {
     beginResetModel();
-    p->root = {};
     p->reset();
     p->tracks = tracks;
 
@@ -307,7 +307,7 @@ void TagEditorModel::processQueue()
 QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(role == Qt::TextAlignmentRole) {
-        return (Qt::AlignHCenter);
+        return (Qt::AlignCenter);
     }
 
     if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {

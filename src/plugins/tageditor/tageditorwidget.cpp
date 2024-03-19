@@ -49,90 +49,53 @@ int TagEditorView::sizeHintForRow(int row) const
     return model()->index(row, 0, {}).data(Qt::SizeHintRole).toSize().height();
 }
 
-struct TagEditorWidget::Private
-{
-    TagEditorWidget* self;
-
-    ActionManager* actionManager;
-    SettingsManager* settings;
-
-    WidgetContext* context;
-
-    TagEditorView* view;
-    TagEditorModel* model;
-
-    Private(TagEditorWidget* self_, ActionManager* actionManager_, SettingsManager* settings_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , settings{settings_}
-        , context{new WidgetContext(self, Context{"Context.TagEditor"}, self)}
-        , view{new TagEditorView(actionManager, self)}
-        , model{new TagEditorModel(settings, self)}
-    {
-        auto* layout = new QHBoxLayout(self);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(view);
-
-        view->setExtendableModel(model);
-
-        view->horizontalHeader()->setStretchLastSection(true);
-        view->horizontalHeader()->setSectionsClickable(false);
-        view->verticalHeader()->setVisible(false);
-        view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
-        actionManager->addContextObject(context);
-    }
-
-    void saveState() const
-    {
-        const QByteArray state = view->horizontalHeader()->saveState();
-        settings->fileSet(QStringLiteral("TagEditor/State"), state);
-    }
-
-    void restoreState() const
-    {
-        const QByteArray state = settings->fileValue(QStringLiteral("TagEditor/State")).toByteArray();
-
-        if(state.isEmpty()) {
-            return;
-        }
-
-        view->horizontalHeader()->restoreState(state);
-    };
-};
-
 TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
                                  QWidget* parent)
     : PropertiesTabWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, settings)}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
+    , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
+    , m_view{new TagEditorView(actionManager, this)}
+    , m_model{new TagEditorModel(settings, this)}
 {
     setObjectName(TagEditorWidget::name());
     setWindowFlags(Qt::Dialog);
     resize(600, 720);
     setMinimumSize(300, 400);
 
-    const QFontMetrics fontMetrics{font()};
-    const int width = fontMetrics.horizontalAdvance(TagEditorModel::defaultFieldText()) + 15;
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(m_view);
 
-    p->view->setColumnWidth(0, width);
+    m_view->setExtendableModel(m_model);
 
-    QObject::connect(p->model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
-    QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
-        const QModelIndexList selected = p->view->selectionModel()->selectedIndexes();
+    m_view->horizontalHeader()->setStretchLastSection(true);
+    m_view->horizontalHeader()->setSectionsClickable(false);
+    m_view->verticalHeader()->setVisible(false);
+
+    m_actionManager->addContextObject(m_context);
+
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_view, &QTableView::resizeRowsToContents);
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
+        m_view->resizeColumnsToContents();
+        m_view->resizeRowsToContents();
+        restoreState();
+    });
+    QObject::connect(m_model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
         const bool canRemove           = std::ranges::any_of(std::as_const(selected), [](const QModelIndex& index) {
             return !index.data(TagEditorItem::IsDefault).toBool();
         });
-        p->view->removeAction()->setEnabled(canRemove);
+        m_view->removeAction()->setEnabled(canRemove);
     });
 
-    p->model->reset(tracks);
-
-    p->restoreState();
+    m_model->reset(tracks);
 }
 
 TagEditorWidget::~TagEditorWidget()
 {
-    p->saveState();
+    saveState();
 }
 
 QString TagEditorWidget::name() const
@@ -147,12 +110,12 @@ QString TagEditorWidget::layoutName() const
 
 void TagEditorWidget::apply()
 {
-    if(!p->model->tagsHaveChanged()) {
+    if(!m_model->tagsHaveChanged()) {
         return;
     }
 
-    if(p->settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
-        p->model->processQueue();
+    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+        m_model->processQueue();
         return;
     }
 
@@ -171,13 +134,30 @@ void TagEditorWidget::apply()
 
     if(buttonClicked == QMessageBox::Yes) {
         if(dontAskAgain->isChecked()) {
-            p->settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
+            m_settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
         }
-        p->model->processQueue();
+        m_model->processQueue();
     }
 }
 
 void TagEditorWidget::contextMenuEvent(QContextMenuEvent* /*event*/) { }
+
+void TagEditorWidget::saveState() const
+{
+    const QByteArray state = m_view->horizontalHeader()->saveState();
+    m_settings->fileSet(QStringLiteral("TagEditor/State"), state);
+}
+
+void TagEditorWidget::restoreState() const
+{
+    const QByteArray state = m_settings->fileValue(QStringLiteral("TagEditor/State")).toByteArray();
+
+    if(state.isEmpty()) {
+        return;
+    }
+
+    m_view->horizontalHeader()->restoreState(state);
+}
 } // namespace Fooyin::TagEditor
 
 #include "moc_tageditorwidget.cpp"
