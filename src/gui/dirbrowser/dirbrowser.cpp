@@ -464,7 +464,8 @@ struct DirBrowser::Private
             }
         }
 
-        self->updateDir(newPath);
+        auto* changeDir = new DirChange(self, dirTree, model->rootPath(), newPath);
+        dirHistory.push(changeDir);
     }
 };
 
