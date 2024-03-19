@@ -25,6 +25,7 @@
 #include <utils/utils.h>
 
 #include <QFileInfo>
+#include <QFont>
 
 constexpr auto HeaderFontDelta = 2;
 
@@ -315,8 +316,9 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
             return QStringLiteral("Name");
         case(1):
             return QStringLiteral("Value");
+        default:
+            return {};
     }
-    return {};
 }
 
 int InfoModel::columnCount(const QModelIndex& /*parent*/) const
@@ -353,9 +355,9 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
             return item->name();
         case(1):
             return item->value();
+        default:
+            return {};
     }
-
-    return {};
 }
 } // namespace Fooyin
 
