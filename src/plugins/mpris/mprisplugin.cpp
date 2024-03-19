@@ -80,12 +80,14 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
         notify(QStringLiteral("LoopStatus"), loopStatus());
         notify(QStringLiteral("Shuffle"), shuffle());
+        notify(QStringLiteral("CanGoNext"), canGoNext());
+        notify(QStringLiteral("CanGoPrevious"), canGoPrevious());
     });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, [this]() {
         notify(QStringLiteral("PlaybackStatus"), playbackStatus());
         notify(QStringLiteral("CanPause"), canPause());
         notify(QStringLiteral("CanPlay"), canPlay());
-        notify(QStringLiteral("CanGoNext"), canPlay());
+        notify(QStringLiteral("CanGoNext"), canGoNext());
         notify(QStringLiteral("CanGoPrevious"), canGoPrevious());
         notify(QStringLiteral("CanSeek"), canSeek());
     });
@@ -183,12 +185,12 @@ bool MprisPlugin::canControl() const
 
 bool MprisPlugin::canGoNext() const
 {
-    return m_playlistHandler->activePlaylist();
+    return m_playlistHandler->activePlaylist() && m_playlistHandler->nextTrack().isValid();
 }
 
 bool MprisPlugin::canGoPrevious() const
 {
-    return m_playlistHandler->activePlaylist();
+    return m_playlistHandler->activePlaylist() && m_playlistHandler->previousTrack().isValid();
 }
 
 bool MprisPlugin::canPause() const
