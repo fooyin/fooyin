@@ -61,12 +61,10 @@ struct InfoWidget::Private
         view->setRootIsDecorated(false);
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
         view->setSelectionMode(QAbstractItemView::SingleSelection);
-        view->setMouseTracking(true);
         view->setItemsExpandable(false);
         view->setIndentation(0);
         view->setExpandsOnDoubleClick(false);
-        view->setWordWrap(true);
-        view->setTextElideMode(Qt::ElideLeft);
+        view->setTextElideMode(Qt::ElideRight);
         view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         view->setSortingEnabled(false);
         view->setAlternatingRowColors(true);

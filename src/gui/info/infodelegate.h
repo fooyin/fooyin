@@ -27,9 +27,8 @@ class ItemDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    explicit ItemDelegate(QObject* parent = nullptr);
+    using QStyledItemDelegate::QStyledItemDelegate;
 
-    [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
 } // namespace Fooyin

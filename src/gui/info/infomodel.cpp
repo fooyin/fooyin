@@ -26,6 +26,8 @@
 
 #include <QFileInfo>
 
+constexpr auto HeaderFontDelta = 2;
+
 namespace Fooyin {
 InfoItem::InfoItem()
     : InfoItem{Header, QStringLiteral(""), nullptr, ValueType::Concat, {}}
@@ -128,9 +130,13 @@ struct InfoModel::Private
 
     std::unordered_map<QString, InfoItem> nodes;
 
+    QFont headerFont;
+
     explicit Private(InfoModel* self_)
         : self{self_}
-    { }
+    {
+        headerFont.setPointSize(headerFont.pointSize() + HeaderFontDelta);
+    }
 
     void reset()
     {
@@ -329,6 +335,13 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
     if(role == InfoItem::Type) {
         return QVariant::fromValue<InfoItem::ItemType>(type);
+    }
+
+    if(role == Qt::FontRole) {
+        if(type == InfoItem::Header) {
+            return p->headerFont;
+        }
+        return {};
     }
 
     if(role != Qt::DisplayRole) {
