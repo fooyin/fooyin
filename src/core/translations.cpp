@@ -70,7 +70,7 @@ void Translations::initialiseTranslations()
     }
 
     if(!foundQt) {
-        installTranslations(locale, QStringLiteral("qt"), translationsPath, true);
+        installTranslations(locale, QStringLiteral("qt"), translationsPath, false);
     }
 
     installTranslations(locale, QStringLiteral("fooyin"), translationsPath, true);

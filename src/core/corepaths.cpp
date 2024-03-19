@@ -45,14 +45,20 @@ QString userPluginsPath()
 
 QString translationsPath()
 {
-    QDir translations{QString::fromLatin1(FOOYIN_TRANSLATION_PATH)};
-    if(translations.exists()) {
-        return translations.absolutePath();
+    const QDir embeddedPath{QStringLiteral("://translations")};
+    if(embeddedPath.exists()) {
+        return embeddedPath.absolutePath();
     }
 
-    QDir appDir = QCoreApplication::applicationDirPath();
-    if(appDir.cd(QStringLiteral("../data"))) {
-        return appDir.absolutePath();
+    QDir appPath{QCoreApplication::applicationDirPath()};
+
+    QDir systemPath{appPath.absolutePath() + QStringLiteral("/") + QString::fromLatin1(RELATIVE_TRANSLATION_PATH)};
+    if(systemPath.exists()) {
+        return systemPath.absolutePath();
+    }
+
+    if(appPath.cd(QStringLiteral("../../data"))) {
+        return appPath.absolutePath();
     }
 
     return {};
