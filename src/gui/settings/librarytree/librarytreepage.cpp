@@ -140,7 +140,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
         box->addItem(text, actionValue);
     };
 
-    addTrackAction(m_doubleClick, tr("Expand/Collapse"), TrackAction::Expand, doubleActions);
+    addTrackAction(m_doubleClick, tr("Expand/Collapse"), TrackAction::Play, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to current playlist"), TrackAction::AddCurrentPlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Add to active playlist"), TrackAction::AddActivePlaylist, doubleActions);
     addTrackAction(m_doubleClick, tr("Send to current playlist"), TrackAction::SendCurrentPlaylist, doubleActions);

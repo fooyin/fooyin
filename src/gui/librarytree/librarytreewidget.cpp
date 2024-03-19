@@ -164,7 +164,7 @@ struct LibraryTreeWidget::Private
 
         libraryTree->setModel(model);
 
-        libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Expand);
+        libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Play);
         libraryTree->setAnimated(true);
 
         libraryTree->setHeaderHidden(!settings->value<LibTreeHeader>());
@@ -428,7 +428,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
 
     settings->subscribe<LibTreeDoubleClick>(this, [this](int action) {
         p->doubleClickAction = static_cast<TrackAction>(action);
-        p->libraryTree->setExpandsOnDoubleClick(p->doubleClickAction == TrackAction::Expand);
+        p->libraryTree->setExpandsOnDoubleClick(p->doubleClickAction == TrackAction::Play);
     });
     settings->subscribe<LibTreeMiddleClick>(
         this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });

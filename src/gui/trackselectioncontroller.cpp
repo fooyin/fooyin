@@ -428,7 +428,6 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             }
             break;
         }
-        case(TrackAction::Expand):
         case(TrackAction::None):
             break;
     }

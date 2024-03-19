@@ -64,7 +64,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
 
     qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
 
-    m_settings->createSetting<Internal::LibTreeDoubleClick>(1, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
+    m_settings->createSetting<Internal::LibTreeDoubleClick>(5, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
     m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
                                                                 QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
@@ -81,10 +81,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
     m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));
     m_settings->createSetting<Internal::DirBrowserIcons>(true, QStringLiteral("DirectoryBrowser/Icons"));
-    m_settings->createSetting<Internal::DirBrowserDoubleClick>(1,
+    m_settings->createSetting<Internal::DirBrowserDoubleClick>(5,
                                                                QStringLiteral("DirectoryBrowser/DoubleClickBehaviour"));
-    m_settings->createSetting<Internal::DirBrowserMiddleClick>(
-        0, QStringLiteral("DirectoryBrowser/MiddleClickkBehaviour"));
+    m_settings->createSetting<Internal::DirBrowserMiddleClick>(0,
+                                                               QStringLiteral("DirectoryBrowser/MiddleClickBehaviour"));
     m_settings->createSetting<Internal::DirBrowserMode>(1, QStringLiteral("DirectoryBrowser/Mode"));
     m_settings->createSetting<Internal::DirBrowserListIndent>(true, QStringLiteral("DirectoryBrowser/IndentList"));
     m_settings->createSetting<Internal::DirBrowserControls>(true, QStringLiteral("DirectoryBrowser/Controls"));

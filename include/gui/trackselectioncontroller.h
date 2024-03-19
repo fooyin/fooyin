@@ -36,7 +36,6 @@ class WidgetContext;
 enum class TrackAction
 {
     None,
-    Expand,
     AddCurrentPlaylist,
     AddActivePlaylist,
     SendCurrentPlaylist,

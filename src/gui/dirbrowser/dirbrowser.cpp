@@ -270,7 +270,6 @@ struct DirBrowser::Private
                 playlistController->filesToActivePlaylist(files);
                 break;
             case(TrackAction::None):
-            case(TrackAction::Expand):
                 break;
         }
     }
