@@ -61,6 +61,11 @@
                 TrackIndex INTEGER NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS Settings (
+                Name TEXT UNIQUE NOT NULL,
+                Value TEXT
+            );
+
             CREATE INDEX IF NOT EXISTS TrackIndex ON Tracks(TrackHash);
             CREATE INDEX IF NOT EXISTS PlaylistIndex ON Playlists(PlaylistID, Name);
             CREATE INDEX IF NOT EXISTS PlaylistTracksIndex ON PlaylistTracks(PlaylistID, TrackIndex);
@@ -68,15 +73,10 @@
     </revision>
     <revision version="2">
         <description>
-            Add settings table and embedded artwork column.
+            Adds an embedded artwork column.
         </description>
         <sql>
-            CREATE TABLE IF NOT EXISTS Settings (
-                Name TEXT UNIQUE NOT NULL,
-                Value TEXT
-            );
-
-            ALTER TABLE Tracks ADD COLUMN EmbeddedCover INTEGER DEFAULT 0;
+            ALTER TABLE Tracks ADD COLUMN HasEmbeddedCover INTEGER DEFAULT 0;
         </sql>
     </revision>
 </schema>

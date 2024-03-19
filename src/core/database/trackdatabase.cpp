@@ -32,41 +32,40 @@ using BindingsMap = std::map<QString, QVariant>;
 namespace {
 QString fetchTrackColumns()
 {
-    static const QStringList columns = {
-        QStringLiteral("TrackID"),      // 0
-        QStringLiteral("FilePath"),     // 1
-        QStringLiteral("RelativePath"), // 2
-        QStringLiteral("Title"),        // 3
-        QStringLiteral("TrackNumber"),  // 4
-        QStringLiteral("TrackTotal"),   // 5
-        QStringLiteral("Artists"),      // 6
-        QStringLiteral("AlbumArtist"),  // 7
-        QStringLiteral("Album"),        // 8
-        QStringLiteral("CoverPath"),    // 9
-        QStringLiteral("DiscNumber"),   // 10
-        QStringLiteral("DiscTotal"),    // 11
-        QStringLiteral("Date"),         // 12
-        QStringLiteral("Composer"),     // 13
-        QStringLiteral("Performer"),    // 14
-        QStringLiteral("Genres"),       // 15
-        QStringLiteral("Comment"),      // 16
-        QStringLiteral("Duration"),     // 17
-        QStringLiteral("FileSize"),     // 18
-        QStringLiteral("BitRate"),      // 19
-        QStringLiteral("SampleRate"),   // 20
-        QStringLiteral("ExtraTags"),    // 21
-        QStringLiteral("Type"),         // 22
-        QStringLiteral("ModifiedDate"), // 23
-        QStringLiteral("LibraryID"),    // 24
-        QStringLiteral("TrackHash"),    // 25
-        QStringLiteral("AddedDate"),    // 26
-        QStringLiteral("FirstPlayed"),  // 27
-        QStringLiteral("LastPlayed"),   // 28
-        QStringLiteral("PlayCount"),    // 29
-        QStringLiteral("Rating"),       // 30
-    };
+    static const QString columns = QStringLiteral("TrackID,"
+                                                  "FilePath,"
+                                                  "RelativePath,"
+                                                  "Title,"
+                                                  "TrackNumber,"
+                                                  "TrackTotal,"
+                                                  "Artists,"
+                                                  "AlbumArtist,"
+                                                  "Album,"
+                                                  "DiscNumber,"
+                                                  "DiscTotal,"
+                                                  "Date,"
+                                                  "Composer,"
+                                                  "Performer,"
+                                                  "Genres,"
+                                                  "Comment,"
+                                                  "Duration,"
+                                                  "FileSize,"
+                                                  "BitRate,"
+                                                  "SampleRate,"
+                                                  "ExtraTags,"
+                                                  "HasEmbeddedCover,"
+                                                  "CoverPath,"
+                                                  "Type,"
+                                                  "ModifiedDate, "
+                                                  "LibraryID,"
+                                                  "TrackHash,"
+                                                  "AddedDate,"
+                                                  "FirstPlayed,"
+                                                  "LastPlayed,"
+                                                  "PlayCount,"
+                                                  "Rating");
 
-    return columns.join(u", ");
+    return columns;
 }
 
 BindingsMap trackBindings(const Fooyin::Track& track)
@@ -110,27 +109,28 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setArtists(q.value(6).toString().split(QStringLiteral("\037"), Qt::SkipEmptyParts));
     track.setAlbumArtist(q.value(7).toString());
     track.setAlbum(q.value(8).toString());
-    track.setCoverPath(q.value(9).toString());
-    track.setDiscNumber(q.value(10).toInt());
-    track.setDiscTotal(q.value(11).toInt());
-    track.setDate(q.value(12).toString());
-    track.setComposer(q.value(13).toString());
-    track.setPerformer(q.value(14).toString());
-    track.setGenres(q.value(15).toString().split(QStringLiteral("\037"), Qt::SkipEmptyParts));
-    track.setComment(q.value(16).toString());
-    track.setDuration(q.value(17).toULongLong());
-    track.setFileSize(q.value(18).toInt());
-    track.setBitrate(q.value(19).toInt());
-    track.setSampleRate(q.value(20).toInt());
-    track.storeExtraTags(q.value(21).toByteArray());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(22).toInt()));
-    track.setModifiedTime(q.value(23).toULongLong());
-    track.setLibraryId(q.value(24).toInt());
-    track.setHash(q.value(25).toString());
-    track.setAddedTime(q.value(26).toULongLong());
-    track.setFirstPlayed(q.value(27).toULongLong());
-    track.setLastPlayed(q.value(28).toULongLong());
-    track.setPlayCount(q.value(29).toInt());
+    track.setDiscNumber(q.value(9).toInt());
+    track.setDiscTotal(q.value(10).toInt());
+    track.setDate(q.value(11).toString());
+    track.setComposer(q.value(12).toString());
+    track.setPerformer(q.value(13).toString());
+    track.setGenres(q.value(14).toString().split(QStringLiteral("\037"), Qt::SkipEmptyParts));
+    track.setComment(q.value(15).toString());
+    track.setDuration(q.value(16).toULongLong());
+    track.setFileSize(q.value(17).toInt());
+    track.setBitrate(q.value(18).toInt());
+    track.setSampleRate(q.value(19).toInt());
+    track.storeExtraTags(q.value(20).toByteArray());
+    // track.setCoverPath(q.value(21).toString());
+    track.setCoverPath(q.value(22).toString());
+    track.setType(static_cast<Fooyin::Track::Type>(q.value(23).toInt()));
+    track.setModifiedTime(q.value(24).toULongLong());
+    track.setLibraryId(q.value(25).toInt());
+    track.setHash(q.value(26).toString());
+    track.setAddedTime(q.value(27).toULongLong());
+    track.setFirstPlayed(q.value(28).toULongLong());
+    track.setLastPlayed(q.value(29).toULongLong());
+    track.setPlayCount(q.value(30).toInt());
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
@@ -416,7 +416,6 @@ void TrackDatabase::updateViews(const QSqlDatabase& db)
                                           "Tracks.Artists,"
                                           "Tracks.AlbumArtist,"
                                           "Tracks.Album,"
-                                          "Tracks.CoverPath,"
                                           "Tracks.DiscNumber,"
                                           "Tracks.DiscTotal,"
                                           "Tracks.Date,"
@@ -429,6 +428,8 @@ void TrackDatabase::updateViews(const QSqlDatabase& db)
                                           "Tracks.BitRate,"
                                           "Tracks.SampleRate,"
                                           "Tracks.ExtraTags,"
+                                          "Tracks.HasEmbeddedCover,"
+                                          "Tracks.CoverPath,"
                                           "Tracks.Type,"
                                           "Tracks.ModifiedDate,"
                                           "Tracks.LibraryID,"
