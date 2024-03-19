@@ -1030,7 +1030,7 @@ void PlaylistModel::removeTracks(const TrackGroups& groups)
 void PlaylistModel::updateHeader(Playlist* playlist)
 {
     if(playlist) {
-        m_headerText = QString{QStringLiteral("%1: %2 Tracks")}.arg(playlist->name()).arg(playlist->trackCount());
+        m_headerText = QStringLiteral("%1: %2 Tracks").arg(playlist->name()).arg(playlist->trackCount());
     }
 }
 

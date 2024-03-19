@@ -471,8 +471,8 @@ struct GuiApplication::Private
 
     void addFiles() const
     {
-        const auto extensions = QString{QStringLiteral("Audio Files (%1)")}.arg(
-            Track::supportedFileExtensions().join(QStringLiteral(" ")));
+        const auto extensions
+            = QStringLiteral("Audio Files (%1)").arg(Track::supportedFileExtensions().join(QStringLiteral(" ")));
 
         const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), QStringLiteral("Add Files"),
                                                         QStringLiteral(""), extensions);

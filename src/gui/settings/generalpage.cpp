@@ -167,7 +167,7 @@ void GeneralPageWidget::loadLanguage()
             language = nativeName;
         }
 
-        const auto name     = QString{QStringLiteral("%1 (%2)")}.arg(language, code);
+        const auto name     = QStringLiteral("%1 (%2)").arg(language, code);
         m_languageMap[name] = code;
     }
 

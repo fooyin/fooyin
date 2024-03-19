@@ -120,7 +120,7 @@ void LibraryTreeGuiPageWidget::load()
     m_colour           = options.colour;
     m_rowHeight->setValue(options.rowHeight);
 
-    m_fontButton->setText(QString{QStringLiteral("%1 (%2)")}.arg(m_font.family()).arg(m_font.pointSize()));
+    m_fontButton->setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
 
     QPixmap px(20, 20);
     px.fill(m_colour);

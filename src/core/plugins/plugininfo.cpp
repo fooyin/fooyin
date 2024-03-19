@@ -53,7 +53,7 @@ void PluginInfo::load()
     }
 
     if(!m_loader.load()) {
-        m_error = QString{QStringLiteral("Plugin (%1) couldn't be loaded: %2")}.arg(m_name, m_error);
+        m_error = QStringLiteral("Plugin (%1) couldn't be loaded: %2").arg(m_name, m_error);
         return;
     }
 
@@ -61,7 +61,7 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error = QString{QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'")}.arg(m_name);
+        m_error = QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'").arg(m_name);
         return;
     }
 

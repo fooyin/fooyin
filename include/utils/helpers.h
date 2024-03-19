@@ -98,7 +98,7 @@ QString findUniqueString(const QString& name, const T& elements, StringExtractor
 
     const int count = findCount(name);
 
-    return count > 0 ? QString{QStringLiteral("%1 (%2)")}.arg(name).arg(count) : name;
+    return count > 0 ? QStringLiteral("%1 (%2)").arg(name).arg(count) : name;
 }
 
 template <typename T>

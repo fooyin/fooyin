@@ -109,17 +109,15 @@ QString formatFileSize(uint64_t bytes)
     }
 
     if(unitIndex == 0) {
-        return QString{QStringLiteral("%1 %2")}.arg(QString::number(size, 'f', 1), units.at(unitIndex));
+        return QStringLiteral("%1 %2").arg(QString::number(size, 'f', 1), units.at(unitIndex));
     }
 
-    return QString{QStringLiteral("%1 %2 (%3 bytes)")}
-        .arg(QString::number(size, 'f', 1), units.at(unitIndex))
-        .arg(bytes);
+    return QStringLiteral("%1 %2 (%3 bytes)").arg(QString::number(size, 'f', 1), units.at(unitIndex)).arg(bytes);
 }
 
 QString addLeadingZero(int number, int leadingCount)
 {
-    return QString{QStringLiteral("%1")}.arg(number, leadingCount, 10, QChar::fromLatin1('0'));
+    return QStringLiteral("%1").arg(number, leadingCount, 10, QChar::fromLatin1('0'));
 }
 
 QString appendShortcut(const QString& str, const QKeySequence& shortcut)

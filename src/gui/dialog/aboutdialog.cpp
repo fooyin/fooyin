@@ -62,16 +62,16 @@ QString copyright()
 
 QString qtVersion()
 {
-    return QString{QStringLiteral("Based on Qt %1 (%2, %3)")}.arg(QString::fromLatin1(QT_VERSION_STR),
-                                                                  compilerVersion(), QSysInfo::buildCpuArchitecture());
+    return QStringLiteral("Based on Qt %1 (%2, %3)")
+        .arg(QString::fromLatin1(QT_VERSION_STR), compilerVersion(), QSysInfo::buildCpuArchitecture());
 }
 
 QString description()
 {
-    return QString{QStringLiteral("<h3>%1</h3>"
-                                  "Version: %2<br/>"
-                                  "%3<br/>"
-                                  "<br/>")}
+    return QStringLiteral("<h3>%1</h3>"
+                          "Version: %2<br/>"
+                          "%3<br/>"
+                          "<br/>")
         .arg(u"fooyin", QCoreApplication::applicationVersion(), qtVersion());
 }
 } // namespace

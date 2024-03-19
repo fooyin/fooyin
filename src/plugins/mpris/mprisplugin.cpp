@@ -41,7 +41,7 @@ constexpr auto DbusPath        = "org.freedesktop.DBus.Properties";
 namespace {
 QDBusObjectPath formatTrackId(int index)
 {
-    const QString trackId = QString{QStringLiteral("/org/fooyin/fooyin/track/%1").arg(index)};
+    const QString trackId = QStringLiteral("/org/fooyin/fooyin/track/%1").arg(index);
     return QDBusObjectPath{trackId};
 }
 

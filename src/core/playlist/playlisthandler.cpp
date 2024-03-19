@@ -480,14 +480,14 @@ void PlaylistHandler::renamePlaylist(const Id& id, const QString& name)
 
     auto* playlist = playlistById(id);
     if(!playlist) {
-        qDebug() << QString{QStringLiteral("Playlist could not be renamed to %1")}.arg(name);
+        qDebug() << QStringLiteral("Playlist could not be renamed to %1").arg(name);
         return;
     }
 
     const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
 
     if(!playlist->isTemporary() && !p->playlistConnector.renamePlaylist(playlist->dbId(), newName)) {
-        qDebug() << QString{QStringLiteral("Playlist could not be renamed to %1")}.arg(name);
+        qDebug() << QStringLiteral("Playlist could not be renamed to %1").arg(name);
         return;
     }
 

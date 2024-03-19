@@ -108,7 +108,7 @@ struct LibraryTreeModel::Private
 
     void updateAllNode()
     {
-        allNode.setTitle(QString{QStringLiteral("All Music (%1)")}.arg(trackCount));
+        allNode.setTitle(QStringLiteral("All Music (%1)").arg(trackCount));
     }
 
     void batchFinished(PendingTreeData data)

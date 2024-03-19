@@ -32,7 +32,7 @@ namespace {
 bool checkError(int error, const QString& message)
 {
     if(error < 0) {
-        qWarning() << QString{QStringLiteral("[ALSA] %1 - %2")}.arg(QString::fromLatin1(snd_strerror(error)), message);
+        qWarning() << QStringLiteral("[ALSA] %1 - %2").arg(QString::fromLatin1(snd_strerror(error)), message);
         return true;
     }
     return false;
@@ -40,7 +40,7 @@ bool checkError(int error, const QString& message)
 
 void printError(const QString& message)
 {
-    qWarning() << QString{QStringLiteral("[ALSA] %1")}.arg(message);
+    qWarning() << QStringLiteral("[ALSA] %1").arg(message);
 }
 
 bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams)

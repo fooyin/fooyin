@@ -110,7 +110,7 @@ void LibraryTreeGroupModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Group %1 could not be added")}.arg(group.name);
+                    qWarning() << QStringLiteral("Group %1 could not be added").arg(group.name);
                 }
                 break;
             }
@@ -122,7 +122,7 @@ void LibraryTreeGroupModel::processQueue()
                     groupsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Group %1 could not be removed")}.arg(group.name);
+                    qWarning() << QStringLiteral("Group %1 could not be removed").arg(group.name);
                 }
                 break;
             }
@@ -134,7 +134,7 @@ void LibraryTreeGroupModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Group %1 could not be changed")}.arg(group.name);
+                    qWarning() << QStringLiteral("Group %1 could not be changed").arg(group.name);
                 }
                 break;
             }

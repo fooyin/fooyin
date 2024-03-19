@@ -138,7 +138,7 @@ void CustomisableInput::setFont(const QFont& font)
 {
     p->font = font;
 
-    p->fontButton->setText(QString{QStringLiteral("%1 (%2)")}.arg(font.family()).arg(font.pointSize()));
+    p->fontButton->setText(QStringLiteral("%1 (%2)").arg(font.family()).arg(font.pointSize()));
 }
 
 void CustomisableInput::setColour(const QColor& colour)

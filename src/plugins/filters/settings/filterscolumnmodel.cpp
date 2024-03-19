@@ -109,7 +109,7 @@ void FiltersColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Column %1 could not be added")}.arg(column.name);
+                    qWarning() << QStringLiteral("Column %1 could not be added").arg(column.name);
                 }
                 break;
             }
@@ -121,7 +121,7 @@ void FiltersColumnModel::processQueue()
                     columnsToRemove.push_back(index);
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Column %1 could not be removed")}.arg(column.name);
+                    qWarning() << QStringLiteral("Column %1 could not be removed").arg(column.name);
                 }
                 break;
             }
@@ -133,7 +133,7 @@ void FiltersColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Column %1 could not be changed")}.arg(column.name);
+                    qWarning() << QStringLiteral("Column %1 could not be changed").arg(column.name);
                 }
                 break;
             }

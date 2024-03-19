@@ -109,7 +109,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Sorting %1 could not be added")}.arg(sortScript.name);
+                    qWarning() << QStringLiteral("Sorting %1 could not be added").arg(sortScript.name);
                 }
                 break;
             }
@@ -121,7 +121,7 @@ void SortingModel::processQueue()
                     sortScriptsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Sorting %1 could not be removed")}.arg(sortScript.name);
+                    qWarning() << QStringLiteral("Sorting %1 could not be removed").arg(sortScript.name);
                 }
                 break;
             }
@@ -133,7 +133,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << QString{QStringLiteral("Sorting %1 could not be changed")}.arg(sortScript.name);
+                    qWarning() << QStringLiteral("Sorting %1 could not be changed").arg(sortScript.name);
                 }
                 break;
             }

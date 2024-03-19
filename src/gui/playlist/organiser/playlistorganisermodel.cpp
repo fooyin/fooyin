@@ -462,7 +462,7 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
     }
     if(type == PlaylistOrganiserItem::GroupItem) {
         if(role == Qt::DisplayRole) {
-            return QString{QStringLiteral("%1 [%2]")}.arg(item->title()).arg(item->childCount());
+            return QStringLiteral("%1 [%2]").arg(item->title()).arg(item->childCount());
         }
         return item->title();
     }

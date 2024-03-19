@@ -45,7 +45,7 @@ struct PlaylistScriptRegistry::Private
     QString playingQueue()
     {
         const QString indexes = queueIndexes();
-        return indexes.isEmpty() ? QString{} : QString{QStringLiteral("[%1]")}.arg(indexes);
+        return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
     }
 
     QString queueIndex()

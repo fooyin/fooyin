@@ -135,7 +135,7 @@ struct EngineHandler::Private
         }
 
         if(!outputs.contains(newName)) {
-            qWarning() << QString{QStringLiteral("Output (%1) hasn't been registered")}.arg(newName);
+            qWarning() << QStringLiteral("Output (%1) hasn't been registered").arg(newName);
             return;
         }
 
@@ -216,7 +216,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 void EngineHandler::addOutput(const AudioOutputBuilder& output)
 {
     if(p->outputs.contains(output.name)) {
-        qDebug() << QString{QStringLiteral("Output (%1) already registered")}.arg(output.name);
+        qDebug() << QStringLiteral("Output (%1) already registered").arg(output.name);
         return;
     }
     p->outputs.emplace(output.name, output.creator);
