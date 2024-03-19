@@ -669,9 +669,19 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
 
     auto& rows = m_pendingNodes.at(parentItem->key());
 
-    const int row           = parentItem->childCount();
-    const int totalRows     = static_cast<int>(rows.size());
-    const int rowCount      = parent.isValid() ? totalRows : std::min(50, totalRows);
+    const int row       = parentItem->childCount();
+    const int totalRows = static_cast<int>(rows.size());
+    int rowCount        = totalRows;
+
+    if(!parent.isValid()) {
+        if(!m_currentPreset.header.isValid() && m_currentPreset.subHeaders.empty()) {
+            rowCount = std::min(1000, totalRows);
+        }
+        else {
+            rowCount = std::min(50, totalRows);
+        }
+    }
+
     const auto rowsToInsert = std::views::take(rows, rowCount);
 
     beginInsertRows(parent, row, row + rowCount - 1);
