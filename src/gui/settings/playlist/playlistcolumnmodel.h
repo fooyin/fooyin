@@ -19,17 +19,32 @@
 
 #pragma once
 
+#include "playlist/playlistcolumn.h"
+
 #include <utils/extendabletableview.h>
 #include <utils/tablemodel.h>
+#include <utils/treestatusitem.h>
 
 namespace Fooyin {
 class PlaylistColumnRegistry;
+
+class ColumnItem : public TreeStatusItem<ColumnItem>
+{
+public:
+    ColumnItem();
+    explicit ColumnItem(PlaylistColumn column, ColumnItem* parent);
+
+    [[nodiscard]] PlaylistColumn column() const;
+    void changeColumn(const PlaylistColumn& column);
+
+private:
+    PlaylistColumn m_column;
+};
 
 class PlaylistColumnModel : public ExtendableTableModel
 {
 public:
     explicit PlaylistColumnModel(PlaylistColumnRegistry* columnsRegistry, QObject* parent = nullptr);
-    ~PlaylistColumnModel() override;
 
     void populate();
     void processQueue();
@@ -48,7 +63,8 @@ public:
     void removePendingRow() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    PlaylistColumnRegistry* m_columnsRegistry;
+    ColumnItem m_root;
+    std::map<int, ColumnItem> m_nodes;
 };
 } // namespace Fooyin

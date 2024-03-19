@@ -19,9 +19,15 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include <core/trackfwd.h>
+#include <gui/fywidget.h>
+
+#include <QPixmap>
+
+class QLabel;
 
 namespace Fooyin {
+class CoverProvider;
 class MusicLibrary;
 class PlayerController;
 class TrackSelectionController;
@@ -33,7 +39,6 @@ class CoverWidget : public FyWidget
 public:
     explicit CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
                          QWidget* parent = nullptr);
-    ~CoverWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -42,7 +47,14 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void rescaleCover() const;
+    void reloadCover(const Track& track);
+
+    PlayerController* m_playerController;
+    TrackSelectionController* m_trackSelection;
+    CoverProvider* m_coverProvider;
+
+    QLabel* m_coverLabel;
+    QPixmap m_cover;
 };
 } // namespace Fooyin

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <gui/widgetcontainer.h>
+#include <utils/widgets/editabletabwidget.h>
 
 namespace Fooyin {
 class ActionManager;
@@ -31,7 +32,6 @@ class TabStackWidget : public WidgetContainer
 
 public:
     TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
-    ~TabStackWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -43,13 +43,19 @@ public:
     void removeWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
 
-    WidgetList widgets() const override;
+    [[nodiscard]] WidgetList widgets() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    int indexOfWidget(FyWidget* widget) const;
+    void changeTabPosition(QTabWidget::TabPosition position) const;
+
+    ActionManager* m_actionManager;
+    WidgetProvider* m_widgetProvider;
+
+    WidgetList m_widgets;
+    EditableTabWidget* m_tabs;
 };
 } // namespace Fooyin

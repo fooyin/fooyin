@@ -34,14 +34,15 @@ class TagEditorPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    TagEditorPlugin();
-    ~TagEditorPlugin() override;
-
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    ActionManager* m_actionManager;
+    MusicLibrary* m_library;
+    TrackSelectionController* m_trackSelection;
+    PropertiesDialog* m_propertiesDialog;
+    WidgetProvider* m_widgetProvider;
+    SettingsManager* m_settings;
 };
 } // namespace Fooyin::TagEditor

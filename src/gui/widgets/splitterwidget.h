@@ -19,11 +19,16 @@
 
 #pragma once
 
+#include "dummy.h"
+
 #include <gui/widgetcontainer.h>
+
+#include <QPointer>
 
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
+class Splitter;
 class WidgetProvider;
 
 class SplitterWidget : public WidgetContainer
@@ -50,7 +55,7 @@ public:
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
     void removeWidget(FyWidget* widget) override;
 
-    WidgetList widgets() const override;
+    [[nodiscard]] WidgetList widgets() const override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -59,8 +64,21 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void checkShowDummy();
+    int findIndex(FyWidget* widgetToFind) const;
+    void replaceWidget(int index, FyWidget* widget);
+
+    ActionManager* m_actionManager;
+    WidgetProvider* m_widgetProvider;
+
+    Splitter* m_splitter;
+    WidgetList m_children;
+    QPointer<Dummy> m_dummy;
+
+    int m_limit;
+    bool m_showDummy;
+    int m_widgetCount;
+    int m_baseWidgetCount;
 };
 
 class VerticalSplitterWidget : public SplitterWidget

@@ -25,64 +25,44 @@
 #include <utils/treestatusitem.h>
 
 namespace Fooyin {
-class ColumnItem : public TreeStatusItem<ColumnItem>
+ColumnItem::ColumnItem()
+    : ColumnItem{{}, nullptr}
+{ }
+
+ColumnItem::ColumnItem(PlaylistColumn column, ColumnItem* parent)
+    : TreeStatusItem{parent}
+    , m_column{std::move(column)}
+{ }
+
+PlaylistColumn ColumnItem::column() const
 {
-public:
-    ColumnItem()
-        : ColumnItem{{}, nullptr}
-    { }
+    return m_column;
+}
 
-    explicit ColumnItem(PlaylistColumn column, ColumnItem* parent)
-        : TreeStatusItem{parent}
-        , m_column{std::move(column)}
-    { }
-
-    [[nodiscard]] PlaylistColumn column() const
-    {
-        return m_column;
-    }
-
-    void changeColumn(const PlaylistColumn& column)
-    {
-        m_column = column;
-    }
-
-private:
-    PlaylistColumn m_column;
-};
-
-struct PlaylistColumnModel::Private
+void ColumnItem::changeColumn(const PlaylistColumn& column)
 {
-    PlaylistColumnRegistry* columnsRegistry;
-    ColumnItem root;
-    std::map<int, ColumnItem> nodes;
-
-    explicit Private(PlaylistColumnRegistry* columnsRegistry_)
-        : columnsRegistry{columnsRegistry_}
-    { }
-};
+    m_column = column;
+}
 
 PlaylistColumnModel::PlaylistColumnModel(PlaylistColumnRegistry* columnsRegistry, QObject* parent)
     : ExtendableTableModel{parent}
-    , p{std::make_unique<Private>(columnsRegistry)}
+    , m_columnsRegistry{columnsRegistry}
 { }
-
-PlaylistColumnModel::~PlaylistColumnModel() = default;
 
 void PlaylistColumnModel::populate()
 {
     beginResetModel();
-    p->root = {};
-    p->nodes.clear();
+    m_root = {};
+    m_nodes.clear();
 
-    const auto& columns = p->columnsRegistry->items();
+    const auto& columns = m_columnsRegistry->items();
 
     for(const auto& column : columns) {
         if(column.name.isEmpty()) {
             continue;
         }
-        ColumnItem* child = &p->nodes.emplace(column.index, ColumnItem{column, &p->root}).first->second;
-        p->root.insertChild(column.index, child);
+        ColumnItem* child = &m_nodes.emplace(column.index, ColumnItem{column, &m_root}).first->second;
+        m_root.insertChild(column.index, child);
     }
 
     endResetModel();
@@ -92,7 +72,7 @@ void PlaylistColumnModel::processQueue()
 {
     std::vector<int> columnsToRemove;
 
-    for(auto& [index, node] : p->nodes) {
+    for(auto& [index, node] : m_nodes) {
         const ColumnItem::ItemStatus status = node.status();
         const PlaylistColumn column         = node.column();
 
@@ -102,7 +82,7 @@ void PlaylistColumnModel::processQueue()
                     break;
                 }
 
-                const PlaylistColumn addedColumn = p->columnsRegistry->addItem(column);
+                const PlaylistColumn addedColumn = m_columnsRegistry->addItem(column);
                 if(addedColumn.isValid()) {
                     node.changeColumn(addedColumn);
                     node.setStatus(ColumnItem::None);
@@ -115,9 +95,9 @@ void PlaylistColumnModel::processQueue()
                 break;
             }
             case(ColumnItem::Removed): {
-                if(p->columnsRegistry->removeByIndex(column.index)) {
+                if(m_columnsRegistry->removeByIndex(column.index)) {
                     beginRemoveRows({}, node.row(), node.row());
-                    p->root.removeChild(node.row());
+                    m_root.removeChild(node.row());
                     endRemoveRows();
                     columnsToRemove.push_back(index);
                 }
@@ -127,8 +107,8 @@ void PlaylistColumnModel::processQueue()
                 break;
             }
             case(ColumnItem::Changed): {
-                if(p->columnsRegistry->changeItem(column)) {
-                    node.changeColumn(p->columnsRegistry->itemById(column.id));
+                if(m_columnsRegistry->changeItem(column)) {
+                    node.changeColumn(m_columnsRegistry->itemById(column.id));
                     node.setStatus(ColumnItem::None);
 
                     emit dataChanged({}, {});
@@ -143,7 +123,7 @@ void PlaylistColumnModel::processQueue()
         }
     }
     for(const auto& index : columnsToRemove) {
-        p->nodes.erase(index);
+        m_nodes.erase(index);
     }
 }
 
@@ -265,14 +245,14 @@ QModelIndex PlaylistColumnModel::index(int row, int column, const QModelIndex& p
         return {};
     }
 
-    ColumnItem* item = p->root.child(row);
+    ColumnItem* item = m_root.child(row);
 
     return createIndex(row, column, item);
 }
 
 int PlaylistColumnModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    return p->root.childCount();
+    return m_root.childCount();
 }
 
 int PlaylistColumnModel::columnCount(const QModelIndex& /*parent*/) const
@@ -293,9 +273,9 @@ bool PlaylistColumnModel::removeRows(int row, int count, const QModelIndex& /*pa
         if(item) {
             if(item->status() == ColumnItem::Added) {
                 beginRemoveRows({}, i, i);
-                p->root.removeChild(i);
+                m_root.removeChild(i);
                 endRemoveRows();
-                p->nodes.erase(item->column().index);
+                m_nodes.erase(item->column().index);
             }
             else if(!item->column().isDefault) {
                 item->setStatus(ColumnItem::Removed);
@@ -308,18 +288,18 @@ bool PlaylistColumnModel::removeRows(int row, int count, const QModelIndex& /*pa
 
 void PlaylistColumnModel::addPendingRow()
 {
-    const int index = static_cast<int>(p->nodes.size());
+    const int index = static_cast<int>(m_nodes.size());
 
     PlaylistColumn column;
     column.index = index;
 
-    ColumnItem* item = &p->nodes.emplace(index, ColumnItem{column, &p->root}).first->second;
+    ColumnItem* item = &m_nodes.emplace(index, ColumnItem{column, &m_root}).first->second;
 
     item->setStatus(ColumnItem::Added);
 
-    const int row = p->root.childCount();
+    const int row = m_root.childCount();
     beginInsertRows({}, row, row);
-    p->root.appendChild(item);
+    m_root.appendChild(item);
     endInsertRows();
 }
 
@@ -327,8 +307,7 @@ void PlaylistColumnModel::removePendingRow()
 {
     const int row = rowCount({}) - 1;
     beginRemoveRows({}, row, row);
-    p->root.removeChild(row);
+    m_root.removeChild(row);
     endRemoveRows();
 }
-
 } // namespace Fooyin

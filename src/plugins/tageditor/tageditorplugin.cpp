@@ -33,45 +33,29 @@
 #include <QMenu>
 
 namespace Fooyin::TagEditor {
-struct TagEditorPlugin::Private
-{
-    ActionManager* actionManager;
-    MusicLibrary* library;
-    TrackSelectionController* trackSelection;
-    PropertiesDialog* propertiesDialog;
-    WidgetProvider* widgetProvider;
-    SettingsManager* settings;
-};
-
-TagEditorPlugin::TagEditorPlugin()
-    : p{std::make_unique<Private>()}
-{ }
-
-TagEditorPlugin::~TagEditorPlugin() = default;
-
 void TagEditorPlugin::initialise(const CorePluginContext& context)
 {
-    p->settings = context.settingsManager;
-    p->library  = context.library;
+    m_settings = context.settingsManager;
+    m_library  = context.library;
 }
 
 void TagEditorPlugin::initialise(const GuiPluginContext& context)
 {
-    p->actionManager    = context.actionManager;
-    p->trackSelection   = context.trackSelection;
-    p->propertiesDialog = context.propertiesDialog;
-    p->widgetProvider   = context.widgetProvider;
+    m_actionManager    = context.actionManager;
+    m_trackSelection   = context.trackSelection;
+    m_propertiesDialog = context.propertiesDialog;
+    m_widgetProvider   = context.widgetProvider;
 
-    //    p->factory->registerWidget(
+    //    m_factory->registerWidget(
     //        "TagEditor",
     //        [this]() {
-    //            return new TagEditorWidget(p->trackSelection, p->library, p->settings);
+    //            return new TagEditorWidget(m_trackSelection, m_library, m_settings);
     //        },
     //        "Tag Editor");
 
-    p->propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
-        auto* tagEditor = new TagEditorWidget(p->trackSelection->selectedTracks(), p->actionManager, p->settings);
-        QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, p->library,
+    m_propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
+        auto* tagEditor = new TagEditorWidget(m_trackSelection->selectedTracks(), m_actionManager, m_settings);
+        QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library,
                          &MusicLibrary::updateTrackMetadata);
         return tagEditor;
     });

@@ -19,11 +19,27 @@
 
 #pragma once
 
+#include "librarytree/librarytreegroup.h"
+
 #include <utils/extendabletableview.h>
+#include <utils/treestatusitem.h>
 
 namespace Fooyin {
 class LibraryTreeGroupRegistry;
 struct LibraryTreeGrouping;
+
+class LibraryTreeGroupItem : public TreeStatusItem<LibraryTreeGroupItem>
+{
+public:
+    LibraryTreeGroupItem();
+    explicit LibraryTreeGroupItem(LibraryTreeGrouping group, LibraryTreeGroupItem* parent);
+
+    [[nodiscard]] LibraryTreeGrouping group() const;
+    void changeGroup(const LibraryTreeGrouping& group);
+
+private:
+    LibraryTreeGrouping m_group;
+};
 
 class LibraryTreeGroupModel : public ExtendableTableModel
 {
@@ -31,7 +47,6 @@ class LibraryTreeGroupModel : public ExtendableTableModel
 
 public:
     explicit LibraryTreeGroupModel(LibraryTreeGroupRegistry* groupsRegistry, QObject* parent = nullptr);
-    ~LibraryTreeGroupModel() override;
 
     void populate();
     void processQueue();
@@ -50,7 +65,8 @@ public:
     void removePendingRow() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private>p;
+    LibraryTreeGroupRegistry* m_groupsRegistry;
+    std::map<int, LibraryTreeGroupItem> m_nodes;
+    LibraryTreeGroupItem m_root;
 };
 } // namespace Fooyin

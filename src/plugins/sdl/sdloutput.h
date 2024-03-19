@@ -30,7 +30,6 @@ class SdlOutput : public AudioOutput
 {
 public:
     SdlOutput();
-    ~SdlOutput() override;
 
     bool init(const AudioFormat& format) override;
     void uninit() override;
@@ -49,7 +48,13 @@ public:
     void setDevice(const QString& device) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    AudioFormat m_format;
+    int m_bufferSize;
+    bool m_initialised;
+    QString m_device;
+
+    SDL_AudioSpec m_desiredSpec;
+    SDL_AudioSpec m_obtainedSpec;
+    SDL_AudioDeviceID m_audioDeviceId;
 };
 } // namespace Fooyin::Sdl

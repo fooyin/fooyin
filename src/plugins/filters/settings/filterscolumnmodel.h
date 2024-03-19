@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "filterfwd.h"
+
 #include <utils/extendabletableview.h>
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
@@ -27,13 +29,25 @@ namespace Fooyin::Filters {
 class FilterColumnRegistry;
 class FieldItem;
 
+class ColumnItem : public TreeStatusItem<ColumnItem>
+{
+public:
+    ColumnItem();
+    explicit ColumnItem(FilterColumn column, ColumnItem* parent);
+
+    [[nodiscard]] FilterColumn column() const;
+    void changeColumn(const FilterColumn& column);
+
+private:
+    FilterColumn m_column;
+};
+
 class FiltersColumnModel : public ExtendableTableModel
 {
     Q_OBJECT
 
 public:
     explicit FiltersColumnModel(FilterColumnRegistry* columnsRegistry, QObject* parent = nullptr);
-    ~FiltersColumnModel() override;
 
     void populate();
     void processQueue();
@@ -52,7 +66,8 @@ public:
     void removePendingRow() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private>p;
+    FilterColumnRegistry* m_columnsRegistry;
+    ColumnItem m_root;
+    std::map<int, ColumnItem> m_nodes;
 };
 } // namespace Fooyin::Filters

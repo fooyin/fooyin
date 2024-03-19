@@ -38,60 +38,27 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-struct TabStackWidget::Private
-{
-    TabStackWidget* self;
-
-    ActionManager* actionManager;
-    WidgetProvider* widgetProvider;
-
-    WidgetList widgets;
-    EditableTabWidget* tabs;
-
-    Private(TabStackWidget* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , widgetProvider{widgetProvider_}
-        , tabs{new EditableTabWidget(self)}
-    { }
-
-    int indexOfWidget(FyWidget* widget)
-    {
-        auto it = std::ranges::find(std::as_const(widgets), widget);
-        if(it != widgets.cend()) {
-            return static_cast<int>(std::distance(widgets.cbegin(), it));
-        }
-        return -1;
-    }
-
-    void changeTabPosition(QTabWidget::TabPosition position) const
-    {
-        tabs->setTabPosition(position);
-        tabs->adjustSize();
-    };
-};
-
 TabStackWidget::TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetProvider)}
+    , m_actionManager{actionManager}
+    , m_widgetProvider{widgetProvider}
+    , m_tabs{new EditableTabWidget(this)}
 {
     QObject::setObjectName(TabStackWidget::name());
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    layout->addWidget(p->tabs);
+    layout->addWidget(m_tabs);
 
-    QObject::connect(p->tabs->tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
-        if(from >= 0 && from < static_cast<int>(p->widgets.size())) {
-            auto* widget = p->widgets.at(from);
-            p->widgets.erase(p->widgets.begin() + from);
-            p->widgets.insert(p->widgets.begin() + to, widget);
+    QObject::connect(m_tabs->tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
+        if(from >= 0 && from < static_cast<int>(m_widgets.size())) {
+            auto* widget = m_widgets.at(from);
+            m_widgets.erase(m_widgets.begin() + from);
+            m_widgets.insert(m_widgets.begin() + to, widget);
         }
     });
 }
-
-TabStackWidget::~TabStackWidget() = default;
 
 QString TabStackWidget::name() const
 {
@@ -108,29 +75,29 @@ void TabStackWidget::layoutEditingMenu(ActionContainer* menu)
     const QString addTitle{tr("&Add")};
     auto addMenuId = id().append(addTitle);
 
-    auto* addMenu = p->actionManager->createMenu(addMenuId);
+    auto* addMenu = m_actionManager->createMenu(addMenuId);
     addMenu->menu()->setTitle(addTitle);
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
+    m_widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
     menu->addMenu(addMenu);
 }
 
 void TabStackWidget::saveLayoutData(QJsonObject& layout)
 {
     QJsonArray widgets;
-    for(FyWidget* widget : p->widgets) {
+    for(FyWidget* widget : m_widgets) {
         widget->saveLayout(widgets);
     }
 
     QString state;
-    for(int i{0}; i < p->tabs->count(); ++i) {
+    for(int i{0}; i < m_tabs->count(); ++i) {
         if(!state.isEmpty()) {
             state.append(u"\037");
         }
-        state.append(p->tabs->tabText(i));
+        state.append(m_tabs->tabText(i));
     }
 
-    layout[QStringLiteral("Position")] = Utils::Enum::toString(p->tabs->tabPosition());
+    layout[QStringLiteral("Position")] = Utils::Enum::toString(m_tabs->tabPosition());
     layout[QStringLiteral("State")]    = state;
     layout[QStringLiteral("Widgets")]  = widgets;
 }
@@ -139,7 +106,7 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(const auto position
        = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
-        p->tabs->setTabPosition(position.value());
+        m_tabs->setTabPosition(position.value());
     }
 
     const auto widgets = layout.value(QStringLiteral("Widgets")).toArray();
@@ -150,44 +117,44 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
     const QStringList titles = state.split(QStringLiteral("\037"));
 
     for(int i{0}; const QString& title : titles) {
-        if(i < p->tabs->count()) {
-            p->tabs->setTabText(i++, title);
+        if(i < m_tabs->count()) {
+            m_tabs->setTabText(i++, title);
         }
     }
 }
 
 void TabStackWidget::addWidget(FyWidget* widget)
 {
-    const int index = p->tabs->addTab(widget, widget->name());
-    p->widgets.insert(p->widgets.begin() + index, widget);
+    const int index = m_tabs->addTab(widget, widget->name());
+    m_widgets.insert(m_widgets.begin() + index, widget);
 }
 
 void TabStackWidget::removeWidget(FyWidget* widget)
 {
-    const int index = p->indexOfWidget(widget);
+    const int index = indexOfWidget(widget);
     if(index >= 0) {
-        p->tabs->removeTab(index);
-        p->widgets.erase(p->widgets.begin() + index);
+        m_tabs->removeTab(index);
+        m_widgets.erase(m_widgets.begin() + index);
     }
 }
 
 void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 {
-    const int index = p->indexOfWidget(oldWidget);
+    const int index = indexOfWidget(oldWidget);
     if(index >= 0) {
-        p->tabs->removeTab(index);
-        p->tabs->insertTab(index, newWidget, newWidget->name());
+        m_tabs->removeTab(index);
+        m_tabs->insertTab(index, newWidget, newWidget->name());
 
-        p->widgets.erase(p->widgets.begin() + index);
-        p->widgets.insert(p->widgets.begin() + index, newWidget);
+        m_widgets.erase(m_widgets.begin() + index);
+        m_widgets.insert(m_widgets.begin() + index, newWidget);
 
-        p->tabs->setCurrentIndex(index);
+        m_tabs->setCurrentIndex(index);
     }
 }
 
 WidgetList TabStackWidget::widgets() const
 {
-    return p->widgets;
+    return m_widgets;
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -195,15 +162,15 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const QPoint point = p->tabs->tabBar()->mapFrom(this, event->pos());
-    const int index    = p->tabs->tabBar()->tabAt(point);
+    const QPoint point = m_tabs->tabBar()->mapFrom(this, event->pos());
+    const int index    = m_tabs->tabBar()->tabAt(point);
 
-    if(index < 0 || index >= p->tabs->count()) {
+    if(index < 0 || index >= m_tabs->count()) {
         FyWidget::contextMenuEvent(event);
         return;
     }
 
-    auto* widget = p->widgets.at(index);
+    auto* widget = m_widgets.at(index);
 
     auto* posMenu = new QMenu(tr("&Position"), menu);
 
@@ -219,7 +186,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     south->setCheckable(true);
     west->setCheckable(true);
 
-    const auto tabPos = p->tabs->tabPosition();
+    const auto tabPos = m_tabs->tabPosition();
 
     switch(tabPos) {
         case(QTabWidget::North):
@@ -236,10 +203,10 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
             break;
     }
 
-    QObject::connect(north, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::North); });
-    QObject::connect(east, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::East); });
-    QObject::connect(south, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::South); });
-    QObject::connect(west, &QAction::triggered, this, [this]() { p->changeTabPosition(QTabWidget::West); });
+    QObject::connect(north, &QAction::triggered, this, [this]() { changeTabPosition(QTabWidget::North); });
+    QObject::connect(east, &QAction::triggered, this, [this]() { changeTabPosition(QTabWidget::East); });
+    QObject::connect(south, &QAction::triggered, this, [this]() { changeTabPosition(QTabWidget::South); });
+    QObject::connect(west, &QAction::triggered, this, [this]() { changeTabPosition(QTabWidget::West); });
 
     positionGroup->addAction(north);
     positionGroup->addAction(east);
@@ -252,7 +219,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     posMenu->addAction(west);
 
     auto* rename = new QAction(tr("&Rename"), menu);
-    QObject::connect(rename, &QAction::triggered, p->tabs->editableTabBar(), &EditableTabBar::showEditor);
+    QObject::connect(rename, &QAction::triggered, m_tabs->editableTabBar(), &EditableTabBar::showEditor);
 
     auto* remove = new QAction(tr("Re&move"), menu);
     QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });
@@ -262,7 +229,22 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(rename);
     menu->addAction(remove);
 
-    menu->popup(p->tabs->tabBar()->mapToGlobal(point));
+    menu->popup(m_tabs->tabBar()->mapToGlobal(point));
+}
+
+int TabStackWidget::indexOfWidget(FyWidget* widget) const
+{
+    auto it = std::ranges::find(m_widgets, widget);
+    if(it != m_widgets.cend()) {
+        return static_cast<int>(std::distance(m_widgets.cbegin(), it));
+    }
+    return -1;
+}
+
+void TabStackWidget::changeTabPosition(QTabWidget::TabPosition position) const
+{
+    m_tabs->setTabPosition(position);
+    m_tabs->adjustSize();
 }
 } // namespace Fooyin
 

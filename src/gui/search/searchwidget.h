@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+class QLineEdit;
+
 namespace Fooyin {
 class SettingsManager;
 class SearchController;
@@ -41,7 +43,11 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void changePlaceholderText();
+    void showOptionsMenu();
+
+    SearchController* m_searchController;
+    SettingsManager* m_settings;
+    QLineEdit* m_searchBox;
 };
 } // namespace Fooyin

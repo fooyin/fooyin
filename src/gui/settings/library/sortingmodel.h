@@ -21,11 +21,25 @@
 
 #include <core/library/librarysort.h>
 #include <utils/extendabletableview.h>
+#include <utils/treestatusitem.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class SortingRegistry;
+
+class SortingItem : public TreeStatusItem<SortingItem>
+{
+public:
+    SortingItem();
+    explicit SortingItem(SortScript sortScript, SortingItem* parent);
+
+    [[nodiscard]] SortScript sortScript() const;
+    void changeSort(SortScript sortScript);
+
+private:
+    SortScript m_sortScript;
+};
 
 class SortingModel : public ExtendableTableModel
 {
@@ -33,7 +47,6 @@ class SortingModel : public ExtendableTableModel
 
 public:
     explicit SortingModel(SortingRegistry* sortRegistry, QObject* parent = nullptr);
-    ~SortingModel() override;
 
     void populate();
     void processQueue();
@@ -52,7 +65,8 @@ public:
     void removePendingRow() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private>p;
+    SortingRegistry* m_sortRegistry;
+    std::map<int, SortingItem> m_nodes;
+    SortingItem m_root;
 };
 } // namespace Fooyin

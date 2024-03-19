@@ -37,103 +37,36 @@
 constexpr auto DefaultPlaceholder = "Search library...";
 
 namespace Fooyin {
-struct SearchWidget::Private
-{
-    SearchWidget* self;
-
-    SearchController* searchController;
-    SettingsManager* settings;
-
-    QLineEdit* searchBox;
-
-    Private(SearchWidget* self_, SearchController* controller_, SettingsManager* settings_)
-        : self{self_}
-        , searchController{controller_}
-        , settings{settings_}
-        , searchBox{new QLineEdit(self)}
-    {
-        auto* layout = new QHBoxLayout(self);
-        layout->setContentsMargins(0, 0, 0, 0);
-
-        layout->addWidget(searchBox);
-
-        searchBox->setPlaceholderText(QString::fromLatin1(DefaultPlaceholder));
-        searchBox->setClearButtonEnabled(true);
-    }
-
-    void changePlaceholderText()
-    {
-        auto* lineEdit = new PopupLineEdit(searchBox->placeholderText(), self);
-        lineEdit->setAttribute(Qt::WA_DeleteOnClose);
-
-        QObject::connect(lineEdit, &PopupLineEdit::editingCancelled, lineEdit, &QWidget::close);
-        QObject::connect(lineEdit, &PopupLineEdit::editingFinished, self, [this, lineEdit]() {
-            const QString text = lineEdit->text();
-            if(text != searchBox->placeholderText()) {
-                searchBox->setPlaceholderText(!text.isEmpty() ? text : QString::fromLatin1(DefaultPlaceholder));
-            }
-            lineEdit->close();
-        });
-
-        lineEdit->setGeometry(searchBox->geometry());
-        lineEdit->show();
-        lineEdit->selectAll();
-        lineEdit->setFocus(Qt::ActiveWindowFocusReason);
-    }
-
-    void setupConnections() const
-    {
-        searchController->setupWidgetConnections(self->id());
-    }
-
-    QPoint optionsMenuPoint() const
-    {
-        QStyleOptionFrame opt;
-        opt.initFrom(searchBox);
-
-        const QRect rect = searchBox->style()->subElementRect(QStyle::SE_LineEditContents, &opt, searchBox);
-        const QPoint pos{rect.right() - 5, rect.center().y()};
-
-        return searchBox->mapToGlobal(pos);
-    }
-
-    void showOptionsMenu()
-    {
-        auto* menu = new QMenu(tr("Options"), self);
-        menu->setAttribute(Qt::WA_DeleteOnClose);
-
-        auto* changePlaceholder = new QAction(tr("Change Placeholder Text"), self);
-        QObject::connect(changePlaceholder, &QAction::triggered, self, [this]() { changePlaceholderText(); });
-        menu->addAction(changePlaceholder);
-
-        auto* manageConnections = new QAction(tr("Manage Connections"), self);
-        QObject::connect(manageConnections, &QAction::triggered, self, [this]() { setupConnections(); });
-        menu->addAction(manageConnections);
-
-        menu->popup(optionsMenuPoint());
-    }
-};
-
 SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, controller, settings)}
+    , m_searchController{controller}
+    , m_settings{settings}
+    , m_searchBox{new QLineEdit(this)}
 {
     setObjectName(SearchWidget::name());
 
-    QObject::connect(p->searchBox, &QLineEdit::textChanged, this,
-                     [this](const QString& search) { p->searchController->changeSearch(id(), search); });
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    layout->addWidget(m_searchBox);
+
+    m_searchBox->setPlaceholderText(QString::fromLatin1(DefaultPlaceholder));
+    m_searchBox->setClearButtonEnabled(true);
+
+    QObject::connect(m_searchBox, &QLineEdit::textChanged, this,
+                     [this](const QString& search) { m_searchController->changeSearch(id(), search); });
 
     auto* selectReceiver = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
-    QObject::connect(selectReceiver, &QAction::triggered, this, [this]() { p->showOptionsMenu(); });
-    p->searchBox->addAction(selectReceiver, QLineEdit::TrailingPosition);
+    QObject::connect(selectReceiver, &QAction::triggered, this, [this]() { showOptionsMenu(); });
+    m_searchBox->addAction(selectReceiver, QLineEdit::TrailingPosition);
 
-    settings->subscribe<Settings::Gui::IconTheme>(
+    m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [selectReceiver]() { selectReceiver->setIcon(Utils::iconFromTheme(Constants::Icons::Options)); });
 }
 
 SearchWidget::~SearchWidget()
 {
-    p->searchController->removeConnectedWidgets(id());
+    m_searchController->removeConnectedWidgets(id());
 }
 
 QString SearchWidget::name() const
@@ -149,18 +82,19 @@ QString SearchWidget::layoutName() const
 void SearchWidget::layoutEditingMenu(ActionContainer* menu)
 {
     auto* manageConnections = new QAction(tr("Manage Connections"), this);
-    QObject::connect(manageConnections, &QAction::triggered, this, [this]() { p->setupConnections(); });
+    QObject::connect(manageConnections, &QAction::triggered, this,
+                     [this]() { m_searchController->setupWidgetConnections(id()); });
     menu->addAction(manageConnections);
 }
 
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
-    const QString placeholderText = p->searchBox->placeholderText();
+    const QString placeholderText = m_searchBox->placeholderText();
     if(!placeholderText.isEmpty() && placeholderText != QString::fromLatin1(DefaultPlaceholder)) {
         layout[QStringLiteral("Placeholder")] = placeholderText;
     }
 
-    const auto connectedWidgets = p->searchController->connectedWidgets(id());
+    const auto connectedWidgets = m_searchController->connectedWidgets(id());
 
     if(connectedWidgets.empty()) {
         return;
@@ -175,7 +109,7 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("Placeholder"))) {
-        p->searchBox->setPlaceholderText(layout.value(QStringLiteral("Placeholder")).toString());
+        m_searchBox->setPlaceholderText(layout.value(QStringLiteral("Placeholder")).toString());
     }
 
     if(!layout.contains(QStringLiteral("Widgets"))) {
@@ -194,7 +128,50 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
         connectedWidgets.emplace(id.trimmed());
     }
 
-    p->searchController->setConnectedWidgets(id(), connectedWidgets);
+    m_searchController->setConnectedWidgets(id(), connectedWidgets);
+}
+
+void SearchWidget::changePlaceholderText()
+{
+    auto* lineEdit = new PopupLineEdit(m_searchBox->placeholderText(), this);
+    lineEdit->setAttribute(Qt::WA_DeleteOnClose);
+
+    QObject::connect(lineEdit, &PopupLineEdit::editingCancelled, lineEdit, &QWidget::close);
+    QObject::connect(lineEdit, &PopupLineEdit::editingFinished, this, [this, lineEdit]() {
+        const QString text = lineEdit->text();
+        if(text != m_searchBox->placeholderText()) {
+            m_searchBox->setPlaceholderText(!text.isEmpty() ? text : QString::fromLatin1(DefaultPlaceholder));
+        }
+        lineEdit->close();
+    });
+
+    lineEdit->setGeometry(m_searchBox->geometry());
+    lineEdit->show();
+    lineEdit->selectAll();
+    lineEdit->setFocus(Qt::ActiveWindowFocusReason);
+}
+
+void SearchWidget::showOptionsMenu()
+{
+    auto* menu = new QMenu(tr("Options"), this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* changePlaceholder = new QAction(tr("Change Placeholder Text"), this);
+    QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
+    menu->addAction(changePlaceholder);
+
+    auto* manageConnections = new QAction(tr("Manage Connections"), this);
+    QObject::connect(manageConnections, &QAction::triggered, this,
+                     [this]() { m_searchController->setupWidgetConnections(id()); });
+    menu->addAction(manageConnections);
+
+    QStyleOptionFrame opt;
+    opt.initFrom(m_searchBox);
+
+    const QRect rect = m_searchBox->style()->subElementRect(QStyle::SE_LineEditContents, &opt, m_searchBox);
+    const QPoint pos{rect.right() - 5, rect.center().y()};
+
+    menu->popup(m_searchBox->mapToGlobal(pos));
 }
 } // namespace Fooyin
 

@@ -21,7 +21,10 @@
 
 #include <core/player/playercontroller.h>
 
+#include <QIcon>
 #include <QObject>
+
+class QAction;
 
 namespace Fooyin {
 class ActionManager;
@@ -33,10 +36,26 @@ class PlaybackMenu : public QObject
 
 public:
     PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, QObject* parent = nullptr);
-    ~PlaybackMenu();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void updatePlayPause(PlayState state) const;
+    void updatePlayMode(Playlist::PlayModes mode) const;
+    void setPlayMode(Playlist::PlayMode mode) const;
+
+    ActionManager* m_actionManager;
+    PlayerController* m_playerController;
+
+    QIcon m_playIcon;
+    QIcon m_pauseIcon;
+
+    QAction* m_stop;
+    QAction* m_playPause;
+    QAction* m_previous;
+    QAction* m_next;
+
+    QAction* m_defaultPlayback;
+    QAction* m_repeatTrack;
+    QAction* m_repeatPlaylist;
+    QAction* m_shuffle;
 };
 } // namespace Fooyin

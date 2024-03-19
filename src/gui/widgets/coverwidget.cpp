@@ -29,62 +29,30 @@
 #include <QLabel>
 
 namespace Fooyin {
-struct CoverWidget::Private
-{
-    CoverWidget* self;
-
-    PlayerController* playerController;
-    TrackSelectionController* trackSelection;
-    CoverProvider* coverProvider;
-
-    QLabel* coverLabel;
-    QPixmap cover;
-
-    Private(CoverWidget* self_, PlayerController* playerController_, TrackSelectionController* trackSelection_)
-        : self{self_}
-        , playerController{playerController_}
-        , trackSelection{trackSelection_}
-        , coverProvider{new CoverProvider(self)}
-        , coverLabel{new QLabel(self)}
-    {
-        auto* layout = new QVBoxLayout(self);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setAlignment(Qt::AlignCenter);
-        layout->addWidget(coverLabel);
-
-        coverLabel->setMinimumSize(100, 100);
-    }
-
-    void rescaleCover() const
-    {
-        const QSize scale = self->size() * 4;
-        coverLabel->setPixmap(cover.scaled(scale, Qt::KeepAspectRatio)
-                                  .scaled(self->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
-
-    void reloadCover(const Track& track)
-    {
-        cover = coverProvider->trackCover(track);
-        rescaleCover();
-    }
-};
-
 CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerController, trackSelection)}
+    , m_playerController{playerController}
+    , m_trackSelection{trackSelection}
+    , m_coverProvider{new CoverProvider(this)}
+    , m_coverLabel{new QLabel(this)}
 {
     setObjectName(CoverWidget::name());
 
-    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
-                     [this](const Track& track) { p->reloadCover(track); });
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setAlignment(Qt::AlignCenter);
+    layout->addWidget(m_coverLabel);
+
+    m_coverLabel->setMinimumSize(100, 100);
+
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     [this](const Track& track) { reloadCover(track); });
     QObject::connect(
-        p->coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) { p->reloadCover(track); },
+        m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) { reloadCover(track); },
         Qt::QueuedConnection);
 
-    p->reloadCover(p->playerController->currentTrack());
+    reloadCover(m_playerController->currentTrack());
 }
-
-CoverWidget::~CoverWidget() = default;
 
 QString CoverWidget::name() const
 {
@@ -98,11 +66,24 @@ QString CoverWidget::layoutName() const
 
 void CoverWidget::resizeEvent(QResizeEvent* event)
 {
-    if(!p->cover.isNull()) {
-        p->rescaleCover();
+    if(!m_cover.isNull()) {
+        rescaleCover();
     }
 
     QWidget::resizeEvent(event);
+}
+
+void CoverWidget::rescaleCover() const
+{
+    const QSize scale = size() * 4;
+    m_coverLabel->setPixmap(
+        m_cover.scaled(scale, Qt::KeepAspectRatio).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
+
+void CoverWidget::reloadCover(const Track& track)
+{
+    m_cover = m_coverProvider->trackCover(track);
+    rescaleCover();
 }
 } // namespace Fooyin
 

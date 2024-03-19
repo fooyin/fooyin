@@ -44,84 +44,70 @@ SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
 } // namespace
 
 namespace Fooyin::Sdl {
-struct SdlOutput::Private
-{
-    AudioFormat format;
-    int bufferSize{8192};
-    bool initialised{false};
-
-    SDL_AudioSpec desiredSpec;
-    SDL_AudioSpec obtainedSpec;
-    SDL_AudioDeviceID audioDeviceId;
-
-    QString device{QStringLiteral("default")};
-};
-
 SdlOutput::SdlOutput()
-    : p{std::make_unique<Private>()}
+    : m_bufferSize{8192}
+    , m_initialised{false}
+    , m_device{QStringLiteral("default")}
 { }
-
-SdlOutput::~SdlOutput() = default;
 
 bool SdlOutput::init(const AudioFormat& format)
 {
-    p->format = format;
+    m_format = format;
 
     SDL_Init(SDL_INIT_AUDIO);
 
-    p->desiredSpec.freq     = format.sampleRate();
-    p->desiredSpec.format   = findFormat(format.sampleFormat());
-    p->desiredSpec.channels = format.channelCount();
-    p->desiredSpec.samples  = p->bufferSize;
-    p->desiredSpec.callback = nullptr;
+    m_desiredSpec.freq     = format.sampleRate();
+    m_desiredSpec.format   = findFormat(format.sampleFormat());
+    m_desiredSpec.channels = format.channelCount();
+    m_desiredSpec.samples  = m_bufferSize;
+    m_desiredSpec.callback = nullptr;
 
-    if(p->device == QStringLiteral("default")) {
-        p->audioDeviceId
-            = SDL_OpenAudioDevice(nullptr, 0, &p->desiredSpec, &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    if(m_device == QStringLiteral("default")) {
+        m_audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &m_desiredSpec, &m_obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
     else {
-        p->audioDeviceId = SDL_OpenAudioDevice(p->device.toLocal8Bit().constData(), 0, &p->desiredSpec,
-                                               &p->obtainedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
+        m_audioDeviceId = SDL_OpenAudioDevice(m_device.toLocal8Bit().constData(), 0, &m_desiredSpec, &m_obtainedSpec,
+                                              SDL_AUDIO_ALLOW_ANY_CHANGE);
     }
 
-    if(p->audioDeviceId == 0) {
+    if(m_audioDeviceId == 0) {
         qDebug() << "[SDL] Error opening audio device: " << SDL_GetError();
         return false;
     }
 
-    p->initialised = true;
+    m_initialised = true;
     return true;
 }
 
 void SdlOutput::uninit()
 {
-    SDL_CloseAudioDevice(p->audioDeviceId);
+    SDL_CloseAudioDevice(m_audioDeviceId);
     SDL_Quit();
 
-    p->initialised = false;
+    m_initialised = false;
 }
 
 void SdlOutput::reset()
 {
-    SDL_PauseAudioDevice(p->audioDeviceId, 1);
-    SDL_ClearQueuedAudio(p->audioDeviceId);
+    SDL_PauseAudioDevice(m_audioDeviceId, 1);
+    SDL_ClearQueuedAudio(m_audioDeviceId);
 }
 
 void SdlOutput::start()
 {
     if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING) {
-        SDL_PauseAudioDevice(p->audioDeviceId, 0);
+        SDL_PauseAudioDevice(m_audioDeviceId, 0);
     }
 }
 
 bool SdlOutput::initialised() const
 {
-    return p->initialised;
+    return m_initialised;
 }
 
 QString SdlOutput::device() const
 {
-    return p->device;
+    return m_device;
 }
 
 bool SdlOutput::canHandleVolume() const
@@ -131,15 +117,15 @@ bool SdlOutput::canHandleVolume() const
 
 int SdlOutput::bufferSize() const
 {
-    return p->bufferSize;
+    return m_bufferSize;
 }
 
 OutputState SdlOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(p->audioDeviceId) / p->format.bytesPerFrame());
-    state.freeSamples   = p->bufferSize - state.queuedSamples;
+    state.queuedSamples = static_cast<int>(SDL_GetQueuedAudioSize(m_audioDeviceId) / m_format.bytesPerFrame());
+    state.freeSamples   = m_bufferSize - state.queuedSamples;
 
     return state;
 }
@@ -173,7 +159,7 @@ OutputDevices SdlOutput::getAllDevices() const
 
 int SdlOutput::write(const AudioBuffer& buffer)
 {
-    if(SDL_QueueAudio(p->audioDeviceId, buffer.constData().data(), buffer.byteCount()) == 0) {
+    if(SDL_QueueAudio(m_audioDeviceId, buffer.constData().data(), buffer.byteCount()) == 0) {
         return buffer.sampleCount();
     }
 
@@ -182,13 +168,13 @@ int SdlOutput::write(const AudioBuffer& buffer)
 
 void SdlOutput::setPaused(bool pause)
 {
-    SDL_PauseAudioDevice(p->audioDeviceId, pause);
+    SDL_PauseAudioDevice(m_audioDeviceId, pause);
 }
 
 void SdlOutput::setDevice(const QString& device)
 {
     if(!device.isEmpty()) {
-        p->device = device;
+        m_device = device;
     }
 }
 } // namespace Fooyin::Sdl

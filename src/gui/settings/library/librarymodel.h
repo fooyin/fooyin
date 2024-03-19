@@ -21,9 +21,23 @@
 
 #include <core/library/libraryinfo.h>
 #include <utils/extendabletableview.h>
+#include <utils/treestatusitem.h>
 
 namespace Fooyin {
 class LibraryManager;
+
+class LibraryItem : public TreeStatusItem<LibraryItem>
+{
+public:
+    LibraryItem();
+    explicit LibraryItem(LibraryInfo info, LibraryItem* parent);
+
+    [[nodiscard]] LibraryInfo info() const;
+    void changeInfo(const LibraryInfo& info);
+
+private:
+    LibraryInfo m_info;
+};
 
 class LibraryModel : public ExtendableTableModel
 {
@@ -31,7 +45,6 @@ class LibraryModel : public ExtendableTableModel
 
 public:
     explicit LibraryModel(LibraryManager* libraryManager, QObject* parent = nullptr);
-    ~LibraryModel() override;
 
     void populate();
     void markForAddition(const LibraryInfo& info);
@@ -54,7 +67,10 @@ signals:
     void requestAddLibrary();
 
 private:
-    struct Private;
-    std::unique_ptr<Private>p;
+    LibraryManager* m_libraryManager;
+
+    LibraryItem m_root;
+    std::unordered_map<QString, LibraryItem> m_nodes;
+    std::vector<LibraryInfo> m_librariesToAdd;
 };
 } // namespace Fooyin
