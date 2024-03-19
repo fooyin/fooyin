@@ -83,6 +83,8 @@ struct FilterModel::Private
     QFont font;
     QColor colour;
 
+    TrackList tracksPendingRemoval;
+
     explicit Private(FilterModel* self_)
         : self{self_}
     {
@@ -104,6 +106,10 @@ struct FilterModel::Private
         if(resetting) {
             self->beginResetModel();
             beginReset();
+        }
+
+        if(!tracksPendingRemoval.empty()) {
+            self->removeTracks(tracksPendingRemoval);
         }
 
         populateModel(data);
@@ -374,7 +380,7 @@ void FilterModel::updateTracks(const TrackList& tracks)
         return;
     }
 
-    removeTracks(tracks);
+    p->tracksPendingRemoval = tracks;
     addTracks(tracks);
 }
 

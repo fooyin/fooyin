@@ -480,8 +480,6 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
     p->updating = true;
 
-    p->view->setUpdatesEnabled(false);
-
     const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
 
     QStringList selected;
@@ -509,7 +507,6 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
             }
 
             p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::Select);
-            p->view->setUpdatesEnabled(true);
             p->updating = false;
         },
         Qt::SingleShotConnection);
