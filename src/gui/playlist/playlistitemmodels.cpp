@@ -36,22 +36,22 @@ int PlaylistContainerItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-FormattedScript PlaylistContainerItem::title() const
+RichScript PlaylistContainerItem::title() const
 {
     return m_title;
 }
 
-FormattedScript PlaylistContainerItem::subtitle() const
+RichScript PlaylistContainerItem::subtitle() const
 {
     return m_subtitle;
 }
 
-FormattedScript PlaylistContainerItem::sideText() const
+RichScript PlaylistContainerItem::sideText() const
 {
     return m_sideText;
 }
 
-FormattedScript PlaylistContainerItem::info() const
+RichScript PlaylistContainerItem::info() const
 {
     return m_info;
 }
@@ -76,7 +76,7 @@ void PlaylistContainerItem::updateGroupText(ScriptParser* parser, ScriptFormatte
         return;
     }
 
-    auto evaluateBlocks = [this, parser, formatter](FormattedScript& script) {
+    auto evaluateBlocks = [this, parser, formatter](RichScript& script) {
         script.text.clear();
         const auto evalScript = parser->evaluate(script.script, m_tracks);
         script.text           = formatter->evaluate(evalScript);
@@ -88,22 +88,22 @@ void PlaylistContainerItem::updateGroupText(ScriptParser* parser, ScriptFormatte
     evaluateBlocks(m_sideText);
 }
 
-void PlaylistContainerItem::setTitle(const FormattedScript& title)
+void PlaylistContainerItem::setTitle(const RichScript& title)
 {
     m_title = title;
 }
 
-void PlaylistContainerItem::setSubtitle(const FormattedScript& subtitle)
+void PlaylistContainerItem::setSubtitle(const RichScript& subtitle)
 {
     m_subtitle = subtitle;
 }
 
-void PlaylistContainerItem::setSideText(const FormattedScript& text)
+void PlaylistContainerItem::setSideText(const RichScript& text)
 {
     m_sideText = text;
 }
 
-void PlaylistContainerItem::setInfo(const FormattedScript& info)
+void PlaylistContainerItem::setInfo(const RichScript& info)
 {
     m_info = info;
 }
@@ -137,7 +137,7 @@ void PlaylistContainerItem::calculateSize()
 
     QSize totalSize;
 
-    auto addSize = [&totalSize](const FormattedScript& script, bool addToTotal = true) {
+    auto addSize = [&totalSize](const RichScript& script, bool addToTotal = true) {
         QSize blockSize;
         for(const auto& title : script.text) {
             const QFontMetrics fm{title.format.font};
@@ -178,18 +178,18 @@ void PlaylistContainerItem::calculateSize()
     m_size = totalSize;
 }
 
-PlaylistTrackItem::PlaylistTrackItem(FormattedScript left, FormattedScript right, const Track& track)
+PlaylistTrackItem::PlaylistTrackItem(RichScript left, RichScript right, const Track& track)
     : m_left{std::move(left)}
     , m_right{std::move(right)}
     , m_track{track}
 { }
 
-std::vector<FormattedScript> PlaylistTrackItem::columns() const
+std::vector<RichScript> PlaylistTrackItem::columns() const
 {
     return m_columns;
 }
 
-FormattedScript PlaylistTrackItem::column(int column) const
+RichScript PlaylistTrackItem::column(int column) const
 {
     if(column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
         return {};
@@ -198,17 +198,17 @@ FormattedScript PlaylistTrackItem::column(int column) const
     return m_columns.at(column);
 }
 
-PlaylistTrackItem::PlaylistTrackItem(std::vector<FormattedScript> columns, const Track& track)
+PlaylistTrackItem::PlaylistTrackItem(std::vector<RichScript> columns, const Track& track)
     : m_columns{std::move(columns)}
     , m_track{track}
 { }
 
-FormattedScript PlaylistTrackItem::left() const
+RichScript PlaylistTrackItem::left() const
 {
     return m_left;
 }
 
-FormattedScript PlaylistTrackItem::right() const
+RichScript PlaylistTrackItem::right() const
 {
     return m_right;
 }

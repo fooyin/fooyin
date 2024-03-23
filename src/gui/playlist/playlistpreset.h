@@ -31,26 +31,12 @@
 #include <QVariant>
 
 namespace Fooyin {
-struct FormattedScript
-{
-    QString script;
-    FormattedText text;
-
-    bool operator==(const FormattedScript& other) const
-    {
-        return std::tie(script, text) == std::tie(other.script, other.text);
-    };
-
-    friend QDataStream& operator<<(QDataStream& stream, const FormattedScript& script);
-    friend QDataStream& operator>>(QDataStream& stream, FormattedScript& script);
-};
-
 struct HeaderRow
 {
-    FormattedScript title;
-    FormattedScript subtitle;
-    FormattedScript sideText;
-    FormattedScript info;
+    RichScript title;
+    RichScript subtitle;
+    RichScript sideText;
+    RichScript info;
 
     int rowHeight{0};
     bool showCover{true};
@@ -75,8 +61,8 @@ struct HeaderRow
 
 struct SubheaderRow
 {
-    FormattedScript leftText;
-    FormattedScript rightText;
+    RichScript leftText;
+    RichScript rightText;
 
     int rowHeight{0};
 
@@ -97,9 +83,9 @@ using SubheaderRows = QList<SubheaderRow>;
 
 struct TrackRow
 {
-    std::vector<FormattedScript> columns;
-    FormattedScript leftText;
-    FormattedScript rightText;
+    std::vector<RichScript> columns;
+    RichScript leftText;
+    RichScript rightText;
 
     int rowHeight{0};
 

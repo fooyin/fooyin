@@ -14,6 +14,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/windowcontroller.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
+    ${CMAKE_SOURCE_DIR}/include/gui/scripting/richtext.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h

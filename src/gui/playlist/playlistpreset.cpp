@@ -23,18 +23,6 @@
 #include <QPalette>
 
 namespace Fooyin {
-QDataStream& operator<<(QDataStream& stream, const FormattedScript& script)
-{
-    stream << script.script;
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, FormattedScript& script)
-{
-    stream >> script.script;
-    return stream;
-}
-
 QDataStream& operator<<(QDataStream& stream, const HeaderRow& header)
 {
     stream << header.title;

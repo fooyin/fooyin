@@ -21,34 +21,13 @@
 
 #include "fygui_export.h"
 
+#include <gui/scripting/richtext.h>
+
 #include <QColor>
 #include <QFont>
 
 namespace Fooyin {
 class ScriptFormatterRegistry;
-
-struct Formatting
-{
-    QFont font;
-    QColor colour;
-
-    bool operator==(const Formatting& other) const
-    {
-        return std::tie(font, colour) == std::tie(other.font, other.colour);
-    };
-};
-
-struct FormattedTextBlock
-{
-    QString text;
-    Formatting format;
-
-    bool operator==(const FormattedTextBlock& other) const
-    {
-        return std::tie(text, format) == std::tie(other.text, other.format);
-    };
-};
-using FormattedText = std::vector<FormattedTextBlock>;
 
 class FYGUI_EXPORT ScriptFormatter
 {
@@ -56,7 +35,7 @@ public:
     ScriptFormatter();
     ~ScriptFormatter();
 
-    FormattedText evaluate(const QString& input);
+    RichText evaluate(const QString& input);
 
 private:
     struct Private;

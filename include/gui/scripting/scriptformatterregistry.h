@@ -22,6 +22,7 @@
 #include "fygui_export.h"
 
 #include <core/scripting/scriptregistry.h>
+#include <gui/scripting/richtext.h>
 
 namespace Fooyin {
 struct FormattedTextBlock;
@@ -33,7 +34,7 @@ public:
     ~ScriptFormatterRegistry();
 
     bool isFormatFunc(const QString& option) const;
-    void format(FormattedTextBlock& text, const QString& func, const QString& option = {}) const;
+    void format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
 
 private:
     struct Private;

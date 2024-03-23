@@ -109,7 +109,7 @@ struct PlaylistPopulator::Private
             return;
         }
 
-        auto evaluateBlocks = [this, track](FormattedScript& script) -> QString {
+        auto evaluateBlocks = [this, track](RichScript& script) -> QString {
             script.text.clear();
             const auto evalScript = parser.evaluate(script.script, track);
             if(!evalScript.isEmpty()) {
@@ -230,7 +230,7 @@ struct PlaylistPopulator::Private
             return nullptr;
         }
 
-        auto evaluateTrack = [this, &track](FormattedScript& script) {
+        auto evaluateTrack = [this, &track](RichScript& script) {
             script.text.clear();
             const auto evalScript = parser.evaluate(script.script, track);
             if(!evalScript.isEmpty()) {

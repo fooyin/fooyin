@@ -39,11 +39,11 @@ struct ScriptFormatter::Private
 
     ErrorList errors;
 
-    FormattedTextBlock currentFormat;
-    std::stack<FormattedTextBlock> formatStack;
-    std::vector<FormattedTextBlock> nestedFormats;
+    RichTextBlock currentBlock;
+    std::stack<RichTextBlock> blockStack;
+    std::vector<RichTextBlock> blockGroup;
 
-    FormattedText formatResult;
+    RichText formatResult;
 
     void advance()
     {
@@ -116,7 +116,7 @@ struct ScriptFormatter::Private
             case(ScriptScanner::TokColon):
             case(ScriptScanner::TokEquals):
             case(ScriptScanner::TokLiteral):
-                currentFormat.text += previous.value.toString();
+                currentBlock.text += previous.value.toString();
             case(ScriptScanner::TokEos):
             case(ScriptScanner::TokError):
                 break;
@@ -153,7 +153,7 @@ struct ScriptFormatter::Private
     {
         if(registry.isFormatFunc(func)) {
             addBlock();
-            registry.format(currentFormat, func, option);
+            registry.format(currentBlock.format, func, option);
         }
         else {
             error(QStringLiteral("Format option not found"));
@@ -189,44 +189,44 @@ struct ScriptFormatter::Private
 
     void addBlock()
     {
-        if(!currentFormat.text.isEmpty()) {
-            if(nestedFormats.empty()) {
-                formatResult.emplace_back(currentFormat);
+        if(!currentBlock.text.isEmpty()) {
+            if(blockGroup.empty()) {
+                formatResult.emplace_back(currentBlock);
             }
             else {
-                formatStack.emplace(currentFormat);
+                blockStack.emplace(currentBlock);
             }
-            currentFormat.text.clear();
+            currentBlock.text.clear();
         }
     }
 
     void closeBlock()
     {
-        if(!currentFormat.text.isEmpty()) {
-            if(formatStack.empty()) {
-                formatResult.emplace_back(currentFormat);
+        if(!currentBlock.text.isEmpty()) {
+            if(blockStack.empty()) {
+                formatResult.emplace_back(currentBlock);
             }
             else {
-                nestedFormats.emplace_back(currentFormat);
+                blockGroup.emplace_back(currentBlock);
             }
         }
 
-        if(!formatStack.empty()) {
-            currentFormat = formatStack.top();
-            formatStack.pop();
+        if(!blockStack.empty()) {
+            currentBlock = blockStack.top();
+            blockStack.pop();
         }
         else {
-            std::ranges::reverse(nestedFormats);
-            formatResult.insert(formatResult.end(), nestedFormats.cbegin(), nestedFormats.cend());
-            nestedFormats.clear();
+            std::ranges::reverse(blockGroup);
+            formatResult.insert(formatResult.end(), blockGroup.cbegin(), blockGroup.cend());
+            blockGroup.clear();
             resetFormat();
         }
     }
 
     void resetFormat()
     {
-        currentFormat               = {};
-        currentFormat.format.colour = qApp->palette().text().color();
+        currentBlock               = {};
+        currentBlock.format.colour = qApp->palette().text().color();
     }
 };
 
@@ -236,7 +236,7 @@ ScriptFormatter::ScriptFormatter()
 
 ScriptFormatter::~ScriptFormatter() = default;
 
-FormattedText ScriptFormatter::evaluate(const QString& input)
+RichText ScriptFormatter::evaluate(const QString& input)
 {
     if(input.isEmpty()) {
         return {};
@@ -253,8 +253,8 @@ FormattedText ScriptFormatter::evaluate(const QString& input)
 
     p->consume(ScriptScanner::TokEos, QStringLiteral("Expected end of expression"));
 
-    if(!p->currentFormat.text.isEmpty()) {
-        p->formatResult.emplace_back(p->currentFormat);
+    if(!p->currentBlock.text.isEmpty()) {
+        p->formatResult.emplace_back(p->currentBlock);
     }
 
     return p->formatResult;

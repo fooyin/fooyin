@@ -22,28 +22,28 @@
 #include <gui/scripting/scriptformatter.h>
 
 namespace Fooyin {
-using FormatFunc = std::function<void(FormattedTextBlock&, const QString&)>;
+using FormatFunc = std::function<void(RichFormatting&, const QString&)>;
 
-void bold(FormattedTextBlock& text, const QString& /*option*/)
+void bold(RichFormatting& formatting, const QString& /*option*/)
 {
-    text.format.font.setBold(true);
+    formatting.font.setBold(true);
 }
 
-void italic(FormattedTextBlock& text, const QString& /*option*/)
+void italic(RichFormatting& formatting, const QString& /*option*/)
 {
-    text.format.font.setItalic(true);
+    formatting.font.setItalic(true);
 }
 
-void fontFamily(FormattedTextBlock& text, const QString& option)
+void fontFamily(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
         return;
     }
 
-    text.format.font.setFamily(option);
+    formatting.font.setFamily(option);
 }
 
-void fontSize(FormattedTextBlock& text, const QString& option)
+void fontSize(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
         return;
@@ -53,11 +53,11 @@ void fontSize(FormattedTextBlock& text, const QString& option)
     const int size = option.toInt(&isInt);
 
     if(isInt) {
-        text.format.font.setPointSize(size);
+        formatting.font.setPointSize(size);
     }
 }
 
-void fontDelta(FormattedTextBlock& text, const QString& option)
+void fontDelta(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
         return;
@@ -67,11 +67,11 @@ void fontDelta(FormattedTextBlock& text, const QString& option)
     const int delta = option.toInt(&isInt);
 
     if(isInt) {
-        text.format.font.setPointSize(text.format.font.pointSize() + delta);
+        formatting.font.setPointSize(formatting.font.pointSize() + delta);
     }
 }
 
-void colourAlpha(FormattedTextBlock& text, const QString& option)
+void colourAlpha(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
         return;
@@ -81,11 +81,11 @@ void colourAlpha(FormattedTextBlock& text, const QString& option)
     const int alpha = option.toInt(&isInt);
 
     if(isInt) {
-        text.format.colour.setAlpha(alpha);
+        formatting.colour.setAlpha(alpha);
     }
 }
 
-void colourRgb(FormattedTextBlock& text, const QString& option)
+void colourRgb(RichFormatting& formatting, const QString& option)
 {
     if(option.isEmpty()) {
         return;
@@ -104,7 +104,7 @@ void colourRgb(FormattedTextBlock& text, const QString& option)
     const int alpha = (rgb.size() == 4) ? rgb.at(3).toInt(&isInt) : 255;
 
     if(isInt) {
-        text.format.colour.setRgb(red, green, blue, alpha);
+        formatting.colour.setRgb(red, green, blue, alpha);
     }
 }
 
@@ -129,12 +129,12 @@ bool ScriptFormatterRegistry::isFormatFunc(const QString& option) const
     return p->funcs.contains(option);
 }
 
-void ScriptFormatterRegistry::format(FormattedTextBlock& text, const QString& func, const QString& option) const
+void ScriptFormatterRegistry::format(RichFormatting& formatting, const QString& func, const QString& option) const
 {
     if(!isFormatFunc(func)) {
         return;
     }
 
-    p->funcs.at(func)(text, option);
+    p->funcs.at(func)(formatting, option);
 }
 } // namespace Fooyin

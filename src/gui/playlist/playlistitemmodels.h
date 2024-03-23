@@ -37,19 +37,19 @@ public:
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
 
-    [[nodiscard]] FormattedScript title() const;
-    [[nodiscard]] FormattedScript subtitle() const;
-    [[nodiscard]] FormattedScript sideText() const;
-    [[nodiscard]] FormattedScript info() const;
+    [[nodiscard]] RichScript title() const;
+    [[nodiscard]] RichScript subtitle() const;
+    [[nodiscard]] RichScript sideText() const;
+    [[nodiscard]] RichScript info() const;
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size() const;
 
     void updateGroupText(ScriptParser* parser, ScriptFormatter* formatter);
 
-    void setTitle(const FormattedScript& title);
-    void setSubtitle(const FormattedScript& subtitle);
-    void setSideText(const FormattedScript& text);
-    void setInfo(const FormattedScript& info);
+    void setTitle(const RichScript& title);
+    void setSubtitle(const RichScript& subtitle);
+    void setSideText(const RichScript& text);
+    void setInfo(const RichScript& info);
     void setRowHeight(int height);
 
     void addTrack(const Track& track);
@@ -61,10 +61,10 @@ public:
 private:
     TrackList m_tracks;
 
-    FormattedScript m_title;
-    FormattedScript m_subtitle;
-    FormattedScript m_sideText;
-    FormattedScript m_info;
+    RichScript m_title;
+    RichScript m_subtitle;
+    RichScript m_sideText;
+    RichScript m_info;
 
     QSize m_size;
     int m_rowHeight;
@@ -74,19 +74,19 @@ class PlaylistTrackItem
 {
 public:
     PlaylistTrackItem() = default;
-    PlaylistTrackItem(std::vector<FormattedScript> columns, const Track& track);
-    PlaylistTrackItem(FormattedScript left, FormattedScript right, const Track& track);
+    PlaylistTrackItem(std::vector<RichScript> columns, const Track& track);
+    PlaylistTrackItem(RichScript left, RichScript right, const Track& track);
 
-    [[nodiscard]] std::vector<FormattedScript> columns() const;
-    [[nodiscard]] FormattedScript column(int column) const;
-    [[nodiscard]] FormattedScript left() const;
-    [[nodiscard]] FormattedScript right() const;
+    [[nodiscard]] std::vector<RichScript> columns() const;
+    [[nodiscard]] RichScript column(int column) const;
+    [[nodiscard]] RichScript left() const;
+    [[nodiscard]] RichScript right() const;
     [[nodiscard]] Track track() const;
 
 private:
-    std::vector<FormattedScript> m_columns;
-    FormattedScript m_left;
-    FormattedScript m_right;
+    std::vector<RichScript> m_columns;
+    RichScript m_left;
+    RichScript m_right;
 
     Track m_track;
 };
