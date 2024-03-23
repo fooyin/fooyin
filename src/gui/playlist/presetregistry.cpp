@@ -44,13 +44,13 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Album - Disc");
 
-    preset.header.title.script    = QStringLiteral("$if2(%albumartist%,Unknown Artist)");
-    preset.header.subtitle.script = QStringLiteral("$if2(%album%,Unknown Album)");
-    preset.header.sideText.script = QStringLiteral("%year%");
-    preset.header.info.script
-        = QStringLiteral("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%");
+    preset.header.title.script    = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist)</sized></b>");
+    preset.header.subtitle.script = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)</sized>");
+    preset.header.sideText.script = QStringLiteral("<b><sized=2>%year%</sized></b>");
+    preset.header.info.script     = QStringLiteral(
+        "<sized=-1>[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%</sized>");
 
-    Fooyin::SubheaderRow subheader;
+    SubheaderRow subheader;
     subheader.leftText.script  = QStringLiteral("$ifgreater(%disctotal%,1,Disc #%disc%)");
     subheader.rightText.script = QStringLiteral("$ifgreater(%disctotal%,1,%playtime%)");
     preset.subHeaders.push_back(subheader);
@@ -62,7 +62,7 @@ void PresetRegistry::loadDefaults()
     preset.name = QStringLiteral("Split Discs");
 
     preset.header.subtitle.script
-        = QStringLiteral("$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)");
+        = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)</sized>");
 
     addDefaultItem(preset);
 
@@ -70,7 +70,8 @@ void PresetRegistry::loadDefaults()
 
     preset.header.simple = true;
     preset.header.subtitle.script.clear();
-    preset.header.title.script = QStringLiteral("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)");
+    preset.header.title.script
+        = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)</sized></b>");
 
     addDefaultItem(preset);
 }
