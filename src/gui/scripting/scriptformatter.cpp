@@ -55,6 +55,13 @@ struct ScriptFormatter::Private
         }
     }
 
+    void consume(ScriptScanner::TokenType type)
+    {
+        if(current.type == type) {
+            advance();
+        }
+    }
+
     void consume(ScriptScanner::TokenType type, const QString& message)
     {
         if(current.type == type) {
@@ -145,7 +152,6 @@ struct ScriptFormatter::Private
         }
 
         processFormat(func, option);
-        closeFormat(func);
         closeBlock();
     }
 
@@ -167,12 +173,9 @@ struct ScriptFormatter::Private
             expression();
         }
 
-        consume(ScriptScanner::TokLeftAngle, QStringLiteral("Expected '<' after expression"));
-        consume(ScriptScanner::TokSlash, QStringLiteral("Expected '/' after expression"));
-    }
+        consume(ScriptScanner::TokLeftAngle);
+        consume(ScriptScanner::TokSlash);
 
-    void closeFormat(const QString& func)
-    {
         QString closeOption;
 
         while(current.type != ScriptScanner::TokRightAngle && current.type != ScriptScanner::TokEos) {
@@ -180,11 +183,7 @@ struct ScriptFormatter::Private
             closeOption.append(previous.value.toString());
         }
 
-        if(closeOption != func) {
-            error(QStringLiteral("Formatting option not closed"));
-        }
-
-        consume(ScriptScanner::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+        consume(ScriptScanner::TokRightAngle);
     }
 
     void addBlock()
