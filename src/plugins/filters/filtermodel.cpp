@@ -380,15 +380,15 @@ void FilterModel::updateTracks(const TrackList& tracks)
         return;
     }
 
-    for(const Track& track : tracks) {
-        const int id = track.id();
-        if(p->trackParents.contains(id)) {
-            p->trackParents.erase(id);
-        }
-    }
+    p->tracksPendingRemoval = tracksToUpdate;
 
-    p->tracksPendingRemoval = tracks;
-    addTracks(tracks);
+    p->populatorThread.start();
+
+    QStringList columns;
+    std::ranges::transform(p->columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
+
+    QMetaObject::invokeMethod(&p->populator,
+                              [this, columns, tracksToUpdate] { p->populator.run(columns, tracksToUpdate); });
 }
 
 void FilterModel::removeTracks(const TrackList& tracks)
