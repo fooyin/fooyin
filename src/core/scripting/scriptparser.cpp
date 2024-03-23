@@ -197,19 +197,29 @@ struct ScriptParser::Private
         Expression expr;
         QString value;
 
+        auto checkExists = [this, &value, &tracks]() {
+            if(!registry->isVariable(value, tracks)) {
+                error(QStringLiteral("Variable not found"));
+            }
+        };
+
         if(previous.type == TokenType::TokLeftAngle) {
             advance();
             expr.type = Expr::VariableList;
             value     = QString{previous.value.toString()}.toLower();
             consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+            checkExists();
+        }
+        else if(previous.type == TokenType::TokVar) {
+            advance();
+            expr.type = Expr::Variable;
+            value     = QString{previous.value.toString()}.toLower();
+            consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
         }
         else {
             expr.type = Expr::Variable;
             value     = QString{previous.value.toString()}.toLower();
-        }
-
-        if(!registry->isVariable(value, tracks)) {
-            error(QStringLiteral("Variable not found"));
+            checkExists();
         }
 
         expr.value = value;

@@ -302,6 +302,11 @@ bool Track::hasEmbeddedCover() const
     return p->coverPath == u"|Embedded|";
 }
 
+bool Track::hasExtraTag(const QString& tag) const
+{
+    return p->extraTags.contains(tag);
+}
+
 QStringList Track::extraTag(const QString& tag) const
 {
     if(p->extraTags.contains(tag)) {

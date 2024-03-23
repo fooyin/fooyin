@@ -87,7 +87,7 @@ void ScriptHighlighter::variable()
 
     advance();
 
-    if(m_previous.type == ScriptScanner::TokLeftAngle) {
+    if(m_previous.type == ScriptScanner::TokLeftAngle || m_previous.type == ScriptScanner::TokVar) {
         setTokenFormat(m_varFormat);
         advance();
         advance();

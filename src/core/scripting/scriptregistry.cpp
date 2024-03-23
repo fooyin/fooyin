@@ -181,10 +181,9 @@ ScriptRegistry::ScriptRegistry()
 
 ScriptRegistry::~ScriptRegistry() = default;
 
-bool ScriptRegistry::isVariable(const QString& var, const Track& /*track*/) const
+bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    // TODO: Check custom track metadata
-    return p->metadata.contains(var);
+    return p->metadata.contains(var) || track.hasExtraTag(var.toUpper());
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
@@ -211,8 +210,7 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
         return calculateResult(p->metadata.at(var)(track));
     }
 
-    // return calculateResult(p->listProperties.at(var)({track}));
-    return {};
+    return calculateResult(track.extraTag(var.toUpper()));
 }
 
 ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) const
@@ -226,7 +224,10 @@ ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) 
     }
 
     if(!tracks.empty()) {
-        return calculateResult(p->metadata.at(var)(tracks.front()));
+        if(p->metadata.contains(var)) {
+            return calculateResult(p->metadata.at(var)(tracks.front()));
+        }
+        return calculateResult(tracks.front().extraTag(var.toUpper()));
     }
 
     return {};

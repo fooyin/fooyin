@@ -124,7 +124,8 @@ struct SandboxDialog::Private
         textChangeTimer->start(1500ms);
         results->clear();
 
-        currentScript = parser.parse(editor->toPlainText());
+        const Track track = trackSelection->hasTracks() ? trackSelection->selectedTracks().front() : Track{};
+        currentScript     = parser.parse(editor->toPlainText(), track);
 
         model.populate(currentScript.expressions);
         updateResults();

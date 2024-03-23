@@ -106,6 +106,7 @@ public:
     [[nodiscard]] bool hasCover() const;
     [[nodiscard]] bool hasEmbeddedCover() const;
 
+    [[nodiscard]] bool hasExtraTag(const QString& tag) const;
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
     [[nodiscard]] ExtraTags extraTags() const;
     [[nodiscard]] QStringList removedTags() const;
