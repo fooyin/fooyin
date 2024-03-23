@@ -68,15 +68,6 @@ public:
 
     void clearCache();
 
-protected:
-    ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalLiteral(const Expression& exp) const;
-    ScriptResult evalVariable(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalVariableList(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalFunction(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const;
-    ScriptResult evalConditional(const Expression& exp, const auto& tracks) const;
-
 private:
     struct Private;
     std::unique_ptr<Private> p;
