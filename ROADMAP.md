@@ -17,8 +17,8 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * Integrate Discogs for metadata searching
 
 ## Enhancements
-* Support custom tags within scripts
-* Add HTML-like tags to FooScript for formatting
+* ~~Support custom tags within scripts~~
+* ~~Add HTML-like tags to FooScript for formatting~~
 * Enhance playlist functionality - import/export options
 * Add album cover mode to filter widget
 
