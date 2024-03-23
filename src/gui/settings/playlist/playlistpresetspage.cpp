@@ -38,71 +38,8 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
+#include <QTextEdit>
 #include <QVBoxLayout>
-
-namespace {
-void setupInputBox(const Fooyin::TextBlock& preset, Fooyin::CustomisableInput* input)
-{
-    input->setText(preset.script);
-    input->setFont(preset.font);
-    input->setColour(preset.colour);
-
-    Fooyin::CustomisableInput::State state;
-    if(preset.colourChanged) {
-        state |= Fooyin::CustomisableInput::ColourChanged;
-    }
-    if(preset.fontChanged) {
-        state |= Fooyin::CustomisableInput::FontChanged;
-    }
-
-    input->setState(state);
-}
-
-void updateTextBlock(const Fooyin::CustomisableInput* input, Fooyin::TextBlock& textBlock)
-{
-    textBlock.script = input->text();
-    textBlock.font   = input->font();
-    textBlock.colour = input->colour();
-
-    auto state = input->state();
-
-    textBlock.fontChanged   = state & Fooyin::CustomisableInput::FontChanged;
-    textBlock.colourChanged = state & Fooyin::CustomisableInput::ColourChanged;
-}
-
-void updateTextBlocks(const Fooyin::ExpandableInputList& presetInputs, Fooyin::TextBlockList& textBlocks)
-{
-    textBlocks.clear();
-
-    for(const auto& input : presetInputs) {
-        if(!input->text().isEmpty()) {
-            if(auto* presetInput = qobject_cast<Fooyin::CustomisableInput*>(input)) {
-                Fooyin::TextBlock block;
-                updateTextBlock(presetInput, block);
-                textBlocks.emplace_back(block);
-            }
-        }
-    }
-}
-
-void createPresetInputs(const Fooyin::TextBlockList& blocks, Fooyin::ExpandableInputBox* box, QWidget* parent)
-{
-    auto createInput = [box, parent](const Fooyin::TextBlock& block) {
-        auto* input = new Fooyin::CustomisableInput(parent);
-        setupInputBox(block, input);
-        box->addInput(input);
-    };
-
-    if(blocks.empty()) {
-        createInput({});
-    }
-    else {
-        for(const auto& block : blocks) {
-            createInput(block);
-        }
-    }
-}
-} // namespace
 
 namespace Fooyin {
 class ExpandableGroupBox : public ExpandableInput
@@ -114,10 +51,8 @@ public:
         : ExpandableInput{ExpandableInput::CustomWidget, parent}
         , m_groupBox{new QGroupBox(this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_leftBox{new ExpandableInputBox(tr("Left-aligned text") + QStringLiteral(":"), ExpandableInput::CustomWidget,
-                                           this)}
-        , m_rightBox{new ExpandableInputBox(tr("Right-aligned text") + QStringLiteral(":"),
-                                            ExpandableInput::CustomWidget, this)}
+        , m_leftScript{new QTextEdit(this)}
+        , m_rightScript{new QTextEdit(this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -127,37 +62,39 @@ public:
 
         m_rowHeight->setValue(rowHeight);
 
-        m_leftBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
-        m_rightBox->setInputWidget([](QWidget* widget) { return new CustomisableInput(widget); });
-
         auto* rowHeightLabel = new QLabel(tr("Row height") + QStringLiteral(":"), this);
+
+        auto* leftScript  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
+        auto* rightScript = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
         groupLayout->addWidget(rowHeightLabel, 0, 0);
         groupLayout->addWidget(m_rowHeight, 0, 1);
-        groupLayout->addWidget(m_leftBox, 1, 0, 1, 3);
-        groupLayout->addWidget(m_rightBox, 2, 0, 1, 3);
+        groupLayout->addWidget(leftScript, 1, 0, 1, 3);
+        groupLayout->addWidget(m_leftScript, 2, 0, 1, 3);
+        groupLayout->addWidget(rightScript, 3, 0, 1, 3);
+        groupLayout->addWidget(m_rightScript, 4, 0, 1, 3);
 
         groupLayout->setColumnStretch(2, 1);
     }
 
-    void addLeftInput(const TextBlock& preset)
+    void setLeftScript(const QString& script)
     {
-        addInput(preset, m_leftBox);
+        m_leftScript->setPlainText(script);
     }
 
-    void addRightInput(const TextBlock& preset)
+    void setRightScript(const QString& script)
     {
-        addInput(preset, m_rightBox);
+        m_rightScript->setPlainText(script);
     }
 
-    ExpandableInputList leftBlocks() const
+    QString leftScript() const
     {
-        return m_leftBox->blocks();
+        return m_leftScript->toPlainText();
     }
 
-    ExpandableInputList rightBlocks() const
+    QString rightScript() const
     {
-        return m_rightBox->blocks();
+        return m_rightScript->toPlainText();
     }
 
     int rowHeight() const
@@ -170,35 +107,15 @@ public:
         ExpandableInput::setReadOnly(readOnly);
 
         m_rowHeight->setReadOnly(readOnly);
-        m_leftBox->setReadOnly(readOnly);
-        m_rightBox->setReadOnly(readOnly);
+        m_leftScript->setReadOnly(readOnly);
+        m_rightScript->setReadOnly(readOnly);
     }
 
 private:
-    void addInput(const TextBlock& preset, ExpandableInputBox* box)
-    {
-        auto* block = new CustomisableInput(this);
-        block->setReadOnly(readOnly());
-        block->setText(preset.script);
-        block->setFont(preset.font);
-        block->setColour(preset.colour);
-
-        CustomisableInput::State state;
-        if(preset.colourChanged) {
-            state |= CustomisableInput::ColourChanged;
-        }
-        if(preset.fontChanged) {
-            state |= CustomisableInput::FontChanged;
-        }
-        block->setState(state);
-
-        box->addInput(block);
-    }
-
     QGroupBox* m_groupBox;
     QSpinBox* m_rowHeight;
-    ExpandableInputBox* m_leftBox;
-    ExpandableInputBox* m_rightBox;
+    QTextEdit* m_leftScript;
+    QTextEdit* m_rightScript;
 };
 
 void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* box, QWidget* parent)
@@ -210,23 +127,8 @@ void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* 
     auto* input = new ExpandableGroupBox(subheader.rowHeight, parent);
     box->addInput(input);
 
-    if(subheader.leftText.empty()) {
-        input->addLeftInput({});
-    }
-    else {
-        for(const auto& block : subheader.leftText) {
-            input->addLeftInput(block);
-        }
-    }
-
-    if(subheader.rightText.empty()) {
-        input->addRightInput({});
-    }
-    else {
-        for(const auto& block : subheader.rightText) {
-            input->addRightInput(block);
-        }
-    }
+    input->setLeftScript(subheader.leftText.script);
+    input->setRightScript(subheader.rightText.script);
 }
 
 void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRows& textBlocks)
@@ -237,12 +139,9 @@ void updateGroupTextBlocks(const ExpandableInputList& presetInputs, SubheaderRow
         if(auto* presetInput = qobject_cast<ExpandableGroupBox*>(input)) {
             SubheaderRow block;
 
-            auto leftBlocks  = presetInput->leftBlocks();
-            auto rightBlocks = presetInput->rightBlocks();
-
-            updateTextBlocks(leftBlocks, block.leftText);
-            updateTextBlocks(rightBlocks, block.rightText);
-            block.rowHeight = presetInput->rowHeight();
+            block.leftText.script  = presetInput->leftScript();
+            block.rightText.script = presetInput->rightScript();
+            block.rowHeight        = presetInput->rowHeight();
 
             textBlocks.emplace_back(block);
         }
@@ -279,16 +178,16 @@ private:
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
 
-    ExpandableInputBox* m_headerTitle;
-    ExpandableInputBox* m_headerSubtitle;
-    ExpandableInputBox* m_headerSideText;
-    ExpandableInputBox* m_headerInfo;
+    QTextEdit* m_headerTitle;
+    QTextEdit* m_headerSubtitle;
+    QTextEdit* m_headerSideText;
+    QTextEdit* m_headerInfo;
     QSpinBox* m_headerRowHeight;
 
     ExpandableInputBox* m_subHeaders;
 
-    ExpandableInputBox* m_trackLeftText;
-    ExpandableInputBox* m_trackRightText;
+    QTextEdit* m_trackLeftText;
+    QTextEdit* m_trackRightText;
     QSpinBox* m_trackRowHeight;
 
     QCheckBox* m_showCover;
@@ -306,7 +205,13 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     , m_presetRegistry{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
+    , m_headerTitle{new QTextEdit(this)}
+    , m_headerSubtitle{new QTextEdit(this)}
+    , m_headerSideText{new QTextEdit(this)}
+    , m_headerInfo{new QTextEdit(this)}
     , m_headerRowHeight{new QSpinBox(this)}
+    , m_trackLeftText{new QTextEdit(tr("Left-aligned text") + QStringLiteral(":"), this)}
+    , m_trackRightText{new QTextEdit(tr("Right-aligned text") + QStringLiteral(":"), this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show Cover"), this)}
     , m_simpleHeader{new QCheckBox(tr("Simple Header"), this)}
@@ -330,28 +235,25 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     auto* headerWidget = new QWidget();
     auto* headerLayout = new QGridLayout(headerWidget);
 
-    const auto inputAttributes = ExpandableInput::CustomWidget;
-
-    m_headerTitle    = new ExpandableInputBox(tr("Title") + QStringLiteral(":"), inputAttributes, this);
-    m_headerSubtitle = new ExpandableInputBox(tr("Subtitle") + QStringLiteral(":"), inputAttributes, this);
-    m_headerSideText = new ExpandableInputBox(tr("Side text") + QStringLiteral(":"), inputAttributes, this);
-    m_headerInfo     = new ExpandableInputBox(tr("Info") + QStringLiteral(":"), inputAttributes, this);
-
-    m_headerTitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_headerSubtitle->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_headerSideText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_headerInfo->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-
     auto* headerRowHeight = new QLabel(tr("Row height") + QStringLiteral(":"), this);
+
+    auto* headerTitle    = new QLabel(tr("Title") + QStringLiteral(":"), this);
+    auto* headerSubtitle = new QLabel(tr("Subtitle") + QStringLiteral(":"), this);
+    auto* headerSide     = new QLabel(tr("Side") + QStringLiteral(":"), this);
+    auto* headerInfo     = new QLabel(tr("Info") + QStringLiteral(":"), this);
 
     headerLayout->addWidget(headerRowHeight, 0, 0);
     headerLayout->addWidget(m_headerRowHeight, 0, 1);
     headerLayout->addWidget(m_simpleHeader, 1, 0, 1, 2);
     headerLayout->addWidget(m_showCover, 2, 0, 1, 2);
-    headerLayout->addWidget(m_headerTitle, 3, 0, 1, 5);
-    headerLayout->addWidget(m_headerSubtitle, 4, 0, 1, 5);
-    headerLayout->addWidget(m_headerSideText, 5, 0, 1, 5);
-    headerLayout->addWidget(m_headerInfo, 6, 0, 1, 5);
+    headerLayout->addWidget(headerTitle, 3, 0, 1, 5);
+    headerLayout->addWidget(m_headerTitle, 4, 0, 1, 5);
+    headerLayout->addWidget(headerSubtitle, 5, 0, 1, 5);
+    headerLayout->addWidget(m_headerSubtitle, 6, 0, 1, 5);
+    headerLayout->addWidget(headerSide, 7, 0, 1, 5);
+    headerLayout->addWidget(m_headerSideText, 8, 0, 1, 5);
+    headerLayout->addWidget(headerInfo, 9, 0, 1, 5);
+    headerLayout->addWidget(m_headerInfo, 10, 0, 1, 5);
 
     headerLayout->setColumnStretch(4, 1);
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
@@ -361,12 +263,10 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     auto* subheaderWidget = new QWidget();
     auto* subheaderLayout = new QGridLayout(subheaderWidget);
 
-    m_subHeaders = new ExpandableInputBox(tr("Subheaders") + QStringLiteral(":"), inputAttributes, this);
+    m_subHeaders = new ExpandableInputBox(tr("Subheaders") + QStringLiteral(":"), ExpandableInput::CustomWidget, this);
     m_subHeaders->setInputWidget([](QWidget* parent) {
         const SubheaderRow subheader;
         auto* groupBox = new ExpandableGroupBox(subheader.rowHeight, parent);
-        groupBox->addLeftInput({});
-        groupBox->addRightInput({});
         return groupBox;
     });
 
@@ -381,15 +281,15 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
 
     auto* trackRowHeight = new QLabel(tr("Row height") + QStringLiteral(":"), this);
 
-    m_trackLeftText = new ExpandableInputBox(tr("Left-aligned text") + QStringLiteral(":"), inputAttributes, this);
-    m_trackLeftText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
-    m_trackRightText = new ExpandableInputBox(tr("Right-aligned text") + QStringLiteral(":"), inputAttributes, this);
-    m_trackRightText->setInputWidget([](QWidget* parent) { return new CustomisableInput(parent); });
+    auto* trackLeft  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
+    auto* TrackRight = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
     trackLayout->addWidget(trackRowHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
-    trackLayout->addWidget(m_trackLeftText, 1, 0, 1, 3);
-    trackLayout->addWidget(m_trackRightText, 2, 0, 1, 3);
+    trackLayout->addWidget(trackLeft, 1, 0, 1, 3);
+    trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 3);
+    trackLayout->addWidget(TrackRight, 3, 0, 1, 3);
+    trackLayout->addWidget(m_trackRightText, 4, 0, 1, 3);
 
     trackLayout->setColumnStretch(2, 1);
     trackLayout->setRowStretch(trackLayout->rowCount(), 1);
@@ -495,10 +395,10 @@ void PlaylistPresetsPageWidget::updatePreset()
         return;
     }
 
-    updateTextBlocks(m_headerTitle->blocks(), preset.header.title);
-    updateTextBlocks(m_headerSubtitle->blocks(), preset.header.subtitle);
-    updateTextBlocks(m_headerSideText->blocks(), preset.header.sideText);
-    updateTextBlocks(m_headerInfo->blocks(), preset.header.info);
+    preset.header.title.script    = m_headerTitle->toPlainText();
+    preset.header.subtitle.script = m_headerSubtitle->toPlainText();
+    preset.header.sideText.script = m_headerSideText->toPlainText();
+    preset.header.info.script     = m_headerInfo->toPlainText();
 
     preset.header.rowHeight = m_headerRowHeight->value();
     preset.header.simple    = m_simpleHeader->isChecked();
@@ -506,9 +406,9 @@ void PlaylistPresetsPageWidget::updatePreset()
 
     updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
 
-    updateTextBlocks(m_trackLeftText->blocks(), preset.track.leftText);
-    updateTextBlocks(m_trackRightText->blocks(), preset.track.rightText);
-    preset.track.rowHeight = m_trackRowHeight->value();
+    preset.track.leftText.script  = m_trackLeftText->toPlainText();
+    preset.track.rightText.script = m_trackRightText->toPlainText();
+    preset.track.rowHeight        = m_trackRowHeight->value();
 
     m_presetRegistry.changeItem(preset);
 }
@@ -552,10 +452,10 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSideText->setReadOnly(preset.isDefault);
     m_headerInfo->setReadOnly(preset.isDefault);
 
-    createPresetInputs(preset.header.title, m_headerTitle, this);
-    createPresetInputs(preset.header.subtitle, m_headerSubtitle, this);
-    createPresetInputs(preset.header.sideText, m_headerSideText, this);
-    createPresetInputs(preset.header.info, m_headerInfo, this);
+    m_headerTitle->setPlainText(preset.header.title.script);
+    m_headerSubtitle->setPlainText(preset.header.subtitle.script);
+    m_headerSideText->setPlainText(preset.header.sideText.script);
+    m_headerInfo->setPlainText(preset.header.info.script);
 
     m_headerRowHeight->setValue(preset.header.rowHeight);
     m_headerRowHeight->setReadOnly(preset.isDefault);
@@ -576,21 +476,15 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_trackLeftText->setReadOnly(preset.isDefault);
     m_trackRightText->setReadOnly(preset.isDefault);
 
-    createPresetInputs(preset.track.leftText, m_trackLeftText, this);
-    createPresetInputs(preset.track.rightText, m_trackRightText, this);
+    m_trackLeftText->setPlainText(preset.track.leftText.script);
+    m_trackRightText->setPlainText(preset.track.rightText.script);
     m_trackRowHeight->setValue(preset.track.rowHeight);
     m_trackRowHeight->setReadOnly(preset.isDefault);
 }
 
 void PlaylistPresetsPageWidget::clearBlocks()
 {
-    m_headerTitle->clearBlocks();
-    m_headerSubtitle->clearBlocks();
-    m_headerSideText->clearBlocks();
-    m_headerInfo->clearBlocks();
     m_subHeaders->clearBlocks();
-    m_trackLeftText->clearBlocks();
-    m_trackRightText->clearBlocks();
 }
 
 PlaylistPresetsPage::PlaylistPresetsPage(SettingsManager* settings)

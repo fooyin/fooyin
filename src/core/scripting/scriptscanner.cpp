@@ -33,6 +33,9 @@ bool isLiteral(const QChar ch)
         case(ScriptScanner::TokVar):
         case(ScriptScanner::TokLeftAngle):
         case(ScriptScanner::TokRightAngle):
+        case(ScriptScanner::TokSlash):
+        case(ScriptScanner::TokColon):
+        case(ScriptScanner::TokEquals):
         case(ScriptScanner::TokEscape):
             return false;
         default:
@@ -45,6 +48,33 @@ void ScriptScanner::setup(const QString& input)
     m_input   = input;
     m_start   = m_input.cbegin();
     m_current = m_start;
+
+    m_tokens.clear();
+    m_currentTokenIndex = 0;
+
+    while(!isAtEnd()) {
+        m_tokens.emplace_back(scanNext());
+    }
+}
+
+ScriptScanner::Token ScriptScanner::next()
+{
+    if(m_currentTokenIndex < 0 || std::cmp_greater_equal(m_currentTokenIndex, m_tokens.size())) {
+        return makeToken(TokEos);
+    }
+
+    return m_tokens.at(m_currentTokenIndex++);
+}
+
+ScriptScanner::Token ScriptScanner::peekNext(int delta)
+{
+    const int next = m_currentTokenIndex + delta - 1;
+
+    if(next < 0 || std::cmp_greater_equal(next, m_tokens.size())) {
+        return makeToken(TokEos);
+    }
+
+    return m_tokens.at(next);
 }
 
 ScriptScanner::Token ScriptScanner::scanNext()
@@ -78,6 +108,12 @@ ScriptScanner::Token ScriptScanner::scanNext()
             return makeToken(TokComma);
         case('"'):
             return makeToken(TokQuote);
+        case('/'):
+            return makeToken(TokSlash);
+        case(':'):
+            return makeToken(TokColon);
+        case('='):
+            return makeToken(TokEquals);
         case('\\'):
             return makeToken(TokEscape);
         default:

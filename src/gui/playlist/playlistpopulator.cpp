@@ -44,6 +44,8 @@ struct PlaylistPopulator::Private
     std::unique_ptr<PlaylistScriptRegistry> registry;
     ScriptParser parser;
 
+    ScriptFormatter formatter;
+
     QString prevBaseHeaderKey;
     QString prevHeaderKey;
     std::vector<QString> prevBaseSubheaderKey;
@@ -73,17 +75,6 @@ struct PlaylistPopulator::Private
         prevHeaderKey.clear();
     }
 
-    void updateScripts()
-    {
-        if(!columns.empty()) {
-            TextBlockList columnBlocks;
-            for(const auto& column : columns) {
-                columnBlocks.emplace_back(column.field);
-            }
-            currentPreset.track.leftText = columnBlocks;
-        }
-    }
-
     PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
                                   PlaylistItem* parent, const QString& baseKey)
     {
@@ -107,7 +98,7 @@ struct PlaylistPopulator::Private
     void updateContainers()
     {
         for(const auto& [key, container] : headers) {
-            container->updateGroupText(&parser);
+            container->updateGroupText(&parser, &formatter);
         }
     }
 
@@ -118,25 +109,18 @@ struct PlaylistPopulator::Private
             return;
         }
 
-        auto evaluateBlocks = [this, track](const TextBlockList& presetBlocks, TextBlockList& headerBlocks) -> QString {
-            QString key;
-            headerBlocks.clear();
-            for(const TextBlock& block : presetBlocks) {
-                TextBlock headerBlock{block};
-                headerBlock.text = parser.evaluate(headerBlock.script, track);
-                if(!headerBlock.text.isEmpty()) {
-                    headerBlocks.push_back(headerBlock);
-                }
-                key += headerBlock.text;
+        auto evaluateBlocks = [this, track](RichScript& script) -> QString {
+            script.text.clear();
+            const auto evalScript = parser.evaluate(script.script, track);
+            if(!evalScript.isEmpty()) {
+                script.text = formatter.evaluate(evalScript);
             }
-            return key;
+            return evalScript;
         };
 
-        auto generateHeaderKey = [this, &row, &evaluateBlocks]() {
-            return Utils::generateHash(evaluateBlocks(currentPreset.header.title, row.title),
-                                       evaluateBlocks(currentPreset.header.subtitle, row.subtitle),
-                                       evaluateBlocks(currentPreset.header.sideText, row.sideText),
-                                       evaluateBlocks(currentPreset.header.info, row.info));
+        auto generateHeaderKey = [&row, &evaluateBlocks]() {
+            return Utils::generateHash(evaluateBlocks(row.title), evaluateBlocks(row.subtitle),
+                                       evaluateBlocks(row.sideText), evaluateBlocks(row.info));
         };
 
         const QString baseKey = generateHeaderKey();
@@ -171,12 +155,10 @@ struct PlaylistPopulator::Private
     void iterateSubheaders(const Track& track, PlaylistItem*& parent)
     {
         for(auto& subheader : currentPreset.subHeaders) {
-            for(auto& block : subheader.leftText) {
-                block.text = parser.evaluate(block.script, track);
-            }
-            for(auto& block : subheader.rightText) {
-                block.text = parser.evaluate(block.script, track);
-            }
+            const auto leftScript    = parser.evaluate(subheader.leftText.script, track);
+            subheader.leftText.text  = formatter.evaluate(leftScript);
+            const auto rightScript   = parser.evaluate(subheader.rightText.script, track);
+            subheader.rightText.text = formatter.evaluate(rightScript);
 
             PlaylistContainerItem currentContainer;
             currentContainer.setTitle(subheader.leftText);
@@ -192,10 +174,10 @@ struct PlaylistPopulator::Private
 
         auto generateSubheaderKey = [](const PlaylistContainerItem& subheader) {
             QString subheaderKey;
-            for(const TextBlock& block : subheader.title()) {
+            for(const auto& block : subheader.title().text) {
                 subheaderKey += block.text;
             }
-            for(const TextBlock& block : subheader.subtitle()) {
+            for(const auto& block : subheader.subtitle().text) {
                 subheaderKey += block.text;
             }
             return subheaderKey;
@@ -248,21 +230,32 @@ struct PlaylistPopulator::Private
             return nullptr;
         }
 
-        auto evaluateTrack = [this, &track](const TextBlockList& blocks, TextBlockList& trackRow) {
-            for(const TextBlock& block : blocks) {
-                TextBlock trackBlock{block};
-                trackBlock.text = parser.evaluate(block.script, track);
-                trackRow.push_back(trackBlock);
+        auto evaluateTrack = [this, &track](RichScript& script) {
+            script.text.clear();
+            const auto evalScript = parser.evaluate(script.script, track);
+            if(!evalScript.isEmpty()) {
+                script.text = formatter.evaluate(evalScript);
             }
         };
 
         registry->setTrackIndex(index);
 
-        TrackRow trackRow;
-        evaluateTrack(currentPreset.track.leftText, trackRow.leftText);
-        evaluateTrack(currentPreset.track.rightText, trackRow.rightText);
+        TrackRow trackRow{currentPreset.track};
+        PlaylistTrackItem playlistTrack;
 
-        PlaylistTrackItem playlistTrack{trackRow.leftText, trackRow.rightText, track};
+        if(!columns.empty()) {
+            for(const auto& column : columns) {
+                const auto evalScript = parser.evaluate(column.field, track);
+                trackRow.columns.emplace_back(column.field, formatter.evaluate(evalScript));
+            }
+            playlistTrack = {trackRow.columns, track};
+        }
+        else {
+            evaluateTrack(trackRow.leftText);
+            evaluateTrack(trackRow.rightText);
+
+            playlistTrack = {trackRow.leftText, trackRow.rightText, track};
+        }
 
         const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
         const QString key     = Utils::generateRandomHash();
@@ -358,7 +351,6 @@ void PlaylistPopulator::run(const Id& playlistId, const PlaylistPreset& preset, 
     p->pendingTracks   = tracks;
     p->registry->setup(playlistId, p->playerController->playbackQueue());
 
-    p->updateScripts();
     p->runBatch(TrackPreloadSize, 0);
 
     emit finished();
@@ -378,7 +370,6 @@ void PlaylistPopulator::runTracks(const Id& playlistId, const PlaylistPreset& pr
     p->columns         = columns;
     p->registry->setup(playlistId, p->playerController->playbackQueue());
 
-    p->updateScripts();
     p->runTracksGroup(tracks);
 
     setState(Idle);
@@ -392,7 +383,7 @@ void PlaylistPopulator::updateHeaders(const ItemList& headers)
 
     for(const PlaylistItem& item : headers) {
         PlaylistContainerItem& header = std::get<1>(item.data());
-        header.updateGroupText(&p->parser);
+        header.updateGroupText(&p->parser, &p->formatter);
         updatedHeaders.emplace(item.key(), item);
     }
 

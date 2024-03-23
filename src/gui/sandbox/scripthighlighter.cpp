@@ -70,6 +70,9 @@ void ScriptHighlighter::expression()
         case(ScriptScanner::TokRightParen):
         case(ScriptScanner::TokRightSquare):
         case(ScriptScanner::TokLiteral):
+        case(ScriptScanner::TokSlash):
+        case(ScriptScanner::TokColon):
+        case(ScriptScanner::TokEquals):
         case(ScriptScanner::TokEos):
         case(ScriptScanner::TokError):
             break;
@@ -140,7 +143,7 @@ void ScriptHighlighter::setTokenFormat(const QTextCharFormat& format)
 void ScriptHighlighter::advance()
 {
     m_previous = m_current;
-    m_current  = m_scanner.scanNext();
+    m_current  = m_scanner.next();
 }
 
 bool ScriptHighlighter::currentToken(ScriptScanner::TokenType type) const

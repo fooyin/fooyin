@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/scripting/scriptparser.h>
+#include <gui/scripting/scriptformatter.h>
 
 #include <QColor>
 #include <QDataStream>
@@ -30,66 +31,12 @@
 #include <QVariant>
 
 namespace Fooyin {
-struct TextBlock
-{
-    QString text;
-    QString script;
-
-    bool fontChanged{false};
-    QFont font;
-
-    bool colourChanged{false};
-    QColor colour;
-
-    TextBlock();
-    explicit TextBlock(QString script, int fontDelta = 0);
-
-    bool operator==(const TextBlock& other) const
-    {
-        return std::tie(text, script, fontChanged, font, colourChanged, colour)
-            == std::tie(other.text, other.script, other.fontChanged, other.font, other.colourChanged, other.colour);
-    };
-
-    operator QVariant() const
-    {
-        return QVariant::fromValue(*this);
-    }
-
-    [[nodiscard]] bool isValid() const
-    {
-        return !text.isEmpty();
-    }
-
-    void cloneProperties(const TextBlock& other)
-    {
-        fontChanged   = other.fontChanged;
-        font          = other.font;
-        colourChanged = other.colourChanged;
-        colour        = other.colour;
-    }
-
-    friend QDataStream& operator<<(QDataStream& stream, const TextBlock& block);
-    friend QDataStream& operator>>(QDataStream& stream, TextBlock& block);
-};
-
-class TextBlockList : public std::vector<TextBlock>
-{
-public:
-    operator QVariant() const
-    {
-        return QVariant::fromValue(*this);
-    }
-
-    friend QDataStream& operator<<(QDataStream& stream, const TextBlockList& blocks);
-    friend QDataStream& operator>>(QDataStream& stream, TextBlockList& blocks);
-};
-
 struct HeaderRow
 {
-    TextBlockList title;
-    TextBlockList subtitle;
-    TextBlockList sideText;
-    TextBlockList info;
+    RichScript title;
+    RichScript subtitle;
+    RichScript sideText;
+    RichScript info;
 
     int rowHeight{0};
     bool showCover{true};
@@ -104,7 +51,8 @@ struct HeaderRow
 
     [[nodiscard]] bool isValid() const
     {
-        return !title.empty() || !subtitle.empty() || !sideText.empty() || !info.empty();
+        return !title.script.isEmpty() || !subtitle.script.isEmpty() || !sideText.script.isEmpty()
+            || !info.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const HeaderRow& header);
@@ -113,8 +61,8 @@ struct HeaderRow
 
 struct SubheaderRow
 {
-    TextBlockList leftText;
-    TextBlockList rightText;
+    RichScript leftText;
+    RichScript rightText;
 
     int rowHeight{0};
 
@@ -125,7 +73,7 @@ struct SubheaderRow
 
     [[nodiscard]] bool isValid() const
     {
-        return !leftText.empty() || !rightText.empty();
+        return !leftText.script.isEmpty() || !rightText.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const SubheaderRow& subheader);
@@ -135,19 +83,21 @@ using SubheaderRows = QList<SubheaderRow>;
 
 struct TrackRow
 {
-    TextBlockList leftText;
-    TextBlockList rightText;
+    std::vector<RichScript> columns;
+    RichScript leftText;
+    RichScript rightText;
 
     int rowHeight{0};
 
     bool operator==(const TrackRow& other) const
     {
-        return std::tie(leftText, rightText, rowHeight) == std::tie(other.leftText, other.rightText, other.rowHeight);
+        return std::tie(columns, leftText, rightText, rowHeight)
+            == std::tie(other.columns, other.leftText, other.rightText, other.rowHeight);
     };
 
     [[nodiscard]] bool isValid() const
     {
-        return !leftText.empty() || !rightText.empty();
+        return !columns.empty() || !leftText.script.isEmpty() || !rightText.script.isEmpty();
     }
 
     friend QDataStream& operator<<(QDataStream& stream, const TrackRow& track);
@@ -180,6 +130,3 @@ struct PlaylistPreset
     friend QDataStream& operator>>(QDataStream& stream, PlaylistPreset& preset);
 };
 } // namespace Fooyin
-
-Q_DECLARE_METATYPE(Fooyin::TextBlock);
-Q_DECLARE_METATYPE(Fooyin::TextBlockList);

@@ -39,6 +39,9 @@ public:
         TokRightParen  = ')',
         TokLeftSquare  = '[',
         TokRightSquare = ']',
+        TokSlash       = '/',
+        TokColon       = ':',
+        TokEquals      = '=',
         TokEscape      = '\\',
         TokEos         = '\0',
         TokError,
@@ -47,15 +50,17 @@ public:
 
     struct Token
     {
-        TokenType type;
+        TokenType type{TokError};
         QStringView value;
         int position{0};
     };
 
     void setup(const QString& input);
-    Token scanNext();
+    Token next();
+    Token peekNext(int delta = 1);
 
 private:
+    Token scanNext();
     [[nodiscard]] Token makeToken(TokenType type) const;
     Token literal();
 
@@ -66,5 +71,8 @@ private:
     QStringView m_input;
     const QChar* m_start;
     const QChar* m_current;
+
+    std::vector<Token> m_tokens;
+    int m_currentTokenIndex;
 };
 } // namespace Fooyin

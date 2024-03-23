@@ -50,6 +50,8 @@ QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringLi
 namespace Fooyin {
 struct ScriptParser::Private
 {
+    ScriptParser* self;
+
     ScriptScanner scanner;
     ScriptRegistry* registry;
 
@@ -60,15 +62,16 @@ struct ScriptParser::Private
     std::unordered_map<QString, ParsedScript> parsedScripts;
     QStringList currentResult;
 
-    explicit Private(ScriptRegistry* registry_)
-        : registry{registry_}
+    explicit Private(ScriptParser* self_, ScriptRegistry* registry_)
+        : self{self_}
+        , registry{registry_}
     { }
 
     void advance()
     {
         previous = current;
 
-        current = scanner.scanNext();
+        current = scanner.next();
         if(current.type == TokenType::TokError) {
             errorAtCurrent(current.value.toString());
         }
@@ -126,6 +129,150 @@ struct ScriptParser::Private
     void error(const QString& message)
     {
         errorAt(previous, message);
+    }
+
+    Expression expression(const auto& tracks)
+    {
+        advance();
+        switch(previous.type) {
+            case(TokenType::TokVar):
+                return variable(tracks);
+            case(TokenType::TokFunc):
+                return function(tracks);
+            case(TokenType::TokQuote):
+                return quote();
+            case(TokenType::TokLeftSquare):
+                return conditional(tracks);
+            case(TokenType::TokEscape):
+                advance();
+                return literal();
+            case(TokenType::TokLeftAngle):
+            case(TokenType::TokRightAngle):
+            case(TokenType::TokComma):
+            case(TokenType::TokLeftParen):
+            case(TokenType::TokRightParen):
+            case(TokenType::TokRightSquare):
+            case(TokenType::TokSlash):
+            case(TokenType::TokColon):
+            case(TokenType::TokEquals):
+            case(TokenType::TokLiteral):
+                return literal();
+            case(TokenType::TokEos):
+            case(TokenType::TokError):
+                break;
+        }
+        // We shouldn't ever reach here
+        return {Expr::Null};
+    }
+
+    Expression literal() const
+    {
+        return {Expr::Literal, previous.value.toString()};
+    }
+
+    Expression quote()
+    {
+        Expression expr{Expr::Literal};
+        QString val;
+
+        while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
+            advance();
+            val.append(previous.value.toString());
+            if(currentToken(TokenType::TokEscape)) {
+                advance();
+                val.append(current.value.toString());
+                advance();
+            }
+        }
+
+        expr.value = val;
+        consume(TokenType::TokQuote, QString::fromUtf8(R"(Expected '"' after expression)"));
+        return expr;
+    }
+
+    Expression variable(const auto& tracks)
+    {
+        advance();
+
+        Expression expr;
+        QString value;
+
+        if(previous.type == TokenType::TokLeftAngle) {
+            advance();
+            expr.type = Expr::VariableList;
+            value     = QString{previous.value.toString()}.toLower();
+            consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+        }
+        else {
+            expr.type = Expr::Variable;
+            value     = QString{previous.value.toString()}.toLower();
+        }
+
+        if(!registry->isVariable(value, tracks)) {
+            error(QStringLiteral("Variable not found"));
+        }
+
+        expr.value = value;
+        consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
+        return expr;
+    }
+
+    Expression function(const auto& tracks)
+    {
+        advance();
+
+        if(previous.type != TokenType::TokLiteral) {
+            error(QStringLiteral("Expected function name"));
+        }
+
+        Expression expr{Expr::Function};
+        FuncValue funcExpr;
+        funcExpr.name = QString{previous.value.toString()}.toLower();
+
+        if(!registry->isFunction(funcExpr.name)) {
+            error(QStringLiteral("Function not found"));
+        }
+
+        consume(TokenType::TokLeftParen, QStringLiteral("Expected '(' after function call"));
+
+        if(!currentToken(TokenType::TokRightParen)) {
+            funcExpr.args.emplace_back(functionArgs(tracks));
+            while(match(TokenType::TokComma)) {
+                funcExpr.args.emplace_back(functionArgs(tracks));
+            }
+        }
+
+        expr.value = funcExpr;
+        consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after function call"));
+        return expr;
+    }
+
+    Expression functionArgs(const auto& tracks)
+    {
+        Expression expr{Expr::FunctionArg};
+        ExpressionList funcExpr;
+
+        while(!currentToken(TokenType::TokComma) && !currentToken(TokenType::TokRightParen)
+              && !currentToken(TokenType::TokEos)) {
+            funcExpr.emplace_back(expression(tracks));
+        }
+
+        expr.value = funcExpr;
+        return expr;
+    }
+
+    Expression conditional(const auto& tracks)
+    {
+        Expression expr{Expr::Conditional};
+        ExpressionList condExpr;
+
+        while(!currentToken(TokenType::TokRightSquare) && !currentToken(TokenType::TokEos)) {
+            condExpr.emplace_back(expression(tracks));
+        }
+
+        expr.value = condExpr;
+        consume(TokenType::TokRightSquare, QStringLiteral("Expected ']' after expression"));
+        return expr;
     }
 
     ScriptResult evalExpression(const Expression& exp, const auto& tracks) const
@@ -259,147 +406,6 @@ struct ScriptParser::Private
         return result;
     }
 
-    Expression expression(const auto& tracks)
-    {
-        advance();
-        switch(previous.type) {
-            case(TokenType::TokVar):
-                return variable(tracks);
-            case(TokenType::TokFunc):
-                return function(tracks);
-            case(TokenType::TokQuote):
-                return quote();
-            case(TokenType::TokLeftSquare):
-                return conditional(tracks);
-            case(TokenType::TokEscape):
-                advance();
-                return literal();
-            case(TokenType::TokLeftAngle):
-            case(TokenType::TokRightAngle):
-            case(TokenType::TokComma):
-            case(TokenType::TokLeftParen):
-            case(TokenType::TokRightParen):
-            case(TokenType::TokRightSquare):
-            case(TokenType::TokLiteral):
-                return literal();
-            case(TokenType::TokEos):
-            case(TokenType::TokError):
-                break;
-        }
-        // We shouldn't ever reach here
-        return {Expr::Null};
-    }
-
-    Expression literal() const
-    {
-        return {Expr::Literal, previous.value.toString()};
-    }
-
-    Expression quote()
-    {
-        Expression expr{Expr::Literal};
-        QString val;
-
-        while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
-            advance();
-            val.append(previous.value.toString());
-            if(currentToken(TokenType::TokEscape)) {
-                advance();
-                val.append(current.value.toString());
-                advance();
-            }
-        }
-
-        expr.value = val;
-        consume(TokenType::TokQuote, QString::fromUtf8(R"(Expected '"' after expression)"));
-        return expr;
-    }
-
-    Expression variable(const auto& tracks)
-    {
-        advance();
-
-        Expression expr;
-        QString value;
-
-        if(previous.type == TokenType::TokLeftAngle) {
-            advance();
-            expr.type = Expr::VariableList;
-            value     = QString{previous.value.toString()}.toLower();
-            consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
-        }
-        else {
-            expr.type = Expr::Variable;
-            value     = QString{previous.value.toString()}.toLower();
-        }
-
-        if(!registry->isVariable(value, tracks)) {
-            error(QStringLiteral("Variable not found"));
-        }
-
-        expr.value = value;
-        consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
-        return expr;
-    }
-
-    Expression function(const auto& tracks)
-    {
-        advance();
-
-        if(previous.type != TokenType::TokLiteral) {
-            error(QStringLiteral("Expected function name"));
-        }
-
-        Expression expr{Expr::Function};
-        FuncValue funcExpr;
-        funcExpr.name = QString{previous.value.toString()}.toLower();
-
-        if(!registry->isFunction(funcExpr.name)) {
-            error(QStringLiteral("Function not found"));
-        }
-
-        consume(TokenType::TokLeftParen, QStringLiteral("Expected '(' after function call"));
-
-        if(!currentToken(TokenType::TokRightParen)) {
-            funcExpr.args.emplace_back(functionArgs(tracks));
-            while(match(TokenType::TokComma)) {
-                funcExpr.args.emplace_back(functionArgs(tracks));
-            }
-        }
-
-        expr.value = funcExpr;
-        consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after function call"));
-        return expr;
-    }
-
-    Expression functionArgs(const auto& tracks)
-    {
-        Expression expr{Expr::FunctionArg};
-        ExpressionList funcExpr;
-
-        while(!currentToken(TokenType::TokComma) && !currentToken(TokenType::TokRightParen)
-              && !currentToken(TokenType::TokEos)) {
-            funcExpr.emplace_back(expression(tracks));
-        }
-
-        expr.value = funcExpr;
-        return expr;
-    }
-
-    Expression conditional(const auto& tracks)
-    {
-        Expression expr{Expr::Conditional};
-        ExpressionList condExpr;
-
-        while(!currentToken(TokenType::TokRightSquare) && !currentToken(TokenType::TokEos)) {
-            condExpr.emplace_back(expression(tracks));
-        }
-
-        expr.value = condExpr;
-        consume(TokenType::TokRightSquare, QStringLiteral("Expected ']' after expression"));
-        return expr;
-    }
-
     ParsedScript parse(const QString& input, const auto& tracks)
     {
         if(input.isEmpty() || !registry) {
@@ -475,7 +481,7 @@ struct ScriptParser::Private
 };
 
 ScriptParser::ScriptParser(ScriptRegistry* registry)
-    : p{std::make_unique<Private>(registry)}
+    : p{std::make_unique<Private>(this, registry)}
 { }
 
 ScriptParser::~ScriptParser() = default;

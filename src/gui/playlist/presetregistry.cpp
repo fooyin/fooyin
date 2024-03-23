@@ -37,28 +37,22 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Track Table");
 
-    preset.track.leftText.emplace_back(QStringLiteral("$num(%track%,2).   "));
-    preset.track.leftText.emplace_back(QStringLiteral("%title%"));
-    preset.track.rightText.emplace_back(QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      "));
-    preset.track.rightText.emplace_back(QStringLiteral("$timems(%duration%)"));
+    preset.track.leftText.script  = QStringLiteral("$num(%track%,2).   %title%");
+    preset.track.rightText.script = QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      $timems(%duration%)");
 
     addDefaultItem(preset);
 
     preset.name = QStringLiteral("Album - Disc");
 
-    TextBlock titleBlock{QStringLiteral("$if2(%albumartist%,Unknown Artist)"), 2};
-    titleBlock.font.setBold(true);
-    preset.header.title.emplace_back(titleBlock);
-    preset.header.subtitle.emplace_back(QStringLiteral("$if2(%album%,Unknown Album)"), 1);
-    TextBlock sideBlock{QStringLiteral("%year%"), 1};
-    sideBlock.font.setBold(true);
-    preset.header.sideText.emplace_back(sideBlock);
-    preset.header.info.emplace_back(
-        QStringLiteral("[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%"), -1);
+    preset.header.title.script    = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist)");
+    preset.header.subtitle.script = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)");
+    preset.header.sideText.script = QStringLiteral("<b><sized=2>%year%</sized></b>");
+    preset.header.info.script
+        = QStringLiteral("<sized=-1>[%genres% | ]%trackcount% $ifgreater(%trackcount%,1,Tracks,Track) | %playtime%");
 
-    Fooyin::SubheaderRow subheader;
-    subheader.leftText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,Disc #%disc%)"));
-    subheader.rightText.emplace_back(QStringLiteral("$ifgreater(%disctotal%,1,%playtime%)"));
+    SubheaderRow subheader;
+    subheader.leftText.script  = QStringLiteral("$ifgreater(%disctotal%,1,Disc #%disc%)");
+    subheader.rightText.script = QStringLiteral("$ifgreater(%disctotal%,1,%playtime%)");
     preset.subHeaders.push_back(subheader);
 
     addDefaultItem(preset);
@@ -67,19 +61,17 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Split Discs");
 
-    preset.header.subtitle.clear();
-    preset.header.subtitle.emplace_back(
-        QStringLiteral("$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)"), 1);
+    preset.header.subtitle.script
+        = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)");
 
     addDefaultItem(preset);
 
     preset.name = QStringLiteral("Simple Header");
 
     preset.header.simple = true;
-    preset.header.title.clear();
-    preset.header.subtitle.clear();
-    preset.header.title.emplace_back(QStringLiteral("$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)"),
-                                     2);
+    preset.header.subtitle.script.clear();
+    preset.header.title.script
+        = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)");
 
     addDefaultItem(preset);
 }
