@@ -288,7 +288,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
                                           "LibraryID = :libraryID"
-                                          "WHERE TrackID = :trackId;");
+                                          " WHERE TrackID = :trackId;");
 
     DbQuery query{db(), statement};
 
