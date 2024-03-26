@@ -58,7 +58,7 @@ struct TrackSelectionController::Private
 
     std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
     std::unordered_map<WidgetContext*, WidgetSelection> contextSelection;
-    WidgetContext* activeContext;
+    WidgetContext* activeContext{nullptr};
 
     ActionContainer* tracksMenu{nullptr};
     ActionContainer* tracksQueueMenu{nullptr};
