@@ -42,6 +42,7 @@
 #include <QFileSystemModel>
 #include <QLineEdit>
 #include <QMenu>
+#include <QPointer>
 #include <QPushButton>
 #include <QScrollBar>
 #include <QStandardPaths>
