@@ -44,21 +44,22 @@ public:
     void reserve(size_t size);
     void resize(size_t size);
     void append(std::span<const std::byte> data);
+    void append(const std::byte* data, size_t size);
     void clear();
     void reset();
 
-    bool isValid() const;
+    [[nodiscard]] bool isValid() const;
     void detach();
 
-    AudioFormat format() const;
-    int frameCount() const;
-    int sampleCount() const;
-    int byteCount() const;
-    uint64_t startTime() const;
-    uint64_t duration() const;
+    [[nodiscard]] AudioFormat format() const;
+    [[nodiscard]] int frameCount() const;
+    [[nodiscard]] int sampleCount() const;
+    [[nodiscard]] int byteCount() const;
+    [[nodiscard]] uint64_t startTime() const;
+    [[nodiscard]] uint64_t duration() const;
 
-    std::span<const std::byte> constData() const;
-    const std::byte* data() const;
+    [[nodiscard]] std::span<const std::byte> constData() const;
+    [[nodiscard]] const std::byte* data() const;
     std::byte* data();
 
     void fillSilence();

@@ -111,7 +111,16 @@ void AudioBuffer::resize(size_t size)
 void AudioBuffer::append(std::span<const std::byte> data)
 {
     if(isValid()) {
-        p->buffer.insert(p->buffer.end(), data.begin(), data.end());
+        append(data.data(), data.size());
+    }
+}
+
+void AudioBuffer::append(const std::byte* data, size_t size)
+{
+    if(isValid()) {
+        const size_t index = p->buffer.size();
+        p->buffer.resize(index + size);
+        std::memcpy(p->buffer.data() + index, data, size);
     }
 }
 
