@@ -30,10 +30,6 @@
 
 #include <QDebug>
 
-#include <bit>
-#include <chrono>
-#include <queue>
-
 #if defined(__GNUG__)
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #elif defined(__clang__)
@@ -105,6 +101,7 @@ struct FFmpegDecoder::Private
 
     explicit Private(FFmpegDecoder* self_)
         : self{self_}
+        , timeBase{0, 0}
     { }
 
     bool setup(const QString& source)
