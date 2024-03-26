@@ -24,7 +24,9 @@
 #include <utils/settings/settingsentry.h>
 
 #include <QMetaEnum>
-#include <QReadWriteLock>
+
+#include <mutex>
+#include <shared_mutex>
 
 class QSettings;
 
@@ -201,30 +203,35 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        m_lock.lockForRead();
+        const std::shared_lock lock(m_lock);
 
-        const auto value = m_settings.contains(mapKey) ? m_settings.at(mapKey)->value() : -1;
-        const auto type  = findType<key>();
+        QVariant settingValue;
 
-        m_lock.unlock();
+        if(m_settings.contains(mapKey)) {
+            if(auto* setting = m_settings.at(mapKey)) {
+                settingValue = setting->value();
+            }
+        }
+
+        const auto type = findType<key>();
 
         if constexpr(type == Settings::Bool) {
-            return value.toBool();
+            return settingValue.toBool();
         }
         else if constexpr(type == Settings::Double) {
-            return value.toDouble();
+            return settingValue.toDouble();
         }
         else if constexpr(type == Settings::Int) {
-            return value.toInt();
+            return settingValue.toInt();
         }
         else if constexpr(type == Settings::String) {
-            return value.toString();
+            return settingValue.toString();
         }
         else if constexpr(type == Settings::ByteArray) {
-            return value.toByteArray();
+            return settingValue.toByteArray();
         }
         else {
-            return value;
+            return settingValue;
         }
     }
 
@@ -241,18 +248,17 @@ public:
     {
         const QString mapKey = getMapKey(key);
 
-        m_lock.lockForWrite();
+        std::unique_lock lock(m_lock);
 
         if(!m_settings.contains(mapKey)) {
-            m_lock.unlock();
             return false;
         }
 
         SettingsEntry* setting = m_settings.at(mapKey);
 
-        const bool success = setting->setValue(value);
+        const bool success = setting && setting->setValue(value);
 
-        m_lock.unlock();
+        lock.unlock();
 
         if(success) {
             setting->notifySubscribers();
@@ -272,7 +278,7 @@ public:
     {
         const auto mapKey = getMapKey(key);
 
-        m_lock.lockForWrite();
+        std::unique_lock lock(m_lock);
 
         if(!m_settings.contains(mapKey)) {
             m_lock.unlock();
@@ -281,9 +287,9 @@ public:
 
         SettingsEntry* setting = m_settings.at(mapKey);
 
-        const bool success = setting->reset();
+        const bool success = setting && setting->reset();
 
-        m_lock.unlock();
+        lock.unlock();
 
         if(success) {
             setting->notifySubscribers();
@@ -302,13 +308,11 @@ public:
     template <typename Obj, typename Func>
     void subscribe(const QString& key, const Obj* obj, Func&& func)
     {
-        m_lock.lockForRead();
+        const std::shared_lock lock(m_lock);
 
         if(m_settings.contains(key)) {
             QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, std::forward<Func>(func));
         }
-
-        m_lock.unlock();
     }
 
     /*!
@@ -319,12 +323,12 @@ public:
      * @note this is for enum key-based settings.
      */
     template <auto key, typename Obj, typename Func>
-    void constexpr subscribe(const Obj* obj, Func&& func)
+    void subscribe(const Obj* obj, Func&& func)
     {
         const auto mapKey = getMapKey(key);
         const auto type   = findType<key>();
 
-        m_lock.lockForRead();
+        const std::shared_lock lock(m_lock);
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
@@ -356,8 +360,6 @@ public:
                                  std::forward<Func>(func));
             }
         }
-
-        m_lock.unlock();
     }
 
     /*!
@@ -369,13 +371,11 @@ public:
     template <typename Obj>
     void unsubscribe(const QString& key, const Obj* obj)
     {
-        m_lock.lockForRead();
+        const std::shared_lock lock(m_lock);
 
         if(m_settings.contains(key)) {
             QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
         }
-
-        m_lock.unlock();
     }
 
     /*!
@@ -385,23 +385,21 @@ public:
      * @note this is for enum key-based settings.
      */
     template <auto key, typename Obj>
-    void constexpr unsubscribe(const Obj* obj)
+    void unsubscribe(const Obj* obj)
     {
         const auto mapKey = getMapKey(key);
 
-        m_lock.lockForRead();
+        const std::shared_lock lock(m_lock);
 
         if(m_settings.contains(mapKey)) {
             QObject::disconnect(m_settings.at(mapKey), nullptr, obj, nullptr);
         }
-
-        m_lock.unlock();
     }
 
 private:
     template <auto key, typename Value>
         requires ValidValueType<key, Value>
-    void constexpr createNewSetting(const Value& value, const QString& settingKey, bool isTemporary)
+    void createNewSetting(const Value& value, const QString& settingKey, bool isTemporary)
     {
         using Enum           = decltype(key);
         const auto type      = static_cast<Settings::Type>(findType<key>());
@@ -410,25 +408,23 @@ private:
         const auto keyString = QString::fromLatin1(meta.valueToKey(key));
         const auto mapKey    = enumName + keyString;
 
-        m_lock.lockForWrite();
+        const std::unique_lock lock(m_lock);
 
         if(m_settings.contains(mapKey) || settingExists(settingKey)) {
             qWarning() << "Setting has already been registered: " << keyString;
-            m_lock.unlock();
             return;
         }
 
         m_settings.emplace(mapKey, new SettingsEntry(settingKey, value, type, this));
 
-        auto* setting = m_settings.at(mapKey);
-        if(isTemporary) {
-            setting->setIsTemporary(isTemporary);
+        if(auto* setting = m_settings.at(mapKey)) {
+            if(isTemporary) {
+                setting->setIsTemporary(isTemporary);
+            }
+            else {
+                checkLoadSetting(setting);
+            }
         }
-        else {
-            checkLoadSetting(setting);
-        }
-
-        m_lock.unlock();
     }
 
     template <typename Enum>
@@ -448,7 +444,7 @@ private:
 
     QSettings* m_settingsFile;
     std::map<QString, SettingsEntry*> m_settings;
-    mutable QReadWriteLock m_lock;
+    mutable std::shared_mutex m_lock;
 
     SettingsDialogController* m_settingsDialog;
 };
