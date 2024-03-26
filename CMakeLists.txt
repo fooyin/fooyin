@@ -260,7 +260,12 @@ set_target_properties(
 
 add_subdirectory(src)
 
-target_link_libraries(fooyin_lib PUBLIC Fooyin::Core Fooyin::Gui Fooyin::Utils)
+target_link_libraries(
+    fooyin_lib
+    PUBLIC Fooyin::Core
+           Fooyin::Gui
+           Fooyin::Utils
+)
 
 target_compile_features(fooyin_lib PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin_lib PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -337,6 +342,7 @@ target_link_options(fooyin INTERFACE ${FOOYIN_LINK_OPTIONS})
 target_link_libraries(
     fooyin
     PRIVATE KDAB::kdsingleapplication
+            Qt6::Network
             fooyin_version
             fooyin_lib
             Fooyin::CorePrivate
