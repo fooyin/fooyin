@@ -36,13 +36,13 @@ public:
     void start() override;
     void stop() override;
 
-    AudioFormat format() const override;
-    bool isSeekable() const override;
+    [[nodiscard]] AudioFormat format() const override;
+    [[nodiscard]] bool isSeekable() const override;
     void seek(uint64_t pos) override;
 
     AudioBuffer readBuffer() override;
 
-    Error error() const override;
+    [[nodiscard]] Error error() const override;
 
 private:
     struct Private;
