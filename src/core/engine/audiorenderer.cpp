@@ -124,14 +124,13 @@ struct AudioRenderer::Private
 
             if(!tempBuffer.isValid()) {
                 tempBuffer = {fdata, buffer.format(), buffer.startTime()};
-                tempBuffer.reserve(static_cast<int>(samples * sstride));
             }
             else {
                 tempBuffer.append(fdata);
             }
 
             samplesBuffered += sampleCount;
-            currentBufferOffset += sampleCount * sstride;
+            currentBufferOffset += bytes;
         }
 
         tempBuffer.fillRemainingWithSilence();
@@ -209,6 +208,7 @@ void AudioRenderer::stop()
 
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
+    p->currentBufferOffset = 0;
     p->bufferQueue.clear();
     p->tempBuffer.reset();
 }
@@ -221,6 +221,7 @@ void AudioRenderer::reset()
 
     p->bufferPrefilled     = false;
     p->totalSamplesWritten = 0;
+    p->currentBufferOffset = 0;
     p->bufferQueue.clear();
     p->tempBuffer.reset();
 }
