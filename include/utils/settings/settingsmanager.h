@@ -305,7 +305,7 @@ public:
         m_lock.lockForRead();
 
         if(m_settings.contains(key)) {
-            QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, func);
+            QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, std::forward<Func>(func));
         }
 
         m_lock.unlock();
@@ -328,25 +328,32 @@ public:
 
         if(m_settings.contains(mapKey)) {
             if constexpr(type == Settings::Variant) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj,
+                                 std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Bool) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj,
+                                 std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Double) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedDouble, obj,
+                                 std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Int) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedInt, obj,
+                                 std::forward<Func>(func));
             }
             else if constexpr(type == Settings::String) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj,
+                                 std::forward<Func>(func));
             }
             else if constexpr(type == Settings::ByteArray) {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedByteArray, obj,
+                                 std::forward<Func>(func));
             }
             else {
-                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj, func);
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedVariant, obj,
+                                 std::forward<Func>(func));
             }
         }
 
