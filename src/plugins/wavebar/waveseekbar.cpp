@@ -109,10 +109,10 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     const QRect& rect = event->rect();
     const int first   = rect.left();
     const int last    = rect.right() + 1;
+    const int posX    = positionFromValue(m_position);
 
     painter.fillRect(rect, m_colours.bgUnplayed);
-    const QRect playedRect{first, 0, positionFromValue(m_position), height()};
-    painter.fillRect(playedRect, m_colours.bgPlayed);
+    painter.fillRect(QRect{first, 0, posX - first, height()}, m_colours.bgPlayed);
 
     const int channelHeight     = rect.height() / channels;
     const double waveformHeight = channelHeight * m_channelScale;
@@ -126,7 +126,6 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     if(m_showCursor) {
         painter.setPen({m_colours.cursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
-        const int posX = positionFromValue(m_position);
         painter.drawLine(posX, 0, posX, height());
     }
 
