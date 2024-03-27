@@ -174,7 +174,7 @@ void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 
 int WaveSeekBar::positionFromValue(uint64_t value) const
 {
-    if(m_data.duration <= 0) {
+    if(m_data.duration == 0) {
         return 0;
     }
 
