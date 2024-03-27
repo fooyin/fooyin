@@ -135,11 +135,9 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         y += channelHeight;
     }
 
-    if(m_position > 0) {
-        painter.setPen(QPen(m_progressColour, CursorWidth, Qt::SolidLine, Qt::FlatCap));
-        const int posX = positionFromValue(m_position);
-        painter.drawLine(posX, 0, posX, height());
-    }
+    painter.setPen(QPen(m_progressColour, CursorWidth, Qt::SolidLine, Qt::FlatCap));
+    const int posX = positionFromValue(m_position);
+    painter.drawLine(posX, 0, posX, height());
 
     painter.restore();
 }
@@ -165,6 +163,7 @@ void WaveSeekBar::mousePressEvent(QMouseEvent* event)
         m_isBeingMoved = true;
 
         const uint64_t pos = event->pos().x() > 10 ? valueFromPosition(event->pos().x()) : 0;
+        m_position         = pos;
         emit sliderMoved(pos);
         update();
 
@@ -178,26 +177,15 @@ int WaveSeekBar::positionFromValue(uint64_t value) const
         return 0;
     }
 
-    if(value > m_data.duration) {
+    if(value >= m_data.duration) {
         return width();
     }
 
-    const auto w         = static_cast<uint64_t>(width());
-    const uint64_t range = m_data.duration;
+    const auto w     = static_cast<double>(width());
+    const auto max   = static_cast<double>(m_data.duration);
+    const auto ratio = static_cast<double>(value) / max;
 
-    if(range > (std::numeric_limits<int>::max() / 4096)) {
-        const double pos = static_cast<double>(value) / static_cast<double>(range) / static_cast<double>(w);
-        return static_cast<int>(pos);
-    }
-
-    if(range > w) {
-        return static_cast<int>((2 * value * w + range) / (2 * range));
-    }
-
-    const uint64_t div = w / range;
-    const uint64_t mod = w % range;
-
-    return static_cast<int>(value * div + (2 * value * mod + range) / (2 * range));
+    return static_cast<int>(ratio * w);
 }
 
 uint64_t WaveSeekBar::valueFromPosition(int pos) const
@@ -210,17 +198,11 @@ uint64_t WaveSeekBar::valueFromPosition(int pos) const
         return m_data.duration;
     }
 
-    const auto w         = static_cast<uint64_t>(width());
-    const uint64_t range = m_data.duration;
+    const auto w     = static_cast<double>(width());
+    const auto max   = static_cast<double>(m_data.duration);
+    const auto ratio = static_cast<double>(pos) / w;
 
-    if(w > range) {
-        return (2 * range * pos + w) / (2 * w);
-    }
-
-    const uint64_t div = range / w;
-    const uint64_t mod = range % w;
-
-    return pos * div + (2 * mod * pos + w) / (2 * w);
+    return static_cast<uint64_t>(ratio * max);
 }
 } // namespace Fooyin::WaveBar
 
