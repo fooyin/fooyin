@@ -50,10 +50,12 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
     QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, m_playerController, &PlayerController::changePosition);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
         m_seekbar->setPosition(0);
+        m_builder.stopThread();
         QMetaObject::invokeMethod(&m_builder, "rebuild", Q_ARG(const Track&, track));
     });
     QObject::connect(m_playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
     QObject::connect(&m_builder, &WaveformBuilder::waveformBuilt, this, [this]() {
+        m_builder.stopThread();
         QMetaObject::invokeMethod(&m_builder, "setWidth", Q_ARG(int, width()));
         QMetaObject::invokeMethod(&m_builder, &WaveformBuilder::rescale);
     });
@@ -70,6 +72,7 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
 
 WaveBarWidget::~WaveBarWidget()
 {
+    m_builder.stopThread();
     m_builderThread.quit();
     m_builderThread.wait();
 }

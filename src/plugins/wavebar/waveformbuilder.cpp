@@ -130,7 +130,7 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
     , m_width{0}
 {
     m_requiredFormat.setSampleFormat(SampleFormat::Float);
-    
+
     m_settings->subscribe<Settings::WaveBar::Downmix>(this, [this](const int downMix) {
         m_downMix = static_cast<DownmixOption>(downMix);
         rescale();
@@ -151,6 +151,8 @@ void WaveformBuilder::setWidth(const int width)
 
 void WaveformBuilder::rebuild(const Track& track)
 {
+    setState(Running);
+
     m_decoder->stop();
 
     m_data = {};
@@ -197,10 +199,15 @@ void WaveformBuilder::rebuild(const Track& track)
     m_decoder->start();
 
     while(true) {
+        if(!mayRun()) {
+            return;
+        }
+
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
         if(!buffer.isValid()) {
             break;
         }
+
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
     }
@@ -210,6 +217,8 @@ void WaveformBuilder::rebuild(const Track& track)
     if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
         qWarning() << "[WaveBar] Unable to store waveform for track:" << m_track.filepath();
     }
+
+    setState(Idle);
     emit waveformBuilt();
 }
 
@@ -219,12 +228,14 @@ void WaveformBuilder::rescale()
         return;
     }
 
+    setState(Running);
+
     WaveformData<float> data;
     data.duration = m_data.duration;
     data.format   = m_data.format;
 
     int channels = m_channels;
-    
+
     if(m_downMix == DownmixOption::Stereo) {
         channels = 2;
     }
@@ -248,7 +259,7 @@ void WaveformBuilder::rescale()
 
             int sampleCount{0};
             WaveformSample sample;
-            
+
             if(m_downMix == DownmixOption::Mono) {
                 for(int mixCh{0}; mixCh < m_channels; ++mixCh) {
                     sampleCount += buildSample(sample, mixCh, sampleSize, start, end);
@@ -274,6 +285,7 @@ void WaveformBuilder::rescale()
         }
     }
 
+    setState(Idle);
     emit waveformRescaled(data);
 }
 
