@@ -174,7 +174,8 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
     std::iota(channels.begin(), channels.end(), -1);
 
     // TODO: Handle channel layout of output
-    for(int i{0}; i <= 2; ++i) {
+    const int outputChannels = outFormat.channelCount();
+    for(int i{0}; i < outputChannels; ++i) {
         channels.at(i) = i;
     }
 
