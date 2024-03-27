@@ -29,66 +29,49 @@
 #include <QVBoxLayout>
 
 namespace Fooyin::WaveBar {
-struct WaveBarWidget::Private
-{
-    WaveBarWidget* self;
-
-    PlayerController* playerController;
-    EngineController* engine;
-    SettingsManager* settings;
-
-    WaveSeekBar* seekbar;
-    WaveformBuilder builder;
-    QThread builderThread;
-
-    Private(WaveBarWidget* self_, PlayerController* playerController_, EngineController* engine_,
-            SettingsManager* settings_)
-        : self{self_}
-        , playerController{playerController_}
-        , engine{engine_}
-        , settings{settings_}
-        , seekbar{new WaveSeekBar(settings, self)}
-        , builder{engine->createDecoder(), settings}
-    {
-        auto* layout = new QVBoxLayout(self);
-        layout->setContentsMargins(0, 0, 0, 0);
-
-        layout->addWidget(seekbar);
-
-        builder.moveToThread(&builderThread);
-
-        QObject::connect(seekbar, &WaveSeekBar::sliderMoved, self,
-                         [this](int pos) { playerController->changePosition(pos); });
-        QObject::connect(playerController, &PlayerController::currentTrackChanged, self, [this](const Track& track) {
-            seekbar->setPosition(0);
-            QMetaObject::invokeMethod(&builder, "rebuild", Q_ARG(const Track&, track));
-        });
-        QObject::connect(playerController, &PlayerController::positionChanged, self,
-                         [this](uint64_t pos) { seekbar->setPosition(pos); });
-        QObject::connect(&builder, &WaveformBuilder::waveformBuilt, self, [this]() {
-            QMetaObject::invokeMethod(&builder, "setWidth", Q_ARG(int, self->width()));
-            QMetaObject::invokeMethod(&builder, &WaveformBuilder::rescale);
-        });
-        QObject::connect(&builder, &WaveformBuilder::waveformRescaled, seekbar, &WaveSeekBar::processData);
-
-        builderThread.start();
-
-        QMetaObject::invokeMethod(&builder, &Worker::initialiseThread);
-    }
-};
-
 WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
                              QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerController, engine, settings)}
+    , m_playerController{playerController}
+    , m_engine{engine}
+    , m_settings{settings}
+    , m_seekbar{new WaveSeekBar(settings, this)}
+    , m_builder{engine->createDecoder(), settings}
 {
-    setMinimumSize(50, 20);
+    setMinimumSize(100, 20);
+
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    layout->addWidget(m_seekbar);
+
+    m_builder.moveToThread(&m_builderThread);
+
+    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, m_playerController, &PlayerController::changePosition);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
+        m_seekbar->setPosition(0);
+        QMetaObject::invokeMethod(&m_builder, "rebuild", Q_ARG(const Track&, track));
+    });
+    QObject::connect(m_playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
+    QObject::connect(&m_builder, &WaveformBuilder::waveformBuilt, this, [this]() {
+        QMetaObject::invokeMethod(&m_builder, "setWidth", Q_ARG(int, width()));
+        QMetaObject::invokeMethod(&m_builder, &WaveformBuilder::rescale);
+    });
+    QObject::connect(&m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
+
+    m_builderThread.start();
+
+    QMetaObject::invokeMethod(&m_builder, &Worker::initialiseThread);
+
+    if(m_playerController->currentTrack().isValid()) {
+        QMetaObject::invokeMethod(&m_builder, "rebuild", Q_ARG(const Track&, m_playerController->currentTrack()));
+    }
 }
 
 WaveBarWidget::~WaveBarWidget()
 {
-    p->builderThread.quit();
-    p->builderThread.wait();
+    m_builderThread.quit();
+    m_builderThread.wait();
 }
 
 QString WaveBarWidget::name() const
@@ -106,8 +89,8 @@ void WaveBarWidget::resizeEvent(QResizeEvent* event)
     FyWidget::resizeEvent(event);
 
     // TODO: Group resize calls to avoid rescaling waveform too frequently
-    QMetaObject::invokeMethod(&p->builder, "setWidth", Q_ARG(int, width()));
-    QMetaObject::invokeMethod(&p->builder, &WaveformBuilder::rescale);
+    QMetaObject::invokeMethod(&m_builder, "setWidth", Q_ARG(int, width()));
+    QMetaObject::invokeMethod(&m_builder, &WaveformBuilder::rescale);
 }
 } // namespace Fooyin::WaveBar
 

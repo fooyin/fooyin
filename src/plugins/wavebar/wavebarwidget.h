@@ -19,7 +19,11 @@
 
 #pragma once
 
+#include "waveformbuilder.h"
+
 #include <gui/fywidget.h>
+
+#include <QThread>
 
 namespace Fooyin {
 class EngineController;
@@ -27,6 +31,8 @@ class PlayerController;
 class SettingsManager;
 
 namespace WaveBar {
+class WaveSeekBar;
+
 class WaveBarWidget : public FyWidget
 {
     Q_OBJECT
@@ -43,8 +49,13 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    PlayerController* m_playerController;
+    EngineController* m_engine;
+    SettingsManager* m_settings;
+
+    WaveSeekBar* m_seekbar;
+    WaveformBuilder m_builder;
+    QThread m_builderThread;
 };
 } // namespace WaveBar
 } // namespace Fooyin
