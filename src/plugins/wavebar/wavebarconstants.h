@@ -19,37 +19,8 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
-
-#include <vector>
-
-namespace Fooyin::WaveBar {
-struct WaveformSample
-{
-    float max{-1.0};
-    float min{1.0};
-    float rms{0.0};
-};
-
-template <typename T>
-struct WaveformData
-{
-    AudioFormat format;
-    uint64_t duration{0};
-    int channels{0};
-
-    struct ChannelData
-    {
-        std::vector<T> max;
-        std::vector<T> min;
-        std::vector<T> rms;
-    };
-
-    std::vector<ChannelData> channelData;
-
-    [[nodiscard]] bool empty() const
-    {
-        return !format.isValid() && channelData.empty();
-    }
-};
-} // namespace Fooyin::WaveBar
+namespace Fooyin::WaveBar::Constants {
+namespace Page {
+constexpr auto WaveBarGeneral = "Fooyin.Page.WaveBar.General";
+} // namespace Page
+} // namespace Fooyin::WaveBar::Constants

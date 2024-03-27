@@ -19,37 +19,18 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
+#include <utils/settings/settingspage.h>
 
-#include <vector>
+namespace Fooyin {
+class SettingsManager;
 
-namespace Fooyin::WaveBar {
-struct WaveformSample
+namespace WaveBar {
+class WaveBarSettingsPage : public SettingsPage
 {
-    float max{-1.0};
-    float min{1.0};
-    float rms{0.0};
+    Q_OBJECT
+
+public:
+    explicit WaveBarSettingsPage(SettingsManager* settings);
 };
-
-template <typename T>
-struct WaveformData
-{
-    AudioFormat format;
-    uint64_t duration{0};
-    int channels{0};
-
-    struct ChannelData
-    {
-        std::vector<T> max;
-        std::vector<T> min;
-        std::vector<T> rms;
-    };
-
-    std::vector<ChannelData> channelData;
-
-    [[nodiscard]] bool empty() const
-    {
-        return !format.isValid() && channelData.empty();
-    }
-};
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

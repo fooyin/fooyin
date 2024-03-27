@@ -19,37 +19,35 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
+#include "fyutils_export.h"
 
-#include <vector>
+#include <QWidget>
 
-namespace Fooyin::WaveBar {
-struct WaveformSample
+namespace Fooyin {
+class FYUTILS_EXPORT ColourButton : public QWidget
 {
-    float max{-1.0};
-    float min{1.0};
-    float rms{0.0};
+    Q_OBJECT
+
+public:
+    explicit ColourButton(QWidget* parent = nullptr);
+    explicit ColourButton(const QColor& colour, QWidget* parent = nullptr);
+
+    [[nodiscard]] QColor colour() const;
+    [[nodiscard]] bool colourChanged() const;
+
+    void setColour(const QColor& colour);
+
+signals:
+    void clicked();
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
+
+private:
+    void pickColour();
+
+    QColor m_colour;
+    bool m_changed;
 };
-
-template <typename T>
-struct WaveformData
-{
-    AudioFormat format;
-    uint64_t duration{0};
-    int channels{0};
-
-    struct ChannelData
-    {
-        std::vector<T> max;
-        std::vector<T> min;
-        std::vector<T> rms;
-    };
-
-    std::vector<ChannelData> channelData;
-
-    [[nodiscard]] bool empty() const
-    {
-        return !format.isValid() && channelData.empty();
-    }
-};
-} // namespace Fooyin::WaveBar
+} // namespace Fooyin

@@ -19,17 +19,22 @@
 
 #pragma once
 
+#include "settings/wavebarsettings.h"
+#include "wavebarcolours.h"
 #include "waveformdata.h"
 
 #include <QWidget>
 
-namespace Fooyin::WaveBar {
+namespace Fooyin {
+class SettingsManager;
+
+namespace WaveBar {
 class WaveSeekBar : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WaveSeekBar(QWidget* parent = nullptr);
+    explicit WaveSeekBar(SettingsManager* settings, QWidget* parent = nullptr);
 
     void processData(const WaveformData<float>& waveData);
     void setPosition(uint64_t pos);
@@ -45,13 +50,20 @@ protected:
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
+    void drawChannel(QPainter& painter, int channel, double height, int first, int last, double y);
+
+    SettingsManager* m_settings;
 
     WaveformData<float> m_data;
     uint64_t m_position;
     bool m_isBeingMoved;
 
-    QColor m_baseColour;
-    QColor m_progressColour;
-    QColor m_backgroundColour;
+    bool m_showCursor;
+    double m_cursorWidth;
+    double m_channelScale;
+
+    ValueOptions m_drawValues;
+    Colours m_colours;
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

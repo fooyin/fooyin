@@ -47,8 +47,8 @@ struct WaveBarWidget::Private
         , playerController{playerController_}
         , engine{engine_}
         , settings{settings_}
-        , seekbar{new WaveSeekBar(self)}
-        , builder{engine->createDecoder()}
+        , seekbar{new WaveSeekBar(settings, self)}
+        , builder{engine->createDecoder(), settings}
     {
         auto* layout = new QVBoxLayout(self);
         layout->setContentsMargins(0, 0, 0, 0);

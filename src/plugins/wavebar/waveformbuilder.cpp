@@ -25,13 +25,13 @@
 #include <utils/crypto.h>
 #include <utils/math.h>
 #include <utils/paths.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QDebug>
 #include <QTimer>
 
 #include <cfenv>
 
-// TODO: Make these user configurable
 constexpr auto SampleCount     = 2048;
 constexpr auto ValuesPerSample = 1;
 
@@ -119,15 +119,22 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, QObject* parent)
+WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , m_decoder{std::move(decoder)}
+    , m_settings{settings}
     , m_dbPool{DbConnectionPool::create(dbConnectionParams(), QStringLiteral("wavebar"))}
+    , m_downMix{m_settings->value<Settings::WaveBar::Downmix>()}
     , m_channels{0}
     , m_duration{0}
     , m_width{0}
 {
     m_requiredFormat.setSampleFormat(SampleFormat::Float);
+    
+    m_settings->subscribe<Settings::WaveBar::Downmix>(this, [this](const int downMix) {
+        m_downMix = static_cast<DownmixOption>(downMix);
+        rescale();
+    });
 }
 
 void WaveformBuilder::initialiseThread()
@@ -164,9 +171,6 @@ void WaveformBuilder::rebuild(const Track& track)
     m_requiredFormat.setChannelCount(m_format.channelCount());
     m_requiredFormat.setSampleRate(m_format.sampleRate());
 
-    m_data.format   = m_requiredFormat;
-    m_data.duration = m_duration;
-
     const QString trackKey = trackCacheKey(m_track, m_channels);
 
     if(m_waveDb.existsInCache(trackKey)) {
@@ -179,6 +183,9 @@ void WaveformBuilder::rebuild(const Track& track)
             return;
         }
     }
+
+    m_data.format   = m_requiredFormat;
+    m_data.duration = m_duration;
 
     m_data.channelData.resize(m_channels);
 
@@ -216,13 +223,22 @@ void WaveformBuilder::rescale()
     data.duration = m_data.duration;
     data.format   = m_data.format;
 
-    data.channelData.resize(m_channels);
+    int channels = m_channels;
+    
+    if(m_downMix == DownmixOption::Stereo) {
+        channels = 2;
+    }
+    else if(m_downMix == DownmixOption::Mono) {
+        channels = 1;
+    }
+
+    data.channels = channels;
+    data.channelData.resize(channels);
 
     constexpr int sampleSize     = ValuesPerSample;
     const double samplesPerPixel = static_cast<double>(SampleCount) / (m_width * (sampleSize));
 
-    for(int ch{0}; ch < m_channels; ++ch) {
-        auto& [inMax, inMin, inRms]    = m_data.channelData.at(ch);
+    for(int ch{0}; ch < channels; ++ch) {
         auto& [outMax, outMin, outRms] = data.channelData.at(ch);
 
         double start{0.0};
@@ -230,33 +246,29 @@ void WaveformBuilder::rescale()
         for(int x{0}; x < m_width; ++x) {
             const double end = std::max(1.0, (x + 1) * samplesPerPixel);
 
-            float max{-1.0};
-            float min{1.0};
-            float rms{0.0};
-
             int sampleCount{0};
-            const int lastIndex = std::floor(sampleSize * end);
-
-            for(int i = std::floor(start); i < std::ceil(end); ++i) {
-                for(int index = i * sampleSize; index < lastIndex; index += sampleSize, ++sampleCount) {
-                    if(std::cmp_less(index, inMax.size())) {
-                        const float sampleMax = inMax.at(index);
-                        const float sampleMin = inMin.at(index);
-                        const float sampleRms = inRms.at(index);
-
-                        max = std::max(max, sampleMax);
-                        min = std::min(min, sampleMin);
-                        rms += sampleRms * sampleRms;
-                    }
+            WaveformSample sample;
+            
+            if(m_downMix == DownmixOption::Mono) {
+                for(int mixCh{0}; mixCh < m_channels; ++mixCh) {
+                    sampleCount += buildSample(sample, mixCh, sampleSize, start, end);
                 }
             }
+            else if(m_downMix == DownmixOption::Stereo && m_channels != 2) {
+                for(int mixCh{0}; mixCh < m_channels; ++mixCh) {
+                    sampleCount += buildSample(sample, mixCh, sampleSize, start, end);
+                }
+            }
+            else {
+                sampleCount += buildSample(sample, ch, sampleSize, start, end);
+            }
 
-            rms /= static_cast<float>(sampleCount);
-            rms = std::sqrt(rms);
+            sample.rms /= static_cast<float>(sampleCount);
+            sample.rms = std::sqrt(sample.rms);
 
-            outMax.emplace_back(max);
-            outMin.emplace_back(min);
-            outRms.emplace_back(rms);
+            outMax.emplace_back(sample.max);
+            outMin.emplace_back(sample.min);
+            outRms.emplace_back(sample.rms);
 
             start = end;
         }
@@ -294,5 +306,30 @@ void WaveformBuilder::processBuffer(const AudioBuffer& buffer)
         cMin.emplace_back(min);
         cRms.emplace_back(rms);
     }
+}
+
+int WaveformBuilder::buildSample(WaveformSample& sample, int channel, int sampleSize, double start, double end)
+{
+    int sampleCount{0};
+
+    auto& [inMax, inMin, inRms] = m_data.channelData.at(channel);
+
+    const int lastIndex = std::floor(sampleSize * end);
+
+    for(int i = std::floor(start); i < std::ceil(end); ++i) {
+        for(int index = i * sampleSize; index < lastIndex; index += sampleSize, ++sampleCount) {
+            if(std::cmp_less(index, inMax.size())) {
+                const float sampleMax = inMax.at(index);
+                const float sampleMin = inMin.at(index);
+                const float sampleRms = inRms.at(index);
+
+                sample.max = std::max(sample.max, sampleMax);
+                sample.min = std::min(sample.min, sampleMin);
+                sample.rms += sampleRms * sampleRms;
+            }
+        }
+    }
+
+    return sampleCount;
 }
 } // namespace Fooyin::WaveBar

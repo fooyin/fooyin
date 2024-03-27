@@ -19,6 +19,8 @@
 
 #include "wavebarplugin.h"
 
+#include "settings/wavebarsettings.h"
+#include "settings/wavebarsettingspage.h"
 #include "wavebarwidget.h"
 
 #include <core/engine/enginecontroller.h>
@@ -31,6 +33,9 @@ struct WaveBarPlugin::Private
     EngineController* engine;
     WidgetProvider* widgetProvider;
     SettingsManager* settings;
+
+    std::unique_ptr<WaveBarSettings> waveBarSettings;
+    std::unique_ptr<WaveBarSettingsPage> waveBarSettingsPage;
 };
 
 WaveBarPlugin::WaveBarPlugin()
@@ -49,6 +54,9 @@ void WaveBarPlugin::initialise(const CorePluginContext& context)
 void WaveBarPlugin::initialise(const GuiPluginContext& context)
 {
     p->widgetProvider = context.widgetProvider;
+
+    p->waveBarSettings     = std::make_unique<WaveBarSettings>(p->settings);
+    p->waveBarSettingsPage = std::make_unique<WaveBarSettingsPage>(p->settings);
 
     p->widgetProvider->registerWidget(
         QStringLiteral("WaveBar"), [this]() { return new WaveBarWidget(p->playerManager, p->engine, p->settings); },

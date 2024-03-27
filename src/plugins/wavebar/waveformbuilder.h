@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "settings/wavebarsettings.h"
 #include "wavebardatabase.h"
 #include "waveformdata.h"
 
@@ -32,13 +33,16 @@
 
 namespace Fooyin {
 class AudioBuffer;
+class SettingsManager;
+
 namespace WaveBar {
 class WaveformBuilder : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, QObject* parent = nullptr);
+    explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, SettingsManager* settings,
+                             QObject* parent = nullptr);
 
 signals:
     void waveformBuilt();
@@ -53,8 +57,10 @@ public slots:
 
 private:
     void processBuffer(const AudioBuffer& buffer);
+    int buildSample(WaveformSample& sample, int channel, int sampleSize, double start, double end);
 
     std::unique_ptr<AudioDecoder> m_decoder;
+    SettingsManager* m_settings;
 
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
@@ -63,6 +69,7 @@ private:
     Track m_track;
     AudioFormat m_format;
     AudioFormat m_requiredFormat;
+    DownmixOption m_downMix;
 
     WaveformData<float> m_data;
 

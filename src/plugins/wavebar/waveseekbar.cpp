@@ -19,26 +19,49 @@
 
 #include "waveseekbar.h"
 
+#include "settings/wavebarsettings.h"
+
 #include <core/track.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyle>
 
-// TODO: Make these user configurable
-constexpr auto ChannelHeightScale = 0.9;
-constexpr auto CursorWidth        = 3;
-
 namespace Fooyin::WaveBar {
-WaveSeekBar::WaveSeekBar(QWidget* parent)
+WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
+    , m_settings{settings}
     , m_position{0}
     , m_isBeingMoved{false}
-    , m_baseColour{50, 50, 200}
-    , m_progressColour{palette().highlight().color()}
-    , m_backgroundColour{Qt::transparent}
-{ }
+    , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
+    , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
+    , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
+    , m_drawValues{settings->value<Settings::WaveBar::DrawValues>()}
+    , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
+{
+    m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](bool show) {
+        m_showCursor = show;
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::CursorWidth>(this, [this](double width) {
+        m_cursorWidth = width;
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::ChannelHeightScale>(this, [this](double scale) {
+        m_channelScale = scale;
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::DrawValues>(this, [this](const int values) {
+        m_drawValues = static_cast<ValueOptions>(values);
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::ColourOptions>(this, [this](const QVariant& var) {
+        m_colours = var.value<Colours>();
+        update();
+    });
+}
 
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
 {
@@ -61,8 +84,8 @@ void WaveSeekBar::setPosition(uint64_t pos)
         return;
     }
 
-    const int updateX = (oldX < x ? oldX : x) - CursorWidth;
-    const int width   = std::abs(x - oldX) + (2 * CursorWidth);
+    const auto updateX = static_cast<int>((oldX < x ? oldX : x) - m_cursorWidth);
+    const auto width   = static_cast<int>(std::abs(x - oldX) + (2 * m_cursorWidth));
 
     const QRect updateRect(updateX, 0, width, height());
 
@@ -81,63 +104,31 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     painter.setRenderHint(QPainter::Antialiasing);
 
-    const int channels = m_data.format.channelCount();
+    const int channels = m_data.channels;
 
     const QRect& rect = event->rect();
     const int first   = rect.left();
     const int last    = rect.right() + 1;
 
+    painter.fillRect(rect, m_colours.bgUnplayed);
+    const QRect playedRect{first, 0, positionFromValue(m_position), height()};
+    painter.fillRect(playedRect, m_colours.bgPlayed);
+
     const int channelHeight     = rect.height() / channels;
-    const double waveformHeight = channelHeight * ChannelHeightScale;
+    const double waveformHeight = channelHeight * m_channelScale;
 
     double y = (channelHeight - waveformHeight) / 2;
 
     for(int ch{0}; ch < channels; ++ch) {
-        const auto& [max, min, rms] = m_data.channelData.at(ch);
-
-        const double maxScale = waveformHeight / 2;
-        const double minScale = waveformHeight - maxScale;
-        const double centre   = maxScale + y;
-
-        const int total = static_cast<int>(max.size());
-
-        for(int i = first; i <= last && i < total; ++i) {
-            const auto x = static_cast<double>(i);
-
-            if(valueFromPosition(i) < m_position) {
-                painter.setPen(QPen(m_progressColour, 1, Qt::SolidLine, Qt::FlatCap));
-            }
-            else {
-                painter.setPen(QPen(m_baseColour, 1, Qt::SolidLine, Qt::FlatCap));
-            }
-
-            {
-                const QPointF pt1{x, centre - (max.at(i) * maxScale)};
-                const QPointF pt2{x, centre - (min.at(i) * minScale)};
-
-                painter.drawLine(pt1, pt2);
-            }
-
-            if(valueFromPosition(i) < m_position) {
-                painter.setPen(QPen(m_progressColour.lighter(), 1, Qt::SolidLine, Qt::FlatCap));
-            }
-            else {
-                painter.setPen(QPen(m_baseColour.lighter(200), 1, Qt::SolidLine, Qt::FlatCap));
-            }
-
-            {
-                const QPointF pt1{x, centre - (rms.at(i) * maxScale)};
-                const QPointF pt2{x, centre - (-rms.at(i) * minScale)};
-
-                painter.drawLine(pt1, pt2);
-            }
-        }
+        drawChannel(painter, ch, waveformHeight, first, last, y);
         y += channelHeight;
     }
 
-    painter.setPen(QPen(m_progressColour, CursorWidth, Qt::SolidLine, Qt::FlatCap));
-    const int posX = positionFromValue(m_position);
-    painter.drawLine(posX, 0, posX, height());
+    if(m_showCursor) {
+        painter.setPen({m_colours.cursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
+        const int posX = positionFromValue(m_position);
+        painter.drawLine(posX, 0, posX, height());
+    }
 
     painter.restore();
 }
@@ -203,6 +194,56 @@ uint64_t WaveSeekBar::valueFromPosition(int pos) const
     const auto ratio = static_cast<double>(pos) / w;
 
     return static_cast<uint64_t>(ratio * max);
+}
+
+void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, double y)
+{
+    const auto& [max, min, rms] = m_data.channelData.at(channel);
+
+    const double maxScale = height / 2;
+    const double minScale = height - maxScale;
+    const double centre   = maxScale + y;
+
+    double rmsScale{1.0};
+    if(m_drawValues == ValueOptions::RMS) {
+        rmsScale = *std::ranges::max_element(rms);
+    }
+
+    const int total = static_cast<int>(max.size());
+
+    for(int i = first; i <= last && i < total; ++i) {
+        const auto x = static_cast<double>(i);
+
+        const bool hasPlayed = valueFromPosition(i) < m_position;
+
+        if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::MinMax) {
+            if(hasPlayed) {
+                painter.setPen({m_colours.fgPlayed, 1, Qt::SolidLine, Qt::FlatCap});
+            }
+            else {
+                painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
+            }
+
+            const QPointF pt1{x, centre - (max.at(i) * maxScale)};
+            const QPointF pt2{x, centre - (min.at(i) * minScale)};
+
+            painter.drawLine(pt1, pt2);
+        }
+
+        if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::RMS) {
+            if(hasPlayed) {
+                painter.setPen({m_colours.rmsPlayed, 1, Qt::SolidLine, Qt::FlatCap});
+            }
+            else {
+                painter.setPen({m_colours.rmsUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
+            }
+
+            const QPointF pt1{x, centre - (rms.at(i) / rmsScale * maxScale)};
+            const QPointF pt2{x, centre - (-rms.at(i) / rmsScale * minScale)};
+
+            painter.drawLine(pt1, pt2);
+        }
+    }
 }
 } // namespace Fooyin::WaveBar
 
