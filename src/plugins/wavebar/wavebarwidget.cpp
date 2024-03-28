@@ -48,7 +48,6 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
     });
     QObject::connect(m_playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
     QObject::connect(&m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
-    QObject::connect(&m_builder, &WaveformBuilder::waveformGenerated, this, [this]() { m_builder.rescale(width()); });
     QObject::connect(&m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
     if(m_playerController->currentTrack().isValid()) {
