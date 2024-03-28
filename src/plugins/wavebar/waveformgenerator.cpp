@@ -111,37 +111,6 @@ Fooyin::WaveBar::WaveformData<OutputType> convertCache(const Fooyin::WaveBar::Wa
 
     return data;
 }
-
-void processBuffer(const Fooyin::AudioBuffer& buffer, Fooyin::WaveBar::WaveformData<float>& data)
-{
-    const int bps         = buffer.format().bytesPerSample();
-    const int sampleCount = buffer.frameCount();
-    const auto* samples   = buffer.data();
-
-    for(int ch{0}; ch < data.channels; ++ch) {
-        float max{-1.0};
-        float min{1.0};
-        float rms{0.0};
-
-        for(int i{0}; i < sampleCount; ++i) {
-            const int offset = (i * data.channels + ch) * bps;
-            float sample;
-            std::memcpy(&sample, samples + offset, bps);
-
-            max = std::max(max, sample);
-            min = std::min(min, sample);
-            rms += sample * sample;
-        }
-
-        rms /= static_cast<float>(sampleCount);
-        rms = std::sqrt(rms);
-
-        auto& [cMax, cMin, cRms] = data.channelData.at(ch);
-        cMax.emplace_back(max);
-        cMin.emplace_back(min);
-        cRms.emplace_back(rms);
-    }
-}
 } // namespace
 
 namespace Fooyin::WaveBar {
@@ -229,5 +198,44 @@ void WaveformGenerator::generate(const Track& track)
 
     setState(Idle);
     emit waveformGenerated(m_data);
+}
+
+void WaveformGenerator::processBuffer(const AudioBuffer& buffer)
+{
+    const int bps         = buffer.format().bytesPerSample();
+    const int sampleCount = buffer.frameCount();
+    const auto* samples   = buffer.data();
+
+    for(int ch{0}; ch < m_data.channels; ++ch) {
+        if(!mayRun()) {
+            return;
+        }
+
+        float max{-1.0};
+        float min{1.0};
+        float rms{0.0};
+
+        for(int i{0}; i < sampleCount; ++i) {
+            if(!mayRun()) {
+                return;
+            }
+
+            const int offset = (i * m_data.channels + ch) * bps;
+            float sample;
+            std::memcpy(&sample, samples + offset, bps);
+
+            max = std::max(max, sample);
+            min = std::min(min, sample);
+            rms += sample * sample;
+        }
+
+        rms /= static_cast<float>(sampleCount);
+        rms = std::sqrt(rms);
+
+        auto& [cMax, cMin, cRms] = m_data.channelData.at(ch);
+        cMax.emplace_back(max);
+        cMin.emplace_back(min);
+        cRms.emplace_back(rms);
+    }
 }
 } // namespace Fooyin::WaveBar

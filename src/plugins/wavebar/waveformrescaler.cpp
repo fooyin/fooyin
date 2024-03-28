@@ -91,6 +91,10 @@ void WaveformRescaler::rescale()
         double start{0.0};
 
         for(int x{0}; x < m_width; ++x) {
+            if(!mayRun()) {
+                return;
+            }
+
             const double end = std::max(1.0, (x + 1) * samplesPerPixel);
 
             int sampleCount{0};

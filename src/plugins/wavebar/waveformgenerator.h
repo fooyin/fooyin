@@ -44,6 +44,8 @@ public slots:
     void generate(const Fooyin::Track& track);
 
 private:
+    void processBuffer(const AudioBuffer& buffer);
+
     std::unique_ptr<AudioDecoder> m_decoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
