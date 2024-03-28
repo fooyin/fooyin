@@ -61,6 +61,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     p->widgetProvider->registerWidget(
         QStringLiteral("WaveBar"), [this]() { return new WaveBarWidget(p->playerManager, p->engine, p->settings); },
         QStringLiteral("Waveform Seekbar"));
+    p->widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {QStringLiteral("Controls")});
 }
 } // namespace Fooyin::WaveBar
 
