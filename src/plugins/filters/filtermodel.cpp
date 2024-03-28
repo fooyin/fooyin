@@ -261,7 +261,8 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     const int col    = index.column();
 
     switch(role) {
-        case(Qt::DisplayRole): {
+        case(Qt::DisplayRole):
+        case(Qt::ToolTipRole): {
             const QString& name = item->column(col);
             return !name.isEmpty() ? name : QStringLiteral("?");
         }

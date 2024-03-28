@@ -17,6 +17,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
+    ${CMAKE_SOURCE_DIR}/include/utils/tooltipfilter.h
     ${CMAKE_SOURCE_DIR}/include/utils/treeitem.h
     ${CMAKE_SOURCE_DIR}/include/utils/treemodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/treestatusitem.h
@@ -60,6 +61,7 @@ set(SOURCES
     simpletreeview.cpp
     simpletreeview.h
     slider.cpp
+    tooltipfilter.cpp
     utils.cpp
     worker.cpp
     actions/actioncommand.cpp

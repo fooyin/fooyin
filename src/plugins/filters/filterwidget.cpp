@@ -35,6 +35,7 @@
 #include <utils/async.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/tooltipfilter.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
@@ -263,6 +264,7 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
 
     p->view->setModel(p->model);
     p->view->setItemDelegate(new FilterDelegate(this));
+    p->view->viewport()->installEventFilter(new ToolTipFilter(this));
 
     layout->addWidget(p->view);
 

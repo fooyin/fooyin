@@ -1204,6 +1204,12 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
                         && m_currentPlayingTrack.indexInPlaylist == item->index();
 
     switch(role) {
+        case(Qt::ToolTipRole): {
+            if(!singleColumnMode) {
+                return track.column(column).text.joinedText();
+            }
+            break;
+        }
         case(PlaylistItem::Role::Column): {
             if(!singleColumnMode) {
                 return QVariant::fromValue(track.column(column).text);

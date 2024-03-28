@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <QFont>
 #include <QColor>
+#include <QFont>
 
 namespace Fooyin {
 struct RichFormatting
@@ -44,7 +44,18 @@ struct RichTextBlock
         return std::tie(text, format) == std::tie(other.text, other.format);
     };
 };
-using RichText = std::vector<RichTextBlock>;
+
+struct RichText : public std::vector<RichTextBlock>
+{
+    [[nodiscard]] QString joinedText() const
+    {
+        QString text;
+        for(const auto& block : *this) {
+            text.append(block.text);
+        }
+        return text;
+    }
+};
 
 struct RichScript
 {

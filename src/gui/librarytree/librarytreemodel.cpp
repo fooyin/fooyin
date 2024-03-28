@@ -308,7 +308,8 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
     const auto* item = static_cast<LibraryTreeItem*>(index.internalPointer());
 
     switch(role) {
-        case(Qt::DisplayRole): {
+        case(Qt::DisplayRole):
+        case(Qt::ToolTipRole): {
             const QString& name = item->title();
             return !name.isEmpty() ? name : QStringLiteral("?");
         }

@@ -31,6 +31,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
+#include <utils/tooltipfilter.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -163,6 +164,7 @@ struct LibraryTreeWidget::Private
         layout->addWidget(libraryTree);
 
         libraryTree->setModel(model);
+        libraryTree->viewport()->installEventFilter(new ToolTipFilter(self));
 
         libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Play);
         libraryTree->setAnimated(true);
