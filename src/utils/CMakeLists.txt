@@ -44,6 +44,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/tooltip.h
     clickablelabel.cpp
     crypto.cpp
     expandableinputbox.cpp
@@ -89,6 +90,7 @@ set(SOURCES
     widgets/editabletabwidget.cpp
     widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp
+    widgets/tooltip.cpp
 )
 
 create_fooyin_library(

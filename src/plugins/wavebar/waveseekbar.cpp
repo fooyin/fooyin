@@ -23,6 +23,7 @@
 
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QApplication>
 #include <QMouseEvent>
@@ -34,7 +35,6 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , m_settings{settings}
     , m_position{0}
-    , m_seekPos{0}
     , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
     , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
     , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
@@ -139,9 +139,9 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         painter.drawLine(posX, 0, posX, height());
     }
 
-    if(m_seekPos > 0) {
+    if(!m_seekPos.isNull()) {
         painter.setPen({m_colours.seekingCursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
-        painter.drawLine(m_seekPos, 0, m_seekPos, height());
+        painter.drawLine(m_seekPos.x(), 0, m_seekPos.x(), height());
     }
 
     painter.restore();
@@ -151,8 +151,20 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
 
-    m_seekPos = std::clamp(event->pos().x(), 1, width());
-    update();
+    if(event->buttons() & Qt::LeftButton) {
+        updateMousePosition(event->pos());
+        drawSeekTip();
+    }
+}
+
+void WaveSeekBar::mousePressEvent(QMouseEvent* event)
+{
+    QWidget::mousePressEvent(event);
+
+    if(event->button() == Qt::LeftButton) {
+        updateMousePosition(event->pos());
+        drawSeekTip();
+    }
 }
 
 void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
@@ -163,7 +175,11 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
         return;
     }
 
-    m_seekPos  = 0;
+    if(m_seekTip) {
+        m_seekTip->deleteLater();
+    }
+
+    m_seekPos  = {};
     m_position = valueFromPosition(event->pos().x());
     emit sliderMoved(m_position);
     update();
@@ -201,6 +217,14 @@ uint64_t WaveSeekBar::valueFromPosition(int pos) const
     const auto ratio = static_cast<double>(pos) / w;
 
     return static_cast<uint64_t>(ratio * max);
+}
+
+void WaveSeekBar::updateMousePosition(const QPoint& pos)
+{
+    QPoint widgetPos{pos};
+    widgetPos.setX(std::clamp(pos.x(), 1, width()));
+    m_seekPos = widgetPos;
+    update();
 }
 
 void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, double y)
@@ -257,6 +281,25 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         const int centreY = this->height() / 2;
         painter.drawLine(total, centreY, rect().right(), centreY);
     }
+}
+
+void WaveSeekBar::drawSeekTip()
+{
+    if(!m_seekTip) {
+        m_seekTip = new ToolTip(window());
+        m_seekTip->show();
+    }
+
+    const uint64_t seekPos   = valueFromPosition(m_seekPos.x());
+    const uint64_t seekDelta = std::max(m_position, seekPos) - std::min(m_position, seekPos);
+
+    m_seekTip->setText(Utils::msToString(seekPos));
+    m_seekTip->setSubtext((seekPos > m_position ? QStringLiteral("+") : QStringLiteral("-"))
+                          + Utils::msToString(seekDelta));
+
+    auto seekTipPos{m_seekPos};
+    seekTipPos.setY(std::max(seekTipPos.y(), 0));
+    m_seekTip->setPosition(mapTo(window(), seekTipPos));
 }
 } // namespace Fooyin::WaveBar
 

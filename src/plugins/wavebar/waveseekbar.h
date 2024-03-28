@@ -23,6 +23,9 @@
 #include "wavebarcolours.h"
 #include "waveformdata.h"
 
+#include <utils/widgets/tooltip.h>
+
+#include <QPointer>
 #include <QWidget>
 
 namespace Fooyin {
@@ -45,18 +48,23 @@ signals:
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
+    void updateMousePosition(const QPoint& pos);
+
     void drawChannel(QPainter& painter, int channel, double height, int first, int last, double y);
+    void drawSeekTip();
 
     SettingsManager* m_settings;
 
     WaveformData<float> m_data;
     uint64_t m_position;
-    int m_seekPos;
+    QPoint m_seekPos;
+    QPointer<ToolTip> m_seekTip;
 
     bool m_showCursor;
     double m_cursorWidth;
