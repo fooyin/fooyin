@@ -169,10 +169,14 @@ void WaveformGenerator::generate(const Track& track)
 
     emit generatingWaveform();
 
-    const auto samplesPerChannel
-        = static_cast<int>(std::floor(static_cast<double>(m_data.duration) / 1000 * m_format.sampleRate()));
-    const auto samplesPerBuffer = static_cast<int>(std::ceil(static_cast<double>(samplesPerChannel) / SampleCount));
+    const uint64_t durationSecs = m_data.duration / 1000;
+    const int samplesPerChannel = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
+    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samplesPerChannel) / SampleCount));
     const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
+    const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 30));
+    const int updateThreshold   = SampleCount / numOfUpdates;
+
+    int processedCount{0};
 
     m_decoder->start();
 
@@ -187,7 +191,12 @@ void WaveformGenerator::generate(const Track& track)
         }
 
         buffer = Audio::convert(buffer, m_requiredFormat);
-        processBuffer(buffer, m_data);
+        processBuffer(buffer);
+
+        if(processedCount++ == updateThreshold) {
+            processedCount = 0;
+            emit waveformGenerated(m_data);
+        }
     }
 
     m_decoder->stop();

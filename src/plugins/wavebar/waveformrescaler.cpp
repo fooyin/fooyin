@@ -34,7 +34,7 @@ int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::Wavefo
     const int lastIndex = std::floor(sampleSize * end);
 
     for(int i = std::floor(start); i < std::ceil(end); ++i) {
-        for(int index = i * sampleSize; index < lastIndex; index += sampleSize, ++sampleCount) {
+        for(int index = i * sampleSize; index < lastIndex; index += sampleSize) {
             if(std::cmp_less(index, inMax.size())) {
                 const float sampleMax = inMax.at(index);
                 const float sampleMin = inMin.at(index);
@@ -43,6 +43,8 @@ int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::Wavefo
                 sample.max = std::max(sample.max, sampleMax);
                 sample.min = std::min(sample.min, sampleMin);
                 sample.rms += sampleRms * sampleRms;
+
+                ++sampleCount;
             }
         }
     }
@@ -109,12 +111,14 @@ void WaveformRescaler::rescale()
                 sampleCount += buildSample(sample, m_data, ch, sampleSize, start, end);
             }
 
-            sample.rms /= static_cast<float>(sampleCount);
-            sample.rms = std::sqrt(sample.rms);
+            if(sampleCount > 0) {
+                sample.rms /= static_cast<float>(sampleCount);
+                sample.rms = std::sqrt(sample.rms);
 
-            outMax.emplace_back(sample.max);
-            outMin.emplace_back(sample.min);
-            outRms.emplace_back(sample.rms);
+                outMax.emplace_back(sample.max);
+                outMin.emplace_back(sample.min);
+                outRms.emplace_back(sample.rms);
+            }
 
             start = end;
         }

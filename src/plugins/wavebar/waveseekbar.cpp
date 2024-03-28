@@ -101,17 +101,18 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};
 
+    if(m_antialiasing) {
+        painter.setRenderHint(QPainter::Antialiasing);
+    }
+
     if(m_data.empty()) {
+        painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = height() / 2;
         painter.drawLine(0, centreY, rect().right(), centreY);
         return;
     }
 
     painter.save();
-
-    if(m_antialiasing) {
-        painter.setRenderHint(QPainter::Antialiasing);
-    }
 
     const int channels = m_data.channels;
 
@@ -251,6 +252,12 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 
             painter.drawLine(pt1, pt2);
         }
+    }
+
+    if(total < last) {
+        painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
+        const int centreY = this->height() / 2;
+        painter.drawLine(total, centreY, rect().right(), centreY);
     }
 }
 } // namespace Fooyin::WaveBar
