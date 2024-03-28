@@ -34,7 +34,7 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , m_settings{settings}
     , m_position{0}
-    , m_isBeingMoved{false}
+    , m_seekPos{0}
     , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
     , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
     , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
@@ -78,7 +78,7 @@ void WaveSeekBar::setPosition(uint64_t pos)
 {
     const uint64_t oldPos = std::exchange(m_position, pos);
 
-    if(oldPos == pos || m_isBeingMoved) {
+    if(oldPos == pos) {
         return;
     }
 
@@ -139,6 +139,11 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         painter.drawLine(posX, 0, posX, height());
     }
 
+    if(m_seekPos > 0) {
+        painter.setPen({m_colours.cursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
+        painter.drawLine(m_seekPos, 0, m_seekPos, height());
+    }
+
     painter.restore();
 }
 
@@ -146,29 +151,22 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
 
-    m_isBeingMoved = true;
-
-    const uint64_t pos = event->pos().x() > 10 ? valueFromPosition(event->pos().x()) : 0;
-    emit sliderMoved(pos);
+    m_seekPos = std::clamp(event->pos().x(), 1, width());
     update();
-
-    m_isBeingMoved = false;
 }
 
-void WaveSeekBar::mousePressEvent(QMouseEvent* event)
+void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
 
-    if(event->button() == Qt::LeftButton) {
-        m_isBeingMoved = true;
-
-        const uint64_t pos = event->pos().x() > 10 ? valueFromPosition(event->pos().x()) : 0;
-        m_position         = pos;
-        emit sliderMoved(pos);
-        update();
-
-        m_isBeingMoved = false;
+    if(event->button() != Qt::LeftButton) {
+        return;
     }
+
+    m_seekPos  = 0;
+    m_position = valueFromPosition(event->pos().x());
+    emit sliderMoved(m_position);
+    update();
 }
 
 int WaveSeekBar::positionFromValue(uint64_t value) const

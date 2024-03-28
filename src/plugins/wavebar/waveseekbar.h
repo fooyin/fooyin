@@ -45,7 +45,7 @@ signals:
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
@@ -56,7 +56,7 @@ private:
 
     WaveformData<float> m_data;
     uint64_t m_position;
-    bool m_isBeingMoved;
+    int m_seekPos;
 
     bool m_showCursor;
     double m_cursorWidth;
