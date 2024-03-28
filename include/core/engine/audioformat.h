@@ -41,30 +41,29 @@ public:
     AudioFormat();
     AudioFormat(SampleFormat format, int sampleRate, int channelCount);
 
-    bool operator==(const AudioFormat& other) const;
-    bool operator!=(const AudioFormat& other) const;
+    bool operator<=>(const AudioFormat& other) const = default;
 
-    bool isValid() const;
+    [[nodiscard]] bool isValid() const;
 
-    int sampleRate() const;
-    int channelCount() const;
-    SampleFormat sampleFormat() const;
+    [[nodiscard]] int sampleRate() const;
+    [[nodiscard]] int channelCount() const;
+    [[nodiscard]] SampleFormat sampleFormat() const;
 
     void setSampleRate(int sampleRate);
     void setChannelCount(int channelCount);
     void setSampleFormat(SampleFormat format);
 
-    int bytesForDuration(uint64_t ms) const;
-    uint64_t durationForBytes(int byteCount) const;
+    [[nodiscard]] int bytesForDuration(uint64_t ms) const;
+    [[nodiscard]] uint64_t durationForBytes(int byteCount) const;
 
-    int bytesForFrames(int frameCount) const;
-    int framesForBytes(int byteCount) const;
+    [[nodiscard]] int bytesForFrames(int frameCount) const;
+    [[nodiscard]] int framesForBytes(int byteCount) const;
 
-    int framesForDuration(uint64_t ms) const;
-    uint64_t durationForFrames(int frameCount) const;
+    [[nodiscard]] int framesForDuration(uint64_t ms) const;
+    [[nodiscard]] uint64_t durationForFrames(int frameCount) const;
 
-    int bytesPerFrame() const;
-    int bytesPerSample() const;
+    [[nodiscard]] int bytesPerFrame() const;
+    [[nodiscard]] int bytesPerSample() const;
 
 private:
     SampleFormat m_sampleFormat;
