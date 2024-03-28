@@ -44,9 +44,11 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     PlayerController* m_playerController;
+    SettingsManager* m_settings;
 
     WaveSeekBar* m_seekbar;
     WaveformBuilder m_builder;

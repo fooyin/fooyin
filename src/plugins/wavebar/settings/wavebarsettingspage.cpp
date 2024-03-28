@@ -89,6 +89,9 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
+    auto* appearanceGroup  = new QGroupBox(tr("Appearance"), this);
+    auto* appearanceLayout = new QGridLayout(appearanceGroup);
+
     auto* channelHeightLabel = new QLabel(tr("Channel Scale") + QStringLiteral(":"), this);
     auto* cursorWidthLabel   = new QLabel(tr("Cursor Width") + QStringLiteral(":"), this);
     auto* drawValuesLabel    = new QLabel(tr("Draw Values") + QStringLiteral(":"), this);
@@ -108,15 +111,6 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* seekingCursorLabel = new QLabel(tr("Seeking"), this);
     auto* cursorLabel        = new QLabel(tr("Cursor"), this);
 
-    m_bgUnplayed->setFixedSize(60, 30);
-    m_bgPlayed->setFixedSize(60, 30);
-    m_fgUnplayed->setFixedSize(60, 30);
-    m_fgPlayed->setFixedSize(60, 30);
-    m_rmsUnplayed->setFixedSize(60, 30);
-    m_rmsPlayed->setFixedSize(60, 30);
-    m_cursorColour->setFixedSize(60, 30);
-    m_seekingCursorColour->setFixedSize(60, 30);
-
     coloursLayout->addWidget(unPlayedLabel, 0, 1, Qt::AlignCenter);
     coloursLayout->addWidget(playedLabel, 0, 2, Qt::AlignCenter);
     coloursLayout->addWidget(bgLabel, 1, 0);
@@ -126,14 +120,17 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     coloursLayout->addWidget(seekingCursorLabel, 4, 2, Qt::AlignCenter);
     coloursLayout->addWidget(cursorLabel, 5, 0);
 
-    coloursLayout->addWidget(m_bgUnplayed, 1, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(m_bgPlayed, 1, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(m_fgUnplayed, 2, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(m_fgPlayed, 2, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(m_rmsUnplayed, 3, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(m_rmsPlayed, 3, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(m_cursorColour, 5, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(m_seekingCursorColour, 5, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(m_bgUnplayed, 1, 1);
+    coloursLayout->addWidget(m_bgPlayed, 1, 2);
+    coloursLayout->addWidget(m_fgUnplayed, 2, 1);
+    coloursLayout->addWidget(m_fgPlayed, 2, 2);
+    coloursLayout->addWidget(m_rmsUnplayed, 3, 1);
+    coloursLayout->addWidget(m_rmsPlayed, 3, 2);
+    coloursLayout->addWidget(m_cursorColour, 5, 1);
+    coloursLayout->addWidget(m_seekingCursorColour, 5, 2);
+
+    coloursLayout->setColumnStretch(1, 1);
+    coloursLayout->setColumnStretch(2, 1);
 
     m_cursorWidth->setMinimum(1.0);
     m_cursorWidth->setMaximum(20.0);
@@ -147,22 +144,24 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_sampleValues->setMaximum(100);
     m_sampleValues->setSingleStep(1);
 
-    layout->addWidget(m_showCursor, 0, 0, 1, 2);
-    layout->addWidget(cursorWidthLabel, 1, 0);
-    layout->addWidget(m_cursorWidth, 1, 1);
-    layout->addWidget(channelHeightLabel, 2, 0);
-    layout->addWidget(m_channelHeightScale, 2, 1);
-    layout->addWidget(drawValuesLabel, 3, 0);
-    layout->addWidget(m_drawValues, 3, 1);
-    layout->addWidget(sampleValuesLabel, 4, 0);
-    layout->addWidget(m_sampleValues, 4, 1);
-    layout->addWidget(downMixLabel, 5, 0);
-    layout->addWidget(m_downmix, 5, 1);
-    layout->addWidget(m_antialiasing, 6, 0, 1, 2);
-    layout->addWidget(m_colourGroup, 0, 2, 6, 1);
+    appearanceLayout->addWidget(m_antialiasing, 0, 0, 1, 2);
+    appearanceLayout->addWidget(m_showCursor, 1, 0, 1, 2);
+    appearanceLayout->addWidget(cursorWidthLabel, 2, 0);
+    appearanceLayout->addWidget(m_cursorWidth, 2, 1);
+    appearanceLayout->addWidget(channelHeightLabel, 3, 0);
+    appearanceLayout->addWidget(m_channelHeightScale, 3, 1);
+    appearanceLayout->addWidget(drawValuesLabel, 4, 0);
+    appearanceLayout->addWidget(m_drawValues, 4, 1);
+    appearanceLayout->addWidget(sampleValuesLabel, 5, 0);
+    appearanceLayout->addWidget(m_sampleValues, 5, 1);
+    appearanceLayout->addWidget(downMixLabel, 6, 0);
+    appearanceLayout->addWidget(m_downmix, 6, 1);
+
+    layout->addWidget(appearanceGroup, 0, 1);
+    layout->addWidget(m_colourGroup, 0, 2);
 
     layout->setRowStretch(layout->rowCount(), 1);
-    layout->setColumnStretch(3, 1);
+    layout->setColumnStretch(2, 1);
 
     QObject::connect(m_showCursor, &QCheckBox::stateChanged, this,
                      [this]() { m_cursorWidth->setEnabled(m_showCursor->isChecked()); });
@@ -195,12 +194,12 @@ void WaveBarSettingsPageWidget::load()
 
     m_downmix->clear();
 
-    m_downmix->addItem(tr("None"));
+    m_downmix->addItem(tr("Off"));
     m_downmix->addItem(tr("Stereo"));
     m_downmix->addItem(tr("Mono"));
 
     const auto downMixOption = static_cast<DownmixOption>(m_settings->value<Settings::WaveBar::Downmix>());
-    if(downMixOption == DownmixOption::None) {
+    if(downMixOption == DownmixOption::Off) {
         m_downmix->setCurrentIndex(0);
     }
     else if(downMixOption == DownmixOption::Stereo) {

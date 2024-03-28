@@ -97,6 +97,16 @@ void WaveSeekBar::setPosition(uint64_t pos)
     update(updateRect);
 }
 
+void WaveSeekBar::stopSeeking()
+{
+    if(m_seekTip) {
+        m_seekTip->deleteLater();
+    }
+
+    m_seekPos = {};
+    update();
+}
+
 void WaveSeekBar::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};
@@ -175,14 +185,10 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
         return;
     }
 
-    if(m_seekTip) {
-        m_seekTip->deleteLater();
-    }
+    stopSeeking();
 
-    m_seekPos  = {};
     m_position = valueFromPosition(event->pos().x());
     emit sliderMoved(m_position);
-    update();
 }
 
 int WaveSeekBar::positionFromValue(uint64_t value) const

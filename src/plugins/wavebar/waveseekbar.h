@@ -41,6 +41,7 @@ public:
 
     void processData(const WaveformData<float>& waveData);
     void setPosition(uint64_t pos);
+    void stopSeeking();
 
 signals:
     void sliderMoved(uint64_t pos);

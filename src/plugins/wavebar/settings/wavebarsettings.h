@@ -33,7 +33,7 @@ enum class ValueOptions
 
 enum class DownmixOption
 {
-    None = 0,
+    Off = 0,
     Stereo,
     Mono,
 };

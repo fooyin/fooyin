@@ -56,7 +56,7 @@ WaveformRescaler::WaveformRescaler(QObject* parent)
     : Worker{parent}
     , m_width{0}
     , m_samplePixelRatio{1}
-    , m_downMix{DownmixOption::None}
+    , m_downMix{DownmixOption::Off}
 { }
 
 void WaveformRescaler::rescale()
