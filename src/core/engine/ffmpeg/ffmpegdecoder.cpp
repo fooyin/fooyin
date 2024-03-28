@@ -357,6 +357,8 @@ void FFmpegDecoder::stop()
 {
     p->isDecoding = false;
     p->draining   = false;
+    p->currentPts = 0;
+    p->bufferPos  = 0;
 
     p->context.reset();
     p->stream = {};
