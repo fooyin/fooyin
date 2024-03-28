@@ -95,6 +95,10 @@ void WaveSeekBar::setPosition(uint64_t pos)
     const QRect updateRect(updateX, 0, width, height());
 
     update(updateRect);
+
+    if(!m_seekPos.isNull()) {
+        drawSeekTip();
+    }
 }
 
 void WaveSeekBar::stopSeeking()
