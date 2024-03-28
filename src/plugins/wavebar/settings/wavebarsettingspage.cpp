@@ -64,6 +64,7 @@ private:
     ColourButton* m_rmsUnplayed;
     ColourButton* m_rmsPlayed;
     ColourButton* m_cursorColour;
+    ColourButton* m_seekingCursorColour;
 };
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
@@ -82,6 +83,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_rmsUnplayed{new ColourButton(this)}
     , m_rmsPlayed{new ColourButton(this)}
     , m_cursorColour{new ColourButton(this)}
+    , m_seekingCursorColour{new ColourButton(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -94,12 +96,14 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
 
     auto* coloursLayout = new QGridLayout(m_colourGroup);
 
-    auto* unPlayedLabel = new QLabel(tr("Unplayed"), this);
-    auto* playedLabel   = new QLabel(tr("Played"), this);
-    auto* bgLabel       = new QLabel(tr("Background"), this);
-    auto* fgLabel       = new QLabel(tr("Foreground"), this);
-    auto* rmsLabel      = new QLabel(tr("RMS"), this);
-    auto* cursorLabel   = new QLabel(tr("Cursor"), this);
+    auto* unPlayedLabel      = new QLabel(tr("Unplayed"), this);
+    auto* playedLabel        = new QLabel(tr("Played"), this);
+    auto* bgLabel            = new QLabel(tr("Background"), this);
+    auto* fgLabel            = new QLabel(tr("Foreground"), this);
+    auto* rmsLabel           = new QLabel(tr("RMS"), this);
+    auto* playingCursorLabel = new QLabel(tr("Playing"), this);
+    auto* seekingCursorLabel = new QLabel(tr("Seeking"), this);
+    auto* cursorLabel        = new QLabel(tr("Cursor"), this);
 
     m_bgUnplayed->setFixedSize(60, 30);
     m_bgPlayed->setFixedSize(60, 30);
@@ -108,13 +112,16 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_rmsUnplayed->setFixedSize(60, 30);
     m_rmsPlayed->setFixedSize(60, 30);
     m_cursorColour->setFixedSize(60, 30);
+    m_seekingCursorColour->setFixedSize(60, 30);
 
     coloursLayout->addWidget(unPlayedLabel, 0, 1, Qt::AlignCenter);
     coloursLayout->addWidget(playedLabel, 0, 2, Qt::AlignCenter);
     coloursLayout->addWidget(bgLabel, 1, 0);
     coloursLayout->addWidget(fgLabel, 2, 0);
     coloursLayout->addWidget(rmsLabel, 3, 0);
-    coloursLayout->addWidget(cursorLabel, 4, 0);
+    coloursLayout->addWidget(playingCursorLabel, 4, 1, Qt::AlignCenter);
+    coloursLayout->addWidget(seekingCursorLabel, 4, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(cursorLabel, 5, 0);
 
     coloursLayout->addWidget(m_bgUnplayed, 1, 1, Qt::AlignCenter);
     coloursLayout->addWidget(m_bgPlayed, 1, 2, Qt::AlignCenter);
@@ -122,7 +129,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     coloursLayout->addWidget(m_fgPlayed, 2, 2, Qt::AlignCenter);
     coloursLayout->addWidget(m_rmsUnplayed, 3, 1, Qt::AlignCenter);
     coloursLayout->addWidget(m_rmsPlayed, 3, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(m_cursorColour, 4, 2, Qt::AlignCenter);
+    coloursLayout->addWidget(m_cursorColour, 5, 1, Qt::AlignCenter);
+    coloursLayout->addWidget(m_seekingCursorColour, 5, 2, Qt::AlignCenter);
 
     m_cursorWidth->setMinimum(1.0);
     m_cursorWidth->setMaximum(20.0);
@@ -203,6 +211,7 @@ void WaveBarSettingsPageWidget::load()
     m_rmsUnplayed->setColour(currentColours.rmsUnplayed);
     m_rmsPlayed->setColour(currentColours.rmsPlayed);
     m_cursorColour->setColour(currentColours.cursor);
+    m_seekingCursorColour->setColour(currentColours.seekingCursor);
 }
 
 void WaveBarSettingsPageWidget::apply()
@@ -217,13 +226,14 @@ void WaveBarSettingsPageWidget::apply()
     Colours colours;
 
     if(m_colourGroup->isChecked()) {
-        colours.bgUnplayed  = m_bgUnplayed->colour();
-        colours.bgPlayed    = m_bgPlayed->colour();
-        colours.fgUnplayed  = m_fgUnplayed->colour();
-        colours.fgPlayed    = m_fgPlayed->colour();
-        colours.rmsUnplayed = m_rmsUnplayed->colour();
-        colours.rmsPlayed   = m_rmsPlayed->colour();
-        colours.cursor      = m_cursorColour->colour();
+        colours.bgUnplayed    = m_bgUnplayed->colour();
+        colours.bgPlayed      = m_bgPlayed->colour();
+        colours.fgUnplayed    = m_fgUnplayed->colour();
+        colours.fgPlayed      = m_fgPlayed->colour();
+        colours.rmsUnplayed   = m_rmsUnplayed->colour();
+        colours.rmsPlayed     = m_rmsPlayed->colour();
+        colours.cursor        = m_cursorColour->colour();
+        colours.seekingCursor = m_seekingCursorColour->colour();
         m_settings->set<Settings::WaveBar::ColourOptions>(QVariant::fromValue(colours));
     }
     else {

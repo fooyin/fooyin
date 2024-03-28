@@ -38,12 +38,18 @@ struct Colours
     QColor rmsPlayed{fgPlayed.darker(150)};
 
     QColor cursor{fgPlayed};
+    QColor seekingCursor{rmsPlayed};
 
     bool operator==(const Colours& other) const
     {
-        return std::tie(bgUnplayed, bgPlayed, fgUnplayed, fgPlayed, rmsUnplayed, rmsPlayed, cursor)
+        return std::tie(bgUnplayed, bgPlayed, fgUnplayed, fgPlayed, rmsUnplayed, rmsPlayed, cursor, seekingCursor)
             == std::tie(other.bgUnplayed, other.bgPlayed, other.fgUnplayed, other.fgPlayed, other.rmsUnplayed,
-                        other.rmsPlayed, other.cursor);
+                        other.rmsPlayed, other.cursor, other.seekingCursor);
+    };
+
+    bool operator!=(const Colours& other) const
+    {
+        return !(*this == other);
     };
 
     friend QDataStream& operator<<(QDataStream& stream, const Colours& colours)

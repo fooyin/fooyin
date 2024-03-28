@@ -140,7 +140,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     }
 
     if(m_seekPos > 0) {
-        painter.setPen({m_colours.cursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
+        painter.setPen({m_colours.seekingCursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
         painter.drawLine(m_seekPos, 0, m_seekPos, height());
     }
 
