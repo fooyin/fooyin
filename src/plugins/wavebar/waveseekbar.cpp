@@ -38,23 +38,28 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
     , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
     , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
+    , m_antialiasing{settings->value<Settings::WaveBar::Antialiasing>()}
     , m_drawValues{settings->value<Settings::WaveBar::DrawValues>()}
     , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
 {
-    m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](bool show) {
+    m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](const bool show) {
         m_showCursor = show;
         update();
     });
-    m_settings->subscribe<Settings::WaveBar::CursorWidth>(this, [this](double width) {
+    m_settings->subscribe<Settings::WaveBar::CursorWidth>(this, [this](const double width) {
         m_cursorWidth = width;
         update();
     });
-    m_settings->subscribe<Settings::WaveBar::ChannelHeightScale>(this, [this](double scale) {
+    m_settings->subscribe<Settings::WaveBar::ChannelHeightScale>(this, [this](const double scale) {
         m_channelScale = scale;
         update();
     });
     m_settings->subscribe<Settings::WaveBar::DrawValues>(this, [this](const int values) {
         m_drawValues = static_cast<ValueOptions>(values);
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::Antialiasing>(this, [this](const bool enable) {
+        m_antialiasing = enable;
         update();
     });
     m_settings->subscribe<Settings::WaveBar::ColourOptions>(this, [this](const QVariant& var) {
@@ -102,7 +107,9 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     painter.save();
 
-    painter.setRenderHint(QPainter::Antialiasing);
+    if(m_antialiasing) {
+        painter.setRenderHint(QPainter::Antialiasing);
+    }
 
     const int channels = m_data.channels;
 

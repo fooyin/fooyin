@@ -54,6 +54,7 @@ private:
 
     QComboBox* m_drawValues;
     QComboBox* m_downmix;
+    QCheckBox* m_antialiasing;
 
     QGroupBox* m_colourGroup;
     ColourButton* m_bgUnplayed;
@@ -72,6 +73,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_channelHeightScale{new QDoubleSpinBox(this)}
     , m_drawValues{new QComboBox(this)}
     , m_downmix{new QComboBox(this)}
+    , m_antialiasing{new QCheckBox(tr("Anti-aliasing"), this)}
     , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
     , m_bgUnplayed{new ColourButton(this)}
     , m_bgPlayed{new ColourButton(this)}
@@ -139,7 +141,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     layout->addWidget(m_drawValues, 3, 1);
     layout->addWidget(downMixLabel, 4, 0);
     layout->addWidget(m_downmix, 4, 1);
-    layout->addWidget(m_colourGroup, 0, 2, 5, 1);
+    layout->addWidget(m_antialiasing, 5, 0, 1, 2);
+    layout->addWidget(m_colourGroup, 0, 2, 6, 1);
 
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(3, 1);
@@ -188,6 +191,8 @@ void WaveBarSettingsPageWidget::load()
         m_downmix->setCurrentIndex(2);
     }
 
+    m_antialiasing->setChecked(m_settings->value<Settings::WaveBar::Antialiasing>());
+
     const auto currentColours = m_settings->value<Settings::WaveBar::ColourOptions>().value<Colours>();
     m_colourGroup->setChecked(currentColours != Colours{});
 
@@ -207,6 +212,7 @@ void WaveBarSettingsPageWidget::apply()
     m_settings->set<Settings::WaveBar::ChannelHeightScale>(m_channelHeightScale->value());
     m_settings->set<Settings::WaveBar::Downmix>(m_downmix->currentIndex());
     m_settings->set<Settings::WaveBar::DrawValues>(m_drawValues->currentIndex());
+    m_settings->set<Settings::WaveBar::Antialiasing>(m_antialiasing->isChecked());
 
     Colours colours;
 
@@ -233,6 +239,7 @@ void WaveBarSettingsPageWidget::reset()
     m_settings->reset<Settings::WaveBar::CursorWidth>();
     m_settings->reset<Settings::WaveBar::ColourOptions>();
     m_settings->reset<Settings::WaveBar::DrawValues>();
+    m_settings->reset<Settings::WaveBar::Antialiasing>();
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)

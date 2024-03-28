@@ -61,6 +61,7 @@ private:
     bool m_showCursor;
     double m_cursorWidth;
     double m_channelScale;
+    bool m_antialiasing;
 
     ValueOptions m_drawValues;
     Colours m_colours;
