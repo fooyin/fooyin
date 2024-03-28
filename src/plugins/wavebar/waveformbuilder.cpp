@@ -30,6 +30,7 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
     , m_generator{std::move(decoder)}
     , m_width{0}
 {
+    m_rescaler.changeSamplePixelRatio(m_settings->value<Settings::WaveBar::SamplePixelRatio>());
     m_rescaler.changeDownmix(static_cast<DownmixOption>(m_settings->value<Settings::WaveBar::Downmix>()));
 
     m_generator.moveToThread(&m_generatorThread);
@@ -41,6 +42,10 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
                      [this](const auto& data) { m_rescaler.rescale(data, m_width); });
     QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
 
+    m_settings->subscribe<Settings::WaveBar::SamplePixelRatio>(this, [this](const int ratio) {
+        m_rescaler.stopThread();
+        QMetaObject::invokeMethod(&m_rescaler, "changeSamplePixelRatio", Q_ARG(int, ratio));
+    });
     m_settings->subscribe<Settings::WaveBar::Downmix>(this, [this](const int downMix) {
         m_rescaler.stopThread();
         QMetaObject::invokeMethod(&m_rescaler, "changeDownmix",

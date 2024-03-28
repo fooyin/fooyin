@@ -38,5 +38,6 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ColourOptions>(QVariant::fromValue(Colours{}), QStringLiteral("WaveBar/Colours"));
     m_settings->createSetting<DrawValues>(0, QStringLiteral("WaveBar/DrawValues"));
     m_settings->createSetting<Antialiasing>(true, QStringLiteral("WaveBar/Antialiasing"));
+    m_settings->createSetting<SamplePixelRatio>(1, QStringLiteral("WaveBar/SamplePixelRatio"));
 }
 } // namespace Fooyin::WaveBar

@@ -21,8 +21,6 @@
 
 #include <utils/settings/settingsmanager.h>
 
-constexpr auto ValuesPerSample = 1;
-
 namespace {
 int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::WaveformData<float>& data, int channel,
                 int sampleSize, double start, double end)
@@ -57,6 +55,7 @@ namespace Fooyin::WaveBar {
 WaveformRescaler::WaveformRescaler(QObject* parent)
     : Worker{parent}
     , m_width{0}
+    , m_samplePixelRatio{1}
     , m_downMix{DownmixOption::None}
 { }
 
@@ -84,8 +83,8 @@ void WaveformRescaler::rescale()
     data.channels = channels;
     data.channelData.resize(channels);
 
-    constexpr int sampleSize     = ValuesPerSample;
-    const double samplesPerPixel = static_cast<double>(m_data.sampleCount) / (m_width * (sampleSize));
+    const int sampleSize         = m_samplePixelRatio;
+    const double samplesPerPixel = static_cast<double>(m_data.sampleCount) / (m_width * sampleSize);
 
     for(int ch{0}; ch < channels; ++ch) {
         auto& [outMax, outMin, outRms] = data.channelData.at(ch);
@@ -146,6 +145,12 @@ void WaveformRescaler::rescale(const WaveformData<float>& data, int width)
     }
 
     rescale(width);
+}
+
+void WaveformRescaler::changeSamplePixelRatio(int ratio)
+{
+    m_samplePixelRatio = ratio;
+    rescale(m_width);
 }
 
 void WaveformRescaler::changeDownmix(DownmixOption option)

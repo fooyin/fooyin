@@ -53,6 +53,7 @@ private:
     QDoubleSpinBox* m_channelHeightScale;
 
     QComboBox* m_drawValues;
+    QSpinBox* m_sampleValues;
     QComboBox* m_downmix;
     QCheckBox* m_antialiasing;
 
@@ -73,6 +74,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_cursorWidth{new QDoubleSpinBox(this)}
     , m_channelHeightScale{new QDoubleSpinBox(this)}
     , m_drawValues{new QComboBox(this)}
+    , m_sampleValues{new QSpinBox(this)}
     , m_downmix{new QComboBox(this)}
     , m_antialiasing{new QCheckBox(tr("Anti-aliasing"), this)}
     , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
@@ -90,6 +92,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* channelHeightLabel = new QLabel(tr("Channel Scale") + QStringLiteral(":"), this);
     auto* cursorWidthLabel   = new QLabel(tr("Cursor Width") + QStringLiteral(":"), this);
     auto* drawValuesLabel    = new QLabel(tr("Draw Values") + QStringLiteral(":"), this);
+    auto* sampleValuesLabel  = new QLabel(tr("Sample Pixel Ratio") + QStringLiteral(":"), this);
     auto* downMixLabel       = new QLabel(tr("Downmix") + QStringLiteral(":"), this);
 
     m_colourGroup->setCheckable(true);
@@ -140,6 +143,10 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_channelHeightScale->setMaximum(1.0);
     m_channelHeightScale->setSingleStep(0.1);
 
+    m_sampleValues->setMinimum(1);
+    m_sampleValues->setMaximum(100);
+    m_sampleValues->setSingleStep(1);
+
     layout->addWidget(m_showCursor, 0, 0, 1, 2);
     layout->addWidget(cursorWidthLabel, 1, 0);
     layout->addWidget(m_cursorWidth, 1, 1);
@@ -147,9 +154,11 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     layout->addWidget(m_channelHeightScale, 2, 1);
     layout->addWidget(drawValuesLabel, 3, 0);
     layout->addWidget(m_drawValues, 3, 1);
-    layout->addWidget(downMixLabel, 4, 0);
-    layout->addWidget(m_downmix, 4, 1);
-    layout->addWidget(m_antialiasing, 5, 0, 1, 2);
+    layout->addWidget(sampleValuesLabel, 4, 0);
+    layout->addWidget(m_sampleValues, 4, 1);
+    layout->addWidget(downMixLabel, 5, 0);
+    layout->addWidget(m_downmix, 5, 1);
+    layout->addWidget(m_antialiasing, 6, 0, 1, 2);
     layout->addWidget(m_colourGroup, 0, 2, 6, 1);
 
     layout->setRowStretch(layout->rowCount(), 1);
@@ -181,6 +190,8 @@ void WaveBarSettingsPageWidget::load()
     else {
         m_drawValues->setCurrentIndex(2);
     }
+
+    m_sampleValues->setValue(m_settings->value<Settings::WaveBar::SamplePixelRatio>());
 
     m_downmix->clear();
 
@@ -221,6 +232,7 @@ void WaveBarSettingsPageWidget::apply()
     m_settings->set<Settings::WaveBar::ChannelHeightScale>(m_channelHeightScale->value());
     m_settings->set<Settings::WaveBar::Downmix>(m_downmix->currentIndex());
     m_settings->set<Settings::WaveBar::DrawValues>(m_drawValues->currentIndex());
+    m_settings->set<Settings::WaveBar::SamplePixelRatio>(m_sampleValues->value());
     m_settings->set<Settings::WaveBar::Antialiasing>(m_antialiasing->isChecked());
 
     Colours colours;
@@ -249,6 +261,7 @@ void WaveBarSettingsPageWidget::reset()
     m_settings->reset<Settings::WaveBar::CursorWidth>();
     m_settings->reset<Settings::WaveBar::ColourOptions>();
     m_settings->reset<Settings::WaveBar::DrawValues>();
+    m_settings->reset<Settings::WaveBar::SamplePixelRatio>();
     m_settings->reset<Settings::WaveBar::Antialiasing>();
 }
 
