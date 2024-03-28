@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,35 @@
 
 #pragma once
 
-#include <core/engine/audiodecoder.h>
+#include "fyutils_export.h"
+
+#include <QWidget>
 
 namespace Fooyin {
-class AudioFormat;
-class AudioBuffer;
-
-class FFmpegDecoder : public AudioDecoder
+class FYUTILS_EXPORT ColourButton : public QWidget
 {
+    Q_OBJECT
+
 public:
-    FFmpegDecoder();
-    ~FFmpegDecoder() override;
+    explicit ColourButton(QWidget* parent = nullptr);
+    explicit ColourButton(const QColor& colour, QWidget* parent = nullptr);
 
-    bool init(const QString& source) override;
+    [[nodiscard]] QColor colour() const;
+    [[nodiscard]] bool colourChanged() const;
 
-    void start() override;
-    void stop() override;
+    void setColour(const QColor& colour);
 
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] bool isSeekable() const override;
-    void seek(uint64_t pos) override;
+signals:
+    void clicked();
 
-    AudioBuffer readBuffer() override;
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] Error error() const override;
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void pickColour();
+
+    QColor m_colour;
+    bool m_changed;
 };
 } // namespace Fooyin

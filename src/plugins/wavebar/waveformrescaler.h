@@ -19,34 +19,34 @@
 
 #pragma once
 
-#include <core/engine/audiobuffer.h>
+#include "settings/wavebarsettings.h"
+#include "waveformdata.h"
 
-namespace Fooyin {
-class AudioDecoder
+#include <utils/worker.h>
+
+namespace Fooyin::WaveBar {
+class WaveformRescaler : public Worker
 {
+    Q_OBJECT
+
 public:
-    enum Error
-    {
-        NoError,
-        ResourceError,
-        FormatError,
-        AccessDeniedError,
-        NotSupportedError
-    };
+    explicit WaveformRescaler(QObject* parent = nullptr);
 
-    virtual ~AudioDecoder() = default;
+signals:
+    void waveformRescaled(const WaveformData<float>& data);
 
-    virtual bool init(const QString& source) = 0;
-    virtual void start()                     = 0;
-    virtual void stop()                      = 0;
+public slots:
+    void rescale();
+    void rescale(int width);
+    void rescale(const WaveformData<float>& data, int width);
 
-    virtual bool isSeekable() const = 0;
-    virtual void seek(uint64_t pos) = 0;
+    void changeSamplePixelRatio(int ratio);
+    void changeDownmix(DownmixOption option);
 
-    virtual AudioBuffer readBuffer()             = 0;
-    virtual AudioBuffer readBuffer(size_t bytes) = 0;
-
-    virtual AudioFormat format() const = 0;
-    virtual Error error() const        = 0;
+private:
+    WaveformData<float> m_data;
+    int m_width;
+    int m_samplePixelRatio;
+    DownmixOption m_downMix;
 };
-} // namespace Fooyin
+} // namespace Fooyin::WaveBar

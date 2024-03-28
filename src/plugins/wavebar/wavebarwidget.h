@@ -19,34 +19,39 @@
 
 #pragma once
 
-#include <core/engine/audiobuffer.h>
+#include "waveformbuilder.h"
+
+#include <gui/fywidget.h>
 
 namespace Fooyin {
-class AudioDecoder
+class EngineController;
+class PlayerController;
+class SettingsManager;
+
+namespace WaveBar {
+class WaveSeekBar;
+
+class WaveBarWidget : public FyWidget
 {
+    Q_OBJECT
+
 public:
-    enum Error
-    {
-        NoError,
-        ResourceError,
-        FormatError,
-        AccessDeniedError,
-        NotSupportedError
-    };
+    WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
+                  QWidget* parent = nullptr);
 
-    virtual ~AudioDecoder() = default;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
-    virtual bool init(const QString& source) = 0;
-    virtual void start()                     = 0;
-    virtual void stop()                      = 0;
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
-    virtual bool isSeekable() const = 0;
-    virtual void seek(uint64_t pos) = 0;
+private:
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
 
-    virtual AudioBuffer readBuffer()             = 0;
-    virtual AudioBuffer readBuffer(size_t bytes) = 0;
-
-    virtual AudioFormat format() const = 0;
-    virtual Error error() const        = 0;
+    WaveSeekBar* m_seekbar;
+    WaveformBuilder m_builder;
 };
+} // namespace WaveBar
 } // namespace Fooyin

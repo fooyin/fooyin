@@ -97,6 +97,7 @@ struct FFmpegDecoder::Private
     bool isDecoding{false};
 
     AudioBuffer buffer;
+    int bufferPos{0};
     uint64_t currentPts{0};
 
     explicit Private(FFmpegDecoder* self_)
@@ -356,6 +357,8 @@ void FFmpegDecoder::stop()
 {
     p->isDecoding = false;
     p->draining   = false;
+    p->currentPts = 0;
+    p->bufferPos  = 0;
 
     p->context.reset();
     p->stream = {};
@@ -384,9 +387,49 @@ AudioBuffer FFmpegDecoder::readBuffer()
         return {};
     }
 
-    p->readNext();
+    if(!p->buffer.isValid()) {
+        p->readNext();
+    }
 
     return std::exchange(p->buffer, {});
+}
+
+AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
+{
+    if(!p->isDecoding || p->hasError()) {
+        return {};
+    }
+
+    if(!p->buffer.isValid()) {
+        p->readNext();
+    }
+
+    AudioBuffer buffer;
+
+    const int bytesRequested = static_cast<int>(bytes);
+    int bytesWritten{0};
+
+    while(p->buffer.isValid() && bytesWritten < bytesRequested) {
+        if(!buffer.isValid()) {
+            buffer = {p->buffer.format(), p->buffer.startTime()};
+        }
+        const int remaining = bytesRequested - bytesWritten;
+        const int count     = p->buffer.byteCount() - p->bufferPos;
+        if(count <= remaining) {
+            buffer.append(p->buffer.data() + p->bufferPos, count);
+            bytesWritten += count;
+            p->buffer    = {};
+            p->bufferPos = 0;
+            p->readNext();
+        }
+        else {
+            buffer.append(p->buffer.data() + p->bufferPos, remaining);
+            bytesWritten += remaining;
+            p->bufferPos += remaining;
+        }
+    }
+
+    return buffer;
 }
 
 AudioDecoder::Error FFmpegDecoder::error() const

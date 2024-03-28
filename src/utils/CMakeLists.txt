@@ -39,10 +39,12 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/autoheaderview.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/colourbutton.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabbar.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/tooltip.h
     clickablelabel.cpp
     crypto.cpp
     expandableinputbox.cpp
@@ -83,10 +85,12 @@ set(SOURCES
     settings/settingsmodel.h
     settings/settingspage.cpp
     widgets/autoheaderview.cpp
+    widgets/colourbutton.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
     widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp
+    widgets/tooltip.cpp
 )
 
 create_fooyin_library(

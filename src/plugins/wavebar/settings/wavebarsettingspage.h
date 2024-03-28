@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,18 @@
 
 #pragma once
 
-#include <core/engine/audiodecoder.h>
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
-class AudioFormat;
-class AudioBuffer;
+class SettingsManager;
 
-class FFmpegDecoder : public AudioDecoder
+namespace WaveBar {
+class WaveBarSettingsPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
-    FFmpegDecoder();
-    ~FFmpegDecoder() override;
-
-    bool init(const QString& source) override;
-
-    void start() override;
-    void stop() override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] bool isSeekable() const override;
-    void seek(uint64_t pos) override;
-
-    AudioBuffer readBuffer() override;
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] Error error() const override;
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    explicit WaveBarSettingsPage(SettingsManager* settings);
 };
+} // namespace WaveBar
 } // namespace Fooyin

@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,36 @@
 
 #pragma once
 
-#include <core/engine/audiodecoder.h>
+#include "fyutils_export.h"
+
+#include <QWidget>
 
 namespace Fooyin {
-class AudioFormat;
-class AudioBuffer;
-
-class FFmpegDecoder : public AudioDecoder
+class FYUTILS_EXPORT ToolTip : public QWidget
 {
+    Q_OBJECT
+
 public:
-    FFmpegDecoder();
-    ~FFmpegDecoder() override;
+    explicit ToolTip(QWidget* parent = nullptr);
 
-    bool init(const QString& source) override;
+    void setText(const QString& text);
+    void setSubtext(const QString& text);
+    void setPosition(const QPoint& pos);
 
-    void start() override;
-    void stop() override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] bool isSeekable() const override;
-    void seek(uint64_t pos) override;
-
-    AudioBuffer readBuffer() override;
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] Error error() const override;
+protected:
+    void paintEvent(QPaintEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void redraw();
+
+    QString m_text;
+    QString m_subText;
+    QPoint m_pos;
+
+    QFont m_font;
+    QFont m_subFont;
+
+    QPixmap m_pixmap;
+    QPixmap m_cachedBg;
 };
 } // namespace Fooyin

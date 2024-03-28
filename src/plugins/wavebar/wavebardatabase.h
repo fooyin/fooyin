@@ -19,34 +19,18 @@
 
 #pragma once
 
-#include <core/engine/audiobuffer.h>
+#include "waveformdata.h"
 
-namespace Fooyin {
-class AudioDecoder
+#include <utils/database/dbmodule.h>
+
+namespace Fooyin::WaveBar {
+class WaveBarDatabase : public DbModule
 {
 public:
-    enum Error
-    {
-        NoError,
-        ResourceError,
-        FormatError,
-        AccessDeniedError,
-        NotSupportedError
-    };
+    void initialiseDatabase() const;
 
-    virtual ~AudioDecoder() = default;
-
-    virtual bool init(const QString& source) = 0;
-    virtual void start()                     = 0;
-    virtual void stop()                      = 0;
-
-    virtual bool isSeekable() const = 0;
-    virtual void seek(uint64_t pos) = 0;
-
-    virtual AudioBuffer readBuffer()             = 0;
-    virtual AudioBuffer readBuffer(size_t bytes) = 0;
-
-    virtual AudioFormat format() const = 0;
-    virtual Error error() const        = 0;
+    [[nodiscard]] bool existsInCache(const QString& key) const;
+    [[nodiscard]] bool loadCachedData(const QString& key, WaveformData<int16_t>& data) const;
+    [[nodiscard]] bool storeInCache(const QString& key, const WaveformData<int16_t>& data) const;
 };
-} // namespace Fooyin
+} // namespace Fooyin::WaveBar
