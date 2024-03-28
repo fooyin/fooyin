@@ -42,7 +42,9 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
     QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
 
     m_settings->subscribe<Settings::WaveBar::Downmix>(this, [this](const int downMix) {
-        QMetaObject::invokeMethod(&m_rescaler, "changeDownmix", Q_ARG(int, downMix));
+        m_rescaler.stopThread();
+        QMetaObject::invokeMethod(&m_rescaler, "changeDownmix",
+                                  Q_ARG(DownmixOption, static_cast<DownmixOption>(downMix)));
     });
 
     m_generatorThread.start();

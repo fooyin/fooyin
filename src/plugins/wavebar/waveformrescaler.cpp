@@ -151,6 +151,6 @@ void WaveformRescaler::rescale(const WaveformData<float>& data, int width)
 void WaveformRescaler::changeDownmix(DownmixOption option)
 {
     m_downMix = option;
-    rescale(m_data, m_width);
+    rescale(m_width);
 }
 } // namespace Fooyin::WaveBar
