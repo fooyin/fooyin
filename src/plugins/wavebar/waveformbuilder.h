@@ -20,62 +20,47 @@
 #pragma once
 
 #include "settings/wavebarsettings.h"
-#include "wavebardatabase.h"
 #include "waveformdata.h"
+#include "waveformgenerator.h"
+#include "waveformrescaler.h"
 
 #include <core/engine/audiodecoder.h>
 #include <core/track.h>
-#include <utils/database/dbconnectionhandler.h>
-#include <utils/database/dbconnectionpool.h>
-#include <utils/worker.h>
 
 #include <QObject>
+#include <QThread>
 
 namespace Fooyin {
 class AudioBuffer;
 class SettingsManager;
 
 namespace WaveBar {
-class WaveformBuilder : public Worker
+class WaveformBuilder : public QObject
 {
     Q_OBJECT
 
 public:
     explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, SettingsManager* settings,
                              QObject* parent = nullptr);
+    ~WaveformBuilder() override;
+
+    void generate(const Fooyin::Track& track);
+    void rescale(int width);
 
 signals:
-    void buildingWaveform();
-    void waveformBuilt();
+    void generatingWaveform();
+    void waveformGenerated();
     void waveformRescaled(const WaveformData<float>& data);
 
-public slots:
-    void initialiseThread() override;
-
-    void setWidth(int width);
-    void rebuild(const Fooyin::Track& track);
-    void rescale();
-
 private:
-    void processBuffer(const AudioBuffer& buffer);
-    int buildSample(WaveformSample& sample, int channel, int sampleSize, double start, double end);
-
-    std::unique_ptr<AudioDecoder> m_decoder;
     SettingsManager* m_settings;
 
-    DbConnectionPoolPtr m_dbPool;
-    std::unique_ptr<DbConnectionHandler> m_dbHandler;
-    WaveBarDatabase m_waveDb;
+    QThread m_generatorThread;
+    QThread m_rescalerThread;
 
-    Track m_track;
-    AudioFormat m_format;
-    AudioFormat m_requiredFormat;
-    DownmixOption m_downMix;
+    WaveformGenerator m_generator;
+    WaveformRescaler m_rescaler;
 
-    WaveformData<float> m_data;
-
-    int m_channels;
-    uint64_t m_duration;
     int m_width;
 };
 } // namespace WaveBar

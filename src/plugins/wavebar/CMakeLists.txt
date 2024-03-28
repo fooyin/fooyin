@@ -12,6 +12,10 @@ create_fooyin_plugin_internal(
             waveformbuilder.cpp
             waveformbuilder.h
             waveformdata.h
+            waveformgenerator.cpp
+            waveformgenerator.h
+            waveformrescaler.cpp
+            waveformrescaler.h
             waveseekbar.cpp
             waveseekbar.h
             settings/wavebarsettings.cpp

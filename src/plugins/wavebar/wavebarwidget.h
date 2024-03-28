@@ -23,8 +23,6 @@
 
 #include <gui/fywidget.h>
 
-#include <QThread>
-
 namespace Fooyin {
 class EngineController;
 class PlayerController;
@@ -40,7 +38,6 @@ class WaveBarWidget : public FyWidget
 public:
     WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
                   QWidget* parent = nullptr);
-    ~WaveBarWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -50,12 +47,9 @@ protected:
 
 private:
     PlayerController* m_playerController;
-    EngineController* m_engine;
-    SettingsManager* m_settings;
 
     WaveSeekBar* m_seekbar;
     WaveformBuilder m_builder;
-    QThread m_builderThread;
 };
 } // namespace WaveBar
 } // namespace Fooyin

@@ -19,41 +19,32 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
+#include "settings/wavebarsettings.h"
+#include "waveformdata.h"
 
-#include <vector>
+#include <utils/worker.h>
 
 namespace Fooyin::WaveBar {
-struct WaveformSample
+class WaveformRescaler : public Worker
 {
-    float max{-1.0};
-    float min{1.0};
-    float rms{0.0};
-};
+    Q_OBJECT
 
-template <typename T>
-struct WaveformData
-{
-    AudioFormat format;
-    uint64_t duration{0};
-    int channels{0};
-    int sampleCount{0};
+public:
+    explicit WaveformRescaler(QObject* parent = nullptr);
 
-    struct ChannelData
-    {
-        std::vector<T> max;
-        std::vector<T> min;
-        std::vector<T> rms;
+signals:
+    void waveformRescaled(const WaveformData<float>& data);
 
-        bool operator<=>(const ChannelData& other) const = default;
-    };
-    std::vector<ChannelData> channelData;
+public slots:
+    void rescale();
+    void rescale(int width);
+    void rescale(const WaveformData<float>& data, int width);
 
-    bool operator<=>(const WaveformData<T>& other) const = default;
+    void changeDownmix(DownmixOption option);
 
-    [[nodiscard]] bool empty() const
-    {
-        return !format.isValid() && channelData.empty();
-    }
+private:
+    WaveformData<float> m_data;
+    int m_width;
+    DownmixOption m_downMix;
 };
 } // namespace Fooyin::WaveBar
