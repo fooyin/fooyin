@@ -66,6 +66,8 @@ WaveformBuilder::~WaveformBuilder()
 void WaveformBuilder::generate(const Track& track)
 {
     m_generator.stopThread();
+    m_rescaler.stopThread();
+
     QMetaObject::invokeMethod(&m_generator, "generate", Q_ARG(const Track&, track));
 }
 
