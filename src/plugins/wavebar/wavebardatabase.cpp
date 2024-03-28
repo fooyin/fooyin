@@ -126,15 +126,11 @@ bool WaveBarDatabase::existsInCache(const QString& key) const
 
     query.bindValue(QStringLiteral(":trackKey"), key);
 
-    if(!query.exec()) {
-        return -1;
+    if(query.exec() && query.next()) {
+        return query.value(0).toInt() > 0;
     }
 
-    if(query.next()) {
-        return query.value(0).toInt();
-    }
-
-    return -1;
+    return false;
 }
 
 bool WaveBarDatabase::loadCachedData(const QString& key, WaveformData<int16_t>& data) const
