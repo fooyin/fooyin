@@ -54,6 +54,7 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
         QMetaObject::invokeMethod(&m_builder, "rebuild", Q_ARG(const Track&, track));
     });
     QObject::connect(m_playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
+    QObject::connect(&m_builder, &WaveformBuilder::buildingWaveform, this, [this]() { m_seekbar->processData({}); });
     QObject::connect(&m_builder, &WaveformBuilder::waveformBuilt, this, [this]() {
         m_builder.stopThread();
         QMetaObject::invokeMethod(&m_builder, "setWidth", Q_ARG(int, width()));

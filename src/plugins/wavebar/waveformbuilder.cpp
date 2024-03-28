@@ -186,6 +186,8 @@ void WaveformBuilder::rebuild(const Track& track)
         }
     }
 
+    emit buildingWaveform();
+
     m_data.format   = m_requiredFormat;
     m_data.duration = m_duration;
 

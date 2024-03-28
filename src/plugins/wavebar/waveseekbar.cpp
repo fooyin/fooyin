@@ -99,11 +99,13 @@ void WaveSeekBar::setPosition(uint64_t pos)
 
 void WaveSeekBar::paintEvent(QPaintEvent* event)
 {
+    QPainter painter{this};
+
     if(m_data.empty()) {
+        const int centreY = height() / 2;
+        painter.drawLine(0, centreY, rect().right(), centreY);
         return;
     }
-
-    QPainter painter{this};
 
     painter.save();
 

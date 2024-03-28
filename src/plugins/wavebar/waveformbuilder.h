@@ -45,6 +45,7 @@ public:
                              QObject* parent = nullptr);
 
 signals:
+    void buildingWaveform();
     void waveformBuilt();
     void waveformRescaled(const WaveformData<float>& data);
 
