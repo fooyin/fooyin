@@ -882,6 +882,8 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder or
         [sortField, currentTracks, order]() { return Sorting::calcSortTracks(sortField, currentTracks, order); });
 
     playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+
+    header->setSortIndicator(-1, Qt::AscendingOrder);
 }
 
 void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
