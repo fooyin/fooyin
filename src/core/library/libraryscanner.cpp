@@ -200,7 +200,7 @@ struct LibraryScanner::Private
 
                     if(tracksToStore.size() >= BatchSize) {
                         storeTracks(tracksToStore);
-                        emit self->scanUpdate({.addedTracks = tracksToStore});
+                        emit self->scanUpdate({.addedTracks = tracksToStore, .updatedTracks = {}});
                         tracksToStore.clear();
                     }
                 }
