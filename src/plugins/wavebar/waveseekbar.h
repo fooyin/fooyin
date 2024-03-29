@@ -63,6 +63,7 @@ private:
     SettingsManager* m_settings;
 
     WaveformData<float> m_data;
+    double m_scale;
     uint64_t m_position;
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;
@@ -70,7 +71,6 @@ private:
     bool m_showCursor;
     double m_cursorWidth;
     double m_channelScale;
-    bool m_antialiasing;
 
     ValueOptions m_drawValues;
     Colours m_colours;

@@ -162,6 +162,7 @@ void WaveformGenerator::generate(const Track& track)
         if(m_waveDb.loadCachedData(trackKey, data)) {
             const auto floatData = convertCache<float>(data);
             m_data.channelData   = floatData.channelData;
+            m_data.complete      = true;
             emit waveformGenerated(m_data);
             return;
         }
@@ -187,6 +188,7 @@ void WaveformGenerator::generate(const Track& track)
 
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
         if(!buffer.isValid()) {
+            m_data.complete = true;
             break;
         }
 

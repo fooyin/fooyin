@@ -38,6 +38,7 @@ struct WaveformData
     uint64_t duration{0};
     int channels{0};
     int sampleCount{0};
+    bool complete{false};
 
     struct ChannelData
     {
