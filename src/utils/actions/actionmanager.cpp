@@ -130,7 +130,7 @@ struct ActionManager::Private
         uniqueContexts.append(Constants::Context::Global);
 
         setContext(uniqueContexts);
-        QMetaObject::invokeMethod(self, "contextChanged", Q_ARG(const Context&, uniqueContexts));
+        emit self->contextChanged(uniqueContexts);
     }
 
     void updateFocusWidget(QWidget* widget)

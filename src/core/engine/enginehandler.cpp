@@ -89,7 +89,7 @@ struct EngineHandler::Private
                 break;
         }
 
-        QMetaObject::invokeMethod(self, "trackStatusChanged", Q_ARG(TrackStatus, status));
+        emit self->trackStatusChanged(status);
     }
 
     void playStateChanged(PlayState state)
@@ -142,12 +142,12 @@ struct EngineHandler::Private
 
         if(currentOutput.name != newName) {
             currentOutput = {newName, device};
-            QMetaObject::invokeMethod(self, "outputChanged", Q_ARG(const QString&, newName));
-            QMetaObject::invokeMethod(self, "deviceChanged", Q_ARG(const QString&, device));
+            emit self->outputChanged(newName);
+            emit self->deviceChanged(device);
         }
         else if(currentOutput.device != device) {
             currentOutput.device = device;
-            QMetaObject::invokeMethod(self, "deviceChanged", Q_ARG(const QString&, device));
+            emit self->deviceChanged(device);
         }
     }
 
@@ -168,7 +168,7 @@ EngineHandler::EngineHandler(PlayerController* playerController, SettingsManager
     QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output) {
         if(p->outputs.contains(output)) {
             const auto& outputCreator = p->outputs.at(output);
-            QMetaObject::invokeMethod(p->engine, "setAudioOutput", Q_ARG(const OutputCreator&, outputCreator));
+            QMetaObject::invokeMethod(p->engine, [this, outputCreator]() { p->engine->setAudioOutput(outputCreator); });
         }
     });
     QObject::connect(this, &EngineHandler::deviceChanged, p->engine, &AudioEngine::setOutputDevice);

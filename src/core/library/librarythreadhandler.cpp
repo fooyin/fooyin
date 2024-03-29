@@ -86,20 +86,21 @@ struct LibraryThreadHandler::Private
 
     void scanLibrary(const LibraryScanRequest& request)
     {
-        QMetaObject::invokeMethod(&scanner, "scanLibrary", Q_ARG(const LibraryInfo&, request.library),
-                                  Q_ARG(const TrackList&, library->tracks()));
+        QMetaObject::invokeMethod(&scanner,
+                                  [this, request]() { scanner.scanLibrary(request.library, library->tracks()); });
     }
 
     void scanTracks(const LibraryScanRequest& request)
     {
-        QMetaObject::invokeMethod(&scanner, "scanTracks", Q_ARG(const TrackList&, library->tracks()),
-                                  Q_ARG(const TrackList&, request.tracks));
+        QMetaObject::invokeMethod(&scanner,
+                                  [this, request]() { scanner.scanTracks(library->tracks(), request.tracks); });
     }
 
     void scanDirectory(const LibraryScanRequest& request)
     {
-        QMetaObject::invokeMethod(&scanner, "scanLibraryDirectory", Q_ARG(const LibraryInfo&, request.library),
-                                  Q_ARG(const QString&, request.dir), Q_ARG(const TrackList&, library->tracks()));
+        QMetaObject::invokeMethod(&scanner, [this, request]() {
+            scanner.scanLibraryDirectory(request.library, request.dir, library->tracks());
+        });
     }
 
     ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo)
@@ -261,8 +262,8 @@ void LibraryThreadHandler::getAllTracks()
 
 void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool enabled)
 {
-    QMetaObject::invokeMethod(&p->scanner, "setupWatchers", Q_ARG(const LibraryInfoMap&, libraries),
-                              Q_ARG(bool, enabled));
+    QMetaObject::invokeMethod(&p->scanner,
+                              [this, libraries, enabled]() { p->scanner.setupWatchers(libraries, enabled); });
 }
 
 ScanRequest LibraryThreadHandler::scanLibrary(const LibraryInfo& library)
@@ -292,12 +293,14 @@ void LibraryThreadHandler::libraryRemoved(int id)
 
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(&p->trackDatabaseManager, "updateTracks", Q_ARG(const TrackList&, tracks));
+    QMetaObject::invokeMethod(&p->trackDatabaseManager,
+                              [this, tracks]() { p->trackDatabaseManager.updateTracks(tracks); });
 }
 
 void LibraryThreadHandler::saveUpdatedTrackStats(const Track& track)
 {
-    QMetaObject::invokeMethod(&p->trackDatabaseManager, "updateTrackStats", Q_ARG(const Track&, track));
+    QMetaObject::invokeMethod(&p->trackDatabaseManager,
+                              [this, track]() { p->trackDatabaseManager.updateTrackStats(track); });
 }
 
 void LibraryThreadHandler::cleanupTracks()

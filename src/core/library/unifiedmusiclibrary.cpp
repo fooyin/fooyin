@@ -77,7 +77,7 @@ struct UnifiedMusicLibrary::Private
         TrackList sortedTracks
             = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
         tracks = std::move(sortedTracks);
-        QMetaObject::invokeMethod(self, "tracksLoaded", Q_ARG(const TrackList&, tracks));
+        emit self->tracksLoaded(tracks);
     }
 
     QCoro::Task<void> addTracks(TrackList newTracks)
@@ -88,7 +88,7 @@ struct UnifiedMusicLibrary::Private
         std::ranges::copy(sortedTracks, std::back_inserter(tracks));
         tracks = co_await resortTracks(tracks);
 
-        QMetaObject::invokeMethod(self, "tracksAdded", Q_ARG(const TrackList&, sortedTracks));
+        emit self->tracksAdded(sortedTracks);
     }
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
@@ -103,7 +103,7 @@ struct UnifiedMusicLibrary::Private
         tracks         = co_await resortTracks(tracks);
         tracksToUpdate = co_await resortTracks(tracksToUpdate);
 
-        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, tracksToUpdate));
+        emit self->tracksUpdated(tracksToUpdate);
     }
 
     QCoro::Task<void> handleScanResult(ScanResult result)
@@ -122,7 +122,7 @@ struct UnifiedMusicLibrary::Private
 
         addTracks(tracksScanned);
 
-        QMetaObject::invokeMethod(self, "tracksScanned", Q_ARG(int, id), Q_ARG(const TrackList&, tracksScanned));
+        emit self->tracksScanned(id, tracksScanned);
     }
 
     void removeLibrary(int id, const std::set<int>& tracksRemoved)
@@ -152,8 +152,8 @@ struct UnifiedMusicLibrary::Private
 
         threadHandler.libraryRemoved(id);
 
-        QMetaObject::invokeMethod(self, "tracksDeleted", Q_ARG(const TrackList&, removedTracks));
-        QMetaObject::invokeMethod(self, "tracksUpdated", Q_ARG(const TrackList&, updatedTracks));
+        emit self->tracksDeleted(removedTracks);
+        emit self->tracksUpdated(updatedTracks);
     }
 
     void libraryStatusChanged(const LibraryInfo& library) const
@@ -166,7 +166,7 @@ struct UnifiedMusicLibrary::Private
         TrackList sortedTracks = co_await recalSortTracks(sort, tracks);
         tracks                 = std::move(sortedTracks);
 
-        QMetaObject::invokeMethod(self, "tracksSorted", Q_ARG(const TrackList&, tracks));
+        emit self->tracksSorted(tracks);
     }
 };
 
@@ -195,18 +195,16 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     p->settings->subscribe<Settings::Core::LibrarySortScript>(this,
                                                               [this](const QString& sort) { p->changeSort(sort); });
 
-    connect(this, &MusicLibrary::tracksLoaded, this, [this]() {
-        QMetaObject::invokeMethod(
-            this,
-            [this]() {
-                p->threadHandler.setupWatchers(p->libraryManager->allLibraries(),
-                                               p->settings->value<Settings::Core::Internal::MonitorLibraries>());
-                if(p->settings->value<Settings::Core::AutoRefresh>()) {
-                    rescanAll();
-                }
-            },
-            Qt::QueuedConnection);
-    });
+    connect(
+        this, &MusicLibrary::tracksLoaded, this,
+        [this]() {
+            p->threadHandler.setupWatchers(p->libraryManager->allLibraries(),
+                                           p->settings->value<Settings::Core::Internal::MonitorLibraries>());
+            if(p->settings->value<Settings::Core::AutoRefresh>()) {
+                rescanAll();
+            }
+        },
+        Qt::QueuedConnection);
 
     p->settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
         this, [this](bool enabled) { p->threadHandler.setupWatchers(p->libraryManager->allLibraries(), enabled); });

@@ -157,7 +157,7 @@ struct FilterWidget::Private
 
         filteredTracks = selectedTracks;
 
-        QMetaObject::invokeMethod(self, "selectionChanged", Q_ARG(QString, playlistNameFromSelection()));
+        emit self->selectionChanged(playlistNameFromSelection());
     }
 
     void updateAppearance(const QVariant& optionsVar) const

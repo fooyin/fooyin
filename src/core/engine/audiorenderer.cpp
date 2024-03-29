@@ -113,7 +113,7 @@ struct AudioRenderer::Private
 
             if(bytesLeft <= 0) {
                 currentBufferOffset = 0;
-                QMetaObject::invokeMethod(self, "bufferProcessed", Q_ARG(const AudioBuffer&, buffer));
+                emit self->bufferProcessed(buffer);
                 bufferQueue.dequeue();
                 continue;
             }

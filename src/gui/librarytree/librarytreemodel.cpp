@@ -213,8 +213,7 @@ struct LibraryTreeModel::Private
         trackParents.merge(data.trackParents);
 
         const QModelIndex allIndex = self->indexOfItem(&allNode);
-        QMetaObject::invokeMethod(self, "dataChanged", Q_ARG(const QModelIndex&, allIndex),
-                                  Q_ARG(const QModelIndex&, allIndex), Q_ARG(const QList<int>&, {Qt::DisplayRole}));
+        emit self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
 
         if(resetting) {
             for(const auto& [parentKey, rows] : data.nodes) {

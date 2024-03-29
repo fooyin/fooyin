@@ -44,12 +44,12 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
 
     m_settings->subscribe<Settings::WaveBar::SamplePixelRatio>(this, [this](const int ratio) {
         m_rescaler.stopThread();
-        QMetaObject::invokeMethod(&m_rescaler, "changeSamplePixelRatio", Q_ARG(int, ratio));
+        QMetaObject::invokeMethod(&m_rescaler, [this, ratio]() { m_rescaler.changeSamplePixelRatio(ratio); });
     });
     m_settings->subscribe<Settings::WaveBar::Downmix>(this, [this](const int downMix) {
         m_rescaler.stopThread();
-        QMetaObject::invokeMethod(&m_rescaler, "changeDownmix",
-                                  Q_ARG(DownmixOption, static_cast<DownmixOption>(downMix)));
+        QMetaObject::invokeMethod(&m_rescaler,
+                                  [this, downMix]() { m_rescaler.changeDownmix(static_cast<DownmixOption>(downMix)); });
     });
 
     m_generatorThread.start();

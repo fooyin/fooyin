@@ -267,7 +267,7 @@ struct TrackSelectionController::Private
 
         auto* playlist = playlistHandler->createPlaylist(newName, selection.tracks);
         handleActions(playlist, options);
-        QMetaObject::invokeMethod(self, "actionExecuted", Q_ARG(TrackAction, TrackAction::SendNewPlaylist));
+        emit self->actionExecuted(TrackAction::SendNewPlaylist);
     }
 
     void sendToCurrentPlaylist(PlaylistAction::ActionOptions options = {}) const
@@ -277,7 +277,7 @@ struct TrackSelectionController::Private
             if(auto* currentPlaylist = playlistController->currentPlaylist()) {
                 playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
                 handleActions(currentPlaylist, options);
-                QMetaObject::invokeMethod(self, "actionExecuted", Q_ARG(TrackAction, TrackAction::SendCurrentPlaylist));
+                emit self->actionExecuted(TrackAction::SendCurrentPlaylist);
             }
         }
     }
@@ -288,7 +288,7 @@ struct TrackSelectionController::Private
             const auto& selection = contextSelection.at(activeContext);
             if(const auto* playlist = playlistController->currentPlaylist()) {
                 playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-                QMetaObject::invokeMethod(self, "actionExecuted", Q_ARG(TrackAction, TrackAction::AddCurrentPlaylist));
+                emit self->actionExecuted(TrackAction::AddCurrentPlaylist);
             }
         }
     }
@@ -299,7 +299,7 @@ struct TrackSelectionController::Private
             const auto& selection = contextSelection.at(activeContext);
             if(const auto* playlist = playlistHandler->activePlaylist()) {
                 playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-                QMetaObject::invokeMethod(self, "actionExecuted", Q_ARG(TrackAction, TrackAction::AddActivePlaylist));
+                emit self->actionExecuted(TrackAction::AddActivePlaylist);
             }
         }
     }

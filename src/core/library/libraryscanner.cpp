@@ -94,9 +94,7 @@ struct LibraryScanner::Private
         QObject::connect(&watchers.at(library.id), &LibraryWatcher::libraryDirChanged, self,
                          [this, watchPaths, library](const QString& dir) {
                              watchPaths(dir);
-                             QMetaObject::invokeMethod(self, "directoryChanged",
-                                                       Q_ARG(const Fooyin::LibraryInfo&, library),
-                                                       Q_ARG(const QString&, dir));
+                             emit self->directoryChanged(library, dir);
                          });
     }
 
@@ -105,7 +103,7 @@ struct LibraryScanner::Private
         const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
         if(currentProgress != progress) {
             currentProgress = progress;
-            QMetaObject::invokeMethod(self, "progressChanged", Q_ARG(int, currentProgress));
+            emit self->progressChanged(currentProgress);
         }
     }
 
@@ -202,8 +200,7 @@ struct LibraryScanner::Private
 
                     if(tracksToStore.size() >= BatchSize) {
                         storeTracks(tracksToStore);
-                        QMetaObject::invokeMethod(self, "scanUpdate",
-                                                  Q_ARG(const ScanResult&, {.addedTracks = tracksToStore}));
+                        emit self->scanUpdate({.addedTracks = tracksToStore});
                         tracksToStore.clear();
                     }
                 }
@@ -224,8 +221,7 @@ struct LibraryScanner::Private
         storeTracks(tracksToUpdate);
 
         if(!tracksToStore.empty() || !tracksToUpdate.empty()) {
-            QMetaObject::invokeMethod(self, "scanUpdate",
-                                      Q_ARG(const ScanResult&, (ScanResult{tracksToStore, tracksToUpdate})));
+            emit self->scanUpdate({tracksToStore, tracksToUpdate});
         }
 
         return true;
@@ -234,7 +230,7 @@ struct LibraryScanner::Private
     void changeLibraryStatus(LibraryInfo::Status status)
     {
         currentLibrary.status = status;
-        QMetaObject::invokeMethod(self, "statusChanged", Q_ARG(const Fooyin::LibraryInfo&, currentLibrary));
+        emit self->statusChanged(currentLibrary);
     }
 };
 

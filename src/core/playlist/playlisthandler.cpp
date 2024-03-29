@@ -233,7 +233,7 @@ struct PlaylistHandler::Private
                                                  [lastId](const auto& pl) { return pl->dbId() == lastId; });
             if(playlist != playlists.cend()) {
                 activePlaylist = playlist->get();
-                QMetaObject::invokeMethod(self, "activePlaylistChanged", Q_ARG(Playlist*, activePlaylist));
+                emit self->activePlaylistChanged(activePlaylist);
             }
         }
     }

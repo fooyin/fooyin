@@ -143,7 +143,7 @@ struct CoverProvider::Private
         }
 
         pendingCovers.erase(key);
-        QMetaObject::invokeMethod(self, "coverAdded", Q_ARG(Track, track));
+        emit self->coverAdded(track);
     }
 };
 

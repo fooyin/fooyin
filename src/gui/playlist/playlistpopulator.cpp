@@ -290,7 +290,7 @@ struct PlaylistPopulator::Private
             return;
         }
 
-        QMetaObject::invokeMethod(self, "populated", Q_ARG(PendingData, data));
+        emit self->populated(data);
 
         auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
         TrackList tempTracks;
@@ -327,7 +327,7 @@ struct PlaylistPopulator::Private
             return;
         }
 
-        QMetaObject::invokeMethod(self, "populatedTrackGroup", Q_ARG(PendingData, data));
+        emit self->populatedTrackGroup(data);
     }
 };
 

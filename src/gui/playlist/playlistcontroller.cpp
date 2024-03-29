@@ -74,13 +74,12 @@ struct PlaylistController::Private
 
             if(playlist) {
                 currentPlaylist = playlist;
-                QMetaObject::invokeMethod(self, "currentPlaylistChanged", Q_ARG(Playlist*, nullptr),
-                                          Q_ARG(Playlist*, playlist));
+                emit self->currentPlaylistChanged(currentPlaylist, playlist);
             }
         }
 
         loaded = true;
-        QMetaObject::invokeMethod(self, &PlaylistController::playlistsLoaded);
+        emit self->playlistsLoaded();
     }
 
     void handlePlaylistAdded(Playlist* playlist)
@@ -94,8 +93,7 @@ struct PlaylistController::Private
     void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
     {
         if(playlist == currentPlaylist) {
-            QMetaObject::invokeMethod(self, "currentPlaylistTracksAdded", Q_ARG(const TrackList&, tracks),
-                                      Q_ARG(int, index));
+            emit self->currentPlaylistTracksAdded(tracks, index);
         }
     }
 
@@ -112,7 +110,7 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+            emit self->currentPlaylistQueueChanged(indexes);
         }
     }
 
@@ -138,7 +136,7 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+            emit self->currentPlaylistQueueChanged(indexes);
         }
     }
 
@@ -160,7 +158,7 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            QMetaObject::invokeMethod(self, "currentPlaylistQueueChanged", Q_ARG(const std::vector<int>&, indexes));
+            emit self->currentPlaylistQueueChanged(indexes);
         }
     }
 
@@ -183,8 +181,7 @@ struct PlaylistController::Private
         }
 
         if(playlist == currentPlaylist) {
-            QMetaObject::invokeMethod(self, "currentPlaylistTracksChanged", Q_ARG(const std::vector<int>&, indexes),
-                                      Q_ARG(bool, allNew));
+            emit self->currentPlaylistTracksChanged(indexes, allNew);
         }
     }
 
@@ -222,7 +219,7 @@ struct PlaylistController::Private
     void handlePlayingTrackChanged(const PlaylistTrack& track) const
     {
         if(currentPlaylist && currentPlaylist->id() == track.playlistId) {
-            QMetaObject::invokeMethod(self, "playingTrackChanged", Q_ARG(const PlaylistTrack&, track));
+            emit self->playingTrackChanged(track);
         }
     }
 

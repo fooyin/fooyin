@@ -121,7 +121,7 @@ struct AudioPlaybackEngine::Private
     {
         auto prevState = std::exchange(state, newState);
         if(prevState != state) {
-            QMetaObject::invokeMethod(self, "stateChanged", Q_ARG(PlaybackState, state));
+            emit self->stateChanged(state);
         }
         return prevState;
     }
@@ -130,7 +130,7 @@ struct AudioPlaybackEngine::Private
     {
         auto prevStatus = std::exchange(status, newStatus);
         if(prevStatus != status) {
-            QMetaObject::invokeMethod(self, "trackStatusChanged", Q_ARG(TrackStatus, status));
+            emit self->trackStatusChanged(status);
         }
         return prevStatus;
     }
@@ -138,7 +138,7 @@ struct AudioPlaybackEngine::Private
     void updatePosition()
     {
         if(std::exchange(lastPosition, clock.currentPosition()) != lastPosition) {
-            QMetaObject::invokeMethod(self, "positionChanged", Q_ARG(uint64_t, lastPosition));
+            emit self->positionChanged(lastPosition);
         }
     }
 
