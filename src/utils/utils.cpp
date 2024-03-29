@@ -151,7 +151,7 @@ QString capitalise(const QString& str)
     return parts.join(QStringLiteral(" "));
 }
 
-QPixmap scalePixmap(QPixmap& image, const QSize& size)
+QPixmap scalePixmap(const QPixmap& image, const QSize& size)
 {
     const QSize scale = 4 * size;
     const int width   = image.size().width();

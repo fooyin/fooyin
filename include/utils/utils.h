@@ -47,7 +47,7 @@ FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
 FYUTILS_EXPORT QString capitalise(const QString& str);
 
-FYUTILS_EXPORT QPixmap scalePixmap(QPixmap& image, const QSize& size);
+FYUTILS_EXPORT QPixmap scalePixmap(const QPixmap& image, const QSize& size);
 FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
