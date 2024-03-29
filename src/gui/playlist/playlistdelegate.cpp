@@ -323,6 +323,10 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
+    // Prevents the current playing row being larger than the rest
+    opt.icon           = {};
+    opt.decorationSize = {};
+
     const QWidget* widget = opt.widget;
     const QStyle* style   = widget ? widget->style() : qApp->style();
 
