@@ -121,6 +121,8 @@ void WaveformRescaler::rescale()
         }
     }
 
+    data.sampleCount /= data.channels;
+
     setState(Idle);
     emit waveformRescaled(data);
 }
