@@ -285,6 +285,7 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
         saveState(prevPlaylist);
     }
 
+    header->setSortIndicator(-1, Qt::AscendingOrder);
     resetModel();
 }
 
@@ -966,6 +967,8 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 
         layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
     }
+
+    p->header->setSortIndicator(-1, Qt::AscendingOrder);
 
     if(!p->singleMode || !p->headerState.isEmpty()) {
         QByteArray state = p->singleMode && !p->headerState.isEmpty() ? p->headerState : p->header->saveHeaderState();
