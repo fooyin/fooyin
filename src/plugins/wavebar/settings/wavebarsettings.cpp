@@ -37,7 +37,7 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     m_settings->createSetting<CursorWidth>(3.0, QStringLiteral("WaveBar/CursorWidth"));
     m_settings->createSetting<ColourOptions>(QVariant::fromValue(Colours{}), QStringLiteral("WaveBar/Colours"));
     m_settings->createSetting<DrawValues>(0, QStringLiteral("WaveBar/DrawValues"));
-    m_settings->createSetting<BarWidth>(1, QStringLiteral("WaveBar/SampleWidth"));
-    m_settings->createSetting<BarGap>(0, QStringLiteral("WaveBar/SampleGap"));
+    m_settings->createSetting<BarWidth>(1, QStringLiteral("WaveBar/BarWidth"));
+    m_settings->createSetting<BarGap>(0, QStringLiteral("WaveBar/BarGap"));
 }
 } // namespace Fooyin::WaveBar
