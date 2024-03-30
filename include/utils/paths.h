@@ -23,10 +23,8 @@
 
 #include <QString>
 
-namespace Fooyin {
-namespace Utils {
+namespace Fooyin::Utils {
 FYUTILS_EXPORT QString configPath(const QString& appendPath = {});
 FYUTILS_EXPORT QString sharePath(const QString& appendPath = {});
 FYUTILS_EXPORT QString cachePath(const QString& appendPath = {});
-} // namespace Utils
-} // namespace FYUTILS_EXPORT Fooyin
+} // namespace Fooyin::Utils

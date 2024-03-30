@@ -25,13 +25,15 @@
 #include <QDir>
 #include <QStandardPaths>
 
-namespace Fooyin::Utils {
+namespace {
 QString operator/(const QString& first, const QString& second)
 {
-    return (second.isEmpty()) ? Utils::File::cleanPath(first)
-                              : Utils::File::cleanPath(first + QDir::separator() + second);
+    using Fooyin::Utils::File::cleanPath;
+    return (second.isEmpty()) ? cleanPath(first) : cleanPath(first + QDir::separator() + second);
 }
+} // namespace
 
+namespace Fooyin::Utils {
 QString createPath(const QString& path, const QString& appendPath)
 {
     if(!QFileInfo::exists(path)) {
@@ -40,7 +42,7 @@ QString createPath(const QString& path, const QString& appendPath)
         }
     }
 
-    const QString fullPath = path + QStringLiteral("/") + appendPath;
+    const QString fullPath = path / appendPath;
 
     if(!QFileInfo::exists(fullPath)) {
         if(!QDir().mkpath(fullPath)) {

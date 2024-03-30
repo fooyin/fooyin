@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include <utils/fileutils.h>
 #include <utils/paths.h>
 
 #include <QCoreApplication>
@@ -32,10 +33,24 @@ QString settingsPath()
     return QDir::cleanPath(Utils::configPath().append(QStringLiteral("/fooyin.conf")));
 }
 
-QString pluginsPath()
+QStringList pluginPaths()
 {
-    return QDir::cleanPath(QCoreApplication::applicationDirPath() + QStringLiteral("/")
-                           + QString::fromLatin1(RELATIVE_PLUGIN_PATH));
+    QStringList paths;
+
+    QDir appPath{QCoreApplication::applicationDirPath()};
+
+    const QDir systemPath{appPath.absolutePath() + QStringLiteral("/") + QString::fromLatin1(RELATIVE_PLUGIN_PATH)};
+    if(systemPath.exists()) {
+        paths.append(Utils::File::cleanPath(systemPath.absolutePath()));
+    }
+
+    if(appPath.cd(QStringLiteral("plugins"))) {
+        paths.append(Utils::File::cleanPath(appPath.absolutePath()));
+    }
+
+    paths.append(userPluginsPath());
+
+    return paths;
 }
 
 QString userPluginsPath()
@@ -52,7 +67,8 @@ QString translationsPath()
 
     QDir appPath{QCoreApplication::applicationDirPath()};
 
-    QDir systemPath{appPath.absolutePath() + QStringLiteral("/") + QString::fromLatin1(RELATIVE_TRANSLATION_PATH)};
+    const QDir systemPath{appPath.absolutePath() + QStringLiteral("/")
+                          + QString::fromLatin1(RELATIVE_TRANSLATION_PATH)};
     if(systemPath.exists()) {
         return systemPath.absolutePath();
     }

@@ -21,11 +21,11 @@
 
 #include "fycore_export.h"
 
-class QString;
+#include <QString>
 
 namespace Fooyin::Core {
 FYCORE_EXPORT QString settingsPath();
-FYCORE_EXPORT QString pluginsPath();
+FYCORE_EXPORT QStringList pluginPaths();
 FYCORE_EXPORT QString userPluginsPath();
 FYCORE_EXPORT QString translationsPath();
 } // namespace Fooyin::Core

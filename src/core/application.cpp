@@ -81,7 +81,7 @@ struct Application::Private
 
     void loadPlugins()
     {
-        const QStringList pluginPaths{Core::pluginsPath(), Core::userPluginsPath()};
+        const QStringList pluginPaths{Core::pluginPaths()};
         pluginManager.findPlugins(pluginPaths);
         pluginManager.loadPlugins();
 
