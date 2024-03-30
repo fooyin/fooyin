@@ -22,7 +22,6 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "engine/enginehandler.h"
-#include "engine/output/alsaoutput.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
@@ -65,7 +64,6 @@ struct Application::Private
                             library,        playlistHandler, settingsManager}
     {
         registerTypes();
-        registerOutputs();
         loadPlugins();
     }
 
@@ -79,13 +77,6 @@ struct Application::Private
         qRegisterMetaType<OutputCreator>("OutputCreator");
         qRegisterMetaType<LibraryInfo>("LibraryInfo");
         qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
-    }
-
-    void registerOutputs()
-    {
-        engine.addOutput({.name = QStringLiteral("ALSA"), .creator = []() {
-                              return std::make_unique<AlsaOutput>();
-                          }});
     }
 
     void loadPlugins()

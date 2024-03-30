@@ -128,11 +128,8 @@ function(create_fooyin_library name)
 endfunction()
 
 
-function(create_fooyin_plugin_internal base_name)
+function(create_fooyin_plugin_internal plugin_name)
     create_fooyin_plugin(${ARGV})
-
-    string(TOLOWER ${base_name} name)
-    set(plugin_name "fyplugin_${name}")
 
     set_target_properties(
         ${plugin_name}

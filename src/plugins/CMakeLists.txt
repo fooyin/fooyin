@@ -1,6 +1,7 @@
+add_subdirectory(alsa)
 add_subdirectory(filters)
+add_subdirectory(mpris)
 add_subdirectory(pipewire)
 add_subdirectory(sdl)
 add_subdirectory(tageditor)
-add_subdirectory(mpris)
 add_subdirectory(wavebar)

@@ -71,8 +71,6 @@ set(SOURCES
     engine/ffmpeg/ffmpegstream.h
     engine/ffmpeg/ffmpegutils.cpp
     engine/ffmpeg/ffmpegutils.h
-    engine/output/alsaoutput.cpp
-    engine/output/alsaoutput.h
     library/libraryinfo.h
     library/librarymanager.cpp
     library/librarymanager.h
@@ -137,9 +135,8 @@ target_link_libraries(
            Taglib::Taglib
            Fooyin::Utils
            ${FFMPEG_LIBRARIES}
-           ${ALSA_LIBRARIES}
 )
 
 target_include_directories(
-    fooyin_core PRIVATE ${FFMPEG_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS}
+    fooyin_core PRIVATE ${FFMPEG_INCLUDE_DIRS}
 )

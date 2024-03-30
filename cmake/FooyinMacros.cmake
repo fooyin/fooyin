@@ -8,7 +8,7 @@ function(fooyin_set_rpath target prefix)
     set_target_properties(${target} PROPERTIES INSTALL_RPATH "${rpath}")
 endfunction()
 
-function(create_fooyin_plugin base_name)
+function(create_fooyin_plugin plugin_name)
     cmake_parse_arguments(
         LIB
         ""
@@ -19,8 +19,8 @@ function(create_fooyin_plugin base_name)
 
     set(CMAKE_AUTOMOC ON)
 
-    string(TOLOWER ${base_name} name)
-    set(plugin_name "fyplugin_${name}")
+    string(TOLOWER ${plugin_name} name)
+    set(output_name "fyplugin_${name}")
 
     # Configure json file:
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.json.in")
@@ -49,7 +49,7 @@ function(create_fooyin_plugin base_name)
                    VISIBILITY_INLINES_HIDDEN YES
                    PREFIX ""
                    EXPORT_NAME ${name}
-                   OUTPUT_NAME ${plugin_name}
+                   OUTPUT_NAME ${output_name}
     )
 
     fooyin_set_rpath(${plugin_name} ${FOOYIN_PLUGIN_INSTALL_DIR})

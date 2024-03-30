@@ -133,7 +133,7 @@ struct PcmHandleDeleter
 using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
 } // namespace
 
-namespace Fooyin {
+namespace Fooyin::Alsa {
 struct AlsaOutput::Private
 {
     AudioFormat format;
@@ -523,4 +523,4 @@ void AlsaOutput::setDevice(const QString& device)
         p->device = device;
     }
 }
-} // namespace Fooyin
+} // namespace Fooyin::Alsa

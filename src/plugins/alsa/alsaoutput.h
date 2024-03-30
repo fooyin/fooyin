@@ -23,7 +23,7 @@
 
 #include <memory>
 
-namespace Fooyin {
+namespace Fooyin::Alsa {
 class AlsaOutput : public AudioOutput
 {
 public:
@@ -50,4 +50,4 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fooyin
+} // namespace Fooyin::Alsa
