@@ -53,6 +53,8 @@ signals:
     void waveformRescaled(const WaveformData<float>& data);
 
 private:
+    void updateRescaler();
+
     SettingsManager* m_settings;
 
     QThread m_generatorThread;

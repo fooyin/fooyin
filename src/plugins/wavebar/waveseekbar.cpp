@@ -39,6 +39,8 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
     , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
     , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
+    , m_barWidth{settings->value<Settings::WaveBar::BarWidth>()}
+    , m_barGap{settings->value<Settings::WaveBar::BarGap>()}
     , m_drawValues{settings->value<Settings::WaveBar::DrawValues>()}
     , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
 {
@@ -52,6 +54,14 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     });
     m_settings->subscribe<Settings::WaveBar::ChannelHeightScale>(this, [this](const double scale) {
         m_channelScale = scale;
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::BarWidth>(this, [this](const int width) {
+        m_barWidth = width;
+        update();
+    });
+    m_settings->subscribe<Settings::WaveBar::BarGap>(this, [this](const int gap) {
+        m_barGap = gap;
         update();
     });
     m_settings->subscribe<Settings::WaveBar::DrawValues>(this, [this](const int values) {
@@ -69,11 +79,12 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     m_data = waveData;
 
     if(m_data.complete) {
-        if(width() == m_data.sampleCount()) {
+        const double waveformWidth = m_data.sampleCount() * (m_barWidth + m_barGap);
+        if(width() == waveformWidth) {
             m_scale = 1.0;
         }
         else {
-            m_scale = static_cast<double>(width()) / m_data.sampleCount();
+            m_scale = static_cast<double>(width()) / waveformWidth;
         }
     }
 
@@ -136,11 +147,12 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
     painter.scale(m_scale, 1.0);
 
-    const int channels = m_data.channels;
-    const QRect& rect  = event->rect();
-    const int first    = static_cast<int>(rect.left() / m_scale);
-    const int last     = static_cast<int>(rect.right() + 1 / m_scale);
-    const double posX  = positionFromValue(m_position) / m_scale;
+    const int channels       = m_data.channels;
+    const double sampleTotal = m_barWidth + m_barGap;
+    const QRect& rect        = event->rect();
+    const int first          = static_cast<int>(static_cast<double>(rect.left()) / m_scale / sampleTotal);
+    const int last           = static_cast<int>(static_cast<double>(rect.right() + 1) / m_scale);
+    const double posX        = positionFromValue(m_position) / m_scale;
 
     painter.fillRect(rect, m_colours.bgUnplayed);
     painter.fillRect(QRect{first, 0, static_cast<int>(posX) - first, height()}, m_colours.bgPlayed);
@@ -156,14 +168,14 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     }
 
     if(m_showCursor) {
-        painter.setPen({m_colours.cursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
+        painter.setPen({m_colours.cursor, m_cursorWidth / m_scale, Qt::SolidLine, Qt::FlatCap});
         const QPointF pt1{posX, 0};
         const QPointF pt2{posX, static_cast<double>(height())};
         painter.drawLine(pt1, pt2);
     }
 
     if(isSeeking()) {
-        painter.setPen({m_colours.seekingCursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
+        painter.setPen({m_colours.seekingCursor, m_cursorWidth / m_scale, Qt::SolidLine, Qt::FlatCap});
         const int seekX = static_cast<int>(m_seekPos.x() / m_scale);
         painter.drawLine(seekX, 0, seekX, height());
     }
@@ -239,6 +251,11 @@ uint64_t WaveSeekBar::valueFromPosition(int pos) const
     return static_cast<uint64_t>(ratio * max);
 }
 
+bool WaveSeekBar::positionHasPlayed(int pos) const
+{
+    return static_cast<uint64_t>(static_cast<double>(valueFromPosition(pos)) * m_scale) < m_position;
+}
+
 void WaveSeekBar::updateMousePosition(const QPoint& pos)
 {
     QPoint widgetPos{pos};
@@ -260,18 +277,19 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const int total = static_cast<int>(max.size());
+    const int total       = static_cast<int>(max.size());
+    const int sampleTotal = m_barWidth + m_barGap;
 
-    for(int i{first}; i <= last && i < total; ++i) {
-        const auto x = static_cast<double>(i);
-
-        const bool hasPlayed = static_cast<uint64_t>(static_cast<double>(valueFromPosition(i)) * m_scale) < m_position;
+    auto x = static_cast<double>(first * sampleTotal);
+    for(int i{first}; i < total; ++i, x += sampleTotal) {
+        const bool hasPlayed = positionHasPlayed(static_cast<int>(x));
+        const auto barWidth  = static_cast<double>(m_barWidth);
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::MinMax) {
             const QPointF pt1{x, centre - (max.at(i) * maxScale)};
             const QPointF pt2{x, centre - (min.at(i) * minScale)};
 
-            painter.fillRect(QRectF{x, pt1.y(), m_scale, std::abs(pt1.y() - pt2.y())},
+            painter.fillRect(QRectF{x, pt1.y(), barWidth, std::abs(pt1.y() - pt2.y())},
                              hasPlayed ? m_colours.fgPlayed : m_colours.fgUnplayed);
         }
 
@@ -279,15 +297,16 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
             const QPointF pt1{x, centre - (rms.at(i) / rmsScale * maxScale)};
             const QPointF pt2{x, centre - (-rms.at(i) / rmsScale * minScale)};
 
-            painter.fillRect(QRectF{x, pt1.y(), m_scale, std::abs(pt1.y() - pt2.y())},
+            painter.fillRect(QRectF{x, pt1.y(), barWidth, std::abs(pt1.y() - pt2.y())},
                              hasPlayed ? m_colours.rmsPlayed : m_colours.rmsUnplayed);
         }
     }
 
-    if(total < last) {
+    const int finalX = total * sampleTotal;
+    if(finalX < last) {
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = this->height() / 2;
-        painter.drawLine(total, centreY, rect().right(), centreY);
+        painter.drawLine(finalX, centreY, rect().right(), centreY);
     }
 }
 

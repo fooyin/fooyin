@@ -57,6 +57,7 @@ protected:
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
+    [[nodiscard]] bool positionHasPlayed(int pos) const;
     void updateMousePosition(const QPoint& pos);
 
     void drawChannel(QPainter& painter, int channel, double height, int first, int last, double y);
@@ -73,6 +74,8 @@ private:
     bool m_showCursor;
     double m_cursorWidth;
     double m_channelScale;
+    int m_barWidth;
+    int m_barGap;
 
     ValueOptions m_drawValues;
     Colours m_colours;

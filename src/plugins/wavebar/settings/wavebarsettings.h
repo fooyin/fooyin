@@ -49,7 +49,8 @@ enum WaveBarSettings : uint32_t
     CursorWidth        = 4 | Type::Double,
     ColourOptions      = 5 | Type::Variant,
     DrawValues         = 6 | Type::Int,
-    SamplePixelRatio   = 7 | Type::Int,
+    BarWidth           = 7 | Type::Int,
+    BarGap             = 8 | Type::Int,
 };
 Q_ENUM_NS(WaveBarSettings)
 } // namespace Settings::WaveBar

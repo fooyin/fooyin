@@ -53,7 +53,8 @@ private:
     QDoubleSpinBox* m_channelHeightScale;
 
     QComboBox* m_drawValues;
-    QSpinBox* m_sampleValues;
+    QSpinBox* m_barWidth;
+    QSpinBox* m_barGap;
     QComboBox* m_downmix;
 
     QGroupBox* m_colourGroup;
@@ -73,7 +74,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_cursorWidth{new QDoubleSpinBox(this)}
     , m_channelHeightScale{new QDoubleSpinBox(this)}
     , m_drawValues{new QComboBox(this)}
-    , m_sampleValues{new QSpinBox(this)}
+    , m_barWidth{new QSpinBox(this)}
+    , m_barGap{new QSpinBox(this)}
     , m_downmix{new QComboBox(this)}
     , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
     , m_bgUnplayed{new ColourButton(this)}
@@ -93,7 +95,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* channelHeightLabel = new QLabel(tr("Channel Scale") + QStringLiteral(":"), this);
     auto* cursorWidthLabel   = new QLabel(tr("Cursor Width") + QStringLiteral(":"), this);
     auto* drawValuesLabel    = new QLabel(tr("Draw Values") + QStringLiteral(":"), this);
-    auto* sampleValuesLabel  = new QLabel(tr("Sample Pixel Ratio") + QStringLiteral(":"), this);
+    auto* barWidthLabel      = new QLabel(tr("Bar Width") + QStringLiteral(":"), this);
+    auto* barGapLabel        = new QLabel(tr("Bar Gap") + QStringLiteral(":"), this);
     auto* downMixLabel       = new QLabel(tr("Downmix") + QStringLiteral(":"), this);
 
     m_colourGroup->setCheckable(true);
@@ -138,9 +141,13 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_channelHeightScale->setMaximum(1.0);
     m_channelHeightScale->setSingleStep(0.1);
 
-    m_sampleValues->setMinimum(1);
-    m_sampleValues->setMaximum(25);
-    m_sampleValues->setSingleStep(1);
+    m_barWidth->setMinimum(1);
+    m_barWidth->setMaximum(50);
+    m_barWidth->setSingleStep(1);
+
+    m_barGap->setMinimum(0);
+    m_barGap->setMaximum(50);
+    m_barGap->setSingleStep(1);
 
     int row{0};
     appearanceLayout->addWidget(m_showCursor, row++, 0, 1, 2);
@@ -150,8 +157,10 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     appearanceLayout->addWidget(m_channelHeightScale, row++, 1);
     appearanceLayout->addWidget(drawValuesLabel, row, 0);
     appearanceLayout->addWidget(m_drawValues, row++, 1);
-    appearanceLayout->addWidget(sampleValuesLabel, row, 0);
-    appearanceLayout->addWidget(m_sampleValues, row++, 1);
+    appearanceLayout->addWidget(barWidthLabel, row, 0);
+    appearanceLayout->addWidget(m_barWidth, row++, 1);
+    appearanceLayout->addWidget(barGapLabel, row, 0);
+    appearanceLayout->addWidget(m_barGap, row++, 1);
     appearanceLayout->addWidget(downMixLabel, row, 0);
     appearanceLayout->addWidget(m_downmix, row++, 1);
 
@@ -188,7 +197,8 @@ void WaveBarSettingsPageWidget::load()
         m_drawValues->setCurrentIndex(2);
     }
 
-    m_sampleValues->setValue(m_settings->value<Settings::WaveBar::SamplePixelRatio>());
+    m_barWidth->setValue(m_settings->value<Settings::WaveBar::BarWidth>());
+    m_barGap->setValue(m_settings->value<Settings::WaveBar::BarGap>());
 
     m_downmix->clear();
 
@@ -227,7 +237,8 @@ void WaveBarSettingsPageWidget::apply()
     m_settings->set<Settings::WaveBar::ChannelHeightScale>(m_channelHeightScale->value());
     m_settings->set<Settings::WaveBar::Downmix>(m_downmix->currentIndex());
     m_settings->set<Settings::WaveBar::DrawValues>(m_drawValues->currentIndex());
-    m_settings->set<Settings::WaveBar::SamplePixelRatio>(m_sampleValues->value());
+    m_settings->set<Settings::WaveBar::BarWidth>(m_barWidth->value());
+    m_settings->set<Settings::WaveBar::BarGap>(m_barGap->value());
 
     Colours colours;
 
@@ -255,7 +266,8 @@ void WaveBarSettingsPageWidget::reset()
     m_settings->reset<Settings::WaveBar::CursorWidth>();
     m_settings->reset<Settings::WaveBar::ColourOptions>();
     m_settings->reset<Settings::WaveBar::DrawValues>();
-    m_settings->reset<Settings::WaveBar::SamplePixelRatio>();
+    m_settings->reset<Settings::WaveBar::BarWidth>();
+    m_settings->reset<Settings::WaveBar::BarGap>();
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)

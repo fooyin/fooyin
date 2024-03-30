@@ -21,18 +21,20 @@
 
 #include <utils/settings/settingsmanager.h>
 
+constexpr auto SampleCount = 2048;
+
 namespace {
 int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::WaveformData<float>& data, int channel,
-                int sampleSize, double start, double end)
+                double start, double end)
 {
     int sampleCount{0};
 
     auto& [inMax, inMin, inRms] = data.channelData.at(channel);
 
-    const int lastIndex = std::floor(sampleSize * end);
+    const int lastIndex = std::floor(end);
 
     for(int i = std::floor(start); i < std::ceil(end); ++i) {
-        for(int index = i * sampleSize; index < lastIndex; index += sampleSize) {
+        for(int index{i}; index < lastIndex; ++index) {
             if(std::cmp_less(index, inMax.size())) {
                 const float sampleMax = inMax.at(index);
                 const float sampleMin = inMin.at(index);
@@ -55,7 +57,7 @@ namespace Fooyin::WaveBar {
 WaveformRescaler::WaveformRescaler(QObject* parent)
     : Worker{parent}
     , m_width{0}
-    , m_samplePixelRatio{1}
+    , m_sampleWidth{1}
     , m_downMix{DownmixOption::Off}
 { }
 
@@ -79,8 +81,8 @@ void WaveformRescaler::rescale()
 
     data.channelData.resize(data.channels);
 
-    const int sampleSize         = m_samplePixelRatio;
-    const double samplesPerPixel = static_cast<double>(m_data.sampleCount()) / (m_width * sampleSize);
+    const double sampleSize = static_cast<double>(m_data.complete ? m_data.sampleCount() : SampleCount) * m_sampleWidth;
+    const auto samplesPerPixel = sampleSize / m_width;
 
     for(int ch{0}; ch < data.channels; ++ch) {
         auto& [outMax, outMin, outRms] = data.channelData.at(ch);
@@ -99,11 +101,11 @@ void WaveformRescaler::rescale()
 
             if(m_downMix == DownmixOption::Mono || (m_downMix == DownmixOption::Stereo && m_data.channels > 2)) {
                 for(int mixCh{0}; mixCh < m_data.channels; ++mixCh) {
-                    sampleCount += buildSample(sample, m_data, mixCh, sampleSize, start, end);
+                    sampleCount += buildSample(sample, m_data, mixCh, start, end);
                 }
             }
             else {
-                sampleCount += buildSample(sample, m_data, ch, sampleSize, start, end);
+                sampleCount += buildSample(sample, m_data, ch, start, end);
             }
 
             if(sampleCount > 0) {
@@ -136,22 +138,22 @@ void WaveformRescaler::rescale(int width)
 
 void WaveformRescaler::rescale(const WaveformData<float>& data, int width)
 {
-    if(std::exchange(m_data, data) == data) {
-        return;
+    if(std::exchange(m_data, data) != data) {
+        rescale(width);
     }
-
-    rescale(width);
 }
 
-void WaveformRescaler::changeSamplePixelRatio(int ratio)
+void WaveformRescaler::changeSampleWidth(int width)
 {
-    m_samplePixelRatio = ratio;
-    rescale(m_width);
+    if(std::exchange(m_sampleWidth, width) != width) {
+        rescale(m_width);
+    }
 }
 
 void WaveformRescaler::changeDownmix(DownmixOption option)
 {
-    m_downMix = option;
-    rescale(m_width);
+    if(std::exchange(m_downMix, option) != option) {
+        rescale(m_width);
+    }
 }
 } // namespace Fooyin::WaveBar

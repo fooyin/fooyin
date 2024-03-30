@@ -40,13 +40,13 @@ public slots:
     void rescale(int width);
     void rescale(const WaveformData<float>& data, int width);
 
-    void changeSamplePixelRatio(int ratio);
+    void changeSampleWidth(int width);
     void changeDownmix(DownmixOption option);
 
 private:
     WaveformData<float> m_data;
     int m_width;
-    int m_samplePixelRatio;
+    int m_sampleWidth;
     DownmixOption m_downMix;
 };
 } // namespace Fooyin::WaveBar
