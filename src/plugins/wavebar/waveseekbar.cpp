@@ -69,11 +69,11 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     m_data = waveData;
 
     if(m_data.complete) {
-        if(width() == m_data.sampleCount) {
+        if(width() == m_data.sampleCount()) {
             m_scale = 1.0;
         }
         else {
-            m_scale = static_cast<double>(width()) / m_data.sampleCount;
+            m_scale = static_cast<double>(width()) / m_data.sampleCount();
         }
     }
 
@@ -262,37 +262,25 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 
     const int total = static_cast<int>(max.size());
 
-    for(int i = first; i <= last && i < total; ++i) {
+    for(int i{first}; i <= last && i < total; ++i) {
         const auto x = static_cast<double>(i);
 
         const bool hasPlayed = static_cast<uint64_t>(static_cast<double>(valueFromPosition(i)) * m_scale) < m_position;
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::MinMax) {
-            if(hasPlayed) {
-                painter.setPen({m_colours.fgPlayed, 1, Qt::SolidLine, Qt::FlatCap});
-            }
-            else {
-                painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
-            }
-
             const QPointF pt1{x, centre - (max.at(i) * maxScale)};
             const QPointF pt2{x, centre - (min.at(i) * minScale)};
 
-            painter.drawLine(pt1, pt2);
+            painter.fillRect(QRectF{x, pt1.y(), m_scale, std::abs(pt1.y() - pt2.y())},
+                             hasPlayed ? m_colours.fgPlayed : m_colours.fgUnplayed);
         }
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::RMS) {
-            if(hasPlayed) {
-                painter.setPen({m_colours.rmsPlayed, 1, Qt::SolidLine, Qt::FlatCap});
-            }
-            else {
-                painter.setPen({m_colours.rmsUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
-            }
-
             const QPointF pt1{x, centre - (rms.at(i) / rmsScale * maxScale)};
             const QPointF pt2{x, centre - (-rms.at(i) / rmsScale * minScale)};
 
-            painter.drawLine(pt1, pt2);
+            painter.fillRect(QRectF{x, pt1.y(), m_scale, std::abs(pt1.y() - pt2.y())},
+                             hasPlayed ? m_colours.rmsPlayed : m_colours.rmsUnplayed);
         }
     }
 

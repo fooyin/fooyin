@@ -37,7 +37,6 @@ struct WaveformData
     AudioFormat format;
     uint64_t duration{0};
     int channels{0};
-    int sampleCount{0};
     bool complete{false};
 
     struct ChannelData
@@ -55,6 +54,15 @@ struct WaveformData
     [[nodiscard]] bool empty() const
     {
         return !format.isValid() && channelData.empty();
+    }
+
+    [[nodiscard]] int sampleCount() const
+    {
+        if(channelData.empty()) {
+            return 0;
+        }
+
+        return static_cast<int>(channelData.front().max.size());
     }
 };
 } // namespace Fooyin::WaveBar

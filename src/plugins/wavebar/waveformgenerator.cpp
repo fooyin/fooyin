@@ -153,7 +153,6 @@ void WaveformGenerator::generate(const Track& track)
     m_data.duration = track.duration();
     m_data.channels = m_format.channelCount();
     m_data.channelData.resize(m_data.channels);
-    m_data.sampleCount = SampleCount;
 
     const QString trackKey = trackCacheKey(m_track, m_data.channels);
 

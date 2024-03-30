@@ -69,7 +69,6 @@ void WaveformRescaler::rescale()
 
     WaveformData<float> data{m_data};
     data.channelData.clear();
-    data.sampleCount = 0;
 
     if(m_downMix == DownmixOption::Stereo) {
         data.channels = 2;
@@ -81,7 +80,7 @@ void WaveformRescaler::rescale()
     data.channelData.resize(data.channels);
 
     const int sampleSize         = m_samplePixelRatio;
-    const double samplesPerPixel = static_cast<double>(m_data.sampleCount) / (m_width * sampleSize);
+    const double samplesPerPixel = static_cast<double>(m_data.sampleCount()) / (m_width * sampleSize);
 
     for(int ch{0}; ch < data.channels; ++ch) {
         auto& [outMax, outMin, outRms] = data.channelData.at(ch);
@@ -114,14 +113,11 @@ void WaveformRescaler::rescale()
                 outMax.emplace_back(sample.max);
                 outMin.emplace_back(sample.min);
                 outRms.emplace_back(sample.rms);
-                ++data.sampleCount;
             }
 
             start = end;
         }
     }
-
-    data.sampleCount /= data.channels;
 
     setState(Idle);
     emit waveformRescaled(data);
