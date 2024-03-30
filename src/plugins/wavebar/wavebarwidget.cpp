@@ -170,14 +170,13 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     downmixMenu->addAction(downmixStereo);
     downmixMenu->addAction(downmixMono);
 
-    menu->addMenu(downmixMenu);
-
-    menu->addSeparator();
-
     auto* gotoSettings = new QAction(tr("Settings…"), menu);
     QObject::connect(gotoSettings, &QAction::triggered, this,
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::WaveBarGeneral); });
 
+    menu->addAction(showCursor);
+    menu->addMenu(downmixMenu);
+    menu->addSeparator();
     menu->addAction(gotoSettings);
 
     menu->popup(event->globalPos());

@@ -86,9 +86,9 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
     auto* barWidthLabel    = new QLabel(tr("Bar Width") + QStringLiteral(":"), this);
     auto* barGapLabel      = new QLabel(tr("Bar Gap") + QStringLiteral(":"), this);
 
-    m_cursorWidth->setMinimum(1.0);
+    m_cursorWidth->setMinimum(0.0);
     m_cursorWidth->setMaximum(20.0);
-    m_cursorWidth->setSingleStep(0.1);
+    m_cursorWidth->setSingleStep(0.5);
 
     m_barWidth->setMinimum(1);
     m_barWidth->setMaximum(50);
