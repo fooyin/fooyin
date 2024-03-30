@@ -21,11 +21,6 @@
 
 #include <alsa/asoundlib.h>
 
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-}
-
 #include <QDebug>
 
 namespace {
