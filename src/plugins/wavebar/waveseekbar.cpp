@@ -264,10 +264,10 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::MinMax) {
             if(hasPlayed) {
-                painter.setPen({m_colours.fgPlayed, m_scale, Qt::SolidLine, Qt::FlatCap});
+                painter.setPen({m_colours.fgPlayed, 1, Qt::SolidLine, Qt::FlatCap});
             }
             else {
-                painter.setPen({m_colours.fgUnplayed, m_scale, Qt::SolidLine, Qt::FlatCap});
+                painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
             }
 
             const QPointF pt1{x, centre - (max.at(i) * maxScale)};
@@ -278,10 +278,10 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::RMS) {
             if(hasPlayed) {
-                painter.setPen({m_colours.rmsPlayed, m_scale, Qt::SolidLine, Qt::FlatCap});
+                painter.setPen({m_colours.rmsPlayed, 1, Qt::SolidLine, Qt::FlatCap});
             }
             else {
-                painter.setPen({m_colours.rmsUnplayed, m_scale, Qt::SolidLine, Qt::FlatCap});
+                painter.setPen({m_colours.rmsUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
             }
 
             const QPointF pt1{x, centre - (rms.at(i) / rmsScale * maxScale)};
@@ -292,7 +292,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     }
 
     if(total < last) {
-        painter.setPen({m_colours.fgUnplayed, m_scale, Qt::SolidLine, Qt::FlatCap});
+        painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = this->height() / 2;
         painter.drawLine(total, centreY, rect().right(), centreY);
     }
