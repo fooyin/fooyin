@@ -8,8 +8,8 @@ else()
         include(FetchContent)
         FetchContent_Declare(
             qcoro
-            GIT_REPOSITORY https://github.com/danvratil/qcoro.git
-            GIT_TAG v0.9.0
+            GIT_REPOSITORY https://www.github.com/danvratil/qcoro.git
+            GIT_TAG v0.10.0
         )
         FetchContent_GetProperties(qcoro)
         if(NOT qcoro_POPULATED)

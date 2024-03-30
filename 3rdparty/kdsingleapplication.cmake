@@ -9,7 +9,7 @@ message(STATUS "Using 3rd-party KDSingleApplication")
 include(FetchContent)
 FetchContent_Declare(
     kdsingleapplication
-    GIT_REPOSITORY https://github.com/KDAB/KDSingleApplication.git
+    GIT_REPOSITORY https://www.github.com/KDAB/KDSingleApplication.git
     GIT_TAG v1.1.0
 )
 FetchContent_GetProperties(kdsingleapplication)
