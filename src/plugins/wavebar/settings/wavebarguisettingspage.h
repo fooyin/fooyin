@@ -19,9 +19,18 @@
 
 #pragma once
 
-namespace Fooyin::WaveBar::Constants {
-namespace Page {
-constexpr auto WaveBarGeneral = "Fooyin.Page.WaveBar.General";
-constexpr auto WaveBarColours = "Fooyin.Page.WaveBar.Colours";
-} // namespace Page
-} // namespace Fooyin::WaveBar::Constants
+#include <utils/settings/settingspage.h>
+
+namespace Fooyin {
+class SettingsManager;
+
+namespace WaveBar {
+class WaveBarGuiSettingsPage : public SettingsPage
+{
+    Q_OBJECT
+
+public:
+    explicit WaveBarGuiSettingsPage(SettingsManager* settings);
+};
+} // namespace WaveBar
+} // namespace Fooyin

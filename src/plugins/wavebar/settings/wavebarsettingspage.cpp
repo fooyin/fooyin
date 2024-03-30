@@ -20,17 +20,14 @@
 #include "wavebarsettingspage.h"
 
 #include "settings/wavebarsettings.h"
-#include "wavebarcolours.h"
 #include "wavebarconstants.h"
 
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/colourbutton.h>
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QGridLayout>
-#include <QGroupBox>
 #include <QLabel>
 
 namespace Fooyin::WaveBar {
@@ -48,136 +45,41 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QCheckBox* m_showCursor;
-    QDoubleSpinBox* m_cursorWidth;
     QDoubleSpinBox* m_channelHeightScale;
-
     QComboBox* m_drawValues;
-    QSpinBox* m_barWidth;
-    QSpinBox* m_barGap;
     QComboBox* m_downmix;
-
-    QGroupBox* m_colourGroup;
-    ColourButton* m_bgUnplayed;
-    ColourButton* m_bgPlayed;
-    ColourButton* m_fgUnplayed;
-    ColourButton* m_fgPlayed;
-    ColourButton* m_rmsUnplayed;
-    ColourButton* m_rmsPlayed;
-    ColourButton* m_cursorColour;
-    ColourButton* m_seekingCursorColour;
 };
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_showCursor{new QCheckBox(tr("Show Cursor"), this)}
-    , m_cursorWidth{new QDoubleSpinBox(this)}
     , m_channelHeightScale{new QDoubleSpinBox(this)}
     , m_drawValues{new QComboBox(this)}
-    , m_barWidth{new QSpinBox(this)}
-    , m_barGap{new QSpinBox(this)}
     , m_downmix{new QComboBox(this)}
-    , m_colourGroup{new QGroupBox(tr("Custom colours"), this)}
-    , m_bgUnplayed{new ColourButton(this)}
-    , m_bgPlayed{new ColourButton(this)}
-    , m_fgUnplayed{new ColourButton(this)}
-    , m_fgPlayed{new ColourButton(this)}
-    , m_rmsUnplayed{new ColourButton(this)}
-    , m_rmsPlayed{new ColourButton(this)}
-    , m_cursorColour{new ColourButton(this)}
-    , m_seekingCursorColour{new ColourButton(this)}
 {
     auto* layout = new QGridLayout(this);
 
-    auto* appearanceGroup  = new QGroupBox(tr("Appearance"), this);
-    auto* appearanceLayout = new QGridLayout(appearanceGroup);
-
     auto* channelHeightLabel = new QLabel(tr("Channel Scale") + QStringLiteral(":"), this);
-    auto* cursorWidthLabel   = new QLabel(tr("Cursor Width") + QStringLiteral(":"), this);
     auto* drawValuesLabel    = new QLabel(tr("Draw Values") + QStringLiteral(":"), this);
-    auto* barWidthLabel      = new QLabel(tr("Bar Width") + QStringLiteral(":"), this);
-    auto* barGapLabel        = new QLabel(tr("Bar Gap") + QStringLiteral(":"), this);
     auto* downMixLabel       = new QLabel(tr("Downmix") + QStringLiteral(":"), this);
-
-    m_colourGroup->setCheckable(true);
-
-    auto* coloursLayout = new QGridLayout(m_colourGroup);
-
-    auto* unPlayedLabel      = new QLabel(tr("Unplayed"), this);
-    auto* playedLabel        = new QLabel(tr("Played"), this);
-    auto* bgLabel            = new QLabel(tr("Background"), this);
-    auto* fgLabel            = new QLabel(tr("Foreground"), this);
-    auto* rmsLabel           = new QLabel(tr("RMS"), this);
-    auto* playingCursorLabel = new QLabel(tr("Playing"), this);
-    auto* seekingCursorLabel = new QLabel(tr("Seeking"), this);
-    auto* cursorLabel        = new QLabel(tr("Cursor"), this);
-
-    coloursLayout->addWidget(unPlayedLabel, 0, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(playedLabel, 0, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(bgLabel, 1, 0);
-    coloursLayout->addWidget(fgLabel, 2, 0);
-    coloursLayout->addWidget(rmsLabel, 3, 0);
-    coloursLayout->addWidget(playingCursorLabel, 4, 1, Qt::AlignCenter);
-    coloursLayout->addWidget(seekingCursorLabel, 4, 2, Qt::AlignCenter);
-    coloursLayout->addWidget(cursorLabel, 5, 0);
-
-    coloursLayout->addWidget(m_bgUnplayed, 1, 1);
-    coloursLayout->addWidget(m_bgPlayed, 1, 2);
-    coloursLayout->addWidget(m_fgUnplayed, 2, 1);
-    coloursLayout->addWidget(m_fgPlayed, 2, 2);
-    coloursLayout->addWidget(m_rmsUnplayed, 3, 1);
-    coloursLayout->addWidget(m_rmsPlayed, 3, 2);
-    coloursLayout->addWidget(m_cursorColour, 5, 1);
-    coloursLayout->addWidget(m_seekingCursorColour, 5, 2);
-
-    coloursLayout->setColumnStretch(1, 1);
-    coloursLayout->setColumnStretch(2, 1);
-
-    m_cursorWidth->setMinimum(1.0);
-    m_cursorWidth->setMaximum(20.0);
-    m_cursorWidth->setSingleStep(0.1);
 
     m_channelHeightScale->setMinimum(0.1);
     m_channelHeightScale->setMaximum(1.0);
     m_channelHeightScale->setSingleStep(0.1);
 
-    m_barWidth->setMinimum(1);
-    m_barWidth->setMaximum(50);
-    m_barWidth->setSingleStep(1);
-
-    m_barGap->setMinimum(0);
-    m_barGap->setMaximum(50);
-    m_barGap->setSingleStep(1);
-
     int row{0};
-    appearanceLayout->addWidget(m_showCursor, row++, 0, 1, 2);
-    appearanceLayout->addWidget(cursorWidthLabel, row, 0);
-    appearanceLayout->addWidget(m_cursorWidth, row++, 1);
-    appearanceLayout->addWidget(channelHeightLabel, row, 0);
-    appearanceLayout->addWidget(m_channelHeightScale, row++, 1);
-    appearanceLayout->addWidget(drawValuesLabel, row, 0);
-    appearanceLayout->addWidget(m_drawValues, row++, 1);
-    appearanceLayout->addWidget(barWidthLabel, row, 0);
-    appearanceLayout->addWidget(m_barWidth, row++, 1);
-    appearanceLayout->addWidget(barGapLabel, row, 0);
-    appearanceLayout->addWidget(m_barGap, row++, 1);
-    appearanceLayout->addWidget(downMixLabel, row, 0);
-    appearanceLayout->addWidget(m_downmix, row++, 1);
-
-    layout->addWidget(appearanceGroup, 0, 1);
-    layout->addWidget(m_colourGroup, 0, 2);
+    layout->addWidget(drawValuesLabel, row, 0);
+    layout->addWidget(m_drawValues, row++, 1);
+    layout->addWidget(downMixLabel, row, 0);
+    layout->addWidget(m_downmix, row++, 1);
+    layout->addWidget(channelHeightLabel, row, 0);
+    layout->addWidget(m_channelHeightScale, row++, 1);
 
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
-
-    QObject::connect(m_showCursor, &QCheckBox::stateChanged, this,
-                     [this]() { m_cursorWidth->setEnabled(m_showCursor->isChecked()); });
 }
 
 void WaveBarSettingsPageWidget::load()
 {
-    m_showCursor->setChecked(m_settings->value<Settings::WaveBar::ShowCursor>());
-    m_cursorWidth->setValue(m_settings->value<Settings::WaveBar::CursorWidth>());
     m_channelHeightScale->setValue(m_settings->value<Settings::WaveBar::ChannelHeightScale>());
 
     m_drawValues->clear();
@@ -197,9 +99,6 @@ void WaveBarSettingsPageWidget::load()
         m_drawValues->setCurrentIndex(2);
     }
 
-    m_barWidth->setValue(m_settings->value<Settings::WaveBar::BarWidth>());
-    m_barGap->setValue(m_settings->value<Settings::WaveBar::BarGap>());
-
     m_downmix->clear();
 
     m_downmix->addItem(tr("Off"));
@@ -216,58 +115,21 @@ void WaveBarSettingsPageWidget::load()
     else {
         m_downmix->setCurrentIndex(2);
     }
-
-    const auto currentColours = m_settings->value<Settings::WaveBar::ColourOptions>().value<Colours>();
-    m_colourGroup->setChecked(currentColours != Colours{});
-
-    m_bgUnplayed->setColour(currentColours.bgUnplayed);
-    m_bgPlayed->setColour(currentColours.bgPlayed);
-    m_fgUnplayed->setColour(currentColours.fgUnplayed);
-    m_fgPlayed->setColour(currentColours.fgPlayed);
-    m_rmsUnplayed->setColour(currentColours.rmsUnplayed);
-    m_rmsPlayed->setColour(currentColours.rmsPlayed);
-    m_cursorColour->setColour(currentColours.cursor);
-    m_seekingCursorColour->setColour(currentColours.seekingCursor);
 }
 
 void WaveBarSettingsPageWidget::apply()
 {
-    m_settings->set<Settings::WaveBar::ShowCursor>(m_showCursor->isChecked());
-    m_settings->set<Settings::WaveBar::CursorWidth>(m_cursorWidth->value());
     m_settings->set<Settings::WaveBar::ChannelHeightScale>(m_channelHeightScale->value());
     m_settings->set<Settings::WaveBar::Downmix>(m_downmix->currentIndex());
     m_settings->set<Settings::WaveBar::DrawValues>(m_drawValues->currentIndex());
-    m_settings->set<Settings::WaveBar::BarWidth>(m_barWidth->value());
-    m_settings->set<Settings::WaveBar::BarGap>(m_barGap->value());
-
-    Colours colours;
-
-    if(m_colourGroup->isChecked()) {
-        colours.bgUnplayed    = m_bgUnplayed->colour();
-        colours.bgPlayed      = m_bgPlayed->colour();
-        colours.fgUnplayed    = m_fgUnplayed->colour();
-        colours.fgPlayed      = m_fgPlayed->colour();
-        colours.rmsUnplayed   = m_rmsUnplayed->colour();
-        colours.rmsPlayed     = m_rmsPlayed->colour();
-        colours.cursor        = m_cursorColour->colour();
-        colours.seekingCursor = m_seekingCursorColour->colour();
-        m_settings->set<Settings::WaveBar::ColourOptions>(QVariant::fromValue(colours));
-    }
-    else {
-        m_settings->set<Settings::WaveBar::ColourOptions>(QVariant{});
-    }
 }
 
 void WaveBarSettingsPageWidget::reset()
 {
     m_settings->reset<Settings::WaveBar::Downmix>();
     m_settings->reset<Settings::WaveBar::ChannelHeightScale>();
-    m_settings->reset<Settings::WaveBar::ShowCursor>();
-    m_settings->reset<Settings::WaveBar::CursorWidth>();
     m_settings->reset<Settings::WaveBar::ColourOptions>();
     m_settings->reset<Settings::WaveBar::DrawValues>();
-    m_settings->reset<Settings::WaveBar::BarWidth>();
-    m_settings->reset<Settings::WaveBar::BarGap>();
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)

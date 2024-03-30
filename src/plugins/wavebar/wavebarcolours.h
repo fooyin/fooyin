@@ -33,18 +33,21 @@ struct Colours
 
     QColor fgUnplayed{140, 140, 140};
     QColor fgPlayed{qApp->palette().highlight().color()};
+    QColor fgBorder{Qt::transparent};
 
     QColor rmsUnplayed{65, 65, 65};
     QColor rmsPlayed{fgPlayed.darker(150)};
+    QColor rmsBorder{Qt::transparent};
 
     QColor cursor{fgPlayed};
     QColor seekingCursor{rmsPlayed};
 
     bool operator==(const Colours& other) const
     {
-        return std::tie(bgUnplayed, bgPlayed, fgUnplayed, fgPlayed, rmsUnplayed, rmsPlayed, cursor, seekingCursor)
-            == std::tie(other.bgUnplayed, other.bgPlayed, other.fgUnplayed, other.fgPlayed, other.rmsUnplayed,
-                        other.rmsPlayed, other.cursor, other.seekingCursor);
+        return std::tie(bgUnplayed, bgPlayed, fgUnplayed, fgPlayed, fgBorder, rmsUnplayed, rmsPlayed, rmsBorder, cursor,
+                        seekingCursor)
+            == std::tie(other.bgUnplayed, other.bgPlayed, other.fgUnplayed, other.fgBorder, other.fgPlayed,
+                        other.rmsUnplayed, other.rmsPlayed, other.rmsBorder, other.cursor, other.seekingCursor);
     };
 
     bool operator!=(const Colours& other) const
@@ -58,8 +61,10 @@ struct Colours
         stream << colours.bgPlayed;
         stream << colours.fgUnplayed;
         stream << colours.fgPlayed;
+        stream << colours.fgBorder;
         stream << colours.rmsUnplayed;
         stream << colours.rmsPlayed;
+        stream << colours.rmsBorder;
         stream << colours.cursor;
         return stream;
     }
@@ -70,8 +75,10 @@ struct Colours
         stream >> colours.bgPlayed;
         stream >> colours.fgUnplayed;
         stream >> colours.fgPlayed;
+        stream >> colours.fgBorder;
         stream >> colours.rmsUnplayed;
         stream >> colours.rmsPlayed;
+        stream >> colours.rmsBorder;
         stream >> colours.cursor;
         return stream;
     }

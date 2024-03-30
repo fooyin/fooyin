@@ -71,7 +71,6 @@ private:
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;
 
-    bool m_showCursor;
     double m_cursorWidth;
     double m_channelScale;
     int m_barWidth;

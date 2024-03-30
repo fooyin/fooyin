@@ -33,7 +33,6 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
 
     m_settings->createSetting<Downmix>(0, QStringLiteral("WaveBar/Downmix"));
     m_settings->createSetting<ChannelHeightScale>(0.9, QStringLiteral("WaveBar/ChannelHeightScale"));
-    m_settings->createSetting<ShowCursor>(true, QStringLiteral("WaveBar/ShowCursor"));
     m_settings->createSetting<CursorWidth>(3.0, QStringLiteral("WaveBar/CursorWidth"));
     m_settings->createSetting<ColourOptions>(QVariant::fromValue(Colours{}), QStringLiteral("WaveBar/Colours"));
     m_settings->createSetting<DrawValues>(0, QStringLiteral("WaveBar/DrawValues"));

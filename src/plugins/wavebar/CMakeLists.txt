@@ -18,6 +18,8 @@ create_fooyin_plugin_internal(
             waveformrescaler.h
             waveseekbar.cpp
             waveseekbar.h
+            settings/wavebarguisettingspage.cpp
+            settings/wavebarguisettingspage.h
             settings/wavebarsettings.cpp
             settings/wavebarsettings.h
             settings/wavebarsettingspage.cpp
