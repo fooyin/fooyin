@@ -82,8 +82,10 @@ void WaveBarWidget::resizeEvent(QResizeEvent* event)
 
 void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    // If we open the context menu while seeking, the seek cursor will get stuck in place
-    m_seekbar->stopSeeking();
+    if(m_seekbar->isSeeking()) {
+        m_seekbar->stopSeeking();
+        return;
+    }
 
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);

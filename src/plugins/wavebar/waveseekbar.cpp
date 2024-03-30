@@ -101,9 +101,14 @@ void WaveSeekBar::setPosition(uint64_t pos)
     const QRect updateRect(updateX, 0, width, height());
     update(updateRect);
 
-    if(!m_seekPos.isNull()) {
+    if(isSeeking()) {
         drawSeekTip();
     }
+}
+
+bool WaveSeekBar::isSeeking() const
+{
+    return !m_seekPos.isNull();
 }
 
 void WaveSeekBar::stopSeeking()
@@ -157,7 +162,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         painter.drawLine(pt1, pt2);
     }
 
-    if(!m_seekPos.isNull()) {
+    if(isSeeking()) {
         painter.setPen({m_colours.seekingCursor, m_cursorWidth, Qt::SolidLine, Qt::FlatCap});
         const int seekX = static_cast<int>(m_seekPos.x() / m_scale);
         painter.drawLine(seekX, 0, seekX, height());
@@ -170,7 +175,7 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
 
-    if(event->buttons() & Qt::LeftButton) {
+    if(isSeeking() && event->buttons() & Qt::LeftButton) {
         updateMousePosition(event->pos());
         drawSeekTip();
     }
@@ -190,7 +195,7 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
 
-    if(event->button() != Qt::LeftButton) {
+    if(event->button() != Qt::LeftButton || !isSeeking()) {
         return;
     }
 

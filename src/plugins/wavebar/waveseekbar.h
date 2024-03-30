@@ -40,7 +40,9 @@ public:
     explicit WaveSeekBar(SettingsManager* settings, QWidget* parent = nullptr);
 
     void processData(const WaveformData<float>& waveData);
+
     void setPosition(uint64_t pos);
+    [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
 
 signals:
