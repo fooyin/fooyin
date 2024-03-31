@@ -30,6 +30,17 @@
 #include <QPainter>
 #include <QStyle>
 
+namespace {
+QColor blendColors(const QColor& color1, const QColor& color2, double ratio)
+{
+    const int r = static_cast<int>(color1.red() * (1.0 - ratio) + color2.red() * ratio);
+    const int g = static_cast<int>(color1.green() * (1.0 - ratio) + color2.green() * ratio);
+    const int b = static_cast<int>(color1.blue() * (1.0 - ratio) + color2.blue() * ratio);
+
+    return {r, g, b};
+}
+} // namespace
+
 namespace Fooyin::WaveBar {
 WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
@@ -260,8 +271,9 @@ void WaveSeekBar::updateRange(int first, int last)
         return;
     }
 
-    const auto left  = static_cast<int>((first < last ? first : last) - m_cursorWidth);
-    const auto width = static_cast<int>(std::abs(last - first) + (2 * m_cursorWidth));
+    const int sampleWidth = m_barWidth + m_barGap;
+    const auto left       = static_cast<int>((first < last ? first : last) - m_cursorWidth) - sampleWidth;
+    const auto width      = static_cast<int>(std::abs(last - first) + (2 * m_cursorWidth)) + (2 * sampleWidth);
 
     const QRect updateRect(left, 0, width, height());
     update(updateRect);
@@ -284,46 +296,68 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const int total          = static_cast<int>(max.size());
-    const double sampleWidth = m_barWidth + m_barGap;
+    const auto total          = static_cast<int>(max.size());
+    const auto sampleDuration = static_cast<uint64_t>(m_data.duration / total);
+    const int sampleWidth     = m_barWidth + m_barGap;
 
     for(int i{first}; i < total; ++i) {
-        auto x               = static_cast<double>(i * sampleWidth);
-        const bool hasPlayed = positionHasPlayed(static_cast<int>(x));
-        const auto barWidth  = static_cast<double>(m_barWidth);
+        const auto x        = static_cast<double>(i * sampleWidth);
+        const auto barWidth = static_cast<double>(m_barWidth);
+
+        const auto samplePosition
+            = static_cast<uint64_t>((static_cast<double>(i + 1)) * static_cast<double>(sampleDuration));
+        const auto timeLeft = std::max(samplePosition, m_position) - std::min(samplePosition, m_position);
+        const auto progress = static_cast<double>(sampleDuration - timeLeft) / static_cast<double>(sampleDuration);
+        const bool isPlayed = samplePosition < m_position;
+        const bool isInProgress
+            = !isPlayed && samplePosition > m_position && samplePosition <= m_position + sampleDuration;
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::MinMax) {
             const QPointF pt1{x, centre - (max.at(i) * maxScale)};
             const QPointF pt2{x, centre - (min.at(i) * minScale)};
-
             const QRectF rect{x, pt1.y(), barWidth, std::abs(pt1.y() - pt2.y())};
-            painter.setBrush(hasPlayed ? m_colours.fgPlayed : m_colours.fgUnplayed);
+
+            if(isInProgress) {
+                painter.setBrush(blendColors(m_colours.fgUnplayed, m_colours.fgPlayed, progress));
+            }
+            else {
+                painter.setBrush(isPlayed ? m_colours.fgPlayed : m_colours.fgUnplayed);
+            }
+
             if(barWidth > 1) {
                 painter.setPen(m_colours.fgBorder);
             }
             else {
                 painter.setPen(Qt::NoPen);
             }
+
             painter.drawRect(rect);
         }
 
         if(m_drawValues == ValueOptions::All || m_drawValues == ValueOptions::RMS) {
             const QPointF pt1{x, centre - (rms.at(i) / rmsScale * maxScale)};
             const QPointF pt2{x, centre - (-rms.at(i) / rmsScale * minScale)};
-
             const QRectF rect{x, pt1.y(), barWidth, std::abs(pt1.y() - pt2.y())};
-            painter.setBrush(hasPlayed ? m_colours.rmsPlayed : m_colours.rmsUnplayed);
+
+            if(isInProgress) {
+                painter.setBrush(blendColors(m_colours.rmsUnplayed, m_colours.rmsPlayed, progress));
+            }
+            else {
+                painter.setBrush(isPlayed ? m_colours.rmsPlayed : m_colours.rmsUnplayed);
+            }
+
             if(barWidth > 1) {
                 painter.setPen(m_colours.rmsBorder);
             }
             else {
                 painter.setPen(Qt::NoPen);
             }
+
             painter.drawRect(rect);
         }
     }
 
-    const int finalX = static_cast<int>(total * sampleWidth);
+    const int finalX = total * sampleWidth;
     if(finalX < last) {
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = this->height() / 2;
