@@ -354,6 +354,10 @@ void WaveSeekBar::drawSeekTip()
 
     seekTipPos.setY(std::clamp(seekTipPos.y(), m_seekTip->height(), height()));
     m_seekTip->setPosition(seekTipPos);
+
+    // Update to avoid artifacts
+    const QRect updateRect(m_seekTip->x(), 0, (m_seekTip->width()), height());
+    update(updateRect);
 }
 } // namespace Fooyin::WaveBar
 
