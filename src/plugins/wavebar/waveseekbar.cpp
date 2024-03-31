@@ -323,7 +323,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         }
     }
 
-    const int finalX = total * sampleWidth;
+    const int finalX = static_cast<int>(total * sampleWidth);
     if(finalX < last) {
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = this->height() / 2;
@@ -334,7 +334,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 void WaveSeekBar::drawSeekTip()
 {
     if(!m_seekTip) {
-        m_seekTip = new ToolTip(window());
+        m_seekTip = new ToolTip(this);
         m_seekTip->show();
     }
 
@@ -346,8 +346,14 @@ void WaveSeekBar::drawSeekTip()
                           + Utils::msToString(seekDelta));
 
     auto seekTipPos{m_seekPos};
-    seekTipPos.setY(std::max(seekTipPos.y(), 0));
-    m_seekTip->setPosition(mapTo(window(), seekTipPos));
+
+    if(seekTipPos.x() > (width() / 2)) {
+        // Display to right of cursor to avoid clipping
+        seekTipPos.setX(seekTipPos.x() - (2 * m_seekTip->width()));
+    }
+
+    seekTipPos.setY(std::clamp(seekTipPos.y(), m_seekTip->height(), height()));
+    m_seekTip->setPosition(seekTipPos);
 }
 } // namespace Fooyin::WaveBar
 
