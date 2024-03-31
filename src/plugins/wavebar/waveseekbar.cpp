@@ -96,7 +96,7 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
             m_scale = 1.0;
         }
         else {
-            m_scale = static_cast<double>(width()) / waveformWidth;
+            m_scale = std::round((static_cast<double>(width()) / waveformWidth) * sampleWidth) / sampleWidth;
         }
     }
 
@@ -357,11 +357,10 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         }
     }
 
-    const int finalX = total * sampleWidth;
-    if(finalX < last) {
+    if(!m_data.complete) {
+        const int finalX = (total - 1) * sampleWidth;
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
-        const int centreY = this->height() / 2;
-        painter.drawLine(finalX, centreY, rect().right(), centreY);
+        painter.drawLine(finalX, centre, rect().right(), centre);
     }
 }
 
