@@ -26,6 +26,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/colourbutton.h>
 
+#include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -46,6 +47,7 @@ public:
 private:
     SettingsManager* m_settings;
 
+    QCheckBox* m_showCursor;
     QDoubleSpinBox* m_cursorWidth;
     QSpinBox* m_barWidth;
     QSpinBox* m_barGap;
@@ -65,6 +67,7 @@ private:
 
 WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* settings)
     : m_settings{settings}
+    , m_showCursor{new QCheckBox(tr("Show Cursor"), this)}
     , m_cursorWidth{new QDoubleSpinBox(this)}
     , m_barWidth{new QSpinBox(this)}
     , m_barGap{new QSpinBox(this)}
@@ -86,7 +89,7 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
     auto* barWidthLabel    = new QLabel(tr("Bar Width") + QStringLiteral(":"), this);
     auto* barGapLabel      = new QLabel(tr("Bar Gap") + QStringLiteral(":"), this);
 
-    m_cursorWidth->setMinimum(0.0);
+    m_cursorWidth->setMinimum(1.0);
     m_cursorWidth->setMaximum(20.0);
     m_cursorWidth->setSingleStep(0.5);
 
@@ -138,6 +141,7 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
     coloursLayout->setColumnStretch(3, 1);
 
     int row{0};
+    layout->addWidget(m_showCursor, row++, 0);
     layout->addWidget(cursorWidthLabel, row, 0);
     layout->addWidget(m_cursorWidth, row++, 1);
     layout->addWidget(barWidthLabel, row, 0);
@@ -152,6 +156,7 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
 
 void WaveBarGuiSettingsPageWidget::load()
 {
+    m_showCursor->setChecked(m_settings->value<Settings::WaveBar::ShowCursor>());
     m_cursorWidth->setValue(m_settings->value<Settings::WaveBar::CursorWidth>());
     m_barWidth->setValue(m_settings->value<Settings::WaveBar::BarWidth>());
     m_barGap->setValue(m_settings->value<Settings::WaveBar::BarGap>());
@@ -173,6 +178,7 @@ void WaveBarGuiSettingsPageWidget::load()
 
 void WaveBarGuiSettingsPageWidget::apply()
 {
+    m_settings->set<Settings::WaveBar::ShowCursor>(m_showCursor->isChecked());
     m_settings->set<Settings::WaveBar::CursorWidth>(m_cursorWidth->value());
     m_settings->set<Settings::WaveBar::BarWidth>(m_barWidth->value());
     m_settings->set<Settings::WaveBar::BarGap>(m_barGap->value());
@@ -199,6 +205,7 @@ void WaveBarGuiSettingsPageWidget::apply()
 
 void WaveBarGuiSettingsPageWidget::reset()
 {
+    m_settings->reset<Settings::WaveBar::ShowCursor>();
     m_settings->reset<Settings::WaveBar::CursorWidth>();
     m_settings->reset<Settings::WaveBar::BarWidth>();
     m_settings->reset<Settings::WaveBar::BarGap>();

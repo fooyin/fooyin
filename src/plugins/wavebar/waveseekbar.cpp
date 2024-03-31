@@ -36,6 +36,7 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_settings{settings}
     , m_scale{1.0}
     , m_position{0}
+    , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
     , m_cursorWidth{settings->value<Settings::WaveBar::CursorWidth>()}
     , m_channelScale{settings->value<Settings::WaveBar::ChannelHeightScale>()}
     , m_barWidth{settings->value<Settings::WaveBar::BarWidth>()}
@@ -43,6 +44,10 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_drawValues{settings->value<Settings::WaveBar::DrawValues>()}
     , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
 {
+    m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](const bool show) {
+        m_showCursor = show;
+        update();
+    });
     m_settings->subscribe<Settings::WaveBar::CursorWidth>(this, [this](const double width) {
         m_cursorWidth = width;
         update();
@@ -74,7 +79,8 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     m_data = waveData;
 
     if(m_data.complete) {
-        const double waveformWidth = m_data.sampleCount() * (m_barWidth + m_barGap);
+        const double sampleWidth   = m_barWidth + m_barGap;
+        const double waveformWidth = m_data.sampleCount() * sampleWidth;
         if(width() == waveformWidth) {
             m_scale = 1.0;
         }
@@ -97,19 +103,7 @@ void WaveSeekBar::setPosition(uint64_t pos)
     const int oldX = positionFromValue(oldPos);
     const int x    = positionFromValue(pos);
 
-    if(oldX == x) {
-        return;
-    }
-
-    const auto updateX = static_cast<int>((oldX < x ? oldX : x) - m_cursorWidth);
-    const auto width   = static_cast<int>(std::abs(x - oldX) + (2 * m_cursorWidth));
-
-    const QRect updateRect(updateX, 0, width, height());
-    update(updateRect);
-
-    if(isSeeking()) {
-        drawSeekTip();
-    }
+    updateRange(oldX, x);
 }
 
 bool WaveSeekBar::isSeeking() const
@@ -143,9 +137,9 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     painter.scale(m_scale, 1.0);
 
     const int channels       = m_data.channels;
-    const double sampleTotal = m_barWidth + m_barGap;
+    const double sampleWidth = m_barWidth + m_barGap;
     const QRect& rect        = event->rect();
-    const int first          = static_cast<int>(static_cast<double>(rect.left()) / m_scale / sampleTotal);
+    const int first          = static_cast<int>(static_cast<double>(rect.left()) / m_scale / sampleWidth);
     const int last           = static_cast<int>(static_cast<double>(rect.right() + 1) / m_scale);
     const double posX        = positionFromValue(m_position) / m_scale;
 
@@ -162,7 +156,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         y += channelHeight;
     }
 
-    if(m_cursorWidth > 0) {
+    if(m_showCursor) {
         painter.setPen({m_colours.cursor, m_cursorWidth / m_scale, Qt::SolidLine, Qt::FlatCap});
         const QPointF pt1{posX, 0};
         const QPointF pt2{posX, static_cast<double>(height())};
@@ -255,8 +249,26 @@ void WaveSeekBar::updateMousePosition(const QPoint& pos)
 {
     QPoint widgetPos{pos};
     widgetPos.setX(std::clamp(pos.x(), 1, width()));
-    m_seekPos = widgetPos;
-    update();
+
+    const auto oldSeekPos = std::exchange(m_seekPos, widgetPos);
+    updateRange(oldSeekPos.x(), m_seekPos.x());
+}
+
+void WaveSeekBar::updateRange(int first, int last)
+{
+    if(first == last) {
+        return;
+    }
+
+    const auto left  = static_cast<int>((first < last ? first : last) - m_cursorWidth);
+    const auto width = static_cast<int>(std::abs(last - first) + (2 * m_cursorWidth));
+
+    const QRect updateRect(left, 0, width, height());
+    update(updateRect);
+
+    if(isSeeking()) {
+        drawSeekTip();
+    }
 }
 
 void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, double y)
@@ -272,11 +284,11 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const int total       = static_cast<int>(max.size());
-    const int sampleTotal = m_barWidth + m_barGap;
+    const int total          = static_cast<int>(max.size());
+    const double sampleWidth = m_barWidth + m_barGap;
 
-    auto x = static_cast<double>(first * sampleTotal);
-    for(int i{first}; i < total; ++i, x += sampleTotal) {
+    for(int i{first}; i < total; ++i) {
+        auto x               = static_cast<double>(i * sampleWidth);
         const bool hasPlayed = positionHasPlayed(static_cast<int>(x));
         const auto barWidth  = static_cast<double>(m_barWidth);
 
@@ -311,7 +323,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         }
     }
 
-    const int finalX = total * sampleTotal;
+    const int finalX = total * sampleWidth;
     if(finalX < last) {
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const int centreY = this->height() / 2;

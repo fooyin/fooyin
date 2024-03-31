@@ -59,6 +59,7 @@ private:
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
     [[nodiscard]] bool positionHasPlayed(int pos) const;
     void updateMousePosition(const QPoint& pos);
+    void updateRange(int first, int last);
 
     void drawChannel(QPainter& painter, int channel, double height, int first, int last, double y);
     void drawSeekTip();
@@ -71,6 +72,7 @@ private:
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;
 
+    bool m_showCursor;
     double m_cursorWidth;
     double m_channelScale;
     int m_barWidth;

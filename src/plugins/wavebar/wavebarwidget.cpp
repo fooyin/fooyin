@@ -92,15 +92,9 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showCursor = new QAction(tr("Show Cursor"), menu);
     showCursor->setCheckable(true);
-    showCursor->setChecked(m_settings->value<Settings::WaveBar::CursorWidth>() > 0);
-    QObject::connect(showCursor, &QAction::triggered, this, [this](bool checked) {
-        if(checked) {
-            m_settings->reset<Settings::WaveBar::CursorWidth>();
-        }
-        else {
-            m_settings->set<Settings::WaveBar::CursorWidth>(0.0);
-        }
-    });
+    showCursor->setChecked(m_settings->value<Settings::WaveBar::ShowCursor>());
+    QObject::connect(showCursor, &QAction::triggered, this,
+                     [this](bool checked) { m_settings->set<Settings::WaveBar::ShowCursor>(checked); });
 
     auto* valuesMenu  = new QMenu(tr("Show Values"), menu);
     auto* valuesGroup = new QActionGroup(valuesMenu);
@@ -134,8 +128,6 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     valuesMenu->addAction(valuesAll);
     valuesMenu->addAction(valuesMinMax);
     valuesMenu->addAction(valuesRms);
-
-    menu->addMenu(valuesMenu);
 
     auto* downmixMenu  = new QMenu(tr("Downmix"), menu);
     auto* downmixGroup = new QActionGroup(downmixMenu);
@@ -175,6 +167,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::WaveBarGeneral); });
 
     menu->addAction(showCursor);
+    menu->addMenu(valuesMenu);
     menu->addMenu(downmixMenu);
     menu->addSeparator();
     menu->addAction(gotoSettings);

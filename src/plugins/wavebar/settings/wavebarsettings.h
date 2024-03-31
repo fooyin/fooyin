@@ -45,11 +45,12 @@ enum WaveBarSettings : uint32_t
 {
     Downmix            = 1 | Type::Int,
     ChannelHeightScale = 2 | Type::Double,
-    CursorWidth        = 3 | Type::Double,
-    ColourOptions      = 4 | Type::Variant,
-    DrawValues         = 5 | Type::Int,
-    BarWidth           = 6 | Type::Int,
-    BarGap             = 7 | Type::Int,
+    ShowCursor         = 3 | Type::Bool,
+    CursorWidth        = 4 | Type::Double,
+    ColourOptions      = 5 | Type::Variant,
+    DrawValues         = 6 | Type::Int,
+    BarWidth           = 7 | Type::Int,
+    BarGap             = 8 | Type::Int,
 };
 Q_ENUM_NS(WaveBarSettings)
 } // namespace Settings::WaveBar
