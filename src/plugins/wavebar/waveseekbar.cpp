@@ -348,7 +348,7 @@ void WaveSeekBar::drawSeekTip()
     auto seekTipPos{m_seekPos};
 
     if(seekTipPos.x() > (width() / 2)) {
-        // Display to right of cursor to avoid clipping
+        // Display to left of cursor to avoid clipping
         seekTipPos.setX(seekTipPos.x() - (2 * m_seekTip->width()));
     }
 
