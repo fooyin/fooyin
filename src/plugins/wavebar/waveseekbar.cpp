@@ -358,9 +358,10 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     }
 
     if(!m_data.complete) {
-        const int finalX = (total - 1) * sampleWidth;
         painter.setPen({m_colours.fgUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
-        painter.drawLine(finalX, centre, rect().right(), centre);
+        const double finalX = (total)*sampleWidth;
+        const QLineF centreLine{finalX, centre, static_cast<double>(rect().right()), centre};
+        painter.drawLine(centreLine);
     }
 }
 
