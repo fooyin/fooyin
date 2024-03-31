@@ -300,7 +300,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     const auto sampleDuration = static_cast<uint64_t>(m_data.duration / total);
     const int sampleWidth     = m_barWidth + m_barGap;
 
-    for(int i{first}; i < total; ++i) {
+    for(int i{first}; i < last && i < total; ++i) {
         const auto x        = static_cast<double>(i * sampleWidth);
         const auto barWidth = static_cast<double>(m_barWidth);
 
