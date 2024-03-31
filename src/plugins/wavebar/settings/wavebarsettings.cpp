@@ -32,12 +32,14 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     qRegisterMetaType<Fooyin::WaveBar::Colours>("Fooyin::WaveBar::Colours");
 
     m_settings->createSetting<Downmix>(0, QStringLiteral("WaveBar/Downmix"));
-    m_settings->createSetting<ChannelHeightScale>(0.9, QStringLiteral("WaveBar/ChannelHeightScale"));
     m_settings->createSetting<ShowCursor>(true, QStringLiteral("WaveBar/ShowCursor"));
     m_settings->createSetting<CursorWidth>(3.0, QStringLiteral("WaveBar/CursorWidth"));
     m_settings->createSetting<ColourOptions>(QVariant::fromValue(Colours{}), QStringLiteral("WaveBar/Colours"));
-    m_settings->createSetting<DrawValues>(0, QStringLiteral("WaveBar/DrawValues"));
+    m_settings->createSetting<Mode>(static_cast<int>(Default), QStringLiteral("WaveBar/Mode"));
     m_settings->createSetting<BarWidth>(1, QStringLiteral("WaveBar/BarWidth"));
     m_settings->createSetting<BarGap>(0, QStringLiteral("WaveBar/BarGap"));
+    m_settings->createSetting<MaxScale>(1.0, QStringLiteral("WaveBar/MaxScale"));
+    m_settings->createSetting<CentreGap>(0.0, QStringLiteral("WaveBar/CentreGap"));
+    m_settings->createSetting<ChannelScale>(0.9, QStringLiteral("WaveBar/ChannelScale"));
 }
 } // namespace Fooyin::WaveBar

@@ -96,38 +96,36 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showCursor, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::WaveBar::ShowCursor>(checked); });
 
-    auto* valuesMenu  = new QMenu(tr("Show Values"), menu);
-    auto* valuesGroup = new QActionGroup(valuesMenu);
+    auto* modeMenu = new QMenu(tr("Mode"), menu);
 
-    auto* valuesAll    = new QAction(tr("All"), valuesGroup);
-    auto* valuesMinMax = new QAction(tr("MinMax"), valuesGroup);
-    auto* valuesRms    = new QAction(tr("RMS"), valuesGroup);
+    auto* minMaxMode = new QAction(tr("MinMax"), modeMenu);
+    auto* rmsMode    = new QAction(tr("RMS"), modeMenu);
 
-    valuesAll->setCheckable(true);
-    valuesMinMax->setCheckable(true);
-    valuesRms->setCheckable(true);
+    minMaxMode->setCheckable(true);
+    rmsMode->setCheckable(true);
 
-    const auto valueOption = static_cast<ValueOptions>(m_settings->value<Settings::WaveBar::DrawValues>());
-    if(valueOption == ValueOptions::All) {
-        valuesAll->setChecked(true);
-    }
-    else if(valueOption == ValueOptions::MinMax) {
-        valuesMinMax->setChecked(true);
-    }
-    else {
-        valuesRms->setChecked(true);
-    }
+    const auto currentMode = static_cast<WaveModes>(m_settings->value<Settings::WaveBar::Mode>());
+    minMaxMode->setChecked(currentMode & WaveMode::MinMax);
+    rmsMode->setChecked(currentMode & WaveMode::Rms);
 
-    QObject::connect(valuesAll, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::DrawValues>(0); });
-    QObject::connect(valuesMinMax, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::DrawValues>(1); });
-    QObject::connect(valuesRms, &QAction::triggered, this,
-                     [this]() { m_settings->set<Settings::WaveBar::DrawValues>(2); });
+    auto updateMode = [this](WaveMode mode, bool enable) {
+        auto updatedMode = static_cast<WaveModes>(m_settings->value<Settings::WaveBar::Mode>());
+        if(enable) {
+            updatedMode |= mode;
+        }
+        else {
+            updatedMode &= ~mode;
+        }
+        m_settings->set<Settings::WaveBar::Mode>(static_cast<int>(updatedMode));
+    };
 
-    valuesMenu->addAction(valuesAll);
-    valuesMenu->addAction(valuesMinMax);
-    valuesMenu->addAction(valuesRms);
+    QObject::connect(minMaxMode, &QAction::triggered, this,
+                     [updateMode](bool checked) { updateMode(WaveMode::MinMax, checked); });
+    QObject::connect(rmsMode, &QAction::triggered, this,
+                     [updateMode](bool checked) { updateMode(WaveMode::Rms, checked); });
+
+    modeMenu->addAction(minMaxMode);
+    modeMenu->addAction(rmsMode);
 
     auto* downmixMenu  = new QMenu(tr("Downmix"), menu);
     auto* downmixGroup = new QActionGroup(downmixMenu);
@@ -167,7 +165,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
                      [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::WaveBarGeneral); });
 
     menu->addAction(showCursor);
-    menu->addMenu(valuesMenu);
+    menu->addMenu(modeMenu);
     menu->addMenu(downmixMenu);
     menu->addSeparator();
     menu->addAction(gotoSettings);

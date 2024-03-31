@@ -24,12 +24,34 @@
 namespace Fooyin {
 class SettingsManager;
 
-enum class ValueOptions
+namespace Settings::WaveBar {
+Q_NAMESPACE
+
+enum WaveBarSettings : uint32_t
 {
-    All = 0,
-    MinMax,
-    RMS,
+    Downmix       = 1 | Type::Int,
+    ShowCursor    = 2 | Type::Bool,
+    CursorWidth   = 3 | Type::Double,
+    ColourOptions = 4 | Type::Variant,
+    Mode          = 5 | Type::Int,
+    BarWidth      = 6 | Type::Int,
+    BarGap        = 7 | Type::Int,
+    MaxScale      = 8 | Type::Double,
+    CentreGap     = 9 | Type::Double,
+    ChannelScale  = 10 | Type::Double,
 };
+Q_ENUM_NS(WaveBarSettings)
+} // namespace Settings::WaveBar
+
+namespace WaveBar {
+enum WaveMode : uint32_t
+{
+    None    = 0,
+    MinMax  = 1 << 0,
+    Rms     = 1 << 1,
+    Default = MinMax | Rms,
+};
+Q_DECLARE_FLAGS(WaveModes, WaveMode)
 
 enum class DownmixOption
 {
@@ -38,24 +60,6 @@ enum class DownmixOption
     Mono,
 };
 
-namespace Settings::WaveBar {
-Q_NAMESPACE
-
-enum WaveBarSettings : uint32_t
-{
-    Downmix            = 1 | Type::Int,
-    ChannelHeightScale = 2 | Type::Double,
-    ShowCursor         = 3 | Type::Bool,
-    CursorWidth        = 4 | Type::Double,
-    ColourOptions      = 5 | Type::Variant,
-    DrawValues         = 6 | Type::Int,
-    BarWidth           = 7 | Type::Int,
-    BarGap             = 8 | Type::Int,
-};
-Q_ENUM_NS(WaveBarSettings)
-} // namespace Settings::WaveBar
-
-namespace WaveBar {
 class WaveBarSettings
 {
 public:
@@ -66,3 +70,5 @@ private:
 };
 } // namespace WaveBar
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::WaveBar::WaveModes)

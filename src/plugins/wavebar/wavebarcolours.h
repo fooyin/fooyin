@@ -31,23 +31,34 @@ struct Colours
     QColor bgUnplayed{Qt::transparent};
     QColor bgPlayed{Qt::transparent};
 
-    QColor fgUnplayed{140, 140, 140};
-    QColor fgPlayed{qApp->palette().highlight().color()};
-    QColor fgBorder{Qt::transparent};
+    QColor maxUnplayed{140, 140, 140};
+    QColor maxPlayed{qApp->palette().highlight().color()};
 
-    QColor rmsUnplayed{65, 65, 65};
-    QColor rmsPlayed{fgPlayed.darker(150)};
-    QColor rmsBorder{Qt::transparent};
+    QColor maxBorder{Qt::transparent};
+    QColor minUnplayed{140, 140, 140};
+    QColor minPlayed{qApp->palette().highlight().color()};
+    QColor minBorder{Qt::transparent};
 
-    QColor cursor{fgPlayed};
-    QColor seekingCursor{rmsPlayed};
+    QColor rmsMaxUnplayed{65, 65, 65};
+    QColor rmsMaxPlayed{maxPlayed.darker(150)};
+    QColor rmsMaxBorder{Qt::transparent};
+
+    QColor rmsMinUnplayed{65, 65, 65};
+    QColor rmsMinPlayed{maxPlayed.darker(150)};
+    QColor rmsMinBorder{Qt::transparent};
+
+    QColor cursor{maxPlayed};
+    QColor seekingCursor{rmsMaxPlayed};
 
     bool operator==(const Colours& other) const
     {
-        return std::tie(bgUnplayed, bgPlayed, fgUnplayed, fgPlayed, fgBorder, rmsUnplayed, rmsPlayed, rmsBorder, cursor,
+        return std::tie(bgUnplayed, bgPlayed, maxUnplayed, maxPlayed, maxBorder, minUnplayed, minPlayed, minBorder,
+                        rmsMaxUnplayed, rmsMaxPlayed, rmsMaxBorder, rmsMinUnplayed, rmsMinPlayed, rmsMinBorder, cursor,
                         seekingCursor)
-            == std::tie(other.bgUnplayed, other.bgPlayed, other.fgUnplayed, other.fgBorder, other.fgPlayed,
-                        other.rmsUnplayed, other.rmsPlayed, other.rmsBorder, other.cursor, other.seekingCursor);
+            == std::tie(other.bgUnplayed, other.bgPlayed, other.maxUnplayed, other.maxPlayed, other.maxBorder,
+                        other.minUnplayed, other.minPlayed, other.minBorder, other.rmsMaxUnplayed, other.rmsMaxPlayed,
+                        other.rmsMaxBorder, other.rmsMinUnplayed, other.rmsMinPlayed, other.rmsMinBorder, other.cursor,
+                        other.seekingCursor);
     };
 
     bool operator!=(const Colours& other) const
@@ -59,12 +70,18 @@ struct Colours
     {
         stream << colours.bgUnplayed;
         stream << colours.bgPlayed;
-        stream << colours.fgUnplayed;
-        stream << colours.fgPlayed;
-        stream << colours.fgBorder;
-        stream << colours.rmsUnplayed;
-        stream << colours.rmsPlayed;
-        stream << colours.rmsBorder;
+        stream << colours.maxUnplayed;
+        stream << colours.maxPlayed;
+        stream << colours.maxBorder;
+        stream << colours.minUnplayed;
+        stream << colours.minPlayed;
+        stream << colours.minBorder;
+        stream << colours.rmsMaxUnplayed;
+        stream << colours.rmsMaxPlayed;
+        stream << colours.rmsMaxBorder;
+        stream << colours.rmsMinUnplayed;
+        stream << colours.rmsMinPlayed;
+        stream << colours.rmsMinBorder;
         stream << colours.cursor;
         return stream;
     }
@@ -73,12 +90,18 @@ struct Colours
     {
         stream >> colours.bgUnplayed;
         stream >> colours.bgPlayed;
-        stream >> colours.fgUnplayed;
-        stream >> colours.fgPlayed;
-        stream >> colours.fgBorder;
-        stream >> colours.rmsUnplayed;
-        stream >> colours.rmsPlayed;
-        stream >> colours.rmsBorder;
+        stream >> colours.maxUnplayed;
+        stream >> colours.maxPlayed;
+        stream >> colours.maxBorder;
+        stream >> colours.minUnplayed;
+        stream >> colours.minPlayed;
+        stream >> colours.minBorder;
+        stream >> colours.rmsMaxUnplayed;
+        stream >> colours.rmsMaxPlayed;
+        stream >> colours.rmsMaxBorder;
+        stream >> colours.rmsMinUnplayed;
+        stream >> colours.rmsMinPlayed;
+        stream >> colours.rmsMinBorder;
         stream >> colours.cursor;
         return stream;
     }

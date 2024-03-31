@@ -77,8 +77,10 @@ private:
     double m_channelScale;
     int m_barWidth;
     int m_barGap;
+    double m_maxScale;
+    double m_centreGap;
 
-    ValueOptions m_drawValues;
+    WaveModes m_mode;
     Colours m_colours;
 };
 } // namespace WaveBar
