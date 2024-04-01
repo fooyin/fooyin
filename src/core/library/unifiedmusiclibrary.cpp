@@ -62,6 +62,7 @@ struct UnifiedMusicLibrary::Private
     LibraryThreadHandler threadHandler;
 
     TrackList tracks;
+    std::unordered_map<QString, Track> pendingStatUpdates;
 
     Private(UnifiedMusicLibrary* self_, LibraryManager* libraryManager_, DbConnectionPoolPtr dbPool_,
             SettingsManager* settings_)
@@ -210,7 +211,16 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
         this, [this](bool enabled) { p->threadHandler.setupWatchers(p->libraryManager->allLibraries(), enabled); });
 }
 
-UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
+UnifiedMusicLibrary::~UnifiedMusicLibrary()
+{
+    if(!p->pendingStatUpdates.empty()) {
+        TrackList tracksToUpdate;
+        for(const Track& track : p->pendingStatUpdates | std::views::values) {
+            tracksToUpdate.emplace_back(track);
+        }
+        p->threadHandler.saveUpdatedTrackStats(tracksToUpdate);
+    }
+}
 
 void UnifiedMusicLibrary::loadAllTracks()
 {
@@ -273,7 +283,7 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
 
 void UnifiedMusicLibrary::updateTrackStats(const Track& track)
 {
-    p->threadHandler.saveUpdatedTrackStats(track);
+    p->threadHandler.saveUpdatedTrackStats({track});
 }
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
@@ -282,11 +292,27 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 
     const auto dt = QDateTime::currentMSecsSinceEpoch();
 
-    updatedTrack.setFirstPlayed(dt);
+    if(updatedTrack.firstPlayed() == 0) {
+        updatedTrack.setFirstPlayed(dt);
+    }
     updatedTrack.setLastPlayed(dt);
     updatedTrack.setPlayCount(track.playCount() + 1);
 
-    updateTrackStats(updatedTrack);
+    const QString hash = updatedTrack.hash();
+    p->pendingStatUpdates.emplace(hash, updatedTrack);
+
+    TrackList tracksToUpdate{updatedTrack};
+    for(const auto& libraryTrack : p->tracks) {
+        if(libraryTrack.hash() == hash) {
+            Track sameHashTrack{libraryTrack};
+            sameHashTrack.setFirstPlayed(dt);
+            sameHashTrack.setLastPlayed(dt);
+            sameHashTrack.setPlayCount(updatedTrack.playCount());
+            tracksToUpdate.emplace_back(sameHashTrack);
+        }
+    }
+
+    p->updateTracks(tracksToUpdate);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()

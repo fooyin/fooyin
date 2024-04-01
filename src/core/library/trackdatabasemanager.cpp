@@ -50,15 +50,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
 
     for(const Track& track : tracks) {
         if(Tagging::writeMetaData(track) && m_trackDatabase.updateTrack(track)) {
-            Track updatedTrack{track};
-
-            if(m_trackDatabase.updateTrackStats(updatedTrack)) {
-                const TrackList hashTracks = m_trackDatabase.tracksByHash(updatedTrack.hash());
-                std::ranges::copy(hashTracks, std::back_inserter(tracksUpdated));
-            }
-            else {
-                tracksUpdated.push_back(updatedTrack);
-            }
+            tracksUpdated.emplace_back(track);
         }
     }
 
@@ -67,19 +59,9 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
     }
 }
 
-void TrackDatabaseManager::updateTrackStats(const Track& track)
+void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 {
-    TrackList tracksUpdated;
-
-    Track updatedTrack{track};
-    if(!track.isInDatabase() || m_trackDatabase.updateTrackStats(updatedTrack)) {
-        const TrackList hashTracks = m_trackDatabase.tracksByHash(updatedTrack.hash());
-        std::ranges::copy(hashTracks, std::back_inserter(tracksUpdated));
-    }
-
-    if(!tracksUpdated.empty()) {
-        emit updatedTracks(tracksUpdated);
-    }
+    m_trackDatabase.updateTrackStats(tracks);
 }
 
 void TrackDatabaseManager::cleanupTracks()

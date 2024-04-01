@@ -43,7 +43,7 @@ signals:
 public slots:
     void getAllTracks();
     void updateTracks(const TrackList& tracks);
-    void updateTrackStats(const Track& track);
+    void updateTrackStats(const TrackList& track);
     void cleanupTracks();
 
 private:

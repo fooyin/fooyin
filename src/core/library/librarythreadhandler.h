@@ -49,7 +49,7 @@ public:
     ScanRequest scanTracks(const TrackList& tracks);
 
     void saveUpdatedTracks(const TrackList& tracks);
-    void saveUpdatedTrackStats(const Track& track);
+    void saveUpdatedTrackStats(const TrackList& track);
     void cleanupTracks();
 
     void libraryRemoved(int id);

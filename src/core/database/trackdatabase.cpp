@@ -302,9 +302,19 @@ bool TrackDatabase::updateTrack(const Track& track)
     return query.exec();
 }
 
-bool TrackDatabase::updateTrackStats(Track& track)
+bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
-    return insertOrUpdateStats(track);
+    bool success{true};
+
+    DbTransaction transaction{db()};
+
+    for(const Track& track : tracks) {
+        if(!insertOrUpdateStats(track)) {
+            success = false;
+        }
+    }
+
+    return success && transaction.commit();
 }
 
 bool TrackDatabase::deleteTrack(int id)
@@ -536,7 +546,7 @@ bool TrackDatabase::insertTrack(Track& track) const
     return insertOrUpdateStats(track);
 }
 
-bool TrackDatabase::insertOrUpdateStats(Track& track) const
+bool TrackDatabase::insertOrUpdateStats(const Track& track) const
 {
     if(track.hash().isEmpty()) {
         qDebug() << "Cannot insert/update track stats (Hash empty)";
@@ -580,17 +590,11 @@ bool TrackDatabase::insertOrUpdateStats(Track& track) const
             added         = trackAdded;
             dbNeedsUpdate = true;
         }
-        else {
-            track.setAddedTime(added);
-        }
     }
     if(trackFirstPlayed != firstPlayed) {
         if(firstPlayed == 0 || (trackFirstPlayed > 0 && trackFirstPlayed < firstPlayed)) {
             firstPlayed   = trackFirstPlayed;
             dbNeedsUpdate = true;
-        }
-        else {
-            track.setFirstPlayed(firstPlayed);
         }
     }
     if(trackLastPlayed != lastPlayed) {
@@ -598,17 +602,11 @@ bool TrackDatabase::insertOrUpdateStats(Track& track) const
             lastPlayed    = trackLastPlayed;
             dbNeedsUpdate = true;
         }
-        else {
-            track.setLastPlayed(lastPlayed);
-        }
     }
     if(trackPlayCount != playCount) {
         if(trackPlayCount > playCount) {
             playCount     = trackPlayCount;
             dbNeedsUpdate = true;
-        }
-        else {
-            track.setPlayCount(playCount);
         }
     }
 

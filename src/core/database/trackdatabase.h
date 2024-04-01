@@ -36,7 +36,7 @@ public:
     TrackList tracksByHash(const QString& hash) const;
 
     bool updateTrack(const Track& track);
-    bool updateTrackStats(Track& track);
+    bool updateTrackStats(const TrackList& track);
 
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);
@@ -49,7 +49,7 @@ public:
 private:
     int trackCount() const;
     bool insertTrack(Track& track) const;
-    bool insertOrUpdateStats(Track& track) const;
+    bool insertOrUpdateStats(const Track& track) const;
     void removeUnmanagedTracks() const;
     void markUnusedStatsForDelete() const;
     void deleteExpiredStats() const;

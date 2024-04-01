@@ -297,7 +297,7 @@ void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
                               [this, tracks]() { p->trackDatabaseManager.updateTracks(tracks); });
 }
 
-void LibraryThreadHandler::saveUpdatedTrackStats(const Track& track)
+void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& track)
 {
     QMetaObject::invokeMethod(&p->trackDatabaseManager,
                               [this, track]() { p->trackDatabaseManager.updateTrackStats(track); });
