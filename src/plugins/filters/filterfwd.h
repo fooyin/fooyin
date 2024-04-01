@@ -19,56 +19,10 @@
 
 #pragma once
 
-#include <QApplication>
-#include <QColor>
 #include <QDataStream>
-#include <QFont>
-#include <QPalette>
+#include <QString>
 
 namespace Fooyin::Filters {
-struct FilterOptions
-{
-    bool fontChanged{false};
-    QFont font;
-
-    bool colourChanged{false};
-    QColor colour;
-
-    int rowHeight{0};
-
-    FilterOptions()
-        : colour{QApplication::palette().text().color()}
-    { }
-
-    friend QDataStream& operator<<(QDataStream& stream, const FilterOptions& options)
-    {
-        stream << options.fontChanged;
-        if(options.fontChanged) {
-            stream << options.font;
-        }
-        stream << options.colourChanged;
-        if(options.colourChanged) {
-            stream << options.colour;
-        }
-        stream << options.rowHeight;
-        return stream;
-    }
-
-    friend QDataStream& operator>>(QDataStream& stream, FilterOptions& options)
-    {
-        stream >> options.fontChanged;
-        if(options.fontChanged) {
-            stream >> options.font;
-        }
-        stream >> options.colourChanged;
-        if(options.colourChanged) {
-            stream >> options.colour;
-        }
-        stream >> options.rowHeight;
-        return stream;
-    }
-};
-
 struct FilterColumn
 {
     int id{-1};
@@ -108,5 +62,3 @@ struct FilterColumn
 using FilterColumnList = std::vector<FilterColumn>;
 using ColumnIds        = std::vector<int>;
 } // namespace Fooyin::Filters
-
-Q_DECLARE_METATYPE(Fooyin::Filters::FilterOptions)

@@ -33,12 +33,14 @@ enum FiltersSettings : uint32_t
     FilterAltColours      = 1 | Type::Bool,
     FilterHeader          = 2 | Type::Bool,
     FilterScrollBar       = 3 | Type::Bool,
-    FilterAppearance      = 4 | Type::Variant,
-    FilterDoubleClick     = 5 | Type::Int,
-    FilterMiddleClick     = 6 | Type::Int,
-    FilterPlaylistEnabled = 7 | Type::Bool,
-    FilterAutoSwitch      = 8 | Type::Bool,
-    FilterAutoPlaylist    = 9 | Type::String,
+    FilterDoubleClick     = 4 | Type::Int,
+    FilterMiddleClick     = 5 | Type::Int,
+    FilterPlaylistEnabled = 6 | Type::Bool,
+    FilterAutoSwitch      = 7 | Type::Bool,
+    FilterAutoPlaylist    = 8 | Type::String,
+    FilterFont            = 9 | Type::String,
+    FilterColour          = 10 | Type::String,
+    FilterRowHeight       = 11 | Type::Int,
 
 };
 Q_ENUM_NS(FiltersSettings)

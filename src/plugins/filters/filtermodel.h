@@ -38,9 +38,11 @@ public:
 
     [[nodiscard]] int sortColumn() const;
     [[nodiscard]] Qt::SortOrder sortOrder() const;
-
     void sortOnColumn(int column, Qt::SortOrder order);
-    void setAppearance(const FilterOptions& options);
+
+    void setFont(const QString& font);
+    void setColour(const QColor& colour);
+    void setRowHeight(int height);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -54,7 +56,7 @@ public:
 
     Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
-    
+
     [[nodiscard]] QModelIndexList indexesForValues(const QStringList& values, int column = 0) const;
 
     void addTracks(const TrackList& tracks);

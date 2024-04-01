@@ -215,11 +215,21 @@ void FilterModel::sortOnColumn(int column, Qt::SortOrder order)
     emit layoutChanged();
 }
 
-void FilterModel::setAppearance(const FilterOptions& options)
+void FilterModel::setFont(const QString& font)
 {
-    p->font      = options.font;
-    p->colour    = options.colour;
-    p->rowHeight = options.rowHeight;
+    p->font.fromString(font);
+    emit dataChanged({}, {}, {Qt::FontRole});
+}
+
+void FilterModel::setColour(const QColor& colour)
+{
+    p->colour = colour;
+    emit dataChanged({}, {});
+}
+
+void FilterModel::setRowHeight(int height)
+{
+    p->rowHeight = height;
     emit dataChanged({}, {});
 }
 

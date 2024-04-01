@@ -119,6 +119,10 @@ struct FilterWidget::Private
         columns = {columnRegistry.itemByIndex(0)};
 
         header->restoreHeaderState({});
+
+        model->setFont(settings->value<Settings::Filters::FilterFont>());
+        model->setColour(settings->value<Settings::Filters::FilterColour>());
+        model->setRowHeight(settings->value<Settings::Filters::FilterRowHeight>());
     }
 
     [[nodiscard]] QString playlistNameFromSelection() const
@@ -158,13 +162,6 @@ struct FilterWidget::Private
         filteredTracks = selectedTracks;
 
         emit self->selectionChanged(playlistNameFromSelection());
-    }
-
-    void updateAppearance(const QVariant& optionsVar) const
-    {
-        const auto options = optionsVar.value<FilterOptions>();
-        model->setAppearance(options);
-        QMetaObject::invokeMethod(view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     }
 
     void hideHeader(bool hide) const
@@ -272,14 +269,6 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
     setScrollbarEnabled(p->settings->value<Settings::Filters::FilterScrollBar>());
     p->view->setAlternatingRowColors(p->settings->value<Settings::Filters::FilterAltColours>());
 
-    p->updateAppearance(p->settings->value<Settings::Filters::FilterAppearance>());
-
-    p->settings->subscribe<Settings::Filters::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
-    p->settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
-    p->settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
-    p->settings->subscribe<Settings::Filters::FilterAppearance>(
-        this, [this](const QVariant& appearance) { p->updateAppearance(appearance); });
-
     QObject::connect(&p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
                      [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
 
@@ -294,6 +283,18 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
                      [this]() { emit doubleClicked(p->playlistNameFromSelection()); });
     QObject::connect(p->view, &FilterView::middleClicked, this,
                      [this]() { emit middleClicked(p->playlistNameFromSelection()); });
+
+    p->settings->subscribe<Settings::Filters::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
+    p->settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
+    p->settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
+    p->settings->subscribe<Settings::Filters::FilterFont>(this,
+                                                          [this](const QString& font) { p->model->setFont(font); });
+    p->settings->subscribe<Settings::Filters::FilterColour>(
+        this, [this](const QString& colour) { p->model->setColour(colour); });
+    p->settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
+        p->model->setRowHeight(height);
+        QMetaObject::invokeMethod(p->view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    });
 }
 
 FilterWidget::~FilterWidget()
