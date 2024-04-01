@@ -227,7 +227,8 @@ void LibraryTreePageWidget::load()
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
 
-    m_font = m_settings->value<Settings::Gui::Internal::LibTreeFont>();
+    const QString font = m_settings->value<Settings::Gui::Internal::LibTreeFont>();
+    m_font.fromString(font);
     m_colourButton->setColour(QColor::fromString(m_settings->value<Settings::Gui::Internal::LibTreeColour>()));
     m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
 
