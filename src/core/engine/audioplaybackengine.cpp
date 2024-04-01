@@ -30,12 +30,6 @@
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
-extern "C"
-{
-#include <libavformat/avformat.h>
-#include <libavutil/opt.h>
-}
-
 #include <QTimer>
 
 using namespace std::chrono_literals;
@@ -55,7 +49,7 @@ struct AudioPlaybackEngine::Private
     uint64_t lastPosition{0};
 
     uint64_t totalBufferTime{0};
-    uint64_t bufferLength;
+    uint64_t bufferLength{0};
 
     uint64_t duration{0};
     double volume{1.0};
@@ -75,7 +69,7 @@ struct AudioPlaybackEngine::Private
         , renderer{new AudioRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
-        bufferTimer->setInterval(5ms);
+        bufferTimer->setInterval(15ms);
 
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
 
