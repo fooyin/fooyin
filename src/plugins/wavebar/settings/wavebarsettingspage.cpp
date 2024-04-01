@@ -57,11 +57,11 @@ private:
 
     QCheckBox* m_showCursor;
     QDoubleSpinBox* m_channelScale;
-    QDoubleSpinBox* m_cursorWidth;
+    QSpinBox* m_cursorWidth;
     QSpinBox* m_barWidth;
     QSpinBox* m_barGap;
     QDoubleSpinBox* m_maxScale;
-    QDoubleSpinBox* m_centreGap;
+    QSpinBox* m_centreGap;
 };
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
@@ -73,11 +73,11 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_downmixMono{new QRadioButton(tr("Mono"), this)}
     , m_showCursor{new QCheckBox(tr("Show Progress Cursor"), this)}
     , m_channelScale{new QDoubleSpinBox(this)}
-    , m_cursorWidth{new QDoubleSpinBox(this)}
+    , m_cursorWidth{new QSpinBox(this)}
     , m_barWidth{new QSpinBox(this)}
     , m_barGap{new QSpinBox(this)}
     , m_maxScale{new QDoubleSpinBox(this)}
-    , m_centreGap{new QDoubleSpinBox(this)}
+    , m_centreGap{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -87,9 +87,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     auto* maxScaleLabel    = new QLabel(tr("Max Scale") + QStringLiteral(":"), this);
     auto* centreGapLabel   = new QLabel(tr("Centre Gap") + QStringLiteral(":"), this);
 
-    m_cursorWidth->setMinimum(1.0);
-    m_cursorWidth->setMaximum(20.0);
-    m_cursorWidth->setSingleStep(0.5);
+    m_cursorWidth->setMinimum(1);
+    m_cursorWidth->setMaximum(20);
     m_cursorWidth->setSuffix(QStringLiteral(" px"));
 
     m_channelScale->setMinimum(0.0);
@@ -108,8 +107,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_barGap->setSuffix(QStringLiteral(" px"));
 
     m_centreGap->setMinimum(0);
-    m_centreGap->setMaximum(10.0);
-    m_centreGap->setSingleStep(0.25);
+    m_centreGap->setMaximum(10);
     m_centreGap->setSuffix(QStringLiteral(" px"));
 
     m_maxScale->setMinimum(-10.0);

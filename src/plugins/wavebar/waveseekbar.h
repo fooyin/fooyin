@@ -57,7 +57,6 @@ protected:
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
     [[nodiscard]] uint64_t valueFromPosition(int pos) const;
-    [[nodiscard]] bool positionHasPlayed(int pos) const;
     void updateMousePosition(const QPoint& pos);
     void updateRange(int first, int last);
 
@@ -73,12 +72,13 @@ private:
     QPointer<ToolTip> m_seekTip;
 
     bool m_showCursor;
-    double m_cursorWidth;
+    int m_cursorWidth;
     double m_channelScale;
     int m_barWidth;
     int m_barGap;
+    int m_sampleWidth;
     double m_maxScale;
-    double m_centreGap;
+    int m_centreGap;
 
     WaveModes m_mode;
     Colours m_colours;
