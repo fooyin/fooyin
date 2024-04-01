@@ -222,7 +222,7 @@ void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
     QWidget::mousePressEvent(event);
 
-    if(event->button() == Qt::LeftButton) {
+    if(!m_data.empty() && event->button() == Qt::LeftButton) {
         updateMousePosition(event->pos());
         drawSeekTip();
     }
