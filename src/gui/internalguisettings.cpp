@@ -23,7 +23,9 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QFont>
 #include <QIcon>
+#include <QPalette>
 
 namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
@@ -74,7 +76,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::LibTreeFont>(QFont{}.toString(), QStringLiteral("LibraryTree/Font"));
     m_settings->createSetting<Internal::LibTreeColour>(QApplication::palette().text().color().name(),
                                                        QStringLiteral("LibraryTree/Colour"));
-    m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("DirectoryBrowser/RowHeight"));
+    m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("LibraryTree/RowHeight"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
     m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
     m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));
