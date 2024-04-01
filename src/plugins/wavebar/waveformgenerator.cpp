@@ -36,7 +36,7 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
     Fooyin::DbConnection::DbParams params;
     params.type           = QStringLiteral("QSQLITE");
     params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
-    params.filePath       = Fooyin::Utils::cachePath() + QStringLiteral("wavebar.db");
+    params.filePath       = Fooyin::Utils::cachePath(QStringLiteral("wavebar.db"));
 
     return params;
 }
