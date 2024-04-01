@@ -20,7 +20,6 @@
 #include "filtersgeneralpage.h"
 
 #include "constants.h"
-#include "filterfwd.h"
 #include "filtersettings.h"
 
 #include <gui/guiconstants.h>
@@ -28,6 +27,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/colourbutton.h>
+#include <utils/widgets/fontbutton.h>
 
 #include <QCheckBox>
 #include <QColorDialog>
@@ -59,9 +59,7 @@ private:
     QCheckBox* m_filterScrollBars;
     QCheckBox* m_altRowColours;
 
-    QPushButton* m_fontButton;
-    QFont m_font;
-    bool m_fontChanged{false};
+    FontButton* m_fontButton;
     ColourButton* m_colourButton;
     QSpinBox* m_rowHeight;
 
@@ -78,7 +76,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), QStringLiteral(""), this)}
+    , m_fontButton{new FontButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), QStringLiteral(""), this)}
     , m_colourButton{new ColourButton(this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
@@ -135,15 +133,6 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     mainLayout->addWidget(selectionPlaylist, 2, 0);
     // mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
-
-    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
-        bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
-        if(ok && chosenFont != m_font) {
-            m_fontChanged = true;
-            m_font        = chosenFont;
-        }
-    });
 }
 
 void FiltersGeneralPageWidget::load()
@@ -192,12 +181,9 @@ void FiltersGeneralPageWidget::load()
     m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
     m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
 
-    const QString font = m_settings->value<Settings::Filters::FilterFont>();
-    m_font.fromString(font);
+    m_fontButton->setFont(m_settings->value<Settings::Filters::FilterFont>());
     m_colourButton->setColour(m_settings->value<Settings::Filters::FilterColour>());
     m_rowHeight->setValue(m_settings->value<Settings::Filters::FilterRowHeight>());
-
-    m_fontButton->setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
 
     m_playlistEnabled->setChecked(m_settings->value<Settings::Filters::FilterPlaylistEnabled>());
     m_autoSwitch->setChecked(m_settings->value<Settings::Filters::FilterAutoSwitch>());
@@ -213,7 +199,7 @@ void FiltersGeneralPageWidget::apply()
     m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
     m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
 
-    m_settings->set<Settings::Filters::FilterFont>(m_font.toString());
+    m_settings->set<Settings::Filters::FilterFont>(m_fontButton->font().toString());
     m_settings->set<Settings::Filters::FilterColour>(m_colourButton->colour().name());
     m_settings->set<Settings::Filters::FilterRowHeight>(m_rowHeight->value());
 

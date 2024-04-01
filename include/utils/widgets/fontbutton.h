@@ -21,34 +21,28 @@
 
 #include "fyutils_export.h"
 
-#include <QColor>
-#include <QWidget>
+#include <QFont>
+#include <QPushButton>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ColourButton : public QWidget
+class FYUTILS_EXPORT FontButton : public QPushButton
 {
     Q_OBJECT
 
 public:
-    explicit ColourButton(QWidget* parent = nullptr);
-    explicit ColourButton(const QColor& colour, QWidget* parent = nullptr);
+    explicit FontButton(QWidget* parent = nullptr);
+    explicit FontButton(const QString& text, QWidget* parent = nullptr);
+    explicit FontButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
 
-    [[nodiscard]] QColor colour() const;
-    [[nodiscard]] bool colourChanged() const;
-
-    void setColour(const QColor& colour);
-
-signals:
-    void clicked();
-
-protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
+    [[nodiscard]] QFont font() const;
+    [[nodiscard]] bool fontChanged() const;
+    void setFont(const QFont& font);
+    void setFont(const QString& font);
 
 private:
-    void pickColour();
+    void pickFont();
 
-    QColor m_colour;
+    QFont m_font;
     bool m_changed;
 };
 } // namespace Fooyin

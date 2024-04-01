@@ -28,6 +28,7 @@
 #include <utils/multilinedelegate.h>
 #include <utils/utils.h>
 #include <utils/widgets/colourbutton.h>
+#include <utils/widgets/fontbutton.h>
 
 #include <QAction>
 #include <QCheckBox>
@@ -71,8 +72,7 @@ private:
     QCheckBox* m_showScrollbar;
     QCheckBox* m_altColours;
 
-    QPushButton* m_fontButton;
-    QFont m_font;
+    FontButton* m_fontButton;
     ColourButton* m_colourButton;
     QSpinBox* m_rowHeight;
 };
@@ -89,7 +89,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     , m_playlistName{new QLineEdit(this)}
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
-    , m_fontButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
+    , m_fontButton{new FontButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
     , m_colourButton{new ColourButton(this)}
     , m_rowHeight{new QSpinBox(this)}
 {
@@ -166,14 +166,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     mainLayout->addWidget(clickBehaviour, 1, 0);
     mainLayout->addWidget(appearanceGroup, 1, 1, 2, 1);
     mainLayout->addWidget(selectionPlaylist, 2, 0);
-
-    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
-        bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
-        if(ok && chosenFont != m_font) {
-            m_font = chosenFont;
-        }
-    });
 }
 
 void LibraryTreePageWidget::load()
@@ -227,12 +219,9 @@ void LibraryTreePageWidget::load()
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
 
-    const QString font = m_settings->value<Settings::Gui::Internal::LibTreeFont>();
-    m_font.fromString(font);
-    m_colourButton->setColour(QColor::fromString(m_settings->value<Settings::Gui::Internal::LibTreeColour>()));
+    m_fontButton->setFont(m_settings->value<Settings::Gui::Internal::LibTreeFont>());
+    m_colourButton->setColour(m_settings->value<Settings::Gui::Internal::LibTreeColour>());
     m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
-
-    m_fontButton->setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
 }
 
 void LibraryTreePageWidget::apply()
@@ -245,7 +234,7 @@ void LibraryTreePageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_font.toString());
+    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->font().toString());
     m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
     m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 
