@@ -188,7 +188,7 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
 
 bool isDarkMode()
 {
-    const QPalette palette{qApp->palette()};
+    const QPalette palette{QApplication::palette()};
 
     const QColor textColour   = palette.color(QPalette::Active, QPalette::Text);
     const QColor windowColour = palette.color(QPalette::Active, QPalette::Window);

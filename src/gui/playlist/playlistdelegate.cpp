@@ -66,7 +66,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     opt.text.clear();
     opt.icon = {};
 
-    QStyle* style = opt.widget ? opt.widget->style() : qApp->style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -151,7 +151,7 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     opt.text.clear();
     opt.icon = {};
 
-    QStyle* style = opt.widget ? opt.widget->style() : qApp->style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -196,7 +196,7 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
 {
     QStyleOptionViewItem opt{option};
 
-    QStyle* style = opt.widget ? opt.widget->style() : qApp->style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -242,7 +242,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 {
     QStyleOptionViewItem opt{option};
 
-    QStyle* style = option.widget ? option.widget->style() : qApp->style();
+    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
     const auto icon         = index.data(Qt::DecorationRole).value<QPixmap>();
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
@@ -328,7 +328,7 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     opt.decorationSize = {};
 
     const QWidget* widget = opt.widget;
-    const QStyle* style   = widget ? widget->style() : qApp->style();
+    const QStyle* style   = widget ? widget->style() : QApplication::style();
 
     QSize size = index.data(Qt::SizeHintRole).toSize();
     int rowHeight{0};

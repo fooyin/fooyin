@@ -28,7 +28,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    QStyle* style = option.widget ? option.widget->style() : qApp->style();
+    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
     painter->save();
 
@@ -43,7 +43,7 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     initStyleOption(&opt, index);
 
     const QWidget* widget = opt.widget;
-    const QStyle* style   = widget ? widget->style() : qApp->style();
+    const QStyle* style   = widget ? widget->style() : QApplication::style();
 
     QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, widget);
 

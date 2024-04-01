@@ -135,12 +135,12 @@ void MprisPlugin::shutdown()
 
 QString MprisPlugin::identity() const
 {
-    return qApp->applicationDisplayName();
+    return QApplication::applicationDisplayName();
 }
 
 QString MprisPlugin::desktopEntry() const
 {
-    return qApp->desktopFileName();
+    return QApplication::desktopFileName();
 }
 
 bool MprisPlugin::canRaise() const

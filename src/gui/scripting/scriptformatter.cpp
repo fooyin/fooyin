@@ -225,7 +225,7 @@ struct ScriptFormatter::Private
     void resetFormat()
     {
         currentBlock               = {};
-        currentBlock.format.colour = qApp->palette().text().color();
+        currentBlock.format.colour = QApplication::palette().text().color();
     }
 };
 

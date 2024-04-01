@@ -1228,7 +1228,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
             }
 
             if(m_altColours) {
-                return item->row() & 1 ? qApp->palette().base().color() : qApp->palette().alternateBase().color();
+                return item->row() & 1 ? QApplication::palette().base().color()
+                                       : QApplication::palette().alternateBase().color();
             }
 
             break;

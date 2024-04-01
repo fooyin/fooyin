@@ -32,20 +32,20 @@ struct Colours
     QColor bgPlayed{Qt::transparent};
 
     QColor maxUnplayed{140, 140, 140};
-    QColor maxPlayed{qApp->palette().highlight().color()};
-
+    QColor maxPlayed{QApplication::palette().highlight().color()};
     QColor maxBorder{Qt::transparent};
-    QColor minUnplayed{140, 140, 140};
-    QColor minPlayed{qApp->palette().highlight().color()};
-    QColor minBorder{Qt::transparent};
+
+    QColor minUnplayed{maxUnplayed};
+    QColor minPlayed{maxPlayed};
+    QColor minBorder{maxBorder};
 
     QColor rmsMaxUnplayed{65, 65, 65};
     QColor rmsMaxPlayed{maxPlayed.darker(150)};
     QColor rmsMaxBorder{Qt::transparent};
 
-    QColor rmsMinUnplayed{65, 65, 65};
-    QColor rmsMinPlayed{maxPlayed.darker(150)};
-    QColor rmsMinBorder{Qt::transparent};
+    QColor rmsMinUnplayed{rmsMaxUnplayed};
+    QColor rmsMinPlayed{rmsMaxPlayed};
+    QColor rmsMinBorder{rmsMaxBorder};
 
     QColor cursor{maxPlayed};
     QColor seekingCursor{rmsMaxPlayed};

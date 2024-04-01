@@ -42,7 +42,7 @@ void WidgetFilter::start()
 
     m_active = true;
     qApp->installEventFilter(this);
-    qApp->setOverrideCursor(Qt::ArrowCursor);
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void WidgetFilter::stop()
@@ -53,7 +53,7 @@ void WidgetFilter::stop()
 
     m_active = false;
     qApp->removeEventFilter(this);
-    qApp->restoreOverrideCursor();
+    QApplication::restoreOverrideCursor();
 }
 
 bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
@@ -73,7 +73,7 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
         }
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
-        auto* widget     = qApp->widgetAt(pos);
+        auto* widget     = QApplication::widgetAt(pos);
 
         if(widget && (qobject_cast<OverlayWidget*>(widget) || qobject_cast<QPushButton*>(widget))) {
             m_overOverlay = true;

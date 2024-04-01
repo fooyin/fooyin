@@ -27,7 +27,7 @@
 namespace {
 void paintHeader(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& /*index*/)
 {
-    QStyle* style = opt.widget ? opt.widget->style() : qApp->style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 
@@ -52,7 +52,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& opt, const QMode
 
 void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& /*index*/)
 {
-    QStyle* style = opt.widget ? opt.widget->style() : qApp->style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 }
