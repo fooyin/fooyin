@@ -36,7 +36,7 @@ public:
     explicit LibraryTreeModel(QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
-    void setFont(const QFont& font);
+    void setFont(const QString& font);
     void setColour(const QColor& colour);
     void setRowHeight(int height);
 

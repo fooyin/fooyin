@@ -264,9 +264,9 @@ LibraryTreeModel::~LibraryTreeModel()
     p->populatorThread.wait();
 }
 
-void LibraryTreeModel::setFont(const QFont& font)
+void LibraryTreeModel::setFont(const QString& font)
 {
-    p->font = font;
+    p->font.fromString(font);
     emit dataChanged({}, {}, {Qt::FontRole});
 }
 
