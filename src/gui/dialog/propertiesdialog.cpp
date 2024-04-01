@@ -126,6 +126,8 @@ PropertiesDialogWidget::PropertiesDialogWidget(PropertiesDialog::TabList tabs)
     auto* layout = new QGridLayout(this);
     layout->setContentsMargins(0, 0, 0, 5);
 
+    setWindowTitle(tr("Properties"));
+
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
     layout->addWidget(buttonBox);
     buttonBox->setContentsMargins(0, 0, 5, 5);
@@ -191,6 +193,7 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     auto tabIt = std::ranges::find_if(m_tabs, [index](const PropertiesTab& tab) { return tab.index() == index; });
     if(tabIt != m_tabs.cend()) {
         tabIt->setVisited(true);
+        setWindowTitle(tr("Properties") + QStringLiteral(": ") + tabIt->title());
     }
 }
 
