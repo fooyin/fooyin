@@ -41,8 +41,8 @@ public:
 
     void addPage(SettingsPage* page);
 
-    [[nodiscard]] QByteArray saveState() const;
-    void loadState(const QByteArray& state);
+    void saveState();
+    void restoreState();
 
 private:
     struct Private;

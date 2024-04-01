@@ -95,18 +95,16 @@ public:
 
     void saveState(SettingsManager* settings)
     {
-        QByteArray state = saveGeometry();
-        state            = qCompress(state, 9);
-        settings->fileSet(QStringLiteral("Interface/PropertiesDialogState"), state);
+        settings->fileSet(QStringLiteral("Interface/PropertiesDialogSize"), size());
     }
 
     void restoreState(SettingsManager* settings)
     {
-        QByteArray state = settings->fileValue(QStringLiteral("Interface/PropertiesDialogState")).toByteArray();
-
-        if(!state.isEmpty()) {
-            state = qUncompress(state);
-            restoreGeometry(state);
+        if(settings->fileContains(QStringLiteral("Interface/PropertiesDialogSize"))) {
+            const QSize size = settings->fileValue(QStringLiteral("Interface/PropertiesDialogSize")).toSize();
+            if(size.isValid()) {
+                resize(size);
+            }
         }
     }
 

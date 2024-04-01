@@ -31,11 +31,11 @@ struct SettingsDialogController::Private
 {
     SettingsManager* settings;
 
-    QByteArray geometry;
+    QSize size;
     PageList pages;
     Id lastOpenPage;
 
-    Private(SettingsManager* settings_)
+    explicit Private(SettingsManager* settings_)
         : settings{settings_}
     { }
 };
@@ -56,19 +56,20 @@ void SettingsDialogController::openAtPage(const Id& page)
 {
     auto* settingsDialog = new SettingsDialog{p->pages};
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
-        p->geometry     = settingsDialog->saveGeometry();
+        p->size         = settingsDialog->size();
         p->lastOpenPage = settingsDialog->currentPage();
         settingsDialog->deleteLater();
     });
     QObject::connect(settingsDialog, &SettingsDialog::resettingAll, this,
                      [this]() { p->settings->resetAllSettings(); });
 
-    if(p->geometry.isEmpty()) {
-        settingsDialog->resize(750, 450);
+    if(p->size.isValid()) {
+        settingsDialog->resize(p->size);
     }
     else {
-        settingsDialog->restoreGeometry(p->geometry);
+        settingsDialog->resize({800, 500});
     }
+
     settingsDialog->openSettings();
 
     if(page.isValid()) {
@@ -81,28 +82,26 @@ void SettingsDialogController::addPage(SettingsPage* page)
     p->pages.push_back(page);
 }
 
-QByteArray SettingsDialogController::saveState() const
+void SettingsDialogController::saveState()
 {
-    QByteArray state;
-    QDataStream stream(&state, QIODevice::WriteOnly);
-    stream.setVersion(QDataStream::Qt_6_0);
-
-    stream << p->geometry;
-    stream << p->lastOpenPage;
-
-    return state;
+    p->settings->fileSet(QStringLiteral("Interface/SettingsDialogSize"), p->size);
+    p->settings->fileSet(QStringLiteral("Interface/SettingsDialogLastPage"), p->lastOpenPage.name());
 }
 
-void SettingsDialogController::loadState(const QByteArray& state)
+void SettingsDialogController::restoreState()
 {
-    if(!state.isEmpty()) {
-        QByteArray stateData{state};
+    if(p->settings->fileContains(QStringLiteral("Interface/SettingsDialogSize"))) {
+        const QSize size = p->settings->fileValue(QStringLiteral("Interface/SettingsDialogSize")).toSize();
+        if(size.isValid()) {
+            p->size = size;
+        }
+    }
 
-        QDataStream stream(&stateData, QIODevice::ReadOnly);
-        stream.setVersion(QDataStream::Qt_6_0);
-
-        stream >> p->geometry;
-        stream >> p->lastOpenPage;
+    if(p->settings->fileContains(QStringLiteral("Interface/SettingsDialogLastPage"))) {
+        const Id lastPage{p->settings->fileValue(QStringLiteral("Interface/SettingsDialogLastPage")).toString()};
+        if(lastPage.isValid()) {
+            p->lastOpenPage = lastPage;
+        }
     }
 }
 } // namespace Fooyin

@@ -154,12 +154,12 @@ struct SandboxDialog::Private
 
         QDataStream in(&byteArray, QIODevice::ReadOnly);
 
-        QByteArray dialogGeometry;
+        QSize dialogSize;
         QByteArray mainSplitterState;
         QByteArray documentSplitterState;
         QString editorText;
 
-        in >> dialogGeometry;
+        in >> dialogSize;
         in >> mainSplitterState;
         in >> documentSplitterState;
         in >> editorText;
@@ -168,7 +168,7 @@ struct SandboxDialog::Private
             editorText = defaultScript;
         }
 
-        self->restoreGeometry(dialogGeometry);
+        self->resize(dialogSize);
         mainSplitter->restoreState(mainSplitterState);
         documentSplitter->restoreState(documentSplitterState);
         editor->setPlainText(editorText);
@@ -185,7 +185,7 @@ struct SandboxDialog::Private
         QByteArray byteArray;
         QDataStream out(&byteArray, QIODevice::WriteOnly);
 
-        out << self->saveGeometry();
+        out << self->size();
         out << mainSplitter->saveState();
         out << documentSplitter->saveState();
         out << editor->toPlainText();

@@ -31,7 +31,7 @@ SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
     , m_settingsDialog{new SettingsDialogController(this)}
 {
-    m_settingsDialog->loadState(fileValue(QStringLiteral("Interface/SettingsDialogState")).toByteArray());
+    m_settingsDialog->restoreState();
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const
@@ -218,9 +218,7 @@ void SettingsManager::saveSettings(bool onlyChanged)
         }
     }
 
-    const auto dialogState = m_settingsDialog->saveState();
-
-    fileSet(QStringLiteral("Interface/SettingsDialogState"), dialogState);
+    m_settingsDialog->saveState();
 
     m_settingsFile->sync();
 }
