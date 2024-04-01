@@ -20,7 +20,7 @@
 #include <utils/id.h>
 
 namespace Fooyin {
-unsigned int idFromString(const QString& str)
+uint32_t idFromString(const QString& str)
 {
     uint32_t result{0};
     if(!str.isEmpty()) {
@@ -44,7 +44,7 @@ bool Id::isValid() const
     return (m_id > 0 && !m_name.isNull());
 }
 
-unsigned int Id::id() const
+uint32_t Id::id() const
 {
     return m_id;
 }

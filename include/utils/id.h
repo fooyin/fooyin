@@ -47,7 +47,7 @@ public:
 
     [[nodiscard]] bool isValid() const;
 
-    [[nodiscard]] unsigned int id() const;
+    [[nodiscard]] uint32_t id() const;
     [[nodiscard]] QString name() const;
 
     Id append(const Id& id);
