@@ -20,7 +20,6 @@
 #include "librarytreewidget.h"
 
 #include "internalguisettings.h"
-#include "librarytreeappearance.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
@@ -174,7 +173,9 @@ struct LibraryTreeWidget::Private
 
         changeGrouping(groupsRegistry.itemByName(QStringLiteral("")));
 
-        updateAppearance(settings->value<LibTreeAppearance>());
+        model->setFont(settings->value<LibTreeFont>());
+        model->setColour(settings->value<LibTreeColour>());
+        model->setRowHeight(settings->value<LibTreeRowHeight>());
     }
 
     void reset() const
@@ -212,13 +213,6 @@ struct LibraryTreeWidget::Private
     void setScrollbarEnabled(bool enabled) const
     {
         libraryTree->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    }
-
-    void updateAppearance(const QVariant& optionsVar) const
-    {
-        const auto options = optionsVar.value<LibraryTreeAppearance>();
-        model->setAppearance(options);
-        QMetaObject::invokeMethod(libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     }
 
     void setupHeaderContextMenu(const QPoint& pos)
@@ -441,7 +435,12 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
     settings->subscribe<LibTreeScrollBar>(this, [this](bool show) { p->setScrollbarEnabled(show); });
     settings->subscribe<LibTreeAltColours>(this,
                                            [this](bool enable) { p->libraryTree->setAlternatingRowColors(enable); });
-    settings->subscribe<LibTreeAppearance>(this, [this](const QVariant& var) { p->updateAppearance(var); });
+    settings->subscribe<LibTreeFont>(this, [this](const QString& font) { p->model->setFont(font); });
+    settings->subscribe<LibTreeColour>(this, [this](const QString& colour) { p->model->setColour(colour); });
+    settings->subscribe<LibTreeRowHeight>(this, [this](const int height) {
+        p->model->setRowHeight(height);
+        QMetaObject::invokeMethod(p->libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    });
 }
 
 QString LibraryTreeWidget::name() const

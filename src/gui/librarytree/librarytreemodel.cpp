@@ -19,7 +19,6 @@
 
 #include "librarytreemodel.h"
 
-#include "librarytreeappearance.h"
 #include "librarytreepopulator.h"
 
 #include <gui/guiconstants.h>
@@ -31,7 +30,6 @@
 #include <QSize>
 #include <QThread>
 
-#include <queue>
 #include <ranges>
 #include <set>
 #include <stack>
@@ -266,11 +264,21 @@ LibraryTreeModel::~LibraryTreeModel()
     p->populatorThread.wait();
 }
 
-void LibraryTreeModel::setAppearance(const LibraryTreeAppearance& options)
+void LibraryTreeModel::setFont(const QFont& font)
 {
-    p->font      = options.font;
-    p->colour    = options.colour;
-    p->rowHeight = options.rowHeight;
+    p->font = font;
+    emit dataChanged({}, {}, {Qt::FontRole});
+}
+
+void LibraryTreeModel::setColour(const QColor& colour)
+{
+    p->colour = colour;
+    emit dataChanged({}, {});
+}
+
+void LibraryTreeModel::setRowHeight(int height)
+{
+    p->rowHeight = height;
     emit dataChanged({}, {});
 }
 
@@ -322,7 +330,10 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             return QVariant::fromValue(item->tracks());
         }
         case(Qt::SizeHintRole): {
-            return QSize{0, p->rowHeight};
+            if(p->rowHeight > 0) {
+                return QSize{0, p->rowHeight};
+            }
+            break;
         }
         case(Qt::FontRole): {
             return p->font;
@@ -334,6 +345,8 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             return {};
         }
     }
+
+    return {};
 }
 
 bool LibraryTreeModel::hasChildren(const QModelIndex& parent) const

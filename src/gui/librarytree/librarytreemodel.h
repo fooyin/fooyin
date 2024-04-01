@@ -36,7 +36,9 @@ public:
     explicit LibraryTreeModel(QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
-    void setAppearance(const LibraryTreeAppearance& options);
+    void setFont(const QFont& font);
+    void setColour(const QColor& colour);
+    void setRowHeight(int height);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

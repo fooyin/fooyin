@@ -59,7 +59,6 @@ set(SOURCES
     info/infomodel.h
     info/infowidget.cpp
     info/infowidget.h
-    librarytree/librarytreeappearance.h
     librarytree/librarytreegroup.h
     librarytree/librarytreegroupregistry.cpp
     librarytree/librarytreegroupregistry.h
@@ -157,8 +156,6 @@ set(SOURCES
     settings/library/sortingmodel.h
     settings/librarytree/librarytreegroupmodel.cpp
     settings/librarytree/librarytreegroupmodel.h
-    settings/librarytree/librarytreeguipage.cpp
-    settings/librarytree/librarytreeguipage.h
     settings/librarytree/librarytreepage.cpp
     settings/librarytree/librarytreepage.h
     settings/playlist/playlistcolumnmodel.cpp

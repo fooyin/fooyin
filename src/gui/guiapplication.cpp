@@ -48,7 +48,6 @@
 #include "settings/guigeneralpage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarysortingpage.h"
-#include "settings/librarytree/librarytreeguipage.h"
 #include "settings/librarytree/librarytreepage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
@@ -136,7 +135,6 @@ struct GuiApplication::Private
     EnginePage enginePage;
     DirBrowserPage dirBrowserPage;
     LibraryTreePage libraryTreePage;
-    LibraryTreeGuiPage libraryTreeGuiPage;
     StatusWidgetPage statusWidgetPage;
     PluginPage pluginPage;
 
@@ -182,7 +180,6 @@ struct GuiApplication::Private
         , enginePage{settingsManager, engine}
         , dirBrowserPage{settingsManager}
         , libraryTreePage{actionManager, settingsManager}
-        , libraryTreeGuiPage{settingsManager}
         , statusWidgetPage{settingsManager}
         , pluginPage{settingsManager, pluginManager}
         , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,

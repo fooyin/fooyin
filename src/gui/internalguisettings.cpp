@@ -19,11 +19,10 @@
 
 #include "internalguisettings.h"
 
-#include "librarytree/librarytreeappearance.h"
-
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
 #include <QIcon>
 
 namespace Fooyin {
@@ -62,8 +61,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         QStringLiteral("%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%"),
         QStringLiteral("StatusWidget/SelectionScript"));
 
-    qRegisterMetaType<Fooyin::LibraryTreeAppearance>("Fooyin::LibraryTreeAppearance");
-
     m_settings->createSetting<Internal::LibTreeDoubleClick>(5, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
     m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
@@ -74,8 +71,10 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
     m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
-    m_settings->createSetting<Internal::LibTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
-                                                           QStringLiteral("LibraryTree/Appearance"));
+    m_settings->createSetting<Internal::LibTreeFont>(QFont{}.toString(), QStringLiteral("LibraryTree/Font"));
+    m_settings->createSetting<Internal::LibTreeColour>(QApplication::palette().text().color().name(),
+                                                       QStringLiteral("LibraryTree/Colour"));
+    m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("DirectoryBrowser/RowHeight"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
     m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
     m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));

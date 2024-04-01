@@ -26,16 +26,20 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/multilinedelegate.h>
+#include <utils/utils.h>
+#include <utils/widgets/colourbutton.h>
 
 #include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFontDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QTableView>
 
 namespace Fooyin {
@@ -63,6 +67,14 @@ private:
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
     QLineEdit* m_playlistName;
+
+    QCheckBox* m_showScrollbar;
+    QCheckBox* m_altColours;
+
+    QPushButton* m_fontButton;
+    QFont m_font;
+    ColourButton* m_colourButton;
+    QSpinBox* m_rowHeight;
 };
 
 LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings)
@@ -75,6 +87,11 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
+    , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
+    , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
+    , m_fontButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
+    , m_colourButton{new ColourButton(this)}
+    , m_rowHeight{new QSpinBox(this)}
 {
     m_groupList->setExtendableModel(m_model);
 
@@ -125,10 +142,43 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
+    auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
+    auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
+
+    auto* fontLabel      = new QLabel(tr("Font") + QStringLiteral(":"), this);
+    auto* colourLabel    = new QLabel(tr("Colour") + QStringLiteral(":"), this);
+    auto* rowHeightLabel = new QLabel(tr("Row Height") + QStringLiteral(":"), this);
+
+    int row{0};
+    appearanceGroupLayout->addWidget(m_showScrollbar, row++, 0, 1, 2);
+    appearanceGroupLayout->addWidget(m_altColours, row++, 0, 1, 2);
+    appearanceGroupLayout->addWidget(rowHeightLabel, row, 0);
+    appearanceGroupLayout->addWidget(m_rowHeight, row++, 1);
+    appearanceGroupLayout->addWidget(fontLabel, row, 0);
+    appearanceGroupLayout->addWidget(m_fontButton, row++, 1);
+    appearanceGroupLayout->addWidget(colourLabel, row, 0);
+    appearanceGroupLayout->addWidget(m_colourButton, row++, 1);
+
+    appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_groupList, 0, 0, 1, 3);
     mainLayout->addWidget(clickBehaviour, 1, 0);
-    mainLayout->addWidget(selectionPlaylist, 1, 1);
+    mainLayout->addWidget(appearanceGroup, 1, 1, 2, 1);
+    mainLayout->addWidget(selectionPlaylist, 2, 0);
+
+    QObject::connect(m_fontButton, &QPushButton::pressed, this, [this]() {
+        bool ok;
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
+        if(ok && chosenFont != m_font) {
+            m_font = chosenFont;
+        }
+    });
+}
+
+void LibraryTreePageWidget::load()
+{
+    m_model->populate();
 
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap doubleActions;
@@ -173,11 +223,15 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Gui::Internal::LibTreeAutoPlaylist>());
-}
 
-void LibraryTreePageWidget::load()
-{
-    m_model->populate();
+    m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
+    m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
+
+    m_font = m_settings->value<Settings::Gui::Internal::LibTreeFont>();
+    m_colourButton->setColour(QColor::fromString(m_settings->value<Settings::Gui::Internal::LibTreeColour>()));
+    m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
+
+    m_fontButton->setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
 }
 
 void LibraryTreePageWidget::apply()
@@ -187,6 +241,12 @@ void LibraryTreePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::LibTreePlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoSwitch>(m_autoSwitch->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
+
+    m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_font.toString());
+    m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
+    m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 
     m_model->processQueue();
 }
@@ -198,6 +258,12 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
+
+    m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeFont>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeColour>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
 
     m_groupsRegistry.reset();
 }
