@@ -58,7 +58,6 @@ enum GuiInternalSettings : uint32_t
     LibTreePlaylistEnabled = 19 | Type::Bool,
     LibTreeAutoSwitch      = 20 | Type::Bool,
     LibTreeAutoPlaylist    = 21 | Type::String,
-    LibTreeHeader          = 22 | Type::Bool,
     LibTreeScrollBar       = 23 | Type::Bool,
     LibTreeAltColours      = 24 | Type::Bool,
     LibTreeAppearance      = 25 | Type::Variant,

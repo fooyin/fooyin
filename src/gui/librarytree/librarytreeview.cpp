@@ -28,6 +28,7 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
 {
     setUniformRowHeights(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setHeaderHidden(true);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragOnly);
     setDefaultDropAction(Qt::CopyAction);

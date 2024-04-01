@@ -169,7 +169,6 @@ struct LibraryTreeWidget::Private
         libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Play);
         libraryTree->setAnimated(true);
 
-        libraryTree->setHeaderHidden(!settings->value<LibTreeHeader>());
         setScrollbarEnabled(settings->value<LibTreeScrollBar>());
         libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
 
@@ -439,7 +438,6 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
     });
     settings->subscribe<LibTreeMiddleClick>(
         this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<LibTreeHeader>(this, [this](bool show) { p->libraryTree->setHeaderHidden(!show); });
     settings->subscribe<LibTreeScrollBar>(this, [this](bool show) { p->setScrollbarEnabled(show); });
     settings->subscribe<LibTreeAltColours>(this,
                                            [this](bool enable) { p->libraryTree->setAlternatingRowColors(enable); });

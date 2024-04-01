@@ -50,7 +50,6 @@ private:
 
     SettingsManager* m_settings;
 
-    QCheckBox* m_showHeader;
     QCheckBox* m_showScrollbar;
     QCheckBox* m_altColours;
 
@@ -67,7 +66,6 @@ private:
 
 LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_showHeader{new QCheckBox(tr("Show Header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating Row Colours"), this)}
     , m_fontButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
@@ -78,13 +76,14 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
 
     auto* rowHeightLabel = new QLabel(tr("Row Height") + QStringLiteral(":"), this);
 
-    layout->addWidget(m_showHeader, 0, 0, 1, 2);
-    layout->addWidget(m_showScrollbar, 1, 0, 1, 2);
-    layout->addWidget(m_altColours, 2, 0, 1, 2);
-    layout->addWidget(rowHeightLabel, 3, 0);
-    layout->addWidget(m_rowHeight, 3, 1);
-    layout->addWidget(m_fontButton, 4, 0);
-    layout->addWidget(m_colourButton, 4, 1);
+    int row{0};
+    layout->addWidget(m_showScrollbar, row++, 0, 1, 2);
+    layout->addWidget(m_altColours, row++, 0, 1, 2);
+    layout->addWidget(rowHeightLabel, row, 0);
+    layout->addWidget(m_rowHeight, row++, 1);
+    layout->addWidget(m_fontButton, row, 0);
+    layout->addWidget(m_colourButton, row++, 1);
+
     layout->setColumnStretch(2, 1);
     layout->setRowStretch(5, 1);
 
@@ -109,7 +108,6 @@ LibraryTreeGuiPageWidget::LibraryTreeGuiPageWidget(SettingsManager* settings)
 
 void LibraryTreeGuiPageWidget::load()
 {
-    m_showHeader->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
 
@@ -130,7 +128,6 @@ void LibraryTreeGuiPageWidget::load()
 
 void LibraryTreeGuiPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::Internal::LibTreeHeader>(m_showHeader->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
 
@@ -145,7 +142,6 @@ void LibraryTreeGuiPageWidget::apply()
 
 void LibraryTreeGuiPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::Internal::LibTreeHeader>();
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAppearance>();

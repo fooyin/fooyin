@@ -72,7 +72,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                            QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
     m_settings->createSetting<Internal::LibTreeAutoPlaylist>(QStringLiteral("Library Selection"),
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
-    m_settings->createSetting<Internal::LibTreeHeader>(true, QStringLiteral("LibraryTree/Header"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
     m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
     m_settings->createSetting<Internal::LibTreeAppearance>(QVariant::fromValue(LibraryTreeAppearance{}),
