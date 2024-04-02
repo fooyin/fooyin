@@ -305,7 +305,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
     const QString hash = updatedTrack.hash();
     p->pendingStatUpdates.emplace(hash, updatedTrack);
 
-    TrackList tracksToUpdate{updatedTrack};
+    TrackList tracksToUpdate;
     for(const auto& libraryTrack : p->tracks) {
         if(libraryTrack.hash() == hash) {
             Track sameHashTrack{libraryTrack};
