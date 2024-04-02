@@ -33,7 +33,7 @@ public:
     SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
     ~SeekBar() override;
 
-    QString name() const override;
+    [[nodiscard]] QString name() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

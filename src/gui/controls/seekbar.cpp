@@ -25,15 +25,202 @@
 #include <core/track.h>
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/slider.h>
 #include <utils/utils.h>
+#include <utils/widgets/tooltip.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
 #include <QSlider>
+#include <QStyleOptionSlider>
 
 namespace Fooyin {
+class TrackSlider : public QSlider
+{
+    Q_OBJECT
+
+public:
+    explicit TrackSlider(QWidget* parent = nullptr);
+
+    [[nodiscard]] int positionFromValue(uint64_t value) const;
+    uint64_t valueFromPosition(int pos);
+
+    void updateMaximum(uint64_t max);
+    void updateCurrentValue(uint64_t value);
+
+    [[nodiscard]] bool isSeeking() const;
+    void stopSeeking();
+
+signals:
+    void sliderDropped(uint64_t pos);
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+
+private:
+    void updateSeekPosition(const QPointF& pos);
+    void updateToolTip();
+
+    QPointer<ToolTip> m_toolTip;
+    uint64_t m_max{0};
+    uint64_t m_currentPos{0};
+    QPoint m_seekPos;
+};
+
+TrackSlider::TrackSlider(QWidget* parent)
+    : QSlider{Qt::Horizontal, parent}
+{ }
+
+uint64_t TrackSlider::valueFromPosition(int pos)
+{
+    QStyleOptionSlider opt;
+    initStyleOption(&opt);
+
+    const QRect groove = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, this);
+    const QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+
+    const int handleWidth = handle.width();
+    const int sliderPos   = pos - (handleWidth / 2) - groove.x() + 1;
+    const int span        = groove.right() - handleWidth - groove.x() + 1;
+
+    return static_cast<uint64_t>(QStyle::sliderValueFromPosition(0, maximum(), sliderPos, span, opt.upsideDown));
+}
+
+void TrackSlider::updateMaximum(uint64_t max)
+{
+    m_max = max;
+    setMaximum(static_cast<int>(max));
+}
+
+void TrackSlider::updateCurrentValue(uint64_t value)
+{
+    m_currentPos = value;
+
+    if(!isSeeking()) {
+        setValue(static_cast<int>(value));
+    }
+
+    updateToolTip();
+}
+
+bool TrackSlider::isSeeking() const
+{
+    return !m_seekPos.isNull();
+}
+
+void TrackSlider::stopSeeking()
+{
+    if(m_toolTip) {
+        m_toolTip->deleteLater();
+    }
+
+    m_seekPos = {};
+}
+
+void TrackSlider::mousePressEvent(QMouseEvent* event)
+{
+    if(m_max == 0) {
+        return;
+    }
+
+    Qt::MouseButton button = event->button();
+    if(button == Qt::LeftButton) {
+        const int absolute = style()->styleHint(QStyle::SH_Slider_AbsoluteSetButtons);
+        if(Qt::LeftButton & absolute) {
+            button = Qt::LeftButton;
+        }
+        else if(Qt::MiddleButton & absolute) {
+            button = Qt::MiddleButton;
+        }
+        else if(Qt::RightButton & absolute) {
+            button = Qt::RightButton;
+        }
+    }
+
+    QMouseEvent modifiedEvent{event->type(), event->position(), event->globalPosition(), button,
+                              button,        event->modifiers()};
+    QSlider::mousePressEvent(&modifiedEvent);
+
+    if(modifiedEvent.button() == Qt::LeftButton) {
+        updateSeekPosition(event->position());
+        updateToolTip();
+    }
+}
+
+void TrackSlider::mouseReleaseEvent(QMouseEvent* event)
+{
+    if(m_max == 0) {
+        return;
+    }
+
+    QSlider::mouseReleaseEvent(event);
+
+    if(event->button() != Qt::LeftButton || !isSeeking()) {
+        return;
+    }
+
+    stopSeeking();
+
+    const auto pos = valueFromPosition(static_cast<int>(event->position().x()));
+    emit sliderDropped(pos);
+}
+
+void TrackSlider::mouseMoveEvent(QMouseEvent* event)
+{
+    if(m_max == 0) {
+        return;
+    }
+
+    QSlider::mouseMoveEvent(event);
+
+    if(isSeeking() && event->buttons() & Qt::LeftButton) {
+        updateSeekPosition(event->position());
+        updateToolTip();
+    }
+}
+
+void TrackSlider::updateSeekPosition(const QPointF& pos)
+{
+    m_seekPos = pos.toPoint();
+
+    QPoint seekPoint = pos.toPoint();
+
+    seekPoint.setX(seekPoint.x() - m_toolTip->width());
+    seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - (2 * m_toolTip->width())));
+    seekPoint.setY(rect().y() - m_toolTip->height() / 4);
+
+    m_toolTip->setPosition(mapTo(window(), seekPoint));
+
+    updateToolTip();
+}
+
+void TrackSlider::updateToolTip()
+{
+    if(!m_toolTip) {
+        m_toolTip = new ToolTip(window());
+        m_toolTip->raise();
+        m_toolTip->show();
+    }
+
+    const auto seekPos = valueFromPosition(static_cast<int>(m_seekPos.x()));
+
+    const uint64_t seekDelta = std::max(m_currentPos, seekPos) - std::min(m_currentPos, seekPos);
+
+    QString deltaText;
+
+    if(seekPos > m_currentPos) {
+        deltaText = QStringLiteral("+") + Utils::msToString(seekDelta);
+    }
+    else {
+        deltaText = QStringLiteral("-") + Utils::msToString(seekDelta);
+    }
+
+    m_toolTip->setText(Utils::msToString(seekPos));
+    m_toolTip->setSubtext(deltaText);
+}
+
 struct SeekBar::Private
 {
     SeekBar* self;
@@ -41,9 +228,11 @@ struct SeekBar::Private
     PlayerController* playerController;
     SettingsManager* settings;
 
-    Slider* slider;
+    TrackSlider* slider;
+
     ClickableLabel* elapsed;
     ClickableLabel* total;
+
     uint64_t max{0};
     bool elapsedTotal;
 
@@ -51,7 +240,7 @@ struct SeekBar::Private
         : self{self_}
         , playerController{playerController_}
         , settings{settings_}
-        , slider{new Slider(Qt::Horizontal, self)}
+        , slider{new TrackSlider(self)}
         , elapsed{new ClickableLabel(self)}
         , total{new ClickableLabel(self)}
     {
@@ -69,6 +258,7 @@ struct SeekBar::Private
         elapsed->setText(QStringLiteral("00:00"));
         total->setText(elapsedTotal ? QStringLiteral("-00:00") : QStringLiteral("00:00"));
         slider->setValue(0);
+        slider->updateMaximum(0);
         max = 0;
     }
 
@@ -78,7 +268,7 @@ struct SeekBar::Private
 
         if(track.isValid()) {
             max = track.duration();
-            slider->setMaximum(static_cast<int>(max));
+            slider->updateMaximum(max);
             const QString totalText = elapsedTotal ? QStringLiteral("-") : QStringLiteral("") + Utils::msToString(max);
             total->setText(totalText);
         }
@@ -86,10 +276,8 @@ struct SeekBar::Private
 
     void setCurrentPosition(uint64_t pos) const
     {
-        if(!slider->isSliderDown()) {
-            slider->setValue(static_cast<int>(pos));
-            updateLabels(pos);
-        }
+        slider->updateCurrentValue(pos);
+        updateLabels(pos);
     }
 
     void updateLabels(uint64_t time) const
@@ -139,18 +327,14 @@ struct SeekBar::Private
             total->setText(Utils::msToString(max));
         }
     }
-
-    void sliderDropped() const
-    {
-        const auto pos = static_cast<uint64_t>(slider->value());
-        playerController->changePosition(pos);
-    }
 };
 
 SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, playerController, settings)}
 {
+    setMouseTracking(true);
+
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(10, 0, 10, 0);
 
@@ -162,7 +346,7 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
 
     QObject::connect(p->total, &ClickableLabel::clicked, this,
                      [this]() { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(!p->elapsedTotal); });
-    QObject::connect(p->slider, &Slider::sliderReleased, this, [this]() { p->sliderDropped(); });
+    QObject::connect(p->slider, &TrackSlider::sliderDropped, playerController, &PlayerController::changePosition);
 
     QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
@@ -185,6 +369,10 @@ QString SeekBar::name() const
 
 void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 {
+    if(p->slider->isSeeking()) {
+        p->slider->stopSeeking();
+    }
+
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -207,3 +395,4 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 } // namespace Fooyin
 
 #include "moc_seekbar.cpp"
+#include "seekbar.moc"
