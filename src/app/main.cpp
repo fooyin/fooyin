@@ -35,6 +35,7 @@ int main(int argc, char** argv)
 
     QCoreApplication::setApplicationName(QStringLiteral("fooyin"));
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
+    QGuiApplication::setDesktopFileName(QStringLiteral("org.fooyin.fooyin"));
 
     CommandLine commandLine{argc, argv};
 
