@@ -39,8 +39,10 @@ Only Linux is supported at present, though other platforms will be added at a la
 * [x] Gapless playback
 * [x] Filter library on any field(s)
 * [x] Create and manage playlists
-* [x] Extendable through plugins
-* [x] Tag editing
+* [x] Extend through plugins
+* [x] Tag editor
+* [x] Directory browser
+* [x] Waveform seekbar
 
 ### Roadmap
 
