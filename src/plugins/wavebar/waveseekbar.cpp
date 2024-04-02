@@ -174,10 +174,14 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     }
 
     const int channels = m_data.channels;
-    const QRect& rect  = event->rect();
-    const auto first   = static_cast<int>(static_cast<double>(rect.left() / m_scale) / m_sampleWidth);
-    const auto last    = static_cast<int>(static_cast<double>(rect.right() + 1 / m_scale));
-    const double posX  = positionFromValue(m_position) / m_scale;
+    QRect rect         = event->rect();
+    // Always repaint full height
+    // Prevents clipping with seek tooltip and from other widgets
+    rect.setHeight(contentsRect().height());
+
+    const auto first  = static_cast<int>(static_cast<double>(rect.left() / m_scale) / m_sampleWidth);
+    const auto last   = static_cast<int>(static_cast<double>(rect.right() + 1 / m_scale));
+    const double posX = positionFromValue(m_position) / m_scale;
 
     painter.fillRect(rect, m_colours.bgUnplayed);
     painter.fillRect(QRect{first, 0, static_cast<int>(posX) - first, height()}, m_colours.bgPlayed);
@@ -388,7 +392,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 void WaveSeekBar::drawSeekTip()
 {
     if(!m_seekTip) {
-        m_seekTip = new ToolTip(this);
+        m_seekTip = new ToolTip(window());
         m_seekTip->show();
     }
 
@@ -407,11 +411,7 @@ void WaveSeekBar::drawSeekTip()
     }
 
     seekTipPos.setY(std::clamp(seekTipPos.y(), m_seekTip->height(), height()));
-    m_seekTip->setPosition(seekTipPos);
-
-    // Update to avoid artifacts
-    const QRect updateRect(m_seekTip->x(), 0, (m_seekTip->width()), height());
-    update(updateRect);
+    m_seekTip->setPosition(mapTo(window(), seekTipPos));
 }
 } // namespace Fooyin::WaveBar
 
