@@ -76,8 +76,7 @@ void WaveBarWidget::resizeEvent(QResizeEvent* event)
 {
     FyWidget::resizeEvent(event);
 
-    // TODO: Group resize calls to avoid rescaling waveform too frequently
-    m_builder.rescale(width());
+    m_builder.rescale(m_seekbar->contentsRect().width());
 }
 
 void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
