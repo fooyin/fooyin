@@ -47,7 +47,7 @@ std::vector<int> updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::Tra
 
     for(auto trackIt{tracks.begin()}; trackIt != tracks.end(); ++trackIt) {
         auto updatedIt = std::ranges::find_if(updatedTracks, [&trackIt](const Fooyin::Track& updatedTrack) {
-            return trackIt->id() == updatedTrack.id();
+            return updatedTrack.isInDatabase() && trackIt->id() == updatedTrack.id();
         });
         if(updatedIt != updatedTracks.end()) {
             indexes.push_back(static_cast<int>(std::distance(tracks.begin(), trackIt)));

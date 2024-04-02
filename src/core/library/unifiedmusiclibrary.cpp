@@ -288,6 +288,10 @@ void UnifiedMusicLibrary::updateTrackStats(const Track& track)
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 {
+    if(!track.isInDatabase()) {
+        return;
+    }
+
     Track updatedTrack{track};
 
     const auto dt = QDateTime::currentMSecsSinceEpoch();
