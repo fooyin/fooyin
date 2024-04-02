@@ -24,25 +24,30 @@
 #include <utils/id.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QApplication>
 #include <QIODevice>
+#include <QMainWindow>
 
 namespace Fooyin {
 struct SettingsDialogController::Private
 {
     SettingsManager* settings;
+    QMainWindow* mainWindow;
 
     QSize size;
     PageList pages;
     Id lastOpenPage;
+    bool isOpen{false};
 
-    explicit Private(SettingsManager* settings_)
+    explicit Private(SettingsManager* settings_, QMainWindow* mainWindow_)
         : settings{settings_}
+        , mainWindow{mainWindow_}
     { }
 };
 
-SettingsDialogController::SettingsDialogController(SettingsManager* settings)
+SettingsDialogController::SettingsDialogController(SettingsManager* settings, QMainWindow* mainWindow)
     : QObject{settings}
-    , p{std::make_unique<Private>(settings)}
+    , p{std::make_unique<Private>(settings, mainWindow)}
 { }
 
 SettingsDialogController::~SettingsDialogController() = default;
@@ -54,10 +59,16 @@ void SettingsDialogController::open()
 
 void SettingsDialogController::openAtPage(const Id& page)
 {
-    auto* settingsDialog = new SettingsDialog{p->pages};
+    if(p->isOpen) {
+        return;
+    }
+
+    auto* settingsDialog = new SettingsDialog{p->pages, p->mainWindow};
+
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
         p->size         = settingsDialog->size();
         p->lastOpenPage = settingsDialog->currentPage();
+        p->isOpen       = false;
         settingsDialog->deleteLater();
     });
     QObject::connect(settingsDialog, &SettingsDialog::resettingAll, this,
@@ -70,6 +81,7 @@ void SettingsDialogController::openAtPage(const Id& page)
         settingsDialog->resize({800, 500});
     }
 
+    p->isOpen = true;
     settingsDialog->openSettings();
 
     if(page.isValid()) {

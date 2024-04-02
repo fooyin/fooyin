@@ -43,6 +43,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
+    m_settings->createSettingsDialog(this);
 
     setWindowTitle(QStringLiteral("fooyin"));
 

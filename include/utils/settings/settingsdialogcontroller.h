@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+class QMainWindow;
+
 namespace Fooyin {
 class SettingsManager;
 class SettingsPage;
@@ -33,7 +35,7 @@ class FYUTILS_EXPORT SettingsDialogController : public QObject
     Q_OBJECT
 
 public:
-    explicit SettingsDialogController(SettingsManager* settings);
+    SettingsDialogController(SettingsManager* settings, QMainWindow* mainWindow);
     ~SettingsDialogController() override;
 
     void open();

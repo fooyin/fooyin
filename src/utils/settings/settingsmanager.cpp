@@ -29,8 +29,12 @@ namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
     , m_settingsFile{new QSettings(settingsPath, QSettings::IniFormat, this)}
-    , m_settingsDialog{new SettingsDialogController(this)}
+    , m_settingsDialog{nullptr}
+{ }
+
+void SettingsManager::createSettingsDialog(QMainWindow* mainWindow)
 {
+    m_settingsDialog = new SettingsDialogController(this, mainWindow);
     m_settingsDialog->restoreState();
 }
 
@@ -218,7 +222,9 @@ void SettingsManager::saveSettings(bool onlyChanged)
         }
     }
 
-    m_settingsDialog->saveState();
+    if(m_settingsDialog) {
+        m_settingsDialog->saveState();
+    }
 
     m_settingsFile->sync();
 }

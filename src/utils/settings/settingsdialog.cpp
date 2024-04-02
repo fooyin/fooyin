@@ -206,6 +206,7 @@ SettingsDialog::SettingsDialog(const PageList& pages, QWidget* parent)
     , p{std::make_unique<Private>(this, pages)}
 {
     setWindowTitle(tr("Settings"));
+    setModal(true);
 
     QObject::connect(p->categoryTree->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
                      [this](const QModelIndex& index) { p->currentChanged(index); });

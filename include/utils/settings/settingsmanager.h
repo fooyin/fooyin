@@ -28,6 +28,7 @@
 #include <mutex>
 #include <shared_mutex>
 
+class QMainWindow;
 class QSettings;
 
 namespace Fooyin {
@@ -97,6 +98,13 @@ class FYUTILS_EXPORT SettingsManager : public QObject
 public:
     explicit SettingsManager(const QString& settingsPath, QObject* parent = nullptr);
 
+    void createSettingsDialog(QMainWindow* mainWindow);
+
+    /*!
+     * Returns the settings dialog controller which can be used to open a specific settings page.
+     * @note this will return a nullptr before the GuiApplication is initialised, so plugins should
+     * only call this in the GuiPlugin @fn initialise method at the earliest.
+     */
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
     // Writes only changed settings to file, overwriting any existing values.
