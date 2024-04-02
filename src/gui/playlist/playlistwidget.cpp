@@ -646,9 +646,16 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
 {
     saveState(playlistController->currentPlaylist());
 
-    auto restoreSelection = [this](const std::vector<int>& selectedIndexes) {
+    auto restoreSelection = [this](const int currentIndex, const std::vector<int>& selectedIndexes) {
         restoreState(playlistController->currentPlaylist());
         restoreSelectedPlaylistIndexes(selectedIndexes);
+
+        if(currentIndex >= 0) {
+            const QModelIndex index = model->indexAtPlaylistIndex(currentIndex);
+            if(index.isValid()) {
+                playlistView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
+            }
+        }
     };
 
     const auto changedTrackCount = static_cast<int>(indexes.size());
@@ -662,17 +669,23 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
 
             QObject::connect(
                 model, &PlaylistModel::playlistTracksChanged, this,
-                [restoreSelection, selectedIndexes]() { restoreSelection(selectedIndexes); }, Qt::SingleShotConnection);
+                [restoreSelection, selectedIndexes]() { restoreSelection(-1, selectedIndexes); },
+                Qt::SingleShotConnection);
         }
 
         resetModel();
     }
     else {
+        int currentIndex{-1};
+        if(playlistView->currentIndex().isValid()) {
+            currentIndex = playlistView->currentIndex().data(PlaylistItem::Index).toInt();
+        }
         const std::vector<int> selectedIndexes = selectedPlaylistIndexes();
 
         QObject::connect(
             model, &PlaylistModel::playlistTracksChanged, this,
-            [restoreSelection, selectedIndexes]() { restoreSelection(selectedIndexes); }, Qt::SingleShotConnection);
+            [restoreSelection, currentIndex, selectedIndexes]() { restoreSelection(currentIndex, selectedIndexes); },
+            Qt::SingleShotConnection);
 
         model->updateTracks(indexes);
     }
