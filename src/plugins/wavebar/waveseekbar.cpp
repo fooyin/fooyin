@@ -321,20 +321,26 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const auto total          = static_cast<int>(max.size());
-    const auto sampleDuration = static_cast<uint64_t>(m_data.duration / total);
+    const auto total = static_cast<int>(max.size());
+    // const auto sampleDuration  = static_cast<uint64_t>(m_data.duration / total);
+    const auto currentPosition = positionFromValue(m_position);
 
     for(int i{first}; i <= last && i < total; ++i) {
         const auto x        = static_cast<double>(i * m_sampleWidth);
         const auto barWidth = static_cast<double>(m_barWidth);
+        const auto sampleX  = static_cast<int>(((i + 1) * m_sampleWidth) * m_scale);
 
-        const auto sampleX        = static_cast<double>((i + 1) * m_sampleWidth) * m_scale;
-        const auto samplePosition = valueFromPosition(static_cast<int>(sampleX));
-        const auto timeLeft       = std::max(samplePosition, m_position) - std::min(samplePosition, m_position);
-        const auto progress = static_cast<double>(sampleDuration - timeLeft) / static_cast<double>(sampleDuration);
-        const bool isPlayed = samplePosition < m_position;
-        const bool isInProgress
-            = !isPlayed && samplePosition > m_position && samplePosition <= m_position + sampleDuration;
+        double progress{0.0};
+        if(sampleX <= currentPosition) {
+            progress = 1.0;
+        }
+        else if(currentPosition < sampleX && currentPosition > (sampleX - m_sampleWidth)) {
+            progress = static_cast<double>(m_sampleWidth - std::abs(currentPosition - sampleX))
+                     / static_cast<double>(m_sampleWidth);
+        }
+
+        const bool isPlayed     = progress >= 1.0;
+        const bool isInProgress = !isPlayed && progress > 0.0;
 
         if(m_mode & WaveMode::MinMax) {
             double waveCentre{centre};
