@@ -31,15 +31,14 @@
 #include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+#include <utils/widgets/elidedlabel.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QTimer>
+#include <QStatusBar>
 
 constexpr int IconSize = 50;
-
-using namespace std::chrono_literals;
 
 namespace Fooyin {
 struct StatusWidget::Private
@@ -48,53 +47,65 @@ struct StatusWidget::Private
 
     PlayerController* playerController;
     TrackSelectionController* selectionController;
+
+    QStatusBar* statusBar;
     SettingsManager* settings;
 
     ScriptRegistry scriptRegistry;
     ScriptParser scriptParser;
 
     ClickableLabel* iconLabel;
-    QPixmap icon;
-    ClickableLabel* statusText;
+    ElidedLabel* statusText;
     ClickableLabel* selectionText;
 
     QString playingScript;
     QString selectionScript;
-
-    QTimer clearTimer;
 
     Private(StatusWidget* self_, PlayerController* playerController_, TrackSelectionController* selectionController_,
             SettingsManager* settings_)
         : self{self_}
         , playerController{playerController_}
         , selectionController{selectionController_}
+        , statusBar{new QStatusBar(self)}
         , settings{settings_}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
-        , icon{Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)}
-        , statusText{new ClickableLabel(self)}
+        , statusText{new ElidedLabel(self)}
         , selectionText{new ClickableLabel(self)}
     {
-        clearTimer.setInterval(2s);
-        clearTimer.setSingleShot(true);
-        QObject::connect(&clearTimer, &QTimer::timeout, statusText, &QLabel::clear);
+        auto* layout = new QHBoxLayout(self);
+        layout->setContentsMargins(5, 0, 5, 0);
+
+        iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+        iconLabel->setScaledContents(true);
+
+        iconLabel->setMaximumHeight(22);
+        iconLabel->setMaximumWidth(22);
+
+        layout->addWidget(iconLabel);
+        layout->addWidget(statusBar, 1);
+
+        statusBar->addWidget(statusText);
+        statusBar->addPermanentWidget(selectionText);
+
+        iconLabel->setHidden(!settings->value<Settings::Gui::Internal::StatusShowIcon>());
+        selectionText->setHidden(!settings->value<Settings::Gui::Internal::StatusShowSelection>());
 
         updateScripts();
         updatePlayingText();
+
+        QObject::connect(playerController, &PlayerController::playStateChanged, self,
+                         [this](PlayState state) { stateChanged(state); });
+        QObject::connect(playerController, &PlayerController::positionChanged, self,
+                         [this](uint64_t /*pos*/) { updatePlayingText(); });
+        QObject::connect(selectionController, &TrackSelectionController::selectionChanged, self,
+                         [this]() { updateSelectionText(); });
     }
 
     void updateScripts()
     {
         playingScript   = settings->value<Settings::Gui::Internal::StatusPlayingScript>();
         selectionScript = settings->value<Settings::Gui::Internal::StatusSelectionScript>();
-    }
-
-    void labelClicked() const
-    {
-        const PlayState ps = playerController->playState();
-        if(ps == PlayState::Playing || ps == PlayState::Paused) {
-            QMetaObject::invokeMethod(self, &StatusWidget::clicked);
-        }
     }
 
     void updatePlayingText()
@@ -105,19 +116,10 @@ struct StatusWidget::Private
         }
     }
 
-    void updateScanText(int progress)
+    void updateScanText(int progress) const
     {
-        QString scanText   = QStringLiteral("Scanning library: ") + QString::number(progress) + QStringLiteral("%");
-        const PlayState ps = playerController->playState();
-        if(ps == PlayState::Stopped) {
-            statusText->setText(scanText);
-            if(progress == 100) {
-                clearTimer.start();
-            }
-            else {
-                clearTimer.stop();
-            }
-        }
+        const auto scanText = QStringLiteral("Scanning library: %1%").arg(progress);
+        statusBar->showMessage(scanText, 2000);
     }
 
     void updateSelectionText()
@@ -129,7 +131,7 @@ struct StatusWidget::Private
     {
         switch(state) {
             case(PlayState::Stopped):
-                statusText->setText(QStringLiteral(""));
+                statusBar->clearMessage();
                 break;
             case(PlayState::Playing): {
                 updatePlayingText();
@@ -148,24 +150,6 @@ StatusWidget::StatusWidget(PlayerController* playerController, TrackSelectionCon
 {
     setObjectName(StatusWidget::name());
 
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(5, 0, 5, 0);
-
-    p->iconLabel->setPixmap(p->icon);
-    p->iconLabel->setScaledContents(true);
-
-    p->iconLabel->setMaximumHeight(22);
-    p->iconLabel->setMaximumWidth(22);
-
-    layout->addWidget(p->iconLabel);
-    layout->addWidget(p->statusText);
-    layout->addStretch();
-    layout->addWidget(p->selectionText);
-
-    p->iconLabel->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowIcon>());
-    p->selectionText->setHidden(!p->settings->value<Settings::Gui::Internal::StatusShowSelection>());
-
-    QObject::connect(p->statusText, &ClickableLabel::clicked, this, [this]() { p->labelClicked(); });
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
     QObject::connect(playerController, &PlayerController::positionChanged, this,
@@ -173,10 +157,8 @@ StatusWidget::StatusWidget(PlayerController* playerController, TrackSelectionCon
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->updateSelectionText(); });
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        p->icon = Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize);
-        p->iconLabel->setPixmap(p->icon);
-    });
+    settings->subscribe<Settings::Gui::IconTheme>(
+        this, [this]() { p->iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)); });
 
     settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(this,
                                                                  [this](bool show) { p->iconLabel->setHidden(!show); });

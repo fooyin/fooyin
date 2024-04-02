@@ -43,6 +43,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/colourbutton.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabbar.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/elidedlabel.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/fontbutton.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
@@ -91,6 +92,7 @@ set(SOURCES
     widgets/colourbutton.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
+    widgets/elidedlabel.cpp
     widgets/fontbutton.cpp
     widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp

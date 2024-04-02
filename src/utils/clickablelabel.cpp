@@ -23,10 +23,6 @@
 #include <QMouseEvent>
 
 namespace Fooyin {
-ClickableLabel::ClickableLabel(QWidget* parent)
-    : QLabel{parent}
-{ }
-
 void ClickableLabel::mousePressEvent(QMouseEvent* event)
 {
     QLabel::mousePressEvent(event);

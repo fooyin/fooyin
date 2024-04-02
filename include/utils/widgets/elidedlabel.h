@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,26 @@
 #include <QLabel>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ClickableLabel : public QLabel
+class FYUTILS_EXPORT ElidedLabel : public QLabel
 {
     Q_OBJECT
 
 public:
-    using QLabel::QLabel;
+    explicit ElidedLabel(QWidget* parent = nullptr);
+    explicit ElidedLabel(Qt::TextElideMode elideMode, QWidget* parent = nullptr);
+    ElidedLabel(QString text, Qt::TextElideMode elideMode, QWidget* parent = nullptr);
 
-signals:
-    void clicked();
-    void mouseEntered();
-    void mouseLeft();
+    [[nodiscard]] Qt::TextElideMode elideMode() const;
+    void setElideMode(Qt::TextElideMode elideMode);
+
+    [[nodiscard]] QString text() const;
+    void setText(const QString& text);
 
 protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void enterEvent(QEnterEvent* event) override;
-    void leaveEvent(QEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+
+private:
+    Qt::TextElideMode m_elideMode;
+    QString m_text;
 };
 } // namespace Fooyin
