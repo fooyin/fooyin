@@ -25,6 +25,6 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 ## Widgets
 
 * ~~Directory browser~~
-* Waveform seekbar
+* ~~Waveform seekbar~~
 * Musical spectrum
 * VU meter
