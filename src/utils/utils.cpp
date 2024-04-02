@@ -73,10 +73,7 @@ QString msToString(uint64_t ms)
 
 QString secsToString(uint64_t secs)
 {
-    const int seconds = static_cast<int>(secs);
-    const QTime t(0, 0, 0);
-    auto time = t.addSecs(seconds);
-    return time.toString(time.hour() == 0 ? QStringLiteral("mm:ss") : QStringLiteral("hh:mm:ss"));
+    return msToString(secs * 1000);
 }
 
 uint64_t currentDateToInt()
