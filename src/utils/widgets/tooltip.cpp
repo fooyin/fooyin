@@ -49,8 +49,6 @@ void ToolTip::setSubtext(const QString& text)
 void ToolTip::setPosition(const QPoint& pos)
 {
     m_pos = pos;
-
-    move(m_pos.x() + (m_pixmap.width() / 2), m_pos.y() - m_pixmap.height());
 }
 
 void ToolTip::paintEvent(QPaintEvent* /*event*/)
