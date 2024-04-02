@@ -421,6 +421,7 @@ struct GuiApplication::Private
                 return statusWidget;
             },
             QStringLiteral("Status Bar"));
+        widgetProvider.setLimit(QStringLiteral("StatusBar"), 1);
 
         widgetProvider.registerWidget(
             QStringLiteral("SearchBar"),
