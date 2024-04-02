@@ -124,6 +124,9 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     if(m_data.complete) {
         const int waveformWidth = m_data.sampleCount() * m_sampleWidth;
         m_scale                 = static_cast<double>(width()) / static_cast<double>(waveformWidth);
+
+        const double multiplier = 100.0;
+        m_scale                 = std::round(m_scale * multiplier) / multiplier;
     }
 
     update();
@@ -161,6 +164,7 @@ void WaveSeekBar::stopSeeking()
 void WaveSeekBar::paintEvent(QPaintEvent* event)
 {
     QPainter painter{this};
+    painter.scale(m_scale, 1.0);
 
     if(m_data.empty()) {
         painter.setPen({m_colours.maxUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
@@ -168,10 +172,6 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         painter.drawLine(0, centreY, rect().right(), centreY);
         return;
     }
-
-    painter.save();
-
-    painter.scale(m_scale, 1.0);
 
     const int channels = m_data.channels;
     const QRect& rect  = event->rect();
@@ -204,8 +204,6 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         const int seekX = static_cast<int>(m_seekPos.x() / m_scale);
         painter.drawLine(seekX, 0, seekX, height());
     }
-
-    painter.restore();
 }
 
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
