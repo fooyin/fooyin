@@ -20,7 +20,7 @@
 #include <utils/multilinedelegate.h>
 
 #include <QPainter>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 
 namespace Fooyin {
 MultiLineEditDelegate::MultiLineEditDelegate(QWidget* parent)
@@ -40,8 +40,7 @@ void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* mo
 QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                                              const QModelIndex& /*index*/) const
 {
-    auto* editor = new QTextEdit(parent);
-    editor->setAcceptRichText(false);
+    auto* editor = new QPlainTextEdit(parent);
     editor->setTabChangesFocus(true);
     editor->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     editor->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -52,8 +51,8 @@ QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOption
 
 void MultiLineEditDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-    if(auto* textEdit = qobject_cast<QTextEdit*>(editor)) {
-        textEdit->setText(index.data().toString());
+    if(auto* textEdit = qobject_cast<QPlainTextEdit*>(editor)) {
+        textEdit->setPlainText(index.data(Qt::EditRole).toString());
         textEdit->selectAll();
     }
     else {
