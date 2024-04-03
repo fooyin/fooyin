@@ -74,8 +74,8 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":title"), track.title()},
             {QStringLiteral(":trackNumber"), track.trackNumber()},
             {QStringLiteral(":trackTotal"), track.trackTotal()},
-            {QStringLiteral(":artists"), track.artists().join(u"\037")},
-            {QStringLiteral(":albumArtist"), track.albumArtist()},
+            {QStringLiteral(":artists"), track.artists()},
+            {QStringLiteral(":albumArtist"), track.albumArtists()},
             {QStringLiteral(":album"), track.album()},
             {QStringLiteral(":coverPath"), track.coverPath()},
             {QStringLiteral(":discNumber"), track.discNumber()},
@@ -83,7 +83,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":date"), track.date()},
             {QStringLiteral(":composer"), track.composer()},
             {QStringLiteral(":performer"), track.performer()},
-            {QStringLiteral(":genres"), track.genres().join(u"\037")},
+            {QStringLiteral(":genres"), track.genres()},
             {QStringLiteral(":comment"), track.comment()},
             {QStringLiteral(":duration"), QVariant::fromValue(track.duration())},
             {QStringLiteral(":fileSize"), QVariant::fromValue(track.fileSize())},
@@ -106,15 +106,15 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setTitle(q.value(3).toString());
     track.setTrackNumber(q.value(4).toInt());
     track.setTrackTotal(q.value(5).toInt());
-    track.setArtists(q.value(6).toString().split(QStringLiteral("\037"), Qt::SkipEmptyParts));
-    track.setAlbumArtist(q.value(7).toString());
+    track.setArtists(q.value(6).toStringList());
+    track.setAlbumArtists(q.value(7).toStringList());
     track.setAlbum(q.value(8).toString());
     track.setDiscNumber(q.value(9).toInt());
     track.setDiscTotal(q.value(10).toInt());
     track.setDate(q.value(11).toString());
     track.setComposer(q.value(12).toString());
     track.setPerformer(q.value(13).toString());
-    track.setGenres(q.value(14).toString().split(QStringLiteral("\037"), Qt::SkipEmptyParts));
+    track.setGenres(q.value(14).toStringList());
     track.setComment(q.value(15).toString());
     track.setDuration(q.value(16).toULongLong());
     track.setFileSize(q.value(17).toInt());

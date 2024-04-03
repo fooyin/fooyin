@@ -39,7 +39,7 @@ struct Track::Private : public QSharedData
     QString title;
     QStringList artists;
     QString album;
-    QString albumArtist;
+    QStringList albumArtists;
     int trackNumber{-1};
     int trackTotal{-1};
     int discNumber{-1};
@@ -147,8 +147,23 @@ QString Track::hash() const
 
 QString Track::albumHash() const
 {
-    return QStringLiteral("%1|%2|%3")
-        .arg(p->date, !p->albumArtist.isEmpty() ? p->albumArtist : p->artists.join(QStringLiteral("")), p->album);
+    QStringList hash;
+
+    if(p->albumArtists.size() > 1) {
+        return {};
+    }
+
+    if(!p->date.isEmpty()) {
+        hash.append(p->date);
+    }
+    if(!p->albumArtists.isEmpty()) {
+        hash.append(p->albumArtists.join(QStringLiteral(",")));
+    }
+    if(!p->artists.isEmpty()) {
+        hash.append(p->artists.join(QStringLiteral(",")));
+    }
+
+    return hash.join(QStringLiteral("|"));
 }
 
 Track::Type Track::type() const
@@ -212,9 +227,25 @@ QStringList Track::artists() const
     return p->artists;
 }
 
+QStringList Track::uniqueArtists() const
+{
+    QStringList artists;
+    for(const QString& artist : p->artists) {
+        if(!p->albumArtists.contains(artist)) {
+            artists.emplace_back(artist);
+        }
+    }
+    return artists;
+}
+
 QString Track::artist() const
 {
     return p->artists.join(u"\037");
+}
+
+QString Track::uniqueArtist() const
+{
+    return uniqueArtists().join(u"\037");
 }
 
 QString Track::album() const
@@ -222,9 +253,14 @@ QString Track::album() const
     return p->album;
 }
 
+QStringList Track::albumArtists() const
+{
+    return p->albumArtists;
+}
+
 QString Track::albumArtist() const
 {
-    return p->albumArtist;
+    return p->albumArtists.join(u"\037");
 }
 
 int Track::trackNumber() const
@@ -448,9 +484,9 @@ void Track::setAlbum(const QString& title)
     }
 }
 
-void Track::setAlbumArtist(const QString& artist)
+void Track::setAlbumArtists(const QStringList& artists)
 {
-    p->albumArtist = artist;
+    p->albumArtists = artists;
 }
 
 void Track::setTrackNumber(int number)

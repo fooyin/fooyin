@@ -125,8 +125,9 @@ struct ScriptRegistry::Private
 
         metadata[QString::fromLatin1(MetaData::Title)]        = &Track::title;
         metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::artists;
+        metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
         metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
-        metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::albumArtist;
+        metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::albumArtists;
         metadata[QString::fromLatin1(MetaData::Track)]        = &Track::trackNumber;
         metadata[QString::fromLatin1(MetaData::TrackTotal)]   = &Track::trackTotal;
         metadata[QString::fromLatin1(MetaData::Disc)]         = &Track::discNumber;
@@ -153,7 +154,7 @@ struct ScriptRegistry::Private
         setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
         setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);
         setMetadata[QString::fromLatin1(MetaData::Album)]        = generateSetFunc(&Track::setAlbum);
-        setMetadata[QString::fromLatin1(MetaData::AlbumArtist)]  = generateSetFunc(&Track::setAlbumArtist);
+        setMetadata[QString::fromLatin1(MetaData::AlbumArtist)]  = generateSetFunc(&Track::setAlbumArtists);
         setMetadata[QString::fromLatin1(MetaData::Track)]        = generateSetFunc(&Track::setTrackNumber);
         setMetadata[QString::fromLatin1(MetaData::TrackTotal)]   = generateSetFunc(&Track::setTrackTotal);
         setMetadata[QString::fromLatin1(MetaData::Disc)]         = generateSetFunc(&Track::setDiscNumber);

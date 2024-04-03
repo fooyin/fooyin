@@ -77,7 +77,7 @@ TEST_F(TagWriterTest, AiffWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -133,7 +133,7 @@ TEST_F(TagWriterTest, FlacWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -189,7 +189,7 @@ TEST_F(TagWriterTest, M4aWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -245,7 +245,7 @@ TEST_F(TagWriterTest, Mp3Write)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -301,7 +301,7 @@ TEST_F(TagWriterTest, OggWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -357,7 +357,7 @@ TEST_F(TagWriterTest, OpusWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);
@@ -413,7 +413,7 @@ TEST_F(TagWriterTest, WavWrite)
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
         track.setAlbum({QStringLiteral("TestAlbum")});
-        track.setAlbumArtist(QStringLiteral("TestAArtist"));
+        track.setAlbumArtists({QStringLiteral("TestAArtist")});
         track.setArtists({QStringLiteral("TestArtist")});
         track.setDate(QStringLiteral("2023-12-12"));
         track.setTrackNumber(9);

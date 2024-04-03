@@ -246,8 +246,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         track.setAlbum(convertString(props[Fooyin::Tag::Album].toString()));
     }
     if(props.contains(Fooyin::Tag::AlbumArtist)) {
-        // TODO: Support multiple album artists
-        track.setAlbumArtist(convertString(props[Fooyin::Tag::AlbumArtist].toString()));
+        track.setAlbumArtists(convertStringList(props[Fooyin::Tag::AlbumArtist]));
     }
     if(props.contains(Fooyin::Tag::Genre)) {
         track.setGenres(convertStringList(props[Fooyin::Tag::Genre]));

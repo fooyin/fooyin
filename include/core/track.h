@@ -87,8 +87,11 @@ public:
     [[nodiscard]] QString filename() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
+    [[nodiscard]] QStringList uniqueArtists() const;
     [[nodiscard]] QString artist() const;
+    [[nodiscard]] QString uniqueArtist() const;
     [[nodiscard]] QString album() const;
+    [[nodiscard]] QStringList albumArtists() const;
     [[nodiscard]] QString albumArtist() const;
     [[nodiscard]] int trackNumber() const;
     [[nodiscard]] int trackTotal() const;
@@ -135,7 +138,7 @@ public:
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);
-    void setAlbumArtist(const QString& artist);
+    void setAlbumArtists(const QStringList& artists);
     void setTrackNumber(int num);
     void setTrackTotal(int num);
     void setDiscNumber(int num);

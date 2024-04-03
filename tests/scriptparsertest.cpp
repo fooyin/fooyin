@@ -26,8 +26,7 @@ namespace Fooyin::Testing {
 class ScriptParserTest : public ::testing::Test
 {
 protected:
-    ScriptRegistry m_registry;
-    ScriptParser m_parser{&m_registry};
+    ScriptParser m_parser;
 };
 
 TEST_F(ScriptParserTest, BasicLiteral)

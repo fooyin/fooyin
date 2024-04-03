@@ -23,6 +23,7 @@ namespace Fooyin::Constants {
 namespace MetaData {
 constexpr auto Title        = "title";
 constexpr auto Artist       = "artist";
+constexpr auto UniqueArtist = "uniqueartist";
 constexpr auto Album        = "album";
 constexpr auto AlbumArtist  = "albumartist";
 constexpr auto Track        = "track";
