@@ -90,14 +90,6 @@ struct ActionManager::Private
         }
     }
 
-    void containerDestroyed(QObject* sender)
-    {
-        if(auto* container = qobject_cast<MenuContainer*>(sender)) {
-            idContainerMap.erase(container->id());
-            scheduledContainerUpdates.erase(container);
-        }
-    }
-
     void updateContainer()
     {
         for(MenuContainer* container : scheduledContainerUpdates) {
@@ -277,7 +269,6 @@ ActionContainer* ActionManager::createMenu(const Id& id)
 
     auto* menu = p->idContainerMap.emplace(id, std::make_unique<MenuActionContainer>(id, this)).first->second.get();
 
-    QObject::connect(menu, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
     QObject::connect(menu, &MenuContainer::requestUpdate, this,
                      [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
 
@@ -305,7 +296,6 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
 
     auto* menuBar = p->idContainerMap.at(id).get();
 
-    QObject::connect(menuBar, &QObject::destroyed, this, [this](QObject* sender) { p->containerDestroyed(sender); });
     QObject::connect(menuBar, &MenuContainer::requestUpdate, this,
                      [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
 
