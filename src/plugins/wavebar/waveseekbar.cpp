@@ -189,7 +189,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
     const int channelHeight     = rect.height() / channels;
     const double waveformHeight = (channelHeight - m_centreGap) * m_channelScale;
 
-    double y = (channelHeight - waveformHeight) / 2;
+    int y = static_cast<int>((channelHeight - waveformHeight) / 2);
 
     for(int ch{0}; ch < channels; ++ch) {
         drawChannel(painter, ch, waveformHeight, first, last, y);
@@ -308,21 +308,20 @@ void WaveSeekBar::updateRange(int first, int last)
     }
 }
 
-void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, double y)
+void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int first, int last, int y)
 {
     const auto& [max, min, rms] = m_data.channelData.at(channel);
 
     const double maxScale = (height / 2) * m_maxScale;
     const double minScale = height - maxScale;
-    const double centre   = maxScale + y;
+    const auto centre     = static_cast<int>(maxScale + y);
 
     double rmsScale{1.0};
     if(m_mode & WaveMode::Rms && !(m_mode & WaveMode::MinMax)) {
         rmsScale = *std::ranges::max_element(rms);
     }
 
-    const auto total = static_cast<int>(max.size());
-    // const auto sampleDuration  = static_cast<uint64_t>(m_data.duration / total);
+    const auto total           = static_cast<int>(max.size());
     const auto currentPosition = positionFromValue(m_position);
 
     for(int i{first}; i <= last && i < total; ++i) {
@@ -343,7 +342,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         const bool isInProgress = !isPlayed && progress > 0.0;
 
         if(m_mode & WaveMode::MinMax) {
-            double waveCentre{centre};
+            auto waveCentre = static_cast<double>(centre);
 
             const QPointF pt1{x, waveCentre - (max.at(i) * maxScale)};
             const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
@@ -365,7 +364,7 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         }
 
         if(m_mode & WaveMode::Rms) {
-            double waveCentre{centre};
+            auto waveCentre = static_cast<double>(centre);
 
             const QPointF pt1{x, waveCentre - (rms.at(i) / rmsScale * maxScale)};
             const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
@@ -390,7 +389,8 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     if(!m_data.complete) {
         painter.setPen({m_colours.maxUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
         const auto finalX = static_cast<double>(total * m_sampleWidth);
-        const QLineF centreLine{finalX, centre, static_cast<double>(rect().right()), centre};
+        auto waveCentre   = static_cast<double>(centre);
+        const QLineF centreLine{finalX, waveCentre, static_cast<double>(rect().right()), waveCentre};
         painter.drawLine(centreLine);
     }
 }

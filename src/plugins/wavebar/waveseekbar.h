@@ -60,7 +60,7 @@ private:
     void updateMousePosition(const QPoint& pos);
     void updateRange(int first, int last);
 
-    void drawChannel(QPainter& painter, int channel, double height, int first, int last, double y);
+    void drawChannel(QPainter& painter, int channel, double height, int first, int last, int y);
     void drawSeekTip();
 
     SettingsManager* m_settings;
