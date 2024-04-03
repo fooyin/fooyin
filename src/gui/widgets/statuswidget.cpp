@@ -119,7 +119,7 @@ struct StatusWidget::Private
     void updateScanText(int progress) const
     {
         const auto scanText = QStringLiteral("Scanning library: %1%").arg(progress);
-        statusBar->showMessage(scanText, 2000);
+        statusBar->showMessage(scanText, 5000);
     }
 
     void updateSelectionText()
