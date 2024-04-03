@@ -55,6 +55,7 @@ struct StatusWidget::Private
 
     ClickableLabel* iconLabel;
     ElidedLabel* statusText;
+    ElidedLabel* messageText;
     ClickableLabel* selectionText;
 
     QString playingScript;
@@ -72,6 +73,7 @@ struct StatusWidget::Private
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , statusText{new ElidedLabel(self)}
+        , messageText{new ElidedLabel(self)}
         , selectionText{new ClickableLabel(self)}
     {
         auto* layout = new QHBoxLayout(self);
@@ -84,8 +86,11 @@ struct StatusWidget::Private
         iconLabel->setMaximumWidth(22);
 
         layout->addWidget(iconLabel);
+        layout->addWidget(messageText, 1);
         layout->addWidget(statusText, 1);
         layout->addWidget(selectionText);
+
+        messageText->hide();
 
         iconLabel->setHidden(!settings->value<Settings::Gui::Internal::StatusShowIcon>());
         selectionText->setHidden(!settings->value<Settings::Gui::Internal::StatusShowSelection>());
@@ -108,16 +113,16 @@ struct StatusWidget::Private
     {
         clearTimer.stop();
 
-        if(!tempText.isEmpty()) {
-            statusText->setText(tempText);
-            tempText.clear();
-        }
+        messageText->clear();
+        messageText->hide();
+        statusText->show();
     }
 
     void showMessage(const QString& message, int timeout = 0)
     {
-        tempText = statusText->text();
-        statusText->setText(message);
+        messageText->setText(message);
+        statusText->hide();
+        messageText->show();
 
         if(timeout > 0) {
             clearTimer.start(timeout);
