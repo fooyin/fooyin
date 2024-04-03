@@ -39,6 +39,7 @@
 #include <utils/async.h>
 #include <utils/recursiveselectionmodel.h>
 #include <utils/tooltipfilter.h>
+#include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
@@ -130,9 +131,10 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , header{new AutoHeaderView(Qt::Horizontal, self)}
     , singleMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
-    , removeTrackAction{new QAction(tr("Remove"), self)}
-    , addToQueueAction{new QAction(tr("Add to Playback Queue"), self)}
-    , removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), self)}
+    , removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), self)}
+    , addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to Playback Queue"), self)}
+    , removeFromQueueAction{
+          new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove from Playback Queue"), self)}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
