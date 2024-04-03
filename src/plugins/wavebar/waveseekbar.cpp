@@ -244,6 +244,18 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
     emit sliderMoved(m_position);
 }
 
+void WaveSeekBar::wheelEvent(QWheelEvent* event)
+{
+    if(event->angleDelta().y() < 0) {
+        emit seekBackward();
+    }
+    else {
+        emit seekForward();
+    }
+
+    event->accept();
+}
+
 int WaveSeekBar::positionFromValue(uint64_t value) const
 {
     if(m_data.duration == 0) {

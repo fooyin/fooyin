@@ -33,6 +33,8 @@
 #include <QMenu>
 #include <QVBoxLayout>
 
+constexpr auto SeekDelta = 5000;
+
 namespace Fooyin::WaveBar {
 WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
                              QWidget* parent)
@@ -48,7 +50,9 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_seekbar);
 
-    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, m_playerController, &PlayerController::changePosition);
+    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, m_playerController, &PlayerController::seek);
+    QObject::connect(m_seekbar, &WaveSeekBar::seekForward, this, [this]() { m_playerController->seekForward(SeekDelta); });
+    QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, this, [this]() { m_playerController->seekBackward(SeekDelta); });
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
         m_seekbar->setPosition(0);
         m_builder.generate(track);

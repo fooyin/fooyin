@@ -47,12 +47,15 @@ public:
 
 signals:
     void sliderMoved(uint64_t pos);
+    void seekForward();
+    void seekBackward();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     [[nodiscard]] int positionFromValue(uint64_t value) const;
