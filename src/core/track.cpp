@@ -149,10 +149,6 @@ QString Track::albumHash() const
 {
     QStringList hash;
 
-    if(p->albumArtists.size() > 1) {
-        return {};
-    }
-
     if(!p->date.isEmpty()) {
         hash.append(p->date);
     }
@@ -161,6 +157,9 @@ QString Track::albumHash() const
     }
     if(!p->artists.isEmpty()) {
         hash.append(p->artists.join(QStringLiteral(",")));
+    }
+    if(!p->album.isEmpty()) {
+        hash.append(p->album);
     }
 
     return hash.join(QStringLiteral("|"));
