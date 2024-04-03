@@ -118,15 +118,15 @@ struct CoverProvider::Private
     {
         QPixmap cover;
 
-        if(track.hasEmbeddedCover()) {
-            const QByteArray coverData = co_await Utils::asyncExec([track]() { return Tagging::readCover(track); });
-            if(!cover.loadFromData(coverData)) {
+        if(QFileInfo::exists(track.coverPath())) {
+            cover.load(track.coverPath());
+            if(cover.isNull()) {
                 co_return;
             }
         }
-        else if(QFileInfo::exists(track.coverPath())) {
-            cover.load(track.coverPath());
-            if(cover.isNull()) {
+        else if(track.hasEmbeddedCover()) {
+            const QByteArray coverData = co_await Utils::asyncExec([track]() { return Tagging::readCover(track); });
+            if(!cover.loadFromData(coverData)) {
                 co_return;
             }
         }
