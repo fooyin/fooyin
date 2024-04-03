@@ -509,7 +509,7 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
                 }
             }
 
-            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::Select);
+            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
             p->updating = false;
         },
         Qt::SingleShotConnection);

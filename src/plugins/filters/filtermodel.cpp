@@ -388,6 +388,7 @@ void FilterModel::updateTracks(const TrackList& tracks)
                          [this](const Track& track) { return p->trackParents.contains(track.id()); });
 
     if(tracksToUpdate.empty()) {
+        emit modelUpdated();
         return;
     }
 
