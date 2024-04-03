@@ -207,10 +207,10 @@ void TrackSlider::keyPressEvent(QKeyEvent* event)
 void TrackSlider::wheelEvent(QWheelEvent* event)
 {
     if(event->angleDelta().y() < 0) {
-        emit seekForward();
+        emit seekBackward();
     }
     else {
-        emit seekBackward();
+        emit seekForward();
     }
 
     event->accept();
