@@ -110,8 +110,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_centreGap->setMaximum(10);
     m_centreGap->setSuffix(QStringLiteral(" px"));
 
-    m_maxScale->setMinimum(-10.0);
-    m_maxScale->setMaximum(10.0);
+    m_maxScale->setMinimum(0.0);
+    m_maxScale->setMaximum(2.0);
     m_maxScale->setSingleStep(0.25);
     m_maxScale->setPrefix(QStringLiteral("x"));
 
