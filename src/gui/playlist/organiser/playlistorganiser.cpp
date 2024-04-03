@@ -29,6 +29,7 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -138,13 +139,13 @@ struct PlaylistOrganiser::Private
         , organiserTree{new QTreeView(self)}
         , model{new PlaylistOrganiserModel(playlistController->playlistHandler())}
         , context{self, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())}}
-        , removePlaylist{new QAction(tr("Remove"))}
+        , removePlaylist{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"))}
         , removeCmd{actionManager->registerAction(removePlaylist, Constants::Actions::Remove, context.context())}
         , renamePlaylist{new QAction(tr("Rename"))}
         , renameCmd{actionManager->registerAction(renamePlaylist, Constants::Actions::Rename, context.context())}
-        , newGroup{new QAction(tr("New Group"))}
+        , newGroup{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("New Group"))}
         , newGroupCmd{actionManager->registerAction(newGroup, "PlaylistOrganiser.NewGroup", context.context())}
-        , newPlaylist{new QAction(tr("Create Playlist"))}
+        , newPlaylist{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Create Playlist"))}
         , newPlaylistCmd{actionManager->registerAction(newPlaylist, "PlaylistOrganiser.NewPlaylist", context.context())}
     {
         organiserTree->setHeaderHidden(true);

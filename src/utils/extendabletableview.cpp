@@ -130,12 +130,7 @@ struct ExtendableTableView::Private
         actionManager->addContextObject(context);
 
         addCommand->setDefaultShortcut(QKeySequence::New);
-        addCommand->setAttribute(ProxyAction::UpdateIcon);
-        addCommand->setAttribute(ProxyAction::UpdateText);
-
         removeCommand->setDefaultShortcut(QKeySequence::Delete);
-        removeCommand->setAttribute(ProxyAction::UpdateIcon);
-        removeCommand->setAttribute(ProxyAction::UpdateText);
 
         QObject::connect(add, &QAction::triggered, self, [this]() { handleNewRow(); });
         QObject::connect(remove, &QAction::triggered, self, [this]() { handleRemoveRow(); });
