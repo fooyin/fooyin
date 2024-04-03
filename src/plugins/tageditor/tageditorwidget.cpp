@@ -24,6 +24,7 @@
 
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/widgetcontext.h>
+#include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -68,7 +69,8 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
-
+    m_view->setItemDelegateForColumn(1, new MultiLineEditDelegate(this));
+    m_view->setTextElideMode(Qt::ElideRight);
     m_view->horizontalHeader()->setStretchLastSection(true);
     m_view->horizontalHeader()->setSectionsClickable(false);
     m_view->verticalHeader()->setVisible(false);
