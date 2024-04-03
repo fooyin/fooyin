@@ -49,10 +49,31 @@ struct WidgetProvider::Private
     ActionManager* actionManager;
 
     std::map<QString, FactoryWidget> widgets;
+    std::map<QString, std::vector<QPointer<QAction>>> actions;
 
     explicit Private(ActionManager* actionManager_)
         : actionManager{actionManager_}
     { }
+
+    void updateActionState(const QString& key)
+    {
+        if(!widgets.contains(key)) {
+            return;
+        }
+
+        if(!actions.contains(key)) {
+            return;
+        }
+
+        const FactoryWidget& widget = widgets.at(key);
+        const bool isAtLimit        = atLimit(widget);
+
+        for(const auto& action : actions.at(key)) {
+            if(action) {
+                action->setDisabled(isAtLimit);
+            }
+        }
+    }
 };
 
 WidgetProvider::WidgetProvider(ActionManager* actionManager)
@@ -145,11 +166,18 @@ void WidgetProvider::setupWidgetMenu(ActionContainer* menu, const std::function<
         }
 
         auto* addWidgetAction = new QAction(widget.name, parentMenu);
+        p->actions[key].emplace_back(addWidgetAction);
+
         addWidgetAction->setDisabled(atLimit(widget));
-        QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, func, key] {
+
+        QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, addWidgetAction, func, key] {
             FyWidget* newWidget = createWidget(key);
             func(newWidget);
             newWidget->finalise();
+
+            p->updateActionState(key);
+            QObject::connect(newWidget, &QObject::destroyed, addWidgetAction,
+                             [this, key] { p->updateActionState(key); });
         });
 
         parentMenu->addAction(addWidgetAction);
