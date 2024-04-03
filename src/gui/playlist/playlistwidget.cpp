@@ -38,6 +38,7 @@
 #include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/recursiveselectionmodel.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -784,6 +785,12 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
                 changePreset(currentPreset);
             }
         });
+
+        auto* moreSettings = new QAction(tr("More…"), columnsMenu);
+        QObject::connect(moreSettings, &QAction::triggered, self,
+                         [this]() { settingsDialog->openAtPage(Constants::Page::PlaylistColumns); });
+        columnsMenu->addSeparator();
+        columnsMenu->addAction(moreSettings);
 
         menu->addMenu(columnsMenu);
         menu->addSeparator();
