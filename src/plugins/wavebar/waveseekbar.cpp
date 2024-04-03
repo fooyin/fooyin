@@ -77,6 +77,8 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_mode{static_cast<WaveModes>(settings->value<Settings::WaveBar::Mode>())}
     , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
 {
+    setFocusPolicy(Qt::StrongFocus);
+
     m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](const bool show) {
         m_showCursor = show;
         update();
@@ -254,6 +256,23 @@ void WaveSeekBar::wheelEvent(QWheelEvent* event)
     }
 
     event->accept();
+}
+
+void WaveSeekBar::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+
+    if(key == Qt::Key_Right || key == Qt::Key_Up) {
+        emit seekForward();
+        event->accept();
+    }
+    else if(key == Qt::Key_Left || key == Qt::Key_Down) {
+        emit seekBackward();
+        event->accept();
+    }
+    else {
+        QWidget::keyPressEvent(event);
+    }
 }
 
 int WaveSeekBar::positionFromValue(uint64_t value) const

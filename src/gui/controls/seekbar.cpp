@@ -34,6 +34,8 @@
 #include <QSlider>
 #include <QStyleOptionSlider>
 
+constexpr auto SeekDelta = 5000;
+
 namespace Fooyin {
 class TrackSlider : public QSlider
 {
@@ -53,11 +55,15 @@ public:
 
 signals:
     void sliderDropped(uint64_t pos);
+    void seekForward();
+    void seekBackward();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     void updateSeekPosition(const QPointF& pos);
@@ -179,6 +185,35 @@ void TrackSlider::mouseMoveEvent(QMouseEvent* event)
         updateSeekPosition(event->position());
         updateToolTip();
     }
+}
+
+void TrackSlider::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+
+    if(key == Qt::Key_Right || key == Qt::Key_Up) {
+        emit seekForward();
+        event->accept();
+    }
+    else if(key == Qt::Key_Left || key == Qt::Key_Down) {
+        emit seekBackward();
+        event->accept();
+    }
+    else {
+        QSlider::keyPressEvent(event);
+    }
+}
+
+void TrackSlider::wheelEvent(QWheelEvent* event)
+{
+    if(event->angleDelta().y() < 0) {
+        emit seekForward();
+    }
+    else {
+        emit seekBackward();
+    }
+
+    event->accept();
 }
 
 void TrackSlider::updateSeekPosition(const QPointF& pos)
@@ -347,6 +382,10 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
     QObject::connect(p->total, &ClickableLabel::clicked, this,
                      [this]() { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(!p->elapsedTotal); });
     QObject::connect(p->slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
+    QObject::connect(p->slider, &TrackSlider::seekForward, this,
+                     [this]() { p->playerController->seekForward(SeekDelta); });
+    QObject::connect(p->slider, &TrackSlider::seekBackward, this,
+                     [this]() { p->playerController->seekBackward(SeekDelta); });
 
     QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
