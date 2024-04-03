@@ -629,13 +629,14 @@ QString coverInDirectory(const QString& filepath)
 
 void handleCover(const QByteArray& cover, Fooyin::Track& track)
 {
-    QString coverPath = coverInDirectory(track.filepath());
-
     if(!cover.isEmpty()) {
-        coverPath = QStringLiteral("|Embedded|");
+        track.setHasEmbeddedCover(true);
     }
 
-    track.setCoverPath(coverPath);
+    QString coverPath = coverInDirectory(track.filepath());
+    if(!coverPath.isEmpty()) {
+        track.setCoverPath(coverPath);
+    }
 }
 } // namespace
 

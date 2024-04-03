@@ -151,6 +151,7 @@ public:
     void setDate(const QString& date);
     void setYear(int year);
     void setCoverPath(const QString& path);
+    void setHasEmbeddedCover(bool hasCover);
 
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);

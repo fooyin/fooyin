@@ -51,6 +51,7 @@ struct Track::Private : public QSharedData
     QString comment;
     QString date;
     int year{-1};
+    bool hasEmbeddedCover{false};
     QString coverPath;
     ExtraTags extraTags;
     QStringList removedTags;
@@ -329,12 +330,12 @@ QString Track::coverPath() const
 
 bool Track::hasCover() const
 {
-    return !p->coverPath.isEmpty();
+    return hasEmbeddedCover() || !p->coverPath.isEmpty();
 }
 
 bool Track::hasEmbeddedCover() const
 {
-    return p->coverPath == u"|Embedded|";
+    return p->hasEmbeddedCover;
 }
 
 bool Track::hasExtraTag(const QString& tag) const
@@ -564,6 +565,11 @@ void Track::setYear(int year)
 void Track::setCoverPath(const QString& path)
 {
     p->coverPath = path;
+}
+
+void Track::setHasEmbeddedCover(bool hasCover)
+{
+    p->hasEmbeddedCover = hasCover;
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)

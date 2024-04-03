@@ -90,6 +90,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":bitRate"), track.bitrate()},
             {QStringLiteral(":sampleRate"), track.sampleRate()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
+            {QStringLiteral(":hasEmbeddedCover"), track.hasEmbeddedCover()},
             {QStringLiteral(":type"), static_cast<int>(track.type())},
             {QStringLiteral(":modifiedDate"), QVariant::fromValue(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
@@ -121,7 +122,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setBitrate(q.value(18).toInt());
     track.setSampleRate(q.value(19).toInt());
     track.storeExtraTags(q.value(20).toByteArray());
-    // track.setCoverPath(q.value(21).toString());
+    track.setHasEmbeddedCover(q.value(21).toBool());
     track.setCoverPath(q.value(22).toString());
     track.setType(static_cast<Fooyin::Track::Type>(q.value(23).toInt()));
     track.setModifiedTime(q.value(24).toULongLong());
@@ -284,6 +285,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "BitRate = :bitRate,"
                                           "SampleRate = :sampleRate,"
                                           "ExtraTags = :extraTags,"
+                                          "HasEmbeddedCover = :hasEmbeddedCover,"
                                           "Type = :type,"
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
@@ -498,6 +500,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "BitRate,"
                                           "SampleRate,"
                                           "ExtraTags,"
+                                          "HasEmbeddedCover,"
                                           "Type,"
                                           "ModifiedDate,"
                                           "TrackHash,"
@@ -524,6 +527,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":bitRate,"
                                           ":sampleRate,"
                                           ":extraTags, "
+                                          ":hasEmbeddedCover, "
                                           ":type,"
                                           ":modifiedDate,"
                                           ":trackHash,"
