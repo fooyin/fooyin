@@ -149,6 +149,7 @@ void WidgetProvider::setupWidgetMenu(ActionContainer* menu, const std::function<
         QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, func, key] {
             FyWidget* newWidget = createWidget(key);
             func(newWidget);
+            newWidget->finalise();
         });
 
         parentMenu->addAction(addWidgetAction);
