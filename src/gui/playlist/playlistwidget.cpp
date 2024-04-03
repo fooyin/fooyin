@@ -191,6 +191,8 @@ void PlaylistWidgetPrivate::setupConnections()
                      [this](const std::vector<int>& indexes) { handleTracksChanged(indexes, false); });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](Playlist* prevPlaylist, Playlist* playlist) { changePlaylist(prevPlaylist, playlist); });
+    QObject::connect(playlistController, &PlaylistController::playlistsLoaded, this,
+                     [this]() { changePlaylist(nullptr, playlistController->currentPlaylist()); });
     QObject::connect(playlistController, &PlaylistController::playingTrackChanged, this,
                      &PlaylistWidgetPrivate::handlePlayingTrackChanged);
     QObject::connect(playlistController, &PlaylistController::playStateChanged, model,
@@ -1043,6 +1045,10 @@ void PlaylistWidget::finalise()
 
     p->header->setSectionsClickable(!p->singleMode);
     p->header->setSortIndicatorShown(!p->singleMode);
+
+    if(p->playlistController->currentPlaylist()) {
+        p->changePlaylist(nullptr, p->playlistController->currentPlaylist());
+    }
 }
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)

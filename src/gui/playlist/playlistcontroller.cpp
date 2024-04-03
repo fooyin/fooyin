@@ -67,14 +67,9 @@ struct PlaylistController::Private
         const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
 
         if(lastId >= 0) {
-            Playlist* playlist = handler->playlistByDbId(lastId);
-            if(!playlist) {
-                playlist = handler->playlistByIndex(0);
-            }
-
-            if(playlist) {
-                currentPlaylist = playlist;
-                emit self->currentPlaylistChanged(currentPlaylist, playlist);
+            currentPlaylist = handler->playlistByDbId(lastId);
+            if(!currentPlaylist) {
+                currentPlaylist = handler->playlistByIndex(0);
             }
         }
 
