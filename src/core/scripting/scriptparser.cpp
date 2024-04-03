@@ -53,6 +53,7 @@ struct ScriptParser::Private
     ScriptParser* self;
 
     ScriptScanner scanner;
+    std::unique_ptr<ScriptRegistry> defaultRegistry;
     ScriptRegistry* registry;
 
     ScriptScanner::Token current;
@@ -61,6 +62,12 @@ struct ScriptParser::Private
     QString currentInput;
     std::unordered_map<QString, ParsedScript> parsedScripts;
     QStringList currentResult;
+
+    explicit Private(ScriptParser* self_)
+        : self{self_}
+        , defaultRegistry{std::make_unique<ScriptRegistry>()}
+        , registry{defaultRegistry.get()}
+    { }
 
     explicit Private(ScriptParser* self_, ScriptRegistry* registry_)
         : self{self_}
@@ -489,6 +496,10 @@ struct ScriptParser::Private
         return {};
     }
 };
+
+ScriptParser::ScriptParser()
+    : p{std::make_unique<Private>(this)}
+{ }
 
 ScriptParser::ScriptParser(ScriptRegistry* registry)
     : p{std::make_unique<Private>(this, registry)}

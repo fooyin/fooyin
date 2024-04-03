@@ -27,8 +27,7 @@
 namespace {
 Fooyin::ParsedScript parseScript(const QString& sort)
 {
-    static Fooyin::ScriptRegistry registry;
-    static Fooyin::ScriptParser parser{&registry};
+    static Fooyin::ScriptParser parser;
 
     return parser.parse(sort);
 }
@@ -42,8 +41,7 @@ TrackList calcSortFields(const QString& sort, const TrackList& tracks)
 
 TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
 {
-    static ScriptRegistry registry;
-    static ScriptParser parser{&registry};
+    static ScriptParser parser;
 
     TrackList calcTracks{tracks};
     for(Track& track : calcTracks) {

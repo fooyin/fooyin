@@ -50,6 +50,7 @@ struct ParsedScript
 class FYCORE_EXPORT ScriptParser
 {
 public:
+    ScriptParser();
     explicit ScriptParser(ScriptRegistry* registry);
     virtual ~ScriptParser();
 
