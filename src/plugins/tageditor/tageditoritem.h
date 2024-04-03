@@ -38,6 +38,7 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] QString value() const;
     [[nodiscard]] bool isDefault() const;
+    [[nodiscard]] int trackCount() const;
 
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);

@@ -52,23 +52,22 @@ QString TagEditorItem::name() const
 QString TagEditorItem::value() const
 {
     if(m_value.isEmpty()) {
-        QString values;
-
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QStringLiteral(""));
-
-        values = nonEmptyValues.join(QStringLiteral("; "));
-        if(m_trackCount > 1 && m_values.size() > 1) {
-            values.prepend(QStringLiteral("<<multiple items>> "));
-        }
-        m_value = values;
+        m_value = nonEmptyValues.join(QStringLiteral("; "));
     }
+
     return m_value;
 }
 
 bool TagEditorItem::isDefault() const
 {
     return m_isDefault;
+}
+
+int TagEditorItem::trackCount() const
+{
+    return m_trackCount;
 }
 
 void TagEditorItem::addTrackValue(const QString& value)

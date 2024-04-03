@@ -369,8 +369,13 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                 return name;
             }
             return item->name();
-        case(1):
-            return item->value();
+        case(1): {
+            QString value = item->value();
+            if(item->trackCount() > 1 && role == Qt::DisplayRole) {
+                value.prepend(QStringLiteral("<<multiple items>> "));
+            }
+            return value;
+        }
         default:
             return {};
     }
@@ -401,12 +406,13 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             item->setTitle(name);
             break;
         }
-        case(1):
-            if(value == item->value()) {
+        case(1): {
+            if(value.toString().simplified() == item->value().simplified()) {
                 return false;
             }
             item->setValue(value.toStringList());
             break;
+        }
         default:
             break;
     }
