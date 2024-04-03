@@ -1041,21 +1041,21 @@ void PlaylistWidget::finalise()
 {
     p->currentPreset = p->presetRegistry.itemById(p->settings->value<PlaylistCurrentPreset>());
 
-    if(!p->singleMode) {
+    p->header->setSectionsClickable(!p->singleMode);
+    p->header->setSortIndicatorShown(!p->singleMode);
+
+    if(!p->singleMode && !p->columns.empty() && !p->headerState.isEmpty()) {
         if(!p->columns.empty() && !p->headerState.isEmpty()) {
             QObject::connect(
                 p->model, &QAbstractItemModel::modelReset, this,
                 [this]() { p->header->restoreHeaderState(p->headerState); }, Qt::SingleShotConnection);
         }
-        if(p->columns.empty()) {
-            p->setSingleMode(false);
-        }
     }
 
-    p->header->setSectionsClickable(!p->singleMode);
-    p->header->setSortIndicatorShown(!p->singleMode);
-
-    if(p->playlistController->currentPlaylist()) {
+    if(!p->singleMode && p->columns.empty()) {
+        p->setSingleMode(false);
+    }
+    else if(p->playlistController->currentPlaylist()) {
         p->changePlaylist(nullptr, p->playlistController->currentPlaylist());
     }
 }
