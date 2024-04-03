@@ -362,7 +362,7 @@ void MprisPlugin::Seek(int64_t offset)
 
 void MprisPlugin::SetPosition(const QDBusObjectPath& /*path*/, int64_t position)
 {
-    m_playerController->changePosition(position / 1000);
+    m_playerController->seek(position / 1000);
 }
 
 void MprisPlugin::notify(const QString& name, const QVariant& value)

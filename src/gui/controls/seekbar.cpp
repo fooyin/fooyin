@@ -346,7 +346,7 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
 
     QObject::connect(p->total, &ClickableLabel::clicked, this,
                      [this]() { p->settings->set<Settings::Gui::Internal::SeekBarElapsedTotal>(!p->elapsedTotal); });
-    QObject::connect(p->slider, &TrackSlider::sliderDropped, playerController, &PlayerController::changePosition);
+    QObject::connect(p->slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
 
     QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });

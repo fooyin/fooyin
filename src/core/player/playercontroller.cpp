@@ -146,16 +146,6 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     emit positionChanged(ms);
 }
 
-void PlayerController::changePosition(uint64_t ms)
-{
-    if(ms >= p->totalDuration - 100) {
-        next();
-        return;
-    }
-    p->position = ms;
-    emit positionMoved(ms);
-}
-
 void PlayerController::changeCurrentTrack(const Track& track)
 {
     changeCurrentTrack(PlaylistTrack{track, {}});
@@ -187,6 +177,32 @@ PlaybackQueue PlayerController::playbackQueue() const
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
 {
     p->settings->set<Settings::Core::PlayMode>(static_cast<int>(mode));
+}
+
+void PlayerController::seek(uint64_t ms)
+{
+    if(ms >= p->totalDuration - 100) {
+        next();
+        return;
+    }
+
+    p->position = ms;
+    emit positionMoved(ms);
+}
+
+void PlayerController::seekForward(uint64_t delta)
+{
+    seek(p->position + delta);
+}
+
+void PlayerController::seekBackward(uint64_t delta)
+{
+    if(delta > p->position) {
+        seek(0);
+    }
+    else {
+        seek(p->position - delta);
+    }
 }
 
 PlayState PlayerController::playState() const

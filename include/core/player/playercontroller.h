@@ -80,8 +80,10 @@ public:
     void reset();
 
     void setPlayMode(Playlist::PlayModes mode);
+    void seek(uint64_t ms);
+    void seekForward(uint64_t delta);
+    void seekBackward(uint64_t delta);
     void setCurrentPosition(uint64_t ms);
-    void changePosition(uint64_t ms);
     void changeCurrentTrack(const Track& track);
     void changeCurrentTrack(const PlaylistTrack& track);
     void updateCurrentTrackIndex(int index);

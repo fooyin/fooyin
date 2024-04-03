@@ -153,7 +153,7 @@ struct PlaylistHandler::Private
     void previous()
     {
         if(settings->value<Settings::Core::RewindPreviousTrack>() && playerController->currentPosition() > 5000) {
-            playerController->changePosition(0);
+            playerController->seek(0);
         }
         else {
             nextTrackChange(-1);
