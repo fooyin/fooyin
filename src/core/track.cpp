@@ -175,11 +175,11 @@ QString Track::typeString() const
 {
     switch(p->type) {
         case(Type::MPEG):
-            return QStringLiteral("MPEG");
+            return QStringLiteral("MP3");
         case(Type::AIFF):
             return QStringLiteral("AIFF");
         case(Type::WAV):
-            return QStringLiteral("WAV");
+            return QStringLiteral("PCM");
         case(Type::MPC):
             return QStringLiteral("MPC");
         case(Type::APE):
@@ -191,9 +191,9 @@ QString Track::typeString() const
         case(Type::FLAC):
             return QStringLiteral("FLAC");
         case(Type::OggOpus):
-            return QStringLiteral("OggOpus");
+            return QStringLiteral("Opus");
         case(Type::OggVorbis):
-            return QStringLiteral("OggVorbis");
+            return QStringLiteral("Vorbis");
         case(Type::ASF):
             return QStringLiteral("ASF");
         case(Type::Unknown):
