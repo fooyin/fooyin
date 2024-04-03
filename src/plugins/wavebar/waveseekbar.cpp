@@ -316,6 +316,10 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     const double minScale = height - maxScale;
     const auto centre     = static_cast<int>(maxScale + y);
 
+    const bool drawMax  = maxScale > 0;
+    const bool drawMin  = minScale > 0;
+    const int centreGap = drawMax && drawMin ? m_centreGap : 0;
+
     double rmsScale{1.0};
     if(m_mode & WaveMode::Rms && !(m_mode & WaveMode::MinMax)) {
         rmsScale = *std::ranges::max_element(rms);
@@ -344,45 +348,53 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
         if(m_mode & WaveMode::MinMax) {
             auto waveCentre = static_cast<double>(centre);
 
-            const QPointF pt1{x, waveCentre - (max.at(i) * maxScale)};
-            const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
+            if(drawMax) {
+                const QPointF pt1{x, waveCentre - (max.at(i) * maxScale)};
+                const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
 
-            waveCentre += m_centreGap;
+                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.maxUnplayed,
+                             m_colours.maxPlayed, m_colours.maxBorder);
 
-            const QPointF pt2{x, waveCentre - (min.at(i) * minScale)};
-            const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
+                painter.drawRect(rectMax);
+            }
 
-            setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.maxUnplayed,
-                         m_colours.maxPlayed, m_colours.maxBorder);
+            waveCentre += centreGap;
 
-            painter.drawRect(rectMax);
+            if(drawMin) {
+                const QPointF pt2{x, waveCentre - (min.at(i) * minScale)};
+                const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
 
-            setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.minUnplayed,
-                         m_colours.minPlayed, m_colours.minBorder);
+                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.minUnplayed,
+                             m_colours.minPlayed, m_colours.minBorder);
 
-            painter.drawRect(rectMin);
+                painter.drawRect(rectMin);
+            }
         }
 
         if(m_mode & WaveMode::Rms) {
             auto waveCentre = static_cast<double>(centre);
 
-            const QPointF pt1{x, waveCentre - (rms.at(i) / rmsScale * maxScale)};
-            const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
+            if(drawMax) {
+                const QPointF pt1{x, waveCentre - (rms.at(i) / rmsScale * maxScale)};
+                const QRectF rectMax{x, pt1.y(), barWidth, std::abs(pt1.y() - waveCentre)};
 
-            waveCentre += m_centreGap;
+                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMaxUnplayed,
+                             m_colours.rmsMaxPlayed, m_colours.rmsMaxBorder);
 
-            const QPointF pt2{x, waveCentre - (-rms.at(i) / rmsScale * minScale)};
-            const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
+                painter.drawRect(rectMax);
+            }
 
-            setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMaxUnplayed,
-                         m_colours.rmsMaxPlayed, m_colours.rmsMaxBorder);
+            waveCentre += centreGap;
 
-            painter.drawRect(rectMax);
+            if(drawMin) {
+                const QPointF pt2{x, waveCentre - (-rms.at(i) / rmsScale * minScale)};
+                const QRectF rectMin{x, waveCentre, barWidth, std::abs(waveCentre - pt2.y())};
 
-            setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMinUnplayed,
-                         m_colours.rmsMinPlayed, m_colours.rmsMinBorder);
+                setupPainter(painter, isInProgress, isPlayed, m_barWidth, progress, m_colours.rmsMinUnplayed,
+                             m_colours.rmsMinPlayed, m_colours.rmsMinBorder);
 
-            painter.drawRect(rectMin);
+                painter.drawRect(rectMin);
+            }
         }
     }
 
