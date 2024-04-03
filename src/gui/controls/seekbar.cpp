@@ -143,7 +143,7 @@ void TrackSlider::mousePressEvent(QMouseEvent* event)
                               button,        event->modifiers()};
     QSlider::mousePressEvent(&modifiedEvent);
 
-    if(modifiedEvent.button() == Qt::LeftButton) {
+    if(event->button() == Qt::LeftButton) {
         updateSeekPosition(event->position());
         updateToolTip();
     }
