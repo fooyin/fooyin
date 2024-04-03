@@ -371,6 +371,7 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 {
     if(p->slider->isSeeking()) {
         p->slider->stopSeeking();
+        return;
     }
 
     auto* menu = new QMenu(this);
