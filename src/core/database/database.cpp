@@ -36,7 +36,7 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
     Fooyin::DbConnection::DbParams params;
     params.type           = QStringLiteral("QSQLITE");
     params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
-    params.filePath       = Fooyin::Utils::sharePath() + QStringLiteral("fooyin.db");
+    params.filePath       = Fooyin::Utils::sharePath() + QStringLiteral("/fooyin.db");
 
     return params;
 }
