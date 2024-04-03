@@ -801,6 +801,7 @@ bool readMetaData(Track& track, Quality quality)
     }
 
     track.setType(typeForMime(mimeType));
+    track.generateHash();
 
     return true;
 }

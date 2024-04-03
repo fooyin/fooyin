@@ -42,7 +42,7 @@ Fooyin::Track matchMissingTrack(const Fooyin::TrackFieldMap& missingFiles, const
                                 Fooyin::Track& track)
 {
     const QString filename = track.filename();
-    const QString hash     = track.generateHash();
+    const QString hash     = track.hash();
 
     if(missingFiles.contains(filename) && missingFiles.at(filename).duration() == track.duration()) {
         return missingFiles.at(filename);
@@ -171,7 +171,6 @@ struct LibraryScanner::Private
                    || libraryTrack.modifiedTime() != lastModified) {
                     Track changedTrack{libraryTrack};
                     if(Tagging::readMetaData(changedTrack)) {
-                        changedTrack.generateHash();
                         setTrackProps(changedTrack);
 
                         tracksToUpdate.push_back(changedTrack);
@@ -360,7 +359,6 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
             tracksScanned.push_back(trackMap.at(track.filepath()));
         }
         else if(Tagging::readMetaData(track)) {
-            track.generateHash();
             tracksToStore.push_back(track);
         }
 
