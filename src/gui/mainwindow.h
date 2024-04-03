@@ -19,12 +19,15 @@
 
 #pragma once
 
+#include <core/scripting/scriptparser.h>
+
 #include <QMainWindow>
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
 class MainMenuBar;
+class SettingsManager;
+class Track;
 
 class MainWindow : public QMainWindow
 {
@@ -45,6 +48,7 @@ public:
     ~MainWindow() override;
 
     void open();
+    void updateTitle(const Track& track);
 
 signals:
     void closing();
@@ -55,5 +59,6 @@ protected:
 private:
     MainMenuBar* m_mainMenu;
     SettingsManager* m_settings;
+    ScriptParser m_parser;
 };
 } // namespace Fooyin

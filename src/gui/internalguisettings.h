@@ -74,6 +74,7 @@ enum GuiInternalSettings : uint32_t
     DirBrowserListIndent   = 35 | Type::Bool,
     DirBrowserControls     = 36 | Type::Bool,
     DirBrowserLocation     = 37 | Type::Bool,
+    WindowTitleTrackScript = 38 | Type::String,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

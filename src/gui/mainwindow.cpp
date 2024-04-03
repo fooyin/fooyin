@@ -19,6 +19,7 @@
 
 #include "mainwindow.h"
 
+#include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
 
 #include <core/constants.h>
@@ -74,6 +75,13 @@ void MainWindow::open()
             break;
         }
     }
+}
+
+void MainWindow::updateTitle(const Track& track)
+{
+    const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
+    const QString title  = m_parser.evaluate(script, track) + QStringLiteral(" 𑁋 ") + windowTitle();
+    setWindowTitle(title);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

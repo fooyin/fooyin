@@ -218,6 +218,8 @@ struct GuiApplication::Private
 
     void setupConnections()
     {
+        QObject::connect(playerController, &PlayerController::currentTrackChanged, mainWindow.get(),
+                         &MainWindow::updateTitle);
         QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
                          &PlaylistController::handleTrackSelectionAction);
         QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, propertiesDialog,

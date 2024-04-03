@@ -89,5 +89,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::DirBrowserListIndent>(true, QStringLiteral("DirectoryBrowser/IndentList"));
     m_settings->createSetting<Internal::DirBrowserControls>(true, QStringLiteral("DirectoryBrowser/Controls"));
     m_settings->createSetting<Internal::DirBrowserLocation>(true, QStringLiteral("DirectoryBrowser/LocationBar"));
+    m_settings->createSetting<Internal::WindowTitleTrackScript>(
+        QStringLiteral("[%albumartist% - ]$if2(%title%,%filepath%)"),
+        QStringLiteral("Interface/WindowTitleTrackScript"));
 }
 } // namespace Fooyin
