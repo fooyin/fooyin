@@ -43,11 +43,12 @@ constexpr auto FileSize     = "filesize";
 constexpr auto Bitrate      = "bitrate";
 constexpr auto SampleRate   = "samplerate";
 constexpr auto PlayCount    = "playcount";
-constexpr auto FileType     = "filetype";
+constexpr auto Codec        = "codec";
 constexpr auto AddedTime    = "addedtime";
 constexpr auto ModifiedTime = "modifiedtime";
 constexpr auto FilePath     = "filepath";
 constexpr auto RelativePath = "relativepath";
 constexpr auto FileName     = "filename";
+constexpr auto Extension    = "extension";
 } // namespace MetaData
 } // namespace Fooyin::Constants

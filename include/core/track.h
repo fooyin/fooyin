@@ -85,6 +85,7 @@ public:
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString relativePath() const;
     [[nodiscard]] QString filename() const;
+    [[nodiscard]] QString extension() const;
     [[nodiscard]] QString title() const;
     [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QStringList uniqueArtists() const;

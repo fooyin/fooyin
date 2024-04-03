@@ -144,12 +144,13 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::Bitrate)]      = &Track::bitrate;
         metadata[QString::fromLatin1(MetaData::SampleRate)]   = &Track::sampleRate;
         metadata[QString::fromLatin1(MetaData::PlayCount)]    = &Track::playCount;
-        metadata[QString::fromLatin1(MetaData::FileType)]     = &Track::typeString;
+        metadata[QString::fromLatin1(MetaData::Codec)]        = &Track::typeString;
         metadata[QString::fromLatin1(MetaData::AddedTime)]    = &Track::addedTime;
         metadata[QString::fromLatin1(MetaData::ModifiedTime)] = &Track::modifiedTime;
         metadata[QString::fromLatin1(MetaData::FilePath)]     = &Track::filepath;
         metadata[QString::fromLatin1(MetaData::RelativePath)] = &Track::relativePath;
         metadata[QString::fromLatin1(MetaData::FileName)]     = &Track::filename;
+        metadata[QString::fromLatin1(MetaData::Extension)]    = &Track::extension;
 
         setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
         setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);

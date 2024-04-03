@@ -36,6 +36,7 @@ struct Track::Private : public QSharedData
     QString filepath;
     QString relativePath;
     QString filename;
+    QString extension;
     QString title;
     QStringList artists;
     QString album;
@@ -72,7 +73,9 @@ struct Track::Private : public QSharedData
     explicit Private(QString filepath_)
         : filepath{std::move(filepath_)}
     {
-        filename = QFileInfo{this->filepath}.fileName();
+        QFileInfo fileInfo{this->filepath};
+        filename  = fileInfo.fileName();
+        extension = fileInfo.suffix();
     }
 };
 
@@ -215,6 +218,11 @@ QString Track::relativePath() const
 QString Track::filename() const
 {
     return p->filename;
+}
+
+QString Track::extension() const
+{
+    return p->extension;
 }
 
 QString Track::title() const
