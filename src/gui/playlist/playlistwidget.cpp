@@ -786,7 +786,6 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
         header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
         menu->addSeparator();
         header->addHeaderAlignmentMenu(menu, self->mapToGlobal(pos));
-        menu->addSeparator();
 
         auto* resetAction = new QAction(tr("Reset columns to default"), menu);
         QObject::connect(resetAction, &QAction::triggered, self, [this]() {
@@ -805,7 +804,6 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
 
     menu->addSeparator();
 
-    playlistController->addPlaylistMenu(menu);
     addPresetMenu(menu);
 
     menu->popup(self->mapToGlobal(pos));
@@ -1059,6 +1057,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addSeparator();
 
     p->addSortMenu(menu);
+    p->addPresetMenu(menu);
 
     if(auto* addQueueCmd = p->actionManager->command(Constants::Actions::AddToQueue)) {
         menu->addAction(addQueueCmd->action());

@@ -73,7 +73,7 @@ public:
     void restoreState(Playlist* playlist) const;
     void resetModel() const;
 
-    std::vector<int> selectedPlaylistIndexes() const;
+    [[nodiscard]] std::vector<int> selectedPlaylistIndexes() const;
     void restoreSelectedPlaylistIndexes(const std::vector<int>& indexes) const;
 
     [[nodiscard]] bool isHeaderHidden() const;
