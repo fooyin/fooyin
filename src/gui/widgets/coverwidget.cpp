@@ -36,6 +36,8 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_coverProvider{new CoverProvider(this)}
     , m_coverLabel{new QLabel(this)}
 {
+    Q_UNUSED(m_trackSelection)
+
     setObjectName(CoverWidget::name());
 
     auto* layout = new QVBoxLayout(this);
