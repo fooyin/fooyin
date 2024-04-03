@@ -36,7 +36,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QStatusBar>
+#include <QTimer>
 
 constexpr int IconSize = 50;
 
@@ -48,7 +48,6 @@ struct StatusWidget::Private
     PlayerController* playerController;
     TrackSelectionController* selectionController;
 
-    QStatusBar* statusBar;
     SettingsManager* settings;
 
     ScriptRegistry scriptRegistry;
@@ -61,12 +60,14 @@ struct StatusWidget::Private
     QString playingScript;
     QString selectionScript;
 
+    QTimer clearTimer;
+    QString tempText;
+
     Private(StatusWidget* self_, PlayerController* playerController_, TrackSelectionController* selectionController_,
             SettingsManager* settings_)
         : self{self_}
         , playerController{playerController_}
         , selectionController{selectionController_}
-        , statusBar{new QStatusBar(self)}
         , settings{settings_}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
@@ -83,10 +84,8 @@ struct StatusWidget::Private
         iconLabel->setMaximumWidth(22);
 
         layout->addWidget(iconLabel);
-        layout->addWidget(statusBar, 1);
-
-        statusBar->addWidget(statusText);
-        statusBar->addPermanentWidget(selectionText);
+        layout->addWidget(statusText, 1);
+        layout->addWidget(selectionText);
 
         iconLabel->setHidden(!settings->value<Settings::Gui::Internal::StatusShowIcon>());
         selectionText->setHidden(!settings->value<Settings::Gui::Internal::StatusShowSelection>());
@@ -100,6 +99,29 @@ struct StatusWidget::Private
                          [this](uint64_t /*pos*/) { updatePlayingText(); });
         QObject::connect(selectionController, &TrackSelectionController::selectionChanged, self,
                          [this]() { updateSelectionText(); });
+
+        clearTimer.setSingleShot(true);
+        QObject::connect(&clearTimer, &QTimer::timeout, self, [this]() { clearMessage(); });
+    }
+
+    void clearMessage()
+    {
+        clearTimer.stop();
+
+        if(!tempText.isEmpty()) {
+            statusText->setText(tempText);
+            tempText.clear();
+        }
+    }
+
+    void showMessage(const QString& message, int timeout = 0)
+    {
+        tempText = statusText->text();
+        statusText->setText(message);
+
+        if(timeout > 0) {
+            clearTimer.start(timeout);
+        }
     }
 
     void updateScripts()
@@ -116,10 +138,10 @@ struct StatusWidget::Private
         }
     }
 
-    void updateScanText(int progress) const
+    void updateScanText(int progress)
     {
         const auto scanText = QStringLiteral("Scanning library: %1%").arg(progress);
-        statusBar->showMessage(scanText, 5000);
+        showMessage(scanText, 5000);
     }
 
     void updateSelectionText()
@@ -131,7 +153,7 @@ struct StatusWidget::Private
     {
         switch(state) {
             case(PlayState::Stopped):
-                statusBar->clearMessage();
+                clearMessage();
                 break;
             case(PlayState::Playing): {
                 updatePlayingText();

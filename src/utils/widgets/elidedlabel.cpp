@@ -36,6 +36,7 @@ ElidedLabel::ElidedLabel(QString text, Qt::TextElideMode elideMode, QWidget* par
     : QLabel{parent}
     , m_elideMode{elideMode}
     , m_text{std::move(text)}
+    , m_isElided{false}
 { }
 
 Qt::TextElideMode ElidedLabel::elideMode() const
@@ -46,7 +47,7 @@ Qt::TextElideMode ElidedLabel::elideMode() const
 void ElidedLabel::setElideMode(Qt::TextElideMode elideMode)
 {
     m_elideMode = elideMode;
-    update();
+    elideText(width());
 }
 
 QString ElidedLabel::text() const
@@ -57,16 +58,42 @@ QString ElidedLabel::text() const
 void ElidedLabel::setText(const QString& text)
 {
     m_text = text;
-    QLabel::setText(text);
-    update();
+    elideText(width());
+}
+
+QSize ElidedLabel::sizeHint() const
+{
+    const QFontMetrics fm{fontMetrics()};
+    const QSize size{fm.horizontalAdvance(m_text), QLabel::sizeHint().height()};
+    return size;
+}
+
+QSize ElidedLabel::minimumSizeHint() const
+{
+    const QFontMetrics fm{fontMetrics()};
+    const QSize size{fm.horizontalAdvance(m_text.left(2) + QStringLiteral("…")), QLabel::sizeHint().height()};
+    return size;
 }
 
 void ElidedLabel::resizeEvent(QResizeEvent* event)
 {
-    QLabel::resizeEvent(event);
+    elideText(event->size().width());
 
+    QLabel::resizeEvent(event);
+}
+
+void ElidedLabel::elideText(int width)
+{
     const QFontMetrics fm{fontMetrics()};
-    const QString elidedText = fm.elidedText(m_text, m_elideMode, width());
+
+    QString elidedText = fm.elidedText(m_text, m_elideMode, width - (margin() * 2) - indent());
+
+    if(elidedText == u"…") {
+        elidedText = m_text.at(0);
+    }
+
+    m_isElided = elidedText != m_text;
+
     QLabel::setText(elidedText);
 }
 } // namespace Fooyin

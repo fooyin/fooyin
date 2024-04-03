@@ -39,11 +39,17 @@ public:
     [[nodiscard]] QString text() const;
     void setText(const QString& text);
 
+    [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
+    void elideText(int width);
+
     Qt::TextElideMode m_elideMode;
     QString m_text;
+    bool m_isElided;
 };
 } // namespace Fooyin
