@@ -161,6 +161,19 @@ struct EditableLayout::Private
         FyWidget* currentWidget = widget;
         int level               = settings->value<Settings::Gui::Internal::EditingMenuLevels>();
 
+        auto addPasteAction = [this, menu](FyWidget* containerWidget) {
+            if(auto* container = qobject_cast<WidgetContainer*>(containerWidget)) {
+                if(container->canAddWidget()) {
+                    auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
+                    QObject::connect(pasteInsert, &QAction::triggered, container, [this, container] {
+                        container->addWidget(widgetProvider->createWidget(widgetClipboard));
+                        widgetClipboard.clear();
+                    });
+                    menu->addAction(pasteInsert);
+                }
+            }
+        };
+
         while(level > 0 && currentWidget) {
             menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
             currentWidget->layoutEditingMenu(menu);
@@ -178,16 +191,7 @@ struct EditableLayout::Private
                 menu->addAction(copy);
 
                 if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard)) {
-                    if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
-                        if(container->canAddWidget()) {
-                            auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
-                            QObject::connect(pasteInsert, &QAction::triggered, parent, [this, container] {
-                                container->addWidget(widgetProvider->createWidget(widgetClipboard));
-                                widgetClipboard.clear();
-                            });
-                            menu->addAction(pasteInsert);
-                        }
-                    }
+                    addPasteAction(currentWidget);
 
                     auto* paste = new QAction(tr("Paste (Replace)"), menu);
                     QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
@@ -202,6 +206,9 @@ struct EditableLayout::Private
                     layoutHistory->push(new RemoveWidgetCommand(widgetProvider, parent, currentWidget->id()));
                 });
                 menu->addAction(remove);
+            }
+            else if(!widgetClipboard.isEmpty()) {
+                addPasteAction(currentWidget);
             }
             currentWidget = parent;
             --level;
