@@ -38,11 +38,13 @@ class WidgetContainer : public FyWidget
 public:
     explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
 
+    [[nodiscard]] virtual bool canAddWidget() const = 0;
+
     virtual void addWidget(FyWidget* widget)                             = 0;
     virtual void removeWidget(FyWidget* widget)                          = 0;
     virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
 
-    virtual WidgetList widgets() const = 0;
+    [[nodiscard]] virtual WidgetList widgets() const = 0;
 
     /*!
      * Convenience method to load all widgets in the @p widgets array.

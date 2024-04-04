@@ -51,10 +51,10 @@ public:
 
     [[nodiscard]] int childCount();
 
+    [[nodiscard]] bool canAddWidget() const override;
     void addWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
     void removeWidget(FyWidget* widget) override;
-
     [[nodiscard]] WidgetList widgets() const override;
 
     [[nodiscard]] QString name() const override;

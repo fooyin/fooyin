@@ -61,6 +61,9 @@ public:
     /** Sets the maximum number of instances which can be created of the widget at @p key. */
     void setLimit(const QString& key, int limit);
 
+    /** Returns @c true if an instance can be created of the widget at @p key. */
+    [[nodiscard]] bool canCreateWidget(const QString& key) const;
+
     /*!
      * Creates the widget associated with the @p key.
      * @returns the new widget instance, or nullptr if not registered or over the limit for this widget.

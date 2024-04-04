@@ -123,6 +123,11 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
+bool TabStackWidget::canAddWidget() const
+{
+    return true;
+}
+
 void TabStackWidget::addWidget(FyWidget* widget)
 {
     const int index = m_tabs->addTab(widget, widget->name());

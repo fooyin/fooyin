@@ -46,24 +46,6 @@
 
 #include <stack>
 
-namespace {
-Fooyin::FyWidget* splitterChild(QWidget* widget)
-{
-    if(!widget) {
-        return {};
-    }
-    QWidget* child = widget;
-
-    while(!qobject_cast<Fooyin::FyWidget*>(child)) {
-        child = child->parentWidget();
-        if(!child) {
-            return {};
-        }
-    }
-    return qobject_cast<Fooyin::FyWidget*>(child);
-}
-} // namespace
-
 namespace Fooyin {
 struct EditableLayout::Private
 {
@@ -79,6 +61,8 @@ struct EditableLayout::Private
     QPointer<OverlayWidget> overlay;
     QPointer<SplitterWidget> splitter;
     bool layoutEditing{false};
+
+    QString widgetClipboard;
 
     Private(EditableLayout* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
             LayoutProvider* layoutProvider_, SettingsManager* settings_)
@@ -155,7 +139,7 @@ struct EditableLayout::Private
             menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
     }
 
-    void setupContextMenu(FyWidget* widget, ActionContainer* menu) const
+    void setupContextMenu(FyWidget* widget, ActionContainer* menu)
     {
         if(!widget || !menu) {
             return;
@@ -174,6 +158,31 @@ struct EditableLayout::Private
                 setupReplaceWidgetMenu(changeMenu, currentWidget);
                 menu->addMenu(changeMenu);
 
+                auto* copy = new QAction(tr("Copy"), menu);
+                copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
+                QObject::connect(copy, &QAction::triggered, parent,
+                                 [this, currentWidget] { widgetClipboard = currentWidget->layoutName(); });
+                menu->addAction(copy);
+
+                if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
+                    auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
+                    pasteInsert->setEnabled(!widgetClipboard.isEmpty() && container->canAddWidget()
+                                            && widgetProvider->canCreateWidget(widgetClipboard));
+                    QObject::connect(pasteInsert, &QAction::triggered, parent, [this, container] {
+                        container->addWidget(widgetProvider->createWidget(widgetClipboard));
+                        widgetClipboard.clear();
+                    });
+                    menu->addAction(pasteInsert);
+                }
+
+                auto* paste = new QAction(tr("Paste (Replace)"), menu);
+                paste->setEnabled(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard));
+                QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
+                    parent->replaceWidget(currentWidget, widgetProvider->createWidget(widgetClipboard));
+                    widgetClipboard.clear();
+                });
+                menu->addAction(paste);
+
                 auto* remove = new QAction(tr("Remove"), menu);
                 QObject::connect(remove, &QAction::triggered, parent,
                                  [parent, currentWidget] { parent->removeWidget(currentWidget); });
@@ -182,6 +191,22 @@ struct EditableLayout::Private
             currentWidget = parent;
             --level;
         }
+    }
+
+    FyWidget* findSplitterChild(QWidget* widget)
+    {
+        if(!widget) {
+            return {};
+        }
+        QWidget* child = widget;
+
+        while(!qobject_cast<FyWidget*>(child)) {
+            child = child->parentWidget();
+            if(!child) {
+                return {};
+            }
+        }
+        return qobject_cast<FyWidget*>(child);
     }
 
     template <typename T, typename Predicate>

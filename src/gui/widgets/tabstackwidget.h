@@ -39,10 +39,10 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+    [[nodiscard]] bool canAddWidget() const override;
     void addWidget(FyWidget* widget) override;
     void removeWidget(FyWidget* widget) override;
     void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
-
     [[nodiscard]] WidgetList widgets() const override;
 
 protected:

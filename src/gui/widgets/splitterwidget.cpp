@@ -158,6 +158,11 @@ int SplitterWidget::childCount()
     return static_cast<int>(m_children.size());
 }
 
+bool SplitterWidget::canAddWidget() const
+{
+    return true;
+}
+
 void SplitterWidget::addWidget(FyWidget* widget)
 {
     if(m_limit > 0 && m_widgetCount >= m_limit) {

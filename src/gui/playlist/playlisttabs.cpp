@@ -59,7 +59,7 @@ struct PlaylistTabs::Private
 
     QVBoxLayout* layout;
     EditableTabBar* tabs;
-    FyWidget* tabsWidget{nullptr};
+    QPointer<FyWidget> tabsWidget;
 
     int currentTab{-1};
 
@@ -358,6 +358,11 @@ void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
     WidgetContainer::loadWidgets(children);
 }
 
+bool PlaylistTabs::canAddWidget() const
+{
+    return !p->tabsWidget;
+}
+
 void PlaylistTabs::addWidget(FyWidget* widget)
 {
     p->tabsWidget = widget;
@@ -368,7 +373,6 @@ void PlaylistTabs::removeWidget(FyWidget* widget)
 {
     if(widget == p->tabsWidget) {
         p->tabsWidget->deleteLater();
-        p->tabsWidget = nullptr;
     }
 }
 

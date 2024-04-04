@@ -36,11 +36,6 @@ struct FactoryWidget
     int limit{0};
     int count{0};
 };
-
-bool atLimit(const FactoryWidget& widget)
-{
-    return widget.limit > 0 && widget.count >= widget.limit;
-}
 } // namespace
 
 namespace Fooyin {
@@ -55,6 +50,17 @@ struct WidgetProvider::Private
         : actionManager{actionManager_}
     { }
 
+    bool canCreateWidget(const QString& key)
+    {
+        if(!widgets.contains(key)) {
+            return false;
+        }
+
+        const auto& widget = widgets.at(key);
+
+        return widget.limit == 0 || widget.count < widget.limit;
+    }
+
     void updateActionState(const QString& key)
     {
         if(!widgets.contains(key)) {
@@ -65,12 +71,11 @@ struct WidgetProvider::Private
             return;
         }
 
-        const FactoryWidget& widget = widgets.at(key);
-        const bool isAtLimit        = atLimit(widget);
+        const bool canCreate = canCreateWidget(key);
 
         for(const auto& action : actions.at(key)) {
             if(action) {
-                action->setDisabled(isAtLimit);
+                action->setEnabled(canCreate);
             }
         }
     }
@@ -109,6 +114,11 @@ void WidgetProvider::setSubMenus(const QString& key, const QStringList& subMenus
     p->widgets.at(key).subMenus = subMenus;
 }
 
+bool WidgetProvider::canCreateWidget(const QString& key) const
+{
+    return p->canCreateWidget(key);
+}
+
 void WidgetProvider::setLimit(const QString& key, int limit)
 {
     if(!p->widgets.contains(key)) {
@@ -127,7 +137,7 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
 
     auto& widget = p->widgets.at(key);
 
-    if(!widget.instantiator || atLimit(widget)) {
+    if(!widget.instantiator || !p->canCreateWidget(key)) {
         return nullptr;
     }
 
@@ -168,7 +178,7 @@ void WidgetProvider::setupWidgetMenu(ActionContainer* menu, const std::function<
         auto* addWidgetAction = new QAction(widget.name, parentMenu);
         p->actions[key].emplace_back(addWidgetAction);
 
-        addWidgetAction->setDisabled(atLimit(widget));
+        addWidgetAction->setEnabled(p->canCreateWidget(key));
 
         QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, addWidgetAction, func, key] {
             FyWidget* newWidget = createWidget(key);
