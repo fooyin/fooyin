@@ -184,11 +184,13 @@ struct EditableLayout::Private
                 setupReplaceWidgetMenu(changeMenu, currentWidget);
                 menu->addMenu(changeMenu);
 
-                auto* copy = new QAction(tr("Copy"), menu);
-                copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
-                QObject::connect(copy, &QAction::triggered, parent,
-                                 [this, currentWidget] { widgetClipboard = currentWidget->layoutName(); });
-                menu->addAction(copy);
+                if(!qobject_cast<WidgetContainer*>(currentWidget)) {
+                    auto* copy = new QAction(tr("Copy"), menu);
+                    copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
+                    QObject::connect(copy, &QAction::triggered, parent,
+                                     [this, currentWidget] { widgetClipboard = currentWidget->layoutName(); });
+                    menu->addAction(copy);
+                }
 
                 if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard)) {
                     addPasteAction(currentWidget);
