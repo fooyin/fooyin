@@ -92,6 +92,18 @@ void FyWidget::saveLayout(QJsonArray& layout)
     layout.append(widgetObject);
 }
 
+void FyWidget::saveBaseLayout(QJsonArray& layout)
+{
+    QJsonObject widgetData;
+
+    saveLayoutData(widgetData);
+
+    QJsonObject widgetObject;
+    widgetObject[layoutName()] = widgetData;
+
+    layout.append(widgetObject);
+}
+
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("ID"))) {

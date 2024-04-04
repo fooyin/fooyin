@@ -200,10 +200,11 @@ WidgetList SplitterWidget::widgets() const
     return m_children;
 }
 
-void SplitterWidget::addWidget(FyWidget* widget)
+int SplitterWidget::addWidget(FyWidget* widget)
 {
     const int index = static_cast<int>(m_children.size()) + m_baseWidgetCount;
     insertWidget(index, widget);
+    return index;
 }
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
@@ -230,36 +231,25 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
     m_splitter->insertWidget(index, widget);
 }
 
-void SplitterWidget::removeWidget(const Id& id)
+void SplitterWidget::removeWidget(int index)
 {
-    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
-    if(widgetIt == m_children.cend()) {
+    if(index < 0 || std::cmp_greater_equal(index, m_children.size())) {
         return;
     }
 
     m_widgetCount -= 1;
 
-    const auto index = static_cast<int>(std::distance(m_children.begin(), widgetIt));
-    auto* widget     = *widgetIt;
-    widget->deleteLater();
+    m_children.at(index)->deleteLater();
     m_children.erase(m_children.begin() + index);
 
     checkShowDummy();
 }
 
-void SplitterWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
+void SplitterWidget::replaceWidget(int index, FyWidget* newWidget)
 {
-    if(!newWidget || m_children.empty()) {
+    if(index < 0 || std::cmp_greater_equal(index, m_children.size())) {
         return;
     }
-
-    const auto widgetIt
-        = std::ranges::find_if(m_children, [oldWidget](FyWidget* widget) { return widget->id() == oldWidget; });
-    if(widgetIt == m_children.cend()) {
-        return;
-    }
-
-    const auto index = static_cast<int>(std::distance(m_children.begin(), widgetIt));
 
     auto* replacedWidget = m_splitter->replaceWidget(index, newWidget);
     m_children.erase(m_children.begin() + index);

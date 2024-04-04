@@ -407,10 +407,12 @@ WidgetList PlaylistTabs::widgets() const
     return {p->tabsWidget};
 }
 
-void PlaylistTabs::addWidget(FyWidget* widget)
+int PlaylistTabs::addWidget(FyWidget* widget)
 {
     p->tabsWidget = widget;
     p->layout->addWidget(p->tabsWidget);
+
+    return 0;
 }
 
 void PlaylistTabs::insertWidget(int index, FyWidget* widget)
@@ -426,20 +428,22 @@ void PlaylistTabs::insertWidget(int index, FyWidget* widget)
     addWidget(widget);
 }
 
-void PlaylistTabs::removeWidget(const Id& id)
+void PlaylistTabs::removeWidget(int index)
 {
-    if(p->tabsWidget && p->tabsWidget->id() == id) {
+    if(p->tabsWidget && index == 0) {
         p->tabsWidget->deleteLater();
     }
 }
 
-void PlaylistTabs::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
+void PlaylistTabs::replaceWidget(int index, FyWidget* newWidget)
 {
-    if(p->tabsWidget && p->tabsWidget->id() == oldWidget) {
-        p->tabsWidget->deleteLater();
-        p->tabsWidget = newWidget;
-        p->layout->addWidget(p->tabsWidget);
+    if(index != 0) {
+        return;
     }
+
+    p->tabsWidget->deleteLater();
+    p->tabsWidget = newWidget;
+    p->layout->addWidget(p->tabsWidget);
 }
 } // namespace Fooyin
 

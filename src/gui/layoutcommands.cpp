@@ -23,15 +23,23 @@
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
 
+#include <QJsonArray>
+
 namespace Fooyin {
 LayoutChangeCommand::LayoutChangeCommand(WidgetProvider* provider, WidgetContainer* container)
     : m_provider{provider}
     , m_container{container}
 { }
 
-AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString widgetKey)
+AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key)
     : LayoutChangeCommand{provider, container}
-    , m_widgetKey{std::move(widgetKey)}
+    , m_key{std::move(key)}
+    , m_index{-1}
+{ }
+
+AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget)
+    : LayoutChangeCommand{provider, container}
+    , m_widget{std::move(widget)}
     , m_index{-1}
 { }
 
@@ -40,74 +48,105 @@ void AddWidgetCommand::undo()
     if(m_index >= 0) {
         m_containerState = m_container->saveState();
 
-        if(auto* widget = m_container->widgetAtIndex(m_index)) {
-            m_container->removeWidget(widget->id());
-            m_provider->updateActionState();
-        }
+        m_container->removeWidget(m_index);
+        m_provider->updateActionState();
     }
 }
 
 void AddWidgetCommand::redo()
 {
-    if(auto* widget = m_provider->createWidget(m_widgetKey)) {
-        m_container->addWidget(widget);
-        m_index = m_container->widgetIndex(widget->id());
-        widget->finalise();
+    if(!m_widget.empty()) {
+        if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
+            m_index = m_container->addWidget(widget);
+            widget->finalise();
 
-        m_container->restoreState(m_containerState);
-        m_provider->updateActionState();
+            m_container->restoreState(m_containerState);
+            m_provider->updateActionState();
+        }
+    }
+    else if(!m_key.isEmpty()) {
+        if(auto* widget = m_provider->createWidget(m_key)) {
+            m_index = m_container->addWidget(widget);
+            widget->finalise();
+
+            m_container->restoreState(m_containerState);
+            m_provider->updateActionState();
+        }
     }
 }
 
-ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString widgetKey,
+ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key,
                                            const Id& widgetToReplace)
     : LayoutChangeCommand{provider, container}
-    , m_widgetKey{std::move(widgetKey)}
+    , m_key{std::move(key)}
     , m_index{m_container->widgetIndex(widgetToReplace)}
-{ }
+{
+    if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+        m_oldWidget = EditableLayout::saveWidget(oldWidget);
+    }
+}
+
+ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget,
+                                           const Id& widgetToReplace)
+    : LayoutChangeCommand{provider, container}
+    , m_widget{std::move(widget)}
+    , m_index{m_container->widgetIndex(widgetToReplace)}
+{
+    if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+        m_oldWidget = EditableLayout::saveWidget(oldWidget);
+    }
+}
 
 void ReplaceWidgetCommand::undo()
 {
-    if(m_index >= 0) {
-        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
-            if(auto* widget = m_provider->createWidget(m_oldWidgetKey)) {
-                m_container->replaceWidget(oldWidget->id(), widget);
-                widget->finalise();
+    if(!m_oldWidget.empty()) {
+        if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
+            m_container->replaceWidget(m_index, widget);
 
-                m_container->restoreState(m_containerState);
-                m_provider->updateActionState();
-            }
+            m_container->restoreState(m_containerState);
+            m_provider->updateActionState();
         }
     }
 }
 
 void ReplaceWidgetCommand::redo()
 {
-    if(m_index >= 0) {
-        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
-            m_oldWidgetKey = oldWidget->layoutName();
+    if(!m_widget.empty()) {
+        if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
+            m_containerState = m_container->saveState();
 
-            if(auto* widget = m_provider->createWidget(m_widgetKey)) {
-                m_containerState = m_container->saveState();
+            m_container->replaceWidget(m_index, widget);
+            widget->finalise();
 
-                m_container->replaceWidget(oldWidget->id(), widget);
-                widget->finalise();
+            m_provider->updateActionState();
+        }
+    }
+    else if(!m_key.isEmpty()) {
+        if(auto* widget = m_provider->createWidget(m_key)) {
+            m_containerState = m_container->saveState();
 
-                m_provider->updateActionState();
-            }
+            m_container->replaceWidget(m_index, widget);
+            widget->finalise();
+
+            m_provider->updateActionState();
         }
     }
 }
 
 RemoveWidgetCommand::RemoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, const Id& widgetId)
     : LayoutChangeCommand{provider, container}
-    , m_index{m_container->widgetIndex(widgetId)}
-{ }
+    , m_index{-1}
+{
+    if(auto* widget = container->widgetAtId(widgetId)) {
+        m_widget = EditableLayout::saveWidget(widget);
+        m_index  = container->widgetIndex(widgetId);
+    }
+}
 
 void RemoveWidgetCommand::undo()
 {
-    if(m_index >= 0) {
-        if(auto* widget = m_provider->createWidget(m_widgetKey)) {
+    if(!m_widget.empty()) {
+        if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
             m_container->insertWidget(m_index, widget);
             widget->finalise();
 
@@ -119,15 +158,11 @@ void RemoveWidgetCommand::undo()
 
 void RemoveWidgetCommand::redo()
 {
-    if(m_index >= 0) {
-        if(auto* widget = m_container->widgetAtIndex(m_index)) {
-            m_containerState = m_container->saveState();
-            m_widgetKey      = widget->layoutName();
+    if(!m_widget.empty()) {
+        m_containerState = m_container->saveState();
 
-            m_container->removeWidget(widget->id());
-
-            m_provider->updateActionState();
-        }
+        m_container->removeWidget(m_index);
+        m_provider->updateActionState();
     }
 }
 } // namespace Fooyin

@@ -83,6 +83,10 @@ public:
      */
     void saveLayout(QJsonArray& layout);
     /*!
+     * Saves base widget data excluding any unique identifiers.
+     */
+    void saveBaseLayout(QJsonArray& layout);
+    /*!
      * Called when loading from a layout file (on open or importing).
      * Saves the unique id of this widget and calls @fn saveLayoutData.
      */

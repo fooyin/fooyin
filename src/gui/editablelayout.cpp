@@ -66,7 +66,7 @@ struct EditableLayout::Private
     bool layoutEditing{false};
 
     WidgetContext* editingContext;
-    QString widgetClipboard;
+    QJsonObject widgetClipboard;
     QUndoStack* layoutHistory;
 
     Private(EditableLayout* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
@@ -166,8 +166,7 @@ struct EditableLayout::Private
                 if(container->canAddWidget()) {
                     auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
                     QObject::connect(pasteInsert, &QAction::triggered, container, [this, container] {
-                        container->addWidget(widgetProvider->createWidget(widgetClipboard));
-                        widgetClipboard.clear();
+                        layoutHistory->push(new AddWidgetCommand(widgetProvider, container, widgetClipboard));
                     });
                     menu->addAction(pasteInsert);
                 }
@@ -184,21 +183,20 @@ struct EditableLayout::Private
                 setupReplaceWidgetMenu(changeMenu, currentWidget);
                 menu->addMenu(changeMenu);
 
-                if(!qobject_cast<WidgetContainer*>(currentWidget)) {
-                    auto* copy = new QAction(tr("Copy"), menu);
-                    copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
-                    QObject::connect(copy, &QAction::triggered, parent,
-                                     [this, currentWidget] { widgetClipboard = currentWidget->layoutName(); });
-                    menu->addAction(copy);
-                }
+                auto* copy = new QAction(tr("Copy"), menu);
+                copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
+                QObject::connect(copy, &QAction::triggered, parent, [this, currentWidget] {
+                    widgetClipboard = EditableLayout::saveWidget(currentWidget);
+                });
+                menu->addAction(copy);
 
-                if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard)) {
+                if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
                     addPasteAction(currentWidget);
 
                     auto* paste = new QAction(tr("Paste (Replace)"), menu);
                     QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
-                        parent->replaceWidget(currentWidget->id(), widgetProvider->createWidget(widgetClipboard));
-                        widgetClipboard.clear();
+                        layoutHistory->push(
+                            new ReplaceWidgetCommand(widgetProvider, parent, widgetClipboard, currentWidget->id()));
                     });
                     menu->addAction(paste);
                 }
@@ -209,7 +207,7 @@ struct EditableLayout::Private
                 });
                 menu->addAction(remove);
             }
-            else if(!widgetClipboard.isEmpty()) {
+            else if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
                 addPasteAction(currentWidget);
             }
             currentWidget = parent;
@@ -428,6 +426,35 @@ bool EditableLayout::loadLayout()
 {
     const Layout layout = p->layoutProvider->currentLayout();
     return loadLayout(layout);
+}
+
+QJsonObject EditableLayout::saveWidget(FyWidget* widget)
+{
+    QJsonArray array;
+
+    widget->saveBaseLayout(array);
+
+    if(!array.empty() && array.constBegin()->isObject()) {
+        return array.constBegin()->toObject();
+    }
+
+    return {};
+}
+
+FyWidget* EditableLayout::loadWidget(WidgetProvider* provider, const QJsonObject& layout)
+{
+    if(layout.empty()) {
+        return nullptr;
+    }
+
+    const auto name = layout.constBegin().key();
+    if(auto* widget = provider->createWidget(name)) {
+        const QJsonObject options = layout.constBegin()->toObject();
+        widget->loadLayout(options);
+        return widget;
+    }
+
+    return nullptr;
 }
 
 void EditableLayout::showQuickSetup()

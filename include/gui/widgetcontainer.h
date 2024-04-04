@@ -44,10 +44,10 @@ public:
     [[nodiscard]] virtual FyWidget* widgetAtIndex(int index) const = 0;
     [[nodiscard]] virtual WidgetList widgets() const               = 0;
 
-    virtual void addWidget(FyWidget* widget)                             = 0;
-    virtual void insertWidget(int index, FyWidget* widget)               = 0;
-    virtual void removeWidget(const Id& id)                              = 0;
-    virtual void replaceWidget(const Id& oldWidget, FyWidget* newWidget) = 0;
+    virtual int addWidget(FyWidget* widget)                    = 0;
+    virtual void insertWidget(int index, FyWidget* widget)     = 0;
+    virtual void removeWidget(int index)                       = 0;
+    virtual void replaceWidget(int index, FyWidget* newWidget) = 0;
 
     [[nodiscard]] virtual QByteArray saveState() const;
     virtual bool restoreState(const QByteArray& state);

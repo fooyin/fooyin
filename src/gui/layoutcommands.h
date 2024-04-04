@@ -21,10 +21,10 @@
 
 #include <utils/id.h>
 
+#include <QJsonObject>
 #include <QUndoCommand>
 
 namespace Fooyin {
-class FyWidget;
 class WidgetContainer;
 class WidgetProvider;
 
@@ -42,28 +42,32 @@ protected:
 class AddWidgetCommand : public LayoutChangeCommand
 {
 public:
-    AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString widgetKey);
+    AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key);
+    AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget);
 
     void undo() override;
     void redo() override;
 
 private:
-    QString m_widgetKey;
+    QString m_key;
+    QJsonObject m_widget;
     int m_index;
 };
 
 class ReplaceWidgetCommand : public LayoutChangeCommand
 {
 public:
-    ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString widgetKey,
+    ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key, const Id& widgetToReplace);
+    ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget,
                          const Id& widgetToReplace);
 
     void undo() override;
     void redo() override;
 
 private:
-    QString m_widgetKey;
-    QString m_oldWidgetKey;
+    QString m_key;
+    QJsonObject m_widget;
+    QJsonObject m_oldWidget;
     int m_index;
 };
 
@@ -76,7 +80,7 @@ public:
     void redo() override;
 
 private:
-    QString m_widgetKey;
+    QJsonObject m_widget;
     int m_index;
 };
 } // namespace Fooyin

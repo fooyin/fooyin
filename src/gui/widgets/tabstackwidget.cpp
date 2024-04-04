@@ -170,9 +170,11 @@ WidgetList TabStackWidget::widgets() const
     return m_widgets;
 }
 
-void TabStackWidget::addWidget(FyWidget* widget)
+int TabStackWidget::addWidget(FyWidget* widget)
 {
-    insertWidget(m_tabs->count(), widget);
+    const int index = m_tabs->count();
+    insertWidget(index, widget);
+    return index;
 }
 
 void TabStackWidget::insertWidget(int index, FyWidget* widget)
@@ -185,27 +187,29 @@ void TabStackWidget::insertWidget(int index, FyWidget* widget)
     m_widgets.insert(m_widgets.begin() + insertionIndex, widget);
 }
 
-void TabStackWidget::removeWidget(const Id& id)
+void TabStackWidget::removeWidget(int index)
 {
-    const int index = indexOfWidget(id);
-    if(index >= 0) {
-        m_tabs->removeTab(index);
-        m_widgets.erase(m_widgets.begin() + index);
+    if(index < 0 || index > m_tabs->count()) {
+        return;
     }
+
+    m_tabs->removeTab(index);
+    m_widgets.erase(m_widgets.begin() + index);
 }
 
-void TabStackWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
+void TabStackWidget::replaceWidget(int index, FyWidget* newWidget)
 {
-    const int index = indexOfWidget(oldWidget);
-    if(index >= 0) {
-        m_tabs->removeTab(index);
-        m_tabs->insertTab(index, newWidget, newWidget->name());
-
-        m_widgets.erase(m_widgets.begin() + index);
-        m_widgets.insert(m_widgets.begin() + index, newWidget);
-
-        m_tabs->setCurrentIndex(index);
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return;
     }
+
+    m_tabs->removeTab(index);
+    m_tabs->insertTab(index, newWidget, newWidget->name());
+
+    m_widgets.erase(m_widgets.begin() + index);
+    m_widgets.insert(m_widgets.begin() + index, newWidget);
+
+    m_tabs->setCurrentIndex(index);
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
@@ -220,8 +224,6 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
         FyWidget::contextMenuEvent(event);
         return;
     }
-
-    auto* widget = m_widgets.at(index);
 
     auto* posMenu = new QMenu(tr("&Position"), menu);
 
@@ -273,7 +275,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(rename, &QAction::triggered, m_tabs->editableTabBar(), &EditableTabBar::showEditor);
 
     auto* remove = new QAction(tr("Re&move"), menu);
-    QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget->id()); });
+    QObject::connect(remove, &QAction::triggered, this, [this, index]() { removeWidget(index); });
 
     menu->addMenu(posMenu);
     menu->addSeparator();

@@ -55,6 +55,9 @@ public:
     bool loadLayout(const Layout& layout);
     bool loadLayout();
 
+    static QJsonObject saveWidget(FyWidget* widget);
+    static FyWidget* loadWidget(WidgetProvider* provider, const QJsonObject& layout);
+
     void showQuickSetup();
 
 private:
