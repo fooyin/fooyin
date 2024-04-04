@@ -48,8 +48,8 @@ public:
     void redo() override;
 
 private:
-    Id m_widgetId;
     QString m_widgetKey;
+    int m_index;
 };
 
 class ReplaceWidgetCommand : public LayoutChangeCommand
@@ -63,9 +63,8 @@ public:
 
 private:
     QString m_widgetKey;
-    Id m_widgetToReplace;
-    Id m_widgetId;
-    QString m_replacedWidgetKey;
+    QString m_oldWidgetKey;
+    int m_index;
 };
 
 class RemoveWidgetCommand : public LayoutChangeCommand
@@ -77,7 +76,6 @@ public:
     void redo() override;
 
 private:
-    Id m_widgetId;
     QString m_widgetKey;
     int m_index;
 };

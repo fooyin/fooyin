@@ -88,6 +88,8 @@ WidgetContext::WidgetContext(QWidget* widget, Context context, QObject* parent)
     : QObject{parent}
     , m_widget{widget}
     , m_context{std::move(context)}
+    , m_isEnabled{true}
+    , m_isGlobal{false}
 { }
 
 Context WidgetContext::context() const
@@ -105,10 +107,20 @@ bool WidgetContext::isEnabled() const
     return m_isEnabled;
 }
 
+bool WidgetContext::isGlobal() const
+{
+    return m_isGlobal;
+}
+
 void WidgetContext::setEnabled(bool enabled)
 {
     if(std::exchange(m_isEnabled, enabled) != enabled) {
         emit isEnabledChanged();
     }
+}
+
+void WidgetContext::setGlobal(bool global)
+{
+    m_isGlobal = global;
 }
 } // namespace Fooyin

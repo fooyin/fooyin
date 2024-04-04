@@ -41,12 +41,14 @@ public:
 
     [[nodiscard]] bool canAddWidget() const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
+    [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
+    [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
+    [[nodiscard]] WidgetList widgets() const override;
+
     void addWidget(FyWidget* widget) override;
     void insertWidget(int index, FyWidget* widget) override;
     void removeWidget(const Id& id) override;
     void replaceWidget(const Id& oldWidget, FyWidget* newWidget) override;
-    [[nodiscard]] FyWidget* widget(const Id& id) const override;
-    [[nodiscard]] WidgetList widgets() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

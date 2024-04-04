@@ -134,11 +134,15 @@ struct ActionManager::Private
         WidgetContextList newContext;
 
         if(QWidget* focusedWidget = QApplication::focusWidget()) {
-            WidgetContext* widgetContext{nullptr};
             while(focusedWidget) {
-                widgetContext = self->contextObject(focusedWidget);
-                if(widgetContext && widgetContext->isEnabled()) {
-                    newContext.push_back(widgetContext);
+                if(auto* widgetContext = self->contextObject(focusedWidget)) {
+                    if(widgetContext->isEnabled()) {
+                        if(widgetContext->isGlobal()) {
+                            newContext = {widgetContext};
+                            break;
+                        }
+                        newContext.push_back(widgetContext);
+                    }
                 }
                 focusedWidget = focusedWidget->parentWidget();
             }

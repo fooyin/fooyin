@@ -83,6 +83,9 @@ struct EditableLayout::Private
     {
         box->setContentsMargins(5, 5, 5, 5);
 
+        editingContext->setEnabled(false);
+        editingContext->setGlobal(true);
+        actionManager->addContextObject(editingContext);
         widgetProvider->setCommandStack(layoutHistory);
     }
 
@@ -101,16 +104,16 @@ struct EditableLayout::Private
     {
         layoutEditing = editing;
         if(editing) {
+            editingContext->setEnabled(true);
             overlay = new OverlayWidget(self);
             qApp->installEventFilter(self);
-            editingContext->setEnabled(true);
         }
         else {
+            editingContext->setEnabled(false);
             qApp->removeEventFilter(self);
             if(overlay) {
                 overlay->deleteLater();
             }
-            editingContext->setEnabled(false);
         }
     }
 
@@ -279,8 +282,6 @@ EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
-    p->actionManager->addContextObject(p->editingContext);
-
     auto* editMenu = p->actionManager->actionContainer(Constants::Menus::Edit);
 
     auto* undo    = new QAction(tr("Undo"), this);
@@ -369,7 +370,7 @@ void EditableLayout::changeLayout(const Layout& layout)
     delete p->splitter;
 
     if(loadLayout(layout)) {
-        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->childCount() == 0);
+        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->widgets().size() == 0);
     }
     else {
         p->setupDefault();

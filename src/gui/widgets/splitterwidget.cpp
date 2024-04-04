@@ -153,11 +153,6 @@ bool SplitterWidget::restoreState(const QByteArray& state)
     return m_splitter->restoreState(state);
 }
 
-int SplitterWidget::childCount()
-{
-    return static_cast<int>(m_children.size());
-}
-
 bool SplitterWidget::canAddWidget() const
 {
     return true;
@@ -177,9 +172,37 @@ int SplitterWidget::widgetIndex(const Id& id) const
     return -1;
 }
 
+FyWidget* SplitterWidget::widgetAtId(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_children.cend()) {
+        return *widgetIt;
+    }
+
+    return nullptr;
+}
+
+FyWidget* SplitterWidget::widgetAtIndex(int index) const
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_children.size())) {
+        return nullptr;
+    }
+
+    return m_children.at(index);
+}
+
+WidgetList SplitterWidget::widgets() const
+{
+    return m_children;
+}
+
 void SplitterWidget::addWidget(FyWidget* widget)
 {
-    const int index = childCount() + m_baseWidgetCount;
+    const int index = static_cast<int>(m_children.size()) + m_baseWidgetCount;
     insertWidget(index, widget);
 }
 
@@ -209,14 +232,15 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
 
 void SplitterWidget::removeWidget(const Id& id)
 {
-    const int index = findIndex(id);
-    if(index < 0) {
+    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt == m_children.cend()) {
         return;
     }
 
     m_widgetCount -= 1;
 
-    auto* widget = this->widget(id);
+    const auto index = static_cast<int>(std::distance(m_children.begin(), widgetIt));
+    auto* widget     = *widgetIt;
     widget->deleteLater();
     m_children.erase(m_children.begin() + index);
 
@@ -229,29 +253,19 @@ void SplitterWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
         return;
     }
 
-    const int index = findIndex(oldWidget);
-    if(index >= 0) {
-        replaceWidget(index, newWidget);
-    }
-}
-
-FyWidget* SplitterWidget::widget(const Id& id) const
-{
-    if(!id.isValid()) {
-        return nullptr;
+    const auto widgetIt
+        = std::ranges::find_if(m_children, [oldWidget](FyWidget* widget) { return widget->id() == oldWidget; });
+    if(widgetIt == m_children.cend()) {
+        return;
     }
 
-    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
-    if(widgetIt != m_children.cend()) {
-        return *widgetIt;
-    }
+    const auto index = static_cast<int>(std::distance(m_children.begin(), widgetIt));
 
-    return nullptr;
-}
+    auto* replacedWidget = m_splitter->replaceWidget(index, newWidget);
+    m_children.erase(m_children.begin() + index);
+    replacedWidget->deleteLater();
 
-WidgetList SplitterWidget::widgets() const
-{
-    return m_children;
+    m_children.insert(m_children.begin() + index, newWidget);
 }
 
 QString SplitterWidget::name() const
@@ -318,41 +332,6 @@ void SplitterWidget::checkShowDummy()
     else if(m_dummy && !m_showDummy && m_widgetCount > 0) {
         m_dummy->deleteLater();
     }
-}
-
-int SplitterWidget::findIndex(FyWidget* widgetToFind) const
-{
-    const auto it = std::ranges::find(m_children, widgetToFind);
-    if(it != m_children.cend()) {
-        return static_cast<int>(std::distance(m_children.cbegin(), it));
-    }
-    return -1;
-}
-
-int SplitterWidget::findIndex(const Id& id) const
-{
-    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
-    if(widgetIt != m_children.cend()) {
-        return static_cast<int>(std::distance(m_children.cbegin(), widgetIt));
-    }
-    return -1;
-}
-
-void SplitterWidget::replaceWidget(int index, FyWidget* widget)
-{
-    if(!widget || m_children.empty()) {
-        return;
-    }
-
-    if(index < 0 || index >= childCount()) {
-        return;
-    }
-
-    auto* oldWidget = m_splitter->replaceWidget(index, widget);
-    m_children.erase(m_children.begin() + index);
-    oldWidget->deleteLater();
-
-    m_children.insert(m_children.begin() + index, widget);
 }
 } // namespace Fooyin
 

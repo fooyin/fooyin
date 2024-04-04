@@ -376,6 +376,37 @@ int PlaylistTabs::widgetIndex(const Id& id) const
     return -1;
 }
 
+FyWidget* PlaylistTabs::widgetAtId(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    if(!p->tabsWidget || p->tabsWidget->id() != id) {
+        return nullptr;
+    }
+
+    return p->tabsWidget;
+}
+
+FyWidget* PlaylistTabs::widgetAtIndex(int index) const
+{
+    if(index != 0) {
+        return nullptr;
+    }
+
+    return p->tabsWidget;
+}
+
+WidgetList PlaylistTabs::widgets() const
+{
+    if(!p->tabsWidget) {
+        return {};
+    }
+
+    return {p->tabsWidget};
+}
+
 void PlaylistTabs::addWidget(FyWidget* widget)
 {
     p->tabsWidget = widget;
@@ -409,28 +440,6 @@ void PlaylistTabs::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
         p->tabsWidget = newWidget;
         p->layout->addWidget(p->tabsWidget);
     }
-}
-
-FyWidget* PlaylistTabs::widget(const Id& id) const
-{
-    if(!id.isValid()) {
-        return nullptr;
-    }
-
-    if(!p->tabsWidget || p->tabsWidget->id() != id) {
-        return nullptr;
-    }
-
-    return p->tabsWidget;
-}
-
-WidgetList PlaylistTabs::widgets() const
-{
-    if(!p->tabsWidget) {
-        return {};
-    }
-
-    return {p->tabsWidget};
 }
 } // namespace Fooyin
 

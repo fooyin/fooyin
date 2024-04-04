@@ -142,6 +142,34 @@ int TabStackWidget::widgetIndex(const Id& id) const
     return -1;
 }
 
+FyWidget* TabStackWidget::widgetAtId(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    const auto widgetIt = std::ranges::find_if(m_widgets, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_widgets.cend()) {
+        return *widgetIt;
+    }
+
+    return nullptr;
+}
+
+FyWidget* TabStackWidget::widgetAtIndex(int index) const
+{
+    if(index < 0 || std::cmp_greater_equal(index, m_widgets.size())) {
+        return nullptr;
+    }
+
+    return m_widgets.at(index);
+}
+
+WidgetList TabStackWidget::widgets() const
+{
+    return m_widgets;
+}
+
 void TabStackWidget::addWidget(FyWidget* widget)
 {
     insertWidget(m_tabs->count(), widget);
@@ -178,25 +206,6 @@ void TabStackWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
 
         m_tabs->setCurrentIndex(index);
     }
-}
-
-FyWidget* TabStackWidget::widget(const Id& id) const
-{
-    if(!id.isValid()) {
-        return nullptr;
-    }
-
-    const auto widgetIt = std::ranges::find_if(m_widgets, [id](FyWidget* widget) { return widget->id() == id; });
-    if(widgetIt != m_widgets.cend()) {
-        return *widgetIt;
-    }
-
-    return nullptr;
-}
-
-WidgetList TabStackWidget::widgets() const
-{
-    return m_widgets;
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)

@@ -32,24 +32,26 @@ LayoutChangeCommand::LayoutChangeCommand(WidgetProvider* provider, WidgetContain
 AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString widgetKey)
     : LayoutChangeCommand{provider, container}
     , m_widgetKey{std::move(widgetKey)}
+    , m_index{-1}
 { }
 
 void AddWidgetCommand::undo()
 {
-    if(auto* widget = m_container->widget(m_widgetId)) {
+    if(m_index >= 0) {
         m_containerState = m_container->saveState();
 
-        m_container->removeWidget(m_widgetId);
-        m_provider->updateActionState();
+        if(auto* widget = m_container->widgetAtIndex(m_index)) {
+            m_container->removeWidget(widget->id());
+            m_provider->updateActionState();
+        }
     }
 }
 
 void AddWidgetCommand::redo()
 {
     if(auto* widget = m_provider->createWidget(m_widgetKey)) {
-        m_widgetId = widget->id();
-
         m_container->addWidget(widget);
+        m_index = m_container->widgetIndex(widget->id());
         widget->finalise();
 
         m_container->restoreState(m_containerState);
@@ -61,53 +63,51 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetConta
                                            const Id& widgetToReplace)
     : LayoutChangeCommand{provider, container}
     , m_widgetKey{std::move(widgetKey)}
-    , m_widgetToReplace{widgetToReplace}
+    , m_index{m_container->widgetIndex(widgetToReplace)}
 { }
 
 void ReplaceWidgetCommand::undo()
 {
-    if(m_widgetId.isValid() && !m_replacedWidgetKey.isEmpty()) {
-        if(auto* widget = m_provider->createWidget(m_replacedWidgetKey)) {
-            m_widgetToReplace = widget->id();
+    if(m_index >= 0) {
+        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+            if(auto* widget = m_provider->createWidget(m_oldWidgetKey)) {
+                m_container->replaceWidget(oldWidget->id(), widget);
+                widget->finalise();
 
-            m_container->replaceWidget(m_widgetId, widget);
-            widget->finalise();
-
-            m_container->restoreState(m_containerState);
-            m_provider->updateActionState();
+                m_container->restoreState(m_containerState);
+                m_provider->updateActionState();
+            }
         }
     }
 }
 
 void ReplaceWidgetCommand::redo()
 {
-    if(auto* replacedWidget = m_container->widget(m_widgetToReplace)) {
-        m_replacedWidgetKey = replacedWidget->layoutName();
+    if(m_index >= 0) {
+        if(auto* oldWidget = m_container->widgetAtIndex(m_index)) {
+            m_oldWidgetKey = oldWidget->layoutName();
 
-        if(auto* widget = m_provider->createWidget(m_widgetKey)) {
-            m_containerState = m_container->saveState();
-            m_widgetId       = widget->id();
+            if(auto* widget = m_provider->createWidget(m_widgetKey)) {
+                m_containerState = m_container->saveState();
 
-            m_container->replaceWidget(m_widgetToReplace, widget);
-            widget->finalise();
+                m_container->replaceWidget(oldWidget->id(), widget);
+                widget->finalise();
 
-            m_provider->updateActionState();
+                m_provider->updateActionState();
+            }
         }
     }
 }
 
 RemoveWidgetCommand::RemoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, const Id& widgetId)
     : LayoutChangeCommand{provider, container}
-    , m_widgetId{widgetId}
-    , m_index{-1}
+    , m_index{m_container->widgetIndex(widgetId)}
 { }
 
 void RemoveWidgetCommand::undo()
 {
     if(m_index >= 0) {
         if(auto* widget = m_provider->createWidget(m_widgetKey)) {
-            m_widgetId = widget->id();
-
             m_container->insertWidget(m_index, widget);
             widget->finalise();
 
@@ -119,14 +119,15 @@ void RemoveWidgetCommand::undo()
 
 void RemoveWidgetCommand::redo()
 {
-    if(auto* widget = m_container->widget(m_widgetId)) {
-        m_containerState = m_container->saveState();
-        m_widgetKey      = widget->layoutName();
-        m_index          = m_container->widgetIndex(m_widgetId);
+    if(m_index >= 0) {
+        if(auto* widget = m_container->widgetAtIndex(m_index)) {
+            m_containerState = m_container->saveState();
+            m_widgetKey      = widget->layoutName();
 
-        m_container->removeWidget(m_widgetId);
+            m_container->removeWidget(widget->id());
 
-        m_provider->updateActionState();
+            m_provider->updateActionState();
+        }
     }
 }
 } // namespace Fooyin
