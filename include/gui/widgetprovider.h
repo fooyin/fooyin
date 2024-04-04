@@ -26,10 +26,14 @@
 #include <functional>
 #include <memory>
 
+class QUndoStack;
+
 namespace Fooyin {
 class ActionManager;
 class ActionContainer;
+class Id;
 class FyWidget;
+class WidgetContainer;
 class WidgetFactory;
 
 /*!
@@ -40,6 +44,8 @@ class FYGUI_EXPORT WidgetProvider
 public:
     explicit WidgetProvider(ActionManager* actionManager);
     ~WidgetProvider();
+
+    void setCommandStack(QUndoStack* layoutCommands);
 
     /*!
      * Registers a widget.
@@ -73,9 +79,18 @@ public:
     /*!
      * Fills the passed @p menu with actions to create a new instance of each registered widget.
      * @param menu the menu to add actions to.
-     * @param func called when an action is triggered, passing the new instance of the widget.
+     * @param container the container in which widgets will be added.
      */
-    void setupWidgetMenu(ActionContainer* menu, const std::function<void(FyWidget*)>& func);
+    void setupAddWidgetMenu(ActionContainer* menu, WidgetContainer* container);
+    /*!
+     * Fills the passed @p menu with actions to replace a widget with an instance of another registered widget.
+     * @param menu the menu to add actions to.
+     * @param container the container in which widgets will be replaced.
+     * @param widgetId the widget to replace
+     */
+    void setupReplaceWidgetMenu(ActionContainer* menu, WidgetContainer* container, const Id& widgetId);
+
+    void updateActionState();
 
 private:
     struct Private;

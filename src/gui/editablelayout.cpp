@@ -20,7 +20,9 @@
 #include <gui/editablelayout.h>
 
 #include "internalguisettings.h"
+#include "layoutcommands.h"
 #include "quicksetup/quicksetupdialog.h"
+#include "utils/actions/command.h"
 #include "widgets/dummy.h"
 #include "widgets/menuheader.h"
 #include "widgets/splitterwidget.h"
@@ -43,6 +45,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QUndoStack>
 
 #include <stack>
 
@@ -62,7 +65,9 @@ struct EditableLayout::Private
     QPointer<SplitterWidget> splitter;
     bool layoutEditing{false};
 
+    WidgetContext* editingContext;
     QString widgetClipboard;
+    QUndoStack* layoutHistory;
 
     Private(EditableLayout* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
             LayoutProvider* layoutProvider_, SettingsManager* settings_)
@@ -73,8 +78,12 @@ struct EditableLayout::Private
         , layoutProvider{layoutProvider_}
         , editingMenu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
+        , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
+        , layoutHistory{new QUndoStack(self)}
     {
         box->setContentsMargins(5, 5, 5, 5);
+
+        widgetProvider->setCommandStack(layoutHistory);
     }
 
     void setupDefault()
@@ -94,12 +103,14 @@ struct EditableLayout::Private
         if(editing) {
             overlay = new OverlayWidget(self);
             qApp->installEventFilter(self);
+            editingContext->setEnabled(true);
         }
         else {
             qApp->removeEventFilter(self);
             if(overlay) {
                 overlay->deleteLater();
             }
+            editingContext->setEnabled(false);
         }
     }
 
@@ -135,8 +146,7 @@ struct EditableLayout::Private
             return;
         }
 
-        widgetProvider->setupWidgetMenu(
-            menu, [parent, current](FyWidget* newWidget) { parent->replaceWidget(current, newWidget); });
+        widgetProvider->setupReplaceWidgetMenu(menu, parent, current->id());
     }
 
     void setupContextMenu(FyWidget* widget, ActionContainer* menu)
@@ -178,14 +188,15 @@ struct EditableLayout::Private
                 auto* paste = new QAction(tr("Paste (Replace)"), menu);
                 paste->setEnabled(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard));
                 QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
-                    parent->replaceWidget(currentWidget, widgetProvider->createWidget(widgetClipboard));
+                    parent->replaceWidget(currentWidget->id(), widgetProvider->createWidget(widgetClipboard));
                     widgetClipboard.clear();
                 });
                 menu->addAction(paste);
 
                 auto* remove = new QAction(tr("Remove"), menu);
-                QObject::connect(remove, &QAction::triggered, parent,
-                                 [parent, currentWidget] { parent->removeWidget(currentWidget); });
+                QObject::connect(remove, &QAction::triggered, parent, [this, parent, currentWidget] {
+                    layoutHistory->push(new RemoveWidgetCommand(widgetProvider, parent, currentWidget->id()));
+                });
                 menu->addAction(remove);
             }
             currentWidget = parent;
@@ -193,7 +204,7 @@ struct EditableLayout::Private
         }
     }
 
-    FyWidget* findSplitterChild(QWidget* widget)
+    static FyWidget* findSplitterChild(QWidget* widget)
     {
         if(!widget) {
             return {};
@@ -268,6 +279,28 @@ EditableLayout::~EditableLayout() = default;
 
 void EditableLayout::initialise()
 {
+    p->actionManager->addContextObject(p->editingContext);
+
+    auto* editMenu = p->actionManager->actionContainer(Constants::Menus::Edit);
+
+    auto* undo    = new QAction(tr("Undo"), this);
+    auto* undoCmd = p->actionManager->registerAction(undo, Constants::Actions::Undo, p->editingContext->context());
+    undoCmd->setDefaultShortcut(QKeySequence::Undo);
+    editMenu->addAction(undoCmd);
+    QObject::connect(undo, &QAction::triggered, this, [this]() { p->layoutHistory->undo(); });
+    QObject::connect(p->layoutHistory, &QUndoStack::canUndoChanged, this,
+                     [undo](bool canUndo) { undo->setEnabled(canUndo); });
+    undo->setEnabled(p->layoutHistory->canUndo());
+
+    auto* redo    = new QAction(tr("Redo"), this);
+    auto* redoCmd = p->actionManager->registerAction(redo, Constants::Actions::Redo, p->editingContext->context());
+    redoCmd->setDefaultShortcut(QKeySequence::Redo);
+    editMenu->addAction(redoCmd);
+    QObject::connect(redo, &QAction::triggered, this, [this]() { p->layoutHistory->redo(); });
+    QObject::connect(p->layoutHistory, &QUndoStack::canRedoChanged, this,
+                     [redo](bool canRedo) { redo->setEnabled(canRedo); });
+    redo->setEnabled(p->layoutHistory->canRedo());
+
     if(!loadLayout()) {
         p->setupDefault();
     }
@@ -364,6 +397,8 @@ bool EditableLayout::loadLayout(const Layout& layout)
     if(layout.json.isEmpty()) {
         return false;
     }
+
+    p->layoutHistory->clear();
 
     const auto name = layout.json.constBegin().key();
     if(auto* splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(name))) {

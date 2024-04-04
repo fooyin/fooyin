@@ -27,6 +27,8 @@ set(SOURCES
     guipaths.cpp
     internalguisettings.cpp
     internalguisettings.h
+    layoutcommands.cpp
+    layoutcommands.h
     layoutprovider.cpp
     mainwindow.cpp
     mainwindow.h

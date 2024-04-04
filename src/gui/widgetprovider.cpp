@@ -19,12 +19,16 @@
 
 #include <gui/widgetprovider.h>
 
+#include "layoutcommands.h"
+
 #include <gui/fywidget.h>
+#include <gui/widgetcontainer.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 
 #include <QAction>
 #include <QMenu>
+#include <QUndoStack>
 
 namespace {
 struct FactoryWidget
@@ -41,13 +45,17 @@ struct FactoryWidget
 namespace Fooyin {
 struct WidgetProvider::Private
 {
+    WidgetProvider* self;
+
     ActionManager* actionManager;
+    QUndoStack* layoutCommands{nullptr};
 
     std::map<QString, FactoryWidget> widgets;
     std::map<QString, std::vector<QPointer<QAction>>> actions;
 
-    explicit Private(ActionManager* actionManager_)
-        : actionManager{actionManager_}
+    explicit Private(WidgetProvider* self_, ActionManager* actionManager_)
+        : self{self_}
+        , actionManager{actionManager_}
     { }
 
     bool canCreateWidget(const QString& key)
@@ -61,29 +69,48 @@ struct WidgetProvider::Private
         return widget.limit == 0 || widget.count < widget.limit;
     }
 
-    void updateActionState(const QString& key)
+    template <typename Func>
+    void setupWidgetMenu(ActionContainer* menu, Func&& func)
     {
-        if(!widgets.contains(key)) {
+        if(!menu->isEmpty()) {
             return;
         }
 
-        if(!actions.contains(key)) {
-            return;
-        }
+        for(const auto& [key, widget] : widgets) {
+            auto* parentMenu = menu;
 
-        const bool canCreate = canCreateWidget(key);
+            for(const auto& subMenu : widget.subMenus) {
+                const Id id     = Id{menu->id()}.append(subMenu);
+                auto* childMenu = actionManager->actionContainer(id);
 
-        for(const auto& action : actions.at(key)) {
-            if(action) {
-                action->setEnabled(canCreate);
+                if(!childMenu) {
+                    childMenu = actionManager->createMenu(id);
+                    childMenu->menu()->setTitle(subMenu);
+                    parentMenu->addMenu(childMenu);
+                }
+                parentMenu = childMenu;
             }
+
+            auto* addWidgetAction = new QAction(widget.name, parentMenu);
+            actions[key].emplace_back(addWidgetAction);
+
+            addWidgetAction->setEnabled(canCreateWidget(key));
+
+            QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, key] { func(key); });
+
+            parentMenu->addAction(addWidgetAction);
         }
     }
 };
 
 WidgetProvider::WidgetProvider(ActionManager* actionManager)
-    : p{std::make_unique<Private>(actionManager)}
+    : p{std::make_unique<Private>(this, actionManager)}
 { }
+
+void WidgetProvider::setCommandStack(QUndoStack* layoutCommands)
+{
+    p->layoutCommands = layoutCommands;
+}
 
 WidgetProvider::~WidgetProvider() = default;
 
@@ -154,43 +181,41 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     return newWidget;
 }
 
-void WidgetProvider::setupWidgetMenu(ActionContainer* menu, const std::function<void(FyWidget*)>& func)
+void WidgetProvider::setupAddWidgetMenu(ActionContainer* menu, WidgetContainer* container)
 {
-    if(!menu->isEmpty()) {
+    if(!p->layoutCommands) {
         return;
     }
 
-    for(const auto& [key, widget] : p->widgets) {
-        auto* parentMenu = menu;
-
-        for(const auto& subMenu : widget.subMenus) {
-            const Id id     = Id{menu->id()}.append(subMenu);
-            auto* childMenu = p->actionManager->actionContainer(id);
-
-            if(!childMenu) {
-                childMenu = p->actionManager->createMenu(id);
-                childMenu->menu()->setTitle(subMenu);
-                parentMenu->addMenu(childMenu);
-            }
-            parentMenu = childMenu;
+    p->setupWidgetMenu(menu, [this, container](const QString& key) {
+        if(p->layoutCommands) {
+            p->layoutCommands->push(new AddWidgetCommand(this, container, key));
         }
+    });
+}
 
-        auto* addWidgetAction = new QAction(widget.name, parentMenu);
-        p->actions[key].emplace_back(addWidgetAction);
+void WidgetProvider::setupReplaceWidgetMenu(ActionContainer* menu, WidgetContainer* container, const Id& widgetId)
+{
+    if(!p->layoutCommands) {
+        return;
+    }
 
-        addWidgetAction->setEnabled(p->canCreateWidget(key));
+    p->setupWidgetMenu(menu, [this, container, widgetId](const QString& key) {
+        if(p->layoutCommands) {
+            p->layoutCommands->push(new ReplaceWidgetCommand(this, container, key, widgetId));
+        }
+    });
+}
 
-        QObject::connect(addWidgetAction, &QAction::triggered, menu, [this, addWidgetAction, func, key] {
-            FyWidget* newWidget = createWidget(key);
-            func(newWidget);
-            newWidget->finalise();
-
-            p->updateActionState(key);
-            QObject::connect(newWidget, &QObject::destroyed, addWidgetAction,
-                             [this, key] { p->updateActionState(key); });
-        });
-
-        parentMenu->addAction(addWidgetAction);
+void WidgetProvider::updateActionState()
+{
+    for(const auto& [key, widget] : p->widgets) {
+        const bool canCreate = canCreateWidget(key);
+        for(const auto& action : p->actions.at(key)) {
+            if(action) {
+                action->setEnabled(canCreate);
+            }
+        }
     }
 }
 } // namespace Fooyin

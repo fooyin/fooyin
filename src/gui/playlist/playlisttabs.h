@@ -52,9 +52,12 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] int widgetIndex(const Id& id) const override;
     void addWidget(FyWidget* widget) override;
-    void removeWidget(FyWidget* widget) override;
-    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
+    void insertWidget(int index, FyWidget* widget) override;
+    void removeWidget(const Id& id) override;
+    void replaceWidget(const Id& oldWidget, FyWidget* newWidget) override;
+    [[nodiscard]] FyWidget* widget(const Id& id) const override;
     [[nodiscard]] WidgetList widgets() const override;
 
 protected:

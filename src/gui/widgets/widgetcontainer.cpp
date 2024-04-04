@@ -30,6 +30,16 @@ WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent
     , m_widgetProvider{widgetProvider}
 { }
 
+QByteArray WidgetContainer::saveState() const
+{
+    return {};
+}
+
+bool WidgetContainer::restoreState(const QByteArray& /*state*/)
+{
+    return true;
+}
+
 void WidgetContainer::loadWidgets(const QJsonArray& widgets)
 {
     for(const auto& widget : widgets) {

@@ -46,15 +46,18 @@ public:
     [[nodiscard]] Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orientation);
 
-    [[nodiscard]] QByteArray saveState() const;
-    bool restoreState(const QByteArray& state);
+    [[nodiscard]] QByteArray saveState() const override;
+    bool restoreState(const QByteArray& state) override;
 
     [[nodiscard]] int childCount();
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] int widgetIndex(const Id& id) const override;
     void addWidget(FyWidget* widget) override;
-    void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) override;
-    void removeWidget(FyWidget* widget) override;
+    void insertWidget(int index, FyWidget* widget) override;
+    void removeWidget(const Id& id) override;
+    void replaceWidget(const Id& oldWidget, FyWidget* newWidget) override;
+    [[nodiscard]] FyWidget* widget(const Id& id) const override;
     [[nodiscard]] WidgetList widgets() const override;
 
     [[nodiscard]] QString name() const override;
@@ -65,7 +68,8 @@ public:
 
 private:
     void checkShowDummy();
-    int findIndex(FyWidget* widgetToFind) const;
+    [[nodiscard]] int findIndex(FyWidget* widgetToFind) const;
+    [[nodiscard]] int findIndex(const Id& id) const;
     void replaceWidget(int index, FyWidget* widget);
 
     ActionManager* m_actionManager;

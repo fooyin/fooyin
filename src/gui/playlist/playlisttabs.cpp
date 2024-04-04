@@ -335,7 +335,7 @@ void PlaylistTabs::layoutEditingMenu(ActionContainer* menu)
     auto* addMenu = p->actionManager->createMenu(addMenuId);
     addMenu->menu()->setTitle(addTitle);
 
-    p->widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
+    p->widgetProvider->setupAddWidgetMenu(addMenu, this);
     menu->addMenu(addMenu);
 }
 
@@ -363,26 +363,65 @@ bool PlaylistTabs::canAddWidget() const
     return !p->tabsWidget;
 }
 
+int PlaylistTabs::widgetIndex(const Id& id) const
+{
+    if(!id.isValid() || !p->tabsWidget) {
+        return -1;
+    }
+
+    if(p->tabsWidget->id() == id) {
+        return 0;
+    }
+
+    return -1;
+}
+
 void PlaylistTabs::addWidget(FyWidget* widget)
 {
     p->tabsWidget = widget;
     p->layout->addWidget(p->tabsWidget);
 }
 
-void PlaylistTabs::removeWidget(FyWidget* widget)
+void PlaylistTabs::insertWidget(int index, FyWidget* widget)
 {
-    if(widget == p->tabsWidget) {
+    if(p->tabsWidget) {
+        return;
+    }
+
+    if(index != 0) {
+        return;
+    }
+
+    addWidget(widget);
+}
+
+void PlaylistTabs::removeWidget(const Id& id)
+{
+    if(p->tabsWidget && p->tabsWidget->id() == id) {
         p->tabsWidget->deleteLater();
     }
 }
 
-void PlaylistTabs::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
+void PlaylistTabs::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
 {
-    if(oldWidget == p->tabsWidget) {
-        oldWidget->deleteLater();
+    if(p->tabsWidget && p->tabsWidget->id() == oldWidget) {
+        p->tabsWidget->deleteLater();
         p->tabsWidget = newWidget;
         p->layout->addWidget(p->tabsWidget);
     }
+}
+
+FyWidget* PlaylistTabs::widget(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    if(!p->tabsWidget || p->tabsWidget->id() != id) {
+        return nullptr;
+    }
+
+    return p->tabsWidget;
 }
 
 WidgetList PlaylistTabs::widgets() const

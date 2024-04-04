@@ -78,7 +78,7 @@ void TabStackWidget::layoutEditingMenu(ActionContainer* menu)
     auto* addMenu = m_actionManager->createMenu(addMenuId);
     addMenu->menu()->setTitle(addTitle);
 
-    m_widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
+    m_widgetProvider->setupAddWidgetMenu(addMenu, this);
     menu->addMenu(addMenu);
 }
 
@@ -128,22 +128,45 @@ bool TabStackWidget::canAddWidget() const
     return true;
 }
 
-void TabStackWidget::addWidget(FyWidget* widget)
+int TabStackWidget::widgetIndex(const Id& id) const
 {
-    const int index = m_tabs->addTab(widget, widget->name());
-    m_widgets.insert(m_widgets.begin() + index, widget);
+    if(!id.isValid()) {
+        return -1;
+    }
+
+    auto it = std::ranges::find_if(m_widgets, [id](FyWidget* widget) { return widget->id() == id; });
+    if(it != m_widgets.cend()) {
+        return static_cast<int>(std::distance(m_widgets.cbegin(), it));
+    }
+
+    return -1;
 }
 
-void TabStackWidget::removeWidget(FyWidget* widget)
+void TabStackWidget::addWidget(FyWidget* widget)
 {
-    const int index = indexOfWidget(widget);
+    insertWidget(m_tabs->count(), widget);
+}
+
+void TabStackWidget::insertWidget(int index, FyWidget* widget)
+{
+    if(index < 0 || index > m_tabs->count()) {
+        return;
+    }
+
+    const int insertionIndex = m_tabs->insertTab(index, widget, widget->name());
+    m_widgets.insert(m_widgets.begin() + insertionIndex, widget);
+}
+
+void TabStackWidget::removeWidget(const Id& id)
+{
+    const int index = indexOfWidget(id);
     if(index >= 0) {
         m_tabs->removeTab(index);
         m_widgets.erase(m_widgets.begin() + index);
     }
 }
 
-void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
+void TabStackWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
 {
     const int index = indexOfWidget(oldWidget);
     if(index >= 0) {
@@ -155,6 +178,20 @@ void TabStackWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
 
         m_tabs->setCurrentIndex(index);
     }
+}
+
+FyWidget* TabStackWidget::widget(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    const auto widgetIt = std::ranges::find_if(m_widgets, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_widgets.cend()) {
+        return *widgetIt;
+    }
+
+    return nullptr;
 }
 
 WidgetList TabStackWidget::widgets() const
@@ -227,7 +264,7 @@ void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(rename, &QAction::triggered, m_tabs->editableTabBar(), &EditableTabBar::showEditor);
 
     auto* remove = new QAction(tr("Re&move"), menu);
-    QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget); });
+    QObject::connect(remove, &QAction::triggered, this, [this, widget]() { removeWidget(widget->id()); });
 
     menu->addMenu(posMenu);
     menu->addSeparator();
@@ -242,6 +279,15 @@ int TabStackWidget::indexOfWidget(FyWidget* widget) const
     auto it = std::ranges::find(m_widgets, widget);
     if(it != m_widgets.cend()) {
         return static_cast<int>(std::distance(m_widgets.cbegin(), it));
+    }
+    return -1;
+}
+
+int TabStackWidget::indexOfWidget(const Id& id) const
+{
+    const auto widgetIt = std::ranges::find_if(m_widgets, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_widgets.cend()) {
+        return static_cast<int>(std::distance(m_widgets.cbegin(), widgetIt));
     }
     return -1;
 }

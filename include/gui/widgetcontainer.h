@@ -38,13 +38,19 @@ class WidgetContainer : public FyWidget
 public:
     explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
 
-    [[nodiscard]] virtual bool canAddWidget() const = 0;
+    [[nodiscard]] virtual bool canAddWidget() const           = 0;
+    [[nodiscard]] virtual int widgetIndex(const Id& id) const = 0;
 
     virtual void addWidget(FyWidget* widget)                             = 0;
-    virtual void removeWidget(FyWidget* widget)                          = 0;
-    virtual void replaceWidget(FyWidget* oldWidget, FyWidget* newWidget) = 0;
+    virtual void insertWidget(int index, FyWidget* widget)               = 0;
+    virtual void removeWidget(const Id& id)                              = 0;
+    virtual void replaceWidget(const Id& oldWidget, FyWidget* newWidget) = 0;
 
-    [[nodiscard]] virtual WidgetList widgets() const = 0;
+    [[nodiscard]] virtual FyWidget* widget(const Id& id) const = 0;
+    [[nodiscard]] virtual WidgetList widgets() const           = 0;
+
+    [[nodiscard]] virtual QByteArray saveState() const;
+    virtual bool restoreState(const QByteArray& state);
 
     /*!
      * Convenience method to load all widgets in the @p widgets array.

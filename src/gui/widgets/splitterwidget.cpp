@@ -163,7 +163,27 @@ bool SplitterWidget::canAddWidget() const
     return true;
 }
 
+int SplitterWidget::widgetIndex(const Id& id) const
+{
+    if(!id.isValid()) {
+        return -1;
+    }
+
+    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_children.cend()) {
+        return static_cast<int>(std::distance(m_children.cbegin(), widgetIt));
+    }
+
+    return -1;
+}
+
 void SplitterWidget::addWidget(FyWidget* widget)
+{
+    const int index = childCount() + m_baseWidgetCount;
+    insertWidget(index, widget);
+}
+
+void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
     if(m_limit > 0 && m_widgetCount >= m_limit) {
         return;
@@ -173,41 +193,60 @@ void SplitterWidget::addWidget(FyWidget* widget)
         return;
     }
 
+    if(index < 0 || index > m_splitter->count()) {
+        return;
+    }
+
     m_widgetCount += 1;
 
     if(m_dummy && m_widgetCount > 0) {
         m_dummy->deleteLater();
-        m_dummy = nullptr;
     }
 
-    const int index = childCount() + m_baseWidgetCount;
-    m_children.push_back(widget);
+    m_children.insert(m_children.begin() + index, widget);
     m_splitter->insertWidget(index, widget);
 }
 
-void SplitterWidget::replaceWidget(FyWidget* oldWidget, FyWidget* newWidget)
+void SplitterWidget::removeWidget(const Id& id)
 {
-    if(!oldWidget || !newWidget || m_children.empty()) {
-        return;
-    }
-
-    const int index = findIndex(oldWidget);
-    replaceWidget(index, newWidget);
-}
-
-void SplitterWidget::removeWidget(FyWidget* widget)
-{
-    const int index = findIndex(widget);
+    const int index = findIndex(id);
     if(index < 0) {
         return;
     }
 
     m_widgetCount -= 1;
 
+    auto* widget = this->widget(id);
     widget->deleteLater();
     m_children.erase(m_children.begin() + index);
 
     checkShowDummy();
+}
+
+void SplitterWidget::replaceWidget(const Id& oldWidget, FyWidget* newWidget)
+{
+    if(!newWidget || m_children.empty()) {
+        return;
+    }
+
+    const int index = findIndex(oldWidget);
+    if(index >= 0) {
+        replaceWidget(index, newWidget);
+    }
+}
+
+FyWidget* SplitterWidget::widget(const Id& id) const
+{
+    if(!id.isValid()) {
+        return nullptr;
+    }
+
+    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_children.cend()) {
+        return *widgetIt;
+    }
+
+    return nullptr;
 }
 
 WidgetList SplitterWidget::widgets() const
@@ -240,7 +279,7 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
 
     auto* addMenu = createNewMenu(m_actionManager, this, tr("&Add"));
 
-    m_widgetProvider->setupWidgetMenu(addMenu, [this](FyWidget* newWidget) { addWidget(newWidget); });
+    m_widgetProvider->setupAddWidgetMenu(addMenu, this);
 
     menu->addMenu(addMenu);
 }
@@ -290,6 +329,15 @@ int SplitterWidget::findIndex(FyWidget* widgetToFind) const
     return -1;
 }
 
+int SplitterWidget::findIndex(const Id& id) const
+{
+    const auto widgetIt = std::ranges::find_if(m_children, [id](FyWidget* widget) { return widget->id() == id; });
+    if(widgetIt != m_children.cend()) {
+        return static_cast<int>(std::distance(m_children.cbegin(), widgetIt));
+    }
+    return -1;
+}
+
 void SplitterWidget::replaceWidget(int index, FyWidget* widget)
 {
     if(!widget || m_children.empty()) {
@@ -300,12 +348,11 @@ void SplitterWidget::replaceWidget(int index, FyWidget* widget)
         return;
     }
 
-    FyWidget* oldWidget = m_children.at(index);
+    auto* oldWidget = m_splitter->replaceWidget(index, widget);
     m_children.erase(m_children.begin() + index);
     oldWidget->deleteLater();
 
     m_children.insert(m_children.begin() + index, widget);
-    m_splitter->insertWidget(index, widget);
 }
 } // namespace Fooyin
 
