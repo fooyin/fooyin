@@ -26,7 +26,6 @@
 #include <QPointer>
 
 namespace Fooyin {
-class ActionManager;
 class SettingsManager;
 class Splitter;
 class WidgetProvider;
@@ -36,8 +35,7 @@ class SplitterWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    SplitterWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, SettingsManager* settings,
-                   QWidget* parent = nullptr);
+    SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~SplitterWidget() override;
 
     void setWidgetLimit(int count);
@@ -50,6 +48,7 @@ public:
     bool restoreState(const QByteArray& state) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
@@ -59,17 +58,17 @@ public:
     void insertWidget(int index, FyWidget* widget) override;
     void removeWidget(int index) override;
     void replaceWidget(int index, FyWidget* newWidget) override;
+    void moveWidget(int index, int newIndex) override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void layoutEditingMenu(ActionContainer* menu) override;
+    void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
 private:
     void checkShowDummy();
 
-    ActionManager* m_actionManager;
     WidgetProvider* m_widgetProvider;
 
     Splitter* m_splitter;
@@ -85,9 +84,8 @@ private:
 class VerticalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit VerticalSplitterWidget(ActionManager* actionManager, WidgetProvider* widgetFactory,
-                                    SettingsManager* settings, QWidget* parent = nullptr)
-        : SplitterWidget(actionManager, widgetFactory, settings, parent)
+    explicit VerticalSplitterWidget(WidgetProvider* widgetFactory, SettingsManager* settings, QWidget* parent = nullptr)
+        : SplitterWidget(widgetFactory, settings, parent)
     {
         setOrientation(Qt::Vertical);
     }
@@ -96,9 +94,9 @@ public:
 class HorizontalSplitterWidget : public SplitterWidget
 {
 public:
-    explicit HorizontalSplitterWidget(ActionManager* actionManager, WidgetProvider* widgetFactory,
-                                      SettingsManager* settings, QWidget* parent = nullptr)
-        : SplitterWidget(actionManager, widgetFactory, settings, parent)
+    explicit HorizontalSplitterWidget(WidgetProvider* widgetFactory, SettingsManager* settings,
+                                      QWidget* parent = nullptr)
+        : SplitterWidget(widgetFactory, settings, parent)
     {
         setOrientation(Qt::Horizontal);
     }

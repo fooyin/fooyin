@@ -79,7 +79,7 @@ QString SearchWidget::layoutName() const
     return QStringLiteral("SearchBar");
 }
 
-void SearchWidget::layoutEditingMenu(ActionContainer* menu)
+void SearchWidget::layoutEditingMenu(QMenu* menu)
 {
     auto* manageConnections = new QAction(tr("Manage Connections"), this);
     QObject::connect(manageConnections, &QAction::triggered, this,

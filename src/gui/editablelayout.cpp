@@ -59,7 +59,7 @@ struct EditableLayout::Private
     WidgetProvider* widgetProvider;
     LayoutProvider* layoutProvider;
 
-    ActionContainer* editingMenu;
+    QPointer<QMenu> editingMenu;
     QHBoxLayout* box;
     QPointer<OverlayWidget> overlay;
     QPointer<SplitterWidget> splitter;
@@ -76,7 +76,6 @@ struct EditableLayout::Private
         , settings{settings_}
         , widgetProvider{widgetProvider_}
         , layoutProvider{layoutProvider_}
-        , editingMenu{actionManager->createMenu(Constants::Menus::Context::Layout)}
         , box{new QHBoxLayout(self)}
         , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
         , layoutHistory{new QUndoStack(self)}
@@ -129,30 +128,30 @@ struct EditableLayout::Private
         overlay->hide();
     }
 
-    ActionContainer* createNewMenu(FyWidget* parent, const QString& title) const
-    {
-        const Id id   = parent->id().append(title);
-        auto* newMenu = actionManager->createMenu(id);
-        newMenu->menu()->setTitle(title);
-
-        return newMenu;
-    }
-
-    void setupReplaceWidgetMenu(ActionContainer* menu, FyWidget* current) const
+    void setupMoveWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
     {
         if(!menu->isEmpty()) {
             return;
         }
 
-        auto* parent = qobject_cast<WidgetContainer*>(current->findParent());
-        if(!parent) {
-            return;
-        }
+        const int widgetIndex = parent->widgetIndex(current->id());
 
-        widgetProvider->setupReplaceWidgetMenu(menu, parent, current->id());
+        auto* moveLeft = new QAction(tr("Left"), menu);
+        moveLeft->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex - 1));
+        QObject::connect(moveLeft, &QAction::triggered, parent, [this, parent, widgetIndex] {
+            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex - 1));
+        });
+        menu->addAction(moveLeft);
+
+        auto* moveRight = new QAction(tr("Right"), menu);
+        moveRight->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex + 1));
+        QObject::connect(moveRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
+            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex + 1));
+        });
+        menu->addAction(moveRight);
     }
 
-    void setupContextMenu(FyWidget* widget, ActionContainer* menu)
+    void setupContextMenu(FyWidget* widget, QMenu* menu)
     {
         if(!widget || !menu) {
             return;
@@ -179,8 +178,13 @@ struct EditableLayout::Private
 
             auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
             if(parent) {
-                auto* changeMenu = createNewMenu(currentWidget, tr("&Replace"));
-                setupReplaceWidgetMenu(changeMenu, currentWidget);
+                auto* moveMenu = new QMenu(tr("&Move"), menu);
+                setupMoveWidgetMenu(moveMenu, parent, currentWidget);
+                tmp = moveMenu;
+                menu->addMenu(moveMenu);
+
+                auto* changeMenu = new QMenu(tr("&Replace"), menu);
+                widgetProvider->setupReplaceWidgetMenu(changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
 
                 auto* copy = new QAction(tr("Copy"), menu);
@@ -316,8 +320,6 @@ void EditableLayout::initialise()
 
     p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                          [this](bool enabled) { p->changeEditingState(enabled); });
-
-    QObject::connect(p->editingMenu->menu(), &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
@@ -344,11 +346,13 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     if(event->type() == QEvent::MouseButtonPress) {
         auto* mouseEvent = static_cast<QMouseEvent*>(event);
 
-        if(!mouseEvent || mouseEvent->button() != Qt::RightButton || !p->editingMenu->isHidden()) {
+        if(!mouseEvent || mouseEvent->button() != Qt::RightButton || (p->editingMenu && !p->editingMenu->isHidden())) {
             return QWidget::eventFilter(watched, event);
         }
 
-        p->editingMenu->clear();
+        p->editingMenu = new QMenu(this);
+        p->editingMenu->setAttribute(Qt::WA_DeleteOnClose);
+        QObject::connect(p->editingMenu, &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         QWidget* widget  = QApplication::widgetAt(pos);
@@ -366,7 +370,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         }
 
         p->showOverlay(child);
-        p->editingMenu->menu()->popup(pos);
+        p->editingMenu->popup(pos);
     }
 
     event->accept();

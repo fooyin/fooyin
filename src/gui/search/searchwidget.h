@@ -38,7 +38,7 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
-    void layoutEditingMenu(ActionContainer* menu) override;
+    void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 

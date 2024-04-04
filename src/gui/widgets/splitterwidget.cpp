@@ -22,9 +22,8 @@
 #include "internalguisettings.h"
 
 #include <gui/widgetprovider.h>
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
 #include <utils/enum.h>
+#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QHBoxLayout>
@@ -32,17 +31,6 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QSplitter>
-
-namespace {
-Fooyin::ActionContainer* createNewMenu(Fooyin::ActionManager* actionManager, Fooyin::FyWidget* parent,
-                                       const QString& title)
-{
-    auto id       = parent->id().append(title);
-    auto* newMenu = actionManager->createMenu(id);
-    newMenu->menu()->setTitle(title);
-    return newMenu;
-}
-} // namespace
 
 namespace Fooyin {
 class SplitterHandle : public QSplitterHandle
@@ -98,10 +86,8 @@ private:
     SettingsManager* m_settings;
 };
 
-SplitterWidget::SplitterWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, SettingsManager* settings,
-                               QWidget* parent)
+SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , m_actionManager{actionManager}
     , m_widgetProvider{widgetProvider}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
     , m_limit{0}
@@ -155,6 +141,25 @@ bool SplitterWidget::restoreState(const QByteArray& state)
 
 bool SplitterWidget::canAddWidget() const
 {
+    return true;
+}
+
+bool SplitterWidget::canMoveWidget(int index, int newIndex) const
+{
+    const auto count = static_cast<int>(m_children.size());
+
+    if(index < 0 || index >= count) {
+        return false;
+    }
+
+    if(newIndex < 0 || newIndex > count) {
+        return false;
+    }
+
+    if(index == newIndex || (index == count - 1 && newIndex == index + 1)) {
+        return false;
+    }
+
     return true;
 }
 
@@ -258,6 +263,13 @@ void SplitterWidget::replaceWidget(int index, FyWidget* newWidget)
     m_children.insert(m_children.begin() + index, newWidget);
 }
 
+void SplitterWidget::moveWidget(int index, int newIndex)
+{
+    auto* widget = m_children.at(index);
+    Utils::move(m_children, index, newIndex);
+    m_splitter->insertWidget(newIndex, widget);
+}
+
 QString SplitterWidget::name() const
 {
     return Utils::Enum::toString(m_splitter->orientation()) + QStringLiteral(" Splitter");
@@ -268,7 +280,7 @@ QString SplitterWidget::layoutName() const
     return QStringLiteral("Splitter") + Utils::Enum::toString(m_splitter->orientation());
 }
 
-void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
+void SplitterWidget::layoutEditingMenu(QMenu* menu)
 {
     auto* changeSplitter = new QAction(tr("Change Splitter"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
@@ -281,10 +293,8 @@ void SplitterWidget::layoutEditingMenu(ActionContainer* menu)
         return;
     }
 
-    auto* addMenu = createNewMenu(m_actionManager, this, tr("&Add"));
-
+    auto* addMenu = new QMenu(tr("&Add"), menu);
     m_widgetProvider->setupAddWidgetMenu(addMenu, this);
-
     menu->addMenu(addMenu);
 }
 

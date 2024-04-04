@@ -26,8 +26,6 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/editabletabbar.h>
 
@@ -50,7 +48,6 @@ using namespace std::chrono_literals;
 namespace Fooyin {
 struct PlaylistTabs::Private
 {
-    ActionManager* actionManager;
     WidgetProvider* widgetProvider;
     PlaylistController* playlistController;
     PlaylistHandler* playlistHandler;
@@ -66,10 +63,9 @@ struct PlaylistTabs::Private
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
 
-    Private(PlaylistTabs* self_, ActionManager* actionManager_, WidgetProvider* widgetProvider_,
-            PlaylistController* playlistController_, SettingsManager* settings_)
-        : actionManager{actionManager_}
-        , widgetProvider{widgetProvider_}
+    Private(PlaylistTabs* self_, WidgetProvider* widgetProvider_, PlaylistController* playlistController_,
+            SettingsManager* settings_)
+        : widgetProvider{widgetProvider_}
         , playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
         , selectionController{playlistController->selectionController()}
@@ -133,10 +129,10 @@ struct PlaylistTabs::Private
     }
 };
 
-PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                           PlaylistController* playlistController, SettingsManager* settings, QWidget* parent)
+PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
+                           SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , p{std::make_unique<Private>(this, actionManager, widgetProvider, playlistController, settings)}
+    , p{std::make_unique<Private>(this, widgetProvider, playlistController, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 
@@ -322,19 +318,14 @@ QString PlaylistTabs::layoutName() const
     return QStringLiteral("PlaylistTabs");
 }
 
-void PlaylistTabs::layoutEditingMenu(ActionContainer* menu)
+void PlaylistTabs::layoutEditingMenu(QMenu* menu)
 {
     if(p->tabsWidget) {
         // Can only contain 1 widget
         return;
     }
 
-    const QString addTitle{tr("&Add")};
-    auto addMenuId = id().append(addTitle);
-
-    auto* addMenu = p->actionManager->createMenu(addMenuId);
-    addMenu->menu()->setTitle(addTitle);
-
+    auto* addMenu = new QMenu(tr("&Add"), menu);
     p->widgetProvider->setupAddWidgetMenu(addMenu, this);
     menu->addMenu(addMenu);
 }
@@ -361,6 +352,11 @@ void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 bool PlaylistTabs::canAddWidget() const
 {
     return !p->tabsWidget;
+}
+
+bool PlaylistTabs::canMoveWidget(int /*index*/, int /*newIndex*/) const
+{
+    return false;
 }
 
 int PlaylistTabs::widgetIndex(const Id& id) const
@@ -445,6 +441,8 @@ void PlaylistTabs::replaceWidget(int index, FyWidget* newWidget)
     p->tabsWidget = newWidget;
     p->layout->addWidget(p->tabsWidget);
 }
+
+void PlaylistTabs::moveWidget(int /*index*/, int /*newIndex*/) { }
 } // namespace Fooyin
 
 #include "moc_playlisttabs.cpp"

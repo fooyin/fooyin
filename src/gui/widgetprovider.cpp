@@ -23,8 +23,6 @@
 
 #include <gui/fywidget.h>
 #include <gui/widgetcontainer.h>
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
 
 #include <QAction>
 #include <QMenu>
@@ -45,18 +43,9 @@ struct FactoryWidget
 namespace Fooyin {
 struct WidgetProvider::Private
 {
-    WidgetProvider* self;
-
-    ActionManager* actionManager;
     QUndoStack* layoutCommands{nullptr};
 
     std::map<QString, FactoryWidget> widgets;
-    std::map<QString, std::vector<QPointer<QAction>>> actions;
-
-    explicit Private(WidgetProvider* self_, ActionManager* actionManager_)
-        : self{self_}
-        , actionManager{actionManager_}
-    { }
 
     bool canCreateWidget(const QString& key)
     {
@@ -70,32 +59,28 @@ struct WidgetProvider::Private
     }
 
     template <typename Func>
-    void setupWidgetMenu(ActionContainer* menu, Func&& func)
+    void setupWidgetMenu(QMenu* menu, Func&& func)
     {
         if(!menu->isEmpty()) {
             return;
         }
 
+        std::map<QString, QMenu*> menuCache;
+
         for(const auto& [key, widget] : widgets) {
             auto* parentMenu = menu;
 
             for(const auto& subMenu : widget.subMenus) {
-                const Id id     = Id{menu->id()}.append(subMenu);
-                auto* childMenu = actionManager->actionContainer(id);
-
-                if(!childMenu) {
-                    childMenu = actionManager->createMenu(id);
-                    childMenu->menu()->setTitle(subMenu);
+                if(!menuCache.contains(subMenu)) {
+                    auto* childMenu = new QMenu(subMenu, menu);
+                    menuCache.emplace(subMenu, childMenu);
                     parentMenu->addMenu(childMenu);
                 }
-                parentMenu = childMenu;
+                parentMenu = menuCache.at(subMenu);
             }
 
             auto* addWidgetAction = new QAction(widget.name, parentMenu);
-            actions[key].emplace_back(addWidgetAction);
-
             addWidgetAction->setEnabled(canCreateWidget(key));
-
             QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, key] { func(key); });
 
             parentMenu->addAction(addWidgetAction);
@@ -103,16 +88,16 @@ struct WidgetProvider::Private
     }
 };
 
-WidgetProvider::WidgetProvider(ActionManager* actionManager)
-    : p{std::make_unique<Private>(this, actionManager)}
+WidgetProvider::WidgetProvider()
+    : p{std::make_unique<Private>()}
 { }
+
+WidgetProvider::~WidgetProvider() = default;
 
 void WidgetProvider::setCommandStack(QUndoStack* layoutCommands)
 {
     p->layoutCommands = layoutCommands;
 }
-
-WidgetProvider::~WidgetProvider() = default;
 
 bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*()> instantiator,
                                     const QString& displayName)
@@ -181,41 +166,25 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     return newWidget;
 }
 
-void WidgetProvider::setupAddWidgetMenu(ActionContainer* menu, WidgetContainer* container)
+void WidgetProvider::setupAddWidgetMenu(QMenu* menu, WidgetContainer* container)
 {
     if(!p->layoutCommands) {
         return;
     }
 
     p->setupWidgetMenu(menu, [this, container](const QString& key) {
-        if(p->layoutCommands) {
-            p->layoutCommands->push(new AddWidgetCommand(this, container, key));
-        }
+        p->layoutCommands->push(new AddWidgetCommand(this, container, key));
     });
 }
 
-void WidgetProvider::setupReplaceWidgetMenu(ActionContainer* menu, WidgetContainer* container, const Id& widgetId)
+void WidgetProvider::setupReplaceWidgetMenu(QMenu* menu, WidgetContainer* container, const Id& widgetId)
 {
     if(!p->layoutCommands) {
         return;
     }
 
     p->setupWidgetMenu(menu, [this, container, widgetId](const QString& key) {
-        if(p->layoutCommands) {
-            p->layoutCommands->push(new ReplaceWidgetCommand(this, container, key, widgetId));
-        }
+        p->layoutCommands->push(new ReplaceWidgetCommand(this, container, key, widgetId));
     });
-}
-
-void WidgetProvider::updateActionState()
-{
-    for(const auto& [key, widget] : p->widgets) {
-        const bool canCreate = canCreateWidget(key);
-        for(const auto& action : p->actions.at(key)) {
-            if(action) {
-                action->setEnabled(canCreate);
-            }
-        }
-    }
 }
 } // namespace Fooyin

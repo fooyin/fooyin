@@ -83,4 +83,18 @@ private:
     QJsonObject m_widget;
     int m_index;
 };
+
+class MoveWidgetCommand : public LayoutChangeCommand
+{
+public:
+    MoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, int index, int newIndex);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    QJsonObject m_widget;
+    int m_oldIndex;
+    int m_index;
+};
 } // namespace Fooyin

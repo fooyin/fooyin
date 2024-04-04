@@ -23,7 +23,6 @@
 #include <utils/widgets/editabletabwidget.h>
 
 namespace Fooyin {
-class ActionManager;
 class WidgetProvider;
 
 class TabStackWidget : public WidgetContainer
@@ -31,15 +30,16 @@ class TabStackWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void layoutEditingMenu(ActionContainer* menu) override;
+    void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
@@ -49,6 +49,7 @@ public:
     void insertWidget(int index, FyWidget* widget) override;
     void removeWidget(int index) override;
     void replaceWidget(int index, FyWidget* newWidget) override;
+    void moveWidget(int index, int newIndex) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
@@ -58,7 +59,6 @@ private:
     [[nodiscard]] int indexOfWidget(const Id& id) const;
     void changeTabPosition(QTabWidget::TabPosition position) const;
 
-    ActionManager* m_actionManager;
     WidgetProvider* m_widgetProvider;
 
     WidgetList m_widgets;

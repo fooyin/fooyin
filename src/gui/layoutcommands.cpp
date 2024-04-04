@@ -49,7 +49,6 @@ void AddWidgetCommand::undo()
         m_containerState = m_container->saveState();
 
         m_container->removeWidget(m_index);
-        m_provider->updateActionState();
     }
 }
 
@@ -61,7 +60,6 @@ void AddWidgetCommand::redo()
             widget->finalise();
 
             m_container->restoreState(m_containerState);
-            m_provider->updateActionState();
         }
     }
     else if(!m_key.isEmpty()) {
@@ -70,7 +68,6 @@ void AddWidgetCommand::redo()
             widget->finalise();
 
             m_container->restoreState(m_containerState);
-            m_provider->updateActionState();
         }
     }
 }
@@ -104,7 +101,6 @@ void ReplaceWidgetCommand::undo()
             m_container->replaceWidget(m_index, widget);
 
             m_container->restoreState(m_containerState);
-            m_provider->updateActionState();
         }
     }
 }
@@ -117,8 +113,6 @@ void ReplaceWidgetCommand::redo()
 
             m_container->replaceWidget(m_index, widget);
             widget->finalise();
-
-            m_provider->updateActionState();
         }
     }
     else if(!m_key.isEmpty()) {
@@ -127,8 +121,6 @@ void ReplaceWidgetCommand::redo()
 
             m_container->replaceWidget(m_index, widget);
             widget->finalise();
-
-            m_provider->updateActionState();
         }
     }
 }
@@ -151,7 +143,6 @@ void RemoveWidgetCommand::undo()
             widget->finalise();
 
             m_container->restoreState(m_containerState);
-            m_provider->updateActionState();
         }
     }
 }
@@ -162,7 +153,26 @@ void RemoveWidgetCommand::redo()
         m_containerState = m_container->saveState();
 
         m_container->removeWidget(m_index);
-        m_provider->updateActionState();
+    }
+}
+
+MoveWidgetCommand::MoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, int index, int newIndex)
+    : LayoutChangeCommand{provider, container}
+    , m_oldIndex{index}
+    , m_index{newIndex}
+{ }
+
+void MoveWidgetCommand::undo()
+{
+    if(m_container->canMoveWidget(m_index, m_oldIndex)) {
+        m_container->moveWidget(m_index, m_oldIndex);
+    }
+}
+
+void MoveWidgetCommand::redo()
+{
+    if(m_container->canMoveWidget(m_oldIndex, m_index)) {
+        m_container->moveWidget(m_oldIndex, m_index);
     }
 }
 } // namespace Fooyin

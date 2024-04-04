@@ -26,8 +26,6 @@
 #include <QWidget>
 
 namespace Fooyin {
-class ActionContainer;
-
 /*!
  * Base class for all widgets in fooyin.
  * A widget must be a subclass of FyWidget and registered using WidgetProvider::registerWidget
@@ -104,7 +102,7 @@ public:
      * Reimplement to add additional actions/menus.
      * @note the base class implementation of this function does nothing.
      */
-    virtual void layoutEditingMenu(ActionContainer* menu);
+    virtual void layoutEditingMenu(QMenu* menu);
 
     /*!
      * Called when saving layout in @fn saveLayout.

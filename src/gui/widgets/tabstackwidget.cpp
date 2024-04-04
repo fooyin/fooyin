@@ -21,9 +21,8 @@
 
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
-#include <utils/actions/actioncontainer.h>
-#include <utils/actions/actionmanager.h>
 #include <utils/enum.h>
+#include <utils/helpers.h>
 #include <utils/widgets/editabletabbar.h>
 #include <utils/widgets/editabletabwidget.h>
 
@@ -38,9 +37,8 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-TabStackWidget::TabStackWidget(ActionManager* actionManager, WidgetProvider* widgetProvider, QWidget* parent)
+TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , m_actionManager{actionManager}
     , m_widgetProvider{widgetProvider}
     , m_tabs{new EditableTabWidget(this)}
 {
@@ -70,13 +68,9 @@ QString TabStackWidget::layoutName() const
     return QStringLiteral("TabStack");
 }
 
-void TabStackWidget::layoutEditingMenu(ActionContainer* menu)
+void TabStackWidget::layoutEditingMenu(QMenu* menu)
 {
-    const QString addTitle{tr("&Add")};
-    auto addMenuId = id().append(addTitle);
-
-    auto* addMenu = m_actionManager->createMenu(addMenuId);
-    addMenu->menu()->setTitle(addTitle);
+    auto* addMenu = new QMenu(tr("&Add"), menu);
 
     m_widgetProvider->setupAddWidgetMenu(addMenu, this);
     menu->addMenu(addMenu);
@@ -125,6 +119,25 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 
 bool TabStackWidget::canAddWidget() const
 {
+    return true;
+}
+
+bool TabStackWidget::canMoveWidget(int index, int newIndex) const
+{
+    const auto count = static_cast<int>(m_widgets.size());
+
+    if(index < 0 || index >= count) {
+        return false;
+    }
+
+    if(newIndex < 0 || newIndex > count) {
+        return false;
+    }
+
+    if(index == newIndex || (index == count - 1 && newIndex == index + 1)) {
+        return false;
+    }
+
     return true;
 }
 
@@ -210,6 +223,14 @@ void TabStackWidget::replaceWidget(int index, FyWidget* newWidget)
     m_widgets.insert(m_widgets.begin() + index, newWidget);
 
     m_tabs->setCurrentIndex(index);
+}
+
+void TabStackWidget::moveWidget(int index, int newIndex)
+{
+    auto* widget = m_widgets.at(index);
+    Utils::move(m_widgets, index, newIndex);
+    m_tabs->removeTab(index);
+    m_tabs->insertTab(newIndex, widget, widget->name());
 }
 
 void TabStackWidget::contextMenuEvent(QContextMenuEvent* event)

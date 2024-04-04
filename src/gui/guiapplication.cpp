@@ -150,7 +150,6 @@ struct GuiApplication::Private
         , libraryManager{core.libraryManager}
         , library{core.library}
         , playlistHandler{core.playlistHandler}
-        , widgetProvider{actionManager}
         , guiSettings{settingsManager}
         , editableLayout{std::make_unique<EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
                                                           settingsManager)}
@@ -320,8 +319,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("SplitterVertical"),
             [this]() {
-                auto* splitter
-                    = new VerticalSplitterWidget(actionManager, &widgetProvider, settingsManager, mainWindow.get());
+                auto* splitter = new VerticalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
@@ -331,8 +329,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("SplitterHorizontal"),
             [this]() {
-                auto* splitter
-                    = new HorizontalSplitterWidget(actionManager, &widgetProvider, settingsManager, mainWindow.get());
+                auto* splitter = new HorizontalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get());
                 splitter->showPlaceholder(true);
                 return splitter;
             },
@@ -342,8 +339,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
             [this]() {
-                return new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(), settingsManager,
-                                        mainWindow.get());
+                return new PlaylistTabs(&widgetProvider, playlistController.get(), settingsManager, mainWindow.get());
             },
             QStringLiteral("Playlist Tabs"));
         widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {QStringLiteral("Splitters")});
@@ -357,8 +353,7 @@ struct GuiApplication::Private
             QStringLiteral("Playlist Organiser"));
 
         widgetProvider.registerWidget(
-            QStringLiteral("TabStack"),
-            [this]() { return new TabStackWidget(actionManager, &widgetProvider, mainWindow.get()); },
+            QStringLiteral("TabStack"), [this]() { return new TabStackWidget(&widgetProvider, mainWindow.get()); },
             QStringLiteral("Tab Stack"));
         widgetProvider.setSubMenus(QStringLiteral("TabStack"), {QStringLiteral("Splitters")});
 

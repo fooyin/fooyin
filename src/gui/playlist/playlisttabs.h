@@ -24,7 +24,6 @@
 class QIcon;
 
 namespace Fooyin {
-class ActionManager;
 class SettingsManager;
 class Playlist;
 class PlaylistController;
@@ -34,8 +33,8 @@ class PlaylistTabs : public WidgetContainer
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
-                          PlaylistController* playlistController, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
+                          SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();
@@ -47,11 +46,12 @@ public:
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
-    void layoutEditingMenu(ActionContainer* menu) override;
+    void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
     [[nodiscard]] bool canAddWidget() const override;
+    [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
@@ -61,6 +61,7 @@ public:
     void insertWidget(int index, FyWidget* widget) override;
     void removeWidget(int index) override;
     void replaceWidget(int index, FyWidget* newWidget) override;
+    void moveWidget(int index, int newIndex) override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
