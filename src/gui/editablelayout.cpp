@@ -177,24 +177,25 @@ struct EditableLayout::Private
                                  [this, currentWidget] { widgetClipboard = currentWidget->layoutName(); });
                 menu->addAction(copy);
 
-                if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
-                    auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
-                    pasteInsert->setEnabled(!widgetClipboard.isEmpty() && container->canAddWidget()
-                                            && widgetProvider->canCreateWidget(widgetClipboard));
-                    QObject::connect(pasteInsert, &QAction::triggered, parent, [this, container] {
-                        container->addWidget(widgetProvider->createWidget(widgetClipboard));
+                if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard)) {
+                    if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
+                        if(container->canAddWidget()) {
+                            auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
+                            QObject::connect(pasteInsert, &QAction::triggered, parent, [this, container] {
+                                container->addWidget(widgetProvider->createWidget(widgetClipboard));
+                                widgetClipboard.clear();
+                            });
+                            menu->addAction(pasteInsert);
+                        }
+                    }
+
+                    auto* paste = new QAction(tr("Paste (Replace)"), menu);
+                    QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
+                        parent->replaceWidget(currentWidget->id(), widgetProvider->createWidget(widgetClipboard));
                         widgetClipboard.clear();
                     });
-                    menu->addAction(pasteInsert);
+                    menu->addAction(paste);
                 }
-
-                auto* paste = new QAction(tr("Paste (Replace)"), menu);
-                paste->setEnabled(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard));
-                QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
-                    parent->replaceWidget(currentWidget->id(), widgetProvider->createWidget(widgetClipboard));
-                    widgetClipboard.clear();
-                });
-                menu->addAction(paste);
 
                 auto* remove = new QAction(tr("Remove"), menu);
                 QObject::connect(remove, &QAction::triggered, parent, [this, parent, currentWidget] {
@@ -370,7 +371,7 @@ void EditableLayout::changeLayout(const Layout& layout)
     delete p->splitter;
 
     if(loadLayout(layout)) {
-        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->widgets().size() == 0);
+        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->widgets().empty());
     }
     else {
         p->setupDefault();
