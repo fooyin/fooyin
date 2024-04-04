@@ -310,7 +310,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
         QWidget* widget  = QApplication::widgetAt(pos);
-        FyWidget* child  = splitterChild(widget);
+        FyWidget* child  = p->findSplitterChild(widget);
 
         if(!child) {
             return QWidget::eventFilter(watched, event);
