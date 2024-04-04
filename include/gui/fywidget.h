@@ -25,6 +25,8 @@
 
 #include <QWidget>
 
+class QMenu;
+
 namespace Fooyin {
 /*!
  * Base class for all widgets in fooyin.

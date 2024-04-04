@@ -23,6 +23,7 @@
 
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QMenu>
 
 namespace Fooyin {
 FyWidget::FyWidget(QWidget* parent)

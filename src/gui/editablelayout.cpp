@@ -180,7 +180,6 @@ struct EditableLayout::Private
             if(parent) {
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
                 setupMoveWidgetMenu(moveMenu, parent, currentWidget);
-                tmp = moveMenu;
                 menu->addMenu(moveMenu);
 
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
