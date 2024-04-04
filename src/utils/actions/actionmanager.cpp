@@ -137,7 +137,7 @@ struct ActionManager::Private
             WidgetContext* widgetContext{nullptr};
             while(focusedWidget) {
                 widgetContext = self->contextObject(focusedWidget);
-                if(widgetContext) {
+                if(widgetContext && widgetContext->isEnabled()) {
                     newContext.push_back(widgetContext);
                 }
                 focusedWidget = focusedWidget->parentWidget();
@@ -241,6 +241,8 @@ void ActionManager::addContextObject(WidgetContext* context)
     }
 
     p->contextWidgets.emplace(widget, context);
+    QObject::connect(context, &WidgetContext::isEnabledChanged, this,
+                     [this] { p->updateFocusWidget(QApplication::focusWidget()); });
     QObject::connect(context, &QObject::destroyed, this, [this, context] { removeContextObject(context); });
 }
 

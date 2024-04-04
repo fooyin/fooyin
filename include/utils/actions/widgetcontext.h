@@ -67,10 +67,17 @@ public:
 
     [[nodiscard]] Context context() const;
     [[nodiscard]] QWidget* widget() const;
+    [[nodiscard]] bool isEnabled() const;
+
+    void setEnabled(bool enabled);
+
+signals:
+    void isEnabledChanged();
 
 private:
     QPointer<QWidget> m_widget;
     Context m_context;
+    bool m_isEnabled;
 };
 using WidgetContextList = std::vector<WidgetContext*>;
 } // namespace Fooyin

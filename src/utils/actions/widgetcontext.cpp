@@ -99,4 +99,16 @@ QWidget* WidgetContext::widget() const
 {
     return m_widget;
 }
+
+bool WidgetContext::isEnabled() const
+{
+    return m_isEnabled;
+}
+
+void WidgetContext::setEnabled(bool enabled)
+{
+    if(std::exchange(m_isEnabled, enabled) != enabled) {
+        emit isEnabledChanged();
+    }
+}
 } // namespace Fooyin
