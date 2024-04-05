@@ -165,7 +165,7 @@ struct EditableLayout::Private
         });
         menu->addAction(moveFarRight);
 
-        return moveLeft->isEnabled() && moveRight->isEnabled() && moveFarLeft->isEnabled() && moveFarRight->isEnabled();
+        return moveLeft->isEnabled() || moveRight->isEnabled() || moveFarLeft->isEnabled() || moveFarRight->isEnabled();
     }
 
     void setupContextMenu(FyWidget* widget, QMenu* menu)
