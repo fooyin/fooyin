@@ -956,6 +956,8 @@ PlaylistWidget::~PlaylistWidget()
         return;
     }
 
+    p->playlistController->clearHistory();
+
     if(p->settings->value<Settings::Gui::RememberPlaylistState>()) {
         p->playlistController->savePlaylistState(p->playlistController->currentPlaylist(),
                                                  p->getState(p->playlistController->currentPlaylist()));

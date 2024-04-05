@@ -509,6 +509,11 @@ void PlaylistController::redoPlaylistChanges()
     }
 }
 
+void PlaylistController::clearHistory()
+{
+    p->histories.clear();
+}
+
 void PlaylistController::handleTrackSelectionAction(TrackAction action)
 {
     if(action == TrackAction::SendCurrentPlaylist) {

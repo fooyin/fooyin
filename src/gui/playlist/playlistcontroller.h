@@ -88,6 +88,7 @@ public:
     [[nodiscard]] bool canRedo() const;
     void undoPlaylistChanges();
     void redoPlaylistChanges();
+    void clearHistory();
 
 signals:
     void playlistsLoaded();
