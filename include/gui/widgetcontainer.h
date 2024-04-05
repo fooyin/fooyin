@@ -44,7 +44,8 @@ public:
     [[nodiscard]] virtual FyWidget* widgetAtId(const Id& id) const          = 0;
     [[nodiscard]] virtual FyWidget* widgetAtIndex(int index) const          = 0;
     [[nodiscard]] virtual int widgetCount() const                           = 0;
-    [[nodiscard]] virtual WidgetList widgets() const                        = 0;
+    [[nodiscard]] virtual int fullWidgetCount() const;
+    [[nodiscard]] virtual WidgetList widgets() const = 0;
 
     [[nodiscard]] virtual Qt::Orientation orientation() const;
 

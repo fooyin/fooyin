@@ -32,6 +32,11 @@ WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent
     , m_widgetProvider{widgetProvider}
 { }
 
+int WidgetContainer::fullWidgetCount() const
+{
+    return widgetCount();
+}
+
 Qt::Orientation WidgetContainer::orientation() const
 {
     return Qt::Horizontal;

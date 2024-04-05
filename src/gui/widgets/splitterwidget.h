@@ -48,6 +48,7 @@ public:
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
     [[nodiscard]] int widgetCount() const override;
+    [[nodiscard]] int fullWidgetCount() const override;
     [[nodiscard]] WidgetList widgets() const override;
 
     int addWidget(FyWidget* widget) override;

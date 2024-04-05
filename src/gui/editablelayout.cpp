@@ -286,10 +286,10 @@ struct EditableLayout::Private
         menu->addAction(moveFarLeft);
 
         auto* moveFarRight = new QAction(horizontal ? tr("Far Right") : tr("Bottom"), menu);
-        moveFarRight->setEnabled(parent->canMoveWidget(widgetIndex, parent->widgetCount() - 1));
+        moveFarRight->setEnabled(parent->canMoveWidget(widgetIndex, parent->fullWidgetCount() - 1));
         QObject::connect(moveFarRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
             layoutHistory->push(
-                new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, parent->widgetCount() - 1));
+                new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, parent->fullWidgetCount() - 1));
         });
         menu->addAction(moveFarRight);
 

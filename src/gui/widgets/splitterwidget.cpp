@@ -189,6 +189,11 @@ int SplitterWidget::widgetCount() const
                                           [](FyWidget* widget) { return !qobject_cast<Dummy*>(widget); }));
 }
 
+int SplitterWidget::fullWidgetCount() const
+{
+    return static_cast<int>(m_widgets.size());
+}
+
 WidgetList SplitterWidget::widgets() const
 {
     return m_widgets;
