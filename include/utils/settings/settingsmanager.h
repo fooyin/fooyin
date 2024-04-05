@@ -64,11 +64,14 @@ concept IsString
     = findType<key>() == Settings::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
 
 template <auto key, typename Value>
+concept IsStringList = findType<key>() == Settings::StringList && std::same_as<Value, QStringList>;
+
+template <auto key, typename Value>
 concept IsByteArray = findType<key>() == Settings::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
 concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
-                      || IsString<key, Value> || IsByteArray<key, Value>;
+                      || IsString<key, Value> || IsStringList<key, Value> || IsByteArray<key, Value>;
 
 /*!
  * Manages all settings in the application.
@@ -235,6 +238,9 @@ public:
         else if constexpr(type == Settings::String) {
             return settingValue.toString();
         }
+        else if constexpr(type == Settings::StringList) {
+            return settingValue.toStringList();
+        }
         else if constexpr(type == Settings::ByteArray) {
             return settingValue.toByteArray();
         }
@@ -357,6 +363,10 @@ public:
             }
             else if constexpr(type == Settings::String) {
                 QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedString, obj,
+                                 std::forward<Func>(func));
+            }
+            else if constexpr(type == Settings::StringList) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedStringList, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::ByteArray) {

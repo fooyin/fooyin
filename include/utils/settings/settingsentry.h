@@ -27,12 +27,13 @@ namespace Fooyin {
 namespace Settings {
 enum Type : uint32_t
 {
-    Variant   = 0 << 28,
-    Bool      = 1 << 28,
-    Int       = 2 << 28,
-    Double    = 3 << 28,
-    String    = 4 << 28,
-    ByteArray = 5 << 28,
+    Variant    = 0 << 28,
+    Bool       = 1 << 28,
+    Int        = 2 << 28,
+    Double     = 3 << 28,
+    String     = 4 << 28,
+    StringList = 5 << 28,
+    ByteArray  = 6 << 28,
 };
 }
 
@@ -64,6 +65,7 @@ signals:
     void settingChangedInt(int value);
     void settingChangedDouble(double value);
     void settingChangedString(const QString& value);
+    void settingChangedStringList(const QStringList& value);
     void settingChangedByteArray(const QByteArray& value);
 
 private:

@@ -101,6 +101,9 @@ void SettingsEntry::notifySubscribers()
         case(Settings::String):
             emit settingChangedString(m_value.toString());
             break;
+        case(Settings::StringList):
+            emit settingChangedStringList(m_value.toStringList());
+            break;
         case(Settings::ByteArray):
             emit settingChangedByteArray(m_value.toByteArray());
             break;
