@@ -197,14 +197,16 @@ struct EditableLayout::Private
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
                 setupMoveWidgetMenu(moveMenu, parent, currentWidget);
                 menu->addMenu(moveMenu);
+            }
 
-                if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
-                    auto* addMenu = new QMenu(tr("&Add"), menu);
-                    addMenu->setEnabled(container->canAddWidget());
-                    widgetProvider->setupAddWidgetMenu(addMenu, container);
-                    menu->addMenu(addMenu);
-                }
+            if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
+                auto* addMenu = new QMenu(tr("&Add"), menu);
+                addMenu->setEnabled(container->canAddWidget());
+                widgetProvider->setupAddWidgetMenu(addMenu, container);
+                menu->addMenu(addMenu);
+            }
 
+            if(parent) {
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
                 widgetProvider->setupReplaceWidgetMenu(changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
@@ -236,6 +238,7 @@ struct EditableLayout::Private
             else if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
                 addPasteAction(currentWidget);
             }
+
             currentWidget = parent;
             --level;
         }
