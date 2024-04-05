@@ -73,7 +73,7 @@ private:
     WidgetProvider* m_widgetProvider;
 
     Splitter* m_splitter;
-    WidgetList m_children;
+    WidgetList m_widgets;
     QPointer<Dummy> m_dummy;
 
     int m_limit;
