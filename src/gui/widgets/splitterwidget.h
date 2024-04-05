@@ -76,7 +76,6 @@ private:
     WidgetList m_widgets;
     QPointer<Dummy> m_dummy;
 
-    int m_limit;
     bool m_showDummy;
     int m_widgetCount;
     int m_baseWidgetCount;

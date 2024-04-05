@@ -189,6 +189,7 @@ struct EditableLayout::Private
 
         while(level > 0 && currentWidget) {
             menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
+
             currentWidget->layoutEditingMenu(menu);
 
             auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
@@ -196,6 +197,13 @@ struct EditableLayout::Private
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
                 setupMoveWidgetMenu(moveMenu, parent, currentWidget);
                 menu->addMenu(moveMenu);
+
+                if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
+                    auto* addMenu = new QMenu(tr("&Add"), menu);
+                    addMenu->setEnabled(container->canAddWidget());
+                    widgetProvider->setupAddWidgetMenu(addMenu, container);
+                    menu->addMenu(addMenu);
+                }
 
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
                 widgetProvider->setupReplaceWidgetMenu(changeMenu, parent, currentWidget->id());

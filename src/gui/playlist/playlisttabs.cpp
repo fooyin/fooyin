@@ -318,18 +318,6 @@ QString PlaylistTabs::layoutName() const
     return QStringLiteral("PlaylistTabs");
 }
 
-void PlaylistTabs::layoutEditingMenu(QMenu* menu)
-{
-    if(p->tabsWidget) {
-        // Can only contain 1 widget
-        return;
-    }
-
-    auto* addMenu = new QMenu(tr("&Add"), menu);
-    p->widgetProvider->setupAddWidgetMenu(addMenu, this);
-    menu->addMenu(addMenu);
-}
-
 void PlaylistTabs::saveLayoutData(QJsonObject& layout)
 {
     if(!p->tabsWidget) {

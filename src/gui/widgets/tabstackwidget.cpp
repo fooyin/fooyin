@@ -68,14 +68,6 @@ QString TabStackWidget::layoutName() const
     return QStringLiteral("TabStack");
 }
 
-void TabStackWidget::layoutEditingMenu(QMenu* menu)
-{
-    auto* addMenu = new QMenu(tr("&Add"), menu);
-
-    m_widgetProvider->setupAddWidgetMenu(addMenu, this);
-    menu->addMenu(addMenu);
-}
-
 void TabStackWidget::saveLayoutData(QJsonObject& layout)
 {
     QJsonArray widgets;

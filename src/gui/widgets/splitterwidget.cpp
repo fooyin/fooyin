@@ -90,7 +90,6 @@ SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* 
     : WidgetContainer{widgetProvider, parent}
     , m_widgetProvider{widgetProvider}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
-    , m_limit{0}
     , m_showDummy{false}
     , m_widgetCount{0}
     , m_baseWidgetCount{0}
@@ -105,11 +104,6 @@ SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* 
 }
 
 SplitterWidget::~SplitterWidget() = default;
-
-void SplitterWidget::setWidgetLimit(int count)
-{
-    m_limit = count;
-}
 
 void SplitterWidget::showPlaceholder(bool show)
 {
@@ -219,10 +213,6 @@ int SplitterWidget::addWidget(FyWidget* widget)
 
 void SplitterWidget::insertWidget(int index, FyWidget* widget)
 {
-    if(m_limit > 0 && m_widgetCount >= m_limit) {
-        return;
-    }
-
     if(!widget) {
         return;
     }
@@ -293,14 +283,6 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
         setObjectName(Utils::Enum::toString(m_splitter->orientation()) + QStringLiteral(" Splitter"));
     });
     menu->addAction(changeSplitter);
-
-    if(m_limit > 0 && m_widgetCount >= m_limit) {
-        return;
-    }
-
-    auto* addMenu = new QMenu(tr("&Add"), menu);
-    m_widgetProvider->setupAddWidgetMenu(addMenu, this);
-    menu->addMenu(addMenu);
 }
 
 void SplitterWidget::saveLayoutData(QJsonObject& layout)
