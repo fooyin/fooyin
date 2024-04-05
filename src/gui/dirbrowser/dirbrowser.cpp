@@ -23,7 +23,7 @@
 #include "dirproxymodel.h"
 #include "dirtree.h"
 #include "internalguisettings.h"
-#include "playlist/playlistcontroller.h"
+#include "playlist/playlistinteractor.h"
 
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
@@ -119,8 +119,8 @@ struct DirBrowser::Private
 {
     DirBrowser* self;
 
-    PlaylistController* playlistController;
-    TrackSelectionController* selectionController;
+    PlaylistInteractor* playlistInteractor;
+    PlaylistHandler* playlistHandler;
     SettingsManager* settings;
 
     std::unique_ptr<QFileIconProvider> iconProvider;
@@ -142,11 +142,10 @@ struct DirBrowser::Private
     TrackAction doubleClickAction;
     TrackAction middleClickAction;
 
-    Private(DirBrowser* self_, TrackSelectionController* selectionController_, PlaylistController* playlistController_,
-            SettingsManager* settings_)
+    Private(DirBrowser* self_, PlaylistInteractor* playlistInteractor_, SettingsManager* settings_)
         : self{self_}
-        , playlistController{playlistController_}
-        , selectionController{selectionController_}
+        , playlistInteractor{playlistInteractor_}
+        , playlistHandler{playlistInteractor->handler()}
         , settings{settings_}
         , controlLayout{new QHBoxLayout()}
         , dirTree{new DirTree(self)}
@@ -259,16 +258,16 @@ struct DirBrowser::Private
                 break;
             }
             case(TrackAction::AddCurrentPlaylist):
-                playlistController->filesToCurrentPlaylist(files);
+                playlistInteractor->filesToCurrentPlaylist(files);
                 break;
             case(TrackAction::SendCurrentPlaylist):
-                playlistController->filesToCurrentPlaylist(files, true);
+                playlistInteractor->filesToCurrentPlaylist(files, true);
                 break;
             case(TrackAction::SendNewPlaylist):
-                playlistController->filesToNewPlaylist(playlistName, files);
+                playlistInteractor->filesToNewPlaylist(playlistName, files);
                 break;
             case(TrackAction::AddActivePlaylist):
-                playlistController->filesToActivePlaylist(files);
+                playlistInteractor->filesToActivePlaylist(files);
                 break;
             case(TrackAction::None):
                 break;
@@ -424,13 +423,17 @@ struct DirBrowser::Private
     void startPlayback(const TrackList& tracks, int row)
     {
         if(!playlist) {
-            playlist = playlistController->playlistHandler()->createTempPlaylist(QString::fromLatin1(DirPlaylist));
+            playlist = playlistHandler->createTempPlaylist(QString::fromLatin1(DirPlaylist));
         }
 
-        playlistController->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
+        if(!playlist) {
+            return;
+        }
+
+        playlistHandler->replacePlaylistTracks(playlist->id(), tracks);
 
         playlist->changeCurrentIndex(row);
-        playlistController->playlistHandler()->startPlayback(playlist);
+        playlistHandler->startPlayback(playlist);
     }
 
     void updateControlState() const
@@ -470,10 +473,9 @@ struct DirBrowser::Private
     }
 };
 
-DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistController* playlistController,
-                       SettingsManager* settings, QWidget* parent)
+DirBrowser::DirBrowser(PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, selectionController, playlistController, settings)}
+    , p{std::make_unique<Private>(this, playlistInteractor, settings)}
 {
     QObject::connect(p->dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });
@@ -482,21 +484,6 @@ DirBrowser::DirBrowser(TrackSelectionController* selectionController, PlaylistCo
     QObject::connect(p->model, &QAbstractItemModel::layoutChanged, this, [this]() { p->handleModelUpdated(); });
     QObject::connect(
         p->proxyModel, &QAbstractItemModel::modelReset, this, [this]() { emit rootChanged(); }, Qt::QueuedConnection);
-
-    QObject::connect(p->playlistController->playerController(), &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->proxyModel->setPlayState(state); });
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
-                     [this](Playlist* playlist) {
-                         if(p->playlist && playlist->id() != p->playlist->id()) {
-                             p->proxyModel->setPlayingPath({});
-                         }
-                     });
-    QObject::connect(p->playlistController->playerController(), &PlayerController::playlistTrackChanged, this,
-                     [this](const PlaylistTrack& track) {
-                         if(p->playlist && p->playlist->id() == track.playlistId) {
-                             p->proxyModel->setPlayingPath(track.track.filepath());
-                         }
-                     });
 
     settings->subscribe<Settings::Gui::Internal::DirBrowserDoubleClick>(
         this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
@@ -545,6 +532,25 @@ void DirBrowser::updateDir(const QString& dir)
 
     if(p->playlist) {
         p->proxyModel->setPlayingPath(p->playlist->currentTrack().filepath());
+    }
+}
+
+void DirBrowser::playstateChanged(PlayState state)
+{
+    p->proxyModel->setPlayState(state);
+}
+
+void DirBrowser::activePlaylistChanged(Playlist* playlist)
+{
+    if(p->playlist && playlist->id() != p->playlist->id()) {
+        p->proxyModel->setPlayingPath({});
+    }
+}
+
+void DirBrowser::playlistTrackChanged(const PlaylistTrack& track)
+{
+    if(p->playlist && p->playlist->id() == track.playlistId) {
+        p->proxyModel->setPlayingPath(track.track.filepath());
     }
 }
 

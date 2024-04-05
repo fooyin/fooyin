@@ -38,6 +38,7 @@
 #include "menubar/viewmenu.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistcontroller.h"
+#include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
 #include "search/searchcontroller.h"
@@ -112,6 +113,7 @@ struct GuiApplication::Private
     std::unique_ptr<MainWindow> mainWindow;
     WidgetContext* mainContext;
     std::unique_ptr<PlaylistController> playlistController;
+    PlaylistInteractor playlistInteractor;
     TrackSelectionController selectionController;
     SearchController* searchController;
 
@@ -157,8 +159,9 @@ struct GuiApplication::Private
         , menubar{std::make_unique<MainMenuBar>(actionManager)}
         , mainWindow{std::make_unique<MainWindow>(actionManager, menubar.get(), settingsManager)}
         , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
-        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerController, library,
+        , playlistController{std::make_unique<PlaylistController>(playlistHandler, playerController,
                                                                   &selectionController, settingsManager)}
+        , playlistInteractor{core.playlistHandler, playlistController.get(), core.library}
         , selectionController{actionManager, settingsManager, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
@@ -396,8 +399,7 @@ struct GuiApplication::Private
             QStringLiteral("Artwork Panel"));
 
         widgetProvider.registerWidget(QStringLiteral("Playlist"), [this]() {
-            return new PlaylistWidget(actionManager, playlistController.get(), library, settingsManager,
-                                      mainWindow.get());
+            return new PlaylistWidget(actionManager, &playlistInteractor, settingsManager, mainWindow.get());
         });
         widgetProvider.setLimit(QStringLiteral("Playlist"), 1);
 
@@ -423,8 +425,14 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("DirectoryBrowser"),
             [this]() {
-                return new DirBrowser(&selectionController, playlistController.get(), settingsManager,
-                                      mainWindow.get());
+                auto* browser = new DirBrowser(&playlistInteractor, settingsManager, mainWindow.get());
+                QObject::connect(playerController, &PlayerController::playStateChanged, browser,
+                                 &DirBrowser::playstateChanged);
+                QObject::connect(playerController, &PlayerController::playlistTrackChanged, browser,
+                                 &DirBrowser::playlistTrackChanged);
+                QObject::connect(playlistHandler, &PlaylistHandler::activePlaylistChanged, browser,
+                                 &DirBrowser::activePlaylistChanged);
+                return browser;
             },
             QStringLiteral("Directory Browser"));
         widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
@@ -471,7 +479,7 @@ struct GuiApplication::Private
             return;
         }
 
-        playlistController->filesToCurrentPlaylist(files);
+        playlistInteractor.filesToCurrentPlaylist(files);
     }
 
     void addFolders() const
@@ -483,12 +491,12 @@ struct GuiApplication::Private
             return;
         }
 
-        playlistController->filesToCurrentPlaylist({dirs});
+        playlistInteractor.filesToCurrentPlaylist({dirs});
     }
 
     void openFiles(const QList<QUrl>& urls) const
     {
-        playlistController->filesToNewPlaylist(QStringLiteral("Default"), urls);
+        playlistInteractor.filesToNewPlaylist(QStringLiteral("Default"), urls);
     }
 };
 

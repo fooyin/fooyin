@@ -22,9 +22,11 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
-class PlaylistController;
+class PlaylistInteractor;
 class SettingsManager;
-class TrackSelectionController;
+class Playlist;
+struct PlaylistTrack;
+enum class PlayState;
 
 class DirBrowser : public FyWidget
 {
@@ -37,8 +39,7 @@ public:
         List,
     };
 
-    explicit DirBrowser(TrackSelectionController* selectionController, PlaylistController* playlistController,
-                        SettingsManager* settings, QWidget* parent = nullptr);
+    explicit DirBrowser(PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
 
     [[nodiscard]] QString name() const override;
@@ -48,6 +49,11 @@ public:
 
 signals:
     void rootChanged();
+
+public slots:
+    void playstateChanged(PlayState state);
+    void activePlaylistChanged(Playlist* playlist);
+    void playlistTrackChanged(const PlaylistTrack& track);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

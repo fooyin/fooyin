@@ -45,6 +45,7 @@ class Playlist;
 class TrackSelectionController;
 class PlaylistWidget;
 class PlaylistController;
+class PlaylistInteractor;
 class PlaylistModel;
 class PlaylistView;
 class MusicLibrary;
@@ -56,8 +57,8 @@ class PlaylistWidgetPrivate : public QObject
     Q_OBJECT
 
 public:
-    PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
-                          MusicLibrary* library, SettingsManager* settings);
+    PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                          SettingsManager* settings);
 
     void setupConnections();
     void setupActions();
@@ -114,13 +115,14 @@ public:
     PlaylistWidget* self;
 
     ActionManager* actionManager;
+    PlaylistInteractor* playlistInteractor;
+    PlaylistController* playlistController;
+    PlayerController* playerController;
     TrackSelectionController* selectionController;
     MusicLibrary* library;
     SettingsManager* settings;
     SettingsDialogController* settingsDialog;
 
-    PlaylistController* playlistController;
-    PlayerController* playerController;
     PlaylistColumnRegistry columnRegistry;
     PresetRegistry presetRegistry;
     SortingRegistry sortRegistry;

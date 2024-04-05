@@ -20,6 +20,7 @@
 #include "playlistwidget.h"
 
 #include "internalguisettings.h"
+#include "playlist/playlistinteractor.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -113,16 +114,16 @@ namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManager* actionManager_,
-                                             PlaylistController* playlistController_, MusicLibrary* library_,
-                                             SettingsManager* settings_)
+                                             PlaylistInteractor* playlistInteractor_, SettingsManager* settings_)
     : self{self_}
     , actionManager{actionManager_}
-    , selectionController{playlistController_->selectionController()}
-    , library{library_}
+    , playlistInteractor{playlistInteractor_}
+    , playlistController{playlistInteractor->controller()}
+    , playerController{playlistController->playerController()}
+    , selectionController{playlistController->selectionController()}
+    , library{playlistInteractor_->library()}
     , settings{settings_}
     , settingsDialog{settings->settingsDialog()}
-    , playlistController{playlistController_}
-    , playerController{playlistController->playerController()}
     , columnRegistry{settings}
     , presetRegistry{settings}
     , sortRegistry{settings}
@@ -578,7 +579,7 @@ void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index
 
     playlistView->setFocus(Qt::ActiveWindowFocusReason);
 
-    playlistController->filesToTracks(urls, [this, index](const TrackList& tracks) {
+    playlistInteractor->filesToTracks(urls, [this, index](const TrackList& tracks) {
         auto* insertCmd
             = new InsertTracks(playerController, model, playlistController->currentPlaylist()->id(), {{index, tracks}});
         playlistController->addToHistory(insertCmd);
@@ -941,10 +942,10 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
     parent->addMenu(presetsMenu);
 }
 
-PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistController* playlistController,
-                               MusicLibrary* library, SettingsManager* settings, QWidget* parent)
+PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                               SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistController, library, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, settings)}
 {
     setObjectName(PlaylistWidget::name());
 }

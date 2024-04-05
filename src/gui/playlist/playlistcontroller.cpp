@@ -40,7 +40,6 @@ struct PlaylistController::Private
 
     PlaylistHandler* handler;
     PlayerController* playerController;
-    MusicLibrary* library;
     TrackSelectionController* selectionController;
     SettingsManager* settings;
 
@@ -53,11 +52,10 @@ struct PlaylistController::Private
     std::unordered_map<Playlist*, PlaylistViewState> states;
 
     Private(PlaylistController* self_, PlaylistHandler* handler_, PlayerController* playerController_,
-            MusicLibrary* library_, TrackSelectionController* selectionController_, SettingsManager* settings_)
+            TrackSelectionController* selectionController_, SettingsManager* settings_)
         : self{self_}
         , handler{handler_}
         , playerController{playerController_}
-        , library{library_}
         , selectionController{selectionController_}
         , settings{settings_}
     { }
@@ -218,37 +216,6 @@ struct PlaylistController::Private
         }
     }
 
-    template <typename Func>
-    void scanTracks(const TrackList& tracks, Func&& func) const
-    {
-        auto* scanDialog
-            = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100, nullptr);
-        scanDialog->setAttribute(Qt::WA_DeleteOnClose);
-        scanDialog->setWindowModality(Qt::WindowModal);
-
-        const ScanRequest request = library->scanTracks(tracks);
-
-        QObject::connect(library, &MusicLibrary::scanProgress, scanDialog, [scanDialog, request](int id, int percent) {
-            if(id != request.id) {
-                return;
-            }
-
-            if(scanDialog->wasCanceled()) {
-                request.cancel();
-                scanDialog->close();
-            }
-
-            scanDialog->setValue(percent);
-        });
-
-        QObject::connect(library, &MusicLibrary::tracksScanned, scanDialog,
-                         [request, func](int id, const TrackList& scannedTracks) {
-                             if(id == request.id) {
-                                 func(scannedTracks);
-                             }
-                         });
-    }
-
     void saveStates() const
     {
         QByteArray out;
@@ -302,10 +269,10 @@ struct PlaylistController::Private
 };
 
 PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerController* playerController,
-                                       MusicLibrary* library, TrackSelectionController* selectionController,
-                                       SettingsManager* settings, QObject* parent)
+                                       TrackSelectionController* selectionController, SettingsManager* settings,
+                                       QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, handler, playerController, library, selectionController, settings)}
+    , p{std::make_unique<Private>(this, handler, playerController, selectionController, settings)}
 {
     p->restoreStates();
 
@@ -540,92 +507,6 @@ void PlaylistController::redoPlaylistChanges()
         p->histories.at(p->currentPlaylist).redo();
         emit playlistHistoryChanged();
     }
-}
-
-void PlaylistController::filesToCurrentPlaylist(const QList<QUrl>& urls, bool replace)
-{
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
-        return;
-    }
-
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, [this, replace](const TrackList& scannedTracks) {
-        if(p->currentPlaylist) {
-            if(replace) {
-                p->handler->replacePlaylistTracks(p->currentPlaylist->id(), scannedTracks);
-            }
-            else {
-                p->handler->appendToPlaylist(p->currentPlaylist->id(), scannedTracks);
-            }
-        }
-    });
-}
-
-void PlaylistController::filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls)
-{
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
-        return;
-    }
-
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    auto handleScanResult = [this, playlistName](const TrackList& scannedTracks) {
-        Playlist* playlist = p->handler->playlistByName(playlistName);
-        if(playlist) {
-            const int indexToPlay = playlist->trackCount();
-            p->handler->appendToPlaylist(playlist->id(), scannedTracks);
-            playlist->changeCurrentIndex(indexToPlay);
-        }
-        else {
-            playlist = p->handler->createPlaylist(playlistName, scannedTracks);
-        }
-
-        if(playlist) {
-            changeCurrentPlaylist(playlist);
-            p->handler->startPlayback(playlist->id());
-        }
-    };
-
-    p->scanTracks(tracks, handleScanResult);
-}
-
-void PlaylistController::filesToActivePlaylist(const QList<QUrl>& urls)
-{
-    if(!p->handler->activePlaylist()) {
-        return;
-    }
-
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
-        return;
-    }
-
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
-        if(p->handler->activePlaylist()) {
-            p->handler->appendToPlaylist(p->handler->activePlaylist()->id(), scannedTracks);
-        }
-    });
-}
-
-void PlaylistController::filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func)
-{
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
-        return;
-    }
-
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, func);
 }
 
 void PlaylistController::handleTrackSelectionAction(TrackAction action)

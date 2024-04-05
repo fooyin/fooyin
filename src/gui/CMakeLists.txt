@@ -103,6 +103,8 @@ set(SOURCES
     playlist/playlistcontroller.h
     playlist/playlistdelegate.cpp
     playlist/playlistdelegate.h
+    playlist/playlistinteractor.cpp
+    playlist/playlistinteractor.h
     playlist/playlistitem.cpp
     playlist/playlistitem.h
     playlist/playlistitemmodels.cpp

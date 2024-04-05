@@ -31,7 +31,6 @@ class QUndoCommand;
 
 namespace Fooyin {
 class SettingsManager;
-class SortingRegistry;
 class PlayerController;
 enum class PlayState;
 enum class TrackAction;
@@ -51,7 +50,7 @@ class PlaylistController : public QObject
     Q_OBJECT
 
 public:
-    PlaylistController(PlaylistHandler* handler, PlayerController* playerController, MusicLibrary* library,
+    PlaylistController(PlaylistHandler* handler, PlayerController* playerController,
                        TrackSelectionController* selectionController, SettingsManager* settings,
                        QObject* parent = nullptr);
     ~PlaylistController() override;
@@ -89,11 +88,6 @@ public:
     [[nodiscard]] bool canRedo() const;
     void undoPlaylistChanges();
     void redoPlaylistChanges();
-
-    void filesToCurrentPlaylist(const QList<QUrl>& urls, bool replace = false);
-    void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls);
-    void filesToActivePlaylist(const QList<QUrl>& urls);
-    void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func);
 
 signals:
     void playlistsLoaded();
