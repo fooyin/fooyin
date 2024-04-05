@@ -42,6 +42,8 @@ struct ActionManager::Private
     QMainWindow* mainWindow{nullptr};
 
     Context currentContext;
+    bool contextOverride{false};
+    WidgetContext* widgetOverride{nullptr};
 
     std::unordered_map<Id, std::unique_ptr<ActionCommand>, Id::IdHash> idCmdMap;
     std::unordered_map<Id, std::unique_ptr<MenuContainer>, Id::IdHash> idContainerMap;
@@ -131,16 +133,16 @@ struct ActionManager::Private
             return;
         }
 
+        if(contextOverride) {
+            return;
+        }
+
         WidgetContextList newContext;
 
         if(QWidget* focusedWidget = QApplication::focusWidget()) {
             while(focusedWidget) {
                 if(auto* widgetContext = self->contextObject(focusedWidget)) {
                     if(widgetContext->isEnabled()) {
-                        if(widgetContext->isGlobal()) {
-                            newContext = {widgetContext};
-                            break;
-                        }
                         newContext.push_back(widgetContext);
                     }
                 }
@@ -250,6 +252,31 @@ void ActionManager::addContextObject(WidgetContext* context)
     QObject::connect(context, &QObject::destroyed, this, [this, context] { removeContextObject(context); });
 }
 
+void ActionManager::overrideContext(WidgetContext* context, bool override)
+{
+    if(!context) {
+        return;
+    }
+
+    if(override && p->contextOverride) {
+        // Only one override allowed
+        return;
+    }
+
+    if(override) {
+        p->contextOverride = true;
+        p->widgetOverride  = context;
+        p->updateContextObject({context});
+    }
+    else if(context == p->widgetOverride) {
+        p->contextOverride = false;
+        p->widgetOverride  = nullptr;
+        p->activeContext.clear();
+        p->currentContext = {};
+        p->updateFocusWidget(QApplication::focusWidget());
+    }
+}
+
 void ActionManager::removeContextObject(WidgetContext* context)
 {
     if(!context) {
@@ -312,7 +339,7 @@ Command* ActionManager::registerAction(QAction* action, const Id& id, const Cont
 {
     ActionCommand* command = p->overridableAction(id);
     if(command) {
-        command->addOverrideAction(action, context);
+        command->addOverrideAction(action, context, !p->contextOverride);
         emit commandsChanged();
     }
     return command;

@@ -57,7 +57,7 @@ public:
     QString description() const override;
 
     void setCurrentContext(const Context& newContext);
-    void addOverrideAction(QAction* actionToAdd, const Context& context);
+    void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
 
 private:
     struct Private;

@@ -191,9 +191,6 @@ struct EditableLayout::Private
         box->setContentsMargins(5, 5, 5, 5);
         box->addWidget(root);
 
-        editingContext->setEnabled(false);
-        editingContext->setGlobal(true);
-        actionManager->addContextObject(editingContext);
         widgetProvider->setCommandStack(layoutHistory);
 
         settings->subscribe<Settings::Gui::LayoutEditing>(self, [this](bool enabled) { changeEditingState(enabled); });
@@ -212,12 +209,12 @@ struct EditableLayout::Private
         }
 
         if(editing) {
-            editingContext->setEnabled(true);
+            actionManager->overrideContext(editingContext, true);
             overlay = new OverlayWidget(self);
             qApp->installEventFilter(self);
         }
         else {
-            editingContext->setEnabled(false);
+            actionManager->overrideContext(editingContext, false);
             qApp->removeEventFilter(self);
             if(overlay) {
                 overlay->deleteLater();
@@ -478,7 +475,12 @@ EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* wid
     setObjectName(QStringLiteral("EditableLayout"));
 }
 
-EditableLayout::~EditableLayout() = default;
+EditableLayout::~EditableLayout()
+{
+    if(p->layoutEditing) {
+        p->changeEditingState(false);
+    }
+}
 
 void EditableLayout::initialise()
 {

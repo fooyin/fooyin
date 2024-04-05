@@ -51,6 +51,7 @@ public:
     [[nodiscard]] QWidget* currentContextWidget() const;
     [[nodiscard]] WidgetContext* contextObject(QWidget* widget) const;
     void addContextObject(WidgetContext* context);
+    void overrideContext(WidgetContext* context, bool override);
     void removeContextObject(WidgetContext* context);
 
     ActionContainer* createMenu(const Id& id);

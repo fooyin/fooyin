@@ -69,10 +69,8 @@ public:
     [[nodiscard]] QWidget* widget() const;
 
     [[nodiscard]] bool isEnabled() const;
-    [[nodiscard]] bool isGlobal() const;
 
     void setEnabled(bool enabled);
-    void setGlobal(bool global);
 
 signals:
     void isEnabledChanged();
@@ -81,7 +79,6 @@ private:
     QPointer<QWidget> m_widget;
     Context m_context;
     bool m_isEnabled;
-    bool m_isGlobal;
 };
 using WidgetContextList = std::vector<WidgetContext*>;
 } // namespace Fooyin

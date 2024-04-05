@@ -219,7 +219,7 @@ void ActionCommand::setCurrentContext(const Context& context)
     p->updateActiveState();
 }
 
-void ActionCommand::addOverrideAction(QAction* action, const Context& context)
+void ActionCommand::addOverrideAction(QAction* action, const Context& context, bool changeContext)
 {
     if(action->menuRole() == QAction::TextHeuristicRole) {
         action->setMenuRole(QAction::NoRole);
@@ -244,7 +244,10 @@ void ActionCommand::addOverrideAction(QAction* action, const Context& context)
             p->contextActionMap.emplace(contextId, action);
         }
     }
-    setCurrentContext(context);
+
+    if(changeContext) {
+        setCurrentContext(context);
+    }
 }
 } // namespace Fooyin
 
