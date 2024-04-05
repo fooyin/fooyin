@@ -419,9 +419,11 @@ void PlaylistHandler::appendToPlaylist(const Id& id, const TrackList& tracks)
 void PlaylistHandler::replacePlaylistTracks(const Id& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
+        const auto size = tracks.empty() ? playlist->tracks().size() : tracks.size();
+
         playlist->replaceTracks(tracks);
 
-        std::vector<int> changedIndexes(tracks.size());
+        std::vector<int> changedIndexes(size);
         std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
 
         emit playlistTracksChanged(playlist, changedIndexes);

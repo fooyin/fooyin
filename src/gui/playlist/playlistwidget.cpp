@@ -238,10 +238,7 @@ void PlaylistWidgetPrivate::setupActions()
 
     auto* clear = new QAction(PlaylistWidget::tr("&Clear"), self);
     editMenu->addAction(actionManager->registerAction(clear, Constants::Actions::Clear, playlistContext->context()));
-    QObject::connect(clear, &QAction::triggered, this, [this]() {
-        playlistController->clearCurrentPlaylist();
-        resetModel();
-    });
+    QObject::connect(clear, &QAction::triggered, this, [this]() { playlistController->clearCurrentPlaylist(); });
 
     auto* selectAll = new QAction(PlaylistWidget::tr("&Select All"), self);
     auto* selectAllCmd
