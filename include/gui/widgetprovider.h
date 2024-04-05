@@ -64,6 +64,8 @@ public:
 
     /** Sets the maximum number of instances which can be created of the widget at @p key. */
     void setLimit(const QString& key, int limit);
+    /** Sets whether the widget at @p key is shown in layout editing menus. */
+    void setIsHidden(const QString& key, bool hidden);
 
     /** Returns @c true if an instance can be created of the widget at @p key. */
     [[nodiscard]] bool canCreateWidget(const QString& key) const;

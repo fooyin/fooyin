@@ -19,6 +19,7 @@
 
 #include "splitterwidget.h"
 
+#include "dummy.h"
 #include "internalguisettings.h"
 
 #include <gui/widgetprovider.h>
@@ -90,27 +91,15 @@ SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* 
     : WidgetContainer{widgetProvider, parent}
     , m_widgetProvider{widgetProvider}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
-    , m_showDummy{false}
-    , m_widgetCount{0}
-    , m_baseWidgetCount{0}
 {
     setObjectName(SplitterWidget::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_splitter);
-
-    checkShowDummy();
 }
 
 SplitterWidget::~SplitterWidget() = default;
-
-void SplitterWidget::showPlaceholder(bool show)
-{
-    m_showDummy = show;
-
-    checkShowDummy();
-}
 
 Qt::Orientation SplitterWidget::orientation() const
 {
@@ -196,7 +185,8 @@ FyWidget* SplitterWidget::widgetAtIndex(int index) const
 
 int SplitterWidget::widgetCount() const
 {
-    return static_cast<int>(m_widgets.size());
+    return static_cast<int>(std::count_if(m_widgets.cbegin(), m_widgets.cend(),
+                                          [](FyWidget* widget) { return !qobject_cast<Dummy*>(widget); }));
 }
 
 WidgetList SplitterWidget::widgets() const
@@ -206,7 +196,7 @@ WidgetList SplitterWidget::widgets() const
 
 int SplitterWidget::addWidget(FyWidget* widget)
 {
-    const int index = static_cast<int>(m_widgets.size()) + m_baseWidgetCount;
+    const int index = static_cast<int>(m_widgets.size());
     insertWidget(index, widget);
     return index;
 }
@@ -217,18 +207,19 @@ void SplitterWidget::insertWidget(int index, FyWidget* widget)
         return;
     }
 
-    if(index < 0 || index > m_splitter->count()) {
+    if(index < 0 || std::cmp_greater(index, m_widgets.size())) {
         return;
     }
 
-    m_widgetCount += 1;
-
-    if(m_dummy && m_widgetCount > 0) {
-        m_dummy->deleteLater();
+    if(std::cmp_less(index, m_widgets.size()) && qobject_cast<Dummy*>(m_widgets.at(index))) {
+        m_widgets.at(index)->deleteLater();
+        m_widgets[index] = widget;
+        m_splitter->replaceWidget(index, widget);
     }
-
-    m_widgets.insert(m_widgets.begin() + index, widget);
-    m_splitter->insertWidget(index, widget);
+    else {
+        m_widgets.insert(m_widgets.begin() + index, widget);
+        m_splitter->insertWidget(index, widget);
+    }
 }
 
 void SplitterWidget::removeWidget(int index)
@@ -237,12 +228,16 @@ void SplitterWidget::removeWidget(int index)
         return;
     }
 
-    m_widgetCount -= 1;
-
-    m_widgets.at(index)->deleteLater();
-    m_widgets.erase(m_widgets.begin() + index);
-
-    checkShowDummy();
+    if((m_widgets.size() - 1) < 2) {
+        auto* dummy = new Dummy(this);
+        m_splitter->replaceWidget(index, dummy);
+        m_widgets.at(index)->deleteLater();
+        m_widgets[index] = dummy;
+    }
+    else {
+        m_widgets.at(index)->deleteLater();
+        m_widgets.erase(m_widgets.begin() + index);
+    }
 }
 
 void SplitterWidget::replaceWidget(int index, FyWidget* newWidget)
@@ -306,18 +301,19 @@ void SplitterWidget::loadLayoutData(const QJsonObject& layout)
     WidgetContainer::loadWidgets(children);
 
     restoreState(state);
-
-    checkShowDummy();
 }
 
-void SplitterWidget::checkShowDummy()
+void SplitterWidget::finalise()
 {
-    if(!m_dummy && m_showDummy && m_widgetCount == 0) {
-        m_dummy = new Dummy(this);
-        m_splitter->addWidget(m_dummy);
-    }
-    else if(m_dummy && !m_showDummy && m_widgetCount > 0) {
-        m_dummy->deleteLater();
+    auto addDummy = [this]() {
+        auto* dummy = new Dummy(this);
+        m_widgets.emplace_back(dummy);
+        m_splitter->addWidget(dummy);
+    };
+
+    if(m_widgets.empty()) {
+        addDummy();
+        addDummy();
     }
 }
 } // namespace Fooyin

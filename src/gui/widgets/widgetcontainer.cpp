@@ -19,6 +19,8 @@
 
 #include <gui/widgetcontainer.h>
 
+#include "widgets/dummy.h"
+
 #include <gui/widgetprovider.h>
 
 #include <QJsonArray>
@@ -54,15 +56,39 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
         const QJsonObject widgetObject = widget.toObject();
 
         const auto widgetName = widgetObject.constBegin().key();
+        const auto childValue = widgetObject.value(widgetName);
 
-        if(auto* childWidget = m_widgetProvider->createWidget(widgetName)) {
-            addWidget(childWidget);
-            const auto childValue = widgetObject.value(widgetName);
+        bool currentIsMissing{false};
+        FyWidget* childWidget{nullptr};
+        if(!m_widgetProvider->canCreateWidget(widgetName)) {
+            currentIsMissing = true;
+            childWidget      = new Dummy(widgetName, this);
+        }
+        else {
+            childWidget = m_widgetProvider->createWidget(widgetName);
+        }
 
+        if(childWidget) {
             if(childValue.isObject()) {
                 childWidget->loadLayout(childValue.toObject());
             }
 
+            if(!currentIsMissing) {
+                if(auto* dummy = qobject_cast<Dummy*>(childWidget)) {
+                    const QString missingName = dummy->missingName();
+
+                    if(!missingName.isEmpty() && m_widgetProvider->canCreateWidget(missingName)) {
+                        childWidget->deleteLater();
+                        childWidget = m_widgetProvider->createWidget(missingName);
+
+                        if(childValue.isObject()) {
+                            childWidget->loadLayout(childValue.toObject());
+                        }
+                    }
+                }
+            }
+
+            addWidget(childWidget);
             childWidget->finalise();
         }
     }

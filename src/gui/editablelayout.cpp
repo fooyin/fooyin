@@ -50,6 +50,113 @@
 #include <stack>
 
 namespace Fooyin {
+class RootContainer : public WidgetContainer
+{
+    Q_OBJECT
+
+public:
+    explicit RootContainer(WidgetProvider* provider, QWidget* parent = nullptr)
+        : WidgetContainer{provider, parent}
+        , m_layout{new QVBoxLayout(this)}
+        , m_widget{new Dummy(this)}
+    {
+        m_layout->setContentsMargins(0, 0, 0, 0);
+        m_layout->addWidget(m_widget);
+    }
+
+    void reset()
+    {
+        delete m_widget;
+        m_widget = new Dummy(this);
+        m_layout->addWidget(m_widget);
+    }
+
+    [[nodiscard]] FyWidget* widget() const
+    {
+        return m_widget;
+    }
+
+    [[nodiscard]] QString name() const override
+    {
+        return QStringLiteral("Root");
+    }
+
+    [[nodiscard]] bool canAddWidget() const override
+    {
+        return !m_widget || qobject_cast<Dummy*>(m_widget);
+    }
+
+    [[nodiscard]] bool canMoveWidget(int /*index*/, int /*newIndex*/) const override
+    {
+        return false;
+    }
+
+    [[nodiscard]] int widgetIndex(const Id& id) const override
+    {
+        return m_widget && m_widget->id() == id ? 0 : -1;
+    }
+
+    [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override
+    {
+        return m_widget && m_widget->id() == id ? m_widget : nullptr;
+    }
+
+    [[nodiscard]] FyWidget* widgetAtIndex(int index) const override
+    {
+        return index == 0 ? m_widget : nullptr;
+    }
+
+    [[nodiscard]] int widgetCount() const override
+    {
+        return m_widget ? 1 : 0;
+    }
+
+    [[nodiscard]] WidgetList widgets() const override
+    {
+        if(m_widget) {
+            return {m_widget};
+        }
+
+        return {};
+    }
+
+    int addWidget(FyWidget* widget) override
+    {
+        insertWidget(0, widget);
+        return 0;
+    }
+
+    void insertWidget(int index, FyWidget* widget) override
+    {
+        if(index != 0) {
+            return;
+        }
+
+        widget->setParent(this);
+        delete m_widget;
+        m_widget = widget;
+        m_layout->insertWidget(0, m_widget);
+    }
+
+    void removeWidget(int index) override
+    {
+        if(index == 0) {
+            reset();
+        }
+    }
+
+    void replaceWidget(int index, FyWidget* newWidget) override
+    {
+        insertWidget(index, newWidget);
+    }
+
+    void moveWidget(int /*index*/, int /*newIndex*/) override { }
+
+private:
+    QVBoxLayout* m_layout;
+    QPointer<FyWidget> m_widget;
+};
+
 struct EditableLayout::Private
 {
     EditableLayout* self;
@@ -62,7 +169,7 @@ struct EditableLayout::Private
     QPointer<QMenu> editingMenu;
     QHBoxLayout* box;
     QPointer<OverlayWidget> overlay;
-    QPointer<SplitterWidget> splitter;
+    RootContainer* root;
     bool layoutEditing{false};
 
     WidgetContext* editingContext;
@@ -77,26 +184,25 @@ struct EditableLayout::Private
         , widgetProvider{widgetProvider_}
         , layoutProvider{layoutProvider_}
         , box{new QHBoxLayout(self)}
+        , root{new RootContainer(widgetProvider, self)}
         , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
         , layoutHistory{new QUndoStack(self)}
     {
         box->setContentsMargins(5, 5, 5, 5);
+        box->addWidget(root);
 
         editingContext->setEnabled(false);
         editingContext->setGlobal(true);
         actionManager->addContextObject(editingContext);
         widgetProvider->setCommandStack(layoutHistory);
+
+        settings->subscribe<Settings::Gui::LayoutEditing>(self, [this](bool enabled) { changeEditingState(enabled); });
     }
 
-    void setupDefault()
+    void setupDefault() const
     {
-        splitter = qobject_cast<SplitterWidget*>(widgetProvider->createWidget(QStringLiteral("SplitterVertical")));
-        if(splitter) {
-            splitter->setParent(self);
-            splitter->finalise();
-            box->addWidget(splitter);
-            settings->set<Settings::Gui::LayoutEditing>(true);
-        }
+        root->reset();
+        settings->set<Settings::Gui::LayoutEditing>(true);
     }
 
     void changeEditingState(bool editing)
@@ -126,6 +232,22 @@ struct EditableLayout::Private
     void hideOverlay() const
     {
         overlay->hide();
+    }
+
+    void setupAddWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
+    {
+        if(auto* container = qobject_cast<WidgetContainer*>(current)) {
+            auto* addMenu = new QMenu(tr("&Add"), menu);
+            addMenu->setEnabled(container->canAddWidget());
+            widgetProvider->setupAddWidgetMenu(addMenu, container);
+            menu->addMenu(addMenu);
+        }
+        else if(qobject_cast<Dummy*>(current)) {
+            auto* addMenu = new QMenu(tr("&Add"), menu);
+            addMenu->setEnabled(parent->canAddWidget());
+            widgetProvider->setupReplaceWidgetMenu(addMenu, parent, current->id());
+            menu->addMenu(addMenu);
+        }
     }
 
     bool setupMoveWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
@@ -189,56 +311,54 @@ struct EditableLayout::Private
             }
         };
 
-        while(level > 0 && currentWidget) {
-            menu->addAction(new MenuHeaderAction(currentWidget->name(), menu));
+        while(level > 0 && currentWidget && currentWidget != root) {
+            const bool isDummy = qobject_cast<Dummy*>(currentWidget);
+
+            menu->addAction(new MenuHeaderAction(isDummy ? QStringLiteral("Widget") : currentWidget->name(), menu));
 
             currentWidget->layoutEditingMenu(menu);
 
             auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
-            if(parent) {
+            if(parent && parent != root) {
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
                 moveMenu->setEnabled(setupMoveWidgetMenu(moveMenu, parent, currentWidget));
                 menu->addMenu(moveMenu);
             }
 
-            if(auto* container = qobject_cast<WidgetContainer*>(currentWidget)) {
-                auto* addMenu = new QMenu(tr("&Add"), menu);
-                addMenu->setEnabled(container->canAddWidget());
-                widgetProvider->setupAddWidgetMenu(addMenu, container);
-                menu->addMenu(addMenu);
-            }
+            setupAddWidgetMenu(menu, parent, currentWidget);
 
-            if(parent) {
+            if(!isDummy) {
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
                 widgetProvider->setupReplaceWidgetMenu(changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
 
                 auto* copy = new QAction(tr("Copy"), menu);
                 copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
-                QObject::connect(copy, &QAction::triggered, parent, [this, currentWidget] {
+                QObject::connect(copy, &QAction::triggered, currentWidget, [this, currentWidget] {
                     widgetClipboard = EditableLayout::saveWidget(currentWidget);
                 });
                 menu->addAction(copy);
+            }
 
-                if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
+            if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
+                if(!isDummy) {
                     addPasteAction(currentWidget);
-
-                    auto* paste = new QAction(tr("Paste (Replace)"), menu);
-                    QObject::connect(paste, &QAction::triggered, parent, [this, parent, currentWidget] {
-                        layoutHistory->push(
-                            new ReplaceWidgetCommand(widgetProvider, parent, widgetClipboard, currentWidget->id()));
-                    });
-                    menu->addAction(paste);
                 }
 
+                auto* paste = new QAction(tr("Paste (Replace)"), menu);
+                QObject::connect(paste, &QAction::triggered, currentWidget, [this, parent, currentWidget] {
+                    layoutHistory->push(
+                        new ReplaceWidgetCommand(widgetProvider, parent, widgetClipboard, currentWidget->id()));
+                });
+                menu->addAction(paste);
+            }
+
+            if(!isDummy || parent->widgetCount() > 1) {
                 auto* remove = new QAction(tr("Remove"), menu);
-                QObject::connect(remove, &QAction::triggered, parent, [this, parent, currentWidget] {
+                QObject::connect(remove, &QAction::triggered, currentWidget, [this, parent, currentWidget] {
                     layoutHistory->push(new RemoveWidgetCommand(widgetProvider, parent, currentWidget->id()));
                 });
                 menu->addAction(remove);
-            }
-            else if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
-                addPasteAction(currentWidget);
             }
 
             currentWidget = parent;
@@ -265,7 +385,7 @@ struct EditableLayout::Private
     template <typename T, typename Predicate>
     T findWidgets(const Predicate& predicate) const
     {
-        if(!splitter) {
+        if(!root) {
             if constexpr(std::is_same_v<T, FyWidget*>) {
                 return nullptr;
             }
@@ -275,7 +395,7 @@ struct EditableLayout::Private
         T widgets;
 
         std::stack<FyWidget*> widgetsToCheck;
-        widgetsToCheck.push(splitter);
+        widgetsToCheck.push(root);
 
         while(!widgetsToCheck.empty()) {
             auto* current = widgetsToCheck.top();
@@ -344,9 +464,6 @@ void EditableLayout::initialise()
     if(!loadLayout()) {
         p->setupDefault();
     }
-
-    p->settings->subscribe<Settings::Gui::LayoutEditing>(this,
-                                                         [this](bool enabled) { p->changeEditingState(enabled); });
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
@@ -389,13 +506,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
             return QWidget::eventFilter(watched, event);
         }
 
-        if(qobject_cast<Dummy*>(child)) {
-            p->setupContextMenu(child->findParent(), p->editingMenu);
-        }
-        else {
-            p->setupContextMenu(child, p->editingMenu);
-        }
-
+        p->setupContextMenu(child, p->editingMenu);
         p->showOverlay(child);
         p->editingMenu->popup(pos);
     }
@@ -406,12 +517,9 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
 
 void EditableLayout::changeLayout(const Layout& layout)
 {
-    delete p->splitter;
+    p->root->reset();
 
-    if(loadLayout(layout)) {
-        p->settings->set<Settings::Gui::LayoutEditing>(p->splitter->widgets().empty());
-    }
-    else {
+    if(!loadLayout(layout)) {
         p->setupDefault();
     }
 }
@@ -421,7 +529,12 @@ void EditableLayout::saveLayout()
     QJsonObject root;
     QJsonArray array;
 
-    p->splitter->saveLayout(array);
+    if(p->root->widget()) {
+        p->root->widget()->saveLayout(array);
+    }
+    else {
+        array.append(QJsonObject{});
+    }
 
     root[QStringLiteral("Default")] = array;
 
@@ -441,16 +554,19 @@ bool EditableLayout::loadLayout(const Layout& layout)
     p->layoutHistory->clear();
 
     const auto name = layout.json.constBegin().key();
-    if(auto* splitter = qobject_cast<SplitterWidget*>(p->widgetProvider->createWidget(name))) {
-        p->splitter               = splitter;
-        const QJsonObject options = layout.json.constBegin()->toObject();
-        p->splitter->loadLayout(options);
-        p->splitter->finalise();
-        p->box->addWidget(p->splitter);
-        return true;
+    auto* topWidget = p->widgetProvider->createWidget(name);
+
+    if(!topWidget) {
+        return false;
     }
 
-    return false;
+    p->root->addWidget(topWidget);
+
+    const QJsonObject options = layout.json.constBegin()->toObject();
+    topWidget->loadLayout(options);
+    topWidget->finalise();
+
+    return true;
 }
 
 bool EditableLayout::loadLayout()
@@ -497,4 +613,5 @@ void EditableLayout::showQuickSetup()
 }
 } // namespace Fooyin
 
+#include "editablelayout.moc"
 #include "gui/moc_editablelayout.cpp"

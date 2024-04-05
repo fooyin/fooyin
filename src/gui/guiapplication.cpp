@@ -56,6 +56,7 @@
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "widgets/coverwidget.h"
+#include "widgets/dummy.h"
 #include "widgets/spacer.h"
 #include "widgets/splitterwidget.h"
 #include "widgets/statuswidget.h"
@@ -315,22 +316,18 @@ struct GuiApplication::Private
     void registerWidgets()
     {
         widgetProvider.registerWidget(
+            QStringLiteral("Dummy"), [this]() { return new Dummy(mainWindow.get()); }, QStringLiteral("Dummy"));
+        widgetProvider.setIsHidden(QStringLiteral("Dummy"), true);
+
+        widgetProvider.registerWidget(
             QStringLiteral("SplitterVertical"),
-            [this]() {
-                auto* splitter = new VerticalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get());
-                splitter->showPlaceholder(true);
-                return splitter;
-            },
+            [this]() { return new VerticalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get()); },
             QStringLiteral("Vertical Splitter"));
         widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {QStringLiteral("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SplitterHorizontal"),
-            [this]() {
-                auto* splitter = new HorizontalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get());
-                splitter->showPlaceholder(true);
-                return splitter;
-            },
+            [this]() { return new HorizontalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get()); },
             QStringLiteral("Horizontal Splitter"));
         widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {QStringLiteral("Splitters")});
 

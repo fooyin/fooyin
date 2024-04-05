@@ -35,6 +35,7 @@ struct FactoryWidget
     QString name;
     std::function<Fooyin::FyWidget*()> instantiator;
     QStringList subMenus;
+    bool isHidden{false};
     int limit{0};
     int count{0};
 };
@@ -68,6 +69,10 @@ struct WidgetProvider::Private
         std::map<QString, QMenu*> menuCache;
 
         for(const auto& [key, widget] : widgets) {
+            if(widget.isHidden) {
+                continue;
+            }
+
             auto* parentMenu = menu;
 
             for(const auto& subMenu : widget.subMenus) {
@@ -139,6 +144,16 @@ void WidgetProvider::setLimit(const QString& key, int limit)
     }
 
     p->widgets.at(key).limit = limit;
+}
+
+void WidgetProvider::setIsHidden(const QString& key, bool hidden)
+{
+    if(!p->widgets.contains(key)) {
+        qDebug() << "Subclass not registered";
+        return;
+    }
+
+    p->widgets.at(key).isHidden = hidden;
 }
 
 FyWidget* WidgetProvider::createWidget(const QString& key)

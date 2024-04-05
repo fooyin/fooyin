@@ -20,18 +20,26 @@
 #include "dummy.h"
 
 #include <QHBoxLayout>
+#include <QJsonObject>
 #include <QLabel>
 
 namespace Fooyin {
 Dummy::Dummy(QWidget* parent)
+    : Dummy{{}, parent}
+{ }
+
+Dummy::Dummy(QString name, QWidget* parent)
     : FyWidget{parent}
+    , m_missingName{std::move(name)}
 {
     setObjectName(Dummy::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    auto* label = new QLabel(tr("Right-Click to add a new widget"), this);
+    auto* label = new QLabel(!m_missingName.isEmpty() ? tr("Missing Widget:\n") + m_missingName
+                                                      : tr("Right-Click to add a new widget"),
+                             this);
     label->setAutoFillBackground(true);
 
     QPalette palette = QWidget::palette();
@@ -48,6 +56,25 @@ Dummy::Dummy(QWidget* parent)
 QString Dummy::name() const
 {
     return QStringLiteral("Dummy");
+}
+
+void Dummy::saveLayoutData(QJsonObject& layout)
+{
+    if(!m_missingName.isEmpty()) {
+        layout[QStringLiteral("MissingWidget")] = m_missingName;
+    }
+}
+
+void Dummy::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(QStringLiteral("MissingWidget"))) {
+        m_missingName = layout.value(QStringLiteral("MissingWidget")).toString();
+    }
+}
+
+QString Dummy::missingName() const
+{
+    return m_missingName;
 }
 } // namespace Fooyin
 

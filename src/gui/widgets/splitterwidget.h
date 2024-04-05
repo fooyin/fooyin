@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "dummy.h"
-
 #include <gui/widgetcontainer.h>
 
 #include <QPointer>
@@ -37,9 +35,6 @@ class SplitterWidget : public WidgetContainer
 public:
     SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~SplitterWidget() override;
-
-    void setWidgetLimit(int count);
-    void showPlaceholder(bool show);
 
     [[nodiscard]] Qt::Orientation orientation() const override;
     void setOrientation(Qt::Orientation orientation);
@@ -66,19 +61,13 @@ public:
     void layoutEditingMenu(QMenu* menu) override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
+    void finalise() override;
 
 private:
-    void checkShowDummy();
-
     WidgetProvider* m_widgetProvider;
 
     Splitter* m_splitter;
     WidgetList m_widgets;
-    QPointer<Dummy> m_dummy;
-
-    bool m_showDummy;
-    int m_widgetCount;
-    int m_baseWidgetCount;
 };
 
 class VerticalSplitterWidget : public SplitterWidget

@@ -28,7 +28,15 @@ class Dummy : public FyWidget
 
 public:
     explicit Dummy(QWidget* parent = nullptr);
+    explicit Dummy(QString name, QWidget* parent = nullptr);
 
-    QString name() const;
+    [[nodiscard]] QString name() const override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
+    [[nodiscard]] QString missingName() const;
+
+private:
+    QString m_missingName;
 };
 } // namespace Fooyin
