@@ -128,10 +128,10 @@ struct EditableLayout::Private
         overlay->hide();
     }
 
-    void setupMoveWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
+    bool setupMoveWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
     {
         if(!menu->isEmpty()) {
-            return;
+            return false;
         }
 
         const int widgetIndex = parent->widgetIndex(current->id());
@@ -164,6 +164,8 @@ struct EditableLayout::Private
             layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, parent->widgetCount() - 1));
         });
         menu->addAction(moveFarRight);
+
+        return moveLeft->isEnabled() && moveRight->isEnabled() && moveFarLeft->isEnabled() && moveFarRight->isEnabled();
     }
 
     void setupContextMenu(FyWidget* widget, QMenu* menu)
@@ -195,7 +197,7 @@ struct EditableLayout::Private
             auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
             if(parent) {
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
-                setupMoveWidgetMenu(moveMenu, parent, currentWidget);
+                moveMenu->setEnabled(setupMoveWidgetMenu(moveMenu, parent, currentWidget));
                 menu->addMenu(moveMenu);
             }
 
