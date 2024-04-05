@@ -30,6 +30,11 @@ WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent
     , m_widgetProvider{widgetProvider}
 { }
 
+Qt::Orientation WidgetContainer::orientation() const
+{
+    return Qt::Horizontal;
+}
+
 QByteArray WidgetContainer::saveState() const
 {
     return {};

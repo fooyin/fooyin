@@ -117,6 +117,17 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
+Qt::Orientation TabStackWidget::orientation() const
+{
+    const auto position = m_tabs->tabPosition();
+
+    if(position == QTabWidget::North || position == QTabWidget::South) {
+        return Qt::Vertical;
+    }
+
+    return Qt::Horizontal;
+}
+
 bool TabStackWidget::canAddWidget() const
 {
     return true;
@@ -176,6 +187,11 @@ FyWidget* TabStackWidget::widgetAtIndex(int index) const
     }
 
     return m_widgets.at(index);
+}
+
+int TabStackWidget::widgetCount() const
+{
+    return static_cast<int>(m_widgets.size());
 }
 
 WidgetList TabStackWidget::widgets() const

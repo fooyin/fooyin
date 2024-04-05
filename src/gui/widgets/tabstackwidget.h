@@ -30,7 +30,7 @@ class TabStackWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -38,11 +38,14 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+    [[nodiscard]] Qt::Orientation orientation() const override;
+
     [[nodiscard]] bool canAddWidget() const override;
     [[nodiscard]] bool canMoveWidget(int index, int newIndex) const override;
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
+    [[nodiscard]] int widgetCount() const override;
     [[nodiscard]] WidgetList widgets() const override;
 
     int addWidget(FyWidget* widget) override;

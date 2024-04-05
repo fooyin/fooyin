@@ -394,6 +394,11 @@ FyWidget* PlaylistTabs::widgetAtIndex(int index) const
     return p->tabsWidget;
 }
 
+int PlaylistTabs::widgetCount() const
+{
+    return p->tabsWidget ? 1 : 0;
+}
+
 WidgetList PlaylistTabs::widgets() const
 {
     if(!p->tabsWidget) {

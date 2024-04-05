@@ -135,20 +135,35 @@ struct EditableLayout::Private
         }
 
         const int widgetIndex = parent->widgetIndex(current->id());
+        const bool horizontal = parent->orientation() == Qt::Horizontal;
 
-        auto* moveLeft = new QAction(tr("Left"), menu);
+        auto* moveLeft = new QAction(horizontal ? tr("Left") : tr("Up"), menu);
         moveLeft->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex - 1));
         QObject::connect(moveLeft, &QAction::triggered, parent, [this, parent, widgetIndex] {
             layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex - 1));
         });
         menu->addAction(moveLeft);
 
-        auto* moveRight = new QAction(tr("Right"), menu);
+        auto* moveRight = new QAction(horizontal ? tr("Right") : tr("Down"), menu);
         moveRight->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex + 1));
         QObject::connect(moveRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
             layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex + 1));
         });
         menu->addAction(moveRight);
+
+        auto* moveFarLeft = new QAction(horizontal ? tr("Far Left") : tr("Top"), menu);
+        moveFarLeft->setEnabled(parent->canMoveWidget(widgetIndex, 0));
+        QObject::connect(moveFarLeft, &QAction::triggered, parent, [this, parent, widgetIndex] {
+            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, 0));
+        });
+        menu->addAction(moveFarLeft);
+
+        auto* moveFarRight = new QAction(horizontal ? tr("Far Right") : tr("Bottom"), menu);
+        moveFarRight->setEnabled(parent->canMoveWidget(widgetIndex, parent->widgetCount() - 1));
+        QObject::connect(moveFarRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
+            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, parent->widgetCount() - 1));
+        });
+        menu->addAction(moveFarRight);
     }
 
     void setupContextMenu(FyWidget* widget, QMenu* menu)

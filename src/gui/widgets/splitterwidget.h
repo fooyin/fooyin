@@ -41,7 +41,7 @@ public:
     void setWidgetLimit(int count);
     void showPlaceholder(bool show);
 
-    [[nodiscard]] Qt::Orientation orientation() const;
+    [[nodiscard]] Qt::Orientation orientation() const override;
     void setOrientation(Qt::Orientation orientation);
 
     [[nodiscard]] QByteArray saveState() const override;
@@ -52,6 +52,7 @@ public:
     [[nodiscard]] int widgetIndex(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtId(const Id& id) const override;
     [[nodiscard]] FyWidget* widgetAtIndex(int index) const override;
+    [[nodiscard]] int widgetCount() const override;
     [[nodiscard]] WidgetList widgets() const override;
 
     int addWidget(FyWidget* widget) override;

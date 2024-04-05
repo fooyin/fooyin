@@ -200,6 +200,11 @@ FyWidget* SplitterWidget::widgetAtIndex(int index) const
     return m_children.at(index);
 }
 
+int SplitterWidget::widgetCount() const
+{
+    return static_cast<int>(m_children.size());
+}
+
 WidgetList SplitterWidget::widgets() const
 {
     return m_children;
