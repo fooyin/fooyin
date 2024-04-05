@@ -291,20 +291,18 @@ struct GuiApplication::Private
             R"({"Simple":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA6YAAAAXAP////8BAAAAAgA=",
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABYAAABeoA/////wEAAAABAA==",
             "Widgets":[{"LibraryTree":{"Grouping":"Artist/Album","ID":"8c3bf224ae774bd780cc2ff3ad638081"}},
-            {"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAGwD/////AQAAAAIA",
-            "Widgets":[{"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAcgAAAswAAAA2AAAAGAD/////AQAAAAEA",
-            "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
+            {"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}},{"SplitterHorizontal":{
+            "State":"AAAA/wAAAAEAAAAEAAAAcgAAAswAAAA2AAAAGAD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},{"SeekBar":{}},
+            {"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
         layoutProvider.registerLayout(
             R"({"Vision":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAiQAABk8AAABHAAAAIwD/////AQAAAAEA",
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
-            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADuwAAA48A/////wEAAAABAA==","Widgets":[{"TabStack":{
-            "Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
+            {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAADuwAAA48A/////wEAAAABAA==","Widgets":[
+            {"TabStack":{"Position":"West","State":"Artwork\u001fInfo\u001fLibrary Tree\u001fPlaylist Organiser",
             "Widgets":[{"ArtworkPanel":{}},{"SelectionInfo":{}},{"LibraryTree":{"Grouping":"Artist/Album"}},
-            {"PlaylistOrganiser":{}}]}},{"SplitterVertical":{"State":"AAAA/wAAAAEAAAABAAAAwAD/////AQAAAAIA",
-            "Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
+            {"PlaylistOrganiser":{}}]}},{"Playlist":{}}]}},{"StatusBar":{}}]}}]})");
 
         layoutProvider.registerLayout(
             R"({"Browser":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFwAAA6YAAAAWAP////8BAAAAAgA=",
