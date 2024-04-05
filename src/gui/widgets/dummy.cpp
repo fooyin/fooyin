@@ -30,27 +30,28 @@ Dummy::Dummy(QWidget* parent)
 
 Dummy::Dummy(QString name, QWidget* parent)
     : FyWidget{parent}
+    , m_editing{false}
     , m_missingName{std::move(name)}
+    , m_label{new QLabel(this)}
 {
     setObjectName(Dummy::name());
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    auto* label = new QLabel(!m_missingName.isEmpty() ? tr("Missing Widget:\n") + m_missingName
-                                                      : tr("Right-Click to add a new widget"),
-                             this);
-    label->setAutoFillBackground(true);
-
     QPalette palette = QWidget::palette();
-    palette.setColor(label->backgroundRole(), palette.base().color());
-    label->setPalette(palette);
+    palette.setColor(m_label->backgroundRole(), palette.base().color());
 
-    label->setFrameShape(QFrame::StyledPanel);
-    label->setFrameShadow(QFrame::Sunken);
-    label->setAlignment(Qt::AlignCenter);
+    m_label->setPalette(palette);
+    m_label->setAutoFillBackground(true);
+    m_label->setWordWrap(true);
+    m_label->setFrameShape(QFrame::StyledPanel);
+    m_label->setFrameShadow(QFrame::Sunken);
+    m_label->setAlignment(Qt::AlignCenter);
 
-    layout->addWidget(label);
+    layout->addWidget(m_label);
+
+    updateText();
 }
 
 QString Dummy::name() const
@@ -72,9 +73,28 @@ void Dummy::loadLayoutData(const QJsonObject& layout)
     }
 }
 
+void Dummy::layoutEditingChanged(bool enabled)
+{
+    m_editing = enabled;
+    updateText();
+}
+
 QString Dummy::missingName() const
 {
     return m_missingName;
+}
+
+void Dummy::updateText()
+{
+    if(!m_missingName.isEmpty()) {
+        m_label->setText(tr("Missing Widget") + QStringLiteral(":\n") + m_missingName);
+    }
+    else if(m_editing) {
+        m_label->setText(tr("Right-Click to add a new widget"));
+    }
+    else {
+        m_label->setText(tr("Enter layout editing mode to edit"));
+    }
 }
 } // namespace Fooyin
 
