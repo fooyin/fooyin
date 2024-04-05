@@ -30,6 +30,7 @@ class QUndoStack;
 class QMenu;
 
 namespace Fooyin {
+class EditableLayout;
 class Id;
 class FyWidget;
 class WidgetContainer;
@@ -81,14 +82,14 @@ public:
      * @param menu the menu to add actions to.
      * @param container the container in which widgets will be added.
      */
-    void setupAddWidgetMenu(QMenu* menu, WidgetContainer* container);
+    void setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container);
     /*!
      * Fills the passed @p menu with actions to replace a widget with an instance of another registered widget.
      * @param menu the menu to add actions to.
      * @param container the container in which widgets will be replaced.
      * @param widgetId the widget to replace
      */
-    void setupReplaceWidgetMenu(QMenu* menu, WidgetContainer* container, const Id& widgetId);
+    void setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, const Id& widgetId);
 
 private:
     struct Private;

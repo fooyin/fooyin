@@ -239,13 +239,13 @@ struct EditableLayout::Private
         if(auto* container = qobject_cast<WidgetContainer*>(current)) {
             auto* addMenu = new QMenu(tr("&Add"), menu);
             addMenu->setEnabled(container->canAddWidget());
-            widgetProvider->setupAddWidgetMenu(addMenu, container);
+            widgetProvider->setupAddWidgetMenu(self, addMenu, container);
             menu->addMenu(addMenu);
         }
         else if(qobject_cast<Dummy*>(current)) {
             auto* addMenu = new QMenu(tr("&Add"), menu);
             addMenu->setEnabled(parent->canAddWidget());
-            widgetProvider->setupReplaceWidgetMenu(addMenu, parent, current->id());
+            widgetProvider->setupReplaceWidgetMenu(self, addMenu, parent, current->id());
             menu->addMenu(addMenu);
         }
     }
@@ -262,28 +262,29 @@ struct EditableLayout::Private
         auto* moveLeft = new QAction(horizontal ? tr("Left") : tr("Up"), menu);
         moveLeft->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex - 1));
         QObject::connect(moveLeft, &QAction::triggered, parent, [this, parent, widgetIndex] {
-            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex - 1));
+            layoutHistory->push(new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, widgetIndex - 1));
         });
         menu->addAction(moveLeft);
 
         auto* moveRight = new QAction(horizontal ? tr("Right") : tr("Down"), menu);
         moveRight->setEnabled(parent->canMoveWidget(widgetIndex, widgetIndex + 1));
         QObject::connect(moveRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
-            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, widgetIndex + 1));
+            layoutHistory->push(new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, widgetIndex + 1));
         });
         menu->addAction(moveRight);
 
         auto* moveFarLeft = new QAction(horizontal ? tr("Far Left") : tr("Top"), menu);
         moveFarLeft->setEnabled(parent->canMoveWidget(widgetIndex, 0));
         QObject::connect(moveFarLeft, &QAction::triggered, parent, [this, parent, widgetIndex] {
-            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, 0));
+            layoutHistory->push(new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, 0));
         });
         menu->addAction(moveFarLeft);
 
         auto* moveFarRight = new QAction(horizontal ? tr("Far Right") : tr("Bottom"), menu);
         moveFarRight->setEnabled(parent->canMoveWidget(widgetIndex, parent->widgetCount() - 1));
         QObject::connect(moveFarRight, &QAction::triggered, parent, [this, parent, widgetIndex] {
-            layoutHistory->push(new MoveWidgetCommand(widgetProvider, parent, widgetIndex, parent->widgetCount() - 1));
+            layoutHistory->push(
+                new MoveWidgetCommand(self, widgetProvider, parent, widgetIndex, parent->widgetCount() - 1));
         });
         menu->addAction(moveFarRight);
 
@@ -304,7 +305,7 @@ struct EditableLayout::Private
                 if(container->canAddWidget()) {
                     auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
                     QObject::connect(pasteInsert, &QAction::triggered, container, [this, container] {
-                        layoutHistory->push(new AddWidgetCommand(widgetProvider, container, widgetClipboard));
+                        layoutHistory->push(new AddWidgetCommand(self, widgetProvider, container, widgetClipboard));
                     });
                     menu->addAction(pasteInsert);
                 }
@@ -329,13 +330,13 @@ struct EditableLayout::Private
 
             if(!isDummy) {
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
-                widgetProvider->setupReplaceWidgetMenu(changeMenu, parent, currentWidget->id());
+                widgetProvider->setupReplaceWidgetMenu(self, changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
 
                 auto* copy = new QAction(tr("Copy"), menu);
                 copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
                 QObject::connect(copy, &QAction::triggered, currentWidget, [this, currentWidget] {
-                    widgetClipboard = EditableLayout::saveWidget(currentWidget);
+                    widgetClipboard = EditableLayout::saveBaseWidget(currentWidget);
                 });
                 menu->addAction(copy);
             }
@@ -348,7 +349,7 @@ struct EditableLayout::Private
                 auto* paste = new QAction(tr("Paste (Replace)"), menu);
                 QObject::connect(paste, &QAction::triggered, currentWidget, [this, parent, currentWidget] {
                     layoutHistory->push(
-                        new ReplaceWidgetCommand(widgetProvider, parent, widgetClipboard, currentWidget->id()));
+                        new ReplaceWidgetCommand(self, widgetProvider, parent, widgetClipboard, currentWidget->id()));
                 });
                 menu->addAction(paste);
             }
@@ -356,7 +357,7 @@ struct EditableLayout::Private
             if(!isDummy || parent->widgetCount() > 1) {
                 auto* remove = new QAction(tr("Remove"), menu);
                 QObject::connect(remove, &QAction::triggered, currentWidget, [this, parent, currentWidget] {
-                    layoutHistory->push(new RemoveWidgetCommand(widgetProvider, parent, currentWidget->id()));
+                    layoutHistory->push(new RemoveWidgetCommand(self, widgetProvider, parent, currentWidget->id()));
                 });
                 menu->addAction(remove);
             }
@@ -576,6 +577,19 @@ bool EditableLayout::loadLayout()
 }
 
 QJsonObject EditableLayout::saveWidget(FyWidget* widget)
+{
+    QJsonArray array;
+
+    widget->saveLayout(array);
+
+    if(!array.empty() && array.constBegin()->isObject()) {
+        return array.constBegin()->toObject();
+    }
+
+    return {};
+}
+
+QJsonObject EditableLayout::saveBaseWidget(FyWidget* widget)
 {
     QJsonArray array;
 

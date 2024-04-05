@@ -26,26 +26,41 @@
 #include <QJsonArray>
 
 namespace Fooyin {
-LayoutChangeCommand::LayoutChangeCommand(WidgetProvider* provider, WidgetContainer* container)
-    : m_provider{provider}
+LayoutChangeCommand::LayoutChangeCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container)
+    : m_layout{layout}
+    , m_provider{provider}
     , m_container{container}
+    , m_containerId{container->id()}
 { }
 
-AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key)
-    : LayoutChangeCommand{provider, container}
+void LayoutChangeCommand::checkContainer()
+{
+    if(!m_container) {
+        if(auto* container = qobject_cast<WidgetContainer*>(m_layout->findWidget(m_containerId))) {
+            m_container = container;
+        }
+    }
+}
+
+AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                   QString key)
+    : LayoutChangeCommand{layout, provider, container}
     , m_key{std::move(key)}
     , m_index{-1}
 { }
 
-AddWidgetCommand::AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget)
-    : LayoutChangeCommand{provider, container}
+AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                   QJsonObject widget)
+    : LayoutChangeCommand{layout, provider, container}
     , m_widget{std::move(widget)}
     , m_index{-1}
 { }
 
 void AddWidgetCommand::undo()
 {
-    if(m_index >= 0) {
+    checkContainer();
+
+    if(m_container && m_index >= 0) {
         m_containerState = m_container->saveState();
 
         m_container->removeWidget(m_index);
@@ -72,9 +87,9 @@ void AddWidgetCommand::redo()
     }
 }
 
-ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key,
-                                           const Id& widgetToReplace)
-    : LayoutChangeCommand{provider, container}
+ReplaceWidgetCommand::ReplaceWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                           QString key, const Id& widgetToReplace)
+    : LayoutChangeCommand{layout, provider, container}
     , m_key{std::move(key)}
     , m_index{m_container->widgetIndex(widgetToReplace)}
 {
@@ -83,9 +98,9 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetConta
     }
 }
 
-ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget,
-                                           const Id& widgetToReplace)
-    : LayoutChangeCommand{provider, container}
+ReplaceWidgetCommand::ReplaceWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                           QJsonObject widget, const Id& widgetToReplace)
+    : LayoutChangeCommand{layout, provider, container}
     , m_widget{std::move(widget)}
     , m_index{m_container->widgetIndex(widgetToReplace)}
 {
@@ -96,7 +111,9 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(WidgetProvider* provider, WidgetConta
 
 void ReplaceWidgetCommand::undo()
 {
-    if(!m_oldWidget.empty()) {
+    checkContainer();
+
+    if(m_container && !m_oldWidget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
             m_container->replaceWidget(m_index, widget);
 
@@ -125,8 +142,9 @@ void ReplaceWidgetCommand::redo()
     }
 }
 
-RemoveWidgetCommand::RemoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, const Id& widgetId)
-    : LayoutChangeCommand{provider, container}
+RemoveWidgetCommand::RemoveWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                         const Id& widgetId)
+    : LayoutChangeCommand{layout, provider, container}
     , m_index{-1}
 {
     if(auto* widget = container->widgetAtId(widgetId)) {
@@ -137,7 +155,9 @@ RemoveWidgetCommand::RemoveWidgetCommand(WidgetProvider* provider, WidgetContain
 
 void RemoveWidgetCommand::undo()
 {
-    if(!m_widget.empty()) {
+    checkContainer();
+
+    if(m_container && !m_widget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
             m_container->insertWidget(m_index, widget);
             widget->finalise();
@@ -156,15 +176,18 @@ void RemoveWidgetCommand::redo()
     }
 }
 
-MoveWidgetCommand::MoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, int index, int newIndex)
-    : LayoutChangeCommand{provider, container}
+MoveWidgetCommand::MoveWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                     int index, int newIndex)
+    : LayoutChangeCommand{layout, provider, container}
     , m_oldIndex{index}
     , m_index{newIndex}
 { }
 
 void MoveWidgetCommand::undo()
 {
-    if(m_container->canMoveWidget(m_index, m_oldIndex)) {
+    checkContainer();
+
+    if(m_container && m_container->canMoveWidget(m_index, m_oldIndex)) {
         m_container->moveWidget(m_index, m_oldIndex);
     }
 }

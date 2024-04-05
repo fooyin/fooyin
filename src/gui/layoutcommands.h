@@ -22,28 +22,34 @@
 #include <utils/id.h>
 
 #include <QJsonObject>
+#include <QPointer>
 #include <QUndoCommand>
 
 namespace Fooyin {
+class EditableLayout;
 class WidgetContainer;
 class WidgetProvider;
 
 class LayoutChangeCommand : public QUndoCommand
 {
 public:
-    LayoutChangeCommand(WidgetProvider* provider, WidgetContainer* container);
+    LayoutChangeCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container);
 
 protected:
+    void checkContainer();
+
+    EditableLayout* m_layout;
     WidgetProvider* m_provider;
-    WidgetContainer* m_container;
+    QPointer<WidgetContainer> m_container;
+    Id m_containerId;
     QByteArray m_containerState;
 };
 
 class AddWidgetCommand : public LayoutChangeCommand
 {
 public:
-    AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key);
-    AddWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget);
+    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QString key);
+    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QJsonObject widget);
 
     void undo() override;
     void redo() override;
@@ -57,9 +63,10 @@ private:
 class ReplaceWidgetCommand : public LayoutChangeCommand
 {
 public:
-    ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QString key, const Id& widgetToReplace);
-    ReplaceWidgetCommand(WidgetProvider* provider, WidgetContainer* container, QJsonObject widget,
+    ReplaceWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QString key,
                          const Id& widgetToReplace);
+    ReplaceWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                         QJsonObject widget, const Id& widgetToReplace);
 
     void undo() override;
     void redo() override;
@@ -74,7 +81,8 @@ private:
 class RemoveWidgetCommand : public LayoutChangeCommand
 {
 public:
-    RemoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, const Id& widgetId);
+    RemoveWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                        const Id& widgetId);
 
     void undo() override;
     void redo() override;
@@ -87,7 +95,8 @@ private:
 class MoveWidgetCommand : public LayoutChangeCommand
 {
 public:
-    MoveWidgetCommand(WidgetProvider* provider, WidgetContainer* container, int index, int newIndex);
+    MoveWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, int index,
+                      int newIndex);
 
     void undo() override;
     void redo() override;

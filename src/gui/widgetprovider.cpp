@@ -181,25 +181,26 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     return newWidget;
 }
 
-void WidgetProvider::setupAddWidgetMenu(QMenu* menu, WidgetContainer* container)
+void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container)
 {
     if(!p->layoutCommands) {
         return;
     }
 
-    p->setupWidgetMenu(menu, [this, container](const QString& key) {
-        p->layoutCommands->push(new AddWidgetCommand(this, container, key));
+    p->setupWidgetMenu(menu, [this, layout, container](const QString& key) {
+        p->layoutCommands->push(new AddWidgetCommand(layout, this, container, key));
     });
 }
 
-void WidgetProvider::setupReplaceWidgetMenu(QMenu* menu, WidgetContainer* container, const Id& widgetId)
+void WidgetProvider::setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container,
+                                            const Id& widgetId)
 {
     if(!p->layoutCommands) {
         return;
     }
 
-    p->setupWidgetMenu(menu, [this, container, widgetId](const QString& key) {
-        p->layoutCommands->push(new ReplaceWidgetCommand(this, container, key, widgetId));
+    p->setupWidgetMenu(menu, [this, layout, container, widgetId](const QString& key) {
+        p->layoutCommands->push(new ReplaceWidgetCommand(layout, this, container, key, widgetId));
     });
 }
 } // namespace Fooyin
