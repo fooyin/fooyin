@@ -48,7 +48,7 @@ public:
     {
         None = 0x0,
         /*!
-         * Mark this widget searchable. Needed to form connections with a search widgets.
+         * Mark this widget searchable. Needed to form connections with search widgets.
          * Reimplement @fn searchEvent to receive search events.
          */
         Search = 0x2,
@@ -126,6 +126,12 @@ public:
      * @note the base class implementation of this function does nothing.
      */
     virtual void finalise();
+
+    /*!
+     * Called whenever layout editing mode is enabled or disabled.
+     * @note the base class implementation of this function does nothing.
+     */
+    virtual void layoutEditingChanged(bool enabled);
 
 private:
     Id m_id;

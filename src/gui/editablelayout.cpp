@@ -207,7 +207,10 @@ struct EditableLayout::Private
 
     void changeEditingState(bool editing)
     {
-        layoutEditing = editing;
+        if(std::exchange(layoutEditing, editing) == editing) {
+            return;
+        }
+
         if(editing) {
             editingContext->setEnabled(true);
             overlay = new OverlayWidget(self);
@@ -219,6 +222,11 @@ struct EditableLayout::Private
             if(overlay) {
                 overlay->deleteLater();
             }
+        }
+
+        const auto widgets = findAllWidgets();
+        for(FyWidget* widget : widgets) {
+            widget->layoutEditingChanged(layoutEditing);
         }
     }
 
@@ -381,6 +389,38 @@ struct EditableLayout::Private
             }
         }
         return qobject_cast<FyWidget*>(child);
+    }
+
+    WidgetList findAllWidgets() const
+    {
+        if(!root) {
+            return {};
+        }
+
+        WidgetList widgets;
+
+        std::stack<FyWidget*> widgetsToCheck;
+        widgetsToCheck.push(root);
+
+        while(!widgetsToCheck.empty()) {
+            auto* current = widgetsToCheck.top();
+            widgetsToCheck.pop();
+
+            if(!current) {
+                continue;
+            }
+
+            widgets.push_back(current);
+
+            if(const auto* container = qobject_cast<WidgetContainer*>(current)) {
+                const auto containerWidgets = container->widgets();
+                for(FyWidget* containerWidget : containerWidgets) {
+                    widgetsToCheck.push(containerWidget);
+                }
+            }
+        }
+
+        return widgets;
     }
 
     template <typename T, typename Predicate>
