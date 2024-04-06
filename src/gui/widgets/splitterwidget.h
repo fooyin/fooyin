@@ -65,8 +65,6 @@ public:
     void finalise() override;
 
 private:
-    WidgetProvider* m_widgetProvider;
-
     Splitter* m_splitter;
     WidgetList m_widgets;
 };

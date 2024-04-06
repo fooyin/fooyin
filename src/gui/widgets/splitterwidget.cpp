@@ -89,7 +89,6 @@ private:
 
 SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , m_widgetProvider{widgetProvider}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
 {
     setObjectName(SplitterWidget::name());

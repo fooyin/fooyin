@@ -48,7 +48,6 @@ using namespace std::chrono_literals;
 namespace Fooyin {
 struct PlaylistTabs::Private
 {
-    WidgetProvider* widgetProvider;
     PlaylistController* playlistController;
     PlaylistHandler* playlistHandler;
     TrackSelectionController* selectionController;
@@ -63,10 +62,8 @@ struct PlaylistTabs::Private
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
 
-    Private(PlaylistTabs* self_, WidgetProvider* widgetProvider_, PlaylistController* playlistController_,
-            SettingsManager* settings_)
-        : widgetProvider{widgetProvider_}
-        , playlistController{playlistController_}
+    Private(PlaylistTabs* self_, PlaylistController* playlistController_, SettingsManager* settings_)
+        : playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
         , selectionController{playlistController->selectionController()}
         , settings{settings_}
@@ -132,7 +129,7 @@ struct PlaylistTabs::Private
 PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
                            SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , p{std::make_unique<Private>(this, widgetProvider, playlistController, settings)}
+    , p{std::make_unique<Private>(this, playlistController, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 

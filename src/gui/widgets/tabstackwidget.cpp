@@ -39,7 +39,6 @@
 namespace Fooyin {
 TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent)
     : WidgetContainer{widgetProvider, parent}
-    , m_widgetProvider{widgetProvider}
     , m_tabs{new EditableTabWidget(this)}
 {
     QObject::setObjectName(TabStackWidget::name());

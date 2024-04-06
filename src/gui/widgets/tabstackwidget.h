@@ -61,8 +61,6 @@ private:
     [[nodiscard]] int indexOfWidget(const Id& id) const;
     void changeTabPosition(QTabWidget::TabPosition position) const;
 
-    WidgetProvider* m_widgetProvider;
-
     WidgetList m_widgets;
     EditableTabWidget* m_tabs;
 };
