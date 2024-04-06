@@ -20,7 +20,9 @@
 #include "pluginspage.h"
 
 #include "core/application.h"
+#include "core/internalcoresettings.h"
 #include "core/plugins/pluginmanager.h"
+#include "pluginsdelegate.h"
 #include "pluginsmodel.h"
 
 #include <gui/guiconstants.h>
@@ -41,7 +43,7 @@ class PluginPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PluginPageWidget(PluginManager* pluginManager);
+    explicit PluginPageWidget(PluginManager* pluginManager, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -49,25 +51,29 @@ public:
 
 private:
     void installPlugin();
+    void pluginsChanged();
 
     PluginManager* m_pluginManager;
+    SettingsManager* m_settings;
 
     QTableView* m_pluginList;
     PluginsModel* m_model;
 
     QPushButton* m_installPlugin;
+    bool m_pluginsChanged{false};
 };
 
-PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
+PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager* settings)
     : m_pluginManager{pluginManager}
+    , m_settings{settings}
     , m_pluginList{new QTableView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
     m_pluginList->setModel(m_model);
+    m_pluginList->setItemDelegate(new PluginsDelegate(this));
 
     m_pluginList->verticalHeader()->hide();
-    m_pluginList->horizontalHeader()->setStretchLastSection(true);
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     auto* mainLayout = new QGridLayout(this);
@@ -79,11 +85,37 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager)
     mainLayout->setRowStretch(0, 1);
 
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
+    QObject::connect(m_model, &PluginsModel::pluginsChanged, this, &PluginPageWidget::pluginsChanged);
+
+    m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    for(int i{1}; i < m_model->columnCount({}); ++i) {
+        m_pluginList->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    }
 }
 
 void PluginPageWidget::load() { }
 
-void PluginPageWidget::apply() { }
+void PluginPageWidget::apply()
+{
+    if(m_pluginsChanged) {
+        QStringList disabledPlugins;
+
+        const auto& plugins = m_pluginManager->allPluginInfo();
+        for(const auto& [name, plugin] : plugins) {
+            if(plugin->isDisabled()) {
+                disabledPlugins.emplace_back(plugin->identifier());
+            }
+        }
+
+        m_settings->set<Settings::Core::Internal::DisabledPlugins>(disabledPlugins);
+
+        QMessageBox msg{QMessageBox::Question, tr("Plugins Changed"),
+                        tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
+        if(msg.exec() == QMessageBox::Yes) {
+            Application::restart();
+        }
+    }
+}
 
 void PluginPageWidget::reset() { }
 
@@ -105,13 +137,18 @@ void PluginPageWidget::installPlugin()
     }
 }
 
+void PluginPageWidget::pluginsChanged()
+{
+    m_pluginsChanged = true;
+}
+
 PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::Plugins);
     setName(tr("General"));
     setCategory({tr("Plugins")});
-    setWidgetCreator([pluginManager] { return new PluginPageWidget(pluginManager); });
+    setWidgetCreator([pluginManager, settings] { return new PluginPageWidget(pluginManager, settings); });
 }
 } // namespace Fooyin
 

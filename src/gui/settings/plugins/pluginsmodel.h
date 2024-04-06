@@ -39,15 +39,22 @@ private:
 
 class PluginsModel : public TableModel<PluginItem>
 {
+    Q_OBJECT
+
 public:
     explicit PluginsModel(PluginManager* pluginManager, QObject* parent = nullptr);
 
     void setupModelData();
 
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+
+signals:
+    void pluginsChanged();
 
 private:
     using PluginNameMap = std::unordered_map<QString, PluginItem>;

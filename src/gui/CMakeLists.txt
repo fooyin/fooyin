@@ -170,6 +170,8 @@ set(SOURCES
     settings/playlist/playlistgeneralpage.h
     settings/playlist/playlistpresetspage.cpp
     settings/playlist/playlistpresetspage.h
+    settings/plugins/pluginsdelegate.cpp
+    settings/plugins/pluginsdelegate.h
     settings/plugins/pluginsmodel.cpp
     settings/plugins/pluginsmodel.h
     settings/plugins/pluginspage.cpp

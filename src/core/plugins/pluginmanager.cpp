@@ -20,6 +20,7 @@
 #include "pluginmanager.h"
 
 #include "corepaths.h"
+#include "internalcoresettings.h"
 
 #include <utils/settings/settingsmanager.h>
 
@@ -45,6 +46,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
         }
 
         const QFileInfoList fileList{dir.entryInfoList()};
+        const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
 
         for(const auto& file : fileList) {
             auto pluginFilename = file.absoluteFilePath();
@@ -71,6 +73,10 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
                                .first->second.get();
             if(!error.isEmpty()) {
                 plugin->setError(error);
+            }
+            if(disabledPlugins.contains(plugin->identifier())) {
+                plugin->setDisabled(true);
+                plugin->setStatus(PluginInfo::Status::Disabled);
             }
         }
     }

@@ -19,33 +19,20 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
-#include <utils/settings/settingsentry.h>
+#include <QStyledItemDelegate>
 
 namespace Fooyin {
-class SettingsManager;
-
-namespace Settings::Core::Internal {
-Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
-
-enum CoreInternalSettings : uint32_t
+class PluginsDelegate : public QStyledItemDelegate
 {
-    MonitorLibraries = 0 | Settings::Bool,
-    MuteVolume       = 1 | Settings::Double,
-    DisabledPlugins  = 2 | Settings::StringList,
-};
-Q_ENUM_NS(CoreInternalSettings)
-} // namespace Settings::Core::Internal
+    Q_OBJECT
 
-class CoreSettings
-{
 public:
-    explicit CoreSettings(SettingsManager* settingsManager);
+    using QStyledItemDelegate::QStyledItemDelegate;
 
-    void shutdown();
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-private:
-    SettingsManager* m_settings;
+protected:
+    bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) override;
 };
 } // namespace Fooyin
