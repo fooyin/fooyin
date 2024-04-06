@@ -15,7 +15,7 @@
 
                  You should have received a copy of the GNU General Public License
                  along with Fooyin.  If not, see <http://www.gnu.org/licenses/>",
-    "Category" : "Audio Output",
+    "Category" : "Output",
     "Description" : "Adds PipeWire as an audio output option",
     "Url" : "https://github.com/ludouzi/fooyin"
 }
