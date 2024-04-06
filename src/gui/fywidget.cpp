@@ -123,8 +123,6 @@ void FyWidget::saveLayoutData(QJsonObject& /*object*/) { }
 void FyWidget::loadLayoutData(const QJsonObject& /*object*/) { }
 
 void FyWidget::finalise() { }
-
-void FyWidget::layoutEditingChanged(bool /*enabled*/) { }
 } // namespace Fooyin
 
 #include "gui/moc_fywidget.cpp"

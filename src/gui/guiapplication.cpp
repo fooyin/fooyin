@@ -319,7 +319,8 @@ struct GuiApplication::Private
     void registerWidgets()
     {
         widgetProvider.registerWidget(
-            QStringLiteral("Dummy"), [this]() { return new Dummy(mainWindow.get()); }, QStringLiteral("Dummy"));
+            QStringLiteral("Dummy"), [this]() { return new Dummy(settingsManager, mainWindow.get()); },
+            QStringLiteral("Dummy"));
         widgetProvider.setIsHidden(QStringLiteral("Dummy"), true);
 
         widgetProvider.registerWidget(
@@ -351,7 +352,8 @@ struct GuiApplication::Private
             QStringLiteral("Playlist Organiser"));
 
         widgetProvider.registerWidget(
-            QStringLiteral("TabStack"), [this]() { return new TabStackWidget(&widgetProvider, mainWindow.get()); },
+            QStringLiteral("TabStack"),
+            [this]() { return new TabStackWidget(&widgetProvider, settingsManager, mainWindow.get()); },
             QStringLiteral("Tab Stack"));
         widgetProvider.setSubMenus(QStringLiteral("TabStack"), {QStringLiteral("Splitters")});
 

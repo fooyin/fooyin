@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent)
-    : WidgetContainer{widgetProvider, parent}
+TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
+    : WidgetContainer{widgetProvider, settings, parent}
     , m_tabs{new EditableTabWidget(this)}
 {
     QObject::setObjectName(TabStackWidget::name());

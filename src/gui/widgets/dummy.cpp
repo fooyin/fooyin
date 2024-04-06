@@ -19,18 +19,21 @@
 
 #include "dummy.h"
 
+#include <gui/guisettings.h>
+#include <utils/settings/settingsmanager.h>
+
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QLabel>
 
 namespace Fooyin {
-Dummy::Dummy(QWidget* parent)
-    : Dummy{{}, parent}
+Dummy::Dummy(SettingsManager* settings, QWidget* parent)
+    : Dummy{{}, settings, parent}
 { }
 
-Dummy::Dummy(QString name, QWidget* parent)
+Dummy::Dummy(QString name, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_editing{false}
+    , m_settings{settings}
     , m_missingName{std::move(name)}
     , m_label{new QLabel(this)}
 {
@@ -50,6 +53,8 @@ Dummy::Dummy(QString name, QWidget* parent)
     m_label->setAlignment(Qt::AlignCenter);
 
     layout->addWidget(m_label);
+
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(this, &Dummy::updateText);
 
     updateText();
 }
@@ -73,12 +78,6 @@ void Dummy::loadLayoutData(const QJsonObject& layout)
     }
 }
 
-void Dummy::layoutEditingChanged(bool enabled)
-{
-    m_editing = enabled;
-    updateText();
-}
-
 QString Dummy::missingName() const
 {
     return m_missingName;
@@ -86,10 +85,12 @@ QString Dummy::missingName() const
 
 void Dummy::updateText()
 {
+    const bool isEditing = m_settings->value<Settings::Gui::LayoutEditing>();
+
     if(!m_missingName.isEmpty()) {
         m_label->setText(tr("Missing Widget") + QStringLiteral(":\n") + m_missingName);
     }
-    else if(m_editing) {
+    else if(isEditing) {
         m_label->setText(tr("Right-Click to add a new widget"));
     }
     else {

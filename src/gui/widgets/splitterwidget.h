@@ -65,6 +65,8 @@ public:
     void finalise() override;
 
 private:
+    SettingsManager* m_settings;
+
     Splitter* m_splitter;
     WidgetList m_widgets;
 };

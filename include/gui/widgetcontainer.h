@@ -22,6 +22,7 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class SettingsManager;
 class WidgetProvider;
 
 /*!
@@ -36,7 +37,7 @@ class WidgetContainer : public FyWidget
     Q_OBJECT
 
 public:
-    explicit WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit WidgetContainer(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] virtual bool canAddWidget() const                         = 0;
     [[nodiscard]] virtual bool canMoveWidget(int index, int newIndex) const = 0;
@@ -65,5 +66,6 @@ public:
 
 private:
     WidgetProvider* m_widgetProvider;
+    SettingsManager* m_settings;
 };
 } // namespace Fooyin

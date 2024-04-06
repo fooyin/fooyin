@@ -127,12 +127,6 @@ public:
      */
     virtual void finalise();
 
-    /*!
-     * Called whenever layout editing mode is enabled or disabled.
-     * @note the base class implementation of this function does nothing.
-     */
-    virtual void layoutEditingChanged(bool enabled);
-
 private:
     Id m_id;
     Features m_features;

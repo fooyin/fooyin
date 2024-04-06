@@ -55,10 +55,11 @@ class RootContainer : public WidgetContainer
     Q_OBJECT
 
 public:
-    explicit RootContainer(WidgetProvider* provider, QWidget* parent = nullptr)
-        : WidgetContainer{provider, parent}
+    explicit RootContainer(WidgetProvider* provider, SettingsManager* settings, QWidget* parent = nullptr)
+        : WidgetContainer{provider, settings, parent}
+        , m_settings{settings}
         , m_layout{new QVBoxLayout(this)}
-        , m_widget{new Dummy(this)}
+        , m_widget{new Dummy(m_settings, this)}
     {
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->addWidget(m_widget);
@@ -67,7 +68,7 @@ public:
     void reset()
     {
         delete m_widget;
-        m_widget = new Dummy(this);
+        m_widget = new Dummy(m_settings, this);
         m_layout->addWidget(m_widget);
     }
 
@@ -153,6 +154,7 @@ public:
     void moveWidget(int /*index*/, int /*newIndex*/) override { }
 
 private:
+    SettingsManager* m_settings;
     QVBoxLayout* m_layout;
     QPointer<FyWidget> m_widget;
 };
@@ -184,7 +186,7 @@ struct EditableLayout::Private
         , widgetProvider{widgetProvider_}
         , layoutProvider{layoutProvider_}
         , box{new QHBoxLayout(self)}
-        , root{new RootContainer(widgetProvider, self)}
+        , root{new RootContainer(widgetProvider, settings, self)}
         , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
         , layoutHistory{new QUndoStack(self)}
     {
@@ -219,11 +221,6 @@ struct EditableLayout::Private
             if(overlay) {
                 overlay->deleteLater();
             }
-        }
-
-        const auto widgets = findAllWidgets();
-        for(FyWidget* widget : widgets) {
-            widget->layoutEditingChanged(layoutEditing);
         }
     }
 

@@ -23,6 +23,7 @@
 #include <utils/widgets/editabletabwidget.h>
 
 namespace Fooyin {
+class SettingsManager;
 class WidgetProvider;
 
 class TabStackWidget : public WidgetContainer
@@ -30,7 +31,7 @@ class TabStackWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    explicit TabStackWidget(WidgetProvider* widgetProvider, QWidget* parent = nullptr);
+    explicit TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

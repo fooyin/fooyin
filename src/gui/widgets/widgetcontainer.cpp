@@ -27,9 +27,10 @@
 #include <QJsonObject>
 
 namespace Fooyin {
-WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, QWidget* parent)
+WidgetContainer::WidgetContainer(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_widgetProvider{widgetProvider}
+    , m_settings{settings}
 { }
 
 int WidgetContainer::fullWidgetCount() const
@@ -67,7 +68,7 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
         FyWidget* childWidget{nullptr};
         if(!m_widgetProvider->canCreateWidget(widgetName)) {
             currentIsMissing = true;
-            childWidget      = new Dummy(widgetName, this);
+            childWidget      = new Dummy(widgetName, m_settings, this);
         }
         else {
             childWidget = m_widgetProvider->createWidget(widgetName);

@@ -88,7 +88,8 @@ private:
 };
 
 SplitterWidget::SplitterWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent)
-    : WidgetContainer{widgetProvider, parent}
+    : WidgetContainer{widgetProvider, settings, parent}
+    , m_settings{settings}
     , m_splitter{new Splitter(Qt::Vertical, settings, this)}
 {
     setObjectName(SplitterWidget::name());
@@ -233,7 +234,7 @@ void SplitterWidget::removeWidget(int index)
     }
 
     if((m_widgets.size() - 1) < 2) {
-        auto* dummy = new Dummy(this);
+        auto* dummy = new Dummy(m_settings, this);
         m_splitter->replaceWidget(index, dummy);
         m_widgets.at(index)->deleteLater();
         m_widgets[index] = dummy;
@@ -310,7 +311,7 @@ void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 void SplitterWidget::finalise()
 {
     auto addDummy = [this]() {
-        auto* dummy = new Dummy(this);
+        auto* dummy = new Dummy(m_settings, this);
         m_widgets.emplace_back(dummy);
         m_splitter->addWidget(dummy);
     };

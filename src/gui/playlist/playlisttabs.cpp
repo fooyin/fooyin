@@ -128,7 +128,7 @@ struct PlaylistTabs::Private
 
 PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
                            SettingsManager* settings, QWidget* parent)
-    : WidgetContainer{widgetProvider, parent}
+    : WidgetContainer{widgetProvider, settings, parent}
     , p{std::make_unique<Private>(this, playlistController, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());

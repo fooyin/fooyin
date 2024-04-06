@@ -24,25 +24,26 @@
 class QLabel;
 
 namespace Fooyin {
+class SettingsManager;
+
 class Dummy : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit Dummy(QWidget* parent = nullptr);
-    explicit Dummy(QString name, QWidget* parent = nullptr);
+    explicit Dummy(SettingsManager* settings, QWidget* parent = nullptr);
+    Dummy(QString name, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
-    void layoutEditingChanged(bool enabled) override;
 
     [[nodiscard]] QString missingName() const;
 
 private:
     void updateText();
 
-    bool m_editing;
+    SettingsManager* m_settings;
     QString m_missingName;
     QLabel* m_label;
 };
