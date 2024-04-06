@@ -25,9 +25,9 @@
 namespace Fooyin {
 ToolButton::ToolButton(QWidget* parent)
     : QToolButton{parent}
-    , m_padding{0}
+    , m_padding{5}
     , m_minimumSize{10}
-    , m_maximumSize{20}
+    , m_maximumSize{100}
 { }
 
 void ToolButton::setStretchEnabled(bool enabled)
