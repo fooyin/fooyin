@@ -34,6 +34,9 @@
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QCoreApplication>
+#include <QProcess>
+
 namespace Fooyin {
 struct Application::Private
 {
@@ -60,6 +63,7 @@ struct Application::Private
         , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, parent)}
         , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), settingsManager, parent)}
         , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, parent)}
+        , pluginManager{settingsManager}
         , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
                             library,        playlistHandler, settingsManager}
     {
@@ -131,10 +135,10 @@ void Application::shutdown()
 void Application::restart()
 {
     QMetaObject::invokeMethod(
-        qApp,
+        QCoreApplication::instance(),
         []() {
             QCoreApplication::quit();
-            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
+            QProcess::startDetached(QCoreApplication::applicationFilePath(), {QStringLiteral("-s")});
         },
         Qt::QueuedConnection);
 }
