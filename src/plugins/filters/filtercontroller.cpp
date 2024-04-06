@@ -95,8 +95,7 @@ struct FilterController::Private
         const Id oldGroup = findContainingGroup(widget);
 
         if(groupId == oldGroup) {
-            getFilteredTracks(groupId);
-            widget->reset(tracks(groupId));
+            resetGroup(widget->group());
             return;
         }
 
@@ -130,8 +129,8 @@ struct FilterController::Private
             recalculateIndexesOfGroup(groupId);
         }
 
-        getFilteredTracks(groupId);
-        widget->reset(tracks(groupId));
+        resetGroup(oldGroup);
+        resetGroup(groupId);
     }
 
     void filterContextMenu(const QPoint& pos) const
@@ -178,6 +177,19 @@ struct FilterController::Private
 
         for(auto* filterWidget : ungrouped | std::views::values) {
             filterWidget->reset(library->tracks());
+        }
+    }
+
+    void resetGroup(const Id& group)
+    {
+        if(!groups.contains(group)) {
+            return;
+        }
+
+        auto& filterGroup = groups.at(group);
+        filterGroup.filteredTracks.clear();
+        for(const auto& filterWidget : filterGroup.filters) {
+            filterWidget->reset(tracks(group));
         }
     }
 
