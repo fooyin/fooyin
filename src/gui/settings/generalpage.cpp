@@ -19,6 +19,7 @@
 
 #include "generalpage.h"
 
+#include "core/application.h"
 #include "core/corepaths.h"
 #include "mainwindow.h"
 
@@ -132,8 +133,7 @@ void GeneralPageWidget::apply()
         QMessageBox msg{QMessageBox::Question, tr("Language changed"),
                         tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
-            QCoreApplication::quit();
-            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
+            Application::restart();
         }
     }
 }

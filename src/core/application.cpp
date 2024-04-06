@@ -127,6 +127,17 @@ void Application::shutdown()
     p->settingsManager->storeSettings();
     p->library->cleanupTracks();
 }
+
+void Application::restart()
+{
+    QMetaObject::invokeMethod(
+        qApp,
+        []() {
+            QCoreApplication::quit();
+            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
+        },
+        Qt::QueuedConnection);
+}
 } // namespace Fooyin
 
 #include "moc_application.cpp"

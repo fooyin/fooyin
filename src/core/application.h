@@ -35,7 +35,9 @@ public:
     ~Application() override;
 
     void shutdown();
-    CorePluginContext context() const;
+    static void restart();
+
+    [[nodiscard]] CorePluginContext context() const;
 
 private:
     struct Private;

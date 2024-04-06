@@ -19,6 +19,7 @@
 
 #include "pluginspage.h"
 
+#include "core/application.h"
 #include "core/plugins/pluginmanager.h"
 #include "pluginsmodel.h"
 
@@ -99,8 +100,7 @@ void PluginPageWidget::installPlugin()
         QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
                         tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {
-            QCoreApplication::quit();
-            QProcess::startDetached(QApplication::applicationFilePath(), {QStringLiteral("-s")});
+            Application::restart();
         }
     }
 }
