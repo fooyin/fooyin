@@ -71,7 +71,7 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
     m_pluginList->setModel(m_model);
-    m_pluginList->setItemDelegate(new PluginsDelegate(this));
+    m_pluginList->setItemDelegateForColumn(4, new PluginsDelegate(this));
 
     m_pluginList->verticalHeader()->hide();
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
