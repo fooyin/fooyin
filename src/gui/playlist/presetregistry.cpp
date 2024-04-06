@@ -37,7 +37,8 @@ void PresetRegistry::loadDefaults()
 
     preset.name = QStringLiteral("Track Table");
 
-    preset.track.leftText.script  = QStringLiteral("$num(%track%,2).   %title%");
+    preset.track.leftText.script
+        = QStringLiteral("[\\[%queueindexes%\\]  ]$num(%track%,2).   %title%[<alpha=120>  ▪  %uniqueartist%]");
     preset.track.rightText.script = QStringLiteral("$ifgreater(%playcount%,0,%playcount% |)      $timems(%duration%)");
 
     addDefaultItem(preset);
