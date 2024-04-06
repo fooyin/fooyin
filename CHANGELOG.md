@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.4.0](https://github.com/ludouzi/fooyin/releases/tag/v0.3.10) (2024-04-06)
+
+### Features
+
+* DB: Schema migration support ([#61](https://github.com/ludouzi/fooyin/pull/61))
+* Engine: Configurable buffer size
+* Playlist: Global playback queue
+* Plugins: Add options to disable individual plugins
+* Plugins: MPRIS support
+* Plugins: Waveform seekbar ([#60](https://github.com/ludouzi/fooyin/pull/64), [#52](https://github.com/ludouzi/fooyin/issues/52))
+* Scripting: Custom metadata support
+* Scripting: Formatting support in playlist ([#63](https://github.com/ludouzi/fooyin/pull/63))
+* SearchWidget: Add option to change placeholder text
+* Seekbar: Add options to toggle labels, elapsed total
+* Widgets: Directory browser ([#58](https://github.com/ludouzi/fooyin/pull/58), [#54](https://github.com/ludouzi/fooyin/issues/54))
+
+### Changes
+* Controls: Add button tooltips
+* Engine: Don't start playing if seeking when paused
+* Interface: Make multiple widgets responsive to DPI
+* Layout editing mode: Add options to copy/paste and move widgets
+* Layout editing mode: Add undo/redo support
+* Playlist: Add playing column to indicate status
+* Playlist: Make multi-column mode the default
+* Playlist: Switch to playlist when using File->New Playlist
+* Plugins: Make the ALSA output a separate plugin
+* Settings: Make dialog modal (block rest of application)
+* Track: Handle multiple album artists
+
+### Fixes
+
+* Controls: Fix player commands being issued twice
+* CoverWidget: Fix no cover placeholder being shown unexpectedly
+* DB: Fix out of memory errors when reading tracks
+* Engine: Fix playback of some audio types
+* Engine: Fix silence on next track if previously paused
+* Engine: Fix silence when resuming from pause on some outputs
+* Filters: Filter incoming tracks through active filters
+* Filters: Fix frozen widgets when updating tracks
+* Filters: Fix updated tracks being added to all filters
+* Filters: Restore current selection when tracks are updated
+* Library: Fix searching for album artwork in file directory ([#59](https://github.com/ludouzi/fooyin/issues/59))
+* LibraryTree: Fix hang when selected 'all music' row
+* LibraryTree: Restore state when updating tracks
+* Playlist: Fix crash when dropping tracks into playlist
+* Playlist: Fix crash when inserting same tracks multiple times
+* Playlist: Fix crashes when moving tracks
+* Playlist: Fix incorrect order of tracks on startup
+* Playlist: Fix moving/removing tracks in multi-column mode
+* Playlist: Fix partial loading of album covers
+* Playlist: Insert tracks in correct order
+* PlaylistOrganiser: Fix crashes when removing rows
+* SearchWidget: Fix crash using search after changing connections ([#53](https://github.com/ludouzi/fooyin/issues/53))
+* Seekbar: Respond to external position changes
+
+
 ## [0.3.10](https://github.com/ludouzi/fooyin/releases/tag/v0.3.10) (2024-02-10)
 
 ### Changes
