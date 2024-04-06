@@ -88,9 +88,6 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     QObject::connect(m_model, &PluginsModel::pluginsChanged, this, &PluginPageWidget::pluginsChanged);
 
     m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    for(int i{1}; i < m_model->columnCount({}); ++i) {
-        m_pluginList->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-    }
 }
 
 void PluginPageWidget::load() { }
