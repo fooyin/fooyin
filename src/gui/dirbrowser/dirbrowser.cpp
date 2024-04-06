@@ -40,6 +40,7 @@
 #include <QContextMenuEvent>
 #include <QFileIconProvider>
 #include <QFileSystemModel>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
 #include <QPointer>
@@ -311,6 +312,14 @@ struct DirBrowser::Private
             if(mode == Mode::List) {
                 changeRoot(filePath.absoluteFilePath());
             }
+            else {
+                if(dirTree->isExpanded(index)) {
+                    dirTree->collapse(index);
+                }
+                else {
+                    dirTree->expand(index);
+                }
+            }
             return;
         }
 
@@ -483,7 +492,13 @@ DirBrowser::DirBrowser(PlaylistInteractor* playlistInteractor, SettingsManager* 
 
     QObject::connect(p->model, &QAbstractItemModel::layoutChanged, this, [this]() { p->handleModelUpdated(); });
     QObject::connect(
-        p->proxyModel, &QAbstractItemModel::modelReset, this, [this]() { emit rootChanged(); }, Qt::QueuedConnection);
+        p->proxyModel, &QAbstractItemModel::modelReset, this,
+        [this]() {
+            emit rootChanged();
+            p->dirTree->selectionModel()->setCurrentIndex(p->proxyModel->index(0, 0, {}),
+                                                          QItemSelectionModel::NoUpdate);
+        },
+        Qt::QueuedConnection);
 
     settings->subscribe<Settings::Gui::Internal::DirBrowserDoubleClick>(
         this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
@@ -598,6 +613,23 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     }
 
     menu->popup(event->globalPos());
+}
+
+void DirBrowser::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        const auto indexes = p->dirTree->selectionModel()->selectedRows();
+        if(!indexes.empty()) {
+            p->handleDoubleClick(indexes.front());
+        }
+    }
+    else if(key == Qt::Key_Backspace) {
+        p->goUp();
+    }
+
+    QWidget::keyPressEvent(event);
 }
 } // namespace Fooyin
 
