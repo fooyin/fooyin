@@ -1,7 +1,14 @@
-set(CMAKE_CURRENT_SOURCE_DIR "${CPACK_SOURCE_DIR}")
-
 set(CPACK_PACKAGE_FILE_NAME "fooyin_${CPACK_PACKAGE_VERSION}")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-src")
+
+configure_file(
+        "${CPACK_SOURCE_DIR}/dist/packagetar.sh.in"
+        "${CPACK_SOURCE_DIR}/dist/packagetar.sh" @ONLY
+)
+
+execute_process(
+        COMMAND ${CPACK_SOURCE_DIR}/dist/packagetar.sh
+)
 
 if(CPACK_GENERATOR STREQUAL "DEB")
     find_program(DPKG dpkg)
@@ -43,4 +50,82 @@ if(CPACK_GENERATOR STREQUAL "DEB")
         "${CPACK_PACKAGE_FILE_NAME}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb"
     )
     set(CPACK_INSTALL_SCRIPT ${CPACK_DEBIAN_INSTALL_SCRIPT})
+endif()
+
+if(CPACK_GENERATOR STREQUAL "RPM")
+    find_program(RPM rpm)
+    if(NOT RPM)
+        message(STATUS "Cannot find rpm, defaulting to i386")
+        set(CPACK_SYSTEM_NAME i386)
+    else()
+        execute_process(
+                COMMAND "${RPM}" --eval %{_target_cpu}
+                OUTPUT_VARIABLE CPACK_SYSTEM_NAME
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+    endif()
+
+    find_program(LSB_RELEASE lsb_release)
+    if(NOT LSB_RELEASE)
+        message(FATAL_ERROR "lsb_release not found, required for cpack -G RPM")
+    endif()
+
+    execute_process(
+            COMMAND env LC_ALL="en_US.utf8" date "+%a %b %d %Y"
+            OUTPUT_VARIABLE RPM_DATE
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    execute_process(
+            COMMAND
+            /bin/sh "-c"
+            "${LSB_RELEASE} -is | tr '[:upper:]' '[:lower:]' | cut -d' ' -f1"
+            OUTPUT_VARIABLE DIST_NAME
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    execute_process(
+            COMMAND
+            /bin/sh "-c"
+            "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | cut -d' ' -f2"
+            OUTPUT_VARIABLE DIST_RELEASE
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    execute_process(
+            COMMAND
+            /bin/sh "-c"
+            "${LSB_RELEASE} -ds | tr '[:upper:]' '[:lower:]' | sed 's/\"//g' | sed 's/\\.//g' | cut -d' ' -f3"
+            OUTPUT_VARIABLE DIST_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    if(DIST_NAME)
+        if(${DIST_NAME} STREQUAL "opensuse" AND DIST_RELEASE)
+            if(${DIST_RELEASE} STREQUAL "leap")
+                if(DIST_VERSION)
+                    set(RPM_DISTRO "lp${DIST_VERSION}")
+                else()
+                    set(RPM_DISTRO ${DIST_RELEASE})
+                endif()
+            elseif(${DIST_RELEASE} STREQUAL "tumbleweed")
+                set(RPM_DISTRO ${DIST_RELEASE})
+            endif()
+        elseif(${DIST_NAME} STREQUAL "fedora" AND DIST_VERSION)
+            set(RPM_DISTRO "fc${DIST_VERSION}")
+        elseif(${DIST_NAME} STREQUAL "centos" AND DIST_VERSION)
+            set(RPM_DISTRO "el${DIST_VERSION}")
+        elseif(${DIST_NAME} STREQUAL "mageia" AND DIST_RELEASE)
+            set(RPM_DISTRO "mga${DIST_RELEASE}")
+        endif()
+
+        if(NOT RPM_DISTRO)
+            set(RPM_DISTRO ${DIST_NAME})
+        endif()
+
+#        set(CPACK_RPM_USER_BINARY_SPECFILE "${CPACK_SOURCE_DIR}/dist/linux/rpm/fooyin.spec.in")
+        set(CPACK_RPM_FILE_NAME
+            "${CPACK_PACKAGE_FILE_NAME}-${RPM_DISTRO}_${CPACK_SYSTEM_NAME}.rpm"
+        )
+    endif()
 endif()
