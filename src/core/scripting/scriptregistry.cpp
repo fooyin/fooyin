@@ -290,11 +290,11 @@ ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
     }
     else if(auto* strVal = std::get_if<QString>(&funcRet)) {
         result.value = *strVal;
-        result.cond  = !strVal->isEmpty();
+        result.cond  = !result.value.isEmpty();
     }
     else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
         result.value = strListVal->empty() ? QStringLiteral("") : strListVal->join(u"\037");
-        result.cond  = !strListVal->isEmpty();
+        result.cond  = !result.value.isEmpty();
     }
 
     return result;

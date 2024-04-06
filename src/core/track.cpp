@@ -248,12 +248,13 @@ QStringList Track::uniqueArtists() const
 
 QString Track::artist() const
 {
-    return p->artists.join(u"\037");
+    return p->artists.empty() ? QStringLiteral("") : p->artists.join(u"\037");
 }
 
 QString Track::uniqueArtist() const
 {
-    return uniqueArtists().join(u"\037");
+    const auto uniqArtists = uniqueArtists();
+    return uniqArtists.isEmpty() ? QStringLiteral("") : uniqArtists.join(u"\037");
 }
 
 QString Track::album() const
@@ -268,7 +269,7 @@ QStringList Track::albumArtists() const
 
 QString Track::albumArtist() const
 {
-    return p->albumArtists.join(u"\037");
+    return p->albumArtists.empty() ? QStringLiteral("") : p->albumArtists.join(u"\037");
 }
 
 int Track::trackNumber() const
