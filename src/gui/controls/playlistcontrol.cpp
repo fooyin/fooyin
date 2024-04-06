@@ -63,6 +63,9 @@ struct PlaylistControl::Private
         shuffleAction->setToolTip(QStringLiteral("Shuffle"));
         shuffle->setDefaultAction(shuffleAction);
 
+        repeat->setStretchEnabled(true);
+        shuffle->setStretchEnabled(true);
+
         repeat->setAutoRaise(true);
         shuffle->setAutoRaise(true);
 

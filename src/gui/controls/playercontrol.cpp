@@ -69,6 +69,11 @@ struct PlayerControl::Private
             next->setDefaultAction(nextCmd->action());
         }
 
+        stop->setStretchEnabled(true);
+        prev->setStretchEnabled(true);
+        playPause->setStretchEnabled(true);
+        next->setStretchEnabled(true);
+
         stop->setAutoRaise(true);
         prev->setAutoRaise(true);
         playPause->setAutoRaise(true);
@@ -104,8 +109,8 @@ struct PlayerControl::Private
     }
 };
 
-PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
-                             QWidget* parent)
+PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* playerController,
+                             SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, actionManager, playerController, settings)}
 {

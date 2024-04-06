@@ -68,6 +68,7 @@ struct VolumeControl::Private
             volumeIcon->setDefaultAction(muteCmd->action());
         }
 
+        volumeIcon->setStretchEnabled(true);
         volumeIcon->setAutoRaise(true);
 
         volumeSlider->setMinimumHeight(100);
