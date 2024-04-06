@@ -43,6 +43,8 @@ private:
 
 class PlaylistColumnModel : public ExtendableTableModel
 {
+    Q_OBJECT
+
 public:
     explicit PlaylistColumnModel(PlaylistColumnRegistry* columnsRegistry, QObject* parent = nullptr);
 

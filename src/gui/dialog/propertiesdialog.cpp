@@ -90,6 +90,8 @@ void PropertiesTab::finish()
 
 class PropertiesDialogWidget : public QDialog
 {
+    Q_OBJECT
+
 public:
     explicit PropertiesDialogWidget(PropertiesDialog::TabList tabs);
 
@@ -246,3 +248,4 @@ void PropertiesDialog::show()
 } // namespace Fooyin
 
 #include "gui/moc_propertiesdialog.cpp"
+#include "propertiesdialog.moc"
