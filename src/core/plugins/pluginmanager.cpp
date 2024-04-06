@@ -21,11 +21,15 @@
 
 #include "corepaths.h"
 
+#include <utils/settings/settingsmanager.h>
+
 #include <QDir>
 #include <QLibrary>
 
 namespace Fooyin {
-PluginManager::PluginManager() = default;
+PluginManager::PluginManager(SettingsManager* settings)
+    : m_settings{settings}
+{ }
 
 const PluginInfoMap& PluginManager::allPluginInfo() const
 {

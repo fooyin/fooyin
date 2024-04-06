@@ -24,12 +24,14 @@
 #include "plugininfo.h"
 
 namespace Fooyin {
+class SettingsManager;
+
 using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 
 class FYCORE_EXPORT PluginManager
 {
 public:
-    PluginManager();
+    PluginManager(SettingsManager* settings);
 
     const PluginInfoMap& allPluginInfo() const;
 
@@ -57,6 +59,7 @@ private:
     PluginManager(const PluginManager& other)            = delete;
     PluginManager& operator=(const PluginManager& other) = delete;
 
+    SettingsManager* m_settings;
     PluginInfoMap m_plugins;
 };
 } // namespace Fooyin
