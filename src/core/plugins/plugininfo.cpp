@@ -39,7 +39,7 @@ PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject&
     , m_isRequired{false}
     , m_isLoaded{false}
     , m_isDisabled{false}
-    , m_status{Status::Invalid}
+    , m_status{Status::Read}
     , m_root{nullptr}
     , m_plugin{nullptr}
 {
@@ -53,7 +53,8 @@ void PluginInfo::load()
     }
 
     if(!m_loader.load()) {
-        m_error = QStringLiteral("Plugin (%1) couldn't be loaded: %2").arg(m_name, m_error);
+        m_error  = QStringLiteral("Plugin (%1) couldn't be loaded: %2").arg(m_name, m_error);
+        m_status = Status::Invalid;
         return;
     }
 
@@ -61,7 +62,8 @@ void PluginInfo::load()
     m_plugin = qobject_cast<Plugin*>(m_root);
 
     if(!m_plugin) {
-        m_error = QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'").arg(m_name);
+        m_error  = QStringLiteral("Plugin (%1) does not subclass 'Fooyin::Plugin'").arg(m_name);
+        m_status = Status::Invalid;
         return;
     }
 
@@ -136,6 +138,16 @@ QString PluginInfo::error() const
 bool PluginInfo::hasError() const
 {
     return !m_error.isEmpty();
+}
+
+void PluginInfo::setDisabled(bool disabled)
+{
+    m_isDisabled = disabled;
+}
+
+void PluginInfo::setStatus(Status status)
+{
+    m_status = status;
 }
 
 void PluginInfo::setError(const QString& error)

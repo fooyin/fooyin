@@ -26,6 +26,7 @@
 #include <QString>
 
 namespace Fooyin {
+class PluginManager;
 class Plugin;
 
 class FYCORE_EXPORT PluginInfo
@@ -37,12 +38,9 @@ public:
     {
         Invalid,
         Read,
-        Resolved,
         Loaded,
         Initialised,
-        Running,
-        Stopped,
-        Deleted
+        Disabled,
     };
     Q_ENUM(Status)
 
@@ -71,9 +69,14 @@ public:
     [[nodiscard]] QString error() const;
     [[nodiscard]] bool hasError() const;
 
-    void setError(const QString& error);
+    void setDisabled(bool disabled);
 
 private:
+    friend PluginManager;
+
+    void setStatus(Status status);
+    void setError(const QString& error);
+
     QString m_name;
     QString m_filename;
     QJsonObject m_metadata;
