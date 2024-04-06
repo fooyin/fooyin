@@ -37,6 +37,7 @@ public:
     PluginManager& operator=(const PluginManager& other) = delete;
 
     const PluginInfoMap& allPluginInfo() const;
+    PluginInfo* pluginInfo(const QString& name) const;
 
     void findPlugins(const QStringList& pluginDirs);
     void loadPlugins();

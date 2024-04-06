@@ -71,7 +71,6 @@ public:
 
 private:
     void installPlugin();
-    void pluginsChanged();
 
     PluginManager* m_pluginManager;
     SettingsManager* m_settings;
@@ -80,7 +79,6 @@ private:
     PluginsModel* m_model;
 
     QPushButton* m_installPlugin;
-    bool m_pluginsChanged{false};
 };
 
 PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager* settings)
@@ -110,7 +108,6 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     mainLayout->setRowStretch(0, 1);
 
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
-    QObject::connect(m_model, &PluginsModel::pluginsChanged, this, &PluginPageWidget::pluginsChanged);
 
     m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 }
@@ -119,23 +116,33 @@ void PluginPageWidget::load() { }
 
 void PluginPageWidget::apply()
 {
-    if(m_pluginsChanged) {
-        QStringList disabledPlugins;
+    const auto disabledPlugins = m_model->disabledPlugins();
+    const auto enabledPlugins  = m_model->enabledPlugins();
 
-        const auto& plugins = m_pluginManager->allPluginInfo();
-        for(const auto& [name, plugin] : plugins) {
-            if(plugin->isDisabled()) {
-                disabledPlugins.emplace_back(plugin->identifier());
-            }
+    if(disabledPlugins.empty() && enabledPlugins.empty()) {
+        return;
+    }
+
+    for(const auto& pluginName : enabledPlugins) {
+        if(auto* plugin = m_pluginManager->pluginInfo(pluginName)) {
+            plugin->setDisabled(false);
         }
+    }
 
-        m_settings->set<Settings::Core::Internal::DisabledPlugins>(disabledPlugins);
-
-        QMessageBox msg{QMessageBox::Question, tr("Plugins Changed"),
-                        tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
-        if(msg.exec() == QMessageBox::Yes) {
-            Application::restart();
+    QStringList disabledIdentifiers;
+    const auto& plugins = m_pluginManager->allPluginInfo();
+    for(const auto& [name, plugin] : plugins) {
+        if(plugin->isDisabled() || disabledPlugins.contains(name)) {
+            disabledIdentifiers.emplace_back(plugin->identifier());
         }
+    }
+
+    m_settings->set<Settings::Core::Internal::DisabledPlugins>(disabledIdentifiers);
+
+    QMessageBox msg{QMessageBox::Question, tr("Plugins Changed"),
+                    tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
+    if(msg.exec() == QMessageBox::Yes) {
+        Application::restart();
     }
 }
 
@@ -157,11 +164,6 @@ void PluginPageWidget::installPlugin()
             Application::restart();
         }
     }
-}
-
-void PluginPageWidget::pluginsChanged()
-{
-    m_pluginsChanged = true;
 }
 
 PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)

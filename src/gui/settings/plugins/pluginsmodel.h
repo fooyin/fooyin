@@ -53,8 +53,8 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-signals:
-    void pluginsChanged();
+    [[nodiscard]] QStringList enabledPlugins() const;
+    [[nodiscard]] QStringList disabledPlugins() const;
 
 private:
     using PluginNameMap = std::unordered_map<QString, PluginItem>;
@@ -62,5 +62,7 @@ private:
     PluginManager* m_pluginManager;
 
     PluginNameMap m_nodes;
+    QStringList m_enabledPlugins;
+    QStringList m_disabledPlugins;
 };
 } // namespace Fooyin

@@ -37,6 +37,14 @@ const PluginInfoMap& PluginManager::allPluginInfo() const
     return m_plugins;
 }
 
+PluginInfo* PluginManager::pluginInfo(const QString& name) const
+{
+    if(m_plugins.contains(name)) {
+        return m_plugins.at(name).get();
+    }
+    return nullptr;
+}
+
 void PluginManager::findPlugins(const QStringList& pluginDirs)
 {
     for(const QString& pluginDir : pluginDirs) {

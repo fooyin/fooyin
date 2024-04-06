@@ -155,7 +155,11 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == Qt::CheckStateRole && column == 4) {
-        return item->info()->isDisabled() ? Qt::Unchecked : Qt::Checked;
+        if((item->info()->isDisabled() && !m_enabledPlugins.contains(item->info()->name()))
+           || m_disabledPlugins.contains(item->info()->name())) {
+            return Qt::Unchecked;
+        }
+        return Qt::Checked;
     }
 
     if(role == Qt::ToolTipRole) {
@@ -167,13 +171,43 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
 bool PluginsModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(index.isValid() && role == Qt::CheckStateRole) {
-        const auto* item = static_cast<PluginItem*>(index.internalPointer());
-        item->info()->setDisabled(value.value<Qt::CheckState>() == Qt::Unchecked);
-        emit dataChanged(index, index, {role});
-        emit pluginsChanged();
-        return true;
+    if(!index.isValid() || role != Qt::CheckStateRole) {
+        return false;
     }
-    return false;
+
+    const auto* item   = static_cast<PluginItem*>(index.internalPointer());
+    const bool checked = value.value<Qt::CheckState>() == Qt::Checked;
+    const QString name = item->info()->name();
+
+    if(item->info()->isDisabled()) {
+        if(checked) {
+            m_enabledPlugins.append(name);
+        }
+        else {
+            m_enabledPlugins.removeOne(name);
+        }
+    }
+    else {
+        if(checked) {
+            m_disabledPlugins.removeOne(name);
+        }
+        else {
+            m_disabledPlugins.append(name);
+        }
+    }
+
+    emit dataChanged(index, index, {role});
+
+    return true;
+}
+
+QStringList PluginsModel::enabledPlugins() const
+{
+    return m_enabledPlugins;
+}
+
+QStringList PluginsModel::disabledPlugins() const
+{
+    return m_disabledPlugins;
 }
 } // namespace Fooyin
