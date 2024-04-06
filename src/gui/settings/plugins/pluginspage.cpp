@@ -35,9 +35,29 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
 #include <QTableView>
 
 namespace Fooyin {
+class CheckSortProxyModel : public QSortFilterProxyModel
+{
+public:
+    using QSortFilterProxyModel::QSortFilterProxyModel;
+
+protected:
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+    {
+        if(left.column() == 4 && right.column() == 4) {
+            const bool leftChecked  = sourceModel()->data(left, Qt::CheckStateRole).toBool();
+            const bool rightChecked = sourceModel()->data(right, Qt::CheckStateRole).toBool();
+
+            return leftChecked && !rightChecked;
+        }
+
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+};
+
 class PluginPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
@@ -70,11 +90,16 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     , m_model{new PluginsModel(m_pluginManager)}
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
-    m_pluginList->setModel(m_model);
+    auto* proxyModel = new CheckSortProxyModel(this);
+    proxyModel->setSourceModel(m_model);
+
+    m_pluginList->setModel(proxyModel);
     m_pluginList->setItemDelegateForColumn(4, new PluginsDelegate(this));
 
     m_pluginList->verticalHeader()->hide();
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_pluginList->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+    m_pluginList->setSortingEnabled(true);
 
     auto* mainLayout = new QGridLayout(this);
 
