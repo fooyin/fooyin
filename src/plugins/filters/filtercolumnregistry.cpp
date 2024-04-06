@@ -34,7 +34,7 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
 void FilterColumnRegistry::loadDefaults()
 {
     addDefaultItem({.id = 0, .index = 0, .name = tr("Genre"), .field = QStringLiteral("%<genre>%")});
-    addDefaultItem({.id = 1, .index = 1, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
+    addDefaultItem({.id = 1, .index = 1, .name = tr("Album Artist"), .field = QStringLiteral("%<albumartist>%")});
     addDefaultItem({.id = 2, .index = 2, .name = tr("Artist"), .field = QStringLiteral("%<artist>%")});
     addDefaultItem({.id = 3, .index = 3, .name = tr("Album"), .field = QStringLiteral("%album%")});
     addDefaultItem({.id = 4, .index = 4, .name = tr("Date"), .field = QStringLiteral("%date%")});
