@@ -35,6 +35,7 @@ public:
     ~Application() override;
 
     void shutdown();
+    static void quit();
     static void restart();
 
     [[nodiscard]] CorePluginContext context() const;

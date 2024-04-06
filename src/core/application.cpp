@@ -132,6 +132,12 @@ void Application::shutdown()
     p->library->cleanupTracks();
 }
 
+void Application::quit()
+{
+    QMetaObject::invokeMethod(
+        QCoreApplication::instance(), []() { QCoreApplication::quit(); }, Qt::QueuedConnection);
+}
+
 void Application::restart()
 {
     QMetaObject::invokeMethod(
