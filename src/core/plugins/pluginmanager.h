@@ -31,7 +31,10 @@ using PluginInfoMap = std::unordered_map<QString, std::unique_ptr<PluginInfo>>;
 class FYCORE_EXPORT PluginManager
 {
 public:
-    PluginManager(SettingsManager* settings);
+    explicit PluginManager(SettingsManager* settings);
+
+    PluginManager(const PluginManager& other)            = delete;
+    PluginManager& operator=(const PluginManager& other) = delete;
 
     const PluginInfoMap& allPluginInfo() const;
 
@@ -56,9 +59,6 @@ public:
     void shutdown();
 
 private:
-    PluginManager(const PluginManager& other)            = delete;
-    PluginManager& operator=(const PluginManager& other) = delete;
-
     SettingsManager* m_settings;
     PluginInfoMap m_plugins;
 };
