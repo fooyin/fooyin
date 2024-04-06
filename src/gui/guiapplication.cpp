@@ -236,8 +236,8 @@ struct GuiApplication::Private
     {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText(QStringLiteral("Plugins Not Found"));
-        message.setInformativeText(QStringLiteral("Some plugins are requried for full functionality."));
+        message.setText(QStringLiteral("Plugins not found"));
+        message.setInformativeText(QStringLiteral("Some plugins are required for full functionality."));
         message.setDetailedText(QStringLiteral("Plugin search locations:\n\n")
                                 + Core::pluginPaths().join(QStringLiteral("\n")));
 
