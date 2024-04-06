@@ -77,7 +77,7 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     , m_mode{static_cast<WaveModes>(settings->value<Settings::WaveBar::Mode>())}
     , m_colours{settings->value<Settings::WaveBar::ColourOptions>().value<Colours>()}
 {
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::FocusPolicy(style()->styleHint(QStyle::SH_Button_FocusPolicy)));
 
     m_settings->subscribe<Settings::WaveBar::ShowCursor>(this, [this](const bool show) {
         m_showCursor = show;
@@ -214,11 +214,12 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
-    QWidget::mouseMoveEvent(event);
-
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
         updateMousePosition(event->pos());
         drawSeekTip();
+    }
+    else {
+        QWidget::mouseMoveEvent(event);
     }
 }
 
