@@ -179,4 +179,35 @@ QString sep()
 {
     return QDir::separator();
 }
+
+QString swapPrefix(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 1) {
+        return {};
+    }
+
+    QStringList words = vec.front().split(QStringLiteral(" "), Qt::SkipEmptyParts);
+
+    if(words.empty()) {
+        return vec.front();
+    }
+
+    QStringList prefixes = vec.mid(1);
+
+    if(prefixes.empty()) {
+        prefixes = {QStringLiteral("A"), QStringLiteral("The")};
+    }
+
+    const QString firstWord = words.first();
+    if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
+        words.removeFirst();
+        words.last().append(QStringLiteral(","));
+        words.append(firstWord);
+        return words.join(QStringLiteral(" "));
+    }
+
+    return vec.front();
+}
 } // namespace Fooyin::Scripting
