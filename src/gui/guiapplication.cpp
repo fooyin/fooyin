@@ -23,6 +23,8 @@
 #include "controls/playlistcontrol.h"
 #include "controls/seekbar.h"
 #include "controls/volumecontrol.h"
+#include "core/application.h"
+#include "core/corepaths.h"
 #include "core/internalcoresettings.h"
 #include "dirbrowser/dirbrowser.h"
 #include "info/infowidget.h"
@@ -197,9 +199,7 @@ struct GuiApplication::Private
 
         actionManager->addContextObject(mainContext);
 
-        pluginManager->initialisePlugins<GuiPlugin>(
-            [this](GuiPlugin* plugin) { plugin->initialise(guiPluginContext); });
-
+        initialisePlugins();
         layoutProvider.findLayouts();
         editableLayout->initialise();
         mainWindow->setCentralWidget(editableLayout.get());
@@ -211,11 +211,45 @@ struct GuiApplication::Private
             }
         };
 
-        if(libraryManager->hasLibrary() && settingsManager->value<Settings::Gui::WaitForTracks>()) {
+        if(libraryManager->hasLibrary() && library->isEmpty()
+           && settingsManager->value<Settings::Gui::WaitForTracks>()) {
             connect(library, &MusicLibrary::tracksLoaded, openMainWindow);
         }
         else {
             openMainWindow();
+        }
+    }
+
+    void initialisePlugins()
+    {
+        if(pluginManager->allPluginInfo().empty()) {
+            QMetaObject::invokeMethod(
+                self, []() { showPluginsNotFoundMessage(); }, Qt::QueuedConnection);
+            return;
+        }
+
+        pluginManager->initialisePlugins<GuiPlugin>(
+            [this](GuiPlugin* plugin) { plugin->initialise(guiPluginContext); });
+    }
+
+    static void showPluginsNotFoundMessage()
+    {
+        QMessageBox message;
+        message.setIcon(QMessageBox::Warning);
+        message.setText(QStringLiteral("Plugins Not Found"));
+        message.setInformativeText(QStringLiteral("Some plugins are requried for full functionality."));
+        message.setDetailedText(QStringLiteral("Plugin search locations:\n\n")
+                                + Core::pluginPaths().join(QStringLiteral("\n")));
+
+        message.addButton(QMessageBox::Ok);
+        QPushButton* quitButton = message.addButton(QStringLiteral("Quit"), QMessageBox::ActionRole);
+        quitButton->setIcon(Utils::iconFromTheme(Constants::Icons::Quit));
+        message.setDefaultButton(QMessageBox::Ok);
+
+        message.exec();
+
+        if(message.clickedButton() == quitButton) {
+            Application::quit();
         }
     }
 
