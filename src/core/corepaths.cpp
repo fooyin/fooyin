@@ -37,17 +37,11 @@ QStringList pluginPaths()
 {
     QStringList paths;
 
-    QDir appPath{QCoreApplication::applicationDirPath()};
+    const QDir appPath{QCoreApplication::applicationDirPath()};
 
-    const QDir systemPath{appPath.absolutePath() + QStringLiteral("/") + QString::fromLatin1(RELATIVE_PLUGIN_PATH)};
-    if(systemPath.exists()) {
-        paths.append(Utils::File::cleanPath(systemPath.absolutePath()));
-    }
-
-    if(appPath.cd(QStringLiteral("plugins"))) {
-        paths.append(Utils::File::cleanPath(appPath.absolutePath()));
-    }
-
+    paths.append(Utils::File::cleanPath(appPath.absolutePath() + QStringLiteral("/")
+                                        + QString::fromLatin1(RELATIVE_PLUGIN_PATH)));
+    paths.append(Utils::File::cleanPath(appPath.absolutePath() + QStringLiteral("/plugins")));
     paths.append(userPluginsPath());
 
     return paths;
