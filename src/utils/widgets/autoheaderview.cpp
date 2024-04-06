@@ -486,18 +486,14 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
     const QModelIndex index     = model()->index(0, logical);
     const auto currentAlignment = model()->data(index, Qt::TextAlignmentRole).value<Qt::Alignment>();
 
-    switch(currentAlignment) {
-        case(Qt::AlignLeft):
-            alignLeft->setChecked(true);
-            break;
-        case(Qt::AlignHCenter):
-            alignCentre->setChecked(true);
-            break;
-        case(Qt::AlignRight):
-            alignRight->setChecked(true);
-            break;
-        default:
-            break;
+    if(currentAlignment & Qt::AlignLeft) {
+        alignLeft->setChecked(true);
+    }
+    else if(currentAlignment & Qt::AlignHCenter) {
+        alignCentre->setChecked(true);
+    }
+    else if(currentAlignment & Qt::AlignRight) {
+        alignRight->setChecked(true);
     }
 
     auto changeAlignment = [this, index](Qt::Alignment alignment) {
