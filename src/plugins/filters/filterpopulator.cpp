@@ -74,10 +74,6 @@ struct FilterPopulator::Private
     {
         const QString columns = parser.evaluate(script, track);
 
-        if(columns.isNull()) {
-            return;
-        }
-
         if(columns.contains(u"\037")) {
             const QStringList values = columns.split(QStringLiteral("\037"));
             QList<QStringList> colValues;
