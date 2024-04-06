@@ -225,19 +225,19 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 
 void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
-    QWidget::mousePressEvent(event);
-
     if(!m_data.empty() && event->button() == Qt::LeftButton) {
         updateMousePosition(event->pos());
         drawSeekTip();
+    }
+    else {
+        QWidget::mousePressEvent(event);
     }
 }
 
 void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
 {
-    QWidget::mouseMoveEvent(event);
-
     if(event->button() != Qt::LeftButton || !isSeeking()) {
+        QWidget::mouseReleaseEvent(event);
         return;
     }
 
