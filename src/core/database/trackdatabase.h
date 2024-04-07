@@ -32,8 +32,8 @@ public:
 
     bool reloadTrack(Track& track) const;
     bool reloadTracks(TrackList& tracks) const;
-    TrackList getAllTracks() const;
-    TrackList tracksByHash(const QString& hash) const;
+    [[nodiscard]] TrackList getAllTracks() const;
+    [[nodiscard]] TrackList tracksByHash(const QString& hash) const;
 
     bool updateTrack(const Track& track);
     bool updateTrackStats(const TrackList& track);
@@ -44,7 +44,8 @@ public:
 
     void cleanupTracks();
 
-    static void updateViews(const QSqlDatabase& db);
+    static void dropViews(const QSqlDatabase& db);
+    static void insertViews(const QSqlDatabase& db);
 
 private:
     int trackCount() const;

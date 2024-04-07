@@ -405,18 +405,17 @@ void TrackDatabase::cleanupTracks()
     deleteExpiredStats();
 }
 
-void TrackDatabase::updateViews(const QSqlDatabase& db)
+void TrackDatabase::dropViews(const QSqlDatabase& db)
 {
-    {
-        const auto statement = QStringLiteral("DROP VIEW IF EXISTS TracksView;");
+    const auto statement = QStringLiteral("DROP VIEW IF EXISTS TracksView;");
 
-        DbQuery query{db, statement};
+    DbQuery query{db, statement};
 
-        if(!query.exec()) {
-            return;
-        }
-    }
+    query.exec();
+}
 
+void TrackDatabase::insertViews(const QSqlDatabase& db)
+{
     const auto statement = QStringLiteral("CREATE VIEW IF NOT EXISTS TracksView AS "
                                           "SELECT "
                                           "Tracks.TrackID,"

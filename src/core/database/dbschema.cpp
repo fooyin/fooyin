@@ -131,6 +131,9 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
         qInfo() << "[DB] Upgrading schema from version" << currentVer << "to version" << targetVersion;
     }
 
+    // Update views before migrations in case we've dropped columns
+    TrackDatabase::dropViews(db());
+
     int nextVersion = lastVer;
     while(nextVersion < targetVersion) {
         ++nextVersion;
@@ -163,7 +166,7 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
 
     if(targetVersion != lastVer) {
         m_settingsDb.set(QString::fromLatin1(LastVersionKey), targetVersion);
-        TrackDatabase::updateViews(db());
+        TrackDatabase::insertViews(db());
     }
 
     if(targetVersion < currentVer) {
