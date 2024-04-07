@@ -409,17 +409,13 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         m_currentMetaData[QStringLiteral("xesam:useCount")]    = track.playCount();
     }
 
-    if(track.hasCover()) {
-        QString coverPath = track.coverPath();
-        if(track.hasEmbeddedCover()) {
-            const QPixmap cover = m_coverProvider.trackCover(track, true);
-            if(cover.isNull()) {
-                return;
-            }
-            coverPath = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
-        }
-        m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
+    const QPixmap cover = m_coverProvider.trackCover(track, true);
+    if(cover.isNull()) {
+        return;
     }
+
+    static const QString coverPath = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
+    m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
 }
 } // namespace Fooyin::Mpris
 

@@ -114,19 +114,43 @@ struct CoverProvider::Private
         : self{self_}
     { }
 
+    static QString coverInDirectory(const QString& filepath)
+    {
+        if(filepath.isEmpty()) {
+            return {};
+        }
+
+        static const QStringList coverFileTypes{QStringLiteral("*.jpg"),  QStringLiteral("*.jpeg"),
+                                                QStringLiteral("*.png"),  QStringLiteral("*.gif"),
+                                                QStringLiteral("*.tiff"), QStringLiteral("*.bmp")};
+
+        const QFileInfo file{filepath};
+        const QString basePath = file.isDir() ? file.absoluteFilePath() : file.path();
+
+        const QDir baseDirectory{basePath};
+        const QStringList fileList = baseDirectory.entryList(coverFileTypes, QDir::Files);
+
+        if(!fileList.isEmpty()) {
+            // Use first image found as album cover
+            return baseDirectory.absolutePath() + QStringLiteral("/") + fileList.constFirst();
+        }
+
+        return {};
+    }
+
     QCoro::Task<void> fetchCover(QString key, Track track, QSize size, bool saveToDisk)
     {
         QPixmap cover;
 
-        if(QFileInfo::exists(track.coverPath())) {
-            cover.load(track.coverPath());
-            if(cover.isNull()) {
-                co_return;
-            }
+        // Prefer artwork in directory
+        const QString coverPath = coverInDirectory(track.filepath());
+        if(!coverPath.isEmpty()) {
+            cover.load(coverPath);
         }
-        else if(track.hasEmbeddedCover()) {
+
+        if(cover.isNull()) {
             const QByteArray coverData = co_await Utils::asyncExec([track]() { return Tagging::readCover(track); });
-            if(!cover.loadFromData(coverData)) {
+            if(coverData.isEmpty() || !cover.loadFromData(coverData)) {
                 co_return;
             }
         }
@@ -171,7 +195,7 @@ CoverProvider::~CoverProvider() = default;
 
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, bool saveToDisk) const
 {
-    if(!track.isValid() || !track.hasCover()) {
+    if(!track.isValid()) {
         return p->usePlacerholder ? loadNoCover(size) : QPixmap{};
     }
 

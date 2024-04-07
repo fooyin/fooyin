@@ -79,4 +79,13 @@
             ALTER TABLE Tracks ADD COLUMN HasEmbeddedCover INTEGER DEFAULT 0;
         </sql>
     </revision>
+    <revision version="3">
+        <description>
+            Remove album cover related columns.
+        </description>
+        <sql>
+            ALTER TABLE Tracks DROP COLUMN CoverPath;
+            ALTER TABLE Tracks DROP COLUMN HasEmbeddedCover;
+        </sql>
+    </revision>
 </schema>

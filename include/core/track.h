@@ -25,8 +25,6 @@
 #include <QSharedDataPointer>
 
 namespace Fooyin {
-using ExtraTags = QMap<QString, QStringList>;
-
 /*!
  * Represents a music track and it's associated metadata.
  * Metadata which is not explicitly handled is accessed using Track::extraTags.
@@ -58,6 +56,8 @@ public:
         OggVorbis = 10,
         ASF       = 11,
     };
+
+    using ExtraTags = QMap<QString, QStringList>;
 
     Track();
     explicit Track(QString filepath);
@@ -106,9 +106,6 @@ public:
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
-    [[nodiscard]] QString coverPath() const;
-    [[nodiscard]] bool hasCover() const;
-    [[nodiscard]] bool hasEmbeddedCover() const;
 
     [[nodiscard]] bool hasExtraTag(const QString& tag) const;
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
@@ -151,8 +148,6 @@ public:
     void setComment(const QString& comment);
     void setDate(const QString& date);
     void setYear(int year);
-    void setCoverPath(const QString& path);
-    void setHasEmbeddedCover(bool hasCover);
 
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);

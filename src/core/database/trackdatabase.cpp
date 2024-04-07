@@ -53,8 +53,6 @@ QString fetchTrackColumns()
                                                   "BitRate,"
                                                   "SampleRate,"
                                                   "ExtraTags,"
-                                                  "HasEmbeddedCover,"
-                                                  "CoverPath,"
                                                   "Type,"
                                                   "ModifiedDate, "
                                                   "LibraryID,"
@@ -77,7 +75,6 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":artists"), track.artists()},
             {QStringLiteral(":albumArtist"), track.albumArtists()},
             {QStringLiteral(":album"), track.album()},
-            {QStringLiteral(":coverPath"), track.coverPath()},
             {QStringLiteral(":discNumber"), track.discNumber()},
             {QStringLiteral(":discTotal"), track.discTotal()},
             {QStringLiteral(":date"), track.date()},
@@ -90,7 +87,6 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":bitRate"), track.bitrate()},
             {QStringLiteral(":sampleRate"), track.sampleRate()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
-            {QStringLiteral(":hasEmbeddedCover"), track.hasEmbeddedCover()},
             {QStringLiteral(":type"), static_cast<int>(track.type())},
             {QStringLiteral(":modifiedDate"), QVariant::fromValue(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
@@ -122,16 +118,14 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setBitrate(q.value(18).toInt());
     track.setSampleRate(q.value(19).toInt());
     track.storeExtraTags(q.value(20).toByteArray());
-    track.setHasEmbeddedCover(q.value(21).toBool());
-    track.setCoverPath(q.value(22).toString());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(23).toInt()));
-    track.setModifiedTime(q.value(24).toULongLong());
-    track.setLibraryId(q.value(25).toInt());
-    track.setHash(q.value(26).toString());
-    track.setAddedTime(q.value(27).toULongLong());
-    track.setFirstPlayed(q.value(28).toULongLong());
-    track.setLastPlayed(q.value(29).toULongLong());
-    track.setPlayCount(q.value(30).toInt());
+    track.setType(static_cast<Fooyin::Track::Type>(q.value(21).toInt()));
+    track.setModifiedTime(q.value(22).toULongLong());
+    track.setLibraryId(q.value(23).toInt());
+    track.setHash(q.value(24).toString());
+    track.setAddedTime(q.value(25).toULongLong());
+    track.setFirstPlayed(q.value(26).toULongLong());
+    track.setLastPlayed(q.value(27).toULongLong());
+    track.setPlayCount(q.value(28).toInt());
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
@@ -272,7 +266,6 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "Artists = :artists,"
                                           "AlbumArtist = :albumArtist,"
                                           "Album = :album,"
-                                          "CoverPath = :coverPath,"
                                           "DiscNumber = :discNumber,"
                                           "DiscTotal = :discTotal,"
                                           "Date = :date,"
@@ -285,7 +278,6 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "BitRate = :bitRate,"
                                           "SampleRate = :sampleRate,"
                                           "ExtraTags = :extraTags,"
-                                          "HasEmbeddedCover = :hasEmbeddedCover,"
                                           "Type = :type,"
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
@@ -439,8 +431,6 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.BitRate,"
                                           "Tracks.SampleRate,"
                                           "Tracks.ExtraTags,"
-                                          "Tracks.HasEmbeddedCover,"
-                                          "Tracks.CoverPath,"
                                           "Tracks.Type,"
                                           "Tracks.ModifiedDate,"
                                           "Tracks.LibraryID,"
@@ -486,7 +476,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "Artists,"
                                           "AlbumArtist,"
                                           "Album,"
-                                          "CoverPath,"
                                           "DiscNumber,"
                                           "DiscTotal,"
                                           "Date,"
@@ -499,7 +488,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "BitRate,"
                                           "SampleRate,"
                                           "ExtraTags,"
-                                          "HasEmbeddedCover,"
                                           "Type,"
                                           "ModifiedDate,"
                                           "TrackHash,"
@@ -513,7 +501,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":artists,"
                                           ":albumArtist,"
                                           ":album,"
-                                          ":coverPath,"
                                           ":discNumber,"
                                           ":discTotal,"
                                           ":date, "
@@ -526,7 +513,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":bitRate,"
                                           ":sampleRate,"
                                           ":extraTags, "
-                                          ":hasEmbeddedCover, "
                                           ":type,"
                                           ":modifiedDate,"
                                           ":trackHash,"

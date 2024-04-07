@@ -603,41 +603,6 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
     }
     return {};
 }
-
-QString coverInDirectory(const QString& filepath)
-{
-    if(filepath.isEmpty()) {
-        return {};
-    }
-
-    static const QStringList coverFileTypes{QStringLiteral("*.jpg"), QStringLiteral("*.jpeg"), QStringLiteral("*.png"),
-                                            QStringLiteral("*.gif"), QStringLiteral("*.tiff"), QStringLiteral("*.bmp")};
-
-    const QFileInfo file{filepath};
-    const QString basePath = file.isDir() ? file.absoluteFilePath() : file.path();
-
-    const QDir baseDirectory{basePath};
-    const QStringList fileList = baseDirectory.entryList(coverFileTypes, QDir::Files);
-
-    if(!fileList.isEmpty()) {
-        // Use first image found as album cover
-        return baseDirectory.absolutePath() + QStringLiteral("/") + fileList.constFirst();
-    }
-
-    return {};
-}
-
-void handleCover(const QByteArray& cover, Fooyin::Track& track)
-{
-    if(!cover.isEmpty()) {
-        track.setHasEmbeddedCover(true);
-    }
-
-    QString coverPath = coverInDirectory(track.filepath());
-    if(!coverPath.isEmpty()) {
-        track.setCoverPath(coverPath);
-    }
-}
 } // namespace
 
 namespace Fooyin::Tagging {
@@ -687,7 +652,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.ID3v2Tag(), track);
-                handleCover(readId3Cover(file.ID3v2Tag()), track);
             }
         }
     }
@@ -697,7 +661,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.tag(), track);
-                handleCover(readId3Cover(file.tag()), track);
             }
         }
     }
@@ -708,7 +671,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.ID3v2Tag(), track);
-                handleCover(readId3Cover(file.ID3v2Tag()), track);
             }
         }
     }
@@ -718,7 +680,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.APETag()) {
                 readApeTags(file.APETag(), track);
-                handleCover(readApeCover(file.APETag()), track);
             }
         }
     }
@@ -728,7 +689,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.APETag()) {
                 readApeTags(file.APETag(), track);
-                handleCover(readApeCover(file.APETag()), track);
             }
         }
     }
@@ -738,7 +698,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.APETag()) {
                 readApeTags(file.APETag(), track);
-                handleCover(readApeCover(file.APETag()), track);
             }
         }
     }
@@ -748,7 +707,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file, true);
             if(file.hasMP4Tag()) {
                 readMp4Tags(file.tag(), track);
-                handleCover(readMp4Cover(file.tag()), track);
             }
         }
     }
@@ -763,7 +721,6 @@ bool readMetaData(Track& track, Quality quality)
             if(file.hasXiphComment()) {
                 readXiphComment(file.xiphComment(), track);
             }
-            handleCover(readFlacCover(file.pictureList()), track);
         }
     }
     else if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
@@ -772,7 +729,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.tag()) {
                 readXiphComment(file.tag(), track);
-                handleCover(readFlacCover(file.tag()->pictureList()), track);
             }
         }
     }
@@ -782,7 +738,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.tag()) {
                 readXiphComment(file.tag(), track);
-                handleCover(readFlacCover(file.tag()->pictureList()), track);
             }
         }
     }
@@ -792,7 +747,6 @@ bool readMetaData(Track& track, Quality quality)
             readProperties(file);
             if(file.tag()) {
                 readAsfTags(file.tag(), track);
-                handleCover(readAsfCover(file.tag()), track);
             }
         }
     }
