@@ -60,7 +60,7 @@ public:
     void resetCoverKey();
 
     /*!
-     * This will return either the front cover picture of the @p track if it's either:
+     * This will return either the @p type of cover picture of the @p track if it's either:
      * - Non-embedded.
      * - Exists in QPixmapCache.
      * Or it will return a QPixmap representing 'no cover' and the cover will be read asynchronously from
@@ -69,17 +69,20 @@ public:
      * to query the cover using this method again.
      *
      * @param track the track for which the cover will be found.
+     * @param type the type of cover to find.
      * @param saveToDisk whether the cover will be saved to the on-disk cache.
      * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
      */
-    [[nodiscard]] QPixmap trackCover(const Track& track, const QSize& size, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Track& track, const QSize& size, Track::Cover type = Track::Cover::Front,
+                                     bool saveToDisk = false) const;
 
     /*!
      * This is an overloaded function.
-     * Returns the front cover picture of the @p track up to a maximum size (800px).
+     * Returns the @p type of cover picture of the @p track up to a maximum size (800px).
      * @see trackCover(const Track&, const QSize&, bool).
      */
-    [[nodiscard]] QPixmap trackCover(const Track& track, bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Track& track, Track::Cover type = Track::Cover::Front,
+                                     bool saveToDisk = false) const;
 
     /** Clears the QPixmapCache as well as the on-disk cache. */
     void clearCache();

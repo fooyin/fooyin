@@ -409,7 +409,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         m_currentMetaData[QStringLiteral("xesam:useCount")]    = track.playCount();
     }
 
-    const QPixmap cover = m_coverProvider.trackCover(track, true);
+    const QPixmap cover = m_coverProvider.trackCover(track, Track::Cover::Front, true);
     if(cover.isNull()) {
         return;
     }

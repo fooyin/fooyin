@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <gui/fywidget.h>
 
 #include <QPixmap>
@@ -28,7 +28,6 @@ class QLabel;
 
 namespace Fooyin {
 class CoverProvider;
-class MusicLibrary;
 class PlayerController;
 class TrackSelectionController;
 
@@ -43,8 +42,12 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     void rescaleCover() const;
@@ -54,6 +57,7 @@ private:
     TrackSelectionController* m_trackSelection;
     CoverProvider* m_coverProvider;
 
+    Track::Cover m_coverType;
     QLabel* m_coverLabel;
     QPixmap m_cover;
 };
