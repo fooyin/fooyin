@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.0](https://github.com/ludouzi/fooyin/releases/tag/v0.3.10) (2024-04-06)
+## [0.4.0](https://github.com/ludouzi/fooyin/releases/tag/v0.4.0) (2024-04-06)
 
 ### Features
 
