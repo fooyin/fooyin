@@ -34,18 +34,6 @@ bool checkFile(const QFileInfo& file)
     return file.exists() && file.isFile() && file.isReadable()
         && file.completeSuffix().compare(QStringLiteral("fyl"), Qt::CaseInsensitive) == 0;
 }
-
-QByteArray layoutToJson(const Fooyin::Layout& layout)
-{
-    QJsonObject root;
-    QJsonArray array;
-
-    array.append(layout.json);
-
-    root[layout.name] = array;
-
-    return QJsonDocument(root).toJson();
-}
 } // namespace
 
 namespace Fooyin {
@@ -55,7 +43,7 @@ struct LayoutProvider::Private
     Layout currentLayout;
     QFile layoutFile{Gui::activeLayoutPath()};
 
-    bool layoutExists(const QString& name) const
+    [[nodiscard]] bool layoutExists(const QString& name) const
     {
         return std::ranges::any_of(layouts, [name](const Layout& layout) { return layout.name == name; });
     }
@@ -143,7 +131,7 @@ void LayoutProvider::saveCurrentLayout()
         return;
     }
 
-    const QByteArray json = layoutToJson(p->currentLayout);
+    const QByteArray json = QJsonDocument(p->currentLayout.json).toJson();
 
     p->layoutFile.write(json);
     p->layoutFile.close();
@@ -206,29 +194,17 @@ std::optional<Layout> LayoutProvider::readLayout(const QByteArray& json)
 
     const auto layoutObject = doc.object();
 
-    if(layoutObject.empty() || layoutObject.size() > 1) {
+    if(layoutObject.empty() || !layoutObject.contains(QStringLiteral("Name"))) {
         return {};
     }
 
-    const auto nameIt = layoutObject.constBegin();
-
-    if(!nameIt->isArray()) {
-        return {};
-    }
-
-    const QString name = nameIt.key();
+    const QString name = layoutObject.value(QStringLiteral("Name")).toString();
 
     if(name.isEmpty()) {
         return {};
     }
 
-    const auto layout = nameIt->toArray();
-
-    if(layout.empty() || !layout.first().isObject()) {
-        return {};
-    }
-
-    return Layout{name, layout.first().toObject()};
+    return Layout{name, layoutObject};
 }
 
 std::optional<Layout> LayoutProvider::importLayout(const QString& path)
@@ -268,7 +244,7 @@ bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
         return false;
     }
 
-    const QByteArray json = layoutToJson(layout);
+    const QByteArray json = QJsonDocument(layout.json).toJson();
 
     file.write(json);
     file.close();

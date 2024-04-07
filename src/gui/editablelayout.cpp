@@ -49,6 +49,8 @@
 
 #include <stack>
 
+constexpr auto LayoutVersion = 1;
+
 namespace Fooyin {
 class RootContainer : public WidgetContainer
 {
@@ -518,7 +520,14 @@ std::optional<Layout> EditableLayout::saveCurrentToLayout(const QString& name)
         array.append(QJsonObject{});
     }
 
-    root[name.isEmpty() ? QStringLiteral("New Layout") : name] = array;
+    QString layoutName{name};
+    if(layoutName.isEmpty()) {
+        layoutName = QStringLiteral("Layout %1").arg(p->layoutProvider->layouts().size());
+    }
+
+    root[QStringLiteral("Name")]    = layoutName;
+    root[QStringLiteral("Version")] = LayoutVersion;
+    root[QStringLiteral("Widgets")] = array;
 
     const QByteArray json = QJsonDocument(root).toJson();
 
@@ -598,8 +607,23 @@ bool EditableLayout::loadLayout(const Layout& layout)
 
     p->layoutHistory->clear();
 
-    const auto name = layout.json.constBegin().key();
-    auto* topWidget = p->widgetProvider->createWidget(name);
+    if(!layout.json.contains(QStringLiteral("Widgets"))) {
+        return false;
+    }
+
+    if(!layout.json.value(QStringLiteral("Widgets")).isArray()) {
+        return false;
+    }
+
+    const auto rootWidgets = layout.json.value(QStringLiteral("Widgets")).toArray();
+
+    if(rootWidgets.empty() || !rootWidgets.cbegin()->isObject()) {
+        return false;
+    }
+
+    const auto rootObject = rootWidgets.cbegin()->toObject();
+    const auto widgetKey  = rootObject.constBegin().key();
+    auto* topWidget       = p->widgetProvider->createWidget(widgetKey);
 
     if(!topWidget) {
         return false;
@@ -607,10 +631,12 @@ bool EditableLayout::loadLayout(const Layout& layout)
 
     p->root->addWidget(topWidget);
 
-    const QJsonObject options = layout.json.constBegin()->toObject();
-    topWidget->loadLayout(options);
-    topWidget->finalise();
+    if(rootObject.constBegin()->isObject()) {
+        const QJsonObject options = rootObject.constBegin()->toObject();
+        topWidget->loadLayout(options);
+    }
 
+    topWidget->finalise();
     return true;
 }
 

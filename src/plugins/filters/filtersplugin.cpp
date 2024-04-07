@@ -51,7 +51,7 @@ struct FiltersPlugin::Private
     void registerLayouts() const
     {
         layoutProvider->registerLayout(
-            R"({"Obsidian":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA8EAAAAUAP////8BAAAAAgA=",
+            R"({"Name":"Obsidian","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA8EAAAAUAP////8BAAAAAgA=",
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAAB+AAAA5wAAAGyAP////8BAAAAAQA=",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAHQAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
             "Widgets":"1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},{"SplitterHorizontal":{
@@ -64,7 +64,7 @@ struct FiltersPlugin::Private
             {"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
         layoutProvider->registerLayout(
-            R"({"Ember":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
+            R"({"Name":"Ember","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
             "Widgets":[{"LibraryFilter":{"Columns":"0","Group":"Default","ID":"955f29805de446d7a9b6195a94bfd817","Index":0}},
             {"LibraryFilter":{"Columns":"1","Group":"Default","ID":"4fee1a754b3e47ff86f4c711fbf0f0eb","Index":1}},
@@ -87,9 +87,9 @@ FiltersPlugin::~FiltersPlugin() = default;
 
 void FiltersPlugin::initialise(const CorePluginContext& context)
 {
-    p->library       = context.library;
+    p->library          = context.library;
     p->playerController = context.playerController;
-    p->settings      = context.settingsManager;
+    p->settings         = context.settingsManager;
 
     p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
 }
