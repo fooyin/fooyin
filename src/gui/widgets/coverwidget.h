@@ -58,6 +58,7 @@ private:
     CoverProvider* m_coverProvider;
 
     Track::Cover m_coverType;
+    bool m_keepAspectRatio;
     QLabel* m_coverLabel;
     QPixmap m_cover;
 };

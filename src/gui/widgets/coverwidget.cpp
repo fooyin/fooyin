@@ -40,6 +40,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_trackSelection{trackSelection}
     , m_coverProvider{new CoverProvider(this)}
     , m_coverType{Track::Cover::Front}
+    , m_keepAspectRatio{true}
     , m_coverLabel{new QLabel(this)}
 {
     Q_UNUSED(m_trackSelection)
@@ -74,13 +75,17 @@ QString CoverWidget::layoutName() const
 
 void CoverWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("CoverType")] = static_cast<int>(m_coverType);
+    layout[QStringLiteral("CoverType")]       = static_cast<int>(m_coverType);
+    layout[QStringLiteral("KeepAspectRatio")] = m_keepAspectRatio;
 }
 
 void CoverWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("CoverType"))) {
         m_coverType = static_cast<Track::Cover>(layout.value(QStringLiteral("CoverType")).toInt());
+    }
+    if(layout.contains(QStringLiteral("KeepAspectRatio"))) {
+        m_keepAspectRatio = layout.value(QStringLiteral("KeepAspectRatio")).toBool();
     }
 }
 
@@ -97,6 +102,16 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* keepAspectRatio = new QAction(tr("Keep Aspect Ratio"), this);
+
+    keepAspectRatio->setCheckable(true);
+    keepAspectRatio->setChecked(m_keepAspectRatio);
+
+    QObject::connect(keepAspectRatio, &QAction::triggered, this, [this](bool checked) {
+        m_keepAspectRatio = checked;
+        rescaleCover();
+    });
 
     auto* coverGroup = new QActionGroup(menu);
 
@@ -125,6 +140,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
         reloadCover(m_playerController->currentTrack());
     });
 
+    menu->addAction(keepAspectRatio);
+    menu->addSeparator();
     menu->addAction(frontCover);
     menu->addAction(backCover);
     menu->addAction(artistCover);
@@ -134,9 +151,9 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void CoverWidget::rescaleCover() const
 {
-    const QSize scale = size() * 4;
-    m_coverLabel->setPixmap(
-        m_cover.scaled(scale, Qt::KeepAspectRatio).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    const QSize scale      = size() * 4;
+    const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
+    m_coverLabel->setPixmap(m_cover.scaled(scale, aspectRatio).scaled(size(), aspectRatio, Qt::SmoothTransformation));
 }
 
 void CoverWidget::reloadCover(const Track& track)
