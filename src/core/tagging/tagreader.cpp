@@ -351,7 +351,7 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
         const auto* coverFrame        = static_cast<PictureFrame*>(frame);
         const PictureFrame::Type type = coverFrame->type();
 
-        if(cover == Fooyin::Track::Cover::Front && type == PictureFrame::FrontCover) {
+        if(cover == Fooyin::Track::Cover::Front && (type == PictureFrame::FrontCover || type == PictureFrame::Other)) {
             picture = coverFrame->picture();
         }
         else if(cover == Fooyin::Track::Cover::Back && type == PictureFrame::BackCover) {
@@ -566,7 +566,7 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
     for(const auto& pic : pictures) {
         const auto type = pic->type();
 
-        if(cover == Fooyin::Track::Cover::Front && type == FlacPicture::FrontCover) {
+        if(cover == Fooyin::Track::Cover::Front && (type == FlacPicture::FrontCover || type == FlacPicture::Other)) {
             picture = pic->data();
         }
         else if(cover == Fooyin::Track::Cover::Back && type == FlacPicture::BackCover) {
@@ -628,7 +628,7 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
         const Picture pic = attribute.toPicture();
         const auto type   = pic.type();
 
-        if(cover == Fooyin::Track::Cover::Front && type == Picture::FrontCover) {
+        if(cover == Fooyin::Track::Cover::Front && (type == Picture::FrontCover || type == Picture::Other)) {
             picture = pic.picture();
         }
         else if(cover == Fooyin::Track::Cover::Back && type == Picture::BackCover) {
