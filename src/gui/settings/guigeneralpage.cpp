@@ -216,9 +216,9 @@ void GuiGeneralPageWidget::exportLayout()
         const QString saveFile = QFileDialog::getSaveFileName(
             this, QStringLiteral("Save Layout"), Gui::layoutsPath() + name, QStringLiteral("Fooyin Layout (*.fyl)"));
         if(!saveFile.isEmpty()) {
-            Layout layout = m_layoutProvider->currentLayout();
-            layout.name   = name;
-            m_layoutProvider->exportLayout(layout, saveFile);
+            if(auto layout = m_editableLayout->saveCurrentToLayout(name)) {
+                m_layoutProvider->exportLayout(layout.value(), saveFile);
+            }
         }
     }
 }

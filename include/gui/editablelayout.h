@@ -43,6 +43,7 @@ public:
     ~EditableLayout() override;
 
     void initialise();
+    std::optional<Layout> saveCurrentToLayout(const QString& name);
 
     [[nodiscard]] FyWidget* findWidget(const Id& id) const;
     [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;

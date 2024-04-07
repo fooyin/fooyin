@@ -506,6 +506,25 @@ void EditableLayout::initialise()
     }
 }
 
+std::optional<Layout> EditableLayout::saveCurrentToLayout(const QString& name)
+{
+    QJsonObject root;
+    QJsonArray array;
+
+    if(p->root->widget()) {
+        p->root->widget()->saveLayout(array);
+    }
+    else {
+        array.append(QJsonObject{});
+    }
+
+    root[name.isEmpty() ? QStringLiteral("New Layout") : name] = array;
+
+    const QByteArray json = QJsonDocument(root).toJson();
+
+    return LayoutProvider::readLayout(json);
+}
+
 FyWidget* EditableLayout::findWidget(const Id& id) const
 {
     return p->findWidgets<FyWidget*>([&id](FyWidget* widget) { return widget->id() == id; });
@@ -566,21 +585,7 @@ void EditableLayout::changeLayout(const Layout& layout)
 
 void EditableLayout::saveLayout()
 {
-    QJsonObject root;
-    QJsonArray array;
-
-    if(p->root->widget()) {
-        p->root->widget()->saveLayout(array);
-    }
-    else {
-        array.append(QJsonObject{});
-    }
-
-    root[QStringLiteral("Default")] = array;
-
-    const QByteArray json = QJsonDocument(root).toJson();
-
-    if(const auto layout = LayoutProvider::readLayout(json)) {
+    if(const auto layout = saveCurrentToLayout(QStringLiteral("Default"))) {
         p->layoutProvider->changeLayout(layout.value());
     }
 }
