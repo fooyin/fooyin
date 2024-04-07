@@ -30,10 +30,11 @@ MenuHeader::MenuHeader(QString text, QWidget* parent)
     , m_textHeight{0}
     , m_margin{0}
 {
-    const int textMinWidth = fontMetrics().boundingRect(m_text).width();
-    m_textHeight           = fontMetrics().height();
-    m_margin               = fontMetrics().horizontalAdvance(QStringLiteral("..."));
-    m_minWidth             = 2 * m_margin + textMinWidth;
+    const QFontMetrics fm{fontMetrics()};
+    m_textHeight = fm.height();
+    m_margin     = fm.horizontalAdvance(QStringLiteral("..."));
+    m_minWidth   = fm.boundingRect(m_text).width() + (3 * m_margin);
+
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     updateGeometry();
 }
@@ -50,18 +51,21 @@ QSize MenuHeader::sizeHint() const
 
 void MenuHeader::paintEvent(QPaintEvent* /*event*/)
 {
-    QPainter painter(this);
-    const QPalette palette        = QApplication::palette();
-    const QColor headerBackground = palette.color(QPalette::AlternateBase);
-    const QColor headerText       = palette.color(QPalette::Text);
+    QPainter painter{this};
+
+    const QColor headerBackground = palette().alternateBase().color();
+    const QColor headerText       = palette().text().color();
 
     painter.setBrush(headerBackground);
     painter.setPen(Qt::NoPen);
-    painter.drawRect(QRect(0, 0, width(), m_textHeight + m_margin));
+    painter.drawRect(0, 0, width(), m_textHeight + m_margin);
+
+    QFont font{painter.font()};
+    font.setBold(true);
+    painter.setFont(font);
 
     painter.setPen(headerText);
-    painter.drawText(QPoint(m_margin, static_cast<int>(0.25 * m_margin) + m_textHeight), m_text);
-    painter.end();
+    painter.drawText(QRect{m_margin, 0, m_minWidth - (2 * m_margin), height()}, Qt::AlignVCenter, m_text);
 }
 
 MenuHeaderAction::MenuHeaderAction(const QString& text, QObject* parent)
