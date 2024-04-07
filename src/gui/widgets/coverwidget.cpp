@@ -32,6 +32,7 @@
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
+#include <QTimer>
 
 namespace Fooyin {
 CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection, QWidget* parent)
@@ -41,6 +42,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_coverProvider{new CoverProvider(this)}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{true}
+    , m_resizeTimer{new QTimer(this)}
     , m_coverLabel{new QLabel(this)}
 {
     Q_UNUSED(m_trackSelection)
@@ -52,6 +54,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_coverLabel);
 
+    m_resizeTimer->setSingleShot(true);
     m_coverLabel->setMinimumSize(100, 100);
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
@@ -59,6 +62,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     QObject::connect(
         m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) { reloadCover(track); },
         Qt::QueuedConnection);
+    QObject::connect(m_resizeTimer, &QTimer::timeout, this, &CoverWidget::rescaleCover);
 
     reloadCover(m_playerController->currentTrack());
 }
@@ -92,7 +96,7 @@ void CoverWidget::loadLayoutData(const QJsonObject& layout)
 void CoverWidget::resizeEvent(QResizeEvent* event)
 {
     if(!m_cover.isNull()) {
-        rescaleCover();
+        m_resizeTimer->start(5);
     }
 
     QWidget::resizeEvent(event);

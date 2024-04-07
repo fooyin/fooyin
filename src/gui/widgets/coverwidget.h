@@ -25,6 +25,7 @@
 #include <QPixmap>
 
 class QLabel;
+class QTimer;
 
 namespace Fooyin {
 class CoverProvider;
@@ -59,6 +60,8 @@ private:
 
     Track::Cover m_coverType;
     bool m_keepAspectRatio;
+    QTimer* m_resizeTimer;
+
     QLabel* m_coverLabel;
     QPixmap m_cover;
 };
