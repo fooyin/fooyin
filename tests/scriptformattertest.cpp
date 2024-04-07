@@ -38,6 +38,21 @@ TEST_F(ScriptFormatterTest, NoFormat)
 TEST_F(ScriptFormatterTest, Bold)
 {
     const auto result = m_formattter.evaluate(QStringLiteral("<b>I</b> am a test."));
-    EXPECT_EQ(2, result.size());
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.front().format.font.bold());
+}
+
+TEST_F(ScriptFormatterTest, Italic)
+{
+    const auto result = m_formattter.evaluate(QStringLiteral("<i>I</i> am a test."));
+    ASSERT_EQ(2, result.size());
+    EXPECT_TRUE(result.front().format.font.italic());
+}
+
+TEST_F(ScriptFormatterTest, Rgb)
+{
+    const auto result = m_formattter.evaluate(QStringLiteral("<rgb=255,0,0>I am a test."));
+    ASSERT_EQ(1, result.size());
+    EXPECT_EQ(255, result.front().format.colour.red());
 }
 } // namespace Fooyin::Testing
