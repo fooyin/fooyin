@@ -21,13 +21,11 @@
 
 #include "fycore_export.h"
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 
 #include <taglib/audioproperties.h>
 
 #include <QString>
-
-#include <memory>
 
 class QPixmap;
 
@@ -40,5 +38,5 @@ enum class Quality : uint8_t
 };
 
 FYCORE_EXPORT bool readMetaData(Track& track, Quality quality = Quality::Average);
-FYCORE_EXPORT QByteArray readCover(const Track& track);
+FYCORE_EXPORT QByteArray readCover(const Track& track, Track::Cover cover = Track::Cover::Front);
 } // namespace Fooyin::Tagging

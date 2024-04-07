@@ -335,7 +335,7 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
     }
 }
 
-QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags)
+QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover cover)
 {
     if(id3Tags->isEmpty()) {
         return {};
@@ -345,16 +345,28 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags)
 
     using PictureFrame = TagLib::ID3v2::AttachedPictureFrame;
 
+    TagLib::ByteVector picture;
+
     for(const auto& frame : std::as_const(frames)) {
         const auto* coverFrame        = static_cast<PictureFrame*>(frame);
         const PictureFrame::Type type = coverFrame->type();
 
-        if(type == PictureFrame::FrontCover || type == PictureFrame::Other) {
-            const auto picture = coverFrame->picture();
-            return {picture.data(), picture.size()};
+        if(cover == Fooyin::Track::Cover::Front && type == PictureFrame::FrontCover) {
+            picture = coverFrame->picture();
+        }
+        else if(cover == Fooyin::Track::Cover::Back && type == PictureFrame::BackCover) {
+            picture = coverFrame->picture();
+        }
+        else if(cover == Fooyin::Track::Cover::Artist && type == PictureFrame::Artist) {
+            picture = coverFrame->picture();
         }
     }
-    return {};
+
+    if(picture.isEmpty()) {
+        return {};
+    }
+
+    return {picture.data(), static_cast<qsizetype>(picture.size())};
 }
 
 void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
@@ -382,21 +394,26 @@ void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
     }
 }
 
-QByteArray readApeCover(const TagLib::APE::Tag* apeTags)
+QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Fooyin::Track::Cover cover)
 {
     if(apeTags->isEmpty()) {
         return {};
     }
 
     const TagLib::APE::ItemListMap& items = apeTags->itemListMap();
-    auto itemIt                           = items.find("COVER ART (FRONT)");
+
+    const TagLib::String coverType = cover == Fooyin::Track::Cover::Front ? "COVER ART (FRONT)"
+                                   : cover == Fooyin::Track::Cover::Back  ? "COVER ART (BACK)"
+                                                                          : "COVER ART (ARTIST)";
+
+    auto itemIt = items.find(coverType);
 
     if(itemIt != items.end()) {
         const auto& picture = itemIt->second.binaryData();
         int position        = picture.find('\0');
         if(position >= 0) {
             position += 1;
-            return {picture.data() + position, picture.size() - position};
+            return {picture.data() + position, static_cast<qsizetype>(picture.size() - position)};
         }
     }
     return {};
@@ -484,7 +501,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
     }
 }
 
-QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags)
+QByteArray readMp4Cover(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track::Cover /*cover*/)
 {
     const TagLib::MP4::Item coverArtItem = mp4Tags->item(Fooyin::Mp4::Cover);
     if(!coverArtItem.isValid()) {
@@ -537,20 +554,33 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
     }
 }
 
-QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures)
+QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
 {
     if(pictures.isEmpty()) {
         return {};
     }
 
-    using FlacPicture = TagLib::FLAC::Picture;
+    TagLib::ByteVector picture;
 
-    for(const auto& picture : std::as_const(pictures)) {
-        const auto type = picture->type();
-        if(type == FlacPicture::FrontCover || type == FlacPicture::Other) {
-            return {picture->data().data(), picture->data().size()};
+    using FlacPicture = TagLib::FLAC::Picture;
+    for(const auto& pic : pictures) {
+        const auto type = pic->type();
+
+        if(cover == Fooyin::Track::Cover::Front && type == FlacPicture::FrontCover) {
+            picture = pic->data();
+        }
+        else if(cover == Fooyin::Track::Cover::Back && type == FlacPicture::BackCover) {
+            picture = pic->data();
+        }
+        else if(cover == Fooyin::Track::Cover::Artist && type == FlacPicture::Artist) {
+            picture = pic->data();
         }
     }
+
+    if(!picture.isEmpty()) {
+        return {picture.data(), static_cast<qsizetype>(picture.size())};
+    }
+
     return {};
 }
 
@@ -583,24 +613,36 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
     }
 }
 
-QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags)
+QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover cover)
 {
     if(asfTags->isEmpty()) {
         return {};
     }
 
-    TagLib::ASF::AttributeList pictures = asfTags->attribute("WM/Picture");
+    const TagLib::ASF::AttributeList pictures = asfTags->attribute("WM/Picture");
+
+    TagLib::ByteVector picture;
 
     using Picture = TagLib::ASF::Picture;
+    for(const auto& attribute : pictures) {
+        const Picture pic = attribute.toPicture();
+        const auto type   = pic.type();
 
-    for(const auto& attribute : std::as_const(pictures)) {
-        const Picture picture = attribute.toPicture();
-        const auto imageType  = picture.type();
-        if(imageType == Picture::FrontCover) {
-            const auto& pictureData = picture.picture();
-            return {pictureData.data(), pictureData.size()};
+        if(cover == Fooyin::Track::Cover::Front && type == Picture::FrontCover) {
+            picture = pic.picture();
+        }
+        else if(cover == Fooyin::Track::Cover::Back && type == Picture::BackCover) {
+            picture = pic.picture();
+        }
+        else if(cover == Fooyin::Track::Cover::Artist && type == Picture::Artist) {
+            picture = pic.picture();
         }
     }
+
+    if(!picture.isEmpty()) {
+        return {picture.data(), static_cast<qsizetype>(picture.size())};
+    }
+
     return {};
 }
 } // namespace
@@ -760,7 +802,7 @@ bool readMetaData(Track& track, Quality quality)
     return true;
 }
 
-QByteArray readCover(const Track& track)
+QByteArray readCover(const Track& track, Track::Cover cover)
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -791,44 +833,44 @@ QByteArray readCover(const Track& track)
         TagLib::MPEG::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
 #endif
         if(file.isValid() && file.hasID3v2Tag()) {
-            return readId3Cover(file.ID3v2Tag());
+            return readId3Cover(file.ID3v2Tag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/x-aiff") || mimeType == QStringLiteral("audio/x-aifc")) {
         const TagLib::RIFF::AIFF::File file(&stream, true);
         if(file.isValid() && file.hasID3v2Tag()) {
-            return readId3Cover(file.tag());
+            return readId3Cover(file.tag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/vnd.wave") || mimeType == QStringLiteral("audio/wav")
             || mimeType == QStringLiteral("audio/x-wav")) {
         const TagLib::RIFF::WAV::File file(&stream, true);
         if(file.isValid() && file.hasID3v2Tag()) {
-            return readId3Cover(file.ID3v2Tag());
+            return readId3Cover(file.ID3v2Tag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/x-musepack")) {
         TagLib::MPC::File file(&stream, true);
         if(file.isValid() && file.APETag()) {
-            return readApeCover(file.APETag());
+            return readApeCover(file.APETag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/x-ape")) {
         TagLib::APE::File file(&stream, true);
         if(file.isValid() && file.APETag()) {
-            return readApeCover(file.APETag());
+            return readApeCover(file.APETag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/x-wavpack")) {
         TagLib::WavPack::File file(&stream, true);
         if(file.isValid() && file.APETag()) {
-            return readApeCover(file.APETag());
+            return readApeCover(file.APETag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/mp4") || mimeType == QStringLiteral("audio/vnd.audible.aax")) {
         const TagLib::MP4::File file(&stream, true);
         if(file.isValid() && file.tag()) {
-            return readMp4Cover(file.tag());
+            return readMp4Cover(file.tag(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/flac")) {
@@ -838,25 +880,25 @@ QByteArray readCover(const Track& track)
         TagLib::FLAC::File file(&stream, TagLib::ID3v2::FrameFactory::instance(), true, style);
 #endif
         if(file.isValid()) {
-            return readFlacCover(file.pictureList());
+            return readFlacCover(file.pictureList(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/ogg") || mimeType == QStringLiteral("audio/x-vorbis+ogg")) {
         const TagLib::Ogg::Vorbis::File file(&stream, true);
         if(file.isValid() && file.tag()) {
-            return readFlacCover(file.tag()->pictureList());
+            return readFlacCover(file.tag()->pictureList(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/opus") || mimeType == QStringLiteral("audio/x-opus+ogg")) {
         const TagLib::Ogg::Opus::File file(&stream, true);
         if(file.isValid() && file.tag()) {
-            return readFlacCover(file.tag()->pictureList());
+            return readFlacCover(file.tag()->pictureList(), cover);
         }
     }
     else if(mimeType == QStringLiteral("audio/x-ms-wma")) {
         const TagLib::ASF::File file(&stream, true);
         if(file.isValid() && file.tag()) {
-            return readAsfCover(file.tag());
+            return readAsfCover(file.tag(), cover);
         }
     }
 

@@ -57,6 +57,13 @@ public:
         ASF       = 11,
     };
 
+    enum class Cover : int
+    {
+        Front = 0,
+        Back,
+        Artist,
+    };
+
     using ExtraTags = QMap<QString, QStringList>;
 
     Track();
