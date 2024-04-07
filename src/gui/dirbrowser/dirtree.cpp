@@ -36,17 +36,25 @@ DirTree::DirTree(QWidget* parent)
 
 void DirTree::mousePressEvent(QMouseEvent* event)
 {
-    QTreeView::mousePressEvent(event);
-    if(event->button() == Qt::MiddleButton) {
-        emit middleClicked();
+    const auto button = event->button();
+
+    if(button == Qt::ForwardButton) {
+        emit forwardClicked();
+    }
+    else if(button == Qt::BackButton) {
+        emit backClicked();
+    }
+    else {
+        QTreeView::mousePressEvent(event);
     }
 }
 
 void DirTree::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if(event->button() == Qt::MiddleButton) {
+    if(event->button() != Qt::LeftButton) {
         return;
     }
+
     QTreeView::mouseDoubleClickEvent(event);
 }
 } // namespace Fooyin

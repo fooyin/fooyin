@@ -30,6 +30,8 @@ public:
     explicit DirTree(QWidget* parent = nullptr);
 
 signals:
+    void backClicked();
+    void forwardClicked();
     void middleClicked();
 
 protected:

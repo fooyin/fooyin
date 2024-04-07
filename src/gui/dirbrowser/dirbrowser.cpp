@@ -489,6 +489,16 @@ DirBrowser::DirBrowser(PlaylistInteractor* playlistInteractor, SettingsManager* 
     QObject::connect(p->dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });
     QObject::connect(p->dirTree, &DirTree::middleClicked, this, [this]() { p->handleMiddleClick(); });
+    QObject::connect(p->dirTree, &DirTree::backClicked, this, [this]() {
+        if(p->dirHistory.canUndo()) {
+            p->dirHistory.undo();
+        }
+    });
+    QObject::connect(p->dirTree, &DirTree::forwardClicked, this, [this]() {
+        if(p->dirHistory.canRedo()) {
+            p->dirHistory.redo();
+        }
+    });
 
     QObject::connect(p->model, &QAbstractItemModel::layoutChanged, this, [this]() { p->handleModelUpdated(); });
     QObject::connect(
