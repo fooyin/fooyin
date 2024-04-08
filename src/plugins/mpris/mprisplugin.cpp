@@ -66,10 +66,6 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     m_playerController = context.playerController;
     m_playlistHandler  = context.playlistHandler;
     m_settings         = context.settingsManager;
-    m_coverProvider    = new CoverProvider(m_settings, this);
-
-    m_coverProvider->setUsePlaceholder(false);
-    m_coverProvider->setCoverKey(QStringLiteral("MPRISCOVER"));
 
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
         notify(QStringLiteral("LoopStatus"), loopStatus());
@@ -88,6 +84,18 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
+}
+
+void MprisPlugin::initialise(const GuiPluginContext& context)
+{
+    m_windowController = context.windowController;
+    m_coverProvider    = new CoverProvider(m_settings, this);
+
+    m_coverProvider->setUsePlaceholder(false);
+    m_coverProvider->setCoverKey(QStringLiteral("MPRISCOVER"));
+
+    QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
+                     [this]() { notify(QStringLiteral("Fullscreen"), fullscreen()); });
 
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
         const auto currentTrack = m_playerController->currentPlaylistTrack();
@@ -96,14 +104,6 @@ void MprisPlugin::initialise(const CorePluginContext& context)
             notify(QStringLiteral("Metadata"), metadata());
         }
     });
-}
-
-void MprisPlugin::initialise(const GuiPluginContext& context)
-{
-    m_windowController = context.windowController;
-
-    QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
-                     [this]() { notify(QStringLiteral("Fullscreen"), fullscreen()); });
 
     new MprisRoot(this);
     new MprisPlayer(this);
