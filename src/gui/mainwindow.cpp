@@ -19,11 +19,8 @@
 
 #include "mainwindow.h"
 
-#include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
 
-#include <core/constants.h>
-#include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
@@ -46,7 +43,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     setMenuBar(m_mainMenu->menuBar());
     m_settings->createSettingsDialog(this);
 
-    setWindowTitle(QStringLiteral("fooyin"));
+    resetTitle();
 
     resize(1280, 720);
     setWindowIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
@@ -77,11 +74,19 @@ void MainWindow::open()
     }
 }
 
-void MainWindow::updateTitle(const Track& track)
+void MainWindow::prependTitle(const QString& title)
 {
-    const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-    const QString title  = m_parser.evaluate(script, track) + QStringLiteral(" 𑁋 fooyin");
-    setWindowTitle(title);
+    if(title.isEmpty()) {
+        resetTitle();
+    }
+    else {
+        setWindowTitle(title + QStringLiteral(" 𑁋 fooyin"));
+    }
+}
+
+void MainWindow::resetTitle()
+{
+    setWindowTitle(QStringLiteral("fooyin"));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

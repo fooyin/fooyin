@@ -107,6 +107,11 @@ struct FFmpegDecoder::Private
 
     bool setup(const QString& source)
     {
+        context.reset();
+        stream = {};
+        codec  = {};
+        buffer = {};
+
         error = Error::NoError;
 
         if(!createAVFormatContext(source)) {
@@ -355,15 +360,11 @@ void FFmpegDecoder::start()
 
 void FFmpegDecoder::stop()
 {
+    p->seek(0);
     p->isDecoding = false;
     p->draining   = false;
     p->currentPts = 0;
     p->bufferPos  = 0;
-
-    p->context.reset();
-    p->stream = {};
-    p->codec  = {};
-    p->buffer = {};
 }
 
 AudioFormat FFmpegDecoder::format() const

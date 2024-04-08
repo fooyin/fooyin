@@ -1091,11 +1091,6 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 void PlaylistModel::playStateChanged(PlayState state)
 {
     m_currentPlayState = state;
-
-    if(state == PlayState::Stopped) {
-        playingTrackChanged({});
-    }
-
     emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 

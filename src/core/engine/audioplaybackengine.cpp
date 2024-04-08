@@ -319,7 +319,7 @@ void AudioPlaybackEngine::stop()
 {
     setState(StoppedState);
     p->positionTimer()->stop();
-    p->changeTrackStatus(NoTrack);
+    p->lastPosition = 0;
     emit positionChanged(0);
 }
 

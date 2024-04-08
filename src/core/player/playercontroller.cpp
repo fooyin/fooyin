@@ -65,9 +65,8 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
-    p->playStatus   = PlayState::Stopped;
-    p->position     = 0;
-    p->currentTrack = {};
+    p->playStatus = PlayState::Stopped;
+    p->position   = 0;
 }
 
 void PlayerController::play()

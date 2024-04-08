@@ -145,6 +145,8 @@ struct GuiApplication::Private
 
     GuiPluginContext guiPluginContext;
 
+    ScriptParser parser;
+
     explicit Private(GuiApplication* self_, const CorePluginContext& core)
         : self{self_}
         , settingsManager{core.settingsManager}
@@ -253,10 +255,31 @@ struct GuiApplication::Private
         }
     }
 
+    void updateWindowTitle(const Track& track)
+    {
+        if(!track.isValid()) {
+            mainWindow->resetTitle();
+        }
+        else {
+            const QString script = settingsManager->value<Settings::Gui::Internal::WindowTitleTrackScript>();
+            const QString title  = parser.evaluate(script, track);
+            mainWindow->prependTitle(title);
+        }
+    }
+
     void setupConnections()
     {
-        QObject::connect(playerController, &PlayerController::currentTrackChanged, mainWindow.get(),
-                         &MainWindow::updateTitle);
+        QObject::connect(playerController, &PlayerController::playStateChanged, mainWindow.get(),
+                         [this](PlayState state) {
+                             if(state == PlayState::Stopped) {
+                                 updateWindowTitle({});
+                             }
+                             else if(state == PlayState::Playing) {
+                                 updateWindowTitle(playerController->currentTrack());
+                             }
+                         });
+        QObject::connect(playerController, &PlayerController::currentTrackChanged, self,
+                         [this](const Track& track) { updateWindowTitle(track); });
         QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
                          &PlaylistController::handleTrackSelectionAction);
         QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, propertiesDialog,
