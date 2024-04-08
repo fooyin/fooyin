@@ -162,10 +162,6 @@ struct AudioPlaybackEngine::Private
 
     void onRendererFinished()
     {
-        if(changeState(StoppedState) == StoppedState) {
-            return;
-        }
-
         clock.setPaused(true);
         clock.sync(duration);
 
