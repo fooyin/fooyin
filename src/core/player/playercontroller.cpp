@@ -76,7 +76,7 @@ void PlayerController::play()
         emit tracksDequeued({p->currentTrack});
     }
 
-    if(p->currentTrack.isValid()) {
+    if(p->currentTrack.isValid() && p->playStatus != PlayState::Playing) {
         p->playStatus = PlayState::Playing;
         emit playStateChanged(p->playStatus);
     }
@@ -99,8 +99,9 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    p->playStatus = PlayState::Paused;
-    emit playStateChanged(p->playStatus);
+    if(std::exchange(p->playStatus, PlayState::Paused) != p->playStatus) {
+        emit playStateChanged(p->playStatus);
+    }
 }
 
 void PlayerController::previous()
@@ -123,11 +124,8 @@ void PlayerController::next()
 
 void PlayerController::stop()
 {
-    const bool wasPlaying = p->playStatus != PlayState::Stopped;
-
-    reset();
-
-    if(wasPlaying) {
+    if(std::exchange(p->playStatus, PlayState::Stopped) != p->playStatus) {
+        reset();
         emit playStateChanged(p->playStatus);
     }
 }

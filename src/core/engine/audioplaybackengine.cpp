@@ -261,6 +261,10 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     p->changeTrackStatus(LoadedTrack);
+
+    if(p->state == PlayingState) {
+        setState(PlayingState);
+    }
 }
 
 void AudioPlaybackEngine::setState(PlaybackState state)

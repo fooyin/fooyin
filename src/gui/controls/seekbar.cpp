@@ -301,22 +301,18 @@ struct SeekBar::Private
 
     void reset()
     {
-        elapsed->setText(QStringLiteral("00:00"));
-        total->setText(elapsedTotal ? QStringLiteral("-00:00") : QStringLiteral("00:00"));
-        slider->setValue(0);
-        slider->updateMaximum(0);
         max = 0;
+        slider->setValue(0);
+        slider->updateMaximum(max);
+        updateLabels(max);
     }
 
     void trackChanged(const Track& track)
     {
-        reset();
-
         if(track.isValid()) {
             max = track.duration();
             slider->updateMaximum(max);
-            const QString totalText = elapsedTotal ? QStringLiteral("-") : QStringLiteral("") + Utils::msToString(max);
-            total->setText(totalText);
+            updateLabels(max);
         }
     }
 
@@ -350,7 +346,9 @@ struct SeekBar::Private
                 break;
             }
             case(PlayState::Playing): {
-                trackChanged(playerController->currentTrack());
+                if(max == 0) {
+                    trackChanged(playerController->currentTrack());
+                }
                 slider->setEnabled(true);
                 break;
             }
@@ -401,9 +399,8 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
 
     QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
-        p->trackChanged(track);
-    });
+    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
+                     [this](const Track& track) { p->trackChanged(track); });
     QObject::connect(p->playerController, &PlayerController::positionChanged, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
     QObject::connect(p->playerController, &PlayerController::positionMoved, this,
