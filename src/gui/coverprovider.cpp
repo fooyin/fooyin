@@ -20,12 +20,15 @@
 #include <gui/coverprovider.h>
 
 #include "core/tagging/tagreader.h"
+#include "internalguisettings.h"
 
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QCoro/QCoroCore>
@@ -35,6 +38,7 @@
 #include <QPixmapCache>
 
 #include <set>
+#include <stack>
 
 constexpr QSize MaxCoverSize = {800, 800};
 
@@ -103,37 +107,83 @@ QPixmap loadCachedCover(const QString& key)
 } // namespace
 
 namespace Fooyin {
+using Settings::Gui::Internal::CoverPaths;
+
 struct CoverProvider::Private
 {
     CoverProvider* self;
 
+    SettingsManager* settings;
+
     bool usePlacerholder{true};
     QString coverKey;
     std::set<QString> pendingCovers;
+    ScriptParser parser;
 
-    explicit Private(CoverProvider* self_)
+    CoverPaths paths;
+    int recurseDepth{1};
+
+    explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
-    { }
-
-    static QString coverInDirectory(const QString& filepath)
+        , settings{settings_}
+        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
+        , recurseDepth{settings->value<Settings::Gui::Internal::CoverRecurseDepth>()}
     {
-        if(filepath.isEmpty()) {
+        settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
+            self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
+        settings->subscribe<Settings::Gui::Internal::CoverRecurseDepth>(
+            self, [this](const int depth) { recurseDepth = depth; });
+    }
+
+    QString findCover(const Track& track, Track::Cover type)
+    {
+        if(!track.isValid()) {
             return {};
         }
 
-        static const QStringList coverFileTypes{QStringLiteral("*.jpg"),  QStringLiteral("*.jpeg"),
-                                                QStringLiteral("*.png"),  QStringLiteral("*.gif"),
-                                                QStringLiteral("*.tiff"), QStringLiteral("*.bmp")};
+        QStringList filters;
 
-        const QFileInfo file{filepath};
+        if(type == Track::Cover::Front) {
+            for(const auto& path : paths.frontCoverPaths) {
+                filters.emplace_back(parser.evaluate(path, track));
+            }
+        }
+        else if(type == Track::Cover::Back) {
+            for(const auto& path : paths.backCoverPaths) {
+                filters.emplace_back(parser.evaluate(path, track));
+            }
+        }
+        else if(type == Track::Cover::Artist) {
+            for(const auto& path : paths.artistPaths) {
+                filters.emplace_back(parser.evaluate(path, track));
+            }
+        }
+
+        const QFileInfo file{track.filepath()};
         const QString basePath = file.isDir() ? file.absoluteFilePath() : file.path();
 
-        const QDir baseDirectory{basePath};
-        const QStringList fileList = baseDirectory.entryList(coverFileTypes, QDir::Files);
+        std::stack<QDir> dirStack;
+        dirStack.emplace(basePath);
 
-        if(!fileList.isEmpty()) {
-            // Use first image found as album cover
-            return baseDirectory.absolutePath() + QStringLiteral("/") + fileList.constFirst();
+        int depth = recurseDepth + 1;
+        while(depth > 0 && !dirStack.empty()) {
+            --depth;
+
+            const QDir currentDir = dirStack.top();
+            dirStack.pop();
+            const QStringList fileList = currentDir.entryList(filters, QDir::Files);
+
+            if(!fileList.isEmpty()) {
+                // Use first image found as album cover
+                return currentDir.absolutePath() + QStringLiteral("/") + fileList.constFirst();
+            }
+
+            const QStringList subDirs = currentDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+            for(const QString& subDir : subDirs) {
+                QDir subDirectory = currentDir;
+                subDirectory.cd(subDir);
+                dirStack.push(subDirectory);
+            }
         }
 
         return {};
@@ -144,7 +194,7 @@ struct CoverProvider::Private
         QPixmap cover;
 
         // Prefer artwork in directory
-        const QString coverPath = coverInDirectory(track.filepath());
+        const QString coverPath = co_await Utils::asyncExec([this, track, type]() { return findCover(track, type); });
         if(!coverPath.isEmpty()) {
             cover.load(coverPath);
         }
@@ -173,9 +223,9 @@ struct CoverProvider::Private
     }
 };
 
-CoverProvider::CoverProvider(QObject* parent)
+CoverProvider::CoverProvider(SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<Private>(this, settings)}
 { }
 
 void CoverProvider::setUsePlaceholder(bool enabled)

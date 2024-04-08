@@ -58,24 +58,18 @@ QString formatDateTime(uint64_t time)
 namespace Fooyin::Mpris {
 MprisPlugin::MprisPlugin()
     : m_registered{false}
-{
-    m_coverProvider.setUsePlaceholder(false);
-    m_coverProvider.setCoverKey(QStringLiteral("MPRISCOVER"));
-
-    QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
-        const auto currentTrack = m_playerController->currentPlaylistTrack();
-        if(track.id() == currentTrack.track.id()) {
-            loadMetaData(currentTrack);
-            notify(QStringLiteral("Metadata"), metadata());
-        }
-    });
-}
+    , m_coverProvider{nullptr}
+{ }
 
 void MprisPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
     m_playlistHandler  = context.playlistHandler;
     m_settings         = context.settingsManager;
+    m_coverProvider    = new CoverProvider(m_settings, this);
+
+    m_coverProvider->setUsePlaceholder(false);
+    m_coverProvider->setCoverKey(QStringLiteral("MPRISCOVER"));
 
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
         notify(QStringLiteral("LoopStatus"), loopStatus());
@@ -94,6 +88,14 @@ void MprisPlugin::initialise(const CorePluginContext& context)
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, this, &MprisPlugin::trackChanged);
     QObject::connect(m_playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t ms) { emit Seeked(static_cast<int64_t>(ms) * 1000); });
+
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
+        const auto currentTrack = m_playerController->currentPlaylistTrack();
+        if(track.id() == currentTrack.track.id()) {
+            loadMetaData(currentTrack);
+            notify(QStringLiteral("Metadata"), metadata());
+        }
+    });
 }
 
 void MprisPlugin::initialise(const GuiPluginContext& context)
@@ -377,7 +379,9 @@ void MprisPlugin::notify(const QString& name, const QVariant& value)
 
 void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 {
-    m_coverProvider.removeFromCache(QStringLiteral("MPRISCOVER"));
+    if(m_coverProvider) {
+        m_coverProvider->removeFromCache(QStringLiteral("MPRISCOVER"));
+    }
     m_currentMetaData.clear();
 
     if(playlistTrack.isValid()) {
@@ -409,13 +413,16 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
         m_currentMetaData[QStringLiteral("xesam:useCount")]    = track.playCount();
     }
 
-    const QPixmap cover = m_coverProvider.trackCover(track, Track::Cover::Front, true);
-    if(cover.isNull()) {
-        return;
-    }
+    if(m_coverProvider) {
+        const QPixmap cover = m_coverProvider->trackCover(track, Track::Cover::Front, true);
+        if(cover.isNull()) {
+            return;
+        }
 
-    static const QString coverPath = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
-    m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
+        static const QString coverPath
+            = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
+        m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
+    }
 }
 } // namespace Fooyin::Mpris
 

@@ -92,5 +92,13 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::WindowTitleTrackScript>(
         QStringLiteral("[%albumartist% - ]$if2(%title%,%filepath%)"),
         QStringLiteral("Interface/WindowTitleTrackScript"));
+    m_settings->createSetting<Internal::TrackCoverPaths>(
+        QVariant::fromValue(Internal::CoverPaths{
+            .frontCoverPaths = {QStringLiteral("folder.*"), QStringLiteral("cover.*"), QStringLiteral("front.*"),
+                                QStringLiteral("%album%.*"), QStringLiteral("%filename%.*")},
+            .backCoverPaths  = {QStringLiteral("back.*")},
+            .artistPaths     = {QStringLiteral("artist.*"), QStringLiteral("%albumartist%.*")}}),
+        QStringLiteral("Artwork/Paths"));
+    m_settings->createSetting<Internal::CoverRecurseDepth>(1, QStringLiteral("Artwork/RecurseDepth"));
 }
 } // namespace Fooyin

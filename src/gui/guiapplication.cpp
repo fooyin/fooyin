@@ -454,7 +454,9 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("ArtworkPanel"),
-            [this]() { return new CoverWidget(playerController, &selectionController, mainWindow.get()); },
+            [this]() {
+                return new CoverWidget(playerController, &selectionController, settingsManager, mainWindow.get());
+            },
             QStringLiteral("Artwork Panel"));
 
         widgetProvider.registerWidget(QStringLiteral("Playlist"), [this]() {

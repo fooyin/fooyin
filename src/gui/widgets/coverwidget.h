@@ -30,6 +30,7 @@ class QTimer;
 namespace Fooyin {
 class CoverProvider;
 class PlayerController;
+class SettingsManager;
 class TrackSelectionController;
 
 class CoverWidget : public FyWidget
@@ -38,7 +39,7 @@ class CoverWidget : public FyWidget
 
 public:
     explicit CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
-                         QWidget* parent = nullptr);
+                         SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

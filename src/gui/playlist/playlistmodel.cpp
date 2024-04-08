@@ -493,7 +493,7 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     : TreeModel{parent}
     , m_library{library}
     , m_settings{settings}
-    , m_coverProvider{new CoverProvider(this)}
+    , m_coverProvider{new CoverProvider(settings, this)}
     , m_resetting{false}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}

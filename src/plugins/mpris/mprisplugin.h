@@ -133,7 +133,7 @@ private:
 
     bool m_registered;
     QVariantMap m_currentMetaData;
-    CoverProvider m_coverProvider;
+    CoverProvider* m_coverProvider;
 };
 } // namespace Mpris
 } // namespace Fooyin

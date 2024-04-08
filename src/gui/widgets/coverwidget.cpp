@@ -35,11 +35,12 @@
 #include <QTimer>
 
 namespace Fooyin {
-CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection, QWidget* parent)
+CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
+                         SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
-    , m_coverProvider{new CoverProvider(this)}
+    , m_coverProvider{new CoverProvider(settings, this)}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{true}
     , m_resizeTimer{new QTimer(this)}

@@ -35,6 +35,13 @@ enum class IconThemeOption
     Dark,
 };
 
+struct CoverPaths
+{
+    QStringList frontCoverPaths;
+    QStringList backCoverPaths;
+    QStringList artistPaths;
+};
+
 enum GuiInternalSettings : uint32_t
 {
     EditingMenuLevels      = 1 | Type::Int,
@@ -75,6 +82,8 @@ enum GuiInternalSettings : uint32_t
     DirBrowserControls     = 36 | Type::Bool,
     DirBrowserLocation     = 37 | Type::Bool,
     WindowTitleTrackScript = 38 | Type::String,
+    TrackCoverPaths        = 39 | Settings::Variant,
+    CoverRecurseDepth      = 40 | Settings::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
