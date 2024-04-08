@@ -121,18 +121,14 @@ struct CoverProvider::Private
     ScriptParser parser;
 
     CoverPaths paths;
-    int recurseDepth{1};
 
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
         , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
-        , recurseDepth{settings->value<Settings::Gui::Internal::CoverRecurseDepth>()}
     {
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
             self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
-        settings->subscribe<Settings::Gui::Internal::CoverRecurseDepth>(
-            self, [this](const int depth) { recurseDepth = depth; });
     }
 
     QString findCover(const Track& track, Track::Cover type)
@@ -159,30 +155,14 @@ struct CoverProvider::Private
             }
         }
 
-        const QFileInfo file{track.filepath()};
-        const QString basePath = file.isDir() ? file.absoluteFilePath() : file.path();
-
-        std::stack<QDir> dirStack;
-        dirStack.emplace(basePath);
-
-        int depth = recurseDepth + 1;
-        while(depth > 0 && !dirStack.empty()) {
-            --depth;
-
-            const QDir currentDir = dirStack.top();
-            dirStack.pop();
-            const QStringList fileList = currentDir.entryList(filters, QDir::Files);
+        for(const auto& filter : filters) {
+            const QFileInfo fileInfo{QDir::cleanPath(filter)};
+            const QDir filePath{fileInfo.path()};
+            const QString filePattern  = fileInfo.fileName();
+            const QStringList fileList = filePath.entryList({filePattern}, QDir::Files);
 
             if(!fileList.isEmpty()) {
-                // Use first image found as album cover
-                return currentDir.absolutePath() + QStringLiteral("/") + fileList.constFirst();
-            }
-
-            const QStringList subDirs = currentDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-            for(const QString& subDir : subDirs) {
-                QDir subDirectory = currentDir;
-                subDirectory.cd(subDir);
-                dirStack.push(subDirectory);
+                return filePath.absolutePath() + QStringLiteral("/") + fileList.constFirst();
             }
         }
 

@@ -83,7 +83,6 @@ enum GuiInternalSettings : uint32_t
     DirBrowserLocation     = 37 | Type::Bool,
     WindowTitleTrackScript = 38 | Type::String,
     TrackCoverPaths        = 39 | Settings::Variant,
-    CoverRecurseDepth      = 40 | Settings::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
