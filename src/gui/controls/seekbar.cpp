@@ -350,6 +350,7 @@ struct SeekBar::Private
                 break;
             }
             case(PlayState::Playing): {
+                trackChanged(playerController->currentTrack());
                 slider->setEnabled(true);
                 break;
             }
@@ -400,8 +401,9 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
 
     QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
-                     [this](const Track& track) { p->trackChanged(track); });
+    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
+        p->trackChanged(track);
+    });
     QObject::connect(p->playerController, &PlayerController::positionChanged, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
     QObject::connect(p->playerController, &PlayerController::positionMoved, this,
