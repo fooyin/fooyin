@@ -45,6 +45,7 @@
 #include "playlist/playlistwidget.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
+#include "settings/artworkpage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/enginepage.h"
 #include "settings/generalpage.h"
@@ -131,6 +132,7 @@ struct GuiApplication::Private
 
     GeneralPage generalPage;
     GuiGeneralPage guiGeneralPage;
+    ArtworkPage artworkPage;
     LibraryGeneralPage libraryGeneralPage;
     LibrarySortingPage librarySortingPage;
     ShortcutsPage shortcutsPage;
@@ -178,6 +180,7 @@ struct GuiApplication::Private
         , windowController{new WindowController(mainWindow.get())}
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
+        , artworkPage{settingsManager}
         , libraryGeneralPage{actionManager, libraryManager, settingsManager}
         , librarySortingPage{actionManager, settingsManager}
         , shortcutsPage{actionManager, settingsManager}

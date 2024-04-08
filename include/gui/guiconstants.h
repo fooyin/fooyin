@@ -142,6 +142,7 @@ namespace Page {
 constexpr auto GeneralCore           = "Fooyin.Page.General.Core";
 constexpr auto Engine                = "Fooyin.Page.Engine";
 constexpr auto InterfaceGeneral      = "Fooyin.Page.Interface.General";
+constexpr auto Artwork               = "Fooyin.Page.Interface.Artwork";
 constexpr auto LibraryGeneral        = "Fooyin.Page.Library.General";
 constexpr auto LibrarySorting        = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral       = "Fooyin.Page.Playlist.General";

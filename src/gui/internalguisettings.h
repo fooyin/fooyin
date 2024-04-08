@@ -35,13 +35,6 @@ enum class IconThemeOption
     Dark,
 };
 
-struct CoverPaths
-{
-    QStringList frontCoverPaths;
-    QStringList backCoverPaths;
-    QStringList artistPaths;
-};
-
 enum GuiInternalSettings : uint32_t
 {
     EditingMenuLevels      = 1 | Type::Int,
@@ -90,9 +83,34 @@ Q_ENUM_NS(GuiInternalSettings)
 class GuiSettings
 {
 public:
+    struct CoverPaths
+    {
+        QStringList frontCoverPaths;
+        QStringList backCoverPaths;
+        QStringList artistPaths;
+
+        friend QDataStream& operator<<(QDataStream& stream, const CoverPaths& paths)
+        {
+            stream << paths.frontCoverPaths;
+            stream << paths.backCoverPaths;
+            stream << paths.artistPaths;
+            return stream;
+        }
+
+        friend QDataStream& operator>>(QDataStream& stream, CoverPaths& paths)
+        {
+            stream >> paths.frontCoverPaths;
+            stream >> paths.backCoverPaths;
+            stream >> paths.artistPaths;
+            return stream;
+        }
+    };
+
     explicit GuiSettings(SettingsManager* settingsManager);
 
 private:
     SettingsManager* m_settings;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::GuiSettings::CoverPaths)

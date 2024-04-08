@@ -142,6 +142,8 @@ set(SOURCES
     search/searchcontroller.h
     search/searchwidget.cpp
     search/searchwidget.h
+    settings/artworkpage.cpp
+    settings/artworkpage.h
     settings/enginepage.cpp
     settings/enginepage.h
     settings/generalpage.cpp

@@ -107,8 +107,6 @@ QPixmap loadCachedCover(const QString& key)
 } // namespace
 
 namespace Fooyin {
-using Settings::Gui::Internal::CoverPaths;
-
 struct CoverProvider::Private
 {
     CoverProvider* self;
@@ -120,15 +118,15 @@ struct CoverProvider::Private
     std::set<QString> pendingCovers;
     ScriptParser parser;
 
-    CoverPaths paths;
+    GuiSettings::CoverPaths paths;
 
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
-        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
+        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<GuiSettings::CoverPaths>()}
     {
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
-            self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
+            self, [this](const QVariant& var) { paths = var.value<GuiSettings::CoverPaths>(); });
     }
 
     QString findCover(const Track& track, Track::Cover type)

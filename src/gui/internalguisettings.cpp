@@ -27,11 +27,27 @@
 #include <QIcon>
 #include <QPalette>
 
+namespace {
+Fooyin::GuiSettings::CoverPaths defaultCoverPaths()
+{
+    Fooyin::GuiSettings::CoverPaths paths;
+
+    paths.frontCoverPaths = {QStringLiteral("%path%/folder.*"), QStringLiteral("%path%/cover.*"),
+                             QStringLiteral("%path%/front.*"), QStringLiteral("%path%/../Artwork/folder.*")};
+    paths.backCoverPaths  = {QStringLiteral("%path%/back.*")};
+    paths.artistPaths     = {QStringLiteral("%path%/artist.*"), QStringLiteral("%path%/%albumartist%.*")};
+
+    return paths;
+}
+} // namespace
+
 namespace Fooyin {
 GuiSettings::GuiSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
     using namespace Settings::Gui;
+
+    qRegisterMetaType<CoverPaths>("CoverPaths");
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<StartupBehaviour>(2, QStringLiteral("Interface/StartupBehaviour"));
@@ -92,12 +108,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::WindowTitleTrackScript>(
         QStringLiteral("[%albumartist% - ]$if2(%title%,%filepath%)"),
         QStringLiteral("Interface/WindowTitleTrackScript"));
-    m_settings->createSetting<Internal::TrackCoverPaths>(
-        QVariant::fromValue(Internal::CoverPaths{
-            .frontCoverPaths = {QStringLiteral("%path%/folder.*"), QStringLiteral("%path%/cover.*"),
-                                QStringLiteral("%path%/front.*"), QStringLiteral("%path%/%album%.*")},
-            .backCoverPaths  = {QStringLiteral("%path%/back.*")},
-            .artistPaths     = {QStringLiteral("%path%/artist.*"), QStringLiteral("%path%/%albumartist%.*")}}),
-        QStringLiteral("Artwork/Paths"));
+    m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()),
+                                                         QStringLiteral("Artwork/Paths"));
 }
 } // namespace Fooyin
