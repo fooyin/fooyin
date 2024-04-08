@@ -331,9 +331,7 @@ struct SeekBar::Private
             total->setText(QStringLiteral("-") + Utils::msToString(remaining < 0 ? 0 : remaining));
         }
         else {
-            if(!slider->isEnabled()) {
-                total->setText(Utils::msToString(max));
-            }
+            total->setText(Utils::msToString(max));
         }
     }
 
