@@ -119,8 +119,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* coverGroup = new QActionGroup(menu);
 
-    auto* frontCover  = new QAction(tr("Font"), coverGroup);
-    auto* backCover   = new QAction(tr("Back"), coverGroup);
+    auto* frontCover  = new QAction(tr("Front Cover"), coverGroup);
+    auto* backCover   = new QAction(tr("Back Cover"), coverGroup);
     auto* artistCover = new QAction(tr("Artist"), coverGroup);
 
     frontCover->setCheckable(true);
