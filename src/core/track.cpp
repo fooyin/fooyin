@@ -218,6 +218,11 @@ QString Track::filename() const
     return p->filename;
 }
 
+QString Track::path() const
+{
+    return QFileInfo{p->filepath}.absolutePath();
+}
+
 QString Track::extension() const
 {
     return p->extension;

@@ -50,5 +50,6 @@ constexpr auto FilePath     = "filepath";
 constexpr auto RelativePath = "relativepath";
 constexpr auto FileName     = "filename";
 constexpr auto Extension    = "extension";
+constexpr auto Path         = "path";
 } // namespace MetaData
 } // namespace Fooyin::Constants
