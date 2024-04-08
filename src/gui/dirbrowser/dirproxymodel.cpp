@@ -142,7 +142,7 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         sourcePath = QSortFilterProxyModel::data(proxyIndex, QFileSystemModel::FilePathRole).toString();
     }
 
-    if(!m_playingTrackPath.isEmpty() && sourcePath == m_playingTrackPath) {
+    if(m_playingState != PlayState::Stopped && !m_playingTrackPath.isEmpty() && sourcePath == m_playingTrackPath) {
         if(role == Qt::BackgroundRole) {
             return m_playingColour;
         }
@@ -291,10 +291,6 @@ void DirProxyModel::setIconsEnabled(bool enabled)
 void DirProxyModel::setPlayState(PlayState state)
 {
     m_playingState = state;
-
-    if(state == PlayState::Stopped) {
-        m_playingTrackPath.clear();
-    }
 
     emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
