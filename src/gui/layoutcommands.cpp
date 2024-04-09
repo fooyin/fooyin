@@ -158,11 +158,17 @@ void SplitWidgetCommand::undo()
     checkContainer();
 
     if(m_container && !m_splitWidget.empty()) {
-        if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
-            m_container->replaceWidget(m_index, splitWidget);
+        m_container->removeWidget(m_index);
 
-            m_container->restoreState(m_containerState);
-        }
+        QMetaObject::invokeMethod(
+            m_container,
+            [this]() {
+                if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
+                    m_container->insertWidget(m_index, splitWidget);
+                    m_container->restoreState(m_containerState);
+                }
+            },
+            Qt::QueuedConnection);
     }
 }
 
