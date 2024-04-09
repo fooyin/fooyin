@@ -327,15 +327,6 @@ struct EditableLayout::Private
             currentWidget->layoutEditingMenu(menu);
 
             auto* parent = qobject_cast<WidgetContainer*>(currentWidget->findParent());
-            if(parent && parent != root) {
-                auto* moveMenu = new QMenu(tr("&Move"), menu);
-                moveMenu->setEnabled(setupMoveWidgetMenu(moveMenu, parent, currentWidget));
-                menu->addMenu(moveMenu);
-
-                auto* splitMenu = new QMenu(tr("&Split"), menu);
-                widgetProvider->setupSplitWidgetMenu(self, splitMenu, parent, currentWidget->id());
-                menu->addMenu(splitMenu);
-            }
 
             setupAddWidgetMenu(menu, parent, prevWidget, currentWidget);
 
@@ -343,6 +334,12 @@ struct EditableLayout::Private
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
                 widgetProvider->setupReplaceWidgetMenu(self, changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
+
+                if(parent && parent != root) {
+                    auto* splitMenu = new QMenu(tr("&Split"), menu);
+                    widgetProvider->setupSplitWidgetMenu(self, splitMenu, parent, currentWidget->id());
+                    menu->addMenu(splitMenu);
+                }
 
                 auto* copy = new QAction(tr("Copy"), menu);
                 copy->setEnabled(widgetProvider->canCreateWidget(currentWidget->layoutName()));
@@ -363,6 +360,12 @@ struct EditableLayout::Private
                         new ReplaceWidgetCommand(self, widgetProvider, parent, widgetClipboard, currentWidget->id()));
                 });
                 menu->addAction(paste);
+            }
+
+            if(parent && parent != root) {
+                auto* moveMenu = new QMenu(tr("&Move"), menu);
+                moveMenu->setEnabled(setupMoveWidgetMenu(moveMenu, parent, currentWidget));
+                menu->addMenu(moveMenu);
             }
 
             if(!isDummy || parent->widgetCount() > 1) {
