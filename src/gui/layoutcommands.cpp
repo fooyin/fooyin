@@ -116,6 +116,7 @@ void ReplaceWidgetCommand::undo()
     if(m_container && !m_oldWidget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
             m_container->replaceWidget(m_index, widget);
+            widget->finalise();
 
             m_container->restoreState(m_containerState);
         }
@@ -165,6 +166,7 @@ void SplitWidgetCommand::undo()
             [this]() {
                 if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
                     m_container->insertWidget(m_index, splitWidget);
+                    splitWidget->finalise();
                     m_container->restoreState(m_containerState);
                 }
             },
@@ -187,6 +189,7 @@ void SplitWidgetCommand::redo()
                     [this, widgetContainer]() {
                         if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
                             widgetContainer->insertWidget(0, splitWidget);
+                            splitWidget->finalise();
                         }
                     },
                     Qt::QueuedConnection);
