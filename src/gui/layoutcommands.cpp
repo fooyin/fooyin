@@ -176,9 +176,14 @@ void SplitWidgetCommand::redo()
             widget->finalise();
 
             if(auto* widgetContainer = qobject_cast<WidgetContainer*>(widget)) {
-                if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
-                    widgetContainer->insertWidget(0, splitWidget);
-                }
+                QMetaObject::invokeMethod(
+                    widgetContainer,
+                    [this, widgetContainer]() {
+                        if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
+                            widgetContainer->insertWidget(0, splitWidget);
+                        }
+                    },
+                    Qt::QueuedConnection);
             }
         }
     }
