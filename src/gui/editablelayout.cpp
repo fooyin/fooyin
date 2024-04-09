@@ -243,7 +243,7 @@ struct EditableLayout::Private
         if(auto* container = qobject_cast<WidgetContainer*>(current)) {
             auto* addMenu = new QMenu(tr("&Insert"), menu);
             addMenu->setEnabled(container->canAddWidget());
-            const int insertIndex = container->widgetIndex(prev->id()) + 1;
+            const int insertIndex = current == prev ? container->widgetCount() : container->widgetIndex(prev->id()) + 1;
             widgetProvider->setupAddWidgetMenu(self, addMenu, container, insertIndex);
             menu->addMenu(addMenu);
         }
