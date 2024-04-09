@@ -91,6 +91,13 @@ public:
      * @param widgetId the widget to replace
      */
     void setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, const Id& widgetId);
+    /*!
+     * Fills the passed @p menu with actions to split a widget.
+     * @param menu the menu to add actions to.
+     * @param container the container in which widgets will be replaced.
+     * @param widgetId the widget to replace
+     */
+    void setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, const Id& widgetId);
 
 private:
     struct Private;

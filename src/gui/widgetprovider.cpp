@@ -60,7 +60,7 @@ struct WidgetProvider::Private
     }
 
     template <typename Func>
-    void setupWidgetMenu(QMenu* menu, Func&& func)
+    void setupWidgetMenu(QMenu* menu, Func&& func, const QString& singleMenu = {})
     {
         if(!menu->isEmpty()) {
             return;
@@ -74,21 +74,32 @@ struct WidgetProvider::Private
             }
 
             auto* parentMenu = menu;
+            bool canInclude{false};
 
-            for(const auto& subMenu : widget.subMenus) {
-                if(!menuCache.contains(subMenu)) {
-                    auto* childMenu = new QMenu(subMenu, menu);
-                    menuCache.emplace(subMenu, childMenu);
-                    parentMenu->addMenu(childMenu);
+            if(!singleMenu.isEmpty()) {
+                if(widget.subMenus.contains(singleMenu)) {
+                    canInclude = true;
                 }
-                parentMenu = menuCache.at(subMenu);
+            }
+            else {
+                canInclude = true;
+                for(const auto& subMenu : widget.subMenus) {
+                    if(!menuCache.contains(subMenu)) {
+                        auto* childMenu = new QMenu(subMenu, menu);
+                        menuCache.emplace(subMenu, childMenu);
+                        parentMenu->addMenu(childMenu);
+                    }
+                    parentMenu = menuCache.at(subMenu);
+                }
             }
 
-            auto* addWidgetAction = new QAction(widget.name, parentMenu);
-            addWidgetAction->setEnabled(canCreateWidget(key));
-            QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, key] { func(key); });
+            if(canInclude) {
+                auto* addWidgetAction = new QAction(widget.name, parentMenu);
+                addWidgetAction->setEnabled(canCreateWidget(key));
+                QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, key] { func(key); });
 
-            parentMenu->addAction(addWidgetAction);
+                parentMenu->addAction(addWidgetAction);
+            }
         }
     }
 };
@@ -202,5 +213,19 @@ void WidgetProvider::setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu,
     p->setupWidgetMenu(menu, [this, layout, container, widgetId](const QString& key) {
         p->layoutCommands->push(new ReplaceWidgetCommand(layout, this, container, key, widgetId));
     });
+}
+
+void WidgetProvider::setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container,
+                                          const Id& widgetId)
+{
+    if(!p->layoutCommands) {
+        return;
+    }
+
+    p->setupWidgetMenu(menu,
+                       [this, layout, container, widgetId](const QString& key) {
+                           p->layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
+                       },
+                       {QStringLiteral("Splitters")});
 }
 } // namespace Fooyin

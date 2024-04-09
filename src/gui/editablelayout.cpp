@@ -331,6 +331,10 @@ struct EditableLayout::Private
                 auto* moveMenu = new QMenu(tr("&Move"), menu);
                 moveMenu->setEnabled(setupMoveWidgetMenu(moveMenu, parent, currentWidget));
                 menu->addMenu(moveMenu);
+
+                auto* splitMenu = new QMenu(tr("&Split"), menu);
+                widgetProvider->setupSplitWidgetMenu(self, splitMenu, parent, currentWidget->id());
+                menu->addMenu(splitMenu);
             }
 
             setupAddWidgetMenu(menu, parent, prevWidget, currentWidget);

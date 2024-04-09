@@ -80,6 +80,21 @@ private:
     int m_index;
 };
 
+class SplitWidgetCommand : public LayoutChangeCommand
+{
+public:
+    SplitWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QString key,
+                       const Id& widgetToSplit);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    QString m_key;
+    QJsonObject m_splitWidget;
+    int m_index;
+};
+
 class RemoveWidgetCommand : public LayoutChangeCommand
 {
 public:
@@ -90,8 +105,8 @@ public:
     void redo() override;
 
 private:
-    QJsonObject m_widget;
     int m_index;
+    QJsonObject m_widget;
 };
 
 class MoveWidgetCommand : public LayoutChangeCommand

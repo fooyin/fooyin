@@ -142,6 +142,48 @@ void ReplaceWidgetCommand::redo()
     }
 }
 
+SplitWidgetCommand::SplitWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
+                                       QString key, const Id& widgetToSplit)
+    : LayoutChangeCommand{layout, provider, container}
+    , m_key{std::move(key)}
+    , m_index{m_container->widgetIndex(widgetToSplit)}
+{
+    if(auto* splitWidget = m_container->widgetAtIndex(m_index)) {
+        m_splitWidget = EditableLayout::saveWidget(splitWidget);
+    }
+}
+
+void SplitWidgetCommand::undo()
+{
+    checkContainer();
+
+    if(m_container && !m_splitWidget.empty()) {
+        if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
+            m_container->replaceWidget(m_index, splitWidget);
+
+            m_container->restoreState(m_containerState);
+        }
+    }
+}
+
+void SplitWidgetCommand::redo()
+{
+    if(!m_key.isEmpty()) {
+        if(auto* widget = m_provider->createWidget(m_key)) {
+            m_containerState = m_container->saveState();
+
+            m_container->replaceWidget(m_index, widget);
+            widget->finalise();
+
+            if(auto* widgetContainer = qobject_cast<WidgetContainer*>(widget)) {
+                if(auto* splitWidget = EditableLayout::loadWidget(m_provider, m_splitWidget)) {
+                    widgetContainer->insertWidget(0, splitWidget);
+                }
+            }
+        }
+    }
+}
+
 RemoveWidgetCommand::RemoveWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
                                          const Id& widgetId)
     : LayoutChangeCommand{layout, provider, container}
