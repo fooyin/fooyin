@@ -81,8 +81,9 @@ public:
      * Fills the passed @p menu with actions to create a new instance of each registered widget.
      * @param menu the menu to add actions to.
      * @param container the container in which widgets will be added.
+     * @param index the index to insert at.
      */
-    void setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container);
+    void setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, int index);
     /*!
      * Fills the passed @p menu with actions to replace a widget with an instance of another registered widget.
      * @param menu the menu to add actions to.

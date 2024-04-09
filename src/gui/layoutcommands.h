@@ -48,8 +48,10 @@ protected:
 class AddWidgetCommand : public LayoutChangeCommand
 {
 public:
-    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QString key);
-    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QJsonObject widget);
+    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QString key,
+                     int index);
+    AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container, QJsonObject widget,
+                     int index);
 
     void undo() override;
     void redo() override;

@@ -238,16 +238,17 @@ struct EditableLayout::Private
         overlay->hide();
     }
 
-    void setupAddWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* current) const
+    void setupAddWidgetMenu(QMenu* menu, WidgetContainer* parent, FyWidget* prev, FyWidget* current) const
     {
         if(auto* container = qobject_cast<WidgetContainer*>(current)) {
-            auto* addMenu = new QMenu(tr("&Add"), menu);
+            auto* addMenu = new QMenu(tr("&Insert"), menu);
             addMenu->setEnabled(container->canAddWidget());
-            widgetProvider->setupAddWidgetMenu(self, addMenu, container);
+            const int insertIndex = container->widgetIndex(prev->id()) + 1;
+            widgetProvider->setupAddWidgetMenu(self, addMenu, container, insertIndex);
             menu->addMenu(addMenu);
         }
         else if(qobject_cast<Dummy*>(current)) {
-            auto* addMenu = new QMenu(tr("&Add"), menu);
+            auto* addMenu = new QMenu(tr("&Insert"), menu);
             addMenu->setEnabled(parent->canAddWidget());
             widgetProvider->setupReplaceWidgetMenu(self, addMenu, parent, current->id());
             menu->addMenu(addMenu);
@@ -301,15 +302,17 @@ struct EditableLayout::Private
             return;
         }
 
+        FyWidget* prevWidget    = widget;
         FyWidget* currentWidget = widget;
         int level               = settings->value<Settings::Gui::Internal::EditingMenuLevels>();
 
-        auto addPasteAction = [this, menu](FyWidget* containerWidget) {
+        auto addPasteAction = [this, menu](FyWidget* containerWidget, int insertIndex) {
             if(auto* container = qobject_cast<WidgetContainer*>(containerWidget)) {
                 if(container->canAddWidget()) {
                     auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
-                    QObject::connect(pasteInsert, &QAction::triggered, container, [this, container] {
-                        layoutHistory->push(new AddWidgetCommand(self, widgetProvider, container, widgetClipboard));
+                    QObject::connect(pasteInsert, &QAction::triggered, container, [this, container, insertIndex] {
+                        layoutHistory->push(
+                            new AddWidgetCommand(self, widgetProvider, container, widgetClipboard, insertIndex));
                     });
                     menu->addAction(pasteInsert);
                 }
@@ -330,7 +333,7 @@ struct EditableLayout::Private
                 menu->addMenu(moveMenu);
             }
 
-            setupAddWidgetMenu(menu, parent, currentWidget);
+            setupAddWidgetMenu(menu, parent, prevWidget, currentWidget);
 
             if(!isDummy) {
                 auto* changeMenu = new QMenu(tr("&Replace"), menu);
@@ -346,8 +349,8 @@ struct EditableLayout::Private
             }
 
             if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
-                if(!isDummy) {
-                    addPasteAction(currentWidget);
+                if(parent && !isDummy) {
+                    addPasteAction(currentWidget, parent->widgetIndex(currentWidget->id()));
                 }
 
                 auto* paste = new QAction(tr("Paste (Replace)"), menu);
@@ -366,6 +369,7 @@ struct EditableLayout::Private
                 menu->addAction(remove);
             }
 
+            prevWidget    = currentWidget;
             currentWidget = parent;
             --level;
         }

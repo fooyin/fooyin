@@ -43,17 +43,17 @@ void LayoutChangeCommand::checkContainer()
 }
 
 AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
-                                   QString key)
+                                   QString key, int index)
     : LayoutChangeCommand{layout, provider, container}
     , m_key{std::move(key)}
-    , m_index{-1}
+    , m_index{index}
 { }
 
 AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
-                                   QJsonObject widget)
+                                   QJsonObject widget, int index)
     : LayoutChangeCommand{layout, provider, container}
     , m_widget{std::move(widget)}
-    , m_index{-1}
+    , m_index{index}
 { }
 
 void AddWidgetCommand::undo()
@@ -71,7 +71,7 @@ void AddWidgetCommand::redo()
 {
     if(!m_widget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
-            m_index = m_container->addWidget(widget);
+            m_container->insertWidget(m_index, widget);
             widget->finalise();
 
             m_container->restoreState(m_containerState);
@@ -79,7 +79,7 @@ void AddWidgetCommand::redo()
     }
     else if(!m_key.isEmpty()) {
         if(auto* widget = m_provider->createWidget(m_key)) {
-            m_index = m_container->addWidget(widget);
+            m_container->insertWidget(m_index, widget);
             widget->finalise();
 
             m_container->restoreState(m_containerState);

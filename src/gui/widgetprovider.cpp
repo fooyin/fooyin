@@ -181,14 +181,14 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     return newWidget;
 }
 
-void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container)
+void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, int index)
 {
     if(!p->layoutCommands) {
         return;
     }
 
-    p->setupWidgetMenu(menu, [this, layout, container](const QString& key) {
-        p->layoutCommands->push(new AddWidgetCommand(layout, this, container, key));
+    p->setupWidgetMenu(menu, [this, layout, container, index](const QString& key) {
+        p->layoutCommands->push(new AddWidgetCommand(layout, this, container, key, index));
     });
 }
 
