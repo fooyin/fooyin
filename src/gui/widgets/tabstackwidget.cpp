@@ -226,6 +226,7 @@ void TabStackWidget::replaceWidget(int index, FyWidget* newWidget)
     m_tabs->removeTab(index);
     m_tabs->insertTab(index, newWidget, newWidget->name());
 
+    m_widgets.at(index)->deleteLater();
     m_widgets.erase(m_widgets.begin() + index);
     m_widgets.insert(m_widgets.begin() + index, newWidget);
 
