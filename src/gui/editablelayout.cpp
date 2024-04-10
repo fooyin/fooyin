@@ -296,6 +296,22 @@ struct EditableLayout::Private
         return moveLeft->isEnabled() || moveRight->isEnabled() || moveFarLeft->isEnabled() || moveFarRight->isEnabled();
     }
 
+    void setupPasteAction(QMenu* menu, FyWidget* prev, FyWidget* current)
+    {
+        if(auto* container = qobject_cast<WidgetContainer*>(current)) {
+            if(container->canAddWidget()) {
+                auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
+                const int insertIndex
+                    = current == prev ? container->widgetCount() : container->widgetIndex(prev->id()) + 1;
+                QObject::connect(pasteInsert, &QAction::triggered, container, [this, container, insertIndex] {
+                    layoutHistory->push(
+                        new AddWidgetCommand(self, widgetProvider, container, widgetClipboard, insertIndex));
+                });
+                menu->addAction(pasteInsert);
+            }
+        }
+    }
+
     void setupContextMenu(FyWidget* widget, QMenu* menu)
     {
         if(!widget || !menu) {
@@ -305,19 +321,6 @@ struct EditableLayout::Private
         FyWidget* prevWidget    = widget;
         FyWidget* currentWidget = widget;
         int level               = settings->value<Settings::Gui::Internal::EditingMenuLevels>();
-
-        auto addPasteAction = [this, menu](FyWidget* containerWidget, int insertIndex) {
-            if(auto* container = qobject_cast<WidgetContainer*>(containerWidget)) {
-                if(container->canAddWidget()) {
-                    auto* pasteInsert = new QAction(tr("Paste (Insert)"), menu);
-                    QObject::connect(pasteInsert, &QAction::triggered, container, [this, container, insertIndex] {
-                        layoutHistory->push(
-                            new AddWidgetCommand(self, widgetProvider, container, widgetClipboard, insertIndex));
-                    });
-                    menu->addAction(pasteInsert);
-                }
-            }
-        };
 
         while(level > 0 && currentWidget && currentWidget != root) {
             const bool isDummy = qobject_cast<Dummy*>(currentWidget);
@@ -351,7 +354,7 @@ struct EditableLayout::Private
 
             if(!widgetClipboard.isEmpty() && widgetProvider->canCreateWidget(widgetClipboard.constBegin().key())) {
                 if(parent && !isDummy) {
-                    addPasteAction(currentWidget, parent->widgetIndex(currentWidget->id()));
+                    setupPasteAction(menu, prevWidget, currentWidget);
                 }
 
                 auto* paste = new QAction(tr("Paste (Replace)"), menu);
