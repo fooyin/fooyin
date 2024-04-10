@@ -41,7 +41,7 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
     m_bufferSize      = frames * format.bytesPerFrame();
 
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
-    pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", frames, format.sampleRate());
+    // pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", frames, format.sampleRate());
 
     if(!device.isEmpty()) {
         pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
