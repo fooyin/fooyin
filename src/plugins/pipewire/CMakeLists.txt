@@ -9,5 +9,17 @@ create_fooyin_plugin_internal(
     DEPENDS Fooyin::Core
             PipeWire::PipeWire
     SOURCES pipewireplugin.cpp
+            pipewireplugin.h
             pipewireoutput.cpp
+            pipewireoutput.h
+            pipewirecontext.cpp
+            pipewirecontext.h
+            pipewirecore.cpp
+            pipewirecore.h
+            pipewireregistry.cpp
+            pipewireregistry.h
+            pipewirestream.cpp
+            pipewirestream.h
+            pipewirethreadloop.cpp
+            pipewirethreadloop.h
 )
