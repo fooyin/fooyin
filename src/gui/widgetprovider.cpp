@@ -142,11 +142,6 @@ void WidgetProvider::setSubMenus(const QString& key, const QStringList& subMenus
     p->widgets.at(key).subMenus = subMenus;
 }
 
-bool WidgetProvider::canCreateWidget(const QString& key) const
-{
-    return p->canCreateWidget(key);
-}
-
 void WidgetProvider::setLimit(const QString& key, int limit)
 {
     if(!p->widgets.contains(key)) {
@@ -165,6 +160,16 @@ void WidgetProvider::setIsHidden(const QString& key, bool hidden)
     }
 
     p->widgets.at(key).isHidden = hidden;
+}
+
+bool WidgetProvider::widgetExists(const QString& key) const
+{
+    return p->widgets.contains(key);
+}
+
+bool WidgetProvider::canCreateWidget(const QString& key) const
+{
+    return p->canCreateWidget(key);
 }
 
 FyWidget* WidgetProvider::createWidget(const QString& key)

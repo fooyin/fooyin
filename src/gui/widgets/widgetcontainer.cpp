@@ -66,7 +66,7 @@ void WidgetContainer::loadWidgets(const QJsonArray& widgets)
 
         bool currentIsMissing{false};
         FyWidget* childWidget{nullptr};
-        if(!m_widgetProvider->canCreateWidget(widgetName)) {
+        if(!m_widgetProvider->widgetExists(widgetName)) {
             currentIsMissing = true;
             childWidget      = new Dummy(widgetName, m_settings, this);
         }

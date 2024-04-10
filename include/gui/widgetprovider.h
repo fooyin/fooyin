@@ -68,6 +68,8 @@ public:
     /** Sets whether the widget at @p key is shown in layout editing menus. */
     void setIsHidden(const QString& key, bool hidden);
 
+    /** Returns @c true if the widget at @p key exists. */
+    [[nodiscard]] bool widgetExists(const QString& key) const;
     /** Returns @c true if an instance can be created of the widget at @p key. */
     [[nodiscard]] bool canCreateWidget(const QString& key) const;
 

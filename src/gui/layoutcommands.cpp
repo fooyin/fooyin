@@ -114,24 +114,37 @@ void ReplaceWidgetCommand::undo()
     checkContainer();
 
     if(m_container && !m_oldWidget.empty()) {
-        if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
-            m_container->replaceWidget(m_index, widget);
-            widget->finalise();
+        m_container->removeWidget(m_index);
 
-            m_container->restoreState(m_containerState);
-        }
+        QMetaObject::invokeMethod(
+            m_container,
+            [this]() {
+                if(auto* widget = EditableLayout::loadWidget(m_provider, m_oldWidget)) {
+                    m_container->insertWidget(m_index, widget);
+                    widget->finalise();
+                    m_container->restoreState(m_containerState);
+                }
+            },
+            Qt::QueuedConnection);
     }
 }
 
 void ReplaceWidgetCommand::redo()
 {
     if(!m_widget.empty()) {
-        if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
-            m_containerState = m_container->saveState();
+        m_containerState = m_container->saveState();
 
-            m_container->replaceWidget(m_index, widget);
-            widget->finalise();
-        }
+        m_container->removeWidget(m_index);
+
+        QMetaObject::invokeMethod(
+            m_container,
+            [this]() {
+                if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
+                    m_container->insertWidget(m_index, widget);
+                    widget->finalise();
+                }
+            },
+            Qt::QueuedConnection);
     }
     else if(!m_key.isEmpty()) {
         if(auto* widget = m_provider->createWidget(m_key)) {
