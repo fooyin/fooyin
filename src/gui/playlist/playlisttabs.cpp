@@ -76,10 +76,6 @@ struct PlaylistTabs::Private
 
         tabs->setMovable(true);
         tabs->setExpanding(false);
-
-        if(settings->value<Settings::Gui::Internal::PlaylistTabsHide>()) {
-            tabs->hide();
-        }
     }
 
     void tabChanged(int index)
@@ -150,9 +146,6 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRenamed, this,
                      [this](const Playlist* playlist) { p->playlistRenamed(playlist); });
-
-    p->settings->subscribe<Settings::Gui::Internal::PlaylistTabsHide>(
-        this, [this](bool hide) { p->tabs->setVisible(!hide); });
 }
 
 PlaylistTabs::~PlaylistTabs() = default;
@@ -181,14 +174,10 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
 
 void PlaylistTabs::removePlaylist(const Playlist* playlist)
 {
-    for(int i = 0; i < p->tabs->count(); ++i) {
+    for(int i{0}; i < p->tabs->count(); ++i) {
         if(p->tabs->tabData(i).value<Id>() == playlist->id()) {
             p->tabs->removeTab(i);
         }
-    }
-
-    if(p->settings->value<Settings::Gui::Internal::PlaylistTabsHide>() && p->tabs->count() < 2) {
-        p->tabs->hide();
     }
 }
 
@@ -204,10 +193,6 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
     }
 
     const int index = p->tabs->addTab(icon, name);
-
-    if(p->settings->value<Settings::Gui::Internal::PlaylistTabsHide>() && p->tabs->count() > 1) {
-        p->tabs->show();
-    }
 
     return index;
 }

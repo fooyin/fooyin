@@ -51,7 +51,6 @@ private:
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_rememberPlaylistState;
-    QCheckBox* m_hideSinglePlaylistTab;
 
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
@@ -65,7 +64,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_rememberPlaylistState{new QCheckBox(tr("Remember playlist state"), this)}
-    , m_hideSinglePlaylistTab{new QCheckBox(tr("Hide single playlist tab"), this)}
     , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show Header"), this)}
     , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
@@ -101,17 +99,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     appearanceLayout->setColumnStretch(2, 1);
     appearanceLayout->setRowStretch(5, 1);
 
-    auto* playlistTabs       = new QGroupBox(tr("Playlist Tabs"), this);
-    auto* playlistTabsLayout = new QGridLayout(playlistTabs);
-
-    playlistTabsLayout->addWidget(m_hideSinglePlaylistTab, 0, 0);
-
     layout->addWidget(behaviour, 0, 0);
-    layout->addWidget(appearance, 0, 1);
-    layout->addWidget(playlistTabs, 1, 0);
+    layout->addWidget(appearance, 1, 0);
 
-    layout->setColumnStretch(0, 1);
-    layout->setColumnStretch(1, 1);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
@@ -126,8 +116,6 @@ void PlaylistGeneralPageWidget::load()
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
     m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
-
-    m_hideSinglePlaylistTab->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsHide>());
 }
 
 void PlaylistGeneralPageWidget::apply()
@@ -141,8 +129,6 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
-
-    m_settings->set<Settings::Gui::Internal::PlaylistTabsHide>(m_hideSinglePlaylistTab->isChecked());
 }
 
 void PlaylistGeneralPageWidget::reset()
@@ -156,8 +142,6 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
     m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
-
-    m_settings->reset<Settings::Gui::Internal::PlaylistTabsHide>();
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)

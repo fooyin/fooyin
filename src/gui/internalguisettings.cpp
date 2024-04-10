@@ -66,7 +66,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
     m_settings->createSetting<Internal::PlaylistCurrentPreset>(0, QStringLiteral("PlaylistWidget/CurrentPreset"));
     m_settings->createSetting<Internal::PlaylistThumbnailSize>(60, QStringLiteral("PlaylistWidget/ThumbnailSize"));
-    m_settings->createSetting<Internal::PlaylistTabsHide>(false, QStringLiteral("PlaylistTabs/HideSingleTab"));
     m_settings->createSetting<Internal::InfoAltColours>(true, QStringLiteral("InfoPanel/AlternatingColours"));
     m_settings->createSetting<Internal::InfoHeader>(true, QStringLiteral("InfoPanel/Header"));
     m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
