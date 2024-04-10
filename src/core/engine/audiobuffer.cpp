@@ -124,6 +124,13 @@ void AudioBuffer::append(const std::byte* data, size_t size)
     }
 }
 
+void AudioBuffer::erase(size_t size)
+{
+    if(isValid()) {
+        p->buffer.erase(p->buffer.begin(), p->buffer.begin() + size);
+    }
+}
+
 void AudioBuffer::clear()
 {
     if(isValid()) {

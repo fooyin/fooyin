@@ -45,6 +45,7 @@ public:
     void resize(size_t size);
     void append(std::span<const std::byte> data);
     void append(const std::byte* data, size_t size);
+    void erase(size_t size);
     void clear();
     void reset();
 
