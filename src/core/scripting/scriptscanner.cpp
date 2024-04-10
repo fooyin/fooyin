@@ -87,38 +87,11 @@ ScriptScanner::Token ScriptScanner::scanNext()
 
     const QChar c = advance();
 
-    switch(c.unicode()) {
-        case('('):
-            return makeToken(TokLeftParen);
-        case(')'):
-            return makeToken(TokRightParen);
-        case('['):
-            return makeToken(TokLeftSquare);
-        case(']'):
-            return makeToken(TokRightSquare);
-        case('$'):
-            return makeToken(TokFunc);
-        case('%'):
-            return makeToken(TokVar);
-        case('<'):
-            return makeToken(TokLeftAngle);
-        case('>'):
-            return makeToken(TokRightAngle);
-        case(','):
-            return makeToken(TokComma);
-        case('"'):
-            return makeToken(TokQuote);
-        case('/'):
-            return makeToken(TokSlash);
-        case(':'):
-            return makeToken(TokColon);
-        case('='):
-            return makeToken(TokEquals);
-        case('\\'):
-            return makeToken(TokEscape);
-        default:
-            return literal();
+    if(isLiteral(c)) {
+        return literal();
     }
+
+    return makeToken(static_cast<TokenType>(c.unicode()));
 }
 
 ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
