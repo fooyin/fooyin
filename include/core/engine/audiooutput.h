@@ -50,15 +50,18 @@ public:
 
     /** Initialises the output with the given @p format. */
     virtual bool init(const AudioFormat& format) = 0;
-    /*! Resets the output to the state before @fn init was called.
+    /*!
+     *  Resets the output to the state before @fn init was called.
      *  @note this will only be called if @fn initialised returns @c true.
      */
     virtual void uninit() = 0;
-    /*! Resets the output to the state after @fn init was called.
+    /*!
+     *  Resets the output to the state after @fn init was called.
      *  @note this will only be called if @fn initialised returns @c true.
      */
     virtual void reset() = 0;
-    /*! Starts playback.
+    /*!
+     *  Starts playback.
      *  @note this will only be called if @fn initialised returns @c true.
      */
     virtual void start() = 0;
@@ -68,22 +71,26 @@ public:
     /** Returns the current driver device being used for playback. */
     virtual QString device() const = 0;
 
-    /*! Returns @c true if the driver can handle volume changes internally.
+    /*!
+     *  Returns @c true if the driver can handle volume changes internally.
      *  @note if @c false, a soft-volume will be applied to the samples when required.
      */
     virtual bool canHandleVolume() const = 0;
 
-    /*! Returns the current state of the output.
+    /*!
+     *  Returns the current state of the output.
      *  @note this will only be called if @fn initialised returns @c true.
      *
      *  @see OutputState
      */
-    virtual OutputState currentState()          = 0;
-    /*! Returns the size of the audio driver buffer.
+    virtual OutputState currentState() = 0;
+    /*!
+     *  Returns the size of the audio driver buffer in samples.
      *  @note this will only be called if @fn initialised returns @c true.
      */
-    virtual int bufferSize() const              = 0;
-    /*! Returns a list of all device names and descriptions for this driver.
+    virtual int bufferSize() const = 0;
+    /*!
+     *  Returns a list of all device names and descriptions for this driver.
      *  @note this may be called on multiple instances, so don't rely on a
      *  single initialised state.
      */
