@@ -38,7 +38,6 @@
 #include <QMenu>
 
 #include <ranges>
-#include <set>
 
 namespace Fooyin::Filters {
 struct FilterController::Private
@@ -95,6 +94,11 @@ struct FilterController::Private
         const Id oldGroup = findContainingGroup(widget);
 
         if(groupId == oldGroup) {
+            if(!groupId.isValid()) {
+                // Ungrouped
+                widget->reset(library->tracks());
+                return;
+            }
             resetGroup(widget->group());
             return;
         }
