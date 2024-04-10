@@ -65,6 +65,7 @@ public:
     {
         m_oldState.path      = oldPath;
         m_oldState.scrollPos = m_view->verticalScrollBar()->value();
+        saveSelectedRow(m_oldState);
 
         m_newState.path = newPath;
     }
@@ -77,10 +78,14 @@ public:
     void undo() override
     {
         m_newState.scrollPos = m_view->verticalScrollBar()->value();
+        saveSelectedRow(m_newState);
 
         QObject::connect(
             m_browser, &Fooyin::DirBrowser::rootChanged, m_browser,
-            [this]() { m_view->verticalScrollBar()->setValue(m_oldState.scrollPos); },
+            [this]() {
+                m_view->verticalScrollBar()->setValue(m_oldState.scrollPos);
+                restoreSelectedRow(m_oldState);
+            },
             static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
 
         m_view->setUpdatesEnabled(false);
@@ -92,7 +97,10 @@ public:
         if(m_newState.scrollPos >= 0) {
             QObject::connect(
                 m_browser, &Fooyin::DirBrowser::rootChanged, m_browser,
-                [this]() { m_view->verticalScrollBar()->setValue(m_newState.scrollPos); },
+                [this]() {
+                    m_view->verticalScrollBar()->setValue(m_newState.scrollPos);
+                    restoreSelectedRow(m_newState);
+                },
                 static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
         }
 
@@ -105,7 +113,27 @@ private:
     {
         QString path;
         int scrollPos{-1};
+        int selectedRow{-1};
     };
+
+    void saveSelectedRow(State& state) const
+    {
+        const auto selected = m_view->selectionModel()->selectedRows();
+
+        if(!selected.empty()) {
+            state.selectedRow = selected.front().row();
+        }
+    }
+
+    void restoreSelectedRow(const State& state)
+    {
+        if(state.selectedRow >= 0) {
+            const auto index = m_view->model()->index(state.selectedRow, 0, {});
+            if(index.isValid()) {
+                m_view->setCurrentIndex(index);
+            }
+        }
+    }
 
     Fooyin::DirBrowser* m_browser;
     QAbstractItemView* m_view;
