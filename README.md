@@ -14,22 +14,18 @@
 fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
 collection. It's extendable through the use of plugins and scriptable using *FooScript*.
 
-Audio playback is handled using a custom backend, with ALSA used as the primary output driver.
+Audio playback is supported by FFmpeg, with ALSA used as the primary output driver.
 There is also support for PipeWire and SDL2 through additional plugins, with more planned in the future.
 
 A *layout editing mode* enables the entire user interface to be customised,
 starting from a blank slate or a preset layout.
 
- ![1](https://github.com/ludouzi/fooyin/assets/45490980/94d610d8-4878-4c7a-8607-d2dd7936a8a1) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/d82f619c-f43f-40d6-b9dc-54cdf88e3e11) 
-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------
- ![3](https://github.com/ludouzi/fooyin/assets/45490980/f95f4b76-113e-4f9b-9055-376e4575b033) | ![4](https://github.com/ludouzi/fooyin/assets/45490980/4774d1ef-1618-4a02-8e26-2ef24cb2d039) 
+| | | |
+|:-:|:-:|:-:|
+![simple](https://github.com/ludouzi/fooyin/assets/45490980/93a560cd-ed12-4848-a6e0-eca6318cb9a0) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/6b706453-4661-4fbb-af0e-90d193bb298f) | ![3](https://github.com/ludouzi/fooyin/assets/45490980/9351a305-5de5-4f65-87d3-e9ffee4444aa) 
+![4](https://github.com/ludouzi/fooyin/assets/45490980/2ff47d6d-ff0f-4333-85eb-9fd4a82e3550) | ![5](https://github.com/ludouzi/fooyin/assets/45490980/d8fb8631-af72-4b94-b2f0-7c086bb7ac4a) | ![6](https://github.com/ludouzi/fooyin/assets/45490980/48ecfd76-f658-4120-8a98-485faff4ad32) 
 
-<details>
-<summary>Building a layout from scratch</summary>
-
-https://github.com/ludouzi/fooyin/assets/45490980/e6fbce19-2c95-4a2c-b832-32b37cb41db9
-
-</details>
+Note: The above screenshots were taken using the Otto plasma theme
 
 Only Linux is supported at present, though other platforms will be added at a later date.
 
