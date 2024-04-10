@@ -388,6 +388,8 @@ void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
         loadMetaData(playlistTrack);
         notify(QStringLiteral("Metadata"), metadata());
         notify(QStringLiteral("CanSeek"), canSeek());
+        notify(QStringLiteral("CanGoNext"), canGoNext());
+        notify(QStringLiteral("CanGoPrevious"), canGoPrevious());
     }
 }
 
