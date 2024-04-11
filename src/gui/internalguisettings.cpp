@@ -109,5 +109,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         QStringLiteral("Interface/WindowTitleTrackScript"));
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()),
                                                          QStringLiteral("Artwork/Paths"));
+    m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
 }
 } // namespace Fooyin

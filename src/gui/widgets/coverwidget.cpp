@@ -24,6 +24,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QActionGroup>
@@ -40,14 +41,14 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
+    , m_settings{settings}
     , m_coverProvider{new CoverProvider(settings, this)}
+    , m_displayOption{static_cast<CoverDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{true}
     , m_resizeTimer{new QTimer(this)}
     , m_coverLabel{new QLabel(this)}
 {
-    Q_UNUSED(m_trackSelection)
-
     setObjectName(CoverWidget::name());
 
     auto* layout = new QVBoxLayout(this);
@@ -58,14 +59,18 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     m_resizeTimer->setSingleShot(true);
     m_coverLabel->setMinimumSize(100, 100);
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
-                     [this](const Track& track) { reloadCover(track); });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() { reloadCover(); });
+    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, [this]() { reloadCover(); });
     QObject::connect(
-        m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) { reloadCover(track); },
-        Qt::QueuedConnection);
+        m_coverProvider, &CoverProvider::coverAdded, this, [this]() { reloadCover(); }, Qt::QueuedConnection);
     QObject::connect(m_resizeTimer, &QTimer::timeout, this, &CoverWidget::rescaleCover);
 
-    reloadCover(m_playerController->currentTrack());
+    m_settings->subscribe<Settings::Gui::Internal::TrackCoverDisplayOption>(this, [this](const int option) {
+        m_displayOption = static_cast<CoverDisplay>(option);
+        reloadCover();
+    });
+
+    reloadCover();
 }
 
 QString CoverWidget::name() const
@@ -134,15 +139,15 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     QObject::connect(frontCover, &QAction::triggered, this, [this]() {
         m_coverType = Track::Cover::Front;
-        reloadCover(m_playerController->currentTrack());
+        reloadCover();
     });
     QObject::connect(backCover, &QAction::triggered, this, [this]() {
         m_coverType = Track::Cover::Back;
-        reloadCover(m_playerController->currentTrack());
+        reloadCover();
     });
     QObject::connect(artistCover, &QAction::triggered, this, [this]() {
         m_coverType = Track::Cover::Artist;
-        reloadCover(m_playerController->currentTrack());
+        reloadCover();
     });
 
     menu->addAction(keepAspectRatio);
@@ -161,8 +166,17 @@ void CoverWidget::rescaleCover() const
     m_coverLabel->setPixmap(m_cover.scaled(scale, aspectRatio).scaled(size(), aspectRatio, Qt::SmoothTransformation));
 }
 
-void CoverWidget::reloadCover(const Track& track)
+void CoverWidget::reloadCover()
 {
+    Track track;
+
+    if(m_displayOption == CoverDisplay::PreferSelection && m_trackSelection->hasTracks()) {
+        track = m_trackSelection->selectedTrack();
+    }
+    else {
+        track = m_playerController->currentTrack();
+    }
+
     m_cover = m_coverProvider->trackCover(track, m_coverType);
     rescaleCover();
 }

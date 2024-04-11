@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "internalguisettings.h"
+
 #include <core/track.h>
 #include <gui/fywidget.h>
 
@@ -53,12 +55,14 @@ protected:
 
 private:
     void rescaleCover() const;
-    void reloadCover(const Track& track);
+    void reloadCover();
 
     PlayerController* m_playerController;
     TrackSelectionController* m_trackSelection;
+    SettingsManager* m_settings;
     CoverProvider* m_coverProvider;
 
+    CoverDisplay m_displayOption;
     Track::Cover m_coverType;
     bool m_keepAspectRatio;
     QTimer* m_resizeTimer;

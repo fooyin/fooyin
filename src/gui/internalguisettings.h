@@ -24,10 +24,16 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class CoverDisplay : uint8_t
+{
+    PreferPlaying = 0,
+    PreferSelection
+};
+
 namespace Settings::Gui::Internal {
 Q_NAMESPACE
 
-enum class IconThemeOption
+enum class IconThemeOption : uint8_t
 {
     AutoDetect = 0,
     System,
@@ -37,44 +43,45 @@ enum class IconThemeOption
 
 enum GuiInternalSettings : uint32_t
 {
-    EditingMenuLevels      = 1 | Type::Int,
-    SplitterHandles        = 2 | Type::Bool,
-    PlaylistAltColours     = 3 | Type::Bool,
-    PlaylistHeader         = 4 | Type::Bool,
-    PlaylistScrollBar      = 5 | Type::Bool,
-    PlaylistCurrentPreset  = 6 | Type::Int,
-    PlaylistThumbnailSize  = 7 | Type::Int,
-    SeekBarElapsedTotal    = 8 | Type::Bool,
-    InfoAltColours         = 9 | Type::Bool,
-    InfoHeader             = 10 | Type::Bool,
-    InfoScrollBar          = 11 | Type::Bool,
-    StatusPlayingScript    = 12 | Type::String,
-    StatusSelectionScript  = 13 | Type::String,
-    StatusShowIcon         = 14 | Type::Bool,
-    StatusShowSelection    = 15 | Type::Bool,
-    LibTreeDoubleClick     = 16 | Type::Int,
-    LibTreeMiddleClick     = 17 | Type::Int,
-    LibTreePlaylistEnabled = 18 | Type::Bool,
-    LibTreeAutoSwitch      = 19 | Type::Bool,
-    LibTreeAutoPlaylist    = 20 | Type::String,
-    LibTreeScrollBar       = 21 | Type::Bool,
-    LibTreeAltColours      = 22 | Type::Bool,
-    LibTreeFont            = 23 | Type::String,
-    LibTreeColour          = 24 | Type::String,
-    LibTreeRowHeight       = 25 | Type::Int,
-    LibTreeAppearance      = 26 | Type::Variant,
-    SystemIconTheme        = 27 | Type::String,
-    SeekBarLabels          = 28 | Type::Bool,
-    DirBrowserPath         = 29 | Type::String,
-    DirBrowserIcons        = 30 | Type::Bool,
-    DirBrowserDoubleClick  = 31 | Type::Int,
-    DirBrowserMiddleClick  = 32 | Type::Int,
-    DirBrowserMode         = 33 | Type::Int,
-    DirBrowserListIndent   = 34 | Type::Bool,
-    DirBrowserControls     = 35 | Type::Bool,
-    DirBrowserLocation     = 36 | Type::Bool,
-    WindowTitleTrackScript = 37 | Type::String,
-    TrackCoverPaths        = 38 | Settings::Variant,
+    EditingMenuLevels       = 1 | Type::Int,
+    SplitterHandles         = 2 | Type::Bool,
+    PlaylistAltColours      = 3 | Type::Bool,
+    PlaylistHeader          = 4 | Type::Bool,
+    PlaylistScrollBar       = 5 | Type::Bool,
+    PlaylistCurrentPreset   = 6 | Type::Int,
+    PlaylistThumbnailSize   = 7 | Type::Int,
+    SeekBarElapsedTotal     = 8 | Type::Bool,
+    InfoAltColours          = 9 | Type::Bool,
+    InfoHeader              = 10 | Type::Bool,
+    InfoScrollBar           = 11 | Type::Bool,
+    StatusPlayingScript     = 12 | Type::String,
+    StatusSelectionScript   = 13 | Type::String,
+    StatusShowIcon          = 14 | Type::Bool,
+    StatusShowSelection     = 15 | Type::Bool,
+    LibTreeDoubleClick      = 16 | Type::Int,
+    LibTreeMiddleClick      = 17 | Type::Int,
+    LibTreePlaylistEnabled  = 18 | Type::Bool,
+    LibTreeAutoSwitch       = 19 | Type::Bool,
+    LibTreeAutoPlaylist     = 20 | Type::String,
+    LibTreeScrollBar        = 21 | Type::Bool,
+    LibTreeAltColours       = 22 | Type::Bool,
+    LibTreeFont             = 23 | Type::String,
+    LibTreeColour           = 24 | Type::String,
+    LibTreeRowHeight        = 25 | Type::Int,
+    LibTreeAppearance       = 26 | Type::Variant,
+    SystemIconTheme         = 27 | Type::String,
+    SeekBarLabels           = 28 | Type::Bool,
+    DirBrowserPath          = 29 | Type::String,
+    DirBrowserIcons         = 30 | Type::Bool,
+    DirBrowserDoubleClick   = 31 | Type::Int,
+    DirBrowserMiddleClick   = 32 | Type::Int,
+    DirBrowserMode          = 33 | Type::Int,
+    DirBrowserListIndent    = 34 | Type::Bool,
+    DirBrowserControls      = 35 | Type::Bool,
+    DirBrowserLocation      = 36 | Type::Bool,
+    WindowTitleTrackScript  = 37 | Type::String,
+    TrackCoverPaths         = 38 | Settings::Variant,
+    TrackCoverDisplayOption = 39 | Settings::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
