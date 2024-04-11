@@ -337,13 +337,23 @@ TrackSelectionController::TrackSelectionController(ActionManager* actionManager,
                      [this](QWidget* /*old*/, QWidget* now) { p->updateActiveContext(now); });
 }
 
+TrackSelectionController::~TrackSelectionController() = default;
+
 bool TrackSelectionController::hasTracks() const
 {
     return p->activeContext && p->contextSelection.contains(p->activeContext)
         && !p->contextSelection.at(p->activeContext).tracks.empty();
 }
 
-TrackSelectionController::~TrackSelectionController() = default;
+Track TrackSelectionController::selectedTrack() const
+{
+    const auto selected = selectedTracks();
+    if(!selected.empty()) {
+        return selected.front();
+    }
+
+    return {};
+}
 
 TrackList TrackSelectionController::selectedTracks() const
 {
