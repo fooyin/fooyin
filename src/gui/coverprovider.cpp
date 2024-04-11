@@ -38,7 +38,6 @@
 #include <QPixmapCache>
 
 #include <set>
-#include <stack>
 
 constexpr QSize MaxCoverSize = {800, 800};
 
@@ -118,15 +117,15 @@ struct CoverProvider::Private
     std::set<QString> pendingCovers;
     ScriptParser parser;
 
-    GuiSettings::CoverPaths paths;
+    CoverPaths paths;
 
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
-        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<GuiSettings::CoverPaths>()}
+        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     {
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
-            self, [this](const QVariant& var) { paths = var.value<GuiSettings::CoverPaths>(); });
+            self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
     }
 
     QString findCover(const Track& track, Track::Cover type)

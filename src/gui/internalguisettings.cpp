@@ -28,9 +28,9 @@
 #include <QPalette>
 
 namespace {
-Fooyin::GuiSettings::CoverPaths defaultCoverPaths()
+Fooyin::CoverPaths defaultCoverPaths()
 {
-    Fooyin::GuiSettings::CoverPaths paths;
+    Fooyin::CoverPaths paths;
 
     paths.frontCoverPaths = {QStringLiteral("%path%/folder.*"), QStringLiteral("%path%/cover.*"),
                              QStringLiteral("%path%/front.*"), QStringLiteral("%path%/../Artwork/folder.*")};

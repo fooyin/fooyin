@@ -97,7 +97,7 @@ void ArtworkPageWidget::load()
         m_preferSelection->setChecked(true);
     }
 
-    const auto paths = m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<GuiSettings::CoverPaths>();
+    const auto paths = m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>();
 
     m_frontCovers->setPlainText(paths.frontCoverPaths.join(QStringLiteral("\n")));
     m_backCovers->setPlainText(paths.backCoverPaths.join(QStringLiteral("\n")));
@@ -111,7 +111,7 @@ void ArtworkPageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::TrackCoverDisplayOption>(static_cast<int>(option));
 
-    GuiSettings::CoverPaths paths;
+    CoverPaths paths;
 
     paths.frontCoverPaths = m_frontCovers->toPlainText().split(QStringLiteral("\n"), Qt::SkipEmptyParts);
     paths.backCoverPaths  = m_backCovers->toPlainText().split(QStringLiteral("\n"), Qt::SkipEmptyParts);

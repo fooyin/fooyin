@@ -24,15 +24,6 @@
 namespace Fooyin {
 class SettingsManager;
 
-enum class CoverDisplay : uint8_t
-{
-    PreferPlaying = 0,
-    PreferSelection
-};
-
-namespace Settings::Gui::Internal {
-Q_NAMESPACE
-
 enum class IconThemeOption : uint8_t
 {
     AutoDetect = 0,
@@ -40,6 +31,38 @@ enum class IconThemeOption : uint8_t
     Light,
     Dark,
 };
+
+enum class CoverDisplay : uint8_t
+{
+    PreferPlaying = 0,
+    PreferSelection
+};
+
+struct CoverPaths
+{
+    QStringList frontCoverPaths;
+    QStringList backCoverPaths;
+    QStringList artistPaths;
+
+    friend QDataStream& operator<<(QDataStream& stream, const CoverPaths& paths)
+    {
+        stream << paths.frontCoverPaths;
+        stream << paths.backCoverPaths;
+        stream << paths.artistPaths;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, CoverPaths& paths)
+    {
+        stream >> paths.frontCoverPaths;
+        stream >> paths.backCoverPaths;
+        stream >> paths.artistPaths;
+        return stream;
+    }
+};
+
+namespace Settings::Gui::Internal {
+Q_NAMESPACE
 
 enum GuiInternalSettings : uint32_t
 {
@@ -89,29 +112,6 @@ Q_ENUM_NS(GuiInternalSettings)
 class GuiSettings
 {
 public:
-    struct CoverPaths
-    {
-        QStringList frontCoverPaths;
-        QStringList backCoverPaths;
-        QStringList artistPaths;
-
-        friend QDataStream& operator<<(QDataStream& stream, const CoverPaths& paths)
-        {
-            stream << paths.frontCoverPaths;
-            stream << paths.backCoverPaths;
-            stream << paths.artistPaths;
-            return stream;
-        }
-
-        friend QDataStream& operator>>(QDataStream& stream, CoverPaths& paths)
-        {
-            stream >> paths.frontCoverPaths;
-            stream >> paths.backCoverPaths;
-            stream >> paths.artistPaths;
-            return stream;
-        }
-    };
-
     explicit GuiSettings(SettingsManager* settingsManager);
 
 private:
@@ -119,4 +119,4 @@ private:
 };
 } // namespace Fooyin
 
-Q_DECLARE_METATYPE(Fooyin::GuiSettings::CoverPaths)
+Q_DECLARE_METATYPE(Fooyin::CoverPaths)

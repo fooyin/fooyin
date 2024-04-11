@@ -123,7 +123,7 @@ void GuiGeneralPageWidget::load()
 {
     m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 
-    const auto iconTheme = static_cast<Settings::Gui::Internal::IconThemeOption>(m_settings->value<IconTheme>());
+    const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<IconTheme>());
     switch(iconTheme) {
         case(IconThemeOption::AutoDetect):
             m_detectIconTheme->setChecked(true);
