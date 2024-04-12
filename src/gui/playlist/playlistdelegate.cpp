@@ -82,14 +82,14 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const auto info     = index.data(PlaylistItem::Role::Info).value<RichText>();
     const auto cover    = index.data(Qt::DecorationRole).value<QPixmap>();
 
-    const QRect& rect    = opt.rect;
-    const int halfWidth  = rect.width() / 2;
-    constexpr int offset = 5;
+    const QRect& rect           = opt.rect;
+    const int halfWidth         = rect.width() / 2;
+    static constexpr int offset = 5;
 
-    constexpr int coverMargin     = 10;
-    const int coverSize           = rect.height() - (2 * coverMargin);
-    constexpr int coverFrameWidth = 2;
-    const int coverFrameOffset    = coverFrameWidth / 2;
+    static constexpr int coverMargin     = 10;
+    const int coverSize                  = rect.height() - (2 * coverMargin);
+    static constexpr int coverFrameWidth = 2;
+    const int coverFrameOffset           = coverFrameWidth / 2;
 
     const QRect coverRect{rect.left() + coverMargin, rect.top() + coverMargin, coverSize, coverSize};
     QRect coverFrameRect = coverRect.adjusted(-coverFrameOffset, -coverFrameOffset, coverFrameWidth, coverFrameWidth);
@@ -120,13 +120,15 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
     const QRect infoRect{coverFrameRect.right() + 2 * offset, rect.top() - infoOffset, leftWidth, rect.height()};
     drawTextBlocks(painter, opt, infoRect, info, Qt::AlignBottom);
 
-    const QLineF rightLine(subtitleBound.right() + offset, subtitleBound.center().y() + 1, rightBound.left() - offset,
-                           rightBound.center().y() + 1);
     const QLineF headerLine(coverFrameRect.right() + 2 * offset, coverFrameRect.bottom() + coverFrameWidth,
                             rect.right() - offset, coverFrameRect.bottom() + coverFrameWidth);
 
     painter->setPen(linePen);
     if(!subtitle.empty() && !side.empty() && rect.width() > 160) {
+        static constexpr int lineOffset = 10;
+
+        const QLineF rightLine(subtitleBound.right() + lineOffset, subtitleBound.center().y() + 1,
+                               rightBound.left() - lineOffset, rightBound.center().y() + 1);
         painter->drawLine(rightLine);
     }
 
@@ -164,10 +166,10 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
     const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>();
     const auto subtitle = index.data(PlaylistItem::Role::Right).value<RichText>();
 
-    const QRect& rect    = opt.rect;
-    const int height     = rect.height();
-    const int halfWidth  = rect.width() / 2;
-    constexpr int offset = 5;
+    const QRect& rect           = opt.rect;
+    const int height            = rect.height();
+    const int halfWidth         = rect.width() / 2;
+    static constexpr int offset = 5;
 
     const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, height};
     auto [rightBound, totalRightWidth]
@@ -184,8 +186,10 @@ void paintSimpleHeader(QPainter* painter, const QStyleOptionViewItem& option, co
             rightBound = {rect.right() - offset, rect.top(), offset, height};
         }
 
-        const QLineF rightLine(leftBound.right() + offset, leftBound.center().y() + 1, rightBound.left() - offset,
-                               rightBound.center().y() + 1);
+        const int lineOffset = subtitle.empty() ? 5 : 10;
+
+        const QLineF rightLine(leftBound.right() + lineOffset, leftBound.center().y() + 1,
+                               rightBound.left() - lineOffset, rightBound.center().y() + 1);
 
         painter->setPen(lineColour);
         painter->drawLine(rightLine);
@@ -209,10 +213,10 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     const auto title    = index.data(PlaylistItem::Role::Title).value<RichText>();
     const auto subtitle = index.data(PlaylistItem::Role::Subtitle).value<RichText>();
 
-    const QRect& rect    = opt.rect;
-    const int height     = rect.height();
-    const int halfWidth  = rect.width() / 2;
-    constexpr int offset = 5;
+    const QRect& rect           = opt.rect;
+    const int height            = rect.height();
+    const int halfWidth         = rect.width() / 2;
+    static constexpr int offset = 5;
 
     const QRect rightRect{rect.left() + halfWidth, rect.top(), halfWidth - offset, height};
     auto [rightBound, totalRightWidth]
@@ -225,15 +229,18 @@ void paintSubheader(QPainter* painter, const QStyleOptionViewItem& option, const
     auto [leftBound, _] = drawTextBlocks(painter, opt, leftRect, title, Qt::AlignVCenter | Qt::AlignLeft);
 
     if(title.empty()) {
-        leftBound = {rect.left(), rect.top(), offset, height};
+        leftBound = {rect.left(), rect.top(), 0, height};
     }
 
     if(subtitle.empty()) {
-        rightBound = {rect.right() - offset, rect.top(), offset, height};
+        rightBound = {rect.right(), rect.top(), 0, height};
     }
 
+    const int leftOffset  = !title.empty() ? 10 : offset;
+    const int rightOffset = !subtitle.empty() ? 10 : offset;
+
     painter->setPen(linePen);
-    const QLineF titleLine(leftBound.right() + offset, leftBound.center().y() + 1, rightBound.left() - offset,
+    const QLineF titleLine(leftBound.right() + leftOffset, leftBound.center().y() + 1, rightBound.left() - rightOffset,
                            rightBound.center().y() + 1);
     painter->drawLine(titleLine);
 }
@@ -259,7 +266,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
 
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, option.widget) + 1;
+    const int textMargin = (style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, option.widget) + 1) * 2;
 
     if(singleColumn) {
         const int indent     = icon.isNull() ? index.data(PlaylistItem::Role::Indentation).toInt() : 0;
