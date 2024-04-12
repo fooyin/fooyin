@@ -19,7 +19,6 @@
 
 #include "playlisttabs.h"
 
-#include "internalguisettings.h"
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlisthandler.h>
@@ -100,6 +99,10 @@ struct PlaylistTabs::Private
 
     void playlistChanged(const Playlist* playlist)
     {
+        if(!playlist) {
+            return;
+        }
+
         const int count = tabs->count();
         const Id id     = playlist->id();
 
@@ -113,6 +116,10 @@ struct PlaylistTabs::Private
 
     void playlistRenamed(const Playlist* playlist) const
     {
+        if(!playlist) {
+            return;
+        }
+
         const int count = tabs->count();
 
         for(int i{0}; i < count; ++i) {
@@ -140,6 +147,8 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
     });
     QObject::connect(p->tabs, &QTabBar::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
     QObject::connect(p->tabs, &QTabBar::tabMoved, this, [this](int from, int to) { p->tabMoved(from, to); });
+    QObject::connect(p->playlistController, &PlaylistController::playlistsLoaded, this,
+                     [this]() { p->playlistChanged(p->playlistController->currentPlaylist()); });
     QObject::connect(
         p->playlistController, &PlaylistController::currentPlaylistChanged, this,
         [this](const Playlist* /*prevPlaylist*/, const Playlist* playlist) { p->playlistChanged(playlist); });
@@ -163,6 +172,10 @@ void PlaylistTabs::setupTabs()
 
 int PlaylistTabs::addPlaylist(const Playlist* playlist)
 {
+    if(!playlist) {
+        return -1;
+    }
+
     const int index = addNewTab(playlist->name());
     if(index >= 0) {
         p->tabs->setTabData(index, QVariant::fromValue(playlist->id()));
@@ -170,11 +183,16 @@ int PlaylistTabs::addPlaylist(const Playlist* playlist)
             p->tabs->setCurrentIndex(index);
         }
     }
+
     return index;
 }
 
 void PlaylistTabs::removePlaylist(const Playlist* playlist)
 {
+    if(!playlist) {
+        return;
+    }
+
     for(int i{0}; i < p->tabs->count(); ++i) {
         if(p->tabs->tabData(i).value<Id>() == playlist->id()) {
             p->tabs->removeTab(i);
