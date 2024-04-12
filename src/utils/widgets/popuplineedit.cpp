@@ -20,6 +20,7 @@
 #include <utils/widgets/popuplineedit.h>
 
 #include <QKeyEvent>
+#include <QPainter>
 
 namespace Fooyin {
 PopupLineEdit::PopupLineEdit(QWidget* parent)
@@ -29,6 +30,17 @@ PopupLineEdit::PopupLineEdit(QWidget* parent)
 PopupLineEdit::PopupLineEdit(const QString& contents, QWidget* parent)
     : QLineEdit{contents, parent}
 { }
+
+void PopupLineEdit::paintEvent(QPaintEvent* event)
+{
+    QPainter painter{this};
+
+    // Some styles paint QLineEdit with a transparent background
+    // As we're designed to be used as a popup, override that
+    painter.fillRect(event->rect(), palette().base());
+
+    QLineEdit::paintEvent(event);
+}
 
 void PopupLineEdit::keyPressEvent(QKeyEvent* event)
 {
