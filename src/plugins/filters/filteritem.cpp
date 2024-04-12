@@ -36,7 +36,7 @@ bool sort(int column, Qt::SortOrder order, const Fooyin::Filters::FilterItem* lh
         if(column > 0) {
             return sort(column - 1, Qt::AscendingOrder, lhs, rhs);
         }
-        if(column < lhs->columnCount() - 1) {
+        if(std::cmp_less(column, lhs->columns().size() - 1)) {
             return sort(column + 1, Qt::AscendingOrder, lhs, rhs);
         }
         return false;
@@ -73,11 +73,6 @@ QString FilterItem::column(int column) const
         return {};
     }
     return m_columns.at(column);
-}
-
-int FilterItem::columnCount() const
-{
-    return static_cast<int>(m_columns.size());
 }
 
 TrackList FilterItem::tracks() const

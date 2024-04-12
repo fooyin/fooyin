@@ -65,14 +65,17 @@ public:
 
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override
     {
+        if(parent.column() > 0) {
+            return 0;
+        }
+
         Item* parentItem = itemForIndex(parent);
         return parentItem->childCount();
     }
 
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override
+    [[nodiscard]] int columnCount(const QModelIndex& /*parent*/) const override
     {
-        Item* parentItem = itemForIndex(parent);
-        return parentItem->columnCount();
+        return 1;
     }
 
     [[nodiscard]] QModelIndex indexOfItem(const Item* item) const

@@ -42,7 +42,6 @@ public:
 
     [[nodiscard]] QStringList columns() const;
     [[nodiscard]] QString column(int column) const;
-    [[nodiscard]] int columnCount() const override;
 
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;

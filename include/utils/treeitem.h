@@ -94,11 +94,6 @@ public:
         return m_row;
     }
 
-    [[nodiscard]] virtual int columnCount() const
-    {
-        return 1;
-    }
-
     [[nodiscard]] virtual Item* parent() const
     {
         return m_parent;

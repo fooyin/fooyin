@@ -49,10 +49,5 @@ public:
     {
         return {};
     }
-
-    [[nodiscard]] int rowCount(const QModelIndex& /*parent*/ = {}) const override
-    {
-        return rootItem()->childCount();
-    }
 };
 } // namespace Fooyin

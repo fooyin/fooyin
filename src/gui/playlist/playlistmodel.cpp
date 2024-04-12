@@ -697,6 +697,11 @@ bool PlaylistModel::hasChildren(const QModelIndex& parent) const
     if(!parent.isValid()) {
         return true;
     }
+
+    if(parent.column() != 0) {
+        return false;
+    }
+
     return parent.data(PlaylistItem::Type).toInt() != PlaylistItem::ItemType::Track;
 }
 
