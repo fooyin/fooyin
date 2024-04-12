@@ -23,29 +23,17 @@
 #include <QPlainTextEdit>
 
 namespace Fooyin {
-MultiLineEditDelegate::MultiLineEditDelegate(QWidget* parent)
-    : QStyledItemDelegate{parent}
-{ }
-
-void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
-{
-    if(const auto* textEdit = qobject_cast<QTextEdit*>(editor)) {
-        model->setData(index, textEdit->toPlainText(), Qt::EditRole);
-    }
-    else {
-        QStyledItemDelegate::setModelData(editor, model, index);
-    }
-}
-
 QWidget* MultiLineEditDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-                                             const QModelIndex& /*index*/) const
+                                             const QModelIndex& index) const
 {
     auto* editor = new QPlainTextEdit(parent);
+
+    editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     editor->setTabChangesFocus(true);
-    editor->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    editor->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    const QSize size = {option.rect.width(), 150};
-    editor->setFixedSize(size);
+
+    connect(editor, &QPlainTextEdit::textChanged, this,
+            [this, editor, option, index]() { adjustEditorHeight(editor, option, index); });
+
     return editor;
 }
 
@@ -58,6 +46,67 @@ void MultiLineEditDelegate::setEditorData(QWidget* editor, const QModelIndex& in
     else {
         QStyledItemDelegate::setEditorData(editor, index);
     }
+}
+
+void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+{
+    if(const auto* textEdit = qobject_cast<QPlainTextEdit*>(editor)) {
+        model->setData(index, textEdit->toPlainText(), Qt::EditRole);
+    }
+    else {
+        QStyledItemDelegate::setModelData(editor, model, index);
+    }
+}
+
+void MultiLineEditDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option,
+                                                 const QModelIndex& index) const
+{
+    adjustEditorHeight(editor, option, index);
+}
+
+QSize MultiLineEditDelegate::editorSizeHint(QWidget* editor, const QStyleOptionViewItem& option,
+                                            const QModelIndex& index) const
+{
+    const QVariant value = index.data(Qt::SizeHintRole);
+    if(value.isValid()) {
+        return value.toSize();
+    }
+
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    if(const auto* textEdit = qobject_cast<QPlainTextEdit*>(editor)) {
+        opt.text = textEdit->toPlainText();
+    }
+
+    const QStyle* style = editor->style();
+
+    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, editor);
+
+    return size;
+}
+
+void MultiLineEditDelegate::adjustEditorHeight(QWidget* editor, const QStyleOptionViewItem& option,
+                                               const QModelIndex& index) const
+{
+    const QSize size = editorSizeHint(editor, option, index);
+
+    QRect rect = option.rect;
+    rect.setHeight(std::max(rect.height(), size.height()));
+
+    const int yPosToWindow = editor->parentWidget()->y() + editor->parentWidget()->height();
+    const bool displayAbove
+        = editor->mapTo(editor->parentWidget(), QPoint{0, option.rect.bottom()}).y() + rect.height() > yPosToWindow;
+
+    if(displayAbove) {
+        rect.moveBottom(option.rect.bottom());
+        rect.setY(std::max(rect.y(), editor->parentWidget()->y()));
+    }
+    else {
+        rect.setBottom(std::min(rect.bottom(), editor->parentWidget()->rect().bottom()));
+    }
+
+    editor->setGeometry(rect);
 }
 } // namespace Fooyin
 
