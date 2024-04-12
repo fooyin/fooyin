@@ -36,6 +36,7 @@
 #include <QLayout>
 #include <QMenu>
 #include <QMimeData>
+#include <QPointer>
 #include <QTabBar>
 #include <QTimer>
 

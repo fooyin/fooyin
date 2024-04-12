@@ -31,6 +31,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
+#include <QPointer>
 #include <QSlider>
 #include <QStyleOptionSlider>
 
