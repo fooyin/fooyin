@@ -201,6 +201,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     setTextElideMode(Qt::ElideRight);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     setSortingEnabled(false);
+    setAllColumnsShowFocus(true);
 
     viewport()->setAcceptDrops(true);
     header()->setSectionsClickable(true);
@@ -355,11 +356,10 @@ void PlaylistView::drawRow(QPainter* painter, const QStyleOptionViewItem& option
         // Span first column of headers/subheaders
         // Used instead of setFirstColumnSpanned to account for header section moves
         if(index.column() == 0) {
-            const auto opt = option;
-            QRect rect     = option.rect;
+            QStyleOptionViewItem opt{option};
 
             for(int i{1}; i < model()->columnCount(); ++i) {
-                rect.setRight(rect.right() + columnWidth(i));
+                opt.rect.setRight(opt.rect.right() + columnWidth(i));
             }
 
             itemDelegateForIndex(index)->paint(painter, opt, index);
