@@ -39,6 +39,7 @@ struct PlaylistView::Private
 
     bool waitForLoad{false};
 
+    QPoint dragPos;
     QRect dropIndicatorRect;
     DropIndicatorPosition dropIndicatorPos{OnViewport};
     QTimer autoScrollTimer;
@@ -75,7 +76,7 @@ struct PlaylistView::Private
         return self->model()->flags(index) & Qt::ItemIsDropEnabled;
     }
 
-    bool shouldAutoScroll(const QPoint& pos) const
+    bool shouldAutoScroll() const
     {
         if(!self->hasAutoScroll()) {
             return false;
@@ -84,8 +85,8 @@ struct PlaylistView::Private
         const QRect area       = self->viewport()->rect();
         const int scrollMargin = self->autoScrollMargin();
 
-        return (pos.y() - area.top() < scrollMargin) || (area.bottom() - pos.y() < scrollMargin)
-            || (pos.x() - area.left() < scrollMargin) || (area.right() - pos.x() < scrollMargin);
+        return (dragPos.y() - area.top() < scrollMargin) || (area.bottom() - dragPos.y() < scrollMargin)
+            || (dragPos.x() - area.left() < scrollMargin) || (area.right() - dragPos.x() < scrollMargin);
     }
 
     void startAutoScroll()
@@ -108,7 +109,7 @@ struct PlaylistView::Private
         }
 
         const int value        = scroll->value();
-        const QPoint pos       = self->viewport()->mapFromGlobal(QCursor::pos());
+        const QPoint pos       = dragPos;
         const QRect area       = self->viewport()->rect();
         const int scrollMargin = self->autoScrollMargin();
 
@@ -222,8 +223,9 @@ void PlaylistView::focusInEvent(QFocusEvent* /*event*/)
 
 void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
-    const QPoint pos        = event->position().toPoint();
-    const QModelIndex index = indexAt(pos);
+    p->dragPos = event->position().toPoint();
+
+    const QModelIndex index = indexAt(p->dragPos);
 
     event->ignore();
 
@@ -239,7 +241,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
         const QRect rectLeft  = visualRect(index.sibling(index.row(), 0));
         const QRect rectRight = visualRect(index.sibling(index.row(), model()->columnCount(index) - 1));
 
-        p->dropIndicatorPos = p->position(pos, rect, index);
+        p->dropIndicatorPos = p->position(p->dragPos, rect, index);
 
         switch(p->dropIndicatorPos) {
             case(AboveItem): {
@@ -290,7 +292,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 
     viewport()->update();
 
-    if(p->shouldAutoScroll(pos)) {
+    if(p->shouldAutoScroll()) {
         p->startAutoScroll();
     }
 }
@@ -340,7 +342,7 @@ void PlaylistView::dropEvent(QDropEvent* event)
         }
     }
 
-    stopAutoScroll();
+    p->stopAutoScroll();
     setState(NoState);
     viewport()->update();
 }
