@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.4.1](https://github.com/ludouzi/fooyin/releases/tag/v0.4.1) (2024-04-14)
+
+### Features
+
+* Artwork: Directory artwork discovery ([#68](https://github.com/ludouzi/fooyin/issues/68))
+* Artwork: Support reading front cover, back cover, artist
+* Artwork: Add option to prefer playing track or selection
+* Artwork: Add option to keep aspect ratio
+
+### Changes
+
+* Artwork: Improve performance when resizing
+* DirBrowser: Add mouse button support
+* DirBrowser: Restore selected row when changing directory
+* Layouts: Improve file structure
+* Layout editing mode: Improve insertion of widgets; add widget splitting ([#71](https://github.com/ludouzi/fooyin/issues/71))
+* Player: Support restarting playback after stopping ([#69](https://github.com/ludouzi/fooyin/issues/69))
+* Playlist: Add bitrate, samplerate columns
+* Playlist: Show queue indexes in single-column mode
+
+### Fixes
+
+* Layouts: Fix exporting ([#67](https://github.com/ludouzi/fooyin/issues/67))
+* PipeWire: Fix playback issues ([#70](https://github.com/ludouzi/fooyin/issues/70))
+* Playlist: Fix empty extension column
+* Playlist: Fix auto scrolling under Wayland
+* PlaylistTabs: Fix restoring playlist at startup
+* SeekBar: Fix tooltip display issues
+* WaveBar: Fix seek issues with some styles
+
+
 ## [0.4.0](https://github.com/ludouzi/fooyin/releases/tag/v0.4.0) (2024-04-06)
 
 ### Features
@@ -17,6 +48,7 @@
 * Widgets: Directory browser ([#58](https://github.com/ludouzi/fooyin/pull/58), [#54](https://github.com/ludouzi/fooyin/issues/54))
 
 ### Changes
+
 * Controls: Add button tooltips
 * Engine: Don't start playing if seeking when paused
 * Interface: Make multiple widgets responsive to DPI
@@ -184,6 +216,7 @@
 ## [0.3.0](https://github.com/ludouzi/fooyin/releases/tag/v0.3.0) (2024-01-26)
 
 ### Features
+
 * Command line support
 * Support opening files/directories with fooyin
 
@@ -213,6 +246,7 @@
 ## [0.2.0](https://github.com/ludouzi/fooyin/releases/tag/v0.2.0) (2024-01-23)
 
 ### Features
+
 * Add gapless playback option
 * Add column alignment options to Library Filter
 
