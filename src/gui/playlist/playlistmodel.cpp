@@ -754,17 +754,7 @@ Qt::DropActions PlaylistModel::supportedDropActions() const
 QMimeData* PlaylistModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-
-    QModelIndexList filteredIndexes;
-
-    for(const QModelIndex& index : indexes) {
-        if(index.column() == 0) {
-            filteredIndexes.append(index);
-        }
-    }
-
-    storeMimeData(filteredIndexes, mimeData);
-
+    storeMimeData(indexes, mimeData);
     return mimeData;
 }
 
@@ -888,6 +878,11 @@ void PlaylistModel::changeColumnAlignment(int column, Qt::Alignment alignment)
     m_columnAlignments[column] = alignment;
 }
 
+void PlaylistModel::resetColumnAlignments()
+{
+    m_columnAlignments.clear();
+}
+
 void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
 {
     if(preset.isValid()) {
@@ -948,7 +943,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
 
 QModelIndex PlaylistModel::indexAtPlaylistIndex(int index)
 {
-    const auto result = trackIndexAtPlaylistIndex(index);
+    const auto result = trackIndexAtPlaylistIndex(index, true);
     return result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
@@ -1201,10 +1196,23 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
             break;
         }
         case(PlaylistItem::Role::Column): {
-            if(!singleColumnMode) {
-                return QVariant::fromValue(track.column(column).text);
+            if(singleColumnMode) {
+                break;
             }
-            break;
+
+            const QString field = m_columns.at(column).field;
+
+            if(field == QString::fromLatin1(FrontCover)) {
+                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Front, true);
+            }
+            if(field == QString::fromLatin1(BackCover)) {
+                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Back, true);
+            }
+            if(field == QString::fromLatin1(ArtistPicture)) {
+                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Artist, true);
+            }
+
+            return QVariant::fromValue(track.column(column).text);
         }
         case(PlaylistItem::Role::Left): {
             return QVariant::fromValue(track.left().text);

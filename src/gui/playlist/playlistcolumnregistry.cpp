@@ -54,5 +54,8 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 9, .index = 9, .name = tr("Extension"), .field = QStringLiteral("%extension%")});
     addDefaultItem({.id = 10, .index = 10, .name = tr("Bitrate"), .field = QStringLiteral("%bitrate% kbps")});
     addDefaultItem({.id = 11, .index = 11, .name = tr("Sample Rate"), .field = QStringLiteral("%samplerate% Hz")});
+    addDefaultItem({.id = 12, .index = 12, .name = tr("Front Cover"), .field = QString::fromLatin1(FrontCover)});
+    addDefaultItem({.id = 13, .index = 13, .name = tr("Back Cover"), .field = QString::fromLatin1(BackCover)});
+    addDefaultItem({.id = 14, .index = 14, .name = tr("Artist Picture"), .field = QString::fromLatin1(ArtistPicture)});
 }
 } // namespace Fooyin

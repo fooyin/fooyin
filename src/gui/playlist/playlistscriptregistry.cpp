@@ -40,6 +40,24 @@ struct PlaylistScriptRegistry::Private
         vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
         vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
         vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
+        vars.emplace(QStringLiteral("frontcover"), [this]() { return frontCover(); });
+        vars.emplace(QStringLiteral("backcover"), [this]() { return backCover(); });
+        vars.emplace(QStringLiteral("artistpicture"), [this]() { return artistPicture(); });
+    }
+
+    QString frontCover()
+    {
+        return QString::fromLatin1(FrontCover);
+    }
+
+    QString backCover()
+    {
+        return QString::fromLatin1(BackCover);
+    }
+
+    QString artistPicture()
+    {
+        return QString::fromLatin1(ArtistPicture);
     }
 
     QString playingQueue()
