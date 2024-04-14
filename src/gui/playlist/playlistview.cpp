@@ -359,11 +359,7 @@ void PlaylistView::drawRow(QPainter* painter, const QStyleOptionViewItem& option
         // Used instead of setFirstColumnSpanned to account for header section moves
         if(index.column() == 0) {
             QStyleOptionViewItem opt{option};
-
-            for(int i{1}; i < model()->columnCount(); ++i) {
-                opt.rect.setRight(opt.rect.right() + columnWidth(i));
-            }
-
+            opt.rect.setWidth(header()->width());
             itemDelegateForIndex(index)->paint(painter, opt, index);
         }
     }
