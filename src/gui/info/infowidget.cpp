@@ -35,6 +35,15 @@
 #include <QTreeView>
 
 namespace Fooyin {
+class InfoView : public QTreeView
+{
+public:
+    using QTreeView::QTreeView;
+
+protected:
+    void drawBranches(QPainter* /*painter*/, const QRect& /*rect*/, const QModelIndex& /*index*/) const override { }
+};
+
 struct InfoWidget::Private
 {
     InfoWidget* self;
@@ -43,7 +52,7 @@ struct InfoWidget::Private
     PlayerController* playerController;
     SettingsManager* settings;
 
-    QTreeView* view;
+    InfoView* view;
     InfoModel* model;
 
     Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerController* playerController_,
@@ -52,7 +61,7 @@ struct InfoWidget::Private
         , selectionController{selectionController_}
         , playerController{playerController_}
         , settings{settings_}
-        , view{new QTreeView(self)}
+        , view{new InfoView(self)}
         , model{new InfoModel(self)}
     {
         auto* layout = new QHBoxLayout(self);
@@ -62,7 +71,7 @@ struct InfoWidget::Private
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
         view->setSelectionMode(QAbstractItemView::SingleSelection);
         view->setItemsExpandable(false);
-        view->setIndentation(0);
+        view->setIndentation(10);
         view->setExpandsOnDoubleClick(false);
         view->setTextElideMode(Qt::ElideRight);
         view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
