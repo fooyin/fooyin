@@ -1,15 +1,3 @@
-set(CPACK_PACKAGE_FILE_NAME "fooyin_${CPACK_PACKAGE_VERSION}")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-src")
-
-configure_file(
-        "${CPACK_SOURCE_DIR}/dist/packagetar.sh.in"
-        "${CPACK_SOURCE_DIR}/dist/packagetar.sh" @ONLY
-)
-
-execute_process(
-        COMMAND ${CPACK_SOURCE_DIR}/dist/packagetar.sh
-)
-
 if(CPACK_GENERATOR STREQUAL "DEB")
     find_program(DPKG dpkg)
     if(NOT DPKG)
@@ -47,7 +35,7 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     )
 
     set(CPACK_DEBIAN_FILE_NAME
-        "${CPACK_PACKAGE_FILE_NAME}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb"
+        "fooyin_${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb"
     )
     set(CPACK_INSTALL_SCRIPT ${CPACK_DEBIAN_INSTALL_SCRIPT})
 endif()
@@ -125,7 +113,7 @@ if(CPACK_GENERATOR STREQUAL "RPM")
 
 #        set(CPACK_RPM_USER_BINARY_SPECFILE "${CPACK_SOURCE_DIR}/dist/linux/rpm/fooyin.spec.in")
         set(CPACK_RPM_FILE_NAME
-            "${CPACK_PACKAGE_FILE_NAME}-${RPM_DISTRO}_${CPACK_SYSTEM_NAME}.rpm"
+            "fooyin-${CPACK_PACKAGE_VERSION}-${RPM_DISTRO}_${CPACK_SYSTEM_NAME}.rpm"
         )
     endif()
 endif()
