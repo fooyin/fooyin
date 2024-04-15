@@ -57,7 +57,7 @@ install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
 
 # ---- Fooyin executable ----
 
-install(TARGETS fooyin RUNTIME COMPONENT fooyin)
+install(TARGETS fooyin ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 # ---- Fooyin config ----
 
