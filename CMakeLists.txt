@@ -151,12 +151,17 @@ endif()
 
 include(GNUInstallDirs)
 
+set(DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}")
+fooyin_convert_to_relative_path(DATAROOTDIR)
+
 if(INSTALL_FHS)
   set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
   set(LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/fooyin")
+  set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
 else()
   set(BIN_INSTALL_DIR .)
   set(LIB_INSTALL_DIR .)
+  set(TRANSLATION_INSTALL_DIR "translations")
 endif()
 
 fooyin_convert_to_relative_path(BIN_INSTALL_DIR)
@@ -165,15 +170,11 @@ fooyin_convert_to_relative_path(LIB_INSTALL_DIR)
 set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/fooyin")
 set(CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/fooyin")
 
-set(DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}")
-fooyin_convert_to_relative_path(DATAROOTDIR)
-
 set(XDG_APPS_INSTALL_DIR "${DATAROOTDIR}/applications")
 set(APPDATA_INSTALL_DIR "${DATAROOTDIR}/metainfo")
 set(ICON_INSTALL_DIR "${DATAROOTDIR}/icons")
 
 set(DOC_INSTALL_DIR "${DATAROOTDIR}/doc/fooyin/")
-set(TRANSLATION_INSTALL_DIR "${DATAROOTDIR}/fooyin/translations")
 file(RELATIVE_PATH FOOYIN_RELATIVE_TRANSLATION_PATH "/${BIN_INSTALL_DIR}" "/${TRANSLATION_INSTALL_DIR}")
 
 set(FOOYIN_PLUGIN_INSTALL_DIR "${LIB_INSTALL_DIR}/plugins")
@@ -304,17 +305,7 @@ if(BUILD_TRANSLATIONS)
         qm_files
     )
 
-    if(NOT INSTALL_FHS)
-        set(translations_qrc ${CMAKE_CURRENT_BINARY_DIR}/data/translations.qrc)
-        file(WRITE ${translations_qrc} "<RCC><qresource prefix=\"translations\">\n")
-        foreach(qm_file ${qm_files})
-            get_filename_component(qm_name ${qm_file} NAME)
-            file(APPEND ${translations_qrc} "<file>${qm_name}</file>\n")
-        endforeach()
-        file(APPEND ${translations_qrc} "</qresource></RCC>")
-
-        qt_add_resources(SOURCES ${translations_qrc})
-    elseif(NOT CMAKE_SKIP_INSTALL_RULES)
+    if(NOT CMAKE_SKIP_INSTALL_RULES)
         install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
     endif()
 endif()
