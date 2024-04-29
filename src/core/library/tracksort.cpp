@@ -24,6 +24,8 @@
 
 #include <ranges>
 
+#include <QCollator>
+
 namespace {
 Fooyin::ParsedScript parseScript(const QString& sort)
 {
@@ -53,8 +55,13 @@ TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks
 TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};
-    std::ranges::sort(sortedTracks, [order](const Track& lhs, const Track& rhs) {
-        const auto cmp = QString::localeAwareCompare(lhs.sort(), rhs.sort());
+
+    QCollator collator;
+    collator.setNumericMode(true);
+
+    std::ranges::sort(sortedTracks, [order, collator](const Track& lhs, const Track& rhs) {
+        const auto cmp = collator.compare(lhs.sort(), rhs.sort());
+
         if(cmp == 0) {
             return false;
         }
