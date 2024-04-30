@@ -461,8 +461,9 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerRowHeight->setReadOnly(preset.isDefault);
 
     m_simpleHeader->setChecked(preset.header.simple);
+    m_simpleHeader->setDisabled(preset.isDefault);
     m_showCover->setChecked(preset.header.showCover);
-    m_showCover->setEnabled(!preset.header.simple);
+    m_showCover->setDisabled(preset.isDefault || preset.header.simple);
 
     m_subHeaders->setReadOnly(preset.isDefault);
 
@@ -470,8 +471,8 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
         createGroupPresetInputs(subheader, m_subHeaders, this);
     }
 
-    m_headerSubtitle->setEnabled(!preset.header.simple);
-    m_headerInfo->setEnabled(!preset.header.simple);
+    m_headerSubtitle->setDisabled(preset.header.simple);
+    m_headerInfo->setDisabled(preset.header.simple);
 
     m_trackLeftText->setReadOnly(preset.isDefault);
     m_trackRightText->setReadOnly(preset.isDefault);
