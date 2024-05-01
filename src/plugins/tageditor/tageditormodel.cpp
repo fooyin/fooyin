@@ -150,7 +150,8 @@ struct TagEditorModel::Private
         const QString metadata = findField(name);
 
         for(Track& track : tracks) {
-            if(metadata == QLatin1String{Constants::MetaData::Artist}
+            if(metadata == QLatin1String{Constants::MetaData::AlbumArtist}
+               || metadata == QLatin1String{Constants::MetaData::Artist}
                || metadata == QLatin1String{Constants::MetaData::Genre}) {
                 scriptRegistry.setValue(metadata, value.toString().split(QStringLiteral("; ")), track);
             }
