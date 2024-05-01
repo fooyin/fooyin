@@ -722,6 +722,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
             header->resetSectionPositions();
             header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
             header->setHeaderSectionAlignment(0, Qt::AlignCenter);
+            header->setHeaderSectionAlignment(2, Qt::AlignRight);
             header->setHeaderSectionAlignment(4, Qt::AlignRight);
         };
 
