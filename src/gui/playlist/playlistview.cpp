@@ -243,12 +243,14 @@ void PlaylistView::Private::updateScrollBars() const
 
     const int horizontalLength = m_header->length();
     const QSize maxSize        = m_self->maximumViewportSize();
+
     if(maxSize.width() >= horizontalLength && verticalBar->maximum() <= 0) {
         viewportSize = maxSize;
     }
+
     horizontalBar->setPageStep(viewportSize.width());
     horizontalBar->setRange(0, qMax(horizontalLength - viewportSize.width(), 0));
-    verticalBar->setSingleStep(std::max(viewportSize.width() / (columnsInViewport + 1), 2));
+    horizontalBar->setSingleStep(std::max(viewportSize.width() / (columnsInViewport + 1), 2));
 }
 
 int PlaylistView::Private::itemAtCoordinate(int coordinate) const
