@@ -24,7 +24,10 @@
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
-constexpr auto PlayingIcon = "%playingicon%";
+constexpr auto PlayingIcon   = "%playingicon%";
+constexpr auto FrontCover    = "%frontcover%";
+constexpr auto BackCover     = "%backcover%";
+constexpr auto ArtistPicture = "%artistpicture%";
 
 class PlaylistScriptRegistry : public ScriptRegistry
 {

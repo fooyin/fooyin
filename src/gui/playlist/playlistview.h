@@ -19,11 +19,12 @@
 
 #pragma once
 
-#include <QTimer>
-#include <QTreeView>
+#include <QAbstractItemView>
 
 namespace Fooyin {
-class PlaylistView : public QTreeView
+class AutoHeaderView;
+
+class PlaylistView : public QAbstractItemView
 {
     Q_OBJECT
 
@@ -31,19 +32,50 @@ public:
     explicit PlaylistView(QWidget* parent = nullptr);
     ~PlaylistView() override;
 
+    void setModel(QAbstractItemModel* model) override;
+
+    [[nodiscard]] AutoHeaderView* header() const;
+    [[nodiscard]] bool isSpanning(int column) const;
+
     void setWaitForLoad(bool enabled);
+    void setSpan(int column, bool span);
+
+    [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
+    void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
+    [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
+    [[nodiscard]] QModelIndex indexAbove(const QModelIndex& index) const;
+    [[nodiscard]] QModelIndex indexBelow(const QModelIndex& index) const;
+
+    void doItemsLayout() override;
+    void reset() override;
+    void updateGeometries() override;
+
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles = {}) override;
+    void selectAll() override;
 
 protected:
+    bool viewportEvent(QEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
-    void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
-    void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     void paintEvent(QPaintEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
+    void scrollContentsBy(int dx, int dy) override;
+    void rowsInserted(const QModelIndex& parent, int start, int end) override;
+    void rowsRemoved(const QModelIndex& parent, int first, int last);
+    void startDrag(Qt::DropActions supportedActions) override;
+
+    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
+    [[nodiscard]] int horizontalOffset() const override;
+    [[nodiscard]] int verticalOffset() const override;
+    [[nodiscard]] bool isIndexHidden(const QModelIndex& index) const override;
+    void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags command) override;
+    void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
+    [[nodiscard]] QRegion visualRegionForSelection(const QItemSelection& selection) const override;
 
 private:
-    struct Private;
+    class Private;
     std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

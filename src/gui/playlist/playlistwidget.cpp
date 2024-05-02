@@ -21,6 +21,7 @@
 
 #include "internalguisettings.h"
 #include "playlist/playlistinteractor.h"
+#include "playlist/playlistscriptregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -58,25 +59,6 @@
 #include <stack>
 
 namespace {
-void expandTree(QTreeView* view, QAbstractItemModel* model, const QModelIndex& parent, int first, int last)
-{
-    if(first < 0 || last < 0) {
-        return;
-    }
-
-    while(first <= last) {
-        const QModelIndex child = model->index(first, 0, parent);
-        view->expand(child);
-
-        const int childCount = model->rowCount(child);
-        if(childCount > 0) {
-            expandTree(view, model, child, 0, childCount - 1);
-        }
-
-        ++first;
-    }
-}
-
 Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList& indexes)
 {
     Fooyin::TrackList tracks;
@@ -130,7 +112,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , layout{new QHBoxLayout(self)}
     , model{new PlaylistModel(library, playerController, settings, self)}
     , playlistView{new PlaylistView(self)}
-    , header{new AutoHeaderView(Qt::Horizontal, self)}
+    , header{playlistView->header()}
     , singleMode{false}
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), self)}
@@ -140,7 +122,6 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
-    playlistView->setHeader(header);
     header->setStretchEnabled(true);
     header->setSectionsMovable(true);
     header->setFirstSectionMovable(true);
@@ -179,10 +160,6 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(model, &PlaylistModel::tracksInserted, this, &PlaylistWidgetPrivate::tracksInserted);
     QObject::connect(model, &PlaylistModel::tracksMoved, this, &PlaylistWidgetPrivate::tracksMoved);
     QObject::connect(model, &QAbstractItemModel::modelReset, this, &PlaylistWidgetPrivate::resetTree);
-    QObject::connect(model, &QAbstractItemModel::rowsInserted, this,
-                     [this](const QModelIndex& parent, int first, int last) {
-                         expandTree(playlistView, model, parent, first, last);
-                     });
 
     QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this, [this]() {
         if(!playlistController->currentIsActive()) {
@@ -295,7 +272,6 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
 void PlaylistWidgetPrivate::resetTree() const
 {
     playlistView->setWaitForLoad(true);
-    playlistView->expandAll();
     restoreState(playlistController->currentPlaylist());
 }
 
@@ -422,7 +398,7 @@ void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int
 
 bool PlaylistWidgetPrivate::isHeaderHidden() const
 {
-    return playlistView->isHeaderHidden();
+    return header->isHidden();
 }
 
 bool PlaylistWidgetPrivate::isScrollbarHidden() const
@@ -620,7 +596,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
     playlistController->playlistHandler()->removePlaylistTracks(playlistController->currentPlaylist()->id(), indexes);
 
     auto* delCmd = new RemoveTracks(playerController, model, playlistController->currentPlaylist()->id(),
-                                    model->saveTrackGroups(trackSelection));
+                                    PlaylistModel::saveTrackGroups(trackSelection));
     playlistController->addToHistory(delCmd);
 
     model->updateHeader(playlistController->currentPlaylist());
@@ -719,6 +695,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
         }
 
         auto resetColumns = [this]() {
+            model->resetColumnAlignments();
             header->resetSectionPositions();
             header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
             header->setHeaderSectionAlignment(0, Qt::AlignCenter);
@@ -728,6 +705,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 
         if(std::cmp_equal(header->count(), columns.size())) {
             resetColumns();
+            updateSpans();
         }
         else {
             QObject::connect(
@@ -739,12 +717,31 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
                     else {
                         resetColumns();
                     }
+                    updateSpans();
                 },
                 Qt::SingleShotConnection);
         }
     }
 
     resetModel();
+}
+
+void PlaylistWidgetPrivate::updateSpans()
+{
+    auto isPixmap = [](const QString& field) {
+        return field == QString::fromLatin1(FrontCover) || field == QString::fromLatin1(BackCover)
+            || field == QString::fromLatin1(ArtistPicture);
+    };
+
+    for(auto i{0}; const auto& column : columns) {
+        if(isPixmap(column.field)) {
+            playlistView->setSpan(i, true);
+        }
+        else {
+            playlistView->setSpan(i, false);
+        }
+        ++i;
+    }
 }
 
 void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
@@ -776,11 +773,13 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
                 const PlaylistColumn column = columnRegistry.itemById(action->data().toInt());
                 if(column.isValid()) {
                     columns.push_back(column);
+                    updateSpans();
                     changePreset(currentPreset);
                 }
             }
             else {
                 std::erase_if(columns, [columnId](const PlaylistColumn& col) { return col.id == columnId; });
+                updateSpans();
                 changePreset(currentPreset);
             }
         });
@@ -839,7 +838,11 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) co
         return;
     }
 
-    const QModelIndex modelIndex = model->indexAtPlaylistIndex(index);
+    QModelIndex modelIndex = model->indexAtPlaylistIndex(index);
+    while(modelIndex.isValid() && header->isSectionHidden(modelIndex.column())) {
+        modelIndex = modelIndex.siblingAtColumn(modelIndex.column() + 1);
+    }
+
     if(!modelIndex.isValid()) {
         return;
     }
@@ -904,8 +907,6 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder or
         [sortField, currentTracks, order]() { return Sorting::calcSortTracks(sortField, currentTracks, order); });
 
     playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
-
-    header->setSortIndicator(-1, Qt::AscendingOrder);
 }
 
 void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
@@ -1025,6 +1026,8 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
             }
             ++i;
         }
+
+        p->updateSpans();
     }
 
     if(layout.contains(QStringLiteral("HeaderState"))) {

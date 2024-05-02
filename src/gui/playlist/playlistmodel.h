@@ -99,6 +99,7 @@ public:
     MoveOperation moveTracks(const MoveOperation& operation);
     Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
+    void resetColumnAlignments();
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);

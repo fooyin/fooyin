@@ -251,29 +251,26 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     QStyle* style = option.widget ? option.widget->style() : QApplication::style();
 
-    const auto icon         = index.data(Qt::DecorationRole).value<QPixmap>();
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    if(opt.backgroundBrush != Qt::NoBrush) {
-        painter->fillRect(option.rect, opt.backgroundBrush);
-        opt.backgroundBrush = {};
+    const QRect textRect = opt.rect;
+    const int textMargin = (style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1) * 2;
+
+    QIcon::Mode mode{QIcon::Normal};
+    if(!(opt.state & QStyle::State_Enabled)) {
+        mode = QIcon::Disabled;
     }
-
-    if(!singleColumn) {
-        // Draw it ourselves so it has the correct alignment
-        opt.icon = {};
+    else if(opt.state & QStyle::State_Selected) {
+        mode = QIcon::Selected;
     }
-
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
-
-    const int textMargin = (style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, option.widget) + 1) * 2;
+    opt.decorationAlignment = opt.displayAlignment;
 
     if(singleColumn) {
-        const int indent     = icon.isNull() ? index.data(PlaylistItem::Role::Indentation).toInt() : 0;
+        const auto icon      = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
+        const int indent     = icon.isNull() ? index.data(PlaylistItem::Role::Indentation).toInt()
+                                             : opt.decorationSize.width() + textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>();
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>();
-
-        const QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &option);
 
         const QRect rightRect     = textRect.adjusted(textRect.center().x() - textRect.left(), 0, -textMargin, 0);
         auto [_, totalRightWidth] = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse,
@@ -281,17 +278,30 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
         const QRect leftRect = textRect.adjusted(indent + textMargin, 0, -totalRightWidth, 0);
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft);
-    }
-    else {
-        const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>();
-
-        const QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &option);
-
-        const QRect columnRect = textRect.adjusted(textMargin, 0, -textMargin, 0);
-        drawTextBlocks(painter, opt, columnRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
 
         if(!icon.isNull()) {
-            style->drawItemPixmap(painter, opt.rect, static_cast<int>(opt.displayAlignment), icon);
+            opt.rect.setX(opt.rect.x() + textMargin);
+            opt.icon.paint(painter, opt.rect, Qt::AlignVCenter | Qt::AlignLeft, mode, QIcon::On);
+        }
+    }
+    else {
+        if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
+            const auto cover = index.data(PlaylistItem::Role::Column).value<QPixmap>();
+            if(!cover.isNull()) {
+                const int width = opt.rect.width() - textMargin;
+                style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, cover.scaledToWidth(width));
+            }
+        }
+        else {
+            const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>();
+
+            const QRect columnRect = textRect.adjusted(textMargin, 0, -textMargin, 0);
+            drawTextBlocks(painter, opt, columnRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
+
+            const auto icon = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
+            if(!icon.isNull()) {
+                opt.icon.paint(painter, opt.rect, opt.decorationAlignment, mode, QIcon::On);
+            }
         }
     }
 }

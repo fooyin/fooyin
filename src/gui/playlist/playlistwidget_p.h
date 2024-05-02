@@ -98,12 +98,11 @@ public:
     void handlePlayingTrackChanged(const PlaylistTrack& track) const;
 
     void setSingleMode(bool enabled);
+    void updateSpans();
     void customHeaderMenuRequested(const QPoint& pos);
 
     void changeState(PlayState state) const;
-
     void doubleClicked(const QModelIndex& index) const;
-
     void followCurrentTrack(const Track& track, int index) const;
 
     QCoro::Task<void> sortTracks(QString script);

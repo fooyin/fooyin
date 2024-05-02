@@ -53,7 +53,7 @@ public:
         Index,
         BaseKey,
         SingleColumnMode,
-        Column,
+        Column
     };
 
     enum class State
