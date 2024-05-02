@@ -76,6 +76,8 @@ public:
                 QItemSelectionModel::SelectionFlags command) const;
     void resizeColumnToContents(int column) const;
     void columnCountChanged(int oldCount, int newCount) const;
+
+    void doDelayedItemsLayout(int delay = 0);
     void layoutItems() const;
 
     int viewIndex(const QModelIndex& index) const;
@@ -132,6 +134,7 @@ public:
     AutoHeaderView* m_header;
     QAbstractItemModel* m_model{nullptr};
 
+    bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
     bool m_waitForLoad{false};
 
@@ -152,6 +155,7 @@ public:
 
     int m_columnResizeTimerId{0};
     QBasicTimer m_delayedAutoScroll;
+    QBasicTimer m_delayedLayout;
 };
 
 PlaylistView::Private::Private(PlaylistView* self)
@@ -370,6 +374,14 @@ void PlaylistView::Private::columnCountChanged(int oldCount, int newCount) const
     }
 
     m_self->viewport()->update();
+}
+
+void PlaylistView::Private::doDelayedItemsLayout(int delay)
+{
+    if(!m_delayedPendingLayout) {
+        m_delayedPendingLayout = true;
+        m_delayedLayout.start(delay, m_self);
+    }
 }
 
 void PlaylistView::Private::layoutItems() const
@@ -1453,6 +1465,7 @@ PlaylistView::PlaylistView(QWidget* parent)
 PlaylistView::~PlaylistView()
 {
     p->m_delayedAutoScroll.stop();
+    p->m_delayedLayout.stop();
 }
 
 void PlaylistView::setModel(QAbstractItemModel* model)
@@ -1641,7 +1654,7 @@ void PlaylistView::doItemsLayout()
 void PlaylistView::reset()
 {
     QAbstractItemView::reset();
-    doItemsLayout();
+    p->doDelayedItemsLayout();
 }
 
 void PlaylistView::updateGeometries()
@@ -1916,7 +1929,14 @@ void PlaylistView::paintEvent(QPaintEvent* event)
 
 void PlaylistView::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->m_columnResizeTimerId) {
+    if(event->timerId() == p->m_delayedLayout.timerId()) {
+        p->m_delayedLayout.stop();
+        p->m_delayedPendingLayout = false;
+        if(isVisible()) {
+            doItemsLayout();
+        }
+    }
+    else if(event->timerId() == p->m_columnResizeTimerId) {
         killTimer(p->m_columnResizeTimerId);
         p->m_columnResizeTimerId = 0;
         p->recalculatePadding();
@@ -1954,6 +1974,11 @@ void PlaylistView::scrollContentsBy(int dx, int dy)
 
 void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
+    if(p->m_delayedPendingLayout) {
+        QAbstractItemView::rowsInserted(parent, start, end);
+        return;
+    }
+
     if(parent.column() != 0 && parent.isValid()) {
         QAbstractItemView::rowsInserted(parent, start, end);
         return;
@@ -1964,7 +1989,7 @@ void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
     const int parentItem     = p->viewIndex(parent);
 
     if(parentItem != -1 || parent == rootIndex()) {
-        doItemsLayout();
+        p->doDelayedItemsLayout();
     }
     else if(parentItem != -1 && parentRowCount == delta) {
         p->m_viewItems[parentItem].hasChildren = true;
@@ -1976,7 +2001,7 @@ void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
 
 void PlaylistView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
-    doItemsLayout();
+    p->doDelayedItemsLayout();
 
     setState(QAbstractItemView::NoState);
     updateGeometry();
