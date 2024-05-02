@@ -1276,9 +1276,6 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
     const auto& header = std::get<PlaylistContainerItem>(item->data());
 
     if(role == Qt::SizeHintRole) {
-        if(m_currentPreset.header.simple) {
-            return {};
-        }
         return header.size();
     }
 

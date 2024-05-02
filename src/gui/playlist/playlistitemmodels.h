@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "playlistpreset.h"
-
 #include <core/track.h>
 #include <gui/scripting/scriptformatter.h>
 
@@ -28,11 +26,12 @@
 
 namespace Fooyin {
 class PlaylistScriptRegistry;
+class ScriptParser;
 
 class PlaylistContainerItem
 {
 public:
-    PlaylistContainerItem();
+    explicit PlaylistContainerItem(bool isSimple);
 
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
@@ -66,6 +65,7 @@ private:
     RichScript m_sideText;
     RichScript m_info;
 
+    bool m_simple;
     QSize m_size;
     int m_rowHeight;
 };

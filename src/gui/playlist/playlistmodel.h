@@ -22,6 +22,7 @@
 #include "playlistcolumn.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
+#include "playlistpreset.h"
 
 #include <core/player/playerdefs.h>
 #include <utils/treemodel.h>

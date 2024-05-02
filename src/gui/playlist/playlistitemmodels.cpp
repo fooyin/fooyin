@@ -19,11 +19,14 @@
 
 #include "playlistitemmodels.h"
 
+#include <core/scripting/scriptparser.h>
+
 #include <QFontMetrics>
 
 namespace Fooyin {
-PlaylistContainerItem::PlaylistContainerItem()
-    : m_rowHeight{0}
+PlaylistContainerItem::PlaylistContainerItem(bool isSimple)
+    : m_simple{isSimple}
+    , m_rowHeight{0}
 { }
 
 TrackList PlaylistContainerItem::tracks() const
@@ -163,16 +166,22 @@ void PlaylistContainerItem::calculateSize()
     }
 
     if(!m_sideText.text.empty()) {
-        QSize sideSize = addSize(m_sideText, false);
+        const QSize sideSize = addSize(m_sideText, false);
         subtitleSize.setWidth(subtitleSize.width() + sideSize.width());
         subtitleSize.setHeight(std::max(subtitleSize.height(), sideSize.height()));
     }
 
-    totalSize.setWidth(totalSize.width() + subtitleSize.width());
-    totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
+    if(m_simple) {
+        totalSize.setWidth(totalSize.width() + subtitleSize.width());
+        totalSize.setHeight(std::max(totalSize.height(), subtitleSize.height()));
+    }
+    else {
+        totalSize.setWidth(totalSize.width() + subtitleSize.width());
+        totalSize.setHeight(totalSize.height() + subtitleSize.height() + 4);
 
-    if(!m_info.text.empty()) {
-        addSize(m_info);
+        if(!m_info.text.empty()) {
+            addSize(m_info);
+        }
     }
 
     m_size = totalSize;

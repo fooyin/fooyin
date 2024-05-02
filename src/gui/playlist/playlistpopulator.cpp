@@ -132,7 +132,7 @@ struct PlaylistPopulator::Private
         prevHeaderKey     = key;
 
         if(!headers.contains(key)) {
-            PlaylistContainerItem header;
+            PlaylistContainerItem header{currentPreset.header.simple};
             header.setTitle(row.title);
             header.setSubtitle(row.subtitle);
             header.setSideText(row.sideText);
@@ -160,7 +160,7 @@ struct PlaylistPopulator::Private
             const auto rightScript   = parser.evaluate(subheader.rightText.script, track);
             subheader.rightText.text = formatter.evaluate(rightScript);
 
-            PlaylistContainerItem currentContainer;
+            PlaylistContainerItem currentContainer{false};
             currentContainer.setTitle(subheader.leftText);
             currentContainer.setSubtitle(subheader.rightText);
             currentContainer.setRowHeight(subheader.rowHeight);

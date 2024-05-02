@@ -71,6 +71,7 @@ void PresetRegistry::loadDefaults()
 
     preset.header.simple = true;
     preset.header.subtitle.script.clear();
+    preset.header.info.script.clear();
     preset.header.title.script
         = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist) ▪ $if2(%album%,Unknown Album)");
 
