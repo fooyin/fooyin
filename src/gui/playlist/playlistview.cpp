@@ -1945,6 +1945,8 @@ void PlaylistView::timerEvent(QTimerEvent* event)
         updateGeometries();
         viewport()->update();
     }
+
+    QAbstractItemView::timerEvent(event);
 }
 
 void PlaylistView::scrollContentsBy(int dx, int dy)
