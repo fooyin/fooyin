@@ -117,6 +117,7 @@ public:
     QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = false) const;
     void drawTree(QPainter* painter, const QRegion& region) const;
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
     void paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y, int bottom) const;
 
     bool isIndexValid(const QModelIndex& index) const;
@@ -958,7 +959,7 @@ QPixmap PlaylistView::Private::renderToPixmap(const QModelIndexList& indexes, QR
 
         if(!paintedBg) {
             paintedBg = true;
-            opt.rect.setRect(0, opt.rect.top(), m_header->width(), cellHeight);
+            opt.rect.setRect(0, opt.rect.top(), m_header->length(), cellHeight);
 
             const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
             if(bg != Qt::NoBrush) {
@@ -1102,7 +1103,7 @@ QRect PlaylistView::Private::visualRect(const QModelIndex& index, RectRule rule,
 
     if(rule == RectRule::FullRow) {
         x     = 0;
-        width = m_header->width();
+        width = m_header->length();
     }
 
     const int y = coordinateForItem(viewIndex);
@@ -1194,7 +1195,7 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
     if(m_model->hasChildren(index)) {
         // Span first column of headers/subheaders
         opt.rect.setX(0);
-        opt.rect.setWidth(m_header->width());
+        opt.rect.setWidth(m_header->length());
         m_self->itemDelegateForIndex(index)->paint(painter, opt, index);
         return;
     }
@@ -1272,7 +1273,7 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
                 // Show this as a single gradient across the entire row
                 paintedBg = true;
                 opt.rect.setX(0);
-                opt.rect.setWidth(m_header->width());
+                opt.rect.setWidth(m_header->length());
 
                 const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
                 if(bg != Qt::NoBrush) {
@@ -1292,17 +1293,56 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
     }
 
     if(currentRowHasFocus) {
-        QStyleOptionFocusRect focusOpt;
-        focusOpt.QStyleOption::operator=(opt);
-        focusOpt.state |= QStyle::State_KeyboardFocusChange;
-        const QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
-        focusOpt.backgroundColor      = opt.palette.color(
-            cg, m_self->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
-        const int x{0};
-        const QRect focusRect(x - m_header->offset(), y, m_header->length() - x, opt.rect.height());
-        focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), focusRect);
-        style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
+        drawFocus(painter, opt, modelIndex, y);
     }
+}
+
+void PlaylistView::Private::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                                      int y) const
+{
+    QStyleOptionFocusRect focusOpt;
+    focusOpt.QStyleOption::operator=(option);
+    focusOpt.state |= QStyle::State_KeyboardFocusChange;
+    const QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
+    focusOpt.backgroundColor      = option.palette.color(
+        cg, m_self->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
+
+    QRect focusRect{0, y, 0, option.rect.height()};
+
+    auto drawFocus = [this, painter, &focusOpt, &focusRect]() {
+        if(focusRect.width() > 0) {
+            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), focusRect);
+            m_self->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
+        }
+    };
+
+    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &focusOpt, m_self) + 1;
+    const int count  = m_header->count();
+    bool prevSpan{false};
+
+    for(int section{0}; section < count; ++section) {
+        const int logical = m_header->logicalIndex(section);
+        if(m_header->isSectionHidden(logical)) {
+            continue;
+        }
+
+        if(m_self->isSpanning(logical)) {
+            prevSpan = true;
+            focusRect.adjust(0, 0, margin, 0);
+            drawFocus();
+            focusRect.setWidth(0);
+        }
+        else {
+            if(focusRect.width() == 0) {
+                focusRect.setX(m_header->sectionPosition(logical) - (prevSpan ? margin : 0));
+                focusRect.adjust(0, 0, focusRect.x() + (prevSpan ? margin : 0), 0);
+            }
+            focusRect.adjust(0, 0, m_header->sectionSize(logical), 0);
+            prevSpan = false;
+        }
+    }
+
+    drawFocus();
 }
 
 void PlaylistView::Private::paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y,
@@ -1706,7 +1746,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
     if(index.isValid() && showDropIndicator()) {
         QRect rect = visualRect(index);
         rect.setX(0);
-        rect.setWidth(p->m_header->width());
+        rect.setWidth(p->m_header->length());
 
         p->m_dropIndicatorPos = PlaylistView::Private::dropPosition(p->m_dragPos, rect, index);
 
