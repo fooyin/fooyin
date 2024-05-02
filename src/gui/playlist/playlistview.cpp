@@ -115,8 +115,11 @@ public:
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
 
     QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = false) const;
+    std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
     void drawTree(QPainter* painter, const QRegion& region) const;
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                           int y) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
     void paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y, int bottom) const;
 
@@ -1116,6 +1119,47 @@ QRect PlaylistView::Private::visualRect(const QModelIndex& index, RectRule rule,
     return {x, y, width, height};
 }
 
+std::vector<QRect> PlaylistView::Private::rectsToPaint(const QStyleOptionViewItem& option, int y) const
+{
+    std::vector<QRect> rects;
+
+    QRect currRect{0, y, 0, option.rect.height()};
+
+    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, m_self) + 1;
+    const int count  = m_header->count();
+    bool prevSpan{false};
+
+    for(int section{0}; section < count; ++section) {
+        const int logical = m_header->logicalIndex(section);
+        if(m_header->isSectionHidden(logical)) {
+            continue;
+        }
+
+        if(m_self->isSpanning(logical)) {
+            prevSpan = true;
+            if(currRect.width() > 0) {
+                currRect.adjust(0, 0, margin, 0);
+                rects.emplace_back(currRect);
+            }
+            currRect.setWidth(0);
+        }
+        else {
+            if(currRect.width() == 0) {
+                currRect.setX(m_header->sectionPosition(logical) - (prevSpan ? margin : 0));
+                currRect.adjust(0, 0, currRect.x() + (prevSpan ? margin : 0), 0);
+            }
+            currRect.adjust(0, 0, m_header->sectionSize(logical), 0);
+            prevSpan = false;
+        }
+    }
+
+    if(currRect.width() > 0) {
+        rects.emplace_back(currRect);
+    }
+
+    return rects;
+}
+
 void PlaylistView::Private::drawTree(QPainter* painter, const QRegion& region) const
 {
     QStyleOptionViewItem opt;
@@ -1200,8 +1244,6 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
         return;
     }
 
-    const QStyle* style = m_self->style();
-
     const int y              = opt.rect.y();
     const int left           = m_leftAndRight.first;
     const int right          = m_leftAndRight.second;
@@ -1272,14 +1314,7 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
                 // Some styles use a gradient for the selection bg which only covers each individual cell
                 // Show this as a single gradient across the entire row
                 paintedBg = true;
-                opt.rect.setX(0);
-                opt.rect.setWidth(m_header->length());
-
-                const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
-                if(bg != Qt::NoBrush) {
-                    painter->fillRect(opt.rect, bg);
-                }
-                style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_self);
+                drawRowBackground(painter, opt, modelIndex, y);
             }
 
             if(spanning) {
@@ -1297,6 +1332,24 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
     }
 }
 
+void PlaylistView::Private::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option,
+                                              const QModelIndex& index, int y) const
+{
+    QStyleOptionViewItem opt{option};
+
+    const QStyle* style = m_self->style();
+    const auto bg       = index.data(Qt::BackgroundRole).value<QBrush>();
+
+    const auto paintRects = rectsToPaint(option, y);
+    for(const auto& rect : paintRects) {
+        if(bg != Qt::NoBrush && rect.width() > 0) {
+            opt.rect = rect;
+            painter->fillRect(opt.rect, bg);
+            style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_self);
+        }
+    }
+}
+
 void PlaylistView::Private::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
                                       int y) const
 {
@@ -1307,42 +1360,15 @@ void PlaylistView::Private::drawFocus(QPainter* painter, const QStyleOptionViewI
     focusOpt.backgroundColor      = option.palette.color(
         cg, m_self->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
 
-    QRect focusRect{0, y, 0, option.rect.height()};
+    const QStyle* style = m_self->style();
 
-    auto drawFocus = [this, painter, &focusOpt, &focusRect]() {
-        if(focusRect.width() > 0) {
-            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), focusRect);
-            m_self->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
-        }
-    };
-
-    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &focusOpt, m_self) + 1;
-    const int count  = m_header->count();
-    bool prevSpan{false};
-
-    for(int section{0}; section < count; ++section) {
-        const int logical = m_header->logicalIndex(section);
-        if(m_header->isSectionHidden(logical)) {
-            continue;
-        }
-
-        if(m_self->isSpanning(logical)) {
-            prevSpan = true;
-            focusRect.adjust(0, 0, margin, 0);
-            drawFocus();
-            focusRect.setWidth(0);
-        }
-        else {
-            if(focusRect.width() == 0) {
-                focusRect.setX(m_header->sectionPosition(logical) - (prevSpan ? margin : 0));
-                focusRect.adjust(0, 0, focusRect.x() + (prevSpan ? margin : 0), 0);
-            }
-            focusRect.adjust(0, 0, m_header->sectionSize(logical), 0);
-            prevSpan = false;
+    const auto paintRects = rectsToPaint(option, y);
+    for(const auto& rect : paintRects) {
+        if(rect.width() > 0) {
+            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), rect);
+            style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }
-
-    drawFocus();
 }
 
 void PlaylistView::Private::paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y,
