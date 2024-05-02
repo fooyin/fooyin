@@ -257,6 +257,9 @@ struct PlaylistPopulator::Private
             playlistTrack = {trackRow.leftText, trackRow.rightText, track};
         }
 
+        playlistTrack.setRowHeight(trackRow.rowHeight);
+        playlistTrack.calculateSize();
+
         const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
         const QString key     = Utils::generateRandomHash();
 

@@ -78,11 +78,13 @@ public:
     void columnCountChanged(int oldCount, int newCount) const;
 
     void doDelayedItemsLayout(int delay = 0);
+    void interruptDelayedItemsLayout() const;
     void layoutItems() const;
 
     int viewIndex(const QModelIndex& index) const;
     int indexRowSizeHint(const QModelIndex& index) const;
     int indexSizeHint(const QModelIndex& index, bool span = false) const;
+    int indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const;
     int itemHeight(int item) const;
     int itemPadding(int item) const;
     int coordinateForItem(int item) const;
@@ -127,6 +129,7 @@ public:
 
     bool isIndexValid(const QModelIndex& index) const;
     int firstVisibleItem(int* offset) const;
+    int lastVisibleItem(int firstVisual, int offset) const;
     std::pair<int, int> startAndEndColumns(const QRect& rect) const;
 
     PlaylistView* m_self;
@@ -134,7 +137,7 @@ public:
     AutoHeaderView* m_header;
     QAbstractItemModel* m_model{nullptr};
 
-    bool m_delayedPendingLayout{false};
+    mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
     bool m_waitForLoad{false};
 
@@ -155,7 +158,7 @@ public:
 
     int m_columnResizeTimerId{0};
     QBasicTimer m_delayedAutoScroll;
-    QBasicTimer m_delayedLayout;
+    mutable QBasicTimer m_delayedLayout;
 };
 
 PlaylistView::Private::Private(PlaylistView* self)
@@ -386,9 +389,16 @@ void PlaylistView::Private::doDelayedItemsLayout(int delay)
     }
 }
 
+void PlaylistView::Private::interruptDelayedItemsLayout() const
+{
+    m_delayedLayout.stop();
+    m_delayedPendingLayout = false;
+}
+
 void PlaylistView::Private::layoutItems() const
 {
-    if(m_viewItems.empty()) {
+    if(m_viewItems.empty() && m_delayedPendingLayout) {
+        interruptDelayedItemsLayout();
         m_self->doItemsLayout();
     }
 }
@@ -510,6 +520,12 @@ int PlaylistView::Private::indexSizeHint(const QModelIndex& index, bool span) co
     height         = std::max(height, hint);
 
     return height;
+}
+
+int PlaylistView::Private::indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const
+{
+    const int xHint = m_self->itemDelegateForIndex(index)->sizeHint(option, index).width();
+    return std::max(hint, xHint);
 }
 
 int PlaylistView::Private::itemHeight(int item) const
@@ -1433,6 +1449,29 @@ int PlaylistView::Private::firstVisibleItem(int* offset) const
     return -1;
 }
 
+int PlaylistView::Private::lastVisibleItem(int firstVisual, int offset) const
+{
+    if(firstVisual < 0 || offset < 0) {
+        firstVisual = firstVisibleItem(&offset);
+        if(firstVisual < 0) {
+            return -1;
+        }
+    }
+
+    int y{-offset};
+    int value = m_self->viewport()->height();
+
+    const int count = itemCount();
+    for(int i{firstVisual}; i < count; ++i) {
+        y += itemHeight(i);
+        if(y > value) {
+            return i;
+        }
+    }
+
+    return count - 1;
+}
+
 std::pair<int, int> PlaylistView::Private::startAndEndColumns(const QRect& rect) const
 {
     const int start = std::min(m_header->visualIndexAt(rect.left()), 0);
@@ -1517,6 +1556,104 @@ void PlaylistView::setSpan(int column, bool span)
 QRect PlaylistView::visualRect(const QModelIndex& index) const
 {
     return p->visualRect(index, RectRule::SingleSection);
+}
+
+int PlaylistView::sizeHintForColumn(int column) const
+{
+    p->layoutItems();
+
+    if(p->m_viewItems.empty()) {
+        return -1;
+    }
+
+    ensurePolished();
+
+    QStyleOptionViewItem option;
+    initViewItemOption(&option);
+    const auto viewItems = p->m_viewItems;
+    const int itemCount  = p->itemCount();
+
+    const int maximumProcessRows = p->m_header->resizeContentsPrecision();
+
+    int offset{0};
+    int start = p->firstVisibleItem(&offset);
+    int end   = p->lastVisibleItem(start, offset);
+    if(start < 0 || end < 0 || end == itemCount - 1) {
+        end = itemCount - 1;
+        if(maximumProcessRows < 0) {
+            start = 0;
+        }
+        else if(maximumProcessRows == 0) {
+            start               = std::max(0, end - 1);
+            int remainingHeight = viewport()->height();
+            while(start > 0 && remainingHeight > 0) {
+                remainingHeight -= p->itemHeight(start);
+                --start;
+            }
+        }
+        else {
+            start = std::max(0, end - maximumProcessRows);
+        }
+    }
+
+    int width{0};
+    int rowsProcessed{0};
+
+    for(int i = start; i <= end; ++i) {
+        if(viewItems.at(i).hasChildren) {
+            continue;
+        }
+        QModelIndex index = viewItems.at(i).index;
+        index             = index.sibling(index.row(), column);
+        width             = p->indexWidthHint(index, width, option);
+        ++rowsProcessed;
+        if(rowsProcessed == maximumProcessRows) {
+            break;
+        }
+    }
+
+    --end;
+
+    const int actualBottom = itemCount - 1;
+
+    if(maximumProcessRows == 0) {
+        rowsProcessed = 0;
+    }
+
+    while(rowsProcessed != maximumProcessRows && (start > 0 || end < actualBottom)) {
+        int index{-1};
+
+        if((rowsProcessed % 2 && start > 0) || end == actualBottom) {
+            while(start > 0) {
+                --start;
+                if(viewItems.at(start).hasChildren) {
+                    continue;
+                }
+                index = start;
+                break;
+            }
+        }
+        else {
+            while(end < actualBottom) {
+                ++end;
+                if(viewItems.at(end).hasChildren) {
+                    continue;
+                }
+                index = end;
+                break;
+            }
+        }
+        if(index < 0) {
+            continue;
+        }
+
+        QModelIndex viewIndex = viewItems.at(index).index;
+        viewIndex             = viewIndex.sibling(viewIndex.row(), column);
+        width                 = p->indexWidthHint(viewIndex, width, option);
+        ++rowsProcessed;
+    }
+
+    return width;
 }
 
 void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)

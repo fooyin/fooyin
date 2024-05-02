@@ -254,7 +254,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
     const QRect textRect = opt.rect;
-    const int textMargin = (style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) + 1) * 2;
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
 
     QIcon::Mode mode{QIcon::Normal};
     if(!(opt.state & QStyle::State_Enabled)) {
@@ -348,16 +348,18 @@ QSize PlaylistDelegate::sizeHint(const QStyleOptionViewItem& option, const QMode
     const QStyle* style   = widget ? widget->style() : QApplication::style();
 
     QSize size = index.data(Qt::SizeHintRole).toSize();
-    int rowHeight{0};
+
+    const int margin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 5;
+    const QSize hint = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, size, widget);
 
     if(size.width() <= 0) {
-        rowHeight = size.height();
-        size      = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, size, widget);
+        size.setWidth(hint.width());
+    }
+    if(size.height() < 1) {
+        size.setHeight(hint.height());
     }
 
-    if(rowHeight > 0) {
-        size.setHeight(rowHeight);
-    }
+    size.setWidth(size.width() + margin);
 
     return size;
 }

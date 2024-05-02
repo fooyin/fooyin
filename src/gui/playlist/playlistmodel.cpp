@@ -1243,7 +1243,10 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
             break;
         }
         case(Qt::SizeHintRole): {
-            return QSize{0, m_currentPreset.track.rowHeight};
+            if(m_columns.empty()) {
+                return track.size();
+            }
+            return track.size(column);
         }
         case(Qt::DecorationRole): {
             if(m_columns.empty() || m_columns.at(column).field == QString::fromLatin1(PlayingIcon)) {

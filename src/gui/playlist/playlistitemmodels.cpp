@@ -191,6 +191,7 @@ PlaylistTrackItem::PlaylistTrackItem(RichScript left, RichScript right, const Tr
     : m_left{std::move(left)}
     , m_right{std::move(right)}
     , m_track{track}
+    , m_rowHeight{0}
 { }
 
 std::vector<RichScript> PlaylistTrackItem::columns() const
@@ -225,5 +226,66 @@ RichScript PlaylistTrackItem::right() const
 Track PlaylistTrackItem::track() const
 {
     return m_track;
+}
+
+int PlaylistTrackItem::rowHeight() const
+{
+    return m_rowHeight;
+}
+
+QSize PlaylistTrackItem::size(int column) const
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_sizes.size())) {
+        return {};
+    }
+
+    return m_sizes.at(column);
+}
+
+void PlaylistTrackItem::setRowHeight(int height)
+{
+    m_rowHeight = height;
+}
+
+void PlaylistTrackItem::calculateSize()
+{
+    auto addSize = [](const RichScript& script) {
+        QSize blockSize;
+        for(const auto& title : script.text) {
+            const QFontMetrics fm{title.format.font};
+            const QRect br = fm.boundingRect(title.text);
+            blockSize.setWidth(blockSize.width() + br.width());
+        }
+
+        return blockSize;
+    };
+
+    if(!m_columns.empty()) {
+        for(const auto& col : m_columns) {
+            QSize colSize = addSize(col);
+            if(m_rowHeight > 0) {
+                colSize.setHeight(m_rowHeight);
+            }
+            m_sizes.emplace_back(colSize);
+        }
+    }
+    else {
+        QSize totalSize;
+
+        if(!m_left.text.empty()) {
+            totalSize = addSize(m_left);
+        }
+
+        if(!m_right.text.empty()) {
+            const QSize rightSize = addSize(m_right);
+            totalSize.setWidth(totalSize.width() + rightSize.width());
+        }
+
+        if(m_rowHeight > 0) {
+            totalSize.setHeight(m_rowHeight);
+        }
+
+        m_sizes.emplace_back(totalSize);
+    }
 }
 } // namespace Fooyin

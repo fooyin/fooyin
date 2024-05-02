@@ -41,6 +41,7 @@ public:
     void setSpan(int column, bool span);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
+    [[nodiscard]] int sizeHintForColumn(int column) const override;
     void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
     [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
     [[nodiscard]] QModelIndex indexAbove(const QModelIndex& index) const;
