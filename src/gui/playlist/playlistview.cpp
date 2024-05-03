@@ -2136,6 +2136,7 @@ void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
 
 void PlaylistView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
+    p->m_viewItems.clear();
     p->doDelayedItemsLayout();
 
     setState(QAbstractItemView::NoState);
