@@ -653,7 +653,7 @@ bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int
         return {};
     }
 
-    m_columnAlignments[index.column()] = value.value<Qt::Alignment>();
+    changeColumnAlignment(index.column(), value.value<Qt::Alignment>());
 
     emit dataChanged({}, {}, {Qt::TextAlignmentRole});
 
@@ -866,7 +866,7 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
 
 Qt::Alignment PlaylistModel::columnAlignment(int column) const
 {
-    if(!m_columnAlignments.contains(column)) {
+    if(column < 0 || std::cmp_greater_equal(column, m_columnAlignments.size())) {
         return Qt::AlignLeft;
     }
 
@@ -875,7 +875,17 @@ Qt::Alignment PlaylistModel::columnAlignment(int column) const
 
 void PlaylistModel::changeColumnAlignment(int column, Qt::Alignment alignment)
 {
+    m_columnAlignments.resize(column + 1);
     m_columnAlignments[column] = alignment;
+}
+
+void PlaylistModel::resetColumnAlignment(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_columnAlignments.size())) {
+        return;
+    }
+
+    m_columnAlignments.erase(m_columnAlignments.begin() + column);
 }
 
 void PlaylistModel::resetColumnAlignments()

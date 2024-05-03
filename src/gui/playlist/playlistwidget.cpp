@@ -778,9 +778,15 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
                 }
             }
             else {
-                std::erase_if(columns, [columnId](const PlaylistColumn& col) { return col.id == columnId; });
-                updateSpans();
-                changePreset(currentPreset);
+                auto colIt = std::ranges::find_if(columns,
+                                                  [columnId](const PlaylistColumn& col) { return col.id == columnId; });
+                if(colIt != columns.end()) {
+                    const int removedIndex = static_cast<int>(std::distance(columns.begin(), colIt));
+                    columns.erase(colIt);
+                    model->resetColumnAlignment(removedIndex);
+                    updateSpans();
+                    changePreset(currentPreset);
+                }
             }
         });
 
@@ -1022,6 +1028,9 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
                 if(column.size() > 1) {
                     p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                }
+                else {
+                    p->model->changeColumnAlignment(i, Qt::AlignLeft);
                 }
             }
             ++i;

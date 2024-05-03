@@ -100,6 +100,7 @@ public:
     MoveOperation moveTracks(const MoveOperation& operation);
     Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
+    void resetColumnAlignment(int column);
     void resetColumnAlignments();
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
@@ -233,7 +234,7 @@ private:
 
     PlaylistPreset m_currentPreset;
     PlaylistColumnList m_columns;
-    std::map<int, Qt::Alignment> m_columnAlignments;
+    std::vector<Qt::Alignment> m_columnAlignments;
     std::vector<int> m_pixmapColumns;
 
     Playlist* m_currentPlaylist;
