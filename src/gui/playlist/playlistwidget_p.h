@@ -68,7 +68,7 @@ public:
 
     void changePlaylist(Playlist* prevPlaylist, Playlist* playlist);
 
-    void resetTree() const;
+    void resetTree();
     [[nodiscard]] PlaylistViewState getState(Playlist* playlist) const;
     void saveState(Playlist* playlist) const;
     void restoreState(Playlist* playlist) const;
@@ -83,7 +83,7 @@ public:
     void setScrollbarHidden(bool showScrollBar) const;
 
     void selectionChanged() const;
-    void trackIndexesChanged(int playingIndex) const;
+    void trackIndexesChanged(int playingIndex);
     void queueSelectedTracks() const;
     void dequeueSelectedTracks() const;
 
@@ -105,8 +105,9 @@ public:
     void doubleClicked(const QModelIndex& index) const;
     void followCurrentTrack(const Track& track, int index) const;
 
-    QCoro::Task<void> sortTracks(QString script);
+    QCoro::Task<void> sortTracks(QString script) const;
     QCoro::Task<void> sortColumn(int column, Qt::SortOrder order);
+    void resetSort(bool force = false);
 
     void addSortMenu(QMenu* parent);
     void addPresetMenu(QMenu* parent);
@@ -141,5 +142,8 @@ public:
     QAction* removeTrackAction;
     QAction* addToQueueAction;
     QAction* removeFromQueueAction;
+
+    bool m_sorting;
+    bool m_sortingColumn;
 };
 } // namespace Fooyin

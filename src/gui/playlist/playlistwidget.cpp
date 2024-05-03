@@ -117,8 +117,10 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , playlistContext{new WidgetContext(self, Context{Constants::Context::Playlist}, self)}
     , removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), self)}
     , addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to Playback Queue"), self)}
-    , removeFromQueueAction{
-          new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove from Playback Queue"), self)}
+    , removeFromQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove),
+                                        tr("Remove from Playback Queue"), self)}
+    , m_sorting{false}
+    , m_sortingColumn{false}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -265,12 +267,13 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
         saveState(prevPlaylist);
     }
 
-    header->setSortIndicator(-1, Qt::AscendingOrder);
+    resetSort(true);
     resetModel();
 }
 
-void PlaylistWidgetPrivate::resetTree() const
+void PlaylistWidgetPrivate::resetTree()
 {
+    resetSort();
     playlistView->setWaitForLoad(true);
     restoreState(playlistController->currentPlaylist());
 }
@@ -383,7 +386,7 @@ void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int
     const int columnCount = static_cast<int>(columns.size());
 
     QItemSelection indexesToSelect;
-    indexesToSelect.reserve(indexes.size());
+    indexesToSelect.reserve(static_cast<qsizetype>(indexes.size()));
 
     for(const int selectedIndex : indexes) {
         const QModelIndex index = model->indexAtPlaylistIndex(selectedIndex);
@@ -470,8 +473,10 @@ void PlaylistWidgetPrivate::selectionChanged() const
     removeFromQueueAction->setVisible(canDeque);
 }
 
-void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
+void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
 {
+    resetSort(true);
+
     if(!playlistController->currentPlaylist()) {
         return;
     }
@@ -499,6 +504,8 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex) const
     }
 
     model->updateHeader(playlistController->currentPlaylist());
+
+    m_sorting = false;
 }
 
 void PlaylistWidgetPrivate::queueSelectedTracks() const
@@ -623,6 +630,10 @@ void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int ind
 
 void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes, bool allNew)
 {
+    if(!m_sortingColumn) {
+        resetSort(true);
+    }
+
     saveState(playlistController->currentPlaylist());
 
     auto restoreSelection = [this](const int currentIndex, const std::vector<int>& selectedIndexes) {
@@ -863,7 +874,7 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) co
     playlistView->setCurrentIndex(modelIndex);
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::sortTracks(QString script)
+QCoro::Task<void> PlaylistWidgetPrivate::sortTracks(QString script) const
 {
     if(!playlistController->currentPlaylist()) {
         co_return;
@@ -905,6 +916,9 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder or
         co_return;
     }
 
+    m_sorting       = true;
+    m_sortingColumn = true;
+
     auto* currentPlaylist    = playlistController->currentPlaylist();
     const auto currentTracks = currentPlaylist->tracks();
     const QString sortField  = columns.at(column).field;
@@ -913,6 +927,19 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder or
         [sortField, currentTracks, order]() { return Sorting::calcSortTracks(sortField, currentTracks, order); });
 
     playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+
+    m_sortingColumn = false;
+}
+
+void PlaylistWidgetPrivate::resetSort(bool force)
+{
+    if(force) {
+        m_sorting = false;
+    }
+
+    if(!m_sorting) {
+        header->setSortIndicator(-1, Qt::AscendingOrder);
+    }
 }
 
 void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
@@ -998,7 +1025,7 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
         layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
     }
 
-    p->header->setSortIndicator(-1, Qt::AscendingOrder);
+    p->resetSort();
 
     if(!p->singleMode || !p->headerState.isEmpty()) {
         QByteArray state = p->singleMode && !p->headerState.isEmpty() ? p->headerState : p->header->saveHeaderState();
