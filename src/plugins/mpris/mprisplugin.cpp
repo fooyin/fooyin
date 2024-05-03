@@ -423,7 +423,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
 
         static const QString coverPath
             = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
-        m_currentMetaData[QStringLiteral("mpris:artUrl")] = coverPath;
+        m_currentMetaData[QStringLiteral("mpris:artUrl")] = QUrl::fromLocalFile(coverPath).toString();
     }
 }
 } // namespace Fooyin::Mpris
