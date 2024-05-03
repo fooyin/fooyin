@@ -118,7 +118,7 @@ public:
     void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
 
-    QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = false) const;
+    QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = true) const;
     std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
     void drawTree(QPainter* painter, const QRegion& region) const;
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
@@ -587,18 +587,15 @@ bool PlaylistView::Private::hasVisibleChildren(const QModelIndex& parent) const
         return false;
     }
 
-    if(m_model->hasChildren(parent)) {
-        if(m_self->isIndexHidden(parent)) {
-            return false;
-        }
-        return m_model->rowCount(parent) > 0;
-    }
-
-    return false;
+    return m_model->hasChildren(parent);
 }
 
 void PlaylistView::Private::recalculatePadding()
 {
+    if(m_viewItems.empty()) {
+        return;
+    }
+
     int max{0};
 
     const int sectionCount = m_header->count();
@@ -694,15 +691,12 @@ void PlaylistView::Private::layout(int i, bool afterIsUninitialised)
         item->height          = 0;
         item->childCount      = 0;
         item->hasMoreSiblings = false;
+        item->hasChildren     = m_model->hasChildren(currentIndex);
 
-        if(!(currentIndex.flags() & Qt::ItemNeverHasChildren)) {
+        if(item->hasChildren) {
             layout(last, afterIsUninitialised);
             item = &m_viewItems[last];
             children += item->childCount;
-            item->hasChildren = item->childCount > 0;
-        }
-        else {
-            item->hasChildren = hasVisibleChildren(currentIndex);
         }
     }
 
@@ -710,8 +704,6 @@ void PlaylistView::Private::layout(int i, bool afterIsUninitialised)
         m_viewItems[i].childCount += count;
         i = m_viewItems[i].parentItem;
     }
-
-    recalculatePadding();
 }
 
 bool PlaylistView::Private::isIndexEnabled(const QModelIndex& index) const
@@ -1071,7 +1063,7 @@ bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol
 
     if(m_self->viewport()->rect().contains(pos)) {
         index = m_self->indexAt(pos);
-        if(!index.isValid() || !visualRect(index, RectRule::FullRow, true).contains(pos)) {
+        if(!index.isValid() || !visualRect(index, RectRule::FullRow).contains(pos)) {
             index = {};
         }
     }
@@ -1233,7 +1225,7 @@ void PlaylistView::Private::drawTree(QPainter* painter, const QRegion& region) c
             const auto& item         = m_viewItems.at(i);
             const QModelIndex& index = item.index;
 
-            opt.rect = visualRect(index, RectRule::FullRow);
+            opt.rect = visualRect(index, RectRule::FullRow, false);
             opt.rect.setY(y);
             opt.rect.setHeight(indexRowSizeHint(index));
             opt.state |= QStyle::State_Open | (item.hasChildren ? QStyle::State_Children : QStyle::State_None)
@@ -1783,6 +1775,7 @@ void PlaylistView::doItemsLayout()
 
     if(p->m_model && p->m_model->hasChildren(rootIndex())) {
         p->layout(-1);
+        p->recalculatePadding();
     }
 
     QAbstractItemView::doItemsLayout();
@@ -1834,6 +1827,7 @@ void PlaylistView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bo
     }
 
     if(topViewIndex != -1) {
+        // Single row
         if(topLeft.row() == bottomRight.row()) {
             const int oldHeight = p->itemHeight(topViewIndex);
             p->invalidateHeightCache(topViewIndex);
@@ -1890,7 +1884,7 @@ bool PlaylistView::viewportEvent(QEvent* event)
                 const QModelIndex newIndex = indexAt(hoverEvent->position().toPoint());
                 if(p->m_hoverIndex != newIndex) {
                     p->m_hoverIndex = newIndex;
-                    viewport()->update(p->visualRect(newIndex, RectRule::FullRow));
+                    viewport()->update(p->visualRect(newIndex, RectRule::FullRow, false));
                 }
                 break;
             }
@@ -2288,10 +2282,10 @@ void PlaylistView::currentChanged(const QModelIndex& current, const QModelIndex&
     QAbstractItemView::currentChanged(current, previous);
 
     if(previous.isValid()) {
-        viewport()->update(p->visualRect(previous, RectRule::FullRow));
+        viewport()->update(p->visualRect(previous, RectRule::FullRow, false));
     }
     if(current.isValid()) {
-        viewport()->update(p->visualRect(current, RectRule::FullRow));
+        viewport()->update(p->visualRect(current, RectRule::FullRow, false));
     }
 }
 

@@ -184,6 +184,7 @@ private:
     void updateTrackIndexes();
     void deleteNodes(PlaylistItem* parent);
 
+    std::vector<int> pixmapColumns() const;
     void coverUpdated(const Track& track);
 
     using MoveOperationItemGroups = std::vector<PlaylistItemList>;
@@ -233,6 +234,7 @@ private:
     PlaylistPreset m_currentPreset;
     PlaylistColumnList m_columns;
     std::map<int, Qt::Alignment> m_columnAlignments;
+    std::vector<int> m_pixmapColumns;
 
     Playlist* m_currentPlaylist;
     PlayState m_currentPlayState;

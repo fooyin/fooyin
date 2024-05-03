@@ -30,6 +30,7 @@ struct PlaylistColumn
     bool isDefault{false};
     QString name;
     QString field;
+    bool isPixmap{false};
 
     bool operator==(const PlaylistColumn& other) const
     {

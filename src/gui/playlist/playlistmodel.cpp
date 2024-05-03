@@ -889,7 +889,8 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
         m_currentPreset = preset;
     }
 
-    m_columns = columns;
+    m_columns       = columns;
+    m_pixmapColumns = pixmapColumns();
 
     if(!playlist) {
         return;
@@ -1979,13 +1980,28 @@ void PlaylistModel::deleteNodes(PlaylistItem* node)
     m_nodes.erase(node->key());
 }
 
+std::vector<int> PlaylistModel::pixmapColumns() const
+{
+    std::vector<int> columns;
+
+    for(int i{0}; const auto& column : m_columns) {
+        if(column.isPixmap) {
+            columns.emplace_back(i);
+        }
+        ++i;
+    }
+
+    return columns;
+}
+
 void PlaylistModel::coverUpdated(const Track& track)
 {
     if(!m_trackParents.contains(track.id())) {
         return;
     }
 
-    const auto parents = m_trackParents.at(track.id());
+    const auto parents   = m_trackParents.at(track.id());
+    const bool hasPixmap = !m_pixmapColumns.empty();
 
     for(const QString& parentKey : parents) {
         if(m_nodes.contains(parentKey)) {
@@ -1995,6 +2011,13 @@ void PlaylistModel::coverUpdated(const Track& track)
                 const QModelIndex nodeIndex = indexOfItem(parentItem);
                 emit dataChanged(nodeIndex, nodeIndex.siblingAtColumn(columnCount(nodeIndex) - 1),
                                  {Qt::DecorationRole});
+            }
+            else if(hasPixmap && parentItem->type() == PlaylistItem::Track) {
+                const QModelIndex nodeIndex = indexOfItem(parentItem);
+                for(const int col : m_pixmapColumns) {
+                    emit dataChanged(nodeIndex.siblingAtColumn(col),
+                                     nodeIndex.sibling(rowCount(nodeIndex.parent()) - 1, col), {PlaylistItem::Column});
+                }
             }
         }
     }
