@@ -979,11 +979,13 @@ QPixmap PlaylistView::Private::renderToPixmap(const QModelIndexList& indexes, QR
         opt.rect = paintRect.translated(-rect.topLeft());
         adjustViewOptionsForIndex(&opt, index);
 
-        const int cellHeight = indexSizeHint(index, true);
-        const QRect cellRect = opt.rect;
+        const int cellHeight = indexSizeHint(index);
+        opt.rect.setHeight(cellHeight);
 
         if(!paintedBg) {
+            QRect cellRect{opt.rect};
             paintedBg = true;
+
             opt.rect.setRect(0, opt.rect.top(), m_header->length(), cellHeight);
 
             const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
