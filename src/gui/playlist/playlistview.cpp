@@ -983,7 +983,7 @@ QPixmap PlaylistView::Private::renderToPixmap(const QModelIndexList& indexes, QR
         opt.rect.setHeight(cellHeight);
 
         if(!paintedBg) {
-            QRect cellRect{opt.rect};
+            const QRect cellRect{opt.rect};
             paintedBg = true;
 
             opt.rect.setRect(0, opt.rect.top(), m_header->length(), cellHeight);
@@ -1330,6 +1330,11 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
         }
 
         const int cellHeight = spanning ? indexSizeHint(modelIndex, true) : indexRowSizeHint(modelIndex);
+
+        if(spanning && modelIndex.row() > 0
+           && y > visualRect(modelIndex.siblingAtRow(0), RectRule::FullRow, false).y() + cellHeight) {
+            continue;
+        }
 
         if(cellHeight > 0) {
             QRect cellRect{position, y, width, cellHeight};
