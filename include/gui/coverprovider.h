@@ -87,9 +87,9 @@ public:
                                      bool saveToDisk = false) const;
 
     /** Clears the QPixmapCache as well as the on-disk cache. */
-    void clearCache();
+    static void clearCache();
     /** Removes the cover with the @p key from the cache. */
-    void removeFromCache(const QString& key);
+    static void removeFromCache(const QString& key);
 
 signals:
     /** Emitted after a @fn trackCover call if the cover needs to be read from the track metadata. */

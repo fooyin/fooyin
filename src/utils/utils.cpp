@@ -159,6 +159,17 @@ QPixmap scalePixmap(const QPixmap& image, const QSize& size)
     return image;
 }
 
+QImage scaleImage(const QImage& image, const QSize& size)
+{
+    const QSize scale = 4 * size;
+    const int width   = image.size().width();
+    const int height  = image.size().height();
+    if(width > size.width() || height > size.height()) {
+        return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    return image;
+}
+
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
 {
     QPixmap pixmap{orig.size()};
