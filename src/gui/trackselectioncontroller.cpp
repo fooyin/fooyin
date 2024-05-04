@@ -255,10 +255,7 @@ struct TrackSelectionController::Private
             const QString keepActiveName = newName + QStringLiteral(" (") + tr("Playback") + QStringLiteral(")");
 
             if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
-                keepActivePlaylist->changeCurrentIndex(activePlaylist->currentTrackIndex());
-                playlistHandler->createPlaylist(keepActivePlaylist->name(), activePlaylist->tracks());
-
-                playlistHandler->changeActivePlaylist(keepActivePlaylist->id());
+                playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
             }
             else {
                 playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);

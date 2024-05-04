@@ -68,6 +68,8 @@ public:
     void appendToPlaylist(const Id& id, const TrackList& tracks);
     /** Replaces the @p tracks of the playlist with @p id if found. */
     void replacePlaylistTracks(const Id& id, const TrackList& tracks);
+    /** Moves the tracks of the playlist with @p id to the playlist with @p replaceId. */
+    void movePlaylistTracks(const Id& id, const Id& replaceId);
     /** Removes the tracks at @p indexes of the playlist with @p id if found. */
     void removePlaylistTracks(const Id& id, const std::vector<int>& indexes);
     /** Clears all tracks of the playlist with @p id if found. */

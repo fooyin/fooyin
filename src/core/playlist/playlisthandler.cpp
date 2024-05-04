@@ -430,6 +430,31 @@ void PlaylistHandler::replacePlaylistTracks(const Id& id, const TrackList& track
     }
 }
 
+void PlaylistHandler::movePlaylistTracks(const Id& id, const Id& replaceId)
+{
+    auto updateQueue = [this, &id, &replaceId]() {
+        auto queueTracks = p->playerController->playbackQueue().tracks();
+        for(auto& track : queueTracks) {
+            if(track.playlistId == id) {
+                track.playlistId = replaceId;
+            }
+        }
+        p->playerController->replaceTracks(queueTracks);
+    };
+
+    if(auto* playlist = playlistById(id)) {
+        if(auto* replacePlaylist = playlistById(replaceId)) {
+            replacePlaylist->changeCurrentIndex(playlist->currentTrackIndex());
+            createPlaylist(replacePlaylist->name(), playlist->tracks());
+            if(p->activePlaylist == playlist) {
+                p->playerController->updateCurrentTrackPlaylist(replaceId);
+                changeActivePlaylist(replacePlaylist);
+                updateQueue();
+            }
+        }
+    }
+}
+
 void PlaylistHandler::removePlaylistTracks(const Id& id, const std::vector<int>& indexes)
 {
     if(auto* playlist = playlistById(id)) {
@@ -440,7 +465,7 @@ void PlaylistHandler::removePlaylistTracks(const Id& id, const std::vector<int>&
 
 void PlaylistHandler::clearPlaylistTracks(const Id& id)
 {
-    replacePlaylistTracks(id, {});
+    replacePlaylistTracks(id, TrackList{});
 }
 
 void PlaylistHandler::changePlaylistIndex(const Id& id, int index)

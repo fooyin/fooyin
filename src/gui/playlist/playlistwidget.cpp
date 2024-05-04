@@ -164,9 +164,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(model, &QAbstractItemModel::modelReset, this, &PlaylistWidgetPrivate::resetTree);
 
     QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this, [this]() {
-        if(!playlistController->currentIsActive()) {
-            model->playingTrackChanged({});
-        }
+        model->playingTrackChanged(playerController->currentPlaylistTrack());
     });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksChanged, this,
                      &PlaylistWidgetPrivate::handleTracksChanged);
@@ -684,7 +682,9 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
 void PlaylistWidgetPrivate::handlePlayingTrackChanged(const PlaylistTrack& track) const
 {
     model->playingTrackChanged(track);
-    followCurrentTrack(track.track, track.indexInPlaylist);
+    if(track.playlistId == playlistController->currentPlaylistId()) {
+        followCurrentTrack(track.track, track.indexInPlaylist);
+    }
 }
 
 void PlaylistWidgetPrivate::setSingleMode(bool enabled)

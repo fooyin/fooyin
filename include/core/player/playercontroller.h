@@ -86,6 +86,7 @@ public:
     void setCurrentPosition(uint64_t ms);
     void changeCurrentTrack(const Track& track);
     void changeCurrentTrack(const PlaylistTrack& track);
+    void updateCurrentTrackPlaylist(const Id& playlistId);
     void updateCurrentTrackIndex(int index);
 
     [[nodiscard]] PlaybackQueue playbackQueue() const;
@@ -116,7 +117,6 @@ signals:
 
     void currentTrackChanged(const Track& track);
     void playlistTrackChanged(const PlaylistTrack& track);
-    void playlistTrackIndexChanged(const PlaylistTrack& track);
     void trackPlayed(const Track& track);
 
     void tracksQueued(const QueueTracks& tracks);

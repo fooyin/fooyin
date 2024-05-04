@@ -209,13 +209,6 @@ struct PlaylistController::Private
         }
     }
 
-    void handlePlayingTrackChanged(const PlaylistTrack& track) const
-    {
-        if(currentPlaylist && currentPlaylist->id() == track.playlistId) {
-            emit self->playingTrackChanged(track);
-        }
-    }
-
     void saveStates() const
     {
         QByteArray out;
@@ -290,7 +283,7 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
                      [this](Playlist* playlist) { p->handlePlaylistRemoved(playlist); });
 
     QObject::connect(playerController, &PlayerController::playlistTrackChanged, this,
-                     [this](const PlaylistTrack& track) { p->handlePlayingTrackChanged(track); });
+                     &PlaylistController::playingTrackChanged);
     QObject::connect(playerController, &PlayerController::tracksQueued, this,
                      [this](const QueueTracks& tracks) { p->handleTracksQueued(tracks); });
     QObject::connect(

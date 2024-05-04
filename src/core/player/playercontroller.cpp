@@ -159,11 +159,18 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
     emit playlistTrackChanged(p->currentTrack);
 }
 
+void PlayerController::updateCurrentTrackPlaylist(const Id& playlistId)
+{
+    if(std::exchange(p->currentTrack.playlistId, playlistId) != playlistId) {
+        emit playlistTrackChanged(p->currentTrack);
+    }
+}
+
 void PlayerController::updateCurrentTrackIndex(int index)
 {
-    p->currentTrack.indexInPlaylist = index;
-
-    emit playlistTrackIndexChanged(p->currentTrack);
+    if(std::exchange(p->currentTrack.indexInPlaylist, index) != index) {
+        emit playlistTrackChanged(p->currentTrack);
+    }
 }
 
 PlaybackQueue PlayerController::playbackQueue() const

@@ -528,7 +528,7 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(this, [this](int size) {
         m_coverSize = {size, size};
-        m_coverProvider->clearCache();
+        CoverProvider::clearCache();
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
 
