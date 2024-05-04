@@ -287,6 +287,7 @@ PlaylistViewState PlaylistWidgetPrivate::getState(Playlist* playlist) const
         QModelIndex topTrackIndex = playlistView->indexAt({0, 0});
 
         if(topTrackIndex.isValid()) {
+            topTrackIndex = topTrackIndex.siblingAtColumn(0);
             while(model->hasChildren(topTrackIndex)) {
                 topTrackIndex = playlistView->indexBelow(topTrackIndex);
             }
