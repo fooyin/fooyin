@@ -88,6 +88,8 @@ struct LibraryTreeModel::Private
     std::unordered_set<QString> addedNodes;
     int trackCount{0};
 
+    TrackList tracksPendingRemoval;
+
     int rowHeight{0};
     QFont font;
     QColor colour;
@@ -114,6 +116,10 @@ struct LibraryTreeModel::Private
         if(resetting) {
             self->beginResetModel();
             beginReset();
+        }
+
+        if(!tracksPendingRemoval.empty()) {
+            self->removeTracks(tracksPendingRemoval);
         }
 
         populateModel(data);
@@ -482,10 +488,17 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
                          [this](const Track& track) { return p->trackParents.contains(track.id()); });
 
     if(tracksToUpdate.empty()) {
+        emit modelUpdated();
+        addTracks(tracks);
         return;
     }
 
-    removeTracks(tracks);
+    p->tracksPendingRemoval = tracksToUpdate;
+
+    p->populatorThread.start();
+
+    QMetaObject::invokeMethod(&p->populator, [this, tracksToUpdate] { p->populator.run(p->grouping, tracksToUpdate); });
+
     addTracks(tracks);
 }
 

@@ -389,6 +389,7 @@ void FilterModel::updateTracks(const TrackList& tracks)
 
     if(tracksToUpdate.empty()) {
         emit modelUpdated();
+        addTracks(tracks);
         return;
     }
 
@@ -401,6 +402,8 @@ void FilterModel::updateTracks(const TrackList& tracks)
 
     QMetaObject::invokeMethod(&p->populator,
                               [this, columns, tracksToUpdate] { p->populator.run(columns, tracksToUpdate); });
+
+    addTracks(tracks);
 }
 
 void FilterModel::removeTracks(const TrackList& tracks)
