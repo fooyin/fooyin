@@ -77,7 +77,7 @@ public:
     void resizeColumnToContents(int column) const;
     void columnCountChanged(int oldCount, int newCount) const;
 
-    void doDelayedItemsLayout(int delay = 0);
+    void doDelayedItemsLayout(int delay = 0) const;
     void interruptDelayedItemsLayout() const;
     void layoutItems() const;
 
@@ -381,7 +381,7 @@ void PlaylistView::Private::columnCountChanged(int oldCount, int newCount) const
     m_self->viewport()->update();
 }
 
-void PlaylistView::Private::doDelayedItemsLayout(int delay)
+void PlaylistView::Private::doDelayedItemsLayout(int delay) const
 {
     if(!m_delayedPendingLayout) {
         m_delayedPendingLayout = true;
@@ -1458,7 +1458,7 @@ int PlaylistView::Private::lastVisibleItem(int firstVisual, int offset) const
     }
 
     int y{-offset};
-    int value = m_self->viewport()->height();
+    const int value = m_self->viewport()->height();
 
     const int count = itemCount();
     for(int i{firstVisual}; i < count; ++i) {

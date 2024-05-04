@@ -163,9 +163,8 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(model, &PlaylistModel::tracksMoved, this, &PlaylistWidgetPrivate::tracksMoved);
     QObject::connect(model, &QAbstractItemModel::modelReset, this, &PlaylistWidgetPrivate::resetTree);
 
-    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this, [this]() {
-        model->playingTrackChanged(playerController->currentPlaylistTrack());
-    });
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
+                     [this]() { model->playingTrackChanged(playerController->currentPlaylistTrack()); });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksChanged, this,
                      &PlaylistWidgetPrivate::handleTracksChanged);
     QObject::connect(playlistController, &PlaylistController::currentPlaylistQueueChanged, this,
@@ -691,6 +690,8 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 {
     if(std::exchange(singleMode, enabled) != singleMode && singleMode) {
         headerState = header->saveHeaderState();
+        // Avoid display issues in case first section has been hidden
+        header->showSection(header->logicalIndex(0));
     }
 
     header->setSectionsClickable(!singleMode);
