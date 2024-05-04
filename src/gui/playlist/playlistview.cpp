@@ -2270,8 +2270,8 @@ void PlaylistView::setSelection(const QRect& rect, QItemSelectionModel::Selectio
     const QPoint tl{std::min(rect.left(), rect.right()), std::min(rect.top(), rect.bottom())};
     const QPoint br{std::max(rect.left(), rect.right()), std::max(rect.top(), rect.bottom())};
 
-    QModelIndex topLeft     = indexAt(tl);
-    QModelIndex bottomRight = indexAt(br);
+    QModelIndex topLeft     = p->findIndexAt(tl, false);
+    QModelIndex bottomRight = p->findIndexAt(br, false);
 
     if(!topLeft.isValid() && !bottomRight.isValid()) {
         if(command & QItemSelectionModel::Clear) {
