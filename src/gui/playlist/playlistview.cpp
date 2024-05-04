@@ -70,7 +70,7 @@ public:
 
     int itemCount() const;
     void updateScrollBars() const;
-    int itemAtCoordinate(int coordinate) const;
+    int itemAtCoordinate(int coordinate, bool includePadding) const;
     QModelIndex modelIndex(int i, int column = 0) const;
     void select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
                 QItemSelectionModel::SelectionFlags command) const;
@@ -128,6 +128,7 @@ public:
     void paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y, int bottom) const;
 
     bool isIndexValid(const QModelIndex& index) const;
+    QModelIndex findIndexAt(const QPoint& point, bool includePadding) const;
     int firstVisibleItem(int* offset) const;
     int lastVisibleItem(int firstVisual, int offset) const;
     std::pair<int, int> startAndEndColumns(const QRect& rect) const;
@@ -256,7 +257,7 @@ void PlaylistView::Private::updateScrollBars() const
     horizontalBar->setSingleStep(std::max(viewportSize.width() / (columnsInViewport + 1), 2));
 }
 
-int PlaylistView::Private::itemAtCoordinate(int coordinate) const
+int PlaylistView::Private::itemAtCoordinate(int coordinate, bool includePadding) const
 {
     const int itemCount = this->itemCount();
     if(itemCount == 0) {
@@ -267,9 +268,14 @@ int PlaylistView::Private::itemAtCoordinate(int coordinate) const
 
     int itemCoord{0};
     for(int index{0}; index < itemCount; ++index) {
-        itemCoord += itemHeight(index) + itemPadding(index);
+        const int height  = itemHeight(index);
+        const int padding = itemPadding(index);
+        itemCoord += height + padding;
 
         if(itemCoord > contentsCoord) {
+            if(includePadding && (itemCoord - padding) < contentsCoord) {
+                return -1;
+            }
             return index >= itemCount ? -1 : index;
         }
     }
@@ -751,7 +757,7 @@ void PlaylistView::Private::invalidateHeightCache(int item) const
 
 int PlaylistView::Private::pageUp(int i) const
 {
-    int index = itemAtCoordinate(coordinateForItem(i) - m_self->viewport()->height());
+    int index = itemAtCoordinate(coordinateForItem(i) - m_self->viewport()->height(), false);
 
     while(isItemDisabled(index) || itemHasChildren(index)) {
         index--;
@@ -770,7 +776,7 @@ int PlaylistView::Private::pageUp(int i) const
 
 int PlaylistView::Private::pageDown(int i) const
 {
-    int index = itemAtCoordinate(coordinateForItem(i) + m_self->viewport()->height());
+    int index = itemAtCoordinate(coordinateForItem(i) + m_self->viewport()->height(), false);
 
     while(isItemDisabled(index) || itemHasChildren(index)) {
         index++;
@@ -1060,51 +1066,51 @@ bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol
         return false;
     }
 
-    QModelIndex index;
+    QModelIndex index{dropIndex};
     const QPoint pos = event->position().toPoint();
 
-    if(m_self->viewport()->rect().contains(pos)) {
-        index = m_self->indexAt(pos);
-        if(!index.isValid() || !visualRect(index, RectRule::FullRow).contains(pos)) {
-            index = {};
-        }
+    if(m_self->viewport()->rect().contains(pos)
+       && (!index.isValid() || !visualRect(index, RectRule::FullRow).contains(pos))) {
+        index = {};
     }
 
-    if(m_model->supportedDropActions() & event->dropAction()) {
-        int row{-1};
-        int col{-1};
+    if(!(m_model->supportedDropActions() & event->dropAction())) {
+        return false;
+    }
 
-        if(index.isValid()) {
-            m_dropIndicatorPos = PlaylistView::Private::dropPosition(pos, m_self->visualRect(index), index);
-            switch(m_dropIndicatorPos) {
-                case(AboveItem): {
-                    row   = index.row();
-                    col   = index.column();
-                    index = index.parent();
-                    break;
-                }
-                case(BelowItem): {
-                    row   = index.row() + 1;
-                    col   = index.column();
-                    index = index.parent();
-                    break;
-                }
-                case(OnItem):
-                case(OnViewport):
-                    break;
+    int row{-1};
+    int col{-1};
+
+    if(index.isValid()) {
+        m_dropIndicatorPos = PlaylistView::Private::dropPosition(pos, m_self->visualRect(index), index);
+        switch(m_dropIndicatorPos) {
+            case(AboveItem): {
+                row   = index.row();
+                col   = index.column();
+                index = index.parent();
+                break;
             }
+            case(BelowItem): {
+                row   = index.row() + 1;
+                col   = index.column();
+                index = index.parent();
+                break;
+            }
+            case(OnItem):
+            case(OnViewport):
+                break;
         }
-        else {
-            m_dropIndicatorPos = OnViewport;
-            row                = m_model->rowCount({});
-        }
-
-        dropIndex = index;
-        dropRow   = row;
-        dropCol   = col;
-        return true;
     }
-    return false;
+    else {
+        m_dropIndicatorPos = OnViewport;
+        row                = m_model->rowCount({});
+    }
+
+    dropIndex = index;
+    dropRow   = row;
+    dropCol   = col;
+
+    return true;
 }
 
 QRect PlaylistView::Private::visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const
@@ -1430,6 +1436,27 @@ bool PlaylistView::Private::isIndexValid(const QModelIndex& index) const
     return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
 }
 
+QModelIndex PlaylistView::Private::findIndexAt(const QPoint& point, bool includePadding) const
+{
+    layoutItems();
+
+    const int visualIndex = itemAtCoordinate(point.y(), includePadding);
+    QModelIndex index     = modelIndex(visualIndex);
+    if(!index.isValid()) {
+        return {};
+    }
+
+    const int column = m_header->logicalIndexAt(point.x());
+    if(column == index.column()) {
+        return index;
+    }
+    if(column < 0) {
+        return {};
+    }
+
+    return index.sibling(index.row(), column);
+}
+
 int PlaylistView::Private::firstVisibleItem(int* offset) const
 {
     const int value = m_self->verticalScrollBar()->value();
@@ -1723,23 +1750,7 @@ void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)
 
 QModelIndex PlaylistView::indexAt(const QPoint& point) const
 {
-    p->layoutItems();
-
-    const int visualIndex  = p->itemAtCoordinate(point.y());
-    QModelIndex modelIndex = p->modelIndex(visualIndex);
-    if(!modelIndex.isValid()) {
-        return {};
-    }
-
-    const int column = p->m_header->logicalIndexAt(point.x());
-    if(column == modelIndex.column()) {
-        return modelIndex;
-    }
-    if(column < 0) {
-        return {};
-    }
-
-    return modelIndex.sibling(modelIndex.row(), column);
+    return p->findIndexAt(point, true);
 }
 
 QModelIndex PlaylistView::indexAbove(const QModelIndex& index) const
@@ -1911,7 +1922,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
     p->m_dragPos = event->position().toPoint();
 
-    const QModelIndex index = indexAt(p->m_dragPos);
+    const QModelIndex index = p->findIndexAt(p->m_dragPos, false);
 
     event->ignore();
 
@@ -2001,14 +2012,13 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
 
 void PlaylistView::dropEvent(QDropEvent* event)
 {
-    QModelIndex index = indexAt(event->position().toPoint());
-
     if(dragDropMode() == InternalMove && (event->source() != this || !(event->possibleActions() & Qt::MoveAction))) {
         return;
     }
 
     int col{-1};
     int row{-1};
+    QModelIndex index = p->findIndexAt(event->position().toPoint(), false);
 
     if(p->dropOn(event, row, col, index)) {
         const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
