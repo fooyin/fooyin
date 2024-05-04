@@ -58,6 +58,7 @@ public slots:
     void scanLibrary(const LibraryInfo& library, const TrackList& tracks, bool onlyModified);
     void scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks);
     void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
+    void scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls);
 
 private:
     struct Private;

@@ -29,7 +29,8 @@ namespace Fooyin {
 struct LibraryInfo;
 
 /*!
- * There are two types of scan request:
+ * There are three types of scan request:
+ * - Files: Scans a list of files; emits tracksScanned when finished.
  * - Tracks: Scans a TrackList; emits tracksScanned when finished.
  * - Library: Scans an entire library; emits tracksAdded, tracksUpdated, tracksDeleted.
  * In-progress requests can be cancelled early using cancel().
@@ -38,7 +39,8 @@ struct ScanRequest
 {
     enum Type : uint8_t
     {
-        Tracks = 0,
+        Files = 0,
+        Tracks,
         Library,
     };
 
@@ -86,6 +88,12 @@ public:
      * @note tracks will be considered unmanaged (not associated with an added library)
      */
     virtual ScanRequest scanTracks(const TrackList& tracks) = 0;
+    /*!
+     * Scans the @p files for tracks and adds to library.
+     * @returns a ScanRequest representing a queued scan operation.
+     * @note tracks will be considered unmanaged (not associated with an added library)
+     */
+    virtual ScanRequest scanFiles(const QList<QUrl>& files) = 0;
 
     /** Returns all tracks for all libraries */
     [[nodiscard]] virtual TrackList tracks() const = 0;

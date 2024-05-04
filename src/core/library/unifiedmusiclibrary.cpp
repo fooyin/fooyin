@@ -92,6 +92,7 @@ struct UnifiedMusicLibrary::Private
 
             resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
                 tracks = sortedLibraryTracks;
+
                 emit self->tracksAdded(sortedTracks);
             });
         });
@@ -292,6 +293,11 @@ ScanRequest UnifiedMusicLibrary::rescan(const LibraryInfo& library)
 ScanRequest UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
 {
     return p->threadHandler.scanTracks(tracks);
+}
+
+ScanRequest UnifiedMusicLibrary::scanFiles(const QList<QUrl>& files)
+{
+    return p->threadHandler.scanFiles(files);
 }
 
 bool UnifiedMusicLibrary::hasLibrary() const

@@ -140,6 +140,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
 
     m_decoder->start();
+    m_decoder->seek(track.offset());
 
     while(true) {
         if(!mayRun()) {
@@ -155,6 +156,11 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
+
+        if(buffer.endTime() >= track.offset() + track.duration()) {
+            m_data.complete = true;
+            break;
+        }
     }
 
     m_decoder->stop();
@@ -202,13 +208,14 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
     const uint64_t durationSecs = m_data.duration / 1000;
     const int samples           = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
     const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
-    const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
     const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 30));
     const int updateThreshold   = samplesPerChannel / numOfUpdates;
 
+    const int bufferSize = samplesPerBuffer * m_format.bytesPerFrame();
     int processedCount{0};
 
     m_decoder->start();
+    m_decoder->seek(track.offset());
 
     while(true) {
         if(!mayRun()) {
@@ -228,6 +235,11 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
         if(processedCount++ == updateThreshold) {
             processedCount = 0;
             emit waveformGenerated(m_data);
+        }
+
+        if(buffer.endTime() >= track.offset() + track.duration()) {
+            m_data.complete = true;
+            break;
         }
     }
 

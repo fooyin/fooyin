@@ -43,6 +43,7 @@ public:
     ScanRequest refresh(const LibraryInfo& library) override;
     ScanRequest rescan(const LibraryInfo& library) override;
     ScanRequest scanTracks(const TrackList& tracks) override;
+    ScanRequest scanFiles(const QList<QUrl>& files) override;
 
     [[nodiscard]] bool hasLibrary() const override;
     [[nodiscard]] bool isEmpty() const override;

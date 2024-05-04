@@ -104,4 +104,57 @@
             ALTER TABLE Tracks ADD COLUMN BitDepth INTEGER DEFAULT -1;
         </sql>
     </revision>
+    <revision version="6" foreignKeys="1">
+        <description>
+            Remove unique constraint on FilePath. Add unique index on FilePath and Offset. Add CuePath.
+        </description>
+        <sql>
+            CREATE TABLE NewTracks (
+                TrackID INTEGER PRIMARY KEY AUTOINCREMENT,
+                FilePath TEXT NOT NULL,
+                Title TEXT,
+                TrackNumber INTEGER,
+                TrackTotal INTEGER,
+                Artists TEXT,
+                AlbumArtist TEXT,
+                Album TEXT,
+                DiscNumber INTEGER,
+                DiscTotal INTEGER,
+                Date TEXT,
+                Composer TEXT,
+                Performer TEXT,
+                Genres TEXT,
+                Comment TEXT,
+                CuePath TEXT,
+                Offset INTEGER DEFAULT 0,
+                Duration INTEGER DEFAULT 0,
+                FileSize INTEGER DEFAULT 0,
+                BitRate INTEGER DEFAULT 0,
+                SampleRate INTEGER DEFAULT 0,
+                Channels INTEGER DEFAULT 0,
+                BitDepth INTEGER DEFAULT -1,
+                ExtraTags BLOB,
+                Type INTEGER DEFAULT 0,
+                ModifiedDate INTEGER,
+                LibraryID INTEGER DEFAULT -1,
+                TrackHash TEXT
+            );
+
+            INSERT INTO NewTracks (
+                TrackID, FilePath, Title, TrackNumber, TrackTotal, Artists, AlbumArtist, Album, DiscNumber,
+                DiscTotal, Date, Composer, Performer, Genres, Comment, Duration, FileSize, BitRate, SampleRate,
+                ExtraTags, Type, ModifiedDate, LibraryID, TrackHash
+            )
+            SELECT
+                TrackID, FilePath, Title, TrackNumber, TrackTotal, Artists, AlbumArtist, Album, DiscNumber,
+                DiscTotal, Date, Composer, Performer, Genres, Comment, Duration, FileSize, BitRate, SampleRate,
+                ExtraTags, Type, ModifiedDate, LibraryID, TrackHash
+            FROM Tracks;
+
+            DROP TABLE Tracks;
+            ALTER TABLE NewTracks RENAME TO Tracks;
+
+            CREATE UNIQUE INDEX IF NOT EXISTS UniqueTrack ON Tracks(FilePath, Offset);
+        </sql>
+    </revision>
 </schema>
