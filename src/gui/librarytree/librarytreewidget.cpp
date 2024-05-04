@@ -40,50 +40,33 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 
-#include <set>
 #include <stack>
 
 namespace {
 QModelIndexList filterAncestors(const QModelIndexList& indexes)
 {
-    const std::set<QModelIndex> indexSet(indexes.cbegin(), indexes.cend());
     QModelIndexList filteredIndexes;
+    QModelIndexList indexesToRemove;
 
     for(const QModelIndex& index : indexes) {
-        QModelIndex parent = index.parent();
-        bool keepAncestor{true};
-        while(parent.isValid()) {
-            if(indexSet.contains(parent)) {
-                keepAncestor = false;
-                break;
+        const QModelIndex parentIndex = index.parent();
+        if(indexes.contains(parentIndex) || filteredIndexes.contains(parentIndex)) {
+            for(const QModelIndex& childIndex : filteredIndexes) {
+                if(childIndex.parent() == parentIndex) {
+                    indexesToRemove.emplace_back(childIndex);
+                }
             }
-            parent = parent.parent();
         }
+        else {
+            filteredIndexes.emplace_back(index);
+        }
+    }
 
-        if(keepAncestor) {
-            filteredIndexes.append(index);
-        }
+    for(const QModelIndex& index : std::as_const(indexesToRemove)) {
+        filteredIndexes.removeAll(index);
     }
 
     return filteredIndexes;
-}
-
-void getLowestIndexes(const QTreeView* treeView, const QModelIndex& index, QModelIndexList& bottomIndexes)
-{
-    while(treeView->model()->canFetchMore(index)) {
-        treeView->model()->fetchMore(index);
-    }
-
-    const int rowCount = treeView->model()->rowCount(index);
-    if(rowCount == 0) {
-        bottomIndexes.append(index);
-        return;
-    }
-
-    for(int row = 0; row < rowCount; ++row) {
-        const QModelIndex childIndex = treeView->model()->index(row, 0, index);
-        getLowestIndexes(treeView, childIndex, bottomIndexes);
-    }
 }
 
 Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, Fooyin::MusicLibrary* library)
@@ -105,10 +88,6 @@ Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, Fooyin::MusicLibr
             tracks = library->tracks();
             break;
         }
-        getLowestIndexes(treeView, index, trackIndexes);
-    }
-
-    for(const auto& index : trackIndexes) {
         const auto indexTracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
         tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
     }
