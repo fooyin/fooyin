@@ -56,6 +56,7 @@ private:
     QCheckBox* m_header;
     QCheckBox* m_altColours;
     QSpinBox* m_thumbnailSize;
+    QSpinBox* m_coverPadding;
 };
 
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
@@ -68,6 +69,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_header{new QCheckBox(tr("Show Header"), this)}
     , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
     , m_thumbnailSize{new QSpinBox(this)}
+    , m_coverPadding{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -77,6 +79,10 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     m_thumbnailSize->setMinimum(1);
     m_thumbnailSize->setMaximum(300);
     m_thumbnailSize->setSuffix(QStringLiteral("px"));
+
+    m_coverPadding->setMinimum(0);
+    m_coverPadding->setMaximum(100);
+    m_coverPadding->setSuffix(QStringLiteral("px"));
 
     auto* behaviour       = new QGroupBox(tr("Behaviour"), this);
     auto* behaviourLayout = new QGridLayout(behaviour);
@@ -89,15 +95,19 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel(tr("Thumbnail Size") + QStringLiteral(":"), this);
+    auto* thumbnailSizeLabel = new QLabel(tr("Thumbnail Size") + QStringLiteral(":"), this);
+    auto* coverPaddingLabel  = new QLabel(tr("Cover Padding") + QStringLiteral(":"), this);
 
-    appearanceLayout->addWidget(m_scrollBars, 0, 0, 1, 2);
-    appearanceLayout->addWidget(m_header, 1, 0, 1, 2);
-    appearanceLayout->addWidget(m_altColours, 2, 0, 1, 2);
-    appearanceLayout->addWidget(rowHeightLabel, 3, 0);
-    appearanceLayout->addWidget(m_thumbnailSize, 3, 1);
+    int row{0};
+    appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
+    appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
+    appearanceLayout->addWidget(thumbnailSizeLabel, row, 0);
+    appearanceLayout->addWidget(m_thumbnailSize, row++, 1);
+    appearanceLayout->addWidget(coverPaddingLabel, row, 0);
+    appearanceLayout->addWidget(m_coverPadding, row++, 1);
     appearanceLayout->setColumnStretch(2, 1);
-    appearanceLayout->setRowStretch(5, 1);
+    appearanceLayout->setRowStretch(appearanceLayout->rowCount(), 1);
 
     layout->addWidget(behaviour, 0, 0);
     layout->addWidget(appearance, 1, 0);
@@ -116,6 +126,7 @@ void PlaylistGeneralPageWidget::load()
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
     m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
+    m_coverPadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistCoverPadding>());
 }
 
 void PlaylistGeneralPageWidget::apply()
@@ -129,6 +140,7 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
+    m_settings->set<Settings::Gui::Internal::PlaylistCoverPadding>(m_coverPadding->value());
 }
 
 void PlaylistGeneralPageWidget::reset()
@@ -142,6 +154,7 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
     m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
+    m_settings->reset<Settings::Gui::Internal::PlaylistCoverPadding>();
 }
 
 PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)

@@ -286,9 +286,11 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     }
     else {
         if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
-            const auto cover = index.data(PlaylistItem::Role::Column).value<QPixmap>();
+            const auto cover        = index.data(PlaylistItem::Role::Column).value<QPixmap>();
+            const auto coverPadding = index.data(PlaylistItem::Role::ColumnPadding).toInt();
+
             if(!cover.isNull()) {
-                const int width = opt.rect.width() - textMargin;
+                const int width = opt.rect.width() - textMargin - coverPadding;
                 style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, cover.scaledToWidth(width));
             }
         }

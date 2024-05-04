@@ -105,6 +105,7 @@ enum GuiInternalSettings : uint32_t
     WindowTitleTrackScript  = 37 | Type::String,
     TrackCoverPaths         = 38 | Settings::Variant,
     TrackCoverDisplayOption = 39 | Settings::Int,
+    PlaylistCoverPadding    = 40 | Settings::Int,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

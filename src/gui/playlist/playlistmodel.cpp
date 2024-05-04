@@ -502,6 +502,7 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
                   settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
     , m_populator{playerController}
     , m_playlistLoaded{false}
+    , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistCoverPadding>()}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{PlayState::Stopped}
     , m_tempCurrentPlayingIndex{-1}
@@ -530,6 +531,10 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
         m_coverSize = {size, size};
         CoverProvider::clearCache();
         emit dataChanged({}, {}, {Qt::DecorationRole});
+    });
+    m_settings->subscribe<Settings::Gui::Internal::PlaylistCoverPadding>(this, [this](int padding) {
+        m_pixmapPadding = padding;
+        emit dataChanged({}, {}, {PlaylistItem::ColumnPadding});
     });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
@@ -1224,6 +1229,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
             }
 
             return QVariant::fromValue(track.column(column).text);
+        }
+        case(PlaylistItem::Role::ColumnPadding): {
+            return m_pixmapPadding;
         }
         case(PlaylistItem::Role::Left): {
             return QVariant::fromValue(track.left().text);
