@@ -128,7 +128,6 @@ public:
     void paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y, int bottom) const;
 
     bool isIndexValid(const QModelIndex& index) const;
-    QModelIndex findIndexAt(const QPoint& point, bool includePadding) const;
     int firstVisibleItem(int* offset) const;
     int lastVisibleItem(int firstVisual, int offset) const;
     std::pair<int, int> startAndEndColumns(const QRect& rect) const;
@@ -1436,27 +1435,6 @@ bool PlaylistView::Private::isIndexValid(const QModelIndex& index) const
     return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
 }
 
-QModelIndex PlaylistView::Private::findIndexAt(const QPoint& point, bool includePadding) const
-{
-    layoutItems();
-
-    const int visualIndex = itemAtCoordinate(point.y(), includePadding);
-    QModelIndex index     = modelIndex(visualIndex);
-    if(!index.isValid()) {
-        return {};
-    }
-
-    const int column = m_header->logicalIndexAt(point.x());
-    if(column == index.column()) {
-        return index;
-    }
-    if(column < 0) {
-        return {};
-    }
-
-    return index.sibling(index.row(), column);
-}
-
 int PlaylistView::Private::firstVisibleItem(int* offset) const
 {
     const int value = m_self->verticalScrollBar()->value();
@@ -1691,11 +1669,6 @@ void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)
     p->layoutItems();
     p->updateScrollBars();
 
-    QModelIndex parent = index.parent();
-    while(parent != rootIndex() && parent.isValid() && state() == NoState) {
-        parent = p->m_model->parent(parent);
-    }
-
     const int item = p->viewIndex(index);
     if(item < 0) {
         return;
@@ -1750,7 +1723,28 @@ void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)
 
 QModelIndex PlaylistView::indexAt(const QPoint& point) const
 {
-    return p->findIndexAt(point, true);
+    return findIndexAt(point, true);
+}
+
+QModelIndex PlaylistView::findIndexAt(const QPoint& point, bool includePadding) const
+{
+    p->layoutItems();
+
+    const int visualIndex = p->itemAtCoordinate(point.y(), includePadding);
+    QModelIndex index     = p->modelIndex(visualIndex);
+    if(!index.isValid()) {
+        return {};
+    }
+
+    const int column = p->m_header->logicalIndexAt(point.x());
+    if(column == index.column()) {
+        return index;
+    }
+    if(column < 0) {
+        return {};
+    }
+
+    return index.sibling(index.row(), column);
 }
 
 QModelIndex PlaylistView::indexAbove(const QModelIndex& index) const
@@ -1922,7 +1916,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
     p->m_dragPos = event->position().toPoint();
 
-    const QModelIndex index = p->findIndexAt(p->m_dragPos, false);
+    const QModelIndex index = findIndexAt(p->m_dragPos, false);
 
     event->ignore();
 
@@ -2018,7 +2012,7 @@ void PlaylistView::dropEvent(QDropEvent* event)
 
     int col{-1};
     int row{-1};
-    QModelIndex index = p->findIndexAt(event->position().toPoint(), false);
+    QModelIndex index = findIndexAt(event->position().toPoint(), false);
 
     if(p->dropOn(event, row, col, index)) {
         const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
@@ -2270,8 +2264,8 @@ void PlaylistView::setSelection(const QRect& rect, QItemSelectionModel::Selectio
     const QPoint tl{std::min(rect.left(), rect.right()), std::min(rect.top(), rect.bottom())};
     const QPoint br{std::max(rect.left(), rect.right()), std::max(rect.top(), rect.bottom())};
 
-    QModelIndex topLeft     = p->findIndexAt(tl, false);
-    QModelIndex bottomRight = p->findIndexAt(br, false);
+    QModelIndex topLeft     = findIndexAt(tl, false);
+    QModelIndex bottomRight = findIndexAt(br, false);
 
     if(!topLeft.isValid() && !bottomRight.isValid()) {
         if(command & QItemSelectionModel::Clear) {
