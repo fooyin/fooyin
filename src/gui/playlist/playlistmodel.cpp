@@ -818,6 +818,9 @@ MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
             }
 
             PlaylistItem* sourceParentItem = children.front()->parent();
+            if(!sourceParentItem) {
+                continue;
+            }
 
             const auto targetResult = findDropTarget(sourceParentItem, targetParentItem, row);
 
@@ -1400,8 +1403,10 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
             = restoreIndexes(this, data->data(QString::fromLatin1(Constants::Mime::PlaylistItems)), m_currentPlaylist);
         const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
-        const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex](const auto& range) {
-            return (dropIndex >= range.first && dropIndex <= range.last + 1);
+        const int finalIndex = m_currentPlaylist->trackCount() - 1;
+        const bool validMove = !std::ranges::all_of(indexRanges, [dropIndex, finalIndex](const auto& range) {
+            return ((dropIndex >= range.first && dropIndex <= range.last + 1)
+                    || (dropIndex == -1 && range.last >= finalIndex));
         });
 
         if(!validMove) {
