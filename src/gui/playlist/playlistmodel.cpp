@@ -1201,9 +1201,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     const bool singleColumnMode = m_columns.empty();
-    const bool isPlaying        = m_currentPlaylist && m_currentPlayingTrack.playlistId == m_currentPlaylist->id()
-                        && m_currentPlayingTrack.track.id() == track.track().id()
-                        && m_currentPlayingTrack.indexInPlaylist == item->index();
+    const bool isPlaying        = trackIsPlaying(track.track(), item->index());
 
     switch(role) {
         case(Qt::ToolTipRole): {
@@ -2053,6 +2051,13 @@ void PlaylistModel::coverUpdated(const Track& track)
             }
         }
     }
+}
+
+bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
+{
+    return m_currentPlayState == PlayState::Playing && m_currentPlaylist
+        && m_currentPlayingTrack.playlistId == m_currentPlaylist->id() && m_currentPlayingTrack.track.id() == track.id()
+        && m_currentPlayingTrack.indexInPlaylist == index;
 }
 
 PlaylistModel::MoveOperationMap PlaylistModel::determineMoveOperationGroups(const MoveOperation& operation, bool merge)

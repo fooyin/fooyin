@@ -188,6 +188,8 @@ private:
     std::vector<int> pixmapColumns() const;
     void coverUpdated(const Track& track);
 
+    [[nodiscard]] bool trackIsPlaying(const Track& track, int index) const;
+
     using MoveOperationItemGroups = std::vector<PlaylistItemList>;
 
     struct MoveOperationTargetGroups
