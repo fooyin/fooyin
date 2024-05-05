@@ -158,47 +158,46 @@ struct CoverProvider::Private
 
     void fetchCover(const QString& key, const Track& track, const QSize& size, Track::Cover type, bool saveToDisk)
     {
-        Utils::asyncExec([this, key, track, type]() { return findCover(key, track, type); })
-            .then(QtFuture::Launch::Async,
-                  [key, track, size, type, saveToDisk](const QString& coverPath) {
-                      QImage image;
-                      if(!coverPath.isEmpty()) {
-                          // Prefer artwork in directory
-                          image = loadCover(coverPath, size);
-                      }
+        Utils::asyncExec([this, key, track, size, type, saveToDisk]() {
+            QImage image;
 
-                      if(image.isNull()) {
-                          const QByteArray coverData = Tagging::readCover(track, type);
-                          if(!coverData.isEmpty()) {
-                              image = loadCover(coverData, size);
-                          }
-                      }
+            const QString coverPath = findCover(key, track, type);
+            if(!coverPath.isEmpty()) {
+                // Prefer artwork in directory
+                image = loadCover(coverPath, size);
+            }
 
-                      if(saveToDisk) {
-                          const QString cachePath = coverThumbnailPath(key);
-                          if(image.isNull()) {
-                              QFile::remove(cachePath);
-                          }
-                          else if(!QFileInfo::exists(cachePath)) {
-                              saveThumbnail(image, key);
-                          }
-                      }
+            if(image.isNull()) {
+                const QByteArray coverData = Tagging::readCover(track, type);
+                if(!coverData.isEmpty()) {
+                    image = loadCover(coverData, size);
+                }
+            }
 
-                      return image;
-                  })
-            .then(self, [this, key, track](const QImage& image) {
+            if(saveToDisk) {
+                const QString cachePath = coverThumbnailPath(key);
                 if(image.isNull()) {
-                    return;
+                    QFile::remove(cachePath);
                 }
-
-                const QPixmap cover = QPixmap::fromImage(image);
-                if(!QPixmapCache::insert(key, cover)) {
-                    qDebug() << "Failed to cache cover for:" << track.filepath();
+                else if(!QFileInfo::exists(cachePath)) {
+                    saveThumbnail(image, key);
                 }
+            }
 
-                pendingCovers.erase(key);
-                emit self->coverAdded(track);
-            });
+            return image;
+        }).then(self, [this, key, track](const QImage& image) {
+            if(image.isNull()) {
+                return;
+            }
+
+            const QPixmap cover = QPixmap::fromImage(image);
+            if(!QPixmapCache::insert(key, cover)) {
+                qDebug() << "Failed to cache cover for:" << track.filepath();
+            }
+
+            pendingCovers.erase(key);
+            emit self->coverAdded(track);
+        });
     }
 
     QPixmap loadNoCover(const QSize& size, Track::Cover type) const
