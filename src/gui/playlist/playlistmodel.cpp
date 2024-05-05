@@ -2055,7 +2055,7 @@ void PlaylistModel::coverUpdated(const Track& track)
 
 bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
 {
-    return m_currentPlayState == PlayState::Playing && m_currentPlaylist
+    return m_currentPlayState != PlayState::Stopped && m_currentPlaylist
         && m_currentPlayingTrack.playlistId == m_currentPlaylist->id() && m_currentPlayingTrack.track.id() == track.id()
         && m_currentPlayingTrack.indexInPlaylist == index;
 }
