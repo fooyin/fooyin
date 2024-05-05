@@ -260,10 +260,7 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 
 void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*playlist*/)
 {
-    if(settings->value<Settings::Gui::RememberPlaylistState>()) {
-        saveState(prevPlaylist);
-    }
-
+    saveState(prevPlaylist);
     resetSort(true);
     resetModel();
 }
@@ -324,7 +321,7 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
         playlistView->scrollToTop();
     };
 
-    if(!settings->value<Settings::Gui::RememberPlaylistState>() || playlist->trackCount() == 0) {
+    if(playlist->trackCount() == 0) {
         restoreDefaultState();
         return;
     }
@@ -994,11 +991,8 @@ PlaylistWidget::~PlaylistWidget()
     }
 
     p->playlistController->clearHistory();
-
-    if(p->settings->value<Settings::Gui::RememberPlaylistState>()) {
-        p->playlistController->savePlaylistState(p->playlistController->currentPlaylist(),
-                                                 p->getState(p->playlistController->currentPlaylist()));
-    }
+    p->playlistController->savePlaylistState(p->playlistController->currentPlaylist(),
+                                             p->getState(p->playlistController->currentPlaylist()));
 }
 
 QString PlaylistWidget::name() const

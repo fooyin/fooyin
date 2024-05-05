@@ -50,7 +50,6 @@ private:
     QCheckBox* m_cursorFollowsPlayback;
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
-    QCheckBox* m_rememberPlaylistState;
 
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
@@ -64,7 +63,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
-    , m_rememberPlaylistState{new QCheckBox(tr("Remember playlist state"), this)}
     , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show Header"), this)}
     , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
@@ -90,7 +88,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     behaviourLayout->addWidget(m_cursorFollowsPlayback, 0, 0, 1, 2);
     behaviourLayout->addWidget(m_playbackFollowsCursor, 1, 0, 1, 2);
     behaviourLayout->addWidget(m_rewindPrevious, 2, 0, 1, 2);
-    behaviourLayout->addWidget(m_rememberPlaylistState, 3, 0, 1, 2);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
@@ -120,7 +117,6 @@ void PlaylistGeneralPageWidget::load()
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_rememberPlaylistState->setChecked(m_settings->value<Settings::Gui::RememberPlaylistState>());
 
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
@@ -134,7 +130,6 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->set<Settings::Gui::RememberPlaylistState>(m_rememberPlaylistState->isChecked());
 
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
@@ -148,7 +143,6 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->reset<Settings::Gui::RememberPlaylistState>();
 
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
