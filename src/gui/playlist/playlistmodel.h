@@ -134,7 +134,7 @@ private:
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
 
-    QVariant trackData(PlaylistItem* item, int column, int role) const;
+    QVariant trackData(PlaylistItem* item, const QModelIndex& index, int role) const;
     QVariant headerData(PlaylistItem* item, int column, int role) const;
     QVariant subheaderData(PlaylistItem* item, int column, int role) const;
 

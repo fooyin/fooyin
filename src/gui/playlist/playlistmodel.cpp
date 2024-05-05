@@ -610,7 +610,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    auto* item = static_cast<PlaylistItem*>(index.internalPointer());
+    auto* item = itemForIndex(index);
 
     const PlaylistItem::ItemType type = item->type();
 
@@ -638,7 +638,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
         case(PlaylistItem::Header):
             return headerData(item, index.column(), role);
         case(PlaylistItem::Track):
-            return trackData(item, index.column(), role);
+            return trackData(item, index, role);
         case(PlaylistItem::Subheader):
             return subheaderData(item, index.column(), role);
         case(PlaylistItem::Root):
@@ -1195,8 +1195,9 @@ void PlaylistModel::updateModel(ItemKeyMap& data)
     }
 }
 
-QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) const
+QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, int role) const
 {
+    const int column = index.column();
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     const bool singleColumnMode = m_columns.empty();
@@ -1218,14 +1219,27 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, int column, int role) cons
 
             const QString field = m_columns.at(column).field;
 
+            auto getCover = [this, &index](const Track::Cover type) -> QVariant {
+                const QModelIndex first = index.siblingAtRow(0);
+                if(!first.isValid()) {
+                    return {};
+                }
+                if(const auto* firstSibling = itemForIndex(first)) {
+                    const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
+                    return QVariant::fromValue(
+                        m_coverProvider->trackCover(firstTrack.track(), m_coverSize, type, true));
+                }
+                return {};
+            };
+
             if(field == QString::fromLatin1(FrontCover)) {
-                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Front, true);
+                return getCover(Track::Cover::Front);
             }
             if(field == QString::fromLatin1(BackCover)) {
-                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Back, true);
+                return getCover(Track::Cover::Back);
             }
             if(field == QString::fromLatin1(ArtistPicture)) {
-                return m_coverProvider->trackCover(track.track(), m_coverSize, Track::Cover::Artist, true);
+                return getCover(Track::Cover::Artist);
             }
 
             return QVariant::fromValue(track.column(column).text);
