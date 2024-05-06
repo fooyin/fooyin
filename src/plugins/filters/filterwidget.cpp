@@ -460,6 +460,7 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
 
 void FilterWidget::finalise()
 {
+    p->multipleColumns = p->columns.size() > 1;
     p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
 }
 
