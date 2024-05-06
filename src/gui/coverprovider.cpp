@@ -211,23 +211,20 @@ struct CoverProvider::Private
 
         const static QString noCoverKey = QString::fromLatin1(Constants::NoCover);
 
-        Utils::asyncExec([size]() {
-            QImage image;
-            image.load(noCoverKey);
-            image = Utils::scaleImage(image, size);
-            return image;
-        }).then(self, [key](const QImage& image) {
-            if(image.isNull()) {
-                return;
-            }
+        QImage image;
+        image.load(noCoverKey);
+        image = Utils::scaleImage(image, size);
 
-            const QPixmap cover = QPixmap::fromImage(image);
-            if(!QPixmapCache::insert(key, cover)) {
-                qDebug() << "Failed to cache placeholder cover";
-            }
-        });
+        if(image.isNull()) {
+            return {};
+        }
 
-        return {};
+        const QPixmap cover = QPixmap::fromImage(image);
+        if(!QPixmapCache::insert(key, cover)) {
+            qDebug() << "Failed to cache placeholder cover";
+        }
+
+        return cover;
     }
 };
 
