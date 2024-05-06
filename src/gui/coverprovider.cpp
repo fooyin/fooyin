@@ -33,11 +33,13 @@
 
 #include <QByteArray>
 #include <QFileInfo>
+#include <QIcon>
 #include <QPixmapCache>
 
 #include <set>
 
 constexpr QSize MaxCoverSize = {800, 800};
+constexpr auto NoCoverKey    = "|NoCover|";
 
 namespace {
 QString generateCoverKey(const QString& hash, Fooyin::Track::Cover type, const QSize& size)
@@ -83,6 +85,24 @@ QPixmap loadCachedCover(const QString& key)
     }
 
     return {};
+}
+
+QPixmap loadNoCover(const QSize& size, Fooyin::Track::Cover type)
+{
+    const QString key = generateCoverKey(QLatin1String{NoCoverKey}, type, size);
+
+    QPixmap cachedCover;
+    if(QPixmapCache::find(key, &cachedCover)) {
+        return cachedCover;
+    }
+
+    const QIcon icon    = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
+    const QPixmap cover = Fooyin::Utils::scalePixmap(icon.pixmap(size), size);
+    if(!QPixmapCache::insert(key, cover)) {
+        qDebug() << "Failed to cache placeholder cover";
+    }
+
+    return cover;
 }
 } // namespace
 
@@ -199,33 +219,6 @@ struct CoverProvider::Private
             emit self->coverAdded(track);
         });
     }
-
-    QPixmap loadNoCover(const QSize& size, Track::Cover type) const
-    {
-        const QString key = generateCoverKey(QStringLiteral("|NoCover|"), type, size);
-
-        QPixmap cachedCover;
-        if(QPixmapCache::find(key, &cachedCover)) {
-            return cachedCover;
-        }
-
-        const static QString noCoverKey = QString::fromLatin1(Constants::NoCover);
-
-        QImage image;
-        image.load(noCoverKey);
-        image = Utils::scaleImage(image, size);
-
-        if(image.isNull()) {
-            return {};
-        }
-
-        const QPixmap cover = QPixmap::fromImage(image);
-        if(!QPixmapCache::insert(key, cover)) {
-            qDebug() << "Failed to cache placeholder cover";
-        }
-
-        return cover;
-    }
 };
 
 CoverProvider::CoverProvider(SettingsManager* settings, QObject* parent)
@@ -253,7 +246,7 @@ CoverProvider::~CoverProvider() = default;
 QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, Track::Cover type, bool saveToDisk) const
 {
     if(!track.isValid()) {
-        return p->usePlacerholder ? p->loadNoCover(size, type) : QPixmap{};
+        return p->usePlacerholder ? loadNoCover(size, type) : QPixmap{};
     }
 
     const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track.albumHash(), type, size);
@@ -268,7 +261,7 @@ QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, Track::
         p->fetchCover(coverKey, track, size, type, saveToDisk);
     }
 
-    return p->usePlacerholder ? p->loadNoCover(size, type) : QPixmap{};
+    return p->usePlacerholder ? loadNoCover(size, type) : QPixmap{};
 }
 
 QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type, bool saveToDisk) const

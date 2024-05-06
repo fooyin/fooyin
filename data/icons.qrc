@@ -22,6 +22,7 @@
         <file>icons/dark/scalable/actions/media-playlist-shuffle.svg</file>
         <file>icons/dark/scalable/actions/media-skip-backward.svg</file>
         <file>icons/dark/scalable/actions/media-skip-forward.svg</file>
+        <file>icons/dark/scalable/actions/nocover.svg</file>
         <file>icons/dark/scalable/actions/preferences-desktop-font.svg</file>
         <file>icons/dark/scalable/actions/preferences-desktop.svg</file>
         <file>icons/dark/scalable/actions/preferences-other.svg</file>
@@ -54,6 +55,7 @@
         <file>icons/light/scalable/actions/media-playlist-shuffle.svg</file>
         <file>icons/light/scalable/actions/media-skip-backward.svg</file>
         <file>icons/light/scalable/actions/media-skip-forward.svg</file>
+        <file>icons/light/scalable/actions/nocover.svg</file>
         <file>icons/light/scalable/actions/preferences-desktop-font.svg</file>
         <file>icons/light/scalable/actions/preferences-desktop.svg</file>
         <file>icons/light/scalable/actions/preferences-other.svg</file>
@@ -64,6 +66,5 @@
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
         <file>icons/light/scalable/actions/window-close.svg</file>
-        <file>images/nocover.png</file>
     </qresource>
 </RCC>

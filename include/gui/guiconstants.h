@@ -20,12 +20,12 @@
 #pragma once
 
 namespace Fooyin::Constants {
-constexpr auto NoCover        = "://images/nocover.png";
 constexpr auto LightIconTheme = "light";
 constexpr auto DarkIconTheme  = "dark";
 
 namespace Icons {
 constexpr auto Fooyin     = "fooyin";
+constexpr auto NoCover    = "nocover";
 constexpr auto Play       = "media-playback-start";
 constexpr auto Pause      = "media-playback-pause";
 constexpr auto Stop       = "media-playback-stop";

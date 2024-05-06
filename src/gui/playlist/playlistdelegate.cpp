@@ -21,6 +21,8 @@
 
 #include "playlistitem.h"
 
+#include <utils/utils.h>
+
 #include <QApplication>
 #include <QPainter>
 
@@ -143,7 +145,9 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
 
         painter->setRenderHint(QPainter::Antialiasing);
         painter->drawRect(coverFrameRect);
-        painter->drawPixmap(coverRect, cover);
+
+        const int width = coverRect.width();
+        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width));
     }
 }
 
@@ -286,12 +290,14 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     }
     else {
         if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
-            const auto cover        = index.data(PlaylistItem::Role::Column).value<QPixmap>();
-            const auto coverPadding = index.data(PlaylistItem::Role::ColumnPadding).toInt();
+            const auto cover = index.data(PlaylistItem::Role::Column).value<QPixmap>();
 
             if(!cover.isNull()) {
-                const int width = opt.rect.width() - textMargin - coverPadding;
-                style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop, cover.scaledToWidth(width));
+                const auto coverPadding = textMargin + index.data(PlaylistItem::Role::ColumnPadding).toInt();
+                const int width         = opt.rect.width() - coverPadding;
+
+                style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
+                                      Utils::scalePixmap(cover, width));
             }
         }
         else {
