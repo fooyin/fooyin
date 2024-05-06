@@ -83,6 +83,8 @@ public:
     void setIndentation(int indentation);
     void setIndex(int index);
 
+    void removeColumn(int column);
+
     void appendChild(PlaylistItem* child) override;
     void insertChild(int row, PlaylistItem* child) override;
     void removeChild(int index) override;

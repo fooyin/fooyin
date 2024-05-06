@@ -247,6 +247,15 @@ void PlaylistTrackItem::setRowHeight(int height)
     m_rowHeight = height;
 }
 
+void PlaylistTrackItem::removeColumn(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
+        return;
+    }
+
+    m_columns.erase(m_columns.cbegin() + column);
+}
+
 void PlaylistTrackItem::calculateSize()
 {
     auto addSize = [](const RichScript& script) {

@@ -799,10 +799,10 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
                                                   [columnId](const PlaylistColumn& col) { return col.id == columnId; });
                 if(colIt != columns.end()) {
                     const int removedIndex = static_cast<int>(std::distance(columns.begin(), colIt));
-                    columns.erase(colIt);
-                    model->resetColumnAlignment(removedIndex);
-                    updateSpans();
-                    changePreset(currentPreset);
+                    if(model->removeColumn(removedIndex)) {
+                        columns.erase(colIt);
+                        updateSpans();
+                    }
                 }
             }
         });

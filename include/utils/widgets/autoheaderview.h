@@ -32,6 +32,8 @@ public:
     explicit AutoHeaderView(Qt::Orientation orientation, QWidget* parent = nullptr);
     ~AutoHeaderView() override;
 
+    void setModel(QAbstractItemModel* model) override;
+
     void resetSections();
     void resetSectionPositions();
 

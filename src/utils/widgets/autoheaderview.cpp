@@ -259,14 +259,35 @@ AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
                      [this](int section, int /*oldSize*/, int newSize) { p->sectionResized(section, newSize); });
 
     QObject::connect(this, &QHeaderView::sectionCountChanged, this, [this](int oldCount, int newCount) {
-        if(p->stretchEnabled && newCount != static_cast<int>(p->sectionWidths.size())) {
-            p->sectionWidths.resize(newCount);
-            for(int section{oldCount}; section < newCount; ++section) {
-                p->sectionWidths[section] = 0.5;
+        if(p->stretchEnabled && newCount != oldCount) {
+            if(newCount > oldCount) {
+                p->sectionWidths.resize(newCount);
+                const auto ratio = static_cast<double>(newCount - oldCount) / static_cast<double>(newCount);
+                for(int section{oldCount}; section < newCount; ++section) {
+                    p->sectionWidths[section] = ratio;
+                }
             }
             p->normaliseWidths();
             p->updateWidths();
         }
+    });
+}
+
+void AutoHeaderView::setModel(QAbstractItemModel* model)
+{
+    if(!model) {
+        return;
+    }
+
+    QHeaderView::setModel(model);
+
+    QObject::connect(model, &QAbstractItemModel::columnsAboutToBeRemoved, this,
+                     [this](const QModelIndex& /*parent*/, int first, int last) {
+                         p->sectionWidths.remove(first, last - first + 1);
+                     });
+    QObject::connect(model, &QAbstractItemModel::columnsRemoved, this, [this]() {
+        p->normaliseWidths();
+        p->updateWidths();
     });
 }
 

@@ -1102,6 +1102,28 @@ void PlaylistModel::updateHeader(Playlist* playlist)
     }
 }
 
+bool PlaylistModel::removeColumn(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, m_columns.size())) {
+        return false;
+    }
+
+    beginRemoveColumns({}, column, column);
+
+    m_columns.erase(m_columns.cbegin() + column);
+    if(std::cmp_less(column, m_columns.size())) {
+        m_columnAlignments.erase(m_columnAlignments.cbegin() + column);
+    }
+
+    for(auto& [_, node] : m_nodes) {
+        node.removeColumn(column);
+    }
+
+    endRemoveColumns();
+
+    return true;
+}
+
 TrackGroups PlaylistModel::saveTrackGroups(const QModelIndexList& indexes)
 {
     TrackGroups result;

@@ -86,6 +86,7 @@ public:
     [[nodiscard]] QSize size(int column = 0) const;
 
     void setRowHeight(int height);
+    void removeColumn(int column);
 
     void calculateSize();
 

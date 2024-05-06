@@ -110,6 +110,16 @@ void PlaylistItem::setIndex(int index)
     m_index = index;
 }
 
+void PlaylistItem::removeColumn(int column)
+{
+    if(m_type != Track) {
+        return;
+    }
+
+    auto& data = std::get<PlaylistTrackItem>(m_data);
+    data.removeColumn(column);
+}
+
 void PlaylistItem::appendChild(PlaylistItem* child)
 {
     TreeItem::appendChild(child);

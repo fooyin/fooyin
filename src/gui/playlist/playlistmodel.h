@@ -113,6 +113,8 @@ public:
     void removeTracks(const TrackGroups& groups);
     void updateHeader(Playlist* playlist);
 
+    bool removeColumn(int column);
+
     static TrackGroups saveTrackGroups(const QModelIndexList& indexes);
 
     void tracksAboutToBeChanged();
