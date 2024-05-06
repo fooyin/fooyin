@@ -928,7 +928,9 @@ Qt::Alignment PlaylistModel::columnAlignment(int column) const
 
 void PlaylistModel::changeColumnAlignment(int column, Qt::Alignment alignment)
 {
-    m_columnAlignments.resize(column + 1);
+    if(std::cmp_greater_equal(column, m_columnAlignments.size())) {
+        m_columnAlignments.resize(column + 1, Qt::AlignLeft);
+    }
     m_columnAlignments[column] = alignment;
 }
 
