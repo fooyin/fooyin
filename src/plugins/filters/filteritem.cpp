@@ -25,8 +25,8 @@
 #include <QCollator>
 
 namespace {
-bool sort(const QCollator& collator, int column, Qt::SortOrder order,
-          const Fooyin::Filters::FilterItem* lhs, const Fooyin::Filters::FilterItem* rhs)
+bool sort(const QCollator& collator, int column, Qt::SortOrder order, const Fooyin::Filters::FilterItem* lhs,
+          const Fooyin::Filters::FilterItem* rhs)
 {
     if(!lhs || !rhs) {
         return false;
@@ -35,9 +35,6 @@ bool sort(const QCollator& collator, int column, Qt::SortOrder order,
     const auto cmp = collator.compare(lhs->column(column), rhs->column(column));
 
     if(cmp == 0) {
-        if(column > 0) {
-            return sort(collator, column - 1, Qt::AscendingOrder, lhs, rhs);
-        }
         if(std::cmp_less(column, lhs->columns().size() - 1)) {
             return sort(collator, column + 1, Qt::AscendingOrder, lhs, rhs);
         }
@@ -118,10 +115,11 @@ void FilterItem::sortTracks()
 void FilterItem::sortChildren(int column, Qt::SortOrder order)
 {
     std::vector<FilterItem*> sortedChildren{m_children};
+
     QCollator collator;
     collator.setNumericMode(true);
-    std::ranges::sort(sortedChildren, [collator, column, order](const FilterItem* lhs,
-                      const FilterItem* rhs) {
+
+    std::ranges::sort(sortedChildren, [collator, column, order](const FilterItem* lhs, const FilterItem* rhs) {
         return sort(collator, column, order, lhs, rhs);
     });
     m_children = sortedChildren;
