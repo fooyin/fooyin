@@ -23,6 +23,7 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -69,6 +70,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
         m_displayOption = static_cast<CoverDisplay>(option);
         reloadCover();
     });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { reloadCover(); });
 
     reloadCover();
 }

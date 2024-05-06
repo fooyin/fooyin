@@ -26,6 +26,7 @@
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
+#include <gui/guisettings.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
@@ -116,6 +117,7 @@ struct CoverProvider::Private
     bool usePlacerholder{true};
     QString coverKey;
     std::set<QString> pendingCovers;
+    std::set<QString> noCoverKeys;
     ScriptParser parser;
 
     CoverPaths paths;
@@ -129,6 +131,10 @@ struct CoverProvider::Private
     {
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
             self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
+        settings->subscribe<Settings::Gui::IconTheme>(self, []() {
+            // TODO: Only clear nocover
+            QPixmapCache::clear();
+        });
     }
 
     QString findCover(const QString& key, const Track& track, Track::Cover type)
