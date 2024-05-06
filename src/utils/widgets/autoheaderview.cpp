@@ -102,7 +102,7 @@ struct AutoHeaderView::Private
             rightWidthTotal = 0.0;
 
             for(int section{0}; section < sectionCount; ++section) {
-                if(sections.contains(section)) {
+                if(!self->isSectionHidden(section) && sections.contains(section)) {
                     rightWidthTotal += sectionWidths.at(section);
                 }
             }
@@ -111,7 +111,7 @@ struct AutoHeaderView::Private
         const double multiplier = (rightWidthTotal + (1.0 - widthTotal)) / rightWidthTotal;
 
         for(int section{0}; section < sectionCount; ++section) {
-            if(sections.empty() || sections.contains(section)) {
+            if(!self->isSectionHidden(section) && (sections.empty() || sections.contains(section))) {
                 sectionWidths[section] *= multiplier;
             }
         }
@@ -151,8 +151,9 @@ struct AutoHeaderView::Private
             const bool visible           = !self->isSectionHidden(logical);
             const double normalisedWidth = sectionWidths.at(logical);
             const int headerWidth        = self->width();
-            const int width
-                = logical == finalRow ? (headerWidth - totalWidth) : static_cast<int>(normalisedWidth * headerWidth);
+            const int width              = !visible            ? 0
+                                         : logical == finalRow ? (headerWidth - totalWidth)
+                                                               : static_cast<int>(normalisedWidth * headerWidth);
 
             if(visible) {
                 totalWidth += width;
@@ -340,14 +341,14 @@ void AutoHeaderView::hideHeaderSection(int logical)
         return;
     }
 
+    hideSection(logical);
+
     if(!p->stretchEnabled) {
-        hideSection(logical);
         return;
     }
 
-    p->sectionWidths[logical] = 0;
-    hideSection(logical);
-    resetSections();
+    p->normaliseWidths();
+    p->updateWidths();
 }
 
 void AutoHeaderView::showHeaderSection(int logical)
@@ -357,20 +358,9 @@ void AutoHeaderView::showHeaderSection(int logical)
         return;
     }
 
-    const int sectionCount = count();
-
-    int sectionsVisible{0};
-    for(int section{0}; section < sectionCount; ++section) {
-        if(!isSectionHidden(section)) {
-            ++sectionsVisible;
-        }
-    }
-
-    const int sectionWidth = static_cast<int>(sectionsVisible == 0 ? 1.0 : (1.0 / sectionsVisible) * width());
-
     showSection(logical);
-    resizeSection(logical, sectionWidth);
-    resetSections();
+    p->normaliseWidths();
+    p->updateWidths();
 }
 
 void AutoHeaderView::setHeaderSectionHidden(int logical, bool hidden)
