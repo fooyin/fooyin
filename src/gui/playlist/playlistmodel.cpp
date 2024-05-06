@@ -164,7 +164,52 @@ Fooyin::PlaylistItem* cloneParent(Fooyin::ItemKeyMap& nodes, Fooyin::PlaylistIte
     return newParent;
 }
 
-ItemPtrSet optimiseHeaders(const ItemPtrSet& selection)
+QModelIndexList optimiseSelection(QAbstractItemModel* model, const QModelIndexList& selection)
+{
+    std::queue<QModelIndex> stack;
+
+    for(const QModelIndex index : selection) {
+        stack.push(index);
+    }
+
+    QModelIndexList optimisedSelection;
+    QModelIndexList selectedParents;
+
+    while(!stack.empty()) {
+        const QModelIndex current = stack.front();
+        stack.pop();
+        const QModelIndex parent = current.parent();
+
+        if(selection.contains(parent) || selectedParents.contains(parent)) {
+            continue;
+        }
+
+        bool allChildrenSelected{true};
+
+        if(parent.isValid()) {
+            const int rowCount = model->rowCount(parent);
+            for(int row{0}; row < rowCount; ++row) {
+                const QModelIndex child = model->index(row, 0, parent);
+                if(!selection.contains(child) && !selectedParents.contains(child)) {
+                    allChildrenSelected = false;
+                    break;
+                }
+            }
+        }
+
+        if(!allChildrenSelected || !parent.isValid()) {
+            optimisedSelection.append(current);
+        }
+        else if(!optimisedSelection.contains(parent)) {
+            selectedParents.append(parent);
+            stack.push(parent);
+        }
+    }
+
+    return optimisedSelection;
+}
+
+ItemPtrSet optimiseSelection(const ItemPtrSet& selection)
 {
     using Fooyin::PlaylistItem;
 
@@ -1014,7 +1059,9 @@ void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
     tracksAboutToBeChanged();
 
-    const ParentChildRangesList indexGroups = determineRowGroups(indexes);
+    const auto indexesToRemove = optimiseSelection(this, indexes);
+
+    const ParentChildRangesList indexGroups = determineRowGroups(indexesToRemove);
 
     for(const auto& [parent, groups] : indexGroups) {
         for(const auto& children : groups | std::views::reverse) {
@@ -1875,7 +1922,7 @@ void PlaylistModel::removeEmptyHeaders()
         return;
     }
 
-    const ItemPtrSet topLevelHeaders = optimiseHeaders(headersToRemove);
+    const ItemPtrSet topLevelHeaders = optimiseSelection(headersToRemove);
 
     for(PlaylistItem* item : topLevelHeaders) {
         const QModelIndex index = indexOfItem(item);
