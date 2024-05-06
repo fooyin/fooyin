@@ -402,7 +402,7 @@ void PlaylistView::Private::interruptDelayedItemsLayout() const
 
 void PlaylistView::Private::layoutItems() const
 {
-    if(m_viewItems.empty() && m_delayedPendingLayout) {
+    if(m_delayedPendingLayout) {
         interruptDelayedItemsLayout();
         m_self->doItemsLayout();
     }

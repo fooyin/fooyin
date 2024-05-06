@@ -193,41 +193,40 @@ void PlaylistWidgetPrivate::setupActions()
 
     auto* editMenu = actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* undo    = new QAction(tr("Undo"), this);
-    auto* undoCmd = actionManager->registerAction(undo, Constants::Actions::Undo, playlistContext->context());
+    auto* undoAction = new QAction(tr("Undo"), this);
+    auto* undoCmd    = actionManager->registerAction(undoAction, Constants::Actions::Undo, playlistContext->context());
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
     editMenu->addAction(undoCmd);
-    QObject::connect(undo, &QAction::triggered, this, [this]() { playlistController->undoPlaylistChanges(); });
+    QObject::connect(undoAction, &QAction::triggered, this, [this]() { playlistController->undoPlaylistChanges(); });
     QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
-                     [this, undo]() { undo->setEnabled(playlistController->canUndo()); });
-    undo->setEnabled(playlistController->canUndo());
+                     [this, undoAction]() { undoAction->setEnabled(playlistController->canUndo()); });
+    undoAction->setEnabled(playlistController->canUndo());
 
-    auto* redo    = new QAction(tr("Redo"), this);
-    auto* redoCmd = actionManager->registerAction(redo, Constants::Actions::Redo, playlistContext->context());
+    auto* redoAction = new QAction(tr("Redo"), this);
+    auto* redoCmd    = actionManager->registerAction(redoAction, Constants::Actions::Redo, playlistContext->context());
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
     editMenu->addAction(redoCmd);
-    QObject::connect(redo, &QAction::triggered, this, [this]() { playlistController->redoPlaylistChanges(); });
+    QObject::connect(redoAction, &QAction::triggered, this, [this]() { playlistController->redoPlaylistChanges(); });
     QObject::connect(playlistController, &PlaylistController::playlistHistoryChanged, this,
-                     [this, redo]() { redo->setEnabled(playlistController->canRedo()); });
-    redo->setEnabled(playlistController->canRedo());
+                     [this, redoAction]() { redoAction->setEnabled(playlistController->canRedo()); });
+    redoAction->setEnabled(playlistController->canRedo());
 
     editMenu->addSeparator();
 
-    auto* clear = new QAction(PlaylistWidget::tr("&Clear"), self);
-    editMenu->addAction(actionManager->registerAction(clear, Constants::Actions::Clear, playlistContext->context()));
-    QObject::connect(clear, &QAction::triggered, this, [this]() { playlistController->clearCurrentPlaylist(); });
+    auto* clearAction = new QAction(PlaylistWidget::tr("&Clear"), self);
+    editMenu->addAction(
+        actionManager->registerAction(clearAction, Constants::Actions::Clear, playlistContext->context()));
+    QObject::connect(clearAction, &QAction::triggered, this, [this]() {
+        playlistView->selectAll();
+        tracksRemoved();
+    });
 
-    auto* selectAll = new QAction(PlaylistWidget::tr("&Select All"), self);
+    auto* selectAllAction = new QAction(PlaylistWidget::tr("&Select All"), self);
     auto* selectAllCmd
-        = actionManager->registerAction(selectAll, Constants::Actions::SelectAll, playlistContext->context());
+        = actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, playlistContext->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
     editMenu->addAction(selectAllCmd);
-    QObject::connect(selectAll, &QAction::triggered, this, [this]() {
-        while(model->canFetchMore({})) {
-            model->fetchMore({});
-        }
-        playlistView->selectAll();
-    });
+    QObject::connect(selectAllAction, &QAction::triggered, this, [this]() { selectAll(); });
 
     removeTrackAction->setEnabled(false);
     auto* removeCmd
@@ -413,6 +412,14 @@ void PlaylistWidgetPrivate::setHeaderHidden(bool hide) const
 void PlaylistWidgetPrivate::setScrollbarHidden(bool showScrollBar) const
 {
     playlistView->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+}
+
+void PlaylistWidgetPrivate::selectAll() const
+{
+    while(model->canFetchMore({})) {
+        model->fetchMore({});
+    }
+    playlistView->selectAll();
 }
 
 void PlaylistWidgetPrivate::selectionChanged() const
@@ -1127,12 +1134,16 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
 {
     const auto key = event->key();
 
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+    if(event == QKeySequence::SelectAll) {
+        p->selectAll();
+    }
+    else if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         if(p->selectionController->hasTracks()) {
             p->selectionController->executeAction(TrackAction::Play);
         }
         p->playlistView->clearSelection();
     }
+
     QWidget::keyPressEvent(event);
 }
 } // namespace Fooyin

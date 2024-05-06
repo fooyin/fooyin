@@ -82,6 +82,7 @@ public:
     void setHeaderHidden(bool hide) const;
     void setScrollbarHidden(bool showScrollBar) const;
 
+    void selectAll() const;
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex);
     void queueSelectedTracks() const;
