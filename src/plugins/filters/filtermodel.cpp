@@ -76,8 +76,8 @@ struct FilterModel::Private
     int sortColumn{0};
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
 
-    using ColumnAlignments = std::map<int, Qt::Alignment>;
-    ColumnAlignments columnAlignments;
+    using ColumnAlignments = std::vector<Qt::Alignment>;
+    mutable ColumnAlignments columnAlignments;
 
     int rowHeight{0};
     QFont font;
@@ -307,7 +307,7 @@ bool FilterModel::setData(const QModelIndex& index, const QVariant& value, int r
         return {};
     }
 
-    p->columnAlignments[index.column()] = value.value<Qt::Alignment>();
+    changeColumnAlignment(index.column(), value.value<Qt::Alignment>());
 
     emit dataChanged({}, {}, {Qt::TextAlignmentRole});
 
@@ -338,14 +338,22 @@ QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 
 Qt::Alignment FilterModel::columnAlignment(int column) const
 {
-    if(!p->columnAlignments.contains(column)) {
+    if(column < 0 || std::cmp_greater_equal(column, p->columns.size())) {
         return Qt::AlignLeft;
     }
+
+    if(std::cmp_greater_equal(column, p->columnAlignments.size())) {
+        p->columnAlignments.resize(column + 1, Qt::AlignLeft);
+    }
+
     return p->columnAlignments.at(column);
 }
 
 void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
 {
+    if(std::cmp_greater_equal(column, p->columnAlignments.size())) {
+        p->columnAlignments.resize(column + 1, Qt::AlignLeft);
+    }
     p->columnAlignments[column] = alignment;
 }
 
@@ -436,6 +444,28 @@ void FilterModel::removeTracks(const TrackList& tracks)
     }
 
     p->updateAllNode();
+}
+
+bool FilterModel::removeColumn(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, p->columns.size())) {
+        return false;
+    }
+
+    beginRemoveColumns({}, column, column);
+
+    p->columns.erase(p->columns.cbegin() + column);
+    if(std::cmp_less(column, p->columns.size())) {
+        p->columnAlignments.erase(p->columnAlignments.cbegin() + column);
+    }
+
+    for(auto& [_, node] : p->nodes) {
+        node.removeColumn(column);
+    }
+
+    endRemoveColumns();
+
+    return true;
 }
 
 void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks)

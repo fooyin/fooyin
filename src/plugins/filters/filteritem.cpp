@@ -89,6 +89,11 @@ void FilterItem::setColumns(const QStringList& columns)
     m_columns = columns;
 }
 
+void FilterItem::removeColumn(int column)
+{
+    m_columns.remove(column);
+}
+
 void FilterItem::addTrack(const Track& track)
 {
     m_tracks.emplace_back(track);

@@ -47,6 +47,7 @@ public:
     [[nodiscard]] int trackCount() const;
 
     void setColumns(const QStringList& columns);
+    void removeColumn(int column);
 
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);

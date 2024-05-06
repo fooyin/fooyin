@@ -97,6 +97,8 @@ struct FilterWidget::Private
     bool searching{false};
     bool updating{false};
 
+    QByteArray headerState;
+
     Private(FilterWidget* self_, SettingsManager* settings_)
         : self{self_}
         , columnRegistry{settings_}
@@ -117,8 +119,6 @@ struct FilterWidget::Private
         header->setContextMenuPolicy(Qt::CustomContextMenu);
 
         columns = {columnRegistry.itemByIndex(0)};
-
-        header->restoreHeaderState({});
 
         model->setFont(settings->value<Settings::Filters::FilterFont>());
         model->setColour(settings->value<Settings::Filters::FilterColour>());
@@ -203,8 +203,16 @@ struct FilterWidget::Private
                 }
             }
             else {
-                std::erase_if(columns, [columnId](const FilterColumn& filterCol) { return filterCol.id == columnId; });
+                auto colIt
+                    = std::ranges::find_if(columns, [columnId](const FilterColumn& col) { return col.id == columnId; });
+                if(colIt != columns.end()) {
+                    const int removedIndex = static_cast<int>(std::distance(columns.begin(), colIt));
+                    if(model->removeColumn(removedIndex)) {
+                        columns.erase(colIt);
+                    }
+                }
             }
+
             tracks.clear();
             QMetaObject::invokeMethod(self, &FilterWidget::filterUpdated);
         });
@@ -426,6 +434,9 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
                 if(column.size() > 1) {
                     p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
                 }
+                else {
+                    p->model->changeColumnAlignment(i, Qt::AlignLeft);
+                }
             }
             ++i;
         }
@@ -448,20 +459,25 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
             return;
         }
 
-        state = qUncompress(state);
-
-        // Workaround to ensure QHeaderView section count is updated before restoring state
-        QMetaObject::invokeMethod(p->model, "headerDataChanged", Q_ARG(Qt::Orientation, Qt::Horizontal), Q_ARG(int, 0),
-                                  Q_ARG(int, 0));
-
-        p->header->restoreHeaderState(state);
+        p->headerState = qUncompress(state);
     }
 }
 
 void FilterWidget::finalise()
 {
     p->multipleColumns = p->columns.size() > 1;
-    p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
+
+    if(!p->columns.empty()) {
+        if(!p->headerState.isEmpty()) {
+            QObject::connect(
+                p->model, &QAbstractItemModel::modelReset, this,
+                [this]() {
+                    p->header->restoreHeaderState(p->headerState);
+                    p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
+                },
+                Qt::SingleShotConnection);
+        }
+    }
 }
 
 void FilterWidget::searchEvent(const QString& search)
