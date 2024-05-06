@@ -156,7 +156,15 @@ QPixmap scalePixmap(const QPixmap& image, const QSize& size)
     if(width > size.width() || height > size.height()) {
         return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
+    else {
+        return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
     return image;
+}
+
+QPixmap scalePixmap(const QPixmap& image, int width)
+{
+    return scalePixmap(image, {width, width});
 }
 
 QImage scaleImage(const QImage& image, const QSize& size)
@@ -167,7 +175,15 @@ QImage scaleImage(const QImage& image, const QSize& size)
     if(width > size.width() || height > size.height()) {
         return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
+    else {
+        return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
     return image;
+}
+
+QImage scaleImage(const QImage& image, int width)
+{
+    return scaleImage(image, {width, width});
 }
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
