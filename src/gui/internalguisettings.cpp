@@ -110,5 +110,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                          QStringLiteral("Artwork/Paths"));
     m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
     m_settings->createSetting<Internal::PlaylistCoverPadding>(15, QStringLiteral("PlaylistWidget/CoverPadding"));
+    m_settings->createSetting<Internal::PixmapCacheSize>(20, QStringLiteral("Interface/PixmapCacheSize"));
 }
 } // namespace Fooyin

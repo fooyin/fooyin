@@ -91,6 +91,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QPixmapCache>
 #include <QPushButton>
 
 namespace Fooyin {
@@ -566,7 +567,14 @@ struct GuiApplication::Private
 
 GuiApplication::GuiApplication(const CorePluginContext& core)
     : p{std::make_unique<Private>(this, core)}
-{ }
+{
+    auto updateCache = [](const int sizeMb) {
+        QPixmapCache::setCacheLimit(sizeMb * 1024);
+    };
+
+    updateCache(p->settingsManager->value<Settings::Gui::Internal::PixmapCacheSize>());
+    p->settingsManager->subscribe<Settings::Gui::Internal::PixmapCacheSize>(this, updateCache);
+}
 
 GuiApplication::~GuiApplication() = default;
 
