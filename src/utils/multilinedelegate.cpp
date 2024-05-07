@@ -61,7 +61,12 @@ void MultiLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* mo
 void MultiLineEditDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option,
                                                  const QModelIndex& index) const
 {
-    adjustEditorHeight(editor, option, index);
+    if(qobject_cast<QPlainTextEdit*>(editor)) {
+        adjustEditorHeight(editor, option, index);
+    }
+    else {
+        QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+    }
 }
 
 QSize MultiLineEditDelegate::editorSizeHint(QWidget* editor, const QStyleOptionViewItem& option,
@@ -92,7 +97,7 @@ void MultiLineEditDelegate::adjustEditorHeight(QWidget* editor, const QStyleOpti
     const QSize size = editorSizeHint(editor, option, index);
 
     QRect rect = option.rect;
-    rect.setHeight(std::max(rect.height(), size.height()));
+    rect.setHeight(std::max(rect.height() * 2, size.height()));
 
     const int yPosToWindow = editor->parentWidget()->y() + editor->parentWidget()->height();
     const bool displayAbove
