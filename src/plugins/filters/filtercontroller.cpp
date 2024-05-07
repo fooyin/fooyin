@@ -26,7 +26,6 @@
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <gui/editablelayout.h>
-#include <gui/fywidget.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
 #include <utils/crypto.h>
@@ -38,6 +37,26 @@
 #include <QMenu>
 
 #include <ranges>
+
+namespace {
+Fooyin::TrackList trackIntersection(const Fooyin::TrackList& v1, const Fooyin::TrackList& v2)
+{
+    Fooyin::TrackList result;
+    std::unordered_set<int> ids;
+
+    for(const auto& track : v1) {
+        ids.emplace(track.id());
+    }
+
+    for(const auto& track : v2) {
+        if(ids.contains(track.id())) {
+            result.push_back(track);
+        }
+    }
+
+    return result;
+}
+} // namespace
 
 namespace Fooyin::Filters {
 struct FilterController::Private
@@ -231,8 +250,7 @@ struct FilterController::Private
                 std::ranges::copy(filter->filteredTracks(), std::back_inserter(group.filteredTracks));
             }
             else {
-                group.filteredTracks
-                    = Utils::intersection<Track, Track::TrackHash>(filter->filteredTracks(), group.filteredTracks);
+                group.filteredTracks = trackIntersection(filter->filteredTracks(), group.filteredTracks);
             }
         }
     }
@@ -293,25 +311,42 @@ struct FilterController::Private
         }
     }
 
-    void handleTracksAdded(const TrackList& tracks)
+    // TODO: Updated tracks need to be filtered through each active filter
+    void handleTracksAddedUpdated(const TrackList& tracks, bool updated = false)
     {
-        bool firstActive{false};
         for(const auto& [_, group] : groups) {
+            TrackList activeFilterTracks;
+
             for(const auto& filterWidget : group.filters) {
-                if(firstActive) {
-                    break;
-                }
-
-                if(!filterWidget->filteredTracks().empty()) {
-                    firstActive = true;
-                }
-
                 if(!filterWidget->searchFilter().isEmpty()) {
                     const TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
-                    filterWidget->tracksAdded(filteredTracks);
+                    if(updated) {
+                        filterWidget->tracksUpdated(filteredTracks);
+                    }
+                    else {
+                        filterWidget->tracksAdded(filteredTracks);
+                    }
+                }
+                else if(activeFilterTracks.empty()) {
+                    if(updated) {
+                        filterWidget->tracksUpdated(tracks);
+                    }
+                    else {
+                        filterWidget->tracksAdded(tracks);
+                    }
                 }
                 else {
-                    filterWidget->tracksAdded(tracks);
+                    const auto filtered = trackIntersection(activeFilterTracks, tracks);
+                    if(updated) {
+                        filterWidget->tracksUpdated(filtered);
+                    }
+                    else {
+                        filterWidget->tracksAdded(filtered);
+                    }
+                }
+
+                if(filterWidget->isActive()) {
+                    activeFilterTracks = filterWidget->filteredTracks();
                 }
             }
         }
@@ -342,10 +377,11 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
     , p{std::make_unique<Private>(this, library, trackSelection, editableLayout, settings)}
 {
     QObject::connect(p->library, &MusicLibrary::tracksAdded, this,
-                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
+                     [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksScanned, this,
-                     [this](int /*id*/, const TrackList& tracks) { p->handleTracksAdded(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksUpdated, this, &FilterController::tracksUpdated);
+                     [this](int /*id*/, const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
+    QObject::connect(p->library, &MusicLibrary::tracksUpdated, this,
+                     [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks, true); });
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
     QObject::connect(p->library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
