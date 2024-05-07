@@ -48,10 +48,12 @@ public:
 
     void setGroup(const Id& group);
     void setIndex(int index);
+    void refetchFilteredTracks();
     void setFilteredTracks(const TrackList& tracks);
     void clearFilteredTracks();
 
     void reset(const TrackList& tracks);
+    void softReset(const TrackList& tracks);
 
     void setScrollbarEnabled(bool enabled);
 
@@ -73,6 +75,7 @@ signals:
 
     void filterDeleted();
     void filterUpdated();
+    void finishedUpdating();
     void selectionChanged(const QString& playlistName);
     void requestHeaderMenu(AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos);

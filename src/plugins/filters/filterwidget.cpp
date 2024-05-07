@@ -30,10 +30,8 @@
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <core/track.h>
-#include <gui/guiconstants.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
-#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
 #include <utils/widgets/autoheaderview.h>
@@ -134,12 +132,8 @@ struct FilterWidget::Private
         return titles.join(QStringLiteral(", "));
     }
 
-    void selectionChanged()
+    void refreshFilteredTracks()
     {
-        if(searching || updating) {
-            return;
-        }
-
         filteredTracks.clear();
 
         const QModelIndexList selected = view->selectionModel()->selectedRows();
@@ -160,6 +154,15 @@ struct FilterWidget::Private
         }
 
         filteredTracks = selectedTracks;
+    }
+
+    void selectionChanged()
+    {
+        if(searching || updating) {
+            return;
+        }
+
+        refreshFilteredTracks();
 
         emit self->selectionChanged(playlistNameFromSelection());
     }
@@ -360,6 +363,11 @@ void FilterWidget::setIndex(int index)
     p->index = index;
 }
 
+void FilterWidget::refetchFilteredTracks()
+{
+    p->refreshFilteredTracks();
+}
+
 void FilterWidget::setFilteredTracks(const TrackList& tracks)
 {
     p->filteredTracks = tracks;
@@ -374,6 +382,43 @@ void FilterWidget::reset(const TrackList& tracks)
 {
     p->tracks = tracks;
     p->model->reset(p->columns, tracks);
+}
+
+void FilterWidget::softReset(const TrackList& tracks)
+{
+    QStringList selected;
+    const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
+    for(const QModelIndex& index : selectedRows) {
+        selected.emplace_back(index.data(Qt::DisplayRole).toString());
+    }
+
+    reset(tracks);
+
+    QObject::connect(
+        p->model, &FilterModel::modelUpdated, this,
+        [this, selected]() {
+            const QModelIndexList selectedIndexes = p->model->indexesForValues(selected);
+
+            QItemSelection indexesToSelect;
+            indexesToSelect.reserve(selectedIndexes.size());
+
+            const int columnCount = static_cast<int>(p->columns.size());
+
+            for(const QModelIndex& index : selectedIndexes) {
+                if(index.isValid()) {
+                    const QModelIndex last = index.siblingAtColumn(columnCount - 1);
+                    indexesToSelect.append({index, last.isValid() ? last : index});
+                }
+            }
+
+            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
+            p->updating = false;
+
+            if(indexesToSelect.empty()) {
+                p->selectionChanged();
+            }
+        },
+        Qt::SingleShotConnection);
 }
 
 void FilterWidget::setScrollbarEnabled(bool enabled)
@@ -495,6 +540,7 @@ void FilterWidget::tracksAdded(const TrackList& tracks)
 void FilterWidget::tracksUpdated(const TrackList& tracks)
 {
     if(tracks.empty()) {
+        emit finishedUpdating();
         return;
     }
 
@@ -528,6 +574,7 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
             p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
             p->updating = false;
+            emit finishedUpdating();
         },
         Qt::SingleShotConnection);
 }

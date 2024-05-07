@@ -38,6 +38,7 @@ struct FilterGroup
     Id id;
     std::vector<FilterWidget*> filters;
     TrackList filteredTracks;
+    int updateCount{0};
 };
 
 using FilterGroups     = std::unordered_map<Id, FilterGroup, Id::IdHash>;

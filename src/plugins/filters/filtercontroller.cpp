@@ -311,13 +311,31 @@ struct FilterController::Private
         }
     }
 
-    // TODO: Updated tracks need to be filtered through each active filter
     void handleTracksAddedUpdated(const TrackList& tracks, bool updated = false)
     {
         for(const auto& [_, group] : groups) {
+            const int count = static_cast<int>(group.filters.size());
             TrackList activeFilterTracks;
 
             for(const auto& filterWidget : group.filters) {
+                if(updated) {
+                    QObject::connect(
+                        filterWidget, &FilterWidget::finishedUpdating, filterWidget,
+                        [this, count, filterWidget]() {
+                            const auto groupId = filterWidget->group();
+                            if(groups.contains(groupId)) {
+                                int& updateCount = groups.at(groupId).updateCount;
+                                ++updateCount;
+
+                                if(updateCount == count) {
+                                    updateCount = 0;
+                                    refreshFilters(groupId);
+                                }
+                            }
+                        },
+                        static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
+                }
+
                 if(!filterWidget->searchFilter().isEmpty()) {
                     const TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
                     if(updated) {
@@ -348,6 +366,33 @@ struct FilterController::Private
                 if(filterWidget->isActive()) {
                     activeFilterTracks = filterWidget->filteredTracks();
                 }
+            }
+        }
+    }
+
+    void refreshFilters(const Id& groupId)
+    {
+        if(!groups.contains(groupId)) {
+            return;
+        }
+
+        FilterGroup& group = groups.at(groupId);
+        const auto count   = static_cast<int>(group.filters.size());
+
+        for(int i{0}; i < count - 1; i += 2) {
+            auto* filter = group.filters.at(i);
+
+            if(filter->isActive()) {
+                filter->refetchFilteredTracks();
+                group.filters.at(i + 1)->softReset(filter->filteredTracks());
+            }
+        }
+
+        if(count > 1 && count % 2 == 1) {
+            auto* filter = group.filters.at(count - 2);
+            if(filter->isActive()) {
+                filter->refetchFilteredTracks();
+                group.filters.at(count - 1)->softReset(filter->filteredTracks());
             }
         }
     }
