@@ -36,6 +36,21 @@
 #include <QTableView>
 
 namespace Fooyin::TagEditor {
+class TagEditorDelegate : public MultiLineEditDelegate
+{
+public:
+    using MultiLineEditDelegate::MultiLineEditDelegate;
+
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    {
+        if(index.data(TagEditorItem::IsDefault).toBool()) {
+            // NOLINTNEXTLINE
+            return QStyledItemDelegate::createEditor(parent, option, index); // clazy:exclude=skipped-base-method
+        }
+        return MultiLineEditDelegate::createEditor(parent, option, index);
+    }
+};
+
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
 { }
@@ -69,7 +84,7 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
-    m_view->setItemDelegateForColumn(1, new MultiLineEditDelegate(this));
+    m_view->setItemDelegateForColumn(1, new TagEditorDelegate(this));
     m_view->setTextElideMode(Qt::ElideRight);
     m_view->horizontalHeader()->setStretchLastSection(true);
     m_view->horizontalHeader()->setSectionsClickable(false);
