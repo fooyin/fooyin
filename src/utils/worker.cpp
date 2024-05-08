@@ -39,7 +39,7 @@ void Worker::pauseThread()
 
 void Worker::closeThread()
 {
-    stopThread();
+    setState(Closing);
 }
 
 Worker::State Worker::state() const
@@ -55,6 +55,11 @@ void Worker::setState(State state)
 bool Worker::mayRun() const
 {
     return m_state == Running;
+}
+
+bool Worker::closing() const
+{
+    return m_state == Closing;
 }
 } // namespace Fooyin
 

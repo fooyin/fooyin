@@ -33,7 +33,8 @@ public:
     {
         Idle = 0,
         Running,
-        Paused
+        Paused,
+        Closing
     };
 
     explicit Worker(QObject* parent = nullptr);
@@ -47,6 +48,7 @@ public:
     void setState(State state);
 
     [[nodiscard]] bool mayRun() const;
+    [[nodiscard]] bool closing() const;
 
 signals:
     void finished();
