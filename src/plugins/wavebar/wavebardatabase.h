@@ -23,7 +23,10 @@
 
 #include <utils/database/dbmodule.h>
 
-namespace Fooyin::WaveBar {
+namespace Fooyin {
+class Track;
+
+namespace WaveBar {
 class WaveBarDatabase : public DbModule
 {
 public:
@@ -32,5 +35,12 @@ public:
     [[nodiscard]] bool existsInCache(const QString& key) const;
     [[nodiscard]] bool loadCachedData(const QString& key, WaveformData<int16_t>& data) const;
     [[nodiscard]] bool storeInCache(const QString& key, const WaveformData<int16_t>& data) const;
+    [[nodiscard]] bool removeFromCache(const QString& key) const;
+    [[nodiscard]] bool removeFromCache(const QStringList& keys) const;
+    [[nodiscard]] bool clearCache() const;
+
+    static QString cacheKey(const Track& track);
+    static QString cacheKey(const Track& track, int channels);
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

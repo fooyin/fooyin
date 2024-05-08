@@ -40,11 +40,12 @@ class WaveformBuilder : public QObject
     Q_OBJECT
 
 public:
-    explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, SettingsManager* settings,
-                             QObject* parent = nullptr);
+    explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool,
+                             SettingsManager* settings, QObject* parent = nullptr);
     ~WaveformBuilder() override;
 
-    void generate(const Fooyin::Track& track);
+    void generate(const Track& track, bool update = false);
+    void generateAndScale(const Track& track, bool update = false);
     void rescale(int width);
 
 signals:
@@ -64,6 +65,7 @@ private:
     WaveformRescaler m_rescaler;
 
     int m_width;
+    bool m_rescale;
 };
 } // namespace WaveBar
 } // namespace Fooyin

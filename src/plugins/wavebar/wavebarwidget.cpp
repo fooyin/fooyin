@@ -33,16 +33,12 @@
 #include <QMenu>
 #include <QVBoxLayout>
 
-constexpr auto SeekDelta = 5000;
-
 namespace Fooyin::WaveBar {
-WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
-                             QWidget* parent)
+WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , m_playerController{playerController}
     , m_settings{settings}
     , m_seekbar{new WaveSeekBar(settings, this)}
-    , m_builder{engine->createDecoder(), settings}
+    , m_builder{builder}
 {
     setMinimumSize(100, 20);
 
@@ -50,20 +46,12 @@ WaveBarWidget::WaveBarWidget(PlayerController* playerController, EngineControlle
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_seekbar);
 
-    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, m_playerController, &PlayerController::seek);
-    QObject::connect(m_seekbar, &WaveSeekBar::seekForward, this, [this]() { m_playerController->seekForward(SeekDelta); });
-    QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, this, [this]() { m_playerController->seekBackward(SeekDelta); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this](const Track& track) {
-        m_seekbar->setPosition(0);
-        m_builder.generate(track);
-    });
-    QObject::connect(m_playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
-    QObject::connect(&m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
-    QObject::connect(&m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
+    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, this, &WaveBarWidget::seek);
+    QObject::connect(m_seekbar, &WaveSeekBar::seekForward, this, &WaveBarWidget::seekForward);
+    QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, this, &WaveBarWidget::seekBackward);
 
-    if(m_playerController->currentTrack().isValid()) {
-        m_builder.generate(m_playerController->currentTrack());
-    }
+    QObject::connect(m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
+    QObject::connect(m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 }
 
 QString WaveBarWidget::name() const
@@ -76,11 +64,22 @@ QString WaveBarWidget::layoutName() const
     return QStringLiteral("WaveBar");
 }
 
+void WaveBarWidget::changeTrack(const Track& track)
+{
+    m_seekbar->setPosition(0);
+    m_builder->generateAndScale(track);
+}
+
+void WaveBarWidget::changePosition(uint64_t pos)
+{
+    m_seekbar->setPosition(pos);
+}
+
 void WaveBarWidget::resizeEvent(QResizeEvent* event)
 {
     FyWidget::resizeEvent(event);
 
-    m_builder.rescale(m_seekbar->contentsRect().width());
+    m_builder->rescale(m_seekbar->contentsRect().width());
 }
 
 void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)

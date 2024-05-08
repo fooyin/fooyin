@@ -19,16 +19,14 @@
 
 #pragma once
 
-#include "waveformbuilder.h"
-
 #include <gui/fywidget.h>
 
 namespace Fooyin {
-class EngineController;
-class PlayerController;
 class SettingsManager;
+class Track;
 
 namespace WaveBar {
+class WaveformBuilder;
 class WaveSeekBar;
 
 class WaveBarWidget : public FyWidget
@@ -36,22 +34,28 @@ class WaveBarWidget : public FyWidget
     Q_OBJECT
 
 public:
-    WaveBarWidget(PlayerController* playerController, EngineController* engine, SettingsManager* settings,
-                  QWidget* parent = nullptr);
+    WaveBarWidget(WaveformBuilder* builder, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+
+    void changeTrack(const Track& track);
+    void changePosition(uint64_t pos);
+
+signals:
+    void seek(uint64_t pos);
+    void seekForward();
+    void seekBackward();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    PlayerController* m_playerController;
     SettingsManager* m_settings;
 
     WaveSeekBar* m_seekbar;
-    WaveformBuilder m_builder;
+    WaveformBuilder* m_builder;
 };
 } // namespace WaveBar
 } // namespace Fooyin

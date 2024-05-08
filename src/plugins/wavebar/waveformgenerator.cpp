@@ -20,33 +20,17 @@
 #include "waveformgenerator.h"
 
 #include <core/engine/audioconverter.h>
-#include <utils/crypto.h>
 #include <utils/math.h>
 #include <utils/paths.h>
 
 #include <QDebug>
 
 #include <cfenv>
+#include <utility>
 
 constexpr auto SampleCount = 2048;
 
 namespace {
-Fooyin::DbConnection::DbParams dbConnectionParams()
-{
-    Fooyin::DbConnection::DbParams params;
-    params.type           = QStringLiteral("QSQLITE");
-    params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
-    params.filePath       = Fooyin::Utils::cachePath() + QStringLiteral("/wavebar.db");
-
-    return params;
-}
-
-QString trackCacheKey(const Fooyin::Track& track, int channels)
-{
-    return Fooyin::Utils::generateHash(track.hash(), QString::number(track.duration()),
-                                       QString::number(track.sampleRate()), QString::number(channels));
-}
-
 float convertSampleToFloat(const int16_t inSample)
 {
     return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
@@ -114,10 +98,10 @@ Fooyin::WaveBar::WaveformData<OutputType> convertCache(const Fooyin::WaveBar::Wa
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveformGenerator::WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, QObject* parent)
+WaveformGenerator::WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool, QObject* parent)
     : Worker{parent}
     , m_decoder{std::move(decoder)}
-    , m_dbPool{DbConnectionPool::create(dbConnectionParams(), QStringLiteral("wavebar"))}
+    , m_dbPool{std::move(dbPool)}
 {
     m_requiredFormat.setSampleFormat(SampleFormat::Float);
 }
@@ -129,40 +113,86 @@ void WaveformGenerator::initialiseThread()
     m_waveDb.initialiseDatabase();
 }
 
-void WaveformGenerator::generate(const Track& track)
+void WaveformGenerator::generate(const Track& track, bool update)
 {
+    if(closing()) {
+        return;
+    }
+
+    const QString trackKey = setup(track);
+    if(trackKey.isEmpty()) {
+        return;
+    }
+
     setState(Running);
 
+    if(!update && m_waveDb.existsInCache(trackKey)) {
+        setState(Idle);
+        emit waveformGenerated({});
+        return;
+    }
+
+    emit generatingWaveform();
+
+    const uint64_t durationSecs = m_data.duration / 1000;
+    const int samplesPerChannel = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
+    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samplesPerChannel) / SampleCount));
+    const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
+
+    m_decoder->start();
+
+    while(true) {
+        if(!mayRun()) {
+            m_decoder->stop();
+            return;
+        }
+
+        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
+        if(!buffer.isValid()) {
+            m_data.complete = true;
+            break;
+        }
+
+        buffer = Audio::convert(buffer, m_requiredFormat);
+        processBuffer(buffer);
+    }
+
     m_decoder->stop();
-    m_data = {};
 
-    if(!track.isValid()) {
+    if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
+        qWarning() << "[WaveBar] Unable to store waveform for track:" << m_track.filepath();
+    }
+
+    if(!closing()) {
+        setState(Idle);
+    }
+
+    emit waveformGenerated(m_data);
+}
+
+void WaveformGenerator::generateAndRender(const Track& track, bool update)
+{
+    if(closing()) {
         return;
     }
 
-    if(!m_decoder->init(track.filepath())) {
+    const QString trackKey = setup(track);
+    if(trackKey.isEmpty()) {
         return;
     }
 
-    m_track  = track;
-    m_format = m_decoder->format();
-    m_requiredFormat.setChannelCount(m_format.channelCount());
-    m_requiredFormat.setSampleRate(m_format.sampleRate());
+    setState(Running);
 
-    m_data.format   = m_requiredFormat;
-    m_data.duration = track.duration();
-    m_data.channels = m_format.channelCount();
-    m_data.channelData.resize(m_data.channels);
-
-    const QString trackKey = trackCacheKey(m_track, m_data.channels);
-
-    if(m_waveDb.existsInCache(trackKey)) {
+    if(!update && m_waveDb.existsInCache(trackKey)) {
         WaveformData<int16_t> data;
         if(m_waveDb.loadCachedData(trackKey, data)) {
             const auto floatData = convertCache<float>(data);
             m_data.channelData   = floatData.channelData;
             m_data.complete      = true;
+
+            setState(Idle);
             emit waveformGenerated(m_data);
+
             return;
         }
     }
@@ -182,6 +212,7 @@ void WaveformGenerator::generate(const Track& track)
 
     while(true) {
         if(!mayRun()) {
+            m_decoder->stop();
             return;
         }
 
@@ -206,8 +237,37 @@ void WaveformGenerator::generate(const Track& track)
         qWarning() << "[WaveBar] Unable to store waveform for track:" << m_track.filepath();
     }
 
-    setState(Idle);
+    if(!closing()) {
+        setState(Idle);
+    }
+
     emit waveformGenerated(m_data);
+}
+
+QString WaveformGenerator::setup(const Track& track)
+{
+    m_decoder->stop();
+    m_data = {};
+
+    if(!track.isValid()) {
+        return {};
+    }
+
+    if(!m_decoder->init(track.filepath())) {
+        return {};
+    }
+
+    m_track  = track;
+    m_format = m_decoder->format();
+    m_requiredFormat.setChannelCount(m_format.channelCount());
+    m_requiredFormat.setSampleRate(m_format.sampleRate());
+
+    m_data.format   = m_requiredFormat;
+    m_data.duration = track.duration();
+    m_data.channels = m_format.channelCount();
+    m_data.channelData.resize(m_data.channels);
+
+    return WaveBarDatabase::cacheKey(m_track, m_data.channels);
 }
 
 void WaveformGenerator::processBuffer(const AudioBuffer& buffer)

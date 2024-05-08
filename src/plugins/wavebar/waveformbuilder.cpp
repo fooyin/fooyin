@@ -23,12 +23,16 @@
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <utility>
+
 namespace Fooyin::WaveBar {
-WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, SettingsManager* settings, QObject* parent)
+WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool,
+                                 SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
-    , m_generator{std::move(decoder)}
+    , m_generator{std::move(decoder), std::move(dbPool)}
     , m_width{0}
+    , m_rescale{false}
 {
     updateRescaler();
 
@@ -37,8 +41,11 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
 
     QObject::connect(&m_generator, &WaveformGenerator::generatingWaveform, this, &WaveformBuilder::generatingWaveform);
     QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, this, &WaveformBuilder::waveformGenerated);
-    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, &m_rescaler,
-                     [this](const auto& data) { m_rescaler.rescale(data, m_width); });
+    QObject::connect(&m_generator, &WaveformGenerator::waveformGenerated, &m_rescaler, [this](const auto& data) {
+        if(m_rescale) {
+            m_rescaler.rescale(data, m_width);
+        }
+    });
     QObject::connect(&m_rescaler, &WaveformRescaler::waveformRescaled, this, &WaveformBuilder::waveformRescaled);
 
     m_settings->subscribe<Settings::WaveBar::BarWidth>(this, &WaveformBuilder::updateRescaler);
@@ -53,8 +60,8 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, Settings
 
 WaveformBuilder::~WaveformBuilder()
 {
-    m_generator.stopThread();
-    m_rescaler.stopThread();
+    m_generator.closeThread();
+    m_rescaler.closeThread();
 
     m_generatorThread.quit();
     m_generatorThread.wait();
@@ -63,12 +70,20 @@ WaveformBuilder::~WaveformBuilder()
     m_rescalerThread.wait();
 }
 
-void WaveformBuilder::generate(const Track& track)
+void WaveformBuilder::generate(const Track& track, bool update)
+{
+    m_rescale = false;
+
+    QMetaObject::invokeMethod(&m_generator, [this, track, update]() { m_generator.generate(track, update); });
+}
+
+void WaveformBuilder::generateAndScale(const Track& track, bool update)
 {
     m_generator.stopThread();
     m_rescaler.stopThread();
+    m_rescale = true;
 
-    QMetaObject::invokeMethod(&m_generator, "generate", Q_ARG(const Track&, track));
+    QMetaObject::invokeMethod(&m_generator, [this, track, update]() { m_generator.generateAndRender(track, update); });
 }
 
 void WaveformBuilder::rescale(const int width)

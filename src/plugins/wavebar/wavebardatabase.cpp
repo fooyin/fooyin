@@ -19,6 +19,8 @@
 
 #include "wavebardatabase.h"
 
+#include <core/track.h>
+#include <utils/crypto.h>
 #include <utils/database/dbquery.h>
 
 namespace {
@@ -161,5 +163,45 @@ bool WaveBarDatabase::storeInCache(const QString& key, const WaveformData<int16_
     query.bindValue(QStringLiteral(":data"), serialiseData(data));
 
     return query.exec();
+}
+
+bool WaveBarDatabase::removeFromCache(const QString& key) const
+{
+    const auto statement = QStringLiteral("DELETE FROM WaveCache WHERE TrackKey = :trackKey;");
+
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":trackKey"), key);
+
+    return query.exec();
+}
+
+bool WaveBarDatabase::removeFromCache(const QStringList& keys) const
+{
+    const QString statement = QStringLiteral("DELETE FROM WaveCache WHERE TrackKey IN (:keys);");
+
+    DbQuery query{db(), statement};
+    query.bindValue(QStringLiteral(":keys"), keys);
+
+    return query.exec();
+}
+
+bool WaveBarDatabase::clearCache() const
+{
+    const auto statement = QStringLiteral("DELETE * FROM WaveCache;");
+
+    DbQuery query{db(), statement};
+
+    return query.exec();
+}
+
+QString WaveBarDatabase::cacheKey(const Track& track)
+{
+    return cacheKey(track, track.channels());
+}
+
+QString WaveBarDatabase::cacheKey(const Track& track, int channels)
+{
+    return Utils::generateHash(track.hash(), QString::number(track.duration()), QString::number(track.sampleRate()),
+                               QString::number(channels));
 }
 } // namespace Fooyin::WaveBar
