@@ -224,7 +224,7 @@ struct FilterWidget::Private
         auto* multiColAction = new QAction(tr("Multiple Columns"), menu);
         multiColAction->setCheckable(true);
         multiColAction->setChecked(multipleColumns);
-        multiColAction->setEnabled(!(columns.size() > 1));
+        multiColAction->setEnabled(columns.size() <= 1);
         QObject::connect(multiColAction, &QAction::triggered, self,
                          [this](bool checked) { multipleColumns = checked; });
         menu->addAction(multiColAction);
@@ -386,6 +386,8 @@ void FilterWidget::reset(const TrackList& tracks)
 
 void FilterWidget::softReset(const TrackList& tracks)
 {
+    p->updating = true;
+
     QStringList selected;
     const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
     for(const QModelIndex& index : selectedRows) {
@@ -413,10 +415,6 @@ void FilterWidget::softReset(const TrackList& tracks)
 
             p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
             p->updating = false;
-
-            if(indexesToSelect.empty()) {
-                p->selectionChanged();
-            }
         },
         Qt::SingleShotConnection);
 }
