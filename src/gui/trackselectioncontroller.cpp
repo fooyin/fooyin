@@ -142,14 +142,13 @@ struct TrackSelectionController::Private
         });
         tracksMenu->addAction(actionManager->registerAction(openFolder, "TrackSelection.OpenFolder"));
 
-        tracksMenu->addSeparator();
+        tracksMenu->addSeparator(Actions::Groups::Three);
 
         QObject::connect(openProperties, &QAction::triggered, self, [this]() {
             QMetaObject::invokeMethod(self, &TrackSelectionController::requestPropertiesDialog);
         });
-        tracksMenu->addAction(actionManager->registerAction(openProperties, "TrackSelection.OpenProperties"));
-
-        tracksMenu->addSeparator();
+        tracksMenu->addAction(actionManager->registerAction(openProperties, "TrackSelection.OpenProperties"),
+                              Actions::Groups::Three);
 
         updateActionState();
     }
