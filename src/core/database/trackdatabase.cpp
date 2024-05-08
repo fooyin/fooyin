@@ -52,6 +52,7 @@ QString fetchTrackColumns()
                                                   "FileSize,"
                                                   "BitRate,"
                                                   "SampleRate,"
+                                                  "Channels,"
                                                   "ExtraTags,"
                                                   "Type,"
                                                   "ModifiedDate, "
@@ -86,6 +87,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":fileSize"), QVariant::fromValue(track.fileSize())},
             {QStringLiteral(":bitRate"), track.bitrate()},
             {QStringLiteral(":sampleRate"), track.sampleRate()},
+            {QStringLiteral(":channels"), track.channels()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
             {QStringLiteral(":type"), static_cast<int>(track.type())},
             {QStringLiteral(":modifiedDate"), QVariant::fromValue(track.modifiedTime())},
@@ -117,15 +119,16 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setFileSize(q.value(17).toInt());
     track.setBitrate(q.value(18).toInt());
     track.setSampleRate(q.value(19).toInt());
-    track.storeExtraTags(q.value(20).toByteArray());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(21).toInt()));
-    track.setModifiedTime(q.value(22).toULongLong());
-    track.setLibraryId(q.value(23).toInt());
-    track.setHash(q.value(24).toString());
-    track.setAddedTime(q.value(25).toULongLong());
-    track.setFirstPlayed(q.value(26).toULongLong());
-    track.setLastPlayed(q.value(27).toULongLong());
-    track.setPlayCount(q.value(28).toInt());
+    track.setChannels(q.value(20).toInt());
+    track.storeExtraTags(q.value(21).toByteArray());
+    track.setType(static_cast<Fooyin::Track::Type>(q.value(22).toInt()));
+    track.setModifiedTime(q.value(23).toULongLong());
+    track.setLibraryId(q.value(24).toInt());
+    track.setHash(q.value(25).toString());
+    track.setAddedTime(q.value(26).toULongLong());
+    track.setFirstPlayed(q.value(27).toULongLong());
+    track.setLastPlayed(q.value(28).toULongLong());
+    track.setPlayCount(q.value(29).toInt());
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
@@ -277,6 +280,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "FileSize = :fileSize,"
                                           "BitRate = :bitRate,"
                                           "SampleRate = :sampleRate,"
+                                          "Channels = :channels,"
                                           "ExtraTags = :extraTags,"
                                           "Type = :type,"
                                           "ModifiedDate = :modifiedDate,"
@@ -430,6 +434,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.FileSize,"
                                           "Tracks.BitRate,"
                                           "Tracks.SampleRate,"
+                                          "Tracks.Channels,"
                                           "Tracks.ExtraTags,"
                                           "Tracks.Type,"
                                           "Tracks.ModifiedDate,"
@@ -487,6 +492,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "FileSize,"
                                           "BitRate,"
                                           "SampleRate,"
+                                          "Channels,"
                                           "ExtraTags,"
                                           "Type,"
                                           "ModifiedDate,"
@@ -512,6 +518,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":fileSize,"
                                           ":bitRate,"
                                           ":sampleRate,"
+                                          ":channels,"
                                           ":extraTags, "
                                           ":type,"
                                           ":modifiedDate,"

@@ -124,6 +124,7 @@ public:
     [[nodiscard]] uint64_t fileSize() const;
     [[nodiscard]] int bitrate() const;
     [[nodiscard]] int sampleRate() const;
+    [[nodiscard]] int channels() const;
 
     [[nodiscard]] int playCount() const;
 
@@ -166,6 +167,7 @@ public:
     void setFileSize(uint64_t fileSize);
     void setBitrate(int rate);
     void setSampleRate(int rate);
+    void setChannels(int channels);
 
     void setPlayCount(int count);
 

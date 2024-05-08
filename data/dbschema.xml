@@ -88,4 +88,12 @@
             ALTER TABLE Tracks DROP COLUMN HasEmbeddedCover;
         </sql>
     </revision>
+    <revision version="4">
+        <description>
+            Add channel count column to tracks.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN Channels INTEGER DEFAULT 0;
+        </sql>
+    </revision>
 </schema>

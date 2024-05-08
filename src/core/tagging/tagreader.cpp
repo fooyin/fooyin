@@ -218,14 +218,22 @@ TagLib::AudioProperties::ReadStyle readStyle(Fooyin::Tagging::Quality quality)
 void readAudioProperties(const TagLib::File& file, Fooyin::Track& track)
 {
     if(TagLib::AudioProperties* props = file.audioProperties()) {
-        if(props->lengthInMilliseconds()) {
-            track.setDuration(props->lengthInMilliseconds());
+        const uint64_t duration = props->lengthInMilliseconds();
+        const int bitrate       = props->bitrate();
+        const int sampleRate    = props->sampleRate();
+        const int channels      = props->channels();
+
+        if(duration > 0) {
+            track.setDuration(duration);
         }
-        if(props->bitrate()) {
-            track.setBitrate(props->bitrate());
+        if(bitrate > 0) {
+            track.setBitrate(bitrate);
         }
-        if(props->sampleRate()) {
-            track.setSampleRate(props->sampleRate());
+        if(sampleRate > 0) {
+            track.setSampleRate(sampleRate);
+        }
+        if(channels > 0) {
+            track.setChannels(channels);
         }
     }
 }

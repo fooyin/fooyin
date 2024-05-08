@@ -28,7 +28,7 @@
 
 #include <QFileInfo>
 
-const auto CurrentSchemaVersion = 3;
+const auto CurrentSchemaVersion = 4;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
