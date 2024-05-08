@@ -380,7 +380,7 @@ void MprisPlugin::notify(const QString& name, const QVariant& value)
 void MprisPlugin::trackChanged(const PlaylistTrack& playlistTrack)
 {
     if(m_coverProvider) {
-        m_coverProvider->removeFromCache(QStringLiteral("MPRISCOVER"));
+        CoverProvider::removeFromCache(QStringLiteral("MPRISCOVER"));
     }
     m_currentMetaData.clear();
 
