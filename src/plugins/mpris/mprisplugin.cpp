@@ -416,7 +416,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
     }
 
     if(m_coverProvider) {
-        const QPixmap cover = m_coverProvider->trackCover(track, Track::Cover::Front, true);
+        const QPixmap cover = m_coverProvider->trackCover(track, Track::Cover::Front);
         if(cover.isNull()) {
             return;
         }

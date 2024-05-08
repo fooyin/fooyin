@@ -62,37 +62,38 @@ public:
     void resetCoverKey();
 
     /*!
-     * This will return either the @p type of cover picture of the @p track if it's either:
-     * - Non-embedded.
-     * - Exists in QPixmapCache.
-     * Or it will return a QPixmap representing 'no cover' and the cover will be read asynchronously from
-     * the @p track metadata.
-     * Once loaded, the coverAdded signal will be emitted with the same track. It is then up to the caller
+     * This will return the picture of @p type for the @p track if it exists in the cache.
+     * If not, it will return a QPixmap representing 'no cover', and the coverAdded signal
+     * will be emitted with the same track once it has been loaded. It is then up to the caller
      * to query the cover using this method again.
      *
      * @param track the track for which the cover will be found.
      * @param type the type of cover to find.
-     * @param saveToDisk whether the cover will be saved to the on-disk cache.
-     * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
+     * @returns the cover if already in the cache or the 'no cover' cover if not.
      */
-    [[nodiscard]] QPixmap trackCover(const Track& track, const QSize& size, Track::Cover type = Track::Cover::Front,
-                                     bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCover(const Track& track, Track::Cover type = Track::Cover::Front) const;
 
     /*!
-     * This is an overloaded function.
-     * Returns the @p type of cover picture of the @p track up to a maximum size (800px).
-     * @see trackCover(const Track&, const QSize&, bool).
+     * This will return the thumbnail picture of @p type for the @p track if it exists in the cache.
+     * If not, it will return a QPixmap representing 'no cover', and the coverAdded signal
+     * will be emitted with the same track once it has been loaded. It is then up to the caller
+     * to query the cover using this method again.
+     *
+     * @param track the track for which the cover will be found.
+     * @param type the type of cover to find.
+     * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
      */
-    [[nodiscard]] QPixmap trackCover(const Track& track, Track::Cover type = Track::Cover::Front,
-                                     bool saveToDisk = false) const;
+    [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, Track::Cover type = Track::Cover::Front) const;
 
     /** Clears the QPixmapCache as well as the on-disk cache. */
     static void clearCache();
+    /** Removes all covers of @p size of the @p track from the cache. */
+    static void removeFromCache(const Track& track, const QSize& size);
     /** Removes the cover with the @p key from the cache. */
     static void removeFromCache(const QString& key);
 
 signals:
-    /** Emitted after a @fn trackCover call if the cover needs to be read from the track metadata. */
+    /** Emitted after a @fn trackCover or @fn trackCoverThumbnail call if and when the cover is added to the cache. */
     void coverAdded(const Fooyin::Track& track);
 
 private:

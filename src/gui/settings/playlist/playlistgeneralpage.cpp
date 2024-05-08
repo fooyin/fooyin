@@ -54,7 +54,6 @@ private:
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
-    QSpinBox* m_thumbnailSize;
     QSpinBox* m_coverPadding;
 };
 
@@ -66,17 +65,12 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show Header"), this)}
     , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
-    , m_thumbnailSize{new QSpinBox(this)}
     , m_coverPadding{new QSpinBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
     m_rewindPrevious->setToolTip(tr(
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
-
-    m_thumbnailSize->setMinimum(1);
-    m_thumbnailSize->setMaximum(300);
-    m_thumbnailSize->setSuffix(QStringLiteral("px"));
 
     m_coverPadding->setMinimum(0);
     m_coverPadding->setMaximum(100);
@@ -92,15 +86,12 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* thumbnailSizeLabel = new QLabel(tr("Thumbnail Size") + QStringLiteral(":"), this);
-    auto* coverPaddingLabel  = new QLabel(tr("Cover Padding") + QStringLiteral(":"), this);
+    auto* coverPaddingLabel = new QLabel(tr("Cover Padding") + QStringLiteral(":"), this);
 
     int row{0};
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
-    appearanceLayout->addWidget(thumbnailSizeLabel, row, 0);
-    appearanceLayout->addWidget(m_thumbnailSize, row++, 1);
     appearanceLayout->addWidget(coverPaddingLabel, row, 0);
     appearanceLayout->addWidget(m_coverPadding, row++, 1);
     appearanceLayout->setColumnStretch(2, 1);
@@ -121,7 +112,6 @@ void PlaylistGeneralPageWidget::load()
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
-    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
     m_coverPadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistCoverPadding>());
 }
 
@@ -134,7 +124,6 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
     m_settings->set<Settings::Gui::Internal::PlaylistCoverPadding>(m_coverPadding->value());
 }
 
@@ -147,7 +136,6 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
-    m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
     m_settings->reset<Settings::Gui::Internal::PlaylistCoverPadding>();
 }
 

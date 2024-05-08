@@ -1298,8 +1298,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                 }
                 if(const auto* firstSibling = itemForIndex(first)) {
                     const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
-                    return QVariant::fromValue(
-                        m_coverProvider->trackCover(firstTrack.track(), m_coverSize, type, true));
+                    return QVariant::fromValue(m_coverProvider->trackCoverThumbnail(firstTrack.track(), type));
                 }
                 return {};
             };
@@ -1411,7 +1410,7 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
                 return {};
             }
-            return m_coverProvider->trackCover(header.tracks().front(), m_coverSize, Track::Cover::Front, true);
+            return m_coverProvider->trackCoverThumbnail(header.tracks().front(), Track::Cover::Front);
         }
         default:
             return {};

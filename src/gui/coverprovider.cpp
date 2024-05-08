@@ -39,14 +39,13 @@
 
 #include <set>
 
-constexpr QSize MaxCoverSize = {800, 800};
-constexpr auto NoCoverKey    = "|NoCover|";
+constexpr auto NoCoverSize = 1024;
 
 namespace {
-QString generateCoverKey(const QString& hash, Fooyin::Track::Cover type, const QSize& size)
+QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type, const QSize& size)
 {
-    return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), hash, QString::number(size.width()),
-                                       QString::number(size.height()));
+    return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), track.albumHash(),
+                                       QString::number(size.width()), QString::number(size.height()));
 }
 
 QString coverThumbnailPath(const QString& key)
@@ -61,22 +60,6 @@ void saveThumbnail(const QImage& cover, const QString& key)
     cover.save(&file, "JPG", 85);
 }
 
-QImage loadCover(const QString& path, const QSize& size)
-{
-    QImage image;
-    image.load(path);
-    image = Fooyin::Utils::scaleImage(image, size);
-    return image;
-}
-
-QImage loadCover(const QByteArray& data, QSize size)
-{
-    QImage image;
-    image.loadFromData(data);
-    image = Fooyin::Utils::scaleImage(image, size);
-    return image;
-}
-
 QPixmap loadCachedCover(const QString& key)
 {
     QPixmap cover;
@@ -86,24 +69,6 @@ QPixmap loadCachedCover(const QString& key)
     }
 
     return {};
-}
-
-QPixmap loadNoCover(const QSize& size, Fooyin::Track::Cover type)
-{
-    const QString key = generateCoverKey(QLatin1String{NoCoverKey}, type, size);
-
-    QPixmap cachedCover;
-    if(QPixmapCache::find(key, &cachedCover)) {
-        return cachedCover;
-    }
-
-    const QIcon icon    = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
-    const QPixmap cover = Fooyin::Utils::scalePixmap(icon.pixmap(size), size);
-    if(!QPixmapCache::insert(key, cover)) {
-        qDebug() << "Failed to cache placeholder cover";
-    }
-
-    return cover;
 }
 } // namespace
 
@@ -116,6 +81,8 @@ struct CoverProvider::Private
 
     bool usePlacerholder{true};
     QString coverKey;
+    QPixmapCache::Key noCoverKey;
+    QSize size;
     std::set<QString> pendingCovers;
     std::set<QString> noCoverKeys;
     ScriptParser parser;
@@ -127,25 +94,45 @@ struct CoverProvider::Private
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
+        , size{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
+               settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
         , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     {
+        settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(self, [this](const int thumbSize) {
+            size = {thumbSize, thumbSize};
+        });
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
             self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
-        settings->subscribe<Settings::Gui::IconTheme>(self, []() {
-            // TODO: Only clear nocover
-            QPixmapCache::clear();
-        });
+        settings->subscribe<Settings::Gui::IconTheme>(self, [this]() { QPixmapCache::remove(noCoverKey); });
     }
 
-    QString findCover(const QString& key, const Track& track, Track::Cover type)
+    QPixmap loadNoCover()
+    {
+        QPixmap cachedCover;
+        if(QPixmapCache::find(noCoverKey, &cachedCover)) {
+            return cachedCover;
+        }
+
+        const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
+        static const QSize coverSize{NoCoverSize, NoCoverSize};
+        const QPixmap cover = icon.pixmap(coverSize);
+
+        noCoverKey = QPixmapCache::insert(cover);
+
+        return cover;
+    }
+
+    QString findCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
         if(!track.isValid()) {
             return {};
         }
 
-        QString cachePath = coverThumbnailPath(key);
-        if(QFileInfo::exists(cachePath)) {
-            return cachePath;
+        if(thumbnail) {
+            QString cachePath = coverThumbnailPath(key);
+            if(QFileInfo::exists(cachePath)) {
+                return cachePath;
+            }
         }
 
         QStringList filters;
@@ -182,25 +169,33 @@ struct CoverProvider::Private
         return {};
     }
 
-    void fetchCover(const QString& key, const Track& track, const QSize& size, Track::Cover type, bool saveToDisk)
+    void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
-        Utils::asyncExec([this, key, track, size, type, saveToDisk]() {
+        Utils::asyncExec([this, key, track, type, thumbnail]() {
             QImage image;
 
-            const QString coverPath = findCover(key, track, type);
+            const QString coverPath = findCover(key, track, type, thumbnail);
             if(!coverPath.isEmpty()) {
                 // Prefer artwork in directory
-                image = loadCover(coverPath, size);
+                image.load(coverPath);
+                if(thumbnail) {
+                    image = Fooyin::Utils::scaleImage(image, size);
+                }
+                return image;
             }
 
             if(image.isNull()) {
                 const QByteArray coverData = Tagging::readCover(track, type);
                 if(!coverData.isEmpty()) {
-                    image = loadCover(coverData, size);
+                    image.loadFromData(coverData);
+                    if(thumbnail) {
+                        image = Fooyin::Utils::scaleImage(image, size);
+                    }
+                    return image;
                 }
             }
 
-            if(saveToDisk) {
+            if(thumbnail) {
                 const QString cachePath = coverThumbnailPath(key);
                 if(image.isNull()) {
                     QFile::remove(cachePath);
@@ -249,13 +244,13 @@ void CoverProvider::resetCoverKey()
 
 CoverProvider::~CoverProvider() = default;
 
-QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, Track::Cover type, bool saveToDisk) const
+QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
 {
     if(!track.isValid()) {
-        return p->usePlacerholder ? loadNoCover(size, type) : QPixmap{};
+        return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track.albumHash(), type, size);
+    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track, type, p->size);
 
     if(!p->pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
@@ -264,15 +259,31 @@ QPixmap CoverProvider::trackCover(const Track& track, const QSize& size, Track::
         }
 
         p->pendingCovers.emplace(coverKey);
-        p->fetchCover(coverKey, track, size, type, saveToDisk);
+        p->fetchCover(coverKey, track, type, false);
     }
 
-    return p->usePlacerholder ? loadNoCover(size, type) : QPixmap{};
+    return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
 }
 
-QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type, bool saveToDisk) const
+QPixmap CoverProvider::trackCoverThumbnail(const Track& track, Track::Cover type) const
 {
-    return trackCover(track, MaxCoverSize, type, saveToDisk);
+    if(!track.isValid()) {
+        return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
+    }
+
+    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track, type, p->size);
+
+    if(!p->pendingCovers.contains(coverKey)) {
+        QPixmap cover = loadCachedCover(coverKey);
+        if(!cover.isNull()) {
+            return cover;
+        }
+
+        p->pendingCovers.emplace(coverKey);
+        p->fetchCover(coverKey, track, type, true);
+    }
+
+    return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
 }
 
 void CoverProvider::clearCache()
@@ -281,6 +292,13 @@ void CoverProvider::clearCache()
     cache.removeRecursively();
 
     QPixmapCache::clear();
+}
+
+void CoverProvider::removeFromCache(const Track& track, const QSize& size)
+{
+    removeFromCache(generateCoverKey(track, Track::Cover::Front, size));
+    removeFromCache(generateCoverKey(track, Track::Cover::Back, size));
+    removeFromCache(generateCoverKey(track, Track::Cover::Artist, size));
 }
 
 void CoverProvider::removeFromCache(const QString& key)
