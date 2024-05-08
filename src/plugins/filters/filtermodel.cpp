@@ -361,6 +361,14 @@ QModelIndexList FilterModel::indexesForValues(const QStringList& values, int col
 {
     QModelIndexList indexes;
 
+    if(values.contains(QStringLiteral(""))) {
+        indexes.append(indexOfItem(&p->allNode));
+
+        if(values.size() == 1) {
+            return indexes;
+        }
+    }
+
     const auto rows = p->allNode.children();
     for(const auto& child : rows) {
         if(values.contains(child->column(column))) {

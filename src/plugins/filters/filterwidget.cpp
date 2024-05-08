@@ -550,7 +550,12 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
     QStringList selected;
     for(const QModelIndex& index : selectedRows) {
-        selected.emplace_back(index.data(Qt::DisplayRole).toString());
+        if(!index.parent().isValid()) {
+            selected.emplace_back(QStringLiteral(""));
+        }
+        else {
+            selected.emplace_back(index.data(Qt::DisplayRole).toString());
+        }
     }
 
     p->model->updateTracks(tracks);
