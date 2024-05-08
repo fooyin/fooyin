@@ -91,7 +91,7 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
 
     auto* pixmapCacheLabel = new QLabel(tr("Pixmap Cache Size") + QStringLiteral(":"), this);
 
-    m_pixmapCache->setMinimum(0);
+    m_pixmapCache->setMinimum(10);
     m_pixmapCache->setMaximum(1000);
     m_pixmapCache->setSuffix(QStringLiteral(" MB"));
 
