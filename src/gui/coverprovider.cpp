@@ -183,20 +183,12 @@ struct CoverProvider::Private
             if(!coverPath.isEmpty()) {
                 // Prefer artwork in directory
                 image.load(coverPath);
-                if(thumbnail) {
-                    image = Fooyin::Utils::scaleImage(image, size);
-                }
-                return image;
             }
 
             if(image.isNull()) {
                 const QByteArray coverData = Tagging::readCover(track, type);
                 if(!coverData.isEmpty()) {
                     image.loadFromData(coverData);
-                    if(thumbnail) {
-                        image = Fooyin::Utils::scaleImage(image, size);
-                    }
-                    return image;
                 }
             }
 
@@ -206,6 +198,7 @@ struct CoverProvider::Private
                     QFile::remove(cachePath);
                 }
                 else if(!QFileInfo::exists(cachePath)) {
+                    image = Utils::scaleImage(image, size);
                     saveThumbnail(image, key);
                 }
             }
