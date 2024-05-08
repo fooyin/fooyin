@@ -48,6 +48,11 @@ QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type, 
                                        QString::number(size.width()), QString::number(size.height()));
 }
 
+QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
+{
+    return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), track.albumHash());
+}
+
 QString coverThumbnailPath(const QString& key)
 {
     return Fooyin::Gui::coverPath() + key + QStringLiteral(".jpg");
@@ -94,11 +99,11 @@ struct CoverProvider::Private
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
-        , size{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
-               settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
+        , size{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
+               settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
         , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     {
-        settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(self, [this](const int thumbSize) {
+        settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(self, [this](const int thumbSize) {
             size = {thumbSize, thumbSize};
         });
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
@@ -250,7 +255,10 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
         return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track, type, p->size);
+    QString coverKey{p->coverKey};
+    if(coverKey.isEmpty()) {
+        coverKey = generateCoverKey(track, type);
+    }
 
     if(!p->pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);
@@ -271,7 +279,10 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, Track::Cover type
         return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    const QString coverKey = !p->coverKey.isEmpty() ? p->coverKey : generateCoverKey(track, type, p->size);
+    QString coverKey{p->coverKey};
+    if(coverKey.isEmpty()) {
+        coverKey = generateCoverKey(track, type, p->size);
+    }
 
     if(!p->pendingCovers.contains(coverKey)) {
         QPixmap cover = loadCachedCover(coverKey);

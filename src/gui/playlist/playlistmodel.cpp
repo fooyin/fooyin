@@ -543,8 +543,8 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}
     , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
-    , m_coverSize{settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>(),
-                  settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>()}
+    , m_coverSize{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
+                  settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
     , m_populator{playerController}
     , m_playlistLoaded{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistCoverPadding>()}
@@ -572,9 +572,8 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
         m_altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
     });
-    m_settings->subscribe<Settings::Gui::Internal::PlaylistThumbnailSize>(this, [this](int size) {
+    m_settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(this, [this](int size) {
         m_coverSize = {size, size};
-        CoverProvider::clearCache();
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistCoverPadding>(this, [this](int padding) {

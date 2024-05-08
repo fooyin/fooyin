@@ -133,7 +133,7 @@ void ArtworkPageWidget::load()
     m_artistCovers->setPlainText(paths.artistPaths.join(QStringLiteral("\n")));
 
     m_pixmapCache->setValue(m_settings->value<Settings::Gui::Internal::PixmapCacheSize>());
-    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::PlaylistThumbnailSize>());
+    m_thumbnailSize->setValue(m_settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>());
 }
 
 void ArtworkPageWidget::apply()
@@ -151,7 +151,7 @@ void ArtworkPageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::TrackCoverPaths>(QVariant::fromValue(paths));
     m_settings->set<Settings::Gui::Internal::PixmapCacheSize>(m_pixmapCache->value());
-    m_settings->set<Settings::Gui::Internal::PlaylistThumbnailSize>(m_thumbnailSize->value());
+    m_settings->set<Settings::Gui::Internal::ArtworkThumbnailSize>(m_thumbnailSize->value());
 }
 
 void ArtworkPageWidget::reset()
@@ -159,7 +159,7 @@ void ArtworkPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::TrackCoverDisplayOption>();
     m_settings->reset<Settings::Gui::Internal::TrackCoverPaths>();
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();
-    m_settings->reset<Settings::Gui::Internal::PlaylistThumbnailSize>();
+    m_settings->reset<Settings::Gui::Internal::ArtworkThumbnailSize>();
 }
 
 ArtworkPage::ArtworkPage(SettingsManager* settings)

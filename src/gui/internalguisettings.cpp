@@ -64,7 +64,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
     m_settings->createSetting<Internal::PlaylistCurrentPreset>(0, QStringLiteral("PlaylistWidget/CurrentPreset"));
-    m_settings->createSetting<Internal::PlaylistThumbnailSize>(60, QStringLiteral("PlaylistWidget/ThumbnailSize"));
     m_settings->createSetting<Internal::InfoAltColours>(true, QStringLiteral("InfoPanel/AlternatingColours"));
     m_settings->createSetting<Internal::InfoHeader>(true, QStringLiteral("InfoPanel/Header"));
     m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
@@ -111,5 +110,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
     m_settings->createSetting<Internal::PlaylistCoverPadding>(15, QStringLiteral("PlaylistWidget/CoverPadding"));
     m_settings->createSetting<Internal::PixmapCacheSize>(20, QStringLiteral("Interface/PixmapCacheSize"));
+    m_settings->createSetting<Internal::ArtworkThumbnailSize>(200, QStringLiteral("Interface/ArtworkThumbnailSize"));
 }
 } // namespace Fooyin

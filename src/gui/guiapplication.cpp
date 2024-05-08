@@ -73,6 +73,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
+#include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -574,6 +575,7 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
 
     updateCache(p->settingsManager->value<Settings::Gui::Internal::PixmapCacheSize>());
     p->settingsManager->subscribe<Settings::Gui::Internal::PixmapCacheSize>(this, updateCache);
+    p->settingsManager->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(this, CoverProvider::clearCache);
 }
 
 GuiApplication::~GuiApplication() = default;
