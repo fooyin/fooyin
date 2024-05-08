@@ -58,7 +58,7 @@ struct Track::Private : public QSharedData
     uint64_t filesize{0};
     int bitrate{0};
     int sampleRate{0};
-    int channels{0};
+    int channels{2};
 
     int playcount{0};
 
