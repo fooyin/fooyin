@@ -127,17 +127,10 @@ struct CoverProvider::Private
         return cover;
     }
 
-    QString findCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
+    QString findDirectoryCover(const Track& track, Track::Cover type)
     {
         if(!track.isValid()) {
             return {};
-        }
-
-        if(thumbnail) {
-            QString cachePath = coverThumbnailPath(key);
-            if(QFileInfo::exists(cachePath)) {
-                return cachePath;
-            }
         }
 
         QStringList filters;
@@ -179,24 +172,39 @@ struct CoverProvider::Private
 
             const std::scoped_lock lock{fetchGuard};
 
-            const QString coverPath = findCover(key, track, type, thumbnail);
-            if(!coverPath.isEmpty()) {
-                // Prefer artwork in directory
-                image.load(coverPath);
+            bool isThumb{thumbnail};
+            QString coverPath;
+
+            if(isThumb) {
+                const QString cachePath = coverThumbnailPath(key);
+                if(QFileInfo::exists(cachePath)) {
+                    coverPath = cachePath;
+                }
             }
 
-            if(image.isNull()) {
+            if(coverPath.isEmpty()) {
+                coverPath = findDirectoryCover(track, type);
+                if(!coverPath.isEmpty()) {
+                    image.load(coverPath);
+                }
+            }
+
+            if(!image.isNull()) {
+                // Only store thumbnails in disk cache for embedded artwork
+                isThumb = false;
+            }
+            else {
                 const QByteArray coverData = Tagging::readCover(track, type);
                 if(!coverData.isEmpty()) {
                     image.loadFromData(coverData);
                 }
             }
 
-            if(!image.isNull() && (!thumbnail || !coverKey.isEmpty())) {
+            if(!image.isNull() && (!isThumb || !coverKey.isEmpty())) {
                 image = Utils::scaleImage(image, MaxSize);
             }
 
-            if(thumbnail) {
+            if(isThumb) {
                 const QString cachePath = coverThumbnailPath(key);
                 if(image.isNull()) {
                     QFile::remove(cachePath);
