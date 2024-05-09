@@ -151,10 +151,29 @@ struct LibraryTreeWidget::Private
         libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
 
         changeGrouping(groupsRegistry.itemByName(QStringLiteral("")));
+        trackSelection->changePlaybackOnSend(widgetContext, settings->value<LibTreeSendPlayback>());
 
         model->setFont(settings->value<LibTreeFont>());
         model->setColour(settings->value<LibTreeColour>());
         model->setRowHeight(settings->value<LibTreeRowHeight>());
+
+        settings->subscribe<LibTreeDoubleClick>(self, [this](int action) {
+            doubleClickAction = static_cast<TrackAction>(action);
+            libraryTree->setExpandsOnDoubleClick(doubleClickAction == TrackAction::Play);
+        });
+        settings->subscribe<LibTreeMiddleClick>(
+            self, [this](int action) { middleClickAction = static_cast<TrackAction>(action); });
+        settings->subscribe<LibTreeSendPlayback>(
+            self, [this](bool enabled) { trackSelection->changePlaybackOnSend(widgetContext, enabled); });
+        settings->subscribe<LibTreeScrollBar>(self, [this](bool show) { setScrollbarEnabled(show); });
+        settings->subscribe<LibTreeAltColours>(self,
+                                               [this](bool enable) { libraryTree->setAlternatingRowColors(enable); });
+        settings->subscribe<LibTreeFont>(self, [this](const QString& font) { model->setFont(font); });
+        settings->subscribe<LibTreeColour>(self, [this](const QString& colour) { model->setColour(colour); });
+        settings->subscribe<LibTreeRowHeight>(self, [this](const int height) {
+            model->setRowHeight(height);
+            QMetaObject::invokeMethod(libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+        });
     }
 
     void reset() const
@@ -408,22 +427,6 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
         [this](const TrackList& /*oldTracks*/, const TrackList& tracks) { p->handleTracksUpdated(tracks); });
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->model, &LibraryTreeModel::removeTracks);
     QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
-
-    settings->subscribe<LibTreeDoubleClick>(this, [this](int action) {
-        p->doubleClickAction = static_cast<TrackAction>(action);
-        p->libraryTree->setExpandsOnDoubleClick(p->doubleClickAction == TrackAction::Play);
-    });
-    settings->subscribe<LibTreeMiddleClick>(
-        this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<LibTreeScrollBar>(this, [this](bool show) { p->setScrollbarEnabled(show); });
-    settings->subscribe<LibTreeAltColours>(this,
-                                           [this](bool enable) { p->libraryTree->setAlternatingRowColors(enable); });
-    settings->subscribe<LibTreeFont>(this, [this](const QString& font) { p->model->setFont(font); });
-    settings->subscribe<LibTreeColour>(this, [this](const QString& colour) { p->model->setColour(colour); });
-    settings->subscribe<LibTreeRowHeight>(this, [this](const int height) {
-        p->model->setRowHeight(height);
-        QMetaObject::invokeMethod(p->libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-    });
 }
 
 QString LibraryTreeWidget::name() const

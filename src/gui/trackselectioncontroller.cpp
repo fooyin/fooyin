@@ -45,6 +45,7 @@ struct WidgetSelection
     TrackList tracks;
     int firstIndex{0};
     QString name{TrackSelectionController::tr("New playlist")};
+    bool playbackOnSend{false};
 };
 
 struct TrackSelectionController::Private
@@ -101,13 +102,22 @@ struct TrackSelectionController::Private
         QObject::connect(addActive, &QAction::triggered, tracksPlaylistMenu, [this]() { addToActivePlaylist(); });
         tracksPlaylistMenu->addAction(actionManager->registerAction(addActive, "TrackSelection.AddActivePlaylist"));
 
-        QObject::connect(sendCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { sendToCurrentPlaylist(); });
+        QObject::connect(sendCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() {
+            if(self->hasTracks()) {
+                const auto& selection = contextSelection.at(activeContext);
+                sendToCurrentPlaylist(selection.playbackOnSend ? PlaylistAction::StartPlayback
+                                                               : PlaylistAction::Switch);
+            }
+        });
         tracksPlaylistMenu->addAction(actionManager->registerAction(sendCurrent, "TrackSelection.SendCurrentPlaylist"));
 
         QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this]() {
             if(self->hasTracks()) {
                 const auto& selection = contextSelection.at(activeContext);
-                sendToNewPlaylist(PlaylistAction::Switch, selection.name);
+                const auto options
+                    = PlaylistAction::Switch
+                    | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
+                sendToNewPlaylist(options, selection.name);
             }
         });
         tracksPlaylistMenu->addAction(actionManager->registerAction(sendNew, "TrackSelection.SendNewPlaylist"));
@@ -388,6 +398,14 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
                                                     const QString& title)
 {
     changeSelectedTracks(context, 0, tracks, title);
+}
+
+void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool enabled)
+{
+    if(p->addContextObject(context)) {
+        auto& selection          = p->contextSelection[context];
+        selection.playbackOnSend = enabled;
+    }
 }
 
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const

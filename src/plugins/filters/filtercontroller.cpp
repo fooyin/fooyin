@@ -87,7 +87,13 @@ struct FilterController::Private
         , manager{new FilterManager(self, editableLayout, self)}
         , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
         , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
-    { }
+    {
+        settings->subscribe<Settings::Filters::FilterDoubleClick>(
+            self, [this](int action) { doubleClickAction = static_cast<TrackAction>(action); });
+        settings->subscribe<Settings::Filters::FilterMiddleClick>(
+            self, [this](int action) { middleClickAction = static_cast<TrackAction>(action); });
+        settings->subscribe<Settings::Filters::FilterSendPlayback>(self, [this]() { updateAllPlaylistActions(); });
+    }
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
     {
@@ -276,6 +282,22 @@ struct FilterController::Private
         }
     }
 
+    void updateFilterPlaylistActions(FilterWidget* filterWidget)
+    {
+        const bool startPlayback = settings->value<Settings::Filters::FilterSendPlayback>();
+
+        trackSelection->changePlaybackOnSend(filterWidget->widgetContext(), startPlayback);
+    }
+
+    void updateAllPlaylistActions()
+    {
+        for(const auto& [_, group] : groups) {
+            for(FilterWidget* filterWidget : group.filters) {
+                updateFilterPlaylistActions(filterWidget);
+            }
+        }
+    }
+
     void selectionChanged(FilterWidget* filter, const QString& playlistName)
     {
         trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
@@ -439,11 +461,6 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
     QObject::connect(p->library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
-
-    settings->subscribe<Settings::Filters::FilterDoubleClick>(
-        this, [this](int action) { p->doubleClickAction = static_cast<TrackAction>(action); });
-    settings->subscribe<Settings::Filters::FilterMiddleClick>(
-        this, [this](int action) { p->middleClickAction = static_cast<TrackAction>(action); });
 }
 
 FilterController::~FilterController() = default;
@@ -476,6 +493,7 @@ FilterWidget* FilterController::createFilter()
     QObject::connect(this, &FilterController::tracksRemoved, widget, &FilterWidget::tracksRemoved);
 
     widget->reset(p->tracks(p->defaultId));
+    p->updateFilterPlaylistActions(widget);
 
     return widget;
 }

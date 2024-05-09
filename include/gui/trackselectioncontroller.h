@@ -69,6 +69,7 @@ public:
     [[nodiscard]] TrackList selectedTracks() const;
     void changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks, const QString& title = {});
     void changeSelectedTracks(WidgetContext* context, const TrackList& tracks, const QString& title = {});
+    void changePlaybackOnSend(WidgetContext* context, bool enabled);
 
     void addTrackContextMenu(QMenu* menu) const;
     void addTrackQueueContextMenu(QMenu* menu) const;
