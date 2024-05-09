@@ -42,6 +42,11 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
     QTreeView::mousePressEvent(event);
+
+    if(!indexAt(event->pos()).isValid()) {
+        clearSelection();
+    }
+
     if(event->button() == Qt::MiddleButton) {
         emit middleClicked();
     }
