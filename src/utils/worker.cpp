@@ -23,9 +23,13 @@ namespace Fooyin {
 Worker::Worker(QObject* parent)
     : QObject{parent}
     , m_state{Idle}
+    , m_closing{false}
 { }
 
-void Worker::initialiseThread() { }
+void Worker::initialiseThread()
+{
+    m_closing.store(false, std::memory_order_release);
+}
 
 void Worker::stopThread()
 {
@@ -39,7 +43,7 @@ void Worker::pauseThread()
 
 void Worker::closeThread()
 {
-    setState(Closing);
+    m_closing.store(true, std::memory_order_release);
 }
 
 Worker::State Worker::state() const
@@ -54,12 +58,12 @@ void Worker::setState(State state)
 
 bool Worker::mayRun() const
 {
-    return m_state == Running;
+    return state() == Running && !closing();
 }
 
 bool Worker::closing() const
 {
-    return m_state == Closing;
+    return m_closing.load(std::memory_order_acquire);
 }
 } // namespace Fooyin
 

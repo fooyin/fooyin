@@ -242,8 +242,9 @@ LibraryScanner::~LibraryScanner() = default;
 
 void LibraryScanner::initialiseThread()
 {
-    p->dbHandler = std::make_unique<DbConnectionHandler>(p->dbPool);
+    Worker::initialiseThread();
 
+    p->dbHandler = std::make_unique<DbConnectionHandler>(p->dbPool);
     p->trackDatabase.initialise(DbConnectionProvider{p->dbPool});
 }
 

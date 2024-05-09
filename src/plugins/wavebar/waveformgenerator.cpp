@@ -108,6 +108,8 @@ WaveformGenerator::WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, DbCo
 
 void WaveformGenerator::initialiseThread()
 {
+    Worker::initialiseThread();
+
     m_dbHandler = std::make_unique<DbConnectionHandler>(m_dbPool);
     m_waveDb.initialise(DbConnectionProvider{m_dbPool});
     m_waveDb.initialiseDatabase();

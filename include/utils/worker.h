@@ -33,8 +33,7 @@ public:
     {
         Idle = 0,
         Running,
-        Paused,
-        Closing
+        Paused
     };
 
     explicit Worker(QObject* parent = nullptr);
@@ -55,5 +54,6 @@ signals:
 
 private:
     std::atomic<State> m_state;
+    std::atomic<bool> m_closing;
 };
 } // namespace Fooyin

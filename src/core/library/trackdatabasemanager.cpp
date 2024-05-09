@@ -33,8 +33,9 @@ TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* 
 
 void TrackDatabaseManager::initialiseThread()
 {
-    m_dbHandler = std::make_unique<DbConnectionHandler>(m_dbPool);
+    Worker::initialiseThread();
 
+    m_dbHandler = std::make_unique<DbConnectionHandler>(m_dbPool);
     m_trackDatabase.initialise(DbConnectionProvider{m_dbPool});
 }
 
