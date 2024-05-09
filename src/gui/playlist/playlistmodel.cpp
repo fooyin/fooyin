@@ -1164,6 +1164,9 @@ void PlaylistModel::tracksChanged()
     if(playingIndex >= 0) {
         m_currentPlayingTrack.indexInPlaylist = playingIndex;
     }
+    else {
+        playingIndex = m_currentPlayingTrack.indexInPlaylist;
+    }
 
     emit playlistTracksChanged(playingIndex);
 
