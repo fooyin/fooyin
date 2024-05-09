@@ -22,6 +22,7 @@
 #include "settings/wavebarguisettingspage.h"
 #include "settings/wavebarsettings.h"
 #include "settings/wavebarsettingspage.h"
+#include "wavebarconstants.h"
 #include "wavebarwidget.h"
 #include "waveformbuilder.h"
 
@@ -47,7 +48,7 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
     Fooyin::DbConnection::DbParams params;
     params.type           = QStringLiteral("QSQLITE");
     params.connectOptions = QStringLiteral("QSQLITE_OPEN_URI");
-    params.filePath       = Fooyin::Utils::cachePath() + QStringLiteral("/wavebar.db");
+    params.filePath       = Fooyin::WaveBar::cachePath();
 
     return params;
 }
@@ -149,13 +150,13 @@ struct WaveBarPlugin::Private
             return;
         }
 
-        QStringList keys;
-        for(const Track& track : selectedTracks) {
-            keys.emplace_back(WaveBarDatabase::cacheKey(track));
-        }
+        Utils::asyncExec([this, selectedTracks]() {
+            QStringList keys;
+            for(const Track& track : selectedTracks) {
+                keys.emplace_back(WaveBarDatabase::cacheKey(track));
+            }
 
-        Utils::asyncExec([this, keys]() {
-            auto dbHandler = std::make_unique<DbConnectionHandler>(dbPool);
+            const DbConnectionHandler dbHandler{dbPool};
             WaveBarDatabase waveDb;
             waveDb.initialise(DbConnectionProvider{dbPool});
             waveDb.initialiseDatabase();
@@ -164,6 +165,17 @@ struct WaveBarPlugin::Private
                 qDebug() << "[WaveBar] Unable to remove waveform data";
             }
         });
+    }
+
+    void clearCache() const
+    {
+        const DbConnectionHandler handler{dbPool};
+        WaveBarDatabase waveDb;
+        waveDb.initialise(DbConnectionProvider{dbPool});
+
+        if(!waveDb.clearCache()) {
+            qDebug() << "[WaveBar] Unable to clear cache";
+        }
     }
 };
 
@@ -195,11 +207,14 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     p->waveBarSettingsPage    = std::make_unique<WaveBarSettingsPage>(p->settings);
     p->waveBarGuiSettingsPage = std::make_unique<WaveBarGuiSettingsPage>(p->settings);
 
+    QObject::connect(p->waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this,
+                     [this]() { p->clearCache(); });
+
     p->widgetProvider->registerWidget(
         QStringLiteral("WaveBar"), [this]() { return p->createWavebar(); }, QStringLiteral("Waveform Seekbar"));
     p->widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {QStringLiteral("Controls")});
 
-    auto* selectionMenu = p->actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
+    auto* selectionMenu = p->actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
     auto* utilitiesMenu = p->actionManager->createMenu("Fooyin.Menu.Utilities");
     utilitiesMenu->menu()->setTitle(tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);

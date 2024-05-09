@@ -23,14 +23,17 @@
 #include "wavebarconstants.h"
 
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QPushButton>
 #include <QRadioButton>
 
 namespace Fooyin::WaveBar {
@@ -45,7 +48,12 @@ public:
     void apply() override;
     void reset() override;
 
+signals:
+    void clearCache();
+
 private:
+    void updateCacheSize();
+
     SettingsManager* m_settings;
 
     QCheckBox* m_minMax;
@@ -62,6 +70,8 @@ private:
     QSpinBox* m_barGap;
     QDoubleSpinBox* m_maxScale;
     QSpinBox* m_centreGap;
+
+    QLabel* m_cacheSizeLabel;
 };
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
@@ -78,6 +88,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_barGap{new QSpinBox(this)}
     , m_maxScale{new QDoubleSpinBox(this)}
     , m_centreGap{new QSpinBox(this)}
+    , m_cacheSizeLabel{new QLabel(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -162,12 +173,28 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     dimensionGroupLayout->addWidget(centreGapLabel, row, 0);
     dimensionGroupLayout->addWidget(m_centreGap, row++, 1);
 
+    auto* cacheGroup       = new QGroupBox(tr("Cache"), this);
+    auto* cacheGroupLayout = new QGridLayout(cacheGroup);
+
+    updateCacheSize();
+
+    auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
+
+    QObject::connect(clearCacheButton, &QPushButton::clicked, this, [this]() {
+        emit clearCache();
+        updateCacheSize();
+    });
+
+    cacheGroupLayout->addWidget(m_cacheSizeLabel);
+    cacheGroupLayout->addWidget(clearCacheButton);
+
     row = 0;
     layout->addWidget(modeGroup, row, 0);
     layout->addWidget(downmixGroupBox, row++, 1);
     layout->addWidget(dimensionGroup, row, 0);
     layout->addWidget(scaleGroup, row++, 1);
-    layout->addWidget(cursorGroup, row, 0);
+    layout->addWidget(cursorGroup, row++, 0);
+    layout->addWidget(cacheGroup, row, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(3, 1);
@@ -244,13 +271,25 @@ void WaveBarSettingsPageWidget::reset()
     m_settings->reset<Settings::WaveBar::Mode>();
 }
 
+void WaveBarSettingsPageWidget::updateCacheSize()
+{
+    const QFile cacheFile{cachePath()};
+    const QString cacheSize = Utils::formatFileSize(cacheFile.size());
+
+    m_cacheSizeLabel->setText(tr("Current Disk Usage") + QStringLiteral(": %1").arg(cacheSize));
+}
+
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::WaveBarGeneral);
     setName(tr("General"));
     setCategory({tr("Plugins"), tr("WaveBar")});
-    setWidgetCreator([settings] { return new WaveBarSettingsPageWidget(settings); });
+    setWidgetCreator([this, settings] {
+        auto* widget = new WaveBarSettingsPageWidget(settings);
+        QObject::connect(widget, &WaveBarSettingsPageWidget::clearCache, this, &WaveBarSettingsPage::clearCache);
+        return widget;
+    });
 }
 } // namespace Fooyin::WaveBar
 

@@ -31,6 +31,9 @@ class WaveBarSettingsPage : public SettingsPage
 
 public:
     explicit WaveBarSettingsPage(SettingsManager* settings);
+
+signals:
+    void clearCache();
 };
 } // namespace WaveBar
 } // namespace Fooyin

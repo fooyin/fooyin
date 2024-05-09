@@ -2,6 +2,7 @@ create_fooyin_plugin_internal(
     wavebar
     DEPENDS Fooyin::Gui
     SOURCES wavebarcolours.h
+            wavebarconstants.cpp
             wavebarconstants.h
             wavebardatabase.cpp
             wavebardatabase.h

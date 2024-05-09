@@ -17,15 +17,11 @@
  *
  */
 
-#pragma once
-
-#include <utils/paths.h>
+#include "wavebarconstants.h"
 
 namespace Fooyin::WaveBar {
-QString cachePath();
-
-namespace Constants::Page {
-constexpr auto WaveBarGeneral = "Fooyin.Page.WaveBar.General";
-constexpr auto WaveBarColours = "Fooyin.Page.WaveBar.Colours";
-} // namespace Constants::Page
+QString cachePath()
+{
+    return Fooyin::Utils::cachePath() + QStringLiteral("/wavebar.db");
+}
 } // namespace Fooyin::WaveBar

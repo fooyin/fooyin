@@ -187,11 +187,12 @@ bool WaveBarDatabase::removeFromCache(const QStringList& keys) const
 
 bool WaveBarDatabase::clearCache() const
 {
-    const auto statement = QStringLiteral("DELETE * FROM WaveCache;");
+    const auto statement = QStringLiteral("DELETE FROM WaveCache;");
 
     DbQuery query{db(), statement};
+    DbQuery cleanQuery{db(), QStringLiteral("VACUUM")};
 
-    return query.exec();
+    return query.exec() && cleanQuery.exec();
 }
 
 QString WaveBarDatabase::cacheKey(const Track& track)
