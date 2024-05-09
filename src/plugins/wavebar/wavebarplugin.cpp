@@ -94,8 +94,9 @@ struct WaveBarPlugin::Private
         QObject::connect(wavebar, &WaveBarWidget::seekBackward, playerController,
                          [this]() { playerController->seekBackward(SeekDelta); });
 
-        if(playerController->currentTrack().isValid()) {
-            waveBuilder->generate(playerController->currentTrack());
+        const Track currTrack = playerController->currentTrack();
+        if(currTrack.isValid()) {
+            waveBuilder->generateAndScale(currTrack);
         }
 
         return wavebar;
@@ -110,7 +111,7 @@ struct WaveBarPlugin::Private
 
         const Track currentTrack = playerController->currentTrack();
         auto currIt              = std::ranges::find(selectedTracks, currentTrack);
-        if(currIt != selectedTracks.cend()) {
+        if(waveBuilder && currIt != selectedTracks.cend()) {
             selectedTracks.erase(currIt);
             waveBuilder->generateAndScale(currentTrack, !onlyMissing);
         }
