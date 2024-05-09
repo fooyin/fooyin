@@ -589,6 +589,10 @@ void FilterWidget::tracksRemoved(const TrackList& tracks)
 
 void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
+    if(p->view->selectionModel()->selectedRows().empty()) {
+        return;
+    }
+
     emit requestContextMenu(mapToGlobal(event->pos()));
 }
 } // namespace Fooyin::Filters
