@@ -68,6 +68,7 @@ protected:
     void rowsInserted(const QModelIndex& parent, int start, int end) override;
     void rowsRemoved(const QModelIndex& parent, int first, int last);
     void startDrag(Qt::DropActions supportedActions) override;
+    void verticalScrollbarValueChanged(int value) override;
 
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     [[nodiscard]] int horizontalOffset() const override;

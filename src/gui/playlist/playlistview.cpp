@@ -105,6 +105,7 @@ public:
     void calcLogicalIndexes(std::vector<int>& logicalIndexes,
                             std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions, int left,
                             int right) const;
+    void setHoverIndex(const QPersistentModelIndex& index);
 
     static DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index);
     bool isIndexDropEnabled(const QModelIndex& index) const;
@@ -865,6 +866,23 @@ void PlaylistView::Private::calcLogicalIndexes(std::vector<int>& logicalIndexes,
 
         itemPositions[visual] = pos;
     }
+}
+
+void PlaylistView::Private::setHoverIndex(const QPersistentModelIndex& index)
+{
+    if(m_hoverIndex == index) {
+        return;
+    }
+
+    auto* viewport = m_self->viewport();
+
+    const QRect oldHoverRect = visualRect(m_hoverIndex, RectRule::FullRow, false);
+    const QRect newHoverRect = visualRect(index, RectRule::FullRow, false);
+
+    viewport->update(QRect{0, newHoverRect.y(), viewport->width(), newHoverRect.height()});
+    viewport->update(QRect{0, oldHoverRect.y(), viewport->width(), oldHoverRect.height()});
+
+    m_hoverIndex = index;
 }
 
 QAbstractItemView::DropIndicatorPosition PlaylistView::Private::dropPosition(const QPoint& pos, const QRect& rect,
@@ -1898,20 +1916,20 @@ bool PlaylistView::viewportEvent(QEvent* event)
 {
     switch(event->type()) {
         case(QEvent::HoverEnter):
-        case(QEvent::HoverLeave):
         case(QEvent::HoverMove): {
             if(auto* hoverEvent = static_cast<QHoverEvent*>(event)) {
-                const QModelIndex newIndex = indexAt(hoverEvent->position().toPoint());
-                if(p->m_hoverIndex != newIndex) {
-                    p->m_hoverIndex = newIndex;
-                    viewport()->update(p->visualRect(newIndex, RectRule::FullRow, false));
-                }
-                break;
+                p->setHoverIndex(indexAt(hoverEvent->position().toPoint()));
             }
+            break;
         }
+        case(QEvent::HoverLeave):
+        case(QEvent::Leave):
+            p->setHoverIndex({});
+            break;
         default:
             break;
     }
+
     return QAbstractItemView::viewportEvent(event);
 }
 
@@ -2194,6 +2212,16 @@ void PlaylistView::startDrag(Qt::DropActions supportedActions)
 
     p->m_dropIndicatorRect = {};
     p->m_dropIndicatorPos  = OnViewport;
+}
+
+void PlaylistView::verticalScrollbarValueChanged(int value)
+{
+    QAbstractItemView::verticalScrollbarValueChanged(value);
+
+    const QPoint pos = viewport()->mapFromGlobal(QCursor::pos());
+    if(viewport()->rect().contains(pos)) {
+        p->setHoverIndex(indexAt(pos));
+    }
 }
 
 QModelIndex PlaylistView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers /*modifiers*/)
