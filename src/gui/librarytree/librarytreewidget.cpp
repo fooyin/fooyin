@@ -240,7 +240,7 @@ struct LibraryTreeWidget::Private
         model->reset(tracks);
     }
 
-    QString playlistNameFromSelection() const
+    [[nodiscard]] QString playlistNameFromSelection() const
     {
         QString title;
         const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();

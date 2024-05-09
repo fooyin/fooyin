@@ -28,7 +28,7 @@ class LibraryTreeView : public QTreeView
     Q_OBJECT
 
 public:
-    LibraryTreeView(QWidget* parent = nullptr);
+    explicit LibraryTreeView(QWidget* parent = nullptr);
 
 signals:
     void middleClicked();
