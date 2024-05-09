@@ -456,9 +456,17 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    p->trackSelection->addTrackPlaylistContextMenu(menu);
+    const bool hasSelection = !p->libraryTree->selectionModel()->selectedRows().empty();
+
+    if(hasSelection) {
+        p->trackSelection->addTrackPlaylistContextMenu(menu);
+    }
+
     p->addGroupMenu(menu);
-    p->trackSelection->addTrackContextMenu(menu);
+
+    if(hasSelection) {
+        p->trackSelection->addTrackContextMenu(menu);
+    }
 
     menu->popup(mapToGlobal(event->pos()));
 }
