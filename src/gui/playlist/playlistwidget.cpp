@@ -510,6 +510,31 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
     m_sorting = false;
 }
 
+void PlaylistWidgetPrivate::playSelectedTracks() const
+{
+    if(!playlistController->currentPlaylist()) {
+        return;
+    }
+
+    const auto selected = playlistView->selectionModel()->selectedRows();
+
+    if(selected.empty()) {
+        return;
+    }
+
+    for(const QModelIndex& index : selected) {
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            auto track = index.data(PlaylistItem::ItemData).value<Track>();
+            if(track.isValid()) {
+                const int playIndex = index.data(PlaylistItem::Index).toInt();
+                playlistController->currentPlaylist()->changeCurrentIndex(playIndex);
+                playlistController->startPlayback();
+                return;
+            }
+        }
+    }
+}
+
 void PlaylistWidgetPrivate::queueSelectedTracks() const
 {
     if(!playlistController->currentPlaylist()) {
@@ -1108,24 +1133,35 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(auto* removeCmd = p->actionManager->command(Constants::Actions::Remove)) {
-        menu->addAction(removeCmd->action());
+    const bool hasSelection = !p->playlistView->selectionModel()->selectedRows().empty();
+
+    if(hasSelection) {
+        auto* playAction = new QAction(tr("&Play"), this);
+        QObject::connect(playAction, &QAction::triggered, this, [this]() { p->playSelectedTracks(); });
+        menu->addAction(playAction);
+
+        menu->addSeparator();
+
+        if(auto* removeCmd = p->actionManager->command(Constants::Actions::Remove)) {
+            menu->addAction(removeCmd->action());
+        }
+
+        p->addSortMenu(menu);
     }
 
-    menu->addSeparator();
-
-    p->addSortMenu(menu);
     p->addPresetMenu(menu);
 
-    if(auto* addQueueCmd = p->actionManager->command(Constants::Actions::AddToQueue)) {
-        menu->addAction(addQueueCmd->action());
-    }
+    if(hasSelection) {
+        if(auto* addQueueCmd = p->actionManager->command(Constants::Actions::AddToQueue)) {
+            menu->addAction(addQueueCmd->action());
+        }
 
-    if(auto* removeQueueCmd = p->actionManager->command(Constants::Actions::RemoveFromQueue)) {
-        menu->addAction(removeQueueCmd->action());
-    }
+        if(auto* removeQueueCmd = p->actionManager->command(Constants::Actions::RemoveFromQueue)) {
+            menu->addAction(removeQueueCmd->action());
+        }
 
-    p->selectionController->addTrackContextMenu(menu);
+        p->selectionController->addTrackContextMenu(menu);
+    }
 
     menu->popup(event->globalPos());
 }
