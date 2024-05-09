@@ -85,7 +85,7 @@ struct AutoHeaderView::Private
 
         double widthTotal{0.0};
 
-        const int sectionCount = static_cast<int>(sectionWidths.size());
+        const int sectionCount = self->count();
         for(int section{0}; section < sectionCount; ++section) {
             if(!self->isSectionHidden(section)) {
                 widthTotal += sectionWidths.at(section);
@@ -119,7 +119,7 @@ struct AutoHeaderView::Private
 
     [[nodiscard]] int lastVisibleIndex() const
     {
-        const int sectionCount = static_cast<int>(sectionWidths.size());
+        const int sectionCount = self->count();
 
         for(int section{sectionCount - 1}; section >= 0; --section) {
             const int logical = self->logicalIndex(section);
@@ -136,7 +136,7 @@ struct AutoHeaderView::Private
             return;
         }
 
-        const int sectionCount = static_cast<int>(sectionWidths.size());
+        const int sectionCount = self->count();
         const int finalRow     = lastVisibleIndex();
 
         int totalWidth{0};
