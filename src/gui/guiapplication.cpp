@@ -274,11 +274,8 @@ struct GuiApplication::Private
 
     void removeExpiredCovers(const TrackList& tracks) const
     {
-        const int width = settingsManager->value<Settings::Gui::Internal::ArtworkThumbnailSize>();
-        const QSize size{width, width};
-
         for(const Track& track : tracks) {
-            CoverProvider::removeFromCache(track, size);
+            CoverProvider::removeFromCache(track);
         }
     }
 

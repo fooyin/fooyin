@@ -87,8 +87,8 @@ public:
 
     /** Clears the QPixmapCache as well as the on-disk cache. */
     static void clearCache();
-    /** Removes all covers of @p size of the @p track from the cache. */
-    static void removeFromCache(const Track& track, const QSize& size);
+    /** Removes all covers of the @p track from the cache. */
+    static void removeFromCache(const Track& track);
     /** Removes the cover with the @p key from the cache. */
     static void removeFromCache(const QString& key);
 

@@ -42,12 +42,6 @@
 constexpr auto MaxSize = 1024;
 
 namespace {
-QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type, const QSize& size)
-{
-    return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), track.albumHash(),
-                                       QString::number(size.width()), QString::number(size.height()));
-}
-
 QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
 {
     return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), track.albumHash());
@@ -289,7 +283,7 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, Track::Cover type
 
     QString coverKey{p->coverKey};
     if(coverKey.isEmpty()) {
-        coverKey = generateCoverKey(track, type, p->size);
+        coverKey = generateCoverKey(track, type);
     }
 
     if(!p->pendingCovers.contains(coverKey)) {
@@ -313,11 +307,11 @@ void CoverProvider::clearCache()
     QPixmapCache::clear();
 }
 
-void CoverProvider::removeFromCache(const Track& track, const QSize& size)
+void CoverProvider::removeFromCache(const Track& track)
 {
-    removeFromCache(generateCoverKey(track, Track::Cover::Front, size));
-    removeFromCache(generateCoverKey(track, Track::Cover::Back, size));
-    removeFromCache(generateCoverKey(track, Track::Cover::Artist, size));
+    removeFromCache(generateCoverKey(track, Track::Cover::Front));
+    removeFromCache(generateCoverKey(track, Track::Cover::Back));
+    removeFromCache(generateCoverKey(track, Track::Cover::Artist));
 }
 
 void CoverProvider::removeFromCache(const QString& key)
