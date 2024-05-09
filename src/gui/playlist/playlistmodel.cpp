@@ -1198,7 +1198,7 @@ void PlaylistModel::populateModel(PendingData& data)
     }
 
     m_nodes.merge(data.items);
-    m_trackParents.merge(data.trackParents);
+    mergeTrackParents(data.trackParents);
 
     if(m_resetting) {
         for(const auto& [parentKey, rows] : data.nodes) {
@@ -1248,7 +1248,7 @@ void PlaylistModel::populateTrackGroup(PendingData& data)
     }
 
     m_nodes.merge(data.items);
-    m_trackParents.merge(data.trackParents);
+    mergeTrackParents(data.trackParents);
 
     handleTrackGroup(data);
 
@@ -1264,6 +1264,21 @@ void PlaylistModel::updateModel(ItemKeyMap& data)
             node->setState(PlaylistItem::State::None);
             const QModelIndex headerIndex = indexOfItem(node);
             emit dataChanged(headerIndex, headerIndex, {});
+        }
+    }
+}
+
+void PlaylistModel::mergeTrackParents(const TrackIdNodeMap& parents)
+{
+    for(const auto& pair : parents) {
+        const auto& [id, nodes] = pair;
+
+        auto trackIt = m_trackParents.find(id);
+        if(trackIt != m_trackParents.end()) {
+            trackIt->second.insert(trackIt->second.end(), nodes.cbegin(), nodes.cend());
+        }
+        else {
+            m_trackParents.emplace(pair);
         }
     }
 }
