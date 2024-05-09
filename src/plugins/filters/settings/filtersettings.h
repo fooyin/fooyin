@@ -41,6 +41,7 @@ enum FiltersSettings : uint32_t
     FilterFont            = 9 | Type::String,
     FilterColour          = 10 | Type::String,
     FilterRowHeight       = 11 | Type::Int,
+    FilterSendPlayback    = 12 | Type::Bool,
 
 };
 Q_ENUM_NS(FiltersSettings)

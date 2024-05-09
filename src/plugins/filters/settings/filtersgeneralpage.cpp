@@ -65,6 +65,7 @@ private:
 
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
+    QCheckBox* m_playbackOnSend;
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
@@ -81,6 +82,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     , m_rowHeight{new QSpinBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
+    , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
@@ -114,6 +116,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
     clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
+    clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(2, 1);
 
     auto* selectionPlaylist       = new QGroupBox(tr("Filter Selection Playlist"), this);
@@ -172,6 +175,8 @@ void FiltersGeneralPageWidget::load()
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
 
+    m_playbackOnSend->setChecked(m_settings->value<Settings::Filters::FilterSendPlayback>());
+
     QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
@@ -205,6 +210,7 @@ void FiltersGeneralPageWidget::apply()
 
     m_settings->set<Settings::Filters::FilterDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Filters::FilterMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Filters::FilterSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Filters::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Filters::FilterAutoSwitch>(m_autoSwitch->isChecked());
     m_settings->set<Settings::Filters::FilterAutoPlaylist>(m_playlistName->text());
@@ -222,6 +228,7 @@ void FiltersGeneralPageWidget::reset()
 
     m_settings->reset<Settings::Filters::FilterDoubleClick>();
     m_settings->reset<Settings::Filters::FilterMiddleClick>();
+    m_settings->reset<Settings::Filters::FilterSendPlayback>();
     m_settings->reset<Settings::Filters::FilterPlaylistEnabled>();
     m_settings->reset<Settings::Filters::FilterAutoSwitch>();
     m_settings->reset<Settings::Filters::FilterAutoPlaylist>();

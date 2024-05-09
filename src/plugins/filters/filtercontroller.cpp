@@ -91,8 +91,16 @@ struct FilterController::Private
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
     {
-        const bool autoSwitch = settings->value<Settings::Filters::FilterAutoSwitch>();
-        trackSelection->executeAction(action, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
+        PlaylistAction::ActionOptions options;
+
+        if(settings->value<Settings::Filters::FilterAutoSwitch>()) {
+            options |= PlaylistAction::Switch;
+        }
+        if(settings->value<Settings::Filters::FilterSendPlayback>()) {
+            options |= PlaylistAction::StartPlayback;
+        }
+
+        trackSelection->executeAction(action, options, playlistName);
     }
 
     Id findContainingGroup(FilterWidget* widget)
