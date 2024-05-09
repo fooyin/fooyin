@@ -89,7 +89,7 @@ QString formatTimeMs(uint64_t time)
     return formattedDateTime;
 }
 
-QString formatFileSize(uint64_t bytes)
+QString formatFileSize(uint64_t bytes, bool includeBytes)
 {
     static const QStringList units = {QStringLiteral("bytes"), QStringLiteral("KB"), QStringLiteral("MB"),
                                       QStringLiteral("GB"), QStringLiteral("TB")};
@@ -105,11 +105,17 @@ QString formatFileSize(uint64_t bytes)
         return {};
     }
 
+    QString formattedSize = QStringLiteral("%1 %2").arg(QString::number(size, 'f', 1), units.at(unitIndex));
+
     if(unitIndex == 0) {
-        return QStringLiteral("%1 %2").arg(QString::number(size, 'f', 1), units.at(unitIndex));
+        return formattedSize;
     }
 
-    return QStringLiteral("%1 %2 (%3 bytes)").arg(QString::number(size, 'f', 1), units.at(unitIndex)).arg(bytes);
+    if(includeBytes) {
+        formattedSize.append(QStringLiteral(" (%3 bytes)").arg(bytes));
+    }
+
+    return formattedSize;
 }
 
 QString addLeadingZero(int number, int leadingCount)

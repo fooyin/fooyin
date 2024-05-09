@@ -240,7 +240,7 @@ struct InfoModel::Private
         }
 
         checkAddEntryNode(total > 1 ? tr("Total Size") : tr("File Size"), ItemParent::Location, track.fileSize(),
-                          InfoItem::Total, Utils::formatFileSize);
+                          InfoItem::Total, [](uint64_t size) -> QString { return Utils::formatFileSize(size, true); });
 
         checkAddEntryNode(tr("Last Modified"), ItemParent::Location, track.modifiedTime(), InfoItem::Max,
                           Utils::formatTimeMs);
