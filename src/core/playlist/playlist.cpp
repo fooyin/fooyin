@@ -120,7 +120,8 @@ struct Playlist::Private
         int nextIndex = currentTrackIndex;
 
         if(nextTrackIndex >= 0) {
-            nextIndex = nextTrackIndex;
+            nextIndex      = nextTrackIndex;
+            nextTrackIndex = -1;
         }
         else {
             const int count = static_cast<int>(tracks.size());
