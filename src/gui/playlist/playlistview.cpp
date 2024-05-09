@@ -139,6 +139,7 @@ public:
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
+    bool m_layingOutItems{false};
     bool m_waitForLoad{false};
 
     mutable std::vector<PlaylistViewItem> m_viewItems;
@@ -1783,6 +1784,11 @@ QModelIndex PlaylistView::indexBelow(const QModelIndex& index) const
 
 void PlaylistView::doItemsLayout()
 {
+    if(p->m_layingOutItems) {
+        return;
+    }
+
+    p->m_layingOutItems = true;
     p->m_viewItems.clear();
 
     if(p->m_model && p->m_model->hasChildren(rootIndex())) {
@@ -1793,6 +1799,8 @@ void PlaylistView::doItemsLayout()
     QAbstractItemView::doItemsLayout();
 
     p->m_header->doItemsLayout();
+
+    p->m_layingOutItems = false;
 }
 
 void PlaylistView::reset()
