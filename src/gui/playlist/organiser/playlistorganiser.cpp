@@ -139,13 +139,13 @@ struct PlaylistOrganiser::Private
         , organiserTree{new QTreeView(self)}
         , model{new PlaylistOrganiserModel(playlistController->playlistHandler())}
         , context{self, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())}}
-        , removePlaylist{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"))}
+        , removePlaylist{new QAction(tr("Remove"))}
         , removeCmd{actionManager->registerAction(removePlaylist, Constants::Actions::Remove, context.context())}
         , renamePlaylist{new QAction(tr("Rename"))}
         , renameCmd{actionManager->registerAction(renamePlaylist, Constants::Actions::Rename, context.context())}
-        , newGroup{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("New Group"))}
+        , newGroup{new QAction(tr("New Group"))}
         , newGroupCmd{actionManager->registerAction(newGroup, "PlaylistOrganiser.NewGroup", context.context())}
-        , newPlaylist{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Create Playlist"))}
+        , newPlaylist{new QAction(tr("Create Playlist"))}
         , newPlaylistCmd{actionManager->registerAction(newPlaylist, "PlaylistOrganiser.NewPlaylist", context.context())}
     {
         organiserTree->setHeaderHidden(true);

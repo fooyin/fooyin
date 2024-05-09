@@ -120,8 +120,8 @@ struct ExtendableTableView::Private
         , context{new WidgetContext(
               self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, self)}
         , toolArea{new ExtendableToolArea(self)}
-        , add{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add"), self)}
-        , remove{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), self)}
+        , add{new QAction(tr("Add"), self)}
+        , remove{new QAction(tr("Remove"), self)}
         , addCommand{actionManager->registerAction(add, Constants::Actions::New, context->context())}
         , removeCommand{actionManager->registerAction(remove, Constants::Actions::Remove, context->context())}
         , addButton{new QToolButton(self)}
