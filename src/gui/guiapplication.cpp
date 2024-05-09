@@ -572,7 +572,7 @@ struct GuiApplication::Private
 
     void openFiles(const QList<QUrl>& urls) const
     {
-        playlistInteractor.filesToNewPlaylist(QStringLiteral("Default"), urls);
+        playlistInteractor.filesToNewPlaylist(QStringLiteral("Default"), urls, true);
     }
 };
 

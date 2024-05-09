@@ -256,25 +256,31 @@ struct LibraryTreeWidget::Private
     void handleDoubleClick() const
     {
         if(doubleClickAction != TrackAction::Play) {
-            const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
-            trackSelection->executeAction(doubleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
-                                          playlistNameFromSelection());
+            PlaylistAction::ActionOptions options;
+
+            if(settings->value<LibTreeAutoSwitch>()) {
+                options |= PlaylistAction::Switch;
+            }
+            if(settings->value<LibTreeSendPlayback>()) {
+                options |= PlaylistAction::StartPlayback;
+            }
+
+            trackSelection->executeAction(doubleClickAction, options, playlistNameFromSelection());
         }
     }
 
     void handleMiddleClick() const
     {
-        const TrackList tracks = getSelectedTracks(libraryTree, library);
+        PlaylistAction::ActionOptions options;
 
-        if(tracks.empty()) {
-            return;
+        if(settings->value<LibTreeAutoSwitch>()) {
+            options |= PlaylistAction::Switch;
+        }
+        if(settings->value<LibTreeSendPlayback>()) {
+            options |= PlaylistAction::StartPlayback;
         }
 
-        trackSelection->changeSelectedTracks(widgetContext, tracks, playlistNameFromSelection());
-
-        const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
-        trackSelection->executeAction(middleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
-                                      playlistNameFromSelection());
+        trackSelection->executeAction(middleClickAction, options, playlistNameFromSelection());
     }
 
     void handleTracksAdded(const TrackList& tracks) const

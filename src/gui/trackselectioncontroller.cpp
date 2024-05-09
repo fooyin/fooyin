@@ -227,6 +227,9 @@ struct TrackSelectionController::Private
         if(options & PlaylistAction::Switch) {
             playlistController->changeCurrentPlaylist(playlist);
         }
+        if(options & PlaylistAction::StartPlayback) {
+            playlistHandler->startPlayback(playlist);
+        }
     }
 
     void sendToNewPlaylist(PlaylistAction::ActionOptions options = {}, const QString& playlistName = {}) const

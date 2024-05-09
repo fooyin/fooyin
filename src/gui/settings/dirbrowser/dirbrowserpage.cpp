@@ -63,8 +63,9 @@ private:
     QCheckBox* m_showControls;
     QCheckBox* m_showLocation;
 
-    QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
+    QComboBox* m_middleClick;
+    QCheckBox* m_playbackOnSend;
 };
 
 DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
@@ -75,8 +76,9 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     , m_indentList{new QCheckBox(tr("Show Indent"), this)}
     , m_showControls{new QCheckBox(tr("Show Controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show Location"), this)}
-    , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
+    , m_middleClick{new QComboBox(this)}
+    , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
 {
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -88,6 +90,8 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
     clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
+    clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
+    clickBehaviourLayout->setColumnStretch(2, 1);
 
     auto* browserMode       = new QGroupBox(tr("Browser Mode"), this);
     auto* browserModeLayout = new QVBoxLayout(browserMode);
@@ -168,12 +172,15 @@ void DirBrowserPageWidget::load()
     else {
         m_treeMode->setChecked(true);
     }
+
+    m_playbackOnSend->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserSendPlayback>());
 }
 
 void DirBrowserPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::DirBrowserDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::DirBrowserMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::DirBrowserSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserIcons>(m_showIcons->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserListIndent>(m_indentList->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserControls>(m_showControls->isChecked());
@@ -191,6 +198,7 @@ void DirBrowserPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::DirBrowserDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserMiddleClick>();
+    m_settings->reset<Settings::Gui::Internal::DirBrowserSendPlayback>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserIcons>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserListIndent>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserMode>();

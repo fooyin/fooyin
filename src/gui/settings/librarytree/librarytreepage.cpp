@@ -64,6 +64,7 @@ private:
 
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
+    QCheckBox* m_playbackOnSend;
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
@@ -84,6 +85,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     , m_model{new LibraryTreeGroupModel(&m_groupsRegistry, this)}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
+    , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
@@ -134,7 +136,8 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
     clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
-    selectionPlaylistLayout->setColumnStretch(2, 1);
+    clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
+    clickBehaviourLayout->setColumnStretch(2, 1);
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
@@ -204,6 +207,8 @@ void LibraryTreePageWidget::load()
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
 
+    m_playbackOnSend->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeSendPlayback>());
+
     QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
         m_playlistName->setEnabled(checked);
         m_autoSwitch->setEnabled(checked);
@@ -228,6 +233,7 @@ void LibraryTreePageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::LibTreeDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::LibTreeMiddleClick>(m_middleClick->currentData().toInt());
+    m_settings->set<Settings::Gui::Internal::LibTreeSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreePlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoSwitch>(m_autoSwitch->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
@@ -245,6 +251,7 @@ void LibraryTreePageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::LibTreeDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::LibTreeMiddleClick>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeSendPlayback>();
     m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();

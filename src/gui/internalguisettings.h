@@ -107,6 +107,8 @@ enum GuiInternalSettings : uint32_t
     PlaylistCoverPadding    = 39 | Type::Int,
     PixmapCacheSize         = 40 | Type::Int,
     ArtworkThumbnailSize    = 41 | Type::Int,
+    LibTreeSendPlayback     = 42 | Type::Bool,
+    DirBrowserSendPlayback  = 43 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

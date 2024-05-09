@@ -111,5 +111,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistCoverPadding>(15, QStringLiteral("PlaylistWidget/CoverPadding"));
     m_settings->createSetting<Internal::PixmapCacheSize>(20, QStringLiteral("Interface/PixmapCacheSize"));
     m_settings->createSetting<Internal::ArtworkThumbnailSize>(200, QStringLiteral("Interface/ArtworkThumbnailSize"));
+    m_settings->createSetting<Internal::LibTreeSendPlayback>(true, QStringLiteral("LibraryTree/StartPlaybackOnSend"));
+    m_settings->createSetting<Internal::DirBrowserSendPlayback>(true,
+                                                                QStringLiteral("DirectoryBrowser/StartPlaybackOnSend"));
 }
 } // namespace Fooyin

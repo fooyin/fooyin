@@ -281,6 +281,8 @@ struct DirBrowser::Private
         parentDir.cdUp();
         const QString playlistName = parentDir.dirName();
 
+        const bool startPlayback = settings->value<Settings::Gui::Internal::DirBrowserSendPlayback>();
+
         switch(action) {
             case(TrackAction::Play): {
                 handlePlayAction(files, firstPath);
@@ -290,10 +292,10 @@ struct DirBrowser::Private
                 playlistInteractor->filesToCurrentPlaylist(files);
                 break;
             case(TrackAction::SendCurrentPlaylist):
-                playlistInteractor->filesToCurrentPlaylist(files, true);
+                playlistInteractor->filesToCurrentPlaylistReplace(files, startPlayback);
                 break;
             case(TrackAction::SendNewPlaylist):
-                playlistInteractor->filesToNewPlaylist(playlistName, files);
+                playlistInteractor->filesToNewPlaylist(playlistName, files, startPlayback);
                 break;
             case(TrackAction::AddActivePlaylist):
                 playlistInteractor->filesToActivePlaylist(files);
