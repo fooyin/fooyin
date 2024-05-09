@@ -255,10 +255,7 @@ struct LibraryTreeWidget::Private
 
     void handleDoubleClick() const
     {
-        const QModelIndexList selectedIndexes = libraryTree->selectionModel()->selectedIndexes();
-        const bool leafsSelected              = std::any_of(selectedIndexes.cbegin(), selectedIndexes.cend(),
-                                                            [this](const QModelIndex& index) { return !model->hasChildren(index); });
-        if(leafsSelected) {
+        if(doubleClickAction != TrackAction::Play) {
             const bool autoSwitch = settings->value<LibTreeAutoSwitch>();
             trackSelection->executeAction(doubleClickAction, autoSwitch ? PlaylistAction::Switch : PlaylistAction::None,
                                           playlistNameFromSelection());
