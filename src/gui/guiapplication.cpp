@@ -272,8 +272,21 @@ struct GuiApplication::Private
         }
     }
 
+    void removeExpiredCovers(const TrackList& tracks) const
+    {
+        const int width = settingsManager->value<Settings::Gui::Internal::ArtworkThumbnailSize>();
+        const QSize size{width, width};
+
+        for(const Track& track : tracks) {
+            CoverProvider::removeFromCache(track, size);
+        }
+    }
+
     void setupConnections()
     {
+        QObject::connect(library, &MusicLibrary::tracksUpdated, self,
+                         [this](const TrackList& oldTracks) { removeExpiredCovers(oldTracks); });
+
         QObject::connect(playerController, &PlayerController::playStateChanged, mainWindow.get(),
                          [this](PlayState state) {
                              if(state == PlayState::Stopped) {

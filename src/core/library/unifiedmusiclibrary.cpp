@@ -33,7 +33,6 @@
 #include <QCoro/QCoroCore>
 
 #include <ranges>
-#include <vector>
 
 using namespace std::chrono_literals;
 
@@ -94,17 +93,23 @@ struct UnifiedMusicLibrary::Private
 
     QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
     {
-        tracksToUpdate = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+        TrackList updatedTracks
+            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
-        std::ranges::for_each(tracksToUpdate, [this](const Track& track) {
-            std::ranges::replace_if(
-                tracks, [track](const Track& libraryTrack) { return libraryTrack.id() == track.id(); }, track);
-        });
+        TrackList oldTracks;
+        for(const auto& track : updatedTracks) {
+            auto trackIt
+                = std::ranges::find_if(tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
+            if(trackIt != tracks.end()) {
+                oldTracks.push_back(*trackIt);
+                *trackIt = track;
+            }
+        }
 
-        tracks         = co_await resortTracks(tracks);
-        tracksToUpdate = co_await resortTracks(tracksToUpdate);
+        tracks        = co_await resortTracks(tracks);
+        updatedTracks = co_await resortTracks(updatedTracks);
 
-        emit self->tracksUpdated(tracksToUpdate);
+        emit self->tracksUpdated(oldTracks, updatedTracks);
     }
 
     QCoro::Task<void> handleScanResult(ScanResult result)
@@ -134,6 +139,7 @@ struct UnifiedMusicLibrary::Private
 
         TrackList newTracks;
         TrackList removedTracks;
+        TrackList oldTracks;
         TrackList updatedTracks;
 
         for(auto& track : tracks) {
@@ -142,6 +148,7 @@ struct UnifiedMusicLibrary::Private
                     removedTracks.push_back(track);
                     continue;
                 }
+                oldTracks.push_back(track);
                 track.setLibraryId(-1);
                 updatedTracks.push_back(track);
                 newTracks.push_back(track);
@@ -154,7 +161,7 @@ struct UnifiedMusicLibrary::Private
         threadHandler.libraryRemoved(id);
 
         emit self->tracksDeleted(removedTracks);
-        emit self->tracksUpdated(updatedTracks);
+        emit self->tracksUpdated(oldTracks, updatedTracks);
     }
 
     void libraryStatusChanged(const LibraryInfo& library) const

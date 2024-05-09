@@ -108,7 +108,9 @@ Application::Application(QObject* parent)
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
     QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
                      &PlaylistHandler::savePlaylists);
-    QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler, &PlaylistHandler::tracksUpdated);
+    QObject::connect(
+        p->library, &MusicLibrary::tracksUpdated, p->playlistHandler,
+        [this](const TrackList& /*oldTracks*/, const TrackList& tracks) { p->playlistHandler->tracksUpdated(tracks); });
     QObject::connect(&p->engine, &EngineHandler::trackAboutToFinish, p->playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
 
