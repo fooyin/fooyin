@@ -1329,6 +1329,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             if(field == QString::fromLatin1(ArtistPicture)) {
                 return getCover(Track::Cover::Artist);
             }
+            if(field == QString::fromLatin1(PlayingIcon) && isPlaying) {
+                break;
+            }
 
             return QVariant::fromValue(track.column(column).text);
         }
