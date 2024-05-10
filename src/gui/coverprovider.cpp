@@ -276,7 +276,7 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     if(!p->pendingCovers.contains(coverKey)) {
-        QPixmap cover = p->loadCachedCover(coverKey);
+        QPixmap cover = p->loadCachedCover(coverKey, !p->coverKey.isEmpty());
         if(!cover.isNull()) {
             return cover;
         }
