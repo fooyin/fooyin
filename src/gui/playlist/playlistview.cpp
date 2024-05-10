@@ -1103,7 +1103,8 @@ bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol
     int col{-1};
 
     if(index.isValid()) {
-        m_dropIndicatorPos = PlaylistView::Private::dropPosition(pos, m_self->visualRect(index), index);
+        m_dropIndicatorPos
+            = PlaylistView::Private::dropPosition(pos, visualRect(index, RectRule::FullRow, false), index);
         switch(m_dropIndicatorPos) {
             case(AboveItem): {
                 row   = index.row();
@@ -2020,11 +2021,6 @@ bool PlaylistView::viewportEvent(QEvent* event)
     return QAbstractItemView::viewportEvent(event);
 }
 
-void PlaylistView::focusInEvent(QFocusEvent* /*event*/)
-{
-    // Prevent call to update() causing flickering when adding to playback queue
-}
-
 void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
     p->m_dragPos = event->position().toPoint();
@@ -2041,7 +2037,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
     }
 
     if(index.isValid() && showDropIndicator()) {
-        QRect rect = visualRect(index);
+        QRect rect = p->visualRect(index, RectRule::FullRow, false);
         rect.setX(0);
         rect.setWidth(p->m_header->length());
 
