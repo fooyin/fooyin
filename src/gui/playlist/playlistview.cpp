@@ -1436,8 +1436,7 @@ void PlaylistView::Private::drawAndClipSpans(QPainter* painter, const QStyleOpti
 
     const QRect rect = m_self->viewport()->rect();
     QRegion region{rect};
-    const int count  = itemCount();
-    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
+    const int count = itemCount();
 
     int i{firstVisibleItem};
     int y{firstVisibleItemOffset};
@@ -1493,7 +1492,7 @@ void PlaylistView::Private::drawAndClipSpans(QPainter* painter, const QStyleOpti
                 continue;
             }
 
-            const int width = m_header->sectionSize(headerSection) - margin;
+            const int width = m_header->sectionSize(headerSection);
             position        = m_header->sectionViewportPosition(headerSection);
 
             modelIndex = m_model->index(0, headerSection, parent);
