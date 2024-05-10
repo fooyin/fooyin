@@ -126,6 +126,8 @@ public:
     void drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
                            int y) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
+    void drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option, int firstVisibleItem,
+                          int firstVisibleItemOffset) const;
     void paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y, int bottom) const;
 
     bool isIndexValid(const QModelIndex& index) const;
@@ -161,6 +163,7 @@ public:
     int m_columnResizeTimerId{0};
     QBasicTimer m_delayedAutoScroll;
     mutable QBasicTimer m_delayedLayout;
+    QPoint m_scrollDelayOffset;
 };
 
 PlaylistView::Private::Private(PlaylistView* self)
@@ -1173,31 +1176,28 @@ std::vector<QRect> PlaylistView::Private::rectsToPaint(const QStyleOptionViewIte
 
     QRect currRect{0, y, 0, option.rect.height()};
 
-    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &option, m_self) + 1;
+    const int offset = m_header->offset();
     const int count  = m_header->count();
-    bool prevSpan{false};
 
     for(int section{0}; section < count; ++section) {
-        const int logical = m_header->logicalIndex(section);
+        const int logical  = m_header->logicalIndex(section);
+        const int position = m_header->sectionPosition(logical) - offset;
+
         if(m_header->isSectionHidden(logical)) {
             continue;
         }
 
         if(m_self->isSpanning(logical)) {
-            prevSpan = true;
             if(currRect.width() > 0) {
-                currRect.adjust(0, 0, margin, 0);
                 rects.emplace_back(currRect);
             }
             currRect.setWidth(0);
         }
         else {
             if(currRect.width() == 0) {
-                currRect.setX(m_header->sectionPosition(logical) - (prevSpan ? margin : 0));
-                currRect.adjust(0, 0, currRect.x() + (prevSpan ? margin : 0), 0);
+                currRect.setX(position);
             }
-            currRect.adjust(0, 0, m_header->sectionSize(logical), 0);
-            prevSpan = false;
+            currRect.setRight(position + m_header->sectionSize(logical) - 1);
         }
     }
 
@@ -1223,6 +1223,10 @@ void PlaylistView::Private::drawTree(QPainter* painter, const QRegion& region) c
     if(firstVisibleItem < 0) {
         paintAlternatingRowColors(painter, &opt, 0, region.boundingRect().bottom() + 1);
         return;
+    }
+
+    if(!m_spans.empty()) {
+        drawAndClipSpans(painter, opt, firstVisibleItem, firstVisibleItemOffset);
     }
 
     const int count          = itemCount();
@@ -1292,7 +1296,8 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
         return;
     }
 
-    const int y              = opt.rect.y();
+    const QPoint offset      = m_scrollDelayOffset;
+    const int y              = opt.rect.y() + offset.y();
     const int left           = m_leftAndRight.first;
     const int right          = m_leftAndRight.second;
     const QModelIndex parent = index.parent();
@@ -1316,14 +1321,21 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
 
     for(int section{0}; section < count; ++section) {
         const int headerSection = logicalIndices.at(section);
-        const int width         = m_header->sectionSize(headerSection);
-        position                = m_header->sectionViewportPosition(headerSection);
         const bool spanning     = m_self->isSpanning(headerSection);
 
+        if(spanning) {
+            continue;
+        }
+
+        const int width = m_header->sectionSize(headerSection);
+        position        = m_header->sectionViewportPosition(headerSection) + offset.x();
+
         modelIndex = m_model->index(index.row(), headerSection, parent);
+
         if(!modelIndex.isValid()) {
             continue;
         }
+
         const auto icon      = index.data(Qt::DecorationRole).value<QPixmap>();
         opt.icon             = QIcon{icon};
         opt.decorationSize   = icon.deviceIndependentSize().toSize();
@@ -1353,25 +1365,15 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
             opt.palette.setCurrentColorGroup(cg);
         }
 
-        const int cellHeight = spanning ? indexSizeHint(modelIndex, true) : indexRowSizeHint(modelIndex);
-
-        if(spanning && modelIndex.row() > 0
-           && y > visualRect(modelIndex.siblingAtRow(0), RectRule::FullRow, false).y() + cellHeight) {
-            continue;
-        }
-
+        const int cellHeight = indexRowSizeHint(modelIndex);
         if(cellHeight > 0) {
-            QRect cellRect{position, y, width, cellHeight};
+            const QRect cellRect{position, y, width, cellHeight};
 
             if(!paintedBg) {
                 // Some styles use a gradient for the selection bg which only covers each individual cell
                 // Show this as a single gradient across the entire row
                 paintedBg = true;
                 drawRowBackground(painter, opt, modelIndex, y);
-            }
-
-            if(spanning) {
-                cellRect.setY(m_self->visualRect(modelIndex.siblingAtRow(0)).y());
             }
 
             opt.rect = cellRect;
@@ -1415,13 +1417,99 @@ void PlaylistView::Private::drawFocus(QPainter* painter, const QStyleOptionViewI
 
     const QStyle* style = m_self->style();
 
+    const int margin      = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &focusOpt, m_self) / 2;
     const auto paintRects = rectsToPaint(option, y);
+
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
-            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), rect);
+            const QRect focusRect = rect.adjusted(margin, margin, -margin, -margin);
+            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), focusRect);
             style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }
+}
+
+void PlaylistView::Private::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option,
+                                             int firstVisibleItem, int firstVisibleItemOffset) const
+{
+    QStyleOptionViewItem opt{option};
+
+    const QRect rect = m_self->viewport()->rect();
+    QRegion region{rect};
+    const int count  = itemCount();
+    const int margin = m_self->style()->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
+
+    int i{firstVisibleItem};
+    int y{firstVisibleItemOffset};
+
+    for(; i < count; ++i) {
+        const int itemHeight = this->itemHeight(i) + itemPadding(i);
+        if(y + itemHeight > rect.top()) {
+            break;
+        }
+        y += itemHeight;
+    }
+
+    for(; i < count && y <= rect.bottom(); ++i) {
+        const auto& item  = m_viewItems.at(i);
+        QModelIndex index = item.index;
+
+        if(!index.isValid() || m_model->hasChildren(index)) {
+            y += itemHeight(i) + item.padding;
+            continue;
+        }
+
+        if(i == firstVisibleItem && index.row() > 0) {
+            index = index.siblingAtRow(0);
+        }
+
+        if(index.row() > 0) {
+            y += itemHeight(i) + item.padding;
+            continue;
+        }
+
+        y = visualRect(index, RectRule::FullRow, false).y();
+
+        m_leftAndRight           = startAndEndColumns(rect);
+        const int left           = m_leftAndRight.first;
+        const int right          = m_leftAndRight.second;
+        const QModelIndex parent = index.parent();
+
+        int position;
+        QModelIndex modelIndex;
+
+        std::vector<int> logicalIndices;
+        std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
+
+        calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
+
+        const auto sectionCount = static_cast<int>(logicalIndices.size());
+
+        for(int section{0}; section < sectionCount; ++section) {
+            const int headerSection = logicalIndices.at(section);
+            const bool spanning     = m_self->isSpanning(headerSection);
+
+            if(!spanning) {
+                continue;
+            }
+
+            const int width = m_header->sectionSize(headerSection) - margin;
+            position        = m_header->sectionViewportPosition(headerSection);
+
+            modelIndex = m_model->index(0, headerSection, parent);
+            if(!modelIndex.isValid()) {
+                continue;
+            }
+
+            opt.rect = {position, y, width, indexSizeHint(modelIndex, true)};
+            m_self->itemDelegateForIndex(modelIndex)->paint(painter, opt, modelIndex);
+            region -= opt.rect;
+        }
+
+        y += itemHeight(i) + item.padding;
+    }
+
+    painter->setClipRegion(region);
 }
 
 void PlaylistView::Private::paintAlternatingRowColors(QPainter* painter, QStyleOptionViewItem* option, int y,
@@ -2121,7 +2209,7 @@ void PlaylistView::scrollContentsBy(int dx, int dy)
 {
     p->m_delayedAutoScroll.stop();
 
-    if(dx > 0) {
+    if(dx) {
         p->m_header->setOffset(horizontalScrollBar()->value());
     }
 
@@ -2140,8 +2228,10 @@ void PlaylistView::scrollContentsBy(int dx, int dy)
         return;
     }
 
+    p->m_scrollDelayOffset = {-dx, -dy};
     scrollDirtyRegion(dx, dy);
     viewport()->scroll(dx, dy);
+    p->m_scrollDelayOffset = {0, 0};
 }
 
 void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
