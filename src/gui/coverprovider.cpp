@@ -193,9 +193,10 @@ struct CoverProvider::Private
                 const QString dirPath = findDirectoryCover(track, type);
                 if(!dirPath.isEmpty()) {
                     image.load(dirPath);
-                    if(!image.isNull()) {
+                    if(!image.isNull() && isThumb) {
                         // Only store thumbnails in disk cache for embedded artwork
                         isThumb = false;
+                        image   = Utils::scaleImage(image, coverSize);
                     }
                 }
             }
@@ -223,7 +224,7 @@ struct CoverProvider::Private
                 }
             }
 
-            return {image, isThumb};
+            return {image, thumbnail};
         }).then(self, [this, key, track](const CoverLoaderResult& result) {
             if(result.cover.isNull()) {
                 return;
@@ -328,12 +329,11 @@ void CoverProvider::removeFromCache(const Track& track)
 
 void CoverProvider::removeFromCache(const QString& key)
 {
-    const QString thumbKey = generateThumbCoverKey(key);
-
     QDir cache{Fooyin::Gui::coverPath()};
     cache.remove(coverThumbnailPath(key));
 
     QPixmapCache::remove(key);
+    const QString thumbKey = generateThumbCoverKey(key);
     QPixmapCache::remove(thumbKey);
 }
 } // namespace Fooyin
