@@ -272,17 +272,22 @@ struct GuiApplication::Private
         }
     }
 
-    void removeExpiredCovers(const TrackList& tracks) const
+    static void removeExpiredCovers(const TrackList& oldTracks, const TrackList& tracks)
     {
-        for(const Track& track : tracks) {
-            CoverProvider::removeFromCache(track);
+        for(const Track& oldTrack : oldTracks) {
+            auto trackIt
+                = std::ranges::find_if(tracks, [&oldTrack](const Track& track) { return oldTrack.id() == track.id(); });
+            if(trackIt != tracks.end() && oldTrack.modifiedTime() != trackIt->modifiedTime()) {
+                CoverProvider::removeFromCache(oldTrack);
+            }
         }
     }
 
     void setupConnections()
     {
-        QObject::connect(library, &MusicLibrary::tracksUpdated, self,
-                         [this](const TrackList& oldTracks) { removeExpiredCovers(oldTracks); });
+        QObject::connect(
+            library, &MusicLibrary::tracksUpdated, self,
+            [](const TrackList& oldTracks, const TrackList& tracks) { removeExpiredCovers(oldTracks, tracks); });
 
         QObject::connect(playerController, &PlayerController::playStateChanged, mainWindow.get(),
                          [this](PlayState state) {

@@ -31,7 +31,7 @@ class FYGUI_EXPORT GuiApplication : public QObject
     Q_OBJECT
 
 public:
-    GuiApplication(const CorePluginContext& core);
+    explicit GuiApplication(const CorePluginContext& core);
     ~GuiApplication() override;
 
     void shutdown();
