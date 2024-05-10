@@ -33,19 +33,13 @@ SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
 
 void SortingRegistry::loadDefaults()
 {
-    addDefaultItem({.id     = 0,
-                    .index  = 0,
-                    .name   = QStringLiteral("Album"),
-                    .script = QStringLiteral("%album% - $num(%disc%,2) - $num(%track%,2)")});
-    addDefaultItem({.id     = 1,
-                    .index  = 1,
-                    .name   = QStringLiteral("Artist"),
+    addDefaultItem(
+        {.name = QStringLiteral("Album"), .script = QStringLiteral("%album% - $num(%disc%,2) - $num(%track%,2)")});
+    addDefaultItem({.name   = QStringLiteral("Artist"),
                     .script = QStringLiteral("%artist% - %date% - $num(%disc%,2) - $num(%track%,2)")});
-    addDefaultItem({.id = 2, .index = 2, .name = QStringLiteral("Title"), .script = QStringLiteral("%title%")});
-    addDefaultItem({.id     = 3,
-                    .index  = 3,
-                    .name   = QStringLiteral("Track Number"),
-                    .script = QStringLiteral("$num(%disc%,2) - $num(%track%,2)")});
+    addDefaultItem({.name = QStringLiteral("Title"), .script = QStringLiteral("%title%")});
+    addDefaultItem(
+        {.name = QStringLiteral("Track Number"), .script = QStringLiteral("$num(%disc%,2) - $num(%track%,2)")});
 }
 } // namespace Fooyin
 

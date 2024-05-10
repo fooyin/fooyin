@@ -728,11 +728,11 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 
     if(!singleMode) {
         if(columns.empty()) {
-            columns.push_back(columnRegistry.itemByName(QStringLiteral("Playing")));
-            columns.push_back(columnRegistry.itemByName(QStringLiteral("Artist/Album")));
-            columns.push_back(columnRegistry.itemByName(QStringLiteral("Track")));
-            columns.push_back(columnRegistry.itemByName(QStringLiteral("Title")));
-            columns.push_back(columnRegistry.itemByName(QStringLiteral("Duration")));
+            columns.push_back(columnRegistry.itemById(8));
+            columns.push_back(columnRegistry.itemById(3));
+            columns.push_back(columnRegistry.itemById(0));
+            columns.push_back(columnRegistry.itemById(1));
+            columns.push_back(columnRegistry.itemById(7));
         }
 
         auto resetColumns = [this]() {

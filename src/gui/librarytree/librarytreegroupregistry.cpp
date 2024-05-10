@@ -33,19 +33,12 @@ LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QO
 
 void LibraryTreeGroupRegistry::loadDefaults()
 {
-    addDefaultItem({.id     = 0,
-                    .index  = 0,
-                    .name   = tr("Artist/Album"),
+    addDefaultItem({.name   = tr("Artist/Album"),
                     .script = QStringLiteral(
                         "$if2(%albumartist%,%artist%)||%album% (%year%)||[%disc%.]$num(%track%,2). %title%")});
-    addDefaultItem({.id     = 1,
-                    .index  = 1,
-                    .name   = tr("Album"),
-                    .script = QStringLiteral("%album% (%year%)||[%disc%.]$num(%track%,2). %title%")});
-    addDefaultItem({.id     = 2,
-                    .index  = 2,
-                    .name   = tr("Folder Structure"),
-                    .script = QStringLiteral("$replace(%relativepath%,/,||)")});
+    addDefaultItem(
+        {.name = tr("Album"), .script = QStringLiteral("%album% (%year%)||[%disc%.]$num(%track%,2). %title%")});
+    addDefaultItem({.name = tr("Folder Structure"), .script = QStringLiteral("$replace(%relativepath%,/,||)")});
 }
 } // namespace Fooyin
 
