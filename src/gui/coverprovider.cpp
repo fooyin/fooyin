@@ -44,7 +44,13 @@ constexpr auto MaxSize = 1024;
 namespace {
 QString generateCoverKey(const Fooyin::Track& track, Fooyin::Track::Cover type)
 {
-    return Fooyin::Utils::generateHash(QString::number(static_cast<int>(type)), track.albumHash());
+    return Fooyin::Utils::generateHash(QStringLiteral("FyCover") + QString::number(static_cast<int>(type)),
+                                       track.albumHash());
+}
+
+QString generateThumbCoverKey(const QString& key)
+{
+    return Fooyin::Utils::generateHash(QStringLiteral("Thumb"), key);
 }
 
 QString coverThumbnailPath(const QString& key)
@@ -79,6 +85,12 @@ struct CoverProvider::Private
 
     std::mutex fetchGuard;
 
+    struct CoverLoaderResult
+    {
+        QImage cover;
+        bool isThumb{false};
+    };
+
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
@@ -94,11 +106,11 @@ struct CoverProvider::Private
         settings->subscribe<Settings::Gui::IconTheme>(self, [this]() { QPixmapCache::remove(noCoverKey); });
     }
 
-    [[nodiscard]] QPixmap loadCachedCover(const QString& key) const
+    [[nodiscard]] static QPixmap loadCachedCover(const QString& key, bool isThumb = false)
     {
         QPixmap cover;
 
-        if(QPixmapCache::find(key, &cover)) {
+        if(QPixmapCache::find(isThumb ? generateThumbCoverKey(key) : key, &cover)) {
             return cover;
         }
 
@@ -128,6 +140,8 @@ struct CoverProvider::Private
         }
 
         QStringList filters;
+
+        const std::scoped_lock lock{fetchGuard};
 
         if(type == Track::Cover::Front) {
             for(const auto& path : paths.frontCoverPaths) {
@@ -161,65 +175,63 @@ struct CoverProvider::Private
 
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
-        Utils::asyncExec([this, key, track, type, thumbnail]() {
+        const QSize coverSize = size;
+
+        Utils::asyncExec([this, coverSize, key, track, type, thumbnail]() -> CoverLoaderResult {
             QImage image;
 
-            const std::scoped_lock lock{fetchGuard};
-
             bool isThumb{thumbnail};
-            QString coverPath;
+            const QString cachePath = coverThumbnailPath(key);
 
             if(isThumb) {
-                const QString cachePath = coverThumbnailPath(key);
                 if(QFileInfo::exists(cachePath)) {
-                    coverPath = cachePath;
+                    image.load(cachePath);
                 }
             }
 
-            if(coverPath.isEmpty()) {
-                coverPath = findDirectoryCover(track, type);
-                if(!coverPath.isEmpty()) {
-                    image.load(coverPath);
+            if(image.isNull()) {
+                const QString dirPath = findDirectoryCover(track, type);
+                if(!dirPath.isEmpty()) {
+                    image.load(dirPath);
+                    if(!image.isNull()) {
+                        // Only store thumbnails in disk cache for embedded artwork
+                        isThumb = false;
+                    }
                 }
             }
 
-            if(!image.isNull()) {
-                // Only store thumbnails in disk cache for embedded artwork
-                isThumb = false;
-            }
-            else {
+            if(image.isNull()) {
                 const QByteArray coverData = Tagging::readCover(track, type);
                 if(!coverData.isEmpty()) {
                     image.loadFromData(coverData);
                 }
             }
 
-            if(!image.isNull() && (!isThumb || !coverKey.isEmpty())) {
+            if(!image.isNull()) {
                 image = Utils::scaleImage(image, MaxSize);
             }
 
             if(isThumb) {
-                const QString cachePath = coverThumbnailPath(key);
                 if(image.isNull()) {
                     QFile::remove(cachePath);
                 }
                 else if(!QFileInfo::exists(cachePath)) {
                     if(coverKey.isEmpty()) {
-                        image = Utils::scaleImage(image, size);
+                        image = Utils::scaleImage(image, coverSize);
                     }
                     saveThumbnail(image, key);
                 }
             }
 
-            return image;
-        }).then(self, [this, key, track](const QImage& image) {
-            if(image.isNull()) {
+            return {image, isThumb};
+        }).then(self, [this, key, track](const CoverLoaderResult& result) {
+            if(result.cover.isNull()) {
                 return;
             }
 
-            const QPixmap cover = QPixmap::fromImage(image);
+            const QPixmap cover = QPixmap::fromImage(result.cover);
 
-            if(!QPixmapCache::insert(key, cover)) {
+            if(!QPixmapCache::insert(result.isThumb ? generateThumbCoverKey(key) : key, cover)) {
                 qDebug() << "Failed to cache cover for:" << track.filepath();
             }
 
@@ -287,7 +299,7 @@ QPixmap CoverProvider::trackCoverThumbnail(const Track& track, Track::Cover type
     }
 
     if(!p->pendingCovers.contains(coverKey)) {
-        QPixmap cover = p->loadCachedCover(coverKey);
+        QPixmap cover = p->loadCachedCover(coverKey, true);
         if(!cover.isNull()) {
             return cover;
         }
@@ -316,10 +328,13 @@ void CoverProvider::removeFromCache(const Track& track)
 
 void CoverProvider::removeFromCache(const QString& key)
 {
+    const QString thumbKey = generateThumbCoverKey(key);
+
     QDir cache{Fooyin::Gui::coverPath()};
     cache.remove(coverThumbnailPath(key));
 
     QPixmapCache::remove(key);
+    QPixmapCache::remove(thumbKey);
 }
 } // namespace Fooyin
 

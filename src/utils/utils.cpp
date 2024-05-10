@@ -154,42 +154,46 @@ QString capitalise(const QString& str)
     return parts.join(QStringLiteral(" "));
 }
 
-QPixmap scalePixmap(const QPixmap& image, const QSize& size)
+QPixmap scalePixmap(const QPixmap& image, const QSize& size, bool upscale)
 {
     const QSize scale = 4 * size;
     const int width   = image.size().width();
     const int height  = image.size().height();
+
     if(width > size.width() || height > size.height()) {
         return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-    else {
+    if(upscale) {
         return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
+
     return image;
 }
 
-QPixmap scalePixmap(const QPixmap& image, int width)
+QPixmap scalePixmap(const QPixmap& image, int width, bool upscale)
 {
-    return scalePixmap(image, {width, width});
+    return scalePixmap(image, {width, width}, upscale);
 }
 
-QImage scaleImage(const QImage& image, const QSize& size)
+QImage scaleImage(const QImage& image, const QSize& size, bool upscale)
 {
     const QSize scale = 4 * size;
     const int width   = image.size().width();
     const int height  = image.size().height();
+
     if(width > size.width() || height > size.height()) {
         return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-    else {
+    if(upscale) {
         return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
+
     return image;
 }
 
-QImage scaleImage(const QImage& image, int width)
+QImage scaleImage(const QImage& image, int width, bool upscale)
 {
-    return scaleImage(image, {width, width});
+    return scaleImage(image, {width, width}, upscale);
 }
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)

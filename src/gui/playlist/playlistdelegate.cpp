@@ -147,7 +147,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         painter->drawRect(coverFrameRect);
 
         const int width = coverRect.width();
-        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width));
+        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width, true));
     }
 }
 
@@ -297,7 +297,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
                 const int width         = opt.rect.width() - coverPadding;
 
                 style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
-                                      Utils::scalePixmap(cover, width));
+                                      Utils::scalePixmap(cover, width, true));
             }
         }
         else {
