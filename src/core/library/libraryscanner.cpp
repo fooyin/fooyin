@@ -260,13 +260,18 @@ void LibraryScanner::stopThread()
 void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled)
 {
     for(const auto& library : libraries | std::views::values) {
-        if(!enabled && library.status == LibraryInfo::Status::Monitoring) {
-            LibraryInfo updatedLibrary{library};
-            updatedLibrary.status = LibraryInfo::Status::Idle;
-            emit statusChanged(updatedLibrary);
+        if(!enabled) {
+            if(library.status == LibraryInfo::Status::Monitoring) {
+                LibraryInfo updatedLibrary{library};
+                updatedLibrary.status = LibraryInfo::Status::Idle;
+                emit statusChanged(updatedLibrary);
+            }
         }
         else if(!p->watchers.contains(library.id)) {
             p->addWatcher(library);
+            LibraryInfo updatedLibrary{library};
+            updatedLibrary.status = LibraryInfo::Status::Monitoring;
+            emit statusChanged(updatedLibrary);
         }
     }
 
