@@ -32,6 +32,7 @@ DirTree::DirTree(QWidget* parent)
     setDefaultDropAction(Qt::CopyAction);
     setHeaderHidden(true);
     setTextElideMode(Qt::ElideRight);
+    setAllColumnsShowFocus(true);
 }
 
 void DirTree::mousePressEvent(QMouseEvent* event)

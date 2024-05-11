@@ -157,6 +157,7 @@ struct PlaylistOrganiser::Private
         organiserTree->setDragDropMode(QAbstractItemView::InternalMove);
         organiserTree->setDefaultDropAction(Qt::MoveAction);
         organiserTree->setDropIndicatorShown(true);
+        organiserTree->setAllColumnsShowFocus(true);
 
         organiserTree->setModel(model);
 
