@@ -1263,8 +1263,14 @@ void PlaylistView::Private::drawTree(QPainter* painter, const QRegion& region) c
             opt.rect = visualRect(index, RectRule::FullRow, false);
             opt.rect.setY(y);
             opt.rect.setHeight(indexRowSizeHint(index));
-            opt.state |= QStyle::State_Open | (item.hasChildren ? QStyle::State_Children : QStyle::State_None)
-                       | (item.hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
+            opt.state |= QStyle::State_Open | (item.hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
+
+            if(item.hasChildren) {
+                opt.state |= QStyle::State_Children;
+            }
+            else {
+                opt.state &= ~QStyle::State_Children;
+            }
 
             if(!multipleRects || !drawn.contains(i)) {
                 drawRow(painter, opt, item.index);
@@ -1422,13 +1428,11 @@ void PlaylistView::Private::drawFocus(QPainter* painter, const QStyleOptionViewI
 
     const QStyle* style = m_self->style();
 
-    const int margin      = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &focusOpt, m_self) / 2;
     const auto paintRects = rectsToPaint(option, y);
 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
-            const QRect focusRect = rect.adjusted(margin, margin, -margin, -margin);
-            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), focusRect);
+            focusOpt.rect = QStyle::visualRect(m_self->layoutDirection(), m_self->viewport()->rect(), rect);
             style->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
         }
     }
