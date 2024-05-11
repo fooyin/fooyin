@@ -1299,29 +1299,29 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
 
     QStyleOptionViewItem opt{option};
 
+    const QModelIndex hover = m_hoverIndex;
+    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
+    const bool hasFocus     = m_self->hasFocus();
+
+    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
+
     if(m_model->hasChildren(index)) {
         // Span first column of headers/subheaders
         opt.rect.setX(0);
         opt.rect.setWidth(m_header->length());
+        m_self->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_self);
         m_self->itemDelegateForIndex(index)->paint(painter, opt, index);
         return;
     }
 
-    const QPoint offset      = m_scrollDelayOffset;
-    const int y              = opt.rect.y() + offset.y();
-    const int left           = m_leftAndRight.first;
-    const int right          = m_leftAndRight.second;
-    const QModelIndex parent = index.parent();
-
-    int position;
-    QModelIndex modelIndex;
+    const QPoint offset       = m_scrollDelayOffset;
+    const int y               = opt.rect.y() + offset.y();
+    const int left            = m_leftAndRight.first;
+    const int right           = m_leftAndRight.second;
+    const QModelIndex parent  = index.parent();
     const QModelIndex current = m_self->currentIndex();
-    const QModelIndex hover   = m_hoverIndex;
-    const bool hoverRow       = index.parent() == hover.parent() && index.row() == hover.row();
-    const bool hasFocus       = m_self->hasFocus();
-    bool currentRowHasFocus{false};
-    const bool enabled = (opt.state & QStyle::State_Enabled) != 0;
 
+    QModelIndex modelIndex;
     std::vector<int> logicalIndices;
     std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
 
@@ -1329,6 +1329,7 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
 
     const auto count = static_cast<int>(logicalIndices.size());
     bool paintedBg{false};
+    bool currentRowHasFocus{false};
 
     for(int section{0}; section < count; ++section) {
         const int headerSection = logicalIndices.at(section);
@@ -1338,8 +1339,8 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
             continue;
         }
 
-        const int width = m_header->sectionSize(headerSection);
-        position        = m_header->sectionViewportPosition(headerSection) + offset.x();
+        const int width    = m_header->sectionSize(headerSection);
+        const int position = m_header->sectionViewportPosition(headerSection) + offset.x();
 
         modelIndex = m_model->index(index.row(), headerSection, parent);
 
@@ -1359,9 +1360,7 @@ void PlaylistView::Private::drawRow(QPainter* painter, const QStyleOptionViewIte
             currentRowHasFocus = true;
         }
 
-        opt.state.setFlag(QStyle::State_MouseOver, (hoverRow || modelIndex == hover));
-
-        if(enabled) {
+        if(opt.state & QStyle::State_Enabled) {
             QPalette::ColorGroup cg;
             if((m_model->flags(modelIndex) & Qt::ItemIsEnabled) == 0) {
                 opt.state &= ~QStyle::State_Enabled;
