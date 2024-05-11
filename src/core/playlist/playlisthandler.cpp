@@ -594,7 +594,8 @@ Playlist* PlaylistHandler::activePlaylist() const
 
 int PlaylistHandler::playlistCount() const
 {
-    return std::ranges::count_if(p->playlists, [](const auto& playlist) { return !playlist->isTemporary(); });
+    return static_cast<int>(
+        std::ranges::count_if(p->playlists, [](const auto& playlist) { return !playlist->isTemporary(); }));
 }
 
 void PlaylistHandler::savePlaylists()
