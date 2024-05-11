@@ -82,6 +82,7 @@ public:
     [[nodiscard]] bool isInLibrary() const;
     [[nodiscard]] bool isInDatabase() const;
     [[nodiscard]] bool metadataWasRead() const;
+    [[nodiscard]] bool metadataWasModified() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] int id() const;
@@ -177,6 +178,7 @@ public:
     void setLastPlayed(uint64_t time);
 
     void setSort(const QString& sort);
+    void clearWasModified();
 
     static QStringList supportedFileExtensions();
     static QStringList supportedMimeTypes();

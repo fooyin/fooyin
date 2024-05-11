@@ -98,19 +98,18 @@ struct UnifiedMusicLibrary::Private
     {
         return recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate)
             .then(self, [this](const TrackList& sortedTracks) {
-                TrackList oldTracks;
                 for(const auto& track : sortedTracks) {
                     auto trackIt = std::ranges::find_if(
                         tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
                     if(trackIt != tracks.end()) {
-                        oldTracks.push_back(*trackIt);
                         *trackIt = track;
+                        trackIt->clearWasModified();
                     }
                 }
 
-                resortTracks(tracks).then(self, [this, oldTracks, sortedTracks](const TrackList& sortedLibraryTracks) {
+                resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
                     tracks = sortedLibraryTracks;
-                    emit self->tracksUpdated(oldTracks, sortedTracks);
+                    emit self->tracksUpdated(sortedTracks);
                 });
             });
     }
@@ -147,7 +146,6 @@ struct UnifiedMusicLibrary::Private
 
         TrackList newTracks;
         TrackList removedTracks;
-        TrackList oldTracks;
         TrackList updatedTracks;
 
         for(auto& track : tracks) {
@@ -156,7 +154,6 @@ struct UnifiedMusicLibrary::Private
                     removedTracks.push_back(track);
                     continue;
                 }
-                oldTracks.push_back(track);
                 track.setLibraryId(-1);
                 updatedTracks.push_back(track);
                 newTracks.push_back(track);
@@ -169,7 +166,7 @@ struct UnifiedMusicLibrary::Private
         threadHandler.libraryRemoved(id);
 
         emit self->tracksDeleted(removedTracks);
-        emit self->tracksUpdated(oldTracks, updatedTracks);
+        emit self->tracksUpdated(updatedTracks);
     }
 
     void libraryStatusChanged(const LibraryInfo& library) const

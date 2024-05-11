@@ -69,6 +69,8 @@ struct Track::Private : public QSharedData
 
     QString sort;
 
+    bool metadataWasModified{false};
+
     explicit Private(QString filepath_)
         : filepath{std::move(filepath_)}
     {
@@ -131,6 +133,11 @@ bool Track::metadataWasRead() const
 {
     // Assume read if basic properties are valid
     return p->type != Type::Unknown && p->filesize > 0 && p->modifiedTime > 0;
+}
+
+bool Track::metadataWasModified() const
+{
+    return p->metadataWasModified;
 }
 
 int Track::libraryId() const
@@ -648,6 +655,9 @@ void Track::setAddedTime(uint64_t time)
 
 void Track::setModifiedTime(uint64_t time)
 {
+    if(p->modifiedTime > 0 && p->modifiedTime != time) {
+        p->metadataWasModified = true;
+    }
     p->modifiedTime = time;
 }
 
@@ -668,6 +678,11 @@ void Track::setLastPlayed(uint64_t time)
 void Track::setSort(const QString& sort)
 {
     p->sort = sort;
+}
+
+void Track::clearWasModified()
+{
+    p->metadataWasModified = false;
 }
 
 QStringList Track::supportedFileExtensions()
