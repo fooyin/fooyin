@@ -131,7 +131,6 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
-           QCoro6::Core
            Taglib::Taglib
            Fooyin::Utils
            ${FFMPEG_LIBRARIES}

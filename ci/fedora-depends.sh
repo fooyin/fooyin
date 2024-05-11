@@ -20,6 +20,5 @@ dnf -y --allowerasing install \
      qt6-qttools-devel \
      ffmpeg-devel \
      taglib-devel \
-     qcoro-qt6-devel \
      kdsingleapplication-qt6-devel \
      pipewire-devel

@@ -27,8 +27,6 @@
 #include <core/library/sortingregistry.h>
 #include <core/player/playbackqueue.h>
 
-#include <QCoro/QCoroTask>
-
 #include <QString>
 
 class QHBoxLayout;
@@ -107,8 +105,8 @@ public:
     void doubleClicked(const QModelIndex& index) const;
     void followCurrentTrack(const Track& track, int index) const;
 
-    QCoro::Task<void> sortTracks(QString script) const;
-    QCoro::Task<void> sortColumn(int column, Qt::SortOrder order);
+    void sortTracks(const QString& script) const;
+    void sortColumn(int column, Qt::SortOrder order);
     void resetSort(bool force = false);
 
     void addSortMenu(QMenu* parent);

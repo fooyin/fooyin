@@ -5,12 +5,11 @@
 To build Fooyin you will need *at least*:
 
 - CMake (3.18+)
-- a C++ compiler with C++20 and coroutine support
+- a C++ compiler with C++20 support
 
 The following libraries are required:
 
 * [Qt6](https://www.qt.io) (6.2+)
-* [QCoro](https://github.com/danvratil/qcoro) (0.9.0+)
 * [TagLib](https://taglib.org) (1.11.1+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ALSA](https://alsa-project.org)
@@ -40,7 +39,7 @@ sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib \
     qt6-base qt6-svg qt6-tools \
-    kdsingleapplication qcoro-qt6 taglib ffmpeg
+    kdsingleapplication taglib ffmpeg
 ```
 
 ## Building

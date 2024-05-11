@@ -36,7 +36,6 @@ BuildRequires:  cmake(Qt6Sql)
 BuildRequires:  cmake(Qt6LinguistTools)
 BuildRequires:  ffmpeg-devel
 BuildRequires:  pkgconfig(taglib)
-BuildRequires:  qcoro-qt6-devel
 BuildRequires:  kdsingleapplication-qt6-devel
 BuildRequires:  pipewire-devel
 

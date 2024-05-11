@@ -32,8 +32,6 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
-#include <QCoro/QCoroCore>
-
 #include <QMenu>
 
 #include <ranges>
@@ -427,22 +425,22 @@ struct FilterController::Private
         }
     }
 
-    QCoro::Task<void> searchChanged(FilterWidget* filter, QString search)
+    void searchChanged(FilterWidget* filter, const QString& search)
     {
         const Id groupId = filter->group();
 
         if(!groups.contains(groupId)) {
-            co_return;
+            return;
         }
 
         FilterGroup& group = groups.at(groupId);
 
         const bool reset         = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
         TrackList tracksToFilter = reset ? library->tracks() : filter->tracks();
-        TrackList filteredTracks = co_await Utils::asyncExec(
-            [&search, &tracksToFilter]() { return Filter::filterTracks(tracksToFilter, search); });
 
-        filter->reset(filteredTracks);
+        Utils::asyncExec([search, tracksToFilter]() {
+            return Filter::filterTracks(tracksToFilter, search);
+        }).then(self, [filter](TrackList filteredTracks) { filter->reset(filteredTracks); });
     }
 };
 

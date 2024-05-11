@@ -51,10 +51,7 @@
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QMenu>
-#include <QProgressDialog>
 #include <QScrollBar>
-
-#include <QCoro/QCoroCore>
 
 #include <stack>
 
@@ -904,14 +901,18 @@ void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) co
     playlistView->setCurrentIndex(modelIndex);
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::sortTracks(QString script) const
+void PlaylistWidgetPrivate::sortTracks(const QString& script) const
 {
     if(!playlistController->currentPlaylist()) {
-        co_return;
+        return;
     }
 
     auto* currentPlaylist    = playlistController->currentPlaylist();
     const auto currentTracks = currentPlaylist->tracks();
+
+    auto handleSortedTracks = [this, currentPlaylist](const TrackList& sortedTracks) {
+        playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+    };
 
     if(playlistView->selectionModel()->hasSelection()) {
         const auto selected = playlistView->selectionModel()->selectedRows();
@@ -926,24 +927,21 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortTracks(QString script) const
 
         std::ranges::sort(indexesToSort);
 
-        const auto sortedTracks = co_await Utils::asyncExec([currentTracks, script, indexesToSort]() {
+        Utils::asyncExec([currentTracks, script, indexesToSort]() {
             return Sorting::calcSortTracks(script, currentTracks, indexesToSort);
-        });
-
-        playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+        }).then(self, handleSortedTracks);
     }
     else {
-        const auto sortedTracks = co_await Utils::asyncExec(
-            [currentTracks, script]() { return Sorting::calcSortTracks(script, currentTracks); });
-
-        playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+        Utils::asyncExec([currentTracks, script]() {
+            return Sorting::calcSortTracks(script, currentTracks);
+        }).then(self, handleSortedTracks);
     }
 }
 
-QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
+void PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
 {
     if(!playlistController->currentPlaylist() || column < 0 || std::cmp_greater_equal(column, columns.size())) {
-        co_return;
+        return;
     }
 
     m_sorting       = true;
@@ -953,12 +951,12 @@ QCoro::Task<void> PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder or
     const auto currentTracks = currentPlaylist->tracks();
     const QString sortField  = columns.at(column).field;
 
-    const auto sortedTracks = co_await Utils::asyncExec(
-        [sortField, currentTracks, order]() { return Sorting::calcSortTracks(sortField, currentTracks, order); });
-
-    playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
-
-    m_sortingColumn = false;
+    Utils::asyncExec([sortField, currentTracks, order]() {
+        return Sorting::calcSortTracks(sortField, currentTracks, order);
+    }).then(self, [this, currentPlaylist](const TrackList& sortedTracks) {
+        playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+        m_sortingColumn = false;
+    });
 }
 
 void PlaylistWidgetPrivate::resetSort(bool force)

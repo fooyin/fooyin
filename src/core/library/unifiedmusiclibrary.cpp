@@ -27,25 +27,21 @@
 #include <core/coresettings.h>
 #include <core/library/tracksort.h>
 #include <utils/async.h>
-#include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
-
-#include <QCoro/QCoroCore>
 
 #include <ranges>
 
 using namespace std::chrono_literals;
 
 namespace {
-QCoro::Task<Fooyin::TrackList> recalSortTracks(QString sort, Fooyin::TrackList tracks)
+QFuture<Fooyin::TrackList> recalSortTracks(const QString& sort, const Fooyin::TrackList& tracks)
 {
-    co_return co_await Fooyin::Utils::asyncExec(
-        [&sort, &tracks]() { return Fooyin::Sorting::calcSortTracks(sort, tracks); });
+    return Fooyin::Utils::asyncExec([sort, tracks]() { return Fooyin::Sorting::calcSortTracks(sort, tracks); });
 }
 
-QCoro::Task<Fooyin::TrackList> resortTracks(Fooyin::TrackList tracks)
+QFuture<Fooyin::TrackList> resortTracks(const Fooyin::TrackList& tracks)
 {
-    co_return co_await Fooyin::Utils::asyncExec([&tracks]() { return Fooyin::Sorting::sortTracks(tracks); });
+    return Fooyin::Utils::asyncExec([tracks]() { return Fooyin::Sorting::sortTracks(tracks); });
 }
 } // namespace
 
@@ -72,63 +68,75 @@ struct UnifiedMusicLibrary::Private
         , threadHandler{dbPool, self, settings}
     { }
 
-    QCoro::Task<void> loadTracks(TrackList trackToLoad)
+    void loadTracks(const TrackList& trackToLoad)
     {
-        TrackList sortedTracks
-            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
-        tracks = std::move(sortedTracks);
-        emit self->tracksLoaded(tracks);
-    }
-
-    QCoro::Task<void> addTracks(TrackList newTracks)
-    {
-        const TrackList sortedTracks
-            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
-
-        std::ranges::copy(sortedTracks, std::back_inserter(tracks));
-        tracks = co_await resortTracks(tracks);
-
-        emit self->tracksAdded(sortedTracks);
-    }
-
-    QCoro::Task<void> updateTracks(TrackList tracksToUpdate)
-    {
-        TrackList updatedTracks
-            = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
-
-        TrackList oldTracks;
-        for(const auto& track : updatedTracks) {
-            auto trackIt
-                = std::ranges::find_if(tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
-            if(trackIt != tracks.end()) {
-                oldTracks.push_back(*trackIt);
-                *trackIt = track;
-            }
+        if(trackToLoad.empty()) {
+            emit self->tracksLoaded({});
+            return;
         }
 
-        tracks        = co_await resortTracks(tracks);
-        updatedTracks = co_await resortTracks(updatedTracks);
-
-        emit self->tracksUpdated(oldTracks, updatedTracks);
+        recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad)
+            .then(self, [this](const TrackList& sortedTracks) {
+                tracks = sortedTracks;
+                emit self->tracksLoaded(tracks);
+            });
     }
 
-    QCoro::Task<void> handleScanResult(ScanResult result)
+    QFuture<void> addTracks(const TrackList& newTracks)
+    {
+        return recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), newTracks)
+            .then(self, [this](const TrackList& sortedTracks) {
+                std::ranges::copy(sortedTracks, std::back_inserter(tracks));
+                resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                    tracks = sortedLibraryTracks;
+                    emit self->tracksAdded(sortedTracks);
+                });
+            });
+    }
+
+    QFuture<void> updateTracks(const TrackList& tracksToUpdate)
+    {
+        return recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate)
+            .then(self, [this](const TrackList& sortedTracks) {
+                TrackList oldTracks;
+                for(const auto& track : sortedTracks) {
+                    auto trackIt = std::ranges::find_if(
+                        tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
+                    if(trackIt != tracks.end()) {
+                        oldTracks.push_back(*trackIt);
+                        *trackIt = track;
+                    }
+                }
+
+                resortTracks(tracks).then(self, [this, oldTracks, sortedTracks](const TrackList& sortedLibraryTracks) {
+                    tracks = sortedLibraryTracks;
+                    emit self->tracksUpdated(oldTracks, sortedTracks);
+                });
+            });
+    }
+
+    void handleScanResult(const ScanResult& result)
     {
         if(!result.addedTracks.empty()) {
-            co_await addTracks(result.addedTracks);
+            addTracks(result.addedTracks).then(self, [this, result]() {
+                if(!result.updatedTracks.empty()) {
+                    updateTracks(result.updatedTracks);
+                }
+            });
         }
-        if(!result.updatedTracks.empty()) {
-            co_await updateTracks(result.updatedTracks);
+        else if(!result.updatedTracks.empty()) {
+            updateTracks(result.updatedTracks);
         }
     }
 
-    QCoro::Task<void> scannedTracks(int id, TrackList tracksScanned)
+    void scannedTracks(int id, const TrackList& tracksScanned)
     {
-        tracksScanned = co_await recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
-
-        addTracks(tracksScanned);
-
-        emit self->tracksScanned(id, tracksScanned);
+        recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned)
+            .then(self, [this, id](const TrackList& scannedTracks) {
+                addTracks(scannedTracks).then(self, [this, id, scannedTracks]() {
+                    emit self->tracksScanned(id, scannedTracks);
+                });
+            });
     }
 
     void removeLibrary(int id, const std::set<int>& tracksRemoved)
@@ -169,12 +177,12 @@ struct UnifiedMusicLibrary::Private
         libraryManager->updateLibraryStatus(library);
     }
 
-    QCoro::Task<void> changeSort(QString sort)
+    void changeSort(const QString& sort)
     {
-        TrackList sortedTracks = co_await recalSortTracks(sort, tracks);
-        tracks                 = std::move(sortedTracks);
-
-        emit self->tracksSorted(tracks);
+        recalSortTracks(sort, tracks).then(self, [this](const TrackList& sortedTracks) {
+            tracks = sortedTracks;
+            emit self->tracksSorted(tracks);
+        });
     }
 };
 
