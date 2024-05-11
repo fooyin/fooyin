@@ -117,6 +117,10 @@ struct Playlist::Private
 
     int getNextIndex(int delta, PlayModes mode)
     {
+        if(tracks.empty()) {
+            return -1;
+        }
+
         int nextIndex = currentTrackIndex;
 
         if(nextTrackIndex >= 0) {
