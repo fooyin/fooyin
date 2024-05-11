@@ -44,6 +44,10 @@ void DirTree::mousePressEvent(QMouseEvent* event)
     else if(button == Qt::BackButton) {
         emit backClicked();
     }
+    else if(button == Qt::MiddleButton) {
+        QTreeView::mousePressEvent(event);
+        emit middleClicked();
+    }
     else {
         QTreeView::mousePressEvent(event);
     }

@@ -232,7 +232,7 @@ struct DirBrowser::Private
         dirTree->setUpdatesEnabled(true);
     }
 
-    void handleAction(TrackAction action)
+    void handleAction(TrackAction action, bool onlySelection)
     {
         QModelIndexList selected = dirTree->selectionModel()->selectedRows();
 
@@ -246,7 +246,7 @@ struct DirBrowser::Private
             const QModelIndex index = selected.front();
             if(index.isValid()) {
                 const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
-                if(filePath.isFile()) {
+                if(!onlySelection && filePath.isFile()) {
                     // Add all files in same directory
                     selected  = {proxyModel->mapToSource(selected.front()).parent()};
                     firstPath = filePath.absoluteFilePath();
@@ -353,12 +353,12 @@ struct DirBrowser::Private
             return;
         }
 
-        handleAction(doubleClickAction);
+        handleAction(doubleClickAction, doubleClickAction != TrackAction::Play);
     }
 
     void handleMiddleClick()
     {
-        handleAction(middleClickAction);
+        handleAction(middleClickAction, true);
     }
 
     void changeRoot(const QString& root)
@@ -597,7 +597,11 @@ void DirBrowser::playstateChanged(PlayState state)
 
 void DirBrowser::activePlaylistChanged(Playlist* playlist)
 {
-    if(p->playlist && playlist->id() != p->playlist->id()) {
+    if(!playlist || !p->playlist) {
+        return;
+    }
+
+    if(playlist->id() != p->playlist->id()) {
         p->proxyModel->setPlayingPath({});
     }
 }
@@ -615,22 +619,23 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* playAction = new QAction(tr("Play"), menu);
-    QObject::connect(playAction, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::Play); });
+    QObject::connect(playAction, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::Play, false); });
 
     auto* addCurrent = new QAction(tr("Add to current playlist"), menu);
     QObject::connect(addCurrent, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::AddCurrentPlaylist); });
+                     [this]() { p->handleAction(TrackAction::AddCurrentPlaylist, true); });
 
     auto* addActive = new QAction(tr("Add to active playlist"), menu);
     QObject::connect(addActive, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::AddActivePlaylist); });
+                     [this]() { p->handleAction(TrackAction::AddActivePlaylist, true); });
 
     auto* sendCurrent = new QAction(tr("Send to current playlist"), menu);
     QObject::connect(sendCurrent, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::SendCurrentPlaylist); });
+                     [this]() { p->handleAction(TrackAction::SendCurrentPlaylist, true); });
 
     auto* sendNew = new QAction(tr("Send to new playlist"), menu);
-    QObject::connect(sendNew, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::SendNewPlaylist); });
+    QObject::connect(sendNew, &QAction::triggered, this,
+                     [this]() { p->handleAction(TrackAction::SendNewPlaylist, true); });
 
     menu->addAction(playAction);
     menu->addSeparator();
