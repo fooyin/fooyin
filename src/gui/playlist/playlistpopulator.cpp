@@ -124,7 +124,7 @@ struct PlaylistPopulator::Private
         };
 
         const QString baseKey = generateHeaderKey();
-        QString key           = baseKey + QString::number(parent->childCount());
+        QString key           = Utils::generateRandomHash();
         if(!prevHeaderKey.isEmpty() && prevBaseHeaderKey == baseKey) {
             key = prevHeaderKey;
         }
@@ -193,7 +193,7 @@ struct PlaylistPopulator::Private
             }
 
             const QString baseKey = Utils::generateHash(parent->baseKey(), subheaderKey);
-            QString key           = baseKey + QString::number(parent->childCount());
+            QString key           = Utils::generateRandomHash();
             if(static_cast<int>(prevSubheaderKey.size()) > i && prevBaseSubheaderKey.at(i) == baseKey) {
                 key = prevSubheaderKey.at(i);
             }

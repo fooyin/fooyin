@@ -1250,9 +1250,6 @@ void PlaylistModel::populateTrackGroup(PendingData& data)
         return;
     }
 
-    m_nodes.merge(data.items);
-    mergeTrackParents(data.trackParents);
-
     handleTrackGroup(data);
 
     tracksChanged();
@@ -1278,7 +1275,11 @@ void PlaylistModel::mergeTrackParents(const TrackIdNodeMap& parents)
 
         auto trackIt = m_trackParents.find(id);
         if(trackIt != m_trackParents.end()) {
-            trackIt->second.insert(trackIt->second.end(), nodes.cbegin(), nodes.cend());
+            for(const QString& key : nodes) {
+                if(m_nodes.contains(key)) {
+                    trackIt->second.emplace_back(key);
+                }
+            }
         }
         else {
             m_trackParents.emplace(pair);
@@ -1647,6 +1648,10 @@ PlaylistModel::DropTargetResult PlaylistModel::findDropTarget(PlaylistItem* sour
         const QModelIndex prevParent = indexOfItem(prevParentItem);
         PlaylistItem* newParent      = parent->pending() ? parent : cloneParent(m_nodes, parent);
 
+        if(!m_nodes.contains(newParent->key())) {
+            newParent = &m_nodes.emplace(newParent->key(), *newParent).first->second;
+        }
+
         insertPlaylistRows(prevParent, newParentRow, newParentRow, {newParent});
 
         prevParentItem = newParent;
@@ -1707,7 +1712,7 @@ PlaylistModel::DropTargetResult PlaylistModel::canBeMerged(PlaylistItem*& currTa
     return {.fullMergeTarget = {}, .partMergeTarget = indexOfItem(currTarget), .target = {}};
 }
 
-void PlaylistModel::handleTrackGroup(const PendingData& data)
+void PlaylistModel::handleTrackGroup(PendingData& data)
 {
     updateTrackIndexes();
 
@@ -1720,10 +1725,20 @@ void PlaylistModel::handleTrackGroup(const PendingData& data)
     using ParentItemMap = std::map<QString, PlaylistItemList, decltype(cmpParentKeys)>;
     std::map<int, ParentItemMap> itemData;
 
+    auto nodeForKey = [this, &data](const QString& key) -> PlaylistItem* {
+        if(key == QStringLiteral("0")) {
+            return rootItem();
+        }
+        if(data.items.contains(key)) {
+            return &data.items.at(key);
+        }
+        return nullptr;
+    };
+
     for(const auto& [index, childKeys] : data.indexNodes) {
         ParentItemMap childrenMap(cmpParentKeys);
         for(const QString& childKey : childKeys) {
-            if(PlaylistItem* child = itemForKey(childKey)) {
+            if(PlaylistItem* child = nodeForKey(childKey)) {
                 if(child->parent()) {
                     childrenMap[child->parent()->key()].push_back(child);
                 }
@@ -1734,7 +1749,7 @@ void PlaylistModel::handleTrackGroup(const PendingData& data)
 
     for(const auto& [index, childGroups] : itemData) {
         for(const auto& [sourceParentKey, children] : childGroups | std::views::reverse) {
-            auto* sourceParentItem = itemForKey(sourceParentKey);
+            auto* sourceParentItem = nodeForKey(sourceParentKey);
             if(!sourceParentItem) {
                 continue;
             }
@@ -1759,6 +1774,8 @@ void PlaylistModel::handleTrackGroup(const PendingData& data)
     }
 
     rootItem()->resetChildren();
+
+    mergeTrackParents(data.trackParents);
 
     cleanupHeaders();
 }
