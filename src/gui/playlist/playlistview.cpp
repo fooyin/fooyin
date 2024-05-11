@@ -629,12 +629,14 @@ void PlaylistView::Private::recalculatePadding()
 
         const QModelIndex parent = modelIndex(item.parentItem);
         const int rowCount       = m_model->rowCount(parent);
+        const int row            = item.index.row();
 
-        if(item.index.row() == rowCount - 1) {
+        if(row == rowCount - 1) {
             if(rowHeight == 0) {
                 // Assume all track rows have the same height
                 rowHeight = indexRowSizeHint(item.index);
             }
+
             const int sectionHeight = rowCount * rowHeight;
             item.padding            = (max > sectionHeight) ? max - sectionHeight : 0;
         }
@@ -933,12 +935,14 @@ ItemViewPaintPairs PlaylistView::Private::draggablePaintPairs(const QModelIndexL
     const QRect viewportRect = m_self->viewport()->rect();
 
     for(const auto& index : indexes) {
-        if(index.isValid()) {
-            const QRect currentRect = m_self->visualRect(index);
-            if(currentRect.intersects(viewportRect)) {
-                ret.emplace_back(currentRect, index);
-                rect |= currentRect;
-            }
+        if(!index.isValid() || m_self->isSpanning(index.column())) {
+            continue;
+        }
+
+        const QRect currentRect = m_self->visualRect(index);
+        if(currentRect.intersects(viewportRect)) {
+            ret.emplace_back(currentRect, index);
+            rect |= currentRect;
         }
     }
 
@@ -1830,10 +1834,10 @@ void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)
 
 QModelIndex PlaylistView::indexAt(const QPoint& point) const
 {
-    return findIndexAt(point, true);
+    return findIndexAt(point, false, true);
 }
 
-QModelIndex PlaylistView::findIndexAt(const QPoint& point, bool includePadding) const
+QModelIndex PlaylistView::findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const
 {
     p->layoutItems();
 
@@ -1844,9 +1848,15 @@ QModelIndex PlaylistView::findIndexAt(const QPoint& point, bool includePadding) 
     }
 
     const int column = p->m_header->logicalIndexAt(point.x());
+
+    if(!includeSpans && isSpanning(column)) {
+        return {};
+    }
+
     if(column == index.column()) {
         return index;
     }
+
     if(column < 0) {
         return {};
     }
@@ -2025,7 +2035,7 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
     p->m_dragPos = event->position().toPoint();
 
-    const QModelIndex index = findIndexAt(p->m_dragPos, false);
+    const QModelIndex index = findIndexAt(p->m_dragPos, true);
 
     event->ignore();
 
@@ -2121,7 +2131,7 @@ void PlaylistView::dropEvent(QDropEvent* event)
 
     int col{-1};
     int row{-1};
-    QModelIndex index = findIndexAt(event->position().toPoint(), false);
+    QModelIndex index = findIndexAt(event->position().toPoint(), true);
 
     if(p->dropOn(event, row, col, index)) {
         const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();

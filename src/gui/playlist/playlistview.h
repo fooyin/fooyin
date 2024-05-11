@@ -45,7 +45,7 @@ public:
     void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
     [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
 
-    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includePadding) const;
+    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding = false) const;
     [[nodiscard]] QModelIndex indexAbove(const QModelIndex& index) const;
     [[nodiscard]] QModelIndex indexBelow(const QModelIndex& index) const;
 
