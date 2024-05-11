@@ -324,8 +324,7 @@ void Playlist::replaceTracks(const TrackList& tracks)
     if(std::exchange(p->tracks, tracks) != tracks) {
         p->tracksModified = true;
         p->shuffleOrder.clear();
-        p->nextTrackIndex    = -1;
-        p->currentTrackIndex = 0;
+        p->nextTrackIndex = -1;
     }
 }
 

@@ -129,6 +129,7 @@ void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, 
     p->scanTracks(tracks, [this, play](const TrackList& scannedTracks) {
         if(auto* playlist = p->controller->currentPlaylist()) {
             p->handler->replacePlaylistTracks(playlist->id(), scannedTracks);
+            playlist->changeCurrentIndex(0);
             if(play) {
                 p->handler->startPlayback(playlist);
             }

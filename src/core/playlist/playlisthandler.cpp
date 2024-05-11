@@ -101,6 +101,12 @@ struct PlaylistHandler::Private
         }
     }
 
+    bool noConcretePlaylists()
+    {
+        return playlists.empty()
+            || std::ranges::all_of(playlists, [](const auto& playlist) { return playlist->isTemporary(); });
+    }
+
     void startNextTrack(const Track& track, int index) const
     {
         if(!activePlaylist) {
@@ -270,7 +276,7 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, PlayerController* p
 {
     p->reloadPlaylists();
 
-    if(p->playlists.empty()) {
+    if(p->noConcretePlaylists()) {
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
     }
 
@@ -388,6 +394,7 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
             emit playlistAdded(playlist);
         }
         else {
+            playlist->changeCurrentIndex(0);
             std::vector<int> changedIndexes(tracks.size());
             std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
             emit playlistTracksChanged(playlist, changedIndexes);
@@ -553,7 +560,14 @@ void PlaylistHandler::removePlaylist(const Id& id)
         return;
     }
 
+    auto createDefaultIfEmpty = [this]() {
+        if(p->noConcretePlaylists()) {
+            createPlaylist(QStringLiteral("Default"), {});
+        }
+    };
+
     if(!playlist->isTemporary() && !p->playlistConnector.removePlaylist(playlist->dbId())) {
+        createDefaultIfEmpty();
         return;
     }
 
@@ -570,9 +584,7 @@ void PlaylistHandler::removePlaylist(const Id& id)
 
     emit playlistRemoved(playlist);
 
-    if(p->playlists.empty()) {
-        createPlaylist(QStringLiteral("Default"), {});
-    }
+    createDefaultIfEmpty();
 }
 
 Playlist* PlaylistHandler::activePlaylist() const
@@ -582,7 +594,7 @@ Playlist* PlaylistHandler::activePlaylist() const
 
 int PlaylistHandler::playlistCount() const
 {
-    return static_cast<int>(p->playlists.size());
+    return std::ranges::count_if(p->playlists, [](const auto& playlist) { return !playlist->isTemporary(); });
 }
 
 void PlaylistHandler::savePlaylists()
