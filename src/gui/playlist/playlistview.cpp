@@ -113,10 +113,6 @@ public:
     ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
     void adjustViewOptionsForIndex(QStyleOptionViewItem* option, const QModelIndex& currentIndex) const;
     QPixmap renderToPixmap(const QModelIndexList& indexes, QRect& rect) const;
-    bool shouldAutoScroll() const;
-    void startAutoScroll();
-    void stopAutoScroll();
-    void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
 
     QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = true) const;
@@ -157,11 +153,8 @@ public:
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;
     DropIndicatorPosition m_dropIndicatorPos{OnViewport};
-    QTimer m_autoScrollTimer;
-    int m_autoScrollCount{0};
 
     int m_columnResizeTimerId{0};
-    QBasicTimer m_delayedAutoScroll;
     mutable QBasicTimer m_delayedLayout;
     QPoint m_scrollDelayOffset;
 };
@@ -174,8 +167,6 @@ PlaylistView::Private::Private(PlaylistView* self)
     m_header->setContextMenuPolicy(Qt::CustomContextMenu);
     m_header->setSectionsMovable(true);
     m_header->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-    QObject::connect(&m_autoScrollTimer, &QTimer::timeout, m_self, [this]() { doAutoScroll(); });
 
     QObject::connect(m_header, &QHeaderView::sectionResized, this, [this]() {
         if(m_columnResizeTimerId == 0) {
@@ -1034,57 +1025,6 @@ QPixmap PlaylistView::Private::renderToPixmap(const QModelIndexList& indexes, QR
     return pixmap;
 }
 
-bool PlaylistView::Private::shouldAutoScroll() const
-{
-    if(!m_self->hasAutoScroll()) {
-        return false;
-    }
-
-    const QRect area       = m_self->viewport()->rect();
-    const int scrollMargin = m_self->autoScrollMargin();
-
-    return (m_dragPos.y() - area.top() < scrollMargin) || (area.bottom() - m_dragPos.y() < scrollMargin)
-        || (m_dragPos.x() - area.left() < scrollMargin) || (area.right() - m_dragPos.x() < scrollMargin);
-}
-
-void PlaylistView::Private::startAutoScroll()
-{
-    m_autoScrollTimer.start(50ms);
-}
-
-void PlaylistView::Private::stopAutoScroll()
-{
-    m_autoScrollTimer.stop();
-    m_autoScrollCount = 0;
-}
-
-void PlaylistView::Private::doAutoScroll()
-{
-    QScrollBar* scroll = m_self->verticalScrollBar();
-
-    if(m_autoScrollCount < scroll->pageStep()) {
-        ++m_autoScrollCount;
-    }
-
-    const int value        = scroll->value();
-    const QPoint pos       = m_dragPos;
-    const QRect area       = m_self->viewport()->rect();
-    const int scrollMargin = m_self->autoScrollMargin();
-
-    if(pos.y() - area.top() < scrollMargin) {
-        scroll->setValue(value - m_autoScrollCount);
-    }
-    else if(area.bottom() - pos.y() < scrollMargin) {
-        scroll->setValue(value + m_autoScrollCount);
-    }
-
-    const bool verticalUnchanged = value == scroll->value();
-
-    if(verticalUnchanged) {
-        stopAutoScroll();
-    }
-}
-
 bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
 {
     if(event->isAccepted()) {
@@ -1617,13 +1557,13 @@ PlaylistView::PlaylistView(QWidget* parent)
     setDropIndicatorShown(true);
     setTextElideMode(Qt::ElideRight);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    setAutoScroll(true);
 
     viewport()->setAcceptDrops(true);
 }
 
 PlaylistView::~PlaylistView()
 {
-    p->m_delayedAutoScroll.stop();
     p->m_delayedLayout.stop();
 }
 
@@ -2036,9 +1976,10 @@ bool PlaylistView::viewportEvent(QEvent* event)
 
 void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
-    p->m_dragPos = event->position().toPoint();
+    QAbstractItemView::dragMoveEvent(event);
 
-    const QModelIndex index = findIndexAt(p->m_dragPos, true);
+    const QPoint pos = event->position().toPoint();
+    p->m_dragPos     = pos /* + p->offset()*/;
 
     event->ignore();
 
@@ -2049,12 +1990,12 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
         event->setDropAction(Qt::MoveAction);
     }
 
-    if(index.isValid() && showDropIndicator()) {
-        QRect rect = p->visualRect(index, RectRule::FullRow, false);
-        rect.setX(0);
-        rect.setWidth(p->m_header->length());
+    const QModelIndex index = findIndexAt(pos, true);
+    p->m_hoverIndex         = index;
 
-        p->m_dropIndicatorPos = PlaylistView::Private::dropPosition(p->m_dragPos, rect, index);
+    if(index.isValid() && showDropIndicator()) {
+        const QRect rect      = p->visualRect(index, RectRule::FullRow, false);
+        p->m_dropIndicatorPos = PlaylistView::Private::dropPosition(pos, rect, index);
 
         switch(p->m_dropIndicatorPos) {
             case(AboveItem): {
@@ -2100,12 +2041,13 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
             event->acceptProposedAction();
         }
     }
+}
 
+void PlaylistView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
+{
+    setState(NoState);
+    p->m_hoverIndex = QModelIndex{};
     viewport()->update();
-
-    if(p->shouldAutoScroll()) {
-        p->startAutoScroll();
-    }
 }
 
 void PlaylistView::mousePressEvent(QMouseEvent* event)
@@ -2154,7 +2096,6 @@ void PlaylistView::dropEvent(QDropEvent* event)
         }
     }
 
-    p->stopAutoScroll();
     setState(NoState);
     viewport()->update();
 }
@@ -2219,8 +2160,6 @@ void PlaylistView::timerEvent(QTimerEvent* event)
 
 void PlaylistView::scrollContentsBy(int dx, int dy)
 {
-    p->m_delayedAutoScroll.stop();
-
     if(dx) {
         p->m_header->setOffset(horizontalScrollBar()->value());
     }
@@ -2319,11 +2258,6 @@ void PlaylistView::startDrag(Qt::DropActions supportedActions)
 void PlaylistView::verticalScrollbarValueChanged(int value)
 {
     QAbstractItemView::verticalScrollbarValueChanged(value);
-
-    const QPoint pos = viewport()->mapFromGlobal(QCursor::pos());
-    if(viewport()->rect().contains(pos)) {
-        p->setHoverIndex(indexAt(pos));
-    }
 }
 
 QModelIndex PlaylistView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers /*modifiers*/)
