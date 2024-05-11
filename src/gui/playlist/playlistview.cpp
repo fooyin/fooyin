@@ -1853,7 +1853,7 @@ QModelIndex PlaylistView::findIndexAt(const QPoint& point, bool includeSpans, bo
 
     const int column = p->m_header->logicalIndexAt(point.x());
 
-    if(!includeSpans && isSpanning(column)) {
+    if(!includeSpans && !p->m_model->hasChildren(index) && isSpanning(column)) {
         return {};
     }
 
