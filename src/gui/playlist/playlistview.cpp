@@ -2124,6 +2124,10 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     }
 
     QAbstractItemView::mousePressEvent(event);
+
+    if(!indexAt(event->pos()).isValid()) {
+        clearSelection();
+    }
 }
 
 void PlaylistView::dropEvent(QDropEvent* event)
