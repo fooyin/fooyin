@@ -113,6 +113,10 @@ public:
     ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
     void adjustViewOptionsForIndex(QStyleOptionViewItem* option, const QModelIndex& currentIndex) const;
     QPixmap renderToPixmap(const QModelIndexList& indexes, QRect& rect) const;
+    bool shouldAutoScroll() const;
+    void startAutoScroll();
+    void stopAutoScroll();
+    void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
 
     QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = true) const;
@@ -153,8 +157,11 @@ public:
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;
     DropIndicatorPosition m_dropIndicatorPos{OnViewport};
+    QBasicTimer m_autoScrollTimer;
+    int m_autoScrollCount{0};
 
     int m_columnResizeTimerId{0};
+    QBasicTimer m_delayedAutoScroll;
     mutable QBasicTimer m_delayedLayout;
     QPoint m_scrollDelayOffset;
 };
@@ -1025,6 +1032,62 @@ QPixmap PlaylistView::Private::renderToPixmap(const QModelIndexList& indexes, QR
     return pixmap;
 }
 
+bool PlaylistView::Private::shouldAutoScroll() const
+{
+    if(!m_self->hasAutoScroll()) {
+        return false;
+    }
+
+    const QRect area       = m_self->viewport()->rect();
+    const int scrollMargin = m_self->autoScrollMargin();
+
+    return (m_dragPos.y() - area.top() < scrollMargin) || (area.bottom() - m_dragPos.y() < scrollMargin)
+        || (m_dragPos.x() - area.left() < scrollMargin) || (area.right() - m_dragPos.x() < scrollMargin);
+}
+
+void PlaylistView::Private::startAutoScroll()
+{
+    m_autoScrollTimer.start(50, m_self);
+    m_autoScrollCount = 0;
+}
+
+void PlaylistView::Private::stopAutoScroll()
+{
+    m_autoScrollTimer.stop();
+    m_autoScrollCount = 0;
+}
+
+void PlaylistView::Private::doAutoScroll()
+{
+    QScrollBar* scroll = m_self->verticalScrollBar();
+
+    if(m_autoScrollCount < scroll->pageStep()) {
+        ++m_autoScrollCount;
+    }
+
+    const int value        = scroll->value();
+    const QPoint pos       = m_dragPos;
+    const QRect area       = m_self->viewport()->rect();
+    const int scrollMargin = m_self->autoScrollMargin();
+
+    if(pos.y() - area.top() < scrollMargin) {
+        scroll->setValue(value - m_autoScrollCount);
+    }
+    else if(area.bottom() - pos.y() < scrollMargin) {
+        scroll->setValue(value + m_autoScrollCount);
+    }
+
+    const bool verticalUnchanged = value == scroll->value();
+
+    if(verticalUnchanged) {
+        stopAutoScroll();
+    }
+    else {
+        m_dropIndicatorRect = {};
+        m_dropIndicatorPos  = OnViewport;
+    }
+}
+
 bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
 {
     if(event->isAccepted()) {
@@ -1557,13 +1620,13 @@ PlaylistView::PlaylistView(QWidget* parent)
     setDropIndicatorShown(true);
     setTextElideMode(Qt::ElideRight);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    setAutoScroll(true);
 
     viewport()->setAcceptDrops(true);
 }
 
 PlaylistView::~PlaylistView()
 {
+    p->m_delayedAutoScroll.stop();
     p->m_delayedLayout.stop();
 }
 
@@ -1976,10 +2039,8 @@ bool PlaylistView::viewportEvent(QEvent* event)
 
 void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
 {
-    QAbstractItemView::dragMoveEvent(event);
-
     const QPoint pos = event->position().toPoint();
-    p->m_dragPos     = pos /* + p->offset()*/;
+    p->m_dragPos     = pos;
 
     event->ignore();
 
@@ -2041,6 +2102,12 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
             event->acceptProposedAction();
         }
     }
+
+    viewport()->update();
+
+    if(p->shouldAutoScroll()) {
+        p->startAutoScroll();
+    }
 }
 
 void PlaylistView::dragLeaveEvent(QDragLeaveEvent* /*event*/)
@@ -2096,6 +2163,7 @@ void PlaylistView::dropEvent(QDropEvent* event)
         }
     }
 
+    p->stopAutoScroll();
     setState(NoState);
     viewport()->update();
 }
@@ -2147,6 +2215,9 @@ void PlaylistView::timerEvent(QTimerEvent* event)
             doItemsLayout();
         }
     }
+    else if(event->timerId() == p->m_autoScrollTimer.timerId()) {
+        p->doAutoScroll();
+    }
     else if(event->timerId() == p->m_columnResizeTimerId) {
         killTimer(p->m_columnResizeTimerId);
         p->m_columnResizeTimerId = 0;
@@ -2160,6 +2231,8 @@ void PlaylistView::timerEvent(QTimerEvent* event)
 
 void PlaylistView::scrollContentsBy(int dx, int dy)
 {
+    p->m_delayedAutoScroll.stop();
+
     if(dx) {
         p->m_header->setOffset(horizontalScrollBar()->value());
     }
