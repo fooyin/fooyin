@@ -127,9 +127,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
 
     playlistView->setModel(model);
     playlistView->setItemDelegate(new PlaylistDelegate(self));
-    playlistView->viewport()->installEventFilter(new ToolTipFilter(self));
-
     playlistView->setSelectionModel(new RecursiveSelectionModel(model, this));
+    playlistView->viewport()->installEventFilter(new ToolTipFilter(self));
 
     layout->addWidget(playlistView);
 
@@ -263,7 +262,7 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
 void PlaylistWidgetPrivate::resetTree()
 {
     resetSort();
-    playlistView->setWaitForLoad(true);
+    playlistView->playlistAboutToBeReset();
     restoreState(playlistController->currentPlaylist());
 }
 
@@ -312,7 +311,7 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
     }
 
     auto restoreDefaultState = [this]() {
-        playlistView->setWaitForLoad(false);
+        playlistView->playlistReset();
         playlistView->scrollToTop();
     };
 
@@ -335,7 +334,7 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
             return false;
         }
 
-        playlistView->setWaitForLoad(false);
+        playlistView->playlistReset();
         playlistView->scrollTo(index);
         playlistView->verticalScrollBar()->setValue(state->scrollPos);
 

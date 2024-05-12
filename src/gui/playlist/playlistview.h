@@ -35,10 +35,12 @@ public:
     void setModel(QAbstractItemModel* model) override;
 
     [[nodiscard]] AutoHeaderView* header() const;
-    [[nodiscard]] bool isSpanning(int column) const;
 
-    void setWaitForLoad(bool enabled);
+    [[nodiscard]] bool isSpanning(int column) const;
     void setSpan(int column, bool span);
+
+    void playlistAboutToBeReset();
+    void playlistReset();
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;

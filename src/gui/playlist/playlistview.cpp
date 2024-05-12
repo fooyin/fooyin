@@ -143,7 +143,7 @@ public:
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
     bool m_layingOutItems{false};
-    bool m_waitForLoad{false};
+    bool m_playlistLoaded{false};
 
     mutable std::vector<PlaylistViewItem> m_viewItems;
     mutable int m_lastViewedItem{0};
@@ -1660,11 +1660,6 @@ bool PlaylistView::isSpanning(int column) const
     return p->m_spans.contains(column);
 }
 
-void PlaylistView::setWaitForLoad(bool enabled)
-{
-    p->m_waitForLoad = enabled;
-}
-
 void PlaylistView::setSpan(int column, bool span)
 {
     if(span) {
@@ -1673,6 +1668,16 @@ void PlaylistView::setSpan(int column, bool span)
     else {
         p->m_spans.erase(column);
     }
+}
+
+void PlaylistView::playlistAboutToBeReset()
+{
+    p->m_playlistLoaded = false;
+}
+
+void PlaylistView::playlistReset()
+{
+    p->m_playlistLoaded = true;
 }
 
 QRect PlaylistView::visualRect(const QModelIndex& index) const
@@ -2183,7 +2188,7 @@ void PlaylistView::paintEvent(QPaintEvent* event)
 
     if(auto* playlistModel = qobject_cast<PlaylistModel*>(p->m_model)) {
         if(playlistModel->haveTracks()) {
-            if(playlistModel->playlistIsLoaded() || !p->m_waitForLoad) {
+            if(playlistModel->playlistIsLoaded() || p->m_playlistLoaded) {
                 p->drawTree(&painter, event->region());
             }
             else {
