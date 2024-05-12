@@ -13,7 +13,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/math.h
     ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/paths.h
-    ${CMAKE_SOURCE_DIR}/include/utils/recursiveselectionmodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
@@ -57,7 +56,6 @@ set(SOURCES
     id.cpp
     multilinedelegate.cpp
     paths.cpp
-    recursiveselectionmodel.cpp
     scrollarea.cpp
     scrollarea.h
     simpletreeview.cpp

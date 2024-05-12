@@ -622,10 +622,11 @@ Qt::ItemFlags PlaylistModel::flags(const QModelIndex& index) const
         defaultFlags |= Qt::ItemIsDragEnabled;
         defaultFlags |= Qt::ItemNeverHasChildren;
     }
-    //    else {
-    //        defaultFlags &= ~Qt::ItemIsSelectable;
-    //    }
+    else {
+        defaultFlags &= ~Qt::ItemIsSelectable;
+    }
     defaultFlags |= Qt::ItemIsDropEnabled;
+
     return defaultFlags;
 }
 

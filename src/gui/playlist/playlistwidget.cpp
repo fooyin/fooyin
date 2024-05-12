@@ -39,7 +39,6 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
-#include <utils/recursiveselectionmodel.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
@@ -127,7 +126,6 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
 
     playlistView->setModel(model);
     playlistView->setItemDelegate(new PlaylistDelegate(self));
-    playlistView->setSelectionModel(new RecursiveSelectionModel(model, this));
     playlistView->viewport()->installEventFilter(new ToolTipFilter(self));
 
     layout->addWidget(playlistView);
