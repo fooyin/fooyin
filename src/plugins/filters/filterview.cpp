@@ -47,9 +47,16 @@ FilterView::FilterView(QWidget* parent)
 
 void FilterView::mousePressEvent(QMouseEvent* event)
 {
+    const QModelIndex index = indexAt(event->position().toPoint());
+
+    if(index.isValid()) {
+        // Prevent drag-and-drop when first selecting items
+        setDragEnabled(selectionModel()->isSelected(index));
+    }
+
     QTreeView::mousePressEvent(event);
 
-    if(!indexAt(event->pos()).isValid()) {
+    if(!index.isValid()) {
         clearSelection();
     }
 
