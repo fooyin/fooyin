@@ -153,17 +153,18 @@ public:
     mutable int m_current;
     std::set<int> m_spans;
 
+    mutable QBasicTimer m_delayedLayout;
+
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;
     DropIndicatorPosition m_dropIndicatorPos{OnViewport};
+
     QBasicTimer m_autoScrollTimer;
     int m_autoScrollCount{0};
+    QPoint m_scrollDelayOffset;
 
     int m_columnResizeTimerId{0};
-    QBasicTimer m_delayedAutoScroll;
-    mutable QBasicTimer m_delayedLayout;
-    QPoint m_scrollDelayOffset;
 };
 
 PlaylistView::Private::Private(PlaylistView* self)
@@ -1626,7 +1627,7 @@ PlaylistView::PlaylistView(QWidget* parent)
 
 PlaylistView::~PlaylistView()
 {
-    p->m_delayedAutoScroll.stop();
+    p->m_autoScrollTimer.stop();
     p->m_delayedLayout.stop();
 }
 
@@ -2174,36 +2175,32 @@ void PlaylistView::paintEvent(QPaintEvent* event)
 
     QPainter painter{viewport()};
 
+    auto drawCentreText = [this, &painter](const QString& text) {
+        QRect textRect = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+        painter.drawText(textRect, Qt::AlignCenter, text);
+    };
+
     if(auto* playlistModel = qobject_cast<PlaylistModel*>(p->m_model)) {
         if(playlistModel->haveTracks()) {
             if(playlistModel->playlistIsLoaded() || !p->m_waitForLoad) {
                 p->drawTree(&painter, event->region());
-
-                if(state() == QAbstractItemView::DraggingState) {
-                    QStyleOptionFrame opt;
-                    initStyleOption(&opt);
-                    opt.rect = p->m_dropIndicatorRect;
-                    style()->drawPrimitive(QStyle::PE_IndicatorItemViewItemDrop, &opt, &painter);
-                }
-
-                return;
             }
-
-            const QString text{tr("Loading Playlist…")};
-
-            QRect textRect = painter.fontMetrics().boundingRect(text);
-            textRect.moveCenter(viewport()->rect().center());
-            painter.drawText(textRect, Qt::AlignCenter, text);
-
-            return;
+            else {
+                drawCentreText(tr("Loading Playlist…"));
+            }
+        }
+        else {
+            drawCentreText(tr("Empty Playlist"));
         }
     }
 
-    const QString text{tr("Empty Playlist")};
-
-    QRect textRect = painter.fontMetrics().boundingRect(text);
-    textRect.moveCenter(viewport()->rect().center());
-    painter.drawText(textRect, Qt::AlignCenter, text);
+    if(state() == QAbstractItemView::DraggingState) {
+        QStyleOptionFrame opt;
+        initStyleOption(&opt);
+        opt.rect = p->m_dropIndicatorRect;
+        style()->drawPrimitive(QStyle::PE_IndicatorItemViewItemDrop, &opt, &painter);
+    }
 }
 
 void PlaylistView::timerEvent(QTimerEvent* event)
@@ -2231,8 +2228,6 @@ void PlaylistView::timerEvent(QTimerEvent* event)
 
 void PlaylistView::scrollContentsBy(int dx, int dy)
 {
-    p->m_delayedAutoScroll.stop();
-
     if(dx) {
         p->m_header->setOffset(horizontalScrollBar()->value());
     }
