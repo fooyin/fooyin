@@ -192,6 +192,7 @@ struct AudioPlaybackEngine::Private
     {
         bufferTimer->stop();
         clock.setPaused(true);
+        clock.sync();
         renderer->stop();
         decoder->stop();
         totalBufferTime = 0;
