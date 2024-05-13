@@ -30,5 +30,6 @@ public:
     explicit Spacer(QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 };
 } // namespace Fooyin

@@ -1026,6 +1026,11 @@ QString PlaylistWidget::name() const
     return tr("Playlist");
 }
 
+QString PlaylistWidget::layoutName() const
+{
+    return QStringLiteral("Playlist");
+}
+
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
     layout[QStringLiteral("SingleMode")] = p->singleMode;

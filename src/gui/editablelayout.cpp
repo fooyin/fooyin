@@ -84,6 +84,11 @@ public:
         return QStringLiteral("Root");
     }
 
+    [[nodiscard]] QString layoutName() const override
+    {
+        return name();
+    }
+
     [[nodiscard]] bool canAddWidget() const override
     {
         return !m_widget || qobject_cast<Dummy*>(m_widget);

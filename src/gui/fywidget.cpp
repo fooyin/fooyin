@@ -36,11 +36,6 @@ Id FyWidget::id() const
     return m_id;
 }
 
-QString FyWidget::layoutName() const
-{
-    return name();
-}
-
 FyWidget::Features FyWidget::features() const
 {
     return m_features;

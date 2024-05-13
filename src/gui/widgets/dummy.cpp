@@ -64,6 +64,11 @@ QString Dummy::name() const
     return tr("Dummy");
 }
 
+QString Dummy::layoutName() const
+{
+    return QStringLiteral("Dummy");
+}
+
 void Dummy::saveLayoutData(QJsonObject& layout)
 {
     if(!m_missingName.isEmpty()) {

@@ -34,6 +34,7 @@ public:
     ~SeekBar() override;
 
     [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

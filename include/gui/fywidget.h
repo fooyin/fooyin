@@ -65,9 +65,8 @@ public:
     [[nodiscard]] virtual QString name() const = 0;
     /*!
      * Used when saving to a layout file.
-     * @note the base class implementation of this function returns @fn name.
      */
-    [[nodiscard]] virtual QString layoutName() const;
+    [[nodiscard]] virtual QString layoutName() const = 0;
 
     [[nodiscard]] Features features() const;
     void setFeature(Feature feature, bool on = true);

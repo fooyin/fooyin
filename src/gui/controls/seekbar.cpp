@@ -415,6 +415,11 @@ QString SeekBar::name() const
     return tr("SeekBar");
 }
 
+QString SeekBar::layoutName() const
+{
+    return QStringLiteral("SeekBar");
+}
+
 void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 {
     if(p->slider->isSeeking()) {

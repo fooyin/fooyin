@@ -31,6 +31,11 @@ QString Spacer::name() const
 {
     return tr("Spacer");
 }
+
+QString Spacer::layoutName() const
+{
+    return QStringLiteral("Spacer");
+}
 } // namespace Fooyin
 
 #include "moc_spacer.cpp"
