@@ -367,17 +367,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="91"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
         <source>Missing Widget</source>
         <translation>Missing Widget</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="94"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Right-Click to add a new widget</source>
         <translation>Right-Click to add a new widget</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="97"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Enter layout editing mode to edit</source>
         <translation>Enter layout editing mode to edit</translation>
     </message>
@@ -393,93 +393,93 @@
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="244"/>
-        <location filename="../../src/gui/editablelayout.cpp" line="251"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="249"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="256"/>
         <source>&amp;Insert</source>
         <translation>&amp;Insert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="267"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="272"/>
         <source>Left</source>
         <translation>Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="267"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="272"/>
         <source>Up</source>
         <translation>Up</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="274"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="279"/>
         <source>Right</source>
         <translation>Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="274"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="279"/>
         <source>Down</source>
         <translation>Down</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="281"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="286"/>
         <source>Far Left</source>
         <translation>Far Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="281"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="286"/>
         <source>Top</source>
         <translation>Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="288"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="293"/>
         <source>Far Right</source>
         <translation>Far Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="288"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="293"/>
         <source>Bottom</source>
         <translation>Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="303"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="308"/>
         <source>Paste (Insert)</source>
         <translation>Paste (Insert)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="337"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="342"/>
         <source>&amp;Replace</source>
         <translation>&amp;Replace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="342"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="347"/>
         <source>&amp;Split</source>
         <translation>&amp;Split</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="347"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="352"/>
         <source>Copy</source>
         <translation>Copy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="360"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
         <source>Paste (Replace)</source>
         <translation>Paste (Replace)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="369"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="374"/>
         <source>&amp;Move</source>
         <translation>&amp;Move</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="375"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="380"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="502"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="507"/>
         <source>Undo</source>
         <translation>Undo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="511"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="516"/>
         <source>Redo</source>
         <translation>Redo</translation>
     </message>
@@ -1457,30 +1457,9 @@
 <context>
     <name>Fooyin::PlaybackMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
-        <source>&amp;Pause</source>
-        <translation>&amp;Pause</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="42"/>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
         <source>&amp;Play</source>
         <translation>&amp;Play</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
-        <source>&amp;Stop</source>
-        <translation>&amp;Stop</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
-        <source>&amp;Next</source>
-        <translation>&amp;Next</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
-        <source>Pre&amp;vious</source>
-        <translation>Pre&amp;vious</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="73"/>
@@ -1491,6 +1470,21 @@
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Default</source>
         <translation>&amp;Default</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -1506,6 +1500,16 @@
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Shuffle Tracks</source>
         <translation>&amp;Shuffle Tracks</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
+        <source>Play</source>
+        <translation type="unfinished">Play</translation>
     </message>
 </context>
 <context>
@@ -1955,7 +1959,7 @@
         <translation type="unfinished">Playlist</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1133"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1138"/>
         <source>&amp;Play</source>
         <translation>&amp;Play</translation>
     </message>
@@ -2169,12 +2173,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="428"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="433"/>
         <source>Show Labels</source>
         <translation>Show Labels</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="435"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="440"/>
         <source>Show Elapsed Total</source>
         <translation>Show Elapsed Total</translation>
     </message>
