@@ -137,13 +137,13 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
     clickBehaviourLayout->addWidget(m_middleClick, 1, 1);
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
-    clickBehaviourLayout->setColumnStretch(2, 1);
+    clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
 
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(playlistNameLabel, 2, 0, 1, 1);
+    selectionPlaylistLayout->addWidget(playlistNameLabel, 2, 0);
     selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
-    selectionPlaylistLayout->setColumnStretch(2, 1);
+    selectionPlaylistLayout->setColumnStretch(selectionPlaylistLayout->columnCount(), 1);
 
     auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
@@ -161,7 +161,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     appearanceGroupLayout->addWidget(m_fontButton, row++, 1);
     appearanceGroupLayout->addWidget(colourLabel, row, 0);
     appearanceGroupLayout->addWidget(m_colourButton, row++, 1);
-
+    appearanceGroupLayout->setColumnStretch(appearanceGroupLayout->columnCount(), 1);
     appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -169,6 +169,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     mainLayout->addWidget(clickBehaviour, 1, 0);
     mainLayout->addWidget(appearanceGroup, 1, 1, 2, 1);
     mainLayout->addWidget(selectionPlaylist, 2, 0);
+    mainLayout->setColumnStretch(2, 1);
 }
 
 void LibraryTreePageWidget::load()
