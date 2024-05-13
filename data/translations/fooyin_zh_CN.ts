@@ -233,27 +233,27 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="36"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>日期</translation>
     </message>
 </context>
 <context>
@@ -306,12 +306,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="141"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="244"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选器</translation>
     </message>
 </context>
 <context>
@@ -332,22 +332,22 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>指数</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="179"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="181"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>字段</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="183"/>
         <source>Sort Field</source>
-        <translation type="unfinished"></translation>
+        <translation>排序字段</translation>
     </message>
 </context>
 <context>
@@ -543,12 +543,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="132"/>
         <source>Language changed</source>
-        <translation type="unfinished"></translation>
+        <translation>语言改变了</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="133"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished">需要重启以使更改生效。现在重启吗？</translation>
+        <translation>需要重启以使更改生效。现在重启吗？</translation>
     </message>
 </context>
 <context>
@@ -659,137 +659,137 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="196"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="216"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="197"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="217"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="198"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="218"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="199"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="219"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="200"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="220"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="201"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="221"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="202"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="222"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨号</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>目录名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="232"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>文件路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>文件大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>上次修改</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>添加时间</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="252"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>采样率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>目录名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>总大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>平均比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="277"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="278"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="279"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="284"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
 </context>
 <context>
@@ -856,22 +856,22 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="250"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="252"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="254"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="256"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>状态</translation>
     </message>
 </context>
 <context>
@@ -893,17 +893,17 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="39"/>
         <source>Artist/Album</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术家/专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="43"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="47"/>
         <source>Folder Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>文件夹结构</translation>
     </message>
 </context>
 <context>
@@ -967,7 +967,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="299"/>
         <source>Library Tree</source>
-        <translation type="unfinished">媒体库树</translation>
+        <translation>媒体库树</translation>
     </message>
 </context>
 <context>
@@ -1111,7 +1111,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="167"/>
         <source>&amp;Shuffle Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>乱序歌曲</translation>
     </message>
 </context>
 <context>
@@ -1119,17 +1119,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="178"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>指数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="180"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="182"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>字段</translation>
     </message>
 </context>
 <context>
@@ -1151,47 +1151,47 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="40"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
         <source>Artist/Album</source>
-        <translation type="unfinished"></translation>
+        <translation>艺术家/专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Playcount</source>
-        <translation type="unfinished"></translation>
+        <translation>播放次数</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Playing</source>
-        <translation type="unfinished"></translation>
+        <translation>播放中</translation>
     </message>
 </context>
 <context>
@@ -1217,7 +1217,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="399"/>
         <source>Playlists</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
 </context>
 <context>
@@ -1467,7 +1467,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistview.cpp" line="397"/>
         <source>Loading Playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>加载播放列表…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistview.cpp" line="407"/>
@@ -1508,12 +1508,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="129"/>
         <source>Add to Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="130"/>
         <source>Remove from Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>从播放队列中删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="205"/>
@@ -1528,12 +1528,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="767"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置列为默认</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="776"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>单列模式</translation>
     </message>
 </context>
 <context>
@@ -1641,12 +1641,12 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="191"/>
         <source>Show Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>显示标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="198"/>
         <source>Show Elapsed Total</source>
-        <translation type="unfinished"></translation>
+        <translation>剩余时间模式</translation>
     </message>
 </context>
 <context>
@@ -1700,17 +1700,17 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="177"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>指数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="179"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="181"/>
         <source>Sort Script</source>
-        <translation type="unfinished"></translation>
+        <translation>排序脚本</translation>
     </message>
 </context>
 <context>
@@ -1881,12 +1881,12 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="90"/>
         <source>Add to Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="91"/>
         <source>Remove from Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>从播放队列中删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="93"/>
@@ -1932,7 +1932,7 @@
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>urls</source>
-        <translation>urls</translation>
+        <translation>统一资源定位</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
