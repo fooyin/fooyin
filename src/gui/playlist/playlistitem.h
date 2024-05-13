@@ -49,7 +49,6 @@ public:
         Path,
         ItemData,
         Type,
-        Indentation,
         Index,
         BaseKey,
         SingleColumnMode,
@@ -73,14 +72,12 @@ public:
     [[nodiscard]] Data& data() const;
     [[nodiscard]] QString baseKey() const;
     [[nodiscard]] QString key() const;
-    [[nodiscard]] int indentation() const;
     [[nodiscard]] int index() const;
 
     void setPending(bool pending);
     void setState(State state);
     void setBaseKey(const QString& key);
     void setKey(const QString& key);
-    void setIndentation(int indentation);
     void setIndex(int index);
 
     void removeColumn(int column);
@@ -96,7 +93,6 @@ private:
     mutable Data m_data;
     QString m_baseKey;
     QString m_key;
-    int m_indentation;
     int m_index;
 };
 using PlaylistItemList = std::vector<PlaylistItem*>;

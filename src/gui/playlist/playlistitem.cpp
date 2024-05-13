@@ -36,7 +36,6 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     , m_data{std::move(data)}
     , m_baseKey{QStringLiteral("0")}
     , m_key{QStringLiteral("0")}
-    , m_indentation{0}
     , m_index{-1}
 { }
 
@@ -70,11 +69,6 @@ QString PlaylistItem::key() const
     return m_key;
 }
 
-int PlaylistItem::indentation() const
-{
-    return m_indentation;
-}
-
 int PlaylistItem::index() const
 {
     return m_index;
@@ -98,11 +92,6 @@ void PlaylistItem::setBaseKey(const QString& key)
 void PlaylistItem::setKey(const QString& key)
 {
     m_key = key;
-}
-
-void PlaylistItem::setIndentation(int indentation)
-{
-    m_indentation = indentation;
 }
 
 void PlaylistItem::setIndex(int index)

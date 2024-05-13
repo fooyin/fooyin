@@ -1349,9 +1349,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         case(PlaylistItem::Role::ItemData): {
             return QVariant::fromValue<Track>(track.track());
         }
-        case(PlaylistItem::Role::Indentation): {
-            return item->indentation();
-        }
         case(Qt::BackgroundRole): {
             if(!track.track().isEnabled()) {
                 return m_disabledColour;
@@ -1457,9 +1454,6 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
         }
         case(PlaylistItem::Role::Subtitle): {
             return QVariant::fromValue(header.subtitle().text);
-        }
-        case(PlaylistItem::Role::Indentation): {
-            return item->indentation();
         }
         default:
             return {};

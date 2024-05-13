@@ -46,6 +46,7 @@ struct PlaylistPopulator::Private
 
     ScriptFormatter formatter;
 
+    int trackDepth{0};
     QString prevBaseHeaderKey;
     QString prevHeaderKey;
     std::vector<QString> prevBaseSubheaderKey;
@@ -69,6 +70,7 @@ struct PlaylistPopulator::Private
     {
         data.clear();
         headers.clear();
+        trackDepth = 0;
         prevBaseSubheaderKey.clear();
         prevSubheaderKey.clear();
         prevBaseHeaderKey.clear();
@@ -150,6 +152,7 @@ struct PlaylistPopulator::Private
 
         auto* headerItem = &data.items.at(key);
         parent           = headerItem;
+        ++trackDepth;
     }
 
     void iterateSubheaders(const Track& track, PlaylistItem*& parent)
@@ -210,11 +213,9 @@ struct PlaylistPopulator::Private
             data.trackParents[track.id()].push_back(key);
 
             auto* subheaderItem = &data.items.at(key);
-            if(subheaderItem->parent()->type() != PlaylistItem::Header) {
-                subheaderItem->setIndentation(subheaderItem->parent()->indentation() + 20);
-            }
-            parent = subheaderItem;
+            parent              = subheaderItem;
             ++i;
+            ++trackDepth;
         }
         subheaders.clear();
     }
@@ -238,7 +239,7 @@ struct PlaylistPopulator::Private
             }
         };
 
-        registry->setTrackIndex(index);
+        registry->setTrackProperties(index, trackDepth);
 
         TrackRow trackRow{currentPreset.track};
         PlaylistTrackItem playlistTrack;
@@ -266,9 +267,7 @@ struct PlaylistPopulator::Private
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);
         data.trackParents[track.id()].push_back(key);
 
-        if(parent->type() != PlaylistItem::Header) {
-            trackItem->setIndentation(parent->indentation() + 20);
-        }
+        trackDepth = 0;
         return trackItem;
     }
 

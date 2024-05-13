@@ -271,8 +271,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     if(singleColumn) {
         const auto icon      = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
-        const int indent     = icon.isNull() ? index.data(PlaylistItem::Role::Indentation).toInt()
-                                             : opt.decorationSize.width() + textMargin;
+        const int indent     = icon.isNull() ? 0 : opt.decorationSize.width() + textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>();
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>();
 

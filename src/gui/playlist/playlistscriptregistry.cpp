@@ -26,6 +26,7 @@ struct PlaylistScriptRegistry::Private
 
     Id playlistId;
     int trackIndex{0};
+    int trackDepth{0};
 
     using QueueVar = std::function<QString()>;
     std::unordered_map<QString, QueueVar> vars;
@@ -37,36 +38,21 @@ struct PlaylistScriptRegistry::Private
 
     void addVars()
     {
+        vars.emplace(QStringLiteral("depth"), [this]() { return depth(); });
         vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
         vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
         vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
-        vars.emplace(QStringLiteral("frontcover"), [this]() { return frontCover(); });
-        vars.emplace(QStringLiteral("backcover"), [this]() { return backCover(); });
-        vars.emplace(QStringLiteral("artistpicture"), [this]() { return artistPicture(); });
+        vars.emplace(QStringLiteral("frontcover"), []() { return frontCover(); });
+        vars.emplace(QStringLiteral("backcover"), []() { return backCover(); });
+        vars.emplace(QStringLiteral("artistpicture"), []() { return artistPicture(); });
     }
 
-    QString frontCover()
+    QString depth() const
     {
-        return QString::fromLatin1(FrontCover);
+        return QString::number(trackDepth);
     }
 
-    QString backCover()
-    {
-        return QString::fromLatin1(BackCover);
-    }
-
-    QString artistPicture()
-    {
-        return QString::fromLatin1(ArtistPicture);
-    }
-
-    QString playingQueue()
-    {
-        const QString indexes = queueIndexes();
-        return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
-    }
-
-    QString queueIndex()
+    QString queueIndex() const
     {
         if(!playlistQueue.contains(trackIndex)) {
             return {};
@@ -75,7 +61,7 @@ struct PlaylistScriptRegistry::Private
         return QString::number(*playlistQueue.at(trackIndex).begin());
     }
 
-    QString queueIndexes()
+    QString queueIndexes() const
     {
         if(!playlistQueue.contains(trackIndex)) {
             return {};
@@ -84,13 +70,34 @@ struct PlaylistScriptRegistry::Private
         const auto& indexes = playlistQueue.at(trackIndex);
 
         QStringList str;
-        str.reserve(indexes.size());
+        str.reserve(static_cast<qsizetype>(indexes.size()));
 
         for(const int index : indexes) {
             str.append(QString::number(index + 1));
         }
 
         return str.join(QStringLiteral(", "));
+    }
+
+    QString playingQueue() const
+    {
+        const QString indexes = queueIndexes();
+        return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
+    }
+
+    static QString frontCover()
+    {
+        return QString::fromLatin1(FrontCover);
+    }
+
+    static QString backCover()
+    {
+        return QString::fromLatin1(BackCover);
+    }
+
+    static QString artistPicture()
+    {
+        return QString::fromLatin1(ArtistPicture);
     }
 };
 
@@ -108,9 +115,10 @@ void PlaylistScriptRegistry::setup(const Id& playlistId, const PlaybackQueue& qu
     }
 }
 
-void PlaylistScriptRegistry::setTrackIndex(int index)
+void PlaylistScriptRegistry::setTrackProperties(int index, int depth)
 {
     p->trackIndex = index;
+    p->trackDepth = depth;
 }
 
 bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
