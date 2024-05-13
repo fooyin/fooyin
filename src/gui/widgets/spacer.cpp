@@ -29,7 +29,7 @@ Spacer::Spacer(QWidget* parent)
 
 QString Spacer::name() const
 {
-    return QStringLiteral("Spacer");
+    return tr("Spacer");
 }
 } // namespace Fooyin
 

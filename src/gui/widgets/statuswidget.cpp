@@ -206,7 +206,7 @@ StatusWidget::~StatusWidget() = default;
 
 QString StatusWidget::name() const
 {
-    return QStringLiteral("Status Bar");
+    return tr("Status Bar");
 }
 
 QString StatusWidget::layoutName() const

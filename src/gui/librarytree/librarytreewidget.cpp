@@ -430,7 +430,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
 
 QString LibraryTreeWidget::name() const
 {
-    return QStringLiteral("Library Tree");
+    return tr("Library Tree");
 }
 
 QString LibraryTreeWidget::layoutName() const

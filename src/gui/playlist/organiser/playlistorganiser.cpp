@@ -307,7 +307,7 @@ PlaylistOrganiser::~PlaylistOrganiser()
 
 QString PlaylistOrganiser::name() const
 {
-    return QStringLiteral("Playlist Organiser");
+    return tr("Playlist Organiser");
 }
 
 QString PlaylistOrganiser::layoutName() const

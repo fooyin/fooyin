@@ -153,6 +153,11 @@
 <context>
     <name>Fooyin::CoverWidget</name>
     <message>
+        <location filename="../../src/gui/widgets/coverwidget.cpp" line="80"/>
+        <source>Artwork Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="118"/>
         <source>Keep Aspect Ratio</source>
         <translation type="unfinished"></translation>
@@ -201,6 +206,11 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
         <source>Go forwards</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
+        <source>Directory Browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -351,6 +361,11 @@
 </context>
 <context>
     <name>Fooyin::Dummy</name>
+    <message>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="64"/>
+        <source>Dummy</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="91"/>
         <source>Missing Widget</source>
@@ -671,6 +686,11 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="238"/>
         <source>Manage Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/filters/filterwidget.cpp" line="429"/>
+        <source>Library Filter</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1153,6 +1173,14 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::InfoWidget</name>
+    <message>
+        <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
+        <source>Selection Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::LibraryGeneralPage</name>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
@@ -1245,6 +1273,24 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="106"/>
         <source>Library</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::LibraryTreeGroupModel</name>
+    <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="157"/>
+        <source>Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="159"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
+        <source>Grouping</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1401,6 +1447,14 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::LibraryTreeWidget</name>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="433"/>
+        <source>Library Tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaybackMenu</name>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
@@ -1451,6 +1505,14 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Shuffle Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PlayerControl</name>
+    <message>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="135"/>
+        <source>Player Controls</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1572,6 +1634,16 @@
 <context>
     <name>Fooyin::PlaylistControl</name>
     <message>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
+        <source>Repeat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
+        <source>Shuffle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="83"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
@@ -1584,6 +1656,11 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="85"/>
         <source>Repeat track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
+        <source>Playlist Controls</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1681,6 +1758,11 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="148"/>
         <source>Create Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="310"/>
+        <source>Playlist Organiser</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1825,6 +1907,14 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PlaylistTabs</name>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
+        <source>Playlist Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PlaylistView</name>
     <message>
         <location filename="../../src/gui/playlist/playlistview.cpp" line="2238"/>
@@ -1857,6 +1947,11 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="985"/>
         <source>Presets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1026"/>
+        <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1951,6 +2046,39 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PluginsModel</name>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="97"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="99"/>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="101"/>
+        <source>Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="103"/>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="105"/>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="107"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="131"/>
@@ -2017,6 +2145,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="74"/>
+        <source>Search Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
         <source>Change Placeholder Text</source>
         <translation type="unfinished"></translation>
@@ -2030,6 +2163,11 @@
 </context>
 <context>
     <name>Fooyin::SeekBar</name>
+    <message>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="415"/>
+        <source>SeekBar</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="428"/>
         <source>Show Labels</source>
@@ -2062,6 +2200,24 @@
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="136"/>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="208"/>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ShortcutsModel</name>
+    <message>
+        <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="232"/>
+        <source>Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="234"/>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="236"/>
+        <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2106,7 +2262,30 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::Spacer</name>
+    <message>
+        <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
+        <source>Spacer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::SplitterWidget</name>
+    <message>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <source>%1 Splitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <source>Vertical</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <source>Horizontal</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="280"/>
         <source>Switch Orientation</source>
@@ -2115,6 +2294,11 @@
 </context>
 <context>
     <name>Fooyin::StatusWidget</name>
+    <message>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="209"/>
+        <source>Status Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="227"/>
         <source>Show Icon</source>
@@ -2179,6 +2363,11 @@
 </context>
 <context>
     <name>Fooyin::TabStackWidget</name>
+    <message>
+        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="62"/>
+        <source>Tab Stack</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="257"/>
         <source>&amp;Position</source>
@@ -2296,6 +2485,14 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
         <source>&amp;Script Sandbox</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::VolumeControl</name>
+    <message>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="157"/>
+        <source>Volume Controls</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

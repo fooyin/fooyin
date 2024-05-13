@@ -132,7 +132,7 @@ PlayerControl::~PlayerControl() = default;
 
 QString PlayerControl::name() const
 {
-    return QStringLiteral("Player Controls");
+    return tr("Player Controls");
 }
 
 QString PlayerControl::layoutName() const

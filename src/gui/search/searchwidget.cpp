@@ -71,7 +71,7 @@ SearchWidget::~SearchWidget()
 
 QString SearchWidget::name() const
 {
-    return QStringLiteral("Search Bar");
+    return tr("Search Bar");
 }
 
 QString SearchWidget::layoutName() const

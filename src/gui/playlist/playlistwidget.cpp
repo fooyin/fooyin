@@ -1023,7 +1023,7 @@ PlaylistWidget::~PlaylistWidget()
 
 QString PlaylistWidget::name() const
 {
-    return QStringLiteral("Playlist");
+    return tr("Playlist");
 }
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)

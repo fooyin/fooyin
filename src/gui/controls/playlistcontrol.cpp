@@ -56,11 +56,11 @@ struct PlaylistControl::Private
         repeat->setPopupMode(QToolButton::InstantPopup);
 
         auto* repeatAction = new QAction(self);
-        repeatAction->setToolTip(QStringLiteral("Repeat"));
+        repeatAction->setToolTip(tr("Repeat"));
         repeat->setDefaultAction(repeatAction);
 
         auto* shuffleAction = new QAction(self);
-        shuffleAction->setToolTip(QStringLiteral("Shuffle"));
+        shuffleAction->setToolTip(tr("Shuffle"));
         shuffle->setDefaultAction(shuffleAction);
 
         repeat->setStretchEnabled(true);
@@ -179,7 +179,7 @@ PlaylistControl::~PlaylistControl() = default;
 
 QString PlaylistControl::name() const
 {
-    return QStringLiteral("Playlist Controls");
+    return tr("Playlist Controls");
 }
 
 QString PlaylistControl::layoutName() const

@@ -77,7 +77,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
 
 QString CoverWidget::name() const
 {
-    return QStringLiteral("Artwork Panel");
+    return tr("Artwork Panel");
 }
 
 QString CoverWidget::layoutName() const

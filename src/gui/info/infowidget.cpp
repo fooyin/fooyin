@@ -154,7 +154,7 @@ InfoWidget::~InfoWidget() = default;
 
 QString InfoWidget::name() const
 {
-    return QStringLiteral("Selection Info");
+    return tr("Selection Info");
 }
 
 QString InfoWidget::layoutName() const

@@ -61,7 +61,7 @@ Dummy::Dummy(QString name, SettingsManager* settings, QWidget* parent)
 
 QString Dummy::name() const
 {
-    return QStringLiteral("Dummy");
+    return tr("Dummy");
 }
 
 void Dummy::saveLayoutData(QJsonObject& layout)

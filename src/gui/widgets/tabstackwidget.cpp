@@ -59,7 +59,7 @@ TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* 
 
 QString TabStackWidget::name() const
 {
-    return QStringLiteral("Tab Stack");
+    return tr("Tab Stack");
 }
 
 QString TabStackWidget::layoutName() const

@@ -94,17 +94,17 @@ QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int 
 
     switch(section) {
         case(0):
-            return QStringLiteral("Name");
+            return tr("Name");
         case(1):
-            return QStringLiteral("Version");
+            return tr("Version");
         case(2):
-            return QStringLiteral("Category");
+            return tr("Category");
         case(3):
-            return QStringLiteral("Author");
+            return tr("Author");
         case(4):
-            return QStringLiteral("Load");
+            return tr("Load");
         case(5):
-            return QStringLiteral("Status");
+            return tr("Status");
         default:
             return {};
     }

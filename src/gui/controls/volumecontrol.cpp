@@ -154,7 +154,7 @@ VolumeControl::~VolumeControl() = default;
 
 QString VolumeControl::name() const
 {
-    return QStringLiteral("Volume Controls");
+    return tr("Volume Controls");
 }
 
 QString VolumeControl::layoutName() const

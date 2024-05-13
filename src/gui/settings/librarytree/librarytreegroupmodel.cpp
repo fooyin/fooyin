@@ -154,11 +154,13 @@ QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientat
 
     switch(section) {
         case(0):
-            return QStringLiteral("Index");
+            return tr("Index");
         case(1):
-            return QStringLiteral("Name");
+            return tr("Name");
         case(2):
-            return QStringLiteral("Grouping");
+            return tr("Grouping");
+        default:
+            break;
     }
     return {};
 }
@@ -191,6 +193,8 @@ QVariant LibraryTreeGroupModel::data(const QModelIndex& index, int role) const
                 const QString& field = item->group().script;
                 return !field.isEmpty() ? field : QStringLiteral("<enter grouping here>");
             }
+            default:
+                break;
         }
     }
 

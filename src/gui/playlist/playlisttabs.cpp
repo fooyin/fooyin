@@ -311,7 +311,7 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
 
 QString PlaylistTabs::name() const
 {
-    return QStringLiteral("Playlist Tabs");
+    return tr("Playlist Tabs");
 }
 
 QString PlaylistTabs::layoutName() const

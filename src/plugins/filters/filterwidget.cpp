@@ -426,7 +426,7 @@ void FilterWidget::setScrollbarEnabled(bool enabled)
 
 QString FilterWidget::name() const
 {
-    return QStringLiteral("Library Filter");
+    return tr("Library Filter");
 }
 
 QString FilterWidget::layoutName() const

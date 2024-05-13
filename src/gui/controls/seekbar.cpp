@@ -412,7 +412,7 @@ Fooyin::SeekBar::~SeekBar() = default;
 
 QString SeekBar::name() const
 {
-    return QStringLiteral("SeekBar");
+    return tr("SeekBar");
 }
 
 void SeekBar::contextMenuEvent(QContextMenuEvent* event)

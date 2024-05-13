@@ -568,7 +568,7 @@ DirBrowser::~DirBrowser()
 
 QString DirBrowser::name() const
 {
-    return QStringLiteral("Directory Browser");
+    return tr("Directory Browser");
 }
 
 QString DirBrowser::layoutName() const
