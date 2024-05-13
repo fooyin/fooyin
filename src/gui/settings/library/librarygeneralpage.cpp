@@ -87,8 +87,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_libraryView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup."));
-    m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes."));
+    m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
+    m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes"));
 
     auto* sortScriptLabel = new QLabel(tr("Sort tracks by") + QStringLiteral(":"), this);
 

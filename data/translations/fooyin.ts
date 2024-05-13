@@ -1179,12 +1179,12 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="90"/>
-        <source>Scan libraries for changes on startup.</source>
+        <source>Scan libraries for changes on startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="91"/>
-        <source>Monitor libraries for external changes.</source>
+        <source>Monitor libraries for external changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
