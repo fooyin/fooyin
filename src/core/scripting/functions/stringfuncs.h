@@ -34,4 +34,6 @@ ScriptResult strcmp(const QStringList& vec);
 ScriptResult strcmpi(const QStringList& vec);
 QString sep();
 QString swapPrefix(const QStringList& vec);
+QString pad(const QStringList& vec);
+QString padRight(const QStringList& vec);
 } // namespace Fooyin::Scripting

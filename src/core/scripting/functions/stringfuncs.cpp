@@ -210,4 +210,41 @@ QString swapPrefix(const QStringList& vec)
 
     return vec.front();
 }
+
+QString pad(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 2 || count > 3) {
+        return {};
+    }
+
+    const QString& str = vec.at(0);
+    const int len      = vec.at(1).toInt();
+
+    if(count == 3) {
+        return str.leftJustified(len, vec.at(2).front());
+    }
+
+    return str.leftJustified(len);
+}
+
+QString padRight(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 2 || count > 3) {
+        return {};
+    }
+
+    const QString& str = vec.at(0);
+    const int len      = vec.at(1).toInt();
+
+    if(count == 3) {
+        return str.rightJustified(len, vec.at(2).front());
+    }
+
+    return str.rightJustified(len);
+}
+
 } // namespace Fooyin::Scripting

@@ -102,6 +102,8 @@ struct ScriptRegistry::Private
         funcs.emplace(QStringLiteral("strcmpi"), Fooyin::Scripting::strcmpi);
         funcs.emplace(QStringLiteral("sep"), Fooyin::Scripting::sep);
         funcs.emplace(QStringLiteral("swapprefix"), Fooyin::Scripting::swapPrefix);
+        funcs.emplace(QStringLiteral("pad"), Fooyin::Scripting::pad);
+        funcs.emplace(QStringLiteral("padright"), Fooyin::Scripting::padRight);
 
         funcs.emplace(QStringLiteral("timems"), Fooyin::Scripting::msToString);
 
