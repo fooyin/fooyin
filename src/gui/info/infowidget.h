@@ -30,6 +30,8 @@ class TrackSelectionController;
 
 class InfoWidget : public PropertiesTabWidget
 {
+    Q_OBJECT
+
 public:
     explicit InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                         SettingsManager* settings, QWidget* parent = nullptr);

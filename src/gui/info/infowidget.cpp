@@ -37,6 +37,8 @@
 namespace Fooyin {
 class InfoView : public QTreeView
 {
+    Q_OBJECT
+
 public:
     using QTreeView::QTreeView;
 
@@ -193,3 +195,5 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 } // namespace Fooyin
+
+#include "infowidget.moc"

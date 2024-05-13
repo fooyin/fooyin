@@ -234,6 +234,8 @@ QVariant ShortcutsModel::headerData(int section, Qt::Orientation orientation, in
             return QStringLiteral("Id");
         case(2):
             return QStringLiteral("Shortcut");
+        default:
+            break;
     }
     return {};
 }

@@ -61,6 +61,8 @@ private:
 
 class ShortcutsModel : public TreeModel<ShortcutItem>
 {
+    Q_OBJECT
+
 public:
     explicit ShortcutsModel(QObject* parent = nullptr);
 
