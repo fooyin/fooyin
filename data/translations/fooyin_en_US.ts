@@ -155,7 +155,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="80"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Artwork Panel</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="118"/>
@@ -211,7 +211,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Directory Browser</translation>
+        <translation>Directory Browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
@@ -364,7 +364,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="64"/>
         <source>Dummy</source>
-        <translation type="unfinished"></translation>
+        <translation>Dummy</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
@@ -691,7 +691,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="429"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Library Filter</translation>
     </message>
 </context>
 <context>
@@ -1177,7 +1177,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Selection Info</translation>
     </message>
 </context>
 <context>
@@ -1281,17 +1281,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="157"/>
         <source>Index</source>
-        <translation type="unfinished">Index</translation>
+        <translation>Index</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="159"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Grouping</translation>
     </message>
 </context>
 <context>
@@ -1451,7 +1451,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="433"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Library Tree</translation>
+        <translation>Library Tree</translation>
     </message>
 </context>
 <context>
@@ -1474,17 +1474,17 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Previous</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Next</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -1504,12 +1504,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
         <source>Play</source>
-        <translation type="unfinished">Play</translation>
+        <translation>Play</translation>
     </message>
 </context>
 <context>
@@ -1517,7 +1517,7 @@
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="135"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Player Controls</translation>
     </message>
 </context>
 <context>
@@ -1640,12 +1640,12 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
         <source>Repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeat</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>Shuffle</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="83"/>
@@ -1665,7 +1665,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist Controls</translation>
     </message>
 </context>
 <context>
@@ -1767,7 +1767,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="310"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist Organizer</translation>
     </message>
 </context>
 <context>
@@ -1915,7 +1915,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist Tabs</translation>
     </message>
 </context>
 <context>
@@ -1956,7 +1956,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1026"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1138"/>
@@ -2054,32 +2054,32 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="97"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="99"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Version</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="101"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Category</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="103"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>Author</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="105"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Load</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="107"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
 </context>
 <context>
@@ -2151,7 +2151,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="74"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Search Bar</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
@@ -2170,7 +2170,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="415"/>
         <source>SeekBar</source>
-        <translation type="unfinished"></translation>
+        <translation>SeekBar</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="433"/>
@@ -2212,17 +2212,17 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="232"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="234"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="236"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Shortcut</translation>
     </message>
 </context>
 <context>
@@ -2270,7 +2270,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>Spacer</translation>
     </message>
 </context>
 <context>
@@ -2278,17 +2278,17 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>%1 Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Splitter</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="280"/>
@@ -2301,7 +2301,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="209"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Bar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="227"/>
@@ -2370,7 +2370,7 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="62"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Tab Stack</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="257"/>
@@ -2497,7 +2497,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="157"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume Controls</translation>
     </message>
 </context>
 <context>
