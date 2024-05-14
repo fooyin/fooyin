@@ -1824,6 +1824,11 @@ void PlaylistView::scrollTo(const QModelIndex& index, ScrollHint hint)
         return;
     }
 
+    if(state() == QAbstractItemView::DraggingState || state() == QAbstractItemView::DragSelectingState) {
+        // Prevent cursor follows playback setting from scrolling during drag-n-drop
+        return;
+    }
+
     p->layoutItems();
     p->updateScrollBars();
 

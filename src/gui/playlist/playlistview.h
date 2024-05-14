@@ -44,7 +44,7 @@ public:
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
-    void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
+    void scrollTo(const QModelIndex& index, ScrollHint hint) override;
     [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
 
     [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding = false) const;

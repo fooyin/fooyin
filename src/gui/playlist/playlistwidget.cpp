@@ -333,7 +333,7 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
         }
 
         playlistView->playlistReset();
-        playlistView->scrollTo(index);
+        playlistView->scrollTo(index, PlaylistView::PositionAtTop);
         playlistView->verticalScrollBar()->setValue(state->scrollPos);
 
         return true;
