@@ -13,7 +13,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * Lyric support - embedded and LRC (including enhanced LRC)
 * Audio conversion
 * Renaming/Copying/Moving files on disk
-* Integrate Last.fm for statistic synchronisation
+* Integrate Last.fm for scrobbling
 * Integrate Discogs for metadata searching
 
 ## Enhancements
@@ -21,6 +21,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * ~~Add HTML-like tags to FooScript for formatting~~
 * Enhance playlist functionality - import/export options
 * Add album cover mode to filter widget
+* Per-playlist playback queue
 
 ## Widgets
 
