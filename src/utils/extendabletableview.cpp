@@ -31,10 +31,9 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScrollBar>
-#include <QTextEdit>
 #include <QToolButton>
 
-constexpr auto ButtonAreaHeight = 40;
+constexpr auto ButtonAreaHeight = 45;
 
 namespace Fooyin {
 class ExtendableToolArea : public QWidget
@@ -48,6 +47,8 @@ public:
         , m_customToolLayout{new QHBoxLayout()}
     {
         auto* layout = new QHBoxLayout(this);
+        layout->setContentsMargins(10, 5, 10, 5);
+
         layout->addLayout(m_toolLayout);
         layout->addLayout(m_customToolLayout);
         layout->addStretch();
@@ -145,9 +146,14 @@ struct ExtendableTableView::Private
 
     void updateToolArea() const
     {
+        const QRect rect        = self->contentsRect();
         const int vHeaderWidth  = self->verticalHeader()->isVisible() ? self->verticalHeader()->width() : 0;
         const int hHeaderHeight = self->horizontalHeader()->isVisible() ? self->horizontalHeader()->height() : 0;
+        const int hScrollbarHeight
+            = self->horizontalScrollBar()->isVisible() ? self->horizontalScrollBar()->height() : 0;
 
+        toolArea->setGeometry(rect.x(), rect.bottom() - ButtonAreaHeight - hScrollbarHeight, rect.width(),
+                              ButtonAreaHeight);
         self->setViewportMargins(vHeaderWidth, hHeaderHeight, 0, ButtonAreaHeight);
     }
 
@@ -237,6 +243,8 @@ ExtendableTableView::ExtendableTableView(ActionManager* actionManager, const Too
     , p{std::make_unique<Private>(this, actionManager, tools)}
 { }
 
+ExtendableTableView::~ExtendableTableView() = default;
+
 void ExtendableTableView::setTools(const Tools& tools)
 {
     p->tools = tools;
@@ -263,11 +271,14 @@ void ExtendableTableView::addCustomTool(QWidget* widget)
     }
 }
 
-ExtendableTableView::~ExtendableTableView() = default;
-
 void ExtendableTableView::setExtendableModel(ExtendableTableModel* model)
 {
-    p->model = model;
+    if(!model || std::exchange(p->model, model) == model) {
+        return;
+    }
+
+    QObject::disconnect(model, &ExtendableTableModel::pendingRowCancelled, this, nullptr);
+
     setModel(model);
 
     QObject::connect(
@@ -313,9 +324,9 @@ void ExtendableTableView::scrollTo(const QModelIndex& index, ScrollHint hint)
         return;
     }
 
-    QRect lastItemRect = visualRect(index);
+    const QRect lastItemRect = visualRect(index);
     QTableView::scrollTo(index, hint);
-    QRect visibleRect = viewport()->rect();
+    const QRect visibleRect = viewport()->rect();
 
     // Fixes issues with scrolling to last index with a bottom margin
     if(!visibleRect.contains(lastItemRect.bottomRight())) {
@@ -342,12 +353,6 @@ void ExtendableTableView::resizeEvent(QResizeEvent* event)
     QTableView::resizeEvent(event);
 
     p->updateToolArea();
-
-    const QRect rect           = contentsRect();
-    const int hScrollbarHeight = horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0;
-
-    p->toolArea->setGeometry(rect.x(), rect.y() + rect.height() - ButtonAreaHeight - hScrollbarHeight, rect.width(),
-                             ButtonAreaHeight);
 }
 } // namespace Fooyin
 

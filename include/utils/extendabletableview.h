@@ -71,7 +71,7 @@ public:
     [[nodiscard]] QAction* moveUpAction() const;
     [[nodiscard]] QAction* moveDownAction() const;
 
-    Context context() const;
+    [[nodiscard]] Context context() const;
     virtual void addContextActions(QMenu* menu);
 
     void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
