@@ -331,6 +331,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
             tracksToUpdate.emplace_back(sameHashTrack);
             if(!isPending) {
                 p->pendingStatUpdates.emplace(hash, sameHashTrack);
+                isPending = true;
             }
         }
     }
