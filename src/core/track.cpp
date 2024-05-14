@@ -74,9 +74,13 @@ struct Track::Private : public QSharedData
     explicit Private(QString filepath_)
         : filepath{std::move(filepath_)}
     {
+        if(filepath.isEmpty()) {
+            return;
+        }
+
         const QFileInfo fileInfo{this->filepath};
-        filename  = fileInfo.fileName();
-        extension = fileInfo.suffix();
+        filename  = fileInfo.baseName();
+        extension = fileInfo.completeSuffix();
     }
 };
 
@@ -461,8 +465,8 @@ void Track::setFilePath(const QString& path)
     p->filepath = path;
 
     const QFileInfo fileInfo{path};
-    p->filename  = fileInfo.fileName();
-    p->extension = fileInfo.suffix();
+    p->filename  = fileInfo.baseName();
+    p->extension = fileInfo.completeSuffix();
 }
 
 void Track::setRelativePath(const QString& path)
