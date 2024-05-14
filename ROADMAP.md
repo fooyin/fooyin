@@ -9,6 +9,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * ~~Playback queue~~
 * ~~MPRIS support~~
 * Query-based language for searching/filtering
+* Smart playlists
 * Album artwork features - downloading, storing in metadata/on disk
 * Lyric support - embedded and LRC (including enhanced LRC)
 * Audio conversion
@@ -29,3 +30,4 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * ~~Waveform seekbar~~
 * Musical spectrum
 * VU meter
+* Spectrogram
