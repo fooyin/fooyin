@@ -111,6 +111,25 @@ struct LibraryTreeModel::Private
         allNode.setTitle(QStringLiteral("All Music (%1)").arg(trackCount));
     }
 
+    void mergeTrackParents(const TrackIdNodeMap& parents)
+    {
+        for(const auto& pair : parents) {
+            const auto& [id, children] = pair;
+
+            auto trackIt = trackParents.find(id);
+            if(trackIt != trackParents.end()) {
+                for(const QString& key : children) {
+                    if(nodes.contains(key)) {
+                        trackIt->second.emplace_back(key);
+                    }
+                }
+            }
+            else {
+                trackParents.emplace(pair);
+            }
+        }
+    }
+
     void batchFinished(PendingTreeData data)
     {
         if(resetting) {
@@ -187,7 +206,7 @@ struct LibraryTreeModel::Private
                 auto* node = nodes.contains(row) ? &nodes.at(row) : nullptr;
 
                 if(node && node->pending() && !addedNodes.contains(row)) {
-                    if(!parent->pending() && !pendingNodes.contains(parentKey) && parent->parent()) {
+                    if(!parent->pending() && !pendingNodes.contains(parentKey) && addedNodes.contains(parentKey)) {
                         // Parent is expanded/visible
                         nodesToCheck.emplace(self->indexOfItem(parent));
                     }
@@ -214,7 +233,7 @@ struct LibraryTreeModel::Private
                 nodes[key] = item;
             }
         }
-        trackParents.merge(data.trackParents);
+        mergeTrackParents(data.trackParents);
 
         const QModelIndex allIndex = self->indexOfItem(&allNode);
         emit self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
