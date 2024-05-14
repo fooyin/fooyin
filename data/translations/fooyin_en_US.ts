@@ -866,7 +866,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="109"/>
         <source>Library Filter</source>
-        <translation type="unfinished">Library Filter</translation>
+        <translation>Library Filter</translation>
     </message>
 </context>
 <context>
@@ -944,24 +944,26 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="246"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins not found</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="247"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Some plugins are required for full functionality.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="248"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin search locations:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="251"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Quit</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="324"/>
@@ -971,12 +973,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="395"/>
         <source>Dummy</source>
-        <translation type="unfinished">Dummy</translation>
+        <translation>Dummy</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="401"/>
         <source>Vertical Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertical Splitter</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
@@ -984,37 +986,37 @@
         <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <location filename="../../src/gui/guiapplication.cpp" line="430"/>
         <source>Splitters</source>
-        <translation type="unfinished">Splitters</translation>
+        <translation>Splitters</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="407"/>
         <source>Horizontal Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal Splitter</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="415"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">Playlist Tabs</translation>
+        <translation>Playlist Tabs</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="424"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished">Playlist Organizer</translation>
+        <translation>Playlist Organizer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="429"/>
         <source>Tab Stack</source>
-        <translation type="unfinished">Tab Stack</translation>
+        <translation>Tab Stack</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="437"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Library Tree</translation>
+        <translation>Library Tree</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="442"/>
         <source>Player Controls</source>
-        <translation type="unfinished">Player Controls</translation>
+        <translation>Player Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
@@ -1022,87 +1024,87 @@
         <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <location filename="../../src/gui/guiapplication.cpp" line="460"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="448"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished">Playlist Controls</translation>
+        <translation>Playlist Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="454"/>
         <source>Volume Controls</source>
-        <translation type="unfinished">Volume Controls</translation>
+        <translation>Volume Controls</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="459"/>
         <source>SeekBar</source>
-        <translation type="unfinished">SeekBar</translation>
+        <translation>SeekBar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="467"/>
         <source>Selection Info</source>
-        <translation type="unfinished">Selection Info</translation>
+        <translation>Selection Info</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="474"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">Artwork Panel</translation>
+        <translation>Artwork Panel</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="481"/>
         <source>Playlist</source>
-        <translation type="unfinished">Playlist</translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="485"/>
         <source>Spacer</source>
-        <translation type="unfinished">Spacer</translation>
+        <translation>Spacer</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="496"/>
         <source>Status Bar</source>
-        <translation type="unfinished">Status Bar</translation>
+        <translation>Status Bar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="502"/>
         <source>Search Bar</source>
-        <translation type="unfinished">Search Bar</translation>
+        <translation>Search Bar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="516"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">Directory Browser</translation>
+        <translation>Directory Browser</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Details</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Track Not Found</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="535"/>
         <source>Stop</source>
-        <translation type="unfinished">Stop</translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio Files (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="554"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Folders</translation>
     </message>
 </context>
 <context>
@@ -2436,22 +2438,22 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="36"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation type="unfinished">Artist</translation>
+        <translation>Artist</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Title</source>
-        <translation type="unfinished">Title</translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Track Number</source>
-        <translation type="unfinished">Track Number</translation>
+        <translation>Track Number</translation>
     </message>
 </context>
 <context>
@@ -2775,12 +2777,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="214"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Waveform Seekbar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="215"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Controls</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
