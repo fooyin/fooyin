@@ -462,8 +462,9 @@ void PlaylistHandler::movePlaylistTracks(const Id& id, const Id& replaceId)
 
     if(auto* playlist = playlistById(id)) {
         if(auto* replacePlaylist = playlistById(replaceId)) {
-            replacePlaylist->changeCurrentIndex(playlist->currentTrackIndex());
             createPlaylist(replacePlaylist->name(), playlist->tracks());
+            replacePlaylist->changeCurrentIndex(playlist->currentTrackIndex());
+
             if(p->activePlaylist == playlist) {
                 p->playerController->updateCurrentTrackPlaylist(replaceId);
                 changeActivePlaylist(replacePlaylist);
