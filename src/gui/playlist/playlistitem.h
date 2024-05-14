@@ -53,7 +53,8 @@ public:
         BaseKey,
         SingleColumnMode,
         Column,
-        ColumnPadding
+        ImagePadding,
+        ImagePaddingTop
     };
 
     enum class State

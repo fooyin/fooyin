@@ -104,11 +104,12 @@ enum GuiInternalSettings : uint32_t
     WindowTitleTrackScript  = 36 | Type::String,
     TrackCoverPaths         = 37 | Type::Variant,
     TrackCoverDisplayOption = 38 | Type::Int,
-    PlaylistCoverPadding    = 39 | Type::Int,
-    PixmapCacheSize         = 40 | Type::Int,
-    ArtworkThumbnailSize    = 41 | Type::Int,
-    LibTreeSendPlayback     = 42 | Type::Bool,
-    DirBrowserSendPlayback  = 43 | Type::Bool,
+    PlaylistImagePadding    = 39 | Type::Int,
+    PlaylistImagePaddingTop = 40 | Type::Int,
+    PixmapCacheSize         = 41 | Type::Int,
+    ArtworkThumbnailSize    = 42 | Type::Int,
+    LibTreeSendPlayback     = 43 | Type::Bool,
+    DirBrowserSendPlayback  = 44 | Type::Bool
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

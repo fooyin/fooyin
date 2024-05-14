@@ -108,7 +108,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()),
                                                          QStringLiteral("Artwork/Paths"));
     m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
-    m_settings->createSetting<Internal::PlaylistCoverPadding>(15, QStringLiteral("PlaylistWidget/CoverPadding"));
+    m_settings->createSetting<Internal::PlaylistImagePadding>(5, QStringLiteral("PlaylistWidget/ImagePadding"));
+    m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, QStringLiteral("PlaylistWidget/ImagePaddingTop"));
     m_settings->createSetting<Internal::PixmapCacheSize>(20, QStringLiteral("Interface/PixmapCacheSize"));
     m_settings->createSetting<Internal::ArtworkThumbnailSize>(200, QStringLiteral("Interface/ArtworkThumbnailSize"));
     m_settings->createSetting<Internal::LibTreeSendPlayback>(true, QStringLiteral("LibraryTree/StartPlaybackOnSend"));

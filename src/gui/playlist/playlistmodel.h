@@ -242,6 +242,7 @@ private:
     std::vector<Qt::Alignment> m_columnAlignments;
     std::vector<int> m_pixmapColumns;
     int m_pixmapPadding;
+    int m_pixmapPaddingTop;
 
     Playlist* m_currentPlaylist;
     PlayState m_currentPlayState;

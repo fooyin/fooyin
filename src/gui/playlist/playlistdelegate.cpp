@@ -289,14 +289,16 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     }
     else {
         if(index.data(PlaylistItem::Role::Column).canConvert<QPixmap>()) {
-            const auto cover = index.data(PlaylistItem::Role::Column).value<QPixmap>();
+            const auto image = index.data(PlaylistItem::Role::Column).value<QPixmap>();
 
-            if(!cover.isNull()) {
-                const auto coverPadding = textMargin + index.data(PlaylistItem::Role::ColumnPadding).toInt();
-                const int width         = opt.rect.width() - coverPadding;
+            if(!image.isNull()) {
+                const auto imagePadding    = index.data(PlaylistItem::Role::ImagePadding).toInt();
+                const auto imagePaddingTop = index.data(PlaylistItem::Role::ImagePaddingTop).toInt();
+
+                opt.rect.adjust(imagePadding, imagePaddingTop, -imagePadding, imagePaddingTop);
 
                 style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
-                                      Utils::scalePixmap(cover, width, true));
+                                      Utils::scalePixmap(image, opt.rect.width(), true));
             }
         }
         else {

@@ -547,7 +547,8 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
                   settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
     , m_populator{playerController}
     , m_playlistLoaded{false}
-    , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistCoverPadding>()}
+    , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
+    , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{PlayState::Stopped}
     , m_tempCurrentPlayingIndex{-1}
@@ -576,9 +577,13 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
         m_coverSize = {size, size};
         emit dataChanged({}, {}, {Qt::DecorationRole});
     });
-    m_settings->subscribe<Settings::Gui::Internal::PlaylistCoverPadding>(this, [this](int padding) {
+    m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePadding>(this, [this](int padding) {
         m_pixmapPadding = padding;
-        emit dataChanged({}, {}, {PlaylistItem::ColumnPadding});
+        emit dataChanged({}, {}, {PlaylistItem::ImagePadding});
+    });
+    m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePaddingTop>(this, [this](int padding) {
+        m_pixmapPaddingTop = padding;
+        emit dataChanged({}, {}, {PlaylistItem::ImagePaddingTop});
     });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
@@ -1337,8 +1342,10 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
             return QVariant::fromValue(track.column(column).text);
         }
-        case(PlaylistItem::Role::ColumnPadding):
+        case(PlaylistItem::Role::ImagePadding):
             return m_pixmapPadding;
+        case(PlaylistItem::Role::ImagePaddingTop):
+            return m_pixmapPaddingTop;
         case(PlaylistItem::Role::Left):
             return QVariant::fromValue(track.left().text);
         case(PlaylistItem::Role::Right):
