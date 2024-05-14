@@ -106,7 +106,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 
     p->widgetProvider->registerWidget(
         QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); },
-        QStringLiteral("Library Filter"));
+        tr("Library Filter"));
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->columnsPage = std::make_unique<FiltersColumnPage>(p->actionManager, p->settings);

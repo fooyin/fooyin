@@ -54,8 +54,7 @@ public:
      * @param displayName name to use in layout editing menus.
      * @returns true if the widget was registered, or false if a widget at @p key already exists.
      */
-    bool registerWidget(const QString& key, std::function<FyWidget*()> instantiator,
-                        const QString& displayName = QStringLiteral(""));
+    bool registerWidget(const QString& key, std::function<FyWidget*()> instantiator, const QString& displayName);
 
     /*!
      * Sets the submenus the widget at @p key appears at in add/replace menus when layout editing.

@@ -243,13 +243,12 @@ struct GuiApplication::Private
     {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText(QStringLiteral("Plugins not found"));
-        message.setInformativeText(QStringLiteral("Some plugins are required for full functionality."));
-        message.setDetailedText(QStringLiteral("Plugin search locations:\n\n")
-                                + Core::pluginPaths().join(QStringLiteral("\n")));
+        message.setText(tr("Plugins not found"));
+        message.setInformativeText(tr("Some plugins are required for full functionality."));
+        message.setDetailedText(tr("Plugin search locations:\n\n") + Core::pluginPaths().join(QStringLiteral("\n")));
 
         message.addButton(QMessageBox::Ok);
-        QPushButton* quitButton = message.addButton(QStringLiteral("Quit"), QMessageBox::ActionRole);
+        QPushButton* quitButton = message.addButton(tr("Quit"), QMessageBox::ActionRole);
         quitButton->setIcon(Utils::iconFromTheme(Constants::Icons::Quit));
         message.setDefaultButton(QMessageBox::Ok);
 
@@ -393,29 +392,28 @@ struct GuiApplication::Private
     void registerWidgets()
     {
         widgetProvider.registerWidget(
-            QStringLiteral("Dummy"), [this]() { return new Dummy(settingsManager, mainWindow.get()); },
-            QStringLiteral("Dummy"));
+            QStringLiteral("Dummy"), [this]() { return new Dummy(settingsManager, mainWindow.get()); }, tr("Dummy"));
         widgetProvider.setIsHidden(QStringLiteral("Dummy"), true);
 
         widgetProvider.registerWidget(
             QStringLiteral("SplitterVertical"),
             [this]() { return new VerticalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get()); },
-            QStringLiteral("Vertical Splitter"));
-        widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {QStringLiteral("Splitters")});
+            tr("Vertical Splitter"));
+        widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SplitterHorizontal"),
             [this]() { return new HorizontalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get()); },
-            QStringLiteral("Horizontal Splitter"));
-        widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {QStringLiteral("Splitters")});
+            tr("Horizontal Splitter"));
+        widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
             [this]() {
                 return new PlaylistTabs(&widgetProvider, playlistController.get(), settingsManager, mainWindow.get());
             },
-            QStringLiteral("Playlist Tabs"));
-        widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {QStringLiteral("Splitters")});
+            tr("Playlist Tabs"));
+        widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistOrganiser"),
@@ -423,65 +421,68 @@ struct GuiApplication::Private
                 return new PlaylistOrganiser(actionManager, playlistController.get(), settingsManager,
                                              mainWindow.get());
             },
-            QStringLiteral("Playlist Organiser"));
+            tr("Playlist Organiser"));
 
         widgetProvider.registerWidget(
             QStringLiteral("TabStack"),
             [this]() { return new TabStackWidget(&widgetProvider, settingsManager, mainWindow.get()); },
-            QStringLiteral("Tab Stack"));
-        widgetProvider.setSubMenus(QStringLiteral("TabStack"), {QStringLiteral("Splitters")});
+            tr("Tab Stack"));
+        widgetProvider.setSubMenus(QStringLiteral("TabStack"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("LibraryTree"),
             [this]() {
                 return new LibraryTreeWidget(library, &selectionController, settingsManager, mainWindow.get());
             },
-            QStringLiteral("Library Tree"));
+            tr("Library Tree"));
 
         widgetProvider.registerWidget(
             QStringLiteral("PlayerControls"),
             [this]() { return new PlayerControl(actionManager, playerController, settingsManager, mainWindow.get()); },
-            QStringLiteral("Player Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {QStringLiteral("Controls")});
+            tr("Player Controls"));
+        widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {tr("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistControls"),
             [this]() { return new PlaylistControl(playerController, settingsManager, mainWindow.get()); },
-            QStringLiteral("Playlist Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {QStringLiteral("Controls")});
+            tr("Playlist Controls"));
+        widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {tr("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("VolumeControls"),
             [this]() { return new VolumeControl(actionManager, settingsManager, mainWindow.get()); },
-            QStringLiteral("Volume Controls"));
-        widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {QStringLiteral("Controls")});
+            tr("Volume Controls"));
+        widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {tr("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SeekBar"),
-            [this]() { return new SeekBar(playerController, settingsManager, mainWindow.get()); },
-            QStringLiteral("SeekBar"));
-        widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {QStringLiteral("Controls")});
+            [this]() { return new SeekBar(playerController, settingsManager, mainWindow.get()); }, tr("SeekBar"));
+        widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SelectionInfo"),
             [this]() {
                 return new InfoWidget(playerController, &selectionController, settingsManager, mainWindow.get());
             },
-            QStringLiteral("Selection Info"));
+            tr("Selection Info"));
 
         widgetProvider.registerWidget(
             QStringLiteral("ArtworkPanel"),
             [this]() {
                 return new CoverWidget(playerController, &selectionController, settingsManager, mainWindow.get());
             },
-            QStringLiteral("Artwork Panel"));
+            tr("Artwork Panel"));
 
-        widgetProvider.registerWidget(QStringLiteral("Playlist"), [this]() {
-            return new PlaylistWidget(actionManager, &playlistInteractor, settingsManager, mainWindow.get());
-        });
+        widgetProvider.registerWidget(
+            QStringLiteral("Playlist"),
+            [this]() {
+                return new PlaylistWidget(actionManager, &playlistInteractor, settingsManager, mainWindow.get());
+            },
+            tr("Playlist"));
         widgetProvider.setLimit(QStringLiteral("Playlist"), 1);
 
-        widgetProvider.registerWidget(QStringLiteral("Spacer"), [this]() { return new Spacer(mainWindow.get()); });
+        widgetProvider.registerWidget(
+            QStringLiteral("Spacer"), [this]() { return new Spacer(mainWindow.get()); }, tr("Spacer"));
 
         widgetProvider.registerWidget(
             QStringLiteral("StatusBar"),
@@ -492,13 +493,13 @@ struct GuiApplication::Private
                                  &StatusWidget::libraryScanProgress);
                 return statusWidget;
             },
-            QStringLiteral("Status Bar"));
+            tr("Status Bar"));
         widgetProvider.setLimit(QStringLiteral("StatusBar"), 1);
 
         widgetProvider.registerWidget(
             QStringLiteral("SearchBar"),
             [this]() { return new SearchWidget(searchController, settingsManager, mainWindow.get()); },
-            QStringLiteral("Search Bar"));
+            tr("Search Bar"));
 
         widgetProvider.registerWidget(
             QStringLiteral("DirectoryBrowser"),
@@ -512,13 +513,13 @@ struct GuiApplication::Private
                                  &DirBrowser::activePlaylistChanged);
                 return browser;
             },
-            QStringLiteral("Directory Browser"));
+            tr("Directory Browser"));
         widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
     }
 
     void createPropertiesTabs()
     {
-        propertiesDialog->addTab(QStringLiteral("Details"), [this]() {
+        propertiesDialog->addTab(tr("Details"), [this]() {
             return new InfoWidget(playerController, &selectionController, settingsManager);
         });
     }
@@ -527,11 +528,11 @@ struct GuiApplication::Private
     {
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
-        message.setText(QStringLiteral("Track Not Found"));
+        message.setText(tr("Track Not Found"));
         message.setInformativeText(track.filepath());
 
         message.addButton(QMessageBox::Ok);
-        QPushButton* stopButton = message.addButton(QStringLiteral("Stop"), QMessageBox::ActionRole);
+        QPushButton* stopButton = message.addButton(tr("Stop"), QMessageBox::ActionRole);
         stopButton->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
         message.setDefaultButton(QMessageBox::Ok);
 
@@ -547,11 +548,10 @@ struct GuiApplication::Private
 
     void addFiles() const
     {
-        const auto extensions
-            = QStringLiteral("Audio Files (%1)").arg(Track::supportedFileExtensions().join(QStringLiteral(" ")));
+        const auto extensions = tr("Audio Files (%1)").arg(Track::supportedFileExtensions().join(QStringLiteral(" ")));
 
-        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), QStringLiteral("Add Files"),
-                                                        QStringLiteral(""), extensions);
+        const auto files
+            = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), QStringLiteral(""), extensions);
 
         if(files.empty()) {
             return;
@@ -562,8 +562,7 @@ struct GuiApplication::Private
 
     void addFolders() const
     {
-        const auto dirs
-            = QFileDialog::getExistingDirectoryUrl(mainWindow.get(), QStringLiteral("Add Folders"), QStringLiteral(""));
+        const auto dirs = QFileDialog::getExistingDirectoryUrl(mainWindow.get(), tr("Add Folders"), QStringLiteral(""));
 
         if(dirs.isEmpty()) {
             return;

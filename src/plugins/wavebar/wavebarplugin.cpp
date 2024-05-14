@@ -211,8 +211,8 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
                      [this]() { p->clearCache(); });
 
     p->widgetProvider->registerWidget(
-        QStringLiteral("WaveBar"), [this]() { return p->createWavebar(); }, QStringLiteral("Waveform Seekbar"));
-    p->widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {QStringLiteral("Controls")});
+        QStringLiteral("WaveBar"), [this]() { return p->createWavebar(); }, tr("Waveform Seekbar"));
+    p->widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {tr("Controls")});
 
     auto* selectionMenu = p->actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
     auto* utilitiesMenu = p->actionManager->createMenu("Fooyin.Menu.Utilities");
