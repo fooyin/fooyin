@@ -155,7 +155,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="80"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>封面面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="118"/>
@@ -211,7 +211,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">目录浏览器</translation>
+        <translation>目录浏览器</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
@@ -364,7 +364,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="64"/>
         <source>Dummy</source>
-        <translation type="unfinished"></translation>
+        <translation>占位符</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
@@ -691,7 +691,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="429"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>媒体库筛选器</translation>
     </message>
 </context>
 <context>
@@ -1177,7 +1177,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>选中信息</translation>
     </message>
 </context>
 <context>
@@ -1281,17 +1281,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="157"/>
         <source>Index</source>
-        <translation type="unfinished">指数</translation>
+        <translation>指数</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="159"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>分组</translation>
     </message>
 </context>
 <context>
@@ -1451,7 +1451,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="433"/>
         <source>Library Tree</source>
-        <translation type="unfinished">媒体库树</translation>
+        <translation>媒体库树</translation>
     </message>
 </context>
 <context>
@@ -1474,17 +1474,17 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>上一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一首</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -1504,12 +1504,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
 </context>
 <context>
@@ -1517,7 +1517,7 @@
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="135"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>播放控制</translation>
     </message>
 </context>
 <context>
@@ -1640,12 +1640,12 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
         <source>Repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>循环</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>乱序</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="83"/>
@@ -1665,7 +1665,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表控制</translation>
     </message>
 </context>
 <context>
@@ -1767,7 +1767,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="310"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表管理器</translation>
     </message>
 </context>
 <context>
@@ -1915,7 +1915,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表选项卡</translation>
     </message>
 </context>
 <context>
@@ -1956,7 +1956,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1026"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1138"/>
@@ -2054,32 +2054,32 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="97"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="99"/>
         <source>Version</source>
-        <translation type="unfinished"></translation>
+        <translation>版本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="101"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>类别</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="103"/>
         <source>Author</source>
-        <translation type="unfinished"></translation>
+        <translation>作者</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="105"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation>加载</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="107"/>
         <source>Status</source>
-        <translation type="unfinished">状态</translation>
+        <translation>状态</translation>
     </message>
 </context>
 <context>
@@ -2151,7 +2151,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="74"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
@@ -2170,7 +2170,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="415"/>
         <source>SeekBar</source>
-        <translation type="unfinished"></translation>
+        <translation>拖动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="433"/>
@@ -2212,17 +2212,17 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="232"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>操作</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="234"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Id</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="236"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键</translation>
     </message>
 </context>
 <context>
@@ -2270,7 +2270,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation>间隔器</translation>
     </message>
 </context>
 <context>
@@ -2278,17 +2278,17 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>%1 Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>%1分割器</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="280"/>
@@ -2301,7 +2301,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="209"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>状态栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="227"/>
@@ -2370,7 +2370,7 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="62"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>堆叠选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="257"/>
@@ -2497,7 +2497,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="157"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>音量控制</translation>
     </message>
 </context>
 <context>
