@@ -246,7 +246,7 @@ void PlaylistView::Private::updateScrollBars() const
     const int viewportHeight = viewportSize.height();
 
     for(int height{0}, item = itemCount - 1; item >= 0; --item) {
-        height += itemHeight(item) + itemPadding(item);
+        height += itemHeight(item);
         if(height > viewportHeight) {
             break;
         }
@@ -1620,7 +1620,8 @@ int PlaylistView::Private::lastVisibleItem(int firstVisual, int offset) const
 
     const int count = itemCount();
     for(int i{firstVisual}; i < count; ++i) {
-        y += itemHeight(i);
+        const int itemHeight = this->itemHeight(i) + itemPadding(i);
+        y += itemHeight;
         if(y > value) {
             return i;
         }
