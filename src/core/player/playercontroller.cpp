@@ -185,13 +185,18 @@ void PlayerController::setPlayMode(Playlist::PlayModes mode)
 
 void PlayerController::seek(uint64_t ms)
 {
+    if(p->totalDuration < 100) {
+        return;
+    }
+
     if(ms >= p->totalDuration - 100) {
         next();
         return;
     }
 
-    p->position = ms;
-    emit positionMoved(ms);
+    if(std::exchange(p->position, ms) != ms) {
+        emit positionMoved(ms);
+    }
 }
 
 void PlayerController::seekForward(uint64_t delta)

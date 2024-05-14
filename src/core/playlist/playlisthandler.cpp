@@ -20,6 +20,7 @@
 #include <core/playlist/playlisthandler.h>
 
 #include "database/playlistdatabase.h"
+#include "internalcoresettings.h"
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
@@ -29,6 +30,8 @@
 
 #include <ranges>
 #include <utility>
+
+constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
 
 namespace {
 enum class CommonOperation : uint8_t
@@ -234,12 +237,20 @@ struct PlaylistHandler::Private
     void restoreActivePlaylist()
     {
         const int lastId = settings->value<Settings::Core::ActivePlaylistId>();
-        if(lastId >= 0) {
-            auto playlist = std::ranges::find_if(std::as_const(playlists),
-                                                 [lastId](const auto& pl) { return pl->dbId() == lastId; });
-            if(playlist != playlists.cend()) {
-                activePlaylist = playlist->get();
-                emit self->activePlaylistChanged(activePlaylist);
+        if(lastId < 0) {
+            return;
+        }
+
+        auto playlist
+            = std::ranges::find_if(std::as_const(playlists), [lastId](const auto& pl) { return pl->dbId() == lastId; });
+        if(playlist != playlists.cend()) {
+            activePlaylist = playlist->get();
+            emit self->activePlaylistChanged(activePlaylist);
+
+            if(settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+                const int lastIndex = settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
+                activePlaylist->changeCurrentIndex(lastIndex);
+                playerController->changeCurrentTrack({activePlaylist->currentTrack(), activePlaylist->id(), lastIndex});
             }
         }
     }
@@ -614,6 +625,13 @@ void PlaylistHandler::savePlaylists()
 
     if(p->activePlaylist && !p->activePlaylist->isTemporary()) {
         p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->dbId());
+
+        if(p->settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+            p->settings->fileSet(QString::fromLatin1(ActiveIndex), p->activePlaylist->currentTrackIndex());
+        }
+        else {
+            p->settings->fileRemove(QString::fromLatin1(ActiveIndex));
+        }
     }
 }
 

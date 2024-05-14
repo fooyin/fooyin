@@ -37,6 +37,9 @@
 #include <QCoreApplication>
 #include <QProcess>
 
+constexpr auto LastPlaybackPosition = "Player/LastPositon";
+constexpr auto LastPlaybackState    = "Player/LastState";
+
 namespace Fooyin {
 struct Application::Private
 {
@@ -97,12 +100,52 @@ struct Application::Private
             engine.addOutput(builder);
         });
     }
+
+    void savePlaybackState() const
+    {
+        if(settingsManager->value<Settings::Core::Internal::SavePlaybackState>()) {
+            const auto lastPos = static_cast<quint64>(playerController->currentPosition());
+
+            settingsManager->fileSet(QString::fromLatin1(LastPlaybackPosition), lastPos);
+            settingsManager->fileSet(QString::fromLatin1(LastPlaybackState),
+                                     static_cast<int>(playerController->playState()));
+        }
+        else {
+            settingsManager->fileRemove(QString::fromLatin1(LastPlaybackPosition));
+            settingsManager->fileRemove(QString::fromLatin1(LastPlaybackState));
+        }
+    }
+
+    void loadPlaybackState() const
+    {
+        if(!settingsManager->value<Settings::Core::Internal::SavePlaybackState>()) {
+            return;
+        }
+
+        const auto lastPos = settingsManager->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
+        const auto state   = settingsManager->fileValue(QString::fromLatin1(LastPlaybackState)).value<PlayState>();
+
+        switch(state) {
+            case PlayState::Paused:
+                playerController->pause();
+                break;
+            case PlayState::Playing:
+                playerController->play();
+                break;
+            case PlayState::Stopped:
+                break;
+        }
+
+        playerController->seek(lastPos);
+    }
 };
 
 Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistsPopulated, this,
+                     [this]() { p->loadPlaybackState(); });
     QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library,
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
@@ -126,6 +169,7 @@ CorePluginContext Application::context() const
 
 void Application::shutdown()
 {
+    p->savePlaybackState();
     p->playlistHandler->savePlaylists();
     p->coreSettings.shutdown();
     p->pluginManager.shutdown();

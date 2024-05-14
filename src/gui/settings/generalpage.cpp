@@ -21,6 +21,7 @@
 
 #include "core/application.h"
 #include "core/corepaths.h"
+#include "core/internalcoresettings.h"
 #include "mainwindow.h"
 
 #include <core/coresettings.h>
@@ -70,6 +71,7 @@ private:
     SettingsManager* m_settings;
 
     QComboBox* m_startupBehaviour;
+    QCheckBox* m_restorePlayback;
     QCheckBox* m_waitForTracks;
 
     QComboBox* m_language;
@@ -79,20 +81,21 @@ private:
 GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_startupBehaviour{new QComboBox(this)}
+    , m_restorePlayback{new QCheckBox(tr("Restore playback state"), this)}
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
     , m_language{new QComboBox(this)}
 {
     auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + QStringLiteral(":"), this);
 
     m_waitForTracks->setToolTip(tr("Delay opening fooyin until all tracks have been loaded"));
-    m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
 
     auto* startupGroup       = new QGroupBox(tr("Startup"), this);
     auto* startupGroupLayout = new QGridLayout(startupGroup);
 
     startupGroupLayout->addWidget(startupBehaviourLabel, 0, 0);
     startupGroupLayout->addWidget(m_startupBehaviour, 0, 1);
-    startupGroupLayout->addWidget(m_waitForTracks, 1, 0, 1, 2);
+    startupGroupLayout->addWidget(m_restorePlayback, 1, 0, 1, 2);
+    startupGroupLayout->addWidget(m_waitForTracks, 2, 0, 1, 2);
     startupGroupLayout->setColumnStretch(1, 1);
 
     auto* languageLabel = new QLabel(tr("Language") + QStringLiteral(":"), this);
@@ -116,15 +119,15 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
 
 void GeneralPageWidget::load()
 {
-    m_startupBehaviour->setCurrentIndex(m_settings->value<Settings::Gui::StartupBehaviour>());
     loadLanguage();
+
+    m_startupBehaviour->setCurrentIndex(m_settings->value<Settings::Gui::StartupBehaviour>());
+    m_restorePlayback->setChecked(m_settings->value<Settings::Core::Internal::SavePlaybackState>());
+    m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
 }
 
 void GeneralPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::StartupBehaviour>(m_startupBehaviour->currentIndex());
-    m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
-
     const QString currentLanguage = m_language->currentText();
     const auto chosenLanguage = m_languageMap.contains(currentLanguage) ? m_languageMap.at(currentLanguage) : QString{};
 
@@ -136,13 +139,18 @@ void GeneralPageWidget::apply()
             Application::restart();
         }
     }
+
+    m_settings->set<Settings::Gui::StartupBehaviour>(m_startupBehaviour->currentIndex());
+    m_settings->set<Settings::Core::Internal::SavePlaybackState>(m_restorePlayback->isChecked());
+    m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
 }
 
 void GeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::StartupBehaviour>();
-    m_settings->reset<Settings::Gui::WaitForTracks>();
     m_settings->reset<Settings::Core::Language>();
+    m_settings->reset<Settings::Gui::StartupBehaviour>();
+    m_settings->reset<Settings::Core::Internal::SavePlaybackState>();
+    m_settings->reset<Settings::Gui::WaitForTracks>();
 }
 
 void GeneralPageWidget::loadLanguage()

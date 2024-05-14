@@ -31,9 +31,10 @@ Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries = 0 | Settings::Bool,
-    MuteVolume       = 1 | Settings::Double,
-    DisabledPlugins  = 2 | Settings::StringList,
+    MonitorLibraries  = 0 | Settings::Bool,
+    MuteVolume        = 1 | Settings::Double,
+    DisabledPlugins   = 2 | Settings::StringList,
+    SavePlaybackState = 3 | Settings::Bool
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
