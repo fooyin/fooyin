@@ -300,31 +300,38 @@ void UnifiedMusicLibrary::updateTrackStats(const Track& track)
 
 void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 {
-    if(!track.isInDatabase()) {
-        return;
+    const QString hash  = track.hash();
+    const auto currTime = QDateTime::currentMSecsSinceEpoch();
+    int playCount       = track.playCount();
+
+    bool isPending{false};
+
+    if(track.isInDatabase()) {
+        Track updatedTrack{track};
+
+        if(updatedTrack.firstPlayed() == 0) {
+            updatedTrack.setFirstPlayed(currTime);
+        }
+        updatedTrack.setLastPlayed(currTime);
+        updatedTrack.setPlayCount(track.playCount() + 1);
+
+        playCount = updatedTrack.playCount();
+        p->pendingStatUpdates.emplace(hash, updatedTrack);
+        isPending = true;
     }
-
-    Track updatedTrack{track};
-
-    const auto dt = QDateTime::currentMSecsSinceEpoch();
-
-    if(updatedTrack.firstPlayed() == 0) {
-        updatedTrack.setFirstPlayed(dt);
-    }
-    updatedTrack.setLastPlayed(dt);
-    updatedTrack.setPlayCount(track.playCount() + 1);
-
-    const QString hash = updatedTrack.hash();
-    p->pendingStatUpdates.emplace(hash, updatedTrack);
 
     TrackList tracksToUpdate;
     for(const auto& libraryTrack : p->tracks) {
         if(libraryTrack.hash() == hash) {
             Track sameHashTrack{libraryTrack};
-            sameHashTrack.setFirstPlayed(dt);
-            sameHashTrack.setLastPlayed(dt);
-            sameHashTrack.setPlayCount(updatedTrack.playCount());
+            sameHashTrack.setFirstPlayed(currTime);
+            sameHashTrack.setLastPlayed(currTime);
+            sameHashTrack.setPlayCount(playCount > 0 ? playCount : sameHashTrack.playCount() + 1);
+
             tracksToUpdate.emplace_back(sameHashTrack);
+            if(!isPending) {
+                p->pendingStatUpdates.emplace(hash, sameHashTrack);
+            }
         }
     }
 
