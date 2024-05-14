@@ -26,6 +26,7 @@
 
 #include <QFileInfo>
 #include <QFont>
+#include <algorithm>
 
 constexpr auto HeaderFontDelta = 2;
 
@@ -84,22 +85,17 @@ QVariant InfoItem::value() const
 void InfoItem::addTrackValue(uint64_t value)
 {
     switch(m_valueType) {
-        case(ValueType::Concat): {
+        case(ValueType::Concat):
             addTrackValue(QString::number(value));
             break;
-        }
-        case(ValueType::Average): {
+        case(ValueType::Average):
             m_numValues.push_back(value);
             break;
-        }
-        case(ValueType::Total): {
+        case(ValueType::Total):
             m_numValue += value;
             break;
-        }
         case(ValueType::Max):
-            if(value > m_numValue) {
-                m_numValue = value;
-            }
+            m_numValue = std::max(m_numValue, value);
             break;
     }
 }
@@ -319,8 +315,10 @@ QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int rol
         case(1):
             return QStringLiteral("Value");
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 
 int InfoModel::columnCount(const QModelIndex& /*parent*/) const
@@ -358,8 +356,10 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         case(1):
             return item->value();
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 } // namespace Fooyin
 

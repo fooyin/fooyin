@@ -42,15 +42,14 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
     const auto& layout = layouts.at(index.row());
 
     switch(role) {
-        case(Qt::DisplayRole): {
+        case(Qt::DisplayRole):
             return layout.name;
-        }
-        case(Role::Layout): {
+        case(Role::Layout):
             return QVariant::fromValue(layout);
-        }
-        default: {
-            return {};
-        }
+        default:
+            break;
     }
+
+    return {};
 }
 } // namespace Fooyin

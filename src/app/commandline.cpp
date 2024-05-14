@@ -71,10 +71,9 @@ bool CommandLine::parse()
                 std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }
-            case('s'): {
+            case('s'):
                 m_skipSingle = true;
                 break;
-            }
             default:
                 return false;
         }

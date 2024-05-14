@@ -161,10 +161,9 @@ struct StatusWidget::Private
                 clearMessage();
                 statusText->clear();
                 break;
-            case(PlayState::Playing): {
+            case(PlayState::Playing):
                 updatePlayingText();
                 break;
-            }
             case(PlayState::Paused):
                 break;
         }

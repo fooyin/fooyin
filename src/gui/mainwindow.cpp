@@ -57,20 +57,17 @@ MainWindow::~MainWindow()
 void MainWindow::open()
 {
     switch(m_settings->value<Settings::Gui::StartupBehaviour>()) {
-        case(Maximised): {
+        case(Maximised):
             showMaximized();
             break;
-        }
-        case(RememberLast): {
+        case(RememberLast):
             restoreGeometry(m_settings->fileValue(QString::fromLatin1(MainWindowGeometry)).toByteArray());
             show();
             break;
-        }
         case(Normal):
-        default: {
+        default:
             show();
             break;
-        }
     }
 }
 

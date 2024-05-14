@@ -157,7 +157,10 @@ QVariant SortingModel::headerData(int section, Qt::Orientation orientation, int 
             return tr("Name");
         case(2):
             return tr("Sort Script");
+        default:
+            break;
     }
+
     return {};
 }
 
@@ -189,6 +192,8 @@ QVariant SortingModel::data(const QModelIndex& index, int role) const
                 const QString& field = item->sortScript().script;
                 return !field.isEmpty() ? field : QStringLiteral("<enter sort script here>");
             }
+            default:
+                break;
         }
     }
 
@@ -222,7 +227,7 @@ bool SortingModel::setData(const QModelIndex& index, const QVariant& value, int 
             sortScript.script = value.toString();
             break;
         }
-        case(0):
+        default:
             break;
     }
 

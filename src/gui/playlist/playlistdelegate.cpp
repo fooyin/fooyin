@@ -322,23 +322,21 @@ void PlaylistDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
     const auto type = index.data(PlaylistItem::Type).toInt();
     switch(type) {
-        case(PlaylistItem::Track): {
+        case(PlaylistItem::Track):
             paintTrack(painter, opt, index);
             break;
-        }
         case(PlaylistItem::Header): {
             const auto simple = index.data(PlaylistItem::Simple).toBool();
             simple ? paintSimpleHeader(painter, opt, index) : paintHeader(painter, opt, index);
             break;
         }
-        case(PlaylistItem::Subheader): {
+        case(PlaylistItem::Subheader):
             paintSubheader(painter, opt, index);
             break;
-        }
-        default: {
+        default:
             break;
-        }
     }
+
     painter->restore();
 }
 

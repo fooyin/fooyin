@@ -1149,18 +1149,16 @@ bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol
         m_dropIndicatorPos
             = PlaylistView::Private::dropPosition(pos, visualRect(index, RectRule::FullRow, false), index);
         switch(m_dropIndicatorPos) {
-            case(AboveItem): {
+            case(AboveItem):
                 row   = index.row();
                 col   = index.column();
                 index = index.parent();
                 break;
-            }
-            case(BelowItem): {
+            case(BelowItem):
                 row   = index.row() + 1;
                 col   = index.column();
                 index = index.parent();
                 break;
-            }
             case(OnItem):
             case(OnViewport):
                 break;

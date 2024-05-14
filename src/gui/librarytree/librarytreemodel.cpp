@@ -326,30 +326,24 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             const QString& name = item->title();
             return !name.isEmpty() ? name : QStringLiteral("?");
         }
-        case(LibraryTreeItem::Title): {
+        case(LibraryTreeItem::Title):
             return item->title();
-        }
-        case(LibraryTreeItem::Level): {
+        case(LibraryTreeItem::Level):
             return item->level();
-        }
-        case(LibraryTreeItem::Tracks): {
+        case(LibraryTreeItem::Tracks):
             return QVariant::fromValue(item->tracks());
-        }
+        case(Qt::FontRole):
+            return p->font;
+        case(Qt::ForegroundRole):
+            return p->colour;
         case(Qt::SizeHintRole): {
             if(p->rowHeight > 0) {
                 return QSize{0, p->rowHeight};
             }
             break;
         }
-        case(Qt::FontRole): {
-            return p->font;
-        }
-        case(Qt::ForegroundRole): {
-            return p->colour;
-        }
-        default: {
-            return {};
-        }
+        default:
+            break;
     }
 
     return {};

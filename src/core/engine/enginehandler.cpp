@@ -98,18 +98,15 @@ struct EngineHandler::Private
             engine,
             [this, state]() {
                 switch(state) {
-                    case(PlayState::Playing): {
+                    case(PlayState::Playing):
                         engine->play();
                         break;
-                    }
-                    case(PlayState::Paused): {
+                    case(PlayState::Paused):
                         engine->pause();
                         break;
-                    }
-                    case(PlayState::Stopped): {
+                    case(PlayState::Stopped):
                         engine->stop();
                         break;
-                    }
                 }
             },
             Qt::QueuedConnection);

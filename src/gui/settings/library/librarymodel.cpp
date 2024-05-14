@@ -223,7 +223,10 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
             return tr("Path");
         case(3):
             return tr("Status");
+        default:
+            break;
     }
+
     return {};
 }
 
@@ -252,6 +255,8 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
             return item->info().path;
         case(3):
             return Utils::Enum::toString(item->info().status);
+        default:
+            break;
     }
 
     return {};

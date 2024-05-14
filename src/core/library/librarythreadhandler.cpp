@@ -179,18 +179,16 @@ struct LibraryThreadHandler::Private
         const auto& request = scanRequests.front();
         currentRequestId    = request.id;
 
-        switch(request.type) {
-            case(ScanRequest::Tracks):
-                scanTracks(request);
-                break;
-            case(ScanRequest::Library):
-                if(request.dir.isEmpty()) {
-                    scanLibrary(request);
-                }
-                else {
-                    scanDirectory(request);
-                }
-                break;
+        if(request.type == ScanRequest::Tracks) {
+            scanTracks(request);
+        }
+        else {
+            if(request.dir.isEmpty()) {
+                scanLibrary(request);
+            }
+            else {
+                scanDirectory(request);
+            }
         }
     }
 

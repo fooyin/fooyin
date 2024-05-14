@@ -162,6 +162,7 @@ QVariant LibraryTreeGroupModel::headerData(int section, Qt::Orientation orientat
         default:
             break;
     }
+
     return {};
 }
 
@@ -228,7 +229,7 @@ bool LibraryTreeGroupModel::setData(const QModelIndex& index, const QVariant& va
             group.script = value.toString();
             break;
         }
-        case(0):
+        default:
             break;
     }
 

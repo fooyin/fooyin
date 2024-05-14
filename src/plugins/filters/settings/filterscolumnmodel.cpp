@@ -121,6 +121,7 @@ void FiltersColumnModel::processQueue()
                 break;
         }
     }
+
     for(const auto& index : columnsToRemove) {
         m_nodes.erase(index);
     }
@@ -161,7 +162,10 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
             return tr("Field");
         case(3):
             return tr("Sort Field");
+        default:
+            break;
     }
+
     return {};
 }
 
@@ -193,6 +197,8 @@ QVariant FiltersColumnModel::data(const QModelIndex& index, int role) const
                 const QString& field = item->column().field;
                 return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
             }
+            default:
+                break;
         }
     }
 
@@ -226,7 +232,7 @@ bool FiltersColumnModel::setData(const QModelIndex& index, const QVariant& value
             column.field = value.toString();
             break;
         }
-        case(0):
+        default:
             break;
     }
 

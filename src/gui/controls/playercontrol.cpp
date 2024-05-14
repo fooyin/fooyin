@@ -93,18 +93,15 @@ struct PlayerControl::Private
     void stateChanged(PlayState state) const
     {
         switch(state) {
-            case(PlayState::Stopped): {
+            case(PlayState::Stopped):
                 playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
                 break;
-            }
-            case(PlayState::Playing): {
+            case(PlayState::Playing):
                 playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Pause));
                 break;
-            }
-            case(PlayState::Paused): {
+            case(PlayState::Paused):
                 playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
                 break;
-            }
         }
     }
 };

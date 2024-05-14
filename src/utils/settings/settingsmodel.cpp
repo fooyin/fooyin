@@ -66,8 +66,10 @@ QVariant SettingsModel::data(const QModelIndex& index, int role) const
         case(SettingsItem::Data):
             return QVariant::fromValue(data);
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 
 void SettingsModel::setPages(const PageList& pages)

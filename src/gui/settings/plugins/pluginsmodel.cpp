@@ -106,8 +106,9 @@ QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int 
         case(5):
             return tr("Status");
         default:
-            return {};
+            break;
     }
+
     return {};
 }
 
@@ -121,7 +122,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::TextAlignmentRole) {
         switch(column) {
-            case(0):;
+            case(0):
                 return (Qt::AlignVCenter | Qt::AlignLeft).toInt();
             case(1):
             case(2):

@@ -171,7 +171,9 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
         case(Expr::Conditional):
         case(Expr::VariableList):
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 } // namespace Fooyin

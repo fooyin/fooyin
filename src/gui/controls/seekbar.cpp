@@ -339,20 +339,18 @@ struct SeekBar::Private
     void stateChanged(PlayState state)
     {
         switch(state) {
-            case(PlayState::Stopped): {
+            case(PlayState::Paused):
+                break;
+            case(PlayState::Stopped):
                 reset();
                 slider->setEnabled(false);
                 break;
-            }
             case(PlayState::Playing): {
                 if(max == 0) {
                     trackChanged(playerController->currentTrack());
                 }
                 slider->setEnabled(true);
                 break;
-            }
-            case(PlayState::Paused): {
-                return;
             }
         }
     }

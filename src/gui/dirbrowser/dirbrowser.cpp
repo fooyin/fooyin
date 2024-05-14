@@ -284,10 +284,9 @@ struct DirBrowser::Private
         const bool startPlayback = settings->value<Settings::Gui::Internal::DirBrowserSendPlayback>();
 
         switch(action) {
-            case(TrackAction::Play): {
+            case(TrackAction::Play):
                 handlePlayAction(files, firstPath);
                 break;
-            }
             case(TrackAction::AddCurrentPlaylist):
                 playlistInteractor->filesToCurrentPlaylist(files);
                 break;

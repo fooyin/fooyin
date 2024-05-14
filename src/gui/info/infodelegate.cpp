@@ -68,15 +68,14 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
 
     const auto type = index.data(InfoItem::Type).value<InfoItem::ItemType>();
     switch(type) {
-        case(InfoItem::ItemType::Header): {
+        case(InfoItem::ItemType::Header):
             paintHeader(painter, opt, index);
             break;
-        }
-        case(InfoItem::ItemType::Entry): {
+        case(InfoItem::ItemType::Entry):
             paintEntry(painter, opt, index);
             break;
-        }
     }
+
     painter->restore();
 }
 } // namespace Fooyin

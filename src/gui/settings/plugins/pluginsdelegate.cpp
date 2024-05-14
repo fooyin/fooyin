@@ -35,18 +35,15 @@ void PluginsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 
     if(opt.features & QStyleOptionViewItem::HasCheckIndicator) {
         switch(opt.checkState) {
-            case Qt::Unchecked: {
+            case Qt::Unchecked:
                 opt.state |= QStyle::State_Off;
                 break;
-            }
-            case Qt::PartiallyChecked: {
+            case Qt::PartiallyChecked:
                 opt.state |= QStyle::State_NoChange;
                 break;
-            }
-            case Qt::Checked: {
+            case Qt::Checked:
                 opt.state |= QStyle::State_On;
                 break;
-            }
         }
         const QRect rect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &opt, opt.widget);
         opt.rect         = QStyle::alignedRect(opt.direction, index.data(Qt::TextAlignmentRole).value<Qt::Alignment>(),

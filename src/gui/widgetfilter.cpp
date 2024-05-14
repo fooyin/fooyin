@@ -19,7 +19,6 @@
 
 #include <gui/widgetfilter.h>
 
-#include <gui/fywidget.h>
 #include <utils/widgets/overlaywidget.h>
 
 #include <QApplication>
@@ -99,20 +98,20 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
             event->accept();
             return true;
         }
-        case(QEvent::KeyPress): {
+        case(QEvent::KeyPress):
             emit filterFinished();
             event->accept();
             return true;
-        }
         case(QEvent::MouseButtonDblClick):
-        case(QEvent::Wheel): {
+        case(QEvent::Wheel):
             event->accept();
             return true;
-        }
         default:
             event->ignore();
-            return QObject::eventFilter(watched, event);
+            break;
     }
+
+    return QObject::eventFilter(watched, event);
 }
 } // namespace Fooyin
 

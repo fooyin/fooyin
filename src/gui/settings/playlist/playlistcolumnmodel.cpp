@@ -160,7 +160,10 @@ QVariant PlaylistColumnModel::headerData(int section, Qt::Orientation orientatio
             return tr("Name");
         case(2):
             return tr("Field");
+        default:
+            break;
     }
+
     return {};
 }
 
@@ -192,6 +195,8 @@ QVariant PlaylistColumnModel::data(const QModelIndex& index, int role) const
                 const QString& field = item->column().field;
                 return !field.isEmpty() ? field : QStringLiteral("<enter field here>");
             }
+            default:
+                break;
         }
     }
 
@@ -225,7 +230,7 @@ bool PlaylistColumnModel::setData(const QModelIndex& index, const QVariant& valu
             column.field = value.toString();
             break;
         }
-        case(0):
+        default:
             break;
     }
 

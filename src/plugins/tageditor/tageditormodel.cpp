@@ -321,8 +321,10 @@ QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, in
         case(1):
             return QStringLiteral("Value");
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 
 Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
@@ -378,8 +380,10 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
             return value;
         }
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 
 bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, int role)

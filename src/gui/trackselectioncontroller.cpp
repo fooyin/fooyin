@@ -427,22 +427,18 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
                                              const QString& playlistName)
 {
     switch(action) {
-        case(TrackAction::SendCurrentPlaylist): {
+        case(TrackAction::SendCurrentPlaylist):
             p->sendToCurrentPlaylist(options);
             break;
-        }
-        case(TrackAction::SendNewPlaylist): {
+        case(TrackAction::SendNewPlaylist):
             p->sendToNewPlaylist(options, playlistName);
             break;
-        }
-        case(TrackAction::AddCurrentPlaylist): {
+        case(TrackAction::AddCurrentPlaylist):
             p->addToCurrentPlaylist();
             break;
-        }
-        case(TrackAction::AddActivePlaylist): {
+        case(TrackAction::AddActivePlaylist):
             p->addToActivePlaylist();
             break;
-        }
         case(TrackAction::Play): {
             if(hasTracks()) {
                 if(auto* playlist = p->playlistController->currentPlaylist()) {

@@ -276,25 +276,21 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             const QString& name = item->column(col);
             return !name.isEmpty() ? name : QStringLiteral("?");
         }
-        case(FilterItem::Tracks): {
+        case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());
-        }
-        case(Qt::SizeHintRole): {
+        case(Qt::SizeHintRole):
             return QSize{0, p->rowHeight};
-        }
-        case(Qt::FontRole): {
+        case(Qt::FontRole):
             return p->font;
-        }
-        case(Qt::ForegroundRole): {
+        case(Qt::ForegroundRole):
             return p->colour;
-        }
-        case(Qt::TextAlignmentRole): {
+        case(Qt::TextAlignmentRole):
             return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(col));
-        }
-        default: {
-            return {};
-        }
+        default:
+            break;
     }
+
+    return {};
 }
 
 bool FilterModel::setData(const QModelIndex& index, const QVariant& value, int role)

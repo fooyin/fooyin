@@ -237,6 +237,7 @@ QVariant ShortcutsModel::headerData(int section, Qt::Orientation orientation, in
         default:
             break;
     }
+
     return {};
 }
 
@@ -266,12 +267,10 @@ QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
     }
 
     switch(index.column()) {
-        case(0): {
+        case(0):
             return !item->isCategory() ? item->command()->description() : item->title();
-        }
-        case(1): {
+        case(1):
             return item->isCategory() ? item->title() : item->command()->id().name();
-        }
         case(2): {
             if(item->isCategory()) {
                 return {};
@@ -279,8 +278,10 @@ QVariant ShortcutsModel::data(const QModelIndex& index, int role) const
             return item->shortcut();
         }
         default:
-            return {};
+            break;
     }
+
+    return {};
 }
 
 int ShortcutsModel::columnCount(const QModelIndex& /*parent*/) const
