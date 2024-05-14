@@ -144,8 +144,9 @@ void Application::restart()
     QMetaObject::invokeMethod(
         QCoreApplication::instance(),
         []() {
+            const QString appPath = QCoreApplication::applicationFilePath();
             QCoreApplication::quit();
-            QProcess::startDetached(QCoreApplication::applicationFilePath(), {QStringLiteral("-s")});
+            QProcess::startDetached(appPath, {QStringLiteral("-s")});
         },
         Qt::QueuedConnection);
 }
