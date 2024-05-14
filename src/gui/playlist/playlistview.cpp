@@ -2378,6 +2378,16 @@ void PlaylistView::startDrag(Qt::DropActions supportedActions)
 void PlaylistView::verticalScrollbarValueChanged(int value)
 {
     QAbstractItemView::verticalScrollbarValueChanged(value);
+
+    if(state() == QAbstractItemView::DraggingState) {
+        p->setHoverIndex({});
+        return;
+    }
+
+    const QPoint pos = viewport()->mapFromGlobal(QCursor::pos());
+    if(viewport()->rect().contains(pos)) {
+        p->setHoverIndex(indexAt(pos));
+    }
 }
 
 QModelIndex PlaylistView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers /*modifiers*/)
