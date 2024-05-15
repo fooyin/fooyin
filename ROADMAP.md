@@ -17,6 +17,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * Integrate Last.fm for scrobbling
 * Integrate Discogs for metadata searching
 * Internet radio support
+* Archive support (Adding to library, playback)
 
 ## Enhancements
 * ~~Support custom tags within scripts~~
