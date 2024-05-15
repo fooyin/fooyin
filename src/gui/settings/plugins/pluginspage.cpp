@@ -110,6 +110,10 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
 
     m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    const int sections = m_pluginList->horizontalHeader()->count();
+    for(int i{1}; i < sections; ++i) {
+        m_pluginList->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    }
 }
 
 void PluginPageWidget::load() { }
