@@ -22,11 +22,13 @@
 #include "internalguisettings.h"
 #include "playlistcontroller.h"
 
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 #include <utils/widgets/editabletabbar.h>
 
 #include <QContextMenuEvent>
@@ -62,6 +64,11 @@ struct PlaylistTabs::Private
 
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
+
+    QIcon playIcon{Utils::iconFromTheme(Constants::Icons::Play)};
+    QIcon pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)};
+
+    Id lastActivePlaylist;
 
     Private(PlaylistTabs* self_, PlaylistController* playlistController_, SettingsManager* settings_)
         : self{self_}
@@ -125,6 +132,59 @@ struct PlaylistTabs::Private
         }
     }
 
+    void updateTabIcon(const int i, PlayState state) const
+    {
+        if(state == PlayState::Playing) {
+            tabs->setTabIcon(i, playIcon);
+        }
+        else if(state == PlayState::Paused) {
+            tabs->setTabIcon(i, pauseIcon);
+        }
+        else {
+            tabs->setTabIcon(i, {});
+        }
+    }
+
+    void activatePlaylistChanged(const Playlist* playlist)
+    {
+        if(!playlist) {
+            return;
+        }
+
+        const int count = tabs->count();
+        const Id id     = playlist->id();
+
+        for(int i{0}; i < count; ++i) {
+            const Id tabId = tabs->tabData(i).value<Id>();
+
+            if(tabId == id) {
+                updateTabIcon(i, playlistController->playState());
+            }
+            else if(lastActivePlaylist.isValid() && tabId == lastActivePlaylist) {
+                updateTabIcon(i, PlayState::Stopped);
+            }
+        }
+
+        lastActivePlaylist = id;
+    }
+
+    void playStateChanged(PlayState state) const
+    {
+        if(!lastActivePlaylist.isValid()) {
+            return;
+        }
+
+        const int count = tabs->count();
+
+        for(int i{0}; i < count; ++i) {
+            const Id tabId = tabs->tabData(i).value<Id>();
+
+            if(tabId == lastActivePlaylist) {
+                updateTabIcon(i, state);
+            }
+        }
+    }
+
     void playlistRenamed(const Playlist* playlist) const
     {
         if(!playlist) {
@@ -168,6 +228,10 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
     QObject::connect(
         p->playlistController, &PlaylistController::currentPlaylistChanged, this,
         [this](const Playlist* /*prevPlaylist*/, const Playlist* playlist) { p->playlistChanged(playlist); });
+    QObject::connect(p->playlistController->playerController(), &PlayerController::playStateChanged, this,
+                     [this](PlayState state) { p->playStateChanged(state); });
+    QObject::connect(p->playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+                     [this](const Playlist* playlist) { p->activatePlaylistChanged(playlist); });
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistAdded, this, &PlaylistTabs::addPlaylist);
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRemoved, this, &PlaylistTabs::removePlaylist);
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistRenamed, this,
