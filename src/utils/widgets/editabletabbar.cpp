@@ -23,6 +23,9 @@
 #include <utils/utils.h>
 #include <utils/widgets/popuplineedit.h>
 
+#include <QIcon>
+#include <QMouseEvent>
+
 namespace Fooyin {
 EditableTabBar::EditableTabBar(QWidget* parent)
     : QTabBar{parent}
