@@ -238,8 +238,11 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     auto* createPlaylist = new QAction(QStringLiteral("Add New Playlist"), menu);
-    QObject::connect(createPlaylist, &QAction::triggered, this,
-                     [this]() { p->playlistHandler->createEmptyPlaylist(); });
+    QObject::connect(createPlaylist, &QAction::triggered, this, [this]() {
+        if(auto* playlist = p->playlistHandler->createEmptyPlaylist()) {
+            p->playlistController->changeCurrentPlaylist(playlist);
+        }
+    });
     menu->addAction(createPlaylist);
 
     const QPoint point = event->pos();
