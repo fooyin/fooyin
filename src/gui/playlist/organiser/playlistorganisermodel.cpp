@@ -19,11 +19,16 @@
 
 #include "playlistorganisermodel.h"
 
+#include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <utils/utils.h>
 
+#include <QApplication>
 #include <QIODevice>
+#include <QIcon>
 #include <QMimeData>
+#include <QPalette>
 
 #include <stack>
 
@@ -109,13 +114,21 @@ struct PlaylistOrganiserModel::Private
     PlaylistOrganiserModel* self;
 
     PlaylistHandler* playlistHandler;
+    PlayerController* playerController;
 
     std::unordered_map<QString, PlaylistOrganiserItem> nodes;
+    QColor playingColour{QApplication::palette().highlight().color()};
+    QIcon playIcon{Utils::iconFromTheme(Constants::Icons::Play)};
+    QIcon pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)};
 
-    explicit Private(PlaylistOrganiserModel* self_, PlaylistHandler* playlistHandler_)
+    explicit Private(PlaylistOrganiserModel* self_, PlaylistHandler* playlistHandler_,
+                     PlayerController* playerController_)
         : self{self_}
         , playlistHandler{playlistHandler_}
-    { }
+        , playerController{playerController_}
+    {
+        playingColour.setAlpha(90);
+    }
 
     QByteArray saveIndexes(const QModelIndexList& indexes) const
     {
@@ -215,9 +228,14 @@ struct PlaylistOrganiserModel::Private
     }
 };
 
-PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler)
-    : p{std::make_unique<Private>(this, playlistHandler)}
-{ }
+PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController)
+    : p{std::make_unique<Private>(this, playlistHandler, playerController)}
+{
+    QObject::connect(playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+                     [this]() { emit dataChanged({}, {}, {Qt::BackgroundRole}); });
+    QObject::connect(playerController, &PlayerController::playStateChanged, this,
+                     [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
+}
 
 PlaylistOrganiserModel::~PlaylistOrganiserModel() = default;
 
@@ -437,11 +455,6 @@ bool PlaylistOrganiserModel::hasChildren(const QModelIndex& parent) const
 
 QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole && role != PlaylistOrganiserItem::ItemType
-       && role != PlaylistOrganiserItem::PlaylistData) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -449,22 +462,44 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
     auto* item      = itemForIndex(index);
     const auto type = item->type();
 
-    if(role == PlaylistOrganiserItem::ItemType) {
-        return QVariant::fromValue(item->type());
-    }
+    const bool currentIsActive = type == PlaylistOrganiserItem::PlaylistItem && p->playlistHandler->activePlaylist()
+                              && item->playlist()->id() == p->playlistHandler->activePlaylist()->id();
 
-    if(role == PlaylistOrganiserItem::PlaylistData) {
-        return QVariant::fromValue(item->playlist());
-    }
-
-    if(type == PlaylistOrganiserItem::PlaylistItem) {
-        return item->title();
-    }
-    if(type == PlaylistOrganiserItem::GroupItem) {
-        if(role == Qt::DisplayRole) {
-            return QStringLiteral("%1 [%2]").arg(item->title()).arg(item->childCount());
+    switch(role) {
+        case(Qt::DisplayRole):
+            if(type == PlaylistOrganiserItem::PlaylistItem) {
+                return item->title();
+            }
+            if(type == PlaylistOrganiserItem::GroupItem) {
+                return QStringLiteral("%1 [%2]").arg(item->title()).arg(item->childCount());
+            }
+            break;
+        case(Qt::EditRole):
+            return item->title();
+        case(Qt::BackgroundRole): {
+            if(currentIsActive) {
+                return p->playingColour;
+            }
+            break;
         }
-        return item->title();
+        case(Qt::DecorationRole):
+            if(currentIsActive) {
+                const auto state = p->playerController->playState();
+                if(state == PlayState::Playing) {
+                    return p->playIcon;
+                }
+                else if(state == PlayState::Paused) {
+                    return p->pauseIcon;
+                }
+            }
+            break;
+
+        case(PlaylistOrganiserItem::ItemType):
+            return QVariant::fromValue(item->type());
+        case(PlaylistOrganiserItem::PlaylistData):
+            return QVariant::fromValue(item->playlist());
+        default:
+            break;
     }
 
     return {};

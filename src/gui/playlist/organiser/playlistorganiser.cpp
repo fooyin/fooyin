@@ -137,7 +137,8 @@ struct PlaylistOrganiser::Private
         , settings{settings_}
         , playlistController{playlistController_}
         , organiserTree{new QTreeView(self)}
-        , model{new PlaylistOrganiserModel(playlistController->playlistHandler())}
+        , model{new PlaylistOrganiserModel(playlistController->playlistHandler(),
+                                           playlistController->playerController())}
         , context{self, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())}}
         , removePlaylist{new QAction(tr("Remove"))}
         , removeCmd{actionManager->registerAction(removePlaylist, Constants::Actions::Remove, context.context())}

@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class Playlist;
+class PlayerController;
 class PlaylistHandler;
 
 class PlaylistOrganiserModel : public TreeModel<PlaylistOrganiserItem>
@@ -32,7 +33,7 @@ class PlaylistOrganiserModel : public TreeModel<PlaylistOrganiserItem>
     Q_OBJECT
 
 public:
-    explicit PlaylistOrganiserModel(PlaylistHandler* playlistManager);
+    explicit PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController);
     ~PlaylistOrganiserModel() override;
 
     void populate();
@@ -49,16 +50,16 @@ public:
 
     QModelIndex indexForPlaylist(Playlist* playlist);
 
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
-    bool hasChildren(const QModelIndex& parent) const override;
-    QVariant data(const QModelIndex& index, int role) const override;
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
+    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                        const QModelIndex& parent) const override;
-    Qt::DropActions supportedDropActions() const override;
-    Qt::DropActions supportedDragActions() const override;
+    [[nodiscard]] Qt::DropActions supportedDropActions() const override;
+    [[nodiscard]] Qt::DropActions supportedDragActions() const override;
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
     bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                       const QModelIndex& parent) override;
