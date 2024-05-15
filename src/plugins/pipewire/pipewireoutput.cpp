@@ -97,6 +97,8 @@ void updateChannelMap(spa_audio_info_raw* info, int channels)
 namespace Fooyin::Pipewire {
 struct PipeWireOutput::Private
 {
+    PipeWireOutput* self;
+
     QString device;
     float volume{1.0};
     bool pendingVolumeChange{false};
@@ -111,6 +113,10 @@ struct PipeWireOutput::Private
     std::unique_ptr<PipewireCore> core;
     std::unique_ptr<PipewireStream> stream;
     std::unique_ptr<PipewireRegistry> registry;
+
+    Private(PipeWireOutput* self_)
+        : self{self_}
+    { }
 
     void uninit()
     {
@@ -264,8 +270,8 @@ struct PipeWireOutput::Private
     {
         auto* self = static_cast<PipeWireOutput::Private*>(userdata);
 
-        if(state == PW_STREAM_STATE_UNCONNECTED || state == PW_STREAM_STATE_PAUSED
-           || state == PW_STREAM_STATE_STREAMING) {
+        if(state == PW_STREAM_STATE_UNCONNECTED) { }
+        else if(state == PW_STREAM_STATE_PAUSED || state == PW_STREAM_STATE_STREAMING) {
             self->loop->signal(false);
         }
     }
@@ -280,7 +286,7 @@ struct PipeWireOutput::Private
 };
 
 PipeWireOutput::PipeWireOutput()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<Private>(this)}
 { }
 
 PipeWireOutput::~PipeWireOutput() = default;

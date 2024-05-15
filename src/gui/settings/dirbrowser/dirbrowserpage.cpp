@@ -113,10 +113,10 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     displayOptionsLayout->addWidget(m_showLocation, 3, 0);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(clickBehaviour, 0, 0, 1, 2);
-    mainLayout->addWidget(browserMode, 1, 0, 1, 1);
-    mainLayout->addWidget(displayOptions, 1, 1, 1, 2);
-    mainLayout->setColumnStretch(2, 1);
+    mainLayout->addWidget(clickBehaviour, 0, 0);
+    mainLayout->addWidget(browserMode, 1, 0);
+    mainLayout->addWidget(displayOptions, 2, 0);
+    // mainLayout->setColumnStretch(2, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     using ActionIndexMap = std::map<int, int>;

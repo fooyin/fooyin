@@ -169,7 +169,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     mainLayout->addWidget(clickBehaviour, 1, 0);
     mainLayout->addWidget(appearanceGroup, 1, 1, 2, 1);
     mainLayout->addWidget(selectionPlaylist, 2, 0);
-    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setColumnStretch(1, 1);
 }
 
 void LibraryTreePageWidget::load()

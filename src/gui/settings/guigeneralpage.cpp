@@ -86,11 +86,6 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
 {
-    auto* splitterBox       = new QGroupBox(tr("Splitters"));
-    auto* splitterBoxLayout = new QGridLayout(splitterBox);
-    splitterBoxLayout->addWidget(m_splitterHandles, 0, 0, 1, 2);
-    splitterBoxLayout->setColumnStretch(2, 1);
-
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
     auto* quickSetup      = new QPushButton(tr("Quick Setup"), this);
@@ -110,7 +105,15 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     setupBoxLayout->addWidget(importLayoutBtn);
     setupBoxLayout->addWidget(exportLayoutBtn);
 
-    auto* layoutMarginLabel = new QLabel(tr("Root layout margin") + QStringLiteral(":"), this);
+    auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
+    auto* layoutGroupLayout = new QGridLayout(layoutGroup);
+
+    auto* layoutMarginLabel = new QLabel(tr("Root margin") + QStringLiteral(":"), this);
+
+    layoutGroupLayout->addWidget(m_splitterHandles, 0, 0, 1, 3);
+    layoutGroupLayout->addWidget(layoutMarginLabel, 1, 0);
+    layoutGroupLayout->addWidget(m_editableLayoutMargin, 1, 1);
+    layoutGroupLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setMinimum(0);
     m_editableLayoutMargin->setMaximum(20);
@@ -118,10 +121,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
-    mainLayout->addWidget(splitterBox, 1, 0, 1, 2);
-    mainLayout->addWidget(iconThemeBox, 2, 0, 1, 2);
-    mainLayout->addWidget(layoutMarginLabel, 3, 0);
-    mainLayout->addWidget(m_editableLayoutMargin, 3, 1, Qt::AlignLeft);
+    mainLayout->addWidget(iconThemeBox, 1, 0, 1, 2);
+    mainLayout->addWidget(layoutGroup, 2, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);

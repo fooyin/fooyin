@@ -102,12 +102,13 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     paddingLayout->addWidget(m_imagePadding, 0, 1);
     paddingLayout->addWidget(paddingTopLabel, 1, 0);
     paddingLayout->addWidget(m_imagePaddingTop, 1, 1);
+    paddingLayout->setColumnStretch(2, 1);
 
     int row{0};
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
-    appearanceLayout->addWidget(padding, row, 0);
+    appearanceLayout->addWidget(padding, row, 0, 1, 3);
     appearanceLayout->setColumnStretch(2, 1);
     appearanceLayout->setRowStretch(appearanceLayout->rowCount(), 1);
 
