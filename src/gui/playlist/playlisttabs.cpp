@@ -57,8 +57,6 @@ struct PlaylistTabs::Private
     EditableTabBar* tabs;
     QPointer<FyWidget> tabsWidget;
 
-    int currentTab{-1};
-
     QBasicTimer hoverTimer;
     int currentHoverIndex{-1};
 
@@ -78,14 +76,16 @@ struct PlaylistTabs::Private
         tabs->setExpanding(false);
     }
 
-    void tabChanged(int index)
+    void tabChanged(int index) const
     {
-        if(std::exchange(currentTab, index) != index) {
-            tabs->closeEditor();
-            const Id id = tabs->tabData(index).value<Id>();
-            if(id.isValid()) {
-                playlistController->changeCurrentPlaylist(id);
-            }
+        const Id id = tabs->tabData(index).value<Id>();
+        if(id == playlistController->currentPlaylistId()) {
+            return;
+        }
+
+        tabs->closeEditor();
+        if(id.isValid()) {
+            playlistController->changeCurrentPlaylist(id);
         }
     }
 
@@ -97,7 +97,7 @@ struct PlaylistTabs::Private
         }
     }
 
-    void playlistChanged(const Playlist* playlist)
+    void playlistChanged(const Playlist* playlist) const
     {
         if(!playlist) {
             return;
@@ -109,7 +109,6 @@ struct PlaylistTabs::Private
         for(int i{0}; i < count; ++i) {
             if(tabs->tabData(i).value<Id>() == id) {
                 tabs->setCurrentIndex(i);
-                currentTab = i;
             }
         }
     }
