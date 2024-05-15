@@ -152,6 +152,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     cursorGroupLayout->addWidget(m_showCursor, 0, 0, 1, 2);
     cursorGroupLayout->addWidget(cursorWidthLabel, 1, 0);
     cursorGroupLayout->addWidget(m_cursorWidth, 1, 1);
+    cursorGroupLayout->setColumnStretch(2, 1);
 
     auto* scaleGroup       = new QGroupBox(tr("Scale"), this);
     auto* scaleGroupLayout = new QGridLayout(scaleGroup);
@@ -161,6 +162,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     scaleGroupLayout->addWidget(m_channelScale, row++, 1);
     scaleGroupLayout->addWidget(maxScaleLabel, row, 0);
     scaleGroupLayout->addWidget(m_maxScale, row++, 1);
+    scaleGroupLayout->setColumnStretch(2, 1);
 
     auto* dimensionGroup       = new QGroupBox(tr("Dimension"), this);
     auto* dimensionGroupLayout = new QGridLayout(dimensionGroup);
@@ -172,6 +174,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     dimensionGroupLayout->addWidget(m_barGap, row++, 1);
     dimensionGroupLayout->addWidget(centreGapLabel, row, 0);
     dimensionGroupLayout->addWidget(m_centreGap, row++, 1);
+    dimensionGroupLayout->setColumnStretch(2, 1);
 
     auto* cacheGroup       = new QGroupBox(tr("Cache"), this);
     auto* cacheGroupLayout = new QGridLayout(cacheGroup);
@@ -185,19 +188,18 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
         updateCacheSize();
     });
 
-    cacheGroupLayout->addWidget(m_cacheSizeLabel);
-    cacheGroupLayout->addWidget(clearCacheButton);
+    cacheGroupLayout->addWidget(m_cacheSizeLabel, 0, 0);
+    cacheGroupLayout->addWidget(clearCacheButton, 1, 0);
+    cacheGroupLayout->setColumnStretch(1, 1);
 
     row = 0;
     layout->addWidget(modeGroup, row, 0);
     layout->addWidget(downmixGroupBox, row++, 1);
     layout->addWidget(dimensionGroup, row, 0);
     layout->addWidget(scaleGroup, row++, 1);
-    layout->addWidget(cursorGroup, row++, 0);
-    layout->addWidget(cacheGroup, row, 0);
-
+    layout->addWidget(cursorGroup, row, 0);
+    layout->addWidget(cacheGroup, row++, 1);
     layout->setRowStretch(layout->rowCount(), 1);
-    layout->setColumnStretch(3, 1);
 }
 
 void WaveBarSettingsPageWidget::load()
