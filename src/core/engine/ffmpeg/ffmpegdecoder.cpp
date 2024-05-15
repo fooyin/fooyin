@@ -326,7 +326,7 @@ struct FFmpegDecoder::Private
 
     void seek(uint64_t pos) const
     {
-        if(!isDecoding || !isSeekable || hasError()) {
+        if(!context || !isSeekable || hasError()) {
             return;
         }
 

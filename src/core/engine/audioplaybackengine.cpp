@@ -229,6 +229,9 @@ void AudioPlaybackEngine::seek(uint64_t pos)
         p->bufferTimer->start();
         p->renderer->start();
     }
+    else {
+        p->updatePosition();
+    }
 }
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
