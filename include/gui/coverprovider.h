@@ -60,6 +60,13 @@ public:
     void setCoverKey(const QString& name);
     /** Restores default behaviour of using a track's album hash as the key. */
     void resetCoverKey();
+    /*!
+     * If @c true, limits thumbnails to the current thumbnail size setting.
+     * @note this is enabled by default.
+     */
+    void setLimitThumbSize(bool enabled);
+    /** If @c true, overrides the default behaviour of only storing thumbnails for embedded artwork. */
+    void setAlwaysStoreThumbnail(bool enabled);
 
     /*!
      * This will return the picture of @p type for the @p track if it exists in the cache.

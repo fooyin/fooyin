@@ -75,6 +75,8 @@ struct CoverProvider::Private
 
     bool usePlacerholder{true};
     QString coverKey;
+    bool storeThumbnail{false};
+    bool limitThumbSize{true};
     QPixmapCache::Key noCoverKey;
     QSize size;
     std::set<QString> pendingCovers;
@@ -175,57 +177,57 @@ struct CoverProvider::Private
 
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
-        const QSize coverSize = size;
+        auto loaderResult
+            = Utils::asyncExec([this, coverSize = size, thumbOverride = storeThumbnail, limit = limitThumbSize, key,
+                                track, type, thumbnail]() -> CoverLoaderResult {
+                  QImage image;
 
-        Utils::asyncExec([this, coverSize, key, track, type, thumbnail]() -> CoverLoaderResult {
-            QImage image;
+                  bool isThumb{thumbnail};
+                  const QString cachePath = coverThumbnailPath(key);
 
-            bool isThumb{thumbnail};
-            const QString cachePath = coverThumbnailPath(key);
+                  if(isThumb && QFileInfo::exists(cachePath)) {
+                      image.load(cachePath);
+                  }
 
-            if(isThumb) {
-                if(QFileInfo::exists(cachePath)) {
-                    image.load(cachePath);
-                }
-            }
+                  if(image.isNull()) {
+                      const QString dirPath = findDirectoryCover(track, type);
+                      if(!dirPath.isEmpty()) {
+                          image.load(dirPath);
+                          if(!image.isNull() && isThumb && !thumbOverride) {
+                              // Only store thumbnails in disk cache for embedded artwork (unless overriden)
+                              isThumb = false;
+                              image   = Utils::scaleImage(image, coverSize);
+                          }
+                      }
+                  }
 
-            if(image.isNull()) {
-                const QString dirPath = findDirectoryCover(track, type);
-                if(!dirPath.isEmpty()) {
-                    image.load(dirPath);
-                    if(!image.isNull() && isThumb) {
-                        // Only store thumbnails in disk cache for embedded artwork
-                        isThumb = false;
-                        image   = Utils::scaleImage(image, coverSize);
-                    }
-                }
-            }
+                  if(image.isNull()) {
+                      const QByteArray coverData = Tagging::readCover(track, type);
+                      if(!coverData.isEmpty()) {
+                          image.loadFromData(coverData);
+                      }
+                  }
 
-            if(image.isNull()) {
-                const QByteArray coverData = Tagging::readCover(track, type);
-                if(!coverData.isEmpty()) {
-                    image.loadFromData(coverData);
-                }
-            }
+                  if(!image.isNull()) {
+                      image = Utils::scaleImage(image, MaxSize);
+                  }
 
-            if(!image.isNull()) {
-                image = Utils::scaleImage(image, MaxSize);
-            }
+                  if(isThumb) {
+                      if(image.isNull()) {
+                          QFile::remove(cachePath);
+                      }
+                      else if(!QFileInfo::exists(cachePath)) {
+                          if(limit) {
+                              image = Utils::scaleImage(image, coverSize);
+                          }
+                          saveThumbnail(image, key);
+                      }
+                  }
 
-            if(isThumb) {
-                if(image.isNull()) {
-                    QFile::remove(cachePath);
-                }
-                else if(!QFileInfo::exists(cachePath)) {
-                    if(coverKey.isEmpty()) {
-                        image = Utils::scaleImage(image, coverSize);
-                    }
-                    saveThumbnail(image, key);
-                }
-            }
+                  return {image, thumbnail};
+              });
 
-            return {image, thumbnail};
-        }).then(self, [this, key, track](const CoverLoaderResult& result) {
+        loaderResult.then(self, [this, key, track](const CoverLoaderResult& result) {
             if(result.cover.isNull()) {
                 return;
             }
@@ -260,6 +262,16 @@ void CoverProvider::setCoverKey(const QString& name)
 void CoverProvider::resetCoverKey()
 {
     p->coverKey.clear();
+}
+
+void CoverProvider::setLimitThumbSize(bool enabled)
+{
+    p->limitThumbSize = enabled;
+}
+
+void CoverProvider::setAlwaysStoreThumbnail(bool enabled)
+{
+    p->storeThumbnail = enabled;
 }
 
 CoverProvider::~CoverProvider() = default;

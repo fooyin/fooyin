@@ -92,6 +92,8 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
     m_coverProvider    = new CoverProvider(m_settings, this);
 
     m_coverProvider->setUsePlaceholder(false);
+    m_coverProvider->setAlwaysStoreThumbnail(true);
+    m_coverProvider->setLimitThumbSize(false);
     m_coverProvider->setCoverKey(QStringLiteral("MPRISCOVER"));
 
     QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
