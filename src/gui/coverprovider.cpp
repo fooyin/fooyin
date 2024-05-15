@@ -228,6 +228,8 @@ struct CoverProvider::Private
               });
 
         loaderResult.then(self, [this, key, track](const CoverLoaderResult& result) {
+            pendingCovers.erase(key);
+
             if(result.cover.isNull()) {
                 return;
             }
@@ -238,7 +240,6 @@ struct CoverProvider::Private
                 qDebug() << "Failed to cache cover for:" << track.filepath();
             }
 
-            pendingCovers.erase(key);
             emit self->coverAdded(track);
         });
     }
