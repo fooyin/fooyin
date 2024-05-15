@@ -237,7 +237,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* createPlaylist = new QAction(QStringLiteral("Add New Playlist"), menu);
+    auto* createPlaylist = new QAction(tr("Add New Playlist"), menu);
     QObject::connect(createPlaylist, &QAction::triggered, this, [this]() {
         if(auto* playlist = p->playlistHandler->createEmptyPlaylist()) {
             p->playlistController->changeCurrentPlaylist(playlist);
@@ -251,10 +251,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         const Id id = p->tabs->tabData(index).value<Id>();
 
-        auto* renamePlAction = new QAction(QStringLiteral("Rename Playlist"), menu);
+        auto* renamePlAction = new QAction(tr("Rename Playlist"), menu);
         QObject::connect(renamePlAction, &QAction::triggered, p->tabs, &EditableTabBar::showEditor);
 
-        auto* removePlAction = new QAction(QStringLiteral("Remove Playlist"), menu);
+        auto* removePlAction = new QAction(tr("Remove Playlist"), menu);
         QObject::connect(removePlAction, &QAction::triggered, this,
                          [this, id]() { p->playlistHandler->removePlaylist(id); });
 
@@ -269,12 +269,12 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         const Id id = p->tabs->tabData(index).value<Id>();
 
-        auto* moveLeft = new QAction(QStringLiteral("Move Left"), menu);
+        auto* moveLeft = new QAction(tr("Move Left"), menu);
         moveLeft->setEnabled(p->tabs->addButtonEnabled() ? index - 1 > 0 : index > 0);
         QObject::connect(moveLeft, &QAction::triggered, p->tabs,
                          [this, index]() { p->tabs->moveTab(index, index - 1); });
 
-        auto* moveRight = new QAction(QStringLiteral("Move Right"), menu);
+        auto* moveRight = new QAction(tr("Move Right"), menu);
         moveRight->setEnabled(index < p->tabs->count() - 1);
         QObject::connect(moveRight, &QAction::triggered, p->tabs,
                          [this, index]() { p->tabs->moveTab(index, index + 1); });
