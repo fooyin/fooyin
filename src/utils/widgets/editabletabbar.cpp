@@ -19,14 +19,41 @@
 
 #include <utils/widgets/editabletabbar.h>
 
+#include <gui/guiconstants.h>
+#include <utils/utils.h>
 #include <utils/widgets/popuplineedit.h>
 
 namespace Fooyin {
 EditableTabBar::EditableTabBar(QWidget* parent)
     : QTabBar{parent}
     , m_lineEdit{nullptr}
+    , m_showAddButton{false}
+    , m_addButtonAdded{false}
 {
     setMovable(true);
+}
+
+bool EditableTabBar::addButtonEnabled() const
+{
+    return m_showAddButton;
+}
+
+void EditableTabBar::setAddButtonEnabled(bool enabled)
+{
+    if(std::exchange(m_showAddButton, enabled) == enabled) {
+        return;
+    }
+
+    if(m_showAddButton) {
+        m_addButtonAdded = true;
+        insertTab(0, Utils::iconFromTheme(Constants::Icons::Add), QStringLiteral(""));
+        setMovable(false);
+    }
+    else if(m_addButtonAdded) {
+        m_addButtonAdded = false;
+        removeTab(0);
+        setMovable(true);
+    }
 }
 
 void EditableTabBar::showEditor()
@@ -64,8 +91,42 @@ void EditableTabBar::closeEditor()
 
 void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 {
+    if(m_showAddButton) {
+        const QPoint pos = event->position().toPoint();
+
+        if(isAddButtonTab(pos)) {
+            return;
+        }
+    }
+
     showEditor();
     QTabBar::mouseDoubleClickEvent(event);
+}
+
+void EditableTabBar::mousePressEvent(QMouseEvent* event)
+{
+    if(m_showAddButton) {
+        const QPoint pos = event->position().toPoint();
+
+        if(isAddButtonTab(pos)) {
+            emit addButtonClicked();
+            return;
+        }
+    }
+
+    QTabBar::mousePressEvent(event);
+}
+
+bool EditableTabBar::isAddButtonTab(const QPoint& pos)
+{
+    if(tabRect(currentIndex()).contains(pos)) {
+        return currentIndex() == 0;
+    }
+    if(isTabEnabled(0) && tabRect(0).contains(pos)) {
+        return true;
+    }
+
+    return false;
 }
 } // namespace Fooyin
 

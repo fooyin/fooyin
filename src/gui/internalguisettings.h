@@ -110,7 +110,8 @@ enum GuiInternalSettings : uint32_t
     ArtworkThumbnailSize    = 42 | Type::Int,
     LibTreeSendPlayback     = 43 | Type::Bool,
     DirBrowserSendPlayback  = 44 | Type::Bool,
-    EditableLayoutMargin    = 45 | Type::Int
+    EditableLayoutMargin    = 45 | Type::Int,
+    PlaylistTabsAddButton   = 46 | Type::Bool
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

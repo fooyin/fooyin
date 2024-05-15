@@ -19,6 +19,7 @@
 
 #include "playlisttabs.h"
 
+#include "internalguisettings.h"
 #include "playlistcontroller.h"
 
 #include <core/playlist/playlisthandler.h>
@@ -48,6 +49,8 @@ using namespace std::chrono_literals;
 namespace Fooyin {
 struct PlaylistTabs::Private
 {
+    PlaylistTabs* self;
+
     PlaylistController* playlistController;
     PlaylistHandler* playlistHandler;
     TrackSelectionController* selectionController;
@@ -61,19 +64,25 @@ struct PlaylistTabs::Private
     int currentHoverIndex{-1};
 
     Private(PlaylistTabs* self_, PlaylistController* playlistController_, SettingsManager* settings_)
-        : playlistController{playlistController_}
+        : self{self_}
+        , playlistController{playlistController_}
         , playlistHandler{playlistController->playlistHandler()}
         , selectionController{playlistController->selectionController()}
         , settings{settings_}
         , layout{new QVBoxLayout(self_)}
         , tabs{new EditableTabBar(self_)}
     {
-        layout->addWidget(tabs);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setAlignment(Qt::AlignTop);
 
         tabs->setMovable(true);
         tabs->setExpanding(false);
+        tabs->setAddButtonEnabled(settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
+
+        layout->addWidget(tabs);
+
+        settings->subscribe<Settings::Gui::Internal::PlaylistTabsAddButton>(
+            self, [this](bool enabled) { tabs->setAddButtonEnabled(enabled); });
     }
 
     void tabChanged(int index) const
@@ -93,6 +102,9 @@ struct PlaylistTabs::Private
     {
         const Id id = tabs->tabData(to).value<Id>();
         if(id.isValid()) {
+            if(tabs->addButtonEnabled()) {
+                --to;
+            }
             playlistController->changePlaylistIndex(id, to);
         }
     }
@@ -140,6 +152,11 @@ PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* p
 
     setupTabs();
 
+    QObject::connect(p->tabs, &EditableTabBar::addButtonClicked, this, [this]() {
+        if(auto* playlist = p->playlistHandler->createEmptyPlaylist()) {
+            p->playlistController->changeCurrentPlaylist(playlist);
+        }
+    });
     QObject::connect(p->tabs, &EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
         const Id id = p->tabs->tabData(index).value<Id>();
         p->playlistHandler->renamePlaylist(id, text);
@@ -227,6 +244,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
     const QPoint point = event->pos();
     const int index    = p->tabs->tabAt(point);
+
     if(index >= 0) {
         const Id id = p->tabs->tabData(index).value<Id>();
 
@@ -240,7 +258,27 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         menu->addAction(renamePlAction);
         menu->addAction(removePlAction);
     }
+
     menu->addAction(createPlaylist);
+
+    if(index >= 0) {
+        menu->addSeparator();
+
+        const Id id = p->tabs->tabData(index).value<Id>();
+
+        auto* moveLeft = new QAction(QStringLiteral("Move Left"), menu);
+        moveLeft->setEnabled(p->tabs->addButtonEnabled() ? index - 1 > 0 : index > 0);
+        QObject::connect(moveLeft, &QAction::triggered, p->tabs,
+                         [this, index]() { p->tabs->moveTab(index, index - 1); });
+
+        auto* moveRight = new QAction(QStringLiteral("Move Right"), menu);
+        moveRight->setEnabled(index < p->tabs->count() - 1);
+        QObject::connect(moveRight, &QAction::triggered, p->tabs,
+                         [this, index]() { p->tabs->moveTab(index, index + 1); });
+
+        menu->addAction(moveLeft);
+        menu->addAction(moveRight);
+    }
 
     menu->popup(mapToGlobal(point));
 }

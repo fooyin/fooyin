@@ -54,6 +54,8 @@ private:
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
+    QCheckBox* m_tabsAddButton;
+
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
 };
@@ -66,6 +68,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show Header"), this)}
     , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
+    , m_tabsAddButton{new QCheckBox(tr("Show Add Button"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
 {
@@ -92,6 +95,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
+    auto* tabsGroup       = new QGroupBox(tr("Playlist Tabs"), this);
+    auto* tabsGroupLayout = new QGridLayout(tabsGroup);
+
     auto* padding       = new QGroupBox(tr("Image Padding"), this);
     auto* paddingLayout = new QGridLayout(padding);
 
@@ -112,8 +118,14 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     appearanceLayout->setColumnStretch(2, 1);
     appearanceLayout->setRowStretch(appearanceLayout->rowCount(), 1);
 
+    auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging."), this);
+
+    tabsGroupLayout->addWidget(m_tabsAddButton, 0, 0);
+    tabsGroupLayout->addWidget(addButtonLabel, 1, 0);
+
     layout->addWidget(behaviour, 0, 0);
     layout->addWidget(appearance, 1, 0);
+    layout->addWidget(tabsGroup, 2, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
 }
@@ -127,6 +139,9 @@ void PlaylistGeneralPageWidget::load()
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
+
+    m_tabsAddButton->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
+
     m_imagePadding->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePadding>());
     m_imagePaddingTop->setValue(m_settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>());
 }
@@ -140,6 +155,9 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
+
+    m_settings->set<Settings::Gui::Internal::PlaylistTabsAddButton>(m_tabsAddButton->isChecked());
+
     m_settings->set<Settings::Gui::Internal::PlaylistImagePadding>(m_imagePadding->value());
     m_settings->set<Settings::Gui::Internal::PlaylistImagePaddingTop>(m_imagePaddingTop->value());
 }
@@ -153,6 +171,9 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
+
+    m_settings->reset<Settings::Gui::Internal::PlaylistTabsAddButton>();
+
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePadding>();
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();
 }
