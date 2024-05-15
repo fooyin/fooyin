@@ -197,7 +197,7 @@ struct EditableLayout::Private
         , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
         , layoutHistory{new QUndoStack(self)}
     {
-        box->setContentsMargins(5, 5, 5, 5);
+        box->setContentsMargins(0, 0, 0, 0);
         box->addWidget(root);
 
         widgetProvider->setCommandStack(layoutHistory);
