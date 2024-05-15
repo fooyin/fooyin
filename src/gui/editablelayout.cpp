@@ -197,18 +197,25 @@ struct EditableLayout::Private
         , editingContext{new WidgetContext(self, Context{"Fooyin.LayoutEditing"}, self)}
         , layoutHistory{new QUndoStack(self)}
     {
-        box->setContentsMargins(5, 5, 5, 5);
+        updateMargins();
         box->addWidget(root);
 
         widgetProvider->setCommandStack(layoutHistory);
 
         settings->subscribe<Settings::Gui::LayoutEditing>(self, [this](bool enabled) { changeEditingState(enabled); });
+        settings->subscribe<Settings::Gui::Internal::EditableLayoutMargin>(self, [this]() { updateMargins(); });
     }
 
     void setupDefault() const
     {
         root->reset();
         settings->set<Settings::Gui::LayoutEditing>(true);
+    }
+
+    void updateMargins()
+    {
+        const int margin = settings->value<Settings::Gui::Internal::EditableLayoutMargin>();
+        box->setContentsMargins(margin, margin, margin, margin);
     }
 
     void changeEditingState(bool editing)

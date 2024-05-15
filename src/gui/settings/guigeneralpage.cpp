@@ -33,10 +33,12 @@
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QInputDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace Fooyin {
@@ -69,6 +71,7 @@ private:
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
     QCheckBox* m_splitterHandles;
+    QSpinBox* m_editableLayoutMargin;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -81,6 +84,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
     , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
+    , m_editableLayoutMargin{new QSpinBox(this)}
 {
     auto* splitterBox       = new QGroupBox(tr("Splitters"));
     auto* splitterBoxLayout = new QGridLayout(splitterBox);
@@ -106,10 +110,18 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     setupBoxLayout->addWidget(importLayoutBtn);
     setupBoxLayout->addWidget(exportLayoutBtn);
 
+    auto* layoutMarginLabel = new QLabel(tr("Root layout margin") + QStringLiteral(":"), this);
+
+    m_editableLayoutMargin->setMinimum(0);
+    m_editableLayoutMargin->setMaximum(20);
+    m_editableLayoutMargin->setSuffix(QStringLiteral("px"));
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
     mainLayout->addWidget(splitterBox, 1, 0, 1, 2);
     mainLayout->addWidget(iconThemeBox, 2, 0, 1, 2);
+    mainLayout->addWidget(layoutMarginLabel, 3, 0);
+    mainLayout->addWidget(m_editableLayoutMargin, 3, 1, Qt::AlignLeft);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -138,6 +150,8 @@ void GuiGeneralPageWidget::load()
             m_darkTheme->setChecked(true);
             break;
     }
+
+    m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
 }
 
 void GuiGeneralPageWidget::apply()
@@ -164,12 +178,14 @@ void GuiGeneralPageWidget::apply()
 
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
     m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<EditableLayoutMargin>(m_editableLayoutMargin->value());
 }
 
 void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<IconTheme>();
     m_settings->reset<SplitterHandles>();
+    m_settings->reset<EditableLayoutMargin>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

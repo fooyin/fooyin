@@ -115,5 +115,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::LibTreeSendPlayback>(true, QStringLiteral("LibraryTree/StartPlaybackOnSend"));
     m_settings->createSetting<Internal::DirBrowserSendPlayback>(true,
                                                                 QStringLiteral("DirectoryBrowser/StartPlaybackOnSend"));
+    m_settings->createSetting<Internal::EditableLayoutMargin>(0, QStringLiteral("Interface/EditableLayoutMargin"));
 }
 } // namespace Fooyin
