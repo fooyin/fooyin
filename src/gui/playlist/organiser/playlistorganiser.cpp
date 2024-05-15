@@ -204,8 +204,9 @@ struct PlaylistOrganiser::Private
         }
     }
 
-    void selectCurrentPlaylist(Playlist* playlist)
+    void selectCurrentPlaylist()
     {
+        auto* playlist = playlistController->currentPlaylist();
         if(!playlist) {
             return;
         }
@@ -281,12 +282,12 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, p->model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this,
-                     [this](Playlist* /*prevPlaylist*/, Playlist* playlist) {
-                         QMetaObject::invokeMethod(
-                             p->model, [this, playlist]() { p->selectCurrentPlaylist(playlist); },
-                             Qt::QueuedConnection);
-                     });
+    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this, [this]() {
+        QMetaObject::invokeMethod(
+            p->model, [this]() { p->selectCurrentPlaylist(); }, Qt::QueuedConnection);
+    });
+    QObject::connect(p->playlistController, &PlaylistController::playlistsLoaded, this,
+                     [this]() { p->selectCurrentPlaylist(); });
 
     if(p->model->restoreModel(p->settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
         const auto state = p->settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();
@@ -296,7 +297,8 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
     else {
         p->model->populate();
     }
-    p->selectCurrentPlaylist(p->playlistController->currentPlaylist());
+
+    p->selectCurrentPlaylist();
 }
 
 PlaylistOrganiser::~PlaylistOrganiser()
