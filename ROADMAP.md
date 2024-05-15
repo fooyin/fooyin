@@ -16,6 +16,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * Renaming/Copying/Moving files on disk
 * Integrate Last.fm for scrobbling
 * Integrate Discogs for metadata searching
+* Internet radio support
 
 ## Enhancements
 * ~~Support custom tags within scripts~~
