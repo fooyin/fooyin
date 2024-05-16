@@ -90,6 +90,8 @@ set(SOURCES
     menubar/viewmenu.h
     playlist/organiser/playlistorganiser.cpp
     playlist/organiser/playlistorganiser.h
+    playlist/organiser/playlistorganiserdelegate.cpp
+    playlist/organiser/playlistorganiserdelegate.h
     playlist/organiser/playlistorganiseritem.cpp
     playlist/organiser/playlistorganiseritem.h
     playlist/organiser/playlistorganisermodel.cpp

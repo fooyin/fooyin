@@ -20,6 +20,7 @@
 #include "playlistorganiser.h"
 
 #include "playlist/playlistcontroller.h"
+#include "playlistorganiserdelegate.h"
 #include "playlistorganisermodel.h"
 
 #include <core/playlist/playlisthandler.h>
@@ -161,6 +162,7 @@ struct PlaylistOrganiser::Private
         organiserTree->setAllColumnsShowFocus(true);
 
         organiserTree->setModel(model);
+        organiserTree->setItemDelegate(new PlaylistOrganiserDelegate(self));
 
         actionManager->addContextObject(&context);
 
