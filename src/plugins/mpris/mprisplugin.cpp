@@ -51,7 +51,8 @@ QString formatDateTime(uint64_t time)
         return {};
     }
 
-    return QDateTime::fromSecsSinceEpoch(static_cast<qint64>(time)).toString(Qt::ISODate);
+    const auto dateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
+    return dateTime.toString(Qt::ISODate);
 }
 } // namespace
 
