@@ -67,7 +67,7 @@ public:
     using ExtraTags = QMap<QString, QStringList>;
 
     Track();
-    explicit Track(QString filepath);
+    explicit Track(const QString& filepath);
     ~Track();
 
     Track(const Track& other);
