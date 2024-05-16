@@ -10,7 +10,7 @@
 
 * Artwork: Add configurable pixmap cache size
 * Artwork: Update cache for changed tracks
-* Artwork: Load image data asynchronously ([#75](https://github.com/ludouzi/pull/75))
+* Artwork: Load image data asynchronously ([#75](https://github.com/ludouzi/fooyin/pull/75))
 * Artwork: Add svg icon for the no cover/placeholder image
 * Layouts: Add setting to control root margin
 * Playlist: Add option to start playback on send
@@ -23,7 +23,7 @@
 * PlaylistOrganiser: Add status icon, background to active playlist
 * Settings: Improve layout/formatting of some pages
 * Scripting: Add playlist depth variable, functions to pad string left/right
-* Sorting: Use QCollator for natural sorting ([#73](https://github.com/ludouzi/pull/73))
+* Sorting: Use QCollator for natural sorting ([#73](https://github.com/ludouzi/fooyin/pull/73))
 * WaveBar: Add context options to control track waveform data
 * WaveBar: Add current disk cache size, with option to clear
 
