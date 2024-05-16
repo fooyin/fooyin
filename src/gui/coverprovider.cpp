@@ -289,13 +289,13 @@ QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
     }
 
     if(!p->pendingCovers.contains(coverKey)) {
-        QPixmap cover = p->loadCachedCover(coverKey, !p->coverKey.isEmpty());
+        QPixmap cover = p->loadCachedCover(coverKey, false);
         if(!cover.isNull()) {
             return cover;
         }
 
         p->pendingCovers.emplace(coverKey);
-        p->fetchCover(coverKey, track, type, !p->coverKey.isEmpty());
+        p->fetchCover(coverKey, track, type, false);
     }
 
     return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
