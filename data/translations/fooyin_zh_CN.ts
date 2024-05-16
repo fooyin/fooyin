@@ -668,7 +668,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="145"/>
         <source>All (%1 %2s)</source>
-        <translation>所有 (%1 %2s)</translation>
+        <translation>所有(%1%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="258"/>
@@ -834,7 +834,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="156"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="162"/>
         <source>None</source>
-        <translation>无&lt;br&gt;</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="157"/>
