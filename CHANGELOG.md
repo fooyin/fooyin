@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.4.2](https://github.com/ludouzi/fooyin/releases/tag/v0.4.2) (2024-05-16)
+
+### Features
+
+* Playlist: Artwork columns
+
+### Improvements
+
+* Artwork: Add configurable pixmap cache size
+* Artwork: Update cache for changed tracks
+* Artwork: Load image data asynchronously ([#75](https://github.com/ludouzi/pull/75))
+* Artwork: Add svg icon for the no cover/placeholder image
+* Layouts: Add setting to control root margin
+* Playlist: Add option to start playback on send
+* Playlist: Add option to resume previous playback state on startup
+* Playlist: Improve add/remove and hide/show of columns
+* Playlist: Improve performance when removing tracks
+* Playlist: Improve scaling of artwork
+* PlaylistTabs: Add option to show 'add playlist' button ([#83](https://github.com/ludouzi/fooyin/issues/83))
+* PlaylistTabs: Add status icon to active playlist
+* PlaylistOrganiser: Add status icon, background to active playlist
+* Settings: Improve layout/formatting of some pages
+* Scripting: Add playlist depth variable, functions to pad string left/right
+* Sorting: Use QCollator for natural sorting ([#73](https://github.com/ludouzi/pull/73))
+* WaveBar: Add context options to control track waveform data
+* WaveBar: Add current disk cache size, with option to clear
+
+### Fixes
+
+* DirBrowser: Fix double-click, middle-click actions
+* Engine: Fix playback of high resolution audio ([#76](https://github.com/ludouzi/fooyin/issues/76))
+* InfoWidget: Fix crash for languages other than English
+* Library: Fix updating monitoring status
+* LibraryTree: Fix double-click behaviour
+* Playlist: Fix crash when active playlist is empty
+* Playlist: Fix crash when removing rows
+* Playlist: Fix crash when using undo/redo
+* Playlist: Fix display issues switching to single-column mode
+* Playlist: Fix index for keep active playlist
+* Playlist: Fix incorrect playing index
+* Playlist: Fix playback on toggling 'playback follows cursor'
+* Playlist: Fix removing moved columns
+* Playlist: Fix select all not selecting all
+* PlaylistOrganiser: Fix selecting current playlist on startup
+* TagEditor: Fix updating album artist field
+
+
 ## [0.4.1](https://github.com/ludouzi/fooyin/releases/tag/v0.4.1) (2024-04-14)
 
 ### Features
