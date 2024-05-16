@@ -33,3 +33,4 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 * Musical spectrum
 * VU meter
 * Spectrogram
+* Playback queue viewer
