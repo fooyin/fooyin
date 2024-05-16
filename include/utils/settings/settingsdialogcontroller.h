@@ -46,6 +46,10 @@ public:
     void saveState();
     void restoreState();
 
+signals:
+    void opening();
+    void closing();
+
 private:
     struct Private;
     std::unique_ptr<Private> p;

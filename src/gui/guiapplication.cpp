@@ -85,6 +85,7 @@
 #include <gui/widgetprovider.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -587,6 +588,16 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
     updateCache(p->settingsManager->value<Settings::Gui::Internal::PixmapCacheSize>());
     p->settingsManager->subscribe<Settings::Gui::Internal::PixmapCacheSize>(this, updateCache);
     p->settingsManager->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(this, CoverProvider::clearCache);
+
+    QObject::connect(p->settingsManager->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
+        const bool isLayoutEditing = p->settingsManager->value<Settings::Gui::LayoutEditing>();
+        // Layout editing mode overrides the global action context, so disable it until the dialog closes
+        p->settingsManager->set<Settings::Gui::LayoutEditing>(false);
+        QObject::connect(
+            p->settingsManager->settingsDialog(), &SettingsDialogController::closing, this,
+            [this, isLayoutEditing]() { p->settingsManager->set<Settings::Gui::LayoutEditing>(isLayoutEditing); },
+            Qt::SingleShotConnection);
+    });
 }
 
 GuiApplication::~GuiApplication() = default;
