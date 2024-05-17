@@ -41,6 +41,7 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, SettingsManager* settings
     , m_builder{builder}
 {
     setMinimumSize(100, 20);
+    resize(100, 100);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
