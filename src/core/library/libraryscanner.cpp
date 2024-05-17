@@ -136,7 +136,7 @@ struct LibraryScanner::Private
             }
         }
 
-        const QStringList files = Utils::File::getFilesInDir(dir, Track::supportedFileExtensions());
+        const QStringList files = Utils::File::getFilesInDirRecursive(dir, Track::supportedFileExtensions());
 
         tracksProcessed = 0;
         totalTracks     = static_cast<double>(files.size());

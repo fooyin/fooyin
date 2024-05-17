@@ -36,7 +36,9 @@ FYUTILS_EXPORT bool createDirectories(const QString& path);
 FYUTILS_EXPORT void openDirectory(const QString& dir);
 
 FYUTILS_EXPORT QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
+FYUTILS_EXPORT QStringList getFilesInDirRecursive(const QDir& baseDirectory, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QList<QUrl> getUrlsInDir(const QDir& baseDirectory, const QStringList& fileExtensions = {});
+FYUTILS_EXPORT QList<QUrl> getUrlsInDirRecursive(const QDir& baseDirectory, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getFiles(const QList<QUrl>& urls, const QStringList& fileExtensions = {});
 FYUTILS_EXPORT QStringList getAllSubdirectories(const QDir& dir);

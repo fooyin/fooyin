@@ -98,38 +98,68 @@ void openDirectory(const QString& dir)
 QStringList getFilesInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
 {
     QStringList ret;
+
+    const QFileInfoList files = baseDirectory.entryInfoList(fileExtensions, QDir::Files);
+    for(const auto& file : files) {
+        ret.append(file.absoluteFilePath());
+    }
+
+    return ret;
+}
+
+QStringList getFilesInDirRecursive(const QDir& baseDirectory, const QStringList& fileExtensions)
+{
+    QStringList ret;
     QList<QDir> stack{baseDirectory};
 
     while(!stack.isEmpty()) {
-        const QDir dir              = stack.takeFirst();
+        const QDir dir = stack.takeFirst();
+
         const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
         for(const auto& subDir : subDirs) {
             stack.append(QDir{subDir.absoluteFilePath()});
         }
+
         const QFileInfoList files = dir.entryInfoList(fileExtensions, QDir::Files);
         for(const auto& file : files) {
             ret.append(file.absoluteFilePath());
         }
     }
+
     return ret;
 }
 
 QList<QUrl> getUrlsInDir(const QDir& baseDirectory, const QStringList& fileExtensions)
 {
     QList<QUrl> ret;
+
+    const QFileInfoList files = baseDirectory.entryInfoList(fileExtensions, QDir::Files);
+    for(const auto& file : files) {
+        ret.append(QUrl::fromLocalFile(file.absoluteFilePath()));
+    }
+
+    return ret;
+}
+
+QList<QUrl> getUrlsInDirRecursive(const QDir& baseDirectory, const QStringList& fileExtensions)
+{
+    QList<QUrl> ret;
     QList<QDir> stack{baseDirectory};
 
     while(!stack.isEmpty()) {
-        const QDir dir              = stack.takeFirst();
+        const QDir dir = stack.takeFirst();
+
         const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
         for(const auto& subDir : subDirs) {
             stack.append(QDir{subDir.absoluteFilePath()});
         }
+
         const QFileInfoList files = dir.entryInfoList(fileExtensions, QDir::Files);
         for(const auto& file : files) {
             ret.append(QUrl::fromLocalFile(file.absoluteFilePath()));
         }
     }
+
     return ret;
 }
 

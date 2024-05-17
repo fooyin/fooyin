@@ -260,8 +260,14 @@ struct DirBrowser::Private
             if(index.isValid()) {
                 const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
                 if(filePath.isDir()) {
-                    files.append(
-                        Utils::File::getUrlsInDir(filePath.absoluteFilePath(), Track::supportedFileExtensions()));
+                    if(!onlySelection) {
+                        files.append(
+                            Utils::File::getUrlsInDir(filePath.absoluteFilePath(), Track::supportedFileExtensions()));
+                    }
+                    else {
+                        files.append(Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(),
+                                                                        Track::supportedFileExtensions()));
+                    }
                 }
                 else {
                     files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
