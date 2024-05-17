@@ -350,7 +350,7 @@ struct EditableLayout::Private
                 widgetProvider->setupReplaceWidgetMenu(self, changeMenu, parent, currentWidget->id());
                 menu->addMenu(changeMenu);
 
-                if(parent && parent != root) {
+                if(parent) {
                     auto* splitMenu = new QMenu(tr("&Split"), menu);
                     widgetProvider->setupSplitWidgetMenu(self, splitMenu, parent, currentWidget->id());
                     menu->addMenu(splitMenu);
