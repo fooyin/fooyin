@@ -111,6 +111,58 @@ struct LibraryTreeModel::Private
         allNode.setTitle(QStringLiteral("All Music (%1)").arg(trackCount));
     }
 
+    void removeTracks(const TrackList& tracks, bool updateCount)
+    {
+        std::set<LibraryTreeItem*, cmpItems> items;
+        std::set<LibraryTreeItem*> pendingItems;
+
+        for(const Track& track : tracks) {
+            const int id = track.id();
+            if(!trackParents.contains(id)) {
+                continue;
+            }
+
+            const auto trackNodes = trackParents[id];
+            for(const QString& node : trackNodes) {
+                if(nodes.contains(node)) {
+                    LibraryTreeItem* item = &nodes[node];
+                    item->removeTrack(track);
+                    if(item->pending()) {
+                        pendingItems.emplace(item);
+                    }
+                    else {
+                        items.emplace(item);
+                    }
+                }
+            }
+            trackParents.erase(id);
+        }
+
+        for(const LibraryTreeItem* item : pendingItems) {
+            if(item->trackCount() == 0) {
+                pendingNodes.erase(item->key());
+                nodes.erase(item->key());
+            }
+        }
+
+        for(LibraryTreeItem* item : items) {
+            if(item->trackCount() == 0) {
+                LibraryTreeItem* parent = item->parent();
+                const int row           = item->row();
+                self->beginRemoveRows(self->indexOfItem(parent), row, row);
+                parent->removeChild(row);
+                parent->resetChildren();
+                self->endRemoveRows();
+                nodes.erase(item->key());
+            }
+        }
+
+        if(updateCount) {
+            trackCount -= static_cast<int>(tracks.size());
+            updateAllNode();
+        }
+    }
+
     void mergeTrackParents(const TrackIdNodeMap& parents)
     {
         for(const auto& pair : parents) {
@@ -138,7 +190,7 @@ struct LibraryTreeModel::Private
         }
 
         if(!tracksPendingRemoval.empty()) {
-            self->removeTracks(tracksPendingRemoval);
+            removeTracks(tracksPendingRemoval, false);
         }
 
         populateModel(data);
@@ -517,52 +569,7 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
 
 void LibraryTreeModel::removeTracks(const TrackList& tracks)
 {
-    std::set<LibraryTreeItem*, cmpItems> items;
-    std::set<LibraryTreeItem*> pendingItems;
-
-    for(const Track& track : tracks) {
-        const int id = track.id();
-        if(!p->trackParents.contains(id)) {
-            continue;
-        }
-
-        const auto trackNodes = p->trackParents[id];
-        for(const QString& node : trackNodes) {
-            if(p->nodes.contains(node)) {
-                LibraryTreeItem* item = &p->nodes[node];
-                item->removeTrack(track);
-                if(item->pending()) {
-                    pendingItems.emplace(item);
-                }
-                else {
-                    items.emplace(item);
-                }
-            }
-        }
-        p->trackParents.erase(id);
-    }
-
-    for(const LibraryTreeItem* item : pendingItems) {
-        if(item->trackCount() == 0) {
-            p->pendingNodes.erase(item->key());
-            p->nodes.erase(item->key());
-        }
-    }
-
-    for(LibraryTreeItem* item : items) {
-        if(item->trackCount() == 0) {
-            LibraryTreeItem* parent = item->parent();
-            const int row           = item->row();
-            beginRemoveRows(indexOfItem(parent), row, row);
-            parent->removeChild(row);
-            parent->resetChildren();
-            endRemoveRows();
-            p->nodes.erase(item->key());
-        }
-    }
-
-    p->trackCount -= static_cast<int>(tracks.size());
-    p->updateAllNode();
+    p->removeTracks(tracks, true);
 }
 
 void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)

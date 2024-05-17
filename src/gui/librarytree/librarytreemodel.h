@@ -45,7 +45,7 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     void fetchMore(const QModelIndex& parent) override;
-    bool canFetchMore(const QModelIndex& parent) const override;
+    [[nodiscard]] bool canFetchMore(const QModelIndex& parent) const override;
 
     [[nodiscard]] QStringList mimeTypes() const override;
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
