@@ -33,13 +33,15 @@ LayoutChangeCommand::LayoutChangeCommand(EditableLayout* layout, WidgetProvider*
     , m_containerId{container->id()}
 { }
 
-void LayoutChangeCommand::checkContainer()
+bool LayoutChangeCommand::checkContainer()
 {
     if(!m_container) {
         if(auto* container = qobject_cast<WidgetContainer*>(m_layout->findWidget(m_containerId))) {
             m_container = container;
         }
     }
+
+    return m_container != nullptr;
 }
 
 AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container,
@@ -58,9 +60,11 @@ AddWidgetCommand::AddWidgetCommand(EditableLayout* layout, WidgetProvider* provi
 
 void AddWidgetCommand::undo()
 {
-    checkContainer();
+    if(!checkContainer()) {
+        return;
+    }
 
-    if(m_container && m_index >= 0) {
+    if(m_index >= 0) {
         m_containerState = m_container->saveState();
 
         m_container->removeWidget(m_index);
@@ -69,6 +73,10 @@ void AddWidgetCommand::undo()
 
 void AddWidgetCommand::redo()
 {
+    if(!checkContainer()) {
+        return;
+    }
+
     if(!m_widget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
             m_container->insertWidget(m_index, widget);
@@ -111,7 +119,9 @@ ReplaceWidgetCommand::ReplaceWidgetCommand(EditableLayout* layout, WidgetProvide
 
 void ReplaceWidgetCommand::undo()
 {
-    checkContainer();
+    if(!checkContainer()) {
+        return;
+    }
 
     if(m_container && !m_oldWidget.empty()) {
         m_container->removeWidget(m_index);
@@ -131,6 +141,10 @@ void ReplaceWidgetCommand::undo()
 
 void ReplaceWidgetCommand::redo()
 {
+    if(!checkContainer()) {
+        return;
+    }
+
     if(!m_widget.empty()) {
         m_containerState = m_container->saveState();
 
@@ -169,9 +183,11 @@ SplitWidgetCommand::SplitWidgetCommand(EditableLayout* layout, WidgetProvider* p
 
 void SplitWidgetCommand::undo()
 {
-    checkContainer();
+    if(!checkContainer()) {
+        return;
+    }
 
-    if(m_container && !m_splitWidget.empty()) {
+    if(!m_splitWidget.empty()) {
         m_container->removeWidget(m_index);
 
         QMetaObject::invokeMethod(
@@ -189,6 +205,10 @@ void SplitWidgetCommand::undo()
 
 void SplitWidgetCommand::redo()
 {
+    if(!checkContainer()) {
+        return;
+    }
+
     if(!m_key.isEmpty()) {
         if(auto* widget = m_provider->createWidget(m_key)) {
             m_containerState = m_container->saveState();
@@ -224,9 +244,11 @@ RemoveWidgetCommand::RemoveWidgetCommand(EditableLayout* layout, WidgetProvider*
 
 void RemoveWidgetCommand::undo()
 {
-    checkContainer();
+    if(!checkContainer()) {
+        return;
+    }
 
-    if(m_container && !m_widget.empty()) {
+    if(!m_widget.empty()) {
         if(auto* widget = EditableLayout::loadWidget(m_provider, m_widget)) {
             m_container->insertWidget(m_index, widget);
             widget->finalise();
@@ -238,6 +260,10 @@ void RemoveWidgetCommand::undo()
 
 void RemoveWidgetCommand::redo()
 {
+    if(!checkContainer()) {
+        return;
+    }
+
     if(!m_widget.empty()) {
         m_containerState = m_container->saveState();
 
@@ -254,7 +280,9 @@ MoveWidgetCommand::MoveWidgetCommand(EditableLayout* layout, WidgetProvider* pro
 
 void MoveWidgetCommand::undo()
 {
-    checkContainer();
+    if(!checkContainer()) {
+        return;
+    }
 
     if(m_container && m_container->canMoveWidget(m_index, m_oldIndex)) {
         m_container->moveWidget(m_index, m_oldIndex);
@@ -263,6 +291,10 @@ void MoveWidgetCommand::undo()
 
 void MoveWidgetCommand::redo()
 {
+    if(!checkContainer()) {
+        return;
+    }
+
     if(m_container->canMoveWidget(m_oldIndex, m_index)) {
         m_container->moveWidget(m_oldIndex, m_index);
     }

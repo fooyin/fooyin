@@ -36,7 +36,7 @@ public:
     LayoutChangeCommand(EditableLayout* layout, WidgetProvider* provider, WidgetContainer* container);
 
 protected:
-    void checkContainer();
+    bool checkContainer();
 
     EditableLayout* m_layout;
     WidgetProvider* m_provider;
