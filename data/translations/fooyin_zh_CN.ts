@@ -1657,7 +1657,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>&amp;Repeat Track</source>
-        <translation>单曲循环(&amp;R)</translation>
+        <translation>单曲循环(R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
@@ -1725,7 +1725,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
         <source>Track</source>
-        <translation>音轨</translation>
+        <translation>音轨号</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
