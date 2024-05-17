@@ -1,6 +1,0 @@
-#!/usr/bin/make -f
-
-%:
-	dh $@ --buildsystem=cmake+ninja --builddirectory=build
-
-override_dh_auto_test:
