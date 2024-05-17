@@ -109,7 +109,7 @@ public:
     void sortColumn(int column, Qt::SortOrder order);
     void resetSort(bool force = false);
 
-    void addSortMenu(QMenu* parent);
+    void addSortMenu(QMenu* parent, bool disabled);
     void addPresetMenu(QMenu* parent);
 
     PlaylistWidget* self;

@@ -967,16 +967,22 @@ void PlaylistWidgetPrivate::resetSort(bool force)
     }
 }
 
-void PlaylistWidgetPrivate::addSortMenu(QMenu* parent)
+void PlaylistWidgetPrivate::addSortMenu(QMenu* parent, bool disabled)
 {
     auto* sortMenu = new QMenu(PlaylistWidget::tr("Sort"), parent);
 
-    const auto& groups = sortRegistry.items();
-    for(const auto& script : groups) {
-        auto* switchSort = new QAction(script.name, sortMenu);
-        QObject::connect(switchSort, &QAction::triggered, self, [this, script]() { sortTracks(script.script); });
-        sortMenu->addAction(switchSort);
+    if(disabled) {
+        sortMenu->setEnabled(false);
     }
+    else {
+        const auto& groups = sortRegistry.items();
+        for(const auto& script : groups) {
+            auto* switchSort = new QAction(script.name, sortMenu);
+            QObject::connect(switchSort, &QAction::triggered, self, [this, script]() { sortTracks(script.script); });
+            sortMenu->addAction(switchSort);
+        }
+    }
+
     parent->addMenu(sortMenu);
 }
 
@@ -1132,7 +1138,8 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const bool hasSelection = !p->playlistView->selectionModel()->selectedRows().empty();
+    const auto selected     = p->playlistView->selectionModel()->selectedRows();
+    const bool hasSelection = !selected.empty();
 
     if(hasSelection) {
         auto* playAction = new QAction(tr("&Play"), this);
@@ -1145,7 +1152,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
             menu->addAction(removeCmd->action());
         }
 
-        p->addSortMenu(menu);
+        p->addSortMenu(menu, selected.size() == 1);
     }
 
     p->addPresetMenu(menu);
