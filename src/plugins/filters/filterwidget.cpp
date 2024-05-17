@@ -511,7 +511,10 @@ void FilterWidget::finalise()
     p->multipleColumns = p->columns.size() > 1;
 
     if(!p->columns.empty()) {
-        if(!p->headerState.isEmpty()) {
+        if(p->headerState.isEmpty()) {
+            p->header->setSortIndicator(0, Qt::AscendingOrder);
+        }
+        else {
             QObject::connect(
                 p->model, &QAbstractItemModel::modelReset, this,
                 [this]() {
