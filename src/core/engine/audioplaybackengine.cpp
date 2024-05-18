@@ -69,7 +69,7 @@ struct AudioPlaybackEngine::Private
         , renderer{new AudioRenderer(self)}
         , bufferTimer{new QTimer(self)}
     {
-        bufferTimer->setInterval(10ms);
+        bufferTimer->setInterval(5ms);
 
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
 
