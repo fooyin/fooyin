@@ -1,4 +1,6 @@
+if(BUILD_ALSA)
 add_subdirectory(alsa)
+endif()
 add_subdirectory(filters)
 add_subdirectory(mpris)
 add_subdirectory(pipewire)

@@ -53,6 +53,7 @@ include(FooyinMacrosInternal)
 fooyin_option(BUILD_SHARED_LIBS "Build fooyin libraries as shared" ON)
 fooyin_option(BUILD_TESTING "Build fooyin tests" OFF)
 fooyin_option(BUILD_PLUGINS "Build plugins included with fooyin" ON)
+fooyin_option(BUILD_ALSA "Build ALSA plugin" ON)
 fooyin_option(BUILD_TRANSLATIONS "Build translation files" ON)
 fooyin_option(BUILD_CCACHE "Build using CCache if found" ON)
 fooyin_option(BUILD_PCH "Build with precompiled header support" OFF)
@@ -128,7 +129,10 @@ set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
+if(BUILD_ALSA)
 find_package(ALSA REQUIRED)
+add_definitions(-DBUILD_ALSA_ENABLED)
+endif()
 
 find_package(
     FFmpeg REQUIRED
