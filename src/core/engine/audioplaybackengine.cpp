@@ -35,7 +35,11 @@
 
 using namespace std::chrono_literals;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto BufferInterval = 5ms;
+#else
+constexpr auto BufferInterval = 5;
+#endif
 
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
