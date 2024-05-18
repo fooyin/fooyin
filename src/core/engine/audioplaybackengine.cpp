@@ -26,13 +26,16 @@
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audiodecoder.h>
-#include <core/engine/audiooutput.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QBasicTimer>
 #include <QTimer>
+#include <QTimerEvent>
 
 using namespace std::chrono_literals;
+
+constexpr auto BufferInterval = 5ms;
 
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
@@ -59,7 +62,7 @@ struct AudioPlaybackEngine::Private
     std::unique_ptr<AudioDecoder> decoder;
     AudioRenderer* renderer;
 
-    QTimer* bufferTimer;
+    QBasicTimer bufferTimer;
 
     explicit Private(AudioEngine* self_, SettingsManager* settings_)
         : self{self_}
@@ -67,10 +70,7 @@ struct AudioPlaybackEngine::Private
         , bufferLength{static_cast<uint64_t>(settings->value<Settings::Core::BufferLength>())}
         , decoder{std::make_unique<FFmpegDecoder>()}
         , renderer{new AudioRenderer(self)}
-        , bufferTimer{new QTimer(self)}
     {
-        bufferTimer->setInterval(5ms);
-
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
 
         QObject::connect(renderer, &AudioRenderer::bufferProcessed, self, [this](const AudioBuffer& buffer) {
@@ -78,8 +78,6 @@ struct AudioPlaybackEngine::Private
             clock.sync(buffer.startTime());
         });
         QObject::connect(renderer, &AudioRenderer::finished, self, [this]() { onRendererFinished(); });
-
-        QObject::connect(bufferTimer, &QTimer::timeout, self, [this]() { readNextBuffer(); });
     }
 
     QTimer* positionTimer()
@@ -99,13 +97,14 @@ struct AudioPlaybackEngine::Private
             return;
         }
 
-        const auto buffer = decoder->readBuffer();
+        const auto bytesLeft = static_cast<size_t>(format.bytesForDuration(bufferLength - totalBufferTime));
+        const auto buffer    = decoder->readBuffer(bytesLeft);
         if(buffer.isValid()) {
             totalBufferTime += buffer.duration();
             renderer->queueBuffer(buffer);
         }
         else {
-            bufferTimer->stop();
+            bufferTimer.stop();
             renderer->queueBuffer({});
             QMetaObject::invokeMethod(self, &AudioEngine::trackAboutToFinish);
         }
@@ -127,6 +126,11 @@ struct AudioPlaybackEngine::Private
             emit self->trackStatusChanged(status);
         }
         return prevStatus;
+    }
+
+    void startBufferTimer()
+    {
+        bufferTimer.start(BufferInterval, self);
     }
 
     void updatePosition()
@@ -153,10 +157,10 @@ struct AudioPlaybackEngine::Private
         return true;
     }
 
-    void startPlayback() const
+    void startPlayback()
     {
         decoder->start();
-        bufferTimer->start();
+        startBufferTimer();
         renderer->start();
     }
 
@@ -168,13 +172,13 @@ struct AudioPlaybackEngine::Private
         changeTrackStatus(EndOfTrack);
     }
 
-    void pauseOutput(bool pause) const
+    void pauseOutput(bool pause)
     {
         if(pause) {
-            bufferTimer->stop();
+            bufferTimer.stop();
         }
         else {
-            bufferTimer->start();
+            startBufferTimer();
         }
 
         renderer->pause(pause);
@@ -182,7 +186,7 @@ struct AudioPlaybackEngine::Private
 
     void resetWorkers()
     {
-        bufferTimer->stop();
+        bufferTimer.stop();
         clock.setPaused(true);
         renderer->reset();
         totalBufferTime = 0;
@@ -190,7 +194,7 @@ struct AudioPlaybackEngine::Private
 
     void stopWorkers()
     {
-        bufferTimer->stop();
+        bufferTimer.stop();
         clock.setPaused(true);
         clock.sync();
         renderer->stop();
@@ -226,7 +230,7 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
     if(p->state == PlayingState) {
         p->clock.setPaused(false);
-        p->bufferTimer->start();
+        p->startBufferTimer();
         p->renderer->start();
     }
     else {
@@ -341,7 +345,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
     p->renderer->pause(playing);
 
     if(playing) {
-        p->bufferTimer->stop();
+        p->bufferTimer.stop();
     }
 
     p->renderer->updateOutput(output);
@@ -351,6 +355,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
             p->changeTrackStatus(NoTrack);
             return;
         }
+
         p->clock.setPaused(false);
         p->startPlayback();
     }
@@ -368,7 +373,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
     p->renderer->pause(playing);
 
     if(playing) {
-        p->bufferTimer->stop();
+        p->bufferTimer.stop();
     }
 
     p->renderer->updateDevice(device);
@@ -378,9 +383,19 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
             p->changeTrackStatus(NoTrack);
             return;
         }
+
         p->clock.setPaused(false);
         p->startPlayback();
     }
+}
+
+void AudioPlaybackEngine::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->bufferTimer.timerId()) {
+        p->readNextBuffer();
+    }
+
+    QObject::timerEvent(event);
 }
 } // namespace Fooyin
 

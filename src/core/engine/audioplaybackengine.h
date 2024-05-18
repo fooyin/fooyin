@@ -47,6 +47,9 @@ public slots:
     void setAudioOutput(const OutputCreator& output) override;
     void setOutputDevice(const QString& device) override;
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
     struct Private;
     std::unique_ptr<Private> p;
