@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>fooyin</id>
-    <launchable type="desktop-id">fooyin.desktop</launchable>
+    <id>org.fooyin.fooyin</id>
+    <launchable type="desktop-id">org.fooyin.fooyin.desktop</launchable>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0</project_license>
     <name>fooyin</name>
     <summary>A customisable music player</summary>
-    <developer_name>Luke Taylor</developer_name>
+    <developer id="org.fooyin.luketaylor">
+        <name>Luke Taylor</name>
+    </developer>
     <description>
         <p>
             Fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music collection. It's extendable through the use of plugins and scriptable using FooScript.
@@ -30,11 +32,12 @@
     <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://github.com/ludouzi/fooyin/blob/master/data/images/ember.png</image>
+            <image>https://github.com/ludouzi/fooyin/assets/45490980/d8fb8631-af72-4b94-b2f0-7c086bb7ac4a</image>
             <caption>Ember layout</caption>
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.4.2" date="2024-05-16"/>
         <release version="0.3.10" date="2024-02-10"/>
     </releases>
     <translation type="qt">fooyin</translation>

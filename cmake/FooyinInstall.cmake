@@ -41,7 +41,7 @@ foreach(SIZE ${ICON_SIZE})
     install(
         FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
         DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
-        RENAME fooyin.png
+        RENAME org.fooyin.fooyin.png
         COMPONENT fooyin
     )
 endforeach(SIZE)
@@ -49,7 +49,7 @@ endforeach(SIZE)
 install(
     FILES ${ICON_SRC_PATH}/sc-fooyin.svg
     DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
-    RENAME fooyin.svg
+    RENAME org.fooyin.fooyin.svg
     COMPONENT fooyin
 )
 
