@@ -63,27 +63,54 @@ spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
 
 void updateChannelMap(spa_audio_info_raw* info, int channels)
 {
+    // Set channels according to: https://xiph.org/flac/format.html
     switch(channels) {
-        case(9):
-            info->position[8] = SPA_AUDIO_CHANNEL_RC;
-            // Fall through
         case(8):
-            info->position[6] = SPA_AUDIO_CHANNEL_FLC;
-            info->position[7] = SPA_AUDIO_CHANNEL_FRC;
-            // Fall through
-        case(6):
-            info->position[4] = SPA_AUDIO_CHANNEL_RL;
+            info->position[7] = SPA_AUDIO_CHANNEL_SR;
+            info->position[6] = SPA_AUDIO_CHANNEL_SL;
             info->position[5] = SPA_AUDIO_CHANNEL_RR;
-            // Fall through
-        case(4):
+            info->position[4] = SPA_AUDIO_CHANNEL_RL;
             info->position[3] = SPA_AUDIO_CHANNEL_LFE;
-            // Fall through
+            info->position[2] = SPA_AUDIO_CHANNEL_FC;
+            info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
+            break;
+        case(7):
+            info->position[6] = SPA_AUDIO_CHANNEL_SR;
+            info->position[5] = SPA_AUDIO_CHANNEL_SL;
+            info->position[4] = SPA_AUDIO_CHANNEL_RC;
+            info->position[3] = SPA_AUDIO_CHANNEL_LFE;
+            info->position[2] = SPA_AUDIO_CHANNEL_FC;
+            info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
+            break;
+        case(6):
+            info->position[5] = SPA_AUDIO_CHANNEL_RR;
+            info->position[4] = SPA_AUDIO_CHANNEL_RL;
+            info->position[3] = SPA_AUDIO_CHANNEL_LFE;
+            info->position[2] = SPA_AUDIO_CHANNEL_FC;
+            info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
+            break;
+        case(5):
+            info->position[4] = SPA_AUDIO_CHANNEL_RR;
+            info->position[3] = SPA_AUDIO_CHANNEL_RL;
+            info->position[2] = SPA_AUDIO_CHANNEL_FC;
+            info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
+            break;
+        case(4):
+            info->position[3] = SPA_AUDIO_CHANNEL_RR;
+            info->position[2] = SPA_AUDIO_CHANNEL_RL;
+            info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
+            break;
         case(3):
             info->position[2] = SPA_AUDIO_CHANNEL_FC;
             // Fall through
         case(2):
-            info->position[0] = SPA_AUDIO_CHANNEL_FL;
             info->position[1] = SPA_AUDIO_CHANNEL_FR;
+            info->position[0] = SPA_AUDIO_CHANNEL_FL;
             break;
         case(1):
             info->position[0] = SPA_AUDIO_CHANNEL_MONO;
