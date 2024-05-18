@@ -77,10 +77,8 @@ struct AudioPlaybackEngine::Private
     {
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
 
-        QObject::connect(renderer, &AudioRenderer::bufferProcessed, self, [this](const AudioBuffer& buffer) {
-            totalBufferTime -= buffer.duration();
-            clock.sync(buffer.startTime());
-        });
+        QObject::connect(renderer, &AudioRenderer::bufferProcessed, self,
+                         [this](const AudioBuffer& buffer) { totalBufferTime -= buffer.duration(); });
         QObject::connect(renderer, &AudioRenderer::finished, self, [this]() { onRendererFinished(); });
     }
 
