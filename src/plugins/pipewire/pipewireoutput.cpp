@@ -141,7 +141,7 @@ struct PipeWireOutput::Private
     std::unique_ptr<PipewireStream> stream;
     std::unique_ptr<PipewireRegistry> registry;
 
-    Private(PipeWireOutput* self_)
+    explicit Private(PipeWireOutput* self_)
         : self{self_}
     { }
 
@@ -286,7 +286,7 @@ struct PipeWireOutput::Private
 
         data.chunk->offset = 0;
         data.chunk->stride = self->format.bytesPerFrame();
-        data.chunk->size   = self->stream->bufferSize();
+        data.chunk->size   = size;
 
         self->stream->queueBuffer(pwBuffer);
         self->loop->signal(false);
@@ -403,14 +403,14 @@ OutputState PipeWireOutput::currentState()
     OutputState state;
 
     state.queuedSamples = p->buffer.frameCount();
-    state.freeSamples   = (p->stream->bufferSize() / p->format.bytesPerFrame()) - state.queuedSamples;
+    state.freeSamples   = p->stream->bufferSize() - state.queuedSamples;
 
     return state;
 }
 
 int PipeWireOutput::bufferSize() const
 {
-    return p->stream ? (p->stream->bufferSize() / p->format.bytesPerFrame()) : 0;
+    return p->stream ? p->stream->bufferSize() : 0;
 }
 
 int PipeWireOutput::write(const AudioBuffer& buffer)

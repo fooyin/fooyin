@@ -30,15 +30,14 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
+constexpr auto BufferSize = 4096;
+
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
 {
     struct pw_properties* props = pw_properties_new(PW_KEY_MEDIA_TYPE, "Audio", PW_KEY_MEDIA_CATEGORY, "Playback",
                                                     PW_KEY_MEDIA_ROLE, "Music", PW_KEY_APP_ID, "fooyin",
                                                     PW_KEY_APP_ICON_NAME, "fooyin", PW_KEY_APP_NAME, "fooyin", nullptr);
-
-    const auto frames = std::clamp<int>(64, std::ceil(static_cast<float>(2048 * format.sampleRate()) / 48000.0), 8192);
-    m_bufferSize      = frames * format.bytesPerFrame();
 
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
     // pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", frames, format.sampleRate());
@@ -66,7 +65,7 @@ pw_stream_state PipewireStream::state()
 
 int PipewireStream::bufferSize() const
 {
-    return m_bufferSize;
+    return BufferSize;
 }
 
 void PipewireStream::setActive(bool active)
