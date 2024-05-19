@@ -99,6 +99,15 @@ void LibraryTreeItem::removeTrack(const Track& track)
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
+void LibraryTreeItem::replaceTrack(const Track& track)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+    std::ranges::replace_if(
+        m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
+}
+
 void LibraryTreeItem::sortTracks()
 {
     m_tracks = Sorting::sortTracks(m_tracks);

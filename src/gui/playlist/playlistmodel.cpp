@@ -607,6 +607,9 @@ PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerCont
     QObject::connect(&m_populator, &PlaylistPopulator::headersUpdated, this,
                      [this](ItemKeyMap data) { updateModel(data); });
 
+    QObject::connect(&m_populator, &PlaylistPopulator::tracksUpdated, this,
+                     [this](const ItemList& data) { updateTracks(data); });
+
     QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this,
                      [this](const Track& track) { coverUpdated(track); });
 }
@@ -1062,6 +1065,25 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
     insertTracks(groups);
 }
 
+void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
+{
+    TrackItemMap items;
+
+    for(const int index : indexes) {
+        const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index, true);
+        if(!end) {
+            const auto track = m_currentPlaylist->track(index);
+            items.emplace(track, *itemForIndex(modelIndex));
+        }
+    }
+
+    if(m_currentPlaylist) {
+        QMetaObject::invokeMethod(&m_populator, [this, items] {
+            m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
+        });
+    }
+}
+
 void PlaylistModel::removeTracks(const QModelIndexList& indexes)
 {
     tracksAboutToBeChanged();
@@ -1263,13 +1285,34 @@ void PlaylistModel::populateTrackGroup(PendingData& data)
 
 void PlaylistModel::updateModel(ItemKeyMap& data)
 {
-    if(!m_resetting) {
-        for(auto& [key, header] : data) {
-            m_nodes[key] = header;
-            auto* node   = &m_nodes.at(key);
+    if(m_resetting) {
+        return;
+    }
+
+    for(auto& [key, header] : data) {
+        m_nodes[key] = header;
+        auto* node   = &m_nodes.at(key);
+        node->setState(PlaylistItem::State::None);
+
+        const QModelIndex headerIndex = indexOfItem(node);
+        emit dataChanged(headerIndex, headerIndex, {});
+    }
+}
+
+void PlaylistModel::updateTracks(const ItemList& tracks)
+{
+    if(m_resetting) {
+        return;
+    }
+
+    for(const PlaylistItem& item : tracks) {
+        if(m_nodes.contains(item.key())) {
+            auto* node = &m_nodes.at(item.key());
+            node->setData(item.data());
             node->setState(PlaylistItem::State::None);
-            const QModelIndex headerIndex = indexOfItem(node);
-            emit dataChanged(headerIndex, headerIndex, {});
+
+            const QModelIndex trackIndex = indexOfItem(node);
+            emit dataChanged(trackIndex, trackIndex.siblingAtColumn(columnCount(trackIndex) - 1), {});
         }
     }
 }

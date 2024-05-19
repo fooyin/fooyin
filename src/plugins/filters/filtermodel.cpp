@@ -418,6 +418,22 @@ void FilterModel::updateTracks(const TrackList& tracks)
     addTracks(tracks);
 }
 
+void FilterModel::refreshTracks(const TrackList& tracks)
+{
+    for(const Track& track : tracks) {
+        if(!p->trackParents.contains(track.id())) {
+            continue;
+        }
+
+        const auto parents = p->trackParents.at(track.id());
+        for(const auto& parent : parents) {
+            if(p->nodes.contains(parent)) {
+                p->nodes.at(parent).replaceTrack(track);
+            }
+        }
+    }
+}
+
 void FilterModel::removeTracks(const TrackList& tracks)
 {
     std::set<FilterItem*> items;

@@ -54,6 +54,7 @@ public:
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
+    void replaceTrack(const Track& track);
     void sortTracks();
 
     void sortChildren();

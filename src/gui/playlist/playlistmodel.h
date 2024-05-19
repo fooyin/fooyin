@@ -109,6 +109,7 @@ public:
 
     void insertTracks(const TrackGroups& tracks);
     void updateTracks(const std::vector<int>& indexes);
+    void refreshTracks(const std::vector<int>& indexes);
     void removeTracks(const QModelIndexList& indexes);
     void removeTracks(const TrackGroups& groups);
     void updateHeader(Playlist* playlist);
@@ -135,6 +136,7 @@ private:
     void populateModel(PendingData& data);
     void populateTrackGroup(PendingData& data);
     void updateModel(ItemKeyMap& data);
+    void updateTracks(const ItemList& tracks);
     void mergeTrackParents(const TrackIdNodeMap& parents);
 
     QVariant trackData(PlaylistItem* item, const QModelIndex& index, int role) const;

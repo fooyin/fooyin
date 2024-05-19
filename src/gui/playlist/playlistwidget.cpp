@@ -160,8 +160,10 @@ void PlaylistWidgetPrivate::setupConnections()
                      [this]() { model->playingTrackChanged(playerController->currentPlaylistTrack()); });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksChanged, this,
                      &PlaylistWidgetPrivate::handleTracksChanged);
+    QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksPlayed, this,
+                     [this](const std::vector<int>& indexes) { model->refreshTracks(indexes); });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistQueueChanged, this,
-                     [this](const std::vector<int>& indexes) { handleTracksChanged(indexes, false); });
+                     [this](const std::vector<int>& indexes) { model->refreshTracks(indexes); });
     QObject::connect(playlistController, &PlaylistController::currentPlaylistChanged, this,
                      [this](Playlist* prevPlaylist, Playlist* playlist) { changePlaylist(prevPlaylist, playlist); });
     QObject::connect(playlistController, &PlaylistController::playlistsLoaded, this,

@@ -377,6 +377,53 @@ void PlaylistPopulator::runTracks(const Id& playlistId, const PlaylistPreset& pr
     setState(Idle);
 }
 
+void PlaylistPopulator::updateTracks(const Id& playlistId, const PlaylistPreset& preset,
+                                     const PlaylistColumnList& columns, const TrackItemMap& tracks)
+{
+    setState(Running);
+
+    p->currentPreset = preset;
+    p->registry->setup(playlistId, p->playerController->playbackQueue());
+
+    ItemList updatedTracks;
+
+    for(const auto& [track, item] : tracks) {
+        PlaylistTrackItem& trackData = std::get<0>(item.data());
+
+        auto evaluateTrack = [this, &track](RichScript& script) {
+            script.text.clear();
+            const auto evalScript = p->parser.evaluate(script.script, track);
+            if(!evalScript.isEmpty()) {
+                script.text = p->formatter.evaluate(evalScript);
+            }
+        };
+
+        if(!columns.empty()) {
+            std::vector<RichScript> trackColumns;
+            for(const auto& column : columns) {
+                const auto evalScript = p->parser.evaluate(column.field, track);
+                trackColumns.emplace_back(column.field, p->formatter.evaluate(evalScript));
+            }
+            trackData.setColumns(trackColumns);
+        }
+        else {
+            RichScript trackLeft{preset.track.leftText};
+            RichScript trackRight{preset.track.rightText};
+
+            evaluateTrack(trackLeft);
+            evaluateTrack(trackRight);
+
+            trackData.setLeftRight(trackLeft, trackRight);
+        }
+
+        updatedTracks.push_back(item);
+    }
+
+    emit tracksUpdated(updatedTracks);
+
+    setState(Idle);
+}
+
 void PlaylistPopulator::updateHeaders(const ItemList& headers)
 {
     setState(Running);

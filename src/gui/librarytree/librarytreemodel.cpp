@@ -567,6 +567,22 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     addTracks(tracks);
 }
 
+void LibraryTreeModel::refreshTracks(const TrackList& tracks)
+{
+    for(const Track& track : tracks) {
+        if(!p->trackParents.contains(track.id())) {
+            continue;
+        }
+
+        const auto parents = p->trackParents.at(track.id());
+        for(const auto& parent : parents) {
+            if(p->nodes.contains(parent)) {
+                p->nodes.at(parent).replaceTrack(track);
+            }
+        }
+    }
+}
+
 void LibraryTreeModel::removeTracks(const TrackList& tracks)
 {
     p->removeTracks(tracks, true);

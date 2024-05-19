@@ -699,6 +699,19 @@ void PlaylistHandler::tracksUpdated(const TrackList& tracks)
     }
 }
 
+void PlaylistHandler::tracksPlayed(const TrackList& tracks)
+{
+    for(auto& playlist : p->playlists) {
+        TrackList playlistTracks  = playlist->tracks();
+        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Update);
+
+        if(!updatedIndexes.empty()) {
+            playlist->replaceTracks(playlistTracks);
+            emit playlistTracksPlayed(playlist.get(), updatedIndexes);
+        }
+    }
+}
+
 void PlaylistHandler::tracksRemoved(const TrackList& tracks)
 {
     for(auto& playlist : p->playlists) {

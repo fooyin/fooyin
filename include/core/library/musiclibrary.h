@@ -102,6 +102,7 @@ signals:
     void tracksLoaded(const TrackList& tracks);
     void tracksAdded(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
+    void tracksPlayed(const TrackList& tracks);
     void tracksDeleted(const TrackList& tracks);
     void tracksSorted(const TrackList& tracks);
 };

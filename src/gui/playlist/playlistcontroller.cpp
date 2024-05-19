@@ -178,6 +178,17 @@ struct PlaylistController::Private
         }
     }
 
+    void handleTracksPlayed(Playlist* playlist, const std::vector<int>& indexes) const
+    {
+        if(changingTracks) {
+            return;
+        }
+
+        if(playlist == currentPlaylist) {
+            emit self->currentPlaylistTracksPlayed(indexes);
+        }
+    }
+
     void handlePlaylistRemoved(Playlist* playlist)
     {
         if(!playlist) {
@@ -275,6 +286,9 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
     QObject::connect(
         handler, &PlaylistHandler::playlistTracksChanged, this,
         [this](Playlist* playlist, const std::vector<int>& indexes) { p->handlePlaylistUpdated(playlist, indexes); });
+    QObject::connect(
+        handler, &PlaylistHandler::playlistTracksPlayed, this,
+        [this](Playlist* playlist, const std::vector<int>& indexes) { p->handleTracksPlayed(playlist, indexes); });
     QObject::connect(handler, &PlaylistHandler::playlistTracksAdded, this,
                      [this](Playlist* playlist, const TrackList& tracks, int index) {
                          p->handlePlaylistTracksAdded(playlist, tracks, index);

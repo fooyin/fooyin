@@ -585,6 +585,11 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
         Qt::SingleShotConnection);
 }
 
+void FilterWidget::tracksPlayed(const TrackList& tracks)
+{
+    p->model->refreshTracks(tracks);
+}
+
 void FilterWidget::tracksRemoved(const TrackList& tracks)
 {
     p->model->removeTracks(tracks);

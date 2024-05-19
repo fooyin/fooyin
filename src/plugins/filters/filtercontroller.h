@@ -68,6 +68,7 @@ public:
 signals:
     void tracksRemoved(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
+    void tracksPlayed(const TrackList& tracks);
 
 private:
     struct Private;

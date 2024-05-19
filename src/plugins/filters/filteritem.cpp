@@ -112,6 +112,15 @@ void FilterItem::removeTrack(const Track& track)
     std::erase_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); });
 }
 
+void FilterItem::replaceTrack(const Track& track)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+    std::ranges::replace_if(
+        m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
+}
+
 void FilterItem::sortTracks()
 {
     m_tracks = Sorting::sortTracks(m_tracks);

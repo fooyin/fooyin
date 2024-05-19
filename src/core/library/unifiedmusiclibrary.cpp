@@ -75,43 +75,66 @@ struct UnifiedMusicLibrary::Private
             return;
         }
 
-        recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad)
-            .then(self, [this](const TrackList& sortedTracks) {
-                tracks = sortedTracks;
-                emit self->tracksLoaded(tracks);
-            });
+        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
+
+        sortTracks.then(self, [this](const TrackList& sortedTracks) {
+            tracks = sortedTracks;
+            emit self->tracksLoaded(tracks);
+        });
     }
 
     QFuture<void> addTracks(const TrackList& newTracks)
     {
-        return recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), newTracks)
-            .then(self, [this](const TrackList& sortedTracks) {
-                std::ranges::copy(sortedTracks, std::back_inserter(tracks));
-                resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                    tracks = sortedLibraryTracks;
-                    emit self->tracksAdded(sortedTracks);
-                });
+        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), newTracks);
+
+        return sortTracks.then(self, [this](const TrackList& sortedTracks) {
+            std::ranges::copy(sortedTracks, std::back_inserter(tracks));
+
+            resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                tracks = sortedLibraryTracks;
+                emit self->tracksAdded(sortedTracks);
             });
+        });
+    }
+
+    void updateLibraryTracks(const TrackList& updatedTracks)
+    {
+        for(const auto& track : updatedTracks) {
+            auto trackIt
+                = std::ranges::find_if(tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
+            if(trackIt != tracks.end()) {
+                *trackIt = track;
+                trackIt->clearWasModified();
+            }
+        }
     }
 
     QFuture<void> updateTracks(const TrackList& tracksToUpdate)
     {
-        return recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate)
-            .then(self, [this](const TrackList& sortedTracks) {
-                for(const auto& track : sortedTracks) {
-                    auto trackIt = std::ranges::find_if(
-                        tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
-                    if(trackIt != tracks.end()) {
-                        *trackIt = track;
-                        trackIt->clearWasModified();
-                    }
-                }
+        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
-                resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                    tracks = sortedLibraryTracks;
-                    emit self->tracksUpdated(sortedTracks);
-                });
+        return sortTracks.then(self, [this](const TrackList& sortedTracks) {
+            updateLibraryTracks(sortedTracks);
+
+            resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                tracks = sortedLibraryTracks;
+                emit self->tracksUpdated(sortedTracks);
             });
+        });
+    }
+
+    QFuture<void> updatePlayedTracks(const TrackList& tracksToUpdate)
+    {
+        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+
+        return sortTracks.then(self, [this](const TrackList& sortedTracks) {
+            updateLibraryTracks(sortedTracks);
+
+            resortTracks(tracks).then(self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+                tracks = sortedLibraryTracks;
+                emit self->tracksPlayed(sortedTracks);
+            });
+        });
     }
 
     void handleScanResult(const ScanResult& result)
@@ -130,12 +153,13 @@ struct UnifiedMusicLibrary::Private
 
     void scannedTracks(int id, const TrackList& tracksScanned)
     {
-        recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned)
-            .then(self, [this, id](const TrackList& scannedTracks) {
-                addTracks(scannedTracks).then(self, [this, id, scannedTracks]() {
-                    emit self->tracksScanned(id, scannedTracks);
-                });
+        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
+
+        sortTracks.then(self, [this, id](const TrackList& scannedTracks) {
+            addTracks(scannedTracks).then(self, [this, id, scannedTracks]() {
+                emit self->tracksScanned(id, scannedTracks);
             });
+        });
     }
 
     void removeLibrary(int id, const std::set<int>& tracksRemoved)
@@ -336,7 +360,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
         }
     }
 
-    p->updateTracks(tracksToUpdate);
+    p->updatePlayedTracks(tracksToUpdate);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()

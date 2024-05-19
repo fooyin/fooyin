@@ -455,6 +455,8 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
                      [this](int /*id*/, const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks, true); });
+    QObject::connect(p->library, &MusicLibrary::tracksPlayed, this,
+                     [this](const TrackList& tracks) { emit tracksPlayed(tracks); });
     QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
     QObject::connect(p->library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
@@ -487,6 +489,7 @@ FilterWidget* FilterController::createFilter()
     QObject::connect(widget, &FilterWidget::requestEditConnections, this,
                      [this]() { p->manager->setupWidgetConnections(); });
     QObject::connect(this, &FilterController::tracksUpdated, widget, &FilterWidget::tracksUpdated);
+    QObject::connect(this, &FilterController::tracksPlayed, widget, &FilterWidget::tracksPlayed);
     QObject::connect(this, &FilterController::tracksRemoved, widget, &FilterWidget::tracksRemoved);
 
     widget->reset(p->tracks(p->defaultId));

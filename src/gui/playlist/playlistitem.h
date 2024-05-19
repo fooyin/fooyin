@@ -77,6 +77,7 @@ public:
 
     void setPending(bool pending);
     void setState(State state);
+    void setData(const Data& data);
     void setBaseKey(const QString& key);
     void setKey(const QString& key);
     void setIndex(int index);

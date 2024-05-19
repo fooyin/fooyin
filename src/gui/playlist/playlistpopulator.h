@@ -32,6 +32,7 @@ class PlayerController;
 struct PlaylistPreset;
 
 using ItemList        = std::vector<PlaylistItem>;
+using TrackItemMap    = std::unordered_map<Track, PlaylistItem, Track::TrackHash>;
 using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
 using ContainerKeyMap = std::unordered_map<QString, PlaylistContainerItem*>;
 using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
@@ -71,14 +72,18 @@ public:
     explicit PlaylistPopulator(PlayerController* playerController, QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns, const TrackList& tracks);
+    void run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+             const TrackList& tracks);
     void runTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                    const std::map<int, TrackList>& tracks);
+    void updateTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+                      const TrackItemMap& tracks);
     void updateHeaders(const ItemList& headers);
 
 signals:
     void populated(PendingData data);
     void populatedTrackGroup(PendingData data);
+    void tracksUpdated(ItemList tracks);
     void headersUpdated(ItemKeyMap headers);
 
 private:

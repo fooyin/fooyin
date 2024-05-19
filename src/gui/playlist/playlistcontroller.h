@@ -94,6 +94,7 @@ signals:
     void playlistsLoaded();
     void currentPlaylistChanged(Playlist* prevPlaylist, Playlist* playlist);
     void currentPlaylistTracksChanged(const std::vector<int>& indexes, bool allNew);
+    void currentPlaylistTracksPlayed(const std::vector<int>& indexes);
     void currentPlaylistTracksAdded(const TrackList& tracks, int index);
     void currentPlaylistTracksRemoved(const std::vector<int>& indexes);
     void currentPlaylistQueueChanged(const std::vector<int>& tracks);

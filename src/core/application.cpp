@@ -153,6 +153,8 @@ Application::Application(QObject* parent)
                      &PlaylistHandler::savePlaylists);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler,
                      [this](const TrackList& tracks) { p->playlistHandler->tracksUpdated(tracks); });
+    QObject::connect(p->library, &MusicLibrary::tracksPlayed, p->playlistHandler,
+                     [this](const TrackList& tracks) { p->playlistHandler->tracksPlayed(tracks); });
     QObject::connect(&p->engine, &EngineHandler::trackAboutToFinish, p->playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
 

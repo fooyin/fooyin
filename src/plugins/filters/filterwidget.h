@@ -67,6 +67,7 @@ public:
 
     void tracksAdded(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
+    void tracksPlayed(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
 
 signals:

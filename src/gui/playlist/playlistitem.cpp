@@ -84,6 +84,11 @@ void PlaylistItem::setState(State state)
     m_state = state;
 }
 
+void PlaylistItem::setData(const Data& data)
+{
+    m_data = data;
+}
+
 void PlaylistItem::setBaseKey(const QString& key)
 {
     m_baseKey = key;

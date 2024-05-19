@@ -61,6 +61,7 @@ public:
 
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);
+    void refreshTracks(const TrackList& tracks);
     void removeTracks(const TrackList& tracks);
     bool removeColumn(int column);
 

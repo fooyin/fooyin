@@ -85,6 +85,9 @@ public:
     [[nodiscard]] int rowHeight() const;
     [[nodiscard]] QSize size(int column = 0) const;
 
+    void setColumns(const std::vector<RichScript>& columns);
+    void setLeftRight(const RichScript& left, const RichScript& right);
+
     void setRowHeight(int height);
     void removeColumn(int column);
 

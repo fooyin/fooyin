@@ -111,6 +111,7 @@ signals:
     void playlistAdded(Playlist* playlist);
     void playlistTracksAdded(Playlist* playlist, const TrackList& tracks, int index);
     void playlistTracksChanged(Playlist* playlist, const std::vector<int>& indexes);
+    void playlistTracksPlayed(Playlist* playlist, const std::vector<int>& indexes);
     void playlistTracksRemoved(Playlist* playlist, const std::vector<int>& indexes);
     void playlistRemoved(Playlist* playlist);
     void playlistRenamed(Playlist* playlist);
@@ -119,6 +120,7 @@ signals:
 public slots:
     void populatePlaylists(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
+    void tracksPlayed(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
     void trackAboutToFinish();
 
