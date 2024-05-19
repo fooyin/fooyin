@@ -30,7 +30,7 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
-constexpr auto BufferSize = 4096;
+constexpr auto BufferSize = 8192;
 
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
