@@ -225,7 +225,7 @@ void LibraryTreePageWidget::load()
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
 
-    m_fontButton->setFont(m_settings->value<Settings::Gui::Internal::LibTreeFont>());
+    m_fontButton->setButtonFont(m_settings->value<Settings::Gui::Internal::LibTreeFont>());
     m_colourButton->setColour(m_settings->value<Settings::Gui::Internal::LibTreeColour>());
     m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
 }
@@ -241,7 +241,7 @@ void LibraryTreePageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->font().toString());
+    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->buttonFont().toString());
     m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
     m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 

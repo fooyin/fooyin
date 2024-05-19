@@ -343,8 +343,14 @@ LibraryTreeModel::~LibraryTreeModel()
 
 void LibraryTreeModel::setFont(const QString& font)
 {
-    p->font.fromString(font);
-    emit dataChanged({}, {}, {Qt::FontRole});
+    if(font.isEmpty()) {
+        p->font = {};
+    }
+    else {
+        p->font.fromString(font);
+    }
+
+    emit dataChanged({}, {}, {Qt::FontRole, Qt::SizeHintRole});
 }
 
 void LibraryTreeModel::setColour(const QColor& colour)

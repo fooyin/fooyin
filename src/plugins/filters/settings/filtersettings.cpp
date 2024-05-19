@@ -22,7 +22,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
-#include <QFont>
 #include <QPalette>
 
 namespace Fooyin::Filters {
@@ -40,7 +39,7 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
     m_settings->createSetting<FilterAutoPlaylist>(QStringLiteral("Filter Results"),
                                                   QStringLiteral("Filters/SelectionPlaylistName"));
-    m_settings->createSetting<FilterFont>(QFont{}.toString(), QStringLiteral("Filters/Font"));
+    m_settings->createSetting<FilterFont>(QStringLiteral(""), QStringLiteral("Filters/Font"));
     m_settings->createSetting<FilterColour>(QApplication::palette().text().color().name(),
                                             QStringLiteral("Filters/Colour"));
     m_settings->createSetting<FilterRowHeight>(0, QStringLiteral("Filters/RowHeight"));

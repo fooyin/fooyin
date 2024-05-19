@@ -34,13 +34,14 @@ public:
     explicit FontButton(const QString& text, QWidget* parent = nullptr);
     explicit FontButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
 
-    [[nodiscard]] QFont font() const;
+    [[nodiscard]] QFont buttonFont() const;
     [[nodiscard]] bool fontChanged() const;
-    void setFont(const QFont& font);
-    void setFont(const QString& font);
+    void setButtonFont(const QFont& font);
+    void setButtonFont(const QString& font);
 
 private:
     void pickFont();
+    void updateText();
 
     QFont m_font;
     bool m_changed;

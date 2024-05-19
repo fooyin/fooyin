@@ -217,8 +217,14 @@ void FilterModel::sortOnColumn(int column, Qt::SortOrder order)
 
 void FilterModel::setFont(const QString& font)
 {
-    p->font.fromString(font);
-    emit dataChanged({}, {}, {Qt::FontRole});
+    if(font.isEmpty()) {
+        p->font = {};
+    }
+    else {
+        p->font.fromString(font);
+    }
+
+    emit dataChanged({}, {}, {Qt::FontRole, Qt::SizeHintRole});
 }
 
 void FilterModel::setColour(const QColor& colour)

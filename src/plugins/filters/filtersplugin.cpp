@@ -90,8 +90,6 @@ void FiltersPlugin::initialise(const CorePluginContext& context)
     p->library          = context.library;
     p->playerController = context.playerController;
     p->settings         = context.settingsManager;
-
-    p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
 }
 
 void FiltersPlugin::initialise(const GuiPluginContext& context)
@@ -101,6 +99,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
     p->widgetProvider = context.widgetProvider;
     p->trackSelection = context.trackSelection;
 
+    p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
     p->filterController
         = new FilterController(p->library, p->trackSelection, context.editableLayout, p->settings, this);
 

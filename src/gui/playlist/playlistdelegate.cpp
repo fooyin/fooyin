@@ -39,15 +39,16 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
 {
     DrawTextResult result;
 
+    QStyle* style     = option.widget ? option.widget->style() : QApplication::style();
     const auto colour = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
 
     for(const auto& block : blocks) {
         painter->setFont(block.format.font);
         painter->setPen(block.format.colour);
+
         result.bound = painter->boundingRect(rect, alignment | Qt::TextWrapAnywhere, block.text);
-        option.widget->style()->drawItemText(
-            painter, rect, alignment, option.palette, true,
-            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()), colour);
+        style->drawItemText(painter, rect, alignment, option.palette, true,
+                            painter->fontMetrics().elidedText(block.text, Qt::ElideRight, rect.width()), colour);
 
         if(alignment & Qt::AlignRight) {
             rect.moveRight((rect.x() + rect.width()) - result.bound.width());
@@ -56,6 +57,7 @@ DrawTextResult drawTextBlocks(QPainter* painter, const QStyleOptionViewItem& opt
             rect.setWidth(rect.width() - result.bound.width());
             rect.moveLeft(rect.x() + result.bound.width());
         }
+
         result.totalWidth += result.bound.width();
     }
 

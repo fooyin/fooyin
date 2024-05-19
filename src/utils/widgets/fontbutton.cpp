@@ -37,7 +37,7 @@ FontButton::FontButton(const QIcon& icon, const QString& text, QWidget* parent)
     QObject::connect(this, &QPushButton::clicked, this, &FontButton::pickFont);
 }
 
-QFont FontButton::font() const
+QFont FontButton::buttonFont() const
 {
     return m_font;
 }
@@ -47,16 +47,21 @@ bool FontButton::fontChanged() const
     return m_changed;
 }
 
-void FontButton::setFont(const QFont& font)
+void FontButton::setButtonFont(const QFont& font)
 {
     m_font = font;
-    setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
+    updateText();
 }
 
-void FontButton::setFont(const QString& font)
+void FontButton::setButtonFont(const QString& font)
 {
-    m_font.fromString(font);
-    setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
+    if(!font.isEmpty()) {
+        m_font.fromString(font);
+    }
+    else {
+        m_font = {};
+    }
+    updateText();
 }
 
 void FontButton::pickFont()
@@ -66,6 +71,12 @@ void FontButton::pickFont()
     if(ok && chosenFont != m_font) {
         m_font    = chosenFont;
         m_changed = true;
+        updateText();
     }
+}
+
+void FontButton::updateText()
+{
+    setText(QStringLiteral("%1 (%2)").arg(m_font.family()).arg(m_font.pointSize()));
 }
 } // namespace Fooyin

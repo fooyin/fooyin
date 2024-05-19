@@ -186,7 +186,7 @@ void FiltersGeneralPageWidget::load()
     m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
     m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
 
-    m_fontButton->setFont(m_settings->value<Settings::Filters::FilterFont>());
+    m_fontButton->setButtonFont(m_settings->value<Settings::Filters::FilterFont>());
     m_colourButton->setColour(m_settings->value<Settings::Filters::FilterColour>());
     m_rowHeight->setValue(m_settings->value<Settings::Filters::FilterRowHeight>());
 
@@ -204,7 +204,7 @@ void FiltersGeneralPageWidget::apply()
     m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
     m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
 
-    m_settings->set<Settings::Filters::FilterFont>(m_fontButton->font().toString());
+    m_settings->set<Settings::Filters::FilterFont>(m_fontButton->buttonFont().toString());
     m_settings->set<Settings::Filters::FilterColour>(m_colourButton->colour().name());
     m_settings->set<Settings::Filters::FilterRowHeight>(m_rowHeight->value());
 

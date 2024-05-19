@@ -23,7 +23,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
-#include <QFont>
 #include <QIcon>
 #include <QPalette>
 
@@ -86,7 +85,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
     m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
-    m_settings->createSetting<Internal::LibTreeFont>(QFont{}.toString(), QStringLiteral("LibraryTree/Font"));
+    m_settings->createSetting<Internal::LibTreeFont>(QStringLiteral(""), QStringLiteral("LibraryTree/Font"));
     m_settings->createSetting<Internal::LibTreeColour>(QApplication::palette().text().color().name(),
                                                        QStringLiteral("LibraryTree/Colour"));
     m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("LibraryTree/RowHeight"));
