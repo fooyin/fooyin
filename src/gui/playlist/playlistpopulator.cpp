@@ -259,6 +259,7 @@ struct PlaylistPopulator::Private
         }
 
         playlistTrack.setRowHeight(trackRow.rowHeight);
+        playlistTrack.setDepth(trackDepth);
         playlistTrack.calculateSize();
 
         const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
@@ -397,6 +398,8 @@ void PlaylistPopulator::updateTracks(const Id& playlistId, const PlaylistPreset&
                 script.text = p->formatter.evaluate(evalScript);
             }
         };
+
+        p->registry->setTrackProperties(item.index(), trackData.depth());
 
         if(!columns.empty()) {
             std::vector<RichScript> trackColumns;

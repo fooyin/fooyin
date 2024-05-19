@@ -198,6 +198,7 @@ PlaylistTrackItem::PlaylistTrackItem(RichScript left, RichScript right, const Tr
     , m_right{std::move(right)}
     , m_track{track}
     , m_rowHeight{0}
+    , m_depth{0}
 { }
 
 std::vector<RichScript> PlaylistTrackItem::columns() const
@@ -234,6 +235,11 @@ int PlaylistTrackItem::rowHeight() const
     return m_rowHeight;
 }
 
+int PlaylistTrackItem::depth() const
+{
+    return m_depth;
+}
+
 QSize PlaylistTrackItem::size(int column) const
 {
     if(column < 0 || std::cmp_greater_equal(column, m_sizes.size())) {
@@ -257,6 +263,11 @@ void PlaylistTrackItem::setLeftRight(const RichScript& left, const RichScript& r
 void PlaylistTrackItem::setRowHeight(int height)
 {
     m_rowHeight = height;
+}
+
+void PlaylistTrackItem::setDepth(int depth)
+{
+    m_depth = depth;
 }
 
 void PlaylistTrackItem::removeColumn(int column)

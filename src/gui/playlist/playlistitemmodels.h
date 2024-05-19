@@ -83,12 +83,14 @@ public:
     [[nodiscard]] RichScript right() const;
     [[nodiscard]] Track track() const;
     [[nodiscard]] int rowHeight() const;
+    [[nodiscard]] int depth() const;
     [[nodiscard]] QSize size(int column = 0) const;
 
     void setColumns(const std::vector<RichScript>& columns);
     void setLeftRight(const RichScript& left, const RichScript& right);
 
     void setRowHeight(int height);
+    void setDepth(int depth);
     void removeColumn(int column);
 
     void calculateSize();
@@ -101,5 +103,6 @@ private:
     Track m_track;
     std::vector<QSize> m_sizes;
     int m_rowHeight;
+    int m_depth;
 };
 } // namespace Fooyin
