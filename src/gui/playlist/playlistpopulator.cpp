@@ -220,6 +220,15 @@ struct PlaylistPopulator::Private
         subheaders.clear();
     }
 
+    void evaluateTrackScript(RichScript& script, const Track& track)
+    {
+        script.text.clear();
+        const auto evalScript = parser.evaluate(script.script, track);
+        if(!evalScript.isEmpty()) {
+            script.text = formatter.evaluate(evalScript);
+        }
+    }
+
     PlaylistItem* iterateTrack(const Track& track, int index)
     {
         PlaylistItem* parent = &root;
@@ -230,14 +239,6 @@ struct PlaylistPopulator::Private
         if(!currentPreset.track.isValid()) {
             return nullptr;
         }
-
-        auto evaluateTrack = [this, &track](RichScript& script) {
-            script.text.clear();
-            const auto evalScript = parser.evaluate(script.script, track);
-            if(!evalScript.isEmpty()) {
-                script.text = formatter.evaluate(evalScript);
-            }
-        };
 
         registry->setTrackProperties(index, trackDepth);
 
@@ -252,8 +253,8 @@ struct PlaylistPopulator::Private
             playlistTrack = {trackRow.columns, track};
         }
         else {
-            evaluateTrack(trackRow.leftText);
-            evaluateTrack(trackRow.rightText);
+            evaluateTrackScript(trackRow.leftText, track);
+            evaluateTrackScript(trackRow.rightText, track);
 
             playlistTrack = {trackRow.leftText, trackRow.rightText, track};
         }
@@ -391,14 +392,6 @@ void PlaylistPopulator::updateTracks(const Id& playlistId, const PlaylistPreset&
     for(const auto& [track, item] : tracks) {
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
-        auto evaluateTrack = [this, &track](RichScript& script) {
-            script.text.clear();
-            const auto evalScript = p->parser.evaluate(script.script, track);
-            if(!evalScript.isEmpty()) {
-                script.text = p->formatter.evaluate(evalScript);
-            }
-        };
-
         p->registry->setTrackProperties(item.index(), trackData.depth());
 
         if(!columns.empty()) {
@@ -413,8 +406,8 @@ void PlaylistPopulator::updateTracks(const Id& playlistId, const PlaylistPreset&
             RichScript trackLeft{preset.track.leftText};
             RichScript trackRight{preset.track.rightText};
 
-            evaluateTrack(trackLeft);
-            evaluateTrack(trackRight);
+            p->evaluateTrackScript(trackLeft, track);
+            p->evaluateTrackScript(trackRight, track);
 
             trackData.setLeftRight(trackLeft, trackRight);
         }
