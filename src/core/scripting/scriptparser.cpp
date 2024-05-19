@@ -519,6 +519,10 @@ ParsedScript ScriptParser::parse(const QString& input, const Track& track)
 
 ParsedScript ScriptParser::parse(const QString& input, const TrackList& tracks)
 {
+    if(tracks.empty()) {
+        return {};
+    }
+
     return p->parse(input, tracks);
 }
 
@@ -529,28 +533,48 @@ QString ScriptParser::evaluate(const QString& input)
 
 QString ScriptParser::evaluate(const ParsedScript& input)
 {
+    if(!input.isValid()) {
+        return {};
+    }
+
     return evaluate(input, Track{});
 }
 
 QString ScriptParser::evaluate(const QString& input, const Track& track)
 {
+    if(input.isEmpty()) {
+        return {};
+    }
+
     const auto script = parse(input, track);
     return p->evaluate(script, track);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const Track& track)
 {
+    if(!input.isValid()) {
+        return {};
+    }
+
     return p->evaluate(input, track);
 }
 
 QString ScriptParser::evaluate(const QString& input, const TrackList& tracks)
 {
+    if(input.isEmpty()) {
+        return {};
+    }
+
     const auto script = parse(input, tracks);
     return p->evaluate(script, tracks);
 }
 
 QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& tracks)
 {
+    if(!input.isValid()) {
+        return {};
+    }
+
     return p->evaluate(input, tracks);
 }
 
