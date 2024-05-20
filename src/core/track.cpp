@@ -241,6 +241,11 @@ QString Track::extension() const
     return p->extension;
 }
 
+QString Track::filenameExt() const
+{
+    return QFileInfo{p->filepath}.fileName();
+}
+
 QString Track::title() const
 {
     return p->title;
