@@ -21,6 +21,8 @@
 
 #include <gui/fywidget.h>
 
+#include <QWheelEvent>
+
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
@@ -35,6 +37,8 @@ public:
 
     QString name() const override;
     QString layoutName() const override;
+
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     struct Private;
