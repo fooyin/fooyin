@@ -147,6 +147,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::SampleRate)]   = &Track::sampleRate;
         metadata[QString::fromLatin1(MetaData::PlayCount)]    = &Track::playCount;
         metadata[QString::fromLatin1(MetaData::Codec)]        = &Track::typeString;
+        metadata[QString::fromLatin1(MetaData::Channels)]     = &Track::channels;
         metadata[QString::fromLatin1(MetaData::AddedTime)]    = &Track::addedTime;
         metadata[QString::fromLatin1(MetaData::ModifiedTime)] = &Track::modifiedTime;
         metadata[QString::fromLatin1(MetaData::FilePath)]     = &Track::filepath;

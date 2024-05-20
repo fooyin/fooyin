@@ -44,6 +44,7 @@ constexpr auto Bitrate      = "bitrate";
 constexpr auto SampleRate   = "samplerate";
 constexpr auto PlayCount    = "playcount";
 constexpr auto Codec        = "codec";
+constexpr auto Channels     = "channels";
 constexpr auto AddedTime    = "addedtime";
 constexpr auto ModifiedTime = "modifiedtime";
 constexpr auto FilePath     = "filepath";
