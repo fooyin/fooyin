@@ -1133,11 +1133,6 @@ bool PlaylistView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol
     QModelIndex index{dropIndex};
     const QPoint pos = event->position().toPoint();
 
-    if(m_self->viewport()->rect().contains(pos)
-       && (!index.isValid() || !visualRect(index, RectRule::FullRow).contains(pos))) {
-        index = {};
-    }
-
     if(!(m_model->supportedDropActions() & event->dropAction())) {
         return false;
     }
@@ -2096,8 +2091,12 @@ void PlaylistView::dragMoveEvent(QDragMoveEvent* event)
         event->setDropAction(Qt::MoveAction);
     }
 
-    const QModelIndex index = findIndexAt(pos, true);
-    p->m_hoverIndex         = index;
+    QModelIndex index = findIndexAt(pos, true);
+    p->m_hoverIndex   = index;
+
+    if(!index.isValid() && p->itemCount() > 0) {
+        index = p->m_viewItems.back().index;
+    }
 
     if(index.isValid() && showDropIndicator()) {
         const QRect rect      = p->visualRect(index, RectRule::FullRow, false);
@@ -2201,6 +2200,10 @@ void PlaylistView::dropEvent(QDropEvent* event)
     int col{-1};
     int row{-1};
     QModelIndex index = findIndexAt(event->position().toPoint(), true);
+
+    if(!index.isValid() && p->itemCount() > 0) {
+        index = p->m_viewItems.back().index;
+    }
 
     if(p->dropOn(event, row, col, index)) {
         const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
