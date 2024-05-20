@@ -96,7 +96,16 @@ public:
 
     Item addItem(const Item& item)
     {
-        return addItem(item, true);
+        Item newItem{item};
+        newItem.name  = findUniqueName(newItem.name);
+        newItem.id    = findValidId();
+        newItem.index = static_cast<int>(m_items.size());
+
+        m_items.push_back(newItem);
+
+        saveItems();
+
+        return newItem;
     }
 
     bool changeItem(const Item& item)
@@ -244,7 +253,18 @@ protected:
     {
         Item defaultItem{item};
         defaultItem.isDefault = true;
-        addItem(defaultItem, false);
+
+        if(defaultItem.name.isEmpty()) {
+            defaultItem.name = findUniqueName(defaultItem.name);
+        }
+        if(defaultItem.id < 0) {
+            defaultItem.id = findValidId();
+        }
+        if(defaultItem.index < 0 || std::cmp_greater(defaultItem.index, m_items.size())) {
+            defaultItem.index = static_cast<int>(m_items.size());
+        }
+
+        m_items.insert(m_items.begin() + defaultItem.index, defaultItem);
     }
 
 private:
@@ -254,31 +274,15 @@ private:
         return Utils::findUniqueString(uniqueName, m_items, [](const auto& item) { return item.name; });
     }
 
-    Item addItem(const Item& item, bool save)
+    [[nodiscard]] int findValidId() const
     {
-        auto findValidId = [this]() -> int {
-            if(m_items.empty()) {
-                return 0;
-            }
-
-            auto ids = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
-
-            const int nextId = *std::ranges::max_element(ids) + 1;
-            return nextId;
-        };
-
-        Item newItem{item};
-        newItem.name  = findUniqueName(newItem.name);
-        newItem.id    = findValidId();
-        newItem.index = static_cast<int>(m_items.size());
-
-        m_items.push_back(newItem);
-
-        if(save) {
-            saveItems();
+        if(m_items.empty()) {
+            return 0;
         }
 
-        return newItem;
+        auto ids         = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
+        const int nextId = *std::ranges::max_element(ids) + 1;
+        return nextId;
     }
 
     void checkChangedItems(const ItemList& oldItems)
