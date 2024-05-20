@@ -366,12 +366,12 @@ struct GuiApplication::Private
         layoutProvider.registerLayout(R"({"Name":"Empty"})");
 
         layoutProvider.registerLayout(
-            R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAFgAAA6YAAAAXAP////8BAAAAAgA=",
-            "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAABYAAABeoA/////wEAAAABAA==",
-            "Widgets":[{"LibraryTree":{"Grouping":"Artist/Album","ID":"8c3bf224ae774bd780cc2ff3ad638081"}},
-            {"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}},{"SplitterHorizontal":{
-            "State":"AAAA/wAAAAEAAAAEAAAAcgAAAswAAAA2AAAAGAD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},{"SeekBar":{}},
-            {"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
+            R"({"Name":"Simple","Version":1,"Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAIAAAAnkAAAAXAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABCEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
+            {"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},{"SplitterHorizontal":{
+            "State":"AAAA/wAAAAEAAAACAAAA9QAABAoA/////wEAAAABAA==","Widgets":[{"SplitterVertical":{
+            "State":"AAAA/wAAAAEAAAACAAABfQAAAPEA/////wEAAAACAA==","Widgets":[{"LibraryTree":{}},{"ArtworkPanel":{}}]}},
+            {"PlaylistTabs":{"Widgets":[{"Playlist":{}}]}}]}},{"StatusBar":{}}]}}]})");
 
         layoutProvider.registerLayout(
             R"({"Name":"Vision","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAA6EAAAAWAP////8BAAAAAgA=",
