@@ -39,38 +39,19 @@ Translations::Translations(SettingsManager* settings)
 void Translations::initialiseTranslations()
 {
     const QString customLanguage = m_settings->value<Settings::Core::Language>();
-
-    if(!customLanguage.isEmpty()) {
-        const QLocale customLocale = QLocale{customLanguage};
-        // Returns the 'C' locale if not valid
-        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0
-           && customLocale.language() == QLocale::C) {
-            qWarning() << "Custom locale (" << customLanguage << ") not found, using 'C' locale.";
-        }
-        QLocale::setDefault(customLocale);
-    }
-
-    const QLocale locale;
-
-    if(locale.language() == QLocale::C) {
-        return;
-    }
+    const QLocale locale = customLanguage.isEmpty() ? QLocale{QLocale::system().language()} : QLocale{customLanguage};
 
     if(locale.language() == QLocale::English
        && (locale.territory() == QLocale::UnitedKingdom || locale.territory() == QLocale::AnyCountry)) {
+        qDebug() << "Skipping loading of translations for locale" << locale.name();
         return;
     }
 
-    const bool foundQt
-        = installTranslations(locale, QStringLiteral("qt"), QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
+    installTranslations(locale, QStringLiteral("qt"), QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
 
     const QString translationsPath = Core::translationsPath();
     if(translationsPath.isEmpty()) {
         return;
-    }
-
-    if(!foundQt) {
-        installTranslations(locale, QStringLiteral("qt"), translationsPath, false);
     }
 
     installTranslations(locale, QStringLiteral("fooyin"), translationsPath, true);
