@@ -31,6 +31,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
@@ -160,6 +161,11 @@ QString VolumeControl::name() const
 QString VolumeControl::layoutName() const
 {
     return QStringLiteral("VolumeControls");
+}
+
+void VolumeControl::wheelEvent(QWheelEvent* event)
+{
+    QApplication::sendEvent(p->volumeSlider, event);
 }
 } // namespace Fooyin
 
