@@ -131,6 +131,7 @@ public:
 
     [[nodiscard]] uint64_t addedTime() const;
     [[nodiscard]] uint64_t modifiedTime() const;
+    [[nodiscard]] QString lastModified() const;
     [[nodiscard]] uint64_t firstPlayed() const;
     [[nodiscard]] uint64_t lastPlayed() const;
 

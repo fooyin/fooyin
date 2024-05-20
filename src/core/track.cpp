@@ -20,6 +20,7 @@
 #include <core/track.h>
 
 #include <utils/crypto.h>
+#include <utils/utils.h>
 
 #include <QDir>
 #include <QFileInfo>
@@ -418,6 +419,11 @@ uint64_t Track::addedTime() const
 uint64_t Track::modifiedTime() const
 {
     return p->modifiedTime;
+}
+
+QString Track::lastModified() const
+{
+    return Utils::formatTimeMs(p->modifiedTime);
 }
 
 uint64_t Track::firstPlayed() const

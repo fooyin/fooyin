@@ -149,7 +149,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::Codec)]        = &Track::typeString;
         metadata[QString::fromLatin1(MetaData::Channels)]     = &Track::channels;
         metadata[QString::fromLatin1(MetaData::AddedTime)]    = &Track::addedTime;
-        metadata[QString::fromLatin1(MetaData::ModifiedTime)] = &Track::modifiedTime;
+        metadata[QString::fromLatin1(MetaData::LastModified)] = &Track::lastModified;
         metadata[QString::fromLatin1(MetaData::FilePath)]     = &Track::filepath;
         metadata[QString::fromLatin1(MetaData::RelativePath)] = &Track::relativePath;
         metadata[QString::fromLatin1(MetaData::FileName)]     = &Track::filename;
