@@ -79,13 +79,13 @@ struct EngineHandler::Private
             case(TrackStatus::EndOfTrack):
                 playerController->next();
                 break;
-            case(NoTrack):
+            case(TrackStatus::NoTrack):
                 playerController->stop();
                 break;
-            case(InvalidTrack):
-            case(LoadingTrack):
-            case(LoadedTrack):
-            case(BufferedTrack):
+            case(TrackStatus::InvalidTrack):
+            case(TrackStatus::LoadingTrack):
+            case(TrackStatus::LoadedTrack):
+            case(TrackStatus::BufferedTrack):
                 break;
         }
 

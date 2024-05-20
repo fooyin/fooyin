@@ -310,7 +310,7 @@ struct GuiApplication::Private
         QObject::connect(fileMenu, &FileMenu::requestAddFolders, self, [this]() { addFolders(); });
         QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
         QObject::connect(engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
-            if(status == InvalidTrack) {
+            if(status == TrackStatus::InvalidTrack) {
                 const Track track = playerController->currentTrack();
                 if(track.isValid() && !QFileInfo::exists(track.filepath())) {
                     showTrackNotFoundMessage(track);

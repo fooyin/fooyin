@@ -26,14 +26,15 @@
 namespace Fooyin {
 class Track;
 
-enum PlaybackState
+enum class PlaybackState
 {
-    StoppedState,
-    PlayingState,
-    PausedState
+    Stopped,
+    Playing,
+    Paused,
+    Error
 };
 
-enum TrackStatus
+enum class TrackStatus
 {
     NoTrack,
     LoadingTrack,
