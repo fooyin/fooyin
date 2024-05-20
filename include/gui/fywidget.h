@@ -87,7 +87,7 @@ public:
     void saveBaseLayout(QJsonArray& layout);
     /*!
      * Called when loading from a layout file (on open or importing).
-     * Saves the unique id of this widget and calls @fn saveLayoutData.
+     * Replaces the unique id of this widget (if it exists) and calls @fn loadLayoutData.
      */
     void loadLayout(const QJsonObject& layout);
 
