@@ -657,7 +657,7 @@ void PlaylistView::Private::recalculatePadding()
     for(auto& item : m_viewItems) {
         item.padding = 0;
 
-        if(item.hasChildren) {
+        if(item.hasChildren || item.parentItem == -1) {
             continue;
         }
 
