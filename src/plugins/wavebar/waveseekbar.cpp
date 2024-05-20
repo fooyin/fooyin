@@ -460,7 +460,9 @@ void WaveSeekBar::drawSeekTip()
         seekTipPos.setX(seekTipPos.x() - (2 * m_seekTip->width()));
     }
 
-    seekTipPos.setY(std::clamp(seekTipPos.y(), m_seekTip->height(), height()));
+    seekTipPos.setY(std::max(seekTipPos.y(), m_seekTip->height()));
+    seekTipPos.setY(std::min(seekTipPos.y(), height()));
+
     m_seekTip->setPosition(mapTo(window(), seekTipPos));
 }
 } // namespace Fooyin::WaveBar
