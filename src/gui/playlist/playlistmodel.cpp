@@ -35,6 +35,7 @@
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+#include <utils/widgets/autoheaderview.h>
 
 #include <QApplication>
 #include <QFontMetrics>
@@ -644,17 +645,42 @@ QVariant PlaylistModel::headerData(int section, Qt::Orientation orientation, int
         return (Qt::AlignHCenter);
     }
 
-    if(role != Qt::DisplayRole || orientation == Qt::Orientation::Vertical) {
+    if(orientation == Qt::Orientation::Vertical) {
         return {};
     }
 
-    if(!m_columns.empty()) {
-        if(section >= 0 && section < static_cast<int>(m_columns.size())) {
-            return m_columns.at(section).name;
-        }
+    if(role == AutoHeaderView::SectionAlignment) {
+        return columnAlignment(section).toInt();
     }
 
-    return m_headerText;
+    if(role == Qt::DisplayRole) {
+        if(!m_columns.empty()) {
+            if(section >= 0 && section < static_cast<int>(m_columns.size())) {
+                return m_columns.at(section).name;
+            }
+        }
+
+        return m_headerText;
+    }
+
+    return {};
+}
+
+bool PlaylistModel::setHeaderData(int section, Qt::Orientation /*orientation*/, const QVariant& value, int role)
+{
+    if(role != AutoHeaderView::SectionAlignment) {
+        return false;
+    }
+
+    if(section < 0 || section >= columnCount({})) {
+        return {};
+    }
+
+    changeColumnAlignment(section, value.value<Qt::Alignment>());
+
+    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+
+    return true;
 }
 
 QVariant PlaylistModel::data(const QModelIndex& index, int role) const
@@ -699,23 +725,6 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     }
 
     return {};
-}
-
-bool PlaylistModel::setData(const QModelIndex& index, const QVariant& value, int role)
-{
-    if(role != Qt::TextAlignmentRole) {
-        return false;
-    }
-
-    if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
-        return {};
-    }
-
-    changeColumnAlignment(index.column(), value.value<Qt::Alignment>());
-
-    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
-
-    return true;
 }
 
 void PlaylistModel::fetchMore(const QModelIndex& parent)
@@ -939,6 +948,7 @@ void PlaylistModel::changeColumnAlignment(int column, Qt::Alignment alignment)
     if(std::cmp_greater_equal(column, m_columnAlignments.size())) {
         m_columnAlignments.resize(column + 1, Qt::AlignLeft);
     }
+
     m_columnAlignments[column] = alignment;
 }
 

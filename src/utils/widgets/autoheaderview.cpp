@@ -494,8 +494,7 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
     alignCentre->setCheckable(true);
     alignRight->setCheckable(true);
 
-    const QModelIndex index     = model()->index(0, logical);
-    const auto currentAlignment = model()->data(index, Qt::TextAlignmentRole).value<Qt::Alignment>();
+    const auto currentAlignment = model()->headerData(logical, orientation(), SectionAlignment).value<Qt::Alignment>();
 
     if(currentAlignment & Qt::AlignLeft) {
         alignLeft->setChecked(true);
@@ -507,8 +506,8 @@ void AutoHeaderView::addHeaderAlignmentMenu(QMenu* menu, const QPoint& pos)
         alignRight->setChecked(true);
     }
 
-    auto changeAlignment = [this, index](Qt::Alignment alignment) {
-        model()->setData(index, alignment.toInt(), Qt::TextAlignmentRole);
+    auto changeAlignment = [this, logical](Qt::Alignment alignment) {
+        model()->setHeaderData(logical, orientation(), alignment.toInt(), SectionAlignment);
     };
 
     QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });

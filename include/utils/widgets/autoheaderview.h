@@ -29,6 +29,11 @@ class FYUTILS_EXPORT AutoHeaderView : public QHeaderView
     Q_OBJECT
 
 public:
+    enum Role
+    {
+        SectionAlignment = Qt::UserRole + 100
+    };
+
     explicit AutoHeaderView(Qt::Orientation orientation, QWidget* parent = nullptr);
     ~AutoHeaderView() override;
 
