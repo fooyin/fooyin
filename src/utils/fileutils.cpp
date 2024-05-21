@@ -179,7 +179,7 @@ QStringList getFiles(const QStringList& paths, const QStringList& fileExtensions
     }
 
     for(const QDir& dir : dirs) {
-        files.append(getFilesInDir(dir, fileExtensions));
+        files.append(getFilesInDirRecursive(dir, fileExtensions));
     }
 
     return files;
