@@ -19,11 +19,9 @@ Audio playback is supported by FFmpeg alongside multiple options for output incl
 A *layout editing mode* enables the entire user interface to be customised,
 starting from a blank slate or a preset layout.
 
-![simple](https://github.com/ludouzi/fooyin/assets/45490980/93a560cd-ed12-4848-a6e0-eca6318cb9a0) | ![2](https://github.com/ludouzi/fooyin/assets/45490980/6b706453-4661-4fbb-af0e-90d193bb298f) | ![3](https://github.com/ludouzi/fooyin/assets/45490980/9351a305-5de5-4f65-87d3-e9ffee4444aa) 
--|-|-
-![4](https://github.com/ludouzi/fooyin/assets/45490980/2ff47d6d-ff0f-4333-85eb-9fd4a82e3550) | ![5](https://github.com/ludouzi/fooyin/assets/45490980/d8fb8631-af72-4b94-b2f0-7c086bb7ac4a) | ![6](https://github.com/ludouzi/fooyin/assets/45490980/48ecfd76-f658-4120-8a98-485faff4ad32) 
-
-Note: The above screenshots were taken using the Otto plasma theme.
+| ![Simple](https://github.com/ludouzi/fooyin/assets/45490980/7e296e0c-ebb5-4106-b867-1bf846d2ec32)   | ![Browser](https://github.com/ludouzi/fooyin/assets/45490980/f9ae509a-69db-498a-8a25-8a5b77c1f62e) |
+|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| ![Obsidian](https://github.com/ludouzi/fooyin/assets/45490980/02243a5e-8ed2-4eb0-a340-0c6fffe85a75) | ![Wave](https://github.com/ludouzi/fooyin/assets/45490980/e9a69535-15d0-43af-bc29-1f90b5969bbf)    |
 
 Only Linux is supported at present, though other platforms will be added at a later date.
 

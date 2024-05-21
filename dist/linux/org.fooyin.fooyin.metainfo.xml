@@ -32,8 +32,8 @@
     <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://github.com/ludouzi/fooyin/assets/45490980/d8fb8631-af72-4b94-b2f0-7c086bb7ac4a</image>
-            <caption>Ember layout</caption>
+            <image>https://github.com/ludouzi/fooyin/assets/45490980/7e296e0c-ebb5-4106-b867-1bf846d2ec32</image>
+            <caption>Simple layout</caption>
         </screenshot>
     </screenshots>
     <releases>
