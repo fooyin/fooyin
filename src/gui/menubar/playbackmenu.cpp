@@ -110,6 +110,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     QObject::connect(followCursor, &QAction::triggered, this,
                      [this](bool enabled) { m_settings->set<Settings::Gui::PlaybackFollowsCursor>(enabled); });
 
+    m_settings->subscribe<Settings::Gui::CursorFollowsPlayback>(
+        this, [followPlayback](bool enabled) { followPlayback->setChecked(enabled); });
+    m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(
+        this, [followCursor](bool enabled) { followCursor->setChecked(enabled); });
+
     playbackMenu->addAction(followPlayback);
     playbackMenu->addAction(followCursor);
 
