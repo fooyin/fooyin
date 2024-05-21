@@ -62,12 +62,6 @@ fooyin_option(BUILD_ASAN "Enable AddressSanitizer" OFF)
 fooyin_option(INSTALL_FHS "Install in Linux distros /usr hierarchy" ON)
 fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
 
-set(FOOYIN_LINK_OPTIONS)
-
-if(BUILD_ASAN)
-    list(APPEND FOOYIN_LINK_OPTIONS -fsanitize=address,undefined)
-endif()
-
 list(
     APPEND
     FOOYIN_COMPILE_OPTIONS
@@ -129,11 +123,6 @@ set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
 find_package(Taglib REQUIRED taglib>=1.12)
-if(BUILD_ALSA)
-find_package(ALSA REQUIRED)
-add_definitions(-DBUILD_ALSA_ENABLED)
-endif()
-
 find_package(
     FFmpeg REQUIRED
     COMPONENTS AVCODEC
