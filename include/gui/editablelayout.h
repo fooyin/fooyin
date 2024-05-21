@@ -54,7 +54,6 @@ public:
     void changeLayout(const Layout& layout);
     void saveLayout();
     bool loadLayout(const Layout& layout);
-    bool loadLayout();
 
     static QJsonObject saveWidget(FyWidget* widget);
     static QJsonObject saveBaseWidget(FyWidget* widget);

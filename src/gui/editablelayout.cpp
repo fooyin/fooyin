@@ -117,7 +117,7 @@ public:
 
     [[nodiscard]] int widgetCount() const override
     {
-        return m_widget ? 1 : 0;
+        return m_widget && !qobject_cast<Dummy*>(m_widget) ? 1 : 0;
     }
 
     [[nodiscard]] WidgetList widgets() const override
@@ -517,9 +517,7 @@ EditableLayout::EditableLayout(ActionManager* actionManager, WidgetProvider* wid
 
 EditableLayout::~EditableLayout()
 {
-    if(p->layoutEditing) {
-        p->changeEditingState(false);
-    }
+    p->settings->set<Settings::Gui::LayoutEditing>(false);
 }
 
 void EditableLayout::initialise()
@@ -544,9 +542,7 @@ void EditableLayout::initialise()
                      [redo](bool canRedo) { redo->setEnabled(canRedo); });
     redo->setEnabled(p->layoutHistory->canRedo());
 
-    if(!loadLayout()) {
-        p->setupDefault();
-    }
+    changeLayout(p->layoutProvider->currentLayout());
 }
 
 std::optional<Layout> EditableLayout::saveCurrentToLayout(const QString& name)
@@ -631,6 +627,13 @@ void EditableLayout::changeLayout(const Layout& layout)
     if(!loadLayout(layout)) {
         p->setupDefault();
     }
+
+    if(p->root->widgetCount() == 0) {
+        p->settings->set<Settings::Gui::LayoutEditing>(true);
+    }
+    else {
+        p->settings->set<Settings::Gui::LayoutEditing>(false);
+    }
 }
 
 void EditableLayout::saveLayout()
@@ -679,12 +682,6 @@ bool EditableLayout::loadLayout(const Layout& layout)
 
     topWidget->finalise();
     return true;
-}
-
-bool EditableLayout::loadLayout()
-{
-    const Layout layout = p->layoutProvider->currentLayout();
-    return loadLayout(layout);
 }
 
 QJsonObject EditableLayout::saveWidget(FyWidget* widget)

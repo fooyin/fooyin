@@ -50,6 +50,8 @@ ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* track
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
     m_layoutEditing->setCheckable(true);
     m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(this,
+                                                        [this](bool enabled) { m_layoutEditing->setChecked(enabled); });
 
     m_openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
     viewMenu->addAction(m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup));
