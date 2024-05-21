@@ -71,6 +71,7 @@ private:
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
     QCheckBox* m_splitterHandles;
+    QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
 };
 
@@ -84,6 +85,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
+    , m_overrideMargin{new QCheckBox(tr("Override root margin") + QStringLiteral(":"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
@@ -108,10 +110,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
-    auto* layoutMarginLabel = new QLabel(tr("Root margin") + QStringLiteral(":"), this);
-
     layoutGroupLayout->addWidget(m_splitterHandles, 0, 0, 1, 3);
-    layoutGroupLayout->addWidget(layoutMarginLabel, 1, 0);
+    layoutGroupLayout->addWidget(m_overrideMargin, 1, 0);
     layoutGroupLayout->addWidget(m_editableLayoutMargin, 1, 1);
     layoutGroupLayout->setColumnStretch(2, 1);
 
@@ -130,6 +130,9 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     QObject::connect(quickSetup, &QPushButton::clicked, this, &GuiGeneralPageWidget::showQuickSetup);
     QObject::connect(importLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::importLayout);
     QObject::connect(exportLayoutBtn, &QPushButton::clicked, this, &GuiGeneralPageWidget::exportLayout);
+
+    QObject::connect(m_overrideMargin, &QCheckBox::toggled, this,
+                     [this](bool checked) { m_editableLayoutMargin->setEnabled(checked); });
 }
 
 void GuiGeneralPageWidget::load()
@@ -152,7 +155,9 @@ void GuiGeneralPageWidget::load()
             break;
     }
 
-    m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
+    m_overrideMargin->setChecked(m_settings->value<EditableLayoutMargin>() >= 0);
+    m_editableLayoutMargin->setValue(std::min(0, m_settings->value<EditableLayoutMargin>()));
+    m_editableLayoutMargin->setEnabled(m_overrideMargin->isChecked());
 }
 
 void GuiGeneralPageWidget::apply()
@@ -179,7 +184,13 @@ void GuiGeneralPageWidget::apply()
 
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
     m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
-    m_settings->set<EditableLayoutMargin>(m_editableLayoutMargin->value());
+
+    if(m_overrideMargin->isChecked()) {
+        m_settings->set<EditableLayoutMargin>(m_editableLayoutMargin->value());
+    }
+    else {
+        m_settings->reset<EditableLayoutMargin>();
+    }
 }
 
 void GuiGeneralPageWidget::reset()

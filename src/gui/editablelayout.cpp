@@ -45,6 +45,7 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QStyle>
 #include <QUndoStack>
 
 #include <stack>
@@ -212,10 +213,18 @@ struct EditableLayout::Private
         settings->set<Settings::Gui::LayoutEditing>(true);
     }
 
-    void updateMargins()
+    void updateMargins() const
     {
         const int margin = settings->value<Settings::Gui::Internal::EditableLayoutMargin>();
-        box->setContentsMargins(margin, margin, margin, margin);
+        if(margin >= 0) {
+            box->setContentsMargins(margin, margin, margin, margin);
+        }
+        else {
+            box->setContentsMargins(self->style()->pixelMetric(QStyle::PM_LayoutLeftMargin),
+                                    self->style()->pixelMetric(QStyle::PM_LayoutTopMargin),
+                                    self->style()->pixelMetric(QStyle::PM_LayoutRightMargin),
+                                    self->style()->pixelMetric(QStyle::PM_LayoutBottomMargin));
+        }
     }
 
     void changeEditingState(bool editing)
