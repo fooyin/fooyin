@@ -91,8 +91,8 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
     auto* cacheGroupBox = new QGroupBox(tr("Cache"), this);
     auto* cacheLayout   = new QGridLayout(cacheGroupBox);
 
-    auto* pixmapCacheLabel   = new QLabel(tr("Pixmap Cache Size") + QStringLiteral(":"), this);
-    auto* thumbnailSizeLabel = new QLabel(tr("Thumbnail Size") + QStringLiteral(":"), this);
+    auto* pixmapCacheLabel   = new QLabel(tr("Pixmap cache size") + QStringLiteral(":"), this);
+    auto* thumbnailSizeLabel = new QLabel(tr("Thumbnail size") + QStringLiteral(":"), this);
 
     m_pixmapCache->setMinimum(10);
     m_pixmapCache->setMaximum(1000);

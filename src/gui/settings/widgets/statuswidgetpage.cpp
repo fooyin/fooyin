@@ -53,16 +53,16 @@ private:
 
 StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_showIcon{new QCheckBox(tr("Show Icon"), this)}
-    , m_showSelection{new QCheckBox(tr("Show Track Selection"), this)}
+    , m_showIcon{new QCheckBox(tr("Show icon"), this)}
+    , m_showSelection{new QCheckBox(tr("Show track selection"), this)}
     , m_playingScript{new QTextEdit(this)}
     , m_selectionScript{new QTextEdit(this)}
 {
     m_playingScript->setFixedHeight(100);
     m_selectionScript->setFixedHeight(100);
 
-    auto* playingScriptLabel   = new QLabel(tr("Playing Track") + QStringLiteral(":"), this);
-    auto* selectionScriptLabel = new QLabel(tr("Track Selection") + QStringLiteral(":"), this);
+    auto* playingScriptLabel   = new QLabel(tr("Playing track") + QStringLiteral(":"), this);
+    auto* selectionScriptLabel = new QLabel(tr("Track selection") + QStringLiteral(":"), this);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);

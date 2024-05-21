@@ -74,9 +74,9 @@ private:
 
 FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_filterHeaders{new QCheckBox(tr("Show Headers"), this)}
-    , m_filterScrollBars{new QCheckBox(tr("Show Scrollbars"), this)}
-    , m_altRowColours{new QCheckBox(tr("Alternating Row Colours"), this)}
+    , m_filterHeaders{new QCheckBox(tr("Show headers"), this)}
+    , m_filterScrollBars{new QCheckBox(tr("Show scrollbars"), this)}
+    , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_fontButton{new FontButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), QStringLiteral(""), this)}
     , m_colourButton{new ColourButton(this)}
     , m_rowHeight{new QSpinBox(this)}
@@ -90,7 +90,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    auto* rowHeightLabel = new QLabel(tr("Row Height") + QStringLiteral(":"), this);
+    auto* rowHeightLabel = new QLabel(tr("Row height") + QStringLiteral(":"), this);
     auto* fontLabel      = new QLabel(tr("Font") + QStringLiteral(":"), this);
     auto* colourLabel    = new QLabel(tr("Colour") + QStringLiteral(":"), this);
 

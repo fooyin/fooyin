@@ -34,14 +34,13 @@
 #include <QMenu>
 #include <QStyleOptionFrame>
 
-constexpr auto DefaultPlaceholder = "Search library...";
-
 namespace Fooyin {
 SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_searchController{controller}
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
+    , m_defaultPlaceholder{tr("Search library…")}
 {
     setObjectName(SearchWidget::name());
 
@@ -50,7 +49,7 @@ SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settin
 
     layout->addWidget(m_searchBox);
 
-    m_searchBox->setPlaceholderText(QString::fromLatin1(DefaultPlaceholder));
+    m_searchBox->setPlaceholderText(m_defaultPlaceholder);
     m_searchBox->setClearButtonEnabled(true);
 
     QObject::connect(m_searchBox, &QLineEdit::textChanged, this,
@@ -90,7 +89,7 @@ void SearchWidget::layoutEditingMenu(QMenu* menu)
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
     const QString placeholderText = m_searchBox->placeholderText();
-    if(!placeholderText.isEmpty() && placeholderText != QString::fromLatin1(DefaultPlaceholder)) {
+    if(!placeholderText.isEmpty() && placeholderText != m_defaultPlaceholder) {
         layout[QStringLiteral("Placeholder")] = placeholderText;
     }
 
@@ -140,7 +139,7 @@ void SearchWidget::changePlaceholderText()
     QObject::connect(lineEdit, &PopupLineEdit::editingFinished, this, [this, lineEdit]() {
         const QString text = lineEdit->text();
         if(text != m_searchBox->placeholderText()) {
-            m_searchBox->setPlaceholderText(!text.isEmpty() ? text : QString::fromLatin1(DefaultPlaceholder));
+            m_searchBox->setPlaceholderText(!text.isEmpty() ? text : m_defaultPlaceholder);
         }
         lineEdit->close();
     });

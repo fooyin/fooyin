@@ -64,7 +64,7 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     , m_engine{engine}
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
-    , m_gaplessPlayback{new QCheckBox(tr("Gapless Playback"), this)}
+    , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
     , m_bufferSize{new QSpinBox(this)}
 {
     auto* outputLabel = new QLabel(tr("Output") + QStringLiteral(":"), this);

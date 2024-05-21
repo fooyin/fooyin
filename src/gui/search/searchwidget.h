@@ -49,5 +49,6 @@ private:
     SearchController* m_searchController;
     SettingsManager* m_settings;
     QLineEdit* m_searchBox;
+    QString m_defaultPlaceholder;
 };
 } // namespace Fooyin

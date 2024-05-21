@@ -76,12 +76,12 @@ private:
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_minMax{new QCheckBox(tr("MinMax"), this)}
+    , m_minMax{new QCheckBox(tr("Min/Max"), this)}
     , m_rms{new QCheckBox(tr("RMS"), this)}
     , m_downmixOff{new QRadioButton(tr("Off"), this)}
     , m_downmixStereo{new QRadioButton(tr("Stereo"), this)}
     , m_downmixMono{new QRadioButton(tr("Mono"), this)}
-    , m_showCursor{new QCheckBox(tr("Show Progress Cursor"), this)}
+    , m_showCursor{new QCheckBox(tr("Show progress cursor"), this)}
     , m_channelScale{new QDoubleSpinBox(this)}
     , m_cursorWidth{new QSpinBox(this)}
     , m_barWidth{new QSpinBox(this)}
@@ -92,11 +92,11 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
-    auto* cursorWidthLabel = new QLabel(tr("Cursor Width") + QStringLiteral(":"), this);
-    auto* barWidthLabel    = new QLabel(tr("Bar Width") + QStringLiteral(":"), this);
-    auto* barGapLabel      = new QLabel(tr("Bar Gap") + QStringLiteral(":"), this);
-    auto* maxScaleLabel    = new QLabel(tr("Max Scale") + QStringLiteral(":"), this);
-    auto* centreGapLabel   = new QLabel(tr("Centre Gap") + QStringLiteral(":"), this);
+    auto* cursorWidthLabel = new QLabel(tr("Cursor width") + QStringLiteral(":"), this);
+    auto* barWidthLabel    = new QLabel(tr("Bar width") + QStringLiteral(":"), this);
+    auto* barGapLabel      = new QLabel(tr("Bar gap") + QStringLiteral(":"), this);
+    auto* maxScaleLabel    = new QLabel(tr("Max scale") + QStringLiteral(":"), this);
+    auto* centreGapLabel   = new QLabel(tr("Centre gap") + QStringLiteral(":"), this);
 
     m_cursorWidth->setMinimum(1);
     m_cursorWidth->setMaximum(20);
@@ -132,7 +132,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     modeLayout->addWidget(m_minMax);
     modeLayout->addWidget(m_rms);
 
-    auto* channelScaleLabel = new QLabel(tr("Channel Scale") + QStringLiteral(":"), this);
+    auto* channelScaleLabel = new QLabel(tr("Channel scale") + QStringLiteral(":"), this);
 
     auto* downmixGroupBox = new QGroupBox(tr("Downmix"), this);
     auto* downmixGroup    = new QButtonGroup(this);

@@ -83,7 +83,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
-    , m_splitterHandles{new QCheckBox(tr("Show Splitter Handles"), this)}
+    , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));

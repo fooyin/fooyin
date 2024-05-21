@@ -72,10 +72,10 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_treeMode{new QRadioButton(tr("Tree"), this)}
     , m_listMode{new QRadioButton(tr("List"), this)}
-    , m_showIcons{new QCheckBox(tr("Show Icons"), this)}
-    , m_indentList{new QCheckBox(tr("Show Indent"), this)}
-    , m_showControls{new QCheckBox(tr("Show Controls"), this)}
-    , m_showLocation{new QCheckBox(tr("Show Location"), this)}
+    , m_showIcons{new QCheckBox(tr("Show icons"), this)}
+    , m_indentList{new QCheckBox(tr("Show indent"), this)}
+    , m_showControls{new QCheckBox(tr("Show controls"), this)}
+    , m_showLocation{new QCheckBox(tr("Show location"), this)}
     , m_doubleClick{new QComboBox(this)}
     , m_middleClick{new QComboBox(this)}
     , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}

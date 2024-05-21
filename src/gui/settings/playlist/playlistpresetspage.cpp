@@ -213,8 +213,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     , m_trackLeftText{new QTextEdit(tr("Left-aligned text") + QStringLiteral(":"), this)}
     , m_trackRightText{new QTextEdit(tr("Right-aligned text") + QStringLiteral(":"), this)}
     , m_trackRowHeight{new QSpinBox(this)}
-    , m_showCover{new QCheckBox(tr("Show Cover"), this)}
-    , m_simpleHeader{new QCheckBox(tr("Simple Header"), this)}
+    , m_showCover{new QCheckBox(tr("Show cover"), this)}
+    , m_simpleHeader{new QCheckBox(tr("Simple header"), this)}
     , m_newPreset{new QPushButton(tr("New"), this)}
     , m_renamePreset{new QPushButton(tr("Rename"), this)}
     , m_deletePreset{new QPushButton(tr("Delete"), this)}

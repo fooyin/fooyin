@@ -65,10 +65,10 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
-    , m_scrollBars{new QCheckBox(tr("Show Scrollbar"), this)}
-    , m_header{new QCheckBox(tr("Show Header"), this)}
-    , m_altColours{new QCheckBox(tr("Alternate Row Colours"), this)}
-    , m_tabsAddButton{new QCheckBox(tr("Show Add Button"), this)}
+    , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
+    , m_header{new QCheckBox(tr("Show header"), this)}
+    , m_altColours{new QCheckBox(tr("Alternate row colours"), this)}
+    , m_tabsAddButton{new QCheckBox(tr("Show add button"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
 {
@@ -118,7 +118,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     appearanceLayout->setColumnStretch(2, 1);
     appearanceLayout->setRowStretch(appearanceLayout->rowCount(), 1);
 
-    auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging."), this);
+    auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging"), this);
 
     tabsGroupLayout->addWidget(m_tabsAddButton, 0, 0);
     tabsGroupLayout->addWidget(addButtonLabel, 1, 0);

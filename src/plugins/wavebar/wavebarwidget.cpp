@@ -101,7 +101,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* modeMenu = new QMenu(tr("Mode"), menu);
 
-    auto* minMaxMode = new QAction(tr("MinMax"), modeMenu);
+    auto* minMaxMode = new QAction(tr("Min/Max"), modeMenu);
     auto* rmsMode    = new QAction(tr("RMS"), modeMenu);
 
     minMaxMode->setCheckable(true);
