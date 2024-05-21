@@ -73,6 +73,8 @@ private:
     QCheckBox* m_splitterHandles;
     QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
+    QCheckBox* m_overrideSplitterHandle;
+    QSpinBox* m_splitterHandleGap;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -87,6 +89,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + QStringLiteral(":"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
+    , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + QStringLiteral(":"), this)}
+    , m_splitterHandleGap{new QSpinBox(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
@@ -111,13 +115,19 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
     layoutGroupLayout->addWidget(m_splitterHandles, 0, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_overrideMargin, 1, 0);
-    layoutGroupLayout->addWidget(m_editableLayoutMargin, 1, 1);
+    layoutGroupLayout->addWidget(m_overrideSplitterHandle, 1, 0);
+    layoutGroupLayout->addWidget(m_splitterHandleGap, 1, 1);
+    layoutGroupLayout->addWidget(m_overrideMargin, 2, 0);
+    layoutGroupLayout->addWidget(m_editableLayoutMargin, 2, 1);
     layoutGroupLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setMinimum(0);
     m_editableLayoutMargin->setMaximum(20);
     m_editableLayoutMargin->setSuffix(QStringLiteral("px"));
+
+    m_splitterHandleGap->setMinimum(0);
+    m_splitterHandleGap->setMaximum(20);
+    m_splitterHandleGap->setSuffix(QStringLiteral("px"));
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
@@ -133,6 +143,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     QObject::connect(m_overrideMargin, &QCheckBox::toggled, this,
                      [this](bool checked) { m_editableLayoutMargin->setEnabled(checked); });
+    QObject::connect(m_overrideSplitterHandle, &QCheckBox::toggled, this,
+                     [this](bool checked) { m_splitterHandleGap->setEnabled(checked); });
 }
 
 void GuiGeneralPageWidget::load()
@@ -156,8 +168,12 @@ void GuiGeneralPageWidget::load()
     }
 
     m_overrideMargin->setChecked(m_settings->value<EditableLayoutMargin>() >= 0);
-    m_editableLayoutMargin->setValue(std::min(0, m_settings->value<EditableLayoutMargin>()));
+    m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
     m_editableLayoutMargin->setEnabled(m_overrideMargin->isChecked());
+
+    m_overrideSplitterHandle->setChecked(m_settings->value<SplitterHandleSize>() >= 0);
+    m_splitterHandleGap->setValue(m_settings->value<SplitterHandleSize>());
+    m_splitterHandleGap->setEnabled(m_overrideSplitterHandle->isChecked());
 }
 
 void GuiGeneralPageWidget::apply()
@@ -191,6 +207,13 @@ void GuiGeneralPageWidget::apply()
     else {
         m_settings->reset<EditableLayoutMargin>();
     }
+
+    if(m_overrideSplitterHandle->isChecked()) {
+        m_settings->set<SplitterHandleSize>(m_splitterHandleGap->value());
+    }
+    else {
+        m_settings->reset<SplitterHandleSize>();
+    }
 }
 
 void GuiGeneralPageWidget::reset()
@@ -198,6 +221,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<IconTheme>();
     m_settings->reset<SplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();
+    m_settings->reset<SplitterHandleSize>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

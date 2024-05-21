@@ -116,5 +116,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                 QStringLiteral("DirectoryBrowser/StartPlaybackOnSend"));
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, QStringLiteral("Interface/EditableLayoutMargin"));
     m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, QStringLiteral("PlaylistTabs/ShowAddButton"));
+    m_settings->createSetting<Internal::SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
 }
 } // namespace Fooyin

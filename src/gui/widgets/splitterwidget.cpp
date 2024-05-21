@@ -49,6 +49,28 @@ public:
         update();
     }
 
+    void setHandleSize(int size)
+    {
+        m_customSize = size;
+        updateGeometry();
+    }
+
+    [[nodiscard]] QSize sizeHint() const override
+    {
+        QSize size = QSplitterHandle::sizeHint();
+
+        if(m_customSize >= 0) {
+            if(orientation() == Qt::Vertical) {
+                size.setHeight(m_customSize);
+            }
+            else {
+                size.setWidth(m_customSize);
+            }
+        }
+
+        return size;
+    }
+
 protected:
     void paintEvent(QPaintEvent* event) override
     {
@@ -59,6 +81,7 @@ protected:
 
 private:
     bool m_showHandle{true};
+    int m_customSize{-1};
 };
 
 class Splitter : public QSplitter
@@ -78,8 +101,13 @@ protected:
     QSplitterHandle* createHandle() override
     {
         auto* handle = new SplitterHandle(orientation(), this);
+
         handle->showHandle(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
+        handle->setHandleSize(m_settings->value<Settings::Gui::Internal::SplitterHandleSize>());
+
         m_settings->subscribe<Settings::Gui::Internal::SplitterHandles>(handle, &SplitterHandle::showHandle);
+        m_settings->subscribe<Settings::Gui::Internal::SplitterHandleSize>(handle, &SplitterHandle::setHandleSize);
+
         return handle;
     };
 
