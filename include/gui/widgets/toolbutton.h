@@ -46,5 +46,6 @@ private:
     int m_padding;
     int m_minimumSize;
     int m_maximumSize;
+    bool m_stretchEnabled;
 };
 } // namespace Fooyin
