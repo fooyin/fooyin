@@ -181,6 +181,7 @@ struct EditableLayout::Private
     QPointer<OverlayWidget> overlay;
     RootContainer* root;
     bool layoutEditing{false};
+    bool prevShowHandles{false};
 
     WidgetContext* editingContext;
     QJsonObject widgetClipboard;
@@ -234,6 +235,9 @@ struct EditableLayout::Private
         }
 
         if(editing) {
+            prevShowHandles = settings->value<Settings::Gui::Internal::SplitterHandles>();
+            settings->set<Settings::Gui::Internal::SplitterHandles>(true);
+
             actionManager->overrideContext(editingContext, true);
             overlay = new OverlayWidget(self);
             qApp->installEventFilter(self);
@@ -244,6 +248,8 @@ struct EditableLayout::Private
             if(overlay) {
                 overlay->deleteLater();
             }
+
+            settings->set<Settings::Gui::Internal::SplitterHandles>(prevShowHandles);
         }
     }
 

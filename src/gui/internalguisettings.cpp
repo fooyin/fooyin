@@ -57,7 +57,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlaybackFollowsCursor>(false, QStringLiteral("Playlist/PlaybackFollowsCursor"));
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
-    m_settings->createSetting<Internal::SplitterHandles>(true, QStringLiteral("Interface/SplitterHandles"));
+    m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
     m_settings->createSetting<Internal::SeekBarElapsedTotal>(false, QStringLiteral("SeekBar/ElapsedTotal"));
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
