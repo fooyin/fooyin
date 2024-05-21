@@ -365,6 +365,7 @@ void FFmpegDecoder::stop()
     p->draining   = false;
     p->currentPts = 0;
     p->bufferPos  = 0;
+    p->buffer.clear();
 }
 
 AudioFormat FFmpegDecoder::format() const

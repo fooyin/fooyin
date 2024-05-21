@@ -205,12 +205,16 @@ struct AudioPlaybackEngine::Private
         totalBufferTime = 0;
     }
 
-    void stopWorkers()
+    void stopWorkers(bool full = false)
     {
         bufferTimer.stop();
         clock.setPaused(true);
         clock.sync();
         renderer->stop();
+        if(full) {
+            renderer->closeOutput();
+            outputState = AudioOutput::State::Disconnected;
+        }
         decoder->stop();
         totalBufferTime = 0;
     }
@@ -291,9 +295,13 @@ void AudioPlaybackEngine::setState(PlaybackState state)
     p->clock.setPaused(state != PlaybackState::Playing);
 
     if(state == PlaybackState::Stopped) {
-        p->stopWorkers();
+        p->stopWorkers(true);
     }
     else if(state == PlaybackState::Playing) {
+        if(p->outputState == AudioOutput::State::Disconnected) {
+            p->outputState = AudioOutput::State::None;
+            p->renderer->init(p->format);
+        }
         p->startPlayback();
         if(prevState == PlaybackState::Paused) {
             p->pauseOutput(false);
@@ -313,11 +321,6 @@ void AudioPlaybackEngine::play()
     if(p->status == TrackStatus::EndOfTrack && p->state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
-    }
-
-    if(p->outputState == AudioOutput::State::Disconnected) {
-        p->outputState = AudioOutput::State::None;
-        p->renderer->init(p->format);
     }
 
     setState(PlaybackState::Playing);
@@ -360,7 +363,9 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
     const bool playing = (p->state == PlaybackState::Playing || p->state == PlaybackState::Paused);
 
     p->clock.setPaused(playing);
-    p->renderer->pause(playing);
+    if(!p->renderer->isPaused()) {
+        p->renderer->pause(playing);
+    }
 
     if(playing) {
         p->bufferTimer.stop();
@@ -388,7 +393,9 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
     const bool playing = p->state == PlaybackState::Playing || p->state == PlaybackState::Paused;
 
     p->clock.setPaused(playing);
-    p->renderer->pause(playing);
+    if(!p->renderer->isPaused()) {
+        p->renderer->pause(playing);
+    }
 
     if(playing) {
         p->bufferTimer.stop();

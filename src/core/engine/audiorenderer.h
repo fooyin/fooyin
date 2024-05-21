@@ -38,7 +38,10 @@ public:
     bool init(const AudioFormat& format);
     void start();
     void stop();
+    void closeOutput();
     void reset();
+
+    [[nodiscard]] bool isPaused() const;
     void pause(bool paused);
 
     void queueBuffer(const AudioBuffer& buffer);

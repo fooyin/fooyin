@@ -68,6 +68,15 @@ struct AudioRenderer::Private
         return true;
     }
 
+    void resetBuffer()
+    {
+        bufferPrefilled     = false;
+        totalSamplesWritten = 0;
+        currentBufferOffset = 0;
+        bufferQueue.clear();
+        tempBuffer.reset();
+    }
+
     void outputStateChanged(AudioOutput::State state) const
     {
         if(state == AudioOutput::State::Disconnected) {
@@ -214,11 +223,14 @@ void AudioRenderer::stop()
     p->isRunning = false;
     p->writeTimer->stop();
 
-    p->bufferPrefilled     = false;
-    p->totalSamplesWritten = 0;
-    p->currentBufferOffset = 0;
-    p->bufferQueue.clear();
-    p->tempBuffer.reset();
+    p->resetBuffer();
+}
+
+void AudioRenderer::closeOutput()
+{
+    if(p->audioOutput->initialised()) {
+        p->audioOutput->uninit();
+    }
 }
 
 void AudioRenderer::reset()
@@ -227,11 +239,12 @@ void AudioRenderer::reset()
         p->audioOutput->reset();
     }
 
-    p->bufferPrefilled     = false;
-    p->totalSamplesWritten = 0;
-    p->currentBufferOffset = 0;
-    p->bufferQueue.clear();
-    p->tempBuffer.reset();
+    p->resetBuffer();
+}
+
+bool AudioRenderer::isPaused() const
+{
+    return !p->isRunning;
 }
 
 void AudioRenderer::pause(bool paused)
