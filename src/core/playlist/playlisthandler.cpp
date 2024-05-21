@@ -624,15 +624,22 @@ void PlaylistHandler::savePlaylists()
 
     p->playlistConnector.saveModifiedPlaylists(playlistsToSave);
 
-    if(p->activePlaylist && !p->activePlaylist->isTemporary()) {
-        p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->dbId());
+    if(!p->activePlaylist) {
+        return;
+    }
 
-        if(p->settings->value<Settings::Core::Internal::SavePlaybackState>()) {
-            p->settings->fileSet(QString::fromLatin1(ActiveIndex), p->activePlaylist->currentTrackIndex());
-        }
-        else {
-            p->settings->fileRemove(QString::fromLatin1(ActiveIndex));
-        }
+    if(p->activePlaylist->isTemporary()) {
+        p->settings->reset<Settings::Core::ActivePlaylistId>();
+    }
+    else {
+        p->settings->set<Settings::Core::ActivePlaylistId>(p->activePlaylist->dbId());
+    }
+
+    if(!p->activePlaylist->isTemporary() && p->settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+        p->settings->fileSet(QString::fromLatin1(ActiveIndex), p->activePlaylist->currentTrackIndex());
+    }
+    else {
+        p->settings->fileRemove(QString::fromLatin1(ActiveIndex));
     }
 }
 

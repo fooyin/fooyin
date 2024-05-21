@@ -40,7 +40,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LibrarySortScript>(
         QStringLiteral("%albumartist% - %year% - %album% - %disc% - %track% - %title%"),
         QStringLiteral("Library/SortScript"));
-    m_settings->createSetting<ActivePlaylistId>(0, QStringLiteral("Playlist/ActivePlaylistId"));
+    m_settings->createSetting<ActivePlaylistId>(-1, QStringLiteral("Playlist/ActivePlaylistId"));
 #ifdef BUILD_ALSA_ENABLED
     m_settings->createSetting<AudioOutput>(QStringLiteral("ALSA|default"), QStringLiteral("Engine/AudioOutput"));
 #else
