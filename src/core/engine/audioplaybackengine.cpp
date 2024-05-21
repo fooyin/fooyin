@@ -297,18 +297,24 @@ void AudioPlaybackEngine::setState(PlaybackState state)
     if(state == PlaybackState::Stopped) {
         p->stopWorkers(true);
     }
+    else if(state == PlaybackState::Paused) {
+        p->pauseOutput(true);
+    }
     else if(state == PlaybackState::Playing) {
         if(p->outputState == AudioOutput::State::Disconnected) {
-            p->outputState = AudioOutput::State::None;
-            p->renderer->init(p->format);
+            if(p->renderer->init(p->format)) {
+                p->outputState = AudioOutput::State::None;
+            }
+            else {
+                return;
+            }
         }
+
         p->startPlayback();
+
         if(prevState == PlaybackState::Paused) {
             p->pauseOutput(false);
         }
-    }
-    else if(state == PlaybackState::Paused) {
-        p->pauseOutput(true);
     }
 }
 
