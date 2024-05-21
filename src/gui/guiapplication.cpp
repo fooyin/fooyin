@@ -366,8 +366,8 @@ struct GuiApplication::Private
         layoutProvider.registerLayout(R"({"Name":"Empty"})");
 
         layoutProvider.registerLayout(
-            R"({"Name":"Simple","Version":1,"Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAIAAAAnkAAAAXAP////8BAAAAAgA=",
-            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABCEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
+            R"({"Name":"Simple","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAAHAAAAn0AAAAXAP////8BAAAAAgA=",
+            "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABqEAAAA+AAAAHAD/////AQAAAAEA","Widgets":[
             {"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},{"SplitterHorizontal":{
             "State":"AAAA/wAAAAEAAAACAAAA9QAABAoA/////wEAAAABAA==","Widgets":[{"SplitterVertical":{
             "State":"AAAA/wAAAAEAAAACAAABfQAAAPEA/////wEAAAACAA==","Widgets":[{"LibraryTree":{}},{"ArtworkPanel":{}}]}},
