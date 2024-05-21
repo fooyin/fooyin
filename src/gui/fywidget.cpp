@@ -78,7 +78,10 @@ QRect FyWidget::widgetGeometry() const
 void FyWidget::saveLayout(QJsonArray& layout)
 {
     QJsonObject widgetData;
-    widgetData[QStringLiteral("ID")] = m_id.name();
+
+    if(m_features & PersistId || m_features & Search) {
+        widgetData[QStringLiteral("ID")] = m_id.name();
+    }
 
     saveLayoutData(widgetData);
 

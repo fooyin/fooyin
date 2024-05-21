@@ -46,12 +46,18 @@ class FYGUI_EXPORT FyWidget : public QWidget
 public:
     enum Feature
     {
-        None = 0x0,
+        None = 0,
+        /*!
+         * Persist the unique id of this widget in the layout.
+         * @note this is disabled by default.
+         * @note this is ignored for searchable widgets.
+         */
+        PersistId = 1 << 0,
         /*!
          * Mark this widget searchable. Needed to form connections with search widgets.
          * Reimplement @fn searchEvent to receive search events.
          */
-        Search = 0x2,
+        Search = 1 << 1,
     };
     Q_DECLARE_FLAGS(Features, Feature)
 
