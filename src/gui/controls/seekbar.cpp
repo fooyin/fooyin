@@ -288,7 +288,7 @@ struct SeekBar::Private
         , playerController{playerController_}
         , settings{settings_}
         , slider{new TrackSlider(self)}
-        , elapsed{new ClickableLabel(self)}
+        , elapsed{new ClickableLabel(Utils::msToString(0), self)}
         , total{new ClickableLabel(self)}
     {
         toggleElapsedTotal(settings->value<Settings::Gui::Internal::SeekBarElapsedTotal>());
@@ -313,7 +313,7 @@ struct SeekBar::Private
         if(track.isValid()) {
             max = track.duration();
             slider->updateMaximum(max);
-            updateLabels(max);
+            updateLabels(0);
         }
     }
 
