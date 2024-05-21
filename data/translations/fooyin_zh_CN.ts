@@ -95,13 +95,13 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="94"/>
-        <source>Pixmap Cache Size</source>
-        <translation>缓存大小</translation>
+        <source>Pixmap cache size</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="95"/>
-        <source>Thumbnail Size</source>
-        <translation>缩略图大小</translation>
+        <source>Thumbnail size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -194,52 +194,52 @@
 <context>
     <name>Fooyin::DirBrowser</name>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="396"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="400"/>
         <source>Go up</source>
         <translation>向上</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="399"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
         <source>Go back</source>
         <translation>后退</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="404"/>
         <source>Go forwards</source>
         <translation>前进</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="573"/>
         <source>Directory Browser</source>
         <translation>目录浏览器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="623"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="626"/>
         <source>Add to current playlist</source>
         <translation>添加到当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="628"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="630"/>
         <source>Add to active playlist</source>
         <translation>添加到活动播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="632"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="634"/>
         <source>Send to current playlist</source>
         <translation>发送到当前播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="636"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="638"/>
         <source>Send to new playlist</source>
         <translation>发送到新播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="654"/>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="656"/>
         <source>Set as root</source>
         <translation>设为根目录</translation>
     </message>
@@ -276,23 +276,23 @@
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
-        <source>Show Icons</source>
-        <translation>显示图标</translation>
+        <source>Show icons</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
-        <source>Show Indent</source>
-        <translation>显示缩进</translation>
+        <source>Show indent</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
-        <source>Show Controls</source>
-        <translation>显示控件</translation>
+        <source>Show controls</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
-        <source>Show Location</source>
-        <translation>显示位置</translation>
+        <source>Show location</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
@@ -393,93 +393,93 @@
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="249"/>
-        <location filename="../../src/gui/editablelayout.cpp" line="256"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="271"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="278"/>
         <source>&amp;Insert</source>
         <translation>插入</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="272"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="294"/>
         <source>Left</source>
         <translation>左</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="272"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="294"/>
         <source>Up</source>
         <translation>上</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="279"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="301"/>
         <source>Right</source>
         <translation>右</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="279"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="301"/>
         <source>Down</source>
         <translation>下</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="286"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="308"/>
         <source>Far Left</source>
         <translation>最左侧</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="286"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="308"/>
         <source>Top</source>
         <translation>顶部</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="293"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="315"/>
         <source>Far Right</source>
         <translation>最右侧</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="293"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="315"/>
         <source>Bottom</source>
         <translation>底部</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="308"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="330"/>
         <source>Paste (Insert)</source>
         <translation>粘贴（插入）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="342"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="364"/>
         <source>&amp;Replace</source>
         <translation>替换(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="347"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="369"/>
         <source>&amp;Split</source>
         <translation>分割(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="352"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="374"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="387"/>
         <source>Paste (Replace)</source>
         <translation>粘贴（替换）</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="374"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="396"/>
         <source>&amp;Move</source>
         <translation>移动(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="380"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="402"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="507"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="527"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="516"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="536"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
@@ -497,8 +497,8 @@
     <name>Fooyin::EnginePageWidget</name>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="67"/>
-        <source>Gapless Playback</source>
-        <translation>无缝播放</translation>
+        <source>Gapless playback</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="70"/>
@@ -666,12 +666,12 @@
 <context>
     <name>Fooyin::Filters::FilterModel</name>
     <message>
-        <location filename="../../src/plugins/filters/filtermodel.cpp" line="145"/>
+        <location filename="../../src/plugins/filters/filtermodel.cpp" line="146"/>
         <source>All (%1 %2s)</source>
         <translation>所有(%1%2)</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/filtermodel.cpp" line="258"/>
+        <location filename="../../src/plugins/filters/filtermodel.cpp" line="266"/>
         <source>Filter</source>
         <translation>筛选器</translation>
     </message>
@@ -697,22 +697,22 @@
 <context>
     <name>Fooyin::Filters::FiltersColumnModel</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="157"/>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="158"/>
         <source>Index</source>
         <translation>指数</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="159"/>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="160"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="161"/>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="162"/>
         <source>Field</source>
         <translation>字段</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
+        <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="164"/>
         <source>Sort Field</source>
         <translation>排序字段</translation>
     </message>
@@ -738,17 +738,17 @@
 <context>
     <name>Fooyin::Filters::FiltersGeneralPage</name>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="241"/>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="245"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="242"/>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="246"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="242"/>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="246"/>
         <source>Filters</source>
         <translation>筛选器</translation>
     </message>
@@ -757,18 +757,18 @@
     <name>Fooyin::Filters::FiltersGeneralPageWidget</name>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
-        <source>Show Headers</source>
-        <translation>显示标题</translation>
+        <source>Show headers</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="78"/>
-        <source>Show Scrollbars</source>
-        <translation>显示滚动条</translation>
+        <source>Show scrollbars</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"/>
-        <source>Alternating Row Colours</source>
-        <translation>交替行颜色</translation>
+        <source>Alternating row colours</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
@@ -791,6 +791,11 @@
         <translation>外观</translation>
     </message>
     <message>
+        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="93"/>
+        <source>Row height</source>
+        <translation type="unfinished">行高</translation>
+    </message>
+    <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
         <source>Font</source>
         <translation>字体</translation>
@@ -809,11 +814,6 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="122"/>
         <source>Filter Selection Playlist</source>
         <translation>筛选器选择项播放列表</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="93"/>
-        <source>Row Height</source>
-        <translation>行高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="112"/>
@@ -864,7 +864,7 @@
 <context>
     <name>Fooyin::Filters::FiltersPlugin</name>
     <message>
-        <location filename="../../src/plugins/filters/filtersplugin.cpp" line="109"/>
+        <location filename="../../src/plugins/filters/filtersplugin.cpp" line="108"/>
         <source>Library Filter</source>
         <translation>媒体库筛选器</translation>
     </message>
@@ -872,7 +872,7 @@
 <context>
     <name>Fooyin::FontButton</name>
     <message>
-        <location filename="../../src/utils/widgets/fontbutton.cpp" line="65"/>
+        <location filename="../../src/utils/widgets/fontbutton.cpp" line="70"/>
         <source>Select Font</source>
         <translation>选择字体</translation>
     </message>
@@ -880,8 +880,8 @@
 <context>
     <name>Fooyin::GeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="196"/>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="197"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="204"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="205"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
@@ -889,52 +889,57 @@
 <context>
     <name>Fooyin::GeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="84"/>
+        <source>Restore playback state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="85"/>
         <source>Wait for tracks</source>
         <translation>等待音轨加载完成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="85"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="88"/>
         <source>Behaviour</source>
         <translation>行为</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="87"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
         <translation>延迟打开fooyin，直到所有轨道加载完成</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Startup</source>
         <translation>启动</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="101"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
         <source>Show main window</source>
         <translation>显示主窗口</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="116"/>
         <source>Show main window maximised</source>
         <translation>显示最大化主窗口</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="114"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="117"/>
         <source>Remember from last run</source>
         <translation>记住上次设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="133"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
         <source>Language changed</source>
         <translation>语言改变了</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/generalpage.cpp" line="134"/>
+        <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>需要重启以使更改生效。现在重启吗？</translation>
     </message>
@@ -942,17 +947,17 @@
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="246"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="247"/>
         <source>Plugins not found</source>
         <translation>找不到插件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="247"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="248"/>
         <source>Some plugins are required for full functionality.</source>
         <translation>一些插件是必需的。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="248"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="249"/>
         <source>Plugin search locations:
 
 </source>
@@ -961,148 +966,148 @@
 </translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="251"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="252"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="324"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="325"/>
         <source>Mute</source>
         <translation>静音</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="395"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="396"/>
         <source>Dummy</source>
         <translation>占位符</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="401"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="402"/>
         <source>Vertical Splitter</source>
         <translation>垂直分割器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="402"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="408"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="430"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="403"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="409"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="417"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="431"/>
         <source>Splitters</source>
         <translation>分割器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="407"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="408"/>
         <source>Horizontal Splitter</source>
         <translation>水平分割器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="415"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>Playlist Tabs</source>
         <translation>播放列表选项卡</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="424"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="425"/>
         <source>Playlist Organiser</source>
         <translation>播放列表管理器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="429"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="430"/>
         <source>Tab Stack</source>
         <translation>堆叠选项卡</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="437"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="438"/>
         <source>Library Tree</source>
         <translation>媒体库树</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="442"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Player Controls</source>
         <translation>播放控制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="449"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="455"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="460"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="444"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="450"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="456"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="461"/>
         <source>Controls</source>
         <translation>控制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="448"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="449"/>
         <source>Playlist Controls</source>
         <translation>播放列表控制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="454"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <source>Volume Controls</source>
         <translation>音量控制</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="459"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="460"/>
         <source>SeekBar</source>
         <translation>拖动条</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="467"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="468"/>
         <source>Selection Info</source>
         <translation>选中信息</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="474"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="475"/>
         <source>Artwork Panel</source>
         <translation>封面面板</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="481"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="485"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="486"/>
         <source>Spacer</source>
         <translation>间隔器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="496"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="497"/>
         <source>Status Bar</source>
         <translation>状态栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="502"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="503"/>
         <source>Search Bar</source>
         <translation>搜索栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="516"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Directory Browser</source>
         <translation>目录浏览器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="522"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="523"/>
         <source>Details</source>
         <translation>详细信息</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="531"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="532"/>
         <source>Track Not Found</source>
         <translation>未找到音轨</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="535"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="536"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="551"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="552"/>
         <source>Audio Files (%1)</source>
         <translation>音频文件 (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="554"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="555"/>
         <source>Add Files</source>
         <translation>添加文件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="565"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="566"/>
         <source>Add Folders</source>
         <translation>添加目录</translation>
     </message>
@@ -1110,12 +1115,12 @@
 <context>
     <name>Fooyin::GuiGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="283"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="284"/>
         <source>Interface</source>
         <translation>界面</translation>
     </message>
@@ -1123,72 +1128,82 @@
 <context>
     <name>Fooyin::GuiGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="79"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="85"/>
         <source>Auto-detect theme</source>
         <translation>自动检测主题图标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="86"/>
         <source>Light</source>
         <translation>浅色</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="81"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="87"/>
         <source>Dark</source>
         <translation>深色</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="82"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="88"/>
         <source>Use system icons</source>
         <translation>使用系统主题图标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="83"/>
-        <source>Show Splitter Handles</source>
-        <translation>显示分割手柄</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="85"/>
-        <source>Splitters</source>
-        <translation>分割器</translation>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="89"/>
+        <source>Show splitter handles</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="90"/>
+        <source>Override root margin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="92"/>
+        <source>Override splitter handle size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="95"/>
         <source>Setup</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="92"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="97"/>
         <source>Quick Setup</source>
         <translation>快速设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="93"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="98"/>
         <source>Import Layout</source>
         <translation>导入布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="94"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="99"/>
         <source>Export Layout</source>
         <translation>导出布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="96"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="101"/>
         <source>Icon Theme</source>
         <translation>主题图标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
+        <source>Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="248"/>
         <source>Unless exported, the current layout will be lost.</source>
         <translation>除非导出，否则当前布局将丢失。</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="212"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="264"/>
         <source>Export layout</source>
         <translation>导出布局</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="212"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="264"/>
         <source>Layout Name</source>
         <translation>布局名称</translation>
     </message>
@@ -1204,138 +1219,138 @@
 <context>
     <name>Fooyin::InfoModel</name>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="223"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="199"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="219"/>
         <source>Artist</source>
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="224"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="200"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="220"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="225"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="201"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="221"/>
         <source>Album</source>
         <translation>专辑</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="202"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="222"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="227"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="223"/>
         <source>Genre</source>
         <translation>流派</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="224"/>
         <source>Album Artist</source>
         <translation>专辑艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="225"/>
         <source>Track Number</source>
         <translation>音轨号</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="233"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
         <source>File Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="231"/>
         <source>Folder Name</source>
         <translation>目录名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="212"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="239"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>File Path</source>
         <translation>文件路径</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="213"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>File Size</source>
         <translation>文件大小</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="214"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="241"/>
         <source>Last Modified</source>
         <translation>上次修改</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="215"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
         <source>Added</source>
         <translation>添加时间</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="216"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="253"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="212"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Duration</source>
         <translation>时长</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="217"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="255"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="213"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="251"/>
         <source>Bitrate</source>
         <translation>比特率</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="218"/>
-        <location filename="../../src/gui/info/infomodel.cpp" line="260"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="214"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="256"/>
         <source>Sample Rate</source>
         <translation>采样率</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="233"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
         <source>File Names</source>
         <translation>文件名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="231"/>
         <source>Folder Names</source>
         <translation>目录名称</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>Total Size</source>
         <translation>总大小</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="255"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="251"/>
         <source>Avg. Bitrate</source>
         <translation>平均比特率</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="285"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="281"/>
         <source>Metadata</source>
         <translation>元数据</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="286"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="282"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="287"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="283"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infomodel.cpp" line="292"/>
+        <location filename="../../src/gui/info/infomodel.cpp" line="288"/>
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
@@ -1483,7 +1498,7 @@
 <context>
     <name>Fooyin::LibraryTreeModel</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="312"/>
+        <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="389"/>
         <source>Library Tree</source>
         <translation>媒体库树</translation>
     </message>
@@ -1491,17 +1506,17 @@
 <context>
     <name>Fooyin::LibraryTreePage</name>
     <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="273"/>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="278"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="274"/>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="279"/>
         <source>Widgets</source>
         <translation>小部件</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="274"/>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="279"/>
         <source>Library Tree</source>
         <translation>媒体库树</translation>
     </message>
@@ -1519,6 +1534,16 @@
         <translation>当更改时切换到播放列表</translation>
     </message>
     <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="92"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="93"/>
+        <source>Alternating row colours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="124"/>
         <source>Click Behaviour</source>
         <translation>点击行为</translation>
@@ -1529,6 +1554,11 @@
         <translation>媒体库选择项播放列表</translation>
     </message>
     <message>
+        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="153"/>
+        <source>Row height</source>
+        <translation type="unfinished">行高</translation>
+    </message>
+    <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
         <source>Double-click</source>
         <translation>双击</translation>
@@ -1537,16 +1567,6 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Start playback on send</source>
         <translation>发送时开始播放</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="92"/>
-        <source>Show Scrollbar</source>
-        <translation>显示滚动条</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="93"/>
-        <source>Alternating Row Colours</source>
-        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="94"/>
@@ -1573,11 +1593,6 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="152"/>
         <source>Colour</source>
         <translation>颜色</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="153"/>
-        <source>Row Height</source>
-        <translation>行高</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="189"/>
@@ -1617,7 +1632,7 @@
 <context>
     <name>Fooyin::LibraryTreeWidget</name>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="433"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="435"/>
         <source>Library Tree</source>
         <translation>媒体库树</translation>
     </message>
@@ -1625,57 +1640,67 @@
 <context>
     <name>Fooyin::PlaybackMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="42"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Play</source>
         <translation>播放(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="73"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="78"/>
         <source>&amp;Order</source>
         <translation>播放顺序(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Default</source>
         <translation>默认(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>Previous</source>
         <translation>上一首</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>Next</source>
         <translation>下一首</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
         <source>&amp;Repeat Track</source>
         <translation>单曲循环(R)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
         <source>Repeat &amp;Playlist</source>
         <translation>播放列表循环(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>&amp;Shuffle Tracks</source>
         <translation>乱序歌曲</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="99"/>
+        <source>Cursor Follows Play&amp;back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="100"/>
+        <source>Playback Follows &amp;Cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
+        <location filename="../../src/gui/menubar/playbackmenu.cpp" line="132"/>
         <source>Play</source>
         <translation>播放</translation>
     </message>
@@ -1683,9 +1708,14 @@
 <context>
     <name>Fooyin::PlayerControl</name>
     <message>
-        <location filename="../../src/gui/controls/playercontrol.cpp" line="135"/>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="140"/>
         <source>Player Controls</source>
         <translation>播放控制</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/playercontrol.cpp" line="150"/>
+        <source>Stretch to fit</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1738,67 +1768,77 @@
         <translation>艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="41"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
         <source>Artist/Album</source>
         <translation>艺术家/专辑</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
         <source>Album Artist</source>
         <translation>专辑艺术家</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Album</source>
         <translation>专辑</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Playcount</source>
         <translation>播放次数</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Duration</source>
         <translation>时长</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Playing</source>
         <translation>播放中</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Codec</source>
         <translation>编解码器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
         <source>Extension</source>
         <translation>扩展名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Bitrate</source>
         <translation>比特率</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
         <source>Sample Rate</source>
         <translation>采样率</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
+        <source>Last Modified</source>
+        <translation type="unfinished">上次修改</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
         <source>Front Cover</source>
         <translation>封面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="56"/>
         <source>Back Cover</source>
         <translation>背面</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
+        <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="58"/>
         <source>Artist Picture</source>
         <translation>艺术家图片</translation>
     </message>
@@ -1816,30 +1856,35 @@
         <translation>乱序</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="83"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="86"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="84"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="87"/>
         <source>Repeat playlist</source>
         <translation>播放列表循环</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="85"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="88"/>
         <source>Repeat track</source>
         <translation>单曲循环</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="186"/>
         <source>Playlist Controls</source>
         <translation>播放列表控制</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/playlistcontrol.cpp" line="196"/>
+        <source>Stretch to fit</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::PlaylistController</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="357"/>
+        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="371"/>
         <source>Playlists</source>
         <translation>播放列表</translation>
     </message>
@@ -1847,12 +1892,12 @@
 <context>
     <name>Fooyin::PlaylistGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="146"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="185"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="147"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="186"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
@@ -1860,80 +1905,105 @@
 <context>
     <name>Fooyin::PlaylistGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="62"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="65"/>
         <source>Cursor follows playback</source>
         <translation>光标跟随播放</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="63"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="66"/>
         <source>Playback follows cursor</source>
         <translation>播放跟随光标&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="64"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="67"/>
         <source>Rewind track on previous</source>
         <translation>切换上一曲前先倒带</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="65"/>
-        <source>Show Scrollbar</source>
-        <translation>显示滚动条</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="68"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="66"/>
-        <source>Show Header</source>
-        <translation>显示标题</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="69"/>
+        <source>Show header</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="67"/>
-        <source>Alternate Row Colours</source>
-        <translation>交替行颜色</translation>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
+        <source>Alternate row colours</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="72"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="71"/>
+        <source>Show add button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
+        <source>Playlist Tabs</source>
+        <translation type="unfinished">播放列表选项卡</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
+        <source>Image Padding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
+        <source>Left/Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
+        <source>Top</source>
+        <translation type="unfinished">顶部</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="121"/>
+        <source>⚠ This will disable moving tabs by dragging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="77"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
         <translation>重播当前曲目，如果曲目开播不足 5 秒钟则播放上一曲</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
         <source>Behaviour</source>
         <translation>行为</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="86"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
         <source>Appearance</source>
         <translation>外观</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
-        <source>Cover Padding</source>
-        <translation>专辑封面填充</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::PlaylistOrganiser</name>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="142"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="144"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="144"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="146"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="146"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="148"/>
         <source>New Group</source>
         <translation>新群组</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="148"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="150"/>
         <source>Create Playlist</source>
         <translation>新建播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="310"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="315"/>
         <source>Playlist Organiser</source>
         <translation>播放列表管理器</translation>
     </message>
@@ -1954,16 +2024,6 @@
 </context>
 <context>
     <name>Fooyin::PlaylistPresetsPageWidget</name>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="216"/>
-        <source>Show Cover</source>
-        <translation>显示专辑封面</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="217"/>
-        <source>Simple Header</source>
-        <translation>简单标头</translation>
-    </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="218"/>
         <source>New</source>
@@ -2037,6 +2097,16 @@
         <translation>标头</translation>
     </message>
     <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="216"/>
+        <source>Show cover</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="217"/>
+        <source>Simple header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="242"/>
         <source>Side</source>
         <translation>侧面</translation>
@@ -2081,7 +2151,32 @@
 <context>
     <name>Fooyin::PlaylistTabs</name>
     <message>
-        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="304"/>
+        <source>Add New Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="318"/>
+        <source>Rename Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="321"/>
+        <source>Remove Playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="336"/>
+        <source>Move Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
+        <source>Move Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlisttabs.cpp" line="418"/>
         <source>Playlist Tabs</source>
         <translation>播放列表选项卡</translation>
     </message>
@@ -2089,12 +2184,12 @@
 <context>
     <name>Fooyin::PlaylistView</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistview.cpp" line="2238"/>
+        <location filename="../../src/gui/playlist/playlistview.cpp" line="2245"/>
         <source>Loading Playlist…</source>
         <translation>加载播放列表…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistview.cpp" line="2242"/>
+        <location filename="../../src/gui/playlist/playlistview.cpp" line="2249"/>
         <source>Empty Playlist</source>
         <translation>空的播放列表</translation>
     </message>
@@ -2102,32 +2197,32 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="209"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="211"/>
         <source>&amp;Clear</source>
         <translation>清除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="217"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="219"/>
         <source>&amp;Select All</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="972"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="975"/>
         <source>Sort</source>
         <translation>排序</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="985"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="994"/>
         <source>Presets</source>
         <translation>预设</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1026"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1035"/>
         <source>Playlist</source>
         <translation>播放列表</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1138"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1148"/>
         <source>&amp;Play</source>
         <translation>播放(&amp;P)</translation>
     </message>
@@ -2150,32 +2245,32 @@
         <translation>从播放队列中删除</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="198"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="200"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="788"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="791"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="828"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="831"/>
         <source>More…</source>
         <translation>更多…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="840"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="843"/>
         <source>Reset columns to default</source>
         <translation>重置列为默认</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="849"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="852"/>
         <source>Single-column mode</source>
         <translation>单列模式</translation>
     </message>
@@ -2183,12 +2278,12 @@
 <context>
     <name>Fooyin::PluginPage</name>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="173"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="177"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="174"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="178"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
@@ -2201,18 +2296,18 @@
         <translation>安装…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="142"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="146"/>
         <source>Plugins Changed</source>
         <translation>插件已更改</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="161"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="165"/>
         <source>Plugin Installed</source>
         <translation>插件已安装</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="143"/>
-        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="162"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="147"/>
+        <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="166"/>
         <source>Restart for changes to take effect. Restart now?</source>
         <translation>需要重启以使更改生效。现在重启吗？</translation>
     </message>
@@ -2311,24 +2406,29 @@
 <context>
     <name>Fooyin::SearchWidget</name>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="59"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="156"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="43"/>
+        <source>Search library…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="58"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="155"/>
         <source>Options</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="74"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="73"/>
         <source>Search Bar</source>
         <translation>搜索栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="158"/>
         <source>Change Placeholder Text</source>
         <translation>更改占位符文本</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="84"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="163"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="83"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="162"/>
         <source>Manage Connections</source>
         <translation>管理连接</translation>
     </message>
@@ -2336,17 +2436,17 @@
 <context>
     <name>Fooyin::SeekBar</name>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="415"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="413"/>
         <source>SeekBar</source>
         <translation>拖动条</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="433"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="431"/>
         <source>Show Labels</source>
         <translation>显示标签</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/seekbar.cpp" line="440"/>
+        <location filename="../../src/gui/controls/seekbar.cpp" line="438"/>
         <source>Show Elapsed Total</source>
         <translation>剩余时间模式</translation>
     </message>
@@ -2467,22 +2567,22 @@
 <context>
     <name>Fooyin::SplitterWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="298"/>
         <source>%1 Splitter</source>
         <translation>%1分割器</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="298"/>
         <source>Vertical</source>
         <translation>垂直</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="298"/>
         <source>Horizontal</source>
         <translation>水平</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="280"/>
+        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="308"/>
         <source>Switch Orientation</source>
         <translation>切换方向</translation>
     </message>
@@ -2490,17 +2590,17 @@
 <context>
     <name>Fooyin::StatusWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="209"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="208"/>
         <source>Status Bar</source>
         <translation>状态栏</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="227"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="226"/>
         <source>Show Icon</source>
         <translation>显示图标</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/statuswidget.cpp" line="234"/>
+        <location filename="../../src/gui/widgets/statuswidget.cpp" line="233"/>
         <source>Show Track Selection</source>
         <translation>显示选中的音轨</translation>
     </message>
@@ -2527,23 +2627,23 @@
     <name>Fooyin::StatusWidgetPageWidget</name>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="56"/>
-        <source>Show Icon</source>
-        <translation>显示图标</translation>
+        <source>Show icon</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="57"/>
-        <source>Show Track Selection</source>
-        <translation>显示选中的音轨</translation>
+        <source>Show track selection</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
-        <source>Playing Track</source>
-        <translation>播放曲目</translation>
+        <source>Playing track</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
-        <source>Track Selection</source>
-        <translation>选中的音轨</translation>
+        <source>Track selection</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
@@ -2673,12 +2773,12 @@
         <translation>布局编辑模式(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="54"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="56"/>
         <source>&amp;Quick Setup</source>
         <translation>快速设置(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="60"/>
         <source>&amp;Script Sandbox</source>
         <translation>脚本沙箱(&amp;S)</translation>
     </message>
@@ -2686,9 +2786,14 @@
 <context>
     <name>Fooyin::VolumeControl</name>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="157"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="167"/>
         <source>Volume Controls</source>
         <translation>音量控制</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="177"/>
+        <source>Stretch to fit</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2808,28 +2913,23 @@
 <context>
     <name>Fooyin::WaveBar::WaveBarSettingsPage</name>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="286"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="288"/>
         <source>General</source>
         <translation>常规设置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="287"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="289"/>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="287"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="289"/>
         <source>WaveBar</source>
         <translation>波形进度条</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::WaveBar::WaveBarSettingsPageWidget</name>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="79"/>
-        <source>MinMax</source>
-        <translation>最小/最大</translation>
-    </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="80"/>
         <source>RMS</source>
@@ -2851,44 +2951,49 @@
         <translation>单声道</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
-        <source>Show Progress Cursor</source>
-        <translation>显示播放进度光标</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="95"/>
-        <source>Cursor Width</source>
-        <translation>光标宽度</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="96"/>
-        <source>Bar Width</source>
-        <translation>条形宽度</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="97"/>
-        <source>Bar Gap</source>
-        <translation>条形间隙</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="98"/>
-        <source>Max Scale</source>
-        <translation>最大刻度</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="99"/>
-        <source>Centre Gap</source>
-        <translation>中心间隙</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="79"/>
+        <source>Min/Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
+        <source>Show progress cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="95"/>
+        <source>Cursor width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="96"/>
+        <source>Bar width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="97"/>
+        <source>Bar gap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="98"/>
+        <source>Max scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="99"/>
+        <source>Centre gap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="135"/>
-        <source>Channel Scale</source>
-        <translation>通道刻度</translation>
+        <source>Channel scale</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="137"/>
@@ -2901,27 +3006,27 @@
         <translation>光标</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="156"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="157"/>
         <source>Scale</source>
         <translation>刻度</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="165"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="167"/>
         <source>Dimension</source>
         <translation>尺寸</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="179"/>
         <source>Cache</source>
         <translation>缓存</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="181"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="184"/>
         <source>Clear Cache</source>
         <translation>清空缓存</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="279"/>
+        <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="281"/>
         <source>Current Disk Usage</source>
         <translation>当前已用磁盘缓存</translation>
     </message>
@@ -2929,47 +3034,47 @@
 <context>
     <name>Fooyin::WaveBar::WaveBarWidget</name>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="95"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="96"/>
         <source>Show Cursor</source>
         <translation>显示光标</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="101"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="102"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="103"/>
-        <source>MinMax</source>
-        <translation>最小/最大</translation>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="104"/>
+        <source>Min/Max</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="104"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="105"/>
         <source>RMS</source>
         <translation>均方根</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="132"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="133"/>
         <source>Downmix</source>
         <translation>混音</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="135"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="136"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="136"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="137"/>
         <source>Stereo</source>
         <translation>立体声</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="137"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="138"/>
         <source>Mono</source>
         <translation>单声道</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="165"/>
+        <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="166"/>
         <source>Settings…</source>
         <translation>设置…</translation>
     </message>
