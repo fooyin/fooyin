@@ -457,7 +457,7 @@ struct GuiApplication::Private
 
         widgetProvider.registerWidget(
             QStringLiteral("SeekBar"),
-            [this]() { return new SeekBar(playerController, settingsManager, mainWindow.get()); }, tr("SeekBar"));
+            [this]() { return new SeekBar(playerController, settingsManager, mainWindow.get()); }, tr("Seekbar"));
         widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 
         widgetProvider.registerWidget(

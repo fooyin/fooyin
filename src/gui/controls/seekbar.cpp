@@ -410,7 +410,7 @@ Fooyin::SeekBar::~SeekBar() = default;
 
 QString SeekBar::name() const
 {
-    return tr("SeekBar");
+    return tr("Seekbar");
 }
 
 QString SeekBar::layoutName() const
