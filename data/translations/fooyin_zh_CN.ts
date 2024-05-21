@@ -668,7 +668,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="145"/>
         <source>All (%1 %2s)</source>
-        <translation>所有 (%1 %2s)</translation>
+        <translation>所有(%1%2)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="258"/>
@@ -834,7 +834,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="156"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="162"/>
         <source>None</source>
-        <translation>无&lt;br&gt;</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="157"/>
@@ -866,7 +866,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="109"/>
         <source>Library Filter</source>
-        <translation type="unfinished">媒体库筛选器</translation>
+        <translation>媒体库筛选器</translation>
     </message>
 </context>
 <context>
@@ -944,24 +944,26 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="246"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>找不到插件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="247"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>一些插件是必需的。</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="248"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>插件搜索目录:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="251"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="324"/>
@@ -971,12 +973,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="395"/>
         <source>Dummy</source>
-        <translation type="unfinished">占位符</translation>
+        <translation>占位符</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="401"/>
         <source>Vertical Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直分割器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
@@ -984,37 +986,37 @@
         <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <location filename="../../src/gui/guiapplication.cpp" line="430"/>
         <source>Splitters</source>
-        <translation type="unfinished">分割器</translation>
+        <translation>分割器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="407"/>
         <source>Horizontal Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>水平分割器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="415"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">播放列表选项卡</translation>
+        <translation>播放列表选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="424"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished">播放列表管理器</translation>
+        <translation>播放列表管理器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="429"/>
         <source>Tab Stack</source>
-        <translation type="unfinished">堆叠选项卡</translation>
+        <translation>堆叠选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="437"/>
         <source>Library Tree</source>
-        <translation type="unfinished">媒体库树</translation>
+        <translation>媒体库树</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="442"/>
         <source>Player Controls</source>
-        <translation type="unfinished">播放控制</translation>
+        <translation>播放控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
@@ -1022,87 +1024,87 @@
         <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <location filename="../../src/gui/guiapplication.cpp" line="460"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="448"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished">播放列表控制</translation>
+        <translation>播放列表控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="454"/>
         <source>Volume Controls</source>
-        <translation type="unfinished">音量控制</translation>
+        <translation>音量控制</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="459"/>
         <source>SeekBar</source>
-        <translation type="unfinished">拖动条</translation>
+        <translation>拖动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="467"/>
         <source>Selection Info</source>
-        <translation type="unfinished">选中信息</translation>
+        <translation>选中信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="474"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">封面面板</translation>
+        <translation>封面面板</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="481"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="485"/>
         <source>Spacer</source>
-        <translation type="unfinished">间隔器</translation>
+        <translation>间隔器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="496"/>
         <source>Status Bar</source>
-        <translation type="unfinished">状态栏</translation>
+        <translation>状态栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="502"/>
         <source>Search Bar</source>
-        <translation type="unfinished">搜索栏</translation>
+        <translation>搜索栏</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="516"/>
         <source>Directory Browser</source>
-        <translation type="unfinished">目录浏览器</translation>
+        <translation>目录浏览器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>详细信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="535"/>
         <source>Stop</source>
-        <translation type="unfinished">停止</translation>
+        <translation>停止</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>音频文件 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="554"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>添加文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>添加目录</translation>
     </message>
 </context>
 <context>
@@ -1655,7 +1657,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>&amp;Repeat Track</source>
-        <translation>单曲循环(&amp;R)</translation>
+        <translation>单曲循环(R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
@@ -1723,7 +1725,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
         <source>Track</source>
-        <translation>音轨</translation>
+        <translation>音轨号</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
@@ -2436,22 +2438,22 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="36"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Track Number</source>
-        <translation type="unfinished">音轨号</translation>
+        <translation>音轨号</translation>
     </message>
 </context>
 <context>
@@ -2775,12 +2777,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="214"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>波形进度条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="215"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>控制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>

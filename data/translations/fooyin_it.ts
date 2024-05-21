@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_US" sourcelanguage="en_GB">
+<TS version="2.1" language="it" sourcelanguage="en_GB">
 <context>
     <name>Fooyin::AboutDialog</name>
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="83"/>
         <source>About %1</source>
-        <translation>About %1</translation>
+        <translation>Info %1</translation>
     </message>
 </context>
 <context>
@@ -19,27 +19,27 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Edit</translation>
+        <translation>&amp;Modifica</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation>&amp;View</translation>
+        <translation>&amp;Vista</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>&amp;Playback</source>
-        <translation>&amp;Playback</translation>
+        <translation>&amp;Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Library</source>
-        <translation>&amp;Library</translation>
+        <translation>&amp;Libreria</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Help</source>
-        <translation>&amp;Help</translation>
+        <translation>&amp;Aiuto</translation>
     </message>
 </context>
 <context>
@@ -48,12 +48,12 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="169"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="170"/>
         <source>Artwork</source>
-        <translation>Artwork</translation>
+        <translation>Copertina</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="170"/>
         <source>Interface</source>
-        <translation>Interface</translation>
+        <translation>Interfaccia</translation>
     </message>
 </context>
 <context>
@@ -61,32 +61,32 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="66"/>
         <source>Prefer currently playing track</source>
-        <translation>Prefer currently playing track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="67"/>
         <source>Prefer current selection</source>
-        <translation>Prefer current selection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="77"/>
         <source>Display</source>
-        <translation>Display</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="87"/>
         <source>Front Cover</source>
-        <translation>Front Cover</translation>
+        <translation>Copertina Frontale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="88"/>
         <source>Back Cover</source>
-        <translation>Back Cover</translation>
+        <translation>Copertina Posteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="89"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="91"/>
@@ -96,12 +96,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="94"/>
         <source>Pixmap Cache Size</source>
-        <translation>Pixmap Cache Size</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="95"/>
         <source>Thumbnail Size</source>
-        <translation>Thumbnail Size</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -109,37 +109,37 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="439"/>
         <source>Auto-size sections</source>
-        <translation>Auto-size sections</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="447"/>
         <source>Show Hidden</source>
-        <translation>Show Hidden</translation>
+        <translation type="unfinished">Mostra Nascosti</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="456"/>
         <source>Hide %1</source>
-        <translation>Hide %1</translation>
+        <translation>Nascondi %1</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="479"/>
         <source>Alignment</source>
-        <translation>Alignment</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="489"/>
         <source>&amp;Left</source>
-        <translation>&amp;Left</translation>
+        <translation>&amp;Sinistra</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="490"/>
         <source>&amp;Centre</source>
-        <translation>&amp;Center</translation>
+        <translation>&amp;Centro</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="491"/>
         <source>&amp;Right</source>
-        <translation>&amp;Right</translation>
+        <translation>&amp;Destra</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../../src/utils/widgets/colourbutton.cpp" line="71"/>
         <source>Select Colour</source>
-        <translation>Select Color</translation>
+        <translation>Seleziona Colore</translation>
     </message>
 </context>
 <context>
@@ -155,27 +155,27 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="80"/>
         <source>Artwork Panel</source>
-        <translation>Artwork Panel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="118"/>
         <source>Keep Aspect Ratio</source>
-        <translation>Keep Aspect Ratio</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="130"/>
         <source>Front Cover</source>
-        <translation>Front Cover</translation>
+        <translation>Copertina Frontale</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="131"/>
         <source>Back Cover</source>
-        <translation>Back Cover</translation>
+        <translation>Copertina Posteriore</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="132"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation>Artista</translation>
     </message>
 </context>
 <context>
@@ -183,12 +183,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="74"/>
         <source>Select Font</source>
-        <translation>Select Font</translation>
+        <translation>Seleziona Carattere</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="84"/>
         <source>Select Colour</source>
-        <translation>Select Color</translation>
+        <translation>Seleziona Colore</translation>
     </message>
 </context>
 <context>
@@ -196,52 +196,52 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="396"/>
         <source>Go up</source>
-        <translation>Go up</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="399"/>
         <source>Go back</source>
-        <translation>Go back</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
         <source>Go forwards</source>
-        <translation>Go forwards</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="571"/>
         <source>Directory Browser</source>
-        <translation>Directory Browser</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="621"/>
         <source>Play</source>
-        <translation>Play</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="624"/>
         <source>Add to current playlist</source>
-        <translation>Add to current playlist</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="628"/>
         <source>Add to active playlist</source>
-        <translation>Add to active playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="632"/>
         <source>Send to current playlist</source>
-        <translation>Send to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="636"/>
         <source>Send to new playlist</source>
-        <translation>Send to new playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="654"/>
         <source>Set as root</source>
-        <translation>Set as root</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -249,17 +249,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="213"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished">Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="214"/>
         <source>Widgets</source>
-        <translation>Widgets</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="214"/>
         <source>Directory Browser</source>
-        <translation>Directory Browser</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -267,96 +267,96 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="73"/>
         <source>Tree</source>
-        <translation>Tree</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="74"/>
         <source>List</source>
-        <translation>List</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
         <source>Show Icons</source>
-        <translation>Show Icons</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Show Indent</source>
-        <translation>Show Indent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
         <source>Show Controls</source>
-        <translation>Show Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show Location</source>
-        <translation>Show Location</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
         <source>Start playback on send</source>
-        <translation>Start playback on send</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="83"/>
         <source>Click Behaviour</source>
-        <translation>Click Behaviour</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Double-click</source>
-        <translation>Double-click</translation>
+        <translation>Doppio-clic</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
         <source>Middle-click</source>
-        <translation>Middle-click</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="96"/>
         <source>Browser Mode</source>
-        <translation>Browser Mode</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="107"/>
         <source>Display Options</source>
-        <translation>Display Options</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="132"/>
         <source>Expand/Collapse/Play</source>
-        <translation>Expand/Collapse/Play</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="133"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <source>Add to current playlist</source>
-        <translation>Add to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
         <source>Add to active playlist</source>
-        <translation>Add to active playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="141"/>
         <source>Send to current playlist</source>
-        <translation>Send to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="142"/>
         <source>Send to new playlist</source>
-        <translation>Send to new playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <source>None</source>
-        <translation>None</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -364,22 +364,22 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="64"/>
         <source>Dummy</source>
-        <translation>Dummy</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
         <source>Missing Widget</source>
-        <translation>Missing Widget</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Right-Click to add a new widget</source>
-        <translation>Right-Click to add a new widget</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Enter layout editing mode to edit</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -387,101 +387,101 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>&amp;Settings</source>
-        <translation>&amp;Settings</translation>
+        <translation>&amp;Impostazioni</translation>
     </message>
 </context>
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="249"/>
-        <location filename="../../src/gui/editablelayout.cpp" line="256"/>
-        <source>&amp;Insert</source>
-        <translation>&amp;Insert</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/editablelayout.cpp" line="272"/>
         <source>Left</source>
-        <translation>Left</translation>
+        <translation>Sinistra</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="272"/>
         <source>Up</source>
-        <translation>Up</translation>
+        <translation>Su</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="279"/>
         <source>Right</source>
-        <translation>Right</translation>
+        <translation>Destra</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="279"/>
         <source>Down</source>
-        <translation>Down</translation>
+        <translation>Giù</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="286"/>
         <source>Far Left</source>
-        <translation>Far Left</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="286"/>
         <source>Top</source>
-        <translation>Top</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="293"/>
         <source>Far Right</source>
-        <translation>Far Right</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="293"/>
         <source>Bottom</source>
-        <translation>Bottom</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="308"/>
         <source>Paste (Insert)</source>
-        <translation>Paste (Insert)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="342"/>
-        <source>&amp;Replace</source>
-        <translation>&amp;Replace</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="347"/>
         <source>&amp;Split</source>
-        <translation>&amp;Split</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="352"/>
-        <source>Copy</source>
-        <translation>Copy</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
-        <source>Paste (Replace)</source>
-        <translation>Paste (Replace)</translation>
+        <translation>&amp;Dividi</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="374"/>
         <source>&amp;Move</source>
-        <translation>&amp;Move</translation>
+        <translation>&amp;Muovi</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/editablelayout.cpp" line="342"/>
+        <source>&amp;Replace</source>
+        <translation>&amp;Sostituisci</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/editablelayout.cpp" line="249"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="256"/>
+        <source>&amp;Insert</source>
+        <translation>&amp;Inserisci</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/editablelayout.cpp" line="352"/>
+        <source>Copy</source>
+        <translation>Copia</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/editablelayout.cpp" line="365"/>
+        <source>Paste (Replace)</source>
+        <translation>Incola (Sostituisci)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="380"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="507"/>
         <source>Undo</source>
-        <translation>Undo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="516"/>
         <source>Redo</source>
-        <translation>Redo</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -490,7 +490,7 @@
         <location filename="../../src/gui/settings/enginepage.cpp" line="187"/>
         <location filename="../../src/gui/settings/enginepage.cpp" line="188"/>
         <source>Engine</source>
-        <translation>Engine</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -498,32 +498,32 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="67"/>
         <source>Gapless Playback</source>
-        <translation>Gapless Playback</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="70"/>
         <source>Output</source>
-        <translation>Output</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="71"/>
         <source>Device</source>
-        <translation>Device</translation>
+        <translation type="unfinished">Dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="73"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished">Generale</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="77"/>
         <source>Try to play consecutive tracks with no silence or disruption at the point of file change</source>
-        <translation>Try to play consecutive tracks with no silence or disruption at the point of file change</translation>
+        <translation>Prova a riprodurre tracce consecutive senza silenzi o interruzioni al cambiamento dei file</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="81"/>
         <source>Buffer length</source>
-        <translation>Buffer length</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -531,17 +531,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="65"/>
         <source>Row height</source>
-        <translation>Row height</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="67"/>
         <source>Left-aligned</source>
-        <translation>Left-aligned</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
         <source>Right-aligned</source>
-        <translation>Right-aligned</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -549,22 +549,22 @@
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="124"/>
         <source>Add</source>
-        <translation>Add</translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="125"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="164"/>
         <source>Move Up</source>
-        <translation>Move Up</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="172"/>
         <source>Move Down</source>
-        <translation>Move Down</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -572,22 +572,22 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="43"/>
         <source>Add &amp;Files</source>
-        <translation>Add &amp;Files</translation>
+        <translation>Aggiungi &amp;File</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Ad&amp;d Folders</source>
-        <translation>Ad&amp;d Folders</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
         <source>&amp;New Playlist</source>
-        <translation>&amp;New Playlist</translation>
+        <translation>&amp;Nuova Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>E&amp;xit</source>
-        <translation>E&amp;xit</translation>
+        <translation>E&amp;sci</translation>
     </message>
 </context>
 <context>
@@ -595,17 +595,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="36"/>
         <source>Genre</source>
-        <translation>Genre</translation>
+        <translation>Genere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Album Artist</source>
-        <translation>Album Artist</translation>
+        <translation>Album Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
@@ -615,7 +615,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Date</source>
-        <translation>Date</translation>
+        <translation>Data</translation>
     </message>
 </context>
 <context>
@@ -623,44 +623,44 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="87"/>
         <source>Clear Group</source>
-        <translation>Clear Group</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="97"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="292"/>
         <source>Clear Groups</source>
-        <translation>Clear Groups</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="149"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="163"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="230"/>
         <source>Ungrouped</source>
-        <translation>Ungrouped</translation>
+        <translation type="unfinished">Non raggruppati</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="164"/>
         <source>Add</source>
-        <translation>Add</translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="283"/>
         <source>Add New Group</source>
-        <translation>Add New Group</translation>
+        <translation>Aggiungi Nuovo Gruppo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="311"/>
         <source>Back</source>
-        <translation>Back</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="328"/>
         <source>Finish</source>
-        <translation>Finish</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -668,12 +668,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="145"/>
         <source>All (%1 %2s)</source>
-        <translation>All (%1 %2s)</translation>
+        <translation type="unfinished">Tutti (% 1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="258"/>
         <source>Filter</source>
-        <translation>Filter</translation>
+        <translation type="unfinished">Filtra</translation>
     </message>
 </context>
 <context>
@@ -681,17 +681,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="224"/>
         <source>Multiple Columns</source>
-        <translation>Multiple Columns</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="238"/>
         <source>Manage Groups</source>
-        <translation>Manage Groups</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="429"/>
         <source>Library Filter</source>
-        <translation>Library Filter</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -699,22 +699,22 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="157"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="159"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="161"/>
         <source>Field</source>
-        <translation>Field</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
         <source>Sort Field</source>
-        <translation>Sort Field</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -722,17 +722,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="108"/>
         <source>Columns</source>
-        <translation>Columns</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
         <source>Filters</source>
-        <translation>Filters</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -740,17 +740,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="241"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="242"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="242"/>
         <source>Filters</source>
-        <translation>Filters</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -758,107 +758,107 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
         <source>Show Headers</source>
-        <translation>Show Headers</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="78"/>
         <source>Show Scrollbars</source>
-        <translation>Show Scrollbars</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"/>
         <source>Alternating Row Colours</source>
-        <translation>Alternating Row Colors</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
         <source>Start playback on send</source>
-        <translation>Start playback on send</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="86"/>
         <source>Enabled</source>
-        <translation>Enabled</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="87"/>
         <source>Switch when changed</source>
-        <translation>Switch when changed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="90"/>
         <source>Appearance</source>
-        <translation>Appearance</translation>
+        <translation>Aspetto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
         <source>Font</source>
-        <translation>Font</translation>
+        <translation>Carattere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="95"/>
         <source>Colour</source>
-        <translation>Color</translation>
+        <translation type="unfinished">Colore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="109"/>
         <source>Click Behaviour</source>
-        <translation>Click Behavior</translation>
+        <translation>Comportamento Clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="122"/>
         <source>Filter Selection Playlist</source>
-        <translation>Filter Selection Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="93"/>
         <source>Row Height</source>
-        <translation>Row Height</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="112"/>
         <source>Double-click</source>
-        <translation>Double-click</translation>
+        <translation>Doppio-clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="113"/>
         <source>Middle-click</source>
-        <translation>Middle-click</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="125"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="156"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="162"/>
         <source>None</source>
-        <translation>None</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="157"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="163"/>
         <source>Add to current playlist</source>
-        <translation>Add to current playlist</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="158"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="164"/>
         <source>Add to active playlist</source>
-        <translation>Add to active playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="159"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="165"/>
         <source>Send to current playlist</source>
-        <translation>Send to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="160"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="166"/>
         <source>Send to new playlist</source>
-        <translation>Send to new playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -866,7 +866,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="109"/>
         <source>Library Filter</source>
-        <translation>Library Filter</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -874,7 +874,7 @@
     <message>
         <location filename="../../src/utils/widgets/fontbutton.cpp" line="65"/>
         <source>Select Font</source>
-        <translation>Select Font</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -883,7 +883,7 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="196"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="197"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -891,52 +891,52 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="82"/>
         <source>Wait for tracks</source>
-        <translation>Wait for tracks</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="85"/>
         <source>Behaviour</source>
-        <translation>Behavior</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="87"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation>Delay opening fooyin until all tracks have been loaded</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
         <source>Startup</source>
-        <translation>Startup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="98"/>
         <source>Language</source>
-        <translation>Language</translation>
+        <translation>Lingua</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="112"/>
         <source>Show main window</source>
-        <translation>Show main window</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="113"/>
         <source>Show main window maximised</source>
-        <translation>Show main window maximized</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="114"/>
         <source>Remember from last run</source>
-        <translation>Remember from last run</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="133"/>
         <source>Language changed</source>
-        <translation>Language changed</translation>
+        <translation>Lingua cambiata</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="134"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation>Restart for changes to take effect. Restart now?</translation>
+        <translation>Riavviare affinché le modifiche abbiano effetto. Riavviare ora?</translation>
     </message>
 </context>
 <context>
@@ -944,41 +944,39 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="246"/>
         <source>Plugins not found</source>
-        <translation>Plugins not found</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="247"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation>Some plugins are required for full functionality.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="248"/>
         <source>Plugin search locations:
 
 </source>
-        <translation>Plugin search locations:
-
-</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="251"/>
         <source>Quit</source>
-        <translation>Quit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="324"/>
         <source>Mute</source>
-        <translation>Mute</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="395"/>
         <source>Dummy</source>
-        <translation>Dummy</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="401"/>
         <source>Vertical Splitter</source>
-        <translation>Vertical Splitter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="402"/>
@@ -986,37 +984,37 @@
         <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <location filename="../../src/gui/guiapplication.cpp" line="430"/>
         <source>Splitters</source>
-        <translation>Splitters</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="407"/>
         <source>Horizontal Splitter</source>
-        <translation>Horizontal Splitter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="415"/>
         <source>Playlist Tabs</source>
-        <translation>Playlist Tabs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="424"/>
         <source>Playlist Organiser</source>
-        <translation>Playlist Organizer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="429"/>
         <source>Tab Stack</source>
-        <translation>Tab Stack</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="437"/>
         <source>Library Tree</source>
-        <translation>Library Tree</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="442"/>
         <source>Player Controls</source>
-        <translation>Player Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
@@ -1024,87 +1022,87 @@
         <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <location filename="../../src/gui/guiapplication.cpp" line="460"/>
         <source>Controls</source>
-        <translation>Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="448"/>
         <source>Playlist Controls</source>
-        <translation>Playlist Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="454"/>
         <source>Volume Controls</source>
-        <translation>Volume Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="459"/>
         <source>SeekBar</source>
-        <translation>SeekBar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="467"/>
         <source>Selection Info</source>
-        <translation>Selection Info</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="474"/>
         <source>Artwork Panel</source>
-        <translation>Artwork Panel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="481"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="485"/>
         <source>Spacer</source>
-        <translation>Spacer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="496"/>
         <source>Status Bar</source>
-        <translation>Status Bar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="502"/>
         <source>Search Bar</source>
-        <translation>Search Bar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="516"/>
         <source>Directory Browser</source>
-        <translation>Directory Browser</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Details</source>
-        <translation>Details</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Track Not Found</source>
-        <translation>Track Not Found</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="535"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>Audio Files (%1)</source>
-        <translation>Audio Files (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="554"/>
         <source>Add Files</source>
-        <translation>Add Files</translation>
+        <translation>Aggiungi File</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Add Folders</source>
-        <translation>Add Folders</translation>
+        <translation>Aggiungi Cartelle</translation>
     </message>
 </context>
 <context>
@@ -1112,12 +1110,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="231"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="232"/>
         <source>Interface</source>
-        <translation>Interface</translation>
+        <translation>Interfaccia</translation>
     </message>
 </context>
 <context>
@@ -1125,72 +1123,72 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="79"/>
         <source>Auto-detect theme</source>
-        <translation>Auto-detect theme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="80"/>
         <source>Light</source>
-        <translation>Light</translation>
+        <translation>Chiaro</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="81"/>
         <source>Dark</source>
-        <translation>Dark</translation>
+        <translation>Scuro</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="82"/>
         <source>Use system icons</source>
-        <translation>Use system icons</translation>
+        <translation>Usa icone di sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="83"/>
         <source>Show Splitter Handles</source>
-        <translation>Show Splitter Handles</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="85"/>
         <source>Splitters</source>
-        <translation>Splitters</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="90"/>
         <source>Setup</source>
-        <translation>Setup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="92"/>
         <source>Quick Setup</source>
-        <translation>Quick Setup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="93"/>
         <source>Import Layout</source>
-        <translation>Import Layout</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="94"/>
         <source>Export Layout</source>
-        <translation>Export Layout</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="96"/>
         <source>Icon Theme</source>
-        <translation>Icon Theme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="196"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Unless exported, the current layout will be lost.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="212"/>
         <source>Export layout</source>
-        <translation>Export layout</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="212"/>
         <source>Layout Name</source>
-        <translation>Layout Name</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1198,7 +1196,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="48"/>
         <source>&amp;About</source>
-        <translation>&amp;About</translation>
+        <translation>&amp;Info</translation>
     </message>
 </context>
 <context>
@@ -1207,137 +1205,137 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="223"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="224"/>
         <source>Title</source>
-        <translation>Title</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="225"/>
         <source>Album</source>
-        <translation>Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="226"/>
         <source>Date</source>
-        <translation>Date</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="227"/>
         <source>Genre</source>
-        <translation>Genre</translation>
+        <translation>Genere</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="228"/>
         <source>Album Artist</source>
-        <translation>Album Artist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
         <source>Track Number</source>
-        <translation>Track Number</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="233"/>
         <source>File Name</source>
-        <translation>File Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>Folder Name</source>
-        <translation>Folder Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="212"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="239"/>
         <source>File Path</source>
-        <translation>File Path</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="213"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
         <source>File Size</source>
-        <translation>File Size</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="214"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
         <source>Last Modified</source>
-        <translation>Last Modified</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="215"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Added</source>
-        <translation>Added</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="216"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="253"/>
         <source>Duration</source>
-        <translation>Duration</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="217"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="255"/>
         <source>Bitrate</source>
-        <translation>Bitrate</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="218"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="260"/>
         <source>Sample Rate</source>
-        <translation>Sample Rate</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="233"/>
         <source>File Names</source>
-        <translation>File Names</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>Folder Names</source>
-        <translation>Folder Names</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="242"/>
         <source>Total Size</source>
-        <translation>Total Size</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="255"/>
         <source>Avg. Bitrate</source>
-        <translation>Avg. Bitrate</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="285"/>
         <source>Metadata</source>
-        <translation>Metadata</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="286"/>
         <source>Location</source>
-        <translation>Location</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="287"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="292"/>
         <source>Tracks</source>
-        <translation>Tracks</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1345,7 +1343,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
         <source>Selection Info</source>
-        <translation>Selection Info</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1353,12 +1351,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="154"/>
         <source>Library</source>
-        <translation>Library</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1366,32 +1364,32 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="76"/>
         <source>Auto refresh on startup</source>
-        <translation>Auto refresh on startup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="77"/>
         <source>Monitor libraries</source>
-        <translation>Monitor libraries</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="90"/>
         <source>Scan libraries for changes on startup</source>
-        <translation>Scan libraries for changes on startup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="91"/>
         <source>Monitor libraries for external changes</source>
-        <translation>Monitor libraries for external changes</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="93"/>
         <source>Sort tracks by</source>
-        <translation>Sort tracks by</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="134"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1399,12 +1397,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="43"/>
         <source>&amp;Rescan Libraries</source>
-        <translation>&amp;Rescan Libraries</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="47"/>
         <source>&amp;Configure</source>
-        <translation>&amp;Configure</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1412,22 +1410,22 @@
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="219"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="221"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="223"/>
         <source>Path</source>
-        <translation>Path</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarymodel.cpp" line="225"/>
         <source>Status</source>
-        <translation>Status</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1436,12 +1434,12 @@
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="105"/>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="106"/>
         <source>Sorting</source>
-        <translation>Sorting</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="106"/>
         <source>Library</source>
-        <translation>Library</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1449,17 +1447,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="157"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="159"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="161"/>
         <source>Grouping</source>
-        <translation>Grouping</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1467,17 +1465,17 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="36"/>
         <source>Artist/Album</source>
-        <translation>Artist/Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="40"/>
         <source>Album</source>
-        <translation>Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="41"/>
         <source>Folder Structure</source>
-        <translation>Folder Structure</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1485,7 +1483,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="312"/>
         <source>Library Tree</source>
-        <translation>Library Tree</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1493,17 +1491,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="273"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="274"/>
         <source>Widgets</source>
-        <translation>Widgets</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="274"/>
         <source>Library Tree</source>
-        <translation>Library Tree</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1511,107 +1509,107 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="89"/>
         <source>Enabled</source>
-        <translation>Enabled</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
         <source>Switch when changed</source>
-        <translation>Switch when changed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="124"/>
         <source>Click Behaviour</source>
-        <translation>Click Behavior</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="130"/>
         <source>Library Selection Playlist</source>
-        <translation>Library Selection Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
         <source>Double-click</source>
-        <translation>Double-click</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Start playback on send</source>
-        <translation>Start playback on send</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="92"/>
         <source>Show Scrollbar</source>
-        <translation>Show Scrollbar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="93"/>
         <source>Alternating Row Colours</source>
-        <translation>Alternating Row Colors</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="94"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="151"/>
         <source>Font</source>
-        <translation>Font</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="128"/>
         <source>Middle-click</source>
-        <translation>Middle-click</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="133"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="148"/>
         <source>Appearance</source>
-        <translation>Appearance</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="152"/>
         <source>Colour</source>
-        <translation>Color</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="153"/>
         <source>Row Height</source>
-        <translation>Row Height</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="189"/>
         <source>Expand/Collapse</source>
-        <translation>Expand/Collapse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="190"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="196"/>
         <source>Add to current playlist</source>
-        <translation>Add to current playlist</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="191"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="197"/>
         <source>Add to active playlist</source>
-        <translation>Add to active playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="192"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="198"/>
         <source>Send to current playlist</source>
-        <translation>Send to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="193"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="199"/>
         <source>Send to new playlist</source>
-        <translation>Send to new playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="195"/>
         <source>None</source>
-        <translation>None</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1619,7 +1617,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="433"/>
         <source>Library Tree</source>
-        <translation>Library Tree</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1627,57 +1625,57 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="42"/>
         <source>&amp;Play</source>
-        <translation>&amp;Play</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="73"/>
         <source>&amp;Order</source>
-        <translation>&amp;Order</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Default</source>
-        <translation>&amp;Default</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="41"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="43"/>
         <source>Previous</source>
-        <translation>Previous</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="44"/>
         <source>Next</source>
-        <translation>Next</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>&amp;Repeat Track</source>
-        <translation>&amp;Repeat Track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>Repeat &amp;Playlist</source>
-        <translation>Repeat &amp;Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Shuffle Tracks</source>
-        <translation>&amp;Shuffle Tracks</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="101"/>
         <source>Pause</source>
-        <translation>Pause</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="105"/>
         <source>Play</source>
-        <translation>Play</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1685,7 +1683,7 @@
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="135"/>
         <source>Player Controls</source>
-        <translation>Player Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1693,17 +1691,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="158"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="160"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnmodel.cpp" line="162"/>
         <source>Field</source>
-        <translation>Field</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1712,12 +1710,12 @@
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="106"/>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="107"/>
         <source>Columns</source>
-        <translation>Columns</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="107"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1725,82 +1723,82 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="38"/>
         <source>Track</source>
-        <translation>Track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="39"/>
         <source>Title</source>
-        <translation>Title</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="40"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="41"/>
         <source>Artist/Album</source>
-        <translation>Artist/Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="42"/>
         <source>Album Artist</source>
-        <translation>Album Artist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="43"/>
         <source>Album</source>
-        <translation>Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="44"/>
         <source>Playcount</source>
-        <translation>Playcount</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="45"/>
         <source>Duration</source>
-        <translation>Duration</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="46"/>
         <source>Playing</source>
-        <translation>Playing</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="47"/>
         <source>Codec</source>
-        <translation>Codec</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="48"/>
         <source>Extension</source>
-        <translation>Extension</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="49"/>
         <source>Bitrate</source>
-        <translation>Bitrate</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="50"/>
         <source>Sample Rate</source>
-        <translation>Sample Rate</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="51"/>
         <source>Front Cover</source>
-        <translation>Front Cover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="52"/>
         <source>Back Cover</source>
-        <translation>Back Cover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Artist Picture</source>
-        <translation>Artist Picture</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1808,32 +1806,32 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="59"/>
         <source>Repeat</source>
-        <translation>Repeat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="63"/>
         <source>Shuffle</source>
-        <translation>Shuffle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="83"/>
         <source>Default</source>
-        <translation>Default</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="84"/>
         <source>Repeat playlist</source>
-        <translation>Repeat playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="85"/>
         <source>Repeat track</source>
-        <translation>Repeat track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="182"/>
         <source>Playlist Controls</source>
-        <translation>Playlist Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1841,7 +1839,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="357"/>
         <source>Playlists</source>
-        <translation>Playlists</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1849,12 +1847,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="146"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="147"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1862,52 +1860,52 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="62"/>
         <source>Cursor follows playback</source>
-        <translation>Cursor follows playback</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="63"/>
         <source>Playback follows cursor</source>
-        <translation>Playback follows cursor</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="64"/>
         <source>Rewind track on previous</source>
-        <translation>Rewind track on previous</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="65"/>
         <source>Show Scrollbar</source>
-        <translation>Show Scrollbar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="66"/>
         <source>Show Header</source>
-        <translation>Show Header</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="67"/>
         <source>Alternate Row Colours</source>
-        <translation>Alternate Row Colors</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="72"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Behaviour</source>
-        <translation>Behavior</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="86"/>
         <source>Appearance</source>
-        <translation>Appearance</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="89"/>
         <source>Cover Padding</source>
-        <translation>Cover Padding</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1915,27 +1913,27 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="142"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="144"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="146"/>
         <source>New Group</source>
-        <translation>New Group</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="148"/>
         <source>Create Playlist</source>
-        <translation>Create Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="310"/>
         <source>Playlist Organiser</source>
-        <translation>Playlist Organizer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1944,12 +1942,12 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="495"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="496"/>
         <source>Presets</source>
-        <translation>Presets</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="496"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1957,125 +1955,125 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="216"/>
         <source>Show Cover</source>
-        <translation>Show Cover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="217"/>
         <source>Simple Header</source>
-        <translation>Simple Header</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="218"/>
         <source>New</source>
-        <translation>New</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="219"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="220"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="221"/>
         <source>Update</source>
-        <translation>Update</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="222"/>
         <source>Clone</source>
-        <translation>Clone</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="240"/>
         <source>Title</source>
-        <translation>Title</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="241"/>
         <source>Subtitle</source>
-        <translation>Subtitle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="243"/>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="238"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="282"/>
         <source>Row height</source>
-        <translation>Row height</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="213"/>
         <source>Left-aligned text</source>
-        <translation>Left-aligned text</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="214"/>
         <source>Right-aligned text</source>
-        <translation>Right-aligned text</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="345"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="365"/>
         <source>Preset Name</source>
-        <translation>Preset Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="422"/>
         <source>Copy of %1</source>
-        <translation>Copy of %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="261"/>
         <source>Header</source>
-        <translation>Header</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="242"/>
         <source>Side</source>
-        <translation>Side</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="266"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="275"/>
         <source>Subheaders</source>
-        <translation>Subheaders</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="284"/>
         <source>Left-aligned</source>
-        <translation>Left-aligned</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="285"/>
         <source>Right-aligned</source>
-        <translation>Right-aligned</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="297"/>
         <source>Tracks</source>
-        <translation>Tracks</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="342"/>
         <source>New preset</source>
-        <translation>New preset</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="345"/>
         <source>Add Preset</source>
-        <translation>Add Preset</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="365"/>
         <source>Rename Preset</source>
-        <translation>Rename Preset</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2083,7 +2081,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
         <source>Playlist Tabs</source>
-        <translation>Playlist Tabs</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2091,12 +2089,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistview.cpp" line="2238"/>
         <source>Loading Playlist…</source>
-        <translation>Loading Playlist…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistview.cpp" line="2242"/>
         <source>Empty Playlist</source>
-        <translation>Empty Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2104,32 +2102,32 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="209"/>
         <source>&amp;Clear</source>
-        <translation>&amp;Clear</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="217"/>
         <source>&amp;Select All</source>
-        <translation>&amp;Select All</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="972"/>
         <source>Sort</source>
-        <translation>Sort</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="985"/>
         <source>Presets</source>
-        <translation>Presets</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1026"/>
         <source>Playlist</source>
-        <translation>Playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1138"/>
         <source>&amp;Play</source>
-        <translation>&amp;Play</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2137,47 +2135,47 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="114"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="115"/>
         <source>Add to Playback Queue</source>
-        <translation>Add to Playback Queue</translation>
+        <translation>Aggiungi alla Coda di Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="116"/>
         <source>Remove from Playback Queue</source>
-        <translation>Remove from Playback Queue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
         <source>Undo</source>
-        <translation>Undo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="198"/>
         <source>Redo</source>
-        <translation>Redo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="788"/>
         <source>Columns</source>
-        <translation>Columns</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="828"/>
         <source>More…</source>
-        <translation>More…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="840"/>
         <source>Reset columns to default</source>
-        <translation>Reset columns to default</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="849"/>
         <source>Single-column mode</source>
-        <translation>Single-column mode</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2185,12 +2183,12 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="173"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="174"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2198,23 +2196,23 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="89"/>
         <source>Install…</source>
-        <translation>Install…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="142"/>
         <source>Plugins Changed</source>
-        <translation>Plugins Changed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="161"/>
         <source>Plugin Installed</source>
-        <translation>Plugin Installed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="143"/>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="162"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation>Restart for changes to take effect. Restart now?</translation>
+        <translation>Riavviare affinché le modifiche abbiano effetto. Riavviare ora?</translation>
     </message>
 </context>
 <context>
@@ -2222,32 +2220,32 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="97"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="99"/>
         <source>Version</source>
-        <translation>Version</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="101"/>
         <source>Category</source>
-        <translation>Category</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="103"/>
         <source>Author</source>
-        <translation>Author</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="105"/>
         <source>Load</source>
-        <translation>Load</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginsmodel.cpp" line="107"/>
         <source>Status</source>
-        <translation>Status</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2256,7 +2254,7 @@
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="131"/>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="198"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2264,12 +2262,12 @@
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="36"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/quicksetup/quicksetupdialog.cpp" line="39"/>
         <source>Quick Setup</source>
-        <translation>Quick Setup</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2277,7 +2275,7 @@
     <message>
         <location filename="../../src/gui/sandbox/sandboxdialog.cpp" line="203"/>
         <source>Script Sandbox</source>
-        <translation>Script Sandbox</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2285,27 +2283,27 @@
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="94"/>
         <source>Connect</source>
-        <translation>Connect</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="99"/>
         <source>Disconnect</source>
-        <translation>Disconnect</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="117"/>
         <source>Unavailable</source>
-        <translation>Unavailable</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="143"/>
         <source>Clear All</source>
-        <translation>Clear All</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="153"/>
         <source>Finish</source>
-        <translation>Finish</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2314,23 +2312,23 @@
         <location filename="../../src/gui/search/searchwidget.cpp" line="59"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="156"/>
         <source>Options</source>
-        <translation>Options</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="74"/>
         <source>Search Bar</source>
-        <translation>Search Bar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="159"/>
         <source>Change Placeholder Text</source>
-        <translation>Change Placeholder Text</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="84"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="163"/>
         <source>Manage Connections</source>
-        <translation>Manage Connections</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2338,17 +2336,17 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="415"/>
         <source>SeekBar</source>
-        <translation>SeekBar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="433"/>
         <source>Show Labels</source>
-        <translation>Show Labels</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="440"/>
         <source>Show Elapsed Total</source>
-        <translation>Show Elapsed Total</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2356,23 +2354,23 @@
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="71"/>
         <source>Reset Page</source>
-        <translation>Reset Page</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="72"/>
         <source>Reset All</source>
-        <translation>Reset All</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="102"/>
         <source>This will reset all settings to default.</source>
-        <translation>This will reset all settings to default.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="136"/>
         <location filename="../../src/utils/settings/settingsdialog.cpp" line="208"/>
         <source>Settings</source>
-        <translation>Settings</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2380,17 +2378,17 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="232"/>
         <source>Action</source>
-        <translation>Action</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="234"/>
         <source>Id</source>
-        <translation>Id</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="236"/>
         <source>Shortcut</source>
-        <translation>Shortcut</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2399,7 +2397,7 @@
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="255"/>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="256"/>
         <source>Shortcuts</source>
-        <translation>Shortcuts</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2407,12 +2405,12 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="106"/>
         <source>Shortcuts</source>
-        <translation>Shortcuts</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutspage.cpp" line="122"/>
         <source>Reset</source>
-        <translation>Reset</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2420,17 +2418,17 @@
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="155"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="157"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/sortingmodel.cpp" line="159"/>
         <source>Sort Script</source>
-        <translation>Sort Script</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2438,22 +2436,22 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="36"/>
         <source>Album</source>
-        <translation>Album</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation>Artist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="39"/>
         <source>Title</source>
-        <translation>Title</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Track Number</source>
-        <translation>Track Number</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2461,7 +2459,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
         <source>Spacer</source>
-        <translation>Spacer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2469,22 +2467,22 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>%1 Splitter</source>
-        <translation>%1 Splitter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Vertical</source>
-        <translation>Vertical</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="270"/>
         <source>Horizontal</source>
-        <translation>Horizontal</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="280"/>
         <source>Switch Orientation</source>
-        <translation>Switch Orientation</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2492,17 +2490,17 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="209"/>
         <source>Status Bar</source>
-        <translation>Status Bar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="227"/>
         <source>Show Icon</source>
-        <translation>Show Icon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="234"/>
         <source>Show Track Selection</source>
-        <translation>Show Track Selection</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2510,17 +2508,17 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="117"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="118"/>
         <source>Widgets</source>
-        <translation>Widgets</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="118"/>
         <source>Status Widget</source>
-        <translation>Status Widget</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2528,32 +2526,32 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="56"/>
         <source>Show Icon</source>
-        <translation>Show Icon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="57"/>
         <source>Show Track Selection</source>
-        <translation>Show Track Selection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
         <source>Playing Track</source>
-        <translation>Playing Track</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Track Selection</source>
-        <translation>Track Selection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
         <source>Appearance</source>
-        <translation>Appearance</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="73"/>
         <source>Scripts</source>
-        <translation>Scripts</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2561,42 +2559,42 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="62"/>
         <source>Tab Stack</source>
-        <translation>Tab Stack</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="257"/>
         <source>&amp;Position</source>
-        <translation>&amp;Position</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="261"/>
         <source>&amp;North</source>
-        <translation>&amp;North</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="262"/>
         <source>&amp;East</source>
-        <translation>&amp;East</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="263"/>
         <source>&amp;South</source>
-        <translation>&amp;South</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="264"/>
         <source>&amp;West</source>
-        <translation>&amp;West</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="303"/>
         <source>&amp;Rename</source>
-        <translation>&amp;Rename</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="306"/>
         <source>Re&amp;move</source>
-        <translation>Re&amp;move</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2604,12 +2602,12 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="142"/>
         <source>Metadata in the associated files will be overwritten.</source>
-        <translation>Metadata in the associated files will be overwritten.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="144"/>
         <source>Don&apos;t ask again</source>
-        <translation>Don&apos;t ask again</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2617,52 +2615,52 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="47"/>
         <source>New playlist</source>
-        <translation>New playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="93"/>
         <source>Open Containing Folder</source>
-        <translation>Open Containing Folder</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="87"/>
         <source>Add to current playlist</source>
-        <translation>Add to current playlist</translation>
+        <translation>Aggiungi alla playlist corrente</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="88"/>
         <source>Add to active playlist</source>
-        <translation>Add to active playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="89"/>
         <source>Send to current playlist</source>
-        <translation>Send to current playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="90"/>
         <source>Send to new playlist</source>
-        <translation>Send to new playlist</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="91"/>
         <source>Add to Playback Queue</source>
-        <translation>Add to Playback Queue</translation>
+        <translation>Aggiungi alla Coda di Riproduzione</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="92"/>
         <source>Remove from Playback Queue</source>
-        <translation>Remove from Playback Queue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="94"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="267"/>
         <source>Playback</source>
-        <translation>Playback</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2670,17 +2668,17 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="46"/>
         <source>Layout &amp;Editing Mode</source>
-        <translation>Layout &amp;Editing Mode</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="54"/>
         <source>&amp;Quick Setup</source>
-        <translation>&amp;Quick Setup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="58"/>
         <source>&amp;Script Sandbox</source>
-        <translation>&amp;Script Sandbox</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2688,7 +2686,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="157"/>
         <source>Volume Controls</source>
-        <translation>Volume Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2696,17 +2694,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="206"/>
         <source>Colours</source>
-        <translation>Colors</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="207"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="207"/>
         <source>WaveBar</source>
-        <translation>WaveBar</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2714,62 +2712,62 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="71"/>
         <source>Custom colours</source>
-        <translation>Custom colors</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="95"/>
         <source>Unplayed</source>
-        <translation>Unplayed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="96"/>
         <source>Played</source>
-        <translation>Played</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="97"/>
         <source>Border</source>
-        <translation>Border</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="98"/>
         <source>Background</source>
-        <translation>Background</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Max</source>
-        <translation>Max</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
         <source>Min</source>
-        <translation>Min</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="101"/>
         <source>RMS Max</source>
-        <translation>RMS Max</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="102"/>
         <source>RMS Min</source>
-        <translation>RMS Min</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
         <source>Playing</source>
-        <translation>Playing</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="104"/>
         <source>Seeking</source>
-        <translation>Seeking</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="105"/>
         <source>Cursor</source>
-        <translation>Cursor</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2777,32 +2775,32 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="214"/>
         <source>Waveform Seekbar</source>
-        <translation>Waveform Seekbar</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="215"/>
         <source>Controls</source>
-        <translation>Controls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="219"/>
         <source>Utilities</source>
-        <translation>Utilities</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="222"/>
         <source>Regenerate waveform data</source>
-        <translation>Regenerate waveform data</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="226"/>
         <source>Generate missing waveform data</source>
-        <translation>Generate missing waveform data</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="230"/>
         <source>Remove waveform data</source>
-        <translation>Remove waveform data</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2810,17 +2808,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="286"/>
         <source>General</source>
-        <translation>General</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="287"/>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="287"/>
         <source>WaveBar</source>
-        <translation>WaveBar</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2828,102 +2826,102 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="79"/>
         <source>MinMax</source>
-        <translation>MinMax</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="80"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="81"/>
         <source>Off</source>
-        <translation>Off</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="82"/>
         <source>Stereo</source>
-        <translation>Stereo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Mono</source>
-        <translation>Mono</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>Show Progress Cursor</source>
-        <translation>Show Progress Cursor</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="95"/>
         <source>Cursor Width</source>
-        <translation>Cursor Width</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="96"/>
         <source>Bar Width</source>
-        <translation>Bar Width</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="97"/>
         <source>Bar Gap</source>
-        <translation>Bar Gap</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="98"/>
         <source>Max Scale</source>
-        <translation>Max Scale</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="99"/>
         <source>Centre Gap</source>
-        <translation>Center Gap</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="129"/>
         <source>Mode</source>
-        <translation>Mode</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="135"/>
         <source>Channel Scale</source>
-        <translation>Channel Scale</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="137"/>
         <source>Downmix</source>
-        <translation>Downmix</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="149"/>
         <source>Cursor</source>
-        <translation>Cursor</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="156"/>
         <source>Scale</source>
-        <translation>Scale</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="165"/>
         <source>Dimension</source>
-        <translation>Dimension</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="176"/>
         <source>Cache</source>
-        <translation>Cache</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="181"/>
         <source>Clear Cache</source>
-        <translation>Clear Cache</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="279"/>
         <source>Current Disk Usage</source>
-        <translation>Current Disk Usage</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2931,47 +2929,47 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="95"/>
         <source>Show Cursor</source>
-        <translation>Show Cursor</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="101"/>
         <source>Mode</source>
-        <translation>Mode</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="103"/>
         <source>MinMax</source>
-        <translation>MinMax</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="104"/>
         <source>RMS</source>
-        <translation>RMS</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="132"/>
         <source>Downmix</source>
-        <translation>Downmix</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="135"/>
         <source>Off</source>
-        <translation>Off</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="136"/>
         <source>Stereo</source>
-        <translation>Stereo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="137"/>
         <source>Mono</source>
-        <translation>Mono</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="165"/>
         <source>Settings…</source>
-        <translation>Settings…</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2979,42 +2977,42 @@
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Usage</source>
-        <translation>Usage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>options</source>
-        <translation>options</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>urls</source>
-        <translation>urls</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Options</source>
-        <translation>Options</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
         <source>Displays help on command line options</source>
-        <translation>Displays help on command line options</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
         <source>Displays version information</source>
-        <translation>Displays version information</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="64"/>
         <source>Arguments</source>
-        <translation>Arguments</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="64"/>
         <source>Files to open</source>
-        <translation>Files to open</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
