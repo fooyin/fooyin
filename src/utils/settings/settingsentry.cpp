@@ -70,6 +70,7 @@ bool SettingsEntry::setValue(const QVariant& value)
         m_wasChanged = true;
         return true;
     }
+
     return false;
 }
 
@@ -112,7 +113,7 @@ void SettingsEntry::notifySubscribers()
 
 bool SettingsEntry::reset()
 {
-    return setValue(m_defaultValue);
+    return std::exchange(m_value, m_defaultValue) != m_defaultValue;
 }
 } // namespace Fooyin
 

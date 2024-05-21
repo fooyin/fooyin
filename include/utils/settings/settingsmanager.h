@@ -306,6 +306,7 @@ public:
         lock.unlock();
 
         if(success) {
+            fileRemove(setting->key());
             setting->notifySubscribers();
         }
 

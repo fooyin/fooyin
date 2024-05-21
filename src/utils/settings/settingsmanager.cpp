@@ -124,6 +124,7 @@ bool SettingsManager::reset(const QString& key)
     lock.unlock();
 
     if(success) {
+        fileRemove(setting->key());
         setting->notifySubscribers();
     }
 
