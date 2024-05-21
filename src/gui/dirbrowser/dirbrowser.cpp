@@ -397,12 +397,9 @@ struct DirBrowser::Private
             backDir    = new ToolButton(self);
             forwardDir = new ToolButton(self);
 
-            upDir->setStretchEnabled(true);
             upDir->setDefaultAction(new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Go up"), upDir));
-            backDir->setStretchEnabled(true);
             backDir->setDefaultAction(
                 new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), tr("Go back"), backDir));
-            forwardDir->setStretchEnabled(true);
             forwardDir->setDefaultAction(
                 new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), tr("Go forwards"), forwardDir));
 

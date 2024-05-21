@@ -19,21 +19,19 @@
 
 #include "playlistcontrol.h"
 
-#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/actions/command.h>
-#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
 #include <QActionGroup>
 #include <QHBoxLayout>
+#include <QJsonObject>
 #include <QMenu>
-#include <QToolButton>
 
 namespace Fooyin {
 struct PlaylistControl::Private
@@ -45,6 +43,8 @@ struct PlaylistControl::Private
 
     ToolButton* repeat;
     ToolButton* shuffle;
+
+    bool stretchIcons{false};
 
     Private(PlaylistControl* self_, PlayerController* playerController_, SettingsManager* settings_)
         : self{self_}
@@ -63,15 +63,18 @@ struct PlaylistControl::Private
         shuffleAction->setToolTip(tr("Shuffle"));
         shuffle->setDefaultAction(shuffleAction);
 
-        repeat->setStretchEnabled(true);
-        shuffle->setStretchEnabled(true);
-
         repeat->setAutoRaise(true);
         shuffle->setAutoRaise(true);
 
         setMode(playerController->playMode());
 
         setupMenus();
+    }
+
+    void updateStretch() const
+    {
+        repeat->setStretchEnabled(stretchIcons);
+        shuffle->setStretchEnabled(stretchIcons);
     }
 
     void setupMenus()
@@ -164,6 +167,7 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
     layout->addWidget(p->repeat);
     layout->addWidget(p->shuffle);
@@ -185,6 +189,37 @@ QString PlaylistControl::name() const
 QString PlaylistControl::layoutName() const
 {
     return QStringLiteral("PlaylistControls");
+}
+
+void PlaylistControl::layoutEditingMenu(QMenu* menu)
+{
+    auto* stretchAction = new QAction(tr("Stretch to fit"), this);
+    stretchAction->setCheckable(true);
+    stretchAction->setChecked(p->stretchIcons);
+    QObject::connect(stretchAction, &QAction::triggered, this, [this]() {
+        p->stretchIcons = !p->stretchIcons;
+        p->updateStretch();
+    });
+    menu->addAction(stretchAction);
+}
+
+void PlaylistControl::saveLayoutData(QJsonObject& layout)
+{
+    if(p->stretchIcons) {
+        layout[QStringLiteral("Stretch")] = p->stretchIcons;
+    }
+}
+
+void PlaylistControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(QStringLiteral("Stretch"))) {
+        p->stretchIcons = layout.value(QStringLiteral("Stretch")).toBool();
+    }
+}
+
+void PlaylistControl::finalise()
+{
+    p->updateStretch();
 }
 } // namespace Fooyin
 

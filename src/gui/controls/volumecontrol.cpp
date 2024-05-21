@@ -31,10 +31,12 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
 #include <QApplication>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QToolButton>
+#include <QJsonObject>
+#include <QMenu>
+#include <QWheelEvent>
 
 #include <chrono>
 
@@ -54,6 +56,8 @@ struct VolumeControl::Private
     HoverMenu* volumeMenu;
     LogSlider* volumeSlider;
 
+    bool stretchIcons{false};
+
     Private(VolumeControl* self_, ActionManager* actionManager_, SettingsManager* settings_)
         : self{self_}
         , actionManager{actionManager_}
@@ -69,7 +73,6 @@ struct VolumeControl::Private
             volumeIcon->setDefaultAction(muteCmd->action());
         }
 
-        volumeIcon->setStretchEnabled(true);
         volumeIcon->setAutoRaise(true);
 
         volumeSlider->setMinimumHeight(100);
@@ -79,6 +82,11 @@ struct VolumeControl::Private
         volumeMenu->hide();
 
         updateDisplay(settings->value<Settings::Core::OutputVolume>());
+    }
+
+    void updateStretch() const
+    {
+        volumeIcon->setStretchEnabled(stretchIcons);
     }
 
     void showVolumeMenu() const
@@ -138,6 +146,7 @@ VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* sett
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
     layout->addWidget(p->volumeIcon);
 
@@ -161,6 +170,37 @@ QString VolumeControl::name() const
 QString VolumeControl::layoutName() const
 {
     return QStringLiteral("VolumeControls");
+}
+
+void VolumeControl::layoutEditingMenu(QMenu* menu)
+{
+    auto* stretchAction = new QAction(tr("Stretch to fit"), this);
+    stretchAction->setCheckable(true);
+    stretchAction->setChecked(p->stretchIcons);
+    QObject::connect(stretchAction, &QAction::triggered, this, [this]() {
+        p->stretchIcons = !p->stretchIcons;
+        p->updateStretch();
+    });
+    menu->addAction(stretchAction);
+}
+
+void VolumeControl::saveLayoutData(QJsonObject& layout)
+{
+    if(p->stretchIcons) {
+        layout[QStringLiteral("Stretch")] = p->stretchIcons;
+    }
+}
+
+void VolumeControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(QStringLiteral("Stretch"))) {
+        p->stretchIcons = layout.value(QStringLiteral("Stretch")).toBool();
+    }
+}
+
+void VolumeControl::finalise()
+{
+    p->updateStretch();
 }
 
 void VolumeControl::wheelEvent(QWheelEvent* event)

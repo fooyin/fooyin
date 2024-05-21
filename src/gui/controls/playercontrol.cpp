@@ -28,8 +28,10 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
 #include <QHBoxLayout>
-#include <QToolButton>
+#include <QJsonObject>
+#include <QMenu>
 
 namespace Fooyin {
 struct PlayerControl::Private
@@ -44,6 +46,8 @@ struct PlayerControl::Private
     ToolButton* prev;
     ToolButton* playPause;
     ToolButton* next;
+
+    bool stretchIcons{false};
 
     Private(PlayerControl* self_, ActionManager* actionManager_, PlayerController* playerController_,
             SettingsManager* settings_)
@@ -69,17 +73,20 @@ struct PlayerControl::Private
             next->setDefaultAction(nextCmd->action());
         }
 
-        stop->setStretchEnabled(true);
-        prev->setStretchEnabled(true);
-        playPause->setStretchEnabled(true);
-        next->setStretchEnabled(true);
-
         stop->setAutoRaise(true);
         prev->setAutoRaise(true);
         playPause->setAutoRaise(true);
         next->setAutoRaise(true);
 
         updateIcons();
+    }
+
+    void updateStretch() const
+    {
+        stop->setStretchEnabled(stretchIcons);
+        prev->setStretchEnabled(stretchIcons);
+        playPause->setStretchEnabled(stretchIcons);
+        next->setStretchEnabled(stretchIcons);
     }
 
     void updateIcons() const
@@ -113,6 +120,7 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
     layout->addWidget(p->stop);
     layout->addWidget(p->prev);
@@ -137,6 +145,36 @@ QString PlayerControl::layoutName() const
     return QStringLiteral("PlayerControls");
 }
 
+void PlayerControl::layoutEditingMenu(QMenu* menu)
+{
+    auto* stretchAction = new QAction(tr("Stretch to fit"), this);
+    stretchAction->setCheckable(true);
+    stretchAction->setChecked(p->stretchIcons);
+    QObject::connect(stretchAction, &QAction::triggered, this, [this]() {
+        p->stretchIcons = !p->stretchIcons;
+        p->updateStretch();
+    });
+    menu->addAction(stretchAction);
+}
+
+void PlayerControl::saveLayoutData(QJsonObject& layout)
+{
+    if(p->stretchIcons) {
+        layout[QStringLiteral("Stretch")] = p->stretchIcons;
+    }
+}
+
+void PlayerControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(QStringLiteral("Stretch"))) {
+        p->stretchIcons = layout.value(QStringLiteral("Stretch")).toBool();
+    }
+}
+
+void PlayerControl::finalise()
+{
+    p->updateStretch();
+}
 } // namespace Fooyin
 
 #include "moc_playercontrol.cpp"
