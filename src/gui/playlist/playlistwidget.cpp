@@ -735,9 +735,19 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
             model->resetColumnAlignments();
             header->resetSectionPositions();
             header->setHeaderSectionWidths({{0, 0.06}, {1, 0.38}, {2, 0.08}, {3, 0.38}, {4, 0.10}});
-            header->setHeaderSectionAlignment(0, Qt::AlignCenter);
-            header->setHeaderSectionAlignment(2, Qt::AlignRight);
-            header->setHeaderSectionAlignment(4, Qt::AlignRight);
+            model->changeColumnAlignment(0, Qt::AlignCenter);
+            model->changeColumnAlignment(2, Qt::AlignRight);
+            model->changeColumnAlignment(4, Qt::AlignRight);
+        };
+
+        auto resetState = [this, resetColumns]() {
+            if(!headerState.isEmpty()) {
+                header->restoreHeaderState(headerState);
+            }
+            else {
+                resetColumns();
+            }
+            updateSpans();
         };
 
         if(std::cmp_equal(header->count(), columns.size())) {
@@ -746,16 +756,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
         }
         else {
             QObject::connect(
-                model, &QAbstractItemModel::modelReset, self,
-                [this, resetColumns]() {
-                    if(!headerState.isEmpty()) {
-                        header->restoreHeaderState(headerState);
-                    }
-                    else {
-                        resetColumns();
-                    }
-                    updateSpans();
-                },
+                model, &QAbstractItemModel::modelReset, self, [resetState]() { resetState(); },
                 Qt::SingleShotConnection);
         }
     }
