@@ -204,8 +204,12 @@ void FiltersGeneralPageWidget::apply()
     m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
     m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
 
-    m_settings->set<Settings::Filters::FilterFont>(m_fontButton->buttonFont().toString());
-    m_settings->set<Settings::Filters::FilterColour>(m_colourButton->colour().name());
+    if(m_fontButton->fontChanged()) {
+        m_settings->set<Settings::Filters::FilterFont>(m_fontButton->buttonFont().toString());
+    }
+    if(m_colourButton->colourChanged()) {
+        m_settings->set<Settings::Filters::FilterColour>(m_colourButton->colour().name());
+    }
     m_settings->set<Settings::Filters::FilterRowHeight>(m_rowHeight->value());
 
     m_settings->set<Settings::Filters::FilterDoubleClick>(m_doubleClick->currentData().toInt());

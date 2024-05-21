@@ -241,8 +241,13 @@ void LibraryTreePageWidget::apply()
 
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
-    m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->buttonFont().toString());
-    m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
+
+    if(m_fontButton->fontChanged()) {
+        m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->buttonFont().toString());
+    }
+    if(m_colourButton->colourChanged()) {
+        m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
+    }
     m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 
     m_model->processQueue();
