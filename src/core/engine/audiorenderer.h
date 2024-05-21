@@ -48,6 +48,7 @@ public:
     void updateVolume(double volume);
 
 signals:
+    void outputStateChanged(AudioOutput::State state);
     void bufferProcessed(const AudioBuffer& buffer);
     void finished();
 

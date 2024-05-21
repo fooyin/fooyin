@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioformat.h>
 
+#include <QObject>
 #include <QString>
 
 namespace Fooyin {
@@ -43,10 +46,16 @@ using OutputDevices = std::vector<OutputDevice>;
 /*!
  * An abstract interface for an audio output driver.
  */
-class AudioOutput
+class FYCORE_EXPORT AudioOutput : public QObject
 {
+    Q_OBJECT
+
 public:
-    virtual ~AudioOutput() = default;
+    enum class State
+    {
+        None,
+        Disconnected
+    };
 
     /** Initialises the output with the given @p format. */
     virtual bool init(const AudioFormat& format) = 0;
@@ -117,6 +126,9 @@ public:
      * @note this may be called regardless of the current initialised state.
      */
     virtual void setDevice(const QString& device) = 0;
+
+signals:
+    void stateChanged(State state);
 };
 using OutputCreator = std::function<std::unique_ptr<AudioOutput>()>;
 } // namespace Fooyin

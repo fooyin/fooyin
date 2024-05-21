@@ -68,6 +68,14 @@ struct AudioRenderer::Private
         return true;
     }
 
+    void outputStateChanged(AudioOutput::State state) const
+    {
+        if(state == AudioOutput::State::Disconnected) {
+            emit self->outputStateChanged(state);
+            audioOutput->uninit();
+        }
+    }
+
     void updateInterval() const
     {
         const auto interval = static_cast<int>(static_cast<double>(bufferSize) / format.sampleRate() * 1000 * 0.25);
@@ -253,6 +261,8 @@ void AudioRenderer::updateOutput(const OutputCreator& output)
 
     p->audioOutput     = std::move(newOutput);
     p->bufferPrefilled = false;
+    QObject::connect(p->audioOutput.get(), &AudioOutput::stateChanged, this,
+                     [this](const auto state) { p->outputStateChanged(state); });
 }
 
 void AudioRenderer::updateDevice(const QString& device)

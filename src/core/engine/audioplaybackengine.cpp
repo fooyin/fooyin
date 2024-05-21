@@ -53,6 +53,7 @@ struct AudioPlaybackEngine::Private
 
     TrackStatus status{TrackStatus::NoTrack};
     PlaybackState state{PlaybackState::Stopped};
+    AudioOutput::State outputState{AudioOutput::State::None};
     uint64_t lastPosition{0};
 
     uint64_t totalBufferTime{0};
@@ -80,6 +81,8 @@ struct AudioPlaybackEngine::Private
         QObject::connect(renderer, &AudioRenderer::bufferProcessed, self,
                          [this](const AudioBuffer& buffer) { totalBufferTime -= buffer.duration(); });
         QObject::connect(renderer, &AudioRenderer::finished, self, [this]() { onRendererFinished(); });
+        QObject::connect(renderer, &AudioRenderer::outputStateChanged, self,
+                         [this](AudioOutput::State outState) { handleOutputState(outState); });
     }
 
     QTimer* positionTimer()
@@ -109,6 +112,14 @@ struct AudioPlaybackEngine::Private
             bufferTimer.stop();
             renderer->queueBuffer({});
             QMetaObject::invokeMethod(self, &AudioEngine::trackAboutToFinish);
+        }
+    }
+
+    void handleOutputState(AudioOutput::State outState)
+    {
+        outputState = outState;
+        if(outputState == AudioOutput::State::Disconnected) {
+            self->pause();
         }
     }
 
@@ -302,6 +313,11 @@ void AudioPlaybackEngine::play()
     if(p->status == TrackStatus::EndOfTrack && p->state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
+    }
+
+    if(p->outputState == AudioOutput::State::Disconnected) {
+        p->outputState = AudioOutput::State::None;
+        p->renderer->init(p->format);
     }
 
     setState(PlaybackState::Playing);

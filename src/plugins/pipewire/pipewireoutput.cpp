@@ -292,14 +292,19 @@ struct PipeWireOutput::Private
         self->loop->signal(false);
     }
 
-    static void stateChanged(void* userdata, enum pw_stream_state /*old*/, enum pw_stream_state state,
+    static void stateChanged(void* userdata, enum pw_stream_state old, enum pw_stream_state state,
                              const char* /*error*/)
     {
-        auto* self = static_cast<PipeWireOutput::Private*>(userdata);
+        auto* priv = static_cast<PipeWireOutput::Private*>(userdata);
 
-        if(state == PW_STREAM_STATE_UNCONNECTED) { }
+        if(state == PW_STREAM_STATE_UNCONNECTED) {
+            QMetaObject::invokeMethod(priv->self, [priv]() { emit priv->self->stateChanged(State::Disconnected); });
+        }
+        else if(old == PW_STREAM_STATE_UNCONNECTED && state == PW_STREAM_STATE_CONNECTING) {
+            // TODO: Handle reconnections
+        }
         else if(state == PW_STREAM_STATE_PAUSED || state == PW_STREAM_STATE_STREAMING) {
-            self->loop->signal(false);
+            priv->loop->signal(false);
         }
     }
 

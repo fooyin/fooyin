@@ -67,10 +67,27 @@ struct EngineHandler::Private
         QObject::connect(engine, &AudioEngine::trackAboutToFinish, self, &EngineHandler::trackAboutToFinish);
         QObject::connect(engine, &AudioEngine::positionChanged, playerController,
                          &PlayerController::setCurrentPosition);
+        QObject::connect(engine, &AudioEngine::stateChanged, self,
+                         [this](PlaybackState state) { handleStateChange(state); });
         QObject::connect(engine, &AudioEngine::trackStatusChanged, self,
                          [this](TrackStatus status) { handleTrackStatus(status); });
 
         updateVolume(settings->value<Settings::Core::OutputVolume>());
+    }
+
+    void handleStateChange(PlaybackState state) const
+    {
+        switch(state) {
+            case(PlaybackState::Error):
+            case(PlaybackState::Stopped):
+                playerController->stop();
+                break;
+            case(PlaybackState::Paused):
+                playerController->pause();
+                break;
+            case(PlaybackState::Playing):
+                break;
+        }
     }
 
     void handleTrackStatus(TrackStatus status) const
