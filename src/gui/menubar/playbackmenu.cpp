@@ -21,21 +21,24 @@
 
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QAction>
 #include <QActionGroup>
-#include <QIcon>
 #include <QMenu>
 
 namespace Fooyin {
-PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, QObject* parent)
+PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
+                           QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
     , m_playerController{playerController}
+    , m_settings{settings}
     , m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
     , m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
     , m_stop{new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("Stop"), this)}
@@ -69,9 +72,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     QObject::connect(m_next, &QAction::triggered, playerController, &PlayerController::next);
     QObject::connect(m_previous, &QAction::triggered, playerController, &PlayerController::previous);
 
+    playbackMenu->addSeparator();
+
     auto* orderMenu = m_actionManager->createMenu(Constants::Menus::PlaybackOrder);
     orderMenu->menu()->setTitle(tr("&Order"));
-    playbackMenu->addMenu(orderMenu, Actions::Groups::Three);
+    playbackMenu->addMenu(orderMenu);
 
     m_defaultPlayback->setCheckable(true);
     m_repeatTrack->setCheckable(true);
@@ -90,6 +95,23 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
                      [this]() { setPlayMode(Playlist::PlayMode::RepeatPlaylist); });
     QObject::connect(m_shuffle, &QAction::triggered, this,
                      [this]() { setPlayMode(Playlist::PlayMode::ShuffleTracks); });
+
+    auto* followPlayback = new QAction(tr("Cursor Follows Play&back"), this);
+    auto* followCursor   = new QAction(tr("Playback Follows &Cursor"), this);
+
+    followPlayback->setCheckable(true);
+    followCursor->setCheckable(true);
+
+    followPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
+    followCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
+
+    QObject::connect(followPlayback, &QAction::triggered, this,
+                     [this](bool enabled) { m_settings->set<Settings::Gui::CursorFollowsPlayback>(enabled); });
+    QObject::connect(followCursor, &QAction::triggered, this,
+                     [this](bool enabled) { m_settings->set<Settings::Gui::PlaybackFollowsCursor>(enabled); });
+
+    playbackMenu->addAction(followPlayback);
+    playbackMenu->addAction(followCursor);
 
     updatePlayPause(m_playerController->playState());
     updatePlayMode(m_playerController->playMode());

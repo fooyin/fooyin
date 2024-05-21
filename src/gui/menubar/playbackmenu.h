@@ -29,13 +29,15 @@ class QAction;
 namespace Fooyin {
 class ActionManager;
 class PlayerController;
+class SettingsManager;
 
 class PlaybackMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, QObject* parent = nullptr);
+    PlaybackMenu(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
+                 QObject* parent = nullptr);
 
 private:
     void updatePlayPause(PlayState state) const;
@@ -44,6 +46,7 @@ private:
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
+    SettingsManager* m_settings;
 
     QIcon m_playIcon;
     QIcon m_pauseIcon;

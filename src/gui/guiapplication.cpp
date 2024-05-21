@@ -176,7 +176,7 @@ struct GuiApplication::Private
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, settingsManager, self)}
         , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
-        , playbackMenu{new PlaybackMenu(actionManager, playerController, self)}
+        , playbackMenu{new PlaybackMenu(actionManager, playerController, settingsManager, self)}
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
         , propertiesDialog{new PropertiesDialog(settingsManager, self)}
