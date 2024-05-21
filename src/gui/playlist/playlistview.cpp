@@ -1439,7 +1439,7 @@ void PlaylistView::Private::drawRowBackground(QPainter* painter, const QStyleOpt
 
     const auto paintRects = rectsToPaint(option, y);
     for(const auto& rect : paintRects) {
-        if(bg != Qt::NoBrush && rect.width() > 0) {
+        if(rect.width() > 0) {
             opt.rect = rect;
             painter->fillRect(opt.rect, bg);
             style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_self);
