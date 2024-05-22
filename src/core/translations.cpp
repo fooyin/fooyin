@@ -39,7 +39,7 @@ Translations::Translations(SettingsManager* settings)
 void Translations::initialiseTranslations()
 {
     const QString customLanguage = m_settings->value<Settings::Core::Language>();
-    const QLocale locale = customLanguage.isEmpty() ? QLocale{QLocale::system().language()} : QLocale{customLanguage};
+    const QLocale locale = customLanguage.isEmpty() ? QLocale{QLocale::system().name()} : QLocale{customLanguage};
 
     if(locale.language() == QLocale::English
        && (locale.territory() == QLocale::UnitedKingdom || locale.territory() == QLocale::AnyCountry)) {
