@@ -22,6 +22,8 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class PlayerController;
+class SeekContainer;
 class SettingsManager;
 class Track;
 
@@ -34,10 +36,13 @@ class WaveBarWidget : public FyWidget
     Q_OBJECT
 
 public:
-    WaveBarWidget(WaveformBuilder* builder, SettingsManager* settings, QWidget* parent = nullptr);
+    WaveBarWidget(WaveformBuilder* builder, PlayerController* playerController, SettingsManager* settings,
+                  QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
+    void saveLayoutData(QJsonObject& layout) override;
+    void loadLayoutData(const QJsonObject& layout) override;
 
     void changeTrack(const Track& track);
     void changePosition(uint64_t pos);
@@ -48,12 +53,17 @@ signals:
     void seekBackward();
 
 protected:
+    void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
+    void rescaleWaveform();
+
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
 
+    SeekContainer* m_container;
     WaveSeekBar* m_seekbar;
     WaveformBuilder* m_builder;
 };

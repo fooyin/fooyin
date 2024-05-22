@@ -39,9 +39,6 @@
 #include <QMenu>
 #include <QProgressDialog>
 
-// TODO: Make setting
-constexpr auto SeekDelta = 5000;
-
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
 {
@@ -84,16 +81,7 @@ struct WaveBarPlugin::Private
             waveBuilder = std::make_unique<WaveformBuilder>(engine->createDecoder(), dbPool, settings);
         }
 
-        auto* wavebar = new WaveBarWidget(waveBuilder.get(), settings);
-
-        QObject::connect(playerController, &PlayerController::currentTrackChanged, wavebar,
-                         &WaveBarWidget::changeTrack);
-        QObject::connect(playerController, &PlayerController::positionChanged, wavebar, &WaveBarWidget::changePosition);
-        QObject::connect(wavebar, &WaveBarWidget::seek, playerController, &PlayerController::seek);
-        QObject::connect(wavebar, &WaveBarWidget::seekForward, playerController,
-                         [this]() { playerController->seekForward(SeekDelta); });
-        QObject::connect(wavebar, &WaveBarWidget::seekBackward, playerController,
-                         [this]() { playerController->seekBackward(SeekDelta); });
+        auto* wavebar = new WaveBarWidget(waveBuilder.get(), playerController, settings);
 
         const Track currTrack = playerController->currentTrack();
         if(currTrack.isValid()) {
