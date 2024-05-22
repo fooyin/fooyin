@@ -347,7 +347,7 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
     setMouseTracking(true);
 
     auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(10, 0, 10, 0);
+    layout->setContentsMargins({});
 
     layout->addWidget(p->container);
     p->container->insertWidget(1, p->slider);
