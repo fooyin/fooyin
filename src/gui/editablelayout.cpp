@@ -604,7 +604,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
         QObject::connect(p->editingMenu, &QMenu::aboutToHide, this, [this]() { p->hideOverlay(); });
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
-        QWidget* widget  = QApplication::widgetAt(pos);
+        QWidget* widget  = childAt(mapFromGlobal(pos));
         FyWidget* child  = p->findSplitterChild(widget);
 
         if(!child) {
