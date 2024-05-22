@@ -41,11 +41,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
         QStringLiteral("%albumartist% - %year% - %album% - %disc% - %track% - %title%"),
         QStringLiteral("Library/SortScript"));
     m_settings->createSetting<ActivePlaylistId>(-1, QStringLiteral("Playlist/ActivePlaylistId"));
-#ifdef BUILD_ALSA_ENABLED
-    m_settings->createSetting<AudioOutput>(QStringLiteral("ALSA|default"), QStringLiteral("Engine/AudioOutput"));
-#else
-    m_settings->createSetting<AudioOutput>(QStringLiteral("PipeWire|default"), QStringLiteral("Engine/AudioOutput"));
-#endif
+    m_settings->createSetting<AudioOutput>(QStringLiteral(""), QStringLiteral("Engine/AudioOutput"));
     m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
     m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));

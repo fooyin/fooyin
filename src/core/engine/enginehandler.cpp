@@ -132,7 +132,12 @@ struct EngineHandler::Private
     void changeOutput(const QString& output)
     {
         if(output.isEmpty()) {
-            return;
+            if(outputs.empty() || !currentOutput.name.isEmpty()) {
+                return;
+            }
+            currentOutput = {outputs.cbegin()->first, QStringLiteral("default")};
+            emit self->outputChanged(currentOutput.name);
+            emit self->deviceChanged(currentOutput.device);
         }
 
         const QStringList newOutput = output.split(QStringLiteral("|"));
