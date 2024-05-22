@@ -217,8 +217,8 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
 void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
-        updateMousePosition(event->pos());
-        if(!m_pressPos.isNull() && std::abs(m_pressPos.x() - event->pos().x()) > ToolTipDelay) {
+        updateMousePosition(event->position().toPoint());
+        if(!m_pressPos.isNull() && std::abs(m_pressPos.x() - event->position().x()) > ToolTipDelay) {
             drawSeekTip();
         }
     }
@@ -230,8 +230,8 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
     if(!m_data.empty() && event->button() == Qt::LeftButton) {
-        m_pressPos = event->pos();
-        updateMousePosition(event->pos());
+        m_pressPos = event->position().toPoint();
+        updateMousePosition(event->position().toPoint());
     }
     else {
         QWidget::mousePressEvent(event);
@@ -248,7 +248,7 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
     stopSeeking();
     m_pressPos = {};
 
-    m_position = valueFromPosition(event->pos().x());
+    m_position = valueFromPosition(event->position().x());
     emit sliderMoved(m_position);
 }
 

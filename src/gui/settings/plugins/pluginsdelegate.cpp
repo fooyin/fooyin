@@ -95,7 +95,7 @@ bool PluginsDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, cons
                                               checkRect.size(), opt.rect);
 
         const auto* mouseEvent = static_cast<QMouseEvent*>(event);
-        if(mouseEvent->button() != Qt::LeftButton || !checkRect.contains(mouseEvent->pos())) {
+        if(mouseEvent->button() != Qt::LeftButton || !checkRect.contains(mouseEvent->position().toPoint())) {
             return false;
         }
 

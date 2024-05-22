@@ -43,7 +43,7 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
     QTreeView::mousePressEvent(event);
 
-    if(!indexAt(event->pos()).isValid()) {
+    if(!indexAt(event->position().toPoint()).isValid()) {
         clearSelection();
     }
 

@@ -475,7 +475,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
         p->trackSelection->addTrackContextMenu(menu);
     }
 
-    menu->popup(mapToGlobal(event->pos()));
+    menu->popup(event->globalPos());
 }
 } // namespace Fooyin
 

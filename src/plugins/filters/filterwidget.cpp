@@ -601,7 +601,7 @@ void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
         return;
     }
 
-    emit requestContextMenu(mapToGlobal(event->pos()));
+    emit requestContextMenu(event->globalPos());
 }
 } // namespace Fooyin::Filters
 

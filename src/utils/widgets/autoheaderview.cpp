@@ -608,7 +608,7 @@ void AutoHeaderView::mousePressEvent(QMouseEvent* event)
         return;
     }
 
-    const QPoint position = event->pos();
+    const QPoint position = event->position().toPoint();
     const int pos         = orientation() == Qt::Horizontal ? position.x() : position.y();
     const int handleIndex = p->sectionHandleAt(pos);
 
@@ -636,7 +636,7 @@ void AutoHeaderView::mousePressEvent(QMouseEvent* event)
 
 void AutoHeaderView::mouseMoveEvent(QMouseEvent* event)
 {
-    const QPoint position = event->pos();
+    const QPoint position = event->position().toPoint();
     const int pos         = orientation() == Qt::Horizontal ? position.x() : position.y();
     const int handleIndex = p->sectionHandleAt(pos);
 
@@ -680,7 +680,7 @@ void AutoHeaderView::mouseReleaseEvent(QMouseEvent* event)
     }
 
     if(p->state == SectionState::None) {
-        const QPoint pos       = event->pos();
+        const QPoint pos       = event->position().toPoint();
         const int handleIndex  = p->sectionHandleAt(orientation() == Qt::Horizontal ? pos.x() : pos.y());
         const int logicalIndex = logicalIndexAt(pos);
 
