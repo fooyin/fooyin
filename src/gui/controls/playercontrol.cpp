@@ -47,8 +47,6 @@ struct PlayerControl::Private
     ToolButton* playPause;
     ToolButton* next;
 
-    bool stretchIcons{false};
-
     Private(PlayerControl* self_, ActionManager* actionManager_, PlayerController* playerController_,
             SettingsManager* settings_)
         : self{self_}
@@ -73,20 +71,25 @@ struct PlayerControl::Private
             next->setDefaultAction(nextCmd->action());
         }
 
-        stop->setAutoRaise(true);
-        prev->setAutoRaise(true);
-        playPause->setAutoRaise(true);
-        next->setAutoRaise(true);
-
-        updateIcons();
+        updateButtonStyle();
     }
 
-    void updateStretch() const
+    void updateButtonStyle() const
     {
-        stop->setStretchEnabled(stretchIcons);
-        prev->setStretchEnabled(stretchIcons);
-        playPause->setStretchEnabled(stretchIcons);
-        next->setStretchEnabled(stretchIcons);
+        const auto options
+            = static_cast<Settings::Gui::ToolButtonOptions>(settings->value<Settings::Gui::ToolButtonStyle>());
+
+        stop->setStretchEnabled(options & Settings::Gui::Stretch);
+        stop->setAutoRaise(!(options & Settings::Gui::Raise));
+
+        prev->setStretchEnabled(options & Settings::Gui::Stretch);
+        prev->setAutoRaise(!(options & Settings::Gui::Raise));
+
+        playPause->setStretchEnabled(options & Settings::Gui::Stretch);
+        playPause->setAutoRaise(!(options & Settings::Gui::Raise));
+
+        next->setStretchEnabled(options & Settings::Gui::Stretch);
+        next->setAutoRaise(!(options & Settings::Gui::Raise));
     }
 
     void updateIcons() const
@@ -131,6 +134,7 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
                      [this](PlayState state) { p->stateChanged(state); });
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->updateIcons(); });
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { p->updateButtonStyle(); });
 }
 
 PlayerControl::~PlayerControl() = default;
@@ -143,37 +147,6 @@ QString PlayerControl::name() const
 QString PlayerControl::layoutName() const
 {
     return QStringLiteral("PlayerControls");
-}
-
-void PlayerControl::layoutEditingMenu(QMenu* menu)
-{
-    auto* stretchAction = new QAction(tr("Stretch to fit"), this);
-    stretchAction->setCheckable(true);
-    stretchAction->setChecked(p->stretchIcons);
-    QObject::connect(stretchAction, &QAction::triggered, this, [this]() {
-        p->stretchIcons = !p->stretchIcons;
-        p->updateStretch();
-    });
-    menu->addAction(stretchAction);
-}
-
-void PlayerControl::saveLayoutData(QJsonObject& layout)
-{
-    if(p->stretchIcons) {
-        layout[QStringLiteral("Stretch")] = p->stretchIcons;
-    }
-}
-
-void PlayerControl::loadLayoutData(const QJsonObject& layout)
-{
-    if(layout.contains(QStringLiteral("Stretch"))) {
-        p->stretchIcons = layout.value(QStringLiteral("Stretch")).toBool();
-    }
-}
-
-void PlayerControl::finalise()
-{
-    p->updateStretch();
 }
 } // namespace Fooyin
 

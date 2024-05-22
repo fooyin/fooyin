@@ -56,8 +56,6 @@ struct VolumeControl::Private
     HoverMenu* volumeMenu;
     LogSlider* volumeSlider;
 
-    bool stretchIcons{false};
-
     Private(VolumeControl* self_, ActionManager* actionManager_, SettingsManager* settings_)
         : self{self_}
         , actionManager{actionManager_}
@@ -73,8 +71,6 @@ struct VolumeControl::Private
             volumeIcon->setDefaultAction(muteCmd->action());
         }
 
-        volumeIcon->setAutoRaise(true);
-
         volumeSlider->setMinimumHeight(100);
         volumeSlider->setRange(MinVolume, 1.0);
         volumeSlider->setNaturalValue(settings->value<Settings::Core::OutputVolume>());
@@ -82,11 +78,16 @@ struct VolumeControl::Private
         volumeMenu->hide();
 
         updateDisplay(settings->value<Settings::Core::OutputVolume>());
+        updateButtonStyle();
     }
 
-    void updateStretch() const
+    void updateButtonStyle() const
     {
-        volumeIcon->setStretchEnabled(stretchIcons);
+        const auto options
+            = static_cast<Settings::Gui::ToolButtonOptions>(settings->value<Settings::Gui::ToolButtonStyle>());
+
+        volumeIcon->setStretchEnabled(options & Settings::Gui::Stretch);
+        volumeIcon->setAutoRaise(!(options & Settings::Gui::Raise));
     }
 
     void showVolumeMenu() const
@@ -158,6 +159,7 @@ VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* sett
     settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
     settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { p->updateDisplay(p->settings->value<Settings::Core::OutputVolume>()); });
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { p->updateButtonStyle(); });
 }
 
 VolumeControl::~VolumeControl() = default;
@@ -170,37 +172,6 @@ QString VolumeControl::name() const
 QString VolumeControl::layoutName() const
 {
     return QStringLiteral("VolumeControls");
-}
-
-void VolumeControl::layoutEditingMenu(QMenu* menu)
-{
-    auto* stretchAction = new QAction(tr("Stretch to fit"), this);
-    stretchAction->setCheckable(true);
-    stretchAction->setChecked(p->stretchIcons);
-    QObject::connect(stretchAction, &QAction::triggered, this, [this]() {
-        p->stretchIcons = !p->stretchIcons;
-        p->updateStretch();
-    });
-    menu->addAction(stretchAction);
-}
-
-void VolumeControl::saveLayoutData(QJsonObject& layout)
-{
-    if(p->stretchIcons) {
-        layout[QStringLiteral("Stretch")] = p->stretchIcons;
-    }
-}
-
-void VolumeControl::loadLayoutData(const QJsonObject& layout)
-{
-    if(layout.contains(QStringLiteral("Stretch"))) {
-        p->stretchIcons = layout.value(QStringLiteral("Stretch")).toBool();
-    }
-}
-
-void VolumeControl::finalise()
-{
-    p->updateStretch();
 }
 
 void VolumeControl::wheelEvent(QWheelEvent* event)

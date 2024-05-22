@@ -27,6 +27,15 @@
 
 namespace Fooyin::Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
+
+enum ToolButtonOption : uint32_t
+{
+    None    = 0,
+    Raise   = 1 << 0,
+    Stretch = 1 << 1,
+};
+Q_DECLARE_FLAGS(ToolButtonOptions, ToolButtonOption)
+
 enum GuiSettings : uint32_t
 {
     LayoutEditing         = 1 | Type::Bool,
@@ -36,6 +45,7 @@ enum GuiSettings : uint32_t
     LastPlaylistId        = 5 | Type::Int,
     CursorFollowsPlayback = 6 | Type::Bool,
     PlaybackFollowsCursor = 7 | Type::Bool,
+    ToolButtonStyle       = 8 | Type::Int,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

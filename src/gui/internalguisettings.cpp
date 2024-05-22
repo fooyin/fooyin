@@ -55,6 +55,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LastPlaylistId>(0, QStringLiteral("Playlist/LastPlaylistId"));
     m_settings->createSetting<CursorFollowsPlayback>(false, QStringLiteral("Playlist/CursorFollowsPlayback"));
     m_settings->createSetting<PlaybackFollowsCursor>(false, QStringLiteral("Playlist/PlaybackFollowsCursor"));
+    m_settings->createSetting<ToolButtonStyle>(0, QStringLiteral("Interface/ToolButtonStyle"));
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));

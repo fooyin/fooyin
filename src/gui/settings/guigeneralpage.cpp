@@ -70,11 +70,16 @@ private:
     QRadioButton* m_lightTheme;
     QRadioButton* m_darkTheme;
     QRadioButton* m_systemTheme;
-    QCheckBox* m_splitterHandles;
+
     QCheckBox* m_overrideMargin;
     QSpinBox* m_editableLayoutMargin;
+
+    QCheckBox* m_splitterHandles;
     QCheckBox* m_overrideSplitterHandle;
     QSpinBox* m_splitterHandleGap;
+
+    QCheckBox* m_buttonRaise;
+    QCheckBox* m_buttonStretch;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -86,11 +91,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
     , m_systemTheme{new QRadioButton(tr("Use system icons"), this)}
-    , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + QStringLiteral(":"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
+    , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
     , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + QStringLiteral(":"), this)}
     , m_splitterHandleGap{new QSpinBox(this)}
+    , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
+    , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
@@ -129,10 +136,17 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     m_splitterHandleGap->setMaximum(20);
     m_splitterHandleGap->setSuffix(QStringLiteral("px"));
 
+    auto* toolButtonGroup       = new QGroupBox(tr("Tool Buttons"), this);
+    auto* toolButtonGroupLayout = new QVBoxLayout(toolButtonGroup);
+
+    toolButtonGroupLayout->addWidget(m_buttonRaise);
+    toolButtonGroupLayout->addWidget(m_buttonStretch);
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
     mainLayout->addWidget(iconThemeBox, 1, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, 2, 0, 1, 2);
+    mainLayout->addWidget(toolButtonGroup, 3, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -174,6 +188,10 @@ void GuiGeneralPageWidget::load()
     m_overrideSplitterHandle->setChecked(m_settings->value<SplitterHandleSize>() >= 0);
     m_splitterHandleGap->setValue(m_settings->value<SplitterHandleSize>());
     m_splitterHandleGap->setEnabled(m_overrideSplitterHandle->isChecked());
+
+    const auto buttonOptions = m_settings->value<Settings::Gui::ToolButtonStyle>();
+    m_buttonRaise->setChecked(buttonOptions & Raise);
+    m_buttonStretch->setChecked(buttonOptions & Stretch);
 }
 
 void GuiGeneralPageWidget::apply()
@@ -214,6 +232,12 @@ void GuiGeneralPageWidget::apply()
     else {
         m_settings->reset<SplitterHandleSize>();
     }
+
+    ToolButtonOptions buttonOptions;
+    buttonOptions.setFlag(Raise, m_buttonRaise->isChecked());
+    buttonOptions.setFlag(Stretch, m_buttonStretch->isChecked());
+
+    m_settings->set<Settings::Gui::ToolButtonStyle>(static_cast<int>(buttonOptions));
 }
 
 void GuiGeneralPageWidget::reset()
