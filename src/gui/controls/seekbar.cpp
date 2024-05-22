@@ -37,7 +37,8 @@
 #include <QSlider>
 #include <QStyleOptionSlider>
 
-constexpr auto SeekDelta = 5000;
+constexpr auto SeekDelta    = 5000;
+constexpr auto ToolTipDelay = 5;
 
 namespace Fooyin {
 class TrackSlider : public QSlider
@@ -75,6 +76,7 @@ private:
     QPointer<ToolTip> m_toolTip;
     uint64_t m_max{0};
     uint64_t m_currentPos{0};
+    QPoint m_pressPos;
     QPoint m_seekPos;
 };
 
@@ -111,7 +113,9 @@ void TrackSlider::updateCurrentValue(uint64_t value)
         setValue(static_cast<int>(value));
     }
 
-    updateToolTip();
+    if(m_toolTip) {
+        updateToolTip();
+    }
 }
 
 bool TrackSlider::isSeeking() const
@@ -153,8 +157,8 @@ void TrackSlider::mousePressEvent(QMouseEvent* event)
     QSlider::mousePressEvent(&modifiedEvent);
 
     if(event->button() == Qt::LeftButton) {
+        m_pressPos = event->position().toPoint();
         updateSeekPosition(event->position());
-        updateToolTip();
     }
 }
 
@@ -171,6 +175,7 @@ void TrackSlider::mouseReleaseEvent(QMouseEvent* event)
     }
 
     stopSeeking();
+    m_pressPos = {};
 
     const auto pos = valueFromPosition(static_cast<int>(event->position().x()));
     emit sliderDropped(pos);
@@ -186,7 +191,9 @@ void TrackSlider::mouseMoveEvent(QMouseEvent* event)
 
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
         updateSeekPosition(event->position());
-        updateToolTip();
+        if(!m_pressPos.isNull() && std::abs(m_pressPos.x() - event->position().x()) > ToolTipDelay) {
+            updateToolTip();
+        }
     }
 }
 
