@@ -21,7 +21,7 @@ starting from a blank slate or a preset layout.
 
 | ![Simple](https://github.com/ludouzi/fooyin/assets/45490980/e01fd4ee-14cf-4b0f-aa3d-76e86b09844a)   | ![Browser](https://github.com/ludouzi/fooyin/assets/45490980/d0e9c686-09c8-46ba-b7b7-f43282059c8d) |
 |-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
-| ![Obsidian](https://github.com/ludouzi/fooyin/assets/45490980/38912757-4e41-46ee-bf62-b88f36af4903) | ![Wave](https://github.com/ludouzi/fooyin/assets/45490980/e9a69535-15d0-43af-bc29-1f90b5969bbf)    |
+| ![Obsidian](https://github.com/ludouzi/fooyin/assets/45490980/38912757-4e41-46ee-bf62-b88f36af4903) | ![Wave](https://github.com/ludouzi/fooyin/assets/45490980/eba25598-4726-41fb-b271-075f23575bf6)    |
 
 Only Linux is supported at present, though other platforms will be added at a later date.
 
