@@ -25,7 +25,7 @@
 namespace Fooyin {
 ToolButton::ToolButton(QWidget* parent)
     : QToolButton{parent}
-    , m_padding{10}
+    , m_padding{20}
     , m_minimumSize{10}
     , m_maximumSize{100}
     , m_stretchEnabled{false}
@@ -70,8 +70,9 @@ void ToolButton::paintEvent(QPaintEvent* /*event*/)
     opt.features &= ~QStyleOptionToolButton::HasMenu;
 
     if(m_stretchEnabled) {
-        const QRect& rect  = opt.rect;
-        const int baseSize = std::min(rect.height(), rect.width()) - (2 * m_padding);
+        const auto rect    = style()->subControlRect(QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButton, this);
+        const int length   = std::min(rect.height(), rect.width());
+        const int baseSize = length - 2 * static_cast<int>((static_cast<double>(m_padding) / 100) * length);
         const int maxSize  = std::clamp(baseSize, m_minimumSize, m_maximumSize);
         opt.iconSize       = {maxSize, maxSize};
     }
