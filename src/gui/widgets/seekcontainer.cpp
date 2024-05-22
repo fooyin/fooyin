@@ -112,6 +112,8 @@ SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent
                      [this](const Track& track) { p->trackChanged(track); });
     QObject::connect(p->playerController, &PlayerController::positionChanged, this,
                      [this](uint64_t pos) { p->updateLabels(pos); });
+
+    QObject::connect(this, &SeekContainer::totalClicked, this, [this]() { setElapsedTotal(!elapsedTotal()); });
 }
 
 SeekContainer::~SeekContainer() = default;

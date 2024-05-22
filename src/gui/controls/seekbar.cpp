@@ -359,9 +359,6 @@ SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, 
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
     QObject::connect(p->playerController, &PlayerController::positionMoved, this,
                      [this](uint64_t pos) { p->setCurrentPosition(pos); });
-
-    QObject::connect(p->container, &SeekContainer::totalClicked, this,
-                     [this]() { p->container->setElapsedTotal(!p->container->elapsedTotal()); });
 }
 
 Fooyin::SeekBar::~SeekBar() = default;
