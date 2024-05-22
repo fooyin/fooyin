@@ -72,6 +72,7 @@ private:
     WaveformData<float> m_data;
     double m_scale;
     uint64_t m_position;
+    QPoint m_pressPos;
     QPoint m_seekPos;
     QPointer<ToolTip> m_seekTip;
 

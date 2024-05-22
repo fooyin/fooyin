@@ -30,6 +30,8 @@
 #include <QPainter>
 #include <QStyle>
 
+constexpr auto ToolTipDelay = 5;
+
 namespace {
 QColor blendColors(const QColor& color1, const QColor& color2, double ratio)
 {
@@ -216,7 +218,9 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 {
     if(isSeeking() && event->buttons() & Qt::LeftButton) {
         updateMousePosition(event->pos());
-        drawSeekTip();
+        if(!m_pressPos.isNull() && std::abs(m_pressPos.x() - event->pos().x()) > ToolTipDelay) {
+            drawSeekTip();
+        }
     }
     else {
         QWidget::mouseMoveEvent(event);
@@ -226,8 +230,8 @@ void WaveSeekBar::mouseMoveEvent(QMouseEvent* event)
 void WaveSeekBar::mousePressEvent(QMouseEvent* event)
 {
     if(!m_data.empty() && event->button() == Qt::LeftButton) {
+        m_pressPos = event->pos();
         updateMousePosition(event->pos());
-        drawSeekTip();
     }
     else {
         QWidget::mousePressEvent(event);
@@ -242,6 +246,7 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
     }
 
     stopSeeking();
+    m_pressPos = {};
 
     m_position = valueFromPosition(event->pos().x());
     emit sliderMoved(m_position);
@@ -335,7 +340,7 @@ void WaveSeekBar::updateRange(int first, int last)
     const QRect updateRect(left, 0, width, height());
     update(updateRect);
 
-    if(isSeeking()) {
+    if(isSeeking() && m_seekTip) {
         drawSeekTip();
     }
 }
