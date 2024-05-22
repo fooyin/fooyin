@@ -37,6 +37,7 @@ QuickSetupDialog::QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* pare
 {
     setObjectName(QStringLiteral("Quick Setup"));
     setWindowTitle(tr("Quick Setup"));
+    setModal(true);
 
     auto* layout = new QVBoxLayout(this);
 
