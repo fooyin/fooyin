@@ -23,6 +23,7 @@
 #include <utils/clickablelabel.h>
 #include <utils/utils.h>
 
+#include <QFontMetrics>
 #include <QHBoxLayout>
 
 namespace Fooyin {
@@ -46,7 +47,11 @@ struct SeekContainer::Private
         , elapsed{new ClickableLabel(Utils::msToString(0), self)}
         , total{new ClickableLabel(Utils::msToString(0), self)}
     {
-        layout->setContentsMargins(10, 0, 10, 0);
+        layout->setContentsMargins({});
+
+        const QFontMetrics fm{self->fontMetrics()};
+        elapsed->setFixedWidth(fm.horizontalAdvance(Utils::msToString(0)));
+        total->setFixedWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
 
         layout->addWidget(elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
         layout->addWidget(total, 0, Qt::AlignVCenter | Qt::AlignLeft);
