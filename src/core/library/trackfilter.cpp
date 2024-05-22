@@ -28,7 +28,7 @@ bool containsSearch(const QString& text, const QString& search)
     return text.contains(search, Qt::CaseInsensitive);
 }
 
-// TODO: Support user-defined tags
+// TODO: Use user-defined search script
 bool matchSearch(const Fooyin::Track& track, const QString& search)
 {
     if(search.isEmpty()) {
@@ -36,7 +36,8 @@ bool matchSearch(const Fooyin::Track& track, const QString& search)
     }
 
     return containsSearch(track.artist(), search) || containsSearch(track.title(), search)
-        || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search);
+        || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search)
+        || containsSearch(track.filename(), search);
 }
 } // namespace
 
