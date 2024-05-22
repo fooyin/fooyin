@@ -18,6 +18,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     coverprovider.cpp
     editablelayout.cpp
@@ -197,6 +198,7 @@ set(SOURCES
     widgets/logslider.h
     widgets/menuheader.cpp
     widgets/menuheader.h
+    widgets/seekcontainer.cpp
     widgets/spacer.cpp
     widgets/spacer.h
     widgets/splitterwidget.cpp

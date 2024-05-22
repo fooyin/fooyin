@@ -59,7 +59,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
-    m_settings->createSetting<Internal::SeekBarElapsedTotal>(false, QStringLiteral("SeekBar/ElapsedTotal"));
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
@@ -91,7 +90,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                        QStringLiteral("LibraryTree/Colour"));
     m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("LibraryTree/RowHeight"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
-    m_settings->createSetting<Internal::SeekBarLabels>(true, QStringLiteral("SeekBar/Labels"));
     m_settings->createSetting<Internal::DirBrowserPath>(QStringLiteral(""), QStringLiteral("DirectoryBrowser/Path"));
     m_settings->createSetting<Internal::DirBrowserIcons>(true, QStringLiteral("DirectoryBrowser/Icons"));
     m_settings->createSetting<Internal::DirBrowserDoubleClick>(5,

@@ -19,27 +19,32 @@
 
 #pragma once
 
-#include <gui/fywidget.h>
+#include "fygui_export.h"
+
+#include <QWidget>
 
 namespace Fooyin {
-class SettingsManager;
 class PlayerController;
 
-class SeekBar : public FyWidget
+class FYGUI_EXPORT SeekContainer : public QWidget
 {
     Q_OBJECT
 
 public:
-    SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
-    ~SeekBar() override;
+    explicit SeekContainer(PlayerController* playerController, QWidget* parent = nullptr);
+    ~SeekContainer() override;
 
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QString layoutName() const override;
-    void saveLayoutData(QJsonObject& layout) override;
-    void loadLayoutData(const QJsonObject& layout) override;
+    void insertWidget(int index, QWidget* widget);
 
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
+    [[nodiscard]] bool labelsEnabled() const;
+    [[nodiscard]] bool elapsedTotal() const;
+
+    void setLabelsEnabled(bool enabled);
+    void setElapsedTotal(bool enabled);
+
+signals:
+    void elapsedClicked();
+    void totalClicked();
 
 private:
     struct Private;
