@@ -54,6 +54,7 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_container);
     m_container->insertWidget(1, m_seekbar);
+    m_container->setLabelsEnabled(false);
 
     QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, this, &WaveBarWidget::seek);
     QObject::connect(m_seekbar, &WaveSeekBar::seekForward, this, &WaveBarWidget::seekForward);
