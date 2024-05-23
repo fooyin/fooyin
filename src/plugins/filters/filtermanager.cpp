@@ -356,7 +356,7 @@ FilterManager::~FilterManager() = default;
 
 void FilterManager::setupWidgetConnections()
 {
-    p->widgetFilter = new WidgetFilter(this);
+    p->widgetFilter = new WidgetFilter(p->editableLayout, this);
     p->widgetFilter->start();
 
     p->clearOverlays();

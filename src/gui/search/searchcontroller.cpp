@@ -180,7 +180,7 @@ struct SearchController::Private
             return;
         }
 
-        filter = new WidgetFilter(self);
+        filter = new WidgetFilter(editableLayout, self);
         filter->start();
 
         createControlDialog(sourceId);

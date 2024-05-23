@@ -24,12 +24,14 @@
 #include <QObject>
 
 namespace Fooyin {
+class EditableLayout;
+
 class FYGUI_EXPORT WidgetFilter : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit WidgetFilter(QObject* parent = nullptr);
+    explicit WidgetFilter(EditableLayout* layout, QObject* parent = nullptr);
 
     void start();
     void stop();
@@ -40,6 +42,8 @@ signals:
     void filterFinished();
 
 private:
+    EditableLayout* m_layout;
+
     bool m_active;
     bool m_overOverlay;
 };

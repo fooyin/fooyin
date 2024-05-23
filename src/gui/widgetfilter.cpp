@@ -19,6 +19,7 @@
 
 #include <gui/widgetfilter.h>
 
+#include <gui/editablelayout.h>
 #include <utils/widgets/overlaywidget.h>
 
 #include <QApplication>
@@ -27,8 +28,9 @@
 #include <QPushButton>
 
 namespace Fooyin {
-WidgetFilter::WidgetFilter(QObject* parent)
+WidgetFilter::WidgetFilter(EditableLayout* layout, QObject* parent)
     : QObject{parent}
+    , m_layout{layout}
     , m_active{false}
     , m_overOverlay{false}
 { }
@@ -72,7 +74,7 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
         }
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
-        auto* widget     = QApplication::widgetAt(pos);
+        auto* widget     = m_layout->childAt(pos);
 
         if(widget && (qobject_cast<OverlayWidget*>(widget) || qobject_cast<QPushButton*>(widget))) {
             m_overOverlay = true;
