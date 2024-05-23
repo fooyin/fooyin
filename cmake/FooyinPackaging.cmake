@@ -13,6 +13,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "${FOOYIN_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${FOOYIN_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION "${FOOYIN_VERSION}")
 set(CPACK_PACKAGE_RELOCATABLE ON CACHE BOOL "Build relocatable package")
+set(CPACK_PACKAGE_RELEASE 1)
 
 set(CPACK_SOURCE_IGNORE_FILES  "\\\\.#;/#;.*~;\\\\.o$")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.git/")
@@ -20,31 +21,30 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.github/")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "/build/")
 list(APPEND CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/")
 
-set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Luke Taylor <luket1@proton.me>")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${CPACK_PROJECT_URL})
 set(CPACK_DEBIAN_PACKAGE_SECTION "sound")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
         "libc6,
-         libstdc++6,
-         libqt6core6 (>= 6.2.0),
-         libqt6gui6 (>= 6.2.0),
-         libqt6widgets6 (>= 6.2.0),
-         libqt6network6 (>= 6.2.0),
-         libqt6sql6 (>= 6.2.0),
-         libqt6sql6-sqlite (>= 6.2.0),
-         libqt6svg6 (>= 6.2.0),
-         qt6-qpa-plugins,
-         libtag1v5,
-         libavcodec58 (>= 7:4.4),
-         libavformat58 (>= 7:4.4),
-         libavdevice58 (>= 7:4.4),
-         libavutil56 (>= 7:4.4)"
+        libstdc++6,
+        libqt6core6 (>= 6.2.0),
+        libqt6gui6 (>= 6.2.0),
+        libqt6widgets6 (>= 6.2.0),
+        libqt6network6 (>= 6.2.0),
+        libqt6sql6 (>= 6.2.0),
+        libqt6sql6-sqlite (>= 6.2.0),
+        libqt6svg6 (>= 6.2.0),
+        qt6-qpa-plugins,
+        libasound2,
+        libtag1v5,
+        ffmpeg (>= 7:4.4),
+        pipewire"
 )
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE_URL}")
 
-if (NOT CPACK_DEBIAN_PACKAGE_RELEASE)
-    set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
-endif()
+set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
+set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
+
+set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/cmake/FooyinPackageConfig.cmake" )
 
 include(CPack)
