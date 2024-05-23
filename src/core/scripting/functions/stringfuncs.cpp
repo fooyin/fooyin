@@ -247,4 +247,22 @@ QString padRight(const QStringList& vec)
     return str.rightJustified(len);
 }
 
+QString repeat(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    bool numSuccess{false};
+    const int num = vec.at(1).toInt(&numSuccess);
+
+    if(numSuccess) {
+        return vec.at(0).repeated(num);
+    }
+
+    return {};
+}
+
 } // namespace Fooyin::Scripting

@@ -36,4 +36,5 @@ QString sep();
 QString swapPrefix(const QStringList& vec);
 QString pad(const QStringList& vec);
 QString padRight(const QStringList& vec);
+QString repeat(const QStringList& vec);
 } // namespace Fooyin::Scripting
