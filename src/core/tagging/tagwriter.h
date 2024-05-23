@@ -26,5 +26,5 @@
 #include <memory>
 
 namespace Fooyin::Tagging {
-FYCORE_EXPORT bool writeMetaData(const Track& track);
+FYCORE_EXPORT bool writeMetaData(Track& track);
 } // namespace Fooyin::Tagging

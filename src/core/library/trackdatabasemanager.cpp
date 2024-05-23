@@ -50,8 +50,9 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
     TrackList tracksUpdated;
 
     for(const Track& track : tracks) {
-        if(Tagging::writeMetaData(track) && m_trackDatabase.updateTrack(track)) {
-            tracksUpdated.emplace_back(track);
+        Track updatedTrack{track};
+        if(Tagging::writeMetaData(updatedTrack) && m_trackDatabase.updateTrack(updatedTrack)) {
+            tracksUpdated.emplace_back(updatedTrack);
         }
     }
 

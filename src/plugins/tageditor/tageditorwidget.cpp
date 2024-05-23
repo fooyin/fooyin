@@ -127,12 +127,9 @@ QString TagEditorWidget::layoutName() const
 
 void TagEditorWidget::apply()
 {
-    if(!m_model->tagsHaveChanged()) {
-        return;
-    }
+    const bool changed = m_model->processQueue();
 
-    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
-        m_model->processQueue();
+    if(!changed || m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
         return;
     }
 

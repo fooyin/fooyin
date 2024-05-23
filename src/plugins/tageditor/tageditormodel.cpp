@@ -224,7 +224,7 @@ void TagEditorModel::reset(const TrackList& tracks)
     endResetModel();
 }
 
-void TagEditorModel::processQueue()
+bool TagEditorModel::processQueue()
 {
     bool nodeChanged{false};
 
@@ -303,6 +303,8 @@ void TagEditorModel::processQueue()
     if(nodeChanged) {
         emit trackMetadataChanged(p->tracks);
     }
+
+    return nodeChanged;
 }
 
 QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -485,11 +487,6 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
 QString TagEditorModel::defaultFieldText()
 {
     return QStringLiteral("<input field name>");
-}
-
-bool TagEditorModel::tagsHaveChanged() const
-{
-    return std::ranges::any_of(p->tags, [](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
 }
 
 void TagEditorModel::addPendingRow()

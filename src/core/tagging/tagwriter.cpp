@@ -425,7 +425,7 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track)
 } // namespace
 
 namespace Fooyin::Tagging {
-bool writeMetaData(const Track& track)
+bool writeMetaData(Track& track)
 {
     const QString filepath = track.filepath();
 
@@ -567,6 +567,10 @@ bool writeMetaData(const Track& track)
             file.save();
         }
     }
+
+    const QDateTime modifiedTime = QFileInfo{filepath}.lastModified();
+    track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+
     return true;
 }
 } // namespace Fooyin::Tagging

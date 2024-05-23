@@ -36,7 +36,7 @@ public:
     ~TagEditorModel() override;
 
     void reset(const TrackList& tracks);
-    void processQueue();
+    bool processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -49,7 +49,6 @@ public:
     [[nodiscard]] bool removeRows(int row, int count,  const QModelIndex &parent) override;
 
     [[nodiscard]] static QString defaultFieldText();
-    [[nodiscard]] bool tagsHaveChanged() const;
 
     void addPendingRow() override;
     void removePendingRow() override;
