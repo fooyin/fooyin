@@ -74,7 +74,7 @@ bool WidgetFilter::eventFilter(QObject* watched, QEvent* event)
         }
 
         const QPoint pos = mouseEvent->globalPosition().toPoint();
-        auto* widget     = m_layout->childAt(pos);
+        auto* widget     = m_layout->childAt(m_layout->mapFromGlobal(pos));
 
         if(widget && (qobject_cast<OverlayWidget*>(widget) || qobject_cast<QPushButton*>(widget))) {
             m_overOverlay = true;
