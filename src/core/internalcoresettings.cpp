@@ -38,7 +38,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
     m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
     m_settings->createSetting<LibrarySortScript>(
-        QStringLiteral("%albumartist% - %year% - %album% - %disc% - %track% - %title%"),
+        QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
         QStringLiteral("Library/SortScript"));
     m_settings->createSetting<ActivePlaylistId>(-1, QStringLiteral("Playlist/ActivePlaylistId"));
     m_settings->createSetting<AudioOutput>(QStringLiteral(""), QStringLiteral("Engine/AudioOutput"));
