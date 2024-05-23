@@ -175,6 +175,8 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksAdded, this,
                      &PlaylistWidgetPrivate::playlistTracksAdded);
     QObject::connect(&presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
+    QObject::connect(&columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
+                     &PlaylistWidgetPrivate::onColumnChanged);
 
     settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
@@ -237,6 +239,18 @@ void PlaylistWidgetPrivate::setupActions()
     actionManager->registerAction(removeFromQueueAction, Constants::Actions::RemoveFromQueue,
                                   playlistContext->context());
     QObject::connect(removeFromQueueAction, &QAction::triggered, this, [this]() { dequeueSelectedTracks(); });
+}
+
+void PlaylistWidgetPrivate::onColumnChanged(const PlaylistColumn& changedColumn)
+{
+    auto existingIt = std::find_if(columns.begin(), columns.end(), [&changedColumn](const PlaylistColumn& column) {
+        return column.id == changedColumn.id;
+    });
+
+    if(existingIt != columns.end()) {
+        *existingIt = changedColumn;
+        resetModel();
+    }
 }
 
 void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)

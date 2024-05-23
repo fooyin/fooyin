@@ -61,6 +61,7 @@ public:
     void setupConnections();
     void setupActions();
 
+    void onColumnChanged(const PlaylistColumn& column);
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
