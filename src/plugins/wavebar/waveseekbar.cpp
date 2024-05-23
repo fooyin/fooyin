@@ -25,7 +25,6 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
-#include <QApplication>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyle>
@@ -358,11 +357,8 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     const double centreGap = drawMax && drawMin ? m_centreGap : 0;
 
     if(!m_data.complete || (m_mode & WaveMode::Silence && drawMax && drawMin)) {
-        painter.setPen({m_colours.maxUnplayed, 1, Qt::SolidLine, Qt::FlatCap});
-        const double offset = centreGap > 0 ? centreGap / 2 : 0;
-        const QLineF centreLine{static_cast<double>(first), centre + offset, static_cast<double>(last),
-                                centre + offset};
-        painter.drawLine(centreLine);
+        const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
+        drawSilence(painter, first, last, centreY);
     }
 
     double rmsScale{1.0};
@@ -441,6 +437,34 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
                 painter.drawRect(rectMin);
             }
         }
+    }
+}
+
+void WaveSeekBar::drawSilence(QPainter& painter, int first, int last, double y)
+{
+    const auto currentPosition = static_cast<double>(positionFromValue(m_position));
+    const bool showRms         = m_data.complete && m_mode & WaveMode::Rms;
+    const auto unplayedColour  = showRms ? m_colours.rmsMaxUnplayed : m_colours.maxUnplayed;
+    const auto playedColour    = showRms ? m_colours.rmsMaxPlayed : m_colours.maxPlayed;
+
+    if(currentPosition <= first) {
+        painter.setPen(unplayedColour);
+        const QLineF unplayedLine{static_cast<double>(first), y, static_cast<double>(last), y};
+        painter.drawLine(unplayedLine);
+    }
+    else if(currentPosition >= last) {
+        painter.setPen(playedColour);
+        const QLineF playedLine{static_cast<double>(first), y, static_cast<double>(last), y};
+        painter.drawLine(playedLine);
+    }
+    else {
+        painter.setPen(playedColour);
+        const QLineF unplayedLine{static_cast<double>(first), y, currentPosition, y};
+        painter.drawLine(unplayedLine);
+
+        painter.setPen(unplayedColour);
+        const QLineF playedLine{currentPosition, y, static_cast<double>(last), y};
+        painter.drawLine(playedLine);
     }
 }
 

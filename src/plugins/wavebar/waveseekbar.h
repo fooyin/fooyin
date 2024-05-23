@@ -65,6 +65,7 @@ private:
     void updateRange(int first, int last);
 
     void drawChannel(QPainter& painter, int channel, double height, int first, int last, int y);
+    void drawSilence(QPainter& painter, int first, int last, double y);
     void drawSeekTip();
 
     SettingsManager* m_settings;
