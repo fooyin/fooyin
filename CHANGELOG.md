@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.4.3](https://github.com/ludouzi/fooyin/releases/tag/v0.4.3) (2024-05-23)
+
+### Improvements
+
+* Interface
+  - Support changing volume by scrolling on column icon ([#106](https://github.com/ludouzi/fooyin/pull/106))
+  - Add options to control appearance of tool buttons
+  - Add options to override margins, splitter handle sizes
+  - Make quick setup dialog modal
+* Playlist
+  - Add channels column
+  - Add last modified column
+  - Add follow playback options to playback menu
+  - Improve performance when updating playback statistics ([#103](https://github.com/ludouzi/fooyin/issues/103))
+* WaveBar
+  - Add optional labels
+  - Improve behaviour when seeking
+
+### Fixes
+
+* General
+  - Fix loading system translations
+  - Fix some adding libraries while layout editing mode is active ([#90](https://github.com/ludouzi/fooyin/issues/90))
+* Engine
+  - Fix high-res file playback ([#100](https://github.com/ludouzi/fooyin/issues/100))
+* DirBrowser
+  - Fix hang when using double click to play
+* Interface
+  - Fix font/row height inconsistencies ([#101](https://github.com/ludouzi/fooyin/issues/101))
+  - Fix layout editing mode not working under recent Qt versions ([#111](https://github.com/ludouzi/fooyin/issues/111))
+  - Fix wrong album art being displayed for untagged/poorly tagged files
+  - Resolve crashes using undo/redo in layout editing mode
+* LibraryTree
+  - Fix track count decrementing on tracks updating
+* MPRIS
+  - Fix artwork caching ([#87](https://github.com/ludouzi/fooyin/issues/87))
+  - Fix sending firstUsed, lastUsed metadata
+* PipeWire
+  - Fix playback of some file types ([#100](https://github.com/ludouzi/fooyin/issues/100))
+  - Fix playback of files with more than 3 channels
+  - Handle server restarts ([#85](https://github.com/ludouzi/fooyin/issues/85))
+* Playlist
+  - Fix autoscrolling when updating tracks
+  - Fix dropping at end of playlist
+  - Fix loading default column alignments
+  - Fix sorting track numbers under some systems ([#112](https://github.com/ludouzi/fooyin/issues/112))
+  - Handle column name/script changes
+  - Resolve rare crash on startup
+* TagEditor
+  - Fix saving changed metadata
+* WaveBar
+  - Fix crash when seeking ([#105](https://github.com/ludouzi/fooyin/issues/105))
+
+
 ## [0.4.2](https://github.com/ludouzi/fooyin/releases/tag/v0.4.2) (2024-05-16)
 
 ### Features
