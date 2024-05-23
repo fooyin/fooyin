@@ -61,7 +61,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="66"/>
         <source>Prefer currently playing track</source>
-        <translation>Lebih memilih trek yang sedang diputar</translation>
+        <translation>Lebih memilih trek saat ini</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="67"/>
@@ -165,17 +165,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="130"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Sampul Depan</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="131"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Sampul Belakang</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="132"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artis</translation>
     </message>
 </context>
 <context>
@@ -183,12 +183,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="74"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Fon</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="84"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Warna</translation>
     </message>
 </context>
 <context>
@@ -196,27 +196,27 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="400"/>
         <source>Go up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ke atas</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
         <source>Go back</source>
-        <translation type="unfinished"></translation>
+        <translation>Kembali</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="404"/>
         <source>Go forwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Selanjutnya</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="573"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Peramban Direktori</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="623"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Putar</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="626"/>
