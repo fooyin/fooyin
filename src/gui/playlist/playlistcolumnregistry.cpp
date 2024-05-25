@@ -51,6 +51,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = QStringLiteral("%bitrate% kbps")});
     addDefaultItem({.id = 12, .name = tr("Sample Rate"), .field = QStringLiteral("%samplerate% Hz")});
     addDefaultItem({.id = 16, .name = tr("Channels"), .field = QStringLiteral("%channels%")});
+    addDefaultItem({.id = 18, .name = tr("Bit Depth"), .field = QStringLiteral("%bitdepth%")});
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
     addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QString::fromLatin1(FrontCover), .isPixmap = true});
     addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = QString::fromLatin1(BackCover), .isPixmap = true});
