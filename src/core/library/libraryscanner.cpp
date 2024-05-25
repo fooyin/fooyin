@@ -116,7 +116,7 @@ struct LibraryScanner::Private
         trackDatabase.storeTracks(tracks);
     }
 
-    bool getAndSaveAllTracks(const QString& path, const TrackList& tracks)
+    bool getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
     {
         const QDir dir{path};
 
@@ -168,7 +168,7 @@ struct LibraryScanner::Private
                 const Track& libraryTrack = trackPaths.at(filepath);
 
                 if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != currentLibrary.id
-                   || libraryTrack.modifiedTime() != lastModified) {
+                   || libraryTrack.modifiedTime() != lastModified || !onlyModified) {
                     Track changedTrack{libraryTrack};
                     if(Tagging::readMetaData(changedTrack)) {
                         setTrackProps(changedTrack);
@@ -280,7 +280,7 @@ void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled
     }
 }
 
-void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tracks)
+void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tracks, bool onlyModified)
 {
     setState(Running);
 
@@ -292,7 +292,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         if(p->settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->watchers.contains(library.id)) {
             p->addWatcher(library);
         }
-        p->getAndSaveAllTracks(library.path, tracks);
+        p->getAndSaveAllTracks(library.path, tracks, onlyModified);
     }
 
     if(state() == Paused) {
@@ -315,7 +315,7 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
 
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    p->getAndSaveAllTracks(dir, tracks);
+    p->getAndSaveAllTracks(dir, tracks, true);
 
     if(state() == Paused) {
         p->changeLibraryStatus(LibraryInfo::Status::Pending);

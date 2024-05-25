@@ -38,7 +38,9 @@ public:
 
     void loadAllTracks() override;
 
+    void refreshAll() override;
     void rescanAll() override;
+    ScanRequest refresh(const LibraryInfo& library) override;
     ScanRequest rescan(const LibraryInfo& library) override;
     ScanRequest scanTracks(const TrackList& tracks) override;
 

@@ -55,7 +55,7 @@ signals:
 
 public slots:
     void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
-    void scanLibrary(const LibraryInfo& library, const TrackList& tracks);
+    void scanLibrary(const LibraryInfo& library, const TrackList& tracks, bool onlyModified);
     void scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks);
     void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
 

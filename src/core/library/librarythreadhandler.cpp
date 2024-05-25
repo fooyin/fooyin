@@ -46,6 +46,7 @@ struct LibraryScanRequest
     LibraryInfo library;
     QString dir;
     TrackList tracks;
+    bool onlyModified{true};
 };
 
 struct LibraryThreadHandler::Private
@@ -86,8 +87,9 @@ struct LibraryThreadHandler::Private
 
     void scanLibrary(const LibraryScanRequest& request)
     {
-        QMetaObject::invokeMethod(&scanner,
-                                  [this, request]() { scanner.scanLibrary(request.library, library->tracks()); });
+        QMetaObject::invokeMethod(&scanner, [this, request]() {
+            scanner.scanLibrary(request.library, library->tracks(), request.onlyModified);
+        });
     }
 
     void scanTracks(const LibraryScanRequest& request)
@@ -103,7 +105,7 @@ struct LibraryThreadHandler::Private
         });
     }
 
-    ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo)
+    ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified)
     {
         const int id = nextRequestId();
 
@@ -111,7 +113,7 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, QStringLiteral(""), TrackList{});
+        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, QStringLiteral(""), TrackList{}, onlyModified);
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -264,9 +266,14 @@ void LibraryThreadHandler::setupWatchers(const LibraryInfoMap& libraries, bool e
                               [this, libraries, enabled]() { p->scanner.setupWatchers(libraries, enabled); });
 }
 
+ScanRequest LibraryThreadHandler::refreshLibrary(const LibraryInfo& library)
+{
+    return p->addLibraryScanRequest(library, true);
+}
+
 ScanRequest LibraryThreadHandler::scanLibrary(const LibraryInfo& library)
 {
-    return p->addLibraryScanRequest(library);
+    return p->addLibraryScanRequest(library, false);
 }
 
 ScanRequest LibraryThreadHandler::scanTracks(const TrackList& tracks)

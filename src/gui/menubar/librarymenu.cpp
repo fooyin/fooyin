@@ -39,8 +39,13 @@ LibraryMenu::LibraryMenu(ActionManager* actionManager, MusicLibrary* library, Se
 {
     auto* libraryMenu = m_actionManager->actionContainer(Constants::Menus::Library);
 
+    auto* refreshLibrary
+        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Refresh Libraries"), this);
+    libraryMenu->addAction(m_actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
+    QObject::connect(refreshLibrary, &QAction::triggered, m_library, &MusicLibrary::rescanAll);
+
     auto* rescanLibrary
-        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Rescan Libraries"), this);
+        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("Re&scan Libraries"), this);
     libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
     QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::rescanAll);
 

@@ -70,10 +70,14 @@ public:
     /** Returns @c true if there are no tracks */
     [[nodiscard]] virtual bool isEmpty() const = 0;
 
-    /** Scans all tracks in all libraries */
+    /** Rescans modified tracks in all libraries */
+    virtual void refreshAll() = 0;
+    /** Rescans all tracks in all libraries */
     virtual void rescanAll() = 0;
 
-    /** Scans the tracks in @p library */
+    /** Rescans the modified tracks in @p library */
+    virtual ScanRequest refresh(const LibraryInfo& library) = 0;
+    /** Rescans the tracks in @p library */
     virtual ScanRequest rescan(const LibraryInfo& library) = 0;
 
     /*!

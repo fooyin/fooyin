@@ -238,7 +238,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
             p->threadHandler.setupWatchers(p->libraryManager->allLibraries(),
                                            p->settings->value<Settings::Core::Internal::MonitorLibraries>());
             if(p->settings->value<Settings::Core::AutoRefresh>()) {
-                rescanAll();
+                refreshAll();
             }
         },
         Qt::QueuedConnection);
@@ -263,12 +263,25 @@ void UnifiedMusicLibrary::loadAllTracks()
     p->threadHandler.getAllTracks();
 }
 
+void UnifiedMusicLibrary::refreshAll()
+{
+    const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
+    for(const auto& library : libraries | std::views::values) {
+        refresh(library);
+    }
+}
+
 void UnifiedMusicLibrary::rescanAll()
 {
     const LibraryInfoMap& libraries = p->libraryManager->allLibraries();
     for(const auto& library : libraries | std::views::values) {
         rescan(library);
     }
+}
+
+ScanRequest UnifiedMusicLibrary::refresh(const LibraryInfo& library)
+{
+    return p->threadHandler.refreshLibrary(library);
 }
 
 ScanRequest UnifiedMusicLibrary::rescan(const LibraryInfo& library)

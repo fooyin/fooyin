@@ -45,6 +45,7 @@ public:
 
     void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
 
+    ScanRequest refreshLibrary(const LibraryInfo& library);
     ScanRequest scanLibrary(const LibraryInfo& library);
     ScanRequest scanTracks(const TrackList& tracks);
 
