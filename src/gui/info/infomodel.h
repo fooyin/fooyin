@@ -23,6 +23,8 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
+#include <set>
+
 namespace Fooyin {
 class InfoItem : public TreeItem<InfoItem>
 {
@@ -38,7 +40,8 @@ public:
         Concat = Qt::UserRole + 5,
         Average,
         Total,
-        Max
+        Max,
+        Percentage
     };
 
     enum Role
@@ -69,7 +72,8 @@ private:
     QString m_name;
     std::vector<uint64_t> m_numValues;
     mutable uint64_t m_numValue;
-    QStringList m_values;
+    std::set<QString> m_values;
+    std::map<QString, int> m_percentValues;
     mutable QString m_value;
 
     FormatFunc m_formatNum;
