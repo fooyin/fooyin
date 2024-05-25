@@ -32,22 +32,22 @@ public:
     enum ItemType
     {
         Header = Qt::UserRole,
-        Entry,
-    };
-
-    enum ValueType
-    {
-        Concat = Qt::UserRole + 5,
-        Average,
-        Total,
-        Max,
-        Percentage
+        Entry
     };
 
     enum Role
     {
-        Type = Qt::UserRole + 10,
+        Type = Qt::UserRole + 5,
         Value
+    };
+
+    enum ValueType
+    {
+        Concat,
+        Average,
+        Total,
+        Max,
+        Percentage
     };
 
     using FormatFunc = std::function<QString(uint64_t)>;

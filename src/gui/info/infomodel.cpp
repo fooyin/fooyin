@@ -51,6 +51,10 @@ QString formatPercentage(const std::map<QString, int>& values)
 
     QStringList formattedList;
     for(const auto& [key, value] : ratios) {
+        if(key == u"0") {
+            // Don't include invalid values
+            continue;
+        }
         formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(value, 'f', 1)));
     }
 
@@ -154,6 +158,7 @@ void InfoItem::addTrackValue(uint64_t value)
 
 void InfoItem::addTrackValue(int value)
 {
+    value = std::max(value, 0);
     addTrackValue(static_cast<uint64_t>(value));
 }
 
@@ -271,6 +276,7 @@ struct InfoModel::Private
         checkAddEntryNode(QStringLiteral("LastModified"), tr("Last Modified"), ItemParent::Location);
         checkAddEntryNode(QStringLiteral("Added"), tr("Added"), ItemParent::Location);
         checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General);
+        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General);
         checkAddEntryNode(QStringLiteral("Bitrate"), tr("Bitrate"), ItemParent::General);
         checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General);
@@ -310,18 +316,20 @@ struct InfoModel::Private
         }
 
         checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General, track.duration(),
-                          InfoItem::ValueType::Total, Utils::msToString);
+                          InfoItem::Total, Utils::msToString);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
-                          InfoItem::ValueType::Percentage);
+                          InfoItem::Percentage);
+        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, track.bitDepth(),
+                          InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
                           ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
                               return QString::number(bitrate) + QStringLiteral("kbps");
                           });
 
         checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General,
-                          QString::number(track.sampleRate()) + QStringLiteral(" Hz"), InfoItem::ValueType::Percentage);
+                          QString::number(track.sampleRate()) + QStringLiteral(" Hz"), InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General, track.typeString(),
-                          InfoItem::ValueType::Percentage);
+                          InfoItem::Percentage);
     }
 };
 
@@ -350,8 +358,7 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
     const int total = static_cast<int>(infoTracks.size());
 
     if(total > 0) {
-        p->checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, total,
-                             InfoItem::ValueType::Total);
+        p->checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, total, InfoItem::Total);
 
         for(const Track& track : infoTracks) {
             p->addTrackNodes(total, track);
