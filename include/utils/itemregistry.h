@@ -234,6 +234,9 @@ public:
                 Item item;
                 stream >> item;
 
+                item.name  = findUniqueName(item.name);
+                item.index = static_cast<int>(m_items.size());
+
                 m_items.push_back(item);
             }
         }
