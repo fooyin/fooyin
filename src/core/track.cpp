@@ -26,6 +26,8 @@
 #include <QFileInfo>
 #include <QIODevice>
 
+constexpr auto MaxStarCount = 5; // TODO: Support 10/half stars
+
 namespace Fooyin {
 struct Track::Private : public QSharedData
 {
@@ -62,8 +64,8 @@ struct Track::Private : public QSharedData
     int sampleRate{0};
     int channels{2};
 
+    float rating{0};
     int playcount{0};
-
     uint64_t addedTime{0};
     uint64_t modifiedTime{0};
     uint64_t firstPlayed{0};
@@ -353,6 +355,16 @@ int Track::year() const
     return p->year;
 }
 
+float Track::rating() const
+{
+    return p->rating;
+}
+
+int Track::ratingStars() const
+{
+    return static_cast<int>(std::floor(p->rating * MaxStarCount));
+}
+
 bool Track::hasExtraTag(const QString& tag) const
 {
     return p->extraTags.contains(tag);
@@ -591,6 +603,16 @@ void Track::setDate(const QString& date)
 void Track::setYear(int year)
 {
     p->year = year;
+}
+
+void Track::setRating(float rating)
+{
+    p->rating = rating;
+}
+
+void Track::setRatingStars(int rating)
+{
+    p->rating = static_cast<float>(rating) / MaxStarCount;
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)

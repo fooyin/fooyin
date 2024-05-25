@@ -147,6 +147,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::Bitrate)]         = &Track::bitrate;
         metadata[QString::fromLatin1(MetaData::SampleRate)]      = &Track::sampleRate;
         metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
+        metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
         metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
         metadata[QString::fromLatin1(MetaData::Channels)]        = &Track::channels;
         metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
@@ -171,8 +172,9 @@ struct ScriptRegistry::Private
         setMetadata[QString::fromLatin1(MetaData::Performer)]   = generateSetFunc(&Track::setPerformer);
         setMetadata[QString::fromLatin1(MetaData::Duration)]    = generateSetFunc(&Track::setDuration);
         setMetadata[QString::fromLatin1(MetaData::Comment)]     = generateSetFunc(&Track::setComment);
-        setMetadata[QString::fromLatin1(MetaData::Date)]        = generateSetFunc(&Track::setDate);
-        setMetadata[QString::fromLatin1(MetaData::Year)]        = generateSetFunc(&Track::setYear);
+        // setMetadata[QString::fromLatin1(MetaData::Rating)]      = generateSetFunc(&Track::setRatingStars);
+        setMetadata[QString::fromLatin1(MetaData::Date)] = generateSetFunc(&Track::setDate);
+        setMetadata[QString::fromLatin1(MetaData::Year)] = generateSetFunc(&Track::setYear);
     }
 };
 

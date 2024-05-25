@@ -41,6 +41,7 @@
 #include <taglib/mpegfile.h>
 #include <taglib/oggfile.h>
 #include <taglib/opusfile.h>
+#include <taglib/popularimeterframe.h>
 #include <taglib/tag.h>
 #include <taglib/tfilestream.h>
 #include <taglib/tpropertymap.h>
@@ -68,6 +69,7 @@ constexpr std::array supportedMp4Tags{
     std::pair(Fooyin::Mp4::Comment, Fooyin::Tag::Comment),
     std::pair(Fooyin::Mp4::Date, Fooyin::Tag::Date),
     std::pair(Fooyin::Mp4::Rating, Fooyin::Tag::Rating),
+    std::pair(Fooyin::Mp4::RatingAlt, Fooyin::Tag::Rating),
     std::pair(Fooyin::Mp4::TrackNumber, Fooyin::Tag::TrackNumber),
     std::pair(Fooyin::Mp4::DiscNumber, Fooyin::Tag::DiscNumber),
     std::pair("cpil", "COMPILATION"),
@@ -144,6 +146,46 @@ QString findMp4Tag(const TagLib::String& tag)
     }
     return {};
 }
+
+float popmToRating(int popm)
+{
+    // Reference: https://www.mediamonkey.com/forum/viewtopic.php?f=7&t=40532&start=30#p391067
+    if(popm == 0) {
+        return 0.0;
+    }
+    if(popm == 1) {
+        return 0.2;
+    }
+    if(popm < 23) {
+        return 0.1;
+    }
+    if(popm < 32) {
+        return 0.2;
+    }
+    if(popm < 64) {
+        return 0.3;
+    }
+    if(popm < 96) {
+        return 0.4;
+    }
+    if(popm < 128) {
+        return 0.5;
+    }
+    if(popm < 160) {
+        return 0.6;
+    }
+    if(popm < 196) {
+        return 0.7;
+    }
+    if(popm < 224) {
+        return 0.8;
+    }
+    if(popm < 255) {
+        return 0.9;
+    }
+
+    return 1.0;
+};
 
 QString convertString(const TagLib::String& str)
 {
@@ -272,7 +314,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         track.setDate(convertString(props[Fooyin::Tag::Date].toString()));
     }
     if(props.contains(Fooyin::Tag::Rating)) {
-        // TODO
+        track.setRating(convertString(props[Fooyin::Tag::Rating].toString()).toInt());
     }
 
     if(!skipExtra) {
@@ -339,6 +381,25 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
         if(!discFrame.isEmpty()) {
             const QString discNumbers = convertString(discFrame.front()->toString());
             readDiscTotalPair(discNumbers, track);
+        }
+    }
+
+    if(frames.contains("FMPS_Rating") && track.rating() <= 0) {
+        const float rating = convertString(frames["FMPS_Rating"].front()->toString()).toFloat();
+        if(rating > 0 && rating <= 1.0) {
+            track.setRating(rating);
+        }
+    }
+
+    if(frames.contains("POPM")) {
+        // Use only first rating
+        if(auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(frames["POPM"].front())) {
+            if(track.playCount() <= 0 && ratingFrame->counter() > 0) {
+                track.setPlayCount(static_cast<int>(ratingFrame->counter()));
+            }
+            if(track.rating() <= 0 && ratingFrame->rating() > 0) {
+                track.setRating(popmToRating(ratingFrame->rating()));
+            }
         }
     }
 }
@@ -460,11 +521,6 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
         }
     }
 
-    if(items.contains(Fooyin::Mp4::Rating)) {
-        const auto rating = items[Fooyin::Mp4::Rating].toStringList();
-        if(rating.size() > 0) { }
-    }
-
     if(items.contains(Fooyin::Mp4::TrackNumber)) {
         const TagLib::MP4::Item::IntPair& trackNumbers = items[Fooyin::Mp4::TrackNumber].toIntPair();
         if(trackNumbers.first > 0) {
@@ -485,12 +541,44 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
         }
     }
 
+    auto convertRating = [](int rating) -> float {
+        if(rating < 20) {
+            return 0.0;
+        }
+        if(rating < 40) {
+            return 0.2;
+        }
+        if(rating < 60) {
+            return 0.4;
+        }
+        if(rating < 80) {
+            return 0.6;
+        }
+        if(rating < 100) {
+            return 0.8;
+        }
+
+        return 1.0;
+    };
+
+    if(items.contains(Fooyin::Mp4::Rating) && track.rating() <= 0) {
+        const int rating = items[Fooyin::Mp4::Rating].toInt();
+        track.setRating(convertRating(rating));
+    }
+
+    if(items.contains(Fooyin::Mp4::RatingAlt) && track.rating() <= 0) {
+        const float rating = convertString(items[Fooyin::Mp4::RatingAlt].toStringList().toString("\n")).toFloat();
+        if(rating > 0) {
+            track.setRating(convertRating(rating));
+        }
+    }
+
     if(!skipExtra) {
         static const std::set<TagLib::String> baseMp4Tags
-            = {Fooyin::Mp4::Title,     Fooyin::Mp4::Artist,   Fooyin::Mp4::Album,     Fooyin::Mp4::AlbumArtist,
-               Fooyin::Mp4::Genre,     Fooyin::Mp4::Composer, Fooyin::Mp4::Performer, Fooyin::Mp4::PerformerAlt,
-               Fooyin::Mp4::Comment,   Fooyin::Mp4::Date,     Fooyin::Mp4::Rating,    Fooyin::Mp4::TrackNumber,
-               Fooyin::Mp4::DiscNumber};
+            = {Fooyin::Mp4::Title,       Fooyin::Mp4::Artist,    Fooyin::Mp4::Album,     Fooyin::Mp4::AlbumArtist,
+               Fooyin::Mp4::Genre,       Fooyin::Mp4::Composer,  Fooyin::Mp4::Performer, Fooyin::Mp4::PerformerAlt,
+               Fooyin::Mp4::Comment,     Fooyin::Mp4::Date,      Fooyin::Mp4::Rating,    Fooyin::Mp4::RatingAlt,
+               Fooyin::Mp4::TrackNumber, Fooyin::Mp4::DiscNumber};
 
         track.clearExtraTags();
 
@@ -560,6 +648,18 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
             track.setDiscTotal(discTotal.front().toInt());
         }
     }
+
+    if(fields.contains("FMPS_RATING") && track.rating() <= 0) {
+        track.setRating(convertString(fields["FMPS_RATING"].front()).toFloat());
+    }
+
+    if(fields.contains(Fooyin::Tag::Rating) && track.rating() <= 0) {
+        // Support 0-100 scale for now
+        const int rating = fields[Fooyin::Tag::Rating].front().toInt();
+        if(rating > 0 && rating <= 100) {
+            track.setRating(static_cast<float>(rating / 10));
+        }
+    }
 }
 
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
@@ -616,6 +716,46 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
             const TagLib::ASF::Attribute& num = discNumber.front();
             if(num.type() == TagLib::ASF::Attribute::UnicodeType) {
                 track.setDiscNumber(num.toString().toInt());
+            }
+        }
+    }
+
+    auto convertRating = [](int rating) -> float {
+        if(rating == 0) {
+            return 0.0;
+        }
+        if(rating < 25) {
+            return 0.2;
+        }
+        if(rating < 50) {
+            return 0.4;
+        }
+        if(rating < 75) {
+            return 0.6;
+        }
+        if(rating < 99) {
+            return 0.8;
+        }
+
+        return 1.0;
+    };
+
+    if(map.contains("FMPS_RATING")) {
+        const TagLib::ASF::AttributeList& ratings = map["FMPS_RATING"];
+        if(!ratings.isEmpty()) {
+            const float rating = convertString(ratings.front().toString()).toFloat();
+            if(track.rating() <= 0 && rating > 0 && rating <= 1.0) {
+                track.setRating(rating);
+            }
+        }
+    }
+
+    if(map.contains("WM/SharedUserRating") && track.rating() <= 0) {
+        const TagLib::ASF::AttributeList& ratings = map["WM/SharedUserRating"];
+        if(!ratings.isEmpty()) {
+            const auto rating = static_cast<int>(ratings.front().toUInt());
+            if(rating > 0 && rating <= 100) {
+                track.setRating(convertRating(rating));
             }
         }
     }

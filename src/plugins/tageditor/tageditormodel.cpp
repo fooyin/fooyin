@@ -47,6 +47,7 @@ struct TagEditorModel::Private
 
     TrackList tracks;
 
+    // TODO: Make fields shown configurable
     std::vector<EditorPair> fields{
         {QStringLiteral("Artist Name"), QString::fromLatin1(Constants::MetaData::Artist)},
         {QStringLiteral("Track Title"), QString::fromLatin1(Constants::MetaData::Title)},
@@ -60,7 +61,8 @@ struct TagEditorModel::Private
         {QStringLiteral("Total Tracks"), QString::fromLatin1(Constants::MetaData::TrackTotal)},
         {QStringLiteral("Disc Number"), QString::fromLatin1(Constants::MetaData::Disc)},
         {QStringLiteral("Total Discs"), QString::fromLatin1(Constants::MetaData::DiscTotal)},
-        {QStringLiteral("Comment"), QString::fromLatin1(Constants::MetaData::Comment)}};
+        {QStringLiteral("Comment"), QString::fromLatin1(Constants::MetaData::Comment)},
+        {QStringLiteral("Rating"), QString::fromLatin1(Constants::MetaData::Rating)}};
 
     TagEditorItem root;
     TagFieldMap tags;
@@ -337,7 +339,10 @@ Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
 
     auto flags = ExtendableTableModel::flags(index);
 
-    if(index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool()) {
+    auto* item = static_cast<TagEditorItem*>(index.internalPointer());
+
+    if((index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool())
+       && item->name() != u"Rating") { // Prevent editing rating for now
         flags |= Qt::ItemIsEditable;
     }
 

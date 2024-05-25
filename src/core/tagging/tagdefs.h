@@ -49,6 +49,7 @@ constexpr auto PerformerAlt = "----:com.apple.iTunes:PERFORMER";
 constexpr auto Comment      = "\251cmt";
 constexpr auto Date         = "\251day";
 constexpr auto Rating       = "rate";
+constexpr auto RatingAlt    = "----:com.apple.iTunes:FMPS_Rating";
 constexpr auto TrackNumber  = "trkn";
 constexpr auto DiscNumber   = "disk";
 constexpr auto Cover        = "covr";

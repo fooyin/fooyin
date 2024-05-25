@@ -129,6 +129,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setFirstPlayed(q.value(27).toULongLong());
     track.setLastPlayed(q.value(28).toULongLong());
     track.setPlayCount(q.value(29).toInt());
+    track.setRating(q.value(30).toFloat());
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
@@ -553,6 +554,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     uint64_t firstPlayed{0};
     uint64_t lastPlayed{0};
     int playCount{0};
+    float rating{0};
 
     {
         const auto statement = QStringLiteral("SELECT AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating FROM "
@@ -571,6 +573,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
             firstPlayed = query.value(1).toULongLong();
             lastPlayed  = query.value(2).toULongLong();
             playCount   = query.value(3).toInt();
+            rating      = query.value(4).toFloat();
         }
     }
 
@@ -580,6 +583,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     const uint64_t trackFirstPlayed = track.firstPlayed();
     const uint64_t trackLastPlayed  = track.lastPlayed();
     const int trackPlayCount        = track.playCount();
+    const float trackRating         = track.rating();
 
     if(trackAdded != added) {
         if(added == 0 || (trackAdded > 0 && trackAdded < added)) {
@@ -605,14 +609,20 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
             dbNeedsUpdate = true;
         }
     }
+    if(trackRating != rating) {
+        if(trackRating > rating) {
+            rating        = trackRating;
+            dbNeedsUpdate = true;
+        }
+    }
 
     if(!dbNeedsUpdate) {
         return true;
     }
 
     const auto statement = QStringLiteral(
-        "INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, PlayCount) VALUES "
-        "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount);");
+        "INSERT OR REPLACE INTO TrackStats (TrackHash, AddedDate, FirstPlayed, LastPlayed, PlayCount, Rating) VALUES "
+        "(:trackHash, :addedDate, :firstPlayed, :lastPlayed, :playCount, :rating);");
 
     DbQuery query{db(), statement};
 
@@ -621,6 +631,7 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
     query.bindValue(QStringLiteral(":firstPlayed"), QVariant::fromValue(firstPlayed));
     query.bindValue(QStringLiteral(":lastPlayed"), QVariant::fromValue(lastPlayed));
     query.bindValue(QStringLiteral(":playCount"), playCount);
+    query.bindValue(QStringLiteral(":rating"), rating);
 
     return query.exec();
 }

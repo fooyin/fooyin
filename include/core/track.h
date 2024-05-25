@@ -116,6 +116,8 @@ public:
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
+    [[nodiscard]] float rating() const;
+    [[nodiscard]] int ratingStars() const;
 
     [[nodiscard]] bool hasExtraTag(const QString& tag) const;
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
@@ -160,6 +162,8 @@ public:
     void setComment(const QString& comment);
     void setDate(const QString& date);
     void setYear(int year);
+    void setRating(float rating);
+    void setRatingStars(int rating);
 
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);
