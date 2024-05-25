@@ -65,7 +65,7 @@ struct Track::Private : public QSharedData
     int channels{2};
     int bitDepth{-1};
 
-    float rating{0};
+    float rating{-1};
     int playcount{0};
     uint64_t addedTime{0};
     uint64_t modifiedTime{0};
@@ -613,7 +613,12 @@ void Track::setYear(int year)
 
 void Track::setRating(float rating)
 {
-    p->rating = rating;
+    if(rating > 0 && rating < 1.0) {
+        p->rating = rating;
+    }
+    else {
+        p->rating = -1;
+    }
 }
 
 void Track::setRatingStars(int rating)
