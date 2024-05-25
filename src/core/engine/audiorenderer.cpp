@@ -55,6 +55,11 @@ struct AudioRenderer::Private
         QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
     }
 
+    bool canWrite()
+    {
+        return isRunning && audioOutput->initialised();
+    }
+
     bool initOutput()
     {
         if(!audioOutput->init(format)) {
@@ -77,11 +82,12 @@ struct AudioRenderer::Private
         tempBuffer.reset();
     }
 
-    void outputStateChanged(AudioOutput::State state) const
+    void outputStateChanged(AudioOutput::State state)
     {
         if(state == AudioOutput::State::Disconnected) {
             emit self->outputStateChanged(state);
             audioOutput->uninit();
+            bufferPrefilled = false;
         }
     }
 
@@ -93,14 +99,14 @@ struct AudioRenderer::Private
 
     void writeNext()
     {
-        if(!isRunning || bufferQueue.empty() || !audioOutput->initialised()) {
+        if(!canWrite() || bufferQueue.empty()) {
             return;
         }
 
         const int samples = audioOutput->currentState().freeSamples;
 
         if((samples == 0 && totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
-            if(!bufferPrefilled) {
+            if(canWrite() && !bufferPrefilled) {
                 bufferPrefilled = true;
                 audioOutput->start();
             }
@@ -254,6 +260,13 @@ void AudioRenderer::pause(bool paused)
     }
 
     p->isRunning = !paused;
+
+    if(paused) {
+        p->writeTimer->stop();
+    }
+    else {
+        p->writeTimer->start();
+    }
 }
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)

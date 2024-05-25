@@ -131,6 +131,8 @@ using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
 namespace Fooyin::Alsa {
 struct AlsaOutput::Private
 {
+    AlsaOutput* self;
+
     AudioFormat format;
 
     bool initialised{false};
@@ -140,8 +142,11 @@ struct AlsaOutput::Private
     snd_pcm_uframes_t periodSize{1024};
     bool pausable{true};
     QString device{QStringLiteral("default")};
-    bool deviceLost;
     bool started{false};
+
+    Private(AlsaOutput* self_)
+        : self{self_}
+    { }
 
     void reset()
     {
@@ -335,11 +340,9 @@ struct AlsaOutput::Private
                 case(SND_PCM_STATE_OPEN):
                 case(SND_PCM_STATE_SETUP):
                 default:
-                    if(!deviceLost) {
-                        printError(QStringLiteral("Device lost. Attempting to recover..."));
-                        // TODO: Request audio output reload
-                        deviceLost = true;
-                    }
+                    printError(QStringLiteral("Device lost. Stopping playback."));
+                    QMetaObject::invokeMethod(self, [this]() { emit self->stateChanged(State::Disconnected); });
+                    return false;
             }
         }
         return false;
@@ -375,7 +378,7 @@ struct AlsaOutput::Private
 };
 
 AlsaOutput::AlsaOutput()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<Private>(this)}
 { }
 
 AlsaOutput::~AlsaOutput()
