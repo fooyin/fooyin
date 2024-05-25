@@ -123,13 +123,41 @@ struct AudioPlaybackEngine::Private
         }
     }
 
-    PlaybackState changeState(PlaybackState newState)
+    bool setState(PlaybackState newState)
     {
         auto prevState = std::exchange(state, newState);
         if(prevState != state) {
             emit self->stateChanged(state);
         }
-        return prevState;
+
+        clock.setPaused(state != PlaybackState::Playing);
+
+        if(state == PlaybackState::Stopped) {
+            stopWorkers(true);
+        }
+        else if(state == PlaybackState::Paused) {
+            pauseOutput(true);
+        }
+        else if(state == PlaybackState::Playing) {
+            if(outputState == AudioOutput::State::Disconnected) {
+                if(renderer->init(format)) {
+                    outputState = AudioOutput::State::None;
+                }
+                else {
+                    state = PlaybackState::Error;
+                    emit self->stateChanged(state);
+                    return false;
+                }
+            }
+
+            startPlayback();
+
+            if(prevState == PlaybackState::Paused) {
+                pauseOutput(false);
+            }
+        }
+
+        return true;
     }
 
     TrackStatus changeTrackStatus(TrackStatus newStatus)
@@ -277,6 +305,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     if(!p->updateFormat(p->decoder->format())) {
+        p->setState(PlaybackState::Error);
         p->changeTrackStatus(TrackStatus::NoTrack);
         return;
     }
@@ -284,37 +313,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     p->changeTrackStatus(TrackStatus::LoadedTrack);
 
     if(p->state == PlaybackState::Playing) {
-        setState(PlaybackState::Playing);
-    }
-}
-
-void AudioPlaybackEngine::setState(PlaybackState state)
-{
-    const auto prevState = p->changeState(state);
-
-    p->clock.setPaused(state != PlaybackState::Playing);
-
-    if(state == PlaybackState::Stopped) {
-        p->stopWorkers(true);
-    }
-    else if(state == PlaybackState::Paused) {
-        p->pauseOutput(true);
-    }
-    else if(state == PlaybackState::Playing) {
-        if(p->outputState == AudioOutput::State::Disconnected) {
-            if(p->renderer->init(p->format)) {
-                p->outputState = AudioOutput::State::None;
-            }
-            else {
-                return;
-            }
-        }
-
-        p->startPlayback();
-
-        if(prevState == PlaybackState::Paused) {
-            p->pauseOutput(false);
-        }
+        p->setState(PlaybackState::Playing);
     }
 }
 
@@ -329,9 +328,10 @@ void AudioPlaybackEngine::play()
         emit positionChanged(0);
     }
 
-    setState(PlaybackState::Playing);
-    p->changeTrackStatus(TrackStatus::BufferedTrack);
-    p->positionTimer()->start();
+    if(p->setState(PlaybackState::Playing)) {
+        p->changeTrackStatus(TrackStatus::BufferedTrack);
+        p->positionTimer()->start();
+    }
 }
 
 void AudioPlaybackEngine::pause()
@@ -345,17 +345,19 @@ void AudioPlaybackEngine::pause()
         emit positionChanged(0);
     }
 
-    setState(PlaybackState::Paused);
-    p->positionTimer()->stop();
-    p->changeTrackStatus(TrackStatus::BufferedTrack);
+    if(p->setState(PlaybackState::Paused)) {
+        p->positionTimer()->stop();
+        p->changeTrackStatus(TrackStatus::BufferedTrack);
+    }
 }
 
 void AudioPlaybackEngine::stop()
 {
-    setState(PlaybackState::Stopped);
-    p->positionTimer()->stop();
-    p->lastPosition = 0;
-    emit positionChanged(0);
+    if(p->setState(PlaybackState::Stopped)) {
+        p->positionTimer()->stop();
+        p->lastPosition = 0;
+        emit positionChanged(0);
+    }
 }
 
 void AudioPlaybackEngine::setVolume(double volume)

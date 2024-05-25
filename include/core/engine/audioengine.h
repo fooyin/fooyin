@@ -56,7 +56,6 @@ public:
     virtual void seek(uint64_t pos) = 0;
 
     virtual void changeTrack(const Track& track) = 0;
-    virtual void setState(PlaybackState state)   = 0;
 
     virtual void play()  = 0;
     virtual void pause() = 0;

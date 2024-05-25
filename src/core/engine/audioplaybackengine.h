@@ -36,7 +36,6 @@ public slots:
     void seek(uint64_t pos) override;
 
     void changeTrack(const Track& track) override;
-    void setState(PlaybackState state) override;
 
     void play() override;
     void pause() override;
