@@ -96,4 +96,12 @@
             ALTER TABLE Tracks ADD COLUMN Channels INTEGER DEFAULT 0;
         </sql>
     </revision>
+    <revision version="5">
+        <description>
+            Add bit depth column to tracks.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN BitDepth INTEGER DEFAULT -1;
+        </sql>
+    </revision>
 </schema>

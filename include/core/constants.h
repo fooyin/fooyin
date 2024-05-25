@@ -46,6 +46,7 @@ constexpr auto PlayCount       = "playcount";
 constexpr auto Rating          = "rating";
 constexpr auto Codec           = "codec";
 constexpr auto Channels        = "channels";
+constexpr auto BitDepth        = "bitdepth";
 constexpr auto AddedTime       = "addedtime";
 constexpr auto LastModified    = "lastmodified";
 constexpr auto FilePath        = "filepath";

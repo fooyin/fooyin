@@ -314,7 +314,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         track.setDate(convertString(props[Fooyin::Tag::Date].toString()));
     }
     if(props.contains(Fooyin::Tag::Rating)) {
-        track.setRating(convertString(props[Fooyin::Tag::Rating].toString()).toInt());
+        track.setRating(convertString(props[Fooyin::Tag::Rating].toString()).toFloat());
     }
 
     if(!skipExtra) {
@@ -849,6 +849,9 @@ bool readMetaData(Track& track, Quality quality)
         const TagLib::RIFF::AIFF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.tag(), track);
             }
@@ -859,6 +862,9 @@ bool readMetaData(Track& track, Quality quality)
         const TagLib::RIFF::WAV::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.hasID3v2Tag()) {
                 readId3Tags(file.ID3v2Tag(), track);
             }
@@ -877,6 +883,9 @@ bool readMetaData(Track& track, Quality quality)
         TagLib::APE::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.APETag()) {
                 readApeTags(file.APETag(), track);
             }
@@ -886,6 +895,9 @@ bool readMetaData(Track& track, Quality quality)
         TagLib::WavPack::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.APETag()) {
                 readApeTags(file.APETag(), track);
             }
@@ -895,6 +907,9 @@ bool readMetaData(Track& track, Quality quality)
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, true);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.hasMP4Tag()) {
                 readMp4Tags(file.tag(), track);
             }
@@ -908,6 +923,9 @@ bool readMetaData(Track& track, Quality quality)
 #endif
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.hasXiphComment()) {
                 readXiphComment(file.xiphComment(), track);
             }
@@ -935,6 +953,9 @@ bool readMetaData(Track& track, Quality quality)
         const TagLib::ASF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
             if(file.tag()) {
                 readAsfTags(file.tag(), track);
             }

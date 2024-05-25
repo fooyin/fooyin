@@ -63,6 +63,7 @@ struct Track::Private : public QSharedData
     int bitrate{0};
     int sampleRate{0};
     int channels{2};
+    int bitDepth{-1};
 
     float rating{0};
     int playcount{0};
@@ -423,6 +424,11 @@ int Track::channels() const
     return p->channels;
 }
 
+int Track::bitDepth() const
+{
+    return p->bitDepth;
+}
+
 int Track::playCount() const
 {
     return p->playcount;
@@ -681,6 +687,11 @@ void Track::setSampleRate(int rate)
 void Track::setChannels(int channels)
 {
     p->channels = channels;
+}
+
+void Track::setBitDepth(int depth)
+{
+    p->bitDepth = depth;
 }
 
 void Track::setPlayCount(int count)
