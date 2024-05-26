@@ -60,6 +60,8 @@ set(SOURCES
     info/infodelegate.h
     info/infomodel.cpp
     info/infomodel.h
+    info/infoview.cpp
+    info/infoview.h
     info/infowidget.cpp
     info/infowidget.h
     librarytree/librarytreegroup.h

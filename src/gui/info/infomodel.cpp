@@ -51,10 +51,6 @@ QString formatPercentage(const std::map<QString, int>& values)
 
     QStringList formattedList;
     for(const auto& [key, value] : ratios) {
-        if(key == u"0") {
-            // Don't include invalid values
-            continue;
-        }
         formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(value, 'f', 1)));
     }
 
@@ -241,8 +237,22 @@ struct InfoModel::Private
         return node;
     }
 
+    void checkAddParentNode(InfoModel::ItemParent parent)
+    {
+        if(parent == InfoModel::ItemParent::Metadata) {
+            getOrAddNode(QStringLiteral("Metadata"), tr("Metadata"), ItemParent::Root, InfoItem::Header);
+        }
+        else if(parent == InfoModel::ItemParent::Location) {
+            getOrAddNode(QStringLiteral("Location"), tr("Location"), ItemParent::Root, InfoItem::Header);
+        }
+        else if(parent == InfoModel::ItemParent::General) {
+            getOrAddNode(QStringLiteral("General"), tr("General"), ItemParent::Root, InfoItem::Header);
+        }
+    }
+
     void checkAddEntryNode(const QString& key, const QString& name, InfoModel::ItemParent parent)
     {
+        checkAddParentNode(parent);
         getOrAddNode(key, name, parent, InfoItem::Entry);
     }
 
@@ -256,42 +266,25 @@ struct InfoModel::Private
                 return;
             }
         }
+
+        checkAddParentNode(parent);
         auto* node = getOrAddNode(key, name, parent, InfoItem::Entry, valueType, std::move(numFunc));
         node->addTrackValue(std::forward<Value>(value));
     }
 
-    void addTrackNodes()
-    {
-        checkAddEntryNode(QStringLiteral("Artist"), tr("Artist"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Title"), tr("Title"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Album"), tr("Album"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Date"), tr("Date"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("Genre"), tr("Genre"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("AlbumArtist"), tr("Album Artist"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("TrackNumber"), tr("Track Number"), ItemParent::Metadata);
-        checkAddEntryNode(QStringLiteral("FileName"), tr("File Name"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("FolderName"), tr("Folder Name"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("FilePath"), tr("File Path"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("FileSize"), tr("File Size"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("LastModified"), tr("Last Modified"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Added"), tr("Added"), ItemParent::Location);
-        checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("Bitrate"), tr("Bitrate"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General);
-        checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General);
-    }
-
     void addTrackNodes(int total, const Track& track)
     {
-        checkAddEntryNode(QStringLiteral("Artist"), tr("Artist"), ItemParent::Metadata, track.artists());
+        if(const auto artists = track.artists(); !artists.empty()) {
+            checkAddEntryNode(QStringLiteral("Artist"), tr("Artist"), ItemParent::Metadata, artists);
+        }
         checkAddEntryNode(QStringLiteral("Title"), tr("Title"), ItemParent::Metadata, track.title());
         checkAddEntryNode(QStringLiteral("Album"), tr("Album"), ItemParent::Metadata, track.album());
         checkAddEntryNode(QStringLiteral("Date"), tr("Date"), ItemParent::Metadata, track.date());
         checkAddEntryNode(QStringLiteral("Genre"), tr("Genre"), ItemParent::Metadata, track.genres());
         checkAddEntryNode(QStringLiteral("AlbumArtist"), tr("Album Artist"), ItemParent::Metadata, track.albumArtist());
-        checkAddEntryNode(QStringLiteral("TrackNumber"), tr("Track Number"), ItemParent::Metadata, track.trackNumber());
+        if(const int trackNumber = track.trackNumber(); trackNumber >= 0) {
+            checkAddEntryNode(QStringLiteral("TrackNumber"), tr("Track Number"), ItemParent::Metadata, trackNumber);
+        }
 
         const QFileInfo file{track.filepath()};
 
@@ -319,8 +312,10 @@ struct InfoModel::Private
                           InfoItem::Total, Utils::msToString);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
                           InfoItem::Percentage);
-        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, track.bitDepth(),
-                          InfoItem::Percentage);
+        if(const int bitDepth = track.bitDepth(); bitDepth > 0) {
+            checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, bitDepth,
+                              InfoItem::Percentage);
+        }
         checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
                           ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
                               return QString::number(bitrate) + QStringLiteral("kbps");
@@ -351,10 +346,6 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
     beginResetModel();
     p->reset();
 
-    p->getOrAddNode(QStringLiteral("Metadata"), tr("Metadata"), ItemParent::Root, InfoItem::Header);
-    p->getOrAddNode(QStringLiteral("Location"), tr("Location"), ItemParent::Root, InfoItem::Header);
-    p->getOrAddNode(QStringLiteral("General"), tr("General"), ItemParent::Root, InfoItem::Header);
-
     const int total = static_cast<int>(infoTracks.size());
 
     if(total > 0) {
@@ -363,9 +354,6 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
         for(const Track& track : infoTracks) {
             p->addTrackNodes(total, track);
         }
-    }
-    else {
-        p->addTrackNodes();
     }
 
     endResetModel();

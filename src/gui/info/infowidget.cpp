@@ -21,6 +21,7 @@
 
 #include "infodelegate.h"
 #include "infomodel.h"
+#include "infoview.h"
 #include "internalguisettings.h"
 
 #include <core/player/playercontroller.h>
@@ -36,17 +37,6 @@
 #include <QTreeView>
 
 namespace Fooyin {
-class InfoView : public QTreeView
-{
-    Q_OBJECT
-
-public:
-    using QTreeView::QTreeView;
-
-protected:
-    void drawBranches(QPainter* /*painter*/, const QRect& /*rect*/, const QModelIndex& /*index*/) const override { }
-};
-
 struct InfoWidget::Private
 {
     InfoWidget* self;
