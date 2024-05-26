@@ -110,7 +110,8 @@ enum GuiInternalSettings : uint32_t
     DirBrowserSendPlayback  = 42 | Type::Bool,
     EditableLayoutMargin    = 43 | Type::Int,
     PlaylistTabsAddButton   = 44 | Type::Bool,
-    SplitterHandleSize      = 45 | Type::Int
+    SplitterHandleSize      = 45 | Type::Int,
+    LibTreeRestoreState     = 46 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

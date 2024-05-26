@@ -331,6 +331,7 @@ LibraryTreeModel::LibraryTreeModel(QObject* parent)
         p->updateAllNode();
         p->populator.stopThread();
         p->populatorThread.quit();
+        emit modelLoaded();
     });
 }
 
@@ -395,7 +396,7 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    const auto* item = static_cast<LibraryTreeItem*>(index.internalPointer());
+    const auto* item = itemForIndex(index);
 
     switch(role) {
         case(Qt::DisplayRole):
@@ -407,6 +408,8 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             return item->title();
         case(LibraryTreeItem::Level):
             return item->level();
+        case(LibraryTreeItem::Key):
+            return item->key();
         case(LibraryTreeItem::Tracks):
             return QVariant::fromValue(item->tracks());
         case(Qt::FontRole):
@@ -608,10 +611,30 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         p->populatorThread.start();
     }
 
+    if(tracks.empty()) {
+        beginResetModel();
+        p->beginReset();
+        endResetModel();
+        return;
+    }
+
     p->resetting  = true;
     p->trackCount = static_cast<int>(tracks.size());
 
     QMetaObject::invokeMethod(&p->populator, [this, tracks] { p->populator.run(p->grouping, tracks); });
+}
+
+QModelIndex LibraryTreeModel::indexForKey(const QString& key)
+{
+    while(!p->nodes.contains(key) && canFetchMore({})) {
+        fetchMore({});
+    }
+
+    if(p->nodes.contains(key)) {
+        return indexOfItem(&p->nodes.at(key));
+    }
+
+    return {};
 }
 } // namespace Fooyin
 

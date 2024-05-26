@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class ActionManager;
 class SettingsManager;
 
-class LibraryTreePage : public SettingsPage
+class LibraryTreeGroupPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    LibraryTreePage(SettingsManager* settings);
+    LibraryTreeGroupPage(ActionManager* actionManager, SettingsManager* settings);
 };
 } // namespace Fooyin

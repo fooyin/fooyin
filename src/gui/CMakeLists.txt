@@ -169,6 +169,8 @@ set(SOURCES
     settings/librarytree/librarytreegroupmodel.h
     settings/librarytree/librarytreepage.cpp
     settings/librarytree/librarytreepage.h
+    settings/librarytree/librarytreegrouppage.cpp
+    settings/librarytree/librarytreegrouppage.h
     settings/playlist/playlistcolumnmodel.cpp
     settings/playlist/playlistcolumnmodel.h
     settings/playlist/playlistcolumnpage.cpp

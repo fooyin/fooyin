@@ -116,5 +116,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, QStringLiteral("Interface/EditableLayoutMargin"));
     m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, QStringLiteral("PlaylistTabs/ShowAddButton"));
     m_settings->createSetting<Internal::SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
+    m_settings->createSetting<Internal::LibTreeRestoreState>(true, QStringLiteral("LibraryTree/RestoreState"));
 }
 } // namespace Fooyin

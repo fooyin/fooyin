@@ -19,7 +19,6 @@
 
 #include "librarytreepopulator.h"
 
-#include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 
@@ -128,10 +127,6 @@ struct LibraryTreePopulator::Private
 
         const auto remaining = static_cast<int>(pendingTracks.size());
         runBatch(std::min(remaining, BatchSize));
-
-        if(remaining == 0) {
-            emit self->finished();
-        }
     }
 };
 
@@ -156,6 +151,8 @@ void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks)
     p->runBatch(InitialBatchSize);
 
     setState(Idle);
+
+    emit finished();
 }
 } // namespace Fooyin
 

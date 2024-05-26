@@ -62,7 +62,10 @@ public:
     void changeGrouping(const LibraryTreeGrouping& grouping);
     void reset(const TrackList& tracks);
 
+    [[nodiscard]] QModelIndex indexForKey(const QString& key);
+
 signals:
+    void modelLoaded();
     void modelUpdated();
 
 private:

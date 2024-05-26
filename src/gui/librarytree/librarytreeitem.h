@@ -34,6 +34,7 @@ public:
     {
         Title = Qt::UserRole,
         Level,
+        Key,
         Tracks,
     };
 

@@ -123,6 +123,7 @@ struct LibraryTreeWidget::Private
     TrackList prevSearchTracks;
 
     bool updating{false};
+    QByteArray pendingState;
 
     Private(LibraryTreeWidget* self_, MusicLibrary* library_, TrackSelectionController* trackSelection_,
             SettingsManager* settings_)
@@ -393,6 +394,91 @@ struct LibraryTreeWidget::Private
         libraryTree->setUpdatesEnabled(true);
         updating = false;
     }
+
+    [[nodiscard]] QByteArray saveState() const
+    {
+        QByteArray data;
+        QDataStream stream{&data, QIODeviceBase::WriteOnly};
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        const QModelIndex topIndex = libraryTree->indexAt({0, 0});
+        stream << topIndex.data(LibraryTreeItem::Key).toString();
+
+        QStringList keysToSave;
+        std::stack<QModelIndex> indexes;
+        indexes.emplace();
+
+        while(!indexes.empty()) {
+            const QModelIndex index = indexes.top();
+            indexes.pop();
+
+            if(index.isValid() && libraryTree->isExpanded(index)) {
+                keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toString());
+            }
+
+            const int childCount = model->rowCount(index);
+            for(int row{0}; row < childCount; ++row) {
+                indexes.push(model->index(row, 0, index));
+            }
+        }
+
+        if(!keysToSave.empty()) {
+            stream << keysToSave;
+        }
+
+        data = qCompress(data, 9);
+        return data;
+    }
+
+    void restoreIndexState(const QString& topKey, const QStringList& keys, int currentIndex = 0)
+    {
+        // We use queued connections here so any expand calls have a chance to load their children in fetchMore
+        if(std::cmp_greater_equal(currentIndex, keys.size())) {
+            QMetaObject::invokeMethod(
+                libraryTree,
+                [this, topKey]() {
+                    if(const QModelIndex topIndex = model->indexForKey(topKey); topIndex.isValid()) {
+                        libraryTree->scrollTo(topIndex, QAbstractItemView::PositionAtTop);
+                    }
+                },
+                Qt::QueuedConnection);
+
+            return;
+        }
+
+        const QString& key = keys.at(currentIndex);
+        if(const auto index = model->indexForKey(key); index.isValid()) {
+            libraryTree->expand(index);
+            QMetaObject::invokeMethod(
+                libraryTree,
+                [this, topKey, keys, currentIndex]() { restoreIndexState(topKey, keys, currentIndex + 1); },
+                Qt::QueuedConnection);
+        }
+        else {
+            restoreIndexState(topKey, keys, currentIndex + 1);
+        }
+    }
+
+    void restoreState(const QByteArray& state)
+    {
+        if(state.isEmpty() || !settings->value<LibTreeRestoreState>()) {
+            return;
+        }
+
+        QByteArray data{state};
+        QDataStream stream{&data, QIODeviceBase::ReadOnly};
+        stream.setVersion(QDataStream::Qt_6_0);
+
+        data = qUncompress(data);
+
+        QString topKey;
+        stream >> topKey;
+
+        QStringList keysToRestore;
+        stream >> keysToRestore;
+
+        restoreIndexState(topKey, keysToRestore);
+    }
 };
 
 LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionController* trackSelection,
@@ -404,6 +490,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionContro
 
     setFeature(FyWidget::Search);
 
+    QObject::connect(p->model, &LibraryTreeModel::modelLoaded, this, [this]() { p->restoreState(p->pendingState); });
     QObject::connect(p->libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
     QObject::connect(p->libraryTree, &LibraryTreeView::middleClicked, this, [this]() { p->handleMiddleClick(); });
     QObject::connect(p->libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -443,6 +530,7 @@ QString LibraryTreeWidget::layoutName() const
 void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
     layout[QStringLiteral("Grouping")] = p->grouping.id;
+    layout[QStringLiteral("State")]    = QString::fromUtf8(p->saveState().toBase64());
 }
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
@@ -453,6 +541,10 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
         if(grouping.isValid()) {
             p->changeGrouping(grouping);
         }
+    }
+
+    if(layout.contains(QStringLiteral("State"))) {
+        p->pendingState = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
     }
 }
 

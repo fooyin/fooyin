@@ -20,28 +20,22 @@
 #include "librarytreepage.h"
 
 #include "internalguisettings.h"
-#include "librarytree/librarytreegroupregistry.h"
-#include "librarytreegroupmodel.h"
 
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
-#include <utils/multilinedelegate.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/colourbutton.h>
 #include <utils/widgets/fontbutton.h>
 
-#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QFontDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
-#include <QPushButton>
 #include <QSpinBox>
-#include <QTableView>
 
 namespace Fooyin {
 class LibraryTreePageWidget : public SettingsPageWidget
@@ -49,18 +43,14 @@ class LibraryTreePageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings);
+    explicit LibraryTreePageWidget(SettingsManager* settings);
 
     void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    LibraryTreeGroupRegistry m_groupsRegistry;
     SettingsManager* m_settings;
-
-    ExtendableTableView* m_groupList;
-    LibraryTreeGroupModel* m_model;
 
     QComboBox* m_middleClick;
     QComboBox* m_doubleClick;
@@ -70,57 +60,30 @@ private:
     QCheckBox* m_autoSwitch;
     QLineEdit* m_playlistName;
 
+    QCheckBox* m_restoreState;
+
     QCheckBox* m_showScrollbar;
     QCheckBox* m_altColours;
-
     FontButton* m_fontButton;
     ColourButton* m_colourButton;
     QSpinBox* m_rowHeight;
 };
 
-LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, SettingsManager* settings)
-    : m_groupsRegistry{settings}
-    , m_settings{settings}
-    , m_groupList{new ExtendableTableView(actionManager, this)}
-    , m_model{new LibraryTreeGroupModel(&m_groupsRegistry, this)}
+LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
+    : m_settings{settings}
     , m_middleClick{new QComboBox(this)}
     , m_doubleClick{new QComboBox(this)}
     , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
     , m_playlistName{new QLineEdit(this)}
+    , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_fontButton{new FontButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
     , m_colourButton{new ColourButton(this)}
     , m_rowHeight{new QSpinBox(this)}
 {
-    m_groupList->setExtendableModel(m_model);
-
-    m_groupList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
-
-    // Hide index column
-    m_groupList->hideColumn(0);
-
-    m_groupList->setExtendableColumn(1);
-    m_groupList->verticalHeader()->hide();
-    m_groupList->horizontalHeader()->setStretchLastSection(true);
-    m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_groupList->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    auto updateButtonState = [this]() {
-        const auto selection = m_groupList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_groupList->removeAction()) {
-            remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
-                return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
-            }));
-        }
-    };
-
-    updateButtonState();
-
-    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this, updateButtonState);
-
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
 
@@ -145,6 +108,11 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(selectionPlaylistLayout->columnCount(), 1);
 
+    auto* generalGroup       = new QGroupBox(tr("General"), this);
+    auto* generalGroupLayout = new QGridLayout(generalGroup);
+
+    generalGroupLayout->addWidget(m_restoreState);
+
     auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
 
@@ -165,16 +133,17 @@ LibraryTreePageWidget::LibraryTreePageWidget(ActionManager* actionManager, Setti
     appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
 
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(m_groupList, 0, 0, 1, 3);
+    mainLayout->addWidget(generalGroup, 0, 0);
     mainLayout->addWidget(clickBehaviour, 1, 0);
-    mainLayout->addWidget(appearanceGroup, 1, 1, 2, 1);
     mainLayout->addWidget(selectionPlaylist, 2, 0);
+    mainLayout->addWidget(appearanceGroup, 3, 0);
     mainLayout->setColumnStretch(1, 1);
+    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 }
 
 void LibraryTreePageWidget::load()
 {
-    m_model->populate();
+    m_restoreState->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeRestoreState>());
 
     using ActionIndexMap = std::map<int, int>;
     ActionIndexMap doubleActions;
@@ -232,6 +201,7 @@ void LibraryTreePageWidget::load()
 
 void LibraryTreePageWidget::apply()
 {
+    m_settings->set<Settings::Gui::Internal::LibTreeRestoreState>(m_restoreState->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeDoubleClick>(m_doubleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::LibTreeMiddleClick>(m_middleClick->currentData().toInt());
     m_settings->set<Settings::Gui::Internal::LibTreeSendPlayback>(m_playbackOnSend->isChecked());
@@ -248,13 +218,13 @@ void LibraryTreePageWidget::apply()
     if(m_colourButton->colourChanged()) {
         m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
     }
-    m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 
-    m_model->processQueue();
+    m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
 }
 
 void LibraryTreePageWidget::reset()
 {
+    m_settings->reset<Settings::Gui::Internal::LibTreeRestoreState>();
     m_settings->reset<Settings::Gui::Internal::LibTreeDoubleClick>();
     m_settings->reset<Settings::Gui::Internal::LibTreeMiddleClick>();
     m_settings->reset<Settings::Gui::Internal::LibTreeSendPlayback>();
@@ -267,17 +237,15 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeFont>();
     m_settings->reset<Settings::Gui::Internal::LibTreeColour>();
     m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
-
-    m_groupsRegistry.reset();
 }
 
-LibraryTreePage::LibraryTreePage(ActionManager* actionManager, SettingsManager* settings)
+LibraryTreePage::LibraryTreePage(SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));
     setCategory({tr("Widgets"), tr("Library Tree")});
-    setWidgetCreator([actionManager, settings] { return new LibraryTreePageWidget(actionManager, settings); });
+    setWidgetCreator([settings] { return new LibraryTreePageWidget(settings); });
 }
 } // namespace Fooyin
 

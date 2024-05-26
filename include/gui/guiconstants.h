@@ -140,21 +140,21 @@ constexpr auto TrackIds      = "application/x-fooyin-trackIds";
 } // namespace Mime
 
 namespace Page {
-constexpr auto GeneralCore           = "Fooyin.Page.General.Core";
-constexpr auto Engine                = "Fooyin.Page.Engine";
-constexpr auto InterfaceGeneral      = "Fooyin.Page.Interface.General";
-constexpr auto Artwork               = "Fooyin.Page.Interface.Artwork";
-constexpr auto LibraryGeneral        = "Fooyin.Page.Library.General";
-constexpr auto LibrarySorting        = "Fooyin.Page.Library.Sorting";
-constexpr auto PlaylistGeneral       = "Fooyin.Page.Playlist.General";
-constexpr auto PlaylistInterface     = "Fooyin.Page.Playlist.Interface";
-constexpr auto PlaylistPresets       = "Fooyin.Page.Playlist.Presets";
-constexpr auto PlaylistColumns       = "Fooyin.Page.Playlist.Columns";
-constexpr auto LibraryTreeGeneral    = "Fooyin.Page.Widgets.LibraryTree.General";
-constexpr auto LibraryTreeAppearance = "Fooyin.Page.Widgets.LibraryTree.Appearance";
-constexpr auto StatusWidget          = "Fooyin.Page.Widgets.Status";
-constexpr auto Plugins               = "Fooyin.Page.Plugins";
-constexpr auto Shortcuts             = "Fooyin.Page.Shortcuts";
-constexpr auto DirBrowser            = "Fooyin.Page.Widgets.DirBrowser";
+constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
+constexpr auto Engine             = "Fooyin.Page.Engine";
+constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
+constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
+constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
+constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";
+constexpr auto PlaylistGeneral    = "Fooyin.Page.Playlist.General";
+constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";
+constexpr auto PlaylistPresets    = "Fooyin.Page.Playlist.Presets";
+constexpr auto PlaylistColumns    = "Fooyin.Page.Playlist.Columns";
+constexpr auto LibraryTreeGeneral = "Fooyin.Page.Widgets.LibraryTree.General";
+constexpr auto LibraryTreeGroups  = "Fooyin.Page.Widgets.LibraryTree.Groups";
+constexpr auto StatusWidget       = "Fooyin.Page.Widgets.Status";
+constexpr auto Plugins            = "Fooyin.Page.Plugins";
+constexpr auto Shortcuts          = "Fooyin.Page.Shortcuts";
+constexpr auto DirBrowser         = "Fooyin.Page.Widgets.DirBrowser";
 } // namespace Page
 } // namespace Fooyin::Constants
