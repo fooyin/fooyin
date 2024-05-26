@@ -442,14 +442,17 @@ QString LibraryTreeWidget::layoutName() const
 
 void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("Grouping")] = p->grouping.name;
+    layout[QStringLiteral("Grouping")] = p->grouping.id;
 }
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const LibraryTreeGrouping grouping = p->groupsRegistry.itemByName(layout[QStringLiteral("Grouping")].toString());
-    if(grouping.isValid()) {
-        p->changeGrouping(grouping);
+    if(layout.contains(QStringLiteral("Grouping"))) {
+        const LibraryTreeGrouping grouping
+            = p->groupsRegistry.itemById(layout.value(QStringLiteral("Grouping")).toInt());
+        if(grouping.isValid()) {
+            p->changeGrouping(grouping);
+        }
     }
 }
 
