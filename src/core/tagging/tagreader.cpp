@@ -197,7 +197,11 @@ QStringList convertStringList(const TagLib::StringList& strList)
     QStringList list;
     list.reserve(strList.size());
 
-    std::ranges::transform(strList, std::back_inserter(list), &convertString);
+    for(const auto& str : strList) {
+        if(!str.isEmpty()) {
+            list.append(convertString(str));
+        }
+    }
 
     return list;
 }
