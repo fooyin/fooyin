@@ -67,7 +67,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
-    , m_altColours{new QCheckBox(tr("Alternate row colours"), this)}
+    , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_tabsAddButton{new QCheckBox(tr("Show add button"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}

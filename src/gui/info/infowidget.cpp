@@ -195,7 +195,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
                      [this](bool checked) { p->settings->set<InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
-    auto* altColours = new QAction(QStringLiteral("Alternate Row Colours"), this);
+    auto* altColours = new QAction(QStringLiteral("Alternating Row Colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(p->view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
