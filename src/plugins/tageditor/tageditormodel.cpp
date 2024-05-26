@@ -28,8 +28,6 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
 
-constexpr auto TrackLimit = 40;
-
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
@@ -126,7 +124,7 @@ struct TagEditorModel::Private
             return;
         }
 
-        for(const auto& track : tracks | std::views::take(TrackLimit)) {
+        for(const auto& track : tracks) {
             for(const auto& [field, var] : fields) {
                 const auto result = scriptRegistry.value(var, track);
                 if(result.cond) {
@@ -139,6 +137,13 @@ struct TagEditorModel::Private
                 }
                 else {
                     tags[field].addTrackValue(QStringLiteral(""));
+                }
+            }
+
+            for(auto& [field, node] : customTags) {
+                const auto result = scriptRegistry.value(field, track);
+                if(!result.cond) {
+                    node.addTrack();
                 }
             }
         }
@@ -223,6 +228,7 @@ void TagEditorModel::reset(const TrackList& tracks)
     }
 
     p->updateFields();
+    p->root.sortCustomTags();
 
     endResetModel();
 }

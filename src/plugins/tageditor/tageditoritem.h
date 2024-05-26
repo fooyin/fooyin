@@ -40,10 +40,13 @@ public:
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
 
+    void addTrack();
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
     void setValue(const QStringList& values);
     void setTitle(const QString& title);
+
+    void sortCustomTags();
 
 private:
     bool m_isDefault;
