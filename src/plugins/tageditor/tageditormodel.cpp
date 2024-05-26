@@ -26,6 +26,7 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/starrating.h>
 
 constexpr auto TrackLimit = 40;
 
@@ -351,10 +352,6 @@ Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
 
 QVariant TagEditorModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole && role != TagEditorItem::IsDefault) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -369,8 +366,8 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         return item->isDefault();
     }
 
-    switch(index.column()) {
-        case(0):
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+        if(index.column() == 0) {
             if(role == Qt::EditRole) {
                 return item->name();
             }
@@ -378,16 +375,19 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                 const QString name = QStringLiteral("<") + item->name() + QStringLiteral(">");
                 return name;
             }
+
             return item->name();
-        case(1): {
-            QString value = item->value();
-            if(item->trackCount() > 1 && role == Qt::DisplayRole) {
-                value.prepend(QStringLiteral("<<multiple items>> "));
-            }
-            return value;
         }
-        default:
-            break;
+
+        if(index.row() == 13) {
+            return QVariant::fromValue(StarRating{item->value().toInt(), 5});
+        }
+
+        QString value = item->value();
+        if(item->trackCount() > 1 && role == Qt::DisplayRole) {
+            value.prepend(QStringLiteral("<<multiple items>> "));
+        }
+        return value;
     }
 
     return {};
@@ -419,6 +419,10 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             break;
         }
         case(1): {
+            if(index.row() == 13) {
+                // We don't handle changing rating for now
+                return false;
+            }
             if(value.toString().simplified() == item->value().simplified()) {
                 return false;
             }

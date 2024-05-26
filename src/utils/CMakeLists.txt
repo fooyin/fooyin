@@ -14,6 +14,9 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/paths.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
+    ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
+    ${CMAKE_SOURCE_DIR}/include/utils/stardelegate.h
+    ${CMAKE_SOURCE_DIR}/include/utils/starrating.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
     ${CMAKE_SOURCE_DIR}/include/utils/tooltipfilter.h
@@ -61,6 +64,9 @@ set(SOURCES
     simpletreeview.cpp
     simpletreeview.h
     slider.cpp
+    stareditor.cpp
+    stardelegate.cpp
+    starrating.cpp
     tooltipfilter.cpp
     utils.cpp
     worker.cpp
