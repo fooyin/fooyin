@@ -840,25 +840,25 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="157"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="163"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať do súčasného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="158"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="164"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať do aktívného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="159"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="165"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do súčasného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="160"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="166"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do nového playlistu</translation>
     </message>
 </context>
 <context>
@@ -866,7 +866,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="108"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Triedenie knižnice</translation>
     </message>
 </context>
 <context>
@@ -874,7 +874,7 @@
     <message>
         <location filename="../../src/utils/widgets/fontbutton.cpp" line="70"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrať písmo</translation>
     </message>
 </context>
 <context>
@@ -883,7 +883,7 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="204"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="205"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
 </context>
 <context>
@@ -891,37 +891,37 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="84"/>
         <source>Restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>Navrátiť stav prehrávania</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="85"/>
         <source>Wait for tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Čakať na skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="88"/>
         <source>Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Správanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadržať otváranie fooyinu, pokiaľ sa nenačítali všetky skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Spúšťanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="101"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="115"/>
         <source>Show main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať hlavné okno</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="116"/>
@@ -931,17 +931,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="117"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamätať si s posledného spustenia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="136"/>
         <source>Language changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Jazyk zmenený</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="137"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Reštartuj, aby mali zmeny vplyv. Reštartovať teraz?</translation>
     </message>
 </context>
 <context>
@@ -949,29 +949,31 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="247"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluginy nenájdené</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="248"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niektoré pluginy sú pre plnú funkčnosť vyžadované.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="249"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Miesta kde hľadať pluginy:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="252"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukončiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="325"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Stíšiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="396"/>
@@ -1019,7 +1021,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovládanie prehrávača</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="444"/>
@@ -1027,17 +1029,17 @@
         <location filename="../../src/gui/guiapplication.cpp" line="456"/>
         <location filename="../../src/gui/guiapplication.cpp" line="461"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovládanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="449"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovládanie playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="455"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Ovládanie hlasitosti</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="460"/>
@@ -1047,7 +1049,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="468"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info o výbere</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="475"/>
@@ -1072,42 +1074,42 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="503"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyhľadávací riadok</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Prehľadávač zložiek</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="523"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Detaily</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="532"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladba nenájdená</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="536"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastaviť</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="552"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Audio Súbory (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="555"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať súbory</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="566"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať zložky</translation>
     </message>
 </context>
 <context>
@@ -1115,12 +1117,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="283"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="284"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozhranie</translation>
     </message>
 </context>
 <context>
@@ -1128,22 +1130,22 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="85"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky rozpoznať tému</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="86"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Svetlá</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="87"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Tmavá</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="88"/>
         <source>Use system icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Použiť systémové ikony</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="89"/>
@@ -1163,12 +1165,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="95"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="97"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Rýchle nastavenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="98"/>
@@ -1188,7 +1190,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozloženie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="248"/>
@@ -1203,7 +1205,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="264"/>
         <source>Layout Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov rozloženia</translation>
     </message>
 </context>
 <context>
@@ -1211,7 +1213,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="48"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;O aplikácii</translation>
     </message>
 </context>
 <context>
@@ -1220,13 +1222,13 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="199"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="219"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Umelec</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="200"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="220"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="201"/>
@@ -1238,13 +1240,13 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="202"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="222"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Dátum</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="203"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="223"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Žáner</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="204"/>
@@ -1256,49 +1258,49 @@
         <location filename="../../src/gui/info/infomodel.cpp" line="205"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="225"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Číslo skladby</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="206"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov súboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="207"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="231"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov zložky</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="208"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="235"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta k súboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="209"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Veľkosť súboru</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="210"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="241"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Naposledy upravený</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="211"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="245"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridaný</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="212"/>
         <location filename="../../src/gui/info/infomodel.cpp" line="249"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Trvanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="213"/>
@@ -1315,17 +1317,17 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="229"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Názvy súborov</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="231"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Názvy zložiek</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="238"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Celková veľkosť</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="251"/>
@@ -1335,22 +1337,22 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="281"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadáta</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="282"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Umiestnenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="283"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="288"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Skladby</translation>
     </message>
 </context>
 <context>
@@ -1358,7 +1360,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info o výbere</translation>
     </message>
 </context>
 <context>
@@ -1366,12 +1368,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="153"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="154"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Knižnica</translation>
     </message>
 </context>
 <context>
@@ -1379,12 +1381,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="76"/>
         <source>Auto refresh on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky obnoviť pri spustení</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="77"/>
         <source>Monitor libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Sledovať knižnice</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="90"/>
