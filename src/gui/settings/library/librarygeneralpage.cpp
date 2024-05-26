@@ -63,8 +63,6 @@ private:
 
     QCheckBox* m_autoRefresh;
     QCheckBox* m_monitorLibraries;
-
-    QLineEdit* m_sortScript;
 };
 
 LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager, LibraryManager* libraryManager,
@@ -75,7 +73,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     , m_model{new LibraryModel(m_libraryManager, this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
     , m_monitorLibraries{new QCheckBox(tr("Monitor libraries"), this)}
-    , m_sortScript{new QLineEdit(this)}
 {
     m_libraryView->setExtendableModel(m_model);
 
@@ -90,14 +87,10 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes"));
 
-    auto* sortScriptLabel = new QLabel(tr("Sort tracks by") + QStringLiteral(":"), this);
-
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_libraryView, 0, 0, 1, 2);
     mainLayout->addWidget(m_autoRefresh, 1, 0, 1, 2);
     mainLayout->addWidget(m_monitorLibraries, 2, 0, 1, 2);
-    mainLayout->addWidget(sortScriptLabel, 3, 0);
-    mainLayout->addWidget(m_sortScript, 3, 1);
 
     mainLayout->setColumnStretch(1, 1);
 
@@ -108,7 +101,6 @@ void LibraryGeneralPageWidget::load()
 {
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
     m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 
     m_model->populate();
 }
@@ -117,7 +109,6 @@ void LibraryGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
-    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->text());
 
     m_model->processQueue();
 }
@@ -126,7 +117,6 @@ void LibraryGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Core::AutoRefresh>();
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
-    m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
 void LibraryGeneralPageWidget::addLibrary() const

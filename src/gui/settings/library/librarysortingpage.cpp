@@ -23,12 +23,14 @@
 #include "gui/guiconstants.h"
 #include "sortingmodel.h"
 
+#include <core/coresettings.h>
 #include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QHeaderView>
 #include <QLabel>
+#include <QPlainTextEdit>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -44,15 +46,20 @@ public:
 
 private:
     SortingRegistry m_sortRegistry;
+    SettingsManager* m_settings;
 
     ExtendableTableView* m_sortList;
     SortingModel* m_model;
+
+    QPlainTextEdit* m_sortScript;
 };
 
 LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings)
     : m_sortRegistry{settings}
+    , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(&m_sortRegistry, this)}
+    , m_sortScript{new QPlainTextEdit(this)}
 {
     m_sortList->setExtendableModel(m_model);
     m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
@@ -66,8 +73,13 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_sortList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    auto* sortScriptLabel = new QLabel(tr("Sort tracks in library by") + QStringLiteral(":"), this);
+
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(m_sortList, 0, 0, 1, 3);
+    mainLayout->addWidget(m_sortList, 0, 0, 1, 2);
+    mainLayout->addWidget(sortScriptLabel, 1, 0);
+    mainLayout->addWidget(m_sortScript, 2, 0, 1, 2);
+    mainLayout->setRowStretch(0, 1);
 
     auto updateButtonState = [this]() {
         const auto selection = m_sortList->selectionModel()->selectedIndexes();
@@ -86,16 +98,19 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
 void LibrarySortingPageWidget::load()
 {
     m_model->populate();
+    m_sortScript->setPlainText(m_settings->value<Settings::Core::LibrarySortScript>());
 }
 
 void LibrarySortingPageWidget::apply()
 {
     m_model->processQueue();
+    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->toPlainText());
 }
 
 void LibrarySortingPageWidget::reset()
 {
     m_sortRegistry.reset();
+    m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings)
