@@ -469,7 +469,8 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
         }
 
         if(index.data(TagEditorItem::IsDefault).toBool()) {
-            return false;
+            setData(index.siblingAtColumn(1), {}, Qt::EditRole);
+            continue;
         }
 
         auto* item = static_cast<TagEditorItem*>(index.internalPointer());
@@ -486,6 +487,7 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
             }
         }
     }
+
     return true;
 }
 

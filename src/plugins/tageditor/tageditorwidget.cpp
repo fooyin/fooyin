@@ -101,10 +101,7 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
     QObject::connect(m_model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
-        const bool canRemove           = std::ranges::any_of(std::as_const(selected), [](const QModelIndex& index) {
-            return !index.data(TagEditorItem::IsDefault).toBool();
-        });
-        m_view->removeAction()->setEnabled(canRemove);
+        m_view->removeAction()->setEnabled(!selected.empty());
     });
 
     m_model->reset(tracks);
