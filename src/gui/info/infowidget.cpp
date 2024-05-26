@@ -32,6 +32,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMenu>
+#include <QScrollBar>
 #include <QTreeView>
 
 namespace Fooyin {
@@ -56,6 +57,8 @@ struct InfoWidget::Private
 
     InfoView* view;
     InfoModel* model;
+
+    int scrollPos{-1};
 
     Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerController* playerController_,
             SettingsManager* settings_)
@@ -123,8 +126,9 @@ struct InfoWidget::Private
         view->setAlternatingRowColors(altColours);
     }
 
-    void resetModel() const
+    void resetModel()
     {
+        scrollPos = view->verticalScrollBar()->value();
         model->resetModel(selectionController->selectedTracks(), playerController->currentTrack());
     }
 };
@@ -139,7 +143,12 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->resetModel(); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->spanHeaders(); });
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
+        p->spanHeaders();
+        if(p->scrollPos >= 0) {
+            p->view->verticalScrollBar()->setValue(std::exchange(p->scrollPos, -1));
+        }
+    });
 
     using namespace Settings::Gui::Internal;
 
