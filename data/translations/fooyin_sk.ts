@@ -14,32 +14,32 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Súbor</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Upraviť</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zobrazenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>&amp;Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Prehrávanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Library</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Knižnica</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pomoc</translation>
     </message>
 </context>
 <context>
@@ -53,7 +53,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="170"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozhranie</translation>
     </message>
 </context>
 <context>
@@ -76,17 +76,17 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="87"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Predný obal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="88"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadný obal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="89"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Umelec</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="91"/>
@@ -114,22 +114,22 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="447"/>
         <source>Show Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať skryté</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="456"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skryť %1</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="479"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarovnanie</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="489"/>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vľavo</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="490"/>
@@ -139,7 +139,7 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="491"/>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vpravo</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../../src/utils/widgets/colourbutton.cpp" line="71"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrať farbu</translation>
     </message>
 </context>
 <context>
@@ -165,17 +165,17 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="130"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Predný obal</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="131"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadný obal</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="132"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Umelec</translation>
     </message>
 </context>
 <context>
@@ -183,12 +183,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="74"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrať písmo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="84"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrať farbu</translation>
     </message>
 </context>
 <context>
@@ -196,17 +196,17 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="400"/>
         <source>Go up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ísť hore</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="402"/>
         <source>Go back</source>
-        <translation type="unfinished"></translation>
+        <translation>Ísť dozadu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="404"/>
         <source>Go forwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Ísť dopredu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="573"/>
@@ -216,27 +216,27 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="623"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Prehrať</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="626"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať k súčasnému playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="630"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať k aktívnemu playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="634"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do súčasného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="638"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do nového playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="656"/>
@@ -249,17 +249,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="213"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="214"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Widgety</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="214"/>
         <source>Directory Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Prehľadávač zložiek</translation>
     </message>
 </context>
 <context>
@@ -272,17 +272,17 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="74"/>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoznam</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať ikony</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Show indent</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať zarovnanie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
@@ -292,12 +292,12 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať cestu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Začať prehrávanie po odoslaní</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="83"/>
@@ -307,7 +307,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Dvoj-klik</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
@@ -322,7 +322,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="107"/>
         <source>Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti zobrazenia</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="132"/>
@@ -333,30 +333,30 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="133"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="139"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať do súčasného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať do aktívného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="141"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do súčasného playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="142"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Poslať do nového playlistu</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žiadna</translation>
     </message>
 </context>
 <context>
@@ -369,12 +369,12 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
         <source>Missing Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Chýbajúci widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Right-Click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Klikni pravým tlačidlom pre pridanie nového widgetu</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
@@ -387,7 +387,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nastavenia</translation>
     </message>
 </context>
 <context>
@@ -395,22 +395,22 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="294"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vľavo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="294"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Hore</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="301"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Vpravo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="301"/>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="308"/>
@@ -420,7 +420,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="308"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Navrchu</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="315"/>
@@ -430,53 +430,53 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="315"/>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Dole</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="330"/>
         <source>Paste (Insert)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="369"/>
         <source>&amp;Split</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozdeliť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="396"/>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Presunúť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="364"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nahradiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="271"/>
         <location filename="../../src/gui/editablelayout.cpp" line="278"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vložiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="374"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovať</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="387"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložiť (Nahradiť)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="402"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="527"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátiť</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="536"/>
@@ -508,12 +508,12 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="71"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Zariadenie</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="73"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="77"/>
@@ -536,12 +536,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="67"/>
         <source>Left-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarovnanie vľavo</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
         <source>Right-aligned</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarovnanie vpravo</translation>
     </message>
 </context>
 <context>
@@ -549,22 +549,22 @@
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="124"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať</translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="125"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="164"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunúť hore</translation>
     </message>
     <message>
         <location filename="../../src/utils/extendabletableview.cpp" line="172"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunúť dole</translation>
     </message>
 </context>
 <context>
@@ -572,22 +572,22 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="43"/>
         <source>Add &amp;Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať &amp;Súbory</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="48"/>
         <source>Ad&amp;d Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Prida&amp;ť Zložky</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="55"/>
         <source>&amp;New Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nový Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="63"/>
         <source>E&amp;xit</source>
-        <translation type="unfinished"></translation>
+        <translation>U&amp;končiť</translation>
     </message>
 </context>
 <context>
@@ -595,17 +595,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="36"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Žáner</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Albumový umelec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Umelec</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
@@ -615,7 +615,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Dátum</translation>
     </message>
 </context>
 <context>
@@ -623,18 +623,18 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="87"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyčistiť skupinu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="97"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="292"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyčistiť skupiny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="149"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="163"/>
@@ -645,22 +645,22 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="164"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="283"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať novú skupinu</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="311"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Späť</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="328"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokončiť</translation>
     </message>
 </context>
 <context>
@@ -668,12 +668,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="146"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Všetky (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="266"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Triediť</translation>
     </message>
 </context>
 <context>
@@ -681,17 +681,17 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="224"/>
         <source>Multiple Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Viacero stĺpcov</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="238"/>
         <source>Manage Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Spravovať skupiny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="429"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Triedenie knižnice</translation>
     </message>
 </context>
 <context>
@@ -704,7 +704,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="160"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Memo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="162"/>
@@ -722,17 +722,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="108"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Stĺpce</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluginy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre</translation>
     </message>
 </context>
 <context>
@@ -740,17 +740,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="245"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Všeobecné</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="246"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluginy</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="246"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtre</translation>
     </message>
 </context>
 <context>
@@ -758,7 +758,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
         <source>Show headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázať hlavičky</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="78"/>
@@ -773,42 +773,42 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
         <source>Start playback on send</source>
-        <translation type="unfinished"></translation>
+        <translation>Po odoslaní začať prehrávanie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="86"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Povolené</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="87"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Prepnúť keď zmenené</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="90"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhľad</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="93"/>
         <source>Row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Výška riadku</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Písmo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="95"/>
         <source>Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Farba</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="109"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Správanie kliknutí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="122"/>
@@ -818,7 +818,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="112"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Dvoj-klik</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="113"/>
@@ -828,13 +828,13 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="125"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="156"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="162"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Žiadny</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="157"/>
