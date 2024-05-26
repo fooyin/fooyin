@@ -19,6 +19,8 @@
 
 #include "infoview.h"
 
+#include <QPainter>
+
 namespace Fooyin {
 InfoView::InfoView(QWidget* parent)
     : QTreeView{parent}

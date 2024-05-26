@@ -32,6 +32,7 @@
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QJsonObject>
 #include <QMenu>
 #include <QScrollBar>
 #include <QTreeView>
@@ -161,6 +162,19 @@ QString InfoWidget::layoutName() const
     return QStringLiteral("SelectionInfo");
 }
 
+void InfoWidget::saveLayoutData(QJsonObject& layout)
+{
+    layout[QStringLiteral("Options")] = static_cast<int>(p->model->options());
+}
+
+void InfoWidget::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(QStringLiteral("Options"))) {
+        const auto options = static_cast<InfoModel::Options>(layout.value(QStringLiteral("Options")).toInt());
+        p->model->setOptions(options);
+    }
+}
+
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     using namespace Settings::Gui::Internal;
@@ -187,12 +201,40 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     QAction::connect(altColours, &QAction::triggered, this,
                      [this](bool checked) { p->settings->set<InfoAltColours>(checked); });
 
+    const auto options = p->model->options();
+
+    auto* showMetadata = new QAction(QStringLiteral("Metadata"), this);
+    showMetadata->setCheckable(true);
+    showMetadata->setChecked(options & InfoModel::Metadata);
+    QAction::connect(showMetadata, &QAction::triggered, this, [this](bool checked) {
+        p->model->setOption(InfoModel::Metadata, checked);
+        p->resetModel();
+    });
+
+    auto* showLocation = new QAction(QStringLiteral("Location"), this);
+    showLocation->setCheckable(true);
+    showLocation->setChecked(options & InfoModel::Location);
+    QAction::connect(showLocation, &QAction::triggered, this, [this](bool checked) {
+        p->model->setOption(InfoModel::Location, checked);
+        p->resetModel();
+    });
+
+    auto* showGeneral = new QAction(QStringLiteral("General"), this);
+    showGeneral->setCheckable(true);
+    showGeneral->setChecked(options & InfoModel::General);
+    QAction::connect(showGeneral, &QAction::triggered, this, [this](bool checked) {
+        p->model->setOption(InfoModel::General, checked);
+        p->resetModel();
+    });
+
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
+    menu->addSeparator();
+    menu->addAction(showMetadata);
+    menu->addAction(showLocation);
+    menu->addAction(showGeneral);
 
     menu->popup(event->globalPos());
 }
 } // namespace Fooyin
-
-#include "infowidget.moc"

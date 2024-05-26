@@ -93,12 +93,26 @@ public:
     };
     Q_ENUM(ItemParent)
 
+    enum Option
+    {
+        None     = 0,
+        Metadata = 1 << 0,
+        Location = 1 << 1,
+        General  = 1 << 2,
+        Default  = (Metadata | Location | General)
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
     explicit InfoModel(QObject* parent = nullptr);
     ~InfoModel() override;
 
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+
+    [[nodiscard]] Options options() const;
+    void setOption(Option option, bool enabled);
+    void setOptions(Options options);
 
     void resetModel(const TrackList& tracks, const Track& playingTrack);
 

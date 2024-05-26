@@ -189,6 +189,7 @@ struct InfoModel::Private
 
     std::unordered_map<QString, InfoItem> nodes;
 
+    Options options{Default};
     QFont headerFont;
 
     explicit Private(InfoModel* self_)
@@ -272,20 +273,25 @@ struct InfoModel::Private
         node->addTrackValue(std::forward<Value>(value));
     }
 
-    void addTrackNodes(int total, const Track& track)
+    void addTrackMetadata(const Track& track)
     {
         if(const auto artists = track.artists(); !artists.empty()) {
             checkAddEntryNode(QStringLiteral("Artist"), tr("Artist"), ItemParent::Metadata, artists);
         }
+
         checkAddEntryNode(QStringLiteral("Title"), tr("Title"), ItemParent::Metadata, track.title());
         checkAddEntryNode(QStringLiteral("Album"), tr("Album"), ItemParent::Metadata, track.album());
         checkAddEntryNode(QStringLiteral("Date"), tr("Date"), ItemParent::Metadata, track.date());
         checkAddEntryNode(QStringLiteral("Genre"), tr("Genre"), ItemParent::Metadata, track.genres());
         checkAddEntryNode(QStringLiteral("AlbumArtist"), tr("Album Artist"), ItemParent::Metadata, track.albumArtist());
+
         if(const int trackNumber = track.trackNumber(); trackNumber >= 0) {
             checkAddEntryNode(QStringLiteral("TrackNumber"), tr("Track Number"), ItemParent::Metadata, trackNumber);
         }
+    }
 
+    void addTrackLocation(int total, const Track& track)
+    {
         const QFileInfo file{track.filepath()};
 
         checkAddEntryNode(QStringLiteral("FileName"), total > 1 ? tr("File Names") : tr("File Name"),
@@ -307,24 +313,45 @@ struct InfoModel::Private
             checkAddEntryNode(QStringLiteral("Added"), tr("Added"), ItemParent::Location, track.addedTime(),
                               InfoItem::Max, Utils::formatTimeMs);
         }
+    }
+
+    void addTrackGeneral(int total, const Track& track)
+    {
+        if(total > 1) {
+            checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, total, InfoItem::Total);
+        }
 
         checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General, track.duration(),
                           InfoItem::Total, Utils::msToString);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
                           InfoItem::Percentage);
+
         if(const int bitDepth = track.bitDepth(); bitDepth > 0) {
             checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, bitDepth,
                               InfoItem::Percentage);
         }
+
         checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
                           ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
                               return QString::number(bitrate) + QStringLiteral("kbps");
                           });
-
         checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General,
                           QString::number(track.sampleRate()) + QStringLiteral(" Hz"), InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General, track.typeString(),
                           InfoItem::Percentage);
+    }
+
+    void addTrackNodes(int total, const Track& track)
+    {
+        if(options & Metadata) {
+            addTrackMetadata(track);
+        }
+        if(options & Location) {
+            addTrackLocation(total, track);
+        }
+        if(options & General) {
+            addTrackGeneral(total, track);
+        }
     }
 };
 
@@ -334,30 +361,6 @@ InfoModel::InfoModel(QObject* parent)
 { }
 
 InfoModel::~InfoModel() = default;
-
-void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
-{
-    TrackList infoTracks{tracks};
-
-    if(infoTracks.empty() && playingTrack.isValid()) {
-        infoTracks.push_back(playingTrack);
-    }
-
-    beginResetModel();
-    p->reset();
-
-    const int total = static_cast<int>(infoTracks.size());
-
-    if(total > 0) {
-        p->checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, total, InfoItem::Total);
-
-        for(const Track& track : infoTracks) {
-            p->addTrackNodes(total, track);
-        }
-    }
-
-    endResetModel();
-}
 
 QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -420,6 +423,48 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
     }
 
     return {};
+}
+
+InfoModel::Options InfoModel::options() const
+{
+    return p->options;
+}
+
+void InfoModel::setOption(Option option, bool enabled)
+{
+    if(enabled) {
+        p->options |= option;
+    }
+    else {
+        p->options &= ~option;
+    }
+}
+
+void InfoModel::setOptions(Options options)
+{
+    p->options = options;
+}
+
+void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
+{
+    TrackList infoTracks{tracks};
+
+    if(infoTracks.empty() && playingTrack.isValid()) {
+        infoTracks.push_back(playingTrack);
+    }
+
+    beginResetModel();
+    p->reset();
+
+    const int total = static_cast<int>(infoTracks.size());
+
+    if(total > 0) {
+        for(const Track& track : infoTracks) {
+            p->addTrackNodes(total, track);
+        }
+    }
+
+    endResetModel();
 }
 } // namespace Fooyin
 
