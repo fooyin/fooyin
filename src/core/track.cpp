@@ -517,7 +517,12 @@ void Track::setTitle(const QString& title)
 
 void Track::setArtists(const QStringList& artists)
 {
-    p->artists = artists;
+    if(artists.size() == 1 && artists.front().isEmpty()) {
+        p->artists.clear();
+    }
+    else {
+        p->artists = artists;
+    }
 
     if(!p->hash.isEmpty()) {
         generateHash();
@@ -535,7 +540,12 @@ void Track::setAlbum(const QString& title)
 
 void Track::setAlbumArtists(const QStringList& artists)
 {
-    p->albumArtists = artists;
+    if(artists.size() == 1 && artists.front().isEmpty()) {
+        p->albumArtists.clear();
+    }
+    else {
+        p->albumArtists = artists;
+    }
 }
 
 void Track::setTrackNumber(int number)
@@ -568,7 +578,12 @@ void Track::setDiscTotal(int total)
 
 void Track::setGenres(const QStringList& genres)
 {
-    p->genres = genres;
+    if(genres.size() == 1 && genres.front().isEmpty()) {
+        p->genres.clear();
+    }
+    else {
+        p->genres = genres;
+    }
 }
 
 void Track::setComposer(const QString& composer)
