@@ -196,6 +196,8 @@ set(SOURCES
     widgets/hovermenu.h
     widgets/logslider.cpp
     widgets/logslider.h
+    widgets/lyricswidget.h
+    widgets/lyricswidget.cpp
     widgets/menuheader.cpp
     widgets/menuheader.h
     widgets/seekcontainer.cpp

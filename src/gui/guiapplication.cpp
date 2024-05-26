@@ -61,6 +61,7 @@
 #include "settings/widgets/statuswidgetpage.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
+#include "widgets/lyricswidget.h"
 #include "widgets/spacer.h"
 #include "widgets/splitterwidget.h"
 #include "widgets/statuswidget.h"
@@ -473,6 +474,14 @@ struct GuiApplication::Private
                 return new CoverWidget(playerController, &selectionController, settingsManager, mainWindow.get());
             },
             tr("Artwork Panel"));
+
+        widgetProvider.registerWidget(
+            QStringLiteral("Lyrics"),
+            [this]() {
+                return new LyricsWidget(playerController, mainWindow.get());
+            },
+            tr("Lyrics"));
+        widgetProvider.setLimit(QStringLiteral("Lyrics"), 1);
 
         widgetProvider.registerWidget(
             QStringLiteral("Playlist"),
