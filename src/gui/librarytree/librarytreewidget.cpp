@@ -412,13 +412,15 @@ struct LibraryTreeWidget::Private
             const QModelIndex index = indexes.top();
             indexes.pop();
 
-            if(index.isValid() && libraryTree->isExpanded(index)) {
-                keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toString());
-            }
+            if(libraryTree->isExpanded(index) || !index.isValid()) {
+                if(index.isValid()) {
+                    keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toString());
+                }
 
-            const int childCount = model->rowCount(index);
-            for(int row{0}; row < childCount; ++row) {
-                indexes.push(model->index(row, 0, index));
+                const int childCount = model->rowCount(index);
+                for(int row{0}; row < childCount; ++row) {
+                    indexes.push(model->index(row, 0, index));
+                }
             }
         }
 

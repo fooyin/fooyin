@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <utils/multilinedelegate.h>
 
+#include <QAction>
 #include <QGridLayout>
 #include <QHeaderView>
 
