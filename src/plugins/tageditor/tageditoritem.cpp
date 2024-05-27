@@ -68,6 +68,11 @@ QString TagEditorItem::value() const
     return m_value;
 }
 
+QStringList TagEditorItem::values() const
+{
+    return m_values;
+}
+
 bool TagEditorItem::isDefault() const
 {
     return m_isDefault;
@@ -85,7 +90,7 @@ void TagEditorItem::addTrack()
 
 void TagEditorItem::addTrackValue(const QString& value)
 {
-    if(m_values.size() < MaxValueCount && !m_values.contains(value)) {
+    if(!value.isEmpty() && m_values.size() < MaxValueCount && !m_values.contains(value)) {
         if(m_trackCount == 0 || withinCharLimit(m_values)) {
             m_values.append(value);
             m_values.sort();
@@ -97,6 +102,10 @@ void TagEditorItem::addTrackValue(const QString& value)
 
 void TagEditorItem::addTrackValue(const QStringList& values)
 {
+    if(values.empty()) {
+        return;
+    }
+
     if(m_values.size() < MaxValueCount) {
         for(const auto& trackValue : values) {
             if(m_values.contains(trackValue)) {

@@ -37,6 +37,7 @@ public:
 
     [[nodiscard]] QString name() const;
     [[nodiscard]] QString value() const;
+    [[nodiscard]] QStringList values() const;
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
 
