@@ -661,7 +661,7 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
         // Support 0-100 scale for now
         const int rating = fields[Fooyin::Tag::Rating].front().toInt();
         if(rating > 0 && rating <= 100) {
-            track.setRating(static_cast<float>(rating / 10));
+            track.setRating(static_cast<float>(rating) / 10);
         }
     }
 }
