@@ -317,8 +317,26 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
     if(props.contains(Fooyin::Tag::Date)) {
         track.setDate(convertString(props[Fooyin::Tag::Date].toString()));
     }
-    if(props.contains(Fooyin::Tag::Rating)) {
-        track.setRating(convertString(props[Fooyin::Tag::Rating].toString()).toFloat());
+    if(props.contains(Fooyin::Tag::Rating) && track.rating() <= 0) {
+        const int rating = props[Fooyin::Tag::Rating].front().toInt();
+        if(rating > 0 && rating <= 100) {
+            float adjustedRating = static_cast<float>(rating) / 10;
+            if(adjustedRating > 1.0) {
+                // Assume a scale of 0-100
+                adjustedRating /= 10;
+            }
+            else {
+                // Assume 1=1 star
+                adjustedRating *= 2;
+            }
+            track.setRating(adjustedRating);
+        }
+    }
+    if(props.contains("FMPS_RATING") && track.rating() <= 0) {
+        const float rating = convertString(props["FMPS_Rating"].front()).toFloat();
+        if(rating > 0 && rating <= 1.0) {
+            track.setRating(rating);
+        }
     }
 
     if(!skipExtra) {
@@ -385,13 +403,6 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
         if(!discFrame.isEmpty()) {
             const QString discNumbers = convertString(discFrame.front()->toString());
             readDiscTotalPair(discNumbers, track);
-        }
-    }
-
-    if(frames.contains("FMPS_Rating") && track.rating() <= 0) {
-        const float rating = convertString(frames["FMPS_Rating"].front()->toString()).toFloat();
-        if(rating > 0 && rating <= 1.0) {
-            track.setRating(rating);
         }
     }
 
@@ -652,18 +663,6 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
             track.setDiscTotal(discTotal.front().toInt());
         }
     }
-
-    if(fields.contains("FMPS_RATING") && track.rating() <= 0) {
-        track.setRating(convertString(fields["FMPS_RATING"].front()).toFloat());
-    }
-
-    if(fields.contains(Fooyin::Tag::Rating) && track.rating() <= 0) {
-        // Support 0-100 scale for now
-        const int rating = fields[Fooyin::Tag::Rating].front().toInt();
-        if(rating > 0 && rating <= 100) {
-            track.setRating(static_cast<float>(rating) / 10);
-        }
-    }
 }
 
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
@@ -743,16 +742,6 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
 
         return 1.0;
     };
-
-    if(map.contains("FMPS_RATING")) {
-        const TagLib::ASF::AttributeList& ratings = map["FMPS_RATING"];
-        if(!ratings.isEmpty()) {
-            const float rating = convertString(ratings.front().toString()).toFloat();
-            if(track.rating() <= 0 && rating > 0 && rating <= 1.0) {
-                track.setRating(rating);
-            }
-        }
-    }
 
     if(map.contains("WM/SharedUserRating") && track.rating() <= 0) {
         const TagLib::ASF::AttributeList& ratings = map["WM/SharedUserRating"];
