@@ -124,8 +124,110 @@ struct PcmHandleDeleter
         }
     }
 };
-
 using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
+
+struct CtlHandleDeleter
+{
+    void operator()(snd_ctl_t* handle) const
+    {
+        if(handle) {
+            snd_ctl_close(handle);
+        }
+    }
+};
+using CtlHandleUPtr = std::unique_ptr<snd_ctl_t, CtlHandleDeleter>;
+
+void getHardwareDevices(Fooyin::OutputDevices& devices)
+{
+    snd_pcm_stream_name(SND_PCM_STREAM_PLAYBACK);
+
+    int card{-1};
+    snd_ctl_card_info_t* cardinfo{nullptr};
+    snd_ctl_card_info_alloca(&cardinfo);
+
+    while(true) {
+        int err = snd_card_next(&card);
+        if(checkError(err, QStringLiteral("Unable to get soundcard"))) {
+            break;
+        }
+
+        if(card < 0) {
+            break;
+        }
+
+        char str[32];
+        snprintf(str, sizeof(str) - 1, "hw:%d", card);
+
+        snd_ctl_t* rawHandle;
+        err = snd_ctl_open(&rawHandle, str, 0);
+        if(checkError(err, QStringLiteral("Unable to open soundcard (%1)").arg(card))) {
+            continue;
+        }
+        const CtlHandleUPtr handle = {rawHandle, CtlHandleDeleter()};
+
+        err = snd_ctl_card_info(handle.get(), cardinfo);
+        if(checkError(err, QStringLiteral("Control failure for soundcard (%1)").arg(card))) {
+            continue;
+        }
+
+        int dev{-1};
+        snd_pcm_info_t* pcminfo{nullptr};
+        snd_pcm_info_alloca(&pcminfo);
+        while(true) {
+            err = snd_ctl_pcm_next_device(handle.get(), &dev);
+            if(checkError(err, QStringLiteral("Failed to get device for soundcard (%1)").arg(card))) {
+                continue;
+            }
+            if(dev < 0) {
+                break;
+            }
+
+            snd_pcm_info_set_device(pcminfo, dev);
+            snd_pcm_info_set_subdevice(pcminfo, 0);
+            snd_pcm_info_set_stream(pcminfo, SND_PCM_STREAM_PLAYBACK);
+
+            err = snd_ctl_pcm_info(handle.get(), pcminfo);
+            if(checkError(err, QStringLiteral("Failed to get control info for soundcard (%1)").arg(card))) {
+                continue;
+            }
+
+            Fooyin::OutputDevice device;
+            device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
+            device.desc = QStringLiteral("%1 - %2 %3")
+                              .arg(device.name, QString::fromLatin1(snd_ctl_card_info_get_name(cardinfo)),
+                                   QString::fromLatin1(snd_pcm_info_get_name(pcminfo)));
+            devices.emplace_back(device);
+        }
+    }
+}
+
+void getPcmDevices(Fooyin::OutputDevices& devices)
+{
+    DeviceHint deviceHint;
+
+    if(snd_device_name_hint(-1, "pcm", &deviceHint.hints) < 0) {
+        return;
+    }
+
+    for(int n{0}; deviceHint.hints[n]; ++n) {
+        const DeviceString name{snd_device_name_get_hint(deviceHint.hints[n], "NAME")};
+        const DeviceString desc{snd_device_name_get_hint(deviceHint.hints[n], "DESC")};
+        const DeviceString io{snd_device_name_get_hint(deviceHint.hints[n], "IOID")};
+
+        if(!name || !desc || (io && strcmp(io.str, "Output") != 0)) {
+            continue;
+        }
+
+        if(strcmp(name.str, "default") == 0) {
+            devices.insert(devices.begin(), {QString::fromLatin1(name.str), QString::fromLatin1(desc.str)});
+        }
+        else {
+            devices.emplace_back(
+                QString::fromLatin1(name.str),
+                QStringLiteral("%1 - %2").arg(QString::fromLatin1(name.str), QString::fromLatin1(desc.str)));
+        }
+    }
+}
 } // namespace
 
 namespace Fooyin::Alsa {
@@ -144,7 +246,7 @@ struct AlsaOutput::Private
     QString device{QStringLiteral("default")};
     bool started{false};
 
-    Private(AlsaOutput* self_)
+    explicit Private(AlsaOutput* self_)
         : self{self_}
     { }
 
@@ -200,9 +302,9 @@ struct AlsaOutput::Private
             return false;
         }
 
-        uint32_t sampleRate = format.sampleRate();
+        const auto sampleRate = static_cast<uint32_t>(format.sampleRate());
 
-        err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, nullptr);
+        err = snd_pcm_hw_params_set_rate(handle, hwParams, sampleRate, 0);
         if(checkError(err, QStringLiteral("Failed to set sample rate"))) {
             return false;
         }
@@ -452,28 +554,8 @@ OutputDevices AlsaOutput::getAllDevices() const
 {
     OutputDevices devices;
 
-    DeviceHint deviceHint;
-
-    if(snd_device_name_hint(-1, "pcm", &deviceHint.hints) < 0) {
-        return {};
-    }
-
-    for(int n{0}; deviceHint.hints[n]; ++n) {
-        const DeviceString name{snd_device_name_get_hint(deviceHint.hints[n], "NAME")};
-        const DeviceString desc{snd_device_name_get_hint(deviceHint.hints[n], "DESC")};
-        const DeviceString io{snd_device_name_get_hint(deviceHint.hints[n], "IOID")};
-
-        if(!name || !desc || (io && strcmp(io.str, "Output") != 0)) {
-            continue;
-        }
-
-        if(strcmp(name.str, "default") == 0) {
-            devices.insert(devices.begin(), {QString::fromLatin1(name.str), QString::fromLatin1(desc.str)});
-        }
-        else {
-            devices.emplace_back(QString::fromLatin1(name.str), QString::fromLatin1(desc.str));
-        }
-    }
+    getPcmDevices(devices);
+    getHardwareDevices(devices);
 
     return devices;
 }
@@ -488,7 +570,7 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
     snd_pcm_sframes_t err{0};
     err = snd_pcm_writei(p->pcmHandle.get(), buffer.constData().data(), frameCount);
-    if(checkError(err, QStringLiteral("Write error"))) {
+    if(checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
         return 0;
     }
     if(err != frameCount) {
