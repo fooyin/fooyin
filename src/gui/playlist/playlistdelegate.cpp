@@ -149,7 +149,7 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         painter->drawRect(coverFrameRect);
 
         const int width = coverRect.width();
-        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width, true));
+        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width, opt.widget->devicePixelRatioF(), true));
     }
 }
 
@@ -299,8 +299,9 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
                 opt.rect.adjust(imagePadding, imagePaddingTop, -imagePadding, imagePaddingTop);
 
-                style->drawItemPixmap(painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
-                                      Utils::scalePixmap(image, opt.rect.width(), true));
+                style->drawItemPixmap(
+                    painter, opt.rect, Qt::AlignHCenter | Qt::AlignTop,
+                    Utils::scalePixmap(image, opt.rect.width(), opt.widget->devicePixelRatioF(), true));
             }
         }
         else {

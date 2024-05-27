@@ -30,6 +30,7 @@
 #include <QContextMenuEvent>
 #include <QMenuBar>
 #include <QTimer>
+#include <QWindow>
 
 constexpr auto MainWindowGeometry = "Interface/Geometry";
 
@@ -47,6 +48,11 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
 
     resize(1280, 720);
     setWindowIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
+
+    if(windowHandle()) {
+        QObject::connect(windowHandle(), &QWindow::screenChanged, this,
+                         [this]() { m_settings->set<Settings::Gui::MainWindowPixelRatio>(devicePixelRatioF()); });
+    }
 }
 
 MainWindow::~MainWindow()
@@ -84,6 +90,12 @@ void MainWindow::prependTitle(const QString& title)
 void MainWindow::resetTitle()
 {
     setWindowTitle(QStringLiteral("fooyin"));
+}
+
+void MainWindow::showEvent(QShowEvent* event)
+{
+    QMainWindow::showEvent(event);
+    m_settings->set<Settings::Gui::MainWindowPixelRatio>(devicePixelRatioF());
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

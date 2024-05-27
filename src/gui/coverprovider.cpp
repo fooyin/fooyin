@@ -73,6 +73,7 @@ struct CoverProvider::Private
 
     SettingsManager* settings;
 
+    double windowDpr{1.0};
     bool usePlacerholder{true};
     QString coverKey;
     bool storeThumbnail{false};
@@ -96,6 +97,7 @@ struct CoverProvider::Private
     explicit Private(CoverProvider* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
+        , windowDpr{settings->value<Settings::Gui::MainWindowPixelRatio>()}
         , size{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
                settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
         , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
@@ -106,6 +108,7 @@ struct CoverProvider::Private
         settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
             self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
         settings->subscribe<Settings::Gui::IconTheme>(self, [this]() { QPixmapCache::remove(noCoverKey); });
+        settings->subscribe<Settings::Gui::MainWindowPixelRatio>(self, [this](double ratio) { windowDpr = ratio; });
     }
 
     [[nodiscard]] static QPixmap loadCachedCover(const QString& key, bool isThumb = false)
@@ -128,7 +131,7 @@ struct CoverProvider::Private
 
         const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
         static const QSize coverSize{MaxSize, MaxSize};
-        const QPixmap cover = icon.pixmap(coverSize);
+        const QPixmap cover = icon.pixmap(coverSize, windowDpr);
 
         noCoverKey = QPixmapCache::insert(cover);
 
@@ -178,8 +181,8 @@ struct CoverProvider::Private
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
         auto loaderResult
-            = Utils::asyncExec([this, coverSize = size, thumbOverride = storeThumbnail, limit = limitThumbSize, key,
-                                track, type, thumbnail]() -> CoverLoaderResult {
+            = Utils::asyncExec([this, coverSize = size, dpr = windowDpr, thumbOverride = storeThumbnail,
+                                limit = limitThumbSize, key, track, type, thumbnail]() -> CoverLoaderResult {
                   QImage image;
 
                   bool isThumb{thumbnail};
@@ -196,7 +199,7 @@ struct CoverProvider::Private
                           if(!image.isNull() && isThumb && !thumbOverride) {
                               // Only store thumbnails in disk cache for embedded artwork (unless overriden)
                               isThumb = false;
-                              image   = Utils::scaleImage(image, coverSize);
+                              image   = Utils::scaleImage(image, coverSize, dpr);
                           }
                       }
                   }
@@ -209,7 +212,7 @@ struct CoverProvider::Private
                   }
 
                   if(!image.isNull()) {
-                      image = Utils::scaleImage(image, MaxSize);
+                      image = Utils::scaleImage(image, MaxSize, dpr);
                   }
 
                   if(isThumb) {
@@ -218,7 +221,7 @@ struct CoverProvider::Private
                       }
                       else if(!QFileInfo::exists(cachePath)) {
                           if(limit) {
-                              image = Utils::scaleImage(image, coverSize);
+                              image = Utils::scaleImage(image, coverSize, dpr);
                           }
                           saveThumbnail(image, key);
                       }

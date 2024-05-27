@@ -154,46 +154,54 @@ QString capitalise(const QString& str)
     return parts.join(QStringLiteral(" "));
 }
 
-QPixmap scalePixmap(const QPixmap& image, const QSize& size, bool upscale)
+QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale)
 {
-    const QSize scale = 4 * size;
-    const int width   = image.size().width();
-    const int height  = image.size().height();
+    const QSize scaledSize(static_cast<int>(size.width() * dpr), static_cast<int>(size.height() * dpr));
+    const int width  = image.size().width();
+    const int height = image.size().height();
 
-    if(width > size.width() || height > size.height()) {
-        return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap scaledPixmap{image};
+
+    if(width > scaledSize.width() || height > scaledSize.height()) {
+        scaledPixmap = image.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     if(upscale) {
-        return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        scaledPixmap = image.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 
-    return image;
+    scaledPixmap.setDevicePixelRatio(dpr);
+
+    return scaledPixmap;
 }
 
-QPixmap scalePixmap(const QPixmap& image, int width, bool upscale)
+QPixmap scalePixmap(const QPixmap& image, int width, double dpr, bool upscale)
 {
-    return scalePixmap(image, {width, width}, upscale);
+    return scalePixmap(image, {width, width}, dpr, upscale);
 }
 
-QImage scaleImage(const QImage& image, const QSize& size, bool upscale)
+QImage scaleImage(const QImage& image, const QSize& size, double dpr, bool upscale)
 {
-    const QSize scale = 4 * size;
-    const int width   = image.size().width();
-    const int height  = image.size().height();
+    const QSize scaledSize(static_cast<int>(size.width() * dpr), static_cast<int>(size.height() * dpr));
+    const int width  = image.size().width();
+    const int height = image.size().height();
 
-    if(width > size.width() || height > size.height()) {
-        return image.scaled(scale).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QImage scaledImage{image};
+
+    if(width > scaledSize.width() || height > scaledSize.height()) {
+        scaledImage = image.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     if(upscale) {
-        return image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        scaledImage = image.scaled(scaledSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 
-    return image;
+    scaledImage.setDevicePixelRatio(dpr);
+
+    return scaledImage;
 }
 
-QImage scaleImage(const QImage& image, int width, bool upscale)
+QImage scaleImage(const QImage& image, int width, double dpr, bool upscale)
 {
-    return scaleImage(image, {width, width}, upscale);
+    return scaleImage(image, {width, width}, dpr, upscale);
 }
 
 QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
