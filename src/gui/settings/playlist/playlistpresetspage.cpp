@@ -50,6 +50,7 @@ public:
     explicit ExpandableGroupBox(int rowHeight, QWidget* parent = nullptr)
         : ExpandableInput{ExpandableInput::CustomWidget, parent}
         , m_groupBox{new QGroupBox(this)}
+        , m_overrideHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
         , m_rowHeight{new QSpinBox(this)}
         , m_leftScript{new QTextEdit(this)}
         , m_rightScript{new QTextEdit(this)}
@@ -60,14 +61,16 @@ public:
 
         auto* groupLayout = new QGridLayout(m_groupBox);
 
+        m_overrideHeight->setChecked(rowHeight > 0);
         m_rowHeight->setValue(rowHeight);
-
-        auto* rowHeightLabel = new QLabel(tr("Row height") + QStringLiteral(":"), this);
+        m_rowHeight->setEnabled(m_overrideHeight->isChecked());
 
         auto* leftScript  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
         auto* rightScript = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
-        groupLayout->addWidget(rowHeightLabel, 0, 0);
+        m_rowHeight->setMinimum(1);
+
+        groupLayout->addWidget(m_overrideHeight, 0, 0);
         groupLayout->addWidget(m_rowHeight, 0, 1);
         groupLayout->addWidget(leftScript, 1, 0, 1, 3);
         groupLayout->addWidget(m_leftScript, 2, 0, 1, 3);
@@ -75,6 +78,9 @@ public:
         groupLayout->addWidget(m_rightScript, 4, 0, 1, 3);
 
         groupLayout->setColumnStretch(2, 1);
+
+        QObject::connect(m_overrideHeight, &QCheckBox::toggled, this,
+                         [this](bool checked) { m_rowHeight->setEnabled(checked); });
     }
 
     void setLeftScript(const QString& script)
@@ -99,13 +105,14 @@ public:
 
     int rowHeight() const
     {
-        return m_rowHeight->value();
+        return m_overrideHeight->isChecked() ? m_rowHeight->value() : 0;
     }
 
     void setReadOnly(bool readOnly) override
     {
         ExpandableInput::setReadOnly(readOnly);
 
+        m_overrideHeight->setDisabled(readOnly);
         m_rowHeight->setReadOnly(readOnly);
         m_leftScript->setReadOnly(readOnly);
         m_rightScript->setReadOnly(readOnly);
@@ -113,6 +120,7 @@ public:
 
 private:
     QGroupBox* m_groupBox;
+    QCheckBox* m_overrideHeight;
     QSpinBox* m_rowHeight;
     QTextEdit* m_leftScript;
     QTextEdit* m_rightScript;
@@ -182,12 +190,14 @@ private:
     QTextEdit* m_headerSubtitle;
     QTextEdit* m_headerSideText;
     QTextEdit* m_headerInfo;
+    QCheckBox* m_overrideHeaderHeight;
     QSpinBox* m_headerRowHeight;
 
     ExpandableInputBox* m_subHeaders;
 
     QTextEdit* m_trackLeftText;
     QTextEdit* m_trackRightText;
+    QCheckBox* m_overrideTrackHeight;
     QSpinBox* m_trackRowHeight;
 
     QCheckBox* m_showCover;
@@ -209,9 +219,11 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     , m_headerSubtitle{new QTextEdit(this)}
     , m_headerSideText{new QTextEdit(this)}
     , m_headerInfo{new QTextEdit(this)}
+    , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
     , m_headerRowHeight{new QSpinBox(this)}
     , m_trackLeftText{new QTextEdit(tr("Left-aligned text") + QStringLiteral(":"), this)}
     , m_trackRightText{new QTextEdit(tr("Right-aligned text") + QStringLiteral(":"), this)}
+    , m_overrideTrackHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show cover"), this)}
     , m_simpleHeader{new QCheckBox(tr("Simple header"), this)}
@@ -235,25 +247,26 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
     auto* headerWidget = new QWidget();
     auto* headerLayout = new QGridLayout(headerWidget);
 
-    auto* headerRowHeight = new QLabel(tr("Row height") + QStringLiteral(":"), this);
-
     auto* headerTitle    = new QLabel(tr("Title") + QStringLiteral(":"), this);
     auto* headerSubtitle = new QLabel(tr("Subtitle") + QStringLiteral(":"), this);
     auto* headerSide     = new QLabel(tr("Side") + QStringLiteral(":"), this);
     auto* headerInfo     = new QLabel(tr("Info") + QStringLiteral(":"), this);
 
-    headerLayout->addWidget(headerRowHeight, 0, 0);
-    headerLayout->addWidget(m_headerRowHeight, 0, 1);
-    headerLayout->addWidget(m_simpleHeader, 1, 0, 1, 2);
-    headerLayout->addWidget(m_showCover, 2, 0, 1, 2);
-    headerLayout->addWidget(headerTitle, 3, 0, 1, 5);
-    headerLayout->addWidget(m_headerTitle, 4, 0, 1, 5);
-    headerLayout->addWidget(headerSubtitle, 5, 0, 1, 5);
-    headerLayout->addWidget(m_headerSubtitle, 6, 0, 1, 5);
-    headerLayout->addWidget(headerSide, 7, 0, 1, 5);
-    headerLayout->addWidget(m_headerSideText, 8, 0, 1, 5);
-    headerLayout->addWidget(headerInfo, 9, 0, 1, 5);
-    headerLayout->addWidget(m_headerInfo, 10, 0, 1, 5);
+    m_headerRowHeight->setMinimum(1);
+
+    int row{0};
+    headerLayout->addWidget(m_simpleHeader, row++, 0, 1, 2);
+    headerLayout->addWidget(m_showCover, row++, 0, 1, 2);
+    headerLayout->addWidget(m_overrideHeaderHeight, row, 0);
+    headerLayout->addWidget(m_headerRowHeight, row++, 1);
+    headerLayout->addWidget(headerTitle, row++, 0, 1, 5);
+    headerLayout->addWidget(m_headerTitle, row++, 0, 1, 5);
+    headerLayout->addWidget(headerSubtitle, row++, 0, 1, 5);
+    headerLayout->addWidget(m_headerSubtitle, row++, 0, 1, 5);
+    headerLayout->addWidget(headerSide, row++, 0, 1, 5);
+    headerLayout->addWidget(m_headerSideText, row++, 0, 1, 5);
+    headerLayout->addWidget(headerInfo, row++, 0, 1, 5);
+    headerLayout->addWidget(m_headerInfo, row++, 0, 1, 5);
 
     headerLayout->setColumnStretch(4, 1);
     headerLayout->setRowStretch(headerLayout->rowCount(), 1);
@@ -279,12 +292,12 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
 
     subheaderLayout->setRowStretch(subheaderLayout->rowCount(), 1);
 
-    auto* trackRowHeight = new QLabel(tr("Row height") + QStringLiteral(":"), this);
-
     auto* trackLeft  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
     auto* TrackRight = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
-    trackLayout->addWidget(trackRowHeight, 0, 0);
+    m_trackRowHeight->setMinimum(1);
+
+    trackLayout->addWidget(m_overrideTrackHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
     trackLayout->addWidget(trackLeft, 1, 0, 1, 3);
     trackLayout->addWidget(m_trackLeftText, 2, 0, 1, 3);
@@ -309,6 +322,11 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
         m_headerSubtitle->setEnabled(!checked);
         m_headerInfo->setEnabled(!checked);
     });
+
+    QObject::connect(m_overrideHeaderHeight, &QCheckBox::toggled, this,
+                     [this](bool checked) { m_headerRowHeight->setEnabled(checked); });
+    QObject::connect(m_overrideTrackHeight, &QCheckBox::toggled, this,
+                     [this](bool checked) { m_trackRowHeight->setEnabled(checked); });
 }
 
 void PlaylistPresetsPageWidget::load()
@@ -400,7 +418,7 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.header.sideText.script = m_headerSideText->toPlainText();
     preset.header.info.script     = m_headerInfo->toPlainText();
 
-    preset.header.rowHeight = m_headerRowHeight->value();
+    preset.header.rowHeight = m_overrideHeaderHeight->isChecked() ? m_headerRowHeight->value() : 0;
     preset.header.simple    = m_simpleHeader->isChecked();
     preset.header.showCover = m_showCover->isEnabled() && m_showCover->isChecked();
 
@@ -408,7 +426,7 @@ void PlaylistPresetsPageWidget::updatePreset()
 
     preset.track.leftText.script  = m_trackLeftText->toPlainText();
     preset.track.rightText.script = m_trackRightText->toPlainText();
-    preset.track.rowHeight        = m_trackRowHeight->value();
+    preset.track.rowHeight        = m_overrideTrackHeight->isChecked() ? m_trackRowHeight->value() : 0;
 
     m_presetRegistry.changeItem(preset);
 }
@@ -457,13 +475,16 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSideText->setPlainText(preset.header.sideText.script);
     m_headerInfo->setPlainText(preset.header.info.script);
 
-    m_headerRowHeight->setValue(preset.header.rowHeight);
-    m_headerRowHeight->setReadOnly(preset.isDefault);
-
     m_simpleHeader->setChecked(preset.header.simple);
     m_simpleHeader->setDisabled(preset.isDefault);
     m_showCover->setChecked(preset.header.showCover);
     m_showCover->setDisabled(preset.isDefault || preset.header.simple);
+
+    m_overrideHeaderHeight->setChecked(preset.header.rowHeight > 0);
+    m_overrideHeaderHeight->setEnabled(!preset.isDefault);
+    m_headerRowHeight->setValue(preset.header.rowHeight);
+    m_headerRowHeight->setReadOnly(preset.isDefault);
+    m_headerRowHeight->setEnabled(m_overrideHeaderHeight->isChecked());
 
     m_subHeaders->setReadOnly(preset.isDefault);
 
@@ -479,8 +500,12 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
 
     m_trackLeftText->setPlainText(preset.track.leftText.script);
     m_trackRightText->setPlainText(preset.track.rightText.script);
+
+    m_overrideTrackHeight->setChecked(preset.track.rowHeight > 0);
+    m_overrideTrackHeight->setEnabled(!preset.isDefault);
     m_trackRowHeight->setValue(preset.track.rowHeight);
     m_trackRowHeight->setReadOnly(preset.isDefault);
+    m_trackRowHeight->setEnabled(m_overrideTrackHeight->isChecked());
 }
 
 void PlaylistPresetsPageWidget::clearBlocks()
