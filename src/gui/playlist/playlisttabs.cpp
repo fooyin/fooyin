@@ -298,6 +298,13 @@ int PlaylistTabs::addNewTab(const QString& name, const QIcon& icon)
 
 void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 {
+    const QPoint point = event->pos();
+    const int index    = p->tabs->tabAt(point);
+
+    if(p->tabs->addButtonEnabled() && index == 0) {
+        return;
+    }
+
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -308,9 +315,6 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
         }
     });
     menu->addAction(createPlaylist);
-
-    const QPoint point = event->pos();
-    const int index    = p->tabs->tabAt(point);
 
     if(index >= 0) {
         const Id id = p->tabs->tabData(index).value<Id>();

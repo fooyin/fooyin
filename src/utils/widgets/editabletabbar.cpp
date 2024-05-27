@@ -112,7 +112,9 @@ void EditableTabBar::mousePressEvent(QMouseEvent* event)
         const QPoint pos = event->position().toPoint();
 
         if(isAddButtonTab(pos)) {
-            emit addButtonClicked();
+            if(event->button() & Qt::LeftButton) {
+                emit addButtonClicked();
+            }
             return;
         }
     }
