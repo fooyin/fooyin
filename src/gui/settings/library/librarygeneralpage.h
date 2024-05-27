@@ -23,14 +23,16 @@
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
 class LibraryManager;
+class MusicLibrary;
+class SettingsManager;
 
 class LibraryGeneralPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager, SettingsManager* settings);
+    LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager, MusicLibrary* library,
+                       SettingsManager* settings);
 };
 } // namespace Fooyin

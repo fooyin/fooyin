@@ -232,10 +232,6 @@ QVariant LibraryModel::headerData(int section, Qt::Orientation orientation, int 
 
 QVariant LibraryModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::DisplayRole && role != Qt::FontRole && role != Qt::EditRole) {
-        return {};
-    }
-
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
     }
@@ -246,17 +242,23 @@ QVariant LibraryModel::data(const QModelIndex& index, int role) const
         return item->font();
     }
 
-    switch(index.column()) {
-        case(0):
-            return item->info().id;
-        case(1):
-            return item->info().name;
-        case(2):
-            return item->info().path;
-        case(3):
-            return Utils::Enum::toString(item->info().status);
-        default:
-            break;
+    if(role == Qt::UserRole) {
+        return QVariant::fromValue(item->info());
+    }
+
+    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+        switch(index.column()) {
+            case(0):
+                return item->info().id;
+            case(1):
+                return item->info().name;
+            case(2):
+                return item->info().path;
+            case(3):
+                return Utils::Enum::toString(item->info().status);
+            default:
+                break;
+        }
     }
 
     return {};

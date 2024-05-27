@@ -187,7 +187,7 @@ struct GuiApplication::Private
         , generalPage{settingsManager}
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settingsManager}
         , artworkPage{settingsManager}
-        , libraryGeneralPage{actionManager, libraryManager, settingsManager}
+        , libraryGeneralPage{actionManager, libraryManager, library, settingsManager}
         , librarySortingPage{actionManager, settingsManager}
         , shortcutsPage{actionManager, settingsManager}
         , playlistGeneralPage{settingsManager}
@@ -479,10 +479,7 @@ struct GuiApplication::Private
             tr("Artwork Panel"));
 
         widgetProvider.registerWidget(
-            QStringLiteral("Lyrics"),
-            [this]() {
-                return new LyricsWidget(playerController, mainWindow.get());
-            },
+            QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(playerController, mainWindow.get()); },
             tr("Lyrics"));
         widgetProvider.setLimit(QStringLiteral("Lyrics"), 1);
 
