@@ -315,7 +315,7 @@ Context ExtendableTableView::context() const
     return p->context->context();
 }
 
-void ExtendableTableView::addContextActions(QMenu* /*menu*/) { }
+void ExtendableTableView::setupContextActions(QMenu* /*menu*/, const QPoint& /*pos*/) { }
 
 void ExtendableTableView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
@@ -339,11 +339,13 @@ void ExtendableTableView::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    addContextActions(menu);
+    setupContextActions(menu, event->pos());
     menu->addSeparator();
 
     menu->addAction(p->addCommand->action());
-    menu->addAction(p->removeCommand->action());
+    if(indexAt(event->pos()).isValid()) {
+        menu->addAction(p->removeCommand->action());
+    }
 
     menu->popup(event->globalPos());
 }
