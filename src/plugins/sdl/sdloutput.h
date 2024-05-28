@@ -22,7 +22,9 @@
 #include <core/engine/audiooutput.h>
 
 #include <SDL2/SDL_audio.h>
+#include <SDL2/SDL_events.h>
 
+#include <QBasicTimer>
 #include <QString>
 
 namespace Fooyin::Sdl {
@@ -47,7 +49,12 @@ public:
     void setPaused(bool pause) override;
     void setDevice(const QString& device) override;
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
+    void checkEvents();
+
     AudioFormat m_format;
     int m_bufferSize;
     bool m_initialised;
@@ -56,5 +63,8 @@ private:
     SDL_AudioSpec m_desiredSpec;
     SDL_AudioSpec m_obtainedSpec;
     SDL_AudioDeviceID m_audioDeviceId;
+
+    SDL_Event m_event;
+    QBasicTimer m_eventTimer;
 };
 } // namespace Fooyin::Sdl

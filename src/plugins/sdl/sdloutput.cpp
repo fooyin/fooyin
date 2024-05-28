@@ -22,6 +22,15 @@
 #include <SDL2/SDL.h>
 
 #include <QDebug>
+#include <QTimerEvent>
+
+using namespace std::chrono_literals;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto EventInterval = 200ms;
+#else
+constexpr auto EventInterval = 200;
+#endif
 
 namespace {
 SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
@@ -81,6 +90,7 @@ bool SdlOutput::init(const AudioFormat& format)
 
 void SdlOutput::uninit()
 {
+    m_eventTimer.stop();
     SDL_CloseAudioDevice(m_audioDeviceId);
     SDL_Quit();
 
@@ -97,6 +107,7 @@ void SdlOutput::start()
 {
     if(SDL_GetAudioStatus() != SDL_AUDIO_PLAYING) {
         SDL_PauseAudioDevice(m_audioDeviceId, 0);
+        m_eventTimer.start(EventInterval, this);
     }
 }
 
@@ -175,6 +186,27 @@ void SdlOutput::setDevice(const QString& device)
 {
     if(!device.isEmpty()) {
         m_device = device;
+    }
+}
+
+void SdlOutput::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_eventTimer.timerId()) {
+        checkEvents();
+    }
+
+    AudioOutput::timerEvent(event);
+}
+
+void SdlOutput::checkEvents()
+{
+    while(SDL_PollEvent(&m_event)) {
+        switch(m_event.type) {
+            case(SDL_AUDIODEVICEREMOVED):
+                emit stateChanged(AudioOutput::State::Disconnected);
+            default:
+                break;
+        }
     }
 }
 } // namespace Fooyin::Sdl
