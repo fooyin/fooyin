@@ -45,11 +45,28 @@ struct WaveformData
         std::vector<T> min;
         std::vector<T> rms;
 
-        auto operator<=>(const ChannelData& other) const noexcept = default;
+        bool operator==(const ChannelData& other) const noexcept
+        {
+            return std::tie(max, min, rms) == std::tie(other.max, other.min, other.rms);
+        }
+
+        bool operator!=(const ChannelData& other) const noexcept
+        {
+            return !(*this == other);
+        }
     };
     std::vector<ChannelData> channelData;
 
-    auto operator<=>(const WaveformData<T>& other) const noexcept = default;
+    bool operator==(const WaveformData<T>& other) const noexcept
+    {
+        return std::tie(format, duration, channels, complete)
+            == std::tie(other.format, other.duration, other.channels, other.complete);
+    }
+
+    bool operator!=(const WaveformData<T>& other) const noexcept
+    {
+        return !(*this == other);
+    }
 
     [[nodiscard]] bool empty() const
     {

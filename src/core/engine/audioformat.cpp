@@ -19,6 +19,8 @@
 
 #include <core/engine/audioformat.h>
 
+#include <tuple>
+
 namespace Fooyin {
 AudioFormat::AudioFormat()
     : AudioFormat{SampleFormat::Unknown, 0, 0}
@@ -29,6 +31,17 @@ AudioFormat::AudioFormat(SampleFormat format, int sampleRate, int channelCount)
     , m_channelCount{channelCount}
     , m_sampleRate{sampleRate}
 { }
+
+bool AudioFormat::operator==(const AudioFormat& other) const noexcept
+{
+    return std::tie(m_sampleFormat, m_channelCount, m_sampleRate)
+        == std::tie(other.m_sampleFormat, other.m_channelCount, other.m_sampleRate);
+}
+
+bool AudioFormat::operator!=(const AudioFormat& other) const noexcept
+{
+    return !(*this == other);
+}
 
 bool AudioFormat::isValid() const
 {
