@@ -9,6 +9,12 @@ on:
 
 env:
   BUILD_TESTS: ON
+  CMAKE_PRESET: release-vcpkg
+  VCPKG_DISABLE_METRICS: true
+  QT_VERSION: '6.8.3'
+
+permissions:
+  contents: write # needed for vcpkg cache
 
 jobs:
   archlinux:
@@ -208,6 +214,85 @@ jobs:
           name: freebsd-14.2
           path: pkg
 
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            qt-arch: win64_msvc2019_64
+            msvc-arch: amd64
+            triplet: x64-windows
+            cmake-preset: release-vcpkg
+          - arch: arm64
+            qt-arch: win64_msvc2019_arm64
+            msvc-arch: amd64_arm64
+            triplet: arm64-windows
+            cmake-preset: release-vcpkg-arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Install dependencies
+        run: |
+          choco install ninja -y
+          choco install nsis -y
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          archives: qtbase qtsvg qttools
+          cache: true
+          arch: ${{ matrix.qt-arch }}
+          install-deps: 'true'
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.msvc-arch }}
+
+      - name: Setup vcpkg cache
+        shell: pwsh
+        run: |
+          $cacheDir = "${{ github.workspace }}/vcpkg-binary-cache"
+          New-Item -ItemType Directory -Force -Path $cacheDir
+          echo "VCPKG_BINARY_SOURCES=clear;files,$cacheDir,readwrite" >> $env:GITHUB_ENV
+          echo "VCPKG_TARGET_TRIPLET=${{ matrix.triplet }}" >> $env:GITHUB_ENV
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vcpkg-binary-cache
+            build-${{ matrix.cmake-preset }}_installed
+          key: ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-${{ hashFiles('**/vcpkg.json', '**/vcpkg-configuration.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-${{ matrix.cmake-preset }}-
+            ${{ runner.os }}-vcpkg-
+
+      - name: Set CMAKE_PRESET
+        shell: pwsh
+        run: echo "CMAKE_PRESET=${{ matrix.cmake-preset }}" >> $env:GITHUB_ENV
+
+      - name: Build & Package
+        run: .\ci\windows-build.ps1
+        shell: pwsh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: "windows-${{ matrix.arch }}"
+          path: artifacts
+
   attach:
     name: Attach to release
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -217,6 +302,7 @@ jobs:
       - debian
       - ubuntu
       - freebsd
+      - windows
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -3,57 +3,59 @@
 set(README_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
-install(
-    FILES ${LICENSE_FILE}
-    DESTINATION ${DOC_INSTALL_DIR}
-    RENAME LICENSE
-    COMPONENT fooyin
-)
-
-install(
-    FILES ${README_FILE}
-    DESTINATION ${DOC_INSTALL_DIR}
-    RENAME README
-    COMPONENT fooyin
-)
-
-install(FILES "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop"
-        DESTINATION ${XDG_APPS_INSTALL_DIR}
-        COMPONENT fooyin
-)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.metainfo.xml"
-        DESTINATION ${APPDATA_INSTALL_DIR}
-        COMPONENT fooyin
-)
-
-set(ICON_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/data/icons)
-set(ICON_SIZE
-    16
-    22
-    32
-    48
-    64
-    128
-    256
-    512
-)
-foreach(SIZE ${ICON_SIZE})
+if(UNIX)
     install(
-        FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
-        DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
-        RENAME org.fooyin.fooyin.png
+        FILES ${LICENSE_FILE}
+        DESTINATION ${DOC_INSTALL_DIR}
+        RENAME LICENSE
         COMPONENT fooyin
     )
-endforeach(SIZE)
 
-install(
-    FILES ${ICON_SRC_PATH}/sc-fooyin.svg
-    DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
-    RENAME org.fooyin.fooyin.svg
-    COMPONENT fooyin
-)
+    install(
+        FILES ${README_FILE}
+        DESTINATION ${DOC_INSTALL_DIR}
+        RENAME README
+        COMPONENT fooyin
+    )
 
-install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
+    install(FILES "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop"
+            DESTINATION ${XDG_APPS_INSTALL_DIR}
+            COMPONENT fooyin
+    )
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.metainfo.xml"
+            DESTINATION ${APPDATA_INSTALL_DIR}
+            COMPONENT fooyin
+    )
+
+    set(ICON_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/data/icons)
+    set(ICON_SIZE
+        16
+        22
+        32
+        48
+        64
+        128
+        256
+        512
+    )
+    foreach(SIZE ${ICON_SIZE})
+        install(
+            FILES ${ICON_SRC_PATH}/${SIZE}-fooyin.png
+            DESTINATION ${ICON_INSTALL_DIR}/hicolor/${SIZE}x${SIZE}/apps
+            RENAME org.fooyin.fooyin.png
+            COMPONENT fooyin
+        )
+    endforeach(SIZE)
+
+    install(
+        FILES ${ICON_SRC_PATH}/sc-fooyin.svg
+        DESTINATION ${ICON_INSTALL_DIR}/hicolor/scalable/apps
+        RENAME org.fooyin.fooyin.svg
+        COMPONENT fooyin
+    )
+
+    install(FILES ${TRANSLATIONS} DESTINATION ${TRANSLATION_INSTALL_DIR})
+endif()
 
 # ---- Fooyin executable ----
 
