@@ -1652,6 +1652,16 @@ PlaylistView::PlaylistView(QWidget* parent)
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     viewport()->setAcceptDrops(true);
+
+    QAction* scrollToBottom = new QAction(tr("Scroll to bottom"), this);
+    scrollToBottom->setShortcut(QKeySequence::MoveToEndOfDocument);
+    addAction(scrollToBottom);
+    QObject::connect(scrollToBottom, &QAction::triggered, this, &QAbstractItemView::scrollToBottom);
+
+    QAction* scrollToTop = new QAction(tr("Scroll to top"), this);
+    scrollToTop->setShortcut(QKeySequence::MoveToStartOfDocument);
+    addAction(scrollToTop);
+    QObject::connect(scrollToTop, &QAction::triggered, this, &QAbstractItemView::scrollToTop);
 }
 
 PlaylistView::~PlaylistView()
