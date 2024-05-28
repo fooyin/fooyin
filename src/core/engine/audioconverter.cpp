@@ -22,6 +22,7 @@
 #include <core/engine/audiobuffer.h>
 #include <utils/math.h>
 
+#include <array>
 #include <cfenv>
 
 namespace {

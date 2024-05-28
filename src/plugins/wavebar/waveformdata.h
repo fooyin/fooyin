@@ -45,11 +45,11 @@ struct WaveformData
         std::vector<T> min;
         std::vector<T> rms;
 
-        bool operator<=>(const ChannelData& other) const = default;
+        auto operator<=>(const ChannelData& other) const noexcept = default;
     };
     std::vector<ChannelData> channelData;
 
-    bool operator<=>(const WaveformData<T>& other) const = default;
+    auto operator<=>(const WaveformData<T>& other) const noexcept = default;
 
     [[nodiscard]] bool empty() const
     {

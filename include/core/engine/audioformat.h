@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <compare>
 #include <cstdint>
 
 namespace Fooyin {
@@ -41,7 +42,7 @@ public:
     AudioFormat();
     AudioFormat(SampleFormat format, int sampleRate, int channelCount);
 
-    bool operator<=>(const AudioFormat& other) const = default;
+    auto operator<=>(const AudioFormat& other) const noexcept = default;
 
     [[nodiscard]] bool isValid() const;
 
