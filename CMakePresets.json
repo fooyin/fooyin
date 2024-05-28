@@ -2,7 +2,7 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 16,
+    "minor": 18,
     "patch": 0
   },
   "configurePresets": [
@@ -12,6 +12,26 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build-${presetName}",
       "hidden": true
+    },
+    {
+      "name": "vcpkg",
+      "displayName": "vcpkg preset",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "FILEPATH",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions",
+        "Qt6_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
+        "INSTALL_FHS": "OFF",
+        "BUILD_TESTING": false
+      },
+      "inherits": [
+        "base"
+      ]
     },
     {
       "name": "dev",
@@ -42,6 +62,16 @@
       ]
     },
     {
+      "name": "dev-vcpkg",
+      "displayName": "dev-vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "inherits": [
+        "vcpkg"
+      ]
+    },
+    {
       "name": "release",
       "displayName": "Build as release",
       "cacheVariables": {
@@ -49,6 +79,16 @@
       },
       "inherits": [
         "base"
+      ]
+    },
+    {
+      "name": "release-vcpkg",
+      "displayName": "release-vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "inherits": [
+        "vcpkg"
       ]
     },
     {

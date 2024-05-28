@@ -123,9 +123,9 @@ function(create_fooyin_library name)
         install(
             TARGETS ${name}
             EXPORT FooyinTargets
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT fooyin
-                    NAMELINK_SKIP
+            RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT fooyin
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin NAMELINK_SKIP
+            ARCHIVE DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin_development
         )
 
         if(INSTALL_HEADERS)
@@ -142,17 +142,25 @@ function(create_fooyin_library name)
 endfunction()
 
 function(create_fooyin_plugin_internal plugin_name)
-    create_fooyin_plugin(${ARGV})
+    create_fooyin_plugin(${ARGV} NO_INSTALL)
 
     set_target_properties(
         ${plugin_name}
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BIN_INSTALL_DIR}"
                    LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
-                   ARCHIVE_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+                   ARCHIVE_OUTPUT_DIRECTORY "${LIB_INSTALL_DIR}"
     )
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
     target_compile_definitions(${plugin_name} PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
     target_compile_options(${plugin_name} PRIVATE ${FOOYIN_COMPILE_OPTIONS})
     target_link_options(${plugin_name} INTERFACE ${FOOYIN_LINK_OPTIONS})
+
+    if(NOT CMAKE_SKIP_INSTALL_RULES)
+        install(
+            TARGETS ${plugin_name}
+            RUNTIME DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin
+            LIBRARY DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin
+        )
+    endif()
 endfunction()

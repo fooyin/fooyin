@@ -79,7 +79,11 @@ SdlOutput::SdlOutput()
     , m_initialised{false}
     , m_device{u"default"_s}
     , m_volume{1.0}
-{ }
+{
+#ifdef Q_OS_WIN32
+    SDL_setenv("SDL_AUDIODRIVER", "directsound", true); // WASAPI driver (default) is broken
+#endif
+}
 
 bool SdlOutput::init(const AudioFormat& format)
 {

@@ -11,7 +11,7 @@ endfunction()
 function(create_fooyin_plugin plugin_name)
     cmake_parse_arguments(
         LIB
-        ""
+        "NO_INSTALL"
         "JSON_IN"
         "DEPENDS;SOURCES"
         ${ARGN}
@@ -62,7 +62,11 @@ function(create_fooyin_plugin plugin_name)
 
     target_compile_definitions(${plugin_name} PRIVATE QT_USE_QSTRINGBUILDER)
 
-    if(NOT CMAKE_SKIP_INSTALL_RULES)
-        install(TARGETS ${plugin_name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR})
+    if(NOT CMAKE_SKIP_INSTALL_RULES AND NOT LIB_NO_INSTALL)
+        install(
+            TARGETS ${plugin_name}
+            RUNTIME DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR}
+            LIBRARY DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR}
+        )
     endif()
 endfunction()
