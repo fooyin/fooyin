@@ -63,33 +63,35 @@ fooyin_option(BUILD_ASAN "Enable AddressSanitizer" OFF)
 fooyin_option(INSTALL_FHS "Install in Linux distros /usr hierarchy" ON)
 fooyin_option(INSTALL_HEADERS "Install public development headers" OFF)
 
-list(
-    APPEND
-    FOOYIN_COMPILE_OPTIONS
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wunused
-    -Wshadow
-    -Wundef
-    -Wuninitialized
-    -Wredundant-decls
-    -Wcast-align
-    -Winit-self
-    -Wmissing-include-dirs
-    -Wstrict-overflow=2
-    -Wunused-parameter
-    -Wdisabled-optimization
-    -Woverloaded-virtual
-    -Wold-style-cast
-    -Wno-array-bounds
-)
-if(BUILD_WERROR)
-    list(APPEND FOOYIN_COMPILE_OPTIONS -Werror)
-endif()
-if(BUILD_ASAN)
-    list(APPEND FOOYIN_COMPILE_OPTIONS -fsanitize=address,undefined)
-    list(APPEND FOOYIN_LINK_OPTIONS -fsanitize=address,undefined)
+if(UNIX)
+    list(
+        APPEND
+        FOOYIN_COMPILE_OPTIONS
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wunused
+        -Wshadow
+        -Wundef
+        -Wuninitialized
+        -Wredundant-decls
+        -Wcast-align
+        -Winit-self
+        -Wmissing-include-dirs
+        -Wstrict-overflow=2
+        -Wunused-parameter
+        -Wdisabled-optimization
+        -Woverloaded-virtual
+        -Wold-style-cast
+        -Wno-array-bounds
+    )
+    if(BUILD_WERROR)
+        list(APPEND FOOYIN_COMPILE_OPTIONS -Werror)
+    endif()
+    if(BUILD_ASAN)
+        list(APPEND FOOYIN_COMPILE_OPTIONS -fsanitize=address,undefined)
+        list(APPEND FOOYIN_LINK_OPTIONS -fsanitize=address,undefined)
+    endif()
 endif()
 
 list(
@@ -134,6 +136,17 @@ find_package(
                AVUTIL
                SWRESAMPLE
 )
+
+if(MSVC)
+	find_path(GETOPT_INCLUDE_DIR getopt.h)
+	if (NOT GETOPT_INCLUDE_DIR)
+		message(FATAL_ERROR "Cannot find getopt.h")
+	endif()
+	find_library(GETOPT_LIBRARY getopt)
+	if (NOT GETOPT_LIBRARY)
+		message(FATAL_ERROR "Cannot find getopt library")
+	endif()
+endif()
 
 include(3rdparty/3rdparty.cmake)
 
@@ -181,6 +194,10 @@ file(RELATIVE_PATH FOOYIN_RELATIVE_PLUGIN_PATH "/${BIN_INSTALL_DIR}" "/${FOOYIN_
 if(NOT FOOYIN_OUTPUT_PREFIX)
     set(FOOYIN_OUTPUT_PREFIX "${PROJECT_BINARY_DIR}/run")
 endif()
+
+set(FOOYIN_PLUGIN_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${FOOYIN_PLUGIN_INSTALL_DIR}")
+
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${BIN_INSTALL_DIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${LIB_INSTALL_DIR}")
 set(FOOYIN_PLUGIN_OUTPUT_DIRECTORY "${FOOYIN_OUTPUT_PREFIX}/${FOOYIN_PLUGIN_INSTALL_DIR}")
@@ -354,7 +371,7 @@ set(SOURCES ${SOURCES} src/app/main.cpp src/app/commandline.cpp)
 qt_add_resources(SOURCES data/data.qrc)
 qt_add_resources(SOURCES data/icons.qrc)
 
-add_executable(fooyin ${SOURCES} ${TRANSLATIONS})
+add_executable(fooyin WIN32 ${SOURCES} ${TRANSLATIONS})
 fooyin_set_rpath(fooyin ${BIN_INSTALL_DIR})
 target_compile_features(fooyin PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})
 target_compile_definitions(fooyin PRIVATE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -369,10 +386,30 @@ target_link_libraries(
             Fooyin::CorePrivate
 )
 
+if(MSVC)
+	target_include_directories(fooyin PRIVATE ${GETOPT_INCLUDE_DIR})
+	target_link_libraries(fooyin PRIVATE ${GETOPT_LIBRARY})
+
+      qt_generate_deploy_app_script(
+      TARGET fooyin
+      OUTPUT_SCRIPT deploy_script
+      DEPLOY_TOOL_OPTIONS
+        # workaround for https://github.com/microsoft/vcpkg/issues/17840 or
+        # https://github.com/microsoft/vcpkg/issues/36250
+        $<$<CONFIG:DEBUG>:--qtpaths ${WINDOWS_DEPENDENCY_VCPKG_DIR}/tools/Qt6/bin/qtpaths.debug.bat>
+    )
+    install(SCRIPT ${deploy_script})
+endif()
+
 # ---- Fooyin install ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
     include(FooyinInstall)
+endif()
+
+if(MSVC)
+   include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DeployQt.cmake")
+   windeployqt("fooyin" "${BIN_INSTALL_DIR}")
 endif()
 
 # ---- Fooyin uninstall ----

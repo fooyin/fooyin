@@ -1,0 +1,50 @@
+name: Windows build
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+env:
+  BUILD_TESTS: Off
+  VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+
+jobs:
+  archlinux:
+    name: Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install Ninja
+        run: choco install ninja
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Vcpkg build
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v7
+        with:
+          manifest-dir: ${{ github.workspace }}
+          triplet: x64-windows-release
+          token: ${{ github.token }}
+          fetch-depth: 0
+
+      - name: Configure CMake Preset
+        run: cmake --preset release-vcpkg
+
+      - name: Build
+        run: cmake --build build-release-vcpkg

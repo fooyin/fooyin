@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "builtin-baseline": "dd3097e305afa53f7b4312371f62058d2e665320",
+  "dependencies": [
+    {
+      "name": "qtbase",
+      "version>=": "6.4.0",
+      "default-features": false,
+      "features": [ "dbus", "gui", "sql", "network", "widgets", "concurrent" ]
+    },
+    {
+      "name": "qtsvg",
+      "version>=": "6.4.0"
+    },
+    {
+      "name": "qttools",
+      "version>=": "6.4.0",
+      "features": [
+        "linguist"
+      ]
+    },
+    {
+      "name": "ffmpeg",
+      "default-features": false,
+      "features": [
+        "avcodec",
+        "avfilter",
+        "avformat",
+        "avdevice",
+        "swresample"
+      ]
+    },
+    "icu",
+    "taglib",
+    "sdl2",
+    "getopt",
+    "libgme",
+    "libopenmpt",
+    "libsndfile",
+    "libarchive"
+  ],
+  "features": {
+    "fooyin-tests": {
+      "description": "Build tests",
+      "dependencies": [ "gtest" ]
+    }
+  }
+}

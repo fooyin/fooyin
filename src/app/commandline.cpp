@@ -30,21 +30,59 @@
 
 using namespace Qt::StringLiterals;
 
+namespace {
+#ifdef Q_OS_WIN
+QString decodeName(wchar_t* opt)
+{
+    return QString::fromWCharArray(opt);
+}
+#else
+QString decodeName(char* opt)
+{
+    return QFile::decodeName(opt);
+}
+#endif
+}
+
 CommandLine::CommandLine(int argc, char** argv)
     : m_argc{argc}
-    , m_argv{argv}
+#ifdef Q_OS_WIN
+    , m_argv{CommandLineToArgvW(GetCommandLineW(), &argc)}
+#else
+   , m_argv{argv}
+#endif
     , m_skipSingle{false}
     , m_playerAction{PlayerAction::None}
 { }
 
 bool CommandLine::parse()
 {
-    static constexpr option cmdOptions[]
-        = {{"help", no_argument, nullptr, 'h'},        {"version", no_argument, nullptr, 'v'},
-           {"skip-single", no_argument, nullptr, 'x'}, {"play-pause", no_argument, nullptr, 't'},
-           {"play", no_argument, nullptr, 'p'},        {"pause", no_argument, nullptr, 'u'},
-           {"stop", no_argument, nullptr, 's'},        {"next", no_argument, nullptr, 'f'},
-           {"previous", no_argument, nullptr, 'r'},    {nullptr, 0, nullptr, 0}};
+    static constexpr option cmdOptions[] = {
+#ifdef Q_OS_WIN
+        {L"help", no_argument, nullptr, 'h'},
+        {L"version", no_argument, nullptr, 'v'},
+        {L"skip-single", no_argument, nullptr, 'x'},
+        {L"play-pause", no_argument, nullptr, 't'},
+        {L"play", no_argument, nullptr, 'p'},
+        {L"pause", no_argument, nullptr, 'u'},
+        {L"stop", no_argument, nullptr, 's'},
+        {L"next", no_argument, nullptr, 'f'},
+        {L"previous", no_argument, nullptr, 'r'},
+        {nullptr, 0, nullptr, 0
+#else
+        {"help", no_argument, nullptr, 'h'},
+        {"version", no_argument, nullptr, 'v'},
+        {"skip-single", no_argument, nullptr, 'x'},
+        {"play-pause", no_argument, nullptr, 't'},
+        {"play", no_argument, nullptr, 'p'},
+        {"pause", no_argument, nullptr, 'u'},
+        {"stop", no_argument, nullptr, 's'},
+        {"next", no_argument, nullptr, 'f'},
+        {"previous", no_argument, nullptr, 'r'},
+        {nullptr, 0, nullptr, 0
+#endif
+        }
+    };
 
     static const auto help = u"%1: fooyin [%2] [%3]\n"
                              "\n"
@@ -64,7 +102,11 @@ bool CommandLine::parse()
                              "  urls            %15\n"_s;
 
     for(;;) {
+#ifdef Q_OS_WIN
+        const int c = getopt_long(m_argc, m_argv, L"hvxtpusfr", cmdOptions, nullptr);
+#else
         const int c = getopt_long(m_argc, m_argv, "hvxtpusfr", cmdOptions, nullptr);
+#endif
         if(c == -1) {
             break;
         }
@@ -112,7 +154,8 @@ bool CommandLine::parse()
     }
 
     for(int i{optind}; i < m_argc; ++i) {
-        const QFileInfo fileinfo{QFile::decodeName(m_argv[i])};
+        const QString file = decodeName(m_argv[i]);
+        QFileInfo fileinfo{file};
         if(fileinfo.exists()) {
             m_files.append(QUrl::fromLocalFile(fileinfo.canonicalFilePath()));
         }

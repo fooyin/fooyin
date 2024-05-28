@@ -57,6 +57,11 @@ function(create_fooyin_plugin plugin_name)
     target_compile_definitions(${plugin_name} PRIVATE QT_USE_QSTRINGBUILDER)
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
-        install(TARGETS ${plugin_name} DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin)
+        install(
+            TARGETS ${plugin_name}
+            RUNTIME DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin
+            LIBRARY DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin
+            ARCHIVE DESTINATION ${FOOYIN_PLUGIN_INSTALL_DIR} COMPONENT fooyin_development
+        )
     endif()
 endfunction()

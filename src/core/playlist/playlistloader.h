@@ -21,14 +21,14 @@
 
 #include "fycore_export.h"
 
+#include <core/playlist/playlistparser.h>
+
 #include <memory>
 #include <shared_mutex>
 
 #include <QStringList>
 
 namespace Fooyin {
-class PlaylistParser;
-
 class FYCORE_EXPORT PlaylistLoader
 {
 public:

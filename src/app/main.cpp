@@ -34,6 +34,18 @@
 using namespace Qt::StringLiterals;
 
 namespace {
+#ifdef Q_OS_WIN
+#include <windows.h>
+void configurePluginSearchPaths()
+{
+    SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+
+    const QDir appPath{QCoreApplication::applicationDirPath()};
+    const QString pluginDir = appPath.absolutePath() + u"/plugins"_s;
+    AddDllDirectory(reinterpret_cast<LPCWSTR>(pluginDir.utf16()));
+}
+#endif
+
 void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, CommandLine& cmdLine)
 {
     const auto playerAction = cmdLine.playerAction();
@@ -79,6 +91,10 @@ int main(int argc, char** argv)
     QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
     QGuiApplication::setDesktopFileName(u"org.fooyin.fooyin"_s);
     QGuiApplication::setQuitOnLastWindowClosed(false);
+
+    #ifdef Q_OS_WIN
+    configurePluginSearchPaths();
+    #endif
 
     CommandLine commandLine{argc, argv};
 
