@@ -121,9 +121,9 @@ function(create_fooyin_library name)
         install(
             TARGETS ${name}
             EXPORT FooyinTargets
-            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-                    COMPONENT fooyin
-                    NAMELINK_SKIP
+            RUNTIME DESTINATION ${BIN_INSTALL_DIR} COMPONENT fooyin
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin NAMELINK_SKIP
+            ARCHIVE DESTINATION ${LIB_INSTALL_DIR} COMPONENT fooyin_development
         )
 
         if(INSTALL_HEADERS)
@@ -144,9 +144,9 @@ function(create_fooyin_plugin_internal plugin_name)
 
     set_target_properties(
         ${plugin_name}
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BIN_INSTALL_DIR}"
                    LIBRARY_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
-                   ARCHIVE_OUTPUT_DIRECTORY "${FOOYIN_PLUGIN_OUTPUT_DIRECTORY}"
+                   ARCHIVE_OUTPUT_DIRECTORY "${LIB_INSTALL_DIR}"
     )
 
     target_compile_features(${plugin_name} PUBLIC ${FOOYIN_REQUIRED_CXX_FEATURES})

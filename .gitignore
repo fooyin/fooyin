@@ -39,6 +39,7 @@ debug_toolchain.cmake
 
 # generated files
 CMakeLists.txt.user*
+CMakeUserPresets.json
 compile_commands.json
 fooyin_version.h
 packagetar.sh
@@ -67,3 +68,5 @@ Debug/
 release/
 Release/
 tmp/
+/.vs
+/vcpkg_installed

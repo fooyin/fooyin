@@ -17,6 +17,7 @@ add_subdirectory(sndfile)
 add_subdirectory(tageditor)
 add_subdirectory(vumeter)
 add_subdirectory(wavebar)
-if(BUILD_LIBVGM)
+if(BUILD_LIBVGM AND NOT MSVC)
+    # TODO: Find out why libvgm fails on windows
     add_subdirectory(libvgm)
 endif()

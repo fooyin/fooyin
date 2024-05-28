@@ -1,0 +1,63 @@
+name: Windows build
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+permissions:
+  contents: write # needed for vcpkg cache
+
+env:
+  BUILD_TESTS: Off
+  CMAKE_PRESET: release-vcpkg
+  VCPKG_DEFAULT_BINARY_CACHE: "${{ github.workspace }}/vcpkg-cache"
+  VCPKG_DISABLE_METRICS: true
+
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install Ninja
+        run: choco install ninja
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Setup vcpkg cache dir
+        run: mkdir -p ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+
+      - name: Set up binary cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: ${{ runner.os }}-vcpkg-binary-cache-${{ hashFiles('vcpkg*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-binary-cache-
+
+      - name: Configure CMake Preset
+        run: cmake --preset ${{ env.CMAKE_PRESET }}
+
+      - name: Build
+        run: cmake --build build-${{ env.CMAKE_PRESET }}
+
+      # - name: Package and upload project
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: "${{ github.workflow }}-${{ github.job }}-${{ github.run_number }}-${{ github.run_id }}"
+      #     path: "${{ github.workspace }}/out/run/x64-windows-release"
