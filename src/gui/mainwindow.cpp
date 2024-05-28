@@ -84,6 +84,15 @@ void MainWindow::open()
     }
 }
 
+void MainWindow::raiseWindow()
+{
+    raise();
+    show();
+    activateWindow();
+
+    m_isHidden = false;
+}
+
 void MainWindow::toggleVisibility()
 {
     if(m_isHidden) {

@@ -46,6 +46,7 @@ public:
     ~MainWindow() override;
 
     void open();
+    void raiseWindow();
     void toggleVisibility();
 
     void prependTitle(const QString& title);

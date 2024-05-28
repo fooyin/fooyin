@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 
         if(commandLine.empty()) {
             qInfo() << "fooyin already running";
+            instance.sendMessage({});
         }
         else {
             instance.sendMessage(commandLine.saveOptions());
@@ -87,6 +88,9 @@ int main(int argc, char** argv)
         command.loadOptions(options);
         if(!command.empty()) {
             guiApp.openFiles(command.files());
+        }
+        else {
+            guiApp.raise();
         }
     });
 

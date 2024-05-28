@@ -272,7 +272,8 @@ struct GuiApplication::Private
     {
         trayIcon = std::make_unique<SystemTrayIcon>(actionManager);
 
-        QObject::connect(trayIcon.get(), &SystemTrayIcon::toggleVisibility, mainWindow.get(), &MainWindow::toggleVisibility);
+        QObject::connect(trayIcon.get(), &SystemTrayIcon::toggleVisibility, mainWindow.get(),
+                         &MainWindow::toggleVisibility);
 
         if(settingsManager->value<Settings::Gui::Internal::ShowTrayIcon>()) {
             trayIcon->show();
@@ -636,6 +637,11 @@ void GuiApplication::shutdown()
     p->editableLayout.reset();
     p->playlistController.reset();
     p->mainWindow.reset();
+}
+
+void GuiApplication::raise()
+{
+    p->mainWindow->raiseWindow();
 }
 
 void GuiApplication::openFiles(const QList<QUrl>& files)

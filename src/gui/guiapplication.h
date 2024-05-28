@@ -36,6 +36,7 @@ public:
 
     void shutdown();
 
+    void raise();
     void openFiles(const QList<QUrl>& files);
 
 private:
