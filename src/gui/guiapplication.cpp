@@ -60,6 +60,7 @@
 #include "settings/plugins/pluginspage.h"
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
+#include "systemtrayicon.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
 #include "widgets/lyricswidget.h"
@@ -119,6 +120,7 @@ struct GuiApplication::Private
     std::unique_ptr<EditableLayout> editableLayout;
     std::unique_ptr<MainMenuBar> menubar;
     std::unique_ptr<MainWindow> mainWindow;
+    std::unique_ptr<SystemTrayIcon> trayIcon;
     WidgetContext* mainContext;
     std::unique_ptr<PlaylistController> playlistController;
     PlaylistInteractor playlistInteractor;
@@ -230,6 +232,8 @@ struct GuiApplication::Private
         else {
             openMainWindow();
         }
+
+        initialiseTray();
     }
 
     void initialisePlugins()
@@ -262,6 +266,20 @@ struct GuiApplication::Private
         if(message.clickedButton() == quitButton) {
             Application::quit();
         }
+    }
+
+    void initialiseTray()
+    {
+        trayIcon = std::make_unique<SystemTrayIcon>(actionManager);
+
+        QObject::connect(trayIcon.get(), &SystemTrayIcon::toggleVisibility, mainWindow.get(), &MainWindow::toggleVisibility);
+
+        if(settingsManager->value<Settings::Gui::Internal::ShowTrayIcon>()) {
+            trayIcon->show();
+        }
+
+        settingsManager->subscribe<Settings::Gui::Internal::ShowTrayIcon>(
+            self, [this](bool show) { trayIcon->setVisible(show); });
     }
 
     void updateWindowTitle(const Track& track)

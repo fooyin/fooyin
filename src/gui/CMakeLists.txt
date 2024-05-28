@@ -33,6 +33,8 @@ set(SOURCES
     layoutprovider.cpp
     mainwindow.cpp
     mainwindow.h
+    systemtrayicon.cpp
+    systemtrayicon.h
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp

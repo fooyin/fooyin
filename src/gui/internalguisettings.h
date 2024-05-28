@@ -112,6 +112,8 @@ enum GuiInternalSettings : uint32_t
     PlaylistTabsAddButton   = 44 | Type::Bool,
     SplitterHandleSize      = 45 | Type::Int,
     LibTreeRestoreState     = 46 | Type::Bool,
+    ShowTrayIcon            = 47 | Type::Bool,
+    TrayOnClose             = 48 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

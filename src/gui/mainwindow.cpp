@@ -19,8 +19,10 @@
 
 #include "mainwindow.h"
 
+#include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
 
+#include <core/application.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
@@ -29,6 +31,7 @@
 
 #include <QContextMenuEvent>
 #include <QMenuBar>
+#include <QSystemTrayIcon>
 #include <QTimer>
 #include <QWindow>
 
@@ -39,6 +42,10 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     : QMainWindow{parent}
     , m_mainMenu{menubar}
     , m_settings{settings}
+    , m_isHidden{false}
+    , m_isMaximised{false}
+    , m_isMinimised{false}
+    , m_hidingToTray{false}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
@@ -77,6 +84,29 @@ void MainWindow::open()
     }
 }
 
+void MainWindow::toggleVisibility()
+{
+    if(m_isHidden) {
+        hideToTray(false);
+    }
+    else if(isActiveWindow()) {
+        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+        hideToTray(true);
+    }
+    else if(isMinimized()) {
+        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+        hideToTray(false);
+    }
+    else if(!isVisible()) {
+        show();
+        activateWindow();
+    }
+    else {
+        activateWindow();
+        raise();
+    }
+}
+
 void MainWindow::prependTitle(const QString& title)
 {
     if(title.isEmpty()) {
@@ -101,7 +131,45 @@ void MainWindow::showEvent(QShowEvent* event)
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     emit closing();
-    QMainWindow::closeEvent(event);
+
+    if(m_hidingToTray) {
+        m_hidingToTray = false;
+        QMainWindow::closeEvent(event);
+        return;
+    }
+
+    const bool canHide = m_settings->value<Settings::Gui::Internal::ShowTrayIcon>()
+                      && m_settings->value<Settings::Gui::Internal::TrayOnClose>();
+
+    if(!m_isHidden && QSystemTrayIcon::isSystemTrayAvailable() && canHide) {
+        hideToTray(true);
+    }
+    else {
+        Application::quit();
+    }
+}
+
+void MainWindow::hideToTray(bool hide)
+{
+    m_isHidden = hide;
+
+    if(hide) {
+        m_isMaximised  = isMaximized();
+        m_isMinimised  = isMinimized();
+        m_hidingToTray = true;
+        close();
+    }
+    else {
+        if(m_isMinimised) {
+            showMinimized();
+        }
+        else if(m_isMaximised) {
+            showMaximized();
+        }
+        else {
+            show();
+        }
+    }
 }
 } // namespace Fooyin
 

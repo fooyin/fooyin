@@ -46,6 +46,7 @@ public:
     ~MainWindow() override;
 
     void open();
+    void toggleVisibility();
 
     void prependTitle(const QString& title);
     void resetTitle();
@@ -58,7 +59,14 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 private:
+    void hideToTray(bool hide);
+
     MainMenuBar* m_mainMenu;
     SettingsManager* m_settings;
+
+    bool m_isHidden;
+    bool m_isMaximised;
+    bool m_isMinimised;
+    bool m_hidingToTray;
 };
 } // namespace Fooyin

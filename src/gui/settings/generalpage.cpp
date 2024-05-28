@@ -22,6 +22,7 @@
 #include "core/application.h"
 #include "core/corepaths.h"
 #include "core/internalcoresettings.h"
+#include "internalguisettings.h"
 #include "mainwindow.h"
 
 #include <core/coresettings.h>
@@ -37,7 +38,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QMessageBox>
-#include <QProcess>
+#include <QSystemTrayIcon>
 
 #include <ranges>
 
@@ -74,6 +75,9 @@ private:
     QCheckBox* m_restorePlayback;
     QCheckBox* m_waitForTracks;
 
+    QCheckBox* m_showTray;
+    QCheckBox* m_minimiseToTray;
+
     QComboBox* m_language;
     std::map<QString, QString, SortLanguages> m_languageMap;
 };
@@ -83,6 +87,8 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     , m_startupBehaviour{new QComboBox(this)}
     , m_restorePlayback{new QCheckBox(tr("Restore playback state"), this)}
     , m_waitForTracks{new QCheckBox(tr("Wait for tracks"), this)}
+    , m_showTray{new QCheckBox(tr("Show system tray icon"), this)}
+    , m_minimiseToTray{new QCheckBox(tr("Minimise to tray on close"), this)}
     , m_language{new QComboBox(this)}
 {
     auto* startupBehaviourLabel = new QLabel(tr("Behaviour") + QStringLiteral(":"), this);
@@ -103,7 +109,9 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(languageLabel, 0, 0);
     mainLayout->addWidget(m_language, 0, 1);
-    mainLayout->addWidget(startupGroup, 1, 0, 1, 2);
+    mainLayout->addWidget(m_showTray, 1, 0, 1, 2);
+    mainLayout->addWidget(m_minimiseToTray, 2, 0, 1, 2);
+    mainLayout->addWidget(startupGroup, 3, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -115,6 +123,9 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
     addStartupBehaviour(tr("Show main window"), MainWindow::Normal);
     addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
     addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
+
+    QObject::connect(m_showTray, &QCheckBox::toggled, this,
+                     [this](bool checked) { m_minimiseToTray->setEnabled(checked); });
 }
 
 void GeneralPageWidget::load()
@@ -124,6 +135,11 @@ void GeneralPageWidget::load()
     m_startupBehaviour->setCurrentIndex(m_settings->value<Settings::Gui::StartupBehaviour>());
     m_restorePlayback->setChecked(m_settings->value<Settings::Core::Internal::SavePlaybackState>());
     m_waitForTracks->setChecked(m_settings->value<Settings::Gui::WaitForTracks>());
+    m_showTray->setChecked(m_settings->value<Settings::Gui::Internal::ShowTrayIcon>());
+    m_minimiseToTray->setChecked(m_settings->value<Settings::Gui::Internal::TrayOnClose>());
+
+    m_showTray->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
+    m_minimiseToTray->setEnabled(QSystemTrayIcon::isSystemTrayAvailable() && m_showTray->isChecked());
 }
 
 void GeneralPageWidget::apply()
@@ -143,6 +159,8 @@ void GeneralPageWidget::apply()
     m_settings->set<Settings::Gui::StartupBehaviour>(m_startupBehaviour->currentIndex());
     m_settings->set<Settings::Core::Internal::SavePlaybackState>(m_restorePlayback->isChecked());
     m_settings->set<Settings::Gui::WaitForTracks>(m_waitForTracks->isChecked());
+    m_settings->set<Settings::Gui::Internal::ShowTrayIcon>(m_showTray->isChecked());
+    m_settings->set<Settings::Gui::Internal::TrayOnClose>(m_minimiseToTray->isChecked());
 }
 
 void GeneralPageWidget::reset()
@@ -151,6 +169,8 @@ void GeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::StartupBehaviour>();
     m_settings->reset<Settings::Core::Internal::SavePlaybackState>();
     m_settings->reset<Settings::Gui::WaitForTracks>();
+    m_settings->reset<Settings::Gui::Internal::ShowTrayIcon>();
+    m_settings->reset<Settings::Gui::Internal::TrayOnClose>();
 }
 
 void GeneralPageWidget::loadLanguage()
