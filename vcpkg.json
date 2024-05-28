@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "builtin-baseline": "4334d8b4c8916018600212ab4dd4bbdc343065d1",
+  "dependencies": [
+    "ffmpeg",
+    "icu",
+    "taglib",
+    "sdl2",
+    "getopt",
+    "libopenmpt",
+    "libsndfile",
+    "libarchive",
+    "libgme"
+  ],
+  "features": {
+    "fooyin-tests": {
+      "description": "Build tests",
+      "dependencies": [ "gtest" ]
+    }
+  }
+}

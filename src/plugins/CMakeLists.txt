@@ -1,12 +1,16 @@
 if(BUILD_ALSA)
     add_subdirectory(alsa)
 endif()
+
+if(UNIX AND NOT APPLE)
+    add_subdirectory(mpris)
+endif()
+
 add_subdirectory(fileops)
 add_subdirectory(filters)
 add_subdirectory(gme)
 add_subdirectory(libarchive)
 add_subdirectory(lyrics)
-add_subdirectory(mpris)
 add_subdirectory(openmpt)
 add_subdirectory(pipewire)
 add_subdirectory(rawaudio)

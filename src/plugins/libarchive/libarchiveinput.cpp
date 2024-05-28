@@ -25,6 +25,9 @@
 #include <QLoggingCategory>
 #include <QMimeDatabase>
 
+#ifdef Q_OS_WIN
+#define NOMINMAX
+#endif
 #include <archive_entry.h>
 
 Q_LOGGING_CATEGORY(LIBARCH, "fy.libarchive")

@@ -378,6 +378,8 @@ create_fooyin_library(
 
 target_link_libraries(
     fooyin_gui
-    PUBLIC Fooyin::Core Fooyin::Utils
-    PRIVATE Fooyin::CorePrivate Qt::Svg
+    PUBLIC Fooyin::Core 
+           Fooyin::Utils
+    PRIVATE Fooyin::CorePrivate 
+            Qt::Svg
 )

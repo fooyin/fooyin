@@ -2,32 +2,48 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 16,
+    "minor": 18,
     "patch": 0
   },
   "configurePresets": [
     {
       "name": "base",
-      "displayName": "base preset",
+      "displayName": "Base preset",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build-${presetName}",
       "hidden": true
     },
     {
-      "name": "dev",
-      "displayName": "Build as debug",
+      "name": "vcpkg-base",
+      "displayName": "Base vcpkg preset",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "FILEPATH",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
+        "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions",
+        "QT_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
+        "Qt6_DIR": "$env{QT_ROOT_DIR}/lib/cmake/Qt6",
+        "INSTALL_FHS": "OFF",
+        "BUILD_TESTING": false
+      },
+      "inherits": [ "base" ]
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "BUILD_TESTING": "ON"
       },
-      "inherits": [
-        "base"
-      ]
+      "inherits": [ "base" ]
     },
     {
-      "name": "dev-clang",
-      "displayName": "dev-clang",
+      "name": "debug-clang",
+      "displayName": "Debug build (Clang)",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
@@ -37,46 +53,101 @@
         "CXX": "clang++",
         "CCACHE_DISABLE": "ON"
       },
-      "inherits": [
-        "base"
-      ]
+      "inherits": [ "base" ]
+    },
+    {
+      "name": "debug-vcpkg",
+      "displayName": "Debug build via vcpkg (x64)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
+      "inherits": [ "vcpkg-base" ]
+    },
+    {
+      "name": "debug-vcpkg-arm64",
+      "displayName": "Debug build via vcpkg (ARM64)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-windows"
+      },
+      "inherits": [ "vcpkg-base" ]
     },
     {
       "name": "release",
-      "displayName": "Build as release",
+      "displayName": "Release build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       },
-      "inherits": [
-        "base"
-      ]
+      "inherits": [ "base" ]
+    },
+    {
+      "name": "release-vcpkg",
+      "displayName": "Release build via vcpkg (x64)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
+      "inherits": [ "vcpkg-base" ]
+    },
+    {
+      "name": "release-vcpkg-arm64",
+      "displayName": "Release build via vcpkg (ARM64)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-windows"
+      },
+      "inherits": [ "vcpkg-base" ]
     },
     {
       "name": "profile",
-      "displayName": "profile",
+      "displayName": "Profile build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       },
-      "inherits": [
-        "base"
-      ]
+      "inherits": [ "base" ]
     }
   ],
   "buildPresets": [
     {
-      "name": "dev",
-      "configurePreset": "dev",
-      "targets": [
-        "all"
-      ]
+      "name": "debug",
+      "configurePreset": "debug",
+      "targets": [ "all" ]
     },
     {
-      "name": "dev-clang",
-      "configurePreset": "dev-clang"
+      "name": "debug-clang",
+      "configurePreset": "debug-clang",
+      "targets": [ "all" ]
+    },
+    {
+      "name": "debug-vcpkg",
+      "configurePreset": "debug-vcpkg",
+      "targets": [ "all" ]
+    },
+    {
+      "name": "debug-vcpkg-arm64",
+      "configurePreset": "debug-vcpkg-arm64",
+      "targets": [ "all" ]
     },
     {
       "name": "release",
-      "configurePreset": "release"
+      "configurePreset": "release",
+      "targets": [ "all" ]
+    },
+    {
+      "name": "release-vcpkg",
+      "configurePreset": "release-vcpkg",
+      "targets": [ "all" ]
+    },
+    {
+      "name": "release-vcpkg-arm64",
+      "configurePreset": "release-vcpkg-arm64",
+      "targets": [ "all" ]
+    },
+    {
+      "name": "profile",
+      "configurePreset": "profile",
+      "targets": [ "all" ]
     }
   ]
 }

@@ -32,6 +32,13 @@
 #include <QFile>
 #include <QIODevice>
 
+#if defined(Q_OS_WINDOWS)
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#endif
+
 #if defined(__GNUG__)
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #elif defined(__clang__)
