@@ -2496,6 +2496,8 @@ void PlaylistView::setSelection(const QRect& rect, QItemSelectionModel::Selectio
 
 void PlaylistView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
+    QAbstractItemView::currentChanged(current, previous);
+
     if(previous.isValid()) {
         viewport()->update(p->visualRect(previous, RectRule::FullRow, false));
     }
