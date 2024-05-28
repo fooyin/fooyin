@@ -21,6 +21,7 @@
 
 #include <core/engine/audioformat.h>
 
+#include <tuple>
 #include <vector>
 
 namespace Fooyin::WaveBar {
