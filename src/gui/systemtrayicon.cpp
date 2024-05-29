@@ -26,13 +26,15 @@
 
 #include <QMenu>
 
+constexpr auto IconSize = 22;
+
 namespace Fooyin {
 SystemTrayIcon::SystemTrayIcon(ActionManager* actionManager, QObject* parent)
     : QSystemTrayIcon{parent}
     , m_actionManager{actionManager}
     , m_menu{std::make_unique<QMenu>()}
 {
-    setIcon(Utils::iconFromTheme(Constants::Icons::Fooyin));
+    setIcon(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
 
     auto* stop      = actionManager->command(Constants::Actions::Stop)->action();
     auto* prev      = actionManager->command(Constants::Actions::Previous)->action();
