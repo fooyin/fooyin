@@ -60,8 +60,8 @@ struct WaveformData
 
     bool operator==(const WaveformData<T>& other) const noexcept
     {
-        return std::tie(format, duration, channels, complete)
-            == std::tie(other.format, other.duration, other.channels, other.complete);
+        return std::tie(format, duration, channels, complete, channelData)
+            == std::tie(other.format, other.duration, other.channels, other.complete, other.channelData);
     }
 
     bool operator!=(const WaveformData<T>& other) const noexcept
