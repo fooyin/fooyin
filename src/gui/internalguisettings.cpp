@@ -49,7 +49,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     qRegisterMetaType<CoverPaths>("CoverPaths");
 
     m_settings->createTempSetting<LayoutEditing>(false);
-    m_settings->createSetting<StartupBehaviour>(2, QStringLiteral("Interface/StartupBehaviour"));
+    m_settings->createSetting<StartupBehaviour>(3, QStringLiteral("Interface/StartupBehaviour"));
     m_settings->createSetting<WaitForTracks>(true, QStringLiteral("Interface/WaitForTracks"));
     m_settings->createSetting<IconTheme>(0, QStringLiteral("Theme/IconTheme"));
     m_settings->createSetting<LastPlaylistId>(0, QStringLiteral("Playlist/LastPlaylistId"));
