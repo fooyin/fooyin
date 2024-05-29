@@ -120,9 +120,10 @@ GeneralPageWidget::GeneralPageWidget(SettingsManager* settings)
         m_startupBehaviour->addItem(text, QVariant::fromValue(action));
     };
 
-    addStartupBehaviour(tr("Show main window"), MainWindow::Normal);
-    addStartupBehaviour(tr("Show main window maximised"), MainWindow::Maximised);
-    addStartupBehaviour(tr("Remember from last run"), MainWindow::RememberLast);
+    addStartupBehaviour(tr("Normal"), MainWindow::StartNormal);
+    addStartupBehaviour(tr("Start maximised"), MainWindow::StartMaximised);
+    addStartupBehaviour(tr("Start hidden to tray"), MainWindow::StartHidden);
+    addStartupBehaviour(tr("Remember from last run"), MainWindow::StartPrev);
 
     QObject::connect(m_showTray, &QCheckBox::toggled, this,
                      [this](bool checked) { m_minimiseToTray->setEnabled(checked); });

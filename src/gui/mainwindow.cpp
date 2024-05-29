@@ -26,30 +26,40 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QMenuBar>
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QWindow>
 
-constexpr auto MainWindowGeometry = "Interface/Geometry";
+constexpr auto MainWindowGeometry  = "Interface/Geometry";
+constexpr auto MainWindowPrevState = "Interface/PrevState";
 
 namespace Fooyin {
 MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, SettingsManager* settings, QWidget* parent)
     : QMainWindow{parent}
     , m_mainMenu{menubar}
     , m_settings{settings}
-    , m_isHidden{false}
-    , m_isMaximised{false}
-    , m_isMinimised{false}
-    , m_hidingToTray{false}
+    , m_prevState{Normal}
+    , m_state{Normal}
+    , m_isHiding{false}
+    , m_hasQuit{false}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
     m_settings->createSettingsDialog(this);
+
+    if(auto prevState = m_settings->fileValue(QString::fromLatin1(MainWindowPrevState)).toString();
+       !prevState.isEmpty()) {
+        if(auto state = Utils::Enum::fromString<WindowState>(prevState)) {
+            m_prevState = state.value();
+        }
+    }
 
     resetTitle();
 
@@ -64,20 +74,22 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
 
 MainWindow::~MainWindow()
 {
-    m_settings->fileSet(QString::fromLatin1(MainWindowGeometry), saveGeometry());
+    exit();
 }
 
 void MainWindow::open()
 {
     switch(m_settings->value<Settings::Gui::StartupBehaviour>()) {
-        case(Maximised):
+        case(StartMaximised):
             showMaximized();
             break;
-        case(RememberLast):
-            restoreGeometry(m_settings->fileValue(QString::fromLatin1(MainWindowGeometry)).toByteArray());
-            show();
+        case(StartPrev):
+            restoreState(m_prevState);
             break;
-        case(Normal):
+        case(StartHidden):
+            m_state = Hidden;
+            break;
+        case(StartNormal):
         default:
             show();
             break;
@@ -90,12 +102,12 @@ void MainWindow::raiseWindow()
     show();
     activateWindow();
 
-    m_isHidden = false;
+    m_state = currentState();
 }
 
 void MainWindow::toggleVisibility()
 {
-    if(m_isHidden) {
+    if(m_state == Hidden) {
         hideToTray(false);
     }
     else if(isActiveWindow()) {
@@ -139,45 +151,83 @@ void MainWindow::showEvent(QShowEvent* event)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    emit closing();
-
-    if(m_hidingToTray) {
-        m_hidingToTray = false;
-        QMainWindow::closeEvent(event);
-        return;
+    if(!m_isHiding) {
+        if(event->spontaneous()) {
+            const bool canHide = m_settings->value<Settings::Gui::Internal::ShowTrayIcon>()
+                              && m_settings->value<Settings::Gui::Internal::TrayOnClose>();
+            if(!isHidden() && QSystemTrayIcon::isSystemTrayAvailable() && canHide) {
+                hideToTray(true);
+            }
+            else {
+                exit();
+            }
+        }
+        else {
+            exit();
+        }
     }
 
-    const bool canHide = m_settings->value<Settings::Gui::Internal::ShowTrayIcon>()
-                      && m_settings->value<Settings::Gui::Internal::TrayOnClose>();
+    event->accept();
+    QMainWindow::closeEvent(event);
+}
 
-    if(!m_isHidden && QSystemTrayIcon::isSystemTrayAvailable() && canHide) {
-        hideToTray(true);
+MainWindow::WindowState MainWindow::currentState()
+{
+    if(isHidden()) {
+        return Hidden;
     }
-    else {
-        Application::quit();
+    if(isMaximized()) {
+        return Maximised;
+    }
+
+    return Normal;
+}
+
+void MainWindow::restoreState(WindowState state)
+{
+    switch(state) {
+        case(Normal):
+            restoreGeometry(m_settings->fileValue(QString::fromLatin1(MainWindowGeometry)).toByteArray());
+            show();
+            break;
+        case(Maximised):
+            showMaximized();
+            break;
+        case(Hidden):
+            m_state = Hidden;
+            break;
     }
 }
 
 void MainWindow::hideToTray(bool hide)
 {
-    m_isHidden = hide;
-
     if(hide) {
-        m_isMaximised  = isMaximized();
-        m_isMinimised  = isMinimized();
-        m_hidingToTray = true;
+        m_isHiding  = true;
+        m_prevState = std::exchange(m_state, Hidden);
         close();
+        m_isHiding = false;
     }
     else {
-        if(m_isMinimised) {
-            showMinimized();
-        }
-        else if(m_isMaximised) {
+        if(m_prevState == Maximised) {
+            m_state = m_prevState;
             showMaximized();
         }
         else {
+            m_state = Normal;
             show();
         }
+    }
+}
+
+void MainWindow::exit()
+{
+    if(!m_hasQuit) {
+        m_hasQuit = true;
+
+        m_settings->fileSet(QString::fromLatin1(MainWindowGeometry), saveGeometry());
+        m_settings->fileSet(QString::fromLatin1(MainWindowPrevState), Utils::Enum::toString(currentState()));
+
+        Application::quit();
     }
 }
 } // namespace Fooyin

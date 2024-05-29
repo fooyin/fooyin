@@ -34,15 +34,23 @@ class MainWindow : public QMainWindow
 public:
     enum StartupBehaviour
     {
-        Normal,
-        Maximised,
-        RememberLast
+        StartNormal,
+        StartMaximised,
+        StartHidden,
+        StartPrev
     };
     Q_ENUM(StartupBehaviour)
 
+    enum WindowState
+    {
+        Normal,
+        Maximised,
+        Hidden
+    };
+    Q_ENUM(WindowState)
+
     explicit MainWindow(ActionManager* actionManager, MainMenuBar* menubar, SettingsManager* settings,
                         QWidget* parent = nullptr);
-
     ~MainWindow() override;
 
     void open();
@@ -52,22 +60,22 @@ public:
     void prependTitle(const QString& title);
     void resetTitle();
 
-signals:
-    void closing();
-
 protected:
     void showEvent(QShowEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
 
 private:
+    WindowState currentState();
+    void restoreState(WindowState state);
     void hideToTray(bool hide);
+    void exit();
 
     MainMenuBar* m_mainMenu;
     SettingsManager* m_settings;
 
-    bool m_isHidden;
-    bool m_isMaximised;
-    bool m_isMinimised;
-    bool m_hidingToTray;
+    WindowState m_prevState;
+    WindowState m_state;
+    bool m_isHiding;
+    bool m_hasQuit;
 };
 } // namespace Fooyin

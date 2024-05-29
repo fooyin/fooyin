@@ -19,6 +19,7 @@
 
 #include "filemenu.h"
 
+#include "core/application.h"
 #include "gui/guiconstants.h"
 
 #include <utils/actions/actioncontainer.h>
@@ -64,7 +65,7 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
     fileMenu->addAction(quitCommand, Actions::Groups::Three);
-    QObject::connect(quit, &QAction::triggered, qApp, &QCoreApplication::quit, Qt::QueuedConnection);
+    QObject::connect(quit, &QAction::triggered, Application::quit);
 }
 
 } // namespace Fooyin
