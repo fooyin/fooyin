@@ -565,6 +565,7 @@ void PlaylistWidgetPrivate::queueSelectedTracks() const
     }
 
     playerController->queueTracks(tracks);
+    removeFromQueueAction->setVisible(true);
 }
 
 void PlaylistWidgetPrivate::dequeueSelectedTracks() const
@@ -588,6 +589,7 @@ void PlaylistWidgetPrivate::dequeueSelectedTracks() const
     }
 
     playerController->dequeueTracks(tracks);
+    removeFromQueueAction->setVisible(false);
 }
 
 void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index)
