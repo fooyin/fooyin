@@ -42,7 +42,7 @@ public:
     void reset();
 
     [[nodiscard]] bool isPaused() const;
-    void pause(bool paused);
+    void pause(bool paused, int fadeLength = 0);
 
     void queueBuffer(const AudioBuffer& buffer);
 
@@ -51,9 +51,13 @@ public:
     void updateVolume(double volume);
 
 signals:
+    void paused();
     void outputStateChanged(AudioOutput::State state);
     void bufferProcessed(const AudioBuffer& buffer);
     void finished();
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     struct Private;

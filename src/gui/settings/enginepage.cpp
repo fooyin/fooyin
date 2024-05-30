@@ -21,6 +21,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
+#include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <utils/expandingcombobox.h>
 #include <utils/settings/settingsmanager.h>
@@ -57,6 +58,12 @@ private:
 
     QCheckBox* m_gaplessPlayback;
     QSpinBox* m_bufferSize;
+
+    QGroupBox* m_fadingBox;
+    QSpinBox* m_fadingStopIn;
+    QSpinBox* m_fadingStopOut;
+    // QSpinBox* m_fadingSeekIn;
+    // QSpinBox* m_fadingSeekOut;
 };
 
 EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* engine)
@@ -66,6 +73,11 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
     , m_bufferSize{new QSpinBox(this)}
+    , m_fadingBox{new QGroupBox(tr("Fading"), this)}
+    , m_fadingStopIn{new QSpinBox(this)}
+    , m_fadingStopOut{new QSpinBox(this)}
+// , m_fadingSeekIn{new QSpinBox(this)}
+// , m_fadingSeekOut{new QSpinBox(this)}
 {
     auto* outputLabel = new QLabel(tr("Output") + QStringLiteral(":"), this);
     auto* deviceLabel = new QLabel(tr("Device") + QStringLiteral(":"), this);
@@ -90,17 +102,54 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
 
     generalLayout->setColumnStretch(2, 1);
 
+    m_fadingBox->setCheckable(true);
+    auto* fadingLayout = new QGridLayout(m_fadingBox);
+
+    auto* fadingInLabel  = new QLabel(tr("Fade In"), this);
+    auto* fadingOutLabel = new QLabel(tr("Fade Out"), this);
+    auto* stopPauseLabel = new QLabel(tr("Pause/Stop"), this);
+    // auto* seekLabel      = new QLabel(tr("Seek"), this);
+
+    m_fadingStopIn->setSuffix(QStringLiteral("ms"));
+    m_fadingStopOut->setSuffix(QStringLiteral("ms"));
+    // m_fadingSeekIn->setSuffix(QStringLiteral("ms"));
+    // m_fadingSeekOut->setSuffix(QStringLiteral("ms"));
+
+    m_fadingStopIn->setMaximum(10000);
+    m_fadingStopOut->setMaximum(10000);
+    // m_fadingSeekIn->setMaximum(10000);
+    // m_fadingSeekOut->setMaximum(10000);
+
+    fadingLayout->addWidget(fadingInLabel, 0, 1);
+    fadingLayout->addWidget(fadingOutLabel, 0, 2);
+    fadingLayout->addWidget(stopPauseLabel, 1, 0);
+    // fadingLayout->addWidget(seekLabel, 2, 0);
+    fadingLayout->addWidget(m_fadingStopIn, 1, 1);
+    fadingLayout->addWidget(m_fadingStopOut, 1, 2);
+    // fadingLayout->addWidget(m_fadingSeekIn, 2, 1);
+    // fadingLayout->addWidget(m_fadingSeekOut, 2, 2);
+    fadingLayout->setColumnStretch(3, 1);
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(outputLabel, 0, 0);
     mainLayout->addWidget(m_outputBox, 0, 1);
     mainLayout->addWidget(deviceLabel, 1, 0);
     mainLayout->addWidget(m_deviceBox, 1, 1);
     mainLayout->addWidget(generalBox, 2, 0, 1, 2);
+    mainLayout->addWidget(m_fadingBox, 3, 0, 1, 2);
 
-    mainLayout->setColumnStretch(1, 1);
-    mainLayout->setRowStretch(3, 1);
+    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
+
+    auto matchBufferInterval = [this](const int value) {
+        if(value > m_bufferSize->value()) {
+            m_bufferSize->setValue(value);
+        }
+    };
 
     QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
+    QObject::connect(m_fadingStopIn, &QSpinBox::valueChanged, this, matchBufferInterval);
+    QObject::connect(m_fadingStopOut, &QSpinBox::valueChanged, this, matchBufferInterval);
 }
 
 void EnginePageWidget::load()
@@ -109,6 +158,13 @@ void EnginePageWidget::load()
     setupDevices(m_outputBox->currentText());
     m_gaplessPlayback->setChecked(m_settings->value<Settings::Core::GaplessPlayback>());
     m_bufferSize->setValue(m_settings->value<Settings::Core::BufferLength>());
+
+    m_fadingBox->setChecked(m_settings->value<Settings::Core::Internal::EngineFading>());
+    const auto fadingValues = m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>();
+    m_fadingStopIn->setValue(fadingValues.inPauseStop);
+    m_fadingStopOut->setValue(fadingValues.outPauseStop);
+    // m_fadingSeekIn->setValue(fadingValues.inSeek);
+    // m_fadingSeekOut->setValue(fadingValues.outSeek);
 }
 
 void EnginePageWidget::apply()
@@ -117,6 +173,15 @@ void EnginePageWidget::apply()
     m_settings->set<Settings::Core::AudioOutput>(output);
     m_settings->set<Settings::Core::GaplessPlayback>(m_gaplessPlayback->isChecked());
     m_settings->set<Settings::Core::BufferLength>(m_bufferSize->value());
+
+    FadingIntervals fadingValues;
+    fadingValues.inPauseStop  = m_fadingStopIn->value();
+    fadingValues.outPauseStop = m_fadingStopOut->value();
+    // fadingValues.inSeek       = m_fadingSeekIn->value();
+    // fadingValues.outSeek      = m_fadingSeekOut->value();
+
+    m_settings->set<Settings::Core::Internal::EngineFading>(m_fadingBox->isChecked());
+    m_settings->set<Settings::Core::Internal::FadingIntervals>(QVariant::fromValue(fadingValues));
 }
 
 void EnginePageWidget::reset()
@@ -124,6 +189,8 @@ void EnginePageWidget::reset()
     m_settings->reset<Settings::Core::AudioOutput>();
     m_settings->reset<Settings::Core::GaplessPlayback>();
     m_settings->reset<Settings::Core::BufferLength>();
+    m_settings->reset<Settings::Core::Internal::EngineFading>();
+    m_settings->reset<Settings::Core::Internal::FadingIntervals>();
 }
 
 void EnginePageWidget::setupOutputs()

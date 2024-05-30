@@ -22,6 +22,7 @@
 #include "audioclock.h"
 #include "audiorenderer.h"
 #include "engine/ffmpeg/ffmpegdecoder.h"
+#include "internalcoresettings.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
@@ -30,6 +31,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
+#include <QThread>
 #include <QTimer>
 #include <QTimerEvent>
 
@@ -69,14 +71,19 @@ struct AudioPlaybackEngine::Private
 
     QBasicTimer bufferTimer;
 
+    FadingIntervals fadeIntervals;
+
     explicit Private(AudioEngine* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
         , bufferLength{static_cast<uint64_t>(settings->value<Settings::Core::BufferLength>())}
         , decoder{std::make_unique<FFmpegDecoder>()}
         , renderer{new AudioRenderer(self)}
+        , fadeIntervals{settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
     {
         settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
+        settings->subscribe<Settings::Core::Internal::FadingIntervals>(
+            self, [this](const QVariant& fading) { fadeIntervals = fading.value<FadingIntervals>(); });
 
         QObject::connect(renderer, &AudioRenderer::bufferProcessed, self,
                          [this](const AudioBuffer& buffer) { totalBufferTime -= buffer.duration(); });
@@ -123,41 +130,78 @@ struct AudioPlaybackEngine::Private
         }
     }
 
-    bool setState(PlaybackState newState)
+    void updateState(PlaybackState newState)
     {
-        auto prevState = std::exchange(state, newState);
-        if(prevState != state) {
-            emit self->stateChanged(state);
+        if(std::exchange(state, newState) != state) {
+            emit self->stateChanged(newState);
         }
+        clock.setPaused(newState != PlaybackState::Playing);
+    }
 
-        clock.setPaused(state != PlaybackState::Playing);
+    void stop()
+    {
+        auto delayedStop = [this]() {
+            stopWorkers(true);
+        };
 
-        if(state == PlaybackState::Stopped) {
+        const bool canFade
+            = settings->value<Settings::Core::Internal::EngineFading>() && fadeIntervals.outPauseStop > 0;
+        if(canFade) {
+            QObject::connect(renderer, &AudioRenderer::paused, self, delayedStop, Qt::SingleShotConnection);
+            renderer->pause(true, fadeIntervals.outPauseStop);
+        }
+        else {
             stopWorkers(true);
         }
-        else if(state == PlaybackState::Paused) {
+
+        updateState(PlaybackState::Stopped);
+        positionTimer()->stop();
+        lastPosition = 0;
+        emit self->positionChanged(0);
+    }
+
+    void pause()
+    {
+        auto delayedPause = [this]() {
             pauseOutput(true);
-        }
-        else if(state == PlaybackState::Playing) {
-            if(outputState == AudioOutput::State::Disconnected) {
-                if(renderer->init(format)) {
-                    outputState = AudioOutput::State::None;
-                }
-                else {
-                    state = PlaybackState::Error;
-                    emit self->stateChanged(state);
-                    return false;
-                }
+            updateState(PlaybackState::Paused);
+            clock.setPaused(true);
+        };
+
+        QObject::connect(renderer, &AudioRenderer::paused, self, delayedPause, Qt::SingleShotConnection);
+
+        const int fadeInterval
+            = settings->value<Settings::Core::Internal::EngineFading>() ? fadeIntervals.outPauseStop : 0;
+        renderer->pause(true, fadeInterval);
+    }
+
+    void play()
+    {
+        if(outputState == AudioOutput::State::Disconnected) {
+            if(renderer->init(format)) {
+                outputState = AudioOutput::State::None;
             }
-
-            startPlayback();
-
-            if(prevState == PlaybackState::Paused) {
-                pauseOutput(false);
+            else {
+                updateState(PlaybackState::Error);
+                return;
             }
         }
 
-        return true;
+        const auto prevState = state;
+
+        startPlayback();
+        updateState(PlaybackState::Playing);
+
+        const bool canFade     = settings->value<Settings::Core::Internal::EngineFading>();
+        const int fadeInterval = prevState != PlaybackState::Stopped && canFade ? fadeIntervals.inPauseStop : 0;
+        renderer->pause(false, fadeInterval);
+        changeTrackStatus(TrackStatus::BufferedTrack);
+        positionTimer()->start();
+    }
+
+    void enterErrorState()
+    {
+        updateState(PlaybackState::Error);
     }
 
     TrackStatus changeTrackStatus(TrackStatus newStatus)
@@ -221,8 +265,6 @@ struct AudioPlaybackEngine::Private
         else {
             startBufferTimer();
         }
-
-        renderer->pause(pause);
     }
 
     void resetWorkers()
@@ -255,6 +297,8 @@ AudioPlaybackEngine::AudioPlaybackEngine(SettingsManager* settings, QObject* par
 
 AudioPlaybackEngine::~AudioPlaybackEngine()
 {
+    AudioPlaybackEngine::stop();
+
     p->stopWorkers();
 
     if(p->positionUpdateTimer) {
@@ -305,7 +349,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     if(!p->updateFormat(p->decoder->format())) {
-        p->setState(PlaybackState::Error);
+        p->enterErrorState();
         p->changeTrackStatus(TrackStatus::NoTrack);
         return;
     }
@@ -313,7 +357,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     p->changeTrackStatus(TrackStatus::LoadedTrack);
 
     if(p->state == PlaybackState::Playing) {
-        p->setState(PlaybackState::Playing);
+        p->play();
     }
 }
 
@@ -328,10 +372,7 @@ void AudioPlaybackEngine::play()
         emit positionChanged(0);
     }
 
-    if(p->setState(PlaybackState::Playing)) {
-        p->changeTrackStatus(TrackStatus::BufferedTrack);
-        p->positionTimer()->start();
-    }
+    p->play();
 }
 
 void AudioPlaybackEngine::pause()
@@ -344,20 +385,14 @@ void AudioPlaybackEngine::pause()
         seek(0);
         emit positionChanged(0);
     }
-
-    if(p->setState(PlaybackState::Paused)) {
-        p->positionTimer()->stop();
-        p->changeTrackStatus(TrackStatus::BufferedTrack);
+    else {
+        p->pause();
     }
 }
 
 void AudioPlaybackEngine::stop()
 {
-    if(p->setState(PlaybackState::Stopped)) {
-        p->positionTimer()->stop();
-        p->lastPosition = 0;
-        emit positionChanged(0);
-    }
+    p->stop();
 }
 
 void AudioPlaybackEngine::setVolume(double volume)
@@ -371,8 +406,8 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
     const bool playing = (p->state == PlaybackState::Playing || p->state == PlaybackState::Paused);
 
     p->clock.setPaused(playing);
-    if(!p->renderer->isPaused()) {
-        p->renderer->pause(playing);
+    if(playing && !p->renderer->isPaused()) {
+        p->renderer->pause(true);
     }
 
     if(playing) {
@@ -389,6 +424,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
 
         p->clock.setPaused(false);
         p->startPlayback();
+        p->renderer->pause(false);
     }
 }
 
@@ -401,8 +437,8 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
     const bool playing = p->state == PlaybackState::Playing || p->state == PlaybackState::Paused;
 
     p->clock.setPaused(playing);
-    if(!p->renderer->isPaused()) {
-        p->renderer->pause(playing);
+    if(playing && !p->renderer->isPaused()) {
+        p->renderer->pause(true);
     }
 
     if(playing) {
@@ -419,6 +455,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
 
         p->clock.setPaused(false);
         p->startPlayback();
+        p->renderer->pause(false);
     }
 }
 

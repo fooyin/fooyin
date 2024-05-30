@@ -23,9 +23,16 @@
 #include <core/engine/audiooutput.h>
 #include <utils/threadqueue.h>
 
+#include <QBasicTimer>
 #include <QDebug>
 #include <QTimer>
+#include <QTimerEvent>
+
 #include <utility>
+
+using namespace std::chrono_literals;
+
+constexpr auto FadeInterval = 10;
 
 namespace Fooyin {
 struct AudioRenderer::Private
@@ -48,6 +55,13 @@ struct AudioRenderer::Private
 
     QTimer* writeTimer;
 
+    QBasicTimer fadeTimer;
+    int fadeLength{0};
+    int fadeSteps{0};
+    int currentFadeStep{0};
+    double volumeChange{0.0};
+    double initialVolume{0.0};
+
     explicit Private(AudioRenderer* self_)
         : self{self_}
         , writeTimer{new QTimer(self)}
@@ -55,7 +69,19 @@ struct AudioRenderer::Private
         QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
     }
 
-    bool canWrite()
+    void resetFade(int length)
+    {
+        if(fadeTimer.isActive()) {
+            fadeTimer.stop();
+        }
+
+        volumeChange    = 0;
+        currentFadeStep = 0;
+        fadeLength      = length;
+        fadeSteps       = static_cast<int>(static_cast<double>(fadeLength) / FadeInterval);
+    }
+
+    bool canWrite() const
     {
         return isRunning && audioOutput->initialised();
     }
@@ -88,6 +114,13 @@ struct AudioRenderer::Private
             emit self->outputStateChanged(state);
             audioOutput->uninit();
             bufferPrefilled = false;
+        }
+    }
+
+    void pauseOutput(bool pause) const
+    {
+        if(audioOutput && audioOutput->initialised()) {
+            audioOutput->setPaused(pause);
         }
     }
 
@@ -258,20 +291,35 @@ bool AudioRenderer::isPaused() const
     return !p->isRunning;
 }
 
-void AudioRenderer::pause(bool paused)
+void AudioRenderer::pause(bool paused, int fadeLength)
 {
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->setPaused(paused);
-    }
-
-    p->isRunning = !paused;
+    p->resetFade(fadeLength);
 
     if(paused) {
-        p->writeTimer->stop();
+        if(fadeLength == 0) {
+            p->volumeChange = -1.0;
+        }
+        else {
+            p->volumeChange = -(p->volume / p->fadeSteps);
+        }
     }
     else {
+        p->pauseOutput(false);
+
+        p->isRunning = true;
         p->writeTimer->start();
+
+        if(fadeLength > 0) {
+            p->updateOutputVolume(0.0);
+            p->volumeChange = std::abs(p->initialVolume - p->volume) / p->fadeSteps;
+        }
+        else {
+            p->updateOutputVolume(p->initialVolume);
+            p->volumeChange = 1.0;
+        }
     }
+
+    p->fadeTimer.start(FadeInterval, this);
 }
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
@@ -322,9 +370,36 @@ void AudioRenderer::updateVolume(double volume)
     p->updateOutputVolume(volume);
 }
 
-    if(p->audioOutput && p->audioOutput->canHandleVolume()) {
-        p->audioOutput->setVolume(volume);
+void AudioRenderer::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() != p->fadeTimer.timerId()) {
+        return;
     }
+
+    if(p->currentFadeStep <= p->fadeSteps) {
+        p->updateOutputVolume(std::clamp(p->volume + p->volumeChange, 0.0, 1.0));
+        p->currentFadeStep++;
+        return;
+    }
+
+    if(p->volumeChange < 0.0) {
+        if(p->audioOutput->currentState().queuedSamples > 0) {
+            // Drain queued samples so we can fade in smoothly
+            p->writeTimer->stop();
+            return;
+        }
+        // Faded out
+        p->isRunning = false;
+        p->writeTimer->stop();
+        p->pauseOutput(true);
+        p->updateOutputVolume(0.0);
+        emit paused();
+    }
+    else {
+        p->updateOutputVolume(p->initialVolume);
+    }
+
+    p->fadeTimer.stop();
 }
 } // namespace Fooyin
 

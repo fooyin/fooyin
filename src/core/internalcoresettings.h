@@ -26,6 +26,38 @@
 namespace Fooyin {
 class SettingsManager;
 
+struct FadingIntervals
+{
+    int inPauseStop{100};
+    int outPauseStop{100};
+    int inSeek{100};
+    int outSeek{100};
+    int inChange{100};
+    int outChange{100};
+
+    friend QDataStream& operator<<(QDataStream& stream, const FadingIntervals& fading)
+    {
+        stream << fading.inPauseStop;
+        stream << fading.outPauseStop;
+        stream << fading.inSeek;
+        stream << fading.outSeek;
+        stream << fading.inChange;
+        stream << fading.outChange;
+        return stream;
+    }
+
+    friend QDataStream& operator>>(QDataStream& stream, FadingIntervals& fading)
+    {
+        stream >> fading.inPauseStop;
+        stream >> fading.outPauseStop;
+        stream >> fading.inSeek;
+        stream >> fading.outSeek;
+        stream >> fading.inChange;
+        stream >> fading.outChange;
+        return stream;
+    }
+};
+
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
@@ -34,7 +66,9 @@ enum CoreInternalSettings : uint32_t
     MonitorLibraries  = 0 | Settings::Bool,
     MuteVolume        = 1 | Settings::Double,
     DisabledPlugins   = 2 | Settings::StringList,
-    SavePlaybackState = 3 | Settings::Bool
+    SavePlaybackState = 3 | Settings::Bool,
+    EngineFading      = 4 | Type::Bool,
+    FadingIntervals   = 5 | Type::Variant
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal
@@ -50,3 +84,5 @@ private:
     SettingsManager* m_settings;
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(Fooyin::FadingIntervals)

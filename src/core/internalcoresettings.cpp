@@ -33,6 +33,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 {
     using namespace Settings::Core;
 
+    qRegisterMetaType<FadingIntervals>("FadingIntervals");
+
     m_settings->createTempSetting<FirstRun>(true);
     m_settings->createSetting<Version>(QString::fromLatin1(VERSION), QStringLiteral("Version"));
     m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
@@ -52,6 +54,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, QStringLiteral("Plugins/Disabled"));
     m_settings->createSetting<Internal::SavePlaybackState>(false, QStringLiteral("Player/SavePlaybackState"));
+    m_settings->createSetting<Internal::EngineFading>(false, QStringLiteral("Engine/Fading"));
+    m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
+                                                         QStringLiteral("Engine/FadingIntervals"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }
