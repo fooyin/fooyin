@@ -70,6 +70,7 @@ struct StatusWidget::Private
         , playerController{playerController_}
         , selectionController{selectionController_}
         , settings{settings_}
+        , scriptRegistry{playerController}
         , scriptParser{&scriptRegistry}
         , iconLabel{new ClickableLabel(self)}
         , statusText{new ElidedLabel(self)}
