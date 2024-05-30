@@ -138,7 +138,7 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     mainLayout->addWidget(generalBox, 2, 0, 1, 2);
     mainLayout->addWidget(m_fadingBox, 3, 0, 1, 2);
 
-    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     auto matchBufferInterval = [this](const int value) {
