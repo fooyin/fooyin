@@ -293,6 +293,11 @@ bool AudioRenderer::isPaused() const
     return !p->isRunning;
 }
 
+bool AudioRenderer::isFading() const
+{
+    return p->fadeTimer.isActive();
+}
+
 void AudioRenderer::pause(bool paused, int fadeLength)
 {
     p->resetFade(fadeLength);
@@ -312,7 +317,6 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         p->writeTimer->start();
 
         if(fadeLength > 0) {
-            p->updateOutputVolume(0.0);
             p->volumeChange = std::abs(p->initialVolume - p->volume) / p->fadeSteps;
         }
         else {

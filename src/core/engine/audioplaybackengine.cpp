@@ -192,8 +192,9 @@ struct AudioPlaybackEngine::Private
         startPlayback();
         updateState(PlaybackState::Playing);
 
-        const bool canFade     = settings->value<Settings::Core::Internal::EngineFading>();
-        const int fadeInterval = prevState == PlaybackState::Paused && canFade ? fadeIntervals.inPauseStop : 0;
+        const bool canFade = settings->value<Settings::Core::Internal::EngineFading>()
+                          && (prevState == PlaybackState::Paused || renderer->isFading());
+        const int fadeInterval = canFade ? fadeIntervals.inPauseStop : 0;
         renderer->pause(false, fadeInterval);
         changeTrackStatus(TrackStatus::BufferedTrack);
         positionTimer()->start();

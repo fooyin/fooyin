@@ -42,6 +42,7 @@ public:
     void reset();
 
     [[nodiscard]] bool isPaused() const;
+    [[nodiscard]] bool isFading() const;
     void pause(bool paused, int fadeLength = 0);
 
     void queueBuffer(const AudioBuffer& buffer);
