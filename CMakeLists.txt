@@ -87,6 +87,7 @@ if(BUILD_WERROR)
 endif()
 if(BUILD_ASAN)
     list(APPEND FOOYIN_COMPILE_OPTIONS -fsanitize=address,undefined)
+    list(APPEND FOOYIN_LINK_OPTIONS -fsanitize=address,undefined)
 endif()
 
 list(
