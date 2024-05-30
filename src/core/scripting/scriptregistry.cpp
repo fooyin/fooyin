@@ -26,7 +26,9 @@
 #include "functions/tracklistfuncs.h"
 
 #include <core/constants.h>
+#include <core/player/playercontroller.h>
 #include <core/track.h>
+#include <utils/utils.h>
 
 namespace {
 using NativeFunc     = std::function<QString(const QStringList&)>;
@@ -70,16 +72,38 @@ auto generateSetFunc(FuncType func)
 namespace Fooyin {
 struct ScriptRegistry::Private
 {
+    PlayerController* playerController{nullptr};
+
     std::unordered_map<QString, TrackFunc> metadata;
     std::unordered_map<QString, TrackSetFunc> setMetadata;
     std::unordered_map<QString, TrackListFunc> listProperties;
     std::unordered_map<QString, Func> funcs;
+    std::unordered_map<QString, NativeVoidFunc> playbackVars;
 
-    Private()
+    explicit Private(PlayerController* playerController_)
+        : playerController{playerController_}
     {
         addDefaultFunctions();
         addDefaultListFuncs();
         addDefaultMetadata();
+        addPlaybackVars();
+    }
+
+    void addPlaybackVars()
+    {
+        if(!playerController) {
+            return;
+        }
+
+        playbackVars.emplace(QStringLiteral("playback_time"), [this]() { return playbackTime(); });
+        playbackVars.emplace(QStringLiteral("playback_time_remaining"), [this]() {
+            return Utils::msToString(playerController->currentTrack().duration() - playerController->currentPosition());
+        });
+    }
+
+    QString playbackTime() const
+    {
+        return Utils::msToString(playerController->currentPosition());
     }
 
     void addDefaultFunctions()
@@ -179,15 +203,15 @@ struct ScriptRegistry::Private
     }
 };
 
-ScriptRegistry::ScriptRegistry()
-    : p{std::make_unique<Private>()}
+ScriptRegistry::ScriptRegistry(PlayerController* playerController)
+    : p{std::make_unique<Private>(playerController)}
 { }
 
 ScriptRegistry::~ScriptRegistry() = default;
 
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    return p->metadata.contains(var) || track.hasExtraTag(var.toUpper());
+    return p->metadata.contains(var) || p->playbackVars.contains(var) || track.hasExtraTag(var.toUpper());
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
@@ -212,6 +236,9 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
 
     if(p->metadata.contains(var)) {
         return calculateResult(p->metadata.at(var)(track));
+    }
+    if(p->playbackVars.contains(var)) {
+        return calculateResult(p->playbackVars.at(var)());
     }
 
     return calculateResult(track.extraTag(var.toUpper()));
