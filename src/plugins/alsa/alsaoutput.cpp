@@ -514,6 +514,7 @@ void AlsaOutput::reset()
     checkError(snd_pcm_drop(p->pcmHandle.get()), QStringLiteral("ALSA drop error"));
     checkError(snd_pcm_prepare(p->pcmHandle.get()), QStringLiteral("ALSA prepare error"));
 
+    p->started = false;
     p->recoverState();
 }
 
