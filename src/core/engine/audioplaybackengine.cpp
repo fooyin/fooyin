@@ -43,6 +43,8 @@ constexpr auto BufferInterval = 5ms;
 constexpr auto BufferInterval = 5;
 #endif
 
+constexpr auto MaxDecodeLength = 1000;
+
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
 {
@@ -110,7 +112,9 @@ struct AudioPlaybackEngine::Private
         }
 
         const auto bytesLeft = static_cast<size_t>(format.bytesForDuration(bufferLength - totalBufferTime));
-        const auto buffer    = decoder->readBuffer(bytesLeft);
+        const auto maxBytes  = static_cast<size_t>(format.bytesForDuration(MaxDecodeLength));
+
+        const auto buffer = decoder->readBuffer(std::min(maxBytes, bytesLeft));
         if(buffer.isValid()) {
             totalBufferTime += buffer.duration();
             renderer->queueBuffer(buffer);
