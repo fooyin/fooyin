@@ -102,7 +102,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::DirBrowserControls>(true, QStringLiteral("DirectoryBrowser/Controls"));
     m_settings->createSetting<Internal::DirBrowserLocation>(true, QStringLiteral("DirectoryBrowser/LocationBar"));
     m_settings->createSetting<Internal::WindowTitleTrackScript>(
-        QStringLiteral("[%albumartist% - ]$if2(%title%,%filepath%)"),
+        QStringLiteral("[$if2(%albumartist%,%artist%) - ]$if2(%title%,%filename%)"),
         QStringLiteral("Interface/WindowTitleTrackScript"));
     m_settings->createSetting<Internal::TrackCoverPaths>(QVariant::fromValue(defaultCoverPaths()),
                                                          QStringLiteral("Artwork/Paths"));
