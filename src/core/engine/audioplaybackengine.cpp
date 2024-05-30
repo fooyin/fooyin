@@ -366,7 +366,7 @@ void AudioPlaybackEngine::setVolume(double volume)
     p->renderer->updateVolume(volume);
 }
 
-void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
+void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QString& device)
 {
     const bool playing = (p->state == PlaybackState::Playing || p->state == PlaybackState::Paused);
 
@@ -379,7 +379,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output)
         p->bufferTimer.stop();
     }
 
-    p->renderer->updateOutput(output);
+    p->renderer->updateOutput(output, device);
 
     if(playing) {
         if(!p->renderer->init(p->format)) {

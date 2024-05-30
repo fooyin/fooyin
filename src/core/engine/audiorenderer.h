@@ -46,7 +46,7 @@ public:
 
     void queueBuffer(const AudioBuffer& buffer);
 
-    void updateOutput(const OutputCreator& output);
+    void updateOutput(const OutputCreator& output, const QString& device);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
 

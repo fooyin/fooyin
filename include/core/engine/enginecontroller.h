@@ -56,7 +56,7 @@ public:
     virtual std::unique_ptr<AudioDecoder> createDecoder() = 0;
 
 signals:
-    void outputChanged(const QString& output);
+    void outputChanged(const QString& output, const QString& device);
     void deviceChanged(const QString& device);
     void trackStatusChanged(TrackStatus status);
     void trackAboutToFinish();

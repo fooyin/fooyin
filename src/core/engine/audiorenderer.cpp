@@ -279,7 +279,7 @@ void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
     p->bufferQueue.enqueue(buffer);
 }
 
-void AudioRenderer::updateOutput(const OutputCreator& output)
+void AudioRenderer::updateOutput(const OutputCreator& output, const QString& device)
 {
     auto newOutput = output();
     if(newOutput == p->audioOutput) {
@@ -290,7 +290,10 @@ void AudioRenderer::updateOutput(const OutputCreator& output)
         p->audioOutput->uninit();
     }
 
-    p->audioOutput     = std::move(newOutput);
+    p->audioOutput = std::move(newOutput);
+    if(!device.isEmpty()) {
+        p->audioOutput->setDevice(device);
+    }
     p->bufferPrefilled = false;
     QObject::connect(p->audioOutput.get(), &AudioOutput::stateChanged, this,
                      [this](const auto state) { p->outputStateChanged(state); });

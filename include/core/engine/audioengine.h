@@ -63,8 +63,8 @@ public:
 
     virtual void setVolume(double volume) = 0;
 
-    virtual void setAudioOutput(const OutputCreator& output) = 0;
-    virtual void setOutputDevice(const QString& device)      = 0;
+    virtual void setAudioOutput(const OutputCreator& output, const QString& device) = 0;
+    virtual void setOutputDevice(const QString& device)                             = 0;
 
 signals:
     void stateChanged(PlaybackState state);

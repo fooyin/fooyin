@@ -43,7 +43,7 @@ public slots:
 
     void setVolume(double volume) override;
 
-    void setAudioOutput(const OutputCreator& output) override;
+    void setAudioOutput(const OutputCreator& output, const QString& device) override;
     void setOutputDevice(const QString& device) override;
 
 protected:

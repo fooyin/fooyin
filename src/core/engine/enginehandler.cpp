@@ -136,8 +136,7 @@ struct EngineHandler::Private
                 return;
             }
             currentOutput = {outputs.cbegin()->first, QStringLiteral("default")};
-            emit self->outputChanged(currentOutput.name);
-            emit self->deviceChanged(currentOutput.device);
+            emit self->outputChanged(currentOutput.name, currentOutput.device);
         }
 
         const QStringList newOutput = output.split(QStringLiteral("|"));
@@ -161,8 +160,7 @@ struct EngineHandler::Private
 
         if(currentOutput.name != newName) {
             currentOutput = {newName, device};
-            emit self->outputChanged(newName);
-            emit self->deviceChanged(device);
+            emit self->outputChanged(newName, device);
         }
         else if(currentOutput.device != device) {
             currentOutput.device = device;
@@ -184,10 +182,11 @@ EngineHandler::EngineHandler(PlayerController* playerController, SettingsManager
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->playStateChanged(state); });
 
-    QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output) {
+    QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output, const QString& device) {
         if(p->outputs.contains(output)) {
             const auto& outputCreator = p->outputs.at(output);
-            QMetaObject::invokeMethod(p->engine, [this, outputCreator]() { p->engine->setAudioOutput(outputCreator); });
+            QMetaObject::invokeMethod(
+                p->engine, [this, outputCreator, device]() { p->engine->setAudioOutput(outputCreator, device); });
         }
     });
     QObject::connect(this, &EngineHandler::deviceChanged, p->engine, &AudioEngine::setOutputDevice);
