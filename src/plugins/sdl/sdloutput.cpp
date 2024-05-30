@@ -57,6 +57,7 @@ SdlOutput::SdlOutput()
     : m_bufferSize{4096}
     , m_initialised{false}
     , m_device{QStringLiteral("default")}
+    , m_volume{1.0}
 { }
 
 bool SdlOutput::init(const AudioFormat& format)
@@ -121,11 +122,6 @@ QString SdlOutput::device() const
     return m_device;
 }
 
-bool SdlOutput::canHandleVolume() const
-{
-    return false;
-}
-
 int SdlOutput::bufferSize() const
 {
     return m_bufferSize;
@@ -170,7 +166,10 @@ OutputDevices SdlOutput::getAllDevices() const
 
 int SdlOutput::write(const AudioBuffer& buffer)
 {
-    if(SDL_QueueAudio(m_audioDeviceId, buffer.constData().data(), buffer.byteCount()) == 0) {
+    AudioBuffer adjustedBuffer{buffer};
+    adjustedBuffer.scale(m_volume);
+
+    if(SDL_QueueAudio(m_audioDeviceId, adjustedBuffer.constData().data(), buffer.byteCount()) == 0) {
         return buffer.sampleCount();
     }
 
@@ -180,6 +179,11 @@ int SdlOutput::write(const AudioBuffer& buffer)
 void SdlOutput::setPaused(bool pause)
 {
     SDL_PauseAudioDevice(m_audioDeviceId, pause);
+}
+
+void SdlOutput::setVolume(double volume)
+{
+    m_volume = volume;
 }
 
 void SdlOutput::setDevice(const QString& device)

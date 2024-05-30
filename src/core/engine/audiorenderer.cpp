@@ -91,6 +91,15 @@ struct AudioRenderer::Private
         }
     }
 
+    void updateOutputVolume(double newVolume)
+    {
+        volume = newVolume;
+
+        if(audioOutput) {
+            audioOutput->setVolume(volume);
+        }
+    }
+
     void updateInterval() const
     {
         const auto interval = static_cast<int>(static_cast<double>(bufferSize) / format.sampleRate() * 1000 * 0.25);
@@ -169,10 +178,6 @@ struct AudioRenderer::Private
     {
         if(writeAudioSamples(samples) == 0) {
             return 0;
-        }
-
-        if(!audioOutput->canHandleVolume()) {
-            tempBuffer.adjustVolumeOfSamples(volume);
         }
 
         if(!tempBuffer.isValid()) {
@@ -310,7 +315,9 @@ void AudioRenderer::updateDevice(const QString& device)
 
 void AudioRenderer::updateVolume(double volume)
 {
-    p->volume = volume;
+    p->initialVolume = volume;
+    p->updateOutputVolume(volume);
+}
 
     if(p->audioOutput && p->audioOutput->canHandleVolume()) {
         p->audioOutput->setVolume(volume);

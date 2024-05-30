@@ -40,13 +40,13 @@ public:
 
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
-    [[nodiscard]] bool canHandleVolume() const override;
     int bufferSize() const override;
     OutputState currentState() override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
     int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;
+    void setVolume(double volume) override;
     void setDevice(const QString& device) override;
 
 protected:
@@ -59,6 +59,7 @@ private:
     int m_bufferSize;
     bool m_initialised;
     QString m_device;
+    double m_volume;
 
     SDL_AudioSpec m_desiredSpec;
     SDL_AudioSpec m_obtainedSpec;

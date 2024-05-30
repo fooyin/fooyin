@@ -37,7 +37,6 @@ public:
 
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
-    [[nodiscard]] bool canHandleVolume() const override;
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
     OutputState currentState() override;

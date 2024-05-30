@@ -374,11 +374,6 @@ QString PipeWireOutput::device() const
     return p->device;
 }
 
-bool PipeWireOutput::canHandleVolume() const
-{
-    return true;
-}
-
 OutputDevices PipeWireOutput::getAllDevices() const
 {
     OutputDevices devices;

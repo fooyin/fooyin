@@ -65,7 +65,7 @@ public:
 
     void fillSilence();
     void fillRemainingWithSilence();
-    void adjustVolumeOfSamples(double volume);
+    void scale(double volume);
 
 private:
     struct Private;

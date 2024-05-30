@@ -60,7 +60,7 @@ struct AudioBuffer::Private : QSharedData
     }
 
     template <typename T>
-    void adjustVolume(const double volume)
+    void scale(const double volume)
     {
         const auto bytes = static_cast<int>(buffer.size());
         const int bps    = format.bytesPerSample();
@@ -228,7 +228,7 @@ void AudioBuffer::fillRemainingWithSilence()
     }
 }
 
-void AudioBuffer::adjustVolumeOfSamples(double volume)
+void AudioBuffer::scale(double volume)
 {
     if(!isValid() || volume == 1.0) {
         return;
@@ -241,21 +241,21 @@ void AudioBuffer::adjustVolumeOfSamples(double volume)
 
     switch(format().sampleFormat()) {
         case(SampleFormat::U8):
-            p->adjustVolume<uint8_t>(volume);
+            p->scale<uint8_t>(volume);
             break;
         case(SampleFormat::S16):
-            p->adjustVolume<int16_t>(volume);
+            p->scale<int16_t>(volume);
             break;
         case(SampleFormat::S24):
         case(SampleFormat::S32):
-            p->adjustVolume<int32_t>(volume);
+            p->scale<int32_t>(volume);
             break;
         case(SampleFormat::Float):
-            p->adjustVolume<float>(volume);
+            p->scale<float>(volume);
             break;
         case(SampleFormat::Unknown):
         default:
-            qDebug() << "Unable to adjust volume of unsupported format";
+            qDebug() << "Unable to scale samples of unsupported format";
     }
 }
 } // namespace Fooyin

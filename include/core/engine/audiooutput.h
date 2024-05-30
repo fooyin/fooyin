@@ -81,12 +81,6 @@ public:
     virtual QString device() const = 0;
 
     /*!
-     *  Returns @c true if the driver can handle volume changes internally.
-     *  @note if @c false, a soft-volume will be applied to the samples when required.
-     */
-    virtual bool canHandleVolume() const = 0;
-
-    /*!
      *  Returns the current state of the output.
      *  @note this will only be called if @fn initialised returns @c true.
      *
@@ -116,10 +110,9 @@ public:
 
     /*!
      * Set's the volume of the audio driver.
-     * @note this will only be called if @fn canHandleVolume returns @c true.
      * @note this may be called regardless of the current initialised state.
      */
-    virtual void setVolume(double /*volume*/){};
+    virtual void setVolume(double volume) = 0;
 
     /*!
      * Set's the device for this driver.

@@ -243,6 +243,7 @@ struct AlsaOutput::Private
     snd_pcm_uframes_t bufferSize{8192};
     snd_pcm_uframes_t periodSize{1024};
     bool pausable{true};
+    double volume{1.0};
     QString device{QStringLiteral("default")};
     bool started{false};
 
@@ -253,6 +254,7 @@ struct AlsaOutput::Private
     void reset()
     {
         if(pcmHandle) {
+            snd_pcm_drain(pcmHandle.get());
             snd_pcm_drop(pcmHandle.get());
             pcmHandle.reset();
         }
@@ -531,11 +533,6 @@ QString AlsaOutput::device() const
     return p->device;
 }
 
-bool AlsaOutput::canHandleVolume() const
-{
-    return false;
-}
-
 int AlsaOutput::bufferSize() const
 {
     return static_cast<int>(p->bufferSize);
@@ -568,8 +565,11 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
     const int frameCount = buffer.frameCount();
 
+    AudioBuffer adjustedBuff{buffer};
+    adjustedBuff.scale(p->volume);
+
     snd_pcm_sframes_t err{0};
-    err = snd_pcm_writei(p->pcmHandle.get(), buffer.constData().data(), frameCount);
+    err = snd_pcm_writei(p->pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
     if(checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
         return 0;
     }
@@ -595,6 +595,11 @@ void AlsaOutput::setPaused(bool pause)
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
         checkError(snd_pcm_pause(p->pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
     }
+}
+
+void AlsaOutput::setVolume(double volume)
+{
+    p->volume = volume;
 }
 
 void AlsaOutput::setDevice(const QString& device)
