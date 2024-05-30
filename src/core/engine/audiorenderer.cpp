@@ -267,6 +267,7 @@ void AudioRenderer::stop()
     p->isRunning = false;
     p->writeTimer->stop();
 
+    p->resetFade(0);
     p->resetBuffer();
 }
 
@@ -283,6 +284,7 @@ void AudioRenderer::reset()
         p->audioOutput->reset();
     }
 
+    p->resetFade(0);
     p->resetBuffer();
 }
 
