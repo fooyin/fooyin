@@ -71,9 +71,26 @@ QString msToString(uint64_t ms)
     return formattedTime;
 }
 
-QString secsToString(uint64_t secs)
+QString msToStringExtended(uint64_t ms)
 {
-    return msToString(secs * 1000);
+    constexpr auto msPerSecond = 1000;
+    constexpr auto msPerMinute = msPerSecond * 60;
+    constexpr auto msPerHour   = msPerMinute * 60;
+    constexpr auto msPerDay    = msPerHour * 24;
+
+    const uint64_t hours   = (ms % msPerDay) / msPerHour;
+    const uint64_t minutes = (ms % msPerHour) / msPerMinute;
+    const uint64_t seconds = (ms % msPerMinute) / msPerSecond;
+
+    QString formattedTime;
+
+    if(hours > 0) {
+        formattedTime = formattedTime + addLeadingZero(static_cast<int>(hours), 2) + QStringLiteral(":");
+    }
+
+    formattedTime = formattedTime + addLeadingZero(static_cast<int>(minutes), 2) + QStringLiteral(":")
+                  + addLeadingZero(static_cast<int>(seconds), 2);
+    return formattedTime;
 }
 
 uint64_t currentDateToInt()

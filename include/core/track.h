@@ -113,6 +113,7 @@ public:
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
     [[nodiscard]] uint64_t duration() const;
+    [[nodiscard]] QString displayDuration() const;
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;

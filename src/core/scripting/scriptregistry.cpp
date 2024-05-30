@@ -139,7 +139,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::Genre)]           = &Track::genres;
         metadata[QString::fromLatin1(MetaData::Composer)]        = &Track::composer;
         metadata[QString::fromLatin1(MetaData::Performer)]       = &Track::performer;
-        metadata[QString::fromLatin1(MetaData::Duration)]        = &Track::duration;
+        metadata[QString::fromLatin1(MetaData::Duration)]        = &Track::displayDuration;
         metadata[QString::fromLatin1(MetaData::Comment)]         = &Track::comment;
         metadata[QString::fromLatin1(MetaData::Date)]            = &Track::date;
         metadata[QString::fromLatin1(MetaData::Year)]            = &Track::year;

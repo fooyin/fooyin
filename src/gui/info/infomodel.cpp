@@ -322,7 +322,7 @@ struct InfoModel::Private
         }
 
         checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General, track.duration(),
-                          InfoItem::Total, Utils::msToString);
+                          InfoItem::Total, Utils::msToStringExtended);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
                           InfoItem::Percentage);
 

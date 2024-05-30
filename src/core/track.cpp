@@ -341,6 +341,11 @@ uint64_t Track::duration() const
     return p->duration;
 }
 
+QString Track::displayDuration() const
+{
+    return Utils::msToString(p->duration);
+}
+
 QString Track::comment() const
 {
     return p->comment;
