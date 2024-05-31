@@ -59,7 +59,7 @@ TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order)
     QCollator collator;
     collator.setNumericMode(true);
 
-    std::ranges::sort(sortedTracks, [order, collator](const Track& lhs, const Track& rhs) {
+    std::ranges::stable_sort(sortedTracks, [order, collator](const Track& lhs, const Track& rhs) {
         const auto cmp = collator.compare(lhs.sort(), rhs.sort());
 
         if(cmp == 0) {
