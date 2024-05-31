@@ -120,6 +120,11 @@ EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* 
     // m_fadingSeekIn->setMaximum(10000);
     // m_fadingSeekOut->setMaximum(10000);
 
+    m_fadingStopIn->setSingleStep(100);
+    m_fadingStopOut->setSingleStep(100);
+    // m_fadingSeekIn->setSingleStep(100);
+    // m_fadingSeekOut->setSingleStep(100);
+
     fadingLayout->addWidget(fadingInLabel, 0, 1);
     fadingLayout->addWidget(fadingOutLabel, 0, 2);
     fadingLayout->addWidget(stopPauseLabel, 1, 0);
