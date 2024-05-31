@@ -70,7 +70,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::StatusShowIcon>(false, QStringLiteral("StatusWidget/ShowIcon"));
     m_settings->createSetting<Internal::StatusShowSelection>(false, QStringLiteral("StatusWidget/ShowSelection"));
     m_settings->createSetting<Internal::StatusPlayingScript>(
-        QStringLiteral("[$num(%track%,2). ][%title% ($timems(%duration%))][ \u2022 %albumartist%][ \u2022 %album%]"),
+        QStringLiteral("%codec% | %bitrate% kbps | %samplerate% Hz | %channels% | %playback_time% / %duration%"),
         QStringLiteral("StatusWidget/PlayingScript"));
     m_settings->createSetting<Internal::StatusSelectionScript>(
         QStringLiteral("%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%"),

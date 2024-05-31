@@ -429,6 +429,18 @@ int Track::channels() const
     return p->channels;
 }
 
+QString Track::displayChannels() const
+{
+    switch(p->channels) {
+        case(1):
+            return QStringLiteral("Mono");
+        case(2):
+            return QStringLiteral("Stereo");
+        default:
+            return QString::number(p->channels) + QStringLiteral("ch");
+    }
+}
+
 int Track::bitDepth() const
 {
     return p->bitDepth;

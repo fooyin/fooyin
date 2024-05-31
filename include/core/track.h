@@ -130,6 +130,7 @@ public:
     [[nodiscard]] int bitrate() const;
     [[nodiscard]] int sampleRate() const;
     [[nodiscard]] int channels() const;
+    [[nodiscard]] QString displayChannels() const;
     [[nodiscard]] int bitDepth() const;
 
     [[nodiscard]] int playCount() const;

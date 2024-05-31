@@ -173,7 +173,7 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
         metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
         metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
-        metadata[QString::fromLatin1(MetaData::Channels)]        = &Track::channels;
+        metadata[QString::fromLatin1(MetaData::Channels)]        = &Track::displayChannels;
         metadata[QString::fromLatin1(MetaData::BitDepth)]        = &Track::bitDepth;
         metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
         metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;
