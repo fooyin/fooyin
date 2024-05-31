@@ -29,8 +29,6 @@
 #include <QTime>
 #include <QWidget>
 
-#include <ranges>
-
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
 {
