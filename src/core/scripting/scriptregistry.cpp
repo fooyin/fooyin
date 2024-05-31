@@ -31,11 +31,12 @@
 #include <utils/utils.h>
 
 namespace {
-using NativeFunc     = std::function<QString(const QStringList&)>;
-using NativeVoidFunc = std::function<QString()>;
-using NativeBoolFunc = std::function<Fooyin::ScriptResult(const QStringList&)>;
-using NativeCondFunc = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
-using Func           = std::variant<NativeFunc, NativeVoidFunc, NativeBoolFunc, NativeCondFunc>;
+using NativeFunc      = std::function<QString(const QStringList&)>;
+using NativeVoidFunc  = std::function<QString()>;
+using NativeTrackFunc = std::function<QString(const Fooyin::Track&, const QStringList&)>;
+using NativeBoolFunc  = std::function<Fooyin::ScriptResult(const QStringList&)>;
+using NativeCondFunc  = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
+using Func            = std::variant<NativeFunc, NativeVoidFunc, NativeTrackFunc, NativeBoolFunc, NativeCondFunc>;
 
 using TrackFunc     = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
 using TrackSetFunc  = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
@@ -67,6 +68,33 @@ auto generateSetFunc(FuncType func)
         }
     };
 }
+
+QString trackInfo(const Fooyin::Track& track, const QStringList& args)
+{
+    if(args.empty()) {
+        return {};
+    }
+
+    const QString& tag = args.front();
+
+    if(tag == u"codec") {
+        return track.typeString();
+    }
+    if(tag == u"samplerate") {
+        return QString::number(track.sampleRate());
+    }
+    if(tag == u"bitrate") {
+        return QString::number(track.bitrate());
+    }
+    if(tag == u"channels") {
+        return QString::number(track.channels());
+    }
+    if(tag == u"bitdepth") {
+        return QString::number(track.bitDepth());
+    }
+
+    return {};
+}
 } // namespace
 
 namespace Fooyin {
@@ -87,6 +115,8 @@ struct ScriptRegistry::Private
         addDefaultListFuncs();
         addDefaultMetadata();
         addPlaybackVars();
+
+        funcs.emplace(QStringLiteral("info"), trackInfo);
     }
 
     void addPlaybackVars()
@@ -95,61 +125,56 @@ struct ScriptRegistry::Private
             return;
         }
 
-        playbackVars.emplace(QStringLiteral("playback_time"), [this]() { return playbackTime(); });
-        playbackVars.emplace(QStringLiteral("playback_time_remaining"), [this]() {
+        playbackVars[QStringLiteral("playback_time")] = [this]() {
+            return Utils::msToString(playerController->currentPosition());
+        };
+        playbackVars[QStringLiteral("playback_time_remaining")] = [this]() {
             return Utils::msToString(playerController->currentTrack().duration() - playerController->currentPosition());
-        });
-    }
-
-    QString playbackTime() const
-    {
-        return Utils::msToString(playerController->currentPosition());
+        };
     }
 
     void addDefaultFunctions()
     {
-        funcs.emplace(QStringLiteral("add"), Fooyin::Scripting::add);
-        funcs.emplace(QStringLiteral("sub"), Fooyin::Scripting::sub);
-        funcs.emplace(QStringLiteral("mul"), Fooyin::Scripting::mul);
-        funcs.emplace(QStringLiteral("div"), Fooyin::Scripting::div);
-        funcs.emplace(QStringLiteral("min"), Fooyin::Scripting::min);
-        funcs.emplace(QStringLiteral("max"), Fooyin::Scripting::max);
-        funcs.emplace(QStringLiteral("mod"), Fooyin::Scripting::mod);
+        funcs[QStringLiteral("add")] = Fooyin::Scripting::add;
+        funcs[QStringLiteral("sub")] = Fooyin::Scripting::sub;
+        funcs[QStringLiteral("mul")] = Fooyin::Scripting::mul;
+        funcs[QStringLiteral("div")] = Fooyin::Scripting::div;
+        funcs[QStringLiteral("min")] = Fooyin::Scripting::min;
+        funcs[QStringLiteral("max")] = Fooyin::Scripting::max;
+        funcs[QStringLiteral("mod")] = Fooyin::Scripting::mod;
 
-        funcs.emplace(QStringLiteral("num"), Fooyin::Scripting::num);
-        funcs.emplace(QStringLiteral("replace"), Fooyin::Scripting::replace);
-        funcs.emplace(QStringLiteral("chop"), Fooyin::Scripting::chop);
-        funcs.emplace(QStringLiteral("slice"), Fooyin::Scripting::slice);
-        funcs.emplace(QStringLiteral("left"), Fooyin::Scripting::left);
-        funcs.emplace(QStringLiteral("right"), Fooyin::Scripting::right);
-        funcs.emplace(QStringLiteral("strcmp"), Fooyin::Scripting::strcmp);
-        funcs.emplace(QStringLiteral("strcmpi"), Fooyin::Scripting::strcmpi);
-        funcs.emplace(QStringLiteral("sep"), Fooyin::Scripting::sep);
-        funcs.emplace(QStringLiteral("swapprefix"), Fooyin::Scripting::swapPrefix);
-        funcs.emplace(QStringLiteral("pad"), Fooyin::Scripting::pad);
-        funcs.emplace(QStringLiteral("padright"), Fooyin::Scripting::padRight);
-        funcs.emplace(QStringLiteral("repeat"), Fooyin::Scripting::repeat);
+        funcs[QStringLiteral("num")]        = Fooyin::Scripting::num;
+        funcs[QStringLiteral("replace")]    = Fooyin::Scripting::replace;
+        funcs[QStringLiteral("chop")]       = Fooyin::Scripting::chop;
+        funcs[QStringLiteral("slice")]      = Fooyin::Scripting::slice;
+        funcs[QStringLiteral("left")]       = Fooyin::Scripting::left;
+        funcs[QStringLiteral("right")]      = Fooyin::Scripting::right;
+        funcs[QStringLiteral("strcmp")]     = Fooyin::Scripting::strcmp;
+        funcs[QStringLiteral("strcmpi")]    = Fooyin::Scripting::strcmpi;
+        funcs[QStringLiteral("sep")]        = Fooyin::Scripting::sep;
+        funcs[QStringLiteral("swapprefix")] = Fooyin::Scripting::swapPrefix;
+        funcs[QStringLiteral("pad")]        = Fooyin::Scripting::pad;
+        funcs[QStringLiteral("padright")]   = Fooyin::Scripting::padRight;
+        funcs[QStringLiteral("repeat")]     = Fooyin::Scripting::repeat;
+        funcs[QStringLiteral("timems")]     = Fooyin::Scripting::msToString;
 
-        funcs.emplace(QStringLiteral("timems"), Fooyin::Scripting::msToString);
-
-        funcs.emplace(QStringLiteral("if"), Fooyin::Scripting::cif);
-        funcs.emplace(QStringLiteral("if2"), Fooyin::Scripting::cif2);
-        funcs.emplace(QStringLiteral("ifgreater"), Fooyin::Scripting::ifgreater);
-        funcs.emplace(QStringLiteral("iflonger"), Fooyin::Scripting::iflonger);
-        funcs.emplace(QStringLiteral("ifequal"), Fooyin::Scripting::ifequal);
+        funcs[QStringLiteral("if")]        = Fooyin::Scripting::cif;
+        funcs[QStringLiteral("if2")]       = Fooyin::Scripting::cif2;
+        funcs[QStringLiteral("ifgreater")] = Fooyin::Scripting::ifgreater;
+        funcs[QStringLiteral("iflonger")]  = Fooyin::Scripting::iflonger;
+        funcs[QStringLiteral("ifequal")]   = Fooyin::Scripting::ifequal;
     }
 
     void addDefaultListFuncs()
     {
-        listProperties.emplace(QStringLiteral("trackcount"), Fooyin::Scripting::trackCount);
-        listProperties.emplace(QStringLiteral("playtime"), Fooyin::Scripting::playtime);
-        listProperties.emplace(QStringLiteral("genres"), Fooyin::Scripting::genres);
+        listProperties[QStringLiteral("trackcount")] = Fooyin::Scripting::trackCount;
+        listProperties[QStringLiteral("playtime")]   = Fooyin::Scripting::playtime;
+        listProperties[QStringLiteral("genres")]     = Fooyin::Scripting::genres;
     }
 
     void addDefaultMetadata()
     {
         using namespace Fooyin::Constants;
-        using Fooyin::Track;
 
         metadata[QString::fromLatin1(MetaData::Title)]           = &Track::title;
         metadata[QString::fromLatin1(MetaData::Artist)]          = &Track::artists;
@@ -168,8 +193,8 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::Date)]            = &Track::date;
         metadata[QString::fromLatin1(MetaData::Year)]            = &Track::year;
         metadata[QString::fromLatin1(MetaData::FileSize)]        = &Track::fileSize;
-        metadata[QString::fromLatin1(MetaData::Bitrate)]         = &Track::bitrate;
-        metadata[QString::fromLatin1(MetaData::SampleRate)]      = &Track::sampleRate;
+        metadata[QString::fromLatin1(MetaData::Bitrate)]         = &Track::displayBitate;
+        metadata[QString::fromLatin1(MetaData::SampleRate)]      = &Track::displaySampleRate;
         metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
         metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
         metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
@@ -264,29 +289,46 @@ ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) 
     return {};
 }
 
-ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args) const
+ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const Track& track) const
 {
     if(func.isEmpty() || !p->funcs.contains(func)) {
         return {};
     }
 
-    auto function = p->funcs.at(func);
-    if(std::holds_alternative<NativeFunc>(function)) {
-        const QString value = std::get<NativeFunc>(function)(containerCast<QStringList>(args));
+    const auto scriptFunc = p->funcs.at(func);
+    if(std::holds_alternative<NativeFunc>(scriptFunc)) {
+        const QString value = std::get<NativeFunc>(scriptFunc)(containerCast<QStringList>(args));
         return {.value = value, .cond = !value.isEmpty()};
     }
-    if(std::holds_alternative<NativeVoidFunc>(function)) {
-        const QString value = std::get<NativeVoidFunc>(function)();
+    if(std::holds_alternative<NativeVoidFunc>(scriptFunc)) {
+        const QString value = std::get<NativeVoidFunc>(scriptFunc)();
         return {.value = value, .cond = !value.isEmpty()};
     }
-    if(std::holds_alternative<NativeBoolFunc>(function)) {
-        return std::get<NativeBoolFunc>(function)(containerCast<QStringList>(args));
+    if(std::holds_alternative<NativeTrackFunc>(scriptFunc)) {
+        const QString value = std::get<NativeTrackFunc>(scriptFunc)(track, containerCast<QStringList>(args));
+        return {.value = value, .cond = !value.isEmpty()};
     }
-    if(std::holds_alternative<NativeCondFunc>(function)) {
-        return std::get<NativeCondFunc>(function)(args);
+    if(std::holds_alternative<NativeBoolFunc>(scriptFunc)) {
+        return std::get<NativeBoolFunc>(scriptFunc)(containerCast<QStringList>(args));
+    }
+    if(std::holds_alternative<NativeCondFunc>(scriptFunc)) {
+        return std::get<NativeCondFunc>(scriptFunc)(args);
     }
 
     return {};
+}
+
+ScriptResult ScriptRegistry::function(const QString& func, const ScriptValueList& args, const TrackList& tracks) const
+{
+    if(func.isEmpty() || !p->funcs.contains(func)) {
+        return {};
+    }
+
+    if(tracks.empty()) {
+        return {};
+    }
+
+    return function(func, args, tracks.front());
 }
 
 void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& track)

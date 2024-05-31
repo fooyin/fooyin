@@ -41,8 +41,8 @@ public:
     void setup(const Id& playlistId, const PlaybackQueue& queue);
     void setTrackProperties(int index, int depth);
 
-    bool isVariable(const QString& var, const Track& track) const override;
-    ScriptResult value(const QString& var, const Track& track) const override;
+    [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;
+    [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
 private:
     struct Private;

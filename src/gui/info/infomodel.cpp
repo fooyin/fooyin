@@ -333,10 +333,10 @@ struct InfoModel::Private
 
         checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
                           ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
-                              return QString::number(bitrate) + QStringLiteral("kbps");
+                              return QString::number(bitrate) + QStringLiteral(" kbps");
                           });
         checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General,
-                          QString::number(track.sampleRate()) + QStringLiteral(" Hz"), InfoItem::Percentage);
+                          track.displaySampleRate(), InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General, track.typeString(),
                           InfoItem::Percentage);
     }

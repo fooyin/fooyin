@@ -419,16 +419,25 @@ int Track::bitrate() const
     return p->bitrate;
 }
 
+QString Track::displayBitate() const
+{
+    return QString::number(p->bitrate) + QStringLiteral(" kbps");
+}
+
 int Track::sampleRate() const
 {
     return p->sampleRate;
+}
+
+QString Track::displaySampleRate() const
+{
+    return QString::number(p->sampleRate) + QStringLiteral(" Hz");
 }
 
 int Track::channels() const
 {
     return p->channels;
 }
-
 QString Track::displayChannels() const
 {
     switch(p->channels) {

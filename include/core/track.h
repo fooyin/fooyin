@@ -128,7 +128,9 @@ public:
 
     [[nodiscard]] uint64_t fileSize() const;
     [[nodiscard]] int bitrate() const;
+    [[nodiscard]] QString displayBitate() const;
     [[nodiscard]] int sampleRate() const;
+    [[nodiscard]] QString displaySampleRate() const;
     [[nodiscard]] int channels() const;
     [[nodiscard]] QString displayChannels() const;
     [[nodiscard]] int bitDepth() const;

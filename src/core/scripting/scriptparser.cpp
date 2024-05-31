@@ -349,7 +349,7 @@ struct ScriptParser::Private
         ScriptValueList args;
         std::ranges::transform(func.args, std::back_inserter(args),
                                [this, &tracks](const Expression& arg) { return evalExpression(arg, tracks); });
-        return registry->function(func.name, args);
+        return registry->function(func.name, args, tracks);
     }
 
     ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const

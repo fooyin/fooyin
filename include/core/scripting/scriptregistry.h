@@ -37,13 +37,16 @@ public:
     explicit ScriptRegistry(PlayerController* playerController = nullptr);
     virtual ~ScriptRegistry();
 
-    virtual bool isVariable(const QString& var, const Track& track) const;
-    virtual bool isVariable(const QString& var, const TrackList& tracks) const;
-    virtual bool isFunction(const QString& func) const;
+    [[nodiscard]] virtual bool isVariable(const QString& var, const Track& track) const;
+    [[nodiscard]] virtual bool isVariable(const QString& var, const TrackList& tracks) const;
+    [[nodiscard]] virtual bool isFunction(const QString& func) const;
 
-    virtual ScriptResult value(const QString& var, const Track& track) const;
-    virtual ScriptResult value(const QString& var, const TrackList& tracks) const;
-    virtual ScriptResult function(const QString& func, const ScriptValueList& args) const;
+    [[nodiscard]] virtual ScriptResult value(const QString& var, const Track& track) const;
+    [[nodiscard]] virtual ScriptResult value(const QString& var, const TrackList& tracks) const;
+    [[nodiscard]] virtual ScriptResult function(const QString& func, const ScriptValueList& args,
+                                                const Track& track) const;
+    [[nodiscard]] virtual ScriptResult function(const QString& func, const ScriptValueList& args,
+                                                const TrackList& tracks) const;
 
     virtual void setValue(const QString& var, const FuncRet& value, Track& track);
 
@@ -54,7 +57,7 @@ protected:
         return NewCntr(from.cbegin(), from.cend());
     }
 
-    bool isListVariable(const QString& var) const;
+    [[nodiscard]] bool isListVariable(const QString& var) const;
     static ScriptResult calculateResult(FuncRet funcRet);
 
 private:
