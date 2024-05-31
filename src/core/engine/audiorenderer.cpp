@@ -340,17 +340,25 @@ void AudioRenderer::updateOutput(const OutputCreator& output, const QString& dev
         return;
     }
 
-    if(p->audioOutput && p->audioOutput->initialised()) {
+    const bool wasInitialised = p->audioOutput && p->audioOutput->initialised();
+
+    if(wasInitialised) {
         p->audioOutput->uninit();
+        QObject::disconnect(p->audioOutput.get(), nullptr, this, nullptr);
     }
 
     p->audioOutput = std::move(newOutput);
     if(!device.isEmpty()) {
         p->audioOutput->setDevice(device);
     }
+
     p->bufferPrefilled = false;
     QObject::connect(p->audioOutput.get(), &AudioOutput::stateChanged, this,
                      [this](const auto state) { p->outputStateChanged(state); });
+
+    if(wasInitialised) {
+        p->audioOutput->init(p->format);
+    }
 }
 
 void AudioRenderer::updateDevice(const QString& device)
@@ -361,9 +369,10 @@ void AudioRenderer::updateDevice(const QString& device)
 
     p->bufferPrefilled = false;
 
-    if(p->audioOutput->initialised()) {
+    if(p->audioOutput && p->audioOutput->initialised()) {
         p->audioOutput->uninit();
         p->audioOutput->setDevice(device);
+        p->audioOutput->init(p->format);
     }
     else {
         p->audioOutput->setDevice(device);

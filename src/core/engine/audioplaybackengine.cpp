@@ -408,15 +408,11 @@ void AudioPlaybackEngine::setVolume(double volume)
 
 void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QString& device)
 {
-    const bool playing = (p->state == PlaybackState::Playing || p->state == PlaybackState::Paused);
-
-    p->clock.setPaused(playing);
-    if(playing && !p->renderer->isPaused()) {
-        p->renderer->pause(true);
-    }
+    const bool playing = p->state == PlaybackState::Playing;
 
     if(playing) {
-        p->bufferTimer.stop();
+        p->clock.setPaused(true);
+        p->renderer->pause(true);
     }
 
     p->renderer->updateOutput(output, device);
@@ -428,7 +424,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
         }
 
         p->clock.setPaused(false);
-        p->startPlayback();
+        p->renderer->start();
         p->renderer->pause(false);
     }
 }
@@ -439,15 +435,11 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
         return;
     }
 
-    const bool playing = p->state == PlaybackState::Playing || p->state == PlaybackState::Paused;
-
-    p->clock.setPaused(playing);
-    if(playing && !p->renderer->isPaused()) {
-        p->renderer->pause(true);
-    }
+    const bool playing = p->state == PlaybackState::Playing;
 
     if(playing) {
-        p->bufferTimer.stop();
+        p->clock.setPaused(true);
+        p->renderer->pause(true);
     }
 
     p->renderer->updateDevice(device);
