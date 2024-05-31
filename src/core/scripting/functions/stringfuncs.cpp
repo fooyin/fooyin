@@ -22,6 +22,7 @@
 #include <utils/utils.h>
 
 #include <QDir>
+#include <QRegularExpression>
 
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec)
@@ -153,6 +154,64 @@ QString right(const QStringList& vec)
     return {};
 }
 
+QString insert(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 3) {
+        return {};
+    }
+
+    bool numSuccess{false};
+    const int index = vec.at(2).toInt(&numSuccess);
+
+    if(numSuccess) {
+        QString ret{vec.front()};
+        ret.insert(index, vec.at(1));
+        return ret;
+    }
+
+    return {};
+}
+
+QString substr(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 3) {
+        return {};
+    }
+
+    bool fromSuccess{false};
+    bool toSuccess{false};
+    const int from = vec.at(1).toInt(&fromSuccess);
+    const int to   = vec.at(2).toInt(&toSuccess);
+
+    if(fromSuccess && toSuccess && to >= from) {
+        return vec.front().mid(from, to - from + 1);
+    }
+
+    return {};
+}
+
+QString len(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return QString::number(vec.front().length());
+}
+
+QString longest(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return *std::max_element(vec.cbegin(), vec.cend());
+}
+
 ScriptResult strcmp(const QStringList& vec)
 {
     const qsizetype count = vec.size();
@@ -164,7 +223,7 @@ ScriptResult strcmp(const QStringList& vec)
     return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseSensitive) == 0};
 }
 
-ScriptResult strcmpi(const QStringList& vec)
+ScriptResult stricmp(const QStringList& vec)
 {
     const qsizetype count = vec.size();
 
@@ -175,9 +234,36 @@ ScriptResult strcmpi(const QStringList& vec)
     return {.value = {}, .cond = QString::compare(vec.at(0), vec.at(1), Qt::CaseInsensitive) == 0};
 }
 
+ScriptResult longer(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count != 2) {
+        return {};
+    }
+
+    return {.value = {}, .cond = vec.at(0).length() > vec.at(1).length()};
+}
+
 QString sep()
 {
     return QDir::separator();
+}
+
+QString tab(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return QStringLiteral("\t");
+    }
+
+    bool numSuccess{false};
+    const int num = vec.front().toInt(&numSuccess);
+
+    if(numSuccess) {
+        return QStringLiteral("\t").repeated(num);
+    }
+
+    return QStringLiteral("\t");
 }
 
 QString swapPrefix(const QStringList& vec)
@@ -205,6 +291,35 @@ QString swapPrefix(const QStringList& vec)
         words.removeFirst();
         words.last().append(QStringLiteral(","));
         words.append(firstWord);
+        return words.join(QStringLiteral(" "));
+    }
+
+    return vec.front();
+}
+
+QString stripPrefix(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 1) {
+        return {};
+    }
+
+    QStringList words = vec.front().split(QStringLiteral(" "), Qt::SkipEmptyParts);
+
+    if(words.empty()) {
+        return vec.front();
+    }
+
+    QStringList prefixes = vec.mid(1);
+
+    if(prefixes.empty()) {
+        prefixes = {QStringLiteral("A"), QStringLiteral("The")};
+    }
+
+    const QString firstWord = words.first();
+    if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
+        words.removeFirst();
         return words.join(QStringLiteral(" "));
     }
 
@@ -265,4 +380,182 @@ QString repeat(const QStringList& vec)
     return {};
 }
 
+QString trim(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return vec.front().trimmed();
+}
+
+QString upper(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return vec.front().toUpper();
+}
+
+QString lower(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return vec.front().toLower();
+}
+
+QString abbr(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 1) {
+        return {};
+    }
+
+    if(count == 2) {
+        bool numSuccess{false};
+        const int len = vec.at(1).toInt(&numSuccess);
+
+        if(numSuccess && vec.front().length() <= len) {
+            return vec.front();
+        }
+    }
+
+    static const QRegularExpression regex{QStringLiteral(R"(\b[\w])")};
+
+    QString abbreviated;
+    const auto matches = regex.globalMatch(vec.front());
+    for(const auto& match : matches) {
+        abbreviated.append(match.captured(0));
+    }
+
+    return abbreviated;
+}
+
+QString caps(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    return Utils::capitalise(vec.front());
+}
+
+QString directory(const QStringList& vec)
+{
+    const qsizetype count = vec.size();
+
+    if(count < 2) {
+        return {};
+    }
+
+    QDir dir{vec.front()};
+
+    if(count == 2) {
+        bool numSuccess{false};
+        int level = vec.at(1).toInt(&numSuccess);
+        if(numSuccess) {
+            while(level > 0) {
+                --level;
+                dir.cdUp();
+            }
+        }
+    }
+
+    return dir.dirName();
+}
+
+QString directoryPath(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    const QDir dir{vec.front()};
+    return dir.absolutePath();
+}
+
+QString ext(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    const QFileInfo file{vec.front()};
+    return file.suffix();
+}
+
+QString filename(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    const QFileInfo file{vec.front()};
+    return file.completeBaseName();
+}
+
+QString progress(const QStringList& vec)
+{
+    if(vec.size() != 5) {
+        return {};
+    }
+
+    const int pos   = vec.at(0).toInt();
+    const int range = vec.at(1).toInt();
+    const int len   = vec.at(2).toInt();
+
+    const auto ratio = static_cast<double>(pos) / range;
+
+    const auto char1Pos = static_cast<int>(ratio * len);
+
+    const QString& char1 = vec.at(3);
+    const QString& char2 = vec.at(4);
+
+    QString progressBar;
+
+    for(int i{0}; i < len; ++i) {
+        if(i == char1Pos) {
+            progressBar.append(char1);
+        }
+        else {
+            progressBar.append(char2);
+        }
+    }
+
+    return progressBar;
+}
+
+QString progress2(const QStringList& vec)
+{
+    if(vec.size() != 5) {
+        return {};
+    }
+
+    const int pos   = vec.at(0).toInt();
+    const int range = vec.at(1).toInt();
+    const int len   = vec.at(2).toInt();
+
+    const auto ratio = static_cast<double>(pos) / range;
+
+    const int char1Count = static_cast<int>(ratio * len);
+    const int char2Count = len - char1Count;
+
+    const QString& char1 = vec.at(3);
+    const QString& char2 = vec.at(4);
+
+    QString progressBar;
+
+    for(int i{0}; i < char1Count; ++i) {
+        progressBar.append(char1);
+    }
+    for(int i{0}; i < char2Count; ++i) {
+        progressBar.append(char2);
+    }
+
+    return progressBar;
+}
 } // namespace Fooyin::Scripting

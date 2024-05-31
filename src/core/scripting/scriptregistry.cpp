@@ -128,8 +128,15 @@ struct ScriptRegistry::Private
         playbackVars[QStringLiteral("playback_time")] = [this]() {
             return Utils::msToString(playerController->currentPosition());
         };
+        playbackVars[QStringLiteral("playback_time_s")] = [this]() {
+            return QString::number(playerController->currentPosition() / 1000);
+        };
         playbackVars[QStringLiteral("playback_time_remaining")] = [this]() {
             return Utils::msToString(playerController->currentTrack().duration() - playerController->currentPosition());
+        };
+        playbackVars[QStringLiteral("playback_time_remaining_s")] = [this]() {
+            return QString::number((playerController->currentTrack().duration() - playerController->currentPosition())
+                                   / 1000);
         };
     }
 
@@ -143,20 +150,39 @@ struct ScriptRegistry::Private
         funcs[QStringLiteral("max")] = Fooyin::Scripting::max;
         funcs[QStringLiteral("mod")] = Fooyin::Scripting::mod;
 
-        funcs[QStringLiteral("num")]        = Fooyin::Scripting::num;
-        funcs[QStringLiteral("replace")]    = Fooyin::Scripting::replace;
-        funcs[QStringLiteral("chop")]       = Fooyin::Scripting::chop;
-        funcs[QStringLiteral("slice")]      = Fooyin::Scripting::slice;
-        funcs[QStringLiteral("left")]       = Fooyin::Scripting::left;
-        funcs[QStringLiteral("right")]      = Fooyin::Scripting::right;
-        funcs[QStringLiteral("strcmp")]     = Fooyin::Scripting::strcmp;
-        funcs[QStringLiteral("strcmpi")]    = Fooyin::Scripting::strcmpi;
-        funcs[QStringLiteral("sep")]        = Fooyin::Scripting::sep;
-        funcs[QStringLiteral("swapprefix")] = Fooyin::Scripting::swapPrefix;
-        funcs[QStringLiteral("pad")]        = Fooyin::Scripting::pad;
-        funcs[QStringLiteral("padright")]   = Fooyin::Scripting::padRight;
-        funcs[QStringLiteral("repeat")]     = Fooyin::Scripting::repeat;
-        funcs[QStringLiteral("timems")]     = Fooyin::Scripting::msToString;
+        funcs[QStringLiteral("num")]            = Fooyin::Scripting::num;
+        funcs[QStringLiteral("replace")]        = Fooyin::Scripting::replace;
+        funcs[QStringLiteral("slice")]          = Fooyin::Scripting::slice;
+        funcs[QStringLiteral("chop")]           = Fooyin::Scripting::chop;
+        funcs[QStringLiteral("left")]           = Fooyin::Scripting::left;
+        funcs[QStringLiteral("right")]          = Fooyin::Scripting::right;
+        funcs[QStringLiteral("insert")]         = Fooyin::Scripting::insert;
+        funcs[QStringLiteral("substr")]         = Fooyin::Scripting::substr;
+        funcs[QStringLiteral("len")]            = Fooyin::Scripting::len;
+        funcs[QStringLiteral("longest")]        = Fooyin::Scripting::longest;
+        funcs[QStringLiteral("strcmp")]         = Fooyin::Scripting::strcmp;
+        funcs[QStringLiteral("stricmp")]        = Fooyin::Scripting::stricmp;
+        funcs[QStringLiteral("longer")]         = Fooyin::Scripting::longer;
+        funcs[QStringLiteral("sep")]            = Fooyin::Scripting::sep;
+        funcs[QStringLiteral("tab")]            = Fooyin::Scripting::tab;
+        funcs[QStringLiteral("swapprefix")]     = Fooyin::Scripting::swapPrefix;
+        funcs[QStringLiteral("stripprefix")]    = Fooyin::Scripting::stripPrefix;
+        funcs[QStringLiteral("pad")]            = Fooyin::Scripting::pad;
+        funcs[QStringLiteral("padright")]       = Fooyin::Scripting::padRight;
+        funcs[QStringLiteral("repeat")]         = Fooyin::Scripting::repeat;
+        funcs[QStringLiteral("trim")]           = Fooyin::Scripting::trim;
+        funcs[QStringLiteral("lower")]          = Fooyin::Scripting::lower;
+        funcs[QStringLiteral("upper")]          = Fooyin::Scripting::upper;
+        funcs[QStringLiteral("abbr")]           = Fooyin::Scripting::abbr;
+        funcs[QStringLiteral("caps")]           = Fooyin::Scripting::caps;
+        funcs[QStringLiteral("directory")]      = Fooyin::Scripting::directory;
+        funcs[QStringLiteral("directory_path")] = Fooyin::Scripting::directoryPath;
+        funcs[QStringLiteral("ext")]            = Fooyin::Scripting::ext;
+        funcs[QStringLiteral("filename")]       = Fooyin::Scripting::filename;
+        funcs[QStringLiteral("progress")]       = Fooyin::Scripting::progress;
+        funcs[QStringLiteral("progress2")]      = Fooyin::Scripting::progress2;
+
+        funcs[QStringLiteral("timems")] = Fooyin::Scripting::msToString;
 
         funcs[QStringLiteral("if")]        = Fooyin::Scripting::cif;
         funcs[QStringLiteral("if2")]       = Fooyin::Scripting::cif2;
@@ -176,29 +202,47 @@ struct ScriptRegistry::Private
     {
         using namespace Fooyin::Constants;
 
-        metadata[QString::fromLatin1(MetaData::Title)]           = &Track::title;
-        metadata[QString::fromLatin1(MetaData::Artist)]          = &Track::artists;
-        metadata[QString::fromLatin1(MetaData::UniqueArtist)]    = &Track::uniqueArtists;
-        metadata[QString::fromLatin1(MetaData::Album)]           = &Track::album;
-        metadata[QString::fromLatin1(MetaData::AlbumArtist)]     = &Track::albumArtists;
-        metadata[QString::fromLatin1(MetaData::Track)]           = &Track::trackNumber;
-        metadata[QString::fromLatin1(MetaData::TrackTotal)]      = &Track::trackTotal;
-        metadata[QString::fromLatin1(MetaData::Disc)]            = &Track::discNumber;
-        metadata[QString::fromLatin1(MetaData::DiscTotal)]       = &Track::discTotal;
-        metadata[QString::fromLatin1(MetaData::Genre)]           = &Track::genres;
-        metadata[QString::fromLatin1(MetaData::Composer)]        = &Track::composer;
-        metadata[QString::fromLatin1(MetaData::Performer)]       = &Track::performer;
-        metadata[QString::fromLatin1(MetaData::Duration)]        = &Track::displayDuration;
-        metadata[QString::fromLatin1(MetaData::Comment)]         = &Track::comment;
-        metadata[QString::fromLatin1(MetaData::Date)]            = &Track::date;
-        metadata[QString::fromLatin1(MetaData::Year)]            = &Track::year;
-        metadata[QString::fromLatin1(MetaData::FileSize)]        = &Track::fileSize;
-        metadata[QString::fromLatin1(MetaData::Bitrate)]         = &Track::displayBitate;
-        metadata[QString::fromLatin1(MetaData::SampleRate)]      = &Track::displaySampleRate;
-        metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
-        metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
-        metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
-        metadata[QString::fromLatin1(MetaData::Channels)]        = &Track::displayChannels;
+        metadata[QString::fromLatin1(MetaData::Title)]        = &Track::title;
+        metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::artists;
+        metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
+        metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
+        metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::albumArtists;
+        metadata[QString::fromLatin1(MetaData::Track)]        = &Track::trackNumber;
+        metadata[QString::fromLatin1(MetaData::TrackTotal)]   = &Track::trackTotal;
+        metadata[QString::fromLatin1(MetaData::Disc)]         = &Track::discNumber;
+        metadata[QString::fromLatin1(MetaData::DiscTotal)]    = &Track::discTotal;
+        metadata[QString::fromLatin1(MetaData::Genre)]        = &Track::genres;
+        metadata[QString::fromLatin1(MetaData::Composer)]     = &Track::composer;
+        metadata[QString::fromLatin1(MetaData::Performer)]    = &Track::performer;
+        metadata[QString::fromLatin1(MetaData::Duration)]     = [](const Track& track) {
+            return Utils::msToString(track.duration());
+        };
+        metadata[QString::fromLatin1(MetaData::DurationSecs)] = [](const Track& track) {
+            return QString::number(track.duration() / 1000);
+        };
+        metadata[QString::fromLatin1(MetaData::Comment)]  = &Track::comment;
+        metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
+        metadata[QString::fromLatin1(MetaData::Year)]     = &Track::year;
+        metadata[QString::fromLatin1(MetaData::FileSize)] = &Track::fileSize;
+        metadata[QString::fromLatin1(MetaData::Bitrate)]  = [](const Track& track) {
+            return QStringLiteral("%1 kbps").arg(track.bitrate());
+        };
+        metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
+            return QStringLiteral("%1 Hz").arg(track.sampleRate());
+        };
+        metadata[QString::fromLatin1(MetaData::PlayCount)] = &Track::playCount;
+        metadata[QString::fromLatin1(MetaData::Rating)]    = &Track::ratingStars;
+        metadata[QString::fromLatin1(MetaData::Codec)]     = &Track::typeString;
+        metadata[QString::fromLatin1(MetaData::Channels)]  = [](const Track& track) {
+            switch(track.channels()) {
+                case(1):
+                    return QStringLiteral("Mono");
+                case(2):
+                    return QStringLiteral("Stereo");
+                default:
+                    return QStringLiteral("%1ch").arg(track.channels());
+            }
+        };
         metadata[QString::fromLatin1(MetaData::BitDepth)]        = &Track::bitDepth;
         metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
         metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;

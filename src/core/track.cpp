@@ -341,11 +341,6 @@ uint64_t Track::duration() const
     return p->duration;
 }
 
-QString Track::displayDuration() const
-{
-    return Utils::msToString(p->duration);
-}
-
 QString Track::comment() const
 {
     return p->comment;
@@ -419,35 +414,14 @@ int Track::bitrate() const
     return p->bitrate;
 }
 
-QString Track::displayBitate() const
-{
-    return QString::number(p->bitrate) + QStringLiteral(" kbps");
-}
-
 int Track::sampleRate() const
 {
     return p->sampleRate;
 }
 
-QString Track::displaySampleRate() const
-{
-    return QString::number(p->sampleRate) + QStringLiteral(" Hz");
-}
-
 int Track::channels() const
 {
     return p->channels;
-}
-QString Track::displayChannels() const
-{
-    switch(p->channels) {
-        case(1):
-            return QStringLiteral("Mono");
-        case(2):
-            return QStringLiteral("Stereo");
-        default:
-            return QString::number(p->channels) + QStringLiteral("ch");
-    }
 }
 
 int Track::bitDepth() const

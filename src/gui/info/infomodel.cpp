@@ -336,7 +336,7 @@ struct InfoModel::Private
                               return QString::number(bitrate) + QStringLiteral(" kbps");
                           });
         checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General,
-                          track.displaySampleRate(), InfoItem::Percentage);
+                          QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General, track.typeString(),
                           InfoItem::Percentage);
     }

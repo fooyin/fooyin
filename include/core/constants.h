@@ -34,6 +34,7 @@ constexpr auto Genre           = "genre";
 constexpr auto Composer        = "composer";
 constexpr auto Performer       = "performer";
 constexpr auto Duration        = "duration";
+constexpr auto DurationSecs    = "duration_s";
 constexpr auto Lyrics          = "lyrics";
 constexpr auto Comment         = "comment";
 constexpr auto Date            = "date";

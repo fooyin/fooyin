@@ -160,13 +160,13 @@ void setMinimumWidth(QLabel* label, const QString& text)
 
 QString capitalise(const QString& str)
 {
-    QStringList parts = str.split(QChar::fromLatin1(' '), Qt::SkipEmptyParts);
+    QStringList parts = str.split(u' ', Qt::SkipEmptyParts);
 
     for(auto& part : parts) {
         part.replace(0, 1, part[0].toUpper());
     }
 
-    return parts.join(QStringLiteral(" "));
+    return parts.join(u' ');
 }
 
 QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale)
