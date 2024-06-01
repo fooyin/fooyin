@@ -63,6 +63,10 @@ QString TagEditorItem::value() const
 
         std::ranges::sort(nonEmptyValues, collator);
         m_value = nonEmptyValues.join(QStringLiteral("; "));
+
+        if(m_trackCount > 1 && nonEmptyValues.size() > 1) {
+            m_value.prepend(QStringLiteral("<<multiple items>> "));
+        }
     }
 
     return m_value;

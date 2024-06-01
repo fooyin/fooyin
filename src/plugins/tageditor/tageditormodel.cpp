@@ -401,17 +401,10 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(index.row() == 13) {
-            if(item->values().size() > 1) {
-                return QStringLiteral("<<multiple items>>");
-            }
             return QVariant::fromValue(StarRating{item->value().toInt(), 5});
         }
 
-        QString value = item->value();
-        if(!value.isEmpty() && item->trackCount() > 1 && role == Qt::DisplayRole) {
-            value.prepend(QStringLiteral("<<multiple items>> "));
-        }
-        return value;
+        return item->value();
     }
 
     return {};
