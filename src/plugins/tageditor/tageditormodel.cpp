@@ -156,18 +156,33 @@ struct TagEditorModel::Private
         }
 
         const QString metadata = findField(name);
+        const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
+                             || metadata == QLatin1String{Constants::MetaData::Artist}
+                             || metadata == QLatin1String{Constants::MetaData::Genre});
+        const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
+                                || metadata == QLatin1String{Constants::MetaData::TrackTotal}
+                                || metadata == QLatin1String{Constants::MetaData::Disc}
+                                || metadata == QLatin1String{Constants::MetaData::DiscTotal});
+        QStringList listValue;
+        int intValue{-1};
+        bool intValueIsValid{false};
+
+        if(isList) {
+            listValue = value.toString().split(QStringLiteral("; "));
+        }
+        else if(isNumeric) {
+            intValue = value.toInt(&intValueIsValid);
+            if(!intValueIsValid) {
+                intValue = -1;
+            }
+        }
 
         for(Track& track : tracks) {
-            if(metadata == QLatin1String{Constants::MetaData::AlbumArtist}
-               || metadata == QLatin1String{Constants::MetaData::Artist}
-               || metadata == QLatin1String{Constants::MetaData::Genre}) {
-                scriptRegistry.setValue(metadata, value.toString().split(QStringLiteral("; ")), track);
+            if(isList) {
+                scriptRegistry.setValue(metadata, listValue, track);
             }
-            else if(metadata == QLatin1String{Constants::MetaData::Track}
-                    || metadata == QLatin1String{Constants::MetaData::TrackTotal}
-                    || metadata == QLatin1String{Constants::MetaData::Disc}
-                    || metadata == QLatin1String{Constants::MetaData::DiscTotal}) {
-                scriptRegistry.setValue(metadata, value.toInt(), track);
+            else if(isNumeric) {
+                scriptRegistry.setValue(metadata, intValue, track);
             }
             else {
                 scriptRegistry.setValue(metadata, value.toString(), track);
