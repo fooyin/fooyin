@@ -34,15 +34,29 @@
 #include <core/plugins/coreplugin.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QBasicTimer>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QTimerEvent>
+
+using namespace std::chrono_literals;
 
 constexpr auto LastPlaybackPosition = "Player/LastPositon";
 constexpr auto LastPlaybackState    = "Player/LastState";
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto PlaylistSaveInterval = 30s;
+constexpr auto SettingsSaveInterval = 5min;
+#else
+constexpr auto PlaylistSaveInterval = 30000;
+constexpr auto SettingsSaveInterval = 300000;
+#endif
+
 namespace Fooyin {
 struct Application::Private
 {
+    Application* self;
+
     SettingsManager* settingsManager;
     CoreSettings coreSettings;
     Translations translations;
@@ -56,22 +70,28 @@ struct Application::Private
     PluginManager pluginManager;
     CorePluginContext corePluginContext;
 
-    explicit Private(QObject* parent)
-        : settingsManager{new SettingsManager(Core::settingsPath(), parent)}
+    QBasicTimer playlistSaveTimer;
+    QBasicTimer settingsSaveTimer;
+
+    explicit Private(Application* self_)
+        : self{self_}
+        , settingsManager{new SettingsManager(Core::settingsPath(), self)}
         , coreSettings{settingsManager}
         , translations{settingsManager}
-        , database{new Database(parent)}
-        , playerController{new PlayerController(settingsManager, parent)}
+        , database{new Database(self)}
+        , playerController{new PlayerController(settingsManager, self)}
         , engine{playerController, settingsManager}
-        , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, parent)}
-        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), settingsManager, parent)}
-        , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, parent)}
+        , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, self)}
+        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), settingsManager, self)}
+        , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, self)}
         , pluginManager{settingsManager}
         , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
                             library,        playlistHandler, settingsManager}
     {
         registerTypes();
         loadPlugins();
+
+        settingsSaveTimer.start(SettingsSaveInterval, self);
     }
 
     static void registerTypes()
@@ -99,6 +119,11 @@ struct Application::Private
             const AudioOutputBuilder builder = plugin->registerOutput();
             engine.addOutput(builder);
         });
+    }
+
+    void startSaveTimer()
+    {
+        playlistSaveTimer.start(PlaylistSaveInterval, self);
     }
 
     void savePlaybackState() const
@@ -144,8 +169,15 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<Private>(this)}
 {
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksAdded, this,
+                     [this]() { p->startSaveTimer(); });
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksChanged, this,
+                     [this]() { p->startSaveTimer(); });
+    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksRemoved, this,
+                     [this]() { p->startSaveTimer(); });
     QObject::connect(p->playlistHandler, &PlaylistHandler::playlistsPopulated, this,
                      [this]() { p->loadPlaybackState(); });
+
     QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library,
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
@@ -167,6 +199,20 @@ Application::~Application() = default;
 CorePluginContext Application::context() const
 {
     return p->corePluginContext;
+}
+
+void Application::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->playlistSaveTimer.timerId()) {
+        p->playlistSaveTimer.stop();
+        p->playlistHandler->savePlaylists();
+    }
+    else if(event->timerId() == p->settingsSaveTimer.timerId()) {
+        p->settingsSaveTimer.stop();
+        p->settingsManager->storeSettings();
+    }
+
+    QObject::timerEvent(event);
 }
 
 void Application::shutdown()

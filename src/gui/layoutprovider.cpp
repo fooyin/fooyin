@@ -78,10 +78,7 @@ LayoutProvider::LayoutProvider()
     loadCurrentLayout();
 }
 
-LayoutProvider::~LayoutProvider()
-{
-    saveCurrentLayout();
-}
+LayoutProvider::~LayoutProvider() = default;
 
 Layout LayoutProvider::currentLayout() const
 {

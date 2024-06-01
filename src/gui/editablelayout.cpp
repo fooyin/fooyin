@@ -250,6 +250,7 @@ struct EditableLayout::Private
             }
 
             settings->set<Settings::Gui::Internal::SplitterHandles>(prevShowHandles);
+            self->saveLayout();
         }
     }
 
@@ -640,6 +641,7 @@ void EditableLayout::saveLayout()
 {
     if(const auto layout = saveCurrentToLayout(QStringLiteral("Default"))) {
         p->layoutProvider->changeLayout(layout.value());
+        p->layoutProvider->saveCurrentLayout();
     }
 }
 

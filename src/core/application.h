@@ -40,6 +40,9 @@ public:
 
     [[nodiscard]] CorePluginContext context() const;
 
+protected:
+    void timerEvent(QTimerEvent* event) override;
+
 private:
     struct Private;
     std::unique_ptr<Private> p;
