@@ -2335,6 +2335,12 @@ void PlaylistView::rowsInserted(const QModelIndex& parent, int start, int end)
     QAbstractItemView::rowsInserted(parent, start, end);
 }
 
+void PlaylistView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
+{
+    p->m_viewItems.clear();
+    QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
+}
+
 void PlaylistView::rowsRemoved(const QModelIndex& /*parent*/, int /*first*/, int /*last*/)
 {
     p->m_viewItems.clear();

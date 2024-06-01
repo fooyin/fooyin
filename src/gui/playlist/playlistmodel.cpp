@@ -1817,14 +1817,12 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
             dropInsertRows(children, targetParent, row);
             endInsertRows();
 
+            rootItem()->resetChildren();
             updateTrackIndexes();
         }
     }
 
-    rootItem()->resetChildren();
-
     mergeTrackParents(data.trackParents);
-
     cleanupHeaders();
 }
 
@@ -2104,25 +2102,24 @@ void PlaylistModel::updateHeaders()
 {
     ItemPtrSet items;
 
-    auto headersToUpdate = m_nodes | std::views::filter([](const auto& pair) {
-                               return pair.second.state() == PlaylistItem::State::Update;
-                           });
-
-    for(auto& [_, header] : headersToUpdate) {
-        PlaylistItem* currHeader{&header};
-        while(currHeader->type() != PlaylistItem::Root) {
-            if(currHeader->childCount() > 0) {
-                items.emplace(currHeader);
+    for(auto& [_, header] : m_nodes) {
+        if(header.state() == PlaylistItem::State::Update) {
+            PlaylistItem* currHeader{&header};
+            while(currHeader && currHeader->type() != PlaylistItem::Root) {
+                if(currHeader->childCount() > 0) {
+                    items.emplace(currHeader);
+                }
+                currHeader = currHeader->parent();
             }
-            currHeader = currHeader->parent();
         }
     }
 
     ItemList updatedHeaders;
 
     for(PlaylistItem* header : items) {
-        updateHeaderChildren(header);
-        updatedHeaders.emplace_back(*header);
+        PlaylistItem updatedHeader = *header;
+        updateHeaderChildren(&updatedHeader);
+        updatedHeaders.emplace_back(updatedHeader);
     }
 
     QMetaObject::invokeMethod(&m_populator, [this, updatedHeaders]() { m_populator.updateHeaders(updatedHeaders); });

@@ -49,6 +49,7 @@ struct PlaylistPopulator::Private
     int trackDepth{0};
     QString prevBaseHeaderKey;
     QString prevHeaderKey;
+    int prevIndex{0};
     std::vector<QString> prevBaseSubheaderKey;
     std::vector<QString> prevSubheaderKey;
 
@@ -104,7 +105,7 @@ struct PlaylistPopulator::Private
         }
     }
 
-    void iterateHeader(const Track& track, PlaylistItem*& parent)
+    void iterateHeader(const Track& track, PlaylistItem*& parent, int index)
     {
         HeaderRow row{currentPreset.header};
         if(!row.isValid()) {
@@ -127,7 +128,7 @@ struct PlaylistPopulator::Private
 
         const QString baseKey = generateHeaderKey();
         QString key           = Utils::generateRandomHash();
-        if(!prevHeaderKey.isEmpty() && prevBaseHeaderKey == baseKey) {
+        if(!prevHeaderKey.isEmpty() && prevBaseHeaderKey == baseKey && index == prevIndex + 1) {
             key = prevHeaderKey;
         }
         prevBaseHeaderKey = baseKey;
@@ -155,7 +156,7 @@ struct PlaylistPopulator::Private
         ++trackDepth;
     }
 
-    void iterateSubheaders(const Track& track, PlaylistItem*& parent)
+    void iterateSubheaders(const Track& track, PlaylistItem*& parent, int index)
     {
         for(auto& subheader : currentPreset.subHeaders) {
             const auto leftScript    = parser.evaluate(subheader.leftText.script, track);
@@ -197,7 +198,8 @@ struct PlaylistPopulator::Private
 
             const QString baseKey = Utils::generateHash(parent->baseKey(), subheaderKey);
             QString key           = Utils::generateRandomHash();
-            if(static_cast<int>(prevSubheaderKey.size()) > i && prevBaseSubheaderKey.at(i) == baseKey) {
+            if(static_cast<int>(prevSubheaderKey.size()) > i && prevBaseSubheaderKey.at(i) == baseKey
+               && index == prevIndex + 1) {
                 key = prevSubheaderKey.at(i);
             }
             prevBaseSubheaderKey[i] = baseKey;
@@ -217,6 +219,7 @@ struct PlaylistPopulator::Private
             ++i;
             ++trackDepth;
         }
+
         subheaders.clear();
     }
 
@@ -233,8 +236,8 @@ struct PlaylistPopulator::Private
     {
         PlaylistItem* parent = &root;
 
-        iterateHeader(track, parent);
-        iterateSubheaders(track, parent);
+        iterateHeader(track, parent, index);
+        iterateSubheaders(track, parent, index);
 
         if(!currentPreset.track.isValid()) {
             return nullptr;
@@ -270,6 +273,7 @@ struct PlaylistPopulator::Private
         data.trackParents[track.id()].push_back(key);
 
         trackDepth = 0;
+        prevIndex  = index;
         return trackItem;
     }
 

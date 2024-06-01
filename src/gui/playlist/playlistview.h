@@ -68,6 +68,7 @@ protected:
     void timerEvent(QTimerEvent* event) override;
     void scrollContentsBy(int dx, int dy) override;
     void rowsInserted(const QModelIndex& parent, int start, int end) override;
+    void rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end) override;
     void rowsRemoved(const QModelIndex& parent, int first, int last);
     void startDrag(Qt::DropActions supportedActions) override;
     void verticalScrollbarValueChanged(int value) override;
