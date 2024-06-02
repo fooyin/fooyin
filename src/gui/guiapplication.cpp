@@ -340,8 +340,8 @@ struct GuiApplication::Private
         });
         QObject::connect(viewMenu, &ViewMenu::showNowPlaying, self, [this]() {
             if(auto* activePlaylist = playlistHandler->activePlaylist()) {
-                playlistController->changeCurrentPlaylist(activePlaylist);
                 playlistController->showNowPlaying();
+                playlistController->changeCurrentPlaylist(activePlaylist);
             }
         });
         QObject::connect(engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
