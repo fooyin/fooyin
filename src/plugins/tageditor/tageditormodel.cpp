@@ -159,11 +159,11 @@ struct TagEditorModel::Private
         const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
                              || metadata == QLatin1String{Constants::MetaData::Artist}
                              || metadata == QLatin1String{Constants::MetaData::Genre});
-        const bool isNumeric
-            = (metadata == QLatin1String{Constants::MetaData::Track}
-               || metadata == QLatin1String{Constants::MetaData::TrackTotal}
-               || metadata == QLatin1String{Constants::MetaData::Disc}
-               || metadata == QLatin1String{Constants::MetaData::DiscTotal} || Constants::MetaData::Rating);
+        const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
+                                || metadata == QLatin1String{Constants::MetaData::TrackTotal}
+                                || metadata == QLatin1String{Constants::MetaData::Disc}
+                                || metadata == QLatin1String{Constants::MetaData::DiscTotal}
+                                || metadata == QLatin1String{Constants::MetaData::Rating});
 
         QStringList listValue;
         int intValue{-1};
