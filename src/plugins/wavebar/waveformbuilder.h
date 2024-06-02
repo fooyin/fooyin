@@ -65,6 +65,7 @@ private:
     WaveformRescaler m_rescaler;
 
     int m_width;
+    int m_samplesPerChannel;
     bool m_rescale;
 };
 } // namespace WaveBar

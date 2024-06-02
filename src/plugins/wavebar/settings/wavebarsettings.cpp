@@ -41,5 +41,6 @@ WaveBarSettings::WaveBarSettings(SettingsManager* settingsManager)
     m_settings->createSetting<MaxScale>(1.0, QStringLiteral("WaveBar/MaxScale"));
     m_settings->createSetting<CentreGap>(0, QStringLiteral("WaveBar/CentreGap"));
     m_settings->createSetting<ChannelScale>(0.9, QStringLiteral("WaveBar/ChannelScale"));
+    m_settings->createSetting<NumSamples>(2048, QStringLiteral("WaveBar/NumSamples"));
 }
 } // namespace Fooyin::WaveBar

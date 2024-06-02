@@ -39,6 +39,7 @@ enum WaveBarSettings : uint32_t
     MaxScale      = 8 | Type::Double,
     CentreGap     = 9 | Type::Int,
     ChannelScale  = 10 | Type::Double,
+    NumSamples    = 11 | Type::Int,
 };
 Q_ENUM_NS(WaveBarSettings)
 } // namespace Settings::WaveBar

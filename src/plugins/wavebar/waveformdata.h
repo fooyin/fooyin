@@ -39,6 +39,7 @@ struct WaveformData
     uint64_t duration{0};
     int channels{0};
     bool complete{false};
+    int samplesPerChannel{2048};
 
     struct ChannelData
     {
@@ -60,8 +61,9 @@ struct WaveformData
 
     bool operator==(const WaveformData<T>& other) const noexcept
     {
-        return std::tie(format, duration, channels, complete, channelData)
-            == std::tie(other.format, other.duration, other.channels, other.complete, other.channelData);
+        return std::tie(format, duration, channels, complete, samplesPerChannel, channelData)
+            == std::tie(other.format, other.duration, other.channels, other.complete, other.samplesPerChannel,
+                        other.channelData);
     }
 
     bool operator!=(const WaveformData<T>& other) const noexcept

@@ -32,6 +32,7 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnec
     , m_settings{settings}
     , m_generator{std::move(decoder), std::move(dbPool)}
     , m_width{0}
+    , m_samplesPerChannel{settings->value<Settings::WaveBar::NumSamples>()}
     , m_rescale{false}
 {
     updateRescaler();
@@ -51,6 +52,7 @@ WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnec
     m_settings->subscribe<Settings::WaveBar::BarWidth>(this, &WaveformBuilder::updateRescaler);
     m_settings->subscribe<Settings::WaveBar::BarGap>(this, &WaveformBuilder::updateRescaler);
     m_settings->subscribe<Settings::WaveBar::Downmix>(this, &WaveformBuilder::updateRescaler);
+    m_settings->subscribe<Settings::WaveBar::NumSamples>(this, [this](const int num) { m_samplesPerChannel = num; });
 
     m_generatorThread.start();
     m_rescalerThread.start();
@@ -74,7 +76,8 @@ void WaveformBuilder::generate(const Track& track, bool update)
 {
     m_rescale = false;
 
-    QMetaObject::invokeMethod(&m_generator, [this, track, update]() { m_generator.generate(track, update); });
+    QMetaObject::invokeMethod(&m_generator,
+                              [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, update); });
 }
 
 void WaveformBuilder::generateAndScale(const Track& track, bool update)
@@ -83,7 +86,8 @@ void WaveformBuilder::generateAndScale(const Track& track, bool update)
     m_rescaler.stopThread();
     m_rescale = true;
 
-    QMetaObject::invokeMethod(&m_generator, [this, track, update]() { m_generator.generateAndRender(track, update); });
+    QMetaObject::invokeMethod(
+        &m_generator, [this, track, update]() { m_generator.generateAndRender(track, m_samplesPerChannel, update); });
 }
 
 void WaveformBuilder::rescale(const int width)

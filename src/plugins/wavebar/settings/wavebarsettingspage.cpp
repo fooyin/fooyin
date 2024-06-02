@@ -73,6 +73,7 @@ private:
     QSpinBox* m_centreGap;
 
     QLabel* m_cacheSizeLabel;
+    QComboBox* m_numSamples;
 };
 
 WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
@@ -91,6 +92,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     , m_maxScale{new QDoubleSpinBox(this)}
     , m_centreGap{new QSpinBox(this)}
     , m_cacheSizeLabel{new QLabel(this)}
+    , m_numSamples{new QComboBox(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -181,10 +183,8 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     dimensionGroupLayout->addWidget(m_centreGap, row++, 1);
     dimensionGroupLayout->setColumnStretch(2, 1);
 
-    auto* cacheGroup       = new QGroupBox(tr("Cache"), this);
-    auto* cacheGroupLayout = new QGridLayout(cacheGroup);
-
-    updateCacheSize();
+    auto* generalGroup       = new QGroupBox(tr("General"), this);
+    auto* generalGroupLayout = new QGridLayout(generalGroup);
 
     auto* clearCacheButton = new QPushButton(tr("Clear Cache"), this);
 
@@ -193,9 +193,23 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
         updateCacheSize();
     });
 
-    cacheGroupLayout->addWidget(m_cacheSizeLabel, 0, 0);
-    cacheGroupLayout->addWidget(clearCacheButton, 1, 0);
-    cacheGroupLayout->setColumnStretch(1, 1);
+    auto* numSamplesLabel = new QLabel(tr("Number of samples") + QStringLiteral(":"), this);
+    const QString numSamplesTip{tr("Number of samples (per channel) to use \n"
+                                   "for waveform data. Higher values will result \n"
+                                   "in a more accurate and detailed waveform at the \n"
+                                   "cost of using more disk space in the cache.")};
+
+    m_numSamples->addItem(QString::number(2048));
+    m_numSamples->addItem(QString::number(4096));
+
+    numSamplesLabel->setToolTip(numSamplesTip);
+    m_numSamples->setToolTip(numSamplesTip);
+
+    generalGroupLayout->addWidget(numSamplesLabel, 0, 0);
+    generalGroupLayout->addWidget(m_numSamples, 0, 1);
+    generalGroupLayout->addWidget(m_cacheSizeLabel, 1, 0);
+    generalGroupLayout->addWidget(clearCacheButton, 1, 1);
+    generalGroupLayout->setColumnStretch(2, 1);
 
     row = 0;
     layout->addWidget(modeGroup, row, 0);
@@ -203,7 +217,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     layout->addWidget(dimensionGroup, row, 0);
     layout->addWidget(scaleGroup, row++, 1);
     layout->addWidget(cursorGroup, row, 0);
-    layout->addWidget(cacheGroup, row++, 1);
+    layout->addWidget(generalGroup, row++, 1);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
@@ -232,6 +246,10 @@ void WaveBarSettingsPageWidget::load()
     else {
         m_downmixMono->setChecked(true);
     }
+
+    updateCacheSize();
+    const int samples = m_settings->value<Settings::WaveBar::NumSamples>();
+    m_numSamples->setCurrentIndex(samples == 2048 ? 0 : 1);
 }
 
 void WaveBarSettingsPageWidget::apply()
@@ -267,6 +285,11 @@ void WaveBarSettingsPageWidget::apply()
         mode |= WaveMode::Silence;
     }
     m_settings->set<Settings::WaveBar::Mode>(static_cast<int>(mode));
+
+    if(m_settings->set<Settings::WaveBar::NumSamples>(m_numSamples->currentIndex() == 0 ? 2048 : 4096)) {
+        emit clearCache();
+        updateCacheSize();
+    }
 }
 
 void WaveBarSettingsPageWidget::reset()
@@ -280,6 +303,7 @@ void WaveBarSettingsPageWidget::reset()
     m_settings->reset<Settings::WaveBar::Downmix>();
     m_settings->reset<Settings::WaveBar::ChannelScale>();
     m_settings->reset<Settings::WaveBar::Mode>();
+    m_settings->reset<Settings::WaveBar::NumSamples>();
 }
 
 void WaveBarSettingsPageWidget::updateCacheSize()
@@ -287,7 +311,7 @@ void WaveBarSettingsPageWidget::updateCacheSize()
     const QFile cacheFile{cachePath()};
     const QString cacheSize = Utils::formatFileSize(cacheFile.size());
 
-    m_cacheSizeLabel->setText(tr("Current Disk Usage") + QStringLiteral(": %1").arg(cacheSize));
+    m_cacheSizeLabel->setText(tr("Disk Cache Usage") + QStringLiteral(": %1").arg(cacheSize));
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)

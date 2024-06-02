@@ -42,11 +42,11 @@ signals:
 
 public slots:
     void initialiseThread() override;
-    void generate(const Fooyin::Track& track, bool update = false);
-    void generateAndRender(const Fooyin::Track& track, bool update = false);
+    void generate(const Fooyin::Track& track, int samplesPerChannel, bool update = false);
+    void generateAndRender(const Fooyin::Track& track, int samplesPerChannel, bool update = false);
 
 private:
-    QString setup(const Track& track);
+    QString setup(const Track& track, int samplesPerChannel);
     void processBuffer(const AudioBuffer& buffer);
 
     std::unique_ptr<AudioDecoder> m_decoder;
@@ -57,6 +57,7 @@ private:
     Track m_track;
     AudioFormat m_format;
     AudioFormat m_requiredFormat;
+    int m_samplesPerChannel;
     WaveformData<float> m_data;
 };
 } // namespace Fooyin::WaveBar

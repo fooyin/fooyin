@@ -28,8 +28,6 @@
 #include <cfenv>
 #include <utility>
 
-constexpr auto SampleCount = 2048;
-
 namespace {
 float convertSampleToFloat(const int16_t inSample)
 {
@@ -115,13 +113,13 @@ void WaveformGenerator::initialiseThread()
     m_waveDb.initialiseDatabase();
 }
 
-void WaveformGenerator::generate(const Track& track, bool update)
+void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool update)
 {
     if(closing()) {
         return;
     }
 
-    const QString trackKey = setup(track);
+    const QString trackKey = setup(track, samplesPerChannel);
     if(trackKey.isEmpty()) {
         return;
     }
@@ -137,8 +135,8 @@ void WaveformGenerator::generate(const Track& track, bool update)
     emit generatingWaveform();
 
     const uint64_t durationSecs = m_data.duration / 1000;
-    const int samplesPerChannel = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
-    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samplesPerChannel) / SampleCount));
+    const int samples           = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
+    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
     const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
 
     m_decoder->start();
@@ -172,13 +170,13 @@ void WaveformGenerator::generate(const Track& track, bool update)
     emit waveformGenerated(m_data);
 }
 
-void WaveformGenerator::generateAndRender(const Track& track, bool update)
+void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChannel, bool update)
 {
     if(closing()) {
         return;
     }
 
-    const QString trackKey = setup(track);
+    const QString trackKey = setup(track, samplesPerChannel);
     if(trackKey.isEmpty()) {
         return;
     }
@@ -202,11 +200,11 @@ void WaveformGenerator::generateAndRender(const Track& track, bool update)
     emit generatingWaveform();
 
     const uint64_t durationSecs = m_data.duration / 1000;
-    const int samplesPerChannel = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
-    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samplesPerChannel) / SampleCount));
+    const int samples           = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
+    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
     const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
     const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 30));
-    const int updateThreshold   = SampleCount / numOfUpdates;
+    const int updateThreshold   = samplesPerChannel / numOfUpdates;
 
     int processedCount{0};
 
@@ -246,7 +244,7 @@ void WaveformGenerator::generateAndRender(const Track& track, bool update)
     emit waveformGenerated(m_data);
 }
 
-QString WaveformGenerator::setup(const Track& track)
+QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
 {
     m_decoder->stop();
     m_data = {};
@@ -268,6 +266,7 @@ QString WaveformGenerator::setup(const Track& track)
     m_data.duration = track.duration();
     m_data.channels = m_format.channelCount();
     m_data.channelData.resize(m_data.channels);
+    m_data.samplesPerChannel = samplesPerChannel;
 
     return WaveBarDatabase::cacheKey(m_track, m_data.channels);
 }

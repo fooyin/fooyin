@@ -21,8 +21,6 @@
 
 #include <utils/settings/settingsmanager.h>
 
-constexpr auto SampleCount = 2048;
-
 namespace {
 int buildSample(Fooyin::WaveBar::WaveformSample& sample, Fooyin::WaveBar::WaveformData<float>& data, int channel,
                 double start, double end)
@@ -81,7 +79,8 @@ void WaveformRescaler::rescale()
 
     data.channelData.resize(data.channels);
 
-    const double sampleSize = static_cast<double>(m_data.complete ? m_data.sampleCount() : SampleCount) * m_sampleWidth;
+    const double sampleSize
+        = static_cast<double>(m_data.complete ? m_data.sampleCount() : m_data.samplesPerChannel) * m_sampleWidth;
     const auto samplesPerPixel = sampleSize / m_width;
 
     for(int ch{0}; ch < data.channels; ++ch) {
