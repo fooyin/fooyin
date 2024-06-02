@@ -159,10 +159,12 @@ struct TagEditorModel::Private
         const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
                              || metadata == QLatin1String{Constants::MetaData::Artist}
                              || metadata == QLatin1String{Constants::MetaData::Genre});
-        const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
-                                || metadata == QLatin1String{Constants::MetaData::TrackTotal}
-                                || metadata == QLatin1String{Constants::MetaData::Disc}
-                                || metadata == QLatin1String{Constants::MetaData::DiscTotal});
+        const bool isNumeric
+            = (metadata == QLatin1String{Constants::MetaData::Track}
+               || metadata == QLatin1String{Constants::MetaData::TrackTotal}
+               || metadata == QLatin1String{Constants::MetaData::Disc}
+               || metadata == QLatin1String{Constants::MetaData::DiscTotal} || Constants::MetaData::Rating);
+
         QStringList listValue;
         int intValue{-1};
         bool intValueIsValid{false};
@@ -361,10 +363,7 @@ Qt::ItemFlags TagEditorModel::flags(const QModelIndex& index) const
 
     auto flags = ExtendableTableModel::flags(index);
 
-    auto* item = static_cast<TagEditorItem*>(index.internalPointer());
-
-    if((index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool())
-       && item->name() != u"Rating") { // Prevent editing rating for now
+    if((index.column() != 0 || !index.data(TagEditorItem::IsDefault).toBool())) {
         flags |= Qt::ItemIsEditable;
     }
 
@@ -436,14 +435,18 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             break;
         }
         case(1): {
+            QString setValue = value.toString();
+
             if(index.row() == 13) {
-                // We don't handle changing rating for now
-                return false;
+                const auto rating = value.value<StarRating>();
+                setValue          = QString::number(rating.starCount());
             }
+
             if(value.toString().simplified() == item->value().simplified()) {
                 return false;
             }
-            item->setValue(value.toStringList());
+
+            item->setValue({setValue});
             break;
         }
         default:

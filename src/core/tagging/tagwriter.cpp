@@ -29,7 +29,6 @@
 #include <taglib/apetag.h>
 #include <taglib/asffile.h>
 #include <taglib/asftag.h>
-#include <taglib/fileref.h>
 #include <taglib/flacfile.h>
 #include <taglib/id3v2framefactory.h>
 #include <taglib/id3v2tag.h>
@@ -38,6 +37,7 @@
 #include <taglib/mpcfile.h>
 #include <taglib/mpegfile.h>
 #include <taglib/opusfile.h>
+#include <taglib/popularimeterframe.h>
 #include <taglib/tag.h>
 #include <taglib/textidentificationframe.h>
 #include <taglib/tfilestream.h>
@@ -265,6 +265,27 @@ QString getDiscNumber(const Fooyin::Track& track)
     return discNumber;
 }
 
+int ratingToPopm(float rating)
+{
+    if(rating < 0.2) {
+        return 0;
+    }
+    if(rating < 0.4) {
+        return 1;
+    }
+    if(rating < 0.6) {
+        return 64;
+    }
+    if(rating < 0.8) {
+        return 128;
+    }
+    if(rating < 1.0) {
+        return 196;
+    }
+
+    return 255;
+};
+
 void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track)
 {
     id3Tags->removeFrames("TRCK");
@@ -279,9 +300,31 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track)
     id3Tags->removeFrames("TPOS");
 
     const QString discNumber = getDiscNumber(track);
-    auto discFrame           = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TPOS", TagLib::String::UTF8);
-    discFrame->setText(convertString(discNumber));
-    id3Tags->addFrame(discFrame.release());
+    if(!discNumber.isEmpty()) {
+        auto discFrame = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("TPOS", TagLib::String::UTF8);
+        discFrame->setText(convertString(discNumber));
+        id3Tags->addFrame(discFrame.release());
+    }
+
+    id3Tags->removeFrames("FMPS_Rating");
+
+    const auto rating = QString::number(track.rating());
+    auto ratingFrame  = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Rating", TagLib::String::UTF8);
+    ratingFrame->setText(convertString(rating));
+    id3Tags->addFrame(ratingFrame.release());
+
+    TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
+    const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
+    if(map.contains("POPM")) {
+        frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(map["POPM"].front());
+    }
+
+    if(!frame) {
+        frame = new TagLib::ID3v2::PopularimeterFrame();
+        id3Tags->addFrame(frame);
+    }
+
+    frame->setRating(ratingToPopm(track.rating()));
 }
 
 void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track)
@@ -300,6 +343,14 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track)
     }
     else {
         apeTags->addValue("DISC", convertString(discNumber), true);
+    }
+
+    if(track.rating() > 0) {
+        apeTags->setItem("FMPS_Rating",
+                         TagLib::APE::Item{"FMPS_Rating", convertString(QString::number(track.rating()))});
+    }
+    else {
+        apeTags->removeItem("FMPS_Rating");
     }
 }
 
@@ -356,6 +407,7 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
     }
 
     mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, TagLib::StringList{convertString(track.performer())});
+    mp4Tags->setItem(Fooyin::Mp4::RatingAlt, TagLib::StringList(convertString(QString::number(track.rating()))));
 
     static const std::set<QString> baseMp4Tags
         = {QString::fromLatin1(Fooyin::Tag::Title),       QString::fromLatin1(Fooyin::Tag::Artist),
@@ -415,12 +467,20 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
     else {
         xiphTags->addField(Fooyin::Tag::DiscTotal, TagLib::String::number(track.discTotal()), true);
     }
+
+    if(track.rating() <= 0) {
+        xiphTags->removeFields("FMPS_RATING");
+    }
+    else {
+        xiphTags->addField("FMPS_RATING", convertString(QString::number(track.rating())), true);
+    }
 }
 
 void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track)
 {
     asfTags->setAttribute("WM/TrackNumber", TagLib::String::number(track.trackNumber()));
     asfTags->setAttribute("WM/PartOfSet", TagLib::String::number(track.discNumber()));
+    asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
 }
 } // namespace
 
