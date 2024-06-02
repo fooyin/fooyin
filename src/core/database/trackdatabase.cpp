@@ -617,10 +617,8 @@ bool TrackDatabase::insertOrUpdateStats(const Track& track) const
         }
     }
     if(trackRating != rating) {
-        if(trackRating > rating) {
-            rating        = trackRating;
-            dbNeedsUpdate = true;
-        }
+        rating        = trackRating;
+        dbNeedsUpdate = true;
     }
 
     if(!dbNeedsUpdate) {
