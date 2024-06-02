@@ -1193,72 +1193,72 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="94"/>
         <source>Override root margin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Marge personnalisée</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="97"/>
         <source>Override splitter handle size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Distance personnalisée entre les différents séparateurs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="99"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Surélever</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="100"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Étirer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="102"/>
         <source>Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="104"/>
         <source>Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration Rapide</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="105"/>
         <source>Import Layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importer une Configuration</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter une Configuration</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Icon Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thème des icônes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="121"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise en Page</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Boutons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="272"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sans exportation, la configuration actuelle sera perdue.</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="288"/>
         <source>Export layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exporter une Configuration</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="288"/>
         <source>Layout Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nom de la Configuration</translation>
     </message>
 </context>
 <context>
@@ -1266,7 +1266,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="48"/>
         <source>&amp;About</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">À &amp;Propos</translation>
     </message>
 </context>
 <context>
@@ -1274,137 +1274,137 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="279"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="282"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titre</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="283"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="284"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Date</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="285"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="286"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artiste de l&apos;Album</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="289"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numéro de Piste</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="297"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du Fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="299"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du Dossier</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="303"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Chemin du fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="306"/>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du Fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="309"/>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Dernière Modification</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="313"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouté</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="324"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Durée</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="326"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Canaux</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="330"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Résolution</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="334"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Débit</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="338"/>
         <source>Sample Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Taux d’Échantillonnage</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="340"/>
         <source>Codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="297"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Noms de Fichiers</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="299"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Noms de Dossiers</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="306"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille Totale</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="334"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Taux d&apos;Échantillonnage Moy.</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="244"/>
         <source>Metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="247"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplacement</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="250"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="321"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Pistes</translation>
     </message>
 </context>
 <context>
@@ -1412,7 +1412,7 @@
     <message>
         <location filename="../../src/gui/info/infoview.cpp" line="33"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune Sélection</translation>
     </message>
 </context>
 <context>
@@ -1420,7 +1420,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="157"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infos sur la Sélection</translation>
     </message>
 </context>
 <context>
@@ -1428,12 +1428,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="185"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="186"/>
         <source>Library</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bibliothèques</translation>
     </message>
 </context>
 <context>
@@ -1441,27 +1441,27 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="112"/>
         <source>Auto refresh on startup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rafraichissement Auto au démarrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="113"/>
         <source>Monitor libraries</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Surveillance des bibliothèques</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="125"/>
         <source>Scan libraries for changes on startup</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scanner les bibliothèques au démarrage</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="126"/>
         <source>Monitor libraries for external changes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Détection des changements externes dans les bibliothèques</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="166"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Répertoire</translation>
     </message>
 </context>
 <context>
