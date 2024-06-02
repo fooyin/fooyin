@@ -208,8 +208,9 @@ void Application::timerEvent(QTimerEvent* event)
         p->playlistHandler->savePlaylists();
     }
     else if(event->timerId() == p->settingsSaveTimer.timerId()) {
-        p->settingsSaveTimer.stop();
-        p->settingsManager->storeSettings();
+        if(p->settingsManager->settingsHaveChanged()) {
+            p->settingsManager->storeSettings();
+        }
     }
 
     QObject::timerEvent(event);

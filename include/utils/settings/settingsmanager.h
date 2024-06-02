@@ -110,6 +110,8 @@ public:
      */
     [[nodiscard]] SettingsDialogController* settingsDialog() const;
 
+    // Returns @c true if any settings have been changed since program startup.
+    [[nodiscard]] bool settingsHaveChanged() const;
     // Writes only changed settings to file, overwriting any existing values.
     void storeSettings();
     // Writes all settings to file, overwriting any existing values.

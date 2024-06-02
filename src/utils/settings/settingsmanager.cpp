@@ -43,6 +43,13 @@ SettingsDialogController* SettingsManager::settingsDialog() const
     return m_settingsDialog;
 }
 
+bool SettingsManager::settingsHaveChanged() const
+{
+    return std::ranges::any_of(m_settings, [](const auto& setting) {
+        return setting.second && setting.second->wasChanged() && !setting.second->isTemporary();
+    });
+}
+
 void SettingsManager::storeSettings()
 {
     saveSettings(true);
