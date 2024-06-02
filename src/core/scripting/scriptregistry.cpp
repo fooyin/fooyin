@@ -162,7 +162,6 @@ struct ScriptRegistry::Private
     std::unordered_map<QString, TrackListFunc> listProperties;
     std::unordered_map<QString, Func> funcs;
     std::unordered_map<QString, NativeVoidFunc> playbackVars;
-    std::set<QString> metaValues{QStringLiteral("albumartist"), QStringLiteral("artist"), QStringLiteral("title")};
 
     explicit Private(PlayerController* playerController_)
         : playerController{playerController_}
