@@ -43,6 +43,7 @@
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
+#include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "settings/artworkpage.h"
@@ -180,7 +181,7 @@ struct GuiApplication::Private
         , searchController{new SearchController(editableLayout.get(), self)}
         , fileMenu{new FileMenu(actionManager, settingsManager, self)}
         , editMenu{new EditMenu(actionManager, settingsManager, self)}
-        , viewMenu{new ViewMenu(actionManager, &selectionController, settingsManager, self)}
+        , viewMenu{new ViewMenu(actionManager, settingsManager, self)}
         , playbackMenu{new PlaybackMenu(actionManager, playerController, settingsManager, self)}
         , libraryMenu{new LibraryMenu(actionManager, library, settingsManager, self)}
         , helpMenu{new HelpMenu(actionManager, self)}
@@ -332,6 +333,17 @@ struct GuiApplication::Private
         QObject::connect(fileMenu, &FileMenu::requestAddFiles, self, [this]() { addFiles(); });
         QObject::connect(fileMenu, &FileMenu::requestAddFolders, self, [this]() { addFolders(); });
         QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
+        QObject::connect(viewMenu, &ViewMenu::openScriptSandbox, self, [this]() {
+            auto* sandboxDialog = new SandboxDialog(&selectionController, settingsManager, mainWindow.get());
+            sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
+            sandboxDialog->show();
+        });
+        QObject::connect(viewMenu, &ViewMenu::showNowPlaying, self, [this]() {
+            if(auto* activePlaylist = playlistHandler->activePlaylist()) {
+                playlistController->changeCurrentPlaylist(activePlaylist);
+                playlistController->showNowPlaying();
+            }
+        });
         QObject::connect(engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
             if(status == TrackStatus::InvalidTrack) {
                 const Track track = playerController->currentTrack();

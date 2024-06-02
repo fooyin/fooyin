@@ -26,26 +26,23 @@ class QAction;
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
-class TrackSelectionController;
 
 class ViewMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(ActionManager* actionManager, TrackSelectionController* trackSelection, SettingsManager* settings,
-                      QObject* parent = nullptr);
+    explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
     void openQuickSetup();
+    void openScriptSandbox();
+    void showNowPlaying();
 
 private:
     ActionManager* m_actionManager;
-    TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
 
     QAction* m_layoutEditing;
-    QAction* m_openQuickSetup;
-    QAction* m_showSandbox;
 };
 } // namespace Fooyin

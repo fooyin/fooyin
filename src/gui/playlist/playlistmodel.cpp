@@ -992,6 +992,11 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
     });
 }
 
+PlaylistTrack PlaylistModel::playingTrack() const
+{
+    return m_currentPlayingTrack;
+}
+
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
 {
     if(m_trackIndexes.empty()) {

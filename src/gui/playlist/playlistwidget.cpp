@@ -116,6 +116,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self_, ActionManage
     , removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), self)}
     , m_sorting{false}
     , m_sortingColumn{false}
+    , m_showPlaying{false}
 {
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -174,6 +175,14 @@ void PlaylistWidgetPrivate::setupConnections()
                      &PlaylistModel::playStateChanged);
     QObject::connect(playlistController, &PlaylistController::currentPlaylistTracksAdded, this,
                      &PlaylistWidgetPrivate::playlistTracksAdded);
+    QObject::connect(playlistController, &PlaylistController::showCurrentTrack, self, [this]() {
+        if(playlistController->currentIsActive()) {
+            followCurrentTrack();
+        }
+        else {
+            m_showPlaying = true;
+        }
+    });
     QObject::connect(&presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
     QObject::connect(&columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
                      &PlaylistWidgetPrivate::onColumnChanged);
@@ -318,7 +327,7 @@ void PlaylistWidgetPrivate::saveState(Playlist* playlist) const
     }
 }
 
-void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
+void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
 {
     if(!playlist) {
         return;
@@ -327,6 +336,9 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
     auto restoreDefaultState = [this]() {
         playlistView->playlistReset();
         playlistView->scrollToTop();
+        if(std::exchange(m_showPlaying, false)) {
+            followCurrentTrack();
+        }
     };
 
     if(playlist->trackCount() == 0) {
@@ -351,6 +363,10 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist) const
         playlistView->playlistReset();
         playlistView->scrollTo(index, PlaylistView::PositionAtTop);
         playlistView->verticalScrollBar()->setValue(state->scrollPos);
+
+        if(std::exchange(m_showPlaying, false)) {
+            followCurrentTrack();
+        }
 
         return true;
     };
@@ -722,8 +738,8 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
 void PlaylistWidgetPrivate::handlePlayingTrackChanged(const PlaylistTrack& track) const
 {
     model->playingTrackChanged(track);
-    if(track.playlistId == playlistController->currentPlaylistId()) {
-        followCurrentTrack(track.track, track.indexInPlaylist);
+    if(settings->value<Settings::Gui::CursorFollowsPlayback>()) {
+        followCurrentTrack();
     }
 }
 
@@ -884,17 +900,15 @@ void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& /*index*/) const
     playlistView->clearSelection();
 }
 
-void PlaylistWidgetPrivate::followCurrentTrack(const Track& track, int index) const
+void PlaylistWidgetPrivate::followCurrentTrack() const
 {
-    if(!settings->value<Settings::Gui::CursorFollowsPlayback>()) {
-        return;
-    }
-
     if(playlistController->playState() != PlayState::Playing) {
         return;
     }
 
-    if(!track.isValid()) {
+    const auto [track, playlistId, index] = model->playingTrack();
+
+    if(!track.isValid() || playlistId != playlistController->currentPlaylistId()) {
         return;
     }
 

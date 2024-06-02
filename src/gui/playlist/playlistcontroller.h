@@ -70,6 +70,7 @@ public:
     void addPlaylistMenu(QMenu* menu);
 
     void startPlayback() const;
+    void showNowPlaying();
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
@@ -102,6 +103,7 @@ signals:
     void playStateChanged(PlayState state);
     void playlistHistoryChanged();
     void playingTrackChanged(const PlaylistTrack& track);
+    void showCurrentTrack();
 
 public slots:
     void handleTrackSelectionAction(TrackAction action);

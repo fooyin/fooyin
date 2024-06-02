@@ -538,6 +538,11 @@ void PlaylistController::startPlayback() const
     }
 }
 
+void PlaylistController::showNowPlaying()
+{
+    emit showCurrentTrack();
+}
+
 bool PlaylistController::currentIsActive() const
 {
     return p->currentPlaylist == p->handler->activePlaylist();

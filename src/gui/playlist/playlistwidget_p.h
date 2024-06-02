@@ -70,7 +70,7 @@ public:
     void resetTree();
     [[nodiscard]] PlaylistViewState getState(Playlist* playlist) const;
     void saveState(Playlist* playlist) const;
-    void restoreState(Playlist* playlist) const;
+    void restoreState(Playlist* playlist);
     void resetModel() const;
 
     [[nodiscard]] std::vector<int> selectedPlaylistIndexes() const;
@@ -104,7 +104,7 @@ public:
 
     void changeState(PlayState state) const;
     void doubleClicked(const QModelIndex& index) const;
-    void followCurrentTrack(const Track& track, int index) const;
+    void followCurrentTrack() const;
 
     void sortTracks(const QString& script) const;
     void sortColumn(int column, Qt::SortOrder order);
@@ -146,5 +146,6 @@ public:
 
     bool m_sorting;
     bool m_sortingColumn;
+    bool m_showPlaying;
 };
 } // namespace Fooyin

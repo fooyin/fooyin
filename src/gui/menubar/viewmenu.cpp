@@ -19,11 +19,8 @@
 
 #include "viewmenu.h"
 
-#include "sandbox/sandboxdialog.h"
-
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
-#include <gui/trackselectioncontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
@@ -33,11 +30,9 @@
 #include <QIcon>
 
 namespace Fooyin {
-ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* trackSelection, SettingsManager* settings,
-                   QObject* parent)
+ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_actionManager{actionManager}
-    , m_trackSelection{trackSelection}
     , m_settings{settings}
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
@@ -53,18 +48,19 @@ ViewMenu::ViewMenu(ActionManager* actionManager, TrackSelectionController* track
     m_settings->subscribe<Settings::Gui::LayoutEditing>(this,
                                                         [this](bool enabled) { m_layoutEditing->setChecked(enabled); });
 
-    m_openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
-    viewMenu->addAction(m_actionManager->registerAction(m_openQuickSetup, Constants::Actions::QuickSetup));
-    QObject::connect(m_openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
+    auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
+    viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup));
+    QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
-    m_showSandbox = new QAction(tr("&Script Sandbox"), this);
-    viewMenu->addAction(m_actionManager->registerAction(m_showSandbox, Constants::Actions::ScriptSandbox),
-                        Actions::Groups::Three);
-    QObject::connect(m_showSandbox, &QAction::triggered, this, [this]() {
-        auto* sandboxDialog = new SandboxDialog(m_trackSelection, m_settings);
-        sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
-        sandboxDialog->show();
-    });
+    viewMenu->addSeparator();
+
+    auto* showSandbox = new QAction(tr("&Script Sandbox"), this);
+    viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
+    QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);
+
+    auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
+    viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));
+    QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }
 } // namespace Fooyin
 

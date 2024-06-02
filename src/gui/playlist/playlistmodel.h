@@ -104,6 +104,7 @@ public:
     void resetColumnAlignments();
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
+    PlaylistTrack playingTrack() const;
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
     QModelIndex indexAtPlaylistIndex(int index);
 

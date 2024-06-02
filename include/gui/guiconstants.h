@@ -111,6 +111,7 @@ constexpr auto Exit            = "File.Exit";
 constexpr auto Settings        = "Edit.Settings";
 constexpr auto LayoutEditing   = "View.LayoutEditing";
 constexpr auto QuickSetup      = "View.QuickSetup";
+constexpr auto ShowNowPlaying  = "View.ShowNowPlaying";
 constexpr auto About           = "Help.About";
 constexpr auto Refresh         = "Library.Refresh";
 constexpr auto Rescan          = "Library.Rescan";
