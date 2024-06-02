@@ -63,10 +63,34 @@ void StarEditor::mouseMoveEvent(QMouseEvent* event)
     QWidget::mouseMoveEvent(event);
 }
 
-void StarEditor::mouseReleaseEvent(QMouseEvent* event)
+void StarEditor::mouseReleaseEvent(QMouseEvent* /*event*/)
 {
     emit editingFinished();
-    QWidget::mouseReleaseEvent(event);
+}
+
+void StarEditor::keyPressEvent(QKeyEvent* event)
+{
+    const int count = m_rating.starCount();
+    const auto key  = event->key();
+
+    if(key == Qt::Key_Return || key == Qt::Key_Enter || key == Qt::Key_Escape) {
+        emit editingFinished();
+    }
+    else if(event->key() == Qt::Key_Left) {
+        if(count > 0) {
+            m_rating.setStarCount(count - 1);
+            update();
+        }
+    }
+    else if(event->key() == Qt::Key_Right) {
+        if(count < m_rating.maxStarCount()) {
+            m_rating.setStarCount(count + 1);
+            update();
+        }
+    }
+    else {
+        QWidget::keyPressEvent(event);
+    }
 }
 
 int StarEditor::starAtPosition(int x) const

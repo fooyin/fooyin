@@ -55,7 +55,7 @@ QWidget* StarDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&
 {
     if(index.data().canConvert<StarRating>()) {
         auto* editor = new StarEditor(parent);
-        connect(editor, &StarEditor::editingFinished, this, &StarDelegate::finishEditing);
+        QObject::connect(editor, &StarEditor::editingFinished, this, &StarDelegate::finishEditing);
         return editor;
     }
 
