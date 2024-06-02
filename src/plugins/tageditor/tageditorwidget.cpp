@@ -91,6 +91,7 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
     m_view->horizontalHeader()->setStretchLastSection(true);
     m_view->horizontalHeader()->setSectionsClickable(false);
     m_view->verticalHeader()->setVisible(false);
+    m_view->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     m_actionManager->addContextObject(m_context);
 
