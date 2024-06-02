@@ -96,12 +96,12 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="94"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>地图缓存大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="95"/>
         <source>Thumbnail size</source>
-        <translation type="unfinished"></translation>
+        <translation>缩略图大小</translation>
     </message>
 </context>
 <context>
@@ -277,22 +277,22 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>显示图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
         <source>Show indent</source>
-        <translation type="unfinished"></translation>
+        <translation>显示缩进</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>显示控件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show location</source>
-        <translation type="unfinished"></translation>
+        <translation>显示位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="81"/>
@@ -498,7 +498,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="67"/>
         <source>Gapless playback</source>
-        <translation type="unfinished"></translation>
+        <translation>无缝播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="70"/>
@@ -758,17 +758,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="77"/>
         <source>Show headers</source>
-        <translation type="unfinished"></translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="78"/>
         <source>Show scrollbars</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="79"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
@@ -793,7 +793,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="93"/>
         <source>Row height</source>
-        <translation type="unfinished">行高</translation>
+        <translation>行高</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
@@ -891,7 +891,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="84"/>
         <source>Restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复播放状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="85"/>
@@ -1150,7 +1150,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="89"/>
         <source>Show splitter handles</source>
-        <translation type="unfinished"></translation>
+        <translation>显示分割手柄</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="90"/>
@@ -1190,7 +1190,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="248"/>
@@ -1536,12 +1536,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="92"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="93"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="124"/>
@@ -1556,7 +1556,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="153"/>
         <source>Row height</source>
-        <translation type="unfinished">行高</translation>
+        <translation>行高</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="127"/>
@@ -1687,12 +1687,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="99"/>
         <source>Cursor Follows Play&amp;back</source>
-        <translation type="unfinished"></translation>
+        <translation>光标跟随播放(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="100"/>
         <source>Playback Follows &amp;Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>播放跟随光标(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="128"/>
@@ -1715,7 +1715,7 @@
     <message>
         <location filename="../../src/gui/controls/playercontrol.cpp" line="150"/>
         <source>Stretch to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>拉伸以适应</translation>
     </message>
 </context>
 <context>
@@ -1820,12 +1820,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="53"/>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
+        <translation>声道</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Last Modified</source>
-        <translation type="unfinished">上次修改</translation>
+        <translation>上次修改</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
@@ -1878,7 +1878,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="196"/>
         <source>Stretch to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>拉伸以适应</translation>
     </message>
 </context>
 <context>
@@ -1912,7 +1912,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="66"/>
         <source>Playback follows cursor</source>
-        <translation>播放跟随光标&lt;br&gt;</translation>
+        <translation>播放跟随光标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="67"/>
@@ -1922,42 +1922,42 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="68"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="69"/>
         <source>Show header</source>
-        <translation type="unfinished"></translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
         <source>Alternate row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="71"/>
         <source>Show add button</source>
-        <translation type="unfinished"></translation>
+        <translation>显示添加按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="98"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished">播放列表选项卡</translation>
+        <translation>播放列表选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
         <source>Image Padding</source>
-        <translation type="unfinished"></translation>
+        <translation>图像填充</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
         <source>Left/Right</source>
-        <translation type="unfinished"></translation>
+        <translation>左右</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
         <source>Top</source>
-        <translation type="unfinished">顶部</translation>
+        <translation>顶部</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="121"/>
@@ -2099,12 +2099,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="216"/>
         <source>Show cover</source>
-        <translation type="unfinished"></translation>
+        <translation>显示专辑封面</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="217"/>
         <source>Simple header</source>
-        <translation type="unfinished"></translation>
+        <translation>简单标头</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="242"/>
@@ -2153,27 +2153,27 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="304"/>
         <source>Add New Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="318"/>
         <source>Rename Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="321"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>移除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="336"/>
         <source>Move Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左移</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="341"/>
         <source>Move Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右移</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="418"/>
@@ -2408,7 +2408,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="43"/>
         <source>Search library…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索库…</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="58"/>
@@ -2628,22 +2628,22 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="56"/>
         <source>Show icon</source>
-        <translation type="unfinished"></translation>
+        <translation>显示图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="57"/>
         <source>Show track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选中的音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="64"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>播放曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>选中的音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="67"/>
@@ -2793,7 +2793,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="177"/>
         <source>Stretch to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>拉伸以适应</translation>
     </message>
 </context>
 <context>
@@ -2958,42 +2958,42 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="79"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>最小/最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>显示播放进度光标</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="95"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>光标宽度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="96"/>
         <source>Bar width</source>
-        <translation type="unfinished"></translation>
+        <translation>条形宽度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="97"/>
         <source>Bar gap</source>
-        <translation type="unfinished"></translation>
+        <translation>条形间隙</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="98"/>
         <source>Max scale</source>
-        <translation type="unfinished"></translation>
+        <translation>最大刻度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="99"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>中心间隙</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="135"/>
         <source>Channel scale</source>
-        <translation type="unfinished"></translation>
+        <translation>通道刻度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="137"/>
@@ -3046,7 +3046,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="104"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>最小/最大</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="105"/>
