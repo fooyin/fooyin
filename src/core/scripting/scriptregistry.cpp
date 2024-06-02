@@ -95,6 +95,61 @@ QString trackInfo(const Fooyin::Track& track, const QStringList& args)
 
     return {};
 }
+
+QString trackMeta(const Fooyin::Track& track, const QStringList& args)
+{
+    if(args.empty()) {
+        return {};
+    }
+
+    const QString& tag = args.front();
+    return track.metaValue(tag);
+}
+
+QString trackTitle(const Fooyin::Track& track)
+{
+    return !track.title().isEmpty() ? track.title() : track.filename();
+}
+
+QString trackArtist(const Fooyin::Track& track)
+{
+    if(!track.artists().empty()) {
+        return track.artist();
+    }
+    if(!track.albumArtists().empty()) {
+        return track.albumArtist();
+    }
+    if(!track.composer().isEmpty()) {
+        return track.composer();
+    }
+    return track.performer();
+}
+
+QString trackAlbumArtist(const Fooyin::Track& track)
+{
+    if(!track.albumArtists().empty()) {
+        return track.albumArtist();
+    }
+    if(!track.artists().empty()) {
+        return track.artist();
+    }
+    if(!track.composer().isEmpty()) {
+        return track.composer();
+    }
+    return track.performer();
+}
+
+QString trackChannels(const Fooyin::Track& track)
+{
+    switch(track.channels()) {
+        case(1):
+            return QStringLiteral("Mono");
+        case(2):
+            return QStringLiteral("Stereo");
+        default:
+            return QStringLiteral("%1ch").arg(track.channels());
+    }
+}
 } // namespace
 
 namespace Fooyin {
@@ -107,6 +162,7 @@ struct ScriptRegistry::Private
     std::unordered_map<QString, TrackListFunc> listProperties;
     std::unordered_map<QString, Func> funcs;
     std::unordered_map<QString, NativeVoidFunc> playbackVars;
+    std::set<QString> metaValues{QStringLiteral("albumartist"), QStringLiteral("artist"), QStringLiteral("title")};
 
     explicit Private(PlayerController* playerController_)
         : playerController{playerController_}
@@ -117,6 +173,7 @@ struct ScriptRegistry::Private
         addPlaybackVars();
 
         funcs.emplace(QStringLiteral("info"), trackInfo);
+        funcs.emplace(QStringLiteral("meta"), trackMeta);
     }
 
     void addPlaybackVars()
@@ -202,11 +259,11 @@ struct ScriptRegistry::Private
     {
         using namespace Fooyin::Constants;
 
-        metadata[QString::fromLatin1(MetaData::Title)]        = &Track::title;
-        metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::artists;
+        metadata[QString::fromLatin1(MetaData::Title)]        = trackTitle;
+        metadata[QString::fromLatin1(MetaData::Artist)]       = trackArtist;
         metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
         metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
-        metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::albumArtists;
+        metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = trackAlbumArtist;
         metadata[QString::fromLatin1(MetaData::Track)]        = &Track::trackNumber;
         metadata[QString::fromLatin1(MetaData::TrackTotal)]   = &Track::trackTotal;
         metadata[QString::fromLatin1(MetaData::Disc)]         = &Track::discNumber;
@@ -230,19 +287,10 @@ struct ScriptRegistry::Private
         metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
             return QStringLiteral("%1 Hz").arg(track.sampleRate());
         };
-        metadata[QString::fromLatin1(MetaData::PlayCount)] = &Track::playCount;
-        metadata[QString::fromLatin1(MetaData::Rating)]    = &Track::ratingStars;
-        metadata[QString::fromLatin1(MetaData::Codec)]     = &Track::typeString;
-        metadata[QString::fromLatin1(MetaData::Channels)]  = [](const Track& track) {
-            switch(track.channels()) {
-                case(1):
-                    return QStringLiteral("Mono");
-                case(2):
-                    return QStringLiteral("Stereo");
-                default:
-                    return QStringLiteral("%1ch").arg(track.channels());
-            }
-        };
+        metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
+        metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
+        metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
+        metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
         metadata[QString::fromLatin1(MetaData::BitDepth)]        = &Track::bitDepth;
         metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
         metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;

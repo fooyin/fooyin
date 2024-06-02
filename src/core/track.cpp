@@ -17,6 +17,7 @@
  *
  */
 
+#include "core/constants.h"
 #include <core/track.h>
 
 #include <utils/crypto.h>
@@ -323,7 +324,7 @@ QStringList Track::genres() const
 
 QString Track::genre() const
 {
-    return p->genres.join(u"\037");
+    return p->genres.empty() ? QStringLiteral("") : p->genres.join(u"\037");
 }
 
 QString Track::composer() const
@@ -639,6 +640,43 @@ void Track::setRating(float rating)
 void Track::setRatingStars(int rating)
 {
     p->rating = static_cast<float>(rating) / MaxStarCount;
+}
+
+QString Track::metaValue(const QString& name) const
+{
+    auto validNum = [](auto num) -> QString {
+        if(num > 0) {
+            return QString::number(num);
+        }
+        return {};
+    };
+
+    // clang-format off
+    static const std::unordered_map<QString, std::function<QString(const Track& track)>> metaMap{
+        {QLatin1String(Constants::MetaData::Title),       [](const Track& track) { return track.p->title; }},
+        {QLatin1String(Constants::MetaData::Artist),      [](const Track& track) { return track.p->artists.join(QStringLiteral("\037")); }},
+        {QLatin1String(Constants::MetaData::Album),       [](const Track& track) { return track.p->album; }},
+        {QLatin1String(Constants::MetaData::AlbumArtist), [](const Track& track) { return track.p->albumArtists.join(QStringLiteral("\037")); }},
+        {QLatin1String(Constants::MetaData::Track),       [validNum](const Track& track) { return validNum(track.trackNumber()); }},
+        {QLatin1String(Constants::MetaData::TrackTotal),  [validNum](const Track& track) { return validNum(track.trackTotal()); }},
+        {QLatin1String(Constants::MetaData::Disc),        [validNum](const Track& track) { return validNum(track.discNumber()); }},
+        {QLatin1String(Constants::MetaData::DiscTotal),   [validNum](const Track& track) { return validNum(track.discTotal()); }},
+        {QLatin1String(Constants::MetaData::Genre),       [](const Track& track) { return track.genre(); }},
+        {QLatin1String(Constants::MetaData::Composer),    [](const Track& track) { return track.composer(); }},
+        {QLatin1String(Constants::MetaData::Performer),   [](const Track& track) { return track.performer(); }},
+        {QLatin1String(Constants::MetaData::Comment),     [](const Track& track) { return track.comment(); }},
+        {QLatin1String(Constants::MetaData::Date),        [](const Track& track) { return track.date(); }},
+        {QLatin1String(Constants::MetaData::Year),        [validNum](const Track& track) { return validNum(track.year()); }},
+        {QLatin1String(Constants::MetaData::PlayCount),   [validNum](const Track& track) { return validNum(track.playCount()); }},
+        {QLatin1String(Constants::MetaData::Rating),      [validNum](const Track& track) { return validNum(track.ratingStars()); }}
+    };
+    // clang-format on
+
+    if(metaMap.contains(name)) {
+        return metaMap.at(name)(*this);
+    }
+
+    return extraTag(name).join(u"\037");
 }
 
 void Track::addExtraTag(const QString& tag, const QString& value)

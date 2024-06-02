@@ -166,6 +166,8 @@ public:
     void setRating(float rating);
     void setRatingStars(int rating);
 
+    [[nodiscard]] QString metaValue(const QString& name) const;
+
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);
     void replaceExtraTag(const QString& tag, const QString& value);

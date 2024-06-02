@@ -34,7 +34,7 @@ using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 struct EditorPair
 {
     QString displayName;
-    QString metadata;
+    std::function<QString(const Track&)> metadata;
 };
 
 struct TagEditorModel::Private
@@ -47,7 +47,37 @@ struct TagEditorModel::Private
     TrackList tracks;
 
     // TODO: Make fields shown configurable
-    std::vector<EditorPair> fields{
+    const std::vector<EditorPair> fields{
+        {QStringLiteral("Artist Name"), &Track::artist},
+        {QStringLiteral("Track Title"), &Track::title},
+        {QStringLiteral("Album Title"), &Track::album},
+        {QStringLiteral("Date"), &Track::date},
+        {QStringLiteral("Genre"), &Track::genre},
+        {QStringLiteral("Composer"), &Track::composer},
+        {QStringLiteral("Performer"), &Track::performer},
+        {QStringLiteral("Album Artist"), &Track::albumArtist},
+        {QStringLiteral("Track Number"),
+         [](const Track& track) {
+             return track.metaValue(QString::fromLatin1(Constants::MetaData::Track));
+         }},
+        {QStringLiteral("Total Tracks"),
+         [](const Track& track) {
+             return track.metaValue(QString::fromLatin1(Constants::MetaData::TrackTotal));
+         }},
+        {QStringLiteral("Disc Number"),
+         [](const Track& track) {
+             return track.metaValue(QString::fromLatin1(Constants::MetaData::Disc));
+         }},
+        {QStringLiteral("Total Discs"),
+         [](const Track& track) {
+             return track.metaValue(QString::fromLatin1(Constants::MetaData::DiscTotal));
+         }},
+        {QStringLiteral("Comment"), &Track::comment},
+        {QStringLiteral("Rating"), [](const Track& track) {
+             return track.metaValue(QString::fromLatin1(Constants::MetaData::Rating));
+         }}};
+
+    const std::unordered_map<QString, QString> setFields{
         {QStringLiteral("Artist Name"), QString::fromLatin1(Constants::MetaData::Artist)},
         {QStringLiteral("Track Title"), QString::fromLatin1(Constants::MetaData::Title)},
         {QStringLiteral("Album Title"), QString::fromLatin1(Constants::MetaData::Album)},
@@ -78,14 +108,12 @@ struct TagEditorModel::Private
                                    [name](const EditorPair& pair) { return pair.displayName == name; });
     }
 
-    QString findField(const QString& name)
+    QString findSetField(const QString& name)
     {
-        const auto field = std::ranges::find_if(std::as_const(fields),
-                                                [name](const EditorPair& pair) { return pair.displayName == name; });
-        if(field == fields.cend()) {
+        if(!setFields.contains(name)) {
             return {};
         }
-        return field->metadata;
+        return setFields.at(name);
     }
 
     void reset()
@@ -126,17 +154,12 @@ struct TagEditorModel::Private
 
         for(const auto& track : tracks) {
             for(const auto& [field, var] : fields) {
-                const auto result = scriptRegistry.value(var, track);
-                if(result.cond) {
-                    if(result.value.contains(u"\037")) {
-                        tags[field].addTrackValue(result.value.split(QStringLiteral("\037")));
-                    }
-                    else {
-                        tags[field].addTrackValue(result.value);
-                    }
+                const auto result = var(track);
+                if(result.contains(u"\037")) {
+                    tags[field].addTrackValue(result.split(QStringLiteral("\037")));
                 }
                 else {
-                    tags[field].addTrackValue(QStringLiteral(""));
+                    tags[field].addTrackValue(result);
                 }
             }
 
@@ -155,7 +178,7 @@ struct TagEditorModel::Private
             return;
         }
 
-        const QString metadata = findField(name);
+        const QString metadata = findSetField(name);
         const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
                              || metadata == QLatin1String{Constants::MetaData::Artist}
                              || metadata == QLatin1String{Constants::MetaData::Genre});
