@@ -442,7 +442,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
                 setValue          = QString::number(rating.starCount());
             }
 
-            if(value.toString().simplified() == item->value().simplified()) {
+            if(setValue.simplified() == item->value().simplified()) {
                 return false;
             }
 

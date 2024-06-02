@@ -19,6 +19,7 @@
 
 #include <utils/stareditor.h>
 
+#include <QContextMenuEvent>
 #include <QKeyEvent>
 #include <QPainter>
 
@@ -49,6 +50,12 @@ void StarEditor::paintEvent(QPaintEvent* /*event*/)
 {
     QPainter painter{this};
     m_rating.paint(&painter, rect(), palette(), StarRating::EditMode::Editable);
+}
+
+void StarEditor::contextMenuEvent(QContextMenuEvent* event)
+{
+    // Prevent showing parent widget context menu
+    event->accept();
 }
 
 void StarEditor::mouseMoveEvent(QMouseEvent* event)
