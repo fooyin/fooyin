@@ -332,12 +332,6 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             track.setRating(adjustedRating);
         }
     }
-    if(props.contains("FMPS_RATING") && track.rating() <= 0) {
-        const float rating = convertString(props["FMPS_Rating"].front()).toFloat();
-        if(rating > 0 && rating <= 1.0) {
-            track.setRating(rating);
-        }
-    }
 
     if(!skipExtra) {
         static const std::set<TagLib::String> baseTags
@@ -403,6 +397,16 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
         if(!discFrame.isEmpty()) {
             const QString discNumbers = convertString(discFrame.front()->toString());
             readDiscTotalPair(discNumbers, track);
+        }
+    }
+
+    if(frames.contains("FMPS_Rating") && track.rating() <= 0) {
+        const TagLib::ID3v2::FrameList& ratingFrame = frames["FMPS_Rating"];
+        if(!ratingFrame.isEmpty()) {
+            const float rating = convertString(ratingFrame.front()->toString()).toFloat();
+            if(rating > 0 && rating <= 1.0) {
+                track.setRating(rating);
+            }
         }
     }
 
@@ -474,6 +478,13 @@ void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
         if(!discItem.isEmpty() && !discItem.values().isEmpty()) {
             const QString discNumbers = convertString(discItem.values().front());
             readDiscTotalPair(discNumbers, track);
+        }
+    }
+
+    if(items.contains("FMPS_RATING") && track.rating() <= 0) {
+        const float rating = convertString(items["FMPS_RATING"].toString()).toFloat();
+        if(rating > 0 && rating <= 1.0) {
+            track.setRating(rating);
         }
     }
 }
@@ -584,7 +595,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
     if(items.contains(Fooyin::Mp4::RatingAlt) && track.rating() <= 0) {
         const float rating = convertString(items[Fooyin::Mp4::RatingAlt].toStringList().toString("\n")).toFloat();
         if(rating > 0) {
-            track.setRating(convertRating(rating));
+            track.setRating(rating);
         }
     }
 
@@ -663,6 +674,16 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
             track.setDiscTotal(discTotal.front().toInt());
         }
     }
+
+    if(fields.contains("FMPS_RATING") && track.rating() <= 0) {
+        const TagLib::StringList& ratings = fields["FMPS_RATING"];
+        if(!ratings.isEmpty()) {
+            const float rating = convertString(ratings.front()).toFloat();
+            if(rating > 0 && rating <= 1.0) {
+                track.setRating(rating);
+            }
+        }
+    }
 }
 
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
@@ -719,6 +740,16 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
             const TagLib::ASF::Attribute& num = discNumber.front();
             if(num.type() == TagLib::ASF::Attribute::UnicodeType) {
                 track.setDiscNumber(num.toString().toInt());
+            }
+        }
+    }
+
+    if(map.contains("FMPS/Rating") && track.rating() <= 0) {
+        const TagLib::ASF::AttributeList& rating = map["FMPS/Rating"];
+        if(!rating.isEmpty()) {
+            const float rate = convertString(map["FMPS/Rating"].front().toString()).toFloat();
+            if(rate > 0 && rate <= 1.0) {
+                track.setRating(rate);
             }
         }
     }
