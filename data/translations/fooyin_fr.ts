@@ -1001,12 +1001,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="260"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="348"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Désactiver le son</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="419"/>
@@ -1016,7 +1016,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="425"/>
         <source>Vertical Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Séparateur Vertical</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="426"/>
@@ -1024,27 +1024,27 @@
         <location filename="../../src/gui/guiapplication.cpp" line="440"/>
         <location filename="../../src/gui/guiapplication.cpp" line="454"/>
         <source>Splitters</source>
-        <translation type="unfinished"></translation>
+        <translation>Séparateurs</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="431"/>
         <source>Horizontal Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Séparateur Horizontal</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="439"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Onglets de Listes de Lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="448"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Répertoire des Listes de Lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="453"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pile d&apos;Onglets</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="461"/>
@@ -1054,7 +1054,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="466"/>
         <source>Player Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrôles du Lecteur</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="467"/>
@@ -1062,47 +1062,47 @@
         <location filename="../../src/gui/guiapplication.cpp" line="479"/>
         <location filename="../../src/gui/guiapplication.cpp" line="484"/>
         <source>Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrôles</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="472"/>
         <source>Playlist Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrôles de Liste de Lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="478"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrôles de Volume</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="483"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre de lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="491"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Infos sur la sélection</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="498"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Panneau des illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="502"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Paroles</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="510"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste de Lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="514"/>
         <source>Spacer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Séparateur</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="525"/>
@@ -1112,7 +1112,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre de Recherche</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="545"/>
@@ -1122,17 +1122,17 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="551"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Détails</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="560"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Piste Introuvable</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="564"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="580"/>
@@ -1142,12 +1142,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="583"/>
         <source>Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter un Fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="594"/>
         <source>Add Folders</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajouter un Dossier</translation>
     </message>
 </context>
 <context>
@@ -1155,12 +1155,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="307"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="308"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Interface</translation>
     </message>
 </context>
 <context>
@@ -1168,27 +1168,27 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="90"/>
         <source>Auto-detect theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Détection automatique du thème</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="91"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clair</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="92"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombre</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="93"/>
         <source>Use system icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser les icônes du système</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="96"/>
         <source>Show splitter handles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afficher les limites des séparateurs</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="94"/>
