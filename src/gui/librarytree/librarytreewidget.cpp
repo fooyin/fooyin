@@ -233,11 +233,17 @@ struct LibraryTreeWidget::Private
         trackSelection->changeSelectedTracks(widgetContext, tracks, playlistNameFromSelection());
 
         if(settings->value<LibTreePlaylistEnabled>()) {
-            const QString playlistName = settings->value<LibTreeAutoPlaylist>();
-            const bool autoSwitch      = settings->value<LibTreeAutoSwitch>();
+            PlaylistAction::ActionOptions options{None};
 
-            trackSelection->executeAction(TrackAction::SendNewPlaylist,
-                                          autoSwitch ? PlaylistAction::Switch : PlaylistAction::None, playlistName);
+            if(settings->value<LibTreeKeepAlive>()) {
+                options |= PlaylistAction::KeepActive;
+            }
+            if(settings->value<LibTreeAutoSwitch>()) {
+                options |= PlaylistAction::Switch;
+            }
+
+            const QString autoPlaylist = settings->value<LibTreeAutoPlaylist>();
+            trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
     }
 

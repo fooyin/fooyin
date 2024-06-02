@@ -44,6 +44,7 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
                                             QStringLiteral("Filters/Colour"));
     m_settings->createSetting<FilterRowHeight>(0, QStringLiteral("Filters/RowHeight"));
     m_settings->createSetting<FilterSendPlayback>(true, QStringLiteral("Filters/StartPlaybackOnSend"));
+    m_settings->createSetting<FilterKeepAlive>(false, QStringLiteral("Filters/KeepAlive"));
 }
 } // namespace Fooyin::Filters
 

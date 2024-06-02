@@ -70,6 +70,7 @@ private:
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
+    QCheckBox* m_keepAlive;
     QLineEdit* m_playlistName;
 };
 
@@ -87,6 +88,7 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
     , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
+    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
     , m_playlistName{new QLineEdit(this)}
 {
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
@@ -127,10 +129,13 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
 
     auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
 
+    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(playlistNameLabel, 2, 0, 1, 1);
-    selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
+    selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(playlistNameLabel, 3, 0, 1, 1);
+    selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -141,6 +146,11 @@ FiltersGeneralPageWidget::FiltersGeneralPageWidget(SettingsManager* settings)
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, this,
                      [this](bool checked) { m_rowHeight->setEnabled(checked); });
+    QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
+        m_playlistName->setEnabled(checked);
+        m_autoSwitch->setEnabled(checked);
+        m_keepAlive->setEnabled(checked);
+    });
 }
 
 void FiltersGeneralPageWidget::load()
@@ -182,11 +192,6 @@ void FiltersGeneralPageWidget::load()
 
     m_playbackOnSend->setChecked(m_settings->value<Settings::Filters::FilterSendPlayback>());
 
-    QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
-        m_playlistName->setEnabled(checked);
-        m_autoSwitch->setEnabled(checked);
-    });
-
     m_filterHeaders->setChecked(m_settings->value<Settings::Filters::FilterHeader>());
     m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
     m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
@@ -199,8 +204,10 @@ void FiltersGeneralPageWidget::load()
 
     m_playlistEnabled->setChecked(m_settings->value<Settings::Filters::FilterPlaylistEnabled>());
     m_autoSwitch->setChecked(m_settings->value<Settings::Filters::FilterAutoSwitch>());
+    m_keepAlive->setChecked(m_settings->value<Settings::Filters::FilterKeepAlive>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
+    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Filters::FilterAutoPlaylist>());
 }
@@ -230,6 +237,7 @@ void FiltersGeneralPageWidget::apply()
     m_settings->set<Settings::Filters::FilterSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Filters::FilterPlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Filters::FilterAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::Filters::FilterKeepAlive>(m_keepAlive->isChecked());
     m_settings->set<Settings::Filters::FilterAutoPlaylist>(m_playlistName->text());
 }
 
@@ -248,6 +256,7 @@ void FiltersGeneralPageWidget::reset()
     m_settings->reset<Settings::Filters::FilterSendPlayback>();
     m_settings->reset<Settings::Filters::FilterPlaylistEnabled>();
     m_settings->reset<Settings::Filters::FilterAutoSwitch>();
+    m_settings->reset<Settings::Filters::FilterKeepAlive>();
     m_settings->reset<Settings::Filters::FilterAutoPlaylist>();
 }
 

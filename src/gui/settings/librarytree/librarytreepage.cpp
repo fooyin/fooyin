@@ -58,6 +58,7 @@ private:
 
     QCheckBox* m_playlistEnabled;
     QCheckBox* m_autoSwitch;
+    QCheckBox* m_keepAlive;
     QLineEdit* m_playlistName;
 
     QCheckBox* m_restoreState;
@@ -77,6 +78,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     , m_playbackOnSend{new QCheckBox(tr("Start playback on send"), this)}
     , m_playlistEnabled{new QCheckBox(tr("Enabled"), this)}
     , m_autoSwitch{new QCheckBox(tr("Switch when changed"), this)}
+    , m_keepAlive{new QCheckBox(tr("Keep alive"), this)}
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
@@ -92,11 +94,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* doubleClickLabel = new QLabel(tr("Double-click") + QStringLiteral(":"), this);
     auto* middleClickLabel = new QLabel(tr("Middle-click") + QStringLiteral(":"), this);
 
-    auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), this);
-    auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
-
-    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
-
     clickBehaviourLayout->addWidget(doubleClickLabel, 0, 0);
     clickBehaviourLayout->addWidget(m_doubleClick, 0, 1);
     clickBehaviourLayout->addWidget(middleClickLabel, 1, 0);
@@ -104,10 +101,18 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     clickBehaviourLayout->addWidget(m_playbackOnSend, 2, 0, 1, 2);
     clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
 
+    auto* selectionPlaylist       = new QGroupBox(tr("Library Selection Playlist"), this);
+    auto* selectionPlaylistLayout = new QGridLayout(selectionPlaylist);
+
+    auto* playlistNameLabel = new QLabel(tr("Name") + QStringLiteral(":"), this);
+
+    m_keepAlive->setToolTip(tr("If this is the active playlist, keep it alive when changing selection"));
+
     selectionPlaylistLayout->addWidget(m_playlistEnabled, 0, 0, 1, 3);
     selectionPlaylistLayout->addWidget(m_autoSwitch, 1, 0, 1, 3);
-    selectionPlaylistLayout->addWidget(playlistNameLabel, 2, 0);
-    selectionPlaylistLayout->addWidget(m_playlistName, 2, 1, 1, 2);
+    selectionPlaylistLayout->addWidget(m_keepAlive, 2, 0, 1, 3);
+    selectionPlaylistLayout->addWidget(playlistNameLabel, 3, 0);
+    selectionPlaylistLayout->addWidget(m_playlistName, 3, 1, 1, 2);
     selectionPlaylistLayout->setColumnStretch(2, 1);
 
     auto* generalGroup       = new QGroupBox(tr("General"), this);
@@ -144,6 +149,11 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
 
     QObject::connect(m_overrideRowHeight, &QCheckBox::toggled, this,
                      [this](bool checked) { m_rowHeight->setEnabled(checked); });
+    QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
+        m_playlistName->setEnabled(checked);
+        m_autoSwitch->setEnabled(checked);
+        m_keepAlive->setEnabled(checked);
+    });
 }
 
 void LibraryTreePageWidget::load()
@@ -184,15 +194,12 @@ void LibraryTreePageWidget::load()
 
     m_playbackOnSend->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeSendPlayback>());
 
-    QObject::connect(m_playlistEnabled, &QCheckBox::clicked, this, [this](bool checked) {
-        m_playlistName->setEnabled(checked);
-        m_autoSwitch->setEnabled(checked);
-    });
-
     m_playlistEnabled->setChecked(m_settings->value<Settings::Gui::Internal::LibTreePlaylistEnabled>());
     m_autoSwitch->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAutoSwitch>());
+    m_keepAlive->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeKeepAlive>());
     m_playlistName->setEnabled(m_playlistEnabled->isChecked());
     m_autoSwitch->setEnabled(m_playlistEnabled->isChecked());
+    m_keepAlive->setEnabled(m_playlistEnabled->isChecked());
 
     m_playlistName->setText(m_settings->value<Settings::Gui::Internal::LibTreeAutoPlaylist>());
 
@@ -216,6 +223,7 @@ void LibraryTreePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::LibTreeSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreePlaylistEnabled>(m_playlistEnabled->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoSwitch>(m_autoSwitch->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeKeepAlive>(m_keepAlive->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
 
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
@@ -244,6 +252,7 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeSendPlayback>();
     m_settings->reset<Settings::Gui::Internal::LibTreePlaylistEnabled>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoSwitch>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeKeepAlive>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
 
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();

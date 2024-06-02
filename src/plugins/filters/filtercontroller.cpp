@@ -301,13 +301,16 @@ struct FilterController::Private
         trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
 
         if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
-            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
-            const bool autoSwitch      = settings->value<Settings::Filters::FilterAutoSwitch>();
+            PlaylistAction::ActionOptions options{PlaylistAction::None};
 
-            PlaylistAction::ActionOptions options = PlaylistAction::KeepActive;
-            if(autoSwitch) {
+            if(settings->value<Settings::Filters::FilterKeepAlive>()) {
+                options |= PlaylistAction::KeepActive;
+            }
+            if(settings->value<Settings::Filters::FilterAutoSwitch>()) {
                 options |= PlaylistAction::Switch;
             }
+
+            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
             trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
 

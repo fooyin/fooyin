@@ -120,5 +120,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::LibTreeRestoreState>(true, QStringLiteral("LibraryTree/RestoreState"));
     m_settings->createSetting<Internal::ShowTrayIcon>(false, QStringLiteral("Interface/ShowTrayIcon"));
     m_settings->createSetting<Internal::TrayOnClose>(true, QStringLiteral("Interface/TrayOnClose"));
+    m_settings->createSetting<Internal::LibTreeKeepAlive>(false, QStringLiteral("LibraryTree/KeepAlive"));
 }
 } // namespace Fooyin
