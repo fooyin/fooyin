@@ -93,7 +93,10 @@ void ToolTip::redraw()
         p.drawRect(bgRect.adjusted(BorderMargin, BorderMargin, -BorderMargin, -BorderMargin));
     }
 
-    m_pixmap = QPixmap{rect.size()};
+    const qreal dpr = devicePixelRatioF();
+    const auto size = rect.size() * dpr;
+    m_pixmap        = QPixmap{size};
+    m_pixmap.setDevicePixelRatio(dpr);
     m_pixmap.fill(Qt::transparent);
 
     QPainter p{&m_pixmap};
