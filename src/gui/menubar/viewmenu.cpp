@@ -58,7 +58,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
     QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);
 
-    auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
+    auto* showNowPlaying = new QAction(tr("Show Playing &Track"), this);
     viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));
     QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }
