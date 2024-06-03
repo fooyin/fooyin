@@ -377,16 +377,18 @@ void PlaylistPresetsPageWidget::renamePreset()
 {
     const int presetId = m_presetBox->currentData().toInt();
 
-    auto preset = m_presetRegistry.itemById(presetId);
+    if(const auto regPreset = m_presetRegistry.itemById(presetId)) {
+        auto preset = regPreset.value();
 
-    bool success{false};
-    const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name") + QStringLiteral(":"),
-                                               QLineEdit::Normal, preset.name, &success);
+        bool success{false};
+        const QString text = QInputDialog::getText(this, tr("Rename Preset"), tr("Preset Name") + QStringLiteral(":"),
+                                                   QLineEdit::Normal, preset.name, &success);
 
-    if(success && !text.isEmpty()) {
-        preset.name = text;
-        if(m_presetRegistry.changeItem(preset)) {
-            m_presetBox->setItemText(m_presetBox->currentIndex(), preset.name);
+        if(success && !text.isEmpty()) {
+            preset.name = text;
+            if(m_presetRegistry.changeItem(preset)) {
+                m_presetBox->setItemText(m_presetBox->currentIndex(), preset.name);
+            }
         }
     }
 }
@@ -407,7 +409,12 @@ void PlaylistPresetsPageWidget::deletePreset()
 void PlaylistPresetsPageWidget::updatePreset()
 {
     const int presetId = m_presetBox->currentData().toInt();
-    auto preset        = m_presetRegistry.itemById(presetId);
+    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    if(!regPreset) {
+        return;
+    }
+
+    auto preset = regPreset.value();
 
     if(preset.isDefault) {
         return;
@@ -434,7 +441,12 @@ void PlaylistPresetsPageWidget::updatePreset()
 void PlaylistPresetsPageWidget::clonePreset()
 {
     const int presetId = m_presetBox->currentData().toInt();
-    auto preset        = m_presetRegistry.itemById(presetId);
+    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    if(!regPreset) {
+        return;
+    }
+
+    auto preset = regPreset.value();
 
     PlaylistPreset clonedPreset{preset};
     clonedPreset.name                = tr("Copy of %1").arg(preset.name);
@@ -449,7 +461,12 @@ void PlaylistPresetsPageWidget::clonePreset()
 void PlaylistPresetsPageWidget::selectionChanged()
 {
     const int presetId = m_presetBox->currentData().toInt();
-    auto preset        = m_presetRegistry.itemById(presetId);
+    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    if(!regPreset) {
+        return;
+    }
+
+    auto preset = regPreset.value();
 
     if(!preset.isValid()) {
         return;

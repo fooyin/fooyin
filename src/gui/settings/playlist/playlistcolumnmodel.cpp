@@ -108,10 +108,12 @@ void PlaylistColumnModel::processQueue()
             }
             case(ColumnItem::Changed): {
                 if(m_columnsRegistry->changeItem(column)) {
-                    node.changeColumn(m_columnsRegistry->itemById(column.id));
-                    node.setStatus(ColumnItem::None);
+                    if(const auto changedItem = m_columnsRegistry->itemById(column.id)) {
+                        node.changeColumn(changedItem.value());
+                        node.setStatus(ColumnItem::None);
 
-                    emit dataChanged({}, {});
+                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+                    }
                 }
                 else {
                     qWarning() << QStringLiteral("Column %1 could not be changed").arg(column.name);

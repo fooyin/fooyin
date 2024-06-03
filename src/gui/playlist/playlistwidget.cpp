@@ -189,8 +189,11 @@ void PlaylistWidgetPrivate::setupConnections()
 
     settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
-    settings->subscribe<PlaylistCurrentPreset>(
-        this, [this](int presetId) { changePreset(presetRegistry.itemById(presetId)); });
+    settings->subscribe<PlaylistCurrentPreset>(this, [this](int presetId) {
+        if(const auto preset = presetRegistry.itemById(presetId)) {
+            changePreset(preset.value());
+        }
+    });
 }
 
 void PlaylistWidgetPrivate::setupActions()
@@ -756,11 +759,21 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 
     if(!singleMode) {
         if(columns.empty()) {
-            columns.push_back(columnRegistry.itemById(8));
-            columns.push_back(columnRegistry.itemById(3));
-            columns.push_back(columnRegistry.itemById(0));
-            columns.push_back(columnRegistry.itemById(1));
-            columns.push_back(columnRegistry.itemById(7));
+            if(const auto column = columnRegistry.itemById(8)) {
+                columns.push_back(column.value());
+            }
+            if(const auto column = columnRegistry.itemById(3)) {
+                columns.push_back(column.value());
+            }
+            if(const auto column = columnRegistry.itemById(0)) {
+                columns.push_back(column.value());
+            }
+            if(const auto column = columnRegistry.itemById(1)) {
+                columns.push_back(column.value());
+            }
+            if(const auto column = columnRegistry.itemById(7)) {
+                columns.push_back(column.value());
+            }
         }
 
         auto resetColumns = [this]() {
@@ -840,9 +853,8 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
         QObject::connect(columnGroup, &QActionGroup::triggered, self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                const PlaylistColumn column = columnRegistry.itemById(action->data().toInt());
-                if(column.isValid()) {
-                    columns.push_back(column);
+                if(const auto column = columnRegistry.itemById(action->data().toInt())) {
+                    columns.push_back(column.value());
                     updateSpans();
                     changePreset(currentPreset);
                 }
@@ -1113,11 +1125,10 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column     = columnId.split(QStringLiteral(":"));
-            const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
+            const auto column = columnId.split(QStringLiteral(":"));
 
-            if(columnItem.isValid()) {
-                p->columns.push_back(columnItem);
+            if(const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt())) {
+                p->columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
                     p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
@@ -1145,7 +1156,9 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
 void PlaylistWidget::finalise()
 {
-    p->currentPreset = p->presetRegistry.itemById(p->settings->value<PlaylistCurrentPreset>());
+    if(const auto preset = p->presetRegistry.itemById(p->settings->value<PlaylistCurrentPreset>())) {
+        p->currentPreset = preset.value();
+    }
 
     p->header->setSectionsClickable(!p->singleMode);
     p->header->setSortIndicatorShown(!p->singleMode);

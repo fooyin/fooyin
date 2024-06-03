@@ -151,7 +151,10 @@ struct LibraryTreeWidget::Private
         setScrollbarEnabled(settings->value<LibTreeScrollBar>());
         libraryTree->setAlternatingRowColors(settings->value<LibTreeAltColours>());
 
-        changeGrouping(groupsRegistry.itemByName(QStringLiteral("")));
+        if(const auto initialGroup = groupsRegistry.itemByIndex(0)) {
+            changeGrouping(initialGroup.value());
+        }
+
         trackSelection->changePlaybackOnSend(widgetContext, settings->value<LibTreeSendPlayback>());
 
         model->setFont(settings->value<LibTreeFont>());
@@ -544,10 +547,10 @@ void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("Grouping"))) {
-        const LibraryTreeGrouping grouping
-            = p->groupsRegistry.itemById(layout.value(QStringLiteral("Grouping")).toInt());
-        if(grouping.isValid()) {
-            p->changeGrouping(grouping);
+        if(const auto grouping = p->groupsRegistry.itemById(layout.value(QStringLiteral("Grouping")).toInt())) {
+            if(grouping->isValid()) {
+                p->changeGrouping(grouping.value());
+            }
         }
     }
 

@@ -26,8 +26,9 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
     : ItemRegistry{QStringLiteral("PlaylistWidget/PlaylistColumns"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto column = itemById(id);
-        emit columnChanged(column);
+        if(const auto column = itemById(id)) {
+            emit columnChanged(column.value());
+        }
     });
 
     loadItems();

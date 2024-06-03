@@ -107,10 +107,12 @@ void LibraryTreeGroupModel::processQueue()
             }
             case(LibraryTreeGroupItem::Changed): {
                 if(m_groupsRegistry->changeItem(group)) {
-                    node.changeGroup(m_groupsRegistry->itemById(group.id));
-                    node.setStatus(LibraryTreeGroupItem::None);
+                    if(const auto updatedGroup = m_groupsRegistry->itemById(group.id)) {
+                        node.changeGroup(updatedGroup.value());
+                        node.setStatus(LibraryTreeGroupItem::None);
 
-                    emit dataChanged({}, {});
+                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+                    }
                 }
                 else {
                     qWarning() << QStringLiteral("Group %1 could not be changed").arg(group.name);

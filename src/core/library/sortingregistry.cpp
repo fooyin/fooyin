@@ -24,8 +24,9 @@ SortingRegistry::SortingRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{QStringLiteral("Library/LibrarySorting"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto sort = itemById(id);
-        emit sortChanged(sort);
+        if(const auto sort = itemById(id)) {
+            emit sortChanged(sort.value());
+        }
     });
 
     loadItems();

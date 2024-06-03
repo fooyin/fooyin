@@ -105,10 +105,12 @@ void SortingModel::processQueue()
             }
             case(SortingItem::Changed): {
                 if(m_sortRegistry->changeItem(sortScript)) {
-                    node.changeSort(m_sortRegistry->itemById(sortScript.id));
-                    node.setStatus(SortingItem::None);
+                    if(const auto changedItem = m_sortRegistry->itemById(sortScript.id)) {
+                        node.changeSort(changedItem.value());
+                        node.setStatus(SortingItem::None);
 
-                    emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+                        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+                    }
                 }
                 else {
                     qWarning() << QStringLiteral("Sorting %1 could not be changed").arg(sortScript.name);

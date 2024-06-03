@@ -24,8 +24,9 @@ FilterColumnRegistry::FilterColumnRegistry(SettingsManager* settings, QObject* p
     : ItemRegistry{QStringLiteral("Filters/FilterColumns"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto field = itemById(id);
-        emit columnChanged(field);
+        if(const auto field = itemById(id)) {
+            emit columnChanged(field.value());
+        }
     });
 
     loadItems();

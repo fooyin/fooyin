@@ -131,40 +131,46 @@ public:
         return false;
     }
 
-    Item itemById(int id) const
+    std::optional<Item> itemById(int id) const
     {
         if(m_items.empty()) {
             return {};
         }
+
         auto it = std::ranges::find_if(m_items, [id](const auto& item) { return item.id == id; });
-        if(it == m_items.end()) {
-            return m_items.at(0);
+        if(it != m_items.end()) {
+            return *it;
         }
-        return *it;
+
+        return {};
     }
 
-    Item itemByIndex(int index) const
+    std::optional<Item> itemByIndex(int index) const
     {
         if(m_items.empty()) {
             return {};
         }
+
         auto it = std::ranges::find_if(m_items, [index](const auto& item) { return item.index == index; });
-        if(it == m_items.end()) {
-            return m_items.at(0);
+        if(it != m_items.end()) {
+            return *it;
         }
-        return *it;
+
+        return {};
     }
 
-    Item itemByName(const QString& name) const
+    std::optional<Item> itemByName(const QString& name) const
     {
         if(m_items.empty()) {
             return {};
         }
+
         auto it = std::ranges::find_if(m_items, [name](const auto& item) { return item.name == name; });
-        if(it == m_items.end()) {
-            return m_items.at(0);
+        if(it != m_items.end()) {
+            return *it;
         }
-        return *it;
+
+        return {};
     }
 
     bool removeById(int id)

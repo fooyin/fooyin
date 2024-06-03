@@ -24,8 +24,9 @@ LibraryTreeGroupRegistry::LibraryTreeGroupRegistry(SettingsManager* settings, QO
     : ItemRegistry{QStringLiteral("LibraryTree/LibraryTreeGroups"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto grouping = itemById(id);
-        emit groupingChanged(grouping);
+        if(const auto grouping = itemById(id)) {
+            emit groupingChanged(grouping.value());
+        }
     });
 
     loadItems();

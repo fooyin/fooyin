@@ -116,7 +116,9 @@ struct FilterWidget::Private
         header->setSectionsClickable(true);
         header->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        columns = {columnRegistry.itemByIndex(0)};
+        if(const auto column = columnRegistry.itemByIndex(0)) {
+            columns = {column.value()};
+        }
 
         model->setFont(settings->value<Settings::Filters::FilterFont>());
         model->setColour(settings->value<Settings::Filters::FilterColour>());
@@ -195,13 +197,12 @@ struct FilterWidget::Private
         QObject::connect(filterList, &QActionGroup::triggered, self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                const FilterColumn column = columnRegistry.itemById(action->data().toInt());
-                if(column.isValid()) {
+                if(const auto column = columnRegistry.itemById(action->data().toInt())) {
                     if(multipleColumns) {
-                        columns.push_back(column);
+                        columns.push_back(column.value());
                     }
                     else {
-                        columns = {column};
+                        columns = {column.value()};
                     }
                 }
             }
@@ -468,11 +469,10 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column     = columnId.split(QStringLiteral(":"));
-            const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt());
+            const auto column = columnId.split(QStringLiteral(":"));
 
-            if(columnItem.isValid()) {
-                p->columns.push_back(columnItem);
+            if(const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt())) {
+                p->columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
                     p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));

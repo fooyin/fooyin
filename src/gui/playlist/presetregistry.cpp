@@ -24,8 +24,9 @@ PresetRegistry::PresetRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{QStringLiteral("PlaylistWidget/Presets"), settings, parent}
 {
     QObject::connect(this, &RegistryBase::itemChanged, this, [this](int id) {
-        const auto preset = itemById(id);
-        emit presetChanged(preset);
+        if(const auto preset = itemById(id)) {
+            emit presetChanged(preset.value());
+        }
     });
 
     loadItems();
