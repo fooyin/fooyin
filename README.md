@@ -22,9 +22,9 @@ Audio playback is supported by FFmpeg alongside multiple options for output incl
 A *layout editing mode* enables the entire user interface to be customised,
 starting from a blank slate or a preset layout.
 
-| ![Simple](https://github.com/ludouzi/fooyin/tree/master/data/images/simple-dark.png)     | ![Browser](https://github.com/ludouzi/fooyin/tree/master/data/images/browser-dark.png) |
-|------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| ![Obsidian](https://github.com/ludouzi/fooyin/tree/master/data/images/obsidian-dark.png) | ![Wave](https://github.com/ludouzi/fooyin/tree/master/data/images/viewer-dark.png)     |
+| ![Simple](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/simple-dark.png)     | ![Browser](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/browser-dark.png) |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| ![Obsidian](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/obsidian-dark.png) | ![Wave](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/viewer-dark.png)     |
 
 Only Linux is supported at present, though support for other platforms is coming soon.
 
