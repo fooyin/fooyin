@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.4.4](https://github.com/ludouzi/fooyin/releases/tag/v0.4.4) (2024-06-04)
+
+### Improvements
+
+* General
+  - Add optional system tray icon ([#93](https://github.com/ludouzi/fooyin/issues/93))
+  - Save playlists, settings at regular intervals ([#127](https://github.com/ludouzi/fooyin/issues/127))
+* ALSA
+  - Support selecting hardware devices ([#119](https://github.com/ludouzi/fooyin/issues/119))
+* Engine
+  - Add fading options for pause/stop ([#123](https://github.com/ludouzi/fooyin/issues/123))
+* Library Tree
+  - Add option to remember expanded state
+* Playlist
+  - Add bit depth/bits per sample column
+  - Support configuring selection playlist keep alive behaviour
+  - Add view option to show currently playing track
+* Scripting:
+  - Add playback variables ([#104](https://github.com/ludouzi/fooyin/issues/104))
+  - Add additional string functions ([#104](https://github.com/ludouzi/fooyin/issues/104))
+  - Add fallbacks for some fields if empty ([#130](https://github.com/ludouzi/fooyin/issues/130))
+* Selection Info
+  - Support hiding/showing sections
+  - Remember scroll position
+  - Add additional technical fields ([#116](https://github.com/ludouzi/fooyin/issues/116))
+* Tag Editor
+  - Add support for rating tags ([#115](https://github.com/ludouzi/fooyin/issues/115))
+* WaveBar
+  - Add option to change number of samples used for waveform data
+* Widgets
+  - Add lyrics widget ([#118](https://github.com/ludouzi/fooyin/pull/118))
+
+### Fixes
+
+* Engine
+  - Handle device loss ([#110](https://github.com/ludouzi/fooyin/issues/110))
+* Interface
+  - Fix scaling of some tooltips
+* Playlist
+  - Fix scaling of artwork ([#120](https://github.com/ludouzi/fooyin/issues/120))
+  - Fix keyboard controls for scrolling to top/bottom
+  - Preserve previous sort order when sorting by column ([#126](https://github.com/ludouzi/fooyin/issues/126))
+  - Resolve crash when updating non-contiguous rows ([#127](https://github.com/ludouzi/fooyin/issues/127))
+
+  
 ## [0.4.3](https://github.com/ludouzi/fooyin/releases/tag/v0.4.3) (2024-05-23)
 
 ### Improvements

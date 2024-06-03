@@ -48,6 +48,9 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.4.4" date="2024-06-04">
+            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.4</url>
+        </release>
         <release version="0.4.3" date="2024-05-23">
             <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.3</url>
         </release>
