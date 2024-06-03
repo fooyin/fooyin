@@ -110,25 +110,26 @@ public:
 
     bool changeItem(const Item& item)
     {
-        auto itemIt = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.id == item.id; });
-
-        if(itemIt != m_items.end()) {
-            if(itemIt->isDefault || *itemIt == item) {
-                return false;
-            }
-
-            Item changedItem{item};
-            if(itemIt->name != changedItem.name) {
-                changedItem.name = findUniqueName(changedItem.name);
-            }
-            *itemIt = changedItem;
-
-            saveItems();
-            emit itemChanged(changedItem.id);
-            return true;
+        const auto itemIt
+            = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.id == item.id; });
+        if(itemIt == m_items.end()) {
+            return false;
         }
 
-        return false;
+        if(itemIt->isDefault || *itemIt == item) {
+            return false;
+        }
+
+        Item changedItem{item};
+        if(itemIt->name != changedItem.name) {
+            changedItem.name = findUniqueName(changedItem.name);
+        }
+        *itemIt = changedItem;
+
+        saveItems();
+        emit itemChanged(changedItem.id);
+
+        return true;
     }
 
     std::optional<Item> itemById(int id) const
@@ -225,6 +226,8 @@ public:
 
         QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
 
+        ItemList defaultItemsToAdjust;
+
         if(!byteArray.isEmpty()) {
             byteArray = qUncompress(byteArray);
 
@@ -243,7 +246,23 @@ public:
                 item.name  = findUniqueName(item.name);
                 item.index = static_cast<int>(m_items.size());
 
+                if(const auto existingItem = itemById(item.id)) {
+                    defaultItemsToAdjust.emplace_back(existingItem.value());
+                }
+
                 m_items.push_back(item);
+            }
+        }
+
+        // If we add new default items but the user has added custom items, there will be an id conflict.
+        // Adjust for this here.
+        for(const auto& item : defaultItemsToAdjust) {
+            auto itemToAdjust = item;
+            const auto itemIt
+                = std::ranges::find_if(m_items, [item](const auto& regItem) { return regItem.id == item.id; });
+            if(itemIt != m_items.end()) {
+                itemToAdjust.id = findValidId();
+                *itemIt         = itemToAdjust;
             }
         }
 
