@@ -32,13 +32,17 @@
     <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://github.com/ludouzi/fooyin/assets/45490980/e01fd4ee-14cf-4b0f-aa3d-76e86b09844a</image>
+            <image>https://github.com/ludouzi/fooyin/assets/45490980/3c541c32-8b84-4083-9aa9-9efdd5980d67</image>
             <caption>Simple layout</caption>
         </screenshot>
     </screenshots>
     <releases>
-        <release version="0.4.2" date="2024-05-16"/>
-        <release version="0.3.10" date="2024-02-10"/>
+        <release version="0.4.3" date="2024-05-23">
+            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.3</url>
+        </release>
+        <release version="0.4.2" date="2024-05-16">
+            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.2</url>
+        </release>
     </releases>
     <translation type="qt">fooyin</translation>
 </component>
