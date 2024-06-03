@@ -17,10 +17,13 @@
         <ul>
             <li>Customisable layout</li>
             <li>Gapless playback</li>
-            <li>Filter and search music collection</li>
+            <li>Filter library on any field(s)</li>
             <li>Create and manage playlists</li>
-            <li>Extendable through plugins</li>
-            <li>Tag editing</li>
+            <li>Extend through plugins</li>
+            <li>Tag editor</li>
+            <li>Directory browser</li>
+            <li>Waveform seekbar</li>
+            <li>MPRIS support</li>
         </ul>
     </description>
     <launchable type="desktop-id">org.fooyin.fooyin.desktop</launchable>
@@ -32,8 +35,16 @@
     <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://github.com/ludouzi/fooyin/assets/45490980/3c541c32-8b84-4083-9aa9-9efdd5980d67</image>
+            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/simple.png</image>
             <caption>Simple layout</caption>
+        </screenshot>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/obsidian.png</image>
+            <caption>Obsidian layout</caption>
+        </screenshot>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/viewer-dark.png</image>
+            <caption>Custom layout with Breeze dark</caption>
         </screenshot>
     </screenshots>
     <releases>
