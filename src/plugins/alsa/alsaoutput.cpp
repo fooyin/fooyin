@@ -74,7 +74,7 @@ snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
         case(Fooyin::SampleFormat::S24):
         case(Fooyin::SampleFormat::S32):
             return SND_PCM_FORMAT_S32;
-        case(Fooyin::SampleFormat::Float):
+        case(Fooyin::SampleFormat::F32):
             return SND_PCM_FORMAT_FLOAT;
         case(Fooyin::SampleFormat::Unknown):
         default:

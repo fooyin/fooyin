@@ -43,7 +43,7 @@ SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
         case(Fooyin::SampleFormat::S24):
         case(Fooyin::SampleFormat::S32):
             return AUDIO_S32SYS;
-        case(Fooyin::SampleFormat::Float):
+        case(Fooyin::SampleFormat::F32):
             return AUDIO_F32SYS;
         case(Fooyin::SampleFormat::Unknown):
         default:

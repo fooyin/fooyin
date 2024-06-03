@@ -53,7 +53,7 @@ spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
         case(Fooyin::SampleFormat::S24):
         case(Fooyin::SampleFormat::S32):
             return SPA_AUDIO_FORMAT_S32;
-        case(Fooyin::SampleFormat::Float):
+        case(Fooyin::SampleFormat::F32):
             return SPA_AUDIO_FORMAT_F32;
         case(Fooyin::SampleFormat::Unknown):
         default:

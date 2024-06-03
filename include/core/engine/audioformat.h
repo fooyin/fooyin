@@ -31,7 +31,7 @@ enum class SampleFormat
     S16,
     S24,
     S32,
-    Float,
+    F32,
 };
 
 // TODO: Handle channel layout

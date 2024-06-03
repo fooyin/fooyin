@@ -44,7 +44,7 @@ Fooyin::SampleFormat sampleFormat(AVSampleFormat format, int bps)
             return bps == 24 ? Fooyin::SampleFormat::S24 : Fooyin::SampleFormat::S32;
         case(AV_SAMPLE_FMT_FLT):
         case(AV_SAMPLE_FMT_FLTP):
-            return Fooyin::SampleFormat::Float;
+            return Fooyin::SampleFormat::F32;
         default:
             return Fooyin::SampleFormat::Unknown;
     }

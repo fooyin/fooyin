@@ -195,7 +195,7 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::S32):
                     convert<uint8_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertU8ToS32);
                     return true;
-                case(SampleFormat::Float):
+                case(SampleFormat::F32):
                     convert<uint8_t, float>(inFormat, input, outFormat, output, samples, channels, convertU8ToFloat);
                     return true;
                 default:
@@ -215,7 +215,7 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::S32):
                     convert<int16_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertS16ToS32);
                     return true;
-                case(SampleFormat::Float):
+                case(SampleFormat::F32):
                     convert<int16_t, float>(inFormat, input, outFormat, output, samples, channels, convertS16ToFloat);
                     return true;
                 default:
@@ -236,7 +236,7 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::S32):
                     convert<int32_t, int32_t>(inFormat, input, outFormat, output, samples, channels, convertS32ToS32);
                     return true;
-                case(SampleFormat::Float):
+                case(SampleFormat::F32):
                     convert<int32_t, float>(inFormat, input, outFormat, output, samples, channels, convertS32ToFloat);
                     return true;
                 default:
@@ -244,7 +244,7 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
             }
             break;
         }
-        case(SampleFormat::Float): {
+        case(SampleFormat::F32): {
             switch(outFormat.sampleFormat()) {
                 case(SampleFormat::U8):
                     convert<float, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertFloatToU8);
@@ -256,7 +256,7 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::S32):
                     convert<float, int32_t>(inFormat, input, outFormat, output, samples, channels, convertFloatToS32);
                     return true;
-                case(SampleFormat::Float):
+                case(SampleFormat::F32):
                     convert<float, float>(inFormat, input, outFormat, output, samples, channels, convertFloatToFloat);
                     return true;
                 default:

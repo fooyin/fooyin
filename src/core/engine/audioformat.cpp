@@ -141,7 +141,7 @@ int AudioFormat::bytesPerSample() const
         case(SampleFormat::S24):
             // Stored in low three bytes of 32bit int
         case(SampleFormat::S32):
-        case(SampleFormat::Float):
+        case(SampleFormat::F32):
             return 4;
         case(SampleFormat::Unknown):
         default:

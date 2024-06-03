@@ -250,7 +250,7 @@ void AudioBuffer::scale(double volume)
         case(SampleFormat::S32):
             p->scale<int32_t>(volume);
             break;
-        case(SampleFormat::Float):
+        case(SampleFormat::F32):
             p->scale<float>(volume);
             break;
         case(SampleFormat::Unknown):

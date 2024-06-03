@@ -101,7 +101,7 @@ WaveformGenerator::WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, DbCo
     , m_decoder{std::move(decoder)}
     , m_dbPool{std::move(dbPool)}
 {
-    m_requiredFormat.setSampleFormat(SampleFormat::Float);
+    m_requiredFormat.setSampleFormat(SampleFormat::F32);
 }
 
 void WaveformGenerator::initialiseThread()
