@@ -1,18 +1,20 @@
 <p align="center">
-<img src="data/icons/sc-fooyin.svg" width="20%" alt="fooyin logo">
+<img src="https://github.com/ludouzi/fooyin/assets/45490980/a6c6923a-5de3-4d29-a6e9-f73ebd5181ac" width="40%" alt="fooyin logo">
 </p>
 
+<hr />
+
 <p align="center" style="font-size: 18px;">
-<strong>fooyin - A customisable music player</strong>
-<br />
 <a href="https://github.com/ludouzi/fooyin/actions/workflows/build.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
 <a href="https://app.codacy.com/gh/ludouzi/fooyin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"><img src="https://app.codacy.com/project/badge/Grade/ae0c3e9825d849b0b64697e59e4dfea6" alt="Code quality"></a>
 <a href="https://repology.org/project/fooyin/versions"><img src="https://repology.org/badge/tiny-repos/fooyin.svg" alt="Packaging status"></a>
 </p>
 
-## What is fooyin?
+<hr />
 
-Fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
+## A customisable music player
+
+fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
 collection. It's extendable through the use of plugins and many widgets make use of *FooScript* to offer an even deeper level of control.
 
 Audio playback is supported by FFmpeg alongside multiple options for output including ALSA and PipeWire, with more to come.
@@ -24,7 +26,7 @@ starting from a blank slate or a preset layout.
 |-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
 | ![Obsidian](https://github.com/ludouzi/fooyin/assets/45490980/38912757-4e41-46ee-bf62-b88f36af4903) | ![Wave](https://github.com/ludouzi/fooyin/assets/45490980/eba25598-4726-41fb-b271-075f23575bf6)    |
 
-Only Linux is supported at present, though other platforms will be added at a later date.
+Only Linux is supported at present, though support for other platforms is coming soon.
 
 ## Features
 
