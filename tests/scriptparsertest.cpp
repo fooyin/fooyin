@@ -60,7 +60,7 @@ TEST_F(ScriptParserTest, StringTest)
     EXPECT_EQ(u"A chop", m_parser.evaluate(QStringLiteral("$chop(A chop test,5)")));
     EXPECT_EQ(u"L", m_parser.evaluate(QStringLiteral("$left(Left test,1)")));
     EXPECT_EQ(u"est", m_parser.evaluate(QStringLiteral("$right(Right test,3)")));
-    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$if($strcmpi(cmp,cMp),true,false)")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$if($stricmp(cmp,cMp),true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$if($strcmp(cmp,cMp),true,false)")));
 }
 
