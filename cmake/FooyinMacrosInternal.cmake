@@ -14,11 +14,11 @@ endmacro()
 
 function(create_fooyin_library name)
     cmake_parse_arguments(
-            LIB
-            "ADD_PRIVATE_TARGET"
-            "EXPORT_NAME"
-            "SOURCES"
-            ${ARGN}
+        LIB
+        "ADD_PRIVATE_TARGET"
+        "EXPORT_NAME"
+        "SOURCES"
+        ${ARGN}
     )
 
     add_library(${name} ${FOOYIN_LIBRARY_TYPE} ${LIB_SOURCES})
@@ -29,47 +29,48 @@ function(create_fooyin_library name)
     include(CMakePackageConfigHelpers)
     include(GenerateExportHeader)
     generate_export_header(
-            ${name}
-            BASE_NAME
-            fy${base_name}
-            EXPORT_FILE_NAME
-            export/fy${base_name}_export.h
+        ${name}
+        BASE_NAME
+        fy${base_name}
+        EXPORT_FILE_NAME
+        export/fy${base_name}_export.h
     )
 
     if(NOT BUILD_SHARED_LIBS)
         string(TOUPPER ${LIB_EXPORT_NAME} static_name)
         target_compile_definitions(
-                ${name} PUBLIC FY${static_name}_STATIC_DEFINE
+            ${name} PUBLIC FY${static_name}_STATIC_DEFINE
         )
         set_target_properties(${name} PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 
     set(${base_name}_paths
-            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/.."
-            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}"
-            "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/${base_name}"
+        "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/.."
+        "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}"
+        "$<INSTALL_PREFIX>/${INCLUDE_INSTALL_DIR}/${base_name}"
     )
 
     target_include_directories(
-            ${name}
-            PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-            PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-                   $<INSTALL_INTERFACE:${${base_name}_paths}>
+        ${name}
+        PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+               $<INSTALL_INTERFACE:${${base_name}_paths}>
     )
 
     target_include_directories(
-            ${name} SYSTEM PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/export>
+        ${name} SYSTEM
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/export>
     )
 
     set_target_properties(
-            ${name}
-            PROPERTIES VERSION ${FOOYIN_SOVERSION}
-                       SOVERSION ${FOOYIN_SOVERSION}
-                       CXX_VISIBILITY_PRESET hidden
-                       VISIBILITY_INLINES_HIDDEN YES
-                       EXPORT_NAME ${LIB_EXPORT_NAME}
-                       OUTPUT_NAME ${name}
+        ${name}
+        PROPERTIES VERSION ${FOOYIN_SOVERSION}
+                   SOVERSION ${FOOYIN_SOVERSION}
+                   CXX_VISIBILITY_PRESET hidden
+                   VISIBILITY_INLINES_HIDDEN YES
+                   EXPORT_NAME ${LIB_EXPORT_NAME}
+                   OUTPUT_NAME ${name}
     )
 
     fooyin_set_rpath(${name} ${LIB_INSTALL_DIR})
@@ -86,15 +87,15 @@ function(create_fooyin_library name)
         add_library(Fooyin::${LIB_EXPORT_NAME}Private ALIAS ${private_name})
 
         target_include_directories(
-                ${private_name}
-                INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+            ${private_name}
+            INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
         )
 
         set_target_properties(
-                ${private_name}
-                PROPERTIES CXX_VISIBILITY_PRESET hidden
-                VISIBILITY_INLINES_HIDDEN YES
-                POSITION_INDEPENDENT_CODE ON
+            ${private_name}
+            PROPERTIES CXX_VISIBILITY_PRESET hidden
+                       VISIBILITY_INLINES_HIDDEN YES
+                       POSITION_INDEPENDENT_CODE ON
         )
         target_compile_features(${private_name} INTERFACE ${FOOYIN_REQUIRED_CXX_FEATURES})
         target_compile_definitions(${private_name} INTERFACE ${FOOYIN_COMPILE_DEFINITIONS})
@@ -111,22 +112,26 @@ function(create_fooyin_library name)
     endif()
 
     if(NOT CMAKE_SKIP_INSTALL_RULES)
+        install(
+            TARGETS ${name}
+            EXPORT FooyinTargets
+            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+                    COMPONENT fooyin
+                    NAMELINK_SKIP
+        )
+
         if(INSTALL_HEADERS)
             install(
-                    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
-                    DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
-                    COMPONENT fooyin_development
+                DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/export/"
+                DESTINATION "${INCLUDE_INSTALL_DIR}/${base_name}"
+                COMPONENT fooyin_development
+            )
+            install(TARGETS ${name} LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+                                            COMPONENT fooyin_development
             )
         endif()
-
-        install(
-                TARGETS ${name}
-                EXPORT FooyinTargets
-                ${INSTALL_TARGETS_DEFAULT_ARGS}
-        )
     endif()
 endfunction()
-
 
 function(create_fooyin_plugin_internal plugin_name)
     create_fooyin_plugin(${ARGV})
