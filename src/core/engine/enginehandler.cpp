@@ -131,12 +131,16 @@ struct EngineHandler::Private
 
     void changeOutput(const QString& output)
     {
+        auto loadDefault = [this]() {
+            currentOutput = {outputs.cbegin()->first, QStringLiteral("default")};
+            emit self->outputChanged(currentOutput.name, currentOutput.device);
+        };
+
         if(output.isEmpty()) {
             if(outputs.empty() || !currentOutput.name.isEmpty()) {
                 return;
             }
-            currentOutput = {outputs.cbegin()->first, QStringLiteral("default")};
-            emit self->outputChanged(currentOutput.name, currentOutput.device);
+            loadDefault();
         }
 
         const QStringList newOutput = output.split(QStringLiteral("|"));
@@ -155,6 +159,7 @@ struct EngineHandler::Private
 
         if(!outputs.contains(newName)) {
             qWarning() << QStringLiteral("Output (%1) hasn't been registered").arg(newName);
+            loadDefault();
             return;
         }
 
