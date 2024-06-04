@@ -30,6 +30,7 @@ dnf -y install --skip-broken \
      taglib-devel \
      kdsingleapplication-qt6-devel \
      pipewire-devel \
+     pulseaudio-libs-devel \
      SDL2-devel \
      libopenmpt-devel \
      game-music-emu-devel \

@@ -23,6 +23,7 @@ $SUDO apt-get install -y \
         zlib1g-dev \
         libasound2-dev \
         libpipewire-0.3-dev \
+        libpulse-dev \
         libsdl2-dev \
         qt6-base-dev \
         libqt6svg6-dev \
