@@ -124,6 +124,15 @@ struct AudioRenderer::Private
         }
     }
 
+    void pause()
+    {
+        isRunning = false;
+        writeTimer->stop();
+        pauseOutput(true);
+        updateOutputVolume(0.0);
+        emit self->paused();
+    }
+
     void updateOutputVolume(double newVolume)
     {
         volume = newVolume;
@@ -304,7 +313,8 @@ void AudioRenderer::pause(bool paused, int fadeLength)
 
     if(paused) {
         if(fadeLength == 0) {
-            p->volumeChange = -1.0;
+            p->pause();
+            return;
         }
         else {
             p->volumeChange = -(p->volume / p->fadeSteps);
@@ -321,7 +331,7 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         }
         else {
             p->updateOutputVolume(p->initialVolume);
-            p->volumeChange = 1.0;
+            return;
         }
     }
 
@@ -404,11 +414,7 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
             return;
         }
         // Faded out
-        p->isRunning = false;
-        p->writeTimer->stop();
-        p->pauseOutput(true);
-        p->updateOutputVolume(0.0);
-        emit paused();
+        p->pause();
     }
     else {
         p->updateOutputVolume(p->initialVolume);
