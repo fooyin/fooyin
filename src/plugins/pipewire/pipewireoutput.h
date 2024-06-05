@@ -34,6 +34,7 @@ public:
     void uninit() override;
     void reset() override;
     void start() override;
+    void drain() override;
 
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;

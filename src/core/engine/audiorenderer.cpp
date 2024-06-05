@@ -398,8 +398,8 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
     }
 
     if(p->volumeChange < 0.0) {
-        if(p->audioOutput->currentState().queuedSamples > 0) {
-            // Drain queued samples so we can fade in smoothly
+        if(p->writeTimer->isActive() && p->audioOutput->currentState().queuedSamples > 0) {
+            p->audioOutput->drain();
             p->writeTimer->stop();
             return;
         }

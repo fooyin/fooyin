@@ -254,8 +254,7 @@ struct AlsaOutput::Private
     void reset()
     {
         if(pcmHandle) {
-            snd_pcm_drain(pcmHandle.get());
-            snd_pcm_drop(pcmHandle.get());
+            self->drain();
             pcmHandle.reset();
         }
         started = false;
@@ -411,6 +410,11 @@ struct AlsaOutput::Private
                 return true;
             }
 
+            if(pcmst == SND_PCM_STATE_SETUP) {
+                snd_pcm_prepare(pcmHandle.get());
+                continue;
+            }
+
             if(pcmst == SND_PCM_STATE_PREPARED) {
                 if(!started) {
                     return true;
@@ -442,7 +446,6 @@ struct AlsaOutput::Private
                 // Device lost
                 case(SND_PCM_STATE_DISCONNECTED):
                 case(SND_PCM_STATE_OPEN):
-                case(SND_PCM_STATE_SETUP):
                 default:
                     printError(QStringLiteral("Device lost. Stopping playback."));
                     QMetaObject::invokeMethod(self, [this]() { emit self->stateChanged(State::Disconnected); });
@@ -522,6 +525,11 @@ void AlsaOutput::start()
 {
     p->started = true;
     snd_pcm_start(p->pcmHandle.get());
+}
+
+void AlsaOutput::drain()
+{
+    snd_pcm_drain(p->pcmHandle.get());
 }
 
 bool AlsaOutput::initialised() const

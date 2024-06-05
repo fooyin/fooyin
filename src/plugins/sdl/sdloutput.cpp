@@ -112,6 +112,8 @@ void SdlOutput::start()
     }
 }
 
+void SdlOutput::drain() { }
+
 bool SdlOutput::initialised() const
 {
     return m_initialised;

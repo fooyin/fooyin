@@ -351,10 +351,7 @@ void PipeWireOutput::uninit()
 
 void PipeWireOutput::reset()
 {
-    {
-        const ThreadLoopGuard guard{p->loop.get()};
-    }
-
+    const ThreadLoopGuard guard{p->loop.get()};
     p->stream->flush(false);
 }
 
@@ -362,6 +359,12 @@ void PipeWireOutput::start()
 {
     const ThreadLoopGuard guard{p->loop.get()};
     p->stream->setActive(true);
+}
+
+void PipeWireOutput::drain()
+{
+    const ThreadLoopGuard guard{p->loop.get()};
+    p->stream->flush(false);
 }
 
 bool PipeWireOutput::initialised() const

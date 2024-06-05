@@ -70,6 +70,11 @@ public:
      */
     virtual void reset() = 0;
     /*!
+     *  Drains all audio samples in the output buffer.
+     *  @note this will only be called if @fn initialised returns @c true.
+     */
+    virtual void drain() = 0;
+    /*!
      *  Starts playback.
      *  @note this will only be called if @fn initialised returns @c true.
      */
