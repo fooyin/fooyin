@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.5](https://github.com/ludouzi/fooyin/releases/tag/v0.4.5) (2024-06-05)
+
+### Fixes
+
+* Fix playback on startup if current output not found
+* Fix pause not pausing playback position ([#133](https://github.com/ludouzi/fooyin/issues/133))
+
+
 ## [0.4.4](https://github.com/ludouzi/fooyin/releases/tag/v0.4.4) (2024-06-04)
 
 ### Improvements
