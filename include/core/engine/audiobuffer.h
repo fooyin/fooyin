@@ -57,6 +57,7 @@ public:
     [[nodiscard]] int sampleCount() const;
     [[nodiscard]] int byteCount() const;
     [[nodiscard]] uint64_t startTime() const;
+    [[nodiscard]] uint64_t endTime() const;
     [[nodiscard]] uint64_t duration() const;
 
     [[nodiscard]] std::span<const std::byte> constData() const;

@@ -185,6 +185,11 @@ uint64_t AudioBuffer::startTime() const
     return isValid() ? p->startTime : -1;
 }
 
+uint64_t AudioBuffer::endTime() const
+{
+    return isValid() ? p->startTime + duration() : -1;
+}
+
 uint64_t AudioBuffer::duration() const
 {
     return format().durationForFrames(frameCount());
