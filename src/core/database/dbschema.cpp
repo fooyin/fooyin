@@ -221,6 +221,7 @@ DbSchema::Revision DbSchema::readRevision()
 
     revision.version          = m_xmlReader.attributes().value(QStringLiteral("version")).toInt();
     revision.minCompatVersion = m_xmlReader.attributes().value(QStringLiteral("minCompatVersion")).toInt();
+    revision.foreignKeys      = m_xmlReader.attributes().value(QStringLiteral("foreignKeys")).toInt();
 
     while(m_xmlReader.readNextStartElement()) {
         if(m_xmlReader.name() == u"description") {
@@ -247,6 +248,12 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
 
     if(revision.sql.isEmpty()) {
         return UpgradeResult::Error;
+    }
+
+    if(revision.foreignKeys) {
+        if(!setForeignKeys(false)) {
+            return UpgradeResult::Error;
+        }
     }
 
     qInfo() << "[DB] Upgrading schema to version" << revisionToApply << ":" << revision.description;
@@ -276,6 +283,9 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
 
     if(!result) {
         transaction.rollback();
+        if(revision.foreignKeys) {
+            setForeignKeys(true);
+        }
         return UpgradeResult::Failed;
     }
 
@@ -291,6 +301,18 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
 
     transaction.commit();
 
+    if(revision.foreignKeys) {
+        if(!setForeignKeys(true)) {
+            return UpgradeResult::Error;
+        }
+    }
+
     return UpgradeResult::Success;
+}
+
+bool DbSchema::setForeignKeys(bool enabled)
+{
+    QSqlQuery foreignKeys{db()};
+    return foreignKeys.exec(QStringLiteral("PRAGMA foreign_keys = %1;").arg(enabled));
 }
 } // namespace Fooyin

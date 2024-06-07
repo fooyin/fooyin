@@ -53,12 +53,14 @@ private:
         int version{0};
         int minCompatVersion{0};
         QString description;
+        bool foreignKeys{false};
         QString sql;
     };
 
     bool readSchema(const QString& schemaFilename);
     Revision readRevision();
     UpgradeResult applyRevision(int currentRevision, int revisionToApply);
+    bool setForeignKeys(bool enabled);
 
     SettingsDatabase m_settingsDb;
     QXmlStreamReader m_xmlReader;
