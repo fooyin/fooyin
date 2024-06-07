@@ -397,7 +397,9 @@ void AudioPlaybackEngine::pause()
 
 void AudioPlaybackEngine::stop()
 {
-    p->stop();
+    if(p->state != PlaybackState::Stopped) {
+        p->stop();
+    }
 }
 
 void AudioPlaybackEngine::setVolume(double volume)
