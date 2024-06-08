@@ -112,7 +112,6 @@ find_package(
                Sql
                Concurrent
                Network
-               LinguistTools
                Svg
 )
 set_package_properties(Qt6Core PROPERTIES TYPE REQUIRED)
@@ -252,6 +251,11 @@ target_link_options(fooyin_lib INTERFACE ${FOOYIN_LINK_OPTIONS})
 # ---- Fooyin translations ----
 
 if(BUILD_TRANSLATIONS)
+    find_package(
+        Qt6 REQUIRED
+        COMPONENTS LinguistTools
+    )
+
     set(translation_dir
         "${PROJECT_SOURCE_DIR}/data/translations"
         CACHE PATH "Path to the *.ts translation files"
