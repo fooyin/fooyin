@@ -203,6 +203,9 @@ struct TagEditorModel::Private
         }
 
         for(Track& track : tracks) {
+            if(track.hasCue()) {
+                continue;
+            }
             if(isList) {
                 scriptRegistry.setValue(metadata, listValue, track);
             }
