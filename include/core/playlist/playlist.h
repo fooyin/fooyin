@@ -104,6 +104,8 @@ public:
     /** Resets the modified and tracksModified flags. */
     void resetFlags();
 
+    static QStringList supportedPlaylistExtensions();
+
 private:
     friend class PlaylistHandler;
 

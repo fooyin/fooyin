@@ -289,6 +289,12 @@ void Playlist::resetFlags()
     p->tracksModified = false;
 }
 
+QStringList Playlist::supportedPlaylistExtensions()
+{
+    static const QStringList supportedExtensions = {QStringLiteral("*.cue")};
+    return supportedExtensions;
+}
+
 std::unique_ptr<Playlist> Playlist::create(const QString& name)
 {
     return std::make_unique<Playlist>(PrivateKey{}, name);
