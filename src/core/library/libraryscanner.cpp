@@ -488,7 +488,8 @@ void LibraryScanner::initialiseThread()
 void LibraryScanner::stopThread()
 {
     if(state() == Running) {
-        emit progressChanged(100);
+        QMetaObject::invokeMethod(
+            this, [this]() { emit progressChanged(100); }, Qt::QueuedConnection);
     }
 
     setState(Idle);
