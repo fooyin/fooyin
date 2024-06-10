@@ -27,7 +27,7 @@ Platform-specific requirements are listed below.
 sudo apt update
 sudo apt install \
     g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev \
-    libasound2-dev libtag1-dev \
+    libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev\
     qt6-base-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev
 ```
@@ -37,9 +37,19 @@ sudo apt install \
 ```
 sudo pacman -Syu
 sudo pacman -S --needed \
-    gcc git cmake pkgconf ninja alsa-lib \
-    qt6-base qt6-svg qt6-tools \
-    kdsingleapplication taglib ffmpeg
+    gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg
+    qt6-base qt6-svg qt6-tools kdsingleapplication taglib
+```
+
+### Fedora
+
+```
+sudo dnf update
+sudo dnf install \
+cmake ninja-build glib2-devel libxkbcommon-x11-devel libxkbcommon-devel \
+alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel 
+libavcodec-free-devel libavformat-free-devel libavutil-free-devel \
+taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel
 ```
 
 ## Building
