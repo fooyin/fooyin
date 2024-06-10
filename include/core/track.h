@@ -37,7 +37,7 @@ public:
     {
         size_t operator()(const Track& track) const
         {
-            return qHash(track.filepath());
+            return qHash(track.uniqueFilepath());
         }
     };
 
@@ -91,6 +91,7 @@ public:
     [[nodiscard]] Type type() const;
     [[nodiscard]] QString typeString() const;
     [[nodiscard]] QString filepath() const;
+    [[nodiscard]] QString uniqueFilepath() const;
     [[nodiscard]] QString relativePath() const;
     [[nodiscard]] QString filename() const;
     [[nodiscard]] QString path() const;
@@ -112,12 +113,14 @@ public:
     [[nodiscard]] QString genre() const;
     [[nodiscard]] QString composer() const;
     [[nodiscard]] QString performer() const;
-    [[nodiscard]] uint64_t duration() const;
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
     [[nodiscard]] int year() const;
     [[nodiscard]] float rating() const;
     [[nodiscard]] int ratingStars() const;
+
+    [[nodiscard]] bool hasCue() const;
+    [[nodiscard]] QString cuePath() const;
 
     [[nodiscard]] bool hasExtraTag(const QString& tag) const;
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
@@ -125,6 +128,8 @@ public:
     [[nodiscard]] QStringList removedTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
+    [[nodiscard]] uint64_t offset() const;
+    [[nodiscard]] uint64_t duration() const;
     [[nodiscard]] uint64_t fileSize() const;
     [[nodiscard]] int bitrate() const;
     [[nodiscard]] int sampleRate() const;
@@ -159,7 +164,6 @@ public:
     void setGenres(const QStringList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
-    void setDuration(uint64_t duration);
     void setComment(const QString& comment);
     void setDate(const QString& date);
     void setYear(int year);
@@ -168,12 +172,16 @@ public:
 
     [[nodiscard]] QString metaValue(const QString& name) const;
 
+    void setCuePath(const QString& path);
+
     void addExtraTag(const QString& tag, const QString& value);
     void removeExtraTag(const QString& tag);
     void replaceExtraTag(const QString& tag, const QString& value);
     void clearExtraTags();
     void storeExtraTags(const QByteArray& json);
 
+    void setOffset(uint64_t offset);
+    void setDuration(uint64_t duration);
     void setFileSize(uint64_t fileSize);
     void setBitrate(int rate);
     void setSampleRate(int rate);

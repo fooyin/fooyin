@@ -29,6 +29,8 @@
 #include <QTime>
 #include <QWidget>
 
+#include <unicode/ucsdet.h>
+
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
 {
@@ -167,6 +169,27 @@ QString capitalise(const QString& str)
     }
 
     return parts.join(u' ');
+}
+
+QByteArray detectEncoding(const QByteArray& content)
+{
+    QByteArray encoding;
+    UErrorCode status{U_ZERO_ERROR};
+
+    UCharsetDetector* csd = ucsdet_open(&status);
+    ucsdet_setText(csd, content.constData(), static_cast<int32_t>(content.length()), &status);
+
+    const UCharsetMatch* ucm = ucsdet_detect(csd, &status);
+    if(U_SUCCESS(status) && ucm) {
+        const char* cname = ucsdet_getName(ucm, &status);
+        if(U_SUCCESS(status)) {
+            encoding = QByteArray{cname};
+        }
+    }
+
+    ucsdet_close(csd);
+
+    return encoding;
 }
 
 QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale)

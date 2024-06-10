@@ -27,6 +27,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QThread>
+#include <QUrl>
 
 #include <deque>
 
@@ -45,6 +46,7 @@ struct LibraryScanRequest
     ScanRequest::Type type;
     LibraryInfo library;
     QString dir;
+    QList<QUrl> files;
     TrackList tracks;
     bool onlyModified{true};
 };
@@ -98,6 +100,11 @@ struct LibraryThreadHandler::Private
                                   [this, request]() { scanner.scanTracks(library->tracks(), request.tracks); });
     }
 
+    void scanFiles(const LibraryScanRequest& request)
+    {
+        QMetaObject::invokeMethod(&scanner, [this, request]() { scanner.scanFiles(library->tracks(), request.files); });
+    }
+
     void scanDirectory(const LibraryScanRequest& request)
     {
         QMetaObject::invokeMethod(&scanner, [this, request]() {
@@ -113,7 +120,13 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, QStringLiteral(""), TrackList{}, onlyModified);
+        LibraryScanRequest libraryRequest;
+        libraryRequest.id           = id;
+        libraryRequest.type         = ScanRequest::Library;
+        libraryRequest.library      = libraryInfo;
+        libraryRequest.onlyModified = onlyModified;
+
+        scanRequests.emplace_back(libraryRequest);
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -130,11 +143,44 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_front(id, ScanRequest::Tracks, LibraryInfo{}, QStringLiteral(""), tracks);
+        LibraryScanRequest libraryRequest;
+        libraryRequest.id     = id;
+        libraryRequest.type   = ScanRequest::Tracks;
+        libraryRequest.tracks = tracks;
 
-        // Track scans take precedence
+        scanRequests.emplace_front(libraryRequest);
+
+        // Track scans take precedence over library scans
         const auto currRequest = currentRequest();
         if(currRequest && currRequest->type == ScanRequest::Library) {
+            scanner.pauseThread();
+            execNextRequest();
+        }
+        else if(scanRequests.size() == 1) {
+            execNextRequest();
+        }
+
+        return request;
+    }
+
+    ScanRequest addFilesScanRequest(const QList<QUrl>& files)
+    {
+        const int id = nextRequestId();
+
+        ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
+                                cancelScanRequest(id);
+                            }};
+
+        LibraryScanRequest libraryRequest;
+        libraryRequest.id    = id;
+        libraryRequest.type  = ScanRequest::Files;
+        libraryRequest.files = files;
+
+        scanRequests.emplace_front(libraryRequest);
+
+        // File scans take precedence over library and track scans
+        const auto currRequest = currentRequest();
+        if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
             scanner.pauseThread();
             execNextRequest();
         }
@@ -153,7 +199,13 @@ struct LibraryThreadHandler::Private
                                 cancelScanRequest(id);
                             }};
 
-        scanRequests.emplace_back(id, ScanRequest::Library, libraryInfo, dir, TrackList{});
+        LibraryScanRequest libraryRequest;
+        libraryRequest.id      = id;
+        libraryRequest.type    = ScanRequest::Library;
+        libraryRequest.library = libraryInfo;
+        libraryRequest.dir     = dir;
+
+        scanRequests.emplace_back(libraryRequest);
 
         if(scanRequests.size() == 1) {
             execNextRequest();
@@ -181,16 +233,21 @@ struct LibraryThreadHandler::Private
         const auto& request = scanRequests.front();
         currentRequestId    = request.id;
 
-        if(request.type == ScanRequest::Tracks) {
-            scanTracks(request);
-        }
-        else {
-            if(request.dir.isEmpty()) {
-                scanLibrary(request);
-            }
-            else {
-                scanDirectory(request);
-            }
+        switch(request.type) {
+            case(ScanRequest::Files):
+                scanFiles(request);
+                break;
+            case(ScanRequest::Tracks):
+                scanTracks(request);
+                break;
+            case(ScanRequest::Library):
+                if(request.dir.isEmpty()) {
+                    scanLibrary(request);
+                }
+                else {
+                    scanDirectory(request);
+                }
+                break;
         }
     }
 
@@ -279,6 +336,11 @@ ScanRequest LibraryThreadHandler::scanLibrary(const LibraryInfo& library)
 ScanRequest LibraryThreadHandler::scanTracks(const TrackList& tracks)
 {
     return p->addTracksScanRequest(tracks);
+}
+
+ScanRequest LibraryThreadHandler::scanFiles(const QList<QUrl>& files)
+{
+    return p->addFilesScanRequest(files);
 }
 
 void LibraryThreadHandler::libraryRemoved(int id)

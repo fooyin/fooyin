@@ -128,9 +128,12 @@ struct AudioRenderer::Private
     {
         isRunning = false;
         writeTimer->stop();
-        pauseOutput(true);
+
         updateOutputVolume(0.0);
+
+        audioOutput->drain();
         emit self->paused();
+        pauseOutput(true);
     }
 
     void updateOutputVolume(double newVolume)
@@ -316,9 +319,8 @@ void AudioRenderer::pause(bool paused, int fadeLength)
             p->pause();
             return;
         }
-        else {
-            p->volumeChange = -(p->volume / p->fadeSteps);
-        }
+
+        p->volumeChange = -(p->volume / p->fadeSteps);
     }
     else {
         p->pauseOutput(false);
@@ -408,11 +410,6 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
     }
 
     if(p->volumeChange < 0.0) {
-        if(p->writeTimer->isActive() && p->audioOutput->currentState().queuedSamples > 0) {
-            p->audioOutput->drain();
-            p->writeTimer->stop();
-            return;
-        }
         // Faded out
         p->pause();
     }

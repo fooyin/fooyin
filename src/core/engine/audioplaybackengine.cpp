@@ -48,7 +48,7 @@ constexpr auto MaxDecodeLength = 1000;
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
 {
-    AudioEngine* self;
+    AudioPlaybackEngine* self;
 
     SettingsManager* settings;
 
@@ -58,6 +58,9 @@ struct AudioPlaybackEngine::Private
     TrackStatus status{TrackStatus::NoTrack};
     PlaybackState state{PlaybackState::Stopped};
     AudioOutput::State outputState{AudioOutput::State::None};
+
+    uint64_t startPosition{0};
+    uint64_t endPosition{0};
     uint64_t lastPosition{0};
 
     uint64_t totalBufferTime{0};
@@ -65,17 +68,21 @@ struct AudioPlaybackEngine::Private
 
     uint64_t duration{0};
     double volume{1.0};
+    bool ending{false};
+    bool pausing{false};
 
+    Track currentTrack;
     AudioFormat format;
 
     std::unique_ptr<AudioDecoder> decoder;
     AudioRenderer* renderer;
 
     QBasicTimer bufferTimer;
+    QBasicTimer pauseTimer;
 
     FadingIntervals fadeIntervals;
 
-    explicit Private(AudioEngine* self_, SettingsManager* settings_)
+    explicit Private(AudioPlaybackEngine* self_, SettingsManager* settings_)
         : self{self_}
         , settings{settings_}
         , bufferLength{static_cast<uint64_t>(settings->value<Settings::Core::BufferLength>())}
@@ -111,17 +118,21 @@ struct AudioPlaybackEngine::Private
             return;
         }
 
-        const auto bytesLeft = static_cast<size_t>(format.bytesForDuration(bufferLength - totalBufferTime));
-        const auto maxBytes  = static_cast<size_t>(format.bytesForDuration(MaxDecodeLength));
+        const auto bytesToEnd = static_cast<size_t>(format.bytesForDuration(endPosition - lastPosition));
+        const auto bytesLeft
+            = std::min(bytesToEnd, static_cast<size_t>(format.bytesForDuration(bufferLength - totalBufferTime)));
+        const auto maxBytes = std::min(bytesLeft, static_cast<size_t>(format.bytesForDuration(MaxDecodeLength)));
 
-        const auto buffer = decoder->readBuffer(std::min(maxBytes, bytesLeft));
+        const auto buffer = decoder->readBuffer(maxBytes);
         if(buffer.isValid()) {
             totalBufferTime += buffer.duration();
             renderer->queueBuffer(buffer);
         }
-        else {
+
+        if(!buffer.isValid() || buffer.endTime() >= endPosition) {
             bufferTimer.stop();
             renderer->queueBuffer({});
+            ending = true;
             QMetaObject::invokeMethod(self, &AudioEngine::trackAboutToFinish);
         }
     }
@@ -194,11 +205,16 @@ struct AudioPlaybackEngine::Private
         const auto prevState = state;
 
         startPlayback();
+        if(state == PlaybackState::Stopped && currentTrack.offset() > 0) {
+            decoder->seek(currentTrack.offset());
+        }
+
         updateState(PlaybackState::Playing);
 
         const bool canFade = settings->value<Settings::Core::Internal::EngineFading>()
                           && (prevState == PlaybackState::Paused || renderer->isFading());
         const int fadeInterval = canFade ? fadeIntervals.inPauseStop : 0;
+
         renderer->pause(false, fadeInterval);
         changeTrackStatus(TrackStatus::BufferedTrack);
         positionTimer()->start();
@@ -225,8 +241,15 @@ struct AudioPlaybackEngine::Private
 
     void updatePosition()
     {
-        if(std::exchange(lastPosition, clock.currentPosition()) != lastPosition) {
-            emit self->positionChanged(lastPosition);
+        const auto currentPosition = startPosition + clock.currentPosition();
+        if(std::exchange(lastPosition, currentPosition) != lastPosition) {
+            emit self->positionChanged(lastPosition - startPosition);
+        }
+
+        if(currentTrack.hasCue() && lastPosition >= endPosition) {
+            clock.setPaused(true);
+            clock.sync(duration);
+            changeTrackStatus(TrackStatus::EndOfTrack);
         }
     }
 
@@ -256,6 +279,10 @@ struct AudioPlaybackEngine::Private
 
     void onRendererFinished()
     {
+        if(currentTrack.hasCue()) {
+            return;
+        }
+
         clock.setPaused(true);
         clock.sync(duration);
 
@@ -319,7 +346,7 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
     p->resetWorkers();
 
-    p->decoder->seek(pos);
+    p->decoder->seek(pos + p->startPosition);
     p->clock.sync(pos);
 
     if(p->state == PlaybackState::Playing) {
@@ -334,10 +361,32 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
+    const Track prevTrack = std::exchange(p->currentTrack, track);
+
+    auto setupDuration = [this, &track]() {
+        p->duration      = track.duration();
+        p->startPosition = track.offset();
+        p->endPosition   = p->startPosition + p->duration;
+        p->lastPosition  = p->startPosition;
+    };
+
+    if(p->ending && track.filepath() == prevTrack.filepath() && p->endPosition == track.offset()) {
+        emit positionChanged(0);
+        p->ending = false;
+        p->clock.sync(0);
+        setupDuration();
+        p->changeTrackStatus(TrackStatus::BufferedTrack);
+        if(p->state == PlaybackState::Playing) {
+            p->play();
+        }
+        return;
+    }
+
     p->stopWorkers();
 
     emit positionChanged(0);
 
+    p->ending = false;
     p->clock.setPaused(true);
     p->clock.sync();
 
@@ -360,6 +409,12 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     p->changeTrackStatus(TrackStatus::LoadedTrack);
+
+    setupDuration();
+
+    if(track.offset() > 0) {
+        p->decoder->seek(track.offset());
+    }
 
     if(p->state == PlaybackState::Playing) {
         p->play();

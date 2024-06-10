@@ -122,6 +122,7 @@ set_package_properties(Qt6Concurrent PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Network PROPERTIES TYPE REQUIRED)
 set_package_properties(Qt6Svg PROPERTIES TYPE REQUIRED)
 
+find_package(ICU COMPONENTS uc i18n REQUIRED)
 find_package(Taglib REQUIRED taglib>=1.12)
 find_package(
     FFmpeg REQUIRED

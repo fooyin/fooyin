@@ -6,8 +6,10 @@ dnf -y --allowerasing install \
      rpmdevtools \
      tar \
      desktop-file-utils \
-     cmake ninja-build \
+     cmake \
+     ninja-build \
      glib2-devel \
+     libicu-devel \
      libxkbcommon-x11-devel \
      libxkbcommon-devel \
      alsa-lib-devel \

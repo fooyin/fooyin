@@ -47,6 +47,7 @@ FYUTILS_EXPORT QString appendShortcut(const QString& str, const QKeySequence& sh
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
 FYUTILS_EXPORT QString capitalise(const QString& str);
+FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
 
 FYUTILS_EXPORT QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale = false);
 FYUTILS_EXPORT QPixmap scalePixmap(const QPixmap& image, int width, double dpr, bool upscale = false);

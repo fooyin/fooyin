@@ -45,14 +45,15 @@ struct PlaylistInteractor::Private
     { }
 
     template <typename Func>
-    void scanTracks(const TrackList& tracks, Func&& func) const
+    void scanFiles(const QList<QUrl>& files, Func&& func) const
     {
         auto* scanDialog
             = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100, nullptr);
         scanDialog->setAttribute(Qt::WA_DeleteOnClose);
         scanDialog->setWindowModality(Qt::WindowModal);
+        scanDialog->setValue(0);
 
-        const ScanRequest request = library->scanTracks(tracks);
+        const ScanRequest request = library->scanFiles(files);
 
         QObject::connect(library, &MusicLibrary::scanProgress, scanDialog, [scanDialog, request](int id, int percent) {
             if(id != request.id) {
@@ -101,15 +102,11 @@ MusicLibrary* PlaylistInteractor::library() const
 
 void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls) const
 {
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
+    if(urls.empty()) {
         return;
     }
 
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
+    p->scanFiles(urls, [this](const TrackList& scannedTracks) {
         if(auto* playlist = p->controller->currentPlaylist()) {
             p->handler->appendToPlaylist(playlist->id(), scannedTracks);
         }
@@ -118,15 +115,11 @@ void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls) const
 
 void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play) const
 {
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
+    if(urls.empty()) {
         return;
     }
 
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, [this, play](const TrackList& scannedTracks) {
+    p->scanFiles(urls, [this, play](const TrackList& scannedTracks) {
         if(auto* playlist = p->controller->currentPlaylist()) {
             p->handler->replacePlaylistTracks(playlist->id(), scannedTracks);
             playlist->changeCurrentIndex(0);
@@ -139,13 +132,9 @@ void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, 
 
 void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play) const
 {
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
+    if(urls.empty()) {
         return;
     }
-
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
 
     auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
         Playlist* playlist = p->handler->playlistByName(playlistName);
@@ -166,7 +155,7 @@ void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const Q
         }
     };
 
-    p->scanTracks(tracks, handleScanResult);
+    p->scanFiles(urls, handleScanResult);
 }
 
 void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
@@ -175,15 +164,11 @@ void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
         return;
     }
 
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
+    if(urls.empty()) {
         return;
     }
 
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, [this](const TrackList& scannedTracks) {
+    p->scanFiles(urls, [this](const TrackList& scannedTracks) {
         if(auto* playlist = p->handler->activePlaylist()) {
             p->handler->appendToPlaylist(playlist->id(), scannedTracks);
         }
@@ -192,14 +177,10 @@ void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
 
 void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const
 {
-    const QStringList filepaths = Utils::File::getFiles(urls, Track::supportedFileExtensions());
-    if(filepaths.empty()) {
+    if(urls.empty()) {
         return;
     }
 
-    TrackList tracks;
-    std::ranges::transform(filepaths, std::back_inserter(tracks), [](const QString& path) { return Track{path}; });
-
-    p->scanTracks(tracks, func);
+    p->scanFiles(urls, func);
 }
 } // namespace Fooyin

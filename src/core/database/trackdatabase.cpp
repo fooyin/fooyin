@@ -48,6 +48,8 @@ QString fetchTrackColumns()
                                                   "Performer,"
                                                   "Genres,"
                                                   "Comment,"
+                                                  "CuePath,"
+                                                  "Offset,"
                                                   "Duration,"
                                                   "FileSize,"
                                                   "BitRate,"
@@ -84,15 +86,17 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":performer"), track.performer()},
             {QStringLiteral(":genres"), track.genres()},
             {QStringLiteral(":comment"), track.comment()},
-            {QStringLiteral(":duration"), QVariant::fromValue(track.duration())},
-            {QStringLiteral(":fileSize"), QVariant::fromValue(track.fileSize())},
+            {QStringLiteral(":cuePath"), track.cuePath()},
+            {QStringLiteral(":offset"), static_cast<quint64>(track.offset())},
+            {QStringLiteral(":duration"), static_cast<quint64>(track.duration())},
+            {QStringLiteral(":fileSize"), static_cast<quint64>(track.fileSize())},
             {QStringLiteral(":bitRate"), track.bitrate()},
             {QStringLiteral(":sampleRate"), track.sampleRate()},
             {QStringLiteral(":channels"), track.channels()},
             {QStringLiteral(":bitDepth"), track.bitDepth()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
             {QStringLiteral(":type"), static_cast<int>(track.type())},
-            {QStringLiteral(":modifiedDate"), QVariant::fromValue(track.modifiedTime())},
+            {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
             {QStringLiteral(":libraryID"), track.libraryId()}};
 }
@@ -117,22 +121,24 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setPerformer(q.value(13).toString());
     track.setGenres(q.value(14).toStringList());
     track.setComment(q.value(15).toString());
-    track.setDuration(q.value(16).toULongLong());
-    track.setFileSize(q.value(17).toInt());
-    track.setBitrate(q.value(18).toInt());
-    track.setSampleRate(q.value(19).toInt());
-    track.setChannels(q.value(20).toInt());
-    track.setBitDepth(q.value(21).toInt());
-    track.storeExtraTags(q.value(22).toByteArray());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(23).toInt()));
-    track.setModifiedTime(q.value(24).toULongLong());
-    track.setLibraryId(q.value(25).toInt());
-    track.setHash(q.value(26).toString());
-    track.setAddedTime(q.value(27).toULongLong());
-    track.setFirstPlayed(q.value(28).toULongLong());
-    track.setLastPlayed(q.value(29).toULongLong());
-    track.setPlayCount(q.value(30).toInt());
-    track.setRating(q.value(31).toFloat());
+    track.setCuePath(q.value(16).toString());
+    track.setOffset(q.value(17).toULongLong());
+    track.setDuration(q.value(18).toULongLong());
+    track.setFileSize(q.value(19).toInt());
+    track.setBitrate(q.value(20).toInt());
+    track.setSampleRate(q.value(21).toInt());
+    track.setChannels(q.value(22).toInt());
+    track.setBitDepth(q.value(23).toInt());
+    track.storeExtraTags(q.value(24).toByteArray());
+    track.setType(static_cast<Fooyin::Track::Type>(q.value(25).toInt()));
+    track.setModifiedTime(q.value(26).toULongLong());
+    track.setLibraryId(q.value(27).toInt());
+    track.setHash(q.value(28).toString());
+    track.setAddedTime(q.value(29).toULongLong());
+    track.setFirstPlayed(q.value(30).toULongLong());
+    track.setLastPlayed(q.value(31).toULongLong());
+    track.setPlayCount(q.value(32).toInt());
+    track.setRating(q.value(33).toFloat());
 
     track.generateHash();
     track.setIsEnabled(QFileInfo::exists(track.filepath()));
@@ -280,6 +286,8 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "Performer = :performer,"
                                           "Genres = :genres,"
                                           "Comment = :comment,"
+                                          "CuePath = :cuePath,"
+                                          "Offset = :offset,"
                                           "Duration = :duration,"
                                           "FileSize = :fileSize,"
                                           "BitRate = :bitRate,"
@@ -435,6 +443,8 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.Performer,"
                                           "Tracks.Genres,"
                                           "Tracks.Comment,"
+                                          "Tracks.CuePath,"
+                                          "Tracks.Offset,"
                                           "Tracks.Duration,"
                                           "Tracks.FileSize,"
                                           "Tracks.BitRate,"
@@ -494,6 +504,8 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "Performer,"
                                           "Genres,"
                                           "Comment,"
+                                          "CuePath,"
+                                          "Offset,"
                                           "Duration,"
                                           "FileSize,"
                                           "BitRate,"
@@ -521,6 +533,8 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":performer,"
                                           ":genres,"
                                           ":comment,"
+                                          ":cuePath,"
+                                          ":offset,"
                                           ":duration,"
                                           ":fileSize,"
                                           ":bitRate,"

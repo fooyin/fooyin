@@ -48,6 +48,7 @@ public:
     ScanRequest refreshLibrary(const LibraryInfo& library);
     ScanRequest scanLibrary(const LibraryInfo& library);
     ScanRequest scanTracks(const TrackList& tracks);
+    ScanRequest scanFiles(const QList<QUrl>& files);
 
     void saveUpdatedTracks(const TrackList& tracks);
     void saveUpdatedTrackStats(const TrackList& track);

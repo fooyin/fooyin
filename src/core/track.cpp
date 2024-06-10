@@ -53,13 +53,16 @@ struct Track::Private : public QSharedData
     QStringList genres;
     QString composer;
     QString performer;
-    uint64_t duration{0};
     QString comment;
     QString date;
     int year{-1};
     ExtraTags extraTags;
     QStringList removedTags;
 
+    QString cuePath;
+
+    uint64_t offset{0};
+    uint64_t duration{0};
     uint64_t filesize{0};
     int bitrate{0};
     int sampleRate{0};
@@ -90,12 +93,12 @@ Track::Track(const QString& filepath)
 
 bool Track::operator==(const Track& other) const
 {
-    return filepath() == other.filepath() && hash() == other.hash();
+    return filepath() == other.filepath() && offset() == other.offset() && hash() == other.hash();
 }
 
 bool Track::operator!=(const Track& other) const
 {
-    return filepath() != other.filepath() && hash() != other.hash();
+    return !(*this == other);
 }
 
 Track::~Track()                             = default;
@@ -225,6 +228,17 @@ QString Track::filepath() const
     return p->filepath;
 }
 
+QString Track::uniqueFilepath() const
+{
+    QString path{p->filepath};
+
+    if(hasCue()) {
+        path.append(QString::number(p->offset));
+    }
+
+    return path;
+}
+
 QString Track::relativePath() const
 {
     return p->relativePath;
@@ -337,11 +351,6 @@ QString Track::performer() const
     return p->performer;
 }
 
-uint64_t Track::duration() const
-{
-    return p->duration;
-}
-
 QString Track::comment() const
 {
     return p->comment;
@@ -365,6 +374,16 @@ float Track::rating() const
 int Track::ratingStars() const
 {
     return static_cast<int>(std::floor(p->rating * MaxStarCount));
+}
+
+bool Track::hasCue() const
+{
+    return !p->cuePath.isEmpty();
+}
+
+QString Track::cuePath() const
+{
+    return p->cuePath;
 }
 
 bool Track::hasExtraTag(const QString& tag) const
@@ -403,6 +422,16 @@ QByteArray Track::serialiseExtrasTags() const
     stream << p->extraTags;
 
     return out;
+}
+
+uint64_t Track::offset() const
+{
+    return p->offset;
+}
+
+uint64_t Track::duration() const
+{
+    return p->duration;
 }
 
 uint64_t Track::fileSize() const
@@ -597,11 +626,6 @@ void Track::setPerformer(const QString& performer)
     p->performer = performer;
 }
 
-void Track::setDuration(uint64_t duration)
-{
-    p->duration = duration;
-}
-
 void Track::setComment(const QString& comment)
 {
     p->comment = comment;
@@ -679,6 +703,11 @@ QString Track::metaValue(const QString& name) const
     return extraTag(name).join(u"\037");
 }
 
+void Track::setCuePath(const QString& path)
+{
+    p->cuePath = path;
+}
+
 void Track::addExtraTag(const QString& tag, const QString& value)
 {
     if(tag.isEmpty() || value.isEmpty()) {
@@ -725,6 +754,16 @@ void Track::storeExtraTags(const QByteArray& tags)
     stream.setVersion(QDataStream::Qt_6_0);
 
     stream >> p->extraTags;
+}
+
+void Track::setOffset(uint64_t offset)
+{
+    p->offset = offset;
+}
+
+void Track::setDuration(uint64_t duration)
+{
+    p->duration = duration;
 }
 
 void Track::setFileSize(uint64_t fileSize)
@@ -832,7 +871,7 @@ QStringList Track::supportedMimeTypes()
 
 size_t qHash(const Track& track)
 {
-    return qHash(track.filepath());
+    return qHash(track.uniqueFilepath());
 }
 } // namespace Fooyin
 

@@ -115,4 +115,10 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
+           ${ICU_LIBRARY_DIRS}
+)
+
+target_include_directories(
+    fooyin_utils
+    PUBLIC ${ICU_INCLUDE_DIRS}
 )
