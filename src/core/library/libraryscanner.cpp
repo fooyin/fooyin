@@ -140,7 +140,7 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls)
     static const QStringList fileExtensions = Fooyin::Track::supportedFileExtensions();
     static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
-    for(const QUrl& url : urls | std::views::reverse) {
+    for(const QUrl& url : urls) {
         const QFileInfo file{url.toLocalFile()};
         const auto dir = file.absolutePath();
 
