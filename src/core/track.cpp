@@ -635,14 +635,17 @@ void Track::setDate(const QString& date)
 {
     p->date = date;
 
-    const QStringList dateParts = date.split(QChar::fromLatin1('-'));
+    const QStringList dateParts = date.split(u'-', Qt::SkipEmptyParts);
     if(dateParts.empty()) {
         if(date.length() == 4) {
             p->year = p->date.toInt();
         }
     }
     else {
-        p->year = dateParts.front().toInt();
+        const auto& year = dateParts.front();
+        if(year.length() == 4) {
+            p->year = year.toInt();
+        }
     }
 }
 
