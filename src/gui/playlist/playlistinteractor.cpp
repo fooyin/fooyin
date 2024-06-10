@@ -20,15 +20,15 @@
 #include "playlistinteractor.h"
 
 #include "playlistcontroller.h"
-#include "playlistwidget.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <utils/fileutils.h>
-#include <utils/id.h>
+#include <utils/utils.h>
 
+#include <QMainWindow>
 #include <QProgressDialog>
 
 namespace Fooyin {
@@ -47,10 +47,10 @@ struct PlaylistInteractor::Private
     template <typename Func>
     void scanFiles(const QList<QUrl>& files, Func&& func) const
     {
-        auto* scanDialog
-            = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100, nullptr);
+        auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
+                                               Utils::getMainWindow());
         scanDialog->setAttribute(Qt::WA_DeleteOnClose);
-        scanDialog->setWindowModality(Qt::WindowModal);
+        scanDialog->setModal(true);
         scanDialog->setValue(0);
 
         const ScanRequest request = library->scanFiles(files);
