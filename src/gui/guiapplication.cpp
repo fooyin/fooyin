@@ -100,6 +100,8 @@
 #include <QPixmapCache>
 #include <QPushButton>
 
+constexpr auto LastFilePath = "Interface/LastFilePath";
+
 namespace Fooyin {
 struct GuiApplication::Private
 {
@@ -599,19 +601,27 @@ struct GuiApplication::Private
 
         const QStringList filters{allFilter, filesFilter, playlistFilter};
 
-        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), QStringLiteral(""),
-                                                        filters.join(QStringLiteral(";;")));
+        QUrl dir = QUrl::fromLocalFile(QDir::homePath());
+        if(const auto lastPath = settingsManager->fileValue(QString::fromLatin1(LastFilePath)).toString();
+           !lastPath.isEmpty()) {
+            dir = lastPath;
+        }
+
+        const auto files
+            = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), dir, filters.join(QStringLiteral(";;")));
 
         if(files.empty()) {
             return;
         }
+
+        settingsManager->fileSet(QString::fromLatin1(LastFilePath), files.front());
 
         playlistInteractor.filesToCurrentPlaylist(files);
     }
 
     void addFolders() const
     {
-        const auto dirs = QFileDialog::getExistingDirectoryUrl(mainWindow.get(), tr("Add Folders"), QStringLiteral(""));
+        const auto dirs = QFileDialog::getExistingDirectoryUrl(mainWindow.get(), tr("Add Folders"), QDir::homePath());
 
         if(dirs.isEmpty()) {
             return;
