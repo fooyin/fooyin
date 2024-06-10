@@ -25,6 +25,6 @@ namespace Fooyin {
 class CueParser : public PlaylistParser
 {
 public:
-    TrackList read(const QString& file) override;
+    TrackList readPlaylist(const QString& file) override;
 };
 } // namespace Fooyin

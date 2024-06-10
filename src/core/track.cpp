@@ -60,7 +60,6 @@ struct Track::Private : public QSharedData
     QStringList removedTags;
 
     QString cuePath;
-    uint64_t cueIndex{0};
 
     uint64_t offset{0};
     uint64_t duration{0};

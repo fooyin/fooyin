@@ -139,7 +139,7 @@ void finaliseTrack(const CueSheet& cue, Fooyin::Track& track)
 } // namespace
 
 namespace Fooyin {
-TrackList CueParser::read(const QString& file)
+TrackList CueParser::readPlaylist(const QString& file)
 {
     TrackList tracks;
 
