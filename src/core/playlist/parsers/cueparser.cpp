@@ -185,7 +185,7 @@ TrackList CueParser::readPlaylist(const QString& file)
         const QString& value = parts.at(1);
 
         if(field.compare(u"PERFORMER", Qt::CaseInsensitive) == 0) {
-            if(track.isValid() && track.artists().empty()) {
+            if(track.isValid()) {
                 track.setArtists({value});
             }
             else {
@@ -193,7 +193,7 @@ TrackList CueParser::readPlaylist(const QString& file)
             }
         }
         else if(field.compare(u"TITLE", Qt::CaseInsensitive) == 0) {
-            if(track.isValid() && track.title().isEmpty()) {
+            if(track.isValid()) {
                 track.setTitle(value);
             }
             else {
@@ -202,7 +202,7 @@ TrackList CueParser::readPlaylist(const QString& file)
         }
         else if(field.compare(u"COMPOSER", Qt::CaseInsensitive) == 0
                 || field.compare(u"SONGWRITER", Qt::CaseInsensitive) == 0) {
-            if(track.isValid() && track.composer().isEmpty()) {
+            if(track.isValid()) {
                 track.setComposer(value);
             }
             else {
