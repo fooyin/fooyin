@@ -30,6 +30,7 @@ class QIcon;
 class QImage;
 class QKeySequence;
 class QLabel;
+class QMainWindow;
 class QMenu;
 class QPixmap;
 class QSize;
@@ -55,6 +56,7 @@ FYUTILS_EXPORT QImage scaleImage(const QImage& image, const QSize& size, double 
 FYUTILS_EXPORT QImage scaleImage(const QImage& image, int width, double dpr, bool upscale = false);
 FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& color);
 
+FYUTILS_EXPORT QMainWindow* getMainWindow();
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
 

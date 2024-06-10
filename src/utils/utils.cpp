@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QIcon>
 #include <QLabel>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
@@ -248,6 +249,19 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
     pixmap.fill(color);
     pixmap.setMask(orig.createMaskFromColor(Qt::transparent));
     return pixmap;
+}
+
+QMainWindow* getMainWindow()
+{
+    const auto widgets = qApp->topLevelWidgets();
+
+    for(QWidget* widget : widgets) {
+        if(auto* mainWindow = qobject_cast<QMainWindow*>(widget)) {
+            return mainWindow;
+        }
+    }
+
+    return nullptr;
 }
 
 void showMessageBox(const QString& text, const QString& infoText)
