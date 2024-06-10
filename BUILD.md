@@ -38,7 +38,7 @@ sudo apt install \
 ```
 sudo pacman -Syu
 sudo pacman -S --needed \
-    gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg
+    gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg \
     qt6-base qt6-svg qt6-tools kdsingleapplication taglib
 ```
 
@@ -47,10 +47,10 @@ sudo pacman -S --needed \
 ```
 sudo dnf update
 sudo dnf install \
-cmake ninja-build glib2-devel libxkbcommon-x11-devel libxkbcommon-devel \
-alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel 
-libavcodec-free-devel libavformat-free-devel libavutil-free-devel \
-taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel
+    cmake ninja-build glib2-devel libxkbcommon-x11-devel libxkbcommon-devel \
+    alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel \
+    libavcodec-free-devel libavformat-free-devel libavutil-free-devel \
+    taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel
 ```
 
 ## Building
