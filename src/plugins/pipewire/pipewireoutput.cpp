@@ -128,7 +128,6 @@ struct PipeWireOutput::Private
 
     QString device;
     float volume{1.0};
-    bool pendingVolumeChange{false};
 
     AudioFormat format;
 
@@ -334,11 +333,6 @@ bool PipeWireOutput::init(const AudioFormat& format)
         return false;
     }
 
-    if(p->pendingVolumeChange) {
-        p->pendingVolumeChange = false;
-        setVolume(p->volume);
-    }
-
     return true;
 }
 
@@ -435,11 +429,6 @@ void PipeWireOutput::setPaused(bool pause)
 void PipeWireOutput::setVolume(double volume)
 {
     p->volume = static_cast<float>(volume);
-
-    if(!p->core || !p->core->initialised()) {
-        p->pendingVolumeChange = true;
-        return;
-    }
 
     const ThreadLoopGuard guard{p->loop.get()};
     p->stream->setVolume(static_cast<float>(volume));

@@ -140,7 +140,7 @@ struct AudioRenderer::Private
     {
         volume = newVolume;
 
-        if(audioOutput) {
+        if(audioOutput && audioOutput->initialised()) {
             audioOutput->setVolume(volume);
         }
     }
