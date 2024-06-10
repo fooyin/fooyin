@@ -589,10 +589,18 @@ struct GuiApplication::Private
 
     void addFiles() const
     {
-        const auto extensions = tr("Audio Files (%1)").arg(Track::supportedFileExtensions().join(QStringLiteral(" ")));
+        const QString audioExtensions    = Track::supportedFileExtensions().join(QStringLiteral(" "));
+        const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(QStringLiteral(" "));
+        const QString allExtensions      = QStringLiteral("%1 %2").arg(audioExtensions, playlistExtensions);
 
-        const auto files
-            = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), QStringLiteral(""), extensions);
+        const QString allFilter      = tr("All Supported Media Files (%1)").arg(allExtensions);
+        const QString filesFilter    = tr("Audio Files (%1)").arg(audioExtensions);
+        const QString playlistFilter = tr("Playlists (%1)").arg(playlistExtensions);
+
+        const QStringList filters{allFilter, filesFilter, playlistFilter};
+
+        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), QStringLiteral(""),
+                                                        filters.join(QStringLiteral(";;")));
 
         if(files.empty()) {
             return;
