@@ -13,6 +13,7 @@ The following libraries are required:
 * [TagLib](https://taglib.org) (1.11.1+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
 * [ALSA](https://alsa-project.org)
+* [ICU](https://icu.unicode.org/)
 
 The following libraries are optional, but will add extra audio outputs:
 
