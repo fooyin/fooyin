@@ -100,7 +100,7 @@ void readRemLine(const QStringList& lineParts, CueSheet& sheet)
         sheet.date = value;
     }
     else if(field.compare(u"DISCNUMBER", Qt::CaseInsensitive) == 0) {
-        if(const int disc = lineParts.at(2).toInt(); disc > 0) {
+        if(const int disc = value.toInt(); disc > 0) {
             sheet.disc = disc;
         }
     }
