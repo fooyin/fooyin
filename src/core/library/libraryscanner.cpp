@@ -295,7 +295,7 @@ struct LibraryScanner::Private
         };
 
         if(existingCues.contains(cue)) {
-            if(existingCues.at(cue) != lastModified || !onlyModified) {
+            if(existingCues.at(cue) < lastModified || !onlyModified) {
                 const TrackList cueTracks = cueParser->readPlaylist(cue);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
@@ -356,7 +356,7 @@ struct LibraryScanner::Private
             const Track& libraryTrack = trackPaths.at(file);
 
             if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != currentLibrary.id
-               || libraryTrack.modifiedTime() != lastModified || !onlyModified) {
+               || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
                 Track changedTrack{libraryTrack};
                 if(Tagging::readMetaData(changedTrack)) {
                     setTrackProps(changedTrack);

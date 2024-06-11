@@ -45,6 +45,7 @@ struct CueSheet
     QString date;
     QString comment;
     int disc{-1};
+    uint64_t lastModified{0};
 };
 
 void setupEncoding(QTextStream& in, QIODevice* file)
@@ -132,6 +133,7 @@ std::optional<uint64_t> msfToMs(const QString& index)
 void finaliseTrack(const CueSheet& cue, Fooyin::Track& track)
 {
     track.setCuePath(cue.cuePath);
+    track.setModifiedTime(std::max(track.modifiedTime(), cue.lastModified));
 
     if(track.albumArtists().empty()) {
         track.setAlbumArtists({cue.albumArtist});
@@ -248,12 +250,18 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
     }
 }
 
-Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const QDir& dir)
+Fooyin::TrackList readCueTracks(QFile* file, const QString& filepath, const QDir& dir)
 {
     Fooyin::TrackList tracks;
 
     CueSheet sheet;
     sheet.cuePath = filepath;
+
+    const QFileInfo cueInfo{*file};
+    const QDateTime lastModified{cueInfo.lastModified()};
+    if(lastModified.isValid()) {
+        sheet.lastModified = static_cast<uint64_t>(lastModified.toMSecsSinceEpoch());
+    }
 
     Fooyin::Track track;
     QString trackPath;
