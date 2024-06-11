@@ -50,8 +50,8 @@ struct SeekContainer::Private
         layout->setContentsMargins({});
 
         const QFontMetrics fm{self->fontMetrics()};
-        elapsed->setFixedWidth(fm.horizontalAdvance(Utils::msToString(0)));
-        total->setFixedWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
+        elapsed->setMinimumWidth(fm.horizontalAdvance(Utils::msToString(0)));
+        total->setMinimumWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
 
         layout->addWidget(elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
         layout->addWidget(total, 0, Qt::AlignVCenter | Qt::AlignLeft);
