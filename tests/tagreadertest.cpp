@@ -26,48 +26,14 @@
 #include <gtest/gtest.h>
 
 // clazy:excludeall=returning-void-expression
-
-namespace {
-void fileValid(const Fooyin::Testing::TempResource& resource, const QString& file)
-{
-    QByteArray origFileData;
-    QByteArray tmpFileData;
-    {
-        QFile origFile(file);
-        origFile.open(QIODevice::ReadOnly);
-
-        EXPECT_TRUE(origFile.isOpen());
-
-        origFileData = origFile.readAll();
-        origFile.close();
-    }
-
-    {
-        QFile tmpFile(resource.fileName());
-        tmpFile.open(QIODevice::ReadOnly);
-
-        EXPECT_TRUE(tmpFile.isOpen());
-
-        tmpFileData = tmpFile.readAll();
-        tmpFile.close();
-    }
-
-    EXPECT_TRUE(!origFileData.isEmpty());
-    EXPECT_TRUE(!tmpFileData.isEmpty());
-    EXPECT_EQ(origFileData, tmpFileData);
-}
-} // namespace
-
 namespace Fooyin::Testing {
 class TagReaderTest : public ::testing::Test
-{
-protected:
-};
+{ };
 
 TEST_F(TagReaderTest, AiffRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.aiff")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.aiff"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -96,7 +62,7 @@ TEST_F(TagReaderTest, AiffRead)
 TEST_F(TagReaderTest, FlacRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.flac")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.flac"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -125,7 +91,7 @@ TEST_F(TagReaderTest, FlacRead)
 TEST_F(TagReaderTest, M4aRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.m4a")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.m4a"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -153,7 +119,7 @@ TEST_F(TagReaderTest, M4aRead)
 TEST_F(TagReaderTest, Mp3Read)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.mp3")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.mp3"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -182,7 +148,7 @@ TEST_F(TagReaderTest, Mp3Read)
 TEST_F(TagReaderTest, OggRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.ogg")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.ogg"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -211,7 +177,7 @@ TEST_F(TagReaderTest, OggRead)
 TEST_F(TagReaderTest, OpusRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.opus")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.opus"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);
@@ -240,7 +206,7 @@ TEST_F(TagReaderTest, OpusRead)
 TEST_F(TagReaderTest, WavRead)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.wav")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.wav"));
+    file.checkValid();
 
     Track track{file.fileName()};
     Tagging::readMetaData(track);

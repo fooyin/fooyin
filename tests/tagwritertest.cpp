@@ -28,47 +28,14 @@
 
 // clazy:excludeall=returning-void-expression
 
-namespace {
-void fileValid(const Fooyin::Testing::TempResource& resource, const QString& file)
-{
-    QByteArray origFileData;
-    QByteArray tmpFileData;
-    {
-        QFile origFile(file);
-        origFile.open(QIODevice::ReadOnly);
-
-        EXPECT_TRUE(origFile.isOpen());
-
-        origFileData = origFile.readAll();
-        origFile.close();
-    }
-
-    {
-        QFile tmpFile(resource.fileName());
-        tmpFile.open(QIODevice::ReadOnly);
-
-        EXPECT_TRUE(tmpFile.isOpen());
-
-        tmpFileData = tmpFile.readAll();
-        tmpFile.close();
-    }
-
-    EXPECT_TRUE(!origFileData.isEmpty());
-    EXPECT_TRUE(!tmpFileData.isEmpty());
-    EXPECT_EQ(origFileData, tmpFileData);
-}
-} // namespace
-
 namespace Fooyin::Testing {
 class TagWriterTest : public ::testing::Test
-{
-protected:
-};
+{ };
 
 TEST_F(TagWriterTest, AiffWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.aiff")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.aiff"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -124,7 +91,7 @@ TEST_F(TagWriterTest, AiffWrite)
 TEST_F(TagWriterTest, FlacWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.flac")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.flac"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -180,7 +147,7 @@ TEST_F(TagWriterTest, FlacWrite)
 TEST_F(TagWriterTest, M4aWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.m4a")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.m4a"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -236,7 +203,7 @@ TEST_F(TagWriterTest, M4aWrite)
 TEST_F(TagWriterTest, Mp3Write)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.mp3")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.mp3"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -292,7 +259,7 @@ TEST_F(TagWriterTest, Mp3Write)
 TEST_F(TagWriterTest, OggWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.ogg")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.ogg"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -348,7 +315,7 @@ TEST_F(TagWriterTest, OggWrite)
 TEST_F(TagWriterTest, OpusWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.opus")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.opus"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};
@@ -404,7 +371,7 @@ TEST_F(TagWriterTest, OpusWrite)
 TEST_F(TagWriterTest, WavWrite)
 {
     const TempResource file{QStringLiteral(":/audio/audiotest.wav")};
-    fileValid(file, QStringLiteral(":/audio/audiotest.wav"));
+    file.checkValid();
 
     {
         Track track{file.fileName()};

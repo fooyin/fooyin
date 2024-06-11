@@ -21,9 +21,12 @@
 
 #include <QDir>
 
+#include <gtest/gtest.h>
+
 namespace Fooyin::Testing {
 TempResource::TempResource(const QString& filename, QObject* parent)
     : QTemporaryFile{parent}
+    , m_file{filename}
 {
     setFileTemplate(QDir::tempPath() + QStringLiteral("/fooyin_test_XXXXXXXXXXXXXXX"));
 
@@ -33,6 +36,34 @@ TempResource::TempResource(const QString& filename, QObject* parent)
     resource.open(QIODevice::ReadOnly);
     write(resource.readAll());
 
-    reset();
+    QTemporaryFile::reset();
+}
+void TempResource::checkValid() const
+{
+    QByteArray origFileData;
+    QByteArray tmpFileData;
+    {
+        QFile origFile{m_file};
+        origFile.open(QIODevice::ReadOnly);
+
+        EXPECT_TRUE(origFile.isOpen());
+
+        origFileData = origFile.readAll();
+        origFile.close();
+    }
+
+    {
+        QFile tmpFile{fileName()};
+        tmpFile.open(QIODevice::ReadOnly);
+
+        EXPECT_TRUE(tmpFile.isOpen());
+
+        tmpFileData = tmpFile.readAll();
+        tmpFile.close();
+    }
+
+    EXPECT_TRUE(!origFileData.isEmpty());
+    EXPECT_TRUE(!tmpFileData.isEmpty());
+    EXPECT_EQ(origFileData, tmpFileData);
 }
 } // namespace Fooyin::Testing

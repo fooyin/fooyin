@@ -26,5 +26,10 @@ class TempResource : public QTemporaryFile
 {
 public:
     explicit TempResource(const QString& filename, QObject* parent = nullptr);
+
+    void checkValid() const;
+
+private:
+    QString m_file;
 };
 } // namespace Fooyin::Testing
