@@ -31,6 +31,6 @@ class FYCORE_EXPORT PlaylistParser
 public:
     virtual ~PlaylistParser() = default;
 
-    virtual TrackList readPlaylist(const QString& file) = 0;
+    virtual TrackList readPlaylist(const QString& file, bool skipNotFound) = 0;
 };
 } // namespace Fooyin

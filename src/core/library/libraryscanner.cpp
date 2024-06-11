@@ -296,7 +296,7 @@ struct LibraryScanner::Private
 
         if(existingCues.contains(cue)) {
             if(existingCues.at(cue) < lastModified || !onlyModified) {
-                const TrackList cueTracks = cueParser->readPlaylist(cue);
+                const TrackList cueTracks = cueParser->readPlaylist(cue, true);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
@@ -314,7 +314,7 @@ struct LibraryScanner::Private
                 }
             }
             else {
-                const TrackList cueTracks = cueParser->readPlaylist(cue);
+                const TrackList cueTracks = cueParser->readPlaylist(cue, true);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
@@ -677,7 +677,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
 
         for(const auto& cue : cues) {
-            const TrackList cueTracks = p->cueParser->readPlaylist(cue);
+            const TrackList cueTracks = p->cueParser->readPlaylist(cue, true);
             for(const Track& cueTrack : cueTracks) {
                 const auto trackKey = cueTrack.filepath();
                 if(trackMap.contains(trackKey)) {

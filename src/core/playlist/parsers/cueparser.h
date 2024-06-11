@@ -19,14 +19,15 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/playlist/playlistparser.h>
 
 namespace Fooyin {
-class CueParser : public PlaylistParser
+class FYCORE_EXPORT CueParser : public PlaylistParser
 {
 public:
-    TrackList readPlaylist(const QString& file) override;
-
+    TrackList readPlaylist(const QString& file, bool skipNotFound) override;
     TrackList readEmbeddedCue(const QString& cueSheet, const QString& filepath);
 };
 } // namespace Fooyin

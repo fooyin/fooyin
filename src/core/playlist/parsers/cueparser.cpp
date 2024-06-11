@@ -250,7 +250,7 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
     }
 }
 
-Fooyin::TrackList readCueTracks(QFile* file, const QString& filepath, const QDir& dir)
+Fooyin::TrackList readCueTracks(QFile* file, const QString& filepath, const QDir& dir, bool skipNotFound)
 {
     Fooyin::TrackList tracks;
 
@@ -270,10 +270,10 @@ Fooyin::TrackList readCueTracks(QFile* file, const QString& filepath, const QDir
     setupEncoding(in, file);
 
     while(!in.atEnd()) {
-        processCueLine(in.readLine().trimmed(), sheet, track, trackPath, dir, true, false, tracks);
+        processCueLine(in.readLine().trimmed(), sheet, track, trackPath, dir, skipNotFound, false, tracks);
     }
 
-    finaliseLastTrack(sheet, track, trackPath, true, tracks);
+    finaliseLastTrack(sheet, track, trackPath, skipNotFound, tracks);
 
     return tracks;
 }
@@ -302,8 +302,12 @@ Fooyin::TrackList readEmbeddedCueTracks(QIODevice* file, const QString& filepath
 } // namespace
 
 namespace Fooyin {
-TrackList CueParser::readPlaylist(const QString& file)
+TrackList CueParser::readPlaylist(const QString& file, bool skipNotFound)
 {
+    if(file.isEmpty()) {
+        return {};
+    }
+
     QFile cueFile{file};
 
     if(!cueFile.open(QIODevice::ReadOnly)) {
@@ -315,11 +319,15 @@ TrackList CueParser::readPlaylist(const QString& file)
     QDir dir{file};
     dir.cdUp();
 
-    return readCueTracks(&cueFile, file, dir);
+    return readCueTracks(&cueFile, file, dir, skipNotFound);
 }
 
 TrackList CueParser::readEmbeddedCue(const QString& cueSheet, const QString& filepath)
 {
+    if(cueSheet.isEmpty() || filepath.isEmpty()) {
+        return {};
+    }
+
     QByteArray cueBytes{cueSheet.toUtf8()};
     QBuffer cueBuffer(&cueBytes);
     if(!cueBuffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
