@@ -139,6 +139,8 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
     const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
 
+    const auto endTime = track.offset() + track.duration();
+
     m_decoder->start();
     m_decoder->seek(track.offset());
 
@@ -149,18 +151,13 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         }
 
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid()) {
+        if(!buffer.isValid() || buffer.endTime() > endTime) {
             m_data.complete = true;
             break;
         }
 
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
-
-        if(buffer.endTime() >= track.offset() + track.duration()) {
-            m_data.complete = true;
-            break;
-        }
     }
 
     m_decoder->stop();
@@ -212,6 +209,7 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
     const int updateThreshold   = samplesPerChannel / numOfUpdates;
 
     const int bufferSize = samplesPerBuffer * m_format.bytesPerFrame();
+    const auto endTime   = track.offset() + track.duration();
     int processedCount{0};
 
     m_decoder->start();
@@ -224,7 +222,7 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
         }
 
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid()) {
+        if(!buffer.isValid() || buffer.endTime() > endTime) {
             m_data.complete = true;
             break;
         }
@@ -235,11 +233,6 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
         if(processedCount++ == updateThreshold) {
             processedCount = 0;
             emit waveformGenerated(m_data);
-        }
-
-        if(buffer.endTime() >= track.offset() + track.duration()) {
-            m_data.complete = true;
-            break;
         }
     }
 
