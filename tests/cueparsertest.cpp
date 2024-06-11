@@ -41,9 +41,6 @@ TEST_F(CueParserTest, NoCue)
 
 TEST_F(CueParserTest, SingleCue)
 {
-    const TempResource file{QStringLiteral(":/cue/singlefiletest.cue")};
-    file.checkValid();
-
     const auto tracks = m_parser->readPlaylist(QStringLiteral(":/cue/singlefiletest.cue"), false);
     ASSERT_EQ(2, tracks.size());
 
