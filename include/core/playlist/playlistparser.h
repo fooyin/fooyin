@@ -23,7 +23,7 @@
 
 #include <core/trackfwd.h>
 
-class QString;
+#include <QString>
 
 namespace Fooyin {
 class FYCORE_EXPORT PlaylistParser

@@ -33,6 +33,7 @@
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QBuffer>
 #include <QDir>
 #include <QFileSystemWatcher>
 #include <QRegularExpression>
@@ -202,7 +203,7 @@ struct LibraryScanner::Private
 
     LibraryInfo currentLibrary;
     TrackDatabase trackDatabase;
-    std::unique_ptr<PlaylistParser> cueParser;
+    std::unique_ptr<CueParser> cueParser;
 
     TrackList tracksToStore;
     TrackList tracksToUpdate;
@@ -360,9 +361,21 @@ struct LibraryScanner::Private
                 if(Tagging::readMetaData(changedTrack)) {
                     setTrackProps(changedTrack);
 
-                    tracksToUpdate.push_back(changedTrack);
-                    missingHashes.erase(changedTrack.hash());
                     missingFiles.erase(changedTrack.filename());
+
+                    if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                        const auto cueSheets = changedTrack.extraTag(QStringLiteral("CUESHEET"));
+                        TrackList cueTracks  = cueParser->readEmbeddedCue(cueSheets.front(), file);
+                        for(Track& cueTrack : cueTracks) {
+                            setTrackProps(cueTrack);
+                            tracksToUpdate.push_back(cueTrack);
+                            missingHashes.erase(cueTrack.hash());
+                        }
+                    }
+                    else {
+                        tracksToUpdate.push_back(changedTrack);
+                        missingHashes.erase(changedTrack.hash());
+                    }
                 }
             }
         }
@@ -381,7 +394,18 @@ struct LibraryScanner::Private
                 }
                 else {
                     setTrackProps(track);
-                    tracksToStore.push_back(track);
+
+                    if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                        const auto cueSheets = track.extraTag(QStringLiteral("CUESHEET"));
+                        TrackList cueTracks  = cueParser->readEmbeddedCue(cueSheets.front(), file);
+                        for(Track& cueTrack : cueTracks) {
+                            setTrackProps(cueTrack);
+                            tracksToStore.push_back(cueTrack);
+                        }
+                    }
+                    else {
+                        tracksToStore.push_back(track);
+                    }
                 }
 
                 if(tracksToStore.size() >= BatchSize) {
@@ -612,9 +636,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
     p->storeTracks(tracksToStore);
 
-    std::ranges::copy(tracksToStore, std::back_inserter(tracksScanned));
-
-    emit scannedTracks(tracksScanned);
+    emit scannedTracks(tracksToStore, tracksScanned);
 
     handleFinished();
 }
@@ -626,9 +648,9 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     TrackList tracksScanned;
     TrackList tracksToStore;
 
-    std::unordered_map<QString, Track> trackMap;
+    std::unordered_multimap<QString, Track> trackMap;
     std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
-                           [](const Track& track) { return std::make_pair(track.uniqueFilepath(), track); });
+                           [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
     p->tracksProcessed = 0;
     p->currentProgress = 0;
@@ -657,16 +679,23 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         for(const auto& cue : cues) {
             const TrackList cueTracks = p->cueParser->readPlaylist(cue);
             for(const Track& cueTrack : cueTracks) {
-                Track track{cueTrack};
-                track.generateHash();
-                const auto trackKey = track.uniqueFilepath();
+                const auto trackKey = cueTrack.filepath();
                 if(trackMap.contains(trackKey)) {
-                    tracksScanned.push_back(trackMap.at(trackKey));
+                    const auto existingTracks = trackMap.equal_range(trackKey);
+                    for(auto it = existingTracks.first; it != existingTracks.second; ++it) {
+                        if(it->second.uniqueFilepath() == cueTrack.uniqueFilepath()) {
+                            tracksScanned.push_back(it->second);
+                            break;
+                        }
+                    }
                 }
                 else {
+                    Track track{cueTrack};
+                    track.generateHash();
                     tracksToStore.push_back(track);
                 }
-                cueFilesScanned.emplace(track.filepath());
+
+                cueFilesScanned.emplace(cueTrack.filepath());
             }
 
             ++p->tracksProcessed;
@@ -675,12 +704,24 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
         for(const auto& file : files) {
             if(!cueFilesScanned.contains(file)) {
-                Track track{file};
-                if(trackMap.contains(track.uniqueFilepath())) {
-                    tracksScanned.push_back(trackMap.at(track.uniqueFilepath()));
+                if(trackMap.contains(file)) {
+                    const auto existingTracks = trackMap.equal_range(file);
+                    for(auto it = existingTracks.first; it != existingTracks.second; ++it) {
+                        tracksScanned.push_back(it->second);
+                    }
                 }
-                else if(Tagging::readMetaData(track)) {
-                    tracksToStore.push_back(track);
+                else {
+                    Track track{file};
+                    if(Tagging::readMetaData(track)) {
+                        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                            const auto cueSheets      = track.extraTag(QStringLiteral("CUESHEET"));
+                            const TrackList cueTracks = p->cueParser->readEmbeddedCue(cueSheets.front(), file);
+                            std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
+                        }
+                        else {
+                            tracksToStore.push_back(track);
+                        }
+                    }
                 }
             }
 
@@ -691,9 +732,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     p->storeTracks(tracksToStore);
 
-    std::ranges::copy(tracksToStore, std::back_inserter(tracksScanned));
-
-    emit scannedTracks(tracksScanned);
+    emit scannedTracks(tracksToStore, tracksScanned);
 
     handleFinished();
 }

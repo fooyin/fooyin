@@ -152,14 +152,15 @@ struct UnifiedMusicLibrary::Private
         }
     }
 
-    void scannedTracks(int id, const TrackList& tracksScanned)
+    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks)
     {
-        auto sortTracks = recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), tracksScanned);
-
-        sortTracks.then(self, [this, id](const TrackList& scannedTracks) {
-            addTracks(scannedTracks).then(self, [this, id, scannedTracks]() {
-                emit self->tracksScanned(id, scannedTracks);
-            });
+        addTracks(newTracks).then([this, id, newTracks, existingTracks]() {
+            TrackList scannedTracks{newTracks};
+            scannedTracks.insert(scannedTracks.end(), existingTracks.cbegin(), existingTracks.cend());
+            recalSortTracks(settings->value<Settings::Core::LibrarySortScript>(), scannedTracks)
+                .then(self, [this, id](const TrackList& sortedScannedTracks) {
+                    emit self->tracksScanned(id, sortedScannedTracks);
+                });
         });
     }
 
@@ -224,7 +225,9 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     connect(&p->threadHandler, &LibraryThreadHandler::scanUpdate, this,
             [this](const ScanResult& result) { p->handleScanResult(result); });
     connect(&p->threadHandler, &LibraryThreadHandler::scannedTracks, this,
-            [this](int id, const TrackList& tracks) { p->scannedTracks(id, tracks); });
+            [this](int id, const TrackList& newTracks, const TrackList& existingTracks) {
+                p->scannedTracks(id, newTracks, existingTracks);
+            });
     connect(&p->threadHandler, &LibraryThreadHandler::tracksUpdated, this,
             [this](const TrackList& tracks) { p->updateTracks(tracks); });
     connect(&p->threadHandler, &LibraryThreadHandler::gotTracks, this,

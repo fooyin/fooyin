@@ -292,7 +292,9 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
     QObject::connect(&p->scanner, &LibraryScanner::progressChanged, this,
                      [this](int percent) { emit progressChanged(p->currentRequestId, percent); });
     QObject::connect(&p->scanner, &LibraryScanner::scannedTracks, this,
-                     [this](const TrackList& tracks) { emit scannedTracks(p->currentRequestId, tracks); });
+                     [this](const TrackList& newTracks, const TrackList& existingTracks) {
+                         emit scannedTracks(p->currentRequestId, newTracks, existingTracks);
+                     });
     QObject::connect(&p->scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(

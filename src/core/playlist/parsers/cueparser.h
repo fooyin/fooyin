@@ -26,5 +26,7 @@ class CueParser : public PlaylistParser
 {
 public:
     TrackList readPlaylist(const QString& file) override;
+
+    TrackList readEmbeddedCue(const QString& cueSheet, const QString& filepath);
 };
 } // namespace Fooyin

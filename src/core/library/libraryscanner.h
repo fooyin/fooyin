@@ -50,7 +50,7 @@ signals:
     void progressChanged(int percent);
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
-    void scannedTracks(const TrackList& tracks);
+    void scannedTracks(const TrackList& newTracks, const TrackList& existingTracks);
     void directoryChanged(const LibraryInfo& library, const QString& dir);
 
 public slots:

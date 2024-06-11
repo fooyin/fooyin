@@ -58,7 +58,7 @@ public:
 
 signals:
     void progressChanged(int id, int percent);
-    void scannedTracks(int id, const TrackList& tracks);
+    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks);
     void statusChanged(const LibraryInfo& library);
     void scanUpdate(const ScanResult& result);
     void tracksUpdated(const TrackList& tracks);

@@ -24,6 +24,7 @@
 
 #include <core/track.h>
 
+#include <QBuffer>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -45,6 +46,24 @@ struct CueSheet
     QString comment;
     int disc{-1};
 };
+
+void setupEncoding(QTextStream& in, QIODevice* file)
+{
+    const QByteArray data = file->peek(1024);
+    auto encoding         = QStringConverter::encodingForData(data);
+    if(encoding) {
+        in.setEncoding(encoding.value());
+    }
+    else {
+        const auto encodingName = Fooyin::Utils::detectEncoding(data);
+        if(!encodingName.isEmpty()) {
+            encoding = QStringConverter::encodingForName(encodingName.constData());
+            if(encoding) {
+                in.setEncoding(encoding.value());
+            }
+        }
+    }
+}
 
 QStringList splitCueLine(const QString& line)
 {
@@ -136,130 +155,170 @@ void finaliseTrack(const CueSheet& cue, Fooyin::Track& track)
         track.setComposer(cue.composer);
     }
 }
-} // namespace
 
-namespace Fooyin {
-TrackList CueParser::readPlaylist(const QString& file)
+void finaliseLastTrack(CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, bool skipNotFound,
+                       Fooyin::TrackList& tracks)
 {
-    TrackList tracks;
-
-    QFile cueFile{file};
-
-    if(!cueFile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Can't open cue file" << file;
-        return {};
-    }
-
-    QDir dir{file};
-    dir.cdUp();
-
-    CueSheet sheet;
-    sheet.cuePath = file;
-    Track track;
-    QString trackPath;
-
-    QTextStream in(&cueFile);
-
-    const QByteArray data = cueFile.peek(1024);
-    auto encoding         = QStringConverter::encodingForData(data);
-    if(encoding) {
-        in.setEncoding(encoding.value());
-    }
-    else {
-        const auto encodingName = Utils::detectEncoding(data);
-        if(!encodingName.isEmpty()) {
-            encoding = QStringConverter::encodingForName(encodingName.constData());
-            if(encoding) {
-                in.setEncoding(encoding.value());
-            }
-        }
-    }
-
-    while(!in.atEnd()) {
-        const QStringList parts = splitCueLine(in.readLine().trimmed());
-        if(parts.size() < 2) {
-            continue;
-        }
-
-        const QString& field = parts.at(0);
-        const QString& value = parts.at(1);
-
-        if(field.compare(u"PERFORMER", Qt::CaseInsensitive) == 0) {
-            if(track.isValid()) {
-                track.setArtists({value});
-            }
-            else {
-                sheet.albumArtist = value;
-            }
-        }
-        else if(field.compare(u"TITLE", Qt::CaseInsensitive) == 0) {
-            if(track.isValid()) {
-                track.setTitle(value);
-            }
-            else {
-                sheet.album = value;
-            }
-        }
-        else if(field.compare(u"COMPOSER", Qt::CaseInsensitive) == 0
-                || field.compare(u"SONGWRITER", Qt::CaseInsensitive) == 0) {
-            if(track.isValid()) {
-                track.setComposer(value);
-            }
-            else {
-                sheet.composer = value;
-            }
-        }
-        else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
-            trackPath = QDir::isAbsolutePath(value) ? value : dir.absoluteFilePath(value);
-            if(parts.size() > 2) {
-                sheet.type = parts.at(2);
-            }
-        }
-        else if(field.compare(u"REM", Qt::CaseInsensitive) == 0) {
-            readRemLine(parts.sliced(1), sheet);
-        }
-        else if(field.compare(u"TRACK", Qt::CaseInsensitive) == 0) {
-            if(QFile::exists(trackPath)) {
-                if(track.isValid()) {
-                    finaliseTrack(sheet, track);
-                    tracks.emplace_back(track);
-                }
-
-                track = Track{trackPath};
-                Tagging::readMetaData(track);
-                if(const int trackNum = parts.at(1).toInt(); trackNum > 0) {
-                    track.setTrackNumber(trackNum);
-                }
-            }
-        }
-        else if(field.compare(u"INDEX", Qt::CaseInsensitive) == 0) {
-            if(value == u"01" && parts.size() > 2) {
-                if(const auto start = msfToMs(parts.at(2))) {
-                    track.setOffset(start.value());
-
-                    if(const auto count = tracks.size(); count > 0) {
-                        Track& prevTrack = tracks.at(count - 1);
-                        prevTrack.setDuration(track.offset() - prevTrack.offset());
-                    }
-                }
-            }
-        }
-
-        // TODO: Implement a binary file decoder
-        if(sheet.type == u"BINARY") {
-            qInfo() << "[CUE] Unsupported file type:" << sheet.type;
-            return {};
-        }
-    }
-
-    if(track.isValid() && QFile::exists(trackPath)) {
+    if(track.isValid() && (QFile::exists(trackPath) || !skipNotFound)) {
         finaliseTrack(sheet, track);
         if(track.duration() > 0) {
             track.setDuration(track.duration() - track.offset());
         }
         tracks.emplace_back(track);
     }
+}
+
+void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, QString& trackPath, const QDir& dir,
+                    bool skipNotFound, bool skipFile, Fooyin::TrackList& tracks)
+{
+    const QStringList parts = splitCueLine(line);
+    if(parts.size() < 2) {
+        return;
+    }
+
+    const QString& field = parts.at(0);
+    const QString& value = parts.at(1);
+
+    if(field.compare(u"PERFORMER", Qt::CaseInsensitive) == 0) {
+        if(track.isValid()) {
+            track.setArtists({value});
+        }
+        else {
+            sheet.albumArtist = value;
+        }
+    }
+    else if(field.compare(u"TITLE", Qt::CaseInsensitive) == 0) {
+        if(track.isValid()) {
+            track.setTitle(value);
+        }
+        else {
+            sheet.album = value;
+        }
+    }
+    else if(field.compare(u"COMPOSER", Qt::CaseInsensitive) == 0
+            || field.compare(u"SONGWRITER", Qt::CaseInsensitive) == 0) {
+        if(track.isValid()) {
+            track.setComposer(value);
+        }
+        else {
+            sheet.composer = value;
+        }
+    }
+    else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
+        if(!skipFile) {
+            trackPath = dir.exists() ? (QDir::isAbsolutePath(value) ? value : dir.absoluteFilePath(value)) : trackPath;
+        }
+        if(parts.size() > 2) {
+            sheet.type = parts.at(2);
+        }
+    }
+    else if(field.compare(u"REM", Qt::CaseInsensitive) == 0) {
+        readRemLine(parts.sliced(1), sheet);
+    }
+    else if(field.compare(u"TRACK", Qt::CaseInsensitive) == 0) {
+        if(QFile::exists(trackPath) || !skipNotFound) {
+            if(track.isValid()) {
+                finaliseTrack(sheet, track);
+                tracks.emplace_back(track);
+            }
+
+            track = Fooyin::Track{trackPath};
+            Fooyin::Tagging::readMetaData(track);
+            if(const int trackNum = parts.at(1).toInt(); trackNum > 0) {
+                track.setTrackNumber(trackNum);
+            }
+        }
+    }
+    else if(field.compare(u"INDEX", Qt::CaseInsensitive) == 0) {
+        if(value == u"01" && parts.size() > 2) {
+            if(const auto start = msfToMs(parts.at(2))) {
+                track.setOffset(start.value());
+
+                if(const auto count = tracks.size(); count > 0) {
+                    Fooyin::Track& prevTrack = tracks.at(count - 1);
+                    prevTrack.setDuration(track.offset() - prevTrack.offset());
+                }
+            }
+        }
+    }
+
+    if(sheet.type == u"BINARY") {
+        qInfo() << "[CUE] Unsupported file type:" << sheet.type;
+        return;
+    }
+}
+
+Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const QDir& dir)
+{
+    Fooyin::TrackList tracks;
+
+    CueSheet sheet;
+    sheet.cuePath = filepath;
+
+    Fooyin::Track track;
+    QString trackPath;
+
+    QTextStream in{file};
+    setupEncoding(in, file);
+
+    while(!in.atEnd()) {
+        processCueLine(in.readLine().trimmed(), sheet, track, trackPath, dir, true, false, tracks);
+    }
+
+    finaliseLastTrack(sheet, track, trackPath, true, tracks);
 
     return tracks;
+}
+
+Fooyin::TrackList readEmbeddedCueTracks(QIODevice* file, const QString& filepath)
+{
+    Fooyin::TrackList tracks;
+    CueSheet sheet;
+
+    sheet.cuePath = QStringLiteral("Embedded");
+
+    Fooyin::Track track;
+    QString trackPath{filepath};
+
+    QTextStream in{file};
+    setupEncoding(in, file);
+
+    while(!in.atEnd()) {
+        processCueLine(in.readLine().trimmed(), sheet, track, trackPath, {}, false, true, tracks);
+    }
+
+    finaliseLastTrack(sheet, track, filepath, false, tracks);
+
+    return tracks;
+}
+} // namespace
+
+namespace Fooyin {
+TrackList CueParser::readPlaylist(const QString& file)
+{
+    QFile cueFile{file};
+
+    if(!cueFile.open(QIODevice::ReadOnly)) {
+        qWarning() << QStringLiteral("Could not open cue file %1 for reading: %2")
+                          .arg(cueFile.fileName(), cueFile.errorString());
+        return {};
+    }
+
+    QDir dir{file};
+    dir.cdUp();
+
+    return readCueTracks(&cueFile, file, dir);
+}
+
+TrackList CueParser::readEmbeddedCue(const QString& cueSheet, const QString& filepath)
+{
+    QByteArray cueBytes{cueSheet.toUtf8()};
+    QBuffer cueBuffer(&cueBytes);
+    if(!cueBuffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << QStringLiteral("Can't open cue buffer for reading: %1").arg(cueBuffer.errorString());
+        return {};
+    }
+
+    return readEmbeddedCueTracks(&cueBuffer, filepath);
 }
 } // namespace Fooyin
