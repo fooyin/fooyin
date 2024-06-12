@@ -664,6 +664,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     const auto handleFinished = [this]() {
         if(state() != Paused) {
             setState(Idle);
+            emit progressChanged(100);
             emit finished();
         }
     };
