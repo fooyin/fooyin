@@ -318,7 +318,7 @@ struct InfoModel::Private
     void addTrackGeneral(int total, const Track& track)
     {
         if(total > 1) {
-            checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, total, InfoItem::Total);
+            checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, 1, InfoItem::Total);
         }
 
         checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General, track.duration(),
