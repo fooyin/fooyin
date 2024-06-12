@@ -88,16 +88,24 @@ struct InfoWidget::Private
         setAltRowColors(settings->value<Settings::Gui::Internal::InfoAltColours>());
     }
 
+    void resetView()
+    {
+        spanHeaders();
+        view->expandAll();
+
+        if(scrollPos >= 0) {
+            view->verticalScrollBar()->setValue(std::exchange(scrollPos, -1));
+        }
+    }
+
     void spanHeaders() const
     {
         const int rowCount = model->rowCount({});
 
         for(int row{0}; row < rowCount; ++row) {
             const auto index = model->index(row, 0, {});
-            const auto type  = index.data(InfoItem::Type).value<InfoItem::ItemType>();
-            if(type == InfoItem::Header) {
+            if(model->hasChildren(index)) {
                 view->setFirstColumnSpanned(row, {}, true);
-                view->expand(index);
             }
         }
     }
@@ -134,12 +142,7 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->resetModel(); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() {
-        p->spanHeaders();
-        if(p->scrollPos >= 0) {
-            p->view->verticalScrollBar()->setValue(std::exchange(p->scrollPos, -1));
-        }
-    });
+    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->resetView(); });
 
     using namespace Settings::Gui::Internal;
 
