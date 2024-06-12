@@ -51,7 +51,9 @@ QString formatPercentage(const std::map<QString, int>& values)
 
     QStringList formattedList;
     for(const auto& [key, value] : ratios) {
-        formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(value, 'f', 1)));
+        if(key != u"-1") {
+            formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(value, 'f', 1)));
+        }
     }
 
     return formattedList.join(u"; ");
@@ -154,8 +156,23 @@ void InfoItem::addTrackValue(uint64_t value)
 
 void InfoItem::addTrackValue(int value)
 {
-    value = std::max(value, 0);
-    addTrackValue(static_cast<uint64_t>(value));
+    switch(m_valueType) {
+        case(ValueType::Concat):
+            addTrackValue(QString::number(value));
+            break;
+        case(ValueType::Average):
+            m_numValues.push_back(value);
+            break;
+        case(ValueType::Total):
+            m_numValue += value;
+            break;
+        case(ValueType::Max):
+            m_numValue = std::max(m_numValue, static_cast<uint64_t>(value));
+            break;
+        case(ValueType::Percentage):
+            m_percentValues[QString::number(value)]++;
+            break;
+    }
 }
 
 void InfoItem::addTrackValue(const QString& value)
@@ -325,12 +342,8 @@ struct InfoModel::Private
                           InfoItem::Total, Utils::msToStringExtended);
         checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
                           InfoItem::Percentage);
-
-        if(const int bitDepth = track.bitDepth(); bitDepth > 0) {
-            checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, bitDepth,
-                              InfoItem::Percentage);
-        }
-
+        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, track.bitDepth(),
+                          InfoItem::Percentage);
         checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
                           ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
                               return QString::number(bitrate) + QStringLiteral(" kbps");
