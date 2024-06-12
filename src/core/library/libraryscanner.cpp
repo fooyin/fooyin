@@ -211,7 +211,7 @@ struct LibraryScanner::Private
     TrackFieldMap trackPaths;
     TrackFieldMap missingFiles;
     TrackFieldMap missingHashes;
-    std::unordered_map<QString, uint64_t> existingCues;
+    std::unordered_map<QString, TrackList> existingCueTracks;
     std::unordered_map<QString, TrackList> missingCueTracks;
     std::set<QString> cueFilesScanned;
 
@@ -235,7 +235,7 @@ struct LibraryScanner::Private
         trackPaths.clear();
         missingFiles.clear();
         missingHashes.clear();
-        existingCues.clear();
+        existingCueTracks.clear();
         missingCueTracks.clear();
         cueFilesScanned.clear();
     }
@@ -294,13 +294,19 @@ struct LibraryScanner::Private
             track.setIsEnabled(true);
         };
 
-        if(existingCues.contains(cue)) {
-            if(existingCues.at(cue) < lastModified || !onlyModified) {
+        if(existingCueTracks.contains(cue)) {
+            const auto& tracks = existingCueTracks.at(cue);
+            if(tracks.front().modifiedTime() < lastModified || !onlyModified) {
                 const TrackList cueTracks = cueParser->readPlaylist(cue, true);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
                     tracksToUpdate.push_back(track);
+                    cueFilesScanned.emplace(track.filepath());
+                }
+            }
+            else {
+                for(const Track& track : tracks) {
                     cueFilesScanned.emplace(track.filepath());
                 }
             }
@@ -423,7 +429,7 @@ struct LibraryScanner::Private
             trackPaths.emplace(track.filepath(), track);
 
             if(track.hasCue()) {
-                existingCues.emplace(track.cuePath(), track.modifiedTime());
+                existingCueTracks[track.cuePath()].emplace_back(track);
                 if(!QFileInfo::exists(track.cuePath())) {
                     missingCueTracks[track.cuePath()].emplace_back(track);
                 }
