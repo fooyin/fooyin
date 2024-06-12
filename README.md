@@ -14,29 +14,31 @@
 
 ## A customisable music player
 
-fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local music
-collection. It's extendable through the use of plugins and many widgets make use of *FooScript* to offer an even deeper level of control.
+fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local 
+music collection. It's extensible using a plugin system and many widgets make use of FooScript to offer an even deeper 
+level of control.
 
-Audio playback is supported by FFmpeg alongside multiple options for output including ALSA and PipeWire, with more to come.
+A layout editing mode enables the entire user interface to be customised, starting from a blank slate or a preset layout.
 
-A *layout editing mode* enables the entire user interface to be customised,
-starting from a blank slate or a preset layout.
+Only Linux is supported at present, though support for other platforms is coming soon.
 
 | ![Simple](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/simple-dark.png)     | ![Browser](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/browser-dark.png) |
 |----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | ![Obsidian](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/obsidian-dark.png) | ![Wave](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/viewer-dark.png)     |
 
-Only Linux is supported at present, though support for other platforms is coming soon.
-
 ## Features
 
-* [x] Customisable layout
+* [x] Playback of: FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, Musepack, Monkey's Audio
 * [x] Gapless playback
+* [x] Audio output and device configuration
+* [x] CUE sheet support (including embedded)
+* [x] Fully customisable layout, starting from a blank window
+* [x] Customisable keyboard shortcuts
 * [x] Filter library on any field(s)
 * [x] Create and manage playlists
-* [x] Extend through plugins
+* [x] Extensible using a plugin system
 * [x] Tag editor
-* [x] Directory browser
+* [x] Directory browser, with support for direct playback
 * [x] Waveform seekbar
 * [x] MPRIS support
 

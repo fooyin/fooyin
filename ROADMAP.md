@@ -4,7 +4,7 @@ This document outlines the upcoming features for fooyin - they are listed in no 
 
 ## New Features
 
-* CUE support
+* ~~CUE support~~
 * ReplayGain support
 * ~~Playback queue~~
 * ~~MPRIS support~~
