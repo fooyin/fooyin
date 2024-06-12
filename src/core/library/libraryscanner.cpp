@@ -420,7 +420,7 @@ struct LibraryScanner::Private
     bool getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
     {
         for(const Track& track : tracks) {
-            trackPaths.emplace(track.uniqueFilepath(), track);
+            trackPaths.emplace(track.filepath(), track);
 
             if(track.hasCue()) {
                 existingCues.emplace(track.cuePath(), track.modifiedTime());
