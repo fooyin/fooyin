@@ -19,14 +19,14 @@
 
 #include "infomodel.h"
 
-#include <core/player/playercontroller.h>
+#include "infopopulator.h"
+
 #include <core/track.h>
-#include <utils/enum.h>
-#include <utils/utils.h>
 
 #include <QCollator>
 #include <QFileInfo>
 #include <QFont>
+#include <QThread>
 
 #include <algorithm>
 
@@ -204,174 +204,64 @@ struct InfoModel::Private
 {
     InfoModel* self;
 
-    std::unordered_map<QString, InfoItem> nodes;
+    QThread m_populatorThread;
+    InfoPopulator m_populator;
+    std::unordered_map<QString, InfoItem> m_nodes;
 
-    Options options{Default};
-    QFont headerFont;
+    Options m_options{Default};
+    QFont m_headerFont;
 
     explicit Private(InfoModel* self_)
         : self{self_}
     {
-        headerFont.setPointSize(headerFont.pointSize() + HeaderFontDelta);
+        m_populator.moveToThread(&m_populatorThread);
+
+        m_headerFont.setPointSize(m_headerFont.pointSize() + HeaderFontDelta);
     }
 
-    void reset()
+    void populate(InfoData data)
     {
+        self->beginResetModel();
         self->resetRoot();
-        nodes.clear();
-    }
+        m_nodes.clear();
 
-    InfoItem* getOrAddNode(const QString& key, const QString& name, ItemParent parent, InfoItem::ItemType type,
-                           InfoItem::ValueType valueType = InfoItem::Concat, InfoItem::FormatFunc numFunc = {})
-    {
-        if(key.isEmpty() || name.isEmpty()) {
-            return nullptr;
-        }
+        m_nodes = std::move(data.nodes);
 
-        if(nodes.contains(key)) {
-            return &nodes.at(key);
-        }
+        for(const auto& [parentKey, children] : data.parents) {
+            InfoItem* parent{nullptr};
 
-        InfoItem* parentItem{nullptr};
+            if(parentKey == u"Root") {
+                parent = self->rootItem();
+            }
+            else if(m_nodes.contains(parentKey)) {
+                parent = &m_nodes.at(parentKey);
+            }
 
-        if(parent == ItemParent::Root) {
-            parentItem = self->rootItem();
-        }
-        else {
-            const QString parentKey = Utils::Enum::toString(parent);
-            if(nodes.contains(parentKey)) {
-                parentItem = &nodes.at(parentKey);
+            if(parent) {
+                for(const auto& child : children) {
+                    if(m_nodes.contains(child)) {
+                        parent->appendChild(&m_nodes.at(child));
+                    }
+                }
             }
         }
 
-        if(!parentItem) {
-            return nullptr;
-        }
-
-        InfoItem item{type, name, parentItem, valueType, std::move(numFunc)};
-        InfoItem* node = &nodes.emplace(key, std::move(item)).first->second;
-        parentItem->appendChild(node);
-
-        return node;
-    }
-
-    void checkAddParentNode(InfoModel::ItemParent parent)
-    {
-        if(parent == InfoModel::ItemParent::Metadata) {
-            getOrAddNode(QStringLiteral("Metadata"), tr("Metadata"), ItemParent::Root, InfoItem::Header);
-        }
-        else if(parent == InfoModel::ItemParent::Location) {
-            getOrAddNode(QStringLiteral("Location"), tr("Location"), ItemParent::Root, InfoItem::Header);
-        }
-        else if(parent == InfoModel::ItemParent::General) {
-            getOrAddNode(QStringLiteral("General"), tr("General"), ItemParent::Root, InfoItem::Header);
-        }
-    }
-
-    void checkAddEntryNode(const QString& key, const QString& name, InfoModel::ItemParent parent)
-    {
-        checkAddParentNode(parent);
-        getOrAddNode(key, name, parent, InfoItem::Entry);
-    }
-
-    template <typename Value>
-    void checkAddEntryNode(const QString& key, const QString& name, InfoModel::ItemParent parent, Value&& value,
-                           InfoItem::ValueType valueType = InfoItem::ValueType::Concat,
-                           InfoItem::FormatFunc numFunc  = {})
-    {
-        if constexpr(std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>) {
-            if(value.isEmpty()) {
-                return;
-            }
-        }
-
-        checkAddParentNode(parent);
-        auto* node = getOrAddNode(key, name, parent, InfoItem::Entry, valueType, std::move(numFunc));
-        node->addTrackValue(std::forward<Value>(value));
-    }
-
-    void addTrackMetadata(const Track& track)
-    {
-        if(const auto artists = track.artists(); !artists.empty()) {
-            checkAddEntryNode(QStringLiteral("Artist"), tr("Artist"), ItemParent::Metadata, artists);
-        }
-
-        checkAddEntryNode(QStringLiteral("Title"), tr("Title"), ItemParent::Metadata, track.title());
-        checkAddEntryNode(QStringLiteral("Album"), tr("Album"), ItemParent::Metadata, track.album());
-        checkAddEntryNode(QStringLiteral("Date"), tr("Date"), ItemParent::Metadata, track.date());
-        checkAddEntryNode(QStringLiteral("Genre"), tr("Genre"), ItemParent::Metadata, track.genres());
-        checkAddEntryNode(QStringLiteral("AlbumArtist"), tr("Album Artist"), ItemParent::Metadata, track.albumArtist());
-
-        if(const int trackNumber = track.trackNumber(); trackNumber >= 0) {
-            checkAddEntryNode(QStringLiteral("TrackNumber"), tr("Track Number"), ItemParent::Metadata, trackNumber);
-        }
-    }
-
-    void addTrackLocation(int total, const Track& track)
-    {
-        const QFileInfo file{track.filepath()};
-
-        checkAddEntryNode(QStringLiteral("FileName"), total > 1 ? tr("File Names") : tr("File Name"),
-                          ItemParent::Location, file.fileName());
-        checkAddEntryNode(QStringLiteral("FolderName"), total > 1 ? tr("Folder Names") : tr("Folder Name"),
-                          ItemParent::Location, file.absolutePath());
-
-        if(total == 1) {
-            checkAddEntryNode(QStringLiteral("FilePath"), tr("File Path"), ItemParent::Location, track.filepath());
-        }
-
-        checkAddEntryNode(QStringLiteral("FileSize"), total > 1 ? tr("Total Size") : tr("File Size"),
-                          ItemParent::Location, track.fileSize(), InfoItem::Total,
-                          [](uint64_t size) -> QString { return Utils::formatFileSize(size, true); });
-        checkAddEntryNode(QStringLiteral("LastModified"), tr("Last Modified"), ItemParent::Location,
-                          track.modifiedTime(), InfoItem::Max, Utils::formatTimeMs);
-
-        if(total == 1) {
-            checkAddEntryNode(QStringLiteral("Added"), tr("Added"), ItemParent::Location, track.addedTime(),
-                              InfoItem::Max, Utils::formatTimeMs);
-        }
-    }
-
-    void addTrackGeneral(int total, const Track& track)
-    {
-        if(total > 1) {
-            checkAddEntryNode(QStringLiteral("Tracks"), tr("Tracks"), ItemParent::General, 1, InfoItem::Total);
-        }
-
-        checkAddEntryNode(QStringLiteral("Duration"), tr("Duration"), ItemParent::General, track.duration(),
-                          InfoItem::Total, Utils::msToStringExtended);
-        checkAddEntryNode(QStringLiteral("Channels"), tr("Channels"), ItemParent::General, track.channels(),
-                          InfoItem::Percentage);
-        checkAddEntryNode(QStringLiteral("BitDepth"), tr("Bit Depth"), ItemParent::General, track.bitDepth(),
-                          InfoItem::Percentage);
-        checkAddEntryNode(QStringLiteral("Bitrate"), total > 1 ? tr("Avg. Bitrate") : tr("Bitrate"),
-                          ItemParent::General, track.bitrate(), InfoItem::Average, [](uint64_t bitrate) -> QString {
-                              return QString::number(bitrate) + QStringLiteral(" kbps");
-                          });
-        checkAddEntryNode(QStringLiteral("SampleRate"), tr("Sample Rate"), ItemParent::General,
-                          QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);
-        checkAddEntryNode(QStringLiteral("Codec"), tr("Codec"), ItemParent::General, track.typeString(),
-                          InfoItem::Percentage);
-    }
-
-    void addTrackNodes(int total, const Track& track)
-    {
-        if(options & Metadata) {
-            addTrackMetadata(track);
-        }
-        if(options & Location) {
-            addTrackLocation(total, track);
-        }
-        if(options & General) {
-            addTrackGeneral(total, track);
-        }
+        self->endResetModel();
     }
 };
 
 InfoModel::InfoModel(QObject* parent)
     : TreeModel{parent}
     , p{std::make_unique<Private>(this)}
-{ }
+{
+    QObject::connect(&p->m_populator, &InfoPopulator::populated, this,
+                     [this](InfoData data) { p->populate(std::move(data)); });
+
+    QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
+        p->m_populator.stopThread();
+        p->m_populatorThread.quit();
+    });
+}
 
 InfoModel::~InfoModel() = default;
 
@@ -417,7 +307,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::FontRole) {
         if(type == InfoItem::Header) {
-            return p->headerFont;
+            return p->m_headerFont;
         }
         return {};
     }
@@ -440,44 +330,40 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
 
 InfoModel::Options InfoModel::options() const
 {
-    return p->options;
+    return p->m_options;
 }
 
 void InfoModel::setOption(Option option, bool enabled)
 {
     if(enabled) {
-        p->options |= option;
+        p->m_options |= option;
     }
     else {
-        p->options &= ~option;
+        p->m_options &= ~option;
     }
 }
 
 void InfoModel::setOptions(Options options)
 {
-    p->options = options;
+    p->m_options = options;
 }
 
 void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
 {
+    if(p->m_populatorThread.isRunning()) {
+        p->m_populator.stopThread();
+    }
+    else {
+        p->m_populatorThread.start();
+    }
+
     TrackList infoTracks{tracks};
 
     if(infoTracks.empty() && playingTrack.isValid()) {
         infoTracks.push_back(playingTrack);
     }
 
-    beginResetModel();
-    p->reset();
-
-    const int total = static_cast<int>(infoTracks.size());
-
-    if(total > 0) {
-        for(const Track& track : infoTracks) {
-            p->addTrackNodes(total, track);
-        }
-    }
-
-    endResetModel();
+    QMetaObject::invokeMethod(&p->m_populator, [this, infoTracks] { p->m_populator.run(p->m_options, infoTracks); });
 }
 } // namespace Fooyin
 

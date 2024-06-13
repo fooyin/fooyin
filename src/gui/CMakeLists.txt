@@ -62,6 +62,8 @@ set(SOURCES
     info/infodelegate.h
     info/infomodel.cpp
     info/infomodel.h
+    info/infopopulator.cpp
+    info/infopopulator.h
     info/infoview.cpp
     info/infoview.h
     info/infowidget.cpp
