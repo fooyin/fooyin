@@ -207,8 +207,13 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
         }
     }
     else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
-        if(!skipFile) {
-            trackPath = dir.exists() ? (QDir::isAbsolutePath(value) ? value : dir.absoluteFilePath(value)) : trackPath;
+        if(!skipFile && dir.exists()) {
+            if(QDir::isAbsolutePath(value)) {
+                trackPath = value;
+            }
+            else {
+                trackPath = dir.absoluteFilePath(value);
+            }
         }
         if(parts.size() > 2) {
             sheet.type = parts.at(2);
@@ -340,6 +345,10 @@ TrackList CueParser::readEmbeddedCue(const QString& cueSheet, const QString& fil
         return {};
     }
 
-    return readEmbeddedCueTracks(&cueBuffer, filepath);
+    TrackList tracks = readEmbeddedCueTracks(&cueBuffer, filepath);
+
+    cueBuffer.close();
+
+    return tracks;
 }
 } // namespace Fooyin

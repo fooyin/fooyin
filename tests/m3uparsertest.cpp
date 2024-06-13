@@ -17,7 +17,7 @@
  *
  */
 
-#include "core/playlist/parsers/cueparser.h"
+#include "core/playlist/parsers/m3uparser.h"
 
 #include <core/track.h>
 
@@ -26,29 +26,25 @@
 #include <QDir>
 
 namespace Fooyin::Testing {
-class CueParserTest : public ::testing::Test
+class M3uParserTest : public ::testing::Test
 {
 protected:
-    std::unique_ptr<PlaylistParser> m_parser{std::make_unique<CueParser>()};
+    std::unique_ptr<PlaylistParser> m_parser{std::make_unique<M3uParser>()};
 };
 
-TEST_F(CueParserTest, NoCue)
+TEST_F(M3uParserTest, NoCue)
 {
     const auto tracks = m_parser->readPlaylist(QStringLiteral(""), false);
     EXPECT_EQ(0, tracks.size());
 }
 
-TEST_F(CueParserTest, SingleCue)
+TEST_F(M3uParserTest, SingleCue)
 {
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(":/playlists/singlefiletest.cue"), false);
-    ASSERT_EQ(2, tracks.size());
+    const auto tracks = m_parser->readPlaylist(QStringLiteral(":/playlists/test.m3u"), false);
+    ASSERT_EQ(7, tracks.size());
 
-    EXPECT_EQ(1991, tracks.at(0).year());
-    EXPECT_EQ(u"Alternative", tracks.at(0).genre());
-    EXPECT_EQ(u"Loveless", tracks.at(0).album());
-    EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
-
-    EXPECT_EQ(1, tracks.at(1).discNumber());
-    EXPECT_EQ(2, tracks.at(1).trackNumber());
+    EXPECT_EQ(u"Rotten Apple", tracks.at(0).title());
+    EXPECT_EQ(u"Alice in Chains", tracks.at(0).artist());
+    EXPECT_EQ(u"Nutshell", tracks.at(1).title());
 }
 } // namespace Fooyin::Testing

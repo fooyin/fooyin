@@ -16,7 +16,7 @@ function(fooyin_add_test name)
 endfunction()
 
 qt_add_resources(TEST_SOURCES data/audio.qrc)
-qt_add_resources(TEST_SOURCES data/cue.qrc)
+qt_add_resources(TEST_SOURCES data/playlists.qrc)
 add_library(fooyin_test_data ${TEST_SOURCES})
 
 fooyin_add_test(test_scriptparser scriptparsertest.cpp)
@@ -39,3 +39,10 @@ target_link_libraries(
     test_cueparser
     PRIVATE fooyin_test_data
 )
+
+fooyin_add_test(test_m3uparser m3uparsertest.cpp)
+target_link_libraries(
+    test_m3uparser
+    PRIVATE fooyin_test_data
+)
+

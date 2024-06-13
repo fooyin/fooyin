@@ -96,6 +96,8 @@ set(SOURCES
     playlist/playlisthandler.cpp
     playlist/parsers/cueparser.cpp
     playlist/parsers/cueparser.h
+    playlist/parsers/m3uparser.cpp
+    playlist/parsers/m3uparser.h
     plugins/plugininfo.cpp
     plugins/plugininfo.h
     plugins/pluginmanager.cpp
