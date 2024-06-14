@@ -171,7 +171,7 @@ struct CoverProvider::Private
             const QStringList fileList = filePath.entryList({filePattern}, QDir::Files);
 
             if(!fileList.isEmpty()) {
-                return filePath.absolutePath() + QStringLiteral("/") + fileList.constFirst();
+                return filePath.absoluteFilePath(fileList.constFirst());
             }
         }
 
