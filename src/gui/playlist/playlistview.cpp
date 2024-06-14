@@ -104,7 +104,7 @@ public:
     explicit Private(PlaylistView* self);
 
     int itemCount() const;
-    void updateScrollBars() const;
+    void updateScrollBars();
     int itemAtCoordinate(int coordinate, bool includePadding) const;
     QModelIndex modelIndex(int i, int column = 0) const;
     void select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
@@ -177,6 +177,7 @@ public:
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
+    bool m_hidingScrollbar{false};
     bool m_layingOutItems{false};
     bool m_playlistLoaded{false};
 
@@ -228,7 +229,7 @@ int PlaylistView::Private::itemCount() const
     return static_cast<int>(m_viewItems.size());
 }
 
-void PlaylistView::Private::updateScrollBars() const
+void PlaylistView::Private::updateScrollBars()
 {
     QSize viewportSize = m_self->viewport()->size();
     if(!viewportSize.isValid()) {
@@ -260,9 +261,12 @@ void PlaylistView::Private::updateScrollBars() const
         contentsHeight += itemHeight(i) + itemPadding(i);
     }
 
-    verticalBar->setRange(0, contentsHeight - viewportSize.height());
-    verticalBar->setPageStep(viewportSize.height());
-    verticalBar->setSingleStep(std::max(viewportSize.height() / (itemsInViewport + 1), 2));
+    const int vMax = contentsHeight - viewportHeight;
+    m_hidingScrollbar = verticalBar->isVisible() && vMax > 0;
+
+    verticalBar->setRange(0, contentsHeight - viewportHeight);
+    verticalBar->setPageStep(viewportHeight);
+    verticalBar->setSingleStep(std::max(viewportHeight / (itemsInViewport + 1), 2));
 
     const int columnCount   = m_header->count();
     const int viewportWidth = viewportSize.width();
@@ -2274,6 +2278,10 @@ void PlaylistView::timerEvent(QTimerEvent* event)
         killTimer(p->m_columnResizeTimerId);
         p->m_columnResizeTimerId = 0;
         p->recalculatePadding();
+        if(p->m_hidingScrollbar) {
+            p->m_hidingScrollbar = false;
+            return;
+        }
         updateGeometries();
         viewport()->update();
     }
