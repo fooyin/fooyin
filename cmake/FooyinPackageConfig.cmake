@@ -37,6 +37,16 @@ if(CPACK_GENERATOR STREQUAL "DEB")
     set(CPACK_DEBIAN_FILE_NAME
             "fooyin_${CPACK_PACKAGE_VERSION}-${DIST_RELEASE}_${CPACK_SYSTEM_NAME}.deb"
     )
+
+    if("${DIST_RELEASE}" STREQUAL "jammy")
+        list(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS "libicu70" )
+    elseif("${DIST_RELEASE}" STREQUAL "mantic")
+        list(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS "libicu72" )
+    elseif("${DIST_RELEASE}" STREQUAL "noble")
+        list(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS "libicu74" )
+    else()
+        list(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS "libicu72" )
+    endif()
 endif()
 
 if(CPACK_GENERATOR STREQUAL "RPM")
