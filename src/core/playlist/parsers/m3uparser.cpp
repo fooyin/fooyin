@@ -100,18 +100,17 @@ TrackList M3uParser::readPlaylist(const QString& file, bool skipNotFound)
         return {};
     }
 
-    QString line = QString::fromUtf8(buffer.readLine()).trimmed();
-    if(line.startsWith(u"#EXTM3U")) {
-        type = Type::Extended;
-    }
-
     QDir dir{file};
     dir.cdUp();
 
     TrackList tracks;
 
     while(!buffer.atEnd()) {
-        line = QString::fromUtf8(buffer.readLine()).trimmed();
+        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+
+        if(line.startsWith(u"#EXTM3U")) {
+            type = Type::Extended;
+        }
 
         if(line.startsWith(u'#')) {
             if(type == Type::Extended && line.startsWith(u"#EXT")) {
