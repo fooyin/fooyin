@@ -23,6 +23,7 @@
 
 #include <core/trackfwd.h>
 
+#include <QDir>
 #include <QString>
 
 namespace Fooyin {
@@ -31,6 +32,9 @@ class FYCORE_EXPORT PlaylistParser
 public:
     virtual ~PlaylistParser() = default;
 
-    virtual TrackList readPlaylist(const QString& file, bool skipNotFound) = 0;
+    [[nodiscard]] virtual QString name() const                    = 0;
+    [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
+
+    virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) = 0;
 };
 } // namespace Fooyin

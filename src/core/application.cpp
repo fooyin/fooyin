@@ -25,6 +25,9 @@
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
+#include "playlist/parsers/cueparser.h"
+#include "playlist/parsers/m3uparser.h"
+#include "playlist/playlistparserregistry.h"
 #include "plugins/pluginmanager.h"
 #include "translations.h"
 
@@ -64,6 +67,7 @@ struct Application::Private
     PlayerController* playerController;
     EngineHandler engine;
     LibraryManager* libraryManager;
+    PlaylistParserRegistry parserRegistry;
     UnifiedMusicLibrary* library;
     PlaylistHandler* playlistHandler;
 
@@ -82,13 +86,15 @@ struct Application::Private
         , playerController{new PlayerController(settingsManager, self)}
         , engine{playerController, settingsManager}
         , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, self)}
-        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), settingsManager, self)}
+        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), &parserRegistry, settingsManager,
+                                          self)}
         , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, self)}
         , pluginManager{settingsManager}
         , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
                             library,        playlistHandler, settingsManager}
     {
         registerTypes();
+        registerPlaylistParsers();
         loadPlugins();
 
         settingsSaveTimer.start(SettingsSaveInterval, self);
@@ -104,6 +110,12 @@ struct Application::Private
         qRegisterMetaType<OutputCreator>("OutputCreator");
         qRegisterMetaType<LibraryInfo>("LibraryInfo");
         qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
+    }
+
+    void registerPlaylistParsers()
+    {
+        parserRegistry.registerParser(std::make_unique<CueParser>());
+        parserRegistry.registerParser(std::make_unique<M3uParser>());
     }
 
     void loadPlugins()

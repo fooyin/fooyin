@@ -291,7 +291,8 @@ void Playlist::resetFlags()
 
 QStringList Playlist::supportedPlaylistExtensions()
 {
-    static const QStringList supportedExtensions = {QStringLiteral("*.cue")};
+    static const QStringList supportedExtensions
+        = {QStringLiteral("*.cue"), QStringLiteral("*.m3u"), QStringLiteral("*.m3u8")};
     return supportedExtensions;
 }
 

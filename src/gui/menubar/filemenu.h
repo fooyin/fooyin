@@ -36,6 +36,8 @@ signals:
     void requestAddFiles();
     void requestAddFolders();
     void requestNewPlaylist();
+    void requestLoadPlaylist();
+    void requestSavePlaylist();
 
 private:
     ActionManager* m_actionManager;

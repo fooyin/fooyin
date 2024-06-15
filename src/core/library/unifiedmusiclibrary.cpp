@@ -60,12 +60,12 @@ struct UnifiedMusicLibrary::Private
     std::unordered_map<QString, Track> pendingStatUpdates;
 
     Private(UnifiedMusicLibrary* self_, LibraryManager* libraryManager_, DbConnectionPoolPtr dbPool_,
-            SettingsManager* settings_)
+            PlaylistParserRegistry* parserRegistry, SettingsManager* settings_)
         : self{self_}
         , libraryManager{libraryManager_}
         , dbPool{std::move(dbPool_)}
         , settings{settings_}
-        , threadHandler{dbPool, self, settings}
+        , threadHandler{dbPool, self, parserRegistry, settings}
     { }
 
     void loadTracks(const TrackList& trackToLoad)
@@ -210,9 +210,10 @@ struct UnifiedMusicLibrary::Private
 };
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
-                                         SettingsManager* settings, QObject* parent)
+                                         PlaylistParserRegistry* parserRegistry, SettingsManager* settings,
+                                         QObject* parent)
     : MusicLibrary{parent}
-    , p{std::make_unique<Private>(this, libraryManager, std::move(dbPool), settings)}
+    , p{std::make_unique<Private>(this, libraryManager, std::move(dbPool), parserRegistry, settings)}
 {
     connect(p->libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     connect(p->libraryManager, &LibraryManager::libraryRemoved, this,

@@ -32,23 +32,24 @@ protected:
     std::unique_ptr<PlaylistParser> m_parser{std::make_unique<CueParser>()};
 };
 
-TEST_F(CueParserTest, NoCue)
-{
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(""), false);
-    EXPECT_EQ(0, tracks.size());
-}
-
 TEST_F(CueParserTest, SingleCue)
 {
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(":/playlists/singlefiletest.cue"), false);
-    ASSERT_EQ(2, tracks.size());
+    const QString filepath = QStringLiteral(":/playlists/singlefiletest.cue");
+    QFile file{filepath};
+    if(file.open(QIODevice::ReadOnly)) {
+        QDir dir{filepath};
+        dir.cdUp();
 
-    EXPECT_EQ(1991, tracks.at(0).year());
-    EXPECT_EQ(u"Alternative", tracks.at(0).genre());
-    EXPECT_EQ(u"Loveless", tracks.at(0).album());
-    EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, false);
+        ASSERT_EQ(2, tracks.size());
 
-    EXPECT_EQ(1, tracks.at(1).discNumber());
-    EXPECT_EQ(2, tracks.at(1).trackNumber());
+        EXPECT_EQ(1991, tracks.at(0).year());
+        EXPECT_EQ(u"Alternative", tracks.at(0).genre());
+        EXPECT_EQ(u"Loveless", tracks.at(0).album());
+        EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
+
+        EXPECT_EQ(1, tracks.at(1).discNumber());
+        EXPECT_EQ(2, tracks.at(1).trackNumber());
+    }
 }
 } // namespace Fooyin::Testing

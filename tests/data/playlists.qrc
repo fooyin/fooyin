@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>playlists/singlefiletest.cue</file>
-        <file>playlists/test.m3u</file>
+        <file>playlists/extendedtest.m3u</file>
+        <file>playlists/standardtest.m3u</file>
     </qresource>
 </RCC>

@@ -59,6 +59,16 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
     QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
 
+    auto* loadPlaylist        = new QAction(tr("&Load Playlist"), this);
+    auto* loadPlaylistCommand = m_actionManager->registerAction(loadPlaylist, Constants::Actions::LoadPlaylist);
+    fileMenu->addAction(loadPlaylistCommand, Actions::Groups::Two);
+    QObject::connect(loadPlaylist, &QAction::triggered, this, &FileMenu::requestLoadPlaylist);
+
+    // auto* savePlaylist        = new QAction(tr("&Save Playlist"), this);
+    // auto* savePlaylistCommand = m_actionManager->registerAction(savePlaylist, Constants::Actions::SavePlaylist);
+    // fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
+    // QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
+
     fileMenu->addSeparator();
 
     auto* quit        = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);

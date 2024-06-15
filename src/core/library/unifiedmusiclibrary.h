@@ -32,8 +32,8 @@ class UnifiedMusicLibrary : public MusicLibrary
     Q_OBJECT
 
 public:
-    UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool, SettingsManager* settings,
-                        QObject* parent = nullptr);
+    UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
+                        PlaylistParserRegistry* parserRegistry, SettingsManager* settings, QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
     void loadAllTracks() override;

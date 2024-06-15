@@ -250,14 +250,14 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
     }
 }
 
-Fooyin::TrackList readCueTracks(QFile* file, const QString& filepath, const QDir& dir, bool skipNotFound)
+Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const QDir& dir, bool skipNotFound)
 {
     Fooyin::TrackList tracks;
 
     CueSheet sheet;
     sheet.cuePath = filepath;
 
-    const QFileInfo cueInfo{*file};
+    const QFileInfo cueInfo{filepath};
     const QDateTime lastModified{cueInfo.lastModified()};
     if(lastModified.isValid()) {
         sheet.lastModified = static_cast<uint64_t>(lastModified.toMSecsSinceEpoch());
@@ -312,43 +312,23 @@ Fooyin::TrackList readEmbeddedCueTracks(QIODevice* file, const QString& filepath
 } // namespace
 
 namespace Fooyin {
-TrackList CueParser::readPlaylist(const QString& file, bool skipNotFound)
+QString CueParser::name() const
 {
-    if(file.isEmpty()) {
-        return {};
-    }
-
-    QFile cueFile{file};
-
-    if(!cueFile.open(QIODevice::ReadOnly)) {
-        qWarning() << QStringLiteral("Could not open cue file %1 for reading: %2")
-                          .arg(cueFile.fileName(), cueFile.errorString());
-        return {};
-    }
-
-    QDir dir{file};
-    dir.cdUp();
-
-    return readCueTracks(&cueFile, file, dir, skipNotFound);
+    return QStringLiteral("CUE");
 }
 
-TrackList CueParser::readEmbeddedCue(const QString& cueSheet, const QString& filepath)
+QStringList CueParser::supportedExtensions() const
 {
-    if(cueSheet.isEmpty() || filepath.isEmpty()) {
-        return {};
+    static const QStringList extensions{QStringLiteral("cue")};
+    return extensions;
+}
+
+TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound)
+{
+    if(dir.path() == u".") {
+        return readEmbeddedCueTracks(device, filepath);
     }
 
-    QByteArray cueBytes{cueSheet.toUtf8()};
-    QBuffer cueBuffer(&cueBytes);
-    if(!cueBuffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << QStringLiteral("Can't open cue buffer for reading: %1").arg(cueBuffer.errorString());
-        return {};
-    }
-
-    TrackList tracks = readEmbeddedCueTracks(&cueBuffer, filepath);
-
-    cueBuffer.close();
-
-    return tracks;
+    return readCueTracks(device, filepath, dir, skipNotFound);
 }
 } // namespace Fooyin

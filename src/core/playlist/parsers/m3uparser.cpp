@@ -73,24 +73,23 @@ bool processMetadata(const QString& line, Metadata& metadata)
 } // namespace
 
 namespace Fooyin {
-TrackList M3uParser::readPlaylist(const QString& file, bool skipNotFound)
+QString M3uParser::name() const
 {
-    if(file.isEmpty()) {
-        return {};
-    }
+    return QStringLiteral("M3U");
+}
 
+QStringList M3uParser::supportedExtensions() const
+{
+    static const QStringList extensions{QStringLiteral("m3u"), QStringLiteral("m3u8")};
+    return extensions;
+}
+
+TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir, bool skipNotFound)
+{
     Type type{Type::Standard};
     Metadata metadata;
 
-    QFile m3uFile{file};
-
-    if(!m3uFile.open(QIODevice::ReadOnly)) {
-        qWarning() << QStringLiteral("Could not open m3u file %1 for reading: %2")
-                          .arg(m3uFile.fileName(), m3uFile.errorString());
-        return {};
-    }
-
-    QString m3u = QString::fromUtf8(m3uFile.readAll());
+    QString m3u = QString::fromUtf8(device->readAll());
     m3u.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
     m3u.replace(u'\r', u'\n');
 
@@ -100,9 +99,6 @@ TrackList M3uParser::readPlaylist(const QString& file, bool skipNotFound)
         return {};
     }
 
-    QDir dir{file};
-    dir.cdUp();
-
     TrackList tracks;
 
     while(!buffer.atEnd()) {
@@ -110,6 +106,7 @@ TrackList M3uParser::readPlaylist(const QString& file, bool skipNotFound)
 
         if(line.startsWith(u"#EXTM3U")) {
             type = Type::Extended;
+            continue;
         }
 
         if(line.startsWith(u'#')) {

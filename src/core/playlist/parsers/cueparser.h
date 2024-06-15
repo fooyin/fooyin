@@ -27,7 +27,9 @@ namespace Fooyin {
 class FYCORE_EXPORT CueParser : public PlaylistParser
 {
 public:
-    TrackList readPlaylist(const QString& file, bool skipNotFound) override;
-    TrackList readEmbeddedCue(const QString& cueSheet, const QString& filepath);
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QStringList supportedExtensions() const override;
+
+    TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
 };
 } // namespace Fooyin

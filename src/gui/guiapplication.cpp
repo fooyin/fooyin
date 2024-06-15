@@ -334,6 +334,7 @@ struct GuiApplication::Private
         });
         QObject::connect(fileMenu, &FileMenu::requestAddFiles, self, [this]() { addFiles(); });
         QObject::connect(fileMenu, &FileMenu::requestAddFolders, self, [this]() { addFolders(); });
+        QObject::connect(fileMenu, &FileMenu::requestLoadPlaylist, self, [this]() { loadPlaylist(); });
         QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
         QObject::connect(viewMenu, &ViewMenu::openScriptSandbox, self, [this]() {
             auto* sandboxDialog = new SandboxDialog(&selectionController, settingsManager, mainWindow.get());
@@ -633,6 +634,30 @@ struct GuiApplication::Private
     void openFiles(const QList<QUrl>& urls) const
     {
         playlistInteractor.filesToNewPlaylist(QStringLiteral("Default"), urls, true);
+    }
+
+    void loadPlaylist() const
+    {
+        const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(QStringLiteral(" "));
+        const QString playlistFilter     = tr("Playlists (%1)").arg(playlistExtensions);
+
+        QUrl dir = QUrl::fromLocalFile(QDir::homePath());
+        if(const auto lastPath = settingsManager->fileValue(QString::fromLatin1(LastFilePath)).toString();
+           !lastPath.isEmpty()) {
+            dir = lastPath;
+        }
+
+        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), dir, playlistFilter);
+
+        if(files.empty()) {
+            return;
+        }
+
+        settingsManager->fileSet(QString::fromLatin1(LastFilePath), files.front());
+
+        const QFileInfo info{files.front().toLocalFile()};
+
+        playlistInteractor.filesToNewPlaylist(info.completeBaseName(), files);
     }
 };
 

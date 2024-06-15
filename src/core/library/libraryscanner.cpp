@@ -24,8 +24,10 @@
 #include "library/libraryinfo.h"
 #include "librarywatcher.h"
 #include "playlist/parsers/cueparser.h"
+#include "playlist/playlistparserregistry.h"
 #include "tagging/tagreader.h"
 
+#include <core/playlist/playlist.h>
 #include <core/playlist/playlistparser.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
@@ -48,7 +50,7 @@ struct LibraryDirectory
 {
     QString directory;
     QStringList files;
-    QStringList cues;
+    QStringList playlists;
 };
 using LibraryDirectories = std::vector<LibraryDirectory>;
 
@@ -89,6 +91,7 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
     stack.emplace(baseDirectory);
 
     static const QStringList fileExtensions = Fooyin::Track::supportedFileExtensions();
+    static const QStringList playlistExtensions{Fooyin::Playlist::supportedPlaylistExtensions()};
     static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
     while(!stack.empty()) {
@@ -97,7 +100,7 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
 
         const QFileInfo info{dir.absolutePath()};
         QStringList files;
-        QStringList cues;
+        QStringList playlists;
 
         if(info.isDir()) {
             const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -110,24 +113,24 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
             }
             const QFileInfoList foundCues = dir.entryInfoList(cueExtensions, QDir::Files);
             for(const auto& file : foundCues) {
-                cues.append(file.absoluteFilePath());
+                playlists.append(file.absoluteFilePath());
             }
 
-            dirs.emplace_back(dir.absolutePath(), files, cues);
+            dirs.emplace_back(dir.absolutePath(), files, playlists);
         }
         else {
             dir.cdUp();
             if(hasMatchingExtension(info.fileName(), fileExtensions)) {
                 files.append(info.absoluteFilePath());
                 if(const auto cue = findMatchingCue(info)) {
-                    cues.append(cue.value());
+                    playlists.append(cue.value());
                 }
             }
-            else if(hasMatchingExtension(info.fileName(), cueExtensions)) {
-                cues.append(info.absoluteFilePath());
+            else if(hasMatchingExtension(info.fileName(), playlistExtensions)) {
+                playlists.append(info.absoluteFilePath());
             }
 
-            dirs.emplace_back(dir.absolutePath(), files, cues);
+            dirs.emplace_back(dir.absolutePath(), files, playlists);
         }
     }
 
@@ -150,9 +153,9 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls)
             if(hasMatchingExtension(file.fileName(), fileExtensions)) {
                 libDir.files.append(file.absoluteFilePath());
             }
-            else if(!libDir.cues.contains(file.absoluteFilePath())
+            else if(!libDir.playlists.contains(file.absoluteFilePath())
                     && hasMatchingExtension(file.fileName(), cueExtensions)) {
-                libDir.cues.append(file.absoluteFilePath());
+                libDir.playlists.append(file.absoluteFilePath());
             }
         }
         else {
@@ -197,13 +200,14 @@ struct LibraryScanner::Private
     LibraryScanner* self;
 
     DbConnectionPoolPtr dbPool;
+    PlaylistParserRegistry* parserRegistry;
     SettingsManager* settings;
 
     std::unique_ptr<DbConnectionHandler> dbHandler;
 
     LibraryInfo currentLibrary;
     TrackDatabase trackDatabase;
-    std::unique_ptr<CueParser> cueParser;
+    CueParser* cueParser;
 
     TrackList tracksToStore;
     TrackList tracksToUpdate;
@@ -221,11 +225,13 @@ struct LibraryScanner::Private
 
     std::unordered_map<int, LibraryWatcher> watchers;
 
-    Private(LibraryScanner* self_, DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
+    Private(LibraryScanner* self_, DbConnectionPoolPtr dbPool_, PlaylistParserRegistry* parserRegistry_,
+            SettingsManager* settings_)
         : self{self_}
         , dbPool{std::move(dbPool_)}
+        , parserRegistry{parserRegistry_}
         , settings{settings_}
-        , cueParser{std::make_unique<CueParser>()}
+        , cueParser{static_cast<CueParser*>(parserRegistry->parserForExtension(QStringLiteral("*.cue")))}
     { }
 
     void cleanupScan()
@@ -275,6 +281,51 @@ struct LibraryScanner::Private
         trackDatabase.storeTracks(tracks);
     }
 
+    TrackList readPlaylistTracks(const QString& file) const
+    {
+        if(file.isEmpty()) {
+            return {};
+        }
+
+        QFile playlistFile{file};
+        if(!playlistFile.open(QIODevice::ReadOnly)) {
+            qWarning() << QStringLiteral("Could not open playlistFile file %1 for reading: %2")
+                              .arg(playlistFile.fileName(), playlistFile.errorString());
+            return {};
+        }
+
+        const QFileInfo info{playlistFile};
+        QDir dir{file};
+        dir.cdUp();
+
+        if(auto* parser = parserRegistry->parserForExtension(info.suffix())) {
+            return parser->readPlaylist(&playlistFile, file, dir, true);
+        }
+
+        return {};
+    }
+
+    TrackList readEmbeddedPlaylistTracks(const Track& track) const
+    {
+        const auto cues = track.extraTag(QStringLiteral("CUESHEET"));
+        QByteArray bytes{cues.front().toUtf8()};
+        QBuffer buffer(&bytes);
+        if(!buffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qWarning() << QStringLiteral("Can't open buffer for reading: %1").arg(buffer.errorString());
+            return {};
+        }
+
+        if(auto* parser = parserRegistry->parserForExtension(QStringLiteral("cue"))) {
+            TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), QStringLiteral(""), false);
+            for(auto& plTrack : tracks) {
+                plTrack.generateHash();
+            }
+            return tracks;
+        }
+
+        return {};
+    }
+
     void readCue(const QString& cue, const QDir& baseDir, bool onlyModified)
     {
         const QFileInfo info{cue};
@@ -297,7 +348,7 @@ struct LibraryScanner::Private
         if(existingCueTracks.contains(cue)) {
             const auto& tracks = existingCueTracks.at(cue);
             if(tracks.front().modifiedTime() < lastModified || !onlyModified) {
-                const TrackList cueTracks = cueParser->readPlaylist(cue, true);
+                const TrackList cueTracks = readPlaylistTracks(cue);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
@@ -320,7 +371,7 @@ struct LibraryScanner::Private
                 }
             }
             else {
-                const TrackList cueTracks = cueParser->readPlaylist(cue, true);
+                const TrackList cueTracks = readPlaylistTracks(cue);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
@@ -370,8 +421,7 @@ struct LibraryScanner::Private
                     missingFiles.erase(changedTrack.filename());
 
                     if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                        const auto cueSheets = changedTrack.extraTag(QStringLiteral("CUESHEET"));
-                        TrackList cueTracks  = cueParser->readEmbeddedCue(cueSheets.front(), file);
+                        TrackList cueTracks = readEmbeddedPlaylistTracks(changedTrack);
                         for(Track& cueTrack : cueTracks) {
                             setTrackProps(cueTrack);
                             tracksToUpdate.push_back(cueTrack);
@@ -402,8 +452,7 @@ struct LibraryScanner::Private
                     setTrackProps(track);
 
                     if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                        const auto cueSheets = track.extraTag(QStringLiteral("CUESHEET"));
-                        TrackList cueTracks  = cueParser->readEmbeddedCue(cueSheets.front(), file);
+                        TrackList cueTracks = readEmbeddedPlaylistTracks(track);
                         for(Track& cueTrack : cueTracks) {
                             setTrackProps(cueTrack);
                             tracksToStore.push_back(cueTrack);
@@ -447,7 +496,7 @@ struct LibraryScanner::Private
         tracksProcessed = 0;
         totalTracks     = static_cast<double>(
             std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
-                return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.cues.size());
+                return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
             }));
         currentProgress = 0;
 
@@ -500,9 +549,10 @@ struct LibraryScanner::Private
     }
 };
 
-LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
+LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, PlaylistParserRegistry* parserRegistry,
+                               SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), parserRegistry, settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -671,38 +721,40 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     const LibraryDirectories dirs = getDirectories(urls);
 
-    p->totalTracks
-        = static_cast<double>(std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
-              return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.cues.size());
-          }));
-    std::set<QString> cueFilesScanned;
+    p->totalTracks = static_cast<double>(
+        std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
+            return sum + dir.files.size() + dir.playlists.size();
+        }));
+    std::set<QString> filesScanned;
 
-    for(const auto& [_, files, cues] : dirs) {
+    for(const auto& [_, files, playlists] : dirs) {
         if(!mayRun()) {
             handleFinished();
             return;
         }
 
-        for(const auto& cue : cues) {
-            const TrackList cueTracks = p->cueParser->readPlaylist(cue, true);
-            for(const Track& cueTrack : cueTracks) {
-                const auto trackKey = cueTrack.filepath();
+        for(const auto& playlist : playlists) {
+            const TrackList playlistTracks = p->readPlaylistTracks(playlist);
+            for(const Track& playlistTrack : playlistTracks) {
+                const auto trackKey = playlistTrack.filepath();
+
                 if(trackMap.contains(trackKey)) {
                     const auto existingTracks = trackMap.equal_range(trackKey);
                     for(auto it = existingTracks.first; it != existingTracks.second; ++it) {
-                        if(it->second.uniqueFilepath() == cueTrack.uniqueFilepath()) {
+                        if(it->second.uniqueFilepath() == playlistTrack.uniqueFilepath()) {
                             tracksScanned.push_back(it->second);
                             break;
                         }
                     }
                 }
-                else {
-                    Track track{cueTrack};
+
+                if(!trackMap.contains(trackKey)) {
+                    Track track{playlistTrack};
                     track.generateHash();
                     tracksToStore.push_back(track);
                 }
 
-                cueFilesScanned.emplace(cueTrack.filepath());
+                filesScanned.emplace(playlistTrack.filepath());
             }
 
             ++p->tracksProcessed;
@@ -710,19 +762,20 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
 
         for(const auto& file : files) {
-            if(!cueFilesScanned.contains(file)) {
+            if(!filesScanned.contains(file)) {
                 if(trackMap.contains(file)) {
                     const auto existingTracks = trackMap.equal_range(file);
                     for(auto it = existingTracks.first; it != existingTracks.second; ++it) {
-                        tracksScanned.push_back(it->second);
+                        if(!it->second.hasCue()) {
+                            tracksScanned.push_back(it->second);
+                        }
                     }
                 }
                 else {
                     Track track{file};
                     if(Tagging::readMetaData(track)) {
                         if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                            const auto cueSheets      = track.extraTag(QStringLiteral("CUESHEET"));
-                            const TrackList cueTracks = p->cueParser->readEmbeddedCue(cueSheets.front(), file);
+                            const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
                             std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
                         }
                         else {

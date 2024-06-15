@@ -27,17 +27,19 @@
 #include <QObject>
 
 namespace Fooyin {
-class SettingsManager;
 class MusicLibrary;
+class PlaylistParserRegistry;
 struct ScanResult;
 struct ScanRequest;
+class SettingsManager;
 
 class LibraryThreadHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library, SettingsManager* settings,
+    explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
+                                  PlaylistParserRegistry* parserRegistry, SettingsManager* settings,
                                   QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 

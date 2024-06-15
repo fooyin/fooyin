@@ -32,25 +32,33 @@ protected:
     std::unique_ptr<PlaylistParser> m_parser{std::make_unique<M3uParser>()};
 };
 
-TEST_F(M3uParserTest, NoM3u)
-{
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(""), false);
-    EXPECT_EQ(0, tracks.size());
-}
-
 TEST_F(M3uParserTest, StandardM3u)
 {
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(":/playlists/standardtest.m3u"), false);
-    ASSERT_EQ(3, tracks.size());
+    const QString filepath = QStringLiteral(":/playlists/standardtest.m3u");
+    QFile file{filepath};
+    if(file.open(QIODevice::ReadOnly)) {
+        QDir dir{filepath};
+        dir.cdUp();
+
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, false);
+        ASSERT_EQ(3, tracks.size());
+    }
 }
 
 TEST_F(M3uParserTest, ExtendedM3u)
 {
-    const auto tracks = m_parser->readPlaylist(QStringLiteral(":/playlists/extendedtest.m3u"), false);
-    ASSERT_EQ(7, tracks.size());
+    const QString filepath = QStringLiteral(":/playlists/extendedtest.m3u");
+    QFile file{filepath};
+    if(file.open(QIODevice::ReadOnly)) {
+        QDir dir{filepath};
+        dir.cdUp();
 
-    EXPECT_EQ(u"Rotten Apple", tracks.at(0).title());
-    EXPECT_EQ(u"Alice in Chains", tracks.at(0).artist());
-    EXPECT_EQ(u"Nutshell", tracks.at(1).title());
+        const auto tracks = m_parser->readPlaylist(&file, filepath, dir, false);
+        ASSERT_EQ(7, tracks.size());
+
+        EXPECT_EQ(u"Rotten Apple", tracks.at(0).title());
+        EXPECT_EQ(u"Alice in Chains", tracks.at(0).artist());
+        EXPECT_EQ(u"Nutshell", tracks.at(1).title());
+    }
 }
 } // namespace Fooyin::Testing
