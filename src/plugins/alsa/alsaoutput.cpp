@@ -233,31 +233,31 @@ void getPcmDevices(Fooyin::OutputDevices& devices)
 namespace Fooyin::Alsa {
 struct AlsaOutput::Private
 {
-    AlsaOutput* self;
+    AlsaOutput* m_self;
 
-    AudioFormat format;
+    AudioFormat m_format;
 
-    bool initialised{false};
+    bool m_initialised{false};
 
-    PcmHandleUPtr pcmHandle{nullptr};
-    snd_pcm_uframes_t bufferSize{8192};
-    snd_pcm_uframes_t periodSize{1024};
-    bool pausable{true};
-    double volume{1.0};
-    QString device{QStringLiteral("default")};
-    bool started{false};
+    PcmHandleUPtr m_pcmHandle{nullptr};
+    snd_pcm_uframes_t m_bufferSize{8192};
+    snd_pcm_uframes_t m_periodSize{1024};
+    bool m_pausable{true};
+    double m_volume{1.0};
+    QString m_device{QStringLiteral("default")};
+    bool m_started{false};
 
-    explicit Private(AlsaOutput* self_)
-        : self{self_}
+    explicit Private(AlsaOutput* self)
+        : m_self{self}
     { }
 
     void reset()
     {
-        if(pcmHandle) {
-            self->drain();
-            pcmHandle.reset();
+        if(m_pcmHandle) {
+            m_self->drain();
+            m_pcmHandle.reset();
         }
-        started = false;
+        m_started = false;
     }
 
     bool initAlsa()
@@ -265,13 +265,14 @@ struct AlsaOutput::Private
         int err{-1};
         {
             snd_pcm_t* rawHandle;
-            err = snd_pcm_open(&rawHandle, device.toLocal8Bit().constData(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+            err = snd_pcm_open(&rawHandle, m_device.toLocal8Bit().constData(), SND_PCM_STREAM_PLAYBACK,
+                               SND_PCM_NONBLOCK);
             if(checkError(err, QStringLiteral("Failed to open device"))) {
                 return false;
             }
-            pcmHandle = {rawHandle, PcmHandleDeleter()};
+            m_pcmHandle = {rawHandle, PcmHandleDeleter()};
         }
-        snd_pcm_t* handle = pcmHandle.get();
+        snd_pcm_t* handle = m_pcmHandle.get();
 
         snd_pcm_hw_params_t* hwParams;
         snd_pcm_hw_params_alloca(&hwParams);
@@ -281,14 +282,14 @@ struct AlsaOutput::Private
             return false;
         }
 
-        pausable = snd_pcm_hw_params_can_pause(hwParams);
+        m_pausable = snd_pcm_hw_params_can_pause(hwParams);
 
         err = snd_pcm_hw_params_set_access(handle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED);
         if(checkError(err, QStringLiteral("Failed to set access mode"))) {
             return false;
         }
 
-        const snd_pcm_format_t alsaFormat = findAlsaFormat(format.sampleFormat());
+        const snd_pcm_format_t alsaFormat = findAlsaFormat(m_format.sampleFormat());
         if(checkError(alsaFormat, QStringLiteral("Format not supported"))) {
             return false;
         }
@@ -303,14 +304,14 @@ struct AlsaOutput::Private
             return false;
         }
 
-        const auto sampleRate = static_cast<uint32_t>(format.sampleRate());
+        const auto sampleRate = static_cast<uint32_t>(m_format.sampleRate());
 
         err = snd_pcm_hw_params_set_rate(handle, hwParams, sampleRate, 0);
         if(checkError(err, QStringLiteral("Failed to set sample rate"))) {
             return false;
         }
 
-        uint32_t channelCount = format.channelCount();
+        uint32_t channelCount = m_format.channelCount();
 
         err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
         if(checkError(err, QStringLiteral("Failed to set channel count"))) {
@@ -323,13 +324,13 @@ struct AlsaOutput::Private
             return false;
         }
 
-        bufferSize = std::min(bufferSize, maxBufferSize);
-        err        = snd_pcm_hw_params_set_buffer_size_near(handle, hwParams, &bufferSize);
+        m_bufferSize = std::min(m_bufferSize, maxBufferSize);
+        err          = snd_pcm_hw_params_set_buffer_size_near(handle, hwParams, &m_bufferSize);
         if(checkError(err, QStringLiteral("Unable to set buffer size"))) {
             return false;
         }
 
-        err = snd_pcm_hw_params_set_period_size_near(handle, hwParams, &periodSize, nullptr);
+        err = snd_pcm_hw_params_set_period_size_near(handle, hwParams, &m_periodSize, nullptr);
         if(checkError(err, QStringLiteral("Failed to set period size"))) {
             return false;
         }
@@ -379,7 +380,7 @@ struct AlsaOutput::Private
             return false;
         }
 
-        return !checkError(snd_pcm_prepare(pcmHandle.get()), QStringLiteral("Prepare error"));
+        return !checkError(snd_pcm_prepare(m_pcmHandle.get()), QStringLiteral("Prepare error"));
     }
 
     bool attemptRecovery(snd_pcm_status_t* status)
@@ -393,11 +394,11 @@ struct AlsaOutput::Private
 
         // Give ALSA a number of chances to recover
         for(int n = 0; n < 5; ++n) {
-            int err = snd_pcm_status(pcmHandle.get(), status);
+            int err = snd_pcm_status(m_pcmHandle.get(), status);
             if(err == -EPIPE || err == -EINTR || err == -ESTRPIPE) {
                 if(!autoRecoverAttempted) {
                     autoRecoverAttempted = true;
-                    snd_pcm_recover(pcmHandle.get(), err, 1);
+                    snd_pcm_recover(m_pcmHandle.get(), err, 1);
                     continue;
                 }
                 pcmst = SND_PCM_STATE_XRUN;
@@ -411,15 +412,15 @@ struct AlsaOutput::Private
             }
 
             if(pcmst == SND_PCM_STATE_SETUP) {
-                snd_pcm_prepare(pcmHandle.get());
+                snd_pcm_prepare(m_pcmHandle.get());
                 continue;
             }
 
             if(pcmst == SND_PCM_STATE_PREPARED) {
-                if(!started) {
+                if(!m_started) {
                     return true;
                 }
-                snd_pcm_start(pcmHandle.get());
+                snd_pcm_start(m_pcmHandle.get());
                 continue;
             }
 
@@ -427,19 +428,19 @@ struct AlsaOutput::Private
                 // Underrun
                 case(SND_PCM_STATE_DRAINING):
                 case(SND_PCM_STATE_XRUN):
-                    checkError(snd_pcm_prepare(pcmHandle.get()), QStringLiteral("ALSA prepare error"));
+                    checkError(snd_pcm_prepare(m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
                     continue;
                 // Hardware suspend
                 case(SND_PCM_STATE_SUSPENDED):
                     printError(QStringLiteral("Suspended. Attempting to resume.."));
-                    err = snd_pcm_resume(pcmHandle.get());
+                    err = snd_pcm_resume(m_pcmHandle.get());
                     if(err == -EAGAIN) {
                         printError(QStringLiteral("Resume failed. Retrying..."));
                         continue;
                     }
                     if(err == -ENOSYS) {
                         printError(QStringLiteral("Resume not supported. Trying prepare..."));
-                        err = snd_pcm_prepare(pcmHandle.get());
+                        err = snd_pcm_prepare(m_pcmHandle.get());
                     }
                     checkError(err, QStringLiteral("Could not be resumed"));
                     continue;
@@ -448,7 +449,7 @@ struct AlsaOutput::Private
                 case(SND_PCM_STATE_OPEN):
                 default:
                     printError(QStringLiteral("Device lost. Stopping playback."));
-                    QMetaObject::invokeMethod(self, [this]() { emit self->stateChanged(State::Disconnected); });
+                    QMetaObject::invokeMethod(m_self, [this]() { emit m_self->stateChanged(State::Disconnected); });
                     return false;
             }
         }
@@ -457,7 +458,7 @@ struct AlsaOutput::Private
 
     bool recoverState(OutputState* state = nullptr)
     {
-        if(!pcmHandle) {
+        if(!m_pcmHandle) {
             return false;
         }
 
@@ -472,12 +473,12 @@ struct AlsaOutput::Private
 
         if(state) {
             const auto delay   = snd_pcm_status_get_delay(status);
-            state->delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(format.sampleRate());
+            state->delay       = static_cast<double>(std::max(delay, 0L)) / static_cast<double>(m_format.sampleRate());
             state->freeSamples = static_cast<int>(snd_pcm_status_get_avail(status));
-            state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(bufferSize));
+            state->freeSamples = std::clamp(state->freeSamples, 0, static_cast<int>(m_bufferSize));
             // Align to period size
-            state->freeSamples   = static_cast<int>(state->freeSamples / periodSize * periodSize);
-            state->queuedSamples = static_cast<int>(bufferSize) - state->freeSamples;
+            state->freeSamples   = static_cast<int>(state->freeSamples / m_periodSize * m_periodSize);
+            state->queuedSamples = static_cast<int>(m_bufferSize) - state->freeSamples;
         }
 
         return recovered;
@@ -495,56 +496,56 @@ AlsaOutput::~AlsaOutput()
 
 bool AlsaOutput::init(const AudioFormat& format)
 {
-    p->format = format;
+    p->m_format = format;
 
     if(!p->initAlsa()) {
         uninit();
         return false;
     }
 
-    p->initialised = true;
+    p->m_initialised = true;
     return true;
 }
 
 void AlsaOutput::uninit()
 {
     p->reset();
-    p->initialised = false;
+    p->m_initialised = false;
 }
 
 void AlsaOutput::reset()
 {
-    checkError(snd_pcm_drop(p->pcmHandle.get()), QStringLiteral("ALSA drop error"));
-    checkError(snd_pcm_prepare(p->pcmHandle.get()), QStringLiteral("ALSA prepare error"));
+    checkError(snd_pcm_drop(p->m_pcmHandle.get()), QStringLiteral("ALSA drop error"));
+    checkError(snd_pcm_prepare(p->m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
 
-    p->started = false;
+    p->m_started = false;
     p->recoverState();
 }
 
 void AlsaOutput::start()
 {
-    p->started = true;
-    snd_pcm_start(p->pcmHandle.get());
+    p->m_started = true;
+    snd_pcm_start(p->m_pcmHandle.get());
 }
 
 void AlsaOutput::drain()
 {
-    snd_pcm_drain(p->pcmHandle.get());
+    snd_pcm_drain(p->m_pcmHandle.get());
 }
 
 bool AlsaOutput::initialised() const
 {
-    return p->initialised;
+    return p->m_initialised;
 }
 
 QString AlsaOutput::device() const
 {
-    return p->device;
+    return p->m_device;
 }
 
 int AlsaOutput::bufferSize() const
 {
-    return static_cast<int>(p->bufferSize);
+    return static_cast<int>(p->m_bufferSize);
 }
 
 OutputState AlsaOutput::currentState()
@@ -568,17 +569,17 @@ OutputDevices AlsaOutput::getAllDevices() const
 
 int AlsaOutput::write(const AudioBuffer& buffer)
 {
-    if(!p->pcmHandle || !p->recoverState()) {
+    if(!p->m_pcmHandle || !p->recoverState()) {
         return 0;
     }
 
     const int frameCount = buffer.frameCount();
 
     AudioBuffer adjustedBuff{buffer};
-    adjustedBuff.scale(p->volume);
+    adjustedBuff.scale(p->m_volume);
 
     snd_pcm_sframes_t err{0};
-    err = snd_pcm_writei(p->pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
+    err = snd_pcm_writei(p->m_pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
     if(checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
         return 0;
     }
@@ -591,30 +592,30 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
 void AlsaOutput::setPaused(bool pause)
 {
-    if(!p->pausable) {
+    if(!p->m_pausable) {
         return;
     }
 
     p->recoverState();
 
-    const auto state = snd_pcm_state(p->pcmHandle.get());
+    const auto state = snd_pcm_state(p->m_pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
-        checkError(snd_pcm_pause(p->pcmHandle.get(), 1), QStringLiteral("Couldn't pause device"));
+        checkError(snd_pcm_pause(p->m_pcmHandle.get(), 1), QStringLiteral("Couldn't pause device"));
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
-        checkError(snd_pcm_pause(p->pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
+        checkError(snd_pcm_pause(p->m_pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
     }
 }
 
 void AlsaOutput::setVolume(double volume)
 {
-    p->volume = volume;
+    p->m_volume = volume;
 }
 
 void AlsaOutput::setDevice(const QString& device)
 {
     if(!device.isEmpty()) {
-        p->device = device;
+        p->m_device = device;
     }
 }
 } // namespace Fooyin::Alsa

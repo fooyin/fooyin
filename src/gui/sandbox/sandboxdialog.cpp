@@ -41,52 +41,52 @@ using namespace std::chrono_literals;
 namespace Fooyin {
 struct SandboxDialog::Private
 {
-    SandboxDialog* self;
+    SandboxDialog* m_self;
 
-    TrackSelectionController* trackSelection;
-    SettingsManager* settings;
+    TrackSelectionController* m_trackSelection;
+    SettingsManager* m_settings;
 
-    QSplitter* mainSplitter;
-    QSplitter* documentSplitter;
+    QSplitter* m_mainSplitter;
+    QSplitter* m_documentSplitter;
 
-    QPlainTextEdit* editor;
-    QTextEdit* results;
-    ScriptHighlighter highlighter;
+    QPlainTextEdit* m_editor;
+    QTextEdit* m_results;
+    ScriptHighlighter m_highlighter;
 
-    QTreeView* expressionTree;
-    ExpressionTreeModel model;
+    QTreeView* m_expressionTree;
+    ExpressionTreeModel m_model;
 
-    QTimer* textChangeTimer;
+    QTimer* m_textChangeTimer;
 
-    ScriptRegistry registry;
-    ScriptParser parser;
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
 
-    ParsedScript currentScript;
+    ParsedScript m_currentScript;
 
-    explicit Private(SandboxDialog* self_, TrackSelectionController* trackSelection_, SettingsManager* settings_)
-        : self{self_}
-        , trackSelection{trackSelection_}
-        , settings{settings_}
-        , mainSplitter{new QSplitter(Qt::Horizontal, self)}
-        , documentSplitter{new QSplitter(Qt::Vertical, self)}
-        , editor{new QPlainTextEdit(self)}
-        , results{new QTextEdit(self)}
-        , highlighter{editor->document()}
-        , expressionTree{new QTreeView(self)}
-        , textChangeTimer{new QTimer(self)}
-        , parser{&registry}
+    explicit Private(SandboxDialog* self, TrackSelectionController* trackSelection, SettingsManager* settings)
+        : m_self{self}
+        , m_trackSelection{trackSelection}
+        , m_settings{settings}
+        , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
+        , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
+        , m_editor{new QPlainTextEdit(m_self)}
+        , m_results{new QTextEdit(m_self)}
+        , m_highlighter{m_editor->document()}
+        , m_expressionTree{new QTreeView(m_self)}
+        , m_textChangeTimer{new QTimer(m_self)}
+        , m_parser{&m_registry}
     {
-        expressionTree->setModel(&model);
-        expressionTree->setHeaderHidden(true);
-        expressionTree->setSelectionMode(QAbstractItemView::SingleSelection);
+        m_expressionTree->setModel(&m_model);
+        m_expressionTree->setHeaderHidden(true);
+        m_expressionTree->setSelectionMode(QAbstractItemView::SingleSelection);
 
-        textChangeTimer->setSingleShot(true);
+        m_textChangeTimer->setSingleShot(true);
     }
 
     void updateResults()
     {
-        if(model.rowCount({}) > 0) {
-            if(const auto* item = static_cast<ExpressionTreeItem*>(model.index(0, 0, {}).internalPointer())) {
+        if(m_model.rowCount({}) > 0) {
+            if(const auto* item = static_cast<ExpressionTreeItem*>(m_model.index(0, 0, {}).internalPointer())) {
                 updateResults(item->expression());
             }
         }
@@ -94,22 +94,22 @@ struct SandboxDialog::Private
 
     void updateResults(const Expression& expression)
     {
-        if(!trackSelection->hasTracks()) {
+        if(!m_trackSelection->hasTracks()) {
             return;
         }
 
         ParsedScript script;
         script.expressions = {expression};
 
-        const auto track  = trackSelection->selectedTracks().front();
-        const auto result = parser.evaluate(script, track);
+        const auto track  = m_trackSelection->selectedTracks().front();
+        const auto result = m_parser.evaluate(script, track);
 
-        results->setText(result);
+        m_results->setText(result);
     }
 
     void selectionChanged()
     {
-        const auto indexes = expressionTree->selectionModel()->selectedIndexes();
+        const auto indexes = m_expressionTree->selectionModel()->selectedIndexes();
         if(indexes.empty()) {
             return;
         }
@@ -121,32 +121,32 @@ struct SandboxDialog::Private
 
     void textChanged()
     {
-        textChangeTimer->start(1500ms);
-        results->clear();
+        m_textChangeTimer->start(1500ms);
+        m_results->clear();
 
-        const Track track = trackSelection->hasTracks() ? trackSelection->selectedTracks().front() : Track{};
-        currentScript     = parser.parse(editor->toPlainText(), track);
+        const Track track = m_trackSelection->hasTracks() ? m_trackSelection->selectedTracks().front() : Track{};
+        m_currentScript   = m_parser.parse(m_editor->toPlainText(), track);
 
-        model.populate(currentScript.expressions);
+        m_model.populate(m_currentScript.expressions);
         updateResults();
     }
 
     void showErrors() const
     {
-        const auto errors = currentScript.errors;
+        const auto errors = m_currentScript.errors;
         for(const ScriptError& error : errors) {
-            results->append(error.message);
+            m_results->append(error.message);
         }
     }
 
     void restoreState()
     {
-        QByteArray byteArray = settings->fileValue(QStringLiteral("Interface/ScriptSandboxState")).toByteArray();
+        QByteArray byteArray = m_settings->fileValue(QStringLiteral("Interface/ScriptSandboxState")).toByteArray();
 
         static auto defaultScript = QStringLiteral("%track%. %title%");
 
         if(byteArray.isEmpty()) {
-            editor->setPlainText(defaultScript);
+            m_editor->setPlainText(defaultScript);
             return;
         }
 
@@ -168,14 +168,14 @@ struct SandboxDialog::Private
             editorText = defaultScript;
         }
 
-        self->resize(dialogSize);
-        mainSplitter->restoreState(mainSplitterState);
-        documentSplitter->restoreState(documentSplitterState);
-        editor->setPlainText(editorText);
-        editor->moveCursor(QTextCursor::End);
+        m_self->resize(dialogSize);
+        m_mainSplitter->restoreState(mainSplitterState);
+        m_documentSplitter->restoreState(documentSplitterState);
+        m_editor->setPlainText(editorText);
+        m_editor->moveCursor(QTextCursor::End);
 
         textChanged();
-        expressionTree->expandAll();
+        m_expressionTree->expandAll();
 
         updateResults();
     }
@@ -185,14 +185,14 @@ struct SandboxDialog::Private
         QByteArray byteArray;
         QDataStream out(&byteArray, QIODevice::WriteOnly);
 
-        out << self->size();
-        out << mainSplitter->saveState();
-        out << documentSplitter->saveState();
-        out << editor->toPlainText();
+        out << m_self->size();
+        out << m_mainSplitter->saveState();
+        out << m_documentSplitter->saveState();
+        out << m_editor->toPlainText();
 
         byteArray = qCompress(byteArray, 9);
 
-        settings->fileSet(QStringLiteral("Interface/ScriptSandboxState"), byteArray);
+        m_settings->fileSet(QStringLiteral("Interface/ScriptSandboxState"), byteArray);
     }
 };
 
@@ -205,38 +205,38 @@ SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, SettingsM
     auto* mainLayout = new QGridLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-    p->documentSplitter->addWidget(p->editor);
-    p->documentSplitter->addWidget(p->results);
+    p->m_documentSplitter->addWidget(p->m_editor);
+    p->m_documentSplitter->addWidget(p->m_results);
 
-    p->mainSplitter->addWidget(p->documentSplitter);
-    p->mainSplitter->addWidget(p->expressionTree);
+    p->m_mainSplitter->addWidget(p->m_documentSplitter);
+    p->m_mainSplitter->addWidget(p->m_expressionTree);
 
-    p->documentSplitter->setStretchFactor(0, 3);
-    p->documentSplitter->setStretchFactor(1, 1);
+    p->m_documentSplitter->setStretchFactor(0, 3);
+    p->m_documentSplitter->setStretchFactor(1, 1);
 
-    p->mainSplitter->setStretchFactor(0, 4);
-    p->mainSplitter->setStretchFactor(1, 2);
+    p->m_mainSplitter->setStretchFactor(0, 4);
+    p->m_mainSplitter->setStretchFactor(1, 2);
 
-    mainLayout->addWidget(p->mainSplitter);
+    mainLayout->addWidget(p->m_mainSplitter);
 
     p->restoreState();
 
-    QObject::connect(p->editor, &QPlainTextEdit::textChanged, this, [this]() { p->textChanged(); });
-    QObject::connect(p->textChangeTimer, &QTimer::timeout, this, [this]() { p->showErrors(); });
-    QObject::connect(&p->model, &QAbstractItemModel::modelReset, p->expressionTree, &QTreeView::expandAll);
-    QObject::connect(p->expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    QObject::connect(p->m_editor, &QPlainTextEdit::textChanged, this, [this]() { p->textChanged(); });
+    QObject::connect(p->m_textChangeTimer, &QTimer::timeout, this, [this]() { p->showErrors(); });
+    QObject::connect(&p->m_model, &QAbstractItemModel::modelReset, p->m_expressionTree, &QTreeView::expandAll);
+    QObject::connect(p->m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
-    QObject::connect(p->trackSelection, &TrackSelectionController::selectionChanged, this,
+    QObject::connect(p->m_trackSelection, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->updateResults(); });
 }
 
 SandboxDialog::~SandboxDialog()
 {
-    p->editor->disconnect();
+    p->m_editor->disconnect();
 
-    p->textChangeTimer->disconnect();
-    p->textChangeTimer->stop();
-    p->textChangeTimer->deleteLater();
+    p->m_textChangeTimer->disconnect();
+    p->m_textChangeTimer->stop();
+    p->m_textChangeTimer->deleteLater();
 
     p->saveState();
 }

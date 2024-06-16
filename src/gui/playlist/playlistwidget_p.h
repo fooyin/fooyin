@@ -113,36 +113,36 @@ public:
     void addSortMenu(QMenu* parent, bool disabled);
     void addPresetMenu(QMenu* parent);
 
-    PlaylistWidget* self;
+    PlaylistWidget* m_self;
 
-    ActionManager* actionManager;
-    PlaylistInteractor* playlistInteractor;
-    PlaylistController* playlistController;
-    PlayerController* playerController;
-    TrackSelectionController* selectionController;
-    MusicLibrary* library;
-    SettingsManager* settings;
-    SettingsDialogController* settingsDialog;
+    ActionManager* m_actionManager;
+    PlaylistInteractor* m_playlistInteractor;
+    PlaylistController* m_playlistController;
+    PlayerController* m_playerController;
+    TrackSelectionController* m_selectionController;
+    MusicLibrary* m_library;
+    SettingsManager* m_settings;
+    SettingsDialogController* m_settingsDialog;
 
-    PlaylistColumnRegistry columnRegistry;
-    PresetRegistry presetRegistry;
-    SortingRegistry sortRegistry;
+    PlaylistColumnRegistry m_columnRegistry;
+    PresetRegistry m_presetRegistry;
+    SortingRegistry m_sortRegistry;
 
-    QHBoxLayout* layout;
-    PlaylistModel* model;
-    PlaylistView* playlistView;
-    AutoHeaderView* header;
+    QHBoxLayout* m_layout;
+    PlaylistModel* m_model;
+    PlaylistView* m_playlistView;
+    AutoHeaderView* m_header;
 
-    PlaylistPreset currentPreset;
-    bool singleMode;
-    PlaylistColumnList columns;
-    QByteArray headerState;
+    PlaylistPreset m_currentPreset;
+    bool m_singleMode;
+    PlaylistColumnList m_columns;
+    QByteArray m_headerState;
 
-    WidgetContext* playlistContext;
+    WidgetContext* m_playlistContext;
 
-    QAction* removeTrackAction;
-    QAction* addToQueueAction;
-    QAction* removeFromQueueAction;
+    QAction* m_removeTrackAction;
+    QAction* m_addToQueueAction;
+    QAction* m_removeFromQueueAction;
 
     bool m_sorting;
     bool m_sortingColumn;

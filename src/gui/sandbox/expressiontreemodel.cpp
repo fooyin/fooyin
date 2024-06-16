@@ -57,87 +57,31 @@ Expression ExpressionTreeItem::expression() const
     return m_expression;
 }
 
-struct ExpressionTreeModel::Private
-{
-    std::unordered_map<QString, ExpressionTreeItem> nodes;
-
-    QIcon iconExpression{Utils::iconFromTheme(Constants::Icons::ScriptExpression)};
-    QIcon iconLiteral{Utils::iconFromTheme(Constants::Icons::ScriptLiteral)};
-    QIcon iconVariable{Utils::iconFromTheme(Constants::Icons::ScriptVariable)};
-    QIcon iconFunction{Utils::iconFromTheme(Constants::Icons::ScriptFunction)};
-
-    ExpressionTreeItem* insertNode(const QString& key, const QString& name, const Expression& expression,
-                                   ExpressionTreeItem* parent)
-    {
-        if(!nodes.contains(key)) {
-            auto* item = nodes.contains(key)
-                           ? &nodes.at(key)
-                           : &nodes.emplace(key, ExpressionTreeItem{key, name, expression}).first->second;
-            parent->appendChild(item);
-        }
-        return &nodes.at(key);
-    }
-
-    QString generateKey(const QString& parentKey, const QString& name) const
-    {
-        return Utils::generateHash(parentKey, name, QString::number(nodes.size()));
-    }
-
-    void iterateExpression(const Expression& expression, ExpressionTreeItem* parent)
-    {
-        QString name;
-
-        if(const auto* val = std::get_if<QString>(&expression.value)) {
-            name = *val;
-            insertNode(generateKey(parent->key(), name), name, expression, parent);
-        }
-
-        else if(const auto* funcVal = std::get_if<FuncValue>(&expression.value)) {
-            name       = funcVal->name;
-            auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
-
-            for(const auto& argExpr : funcVal->args) {
-                iterateExpression(argExpr, node);
-            }
-        }
-
-        else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
-            if(expression.type == Expr::Conditional) {
-                name   = QStringLiteral("[ ... ]");
-                parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
-            }
-
-            for(const auto& listExpr : *listVal) {
-                iterateExpression(listExpr, parent);
-            }
-        }
-    }
-};
-
 ExpressionTreeModel::ExpressionTreeModel(QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>()}
+    , m_iconExpression{Utils::iconFromTheme(Constants::Icons::ScriptExpression)}
+    , m_iconLiteral{Utils::iconFromTheme(Constants::Icons::ScriptLiteral)}
+    , m_iconVariable{Utils::iconFromTheme(Constants::Icons::ScriptVariable)}
+    , m_iconFunction{Utils::iconFromTheme(Constants::Icons::ScriptFunction)}
 { }
-
-ExpressionTreeModel::~ExpressionTreeModel() = default;
 
 void ExpressionTreeModel::populate(const ExpressionList& expressions)
 {
     beginResetModel();
 
     resetRoot();
-    p->nodes.clear();
+    m_nodes.clear();
 
     ExpressionTreeItem* parent = rootItem();
 
     if(expressions.size() > 1) {
         Expression const fullExpression{Expr::FunctionArg, expressions};
-        parent = p->insertNode(p->generateKey(parent->key(), QStringLiteral(" ... ")), QStringLiteral(" ... "),
-                               fullExpression, parent);
+        parent = insertNode(generateKey(parent->key(), QStringLiteral(" ... ")), QStringLiteral(" ... "),
+                            fullExpression, parent);
     }
 
     for(const auto& expression : expressions) {
-        p->iterateExpression(expression, parent);
+        iterateExpression(expression, parent);
     }
     endResetModel();
 }
@@ -160,13 +104,13 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
 
     switch(item->type()) {
         case(Expr::Literal):
-            return p->iconLiteral;
+            return m_iconLiteral;
         case(Expr::Variable):
-            return p->iconVariable;
+            return m_iconVariable;
         case(Expr::Function):
-            return p->iconFunction;
+            return m_iconFunction;
         case(Expr::FunctionArg):
-            return p->iconExpression;
+            return m_iconExpression;
         case(Expr::Null):
         case(Expr::Conditional):
         case(Expr::VariableList):
@@ -175,5 +119,52 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
     }
 
     return {};
+}
+
+ExpressionTreeItem* ExpressionTreeModel::insertNode(const QString& key, const QString& name,
+                                                    const Expression& expression, ExpressionTreeItem* parent)
+{
+    if(!m_nodes.contains(key)) {
+        auto* item = m_nodes.contains(key)
+                       ? &m_nodes.at(key)
+                       : &m_nodes.emplace(key, ExpressionTreeItem{key, name, expression}).first->second;
+        parent->appendChild(item);
+    }
+    return &m_nodes.at(key);
+}
+
+QString ExpressionTreeModel::generateKey(const QString& parentKey, const QString& name) const
+{
+    return Utils::generateHash(parentKey, name, QString::number(m_nodes.size()));
+}
+
+void ExpressionTreeModel::iterateExpression(const Expression& expression, ExpressionTreeItem* parent)
+{
+    QString name;
+
+    if(const auto* val = std::get_if<QString>(&expression.value)) {
+        name = *val;
+        insertNode(generateKey(parent->key(), name), name, expression, parent);
+    }
+
+    else if(const auto* funcVal = std::get_if<FuncValue>(&expression.value)) {
+        name       = funcVal->name;
+        auto* node = insertNode(generateKey(parent->key(), name), name, expression, parent);
+
+        for(const auto& argExpr : funcVal->args) {
+            iterateExpression(argExpr, node);
+        }
+    }
+
+    else if(const auto* listVal = std::get_if<ExpressionList>(&expression.value)) {
+        if(expression.type == Expr::Conditional) {
+            name   = QStringLiteral("[ ... ]");
+            parent = insertNode(generateKey(parent->key(), name), name, expression, parent);
+        }
+
+        for(const auto& listExpr : *listVal) {
+            iterateExpression(listExpr, parent);
+        }
+    }
 }
 } // namespace Fooyin

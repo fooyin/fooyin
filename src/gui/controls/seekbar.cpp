@@ -277,98 +277,35 @@ void TrackSlider::updateToolTip()
     m_toolTip->setSubtext(deltaText);
 }
 
-struct SeekBar::Private
-{
-    SeekBar* self;
-
-    PlayerController* playerController;
-    SettingsManager* settings;
-
-    SeekContainer* container;
-    TrackSlider* slider;
-
-    uint64_t max{0};
-
-    Private(SeekBar* self_, PlayerController* playerController_, SettingsManager* settings_)
-        : self{self_}
-        , playerController{playerController_}
-        , settings{settings_}
-        , container{new SeekContainer(playerController, self)}
-        , slider{new TrackSlider(self)}
-    {
-        slider->setEnabled(playerController->currentTrack().isValid());
-        trackChanged(playerController->currentTrack());
-    }
-
-    void reset()
-    {
-        max = 0;
-        slider->setValue(0);
-        slider->updateMaximum(max);
-    }
-
-    void trackChanged(const Track& track)
-    {
-        if(track.isValid()) {
-            max = track.duration();
-            slider->updateMaximum(max);
-        }
-    }
-
-    void setCurrentPosition(uint64_t pos) const
-    {
-        slider->updateCurrentValue(pos);
-    }
-
-    void stateChanged(PlayState state)
-    {
-        switch(state) {
-            case(PlayState::Paused):
-                break;
-            case(PlayState::Stopped):
-                reset();
-                slider->setEnabled(false);
-                break;
-            case(PlayState::Playing): {
-                if(max == 0) {
-                    trackChanged(playerController->currentTrack());
-                }
-                slider->setEnabled(true);
-                break;
-            }
-        }
-    }
-};
-
 SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerController, settings)}
+    , m_playerController{playerController}
+    , m_settings{settings}
+    , m_container{new SeekContainer(playerController, this)}
+    , m_slider{new TrackSlider(this)}
 {
     setMouseTracking(true);
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
 
-    layout->addWidget(p->container);
-    p->container->insertWidget(1, p->slider);
+    layout->addWidget(m_container);
+    m_container->insertWidget(1, m_slider);
 
-    QObject::connect(p->slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
-    QObject::connect(p->slider, &TrackSlider::seekForward, this,
-                     [this]() { p->playerController->seekForward(SeekDelta); });
-    QObject::connect(p->slider, &TrackSlider::seekBackward, this,
-                     [this]() { p->playerController->seekBackward(SeekDelta); });
+    m_slider->setEnabled(playerController->currentTrack().isValid());
+    trackChanged(playerController->currentTrack());
 
-    QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(p->playerController, &PlayerController::currentTrackChanged, this,
-                     [this](const Track& track) { p->trackChanged(track); });
-    QObject::connect(p->playerController, &PlayerController::positionChanged, this,
-                     [this](uint64_t pos) { p->setCurrentPosition(pos); });
-    QObject::connect(p->playerController, &PlayerController::positionMoved, this,
-                     [this](uint64_t pos) { p->setCurrentPosition(pos); });
+    QObject::connect(m_slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
+    QObject::connect(m_slider, &TrackSlider::seekForward, this,
+                     [this]() { m_playerController->seekForward(SeekDelta); });
+    QObject::connect(m_slider, &TrackSlider::seekBackward, this,
+                     [this]() { m_playerController->seekBackward(SeekDelta); });
+
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &SeekBar::stateChanged);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &SeekBar::trackChanged);
+    QObject::connect(m_playerController, &PlayerController::positionChanged, this, &SeekBar::setCurrentPosition);
+    QObject::connect(m_playerController, &PlayerController::positionMoved, this, &SeekBar::setCurrentPosition);
 }
-
-Fooyin::SeekBar::~SeekBar() = default;
 
 QString SeekBar::name() const
 {
@@ -382,26 +319,26 @@ QString SeekBar::layoutName() const
 
 void SeekBar::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("ShowLabels")]   = p->container->labelsEnabled();
-    layout[QStringLiteral("ElapsedTotal")] = p->container->elapsedTotal();
+    layout[QStringLiteral("ShowLabels")]   = m_container->labelsEnabled();
+    layout[QStringLiteral("ElapsedTotal")] = m_container->elapsedTotal();
 }
 
 void SeekBar::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("ShowLabels"))) {
         const bool showLabels = layout.value(QStringLiteral("ShowLabels")).toBool();
-        p->container->setLabelsEnabled(showLabels);
+        m_container->setLabelsEnabled(showLabels);
     }
     if(layout.contains(QStringLiteral("ElapsedTotal"))) {
         const bool elapsedTotal = layout.value(QStringLiteral("ElapsedTotal")).toBool();
-        p->container->setElapsedTotal(elapsedTotal);
+        m_container->setElapsedTotal(elapsedTotal);
     }
 }
 
 void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(p->slider->isSeeking()) {
-        p->slider->stopSeeking();
+    if(m_slider->isSeeking()) {
+        m_slider->stopSeeking();
         return;
     }
 
@@ -410,19 +347,58 @@ void SeekBar::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showLabels = new QAction(tr("Show Labels"), this);
     showLabels->setCheckable(true);
-    showLabels->setChecked(p->container->labelsEnabled());
+    showLabels->setChecked(m_container->labelsEnabled());
     QObject::connect(showLabels, &QAction::triggered, this,
-                     [this](bool checked) { p->container->setLabelsEnabled(checked); });
+                     [this](bool checked) { m_container->setLabelsEnabled(checked); });
     menu->addAction(showLabels);
 
     auto* showElapsed = new QAction(tr("Show Elapsed Total"), this);
     showElapsed->setCheckable(true);
-    showElapsed->setChecked(p->container->elapsedTotal());
+    showElapsed->setChecked(m_container->elapsedTotal());
     QObject::connect(showElapsed, &QAction::triggered, this,
-                     [this](bool checked) { p->container->setElapsedTotal(checked); });
+                     [this](bool checked) { m_container->setElapsedTotal(checked); });
     menu->addAction(showElapsed);
 
     menu->popup(event->globalPos());
+}
+
+void SeekBar::reset()
+{
+    m_max = 0;
+    m_slider->setValue(0);
+    m_slider->updateMaximum(m_max);
+}
+
+void SeekBar::trackChanged(const Track& track)
+{
+    if(track.isValid()) {
+        m_max = track.duration();
+        m_slider->updateMaximum(m_max);
+    }
+}
+
+void SeekBar::setCurrentPosition(uint64_t pos) const
+{
+    m_slider->updateCurrentValue(pos);
+}
+
+void SeekBar::stateChanged(PlayState state)
+{
+    switch(state) {
+        case(PlayState::Paused):
+            break;
+        case(PlayState::Stopped):
+            reset();
+            m_slider->setEnabled(false);
+            break;
+        case(PlayState::Playing): {
+            if(m_max == 0) {
+                trackChanged(m_playerController->currentTrack());
+            }
+            m_slider->setEnabled(true);
+            break;
+        }
+    }
 }
 } // namespace Fooyin
 

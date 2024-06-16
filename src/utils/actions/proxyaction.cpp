@@ -26,34 +26,34 @@
 namespace Fooyin {
 struct ProxyAction::Private
 {
-    ProxyAction* self;
+    ProxyAction* m_self;
 
-    QPointer<QAction> action{nullptr};
-    bool showShortcut{false};
-    QString toolTip;
+    QPointer<QAction> m_action{nullptr};
+    bool m_showShortcut{false};
+    QString m_toolTip;
 
-    Attributes attributes;
-    bool updating{false};
+    Attributes m_attributes;
+    bool m_updating{false};
 
-    explicit Private(ProxyAction* self_)
-        : self{self_}
+    explicit Private(ProxyAction* self)
+        : m_self{self}
     { }
 
     void updateToolTipWithShortcut()
     {
-        if(updating) {
+        if(m_updating) {
             return;
         }
-        updating = true;
+        m_updating = true;
 
-        if(!showShortcut || self->shortcut().isEmpty()) {
-            self->setToolTip(toolTip);
+        if(!m_showShortcut || m_self->shortcut().isEmpty()) {
+            m_self->setToolTip(m_toolTip);
         }
         else {
-            self->setToolTip(Utils::appendShortcut(toolTip, self->shortcut()));
+            m_self->setToolTip(Utils::appendShortcut(m_toolTip, m_self->shortcut()));
         }
 
-        updating = false;
+        m_updating = false;
     }
 
     void update(QAction* updateAction, bool initialise)
@@ -62,77 +62,77 @@ struct ProxyAction::Private
             return;
         }
 
-        QObject::disconnect(self, &ProxyAction::changed, nullptr, nullptr);
+        QObject::disconnect(m_self, &ProxyAction::changed, nullptr, nullptr);
 
         if(initialise) {
-            self->setSeparator(updateAction->isSeparator());
-            self->setMenuRole(updateAction->menuRole());
+            m_self->setSeparator(updateAction->isSeparator());
+            m_self->setMenuRole(updateAction->menuRole());
         }
-        if(initialise || self->hasAttribute(UpdateIcon)) {
-            self->setIcon(updateAction->icon());
-            self->setIconText(updateAction->iconText());
-            self->setIconVisibleInMenu(updateAction->isIconVisibleInMenu());
+        if(initialise || m_self->hasAttribute(UpdateIcon)) {
+            m_self->setIcon(updateAction->icon());
+            m_self->setIconText(updateAction->iconText());
+            m_self->setIconVisibleInMenu(updateAction->isIconVisibleInMenu());
         }
-        if(initialise || self->hasAttribute(UpdateText)) {
-            self->setText(updateAction->text());
-            self->setIconText(updateAction->text());
-            toolTip = updateAction->toolTip();
+        if(initialise || m_self->hasAttribute(UpdateText)) {
+            m_self->setText(updateAction->text());
+            m_self->setIconText(updateAction->text());
+            m_toolTip = updateAction->toolTip();
             updateToolTipWithShortcut();
-            self->setStatusTip(updateAction->statusTip());
-            self->setWhatsThis(updateAction->whatsThis());
+            m_self->setStatusTip(updateAction->statusTip());
+            m_self->setWhatsThis(updateAction->whatsThis());
         }
 
-        self->setCheckable(updateAction->isCheckable());
+        m_self->setCheckable(updateAction->isCheckable());
 
         if(!initialise) {
-            if(self->isChecked() != updateAction->isChecked()) {
-                if(action) {
-                    QObject::disconnect(self, &ProxyAction::toggled, action, &QAction::setChecked);
+            if(m_self->isChecked() != updateAction->isChecked()) {
+                if(m_action) {
+                    QObject::disconnect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
                 }
-                self->setChecked(updateAction->isChecked());
-                if(action) {
-                    QObject::connect(self, &ProxyAction::toggled, action, &QAction::setChecked);
+                m_self->setChecked(updateAction->isChecked());
+                if(m_action) {
+                    QObject::connect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
                 }
             }
-            self->setEnabled(updateAction->isEnabled());
-            self->setVisible(updateAction->isVisible());
+            m_self->setEnabled(updateAction->isEnabled());
+            m_self->setVisible(updateAction->isVisible());
         }
-        QObject::connect(self, &ProxyAction::changed, self, [this]() { updateToolTipWithShortcut(); });
+        QObject::connect(m_self, &ProxyAction::changed, m_self, [this]() { updateToolTipWithShortcut(); });
     }
 
     void updateState()
     {
-        if(action) {
-            update(action, false);
+        if(m_action) {
+            update(m_action, false);
         }
         else {
-            if(self->hasAttribute(Hide)) {
-                self->setVisible(false);
+            if(m_self->hasAttribute(Hide)) {
+                m_self->setVisible(false);
             }
-            self->setEnabled(false);
+            m_self->setEnabled(false);
         }
     }
 
     void actionChanged()
     {
-        update(action, false);
+        update(m_action, false);
     }
 
     void connectAction()
     {
-        if(action) {
-            QObject::connect(action, &QAction::changed, self, [this]() { actionChanged(); });
-            QObject::connect(self, &ProxyAction::triggered, action, &QAction::triggered);
-            QObject::connect(self, &ProxyAction::toggled, action, &QAction::setChecked);
+        if(m_action) {
+            QObject::connect(m_action, &QAction::changed, m_self, [this]() { actionChanged(); });
+            QObject::connect(m_self, &ProxyAction::triggered, m_action, &QAction::triggered);
+            QObject::connect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
         }
     }
 
     void disconnectAction() const
     {
-        if(action) {
-            QObject::disconnect(action, &QAction::changed, nullptr, nullptr);
-            QObject::disconnect(self, &ProxyAction::triggered, action, &QAction::triggered);
-            QObject::disconnect(self, &ProxyAction::toggled, action, &QAction::setChecked);
+        if(m_action) {
+            QObject::disconnect(m_action, &QAction::changed, nullptr, nullptr);
+            QObject::disconnect(m_self, &ProxyAction::triggered, m_action, &QAction::triggered);
+            QObject::disconnect(m_self, &ProxyAction::toggled, m_action, &QAction::setChecked);
         }
     }
 };
@@ -151,22 +151,22 @@ void ProxyAction::initialise(QAction* action)
 
 QAction* ProxyAction::action() const
 {
-    return p->action;
+    return p->m_action;
 }
 
 bool ProxyAction::shortcutVisibleInToolTip() const
 {
-    return p->showShortcut;
+    return p->m_showShortcut;
 }
 
 void ProxyAction::setAction(QAction* action)
 {
-    if(p->action == action) {
+    if(p->m_action == action) {
         return;
     }
 
     p->disconnectAction();
-    p->action = action;
+    p->m_action = action;
     p->connectAction();
     p->updateState();
 
@@ -175,25 +175,25 @@ void ProxyAction::setAction(QAction* action)
 
 void ProxyAction::setShortcutVisibleInToolTip(bool visible)
 {
-    p->showShortcut = visible;
+    p->m_showShortcut = visible;
     p->updateToolTipWithShortcut();
 }
 
 void ProxyAction::setAttribute(Attribute attribute)
 {
-    p->attributes |= attribute;
+    p->m_attributes |= attribute;
     p->updateState();
 }
 
 void ProxyAction::removeAttribute(Attribute attribute)
 {
-    p->attributes &= ~attribute;
+    p->m_attributes &= ~attribute;
     p->updateState();
 }
 
 bool ProxyAction::hasAttribute(Attribute attribute)
 {
-    return p->attributes & attribute;
+    return p->m_attributes & attribute;
 }
 
 ProxyAction* ProxyAction::actionWithIcon(QAction* original, const QIcon& icon)

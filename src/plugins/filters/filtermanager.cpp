@@ -57,118 +57,118 @@ void updateOverlayLabel(Fooyin::Filters::FilterWidget* filter, Fooyin::OverlayWi
 namespace Fooyin::Filters {
 struct FilterManager::Private
 {
-    FilterManager* self;
+    FilterManager* m_self;
 
-    FilterController* controller;
-    EditableLayout* editableLayout;
-    QPointer<OverlayWidget> controlDialog;
-    std::unordered_map<Id, OverlayWidget*, Id::IdHash> overlays;
+    FilterController* m_controller;
+    EditableLayout* m_editableLayout;
+    QPointer<OverlayWidget> m_controlDialog;
+    std::unordered_map<Id, OverlayWidget*, Id::IdHash> m_overlays;
 
-    QPointer<WidgetFilter> widgetFilter;
+    QPointer<WidgetFilter> m_widgetFilter;
 
-    Id selectedGroup;
-    QColor ungroupedColour{Qt::red};
+    Id m_selectedGroup;
+    QColor m_ungroupedColour{Qt::red};
 
-    QPointer<QPushButton> addGroup;
-    QPointer<QPushButton> clearGroups;
-    QPointer<QPushButton> goBack;
-    QPointer<QPushButton> finishEditing;
+    QPointer<QPushButton> m_addGroup;
+    QPointer<QPushButton> m_clearGroups;
+    QPointer<QPushButton> m_goBack;
+    QPointer<QPushButton> m_finishEditing;
 
-    explicit Private(FilterManager* self_, FilterController* controller_, EditableLayout* editableLayout_)
-        : self{self_}
-        , controller{controller_}
-        , editableLayout{editableLayout_}
+    explicit Private(FilterManager* self, FilterController* controller, EditableLayout* editableLayout)
+        : m_self{self}
+        , m_controller{controller}
+        , m_editableLayout{editableLayout}
     {
-        ungroupedColour.setAlpha(20);
+        m_ungroupedColour.setAlpha(20);
     }
 
     void enterGroupMode()
     {
-        clearGroups->setText(tr("Clear Group"));
+        m_clearGroups->setText(tr("Clear Group"));
 
-        addGroup->hide();
-        finishEditing->hide();
-        goBack->show();
+        m_addGroup->hide();
+        m_finishEditing->hide();
+        m_goBack->show();
     }
 
     void exitGroupMode()
     {
-        selectedGroup = {};
-        clearGroups->setText(tr("Clear Groups"));
+        m_selectedGroup = {};
+        m_clearGroups->setText(tr("Clear Groups"));
 
-        goBack->hide();
-        addGroup->show();
-        finishEditing->show();
+        m_goBack->hide();
+        m_addGroup->show();
+        m_finishEditing->show();
 
-        controlDialog->adjustSize();
+        m_controlDialog->adjustSize();
     }
 
     void clearOverlays()
     {
-        for(auto* overlay : overlays | std::views::values) {
+        for(auto* overlay : m_overlays | std::views::values) {
             overlay->deleteLater();
         }
-        overlays.clear();
+        m_overlays.clear();
     }
 
     void hideAndDeselectOverlay(FilterWidget* filter) const
     {
         const Id id = filter->id();
-        if(overlays.contains(id)) {
-            auto* overlay = overlays.at(id);
+        if(m_overlays.contains(id)) {
+            auto* overlay = m_overlays.at(id);
             overlay->button()->hide();
             overlay->deselect();
-            overlay->setOption(OverlayWidget::Selectable, !controller->filterIsUngrouped(id));
+            overlay->setOption(OverlayWidget::Selectable, !m_controller->filterIsUngrouped(id));
         }
     }
 
     void updateDialog() const
     {
-        addGroup->setEnabled(controller->haveUngroupedFilters());
-        clearGroups->setEnabled(!controller->filterGroups().empty());
+        m_addGroup->setEnabled(m_controller->haveUngroupedFilters());
+        m_clearGroups->setEnabled(!m_controller->filterGroups().empty());
     }
 
     void addOrRemoveFilter(FilterWidget* widget, const QColor& colour) const
     {
         const Id id = widget->id();
 
-        if(!overlays.contains(id)) {
+        if(!m_overlays.contains(id)) {
             return;
         }
 
-        auto* overlay = overlays.at(id);
+        auto* overlay = m_overlays.at(id);
 
         const Id groupId         = widget->group();
-        const bool addingToGroup = controller->filterIsUngrouped(id);
+        const bool addingToGroup = m_controller->filterIsUngrouped(id);
 
-        if(controller->removeFilter(widget)) {
+        if(m_controller->removeFilter(widget)) {
             if(addingToGroup) {
-                controller->addFilterToGroup(widget, selectedGroup);
+                m_controller->addFilterToGroup(widget, m_selectedGroup);
 
                 overlay->label()->setText(QString::number(widget->index() + 1));
                 overlay->button()->setText(tr("Remove"));
                 overlay->setColour(colour);
                 overlay->select();
 
-                if(const auto group = controller->groupById(selectedGroup)) {
+                if(const auto group = m_controller->groupById(m_selectedGroup)) {
                     for(FilterWidget* filter : group.value().filters) {
-                        if(overlays.contains(filter->id())) {
-                            overlays.at(filter->id())->connectOverlay(overlay);
+                        if(m_overlays.contains(filter->id())) {
+                            m_overlays.at(filter->id())->connectOverlay(overlay);
                         }
                     }
                 }
             }
             else {
-                controller->addFilterToGroup(widget, {});
+                m_controller->addFilterToGroup(widget, {});
                 overlay->label()->setText(tr("Ungrouped"));
                 overlay->button()->setText(tr("Add"));
-                overlay->setColour(ungroupedColour);
+                overlay->setColour(m_ungroupedColour);
                 overlay->setOption(OverlayWidget::Selectable, false);
 
-                if(const auto group = controller->groupById(groupId)) {
+                if(const auto group = m_controller->groupById(groupId)) {
                     for(FilterWidget* filter : group.value().filters) {
-                        if(overlays.contains(filter->id())) {
-                            auto* filterOverlay = overlays.at(filter->id());
+                        if(m_overlays.contains(filter->id())) {
+                            auto* filterOverlay = m_overlays.at(filter->id());
                             overlay->disconnectOverlay(filterOverlay);
                             updateOverlayLabel(filter, filterOverlay);
                         }
@@ -183,22 +183,22 @@ struct FilterManager::Private
     void setupOverlayButtons(const Id& group, const QColor& colour)
     {
         auto setupOverlayButtons = [this, &colour](const Id& id, FilterWidget* widget) {
-            if(!overlays.contains(id)) {
+            if(!m_overlays.contains(id)) {
                 return;
             }
 
-            OverlayWidget* overlay = overlays.at(id);
+            OverlayWidget* overlay = m_overlays.at(id);
 
-            overlay->button()->setText(tr(controller->filterIsUngrouped(id) ? "Add" : "Remove"));
+            overlay->button()->setText(tr(m_controller->filterIsUngrouped(id) ? "Add" : "Remove"));
             overlay->button()->show();
 
-            overlay->button()->disconnect(self);
-            QObject::connect(overlay->button(), &QPushButton::clicked, self,
+            overlay->button()->disconnect(m_self);
+            QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
                              [this, widget, colour]() { addOrRemoveFilter(widget, colour); });
         };
 
         if(group.isValid()) {
-            const auto groups        = controller->filterGroups();
+            const auto groups        = m_controller->filterGroups();
             const auto& groupWidgets = groups.at(group).filters;
 
             for(FilterWidget* widget : groupWidgets) {
@@ -206,7 +206,7 @@ struct FilterManager::Private
             }
         }
 
-        const auto ungrouped = controller->ungroupedFilters();
+        const auto ungrouped = m_controller->ungroupedFilters();
         for(const auto& [id, widget] : ungrouped) {
             setupOverlayButtons(id, widget);
         }
@@ -217,7 +217,7 @@ struct FilterManager::Private
         const Id widgetId           = widget->id();
         constexpr auto overlayFlags = OverlayWidget::Label | OverlayWidget::Button | OverlayWidget::Resize;
 
-        auto* overlay = overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+        auto* overlay = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
 
         overlay->button()->hide();
         overlay->setColour(colour);
@@ -230,9 +230,9 @@ struct FilterManager::Private
             overlay->label()->setText(tr("Ungrouped"));
         }
 
-        QObject::connect(overlay, &OverlayWidget::clicked, self, [this, widget, overlay]() {
-            selectedGroup = widget->group();
-            setupOverlayButtons(selectedGroup, overlay->colour());
+        QObject::connect(overlay, &OverlayWidget::clicked, m_self, [this, widget, overlay]() {
+            m_selectedGroup = widget->group();
+            setupOverlayButtons(m_selectedGroup, overlay->colour());
             enterGroupMode();
         });
 
@@ -244,7 +244,7 @@ struct FilterManager::Private
 
     void setupOverlays()
     {
-        const auto groups = controller->filterGroups();
+        const auto groups = m_controller->filterGroups();
 
         for(const auto& group : groups | std::views::values) {
             if(!group.filters.empty()) {
@@ -263,87 +263,87 @@ struct FilterManager::Private
             }
         }
 
-        const auto ungrouped = controller->ungroupedFilters();
+        const auto ungrouped = m_controller->ungroupedFilters();
 
         std::ranges::for_each(ungrouped | std::views::values,
-                              [this](FilterWidget* widget) { setupWidgetOverlay(widget, ungroupedColour); });
+                              [this](FilterWidget* widget) { setupWidgetOverlay(widget, m_ungroupedColour); });
     }
 
     void createControlDialog()
     {
-        controlDialog = new OverlayWidget(OverlayWidget::Static, editableLayout);
+        m_controlDialog = new OverlayWidget(OverlayWidget::Static, m_editableLayout);
 
         auto* effect = new QGraphicsDropShadowEffect();
         effect->setBlurRadius(30);
         effect->setColor(Qt::black);
         effect->setOffset(1, 1);
 
-        controlDialog->setGraphicsEffect(effect);
+        m_controlDialog->setGraphicsEffect(effect);
 
-        addGroup = new QPushButton(tr("Add New Group"), controlDialog);
-        controlDialog->addWidget(addGroup);
-        QObject::connect(addGroup, &QPushButton::clicked, self, [this]() {
+        m_addGroup = new QPushButton(tr("Add New Group"), m_controlDialog);
+        m_controlDialog->addWidget(m_addGroup);
+        QObject::connect(m_addGroup, &QPushButton::clicked, m_self, [this]() {
             const auto newGroup = Id{Utils::generateUniqueHash()};
-            selectedGroup       = newGroup;
+            m_selectedGroup     = newGroup;
             setupOverlayButtons({}, generateRandomUniqueColor(newGroup));
             enterGroupMode();
         });
 
-        clearGroups = new QPushButton(tr("Clear Groups"), controlDialog);
-        controlDialog->addWidget(clearGroups);
-        QObject::connect(clearGroups, &QPushButton::clicked, self, [this]() {
-            const auto groups = controller->filterGroups();
+        m_clearGroups = new QPushButton(tr("Clear Groups"), m_controlDialog);
+        m_controlDialog->addWidget(m_clearGroups);
+        QObject::connect(m_clearGroups, &QPushButton::clicked, m_self, [this]() {
+            const auto groups = m_controller->filterGroups();
 
-            if(selectedGroup.isValid()) {
-                const auto filters = groups.at(selectedGroup).filters;
+            if(m_selectedGroup.isValid()) {
+                const auto filters = groups.at(m_selectedGroup).filters;
                 std::ranges::for_each(filters,
-                                      [this](FilterWidget* widget) { addOrRemoveFilter(widget, ungroupedColour); });
+                                      [this](FilterWidget* widget) { addOrRemoveFilter(widget, m_ungroupedColour); });
             }
             else {
                 for(const auto& group : groups | std::views::values) {
                     const auto filters = group.filters;
-                    std::ranges::for_each(filters,
-                                          [this](FilterWidget* widget) { addOrRemoveFilter(widget, ungroupedColour); });
+                    std::ranges::for_each(
+                        filters, [this](FilterWidget* widget) { addOrRemoveFilter(widget, m_ungroupedColour); });
                 }
             }
         });
 
-        goBack = new QPushButton(tr("Back"), controlDialog);
-        controlDialog->addWidget(goBack);
-        goBack->hide();
-        QObject::connect(goBack, &QPushButton::clicked, self, [this]() {
-            const auto groups = controller->filterGroups();
-            if(selectedGroup.isValid() && groups.contains(selectedGroup)) {
-                const auto& group = groups.at(selectedGroup);
+        m_goBack = new QPushButton(tr("Back"), m_controlDialog);
+        m_controlDialog->addWidget(m_goBack);
+        m_goBack->hide();
+        QObject::connect(m_goBack, &QPushButton::clicked, m_self, [this]() {
+            const auto groups = m_controller->filterGroups();
+            if(m_selectedGroup.isValid() && groups.contains(m_selectedGroup)) {
+                const auto& group = groups.at(m_selectedGroup);
                 std::ranges::for_each(group.filters, [this](FilterWidget* filter) { hideAndDeselectOverlay(filter); });
             }
 
-            const auto ungrouped = controller->ungroupedFilters();
+            const auto ungrouped = m_controller->ungroupedFilters();
             for(auto* filter : ungrouped | std::views::values) {
                 hideAndDeselectOverlay(filter);
             }
             exitGroupMode();
         });
 
-        finishEditing = new QPushButton(tr("Finish"), controlDialog);
-        controlDialog->addWidget(finishEditing);
-        QObject::connect(finishEditing, &QPushButton::clicked, self, [this]() {
-            widgetFilter->stop();
-            widgetFilter->deleteLater();
-            controlDialog->deleteLater();
+        m_finishEditing = new QPushButton(tr("Finish"), m_controlDialog);
+        m_controlDialog->addWidget(m_finishEditing);
+        QObject::connect(m_finishEditing, &QPushButton::clicked, m_self, [this]() {
+            m_widgetFilter->stop();
+            m_widgetFilter->deleteLater();
+            m_controlDialog->deleteLater();
             clearOverlays();
         });
 
-        QObject::connect(widgetFilter, &WidgetFilter::filterFinished, self, [this]() {
-            if(goBack && !goBack->isHidden()) {
-                QMetaObject::invokeMethod(goBack, "clicked", Q_ARG(bool, false));
+        QObject::connect(m_widgetFilter, &WidgetFilter::filterFinished, m_self, [this]() {
+            if(m_goBack && !m_goBack->isHidden()) {
+                QMetaObject::invokeMethod(m_goBack, "clicked", Q_ARG(bool, false));
             }
             else {
-                QMetaObject::invokeMethod(finishEditing, "clicked", Q_ARG(bool, false));
+                QMetaObject::invokeMethod(m_finishEditing, "clicked", Q_ARG(bool, false));
             }
         });
 
-        controlDialog->move(editableLayout->width() - 160, editableLayout->height() - 160);
+        m_controlDialog->move(m_editableLayout->width() - 160, m_editableLayout->height() - 160);
     }
 };
 
@@ -356,8 +356,8 @@ FilterManager::~FilterManager() = default;
 
 void FilterManager::setupWidgetConnections()
 {
-    p->widgetFilter = new WidgetFilter(p->editableLayout, this);
-    p->widgetFilter->start();
+    p->m_widgetFilter = new WidgetFilter(p->m_editableLayout, this);
+    p->m_widgetFilter->start();
 
     p->clearOverlays();
     p->setupOverlays();
@@ -365,7 +365,7 @@ void FilterManager::setupWidgetConnections()
     p->createControlDialog();
     p->updateDialog();
 
-    p->controlDialog->show();
+    p->m_controlDialog->show();
 }
 } // namespace Fooyin::Filters
 

@@ -48,109 +48,109 @@ constexpr auto MaxDecodeLength = 1000;
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
 {
-    AudioPlaybackEngine* self;
+    AudioPlaybackEngine* m_self;
 
-    SettingsManager* settings;
+    SettingsManager* m_settings;
 
-    AudioClock clock;
-    QTimer* positionUpdateTimer{nullptr};
+    AudioClock m_clock;
+    QTimer* m_positionUpdateTimer{nullptr};
 
-    TrackStatus status{TrackStatus::NoTrack};
-    PlaybackState state{PlaybackState::Stopped};
-    AudioOutput::State outputState{AudioOutput::State::None};
+    TrackStatus m_status{TrackStatus::NoTrack};
+    PlaybackState m_state{PlaybackState::Stopped};
+    AudioOutput::State m_outputState{AudioOutput::State::None};
 
-    uint64_t startPosition{0};
-    uint64_t endPosition{0};
-    uint64_t lastPosition{0};
+    uint64_t m_startPosition{0};
+    uint64_t m_endPosition{0};
+    uint64_t m_lastPosition{0};
 
-    uint64_t totalBufferTime{0};
-    uint64_t bufferLength{0};
+    uint64_t m_totalBufferTime{0};
+    uint64_t m_bufferLength{0};
 
-    uint64_t duration{0};
-    double volume{1.0};
-    bool ending{false};
-    bool pausing{false};
+    uint64_t m_duration{0};
+    double m_volume{1.0};
+    bool m_ending{false};
+    bool m_pausing{false};
 
-    Track currentTrack;
-    AudioFormat format;
+    Track m_currentTrack;
+    AudioFormat m_format;
 
-    std::unique_ptr<AudioDecoder> decoder;
-    AudioRenderer* renderer;
+    std::unique_ptr<AudioDecoder> m_decoder;
+    AudioRenderer* m_renderer;
 
-    QBasicTimer bufferTimer;
-    QBasicTimer pauseTimer;
+    QBasicTimer m_bufferTimer;
+    QBasicTimer m_pauseTimer;
 
-    FadingIntervals fadeIntervals;
+    FadingIntervals m_fadeIntervals;
 
-    explicit Private(AudioPlaybackEngine* self_, SettingsManager* settings_)
-        : self{self_}
-        , settings{settings_}
-        , bufferLength{static_cast<uint64_t>(settings->value<Settings::Core::BufferLength>())}
-        , decoder{std::make_unique<FFmpegDecoder>()}
-        , renderer{new AudioRenderer(self)}
-        , fadeIntervals{settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
+    explicit Private(AudioPlaybackEngine* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
+        , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
+        , m_decoder{std::make_unique<FFmpegDecoder>()}
+        , m_renderer{new AudioRenderer(m_self)}
+        , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
     {
-        settings->subscribe<Settings::Core::BufferLength>(self, [this](int length) { bufferLength = length; });
-        settings->subscribe<Settings::Core::Internal::FadingIntervals>(
-            self, [this](const QVariant& fading) { fadeIntervals = fading.value<FadingIntervals>(); });
+        m_settings->subscribe<Settings::Core::BufferLength>(m_self, [this](int length) { m_bufferLength = length; });
+        m_settings->subscribe<Settings::Core::Internal::FadingIntervals>(
+            m_self, [this](const QVariant& fading) { m_fadeIntervals = fading.value<FadingIntervals>(); });
 
-        QObject::connect(renderer, &AudioRenderer::bufferProcessed, self,
-                         [this](const AudioBuffer& buffer) { totalBufferTime -= buffer.duration(); });
-        QObject::connect(renderer, &AudioRenderer::finished, self, [this]() { onRendererFinished(); });
-        QObject::connect(renderer, &AudioRenderer::outputStateChanged, self,
+        QObject::connect(m_renderer, &AudioRenderer::bufferProcessed, m_self,
+                         [this](const AudioBuffer& buffer) { m_totalBufferTime -= buffer.duration(); });
+        QObject::connect(m_renderer, &AudioRenderer::finished, m_self, [this]() { onRendererFinished(); });
+        QObject::connect(m_renderer, &AudioRenderer::outputStateChanged, m_self,
                          [this](AudioOutput::State outState) { handleOutputState(outState); });
     }
 
     QTimer* positionTimer()
     {
-        if(!positionUpdateTimer) {
-            positionUpdateTimer = new QTimer(self);
-            positionUpdateTimer->setInterval(50ms);
-            positionUpdateTimer->setTimerType(Qt::PreciseTimer);
-            QObject::connect(positionUpdateTimer, &QTimer::timeout, self, [this]() { updatePosition(); });
+        if(!m_positionUpdateTimer) {
+            m_positionUpdateTimer = new QTimer(m_self);
+            m_positionUpdateTimer->setInterval(50ms);
+            m_positionUpdateTimer->setTimerType(Qt::PreciseTimer);
+            QObject::connect(m_positionUpdateTimer, &QTimer::timeout, m_self, [this]() { updatePosition(); });
         }
-        return positionUpdateTimer;
+        return m_positionUpdateTimer;
     }
 
     void readNextBuffer()
     {
-        if(totalBufferTime >= bufferLength) {
+        if(m_totalBufferTime >= m_bufferLength) {
             return;
         }
 
-        const auto bytesToEnd = static_cast<size_t>(format.bytesForDuration(endPosition - lastPosition));
+        const auto bytesToEnd = static_cast<size_t>(m_format.bytesForDuration(m_endPosition - m_lastPosition));
         const auto bytesLeft
-            = std::min(bytesToEnd, static_cast<size_t>(format.bytesForDuration(bufferLength - totalBufferTime)));
-        const auto maxBytes = std::min(bytesLeft, static_cast<size_t>(format.bytesForDuration(MaxDecodeLength)));
+            = std::min(bytesToEnd, static_cast<size_t>(m_format.bytesForDuration(m_bufferLength - m_totalBufferTime)));
+        const auto maxBytes = std::min(bytesLeft, static_cast<size_t>(m_format.bytesForDuration(MaxDecodeLength)));
 
-        const auto buffer = decoder->readBuffer(maxBytes);
+        const auto buffer = m_decoder->readBuffer(maxBytes);
         if(buffer.isValid()) {
-            totalBufferTime += buffer.duration();
-            renderer->queueBuffer(buffer);
+            m_totalBufferTime += buffer.duration();
+            m_renderer->queueBuffer(buffer);
         }
 
-        if(!buffer.isValid() || buffer.endTime() >= endPosition) {
-            bufferTimer.stop();
-            renderer->queueBuffer({});
-            ending = true;
-            QMetaObject::invokeMethod(self, &AudioEngine::trackAboutToFinish);
+        if(!buffer.isValid() || buffer.endTime() >= m_endPosition) {
+            m_bufferTimer.stop();
+            m_renderer->queueBuffer({});
+            m_ending = true;
+            QMetaObject::invokeMethod(m_self, &AudioEngine::trackAboutToFinish);
         }
     }
 
     void handleOutputState(AudioOutput::State outState)
     {
-        outputState = outState;
-        if(outputState == AudioOutput::State::Disconnected) {
-            self->pause();
+        m_outputState = outState;
+        if(m_outputState == AudioOutput::State::Disconnected) {
+            m_self->pause();
         }
     }
 
     void updateState(PlaybackState newState)
     {
-        if(std::exchange(state, newState) != state) {
-            emit self->stateChanged(newState);
+        if(std::exchange(m_state, newState) != m_state) {
+            emit m_self->stateChanged(newState);
         }
-        clock.setPaused(newState != PlaybackState::Playing);
+        m_clock.setPaused(newState != PlaybackState::Playing);
     }
 
     void stop()
@@ -160,10 +160,10 @@ struct AudioPlaybackEngine::Private
         };
 
         const bool canFade
-            = settings->value<Settings::Core::Internal::EngineFading>() && fadeIntervals.outPauseStop > 0;
+            = m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0;
         if(canFade) {
-            QObject::connect(renderer, &AudioRenderer::paused, self, delayedStop, Qt::SingleShotConnection);
-            renderer->pause(true, fadeIntervals.outPauseStop);
+            QObject::connect(m_renderer, &AudioRenderer::paused, m_self, delayedStop, Qt::SingleShotConnection);
+            m_renderer->pause(true, m_fadeIntervals.outPauseStop);
         }
         else {
             stopWorkers(true);
@@ -171,8 +171,8 @@ struct AudioPlaybackEngine::Private
 
         updateState(PlaybackState::Stopped);
         positionTimer()->stop();
-        lastPosition = 0;
-        emit self->positionChanged(0);
+        m_lastPosition = 0;
+        emit m_self->positionChanged(0);
     }
 
     void pause()
@@ -180,21 +180,21 @@ struct AudioPlaybackEngine::Private
         auto delayedPause = [this]() {
             pauseOutput(true);
             updateState(PlaybackState::Paused);
-            clock.setPaused(true);
+            m_clock.setPaused(true);
         };
 
-        QObject::connect(renderer, &AudioRenderer::paused, self, delayedPause, Qt::SingleShotConnection);
+        QObject::connect(m_renderer, &AudioRenderer::paused, m_self, delayedPause, Qt::SingleShotConnection);
 
         const int fadeInterval
-            = settings->value<Settings::Core::Internal::EngineFading>() ? fadeIntervals.outPauseStop : 0;
-        renderer->pause(true, fadeInterval);
+            = m_settings->value<Settings::Core::Internal::EngineFading>() ? m_fadeIntervals.outPauseStop : 0;
+        m_renderer->pause(true, fadeInterval);
     }
 
     void play()
     {
-        if(outputState == AudioOutput::State::Disconnected) {
-            if(renderer->init(format)) {
-                outputState = AudioOutput::State::None;
+        if(m_outputState == AudioOutput::State::Disconnected) {
+            if(m_renderer->init(m_format)) {
+                m_outputState = AudioOutput::State::None;
             }
             else {
                 updateState(PlaybackState::Error);
@@ -202,20 +202,20 @@ struct AudioPlaybackEngine::Private
             }
         }
 
-        const auto prevState = state;
+        const auto prevState = m_state;
 
         startPlayback();
-        if(state == PlaybackState::Stopped && currentTrack.offset() > 0) {
-            decoder->seek(currentTrack.offset());
+        if(m_state == PlaybackState::Stopped && m_currentTrack.offset() > 0) {
+            m_decoder->seek(m_currentTrack.offset());
         }
 
         updateState(PlaybackState::Playing);
 
-        const bool canFade = settings->value<Settings::Core::Internal::EngineFading>()
-                          && (prevState == PlaybackState::Paused || renderer->isFading());
-        const int fadeInterval = canFade ? fadeIntervals.inPauseStop : 0;
+        const bool canFade = m_settings->value<Settings::Core::Internal::EngineFading>()
+                          && (prevState == PlaybackState::Paused || m_renderer->isFading());
+        const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
 
-        renderer->pause(false, fadeInterval);
+        m_renderer->pause(false, fadeInterval);
         changeTrackStatus(TrackStatus::BufferedTrack);
         positionTimer()->start();
     }
@@ -227,43 +227,43 @@ struct AudioPlaybackEngine::Private
 
     TrackStatus changeTrackStatus(TrackStatus newStatus)
     {
-        auto prevStatus = std::exchange(status, newStatus);
-        if(prevStatus != status) {
-            emit self->trackStatusChanged(status);
+        auto prevStatus = std::exchange(m_status, newStatus);
+        if(prevStatus != m_status) {
+            emit m_self->trackStatusChanged(m_status);
         }
         return prevStatus;
     }
 
     void startBufferTimer()
     {
-        bufferTimer.start(BufferInterval, self);
+        m_bufferTimer.start(BufferInterval, m_self);
     }
 
     void updatePosition()
     {
-        const auto currentPosition = startPosition + clock.currentPosition();
-        if(std::exchange(lastPosition, currentPosition) != lastPosition) {
-            emit self->positionChanged(lastPosition - startPosition);
+        const auto currentPosition = m_startPosition + m_clock.currentPosition();
+        if(std::exchange(m_lastPosition, currentPosition) != m_lastPosition) {
+            emit m_self->positionChanged(m_lastPosition - m_startPosition);
         }
 
-        if(currentTrack.hasCue() && lastPosition >= endPosition) {
-            clock.setPaused(true);
-            clock.sync(duration);
+        if(m_currentTrack.hasCue() && m_lastPosition >= m_endPosition) {
+            m_clock.setPaused(true);
+            m_clock.sync(m_duration);
             changeTrackStatus(TrackStatus::EndOfTrack);
         }
     }
 
     bool updateFormat(const AudioFormat& nextFormat)
     {
-        const auto prevFormat = std::exchange(format, nextFormat);
+        const auto prevFormat = std::exchange(m_format, nextFormat);
 
-        if(settings->value<Settings::Core::GaplessPlayback>() && prevFormat == format
-           && state != PlaybackState::Paused) {
+        if(m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == m_format
+           && m_state != PlaybackState::Paused) {
             return true;
         }
 
-        if(!renderer->init(format)) {
-            format = {};
+        if(!m_renderer->init(m_format)) {
+            m_format = {};
             return false;
         }
 
@@ -272,19 +272,19 @@ struct AudioPlaybackEngine::Private
 
     void startPlayback()
     {
-        decoder->start();
+        m_decoder->start();
         startBufferTimer();
-        renderer->start();
+        m_renderer->start();
     }
 
     void onRendererFinished()
     {
-        if(currentTrack.hasCue()) {
+        if(m_currentTrack.hasCue()) {
             return;
         }
 
-        clock.setPaused(true);
-        clock.sync(duration);
+        m_clock.setPaused(true);
+        m_clock.sync(m_duration);
 
         changeTrackStatus(TrackStatus::EndOfTrack);
     }
@@ -292,7 +292,7 @@ struct AudioPlaybackEngine::Private
     void pauseOutput(bool pause)
     {
         if(pause) {
-            bufferTimer.stop();
+            m_bufferTimer.stop();
         }
         else {
             startBufferTimer();
@@ -301,24 +301,24 @@ struct AudioPlaybackEngine::Private
 
     void resetWorkers()
     {
-        bufferTimer.stop();
-        clock.setPaused(true);
-        renderer->reset();
-        totalBufferTime = 0;
+        m_bufferTimer.stop();
+        m_clock.setPaused(true);
+        m_renderer->reset();
+        m_totalBufferTime = 0;
     }
 
     void stopWorkers(bool full = false)
     {
-        bufferTimer.stop();
-        clock.setPaused(true);
-        clock.sync();
-        renderer->stop();
+        m_bufferTimer.stop();
+        m_clock.setPaused(true);
+        m_clock.sync();
+        m_renderer->stop();
         if(full) {
-            renderer->closeOutput();
-            outputState = AudioOutput::State::Disconnected;
+            m_renderer->closeOutput();
+            m_outputState = AudioOutput::State::Disconnected;
         }
-        decoder->stop();
-        totalBufferTime = 0;
+        m_decoder->stop();
+        m_totalBufferTime = 0;
     }
 };
 
@@ -333,26 +333,26 @@ AudioPlaybackEngine::~AudioPlaybackEngine()
 
     p->stopWorkers();
 
-    if(p->positionUpdateTimer) {
-        p->positionUpdateTimer->deleteLater();
+    if(p->m_positionUpdateTimer) {
+        p->m_positionUpdateTimer->deleteLater();
     }
 }
 
 void AudioPlaybackEngine::seek(uint64_t pos)
 {
-    if(!p->decoder->isSeekable()) {
+    if(!p->m_decoder->isSeekable()) {
         return;
     }
 
     p->resetWorkers();
 
-    p->decoder->seek(pos + p->startPosition);
-    p->clock.sync(pos);
+    p->m_decoder->seek(pos + p->m_startPosition);
+    p->m_clock.sync(pos);
 
-    if(p->state == PlaybackState::Playing) {
-        p->clock.setPaused(false);
+    if(p->m_state == PlaybackState::Playing) {
+        p->m_clock.setPaused(false);
         p->startBufferTimer();
-        p->renderer->start();
+        p->m_renderer->start();
     }
     else {
         p->updatePosition();
@@ -361,22 +361,22 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
-    const Track prevTrack = std::exchange(p->currentTrack, track);
+    const Track prevTrack = std::exchange(p->m_currentTrack, track);
 
     auto setupDuration = [this, &track]() {
-        p->duration      = track.duration();
-        p->startPosition = track.offset();
-        p->endPosition   = p->startPosition + p->duration;
-        p->lastPosition  = p->startPosition;
+        p->m_duration      = track.duration();
+        p->m_startPosition = track.offset();
+        p->m_endPosition   = p->m_startPosition + p->m_duration;
+        p->m_lastPosition  = p->m_startPosition;
     };
 
-    if(p->ending && track.filepath() == prevTrack.filepath() && p->endPosition == track.offset()) {
+    if(p->m_ending && track.filepath() == prevTrack.filepath() && p->m_endPosition == track.offset()) {
         emit positionChanged(0);
-        p->ending = false;
-        p->clock.sync(0);
+        p->m_ending = false;
+        p->m_clock.sync(0);
         setupDuration();
         p->changeTrackStatus(TrackStatus::BufferedTrack);
-        if(p->state == PlaybackState::Playing) {
+        if(p->m_state == PlaybackState::Playing) {
             p->play();
         }
         return;
@@ -386,9 +386,9 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     emit positionChanged(0);
 
-    p->ending = false;
-    p->clock.setPaused(true);
-    p->clock.sync();
+    p->m_ending = false;
+    p->m_clock.setPaused(true);
+    p->m_clock.sync();
 
     if(!track.isValid()) {
         p->changeTrackStatus(TrackStatus::InvalidTrack);
@@ -397,12 +397,12 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     p->changeTrackStatus(TrackStatus::LoadingTrack);
 
-    if(!p->decoder->init(track.filepath())) {
+    if(!p->m_decoder->init(track.filepath())) {
         p->changeTrackStatus(TrackStatus::InvalidTrack);
         return;
     }
 
-    if(!p->updateFormat(p->decoder->format())) {
+    if(!p->updateFormat(p->m_decoder->format())) {
         p->enterErrorState();
         p->changeTrackStatus(TrackStatus::NoTrack);
         return;
@@ -413,21 +413,21 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     setupDuration();
 
     if(track.offset() > 0) {
-        p->decoder->seek(track.offset());
+        p->m_decoder->seek(track.offset());
     }
 
-    if(p->state == PlaybackState::Playing) {
+    if(p->m_state == PlaybackState::Playing) {
         p->play();
     }
 }
 
 void AudioPlaybackEngine::play()
 {
-    if(p->status == TrackStatus::NoTrack || p->status == TrackStatus::InvalidTrack) {
+    if(p->m_status == TrackStatus::NoTrack || p->m_status == TrackStatus::InvalidTrack) {
         return;
     }
 
-    if(p->status == TrackStatus::EndOfTrack && p->state == PlaybackState::Stopped) {
+    if(p->m_status == TrackStatus::EndOfTrack && p->m_state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
     }
@@ -437,11 +437,11 @@ void AudioPlaybackEngine::play()
 
 void AudioPlaybackEngine::pause()
 {
-    if(p->status == TrackStatus::NoTrack || p->status == TrackStatus::InvalidTrack) {
+    if(p->m_status == TrackStatus::NoTrack || p->m_status == TrackStatus::InvalidTrack) {
         return;
     }
 
-    if(p->status == TrackStatus::EndOfTrack && p->state == PlaybackState::Stopped) {
+    if(p->m_status == TrackStatus::EndOfTrack && p->m_state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
     }
@@ -452,37 +452,37 @@ void AudioPlaybackEngine::pause()
 
 void AudioPlaybackEngine::stop()
 {
-    if(p->state != PlaybackState::Stopped) {
+    if(p->m_state != PlaybackState::Stopped) {
         p->stop();
     }
 }
 
 void AudioPlaybackEngine::setVolume(double volume)
 {
-    p->volume = volume;
-    p->renderer->updateVolume(volume);
+    p->m_volume = volume;
+    p->m_renderer->updateVolume(volume);
 }
 
 void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QString& device)
 {
-    const bool playing = p->state == PlaybackState::Playing;
+    const bool playing = p->m_state == PlaybackState::Playing;
 
     if(playing) {
-        p->clock.setPaused(true);
-        p->renderer->pause(true);
+        p->m_clock.setPaused(true);
+        p->m_renderer->pause(true);
     }
 
-    p->renderer->updateOutput(output, device);
+    p->m_renderer->updateOutput(output, device);
 
     if(playing) {
-        if(!p->renderer->init(p->format)) {
+        if(!p->m_renderer->init(p->m_format)) {
             p->changeTrackStatus(TrackStatus::NoTrack);
             return;
         }
 
-        p->clock.setPaused(false);
-        p->renderer->start();
-        p->renderer->pause(false);
+        p->m_clock.setPaused(false);
+        p->m_renderer->start();
+        p->m_renderer->pause(false);
     }
 }
 
@@ -492,30 +492,30 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
         return;
     }
 
-    const bool playing = p->state == PlaybackState::Playing;
+    const bool playing = p->m_state == PlaybackState::Playing;
 
     if(playing) {
-        p->clock.setPaused(true);
-        p->renderer->pause(true);
+        p->m_clock.setPaused(true);
+        p->m_renderer->pause(true);
     }
 
-    p->renderer->updateDevice(device);
+    p->m_renderer->updateDevice(device);
 
     if(playing) {
-        if(!p->renderer->init(p->format)) {
+        if(!p->m_renderer->init(p->m_format)) {
             p->changeTrackStatus(TrackStatus::NoTrack);
             return;
         }
 
-        p->clock.setPaused(false);
+        p->m_clock.setPaused(false);
         p->startPlayback();
-        p->renderer->pause(false);
+        p->m_renderer->pause(false);
     }
 }
 
 void AudioPlaybackEngine::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->bufferTimer.timerId()) {
+    if(event->timerId() == p->m_bufferTimer.timerId()) {
         p->readNextBuffer();
     }
 

@@ -30,63 +30,62 @@
 
 #include <QIODevice>
 #include <QMenu>
-#include <QProgressDialog>
 #include <QUndoStack>
 
 namespace Fooyin {
 struct PlaylistController::Private
 {
-    PlaylistController* self;
+    PlaylistController* m_self;
 
-    PlaylistHandler* handler;
-    PlayerController* playerController;
-    TrackSelectionController* selectionController;
-    SettingsManager* settings;
+    PlaylistHandler* m_handler;
+    PlayerController* m_playerController;
+    TrackSelectionController* m_selectionController;
+    SettingsManager* m_settings;
 
-    bool loaded{false};
-    Playlist* currentPlaylist{nullptr};
-    bool clearingQueue{false};
-    bool changingTracks{false};
+    bool m_loaded{false};
+    Playlist* m_currentPlaylist{nullptr};
+    bool m_clearingQueue{false};
+    bool m_changingTracks{false};
 
-    std::unordered_map<Playlist*, QUndoStack> histories;
-    std::unordered_map<Playlist*, PlaylistViewState> states;
+    std::unordered_map<Playlist*, QUndoStack> m_histories;
+    std::unordered_map<Playlist*, PlaylistViewState> m_states;
 
-    Private(PlaylistController* self_, PlaylistHandler* handler_, PlayerController* playerController_,
-            TrackSelectionController* selectionController_, SettingsManager* settings_)
-        : self{self_}
-        , handler{handler_}
-        , playerController{playerController_}
-        , selectionController{selectionController_}
-        , settings{settings_}
+    Private(PlaylistController* self, PlaylistHandler* handler, PlayerController* playerController,
+            TrackSelectionController* selectionController, SettingsManager* settings)
+        : m_self{self}
+        , m_handler{handler}
+        , m_playerController{playerController}
+        , m_selectionController{selectionController}
+        , m_settings{settings}
     { }
 
     void restoreLastPlaylist()
     {
-        const int lastId = settings->value<Settings::Gui::LastPlaylistId>();
+        const int lastId = m_settings->value<Settings::Gui::LastPlaylistId>();
 
         if(lastId >= 0) {
-            currentPlaylist = handler->playlistByDbId(lastId);
-            if(!currentPlaylist) {
-                currentPlaylist = handler->playlistByIndex(0);
+            m_currentPlaylist = m_handler->playlistByDbId(lastId);
+            if(!m_currentPlaylist) {
+                m_currentPlaylist = m_handler->playlistByIndex(0);
             }
         }
 
-        loaded = true;
-        emit self->playlistsLoaded();
+        m_loaded = true;
+        emit m_self->playlistsLoaded();
     }
 
     void handlePlaylistAdded(Playlist* playlist)
     {
         if(playlist) {
-            histories.erase(playlist);
-            states.erase(playlist);
+            m_histories.erase(playlist);
+            m_states.erase(playlist);
         }
     }
 
     void handlePlaylistTracksAdded(Playlist* playlist, const TrackList& tracks, int index) const
     {
-        if(playlist == currentPlaylist) {
-            emit self->currentPlaylistTracksAdded(tracks, index);
+        if(playlist == m_currentPlaylist) {
+            emit m_self->currentPlaylistTracksAdded(tracks, index);
         }
     }
 
@@ -95,7 +94,7 @@ struct PlaylistController::Private
         std::set<int> uniqueIndexes;
 
         for(const auto& track : tracks) {
-            if(track.playlistId == currentPlaylist->id()) {
+            if(track.playlistId == m_currentPlaylist->id()) {
                 uniqueIndexes.emplace(track.indexInPlaylist);
             }
         }
@@ -103,25 +102,25 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            emit self->currentPlaylistQueueChanged(indexes);
+            emit m_self->currentPlaylistQueueChanged(indexes);
         }
     }
 
     void handleTracksDequeued(const QueueTracks& tracks) const
     {
-        if(clearingQueue) {
+        if(m_clearingQueue) {
             return;
         }
 
         std::set<int> uniqueIndexes;
 
         for(const auto& track : tracks) {
-            if(track.playlistId == currentPlaylist->id()) {
+            if(track.playlistId == m_currentPlaylist->id()) {
                 uniqueIndexes.emplace(track.indexInPlaylist);
             }
         }
 
-        const auto queuedTracks = playerController->playbackQueue().indexesForPlaylist(currentPlaylist->id());
+        const auto queuedTracks = m_playerController->playbackQueue().indexesForPlaylist(m_currentPlaylist->id());
         for(const auto& trackIndex : queuedTracks | std::views::keys) {
             uniqueIndexes.emplace(trackIndex);
         }
@@ -129,7 +128,7 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            emit self->currentPlaylistQueueChanged(indexes);
+            emit m_self->currentPlaylistQueueChanged(indexes);
         }
     }
 
@@ -139,7 +138,7 @@ struct PlaylistController::Private
 
         auto gatherIndexes = [this, &uniqueIndexes](const QueueTracks& tracks) {
             for(const auto& track : tracks) {
-                if(track.playlistId == currentPlaylist->id()) {
+                if(track.playlistId == m_currentPlaylist->id()) {
                     uniqueIndexes.emplace(track.indexInPlaylist);
                 }
             }
@@ -151,13 +150,13 @@ struct PlaylistController::Private
         const std::vector<int> indexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
 
         if(!indexes.empty()) {
-            emit self->currentPlaylistQueueChanged(indexes);
+            emit m_self->currentPlaylistQueueChanged(indexes);
         }
     }
 
     void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes)
     {
-        if(changingTracks) {
+        if(m_changingTracks) {
             return;
         }
 
@@ -165,27 +164,27 @@ struct PlaylistController::Private
 
         if(playlist && std::cmp_equal(indexes.size(), playlist->trackCount())) {
             allNew = true;
-            histories.erase(playlist);
-            states.erase(playlist);
+            m_histories.erase(playlist);
+            m_states.erase(playlist);
 
-            clearingQueue = true;
-            playerController->clearPlaylistQueue(playlist->id());
-            clearingQueue = false;
+            m_clearingQueue = true;
+            m_playerController->clearPlaylistQueue(playlist->id());
+            m_clearingQueue = false;
         }
 
-        if(playlist == currentPlaylist) {
-            emit self->currentPlaylistTracksChanged(indexes, allNew);
+        if(playlist == m_currentPlaylist) {
+            emit m_self->currentPlaylistTracksChanged(indexes, allNew);
         }
     }
 
     void handleTracksPlayed(Playlist* playlist, const std::vector<int>& indexes) const
     {
-        if(changingTracks) {
+        if(m_changingTracks) {
             return;
         }
 
-        if(playlist == currentPlaylist) {
-            emit self->currentPlaylistTracksPlayed(indexes);
+        if(playlist == m_currentPlaylist) {
+            emit m_self->currentPlaylistTracksPlayed(indexes);
         }
     }
 
@@ -195,27 +194,27 @@ struct PlaylistController::Private
             return;
         }
 
-        histories.erase(playlist);
-        states.erase(playlist);
+        m_histories.erase(playlist);
+        m_states.erase(playlist);
 
-        if(currentPlaylist != playlist) {
+        if(m_currentPlaylist != playlist) {
             return;
         }
 
-        if(handler->playlistCount() == 0) {
+        if(m_handler->playlistCount() == 0) {
             QObject::connect(
-                handler, &PlaylistHandler::playlistAdded, self,
+                m_handler, &PlaylistHandler::playlistAdded, m_self,
                 [this](Playlist* newPlaylist) {
                     if(newPlaylist) {
-                        self->changeCurrentPlaylist(newPlaylist);
+                        m_self->changeCurrentPlaylist(newPlaylist);
                     }
                 },
                 Qt::SingleShotConnection);
         }
         else {
             const int nextIndex = std::max(0, playlist->index() - 1);
-            if(auto* nextPlaylist = handler->playlistByIndex(nextIndex)) {
-                self->changeCurrentPlaylist(nextPlaylist);
+            if(auto* nextPlaylist = m_handler->playlistByIndex(nextIndex)) {
+                m_self->changeCurrentPlaylist(nextPlaylist);
             }
         }
     }
@@ -226,8 +225,8 @@ struct PlaylistController::Private
         QDataStream stream(&out, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_0);
 
-        stream << static_cast<qint32>(states.size());
-        for(const auto& [playlist, state] : states) {
+        stream << static_cast<qint32>(m_states.size());
+        for(const auto& [playlist, state] : m_states) {
             if(playlist) {
                 stream << playlist->dbId();
                 stream << state.topIndex;
@@ -237,12 +236,12 @@ struct PlaylistController::Private
 
         out = qCompress(out, 9);
 
-        settings->fileSet(QStringLiteral("PlaylistWidget/PlaylistStates"), out);
+        m_settings->fileSet(QStringLiteral("PlaylistWidget/PlaylistStates"), out);
     }
 
     void restoreStates()
     {
-        QByteArray in = settings->fileValue(QStringLiteral("PlaylistWidget/PlaylistStates")).toByteArray();
+        QByteArray in = m_settings->fileValue(QStringLiteral("PlaylistWidget/PlaylistStates")).toByteArray();
 
         if(in.isEmpty()) {
             return;
@@ -255,7 +254,7 @@ struct PlaylistController::Private
 
         qint32 size;
         stream >> size;
-        states.clear();
+        m_states.clear();
 
         for(qint32 i{0}; i < size; ++i) {
             int dbId;
@@ -265,8 +264,8 @@ struct PlaylistController::Private
             stream >> value.topIndex;
             stream >> value.scrollPos;
 
-            if(auto* playlist = handler->playlistByDbId(dbId)) {
-                states[playlist] = value;
+            if(auto* playlist = m_handler->playlistByDbId(dbId)) {
+                m_states[playlist] = value;
             }
         }
     }
@@ -311,60 +310,60 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
 
 PlaylistController::~PlaylistController()
 {
-    if(p->currentPlaylist) {
-        p->settings->set<Settings::Gui::LastPlaylistId>(p->currentPlaylist->dbId());
+    if(p->m_currentPlaylist) {
+        p->m_settings->set<Settings::Gui::LastPlaylistId>(p->m_currentPlaylist->dbId());
         p->saveStates();
     }
 }
 
 PlayerController* PlaylistController::playerController() const
 {
-    return p->playerController;
+    return p->m_playerController;
 }
 
 PlaylistHandler* PlaylistController::playlistHandler() const
 {
-    return p->handler;
+    return p->m_handler;
 }
 
 TrackSelectionController* PlaylistController::selectionController() const
 {
-    return p->selectionController;
+    return p->m_selectionController;
 }
 
 bool PlaylistController::playlistsHaveLoaded() const
 {
-    return p->loaded;
+    return p->m_loaded;
 }
 
 PlaylistList PlaylistController::playlists() const
 {
-    return p->handler->playlists();
+    return p->m_handler->playlists();
 }
 
 PlaylistTrack PlaylistController::currentTrack() const
 {
-    return p->playerController->currentPlaylistTrack();
+    return p->m_playerController->currentPlaylistTrack();
 }
 
 PlayState PlaylistController::playState() const
 {
-    return p->playerController->playState();
+    return p->m_playerController->playState();
 }
 
 void PlaylistController::aboutToChangeTracks()
 {
-    p->changingTracks = true;
+    p->m_changingTracks = true;
 }
 
 void PlaylistController::changedTracks()
 {
-    p->changingTracks = false;
+    p->m_changingTracks = false;
 }
 
 void PlaylistController::addPlaylistMenu(QMenu* menu)
 {
-    if(!p->currentPlaylist) {
+    if(!p->m_currentPlaylist) {
         return;
     }
 
@@ -373,7 +372,7 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
     const auto playlists = this->playlists();
 
     for(const auto& playlist : playlists) {
-        if(playlist != p->currentPlaylist) {
+        if(playlist != p->m_currentPlaylist) {
             auto* switchPl = new QAction(playlist->name(), playlistMenu);
             const Id id    = playlist->id();
             QObject::connect(switchPl, &QAction::triggered, playlistMenu, [this, id]() { changeCurrentPlaylist(id); });
@@ -386,12 +385,12 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
 
 Playlist* PlaylistController::currentPlaylist() const
 {
-    return p->currentPlaylist;
+    return p->m_currentPlaylist;
 }
 
 Id PlaylistController::currentPlaylistId() const
 {
-    return p->currentPlaylist ? p->currentPlaylist->id() : Id{};
+    return p->m_currentPlaylist ? p->m_currentPlaylist->id() : Id{};
 }
 
 void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
@@ -400,11 +399,11 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
         return;
     }
 
-    auto* prevPlaylist = std::exchange(p->currentPlaylist, playlist);
+    auto* prevPlaylist = std::exchange(p->m_currentPlaylist, playlist);
 
     if(prevPlaylist == playlist) {
-        p->histories.erase(playlist);
-        p->states.erase(playlist);
+        p->m_histories.erase(playlist);
+        p->m_states.erase(playlist);
 
         emit playlistHistoryChanged();
         return;
@@ -415,30 +414,30 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
 
 void PlaylistController::changeCurrentPlaylist(const Id& id)
 {
-    if(auto* playlist = p->handler->playlistById(id)) {
+    if(auto* playlist = p->m_handler->playlistById(id)) {
         changeCurrentPlaylist(playlist);
     }
 }
 
 void PlaylistController::changePlaylistIndex(const Id& playlistId, int index)
 {
-    p->handler->changePlaylistIndex(playlistId, index);
+    p->m_handler->changePlaylistIndex(playlistId, index);
 }
 
 void PlaylistController::clearCurrentPlaylist()
 {
-    if(p->currentPlaylist) {
-        p->handler->clearPlaylistTracks(p->currentPlaylist->id());
+    if(p->m_currentPlaylist) {
+        p->m_handler->clearPlaylistTracks(p->m_currentPlaylist->id());
     }
 }
 
 std::optional<PlaylistViewState> PlaylistController::playlistState(Playlist* playlist) const
 {
-    if(!playlist || !p->states.contains(playlist)) {
+    if(!playlist || !p->m_states.contains(playlist)) {
         return {};
     }
 
-    return p->states.at(playlist);
+    return p->m_states.at(playlist);
 }
 
 void PlaylistController::savePlaylistState(Playlist* playlist, const PlaylistViewState& state)
@@ -448,93 +447,93 @@ void PlaylistController::savePlaylistState(Playlist* playlist, const PlaylistVie
     }
 
     if(state.scrollPos == 0 || state.topIndex < 0) {
-        p->states.erase(playlist);
+        p->m_states.erase(playlist);
     }
     else {
-        p->states[playlist] = state;
+        p->m_states[playlist] = state;
     }
 }
 
 void PlaylistController::addToHistory(QUndoCommand* command)
 {
-    if(!p->currentPlaylist) {
+    if(!p->m_currentPlaylist) {
         return;
     }
 
-    p->histories[p->currentPlaylist].push(command);
+    p->m_histories[p->m_currentPlaylist].push(command);
 
     emit playlistHistoryChanged();
 }
 
 bool PlaylistController::canUndo() const
 {
-    if(!p->currentPlaylist || p->histories.empty()) {
+    if(!p->m_currentPlaylist || p->m_histories.empty()) {
         return false;
     }
 
-    if(!p->histories.contains(p->currentPlaylist)) {
+    if(!p->m_histories.contains(p->m_currentPlaylist)) {
         return false;
     }
 
-    return p->histories.at(p->currentPlaylist).canUndo();
+    return p->m_histories.at(p->m_currentPlaylist).canUndo();
 }
 
 bool PlaylistController::canRedo() const
 {
-    if(!p->currentPlaylist || p->histories.empty()) {
+    if(!p->m_currentPlaylist || p->m_histories.empty()) {
         return false;
     }
 
-    if(!p->histories.contains(p->currentPlaylist)) {
+    if(!p->m_histories.contains(p->m_currentPlaylist)) {
         return false;
     }
 
-    return p->histories.at(p->currentPlaylist).canRedo();
+    return p->m_histories.at(p->m_currentPlaylist).canRedo();
 }
 
 void PlaylistController::undoPlaylistChanges()
 {
-    if(!p->currentPlaylist) {
+    if(!p->m_currentPlaylist) {
         return;
     }
 
     if(canUndo()) {
-        p->histories.at(p->currentPlaylist).undo();
+        p->m_histories.at(p->m_currentPlaylist).undo();
         emit playlistHistoryChanged();
     }
 }
 
 void PlaylistController::redoPlaylistChanges()
 {
-    if(!p->currentPlaylist) {
+    if(!p->m_currentPlaylist) {
         return;
     }
 
     if(canRedo()) {
-        p->histories.at(p->currentPlaylist).redo();
+        p->m_histories.at(p->m_currentPlaylist).redo();
         emit playlistHistoryChanged();
     }
 }
 
 void PlaylistController::clearHistory()
 {
-    p->histories.clear();
+    p->m_histories.clear();
 }
 
 void PlaylistController::handleTrackSelectionAction(TrackAction action)
 {
     if(action == TrackAction::SendCurrentPlaylist) {
-        if(p->currentPlaylist) {
-            p->histories.erase(p->currentPlaylist);
-            p->states.erase(p->currentPlaylist);
+        if(p->m_currentPlaylist) {
+            p->m_histories.erase(p->m_currentPlaylist);
+            p->m_states.erase(p->m_currentPlaylist);
         }
     }
 }
 
 void PlaylistController::startPlayback() const
 {
-    if(p->currentPlaylist) {
-        p->handler->startPlayback(p->currentPlaylist->id());
+    if(p->m_currentPlaylist) {
+        p->m_handler->startPlayback(p->m_currentPlaylist->id());
     }
 }
 
@@ -545,7 +544,7 @@ void PlaylistController::showNowPlaying()
 
 bool PlaylistController::currentIsActive() const
 {
-    return p->currentPlaylist == p->handler->activePlaylist();
+    return p->m_currentPlaylist == p->m_handler->activePlaylist();
 }
 } // namespace Fooyin
 

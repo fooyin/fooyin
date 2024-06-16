@@ -28,110 +28,63 @@
 #include <QPointer>
 
 namespace Fooyin {
-struct ActionCommand::Private
-{
-    ActionCommand* self;
-
-    Id id;
-    Context context;
-    ShortcutList defaultKeys;
-    QString defaultText;
-
-    bool shortcutIsInitialised{false};
-
-    ProxyAction* action{nullptr};
-
-    std::map<Id, QPointer<QAction>> contextActionMap;
-
-    bool active{false};
-
-    Private(ActionCommand* self_, const Id& id_)
-        : self{self_}
-        , id{id_}
-        , action{new ProxyAction(self)}
-    {
-        action->setShortcutVisibleInToolTip(true);
-        connect(action, &QAction::changed, self, [this]() { updateActiveState(); });
-    }
-
-    void removeOverrideAction(QAction* actionToRemove)
-    {
-        std::erase_if(contextActionMap,
-                      [actionToRemove](const auto& pair) { return !pair.second || pair.second == actionToRemove; });
-        self->setCurrentContext(context);
-    }
-
-    [[nodiscard]] bool isEmpty() const
-    {
-        return contextActionMap.empty();
-    }
-
-    void setActive(bool state)
-    {
-        if(std::exchange(active, state) != state) {
-            QMetaObject::invokeMethod(self, &Command::activeStateChanged);
-        }
-    }
-
-    void updateActiveState()
-    {
-        setActive(action->isEnabled() && action->isVisible() && !action->isSeparator());
-    }
-};
-
 ActionCommand::ActionCommand(const Id& id)
-    : p{std::make_unique<Private>(this, id)}
-{ }
+    : m_id{id}
+    , m_action{new ProxyAction(this)}
+{
+    m_action->setShortcutVisibleInToolTip(true);
+    connect(m_action, &QAction::changed, this, &ActionCommand::updateActiveState);
+}
 
 ActionCommand::~ActionCommand() = default;
 
 Id ActionCommand::id() const
 {
-    return p->id;
+    return m_id;
 }
 
 QAction* ActionCommand::action() const
 {
-    return p->action;
+    return m_action;
 }
 
 QAction* ActionCommand::actionForContext(const Id& context) const
 {
-    if(p->contextActionMap.contains(context)) {
-        return p->contextActionMap.at(context);
+    if(m_contextActionMap.contains(context)) {
+        return m_contextActionMap.at(context);
     }
     return nullptr;
 }
 
 Context ActionCommand::context() const
 {
-    return p->context;
+    return m_context;
 }
 
 void ActionCommand::setAttribute(ProxyAction::Attribute attribute)
 {
-    p->action->setAttribute(attribute);
+    m_action->setAttribute(attribute);
 }
 
 void ActionCommand::removeAttribute(ProxyAction::Attribute attribute)
 {
-    p->action->removeAttribute(attribute);
+    m_action->removeAttribute(attribute);
 }
 
 bool ActionCommand::hasAttribute(ProxyAction::Attribute attribute) const
 {
-    return p->action->hasAttribute(attribute);
+    return m_action->hasAttribute(attribute);
 }
 
 bool ActionCommand::isActive() const
 {
-    return p->active;
+    return m_active;
 }
 
 void ActionCommand::setShortcut(const ShortcutList& keys)
 {
-    p->shortcutIsInitialised = true;
-    p->action->setShortcuts(keys);
+    m_shortcutIsInitialised = true;
+    m_action->setShortcuts(keys);
     emit shortcutChanged();
 }
 
@@ -151,44 +104,44 @@ void ActionCommand::actionWithShortcutToolTip(QAction* action) const
 
 void ActionCommand::setDefaultShortcut(const QKeySequence& shortcut)
 {
-    if(!p->shortcutIsInitialised) {
+    if(!m_shortcutIsInitialised) {
         setShortcut({shortcut});
     }
-    p->defaultKeys = {shortcut};
+    m_defaultKeys = {shortcut};
 }
 
 void ActionCommand::setDefaultShortcut(const ShortcutList& shortcuts)
 {
-    if(!p->shortcutIsInitialised) {
+    if(!m_shortcutIsInitialised) {
         setShortcut(shortcuts);
     }
-    p->defaultKeys = shortcuts;
+    m_defaultKeys = shortcuts;
 }
 
 ShortcutList ActionCommand::defaultShortcuts() const
 {
-    return p->defaultKeys;
+    return m_defaultKeys;
 }
 
 ShortcutList ActionCommand::shortcuts() const
 {
-    return p->action->shortcuts();
+    return m_action->shortcuts();
 }
 
 QKeySequence ActionCommand::shortcut() const
 {
-    return p->action->shortcut();
+    return m_action->shortcut();
 }
 
 void ActionCommand::setDescription(const QString& text)
 {
-    p->defaultText = text;
+    m_defaultText = text;
 }
 
 QString ActionCommand::description() const
 {
-    if(!p->defaultText.isEmpty()) {
-        return p->defaultText;
+    if(!m_defaultText.isEmpty()) {
+        return m_defaultText;
     }
     if(const QAction* act = action()) {
         QString text = act->text();
@@ -203,20 +156,20 @@ QString ActionCommand::description() const
 
 void ActionCommand::setCurrentContext(const Context& context)
 {
-    p->context = context;
+    m_context = context;
 
     QAction* currentAction = nullptr;
-    for(const Id& contextId : std::as_const(p->context)) {
-        if(p->contextActionMap.contains(contextId)) {
-            if(QAction* contextAction = p->contextActionMap.at(contextId)) {
+    for(const Id& contextId : std::as_const(m_context)) {
+        if(m_contextActionMap.contains(contextId)) {
+            if(QAction* contextAction = m_contextActionMap.at(contextId)) {
                 currentAction = contextAction;
                 break;
             }
         }
     }
 
-    p->action->setAction(currentAction);
-    p->updateActiveState();
+    m_action->setAction(currentAction);
+    updateActiveState();
 }
 
 void ActionCommand::addOverrideAction(QAction* action, const Context& context, bool changeContext)
@@ -225,29 +178,53 @@ void ActionCommand::addOverrideAction(QAction* action, const Context& context, b
         action->setMenuRole(QAction::NoRole);
     }
 
-    if(p->isEmpty()) {
-        p->action->initialise(action);
+    if(isEmpty()) {
+        m_action->initialise(action);
     }
 
-    QObject::connect(action, &QObject::destroyed, this, [this, action]() { p->removeOverrideAction(action); });
+    QObject::connect(action, &QObject::destroyed, this, [this, action]() { removeOverrideAction(action); });
 
     if(context.empty()) {
-        p->contextActionMap.emplace(Constants::Context::Global, action);
+        m_contextActionMap.emplace(Constants::Context::Global, action);
     }
     else {
         for(const Id& contextId : context) {
-            if(p->contextActionMap.contains(contextId)) {
-                if(auto contextAction = p->contextActionMap.at(contextId)) {
+            if(m_contextActionMap.contains(contextId)) {
+                if(auto contextAction = m_contextActionMap.at(contextId)) {
                     qWarning() << "Context " << contextId.name() << " already added for " << contextAction;
                 }
             }
-            p->contextActionMap.emplace(contextId, action);
+            m_contextActionMap.emplace(contextId, action);
         }
     }
 
     if(changeContext) {
         setCurrentContext(context);
     }
+}
+
+void ActionCommand::removeOverrideAction(QAction* actionToRemove)
+{
+    std::erase_if(m_contextActionMap,
+                  [actionToRemove](const auto& pair) { return !pair.second || pair.second == actionToRemove; });
+    setCurrentContext(m_context);
+}
+
+[[nodiscard]] bool ActionCommand::isEmpty() const
+{
+    return m_contextActionMap.empty();
+}
+
+void ActionCommand::setActive(bool state)
+{
+    if(std::exchange(m_active, state) != state) {
+        QMetaObject::invokeMethod(this, &Command::activeStateChanged);
+    }
+}
+
+void ActionCommand::updateActiveState()
+{
+    setActive(m_action->isEnabled() && m_action->isVisible() && !m_action->isSeparator());
 }
 } // namespace Fooyin
 

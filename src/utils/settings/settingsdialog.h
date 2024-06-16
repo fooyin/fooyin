@@ -25,14 +25,19 @@
 
 #include <QDialog>
 
+class QDialogButtonBox;
+class QStackedLayout;
+
 namespace Fooyin {
+class SettingsModel;
+class SimpleTreeView;
+
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(const PageList& pages, QWidget* parent = nullptr);
-    ~SettingsDialog() override;
+    explicit SettingsDialog(PageList pages, QWidget* parent = nullptr);
 
     void openSettings();
     void openPage(const Id& id);
@@ -47,7 +52,24 @@ signals:
     void resettingAll();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void apply();
+    void reset();
+    void resetAll();
+    void showCategory(const QModelIndex& index);
+    void checkCategoryWidget(SettingsCategory* category);
+    void currentChanged(const QModelIndex& current);
+    void currentTabChanged(int index);
+    SettingsPage* findPage(const Id& id);
+
+    SettingsModel* m_model;
+    SimpleTreeView* m_categoryTree;
+    QStackedLayout* m_stackedLayout;
+    QDialogButtonBox* m_buttonBox;
+
+    PageList m_pages;
+    std::set<SettingsPage*> m_visitedPages;
+
+    Id m_currentCategory;
+    Id m_currentPage;
 };
 } // namespace Fooyin

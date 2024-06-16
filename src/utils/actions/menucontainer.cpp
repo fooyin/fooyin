@@ -32,65 +32,14 @@ bool canAddAction(Fooyin::Command* action)
 } // namespace
 
 namespace Fooyin {
-struct MenuContainer::Private
-{
-    MenuContainer* self;
-    ActionManager* manager;
-
-    Id id;
-    DisabledBehavior disabledBehavior{Disable};
-
-    Private(MenuContainer* self_, const Id& id_, ActionManager* manager_)
-        : self{self_}
-        , manager{manager_}
-        , id{id_}
-    { }
-
-    void itemDestroyed(QObject* sender) const
-    {
-        for(Group& group : self->groups) {
-            if(std::erase(group.items, sender) > 0) {
-                break;
-            }
-        }
-    }
-
-    GroupList::const_iterator findGroup(const Id& groupId) const
-    {
-        return std::ranges::find_if(std::as_const(self->groups),
-                                    [&](const auto& group) { return (group.id == groupId); });
-    }
-
-    QAction* determineInsertionLocation(GroupList::const_iterator group) const
-    {
-        if(group == self->groups.cend()) {
-            return nullptr;
-        }
-
-        ++group;
-
-        while(group != self->groups.cend()) {
-            if(!group->items.empty()) {
-                QObject* item = group->items.front();
-                if(QAction* action = self->actionForItem(item)) {
-                    return action;
-                }
-            }
-            ++group;
-        }
-        return nullptr;
-    }
-};
-
 MenuContainer::MenuContainer(const Id& id, ActionManager* manager)
-    : p{std::make_unique<Private>(this, id, manager)}
+    : m_manager{manager}
+    , m_id{id}
 { }
-
-MenuContainer::~MenuContainer() = default;
 
 Id MenuContainer::id() const
 {
-    return p->id;
+    return m_id;
 }
 
 QMenu* MenuContainer::menu() const
@@ -105,11 +54,11 @@ QMenuBar* MenuContainer::menuBar() const
 
 QAction* MenuContainer::insertLocation(const Id& group) const
 {
-    auto it = p->findGroup(group);
-    if(it != groups.cend()) {
+    auto it = findGroup(group);
+    if(it != m_groups.cend()) {
         return nullptr;
     }
-    return p->determineInsertionLocation(it);
+    return determineInsertionLocation(it);
 }
 
 QAction* MenuContainer::actionForItem(QObject* item) const
@@ -129,12 +78,12 @@ QAction* MenuContainer::actionForItem(QObject* item) const
 
 ActionContainer::DisabledBehavior MenuContainer::disabledBehavior() const
 {
-    return p->disabledBehavior;
+    return m_disabledBehavior;
 }
 
 void MenuContainer::setDisabledBehavior(DisabledBehavior behavior)
 {
-    p->disabledBehavior = behavior;
+    m_disabledBehavior = behavior;
 }
 
 bool MenuContainer::isEmpty()
@@ -149,17 +98,50 @@ bool MenuContainer::isHidden()
 
 void MenuContainer::clear() { }
 
+void MenuContainer::itemDestroyed(QObject* sender)
+{
+    for(Group& group : m_groups) {
+        if(std::erase(group.items, sender) > 0) {
+            break;
+        }
+    }
+}
+
+MenuContainer::GroupList::const_iterator MenuContainer::findGroup(const Id& groupId) const
+{
+    return std::ranges::find_if(std::as_const(m_groups), [&](const auto& group) { return (group.id == groupId); });
+}
+
+QAction* MenuContainer::determineInsertionLocation(MenuContainer::GroupList::const_iterator group) const
+{
+    if(group == m_groups.cend()) {
+        return nullptr;
+    }
+
+    ++group;
+
+    while(group != m_groups.cend()) {
+        if(!group->items.empty()) {
+            QObject* item = group->items.front();
+            if(QAction* action = actionForItem(item)) {
+                return action;
+            }
+        }
+        ++group;
+    }
+    return nullptr;
+}
+
 void MenuContainer::appendGroup(const Id& group)
 {
-    groups.emplace_back(group);
+    m_groups.emplace_back(group);
 }
 
 void MenuContainer::insertGroup(const Id& beforeGroup, const Id& newGroup)
 {
-    auto groupIt
-        = std::ranges::find_if(std::as_const(groups), [&](const auto& group) { return (group.id == beforeGroup); });
-    if(groupIt != groups.cend()) {
-        groups.insert(groupIt, Group{newGroup});
+    auto groupIt = std::ranges::find_if(m_groups, [&](const auto& group) { return (group.id == beforeGroup); });
+    if(groupIt != m_groups.cend()) {
+        m_groups.insert(groupIt, Group{newGroup});
     }
 }
 
@@ -171,16 +153,16 @@ void MenuContainer::addAction(QAction* action, const Id& group)
 
     const Id groupId = group.isValid() ? group : Id{Actions::Groups::Two};
 
-    const auto groupIt = p->findGroup(groupId);
-    if(groupIt == groups.cend()) {
+    const auto groupIt = findGroup(groupId);
+    if(groupIt == m_groups.cend()) {
         qDebug() << "Can't find group" << group.name() << "in container" << id().name();
         return;
     }
 
-    groups.at(groupIt - groups.cbegin()).items.push_back(action);
-    QObject::connect(action, &QObject::destroyed, this, [this](QObject* sender) { p->itemDestroyed(sender); });
+    m_groups.at(groupIt - m_groups.cbegin()).items.push_back(action);
+    QObject::connect(action, &QObject::destroyed, this, &MenuContainer::itemDestroyed);
 
-    QAction* beforeAction = p->determineInsertionLocation(groupIt);
+    QAction* beforeAction = determineInsertionLocation(groupIt);
     insertAction(beforeAction, action);
 }
 
@@ -192,16 +174,16 @@ void MenuContainer::addAction(Command* action, const Id& group)
 
     const Id groupId = group.isValid() ? group : Id{Actions::Groups::Two};
 
-    const auto groupIt = p->findGroup(groupId);
-    if(groupIt == groups.cend()) {
+    const auto groupIt = findGroup(groupId);
+    if(groupIt == m_groups.cend()) {
         qDebug() << "Can't find group" << group.name() << "in container" << id().name();
         return;
     }
-    groups.at(groupIt - groups.cbegin()).items.push_back(action);
+    m_groups.at(groupIt - m_groups.cbegin()).items.push_back(action);
     QObject::connect(action, &Command::activeStateChanged, this, [this]() { emit requestUpdate(this); });
-    QObject::connect(action, &QObject::destroyed, this, [this](QObject* sender) { p->itemDestroyed(sender); });
+    QObject::connect(action, &QObject::destroyed, this, &MenuContainer::itemDestroyed);
 
-    QAction* beforeAction = p->determineInsertionLocation(groupIt);
+    QAction* beforeAction = determineInsertionLocation(groupIt);
     insertAction(beforeAction, action);
 }
 
@@ -214,14 +196,14 @@ void MenuContainer::addMenu(ActionContainer* menu, const Id& group)
 
     const Id groupId = group.isValid() ? group : Id{Actions::Groups::Two};
 
-    auto groupIt = p->findGroup(groupId);
-    if(groupIt == groups.cend()) {
+    auto groupIt = findGroup(groupId);
+    if(groupIt == m_groups.cend()) {
         return;
     }
-    groups[groupIt - groups.cbegin()].items.push_back(menu);
-    QObject::connect(menu, &QObject::destroyed, this, [this](QObject* sender) { p->itemDestroyed(sender); });
+    m_groups[groupIt - m_groups.cbegin()].items.push_back(menu);
+    QObject::connect(menu, &QObject::destroyed, this, &MenuContainer::itemDestroyed);
 
-    QAction* beforeAction = p->determineInsertionLocation(groupIt);
+    QAction* beforeAction = determineInsertionLocation(groupIt);
     insertMenu(beforeAction, menu);
 }
 
@@ -232,14 +214,14 @@ void MenuContainer::addMenu(ActionContainer* beforeContainer, ActionContainer* m
         return;
     }
 
-    for(Group& group : groups) {
+    for(Group& group : m_groups) {
         auto insertionPoint = std::ranges::find(std::as_const(group.items), beforeContainer);
         if(insertionPoint != group.items.cend()) {
             group.items.insert(insertionPoint, menu);
             break;
         }
     }
-    QObject::connect(menu, &QObject::destroyed, this, [this](QObject* sender) { p->itemDestroyed(sender); });
+    QObject::connect(menu, &QObject::destroyed, this, &MenuContainer::itemDestroyed);
 
     auto* beforeMenu      = qobject_cast<MenuContainer*>(beforeContainer);
     QAction* beforeAction = beforeMenu->containerAction();
@@ -256,7 +238,7 @@ Command* MenuContainer::addSeparator(const Context& context, const Id& group)
     separator->setSeparator(true);
 
     const Id separatorId = id().append(".Separator.").append(++separatorCount);
-    Command* command     = p->manager->registerAction(separator, separatorId, context);
+    Command* command     = m_manager->registerAction(separator, separatorId, context);
     addAction(command, group);
     return command;
 }
@@ -410,7 +392,7 @@ bool MenuActionContainer::update()
     };
 
     bool hasActions
-        = std::ranges::any_of(std::as_const(groups), [&](const Group& group) { return groupHasActions(group); });
+        = std::ranges::any_of(std::as_const(m_groups), [&](const Group& group) { return groupHasActions(group); });
 
     if(!hasActions) {
         hasActions = std::ranges::any_of(std::as_const(actions),

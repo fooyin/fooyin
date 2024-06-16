@@ -29,16 +29,12 @@ class PlaylistParser;
 class PlaylistParserRegistry
 {
 public:
-    PlaylistParserRegistry();
-    ~PlaylistParserRegistry();
-
     PlaylistParser* registerParser(std::unique_ptr<PlaylistParser> parser);
 
     [[nodiscard]] QStringList supportedExtensions() const;
     [[nodiscard]] PlaylistParser* parserForExtension(const QString& extension) const;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unordered_map<QString, std::unique_ptr<PlaylistParser>> m_parsers;
 };
 } // namespace Fooyin

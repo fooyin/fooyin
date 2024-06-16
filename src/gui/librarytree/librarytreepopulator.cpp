@@ -30,27 +30,27 @@ constexpr int BatchSize        = 4000;
 namespace Fooyin {
 struct LibraryTreePopulator::Private
 {
-    LibraryTreePopulator* self;
+    LibraryTreePopulator* m_self;
 
-    ScriptRegistry registry;
-    ScriptParser parser;
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
 
-    QString currentGrouping;
-    ParsedScript script;
+    QString m_currentGrouping;
+    ParsedScript m_script;
 
-    LibraryTreeItem root;
-    PendingTreeData data;
-    TrackList pendingTracks;
+    LibraryTreeItem m_root;
+    PendingTreeData m_data;
+    TrackList m_pendingTracks;
 
-    explicit Private(LibraryTreePopulator* self_)
-        : self{self_}
-        , parser{&registry}
-        , data{}
+    explicit Private(LibraryTreePopulator* self)
+        : m_self{self}
+        , m_parser{&m_registry}
+        , m_data{}
     { }
 
     LibraryTreeItem* getOrInsertItem(const QString& key, const LibraryTreeItem* parent, const QString& title, int level)
     {
-        auto [node, inserted] = data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
+        auto [node, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
         if(inserted) {
             node->second.setKey(key);
         }
@@ -58,16 +58,16 @@ struct LibraryTreePopulator::Private
 
         if(!child->pending()) {
             child->setPending(true);
-            data.nodes[parent->key()].push_back(key);
+            m_data.nodes[parent->key()].push_back(key);
         }
         return child;
     }
 
     void iterateTrack(const Track& track)
     {
-        LibraryTreeItem* parent = &root;
+        LibraryTreeItem* parent = &m_root;
 
-        const QString field = parser.evaluate(script, track);
+        const QString field = m_parser.evaluate(m_script, track);
         if(field.isNull()) {
             return;
         }
@@ -86,7 +86,7 @@ struct LibraryTreePopulator::Private
                 auto* node = getOrInsertItem(key, parent, title, level);
 
                 node->addTrack(track);
-                data.trackParents[track.id()].push_back(node->key());
+                m_data.trackParents[track.id()].push_back(node->key());
 
                 parent = node;
                 ++level;
@@ -100,10 +100,10 @@ struct LibraryTreePopulator::Private
             return;
         }
 
-        auto tracksBatch = std::ranges::views::take(pendingTracks, size);
+        auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
 
         for(const Track& track : tracksBatch) {
-            if(!self->mayRun()) {
+            if(!m_self->mayRun()) {
                 return;
             }
 
@@ -112,20 +112,20 @@ struct LibraryTreePopulator::Private
             }
         }
 
-        if(!self->mayRun()) {
+        if(!m_self->mayRun()) {
             return;
         }
 
-        emit self->populated(data);
+        emit m_self->populated(m_data);
 
-        auto tracksToKeep = std::ranges::views::drop(pendingTracks, size);
+        auto tracksToKeep = std::ranges::views::drop(m_pendingTracks, size);
         TrackList tempTracks;
         std::ranges::copy(tracksToKeep, std::back_inserter(tempTracks));
-        pendingTracks = std::move(tempTracks);
+        m_pendingTracks = std::move(tempTracks);
 
-        data.clear();
+        m_data.clear();
 
-        const auto remaining = static_cast<int>(pendingTracks.size());
+        const auto remaining = static_cast<int>(m_pendingTracks.size());
         runBatch(std::min(remaining, BatchSize));
     }
 };
@@ -141,13 +141,13 @@ void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks)
 {
     setState(Running);
 
-    p->data.clear();
+    p->m_data.clear();
 
-    if(std::exchange(p->currentGrouping, grouping) != grouping) {
-        p->script = p->parser.parse(p->currentGrouping);
+    if(std::exchange(p->m_currentGrouping, grouping) != grouping) {
+        p->m_script = p->m_parser.parse(p->m_currentGrouping);
     }
 
-    p->pendingTracks = tracks;
+    p->m_pendingTracks = tracks;
     p->runBatch(InitialBatchSize);
 
     setState(Idle);

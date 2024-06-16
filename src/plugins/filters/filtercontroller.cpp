@@ -59,57 +59,57 @@ Fooyin::TrackList trackIntersection(const Fooyin::TrackList& v1, const Fooyin::T
 namespace Fooyin::Filters {
 struct FilterController::Private
 {
-    FilterController* self;
+    FilterController* m_self;
 
-    MusicLibrary* library;
-    TrackSelectionController* trackSelection;
-    EditableLayout* editableLayout;
-    SettingsManager* settings;
+    MusicLibrary* m_library;
+    TrackSelectionController* m_trackSelection;
+    EditableLayout* m_editableLayout;
+    SettingsManager* m_settings;
 
-    FilterManager* manager;
+    FilterManager* m_manager;
 
-    Id defaultId{"Default"};
-    FilterGroups groups;
-    std::unordered_map<Id, FilterWidget*, Id::IdHash> ungrouped;
+    Id vdefaultId{"Default"};
+    FilterGroups m_groups;
+    std::unordered_map<Id, FilterWidget*, Id::IdHash> m_ungrouped;
 
-    TrackAction doubleClickAction;
-    TrackAction middleClickAction;
+    TrackAction m_doubleClickAction;
+    TrackAction m_middleClickAction;
 
-    explicit Private(FilterController* self_, MusicLibrary* library_, TrackSelectionController* trackSelection_,
-                     EditableLayout* editableLayout_, SettingsManager* settings_)
-        : self{self_}
-        , library{library_}
-        , trackSelection{trackSelection_}
-        , editableLayout{editableLayout_}
-        , settings{settings_}
-        , manager{new FilterManager(self, editableLayout, self)}
-        , doubleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterDoubleClick>())}
-        , middleClickAction{static_cast<TrackAction>(settings->value<Settings::Filters::FilterMiddleClick>())}
+    explicit Private(FilterController* self, MusicLibrary* library, TrackSelectionController* trackSelection,
+                     EditableLayout* editableLayout, SettingsManager* settings)
+        : m_self{self}
+        , m_library{library}
+        , m_trackSelection{trackSelection}
+        , m_editableLayout{editableLayout}
+        , m_settings{settings}
+        , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
+        , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterDoubleClick>())}
+        , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterMiddleClick>())}
     {
-        settings->subscribe<Settings::Filters::FilterDoubleClick>(
-            self, [this](int action) { doubleClickAction = static_cast<TrackAction>(action); });
-        settings->subscribe<Settings::Filters::FilterMiddleClick>(
-            self, [this](int action) { middleClickAction = static_cast<TrackAction>(action); });
-        settings->subscribe<Settings::Filters::FilterSendPlayback>(self, [this]() { updateAllPlaylistActions(); });
+        m_settings->subscribe<Settings::Filters::FilterDoubleClick>(
+            m_self, [this](int action) { m_doubleClickAction = static_cast<TrackAction>(action); });
+        m_settings->subscribe<Settings::Filters::FilterMiddleClick>(
+            m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
+        m_settings->subscribe<Settings::Filters::FilterSendPlayback>(m_self, [this]() { updateAllPlaylistActions(); });
     }
 
     void handleAction(const TrackAction& action, const QString& playlistName) const
     {
         PlaylistAction::ActionOptions options;
 
-        if(settings->value<Settings::Filters::FilterAutoSwitch>()) {
+        if(m_settings->value<Settings::Filters::FilterAutoSwitch>()) {
             options |= PlaylistAction::Switch;
         }
-        if(settings->value<Settings::Filters::FilterSendPlayback>()) {
+        if(m_settings->value<Settings::Filters::FilterSendPlayback>()) {
             options |= PlaylistAction::StartPlayback;
         }
 
-        trackSelection->executeAction(action, options, playlistName);
+        m_trackSelection->executeAction(action, options, playlistName);
     }
 
     Id findContainingGroup(FilterWidget* widget)
     {
-        for(const auto& [id, group] : groups) {
+        for(const auto& [id, group] : m_groups) {
             for(const auto& filterWidget : group.filters) {
                 if(filterWidget == widget) {
                     return id;
@@ -127,7 +127,7 @@ struct FilterController::Private
         if(groupId == oldGroup) {
             if(!groupId.isValid()) {
                 // Ungrouped
-                widget->reset(library->tracks());
+                widget->reset(m_library->tracks());
                 return;
             }
             resetGroup(widget->group());
@@ -136,12 +136,12 @@ struct FilterController::Private
 
         // Remove from old group
         if(!oldGroup.isValid()) {
-            ungrouped.erase(widget->id());
+            m_ungrouped.erase(widget->id());
         }
-        else if(groups.contains(oldGroup)) {
-            if(std::erase(groups.at(oldGroup).filters, widget) > 0) {
-                if(groups.at(oldGroup).filters.empty()) {
-                    groups.erase(oldGroup);
+        else if(m_groups.contains(oldGroup)) {
+            if(std::erase(m_groups.at(oldGroup).filters, widget) > 0) {
+                if(m_groups.at(oldGroup).filters.empty()) {
+                    m_groups.erase(oldGroup);
                 }
                 recalculateIndexesOfGroup(oldGroup);
             }
@@ -149,10 +149,10 @@ struct FilterController::Private
 
         // Add to new group
         if(!groupId.isValid()) {
-            ungrouped.emplace(widget->id(), widget);
+            m_ungrouped.emplace(widget->id(), widget);
         }
         else {
-            FilterGroup& group = groups[groupId];
+            FilterGroup& group = m_groups[groupId];
             const int index    = widget->index();
             if(index < 0 || index > static_cast<int>(group.filters.size())) {
                 group.filters.push_back(widget);
@@ -173,55 +173,55 @@ struct FilterController::Private
         auto* menu = new QMenu();
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
-        trackSelection->addTrackPlaylistContextMenu(menu);
-        trackSelection->addTrackContextMenu(menu);
+        m_trackSelection->addTrackPlaylistContextMenu(menu);
+        m_trackSelection->addTrackContextMenu(menu);
 
         menu->popup(pos);
     }
 
     [[nodiscard]] TrackList tracks(const Id& groupId) const
     {
-        if(!groups.contains(groupId)) {
-            return library->tracks();
+        if(!m_groups.contains(groupId)) {
+            return m_library->tracks();
         }
 
-        const FilterGroup& group = groups.at(groupId);
+        const FilterGroup& group = m_groups.at(groupId);
 
-        return group.filteredTracks.empty() ? library->tracks() : group.filteredTracks;
+        return group.filteredTracks.empty() ? m_library->tracks() : group.filteredTracks;
     }
 
     void recalculateIndexesOfGroup(const Id& group)
     {
-        if(!groups.contains(group)) {
+        if(!m_groups.contains(group)) {
             return;
         }
 
-        for(auto index{0}; const auto& filter : groups.at(group).filters) {
+        for(auto index{0}; const auto& filter : m_groups.at(group).filters) {
             filter->setIndex(index++);
         }
     }
 
     void resetAll()
     {
-        for(auto& [id, group] : groups) {
+        for(auto& [id, group] : m_groups) {
             group.filteredTracks.clear();
             for(const auto& filterWidget : group.filters) {
                 filterWidget->reset(tracks(id));
             }
         }
 
-        for(auto* filterWidget : ungrouped | std::views::values) {
-            filterWidget->reset(library->tracks());
+        for(auto* filterWidget : m_ungrouped | std::views::values) {
+            filterWidget->reset(m_library->tracks());
         }
     }
 
     void resetGroup(const Id& group)
     {
-        if(!groups.contains(group)) {
+        if(!m_groups.contains(group)) {
             return;
         }
 
-        auto& filterGroup = groups.at(group);
+        auto& filterGroup = m_groups.at(group);
         filterGroup.filteredTracks.clear();
         for(const auto& filterWidget : filterGroup.filters) {
             filterWidget->reset(tracks(group));
@@ -232,13 +232,13 @@ struct FilterController::Private
     {
         const Id group = filter->group();
 
-        if(!groups.contains(group)) {
+        if(!m_groups.contains(group)) {
             return;
         }
 
         const int resetIndex = filter->index() - 1;
 
-        for(const auto& filterWidget : groups.at(group).filters) {
+        for(const auto& filterWidget : m_groups.at(group).filters) {
             if(filterWidget->index() > resetIndex) {
                 filterWidget->reset(tracks(group));
             }
@@ -247,11 +247,11 @@ struct FilterController::Private
 
     void getFilteredTracks(const Id& groupId)
     {
-        if(!groups.contains(groupId)) {
+        if(!m_groups.contains(groupId)) {
             return;
         }
 
-        FilterGroup& group = groups.at(groupId);
+        FilterGroup& group = m_groups.at(groupId);
         group.filteredTracks.clear();
 
         auto activeFilters
@@ -269,11 +269,11 @@ struct FilterController::Private
 
     void clearActiveFilters(const Id& group, int index)
     {
-        if(!groups.contains(group)) {
+        if(!m_groups.contains(group)) {
             return;
         }
 
-        for(const auto& filter : groups.at(group).filters) {
+        for(const auto& filter : m_groups.at(group).filters) {
             if(filter->index() > index) {
                 filter->clearFilteredTracks();
             }
@@ -282,14 +282,14 @@ struct FilterController::Private
 
     void updateFilterPlaylistActions(FilterWidget* filterWidget)
     {
-        const bool startPlayback = settings->value<Settings::Filters::FilterSendPlayback>();
+        const bool startPlayback = m_settings->value<Settings::Filters::FilterSendPlayback>();
 
-        trackSelection->changePlaybackOnSend(filterWidget->widgetContext(), startPlayback);
+        m_trackSelection->changePlaybackOnSend(filterWidget->widgetContext(), startPlayback);
     }
 
     void updateAllPlaylistActions()
     {
-        for(const auto& [_, group] : groups) {
+        for(const auto& [_, group] : m_groups) {
             for(FilterWidget* filterWidget : group.filters) {
                 updateFilterPlaylistActions(filterWidget);
             }
@@ -298,20 +298,20 @@ struct FilterController::Private
 
     void selectionChanged(FilterWidget* filter, const QString& playlistName)
     {
-        trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
+        m_trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
 
-        if(settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
+        if(m_settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
             PlaylistAction::ActionOptions options{PlaylistAction::None};
 
-            if(settings->value<Settings::Filters::FilterKeepAlive>()) {
+            if(m_settings->value<Settings::Filters::FilterKeepAlive>()) {
                 options |= PlaylistAction::KeepActive;
             }
-            if(settings->value<Settings::Filters::FilterAutoSwitch>()) {
+            if(m_settings->value<Settings::Filters::FilterAutoSwitch>()) {
                 options |= PlaylistAction::Switch;
             }
 
-            const QString autoPlaylist = settings->value<Settings::Filters::FilterAutoPlaylist>();
-            trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
+            const QString autoPlaylist = m_settings->value<Settings::Filters::FilterAutoPlaylist>();
+            m_trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
 
         const Id group       = filter->group();
@@ -319,11 +319,11 @@ struct FilterController::Private
         clearActiveFilters(group, resetIndex);
         getFilteredTracks(group);
 
-        if(!groups.contains(group)) {
+        if(!m_groups.contains(group)) {
             return;
         }
 
-        for(const auto& filterWidget : groups.at(group).filters) {
+        for(const auto& filterWidget : m_groups.at(group).filters) {
             if(filterWidget->index() > resetIndex) {
                 filterWidget->reset(tracks(group));
             }
@@ -332,7 +332,7 @@ struct FilterController::Private
 
     void removeLibraryTracks(int libraryId)
     {
-        for(const auto& [_, group] : groups) {
+        for(const auto& [_, group] : m_groups) {
             for(const auto& filterWidget : group.filters) {
                 TrackList cleanedTracks;
                 std::ranges::copy_if(filterWidget->filteredTracks(), std::back_inserter(cleanedTracks),
@@ -344,7 +344,7 @@ struct FilterController::Private
 
     void handleTracksAddedUpdated(const TrackList& tracks, bool updated = false)
     {
-        for(const auto& [_, group] : groups) {
+        for(const auto& [_, group] : m_groups) {
             const int count = static_cast<int>(group.filters.size());
             TrackList activeFilterTracks;
 
@@ -354,8 +354,8 @@ struct FilterController::Private
                         filterWidget, &FilterWidget::finishedUpdating, filterWidget,
                         [this, count, filterWidget]() {
                             const auto groupId = filterWidget->group();
-                            if(groups.contains(groupId)) {
-                                int& updateCount = groups.at(groupId).updateCount;
+                            if(m_groups.contains(groupId)) {
+                                int& updateCount = m_groups.at(groupId).updateCount;
                                 ++updateCount;
 
                                 if(updateCount == count) {
@@ -403,11 +403,11 @@ struct FilterController::Private
 
     void refreshFilters(const Id& groupId)
     {
-        if(!groups.contains(groupId)) {
+        if(!m_groups.contains(groupId)) {
             return;
         }
 
-        FilterGroup& group = groups.at(groupId);
+        FilterGroup& group = m_groups.at(groupId);
         const auto count   = static_cast<int>(group.filters.size());
 
         for(int i{0}; i < count - 1; i += 2) {
@@ -432,18 +432,18 @@ struct FilterController::Private
     {
         const Id groupId = filter->group();
 
-        if(!groups.contains(groupId)) {
+        if(!m_groups.contains(groupId)) {
             return;
         }
 
-        FilterGroup& group = groups.at(groupId);
+        FilterGroup& group = m_groups.at(groupId);
 
         const bool reset         = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
-        TrackList tracksToFilter = reset ? library->tracks() : filter->tracks();
+        TrackList tracksToFilter = reset ? m_library->tracks() : filter->tracks();
 
         Utils::asyncExec([search, tracksToFilter]() {
             return Filter::filterTracks(tracksToFilter, search);
-        }).then(self, [filter](TrackList filteredTracks) { filter->reset(filteredTracks); });
+        }).then(m_self, [filter](TrackList filteredTracks) { filter->reset(filteredTracks); });
     }
 };
 
@@ -452,35 +452,35 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
     : QObject{parent}
     , p{std::make_unique<Private>(this, library, trackSelection, editableLayout, settings)}
 {
-    QObject::connect(p->library, &MusicLibrary::tracksAdded, this,
+    QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksScanned, this,
+    QObject::connect(p->m_library, &MusicLibrary::tracksScanned, this,
                      [this](int /*id*/, const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksUpdated, this,
+    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks, true); });
-    QObject::connect(p->library, &MusicLibrary::tracksPlayed, this,
+    QObject::connect(p->m_library, &MusicLibrary::tracksPlayed, this,
                      [this](const TrackList& tracks) { emit tracksPlayed(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
-    QObject::connect(p->library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
-    QObject::connect(p->library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksDeleted, this, &FilterController::tracksRemoved);
+    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, this, [this]() { p->resetAll(); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksSorted, this, [this]() { p->resetAll(); });
 }
 
 FilterController::~FilterController() = default;
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->settings);
+    auto* widget = new FilterWidget(p->m_settings);
 
-    auto& group = p->groups[p->defaultId];
-    group.id    = p->defaultId;
-    widget->setGroup(p->defaultId);
+    auto& group = p->m_groups[p->vdefaultId];
+    group.id    = p->vdefaultId;
+    widget->setGroup(p->vdefaultId);
     widget->setIndex(static_cast<int>(group.filters.size()));
     group.filters.push_back(widget);
 
     QObject::connect(widget, &FilterWidget::doubleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->doubleClickAction, playlistName); });
+                     [this](const QString& playlistName) { p->handleAction(p->m_doubleClickAction, playlistName); });
     QObject::connect(widget, &FilterWidget::middleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->middleClickAction, playlistName); });
+                     [this](const QString& playlistName) { p->handleAction(p->m_middleClickAction, playlistName); });
     QObject::connect(widget, &FilterWidget::requestSearch, this,
                      [this, widget](const QString& search) { p->searchChanged(widget, search); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
@@ -490,12 +490,12 @@ FilterWidget* FilterController::createFilter()
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });
     QObject::connect(widget, &FilterWidget::filterDeleted, this, [this, widget]() { removeFilter(widget); });
     QObject::connect(widget, &FilterWidget::requestEditConnections, this,
-                     [this]() { p->manager->setupWidgetConnections(); });
+                     [this]() { p->m_manager->setupWidgetConnections(); });
     QObject::connect(this, &FilterController::tracksUpdated, widget, &FilterWidget::tracksUpdated);
     QObject::connect(this, &FilterController::tracksPlayed, widget, &FilterWidget::tracksPlayed);
     QObject::connect(this, &FilterController::tracksRemoved, widget, &FilterWidget::tracksRemoved);
 
-    widget->reset(p->tracks(p->defaultId));
+    widget->reset(p->tracks(p->vdefaultId));
     p->updateFilterPlaylistActions(widget);
 
     return widget;
@@ -503,30 +503,30 @@ FilterWidget* FilterController::createFilter()
 
 bool FilterController::haveUngroupedFilters() const
 {
-    return !p->ungrouped.empty();
+    return !p->m_ungrouped.empty();
 }
 
 bool FilterController::filterIsUngrouped(const Id& id) const
 {
-    return p->ungrouped.contains(id);
+    return p->m_ungrouped.contains(id);
 }
 
 FilterGroups FilterController::filterGroups() const
 {
-    return p->groups;
+    return p->m_groups;
 }
 
 std::optional<FilterGroup> FilterController::groupById(const Id& id) const
 {
-    if(!p->groups.contains(id)) {
+    if(!p->m_groups.contains(id)) {
         return {};
     }
-    return p->groups.at(id);
+    return p->m_groups.at(id);
 }
 
 UngroupedFilters FilterController::ungroupedFilters() const
 {
-    return p->ungrouped;
+    return p->m_ungrouped;
 }
 
 void FilterController::addFilterToGroup(FilterWidget* widget, const Id& groupId)
@@ -534,10 +534,10 @@ void FilterController::addFilterToGroup(FilterWidget* widget, const Id& groupId)
     if(!groupId.isValid()) {
         widget->setGroup("");
         widget->setIndex(-1);
-        p->ungrouped.emplace(widget->id(), widget);
+        p->m_ungrouped.emplace(widget->id(), widget);
     }
     else {
-        auto& group = p->groups[groupId];
+        auto& group = p->m_groups[groupId];
         group.id    = groupId;
         widget->setGroup(groupId);
         widget->setIndex(static_cast<int>(group.filters.size()));
@@ -549,22 +549,22 @@ bool FilterController::removeFilter(FilterWidget* widget)
 {
     const Id groupId = widget->group();
 
-    if(!groupId.isValid() && p->ungrouped.contains(widget->id())) {
-        p->ungrouped.erase(widget->id());
+    if(!groupId.isValid() && p->m_ungrouped.contains(widget->id())) {
+        p->m_ungrouped.erase(widget->id());
         return true;
     }
 
-    if(!p->groups.contains(groupId)) {
+    if(!p->m_groups.contains(groupId)) {
         return false;
     }
 
-    auto& group = p->groups.at(groupId);
+    auto& group = p->m_groups.at(groupId);
 
     if(std::erase(group.filters, widget) > 0) {
         p->recalculateIndexesOfGroup(groupId);
 
         if(group.filters.empty()) {
-            p->groups.erase(groupId);
+            p->m_groups.erase(groupId);
         }
 
         return true;

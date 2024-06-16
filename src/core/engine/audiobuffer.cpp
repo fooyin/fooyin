@@ -21,55 +21,52 @@
 
 #include <QDebug>
 
-#include <ranges>
-#include <utility>
-
 namespace Fooyin {
 struct AudioBuffer::Private : QSharedData
 {
-    std::vector<std::byte> buffer;
-    AudioFormat format;
-    uint64_t startTime;
+    std::vector<std::byte> m_buffer;
+    AudioFormat m_format;
+    uint64_t m_startTime;
 
-    Private(std::span<const std::byte> data_, AudioFormat format_, uint64_t startTime_)
-        : format{format_}
-        , startTime{startTime_}
+    Private(std::span<const std::byte> data, AudioFormat format, uint64_t startTime)
+        : m_format{format}
+        , m_startTime{startTime}
     {
-        buffer.assign(data_.begin(), data_.end());
+        m_buffer.assign(data.begin(), data.end());
     }
 
-    Private(const uint8_t* data_, size_t size, AudioFormat format_, uint64_t startTime_)
-        : format{format_}
-        , startTime{startTime_}
+    Private(const uint8_t* data, size_t size, AudioFormat format, uint64_t startTime)
+        : m_format{format}
+        , m_startTime{startTime}
     {
-        buffer.resize(size);
-        std::memmove(buffer.data(), data_, size);
+        m_buffer.resize(size);
+        std::memmove(m_buffer.data(), data, size);
     }
 
     void fillSilence()
     {
-        const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
-        std::ranges::fill(buffer, unsignedFormat ? std::byte{0x80} : std::byte{0});
+        const bool unsignedFormat = m_format.sampleFormat() == SampleFormat::U8;
+        std::ranges::fill(m_buffer, unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
     void fillRemainingWithSilence()
     {
-        const bool unsignedFormat = format.sampleFormat() == SampleFormat::U8;
-        std::fill(buffer.begin() + buffer.size(), buffer.begin() + buffer.capacity(),
+        const bool unsignedFormat = m_format.sampleFormat() == SampleFormat::U8;
+        std::fill(m_buffer.begin() + m_buffer.size(), m_buffer.begin() + m_buffer.capacity(),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
     template <typename T>
     void scale(const double volume)
     {
-        const auto bytes = static_cast<int>(buffer.size());
-        const int bps    = format.bytesPerSample();
+        const auto bytes = static_cast<int>(m_buffer.size());
+        const int bps    = m_format.bytesPerSample();
 
         for(int i{0}; i < bytes; i += bps) {
             T sample;
-            std::memcpy(&sample, buffer.data() + i, bps);
+            std::memcpy(&sample, m_buffer.data() + i, bps);
             sample *= volume;
-            std::memcpy(buffer.data() + i, &sample, bps);
+            std::memcpy(m_buffer.data() + i, &sample, bps);
         }
     }
 };
@@ -97,14 +94,14 @@ AudioBuffer::AudioBuffer(AudioBuffer&& other) noexcept        = default;
 void AudioBuffer::reserve(size_t size)
 {
     if(isValid()) {
-        p->buffer.reserve(size);
+        p->m_buffer.reserve(size);
     }
 }
 
 void AudioBuffer::resize(size_t size)
 {
     if(isValid()) {
-        p->buffer.resize(size);
+        p->m_buffer.resize(size);
     }
 }
 
@@ -118,23 +115,23 @@ void AudioBuffer::append(std::span<const std::byte> data)
 void AudioBuffer::append(const std::byte* data, size_t size)
 {
     if(isValid()) {
-        const size_t index = p->buffer.size();
-        p->buffer.resize(index + size);
-        std::memcpy(p->buffer.data() + index, data, size);
+        const size_t index = p->m_buffer.size();
+        p->m_buffer.resize(index + size);
+        std::memcpy(p->m_buffer.data() + index, data, size);
     }
 }
 
 void AudioBuffer::erase(size_t size)
 {
     if(isValid()) {
-        p->buffer.erase(p->buffer.begin(), p->buffer.begin() + size);
+        p->m_buffer.erase(p->m_buffer.begin(), p->m_buffer.begin() + size);
     }
 }
 
 void AudioBuffer::clear()
 {
     if(isValid()) {
-        p->buffer.clear();
+        p->m_buffer.clear();
     }
 }
 
@@ -160,14 +157,14 @@ void AudioBuffer::detach()
 AudioFormat AudioBuffer::format() const
 {
     if(isValid()) {
-        return p->format;
+        return p->m_format;
     }
     return {};
 }
 
 int AudioBuffer::frameCount() const
 {
-    return isValid() ? p->format.framesForBytes(byteCount()) : 0;
+    return isValid() ? p->m_format.framesForBytes(byteCount()) : 0;
 }
 
 int AudioBuffer::sampleCount() const
@@ -177,17 +174,17 @@ int AudioBuffer::sampleCount() const
 
 int AudioBuffer::byteCount() const
 {
-    return isValid() ? static_cast<int>(p->buffer.size()) : 0;
+    return isValid() ? static_cast<int>(p->m_buffer.size()) : 0;
 }
 
 uint64_t AudioBuffer::startTime() const
 {
-    return isValid() ? p->startTime : -1;
+    return isValid() ? p->m_startTime : -1;
 }
 
 uint64_t AudioBuffer::endTime() const
 {
-    return isValid() ? p->startTime + duration() : -1;
+    return isValid() ? p->m_startTime + duration() : -1;
 }
 
 uint64_t AudioBuffer::duration() const
@@ -198,7 +195,7 @@ uint64_t AudioBuffer::duration() const
 std::span<const std::byte> AudioBuffer::constData() const
 {
     if(isValid()) {
-        return p->buffer;
+        return p->m_buffer;
     }
     return {};
 }
@@ -206,7 +203,7 @@ std::span<const std::byte> AudioBuffer::constData() const
 const std::byte* AudioBuffer::data() const
 {
     if(isValid()) {
-        return p->buffer.data();
+        return p->m_buffer.data();
     }
     return {};
 }
@@ -214,7 +211,7 @@ const std::byte* AudioBuffer::data() const
 std::byte* AudioBuffer::data()
 {
     if(isValid()) {
-        return p->buffer.data();
+        return p->m_buffer.data();
     }
     return {};
 }

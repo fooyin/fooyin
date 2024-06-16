@@ -22,14 +22,14 @@
 namespace Fooyin {
 struct PlaylistScriptRegistry::Private
 {
-    PlaylistIndexes playlistQueue;
+    PlaylistIndexes m_playlistQueue;
 
-    Id playlistId;
-    int trackIndex{0};
-    int trackDepth{0};
+    Id m_playlistId;
+    int m_trackIndex{0};
+    int m_trackDepth{0};
 
     using QueueVar = std::function<QString()>;
-    std::unordered_map<QString, QueueVar> vars;
+    std::unordered_map<QString, QueueVar> m_vars;
 
     Private()
     {
@@ -38,36 +38,36 @@ struct PlaylistScriptRegistry::Private
 
     void addVars()
     {
-        vars.emplace(QStringLiteral("depth"), [this]() { return depth(); });
-        vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
-        vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
-        vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
-        vars.emplace(QStringLiteral("frontcover"), []() { return frontCover(); });
-        vars.emplace(QStringLiteral("backcover"), []() { return backCover(); });
-        vars.emplace(QStringLiteral("artistpicture"), []() { return artistPicture(); });
+        m_vars.emplace(QStringLiteral("depth"), [this]() { return depth(); });
+        m_vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
+        m_vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
+        m_vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
+        m_vars.emplace(QStringLiteral("frontcover"), []() { return frontCover(); });
+        m_vars.emplace(QStringLiteral("backcover"), []() { return backCover(); });
+        m_vars.emplace(QStringLiteral("artistpicture"), []() { return artistPicture(); });
     }
 
     QString depth() const
     {
-        return QString::number(trackDepth);
+        return QString::number(m_trackDepth);
     }
 
     QString queueIndex() const
     {
-        if(!playlistQueue.contains(trackIndex)) {
+        if(!m_playlistQueue.contains(m_trackIndex)) {
             return {};
         }
 
-        return QString::number(*playlistQueue.at(trackIndex).begin());
+        return QString::number(*m_playlistQueue.at(m_trackIndex).begin());
     }
 
     QString queueIndexes() const
     {
-        if(!playlistQueue.contains(trackIndex)) {
+        if(!m_playlistQueue.contains(m_trackIndex)) {
             return {};
         }
 
-        const auto& indexes = playlistQueue.at(trackIndex);
+        const auto& indexes = m_playlistQueue.at(m_trackIndex);
 
         QStringList str;
         str.reserve(static_cast<qsizetype>(indexes.size()));
@@ -109,21 +109,21 @@ PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;
 
 void PlaylistScriptRegistry::setup(const Id& playlistId, const PlaybackQueue& queue)
 {
-    p->playlistId = playlistId;
+    p->m_playlistId = playlistId;
     if(playlistId.isValid()) {
-        p->playlistQueue = queue.indexesForPlaylist(playlistId);
+        p->m_playlistQueue = queue.indexesForPlaylist(playlistId);
     }
 }
 
 void PlaylistScriptRegistry::setTrackProperties(int index, int depth)
 {
-    p->trackIndex = index;
-    p->trackDepth = depth;
+    p->m_trackIndex = index;
+    p->m_trackDepth = depth;
 }
 
 bool PlaylistScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    if(isListVariable(var) || p->vars.contains(var)) {
+    if(isListVariable(var) || p->m_vars.contains(var)) {
         return true;
     }
 
@@ -136,9 +136,9 @@ ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& trac
         return {.value = QStringLiteral("|Loading|"), .cond = true};
     }
 
-    if(p->vars.contains(var)) {
+    if(p->m_vars.contains(var)) {
         ScriptResult result;
-        result.value = p->vars.at(var)();
+        result.value = p->m_vars.at(var)();
         result.cond  = !result.value.isEmpty();
         return result;
     }

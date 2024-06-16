@@ -62,72 +62,72 @@ QByteArray saveTracks(const QModelIndexList& indexes)
 namespace Fooyin::Filters {
 struct FilterModel::Private
 {
-    FilterModel* self;
+    FilterModel* m_self;
 
-    bool resetting{false};
+    bool m_resetting{false};
 
-    QThread populatorThread;
-    FilterPopulator populator;
+    QThread m_populatorThread;
+    FilterPopulator m_populator;
 
-    FilterItem allNode;
-    ItemKeyMap nodes;
-    TrackIdNodeMap trackParents;
+    FilterItem m_allNode;
+    ItemKeyMap m_nodes;
+    TrackIdNodeMap m_trackParents;
 
-    FilterColumnList columns;
-    int sortColumn{0};
-    Qt::SortOrder sortOrder{Qt::AscendingOrder};
+    FilterColumnList m_columns;
+    int m_sortColumn{0};
+    Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
 
     using ColumnAlignments = std::vector<Qt::Alignment>;
-    mutable ColumnAlignments columnAlignments;
+    mutable ColumnAlignments m_columnAlignments;
 
-    int rowHeight{0};
-    QFont font;
-    QColor colour;
+    int m_rowHeight{0};
+    QFont m_font;
+    QColor m_colour;
 
-    TrackList tracksPendingRemoval;
+    TrackList m_tracksPendingRemoval;
 
-    explicit Private(FilterModel* self_)
-        : self{self_}
+    explicit Private(FilterModel* self)
+        : m_self{self}
     {
-        populator.moveToThread(&populatorThread);
+        m_populator.moveToThread(&m_populatorThread);
     }
 
     void beginReset()
     {
-        self->resetRoot();
-        nodes.clear();
-        trackParents.clear();
+        m_self->resetRoot();
+        m_nodes.clear();
+        m_trackParents.clear();
 
-        allNode = FilterItem{QStringLiteral(""), {}, self->rootItem()};
-        self->rootItem()->appendChild(&allNode);
+        m_allNode = FilterItem{QStringLiteral(""), {}, m_self->rootItem()};
+        m_self->rootItem()->appendChild(&m_allNode);
     }
 
     void batchFinished(PendingTreeData data)
     {
-        if(resetting) {
-            self->beginResetModel();
+        if(m_resetting) {
+            m_self->beginResetModel();
             beginReset();
         }
 
-        if(!tracksPendingRemoval.empty()) {
-            self->removeTracks(tracksPendingRemoval);
+        if(!m_tracksPendingRemoval.empty()) {
+            m_self->removeTracks(m_tracksPendingRemoval);
         }
 
         populateModel(data);
 
-        if(resetting) {
-            self->endResetModel();
+        if(m_resetting) {
+            m_self->endResetModel();
         }
-        resetting = false;
+        m_resetting = false;
 
-        QMetaObject::invokeMethod(self, &FilterModel::modelUpdated);
+        QMetaObject::invokeMethod(m_self, &FilterModel::modelUpdated);
     }
 
     int uniqueValues(int column)
     {
         std::set<QString> columnUniques;
 
-        const auto children = allNode.children();
+        const auto children = m_allNode.children();
 
         for(FilterItem* item : children) {
             columnUniques.emplace(item->column(column));
@@ -138,40 +138,40 @@ struct FilterModel::Private
 
     void updateAllNode()
     {
-        const int columnCount = self->columnCount({});
+        const int columnCount = m_self->columnCount({});
 
         QStringList nodeColumns;
         for(int column{0}; column < columnCount; ++column) {
             nodeColumns.emplace_back(
-                QString{tr("All (%1 %2s)")}.arg(uniqueValues(column)).arg(columns.at(column).name.toLower()));
+                QString{tr("All (%1 %2s)")}.arg(uniqueValues(column)).arg(m_columns.at(column).name.toLower()));
         }
 
-        allNode.setColumns(nodeColumns);
+        m_allNode.setColumns(nodeColumns);
     }
 
     void populateModel(PendingTreeData& data)
     {
         for(const auto& [key, item] : data.items) {
-            if(nodes.contains(key)) {
-                nodes.at(key).addTracks(item.tracks());
+            if(m_nodes.contains(key)) {
+                m_nodes.at(key).addTracks(item.tracks());
             }
             else {
-                if(!resetting) {
-                    const int row = allNode.childCount();
-                    self->beginInsertRows(self->indexOfItem(&allNode), row, row);
+                if(!m_resetting) {
+                    const int row = m_allNode.childCount();
+                    m_self->beginInsertRows(m_self->indexOfItem(&m_allNode), row, row);
                 }
 
-                FilterItem* child = &nodes.emplace(key, item).first->second;
-                allNode.appendChild(child);
+                FilterItem* child = &m_nodes.emplace(key, item).first->second;
+                m_allNode.appendChild(child);
 
-                if(!resetting) {
-                    self->endInsertRows();
+                if(!m_resetting) {
+                    m_self->endInsertRows();
                 }
             }
         }
-        trackParents.merge(data.trackParents);
+        m_trackParents.merge(data.trackParents);
 
-        allNode.sortChildren(sortColumn, sortOrder);
+        m_allNode.sortChildren(m_sortColumn, m_sortOrder);
         updateAllNode();
     }
 };
@@ -180,49 +180,49 @@ FilterModel::FilterModel(QObject* parent)
     : TreeModel{parent}
     , p{std::make_unique<Private>(this)}
 {
-    QObject::connect(&p->populator, &FilterPopulator::populated, this,
+    QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
 
-    QObject::connect(&p->populator, &Worker::finished, this, [this]() {
-        p->populator.stopThread();
-        p->populatorThread.quit();
+    QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
+        p->m_populator.stopThread();
+        p->m_populatorThread.quit();
     });
 }
 
 FilterModel::~FilterModel()
 {
-    p->populator.stopThread();
-    p->populatorThread.quit();
-    p->populatorThread.wait();
+    p->m_populator.stopThread();
+    p->m_populatorThread.quit();
+    p->m_populatorThread.wait();
 }
 
 int FilterModel::sortColumn() const
 {
-    return p->sortColumn;
+    return p->m_sortColumn;
 };
 
 Qt::SortOrder FilterModel::sortOrder() const
 {
-    return p->sortOrder;
+    return p->m_sortOrder;
 }
 
 void FilterModel::sortOnColumn(int column, Qt::SortOrder order)
 {
-    p->sortColumn = column;
-    p->sortOrder  = order;
+    p->m_sortColumn = column;
+    p->m_sortOrder  = order;
 
     emit layoutAboutToBeChanged();
-    p->allNode.sortChildren(column, order);
+    p->m_allNode.sortChildren(column, order);
     emit layoutChanged();
 }
 
 void FilterModel::setFont(const QString& font)
 {
     if(font.isEmpty()) {
-        p->font = {};
+        p->m_font = {};
     }
     else {
-        p->font.fromString(font);
+        p->m_font.fromString(font);
     }
 
     emit dataChanged({}, {}, {Qt::FontRole, Qt::SizeHintRole});
@@ -230,13 +230,13 @@ void FilterModel::setFont(const QString& font)
 
 void FilterModel::setColour(const QColor& colour)
 {
-    p->colour = colour;
+    p->m_colour = colour;
     emit dataChanged({}, {});
 }
 
 void FilterModel::setRowHeight(int height)
 {
-    p->rowHeight = height;
+    p->m_rowHeight = height;
     emit dataChanged({}, {});
 }
 
@@ -262,10 +262,10 @@ QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int r
     }
 
     if(role == Qt::DisplayRole) {
-        if(section < 0 || section >= static_cast<int>(p->columns.size())) {
+        if(section < 0 || section >= static_cast<int>(p->m_columns.size())) {
             return tr("Filter");
         }
-        return p->columns.at(section).name;
+        return p->m_columns.at(section).name;
     }
 
     return {};
@@ -306,11 +306,11 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());
         case(Qt::SizeHintRole):
-            return QSize{0, p->rowHeight};
+            return QSize{0, p->m_rowHeight};
         case(Qt::FontRole):
-            return p->font;
+            return p->m_font;
         case(Qt::ForegroundRole):
-            return p->colour;
+            return p->m_colour;
         case(Qt::TextAlignmentRole):
             return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(col));
         default:
@@ -322,7 +322,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
 
 int FilterModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return static_cast<int>(p->columns.size());
+    return static_cast<int>(p->m_columns.size());
 }
 
 QStringList FilterModel::mimeTypes() const
@@ -344,23 +344,23 @@ QMimeData* FilterModel::mimeData(const QModelIndexList& indexes) const
 
 Qt::Alignment FilterModel::columnAlignment(int column) const
 {
-    if(column < 0 || std::cmp_greater_equal(column, p->columns.size())) {
+    if(column < 0 || std::cmp_greater_equal(column, p->m_columns.size())) {
         return Qt::AlignLeft;
     }
 
-    if(std::cmp_greater_equal(column, p->columnAlignments.size())) {
-        p->columnAlignments.resize(column + 1, Qt::AlignLeft);
+    if(std::cmp_greater_equal(column, p->m_columnAlignments.size())) {
+        p->m_columnAlignments.resize(column + 1, Qt::AlignLeft);
     }
 
-    return p->columnAlignments.at(column);
+    return p->m_columnAlignments.at(column);
 }
 
 void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
 {
-    if(std::cmp_greater_equal(column, p->columnAlignments.size())) {
-        p->columnAlignments.resize(column + 1, Qt::AlignLeft);
+    if(std::cmp_greater_equal(column, p->m_columnAlignments.size())) {
+        p->m_columnAlignments.resize(column + 1, Qt::AlignLeft);
     }
-    p->columnAlignments[column] = alignment;
+    p->m_columnAlignments[column] = alignment;
 }
 
 QModelIndexList FilterModel::indexesForValues(const QStringList& values, int column) const
@@ -368,14 +368,14 @@ QModelIndexList FilterModel::indexesForValues(const QStringList& values, int col
     QModelIndexList indexes;
 
     if(values.contains(QStringLiteral(""))) {
-        indexes.append(indexOfItem(&p->allNode));
+        indexes.append(indexOfItem(&p->m_allNode));
 
         if(values.size() == 1) {
             return indexes;
         }
     }
 
-    const auto rows = p->allNode.children();
+    const auto rows = p->m_allNode.children();
     for(const auto& child : rows) {
         if(values.contains(child->column(column))) {
             indexes.append(indexOfItem(child));
@@ -389,25 +389,26 @@ void FilterModel::addTracks(const TrackList& tracks)
 {
     TrackList tracksToAdd;
     std::ranges::copy_if(tracks, std::back_inserter(tracksToAdd),
-                         [this](const Track& track) { return !p->trackParents.contains(track.id()); });
+                         [this](const Track& track) { return !p->m_trackParents.contains(track.id()); });
 
     if(tracksToAdd.empty()) {
         return;
     }
 
-    p->populatorThread.start();
+    p->m_populatorThread.start();
 
     QStringList columns;
-    std::ranges::transform(p->columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
+    std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->populator, [this, columns, tracksToAdd] { p->populator.run(columns, tracksToAdd); });
+    QMetaObject::invokeMethod(&p->m_populator,
+                              [this, columns, tracksToAdd] { p->m_populator.run(columns, tracksToAdd); });
 }
 
 void FilterModel::updateTracks(const TrackList& tracks)
 {
     TrackList tracksToUpdate;
     std::ranges::copy_if(tracks, std::back_inserter(tracksToUpdate),
-                         [this](const Track& track) { return p->trackParents.contains(track.id()); });
+                         [this](const Track& track) { return p->m_trackParents.contains(track.id()); });
 
     if(tracksToUpdate.empty()) {
         emit modelUpdated();
@@ -415,15 +416,15 @@ void FilterModel::updateTracks(const TrackList& tracks)
         return;
     }
 
-    p->tracksPendingRemoval = tracksToUpdate;
+    p->m_tracksPendingRemoval = tracksToUpdate;
 
-    p->populatorThread.start();
+    p->m_populatorThread.start();
 
     QStringList columns;
-    std::ranges::transform(p->columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
+    std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->populator,
-                              [this, columns, tracksToUpdate] { p->populator.run(columns, tracksToUpdate); });
+    QMetaObject::invokeMethod(&p->m_populator,
+                              [this, columns, tracksToUpdate] { p->m_populator.run(columns, tracksToUpdate); });
 
     addTracks(tracks);
 }
@@ -431,14 +432,14 @@ void FilterModel::updateTracks(const TrackList& tracks)
 void FilterModel::refreshTracks(const TrackList& tracks)
 {
     for(const Track& track : tracks) {
-        if(!p->trackParents.contains(track.id())) {
+        if(!p->m_trackParents.contains(track.id())) {
             continue;
         }
 
-        const auto parents = p->trackParents.at(track.id());
+        const auto parents = p->m_trackParents.at(track.id());
         for(const auto& parent : parents) {
-            if(p->nodes.contains(parent)) {
-                p->nodes.at(parent).replaceTrack(track);
+            if(p->m_nodes.contains(parent)) {
+                p->m_nodes.at(parent).replaceTrack(track);
             }
         }
     }
@@ -450,26 +451,26 @@ void FilterModel::removeTracks(const TrackList& tracks)
 
     for(const Track& track : tracks) {
         const int id = track.id();
-        if(p->trackParents.contains(id)) {
-            const auto trackNodes = p->trackParents[id];
+        if(p->m_trackParents.contains(id)) {
+            const auto trackNodes = p->m_trackParents[id];
             for(const QString& node : trackNodes) {
-                FilterItem* item = &p->nodes[node];
+                FilterItem* item = &p->m_nodes[node];
                 item->removeTrack(track);
                 items.emplace(item);
             }
-            p->trackParents.erase(id);
+            p->m_trackParents.erase(id);
         }
     }
 
     for(FilterItem* item : items) {
         if(item->trackCount() == 0) {
-            const QModelIndex parentIndex = indexOfItem(&p->allNode);
+            const QModelIndex parentIndex = indexOfItem(&p->m_allNode);
             const int row                 = item->row();
             beginRemoveRows(parentIndex, row, row);
-            p->allNode.removeChild(row);
-            p->allNode.resetChildren();
+            p->m_allNode.removeChild(row);
+            p->m_allNode.resetChildren();
             endRemoveRows();
-            p->nodes.erase(item->key());
+            p->m_nodes.erase(item->key());
         }
     }
 
@@ -478,18 +479,18 @@ void FilterModel::removeTracks(const TrackList& tracks)
 
 bool FilterModel::removeColumn(int column)
 {
-    if(column < 0 || std::cmp_greater_equal(column, p->columns.size())) {
+    if(column < 0 || std::cmp_greater_equal(column, p->m_columns.size())) {
         return false;
     }
 
     beginRemoveColumns({}, column, column);
 
-    p->columns.erase(p->columns.cbegin() + column);
-    if(std::cmp_less(column, p->columns.size())) {
-        p->columnAlignments.erase(p->columnAlignments.cbegin() + column);
+    p->m_columns.erase(p->m_columns.cbegin() + column);
+    if(std::cmp_less(column, p->m_columns.size())) {
+        p->m_columnAlignments.erase(p->m_columnAlignments.cbegin() + column);
     }
 
-    for(auto& [_, node] : p->nodes) {
+    for(auto& [_, node] : p->m_nodes) {
         node.removeColumn(column);
     }
 
@@ -500,20 +501,20 @@ bool FilterModel::removeColumn(int column)
 
 void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks)
 {
-    if(p->populatorThread.isRunning()) {
-        p->populator.stopThread();
+    if(p->m_populatorThread.isRunning()) {
+        p->m_populator.stopThread();
     }
     else {
-        p->populatorThread.start();
+        p->m_populatorThread.start();
     }
 
-    p->columns = columns;
+    p->m_columns = columns;
 
-    p->resetting = true;
+    p->m_resetting = true;
 
     QStringList fields;
-    std::ranges::transform(p->columns, std::back_inserter(fields), [](const auto& column) { return column.field; });
+    std::ranges::transform(p->m_columns, std::back_inserter(fields), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->populator, [this, fields, tracks] { p->populator.run(fields, tracks); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, fields, tracks] { p->m_populator.run(fields, tracks); });
 }
 } // namespace Fooyin::Filters

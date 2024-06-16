@@ -44,17 +44,16 @@ struct FactoryWidget
 namespace Fooyin {
 struct WidgetProvider::Private
 {
-    QUndoStack* layoutCommands{nullptr};
-
-    std::map<QString, FactoryWidget> widgets;
+    QUndoStack* m_layoutCommands{nullptr};
+    std::map<QString, FactoryWidget> m_widgets;
 
     bool canCreateWidget(const QString& key)
     {
-        if(!widgets.contains(key)) {
+        if(!m_widgets.contains(key)) {
             return false;
         }
 
-        const auto& widget = widgets.at(key);
+        const auto& widget = m_widgets.at(key);
 
         return widget.limit == 0 || widget.count < widget.limit;
     }
@@ -68,7 +67,7 @@ struct WidgetProvider::Private
 
         std::map<QString, QMenu*> menuCache;
 
-        for(const auto& [key, widget] : widgets) {
+        for(const auto& [key, widget] : m_widgets) {
             if(widget.isHidden) {
                 continue;
             }
@@ -112,13 +111,13 @@ WidgetProvider::~WidgetProvider() = default;
 
 void WidgetProvider::setCommandStack(QUndoStack* layoutCommands)
 {
-    p->layoutCommands = layoutCommands;
+    p->m_layoutCommands = layoutCommands;
 }
 
 bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*()> instantiator,
                                     const QString& displayName)
 {
-    if(p->widgets.contains(key)) {
+    if(p->m_widgets.contains(key)) {
         qDebug() << "Subclass already registered";
         return false;
     }
@@ -128,43 +127,43 @@ bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*(
     fw.name         = displayName.isEmpty() ? key : displayName;
     fw.instantiator = std::move(instantiator);
 
-    p->widgets.emplace(key, fw);
+    p->m_widgets.emplace(key, fw);
     return true;
 }
 
 void WidgetProvider::setSubMenus(const QString& key, const QStringList& subMenus)
 {
-    if(!p->widgets.contains(key)) {
+    if(!p->m_widgets.contains(key)) {
         qDebug() << "Subclass not registered";
         return;
     }
 
-    p->widgets.at(key).subMenus = subMenus;
+    p->m_widgets.at(key).subMenus = subMenus;
 }
 
 void WidgetProvider::setLimit(const QString& key, int limit)
 {
-    if(!p->widgets.contains(key)) {
+    if(!p->m_widgets.contains(key)) {
         qDebug() << "Subclass not registered";
         return;
     }
 
-    p->widgets.at(key).limit = limit;
+    p->m_widgets.at(key).limit = limit;
 }
 
 void WidgetProvider::setIsHidden(const QString& key, bool hidden)
 {
-    if(!p->widgets.contains(key)) {
+    if(!p->m_widgets.contains(key)) {
         qDebug() << "Subclass not registered";
         return;
     }
 
-    p->widgets.at(key).isHidden = hidden;
+    p->m_widgets.at(key).isHidden = hidden;
 }
 
 bool WidgetProvider::widgetExists(const QString& key) const
 {
-    return p->widgets.contains(key);
+    return p->m_widgets.contains(key);
 }
 
 bool WidgetProvider::canCreateWidget(const QString& key) const
@@ -174,11 +173,11 @@ bool WidgetProvider::canCreateWidget(const QString& key) const
 
 FyWidget* WidgetProvider::createWidget(const QString& key)
 {
-    if(!p->widgets.contains(key)) {
+    if(!p->m_widgets.contains(key)) {
         return nullptr;
     }
 
-    auto& widget = p->widgets.at(key);
+    auto& widget = p->m_widgets.at(key);
 
     if(!widget.instantiator || !p->canCreateWidget(key)) {
         return nullptr;
@@ -189,8 +188,8 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
     auto* newWidget = widget.instantiator();
 
     QObject::connect(newWidget, &QObject::destroyed, newWidget, [this, key]() {
-        if(p->widgets.contains(key)) {
-            p->widgets.at(key).count--;
+        if(p->m_widgets.contains(key)) {
+            p->m_widgets.at(key).count--;
         }
     });
 
@@ -199,37 +198,37 @@ FyWidget* WidgetProvider::createWidget(const QString& key)
 
 void WidgetProvider::setupAddWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, int index)
 {
-    if(!p->layoutCommands) {
+    if(!p->m_layoutCommands) {
         return;
     }
 
     p->setupWidgetMenu(menu, [this, layout, container, index](const QString& key) {
-        p->layoutCommands->push(new AddWidgetCommand(layout, this, container, key, index));
+        p->m_layoutCommands->push(new AddWidgetCommand(layout, this, container, key, index));
     });
 }
 
 void WidgetProvider::setupReplaceWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container,
                                             const Id& widgetId)
 {
-    if(!p->layoutCommands) {
+    if(!p->m_layoutCommands) {
         return;
     }
 
     p->setupWidgetMenu(menu, [this, layout, container, widgetId](const QString& key) {
-        p->layoutCommands->push(new ReplaceWidgetCommand(layout, this, container, key, widgetId));
+        p->m_layoutCommands->push(new ReplaceWidgetCommand(layout, this, container, key, widgetId));
     });
 }
 
 void WidgetProvider::setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container,
                                           const Id& widgetId)
 {
-    if(!p->layoutCommands) {
+    if(!p->m_layoutCommands) {
         return;
     }
 
     p->setupWidgetMenu(menu,
                        [this, layout, container, widgetId](const QString& key) {
-                           p->layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
+                           p->m_layoutCommands->push(new SplitWidgetCommand(layout, this, container, key, widgetId));
                        },
                        {QStringLiteral("Splitters")});
 }

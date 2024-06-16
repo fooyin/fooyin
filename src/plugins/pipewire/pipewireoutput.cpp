@@ -124,96 +124,96 @@ void updateChannelMap(spa_audio_info_raw* info, int channels)
 namespace Fooyin::Pipewire {
 struct PipeWireOutput::Private
 {
-    PipeWireOutput* self;
+    PipeWireOutput* m_self;
 
-    QString device;
-    float volume{1.0};
+    QString m_device;
+    float m_volume{1.0};
 
-    AudioFormat format;
+    AudioFormat m_format;
 
-    AudioBuffer buffer;
-    uint32_t bufferPos{0};
+    AudioBuffer m_buffer;
+    uint32_t m_bufferPos{0};
 
-    std::unique_ptr<PipewireThreadLoop> loop;
-    std::unique_ptr<PipewireContext> context;
-    std::unique_ptr<PipewireCore> core;
-    std::unique_ptr<PipewireStream> stream;
-    std::unique_ptr<PipewireRegistry> registry;
+    std::unique_ptr<PipewireThreadLoop> m_loop;
+    std::unique_ptr<PipewireContext> m_context;
+    std::unique_ptr<PipewireCore> m_core;
+    std::unique_ptr<PipewireStream> m_stream;
+    std::unique_ptr<PipewireRegistry> m_registry;
 
-    explicit Private(PipeWireOutput* self_)
-        : self{self_}
+    explicit Private(PipeWireOutput* self)
+        : m_self{self}
     { }
 
     void uninit()
     {
-        if(stream) {
-            const ThreadLoopGuard guard{loop.get()};
-            stream.reset(nullptr);
+        if(m_stream) {
+            const ThreadLoopGuard guard{m_loop.get()};
+            m_stream.reset(nullptr);
         }
 
-        if(loop) {
-            loop->stop();
+        if(m_loop) {
+            m_loop->stop();
         }
 
-        if(core) {
-            core.reset(nullptr);
+        if(m_core) {
+            m_core.reset(nullptr);
         }
 
-        if(context) {
-            context.reset(nullptr);
+        if(m_context) {
+            m_context.reset(nullptr);
         }
 
-        if(loop) {
-            loop.reset(nullptr);
+        if(m_loop) {
+            m_loop.reset(nullptr);
         }
 
-        if(registry) {
-            registry.reset(nullptr);
+        if(m_registry) {
+            m_registry.reset(nullptr);
         }
 
-        buffer.clear();
-        bufferPos = 0;
+        m_buffer.clear();
+        m_bufferPos = 0;
     }
 
     bool initCore()
     {
-        loop = std::make_unique<PipewireThreadLoop>();
+        m_loop = std::make_unique<PipewireThreadLoop>();
 
-        if(!loop->loop()) {
+        if(!m_loop->loop()) {
             return false;
         }
 
-        context = std::make_unique<PipewireContext>(loop.get());
+        m_context = std::make_unique<PipewireContext>(m_loop.get());
 
-        if(!context->context()) {
+        if(!m_context->context()) {
             return false;
         }
 
-        core = std::make_unique<PipewireCore>(context.get());
+        m_core = std::make_unique<PipewireCore>(m_context.get());
 
-        if(!core->core()) {
+        if(!m_core->core()) {
             return false;
         }
 
-        registry = std::make_unique<PipewireRegistry>(core.get());
+        m_registry = std::make_unique<PipewireRegistry>(m_core.get());
 
-        core->syncCore();
+        m_core->syncCore();
 
-        if(!loop->start()) {
+        if(!m_loop->start()) {
             qWarning() << "[PW] Failed to start thread loop";
             return false;
         }
 
         {
-            const ThreadLoopGuard guard{loop.get()};
-            while(!core->initialised()) {
-                if(loop->wait(2) != 0) {
+            const ThreadLoopGuard guard{m_loop.get()};
+            while(!m_core->initialised()) {
+                if(m_loop->wait(2) != 0) {
                     break;
                 }
             }
         }
 
-        return core->initialised();
+        return m_core->initialised();
     }
 
     bool initStream()
@@ -225,14 +225,14 @@ struct PipeWireOutput::Private
             .drained       = drained,
         };
 
-        const ThreadLoopGuard guard{loop.get()};
+        const ThreadLoopGuard guard{m_loop.get()};
 
-        const auto dev = device != u"default" ? device : QStringLiteral("");
+        const auto dev = m_device != u"default" ? m_device : QStringLiteral("");
 
-        stream = std::make_unique<PipewireStream>(core.get(), format, dev);
-        stream->addListener(streamEvents, this);
+        m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, dev);
+        m_stream->addListener(streamEvents, this);
 
-        const spa_audio_format spaFormat = findSpaFormat(format.sampleFormat());
+        const spa_audio_format spaFormat = findSpaFormat(m_format.sampleFormat());
         if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
             qWarning() << "[PW] Unknown audio format";
             return false;
@@ -244,11 +244,11 @@ struct PipeWireOutput::Private
         spa_audio_info_raw audioInfo = {
             .format   = spaFormat,
             .flags    = SPA_AUDIO_FLAG_NONE,
-            .rate     = static_cast<uint32_t>(format.sampleRate()),
-            .channels = static_cast<uint32_t>(format.channelCount()),
+            .rate     = static_cast<uint32_t>(m_format.sampleRate()),
+            .channels = static_cast<uint32_t>(m_format.channelCount()),
         };
 
-        updateChannelMap(&audioInfo, format.channelCount());
+        updateChannelMap(&audioInfo, m_format.channelCount());
 
         std::vector<const spa_pod*> params;
         params.emplace_back(spa_format_audio_raw_build(&builder, SPA_PARAM_EnumFormat, &audioInfo));
@@ -256,19 +256,19 @@ struct PipeWireOutput::Private
         const auto flags = static_cast<pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_INACTIVE
                                                         | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS);
 
-        return stream->connect(PW_ID_ANY, PW_DIRECTION_OUTPUT, params, flags);
+        return m_stream->connect(PW_ID_ANY, PW_DIRECTION_OUTPUT, params, flags);
     }
 
     static void process(void* userData)
     {
         auto* self = static_cast<PipeWireOutput::Private*>(userData);
 
-        if(!self->bufferPos) {
-            self->loop->signal(false);
+        if(!self->m_bufferPos) {
+            self->m_loop->signal(false);
             return;
         }
 
-        auto* pwBuffer = self->stream->dequeueBuffer();
+        auto* pwBuffer = self->m_stream->dequeueBuffer();
         if(!pwBuffer) {
             qWarning() << "PW: No available output buffers";
             return;
@@ -276,19 +276,19 @@ struct PipeWireOutput::Private
 
         const spa_data& data = pwBuffer->buffer->datas[0];
 
-        const auto size = std::min(data.maxsize, self->bufferPos);
+        const auto size = std::min(data.maxsize, self->m_bufferPos);
         auto* dst       = data.data;
 
-        std::memcpy(dst, self->buffer.data(), self->bufferPos);
-        self->bufferPos -= size;
-        self->buffer.erase(size);
+        std::memcpy(dst, self->m_buffer.data(), self->m_bufferPos);
+        self->m_bufferPos -= size;
+        self->m_buffer.erase(size);
 
         data.chunk->offset = 0;
-        data.chunk->stride = self->format.bytesPerFrame();
+        data.chunk->stride = self->m_format.bytesPerFrame();
         data.chunk->size   = size;
 
-        self->stream->queueBuffer(pwBuffer);
-        self->loop->signal(false);
+        self->m_stream->queueBuffer(pwBuffer);
+        self->m_loop->signal(false);
     }
 
     static void stateChanged(void* userdata, enum pw_stream_state old, enum pw_stream_state state,
@@ -297,13 +297,13 @@ struct PipeWireOutput::Private
         auto* priv = static_cast<PipeWireOutput::Private*>(userdata);
 
         if(state == PW_STREAM_STATE_UNCONNECTED) {
-            QMetaObject::invokeMethod(priv->self, [priv]() { emit priv->self->stateChanged(State::Disconnected); });
+            QMetaObject::invokeMethod(priv->m_self, [priv]() { emit priv->m_self->stateChanged(State::Disconnected); });
         }
         else if(old == PW_STREAM_STATE_UNCONNECTED && state == PW_STREAM_STATE_CONNECTING) {
             // TODO: Handle reconnections
         }
         else if(state == PW_STREAM_STATE_PAUSED || state == PW_STREAM_STATE_STREAMING) {
-            priv->loop->signal(false);
+            priv->m_loop->signal(false);
         }
     }
 
@@ -311,8 +311,8 @@ struct PipeWireOutput::Private
     {
         auto* self = static_cast<PipeWireOutput::Private*>(userdata);
 
-        self->stream->setActive(false);
-        self->loop->signal(false);
+        self->m_stream->setActive(false);
+        self->m_loop->signal(false);
     }
 };
 
@@ -324,8 +324,8 @@ PipeWireOutput::~PipeWireOutput() = default;
 
 bool PipeWireOutput::init(const AudioFormat& format)
 {
-    p->format = format;
-    p->buffer = {format, 0};
+    p->m_format = format;
+    p->m_buffer = {format, 0};
 
     pw_init(nullptr, nullptr);
 
@@ -345,30 +345,30 @@ void PipeWireOutput::uninit()
 
 void PipeWireOutput::reset()
 {
-    const ThreadLoopGuard guard{p->loop.get()};
-    p->stream->flush(false);
+    const ThreadLoopGuard guard{p->m_loop.get()};
+    p->m_stream->flush(false);
 }
 
 void PipeWireOutput::start()
 {
-    const ThreadLoopGuard guard{p->loop.get()};
-    p->stream->setActive(true);
+    const ThreadLoopGuard guard{p->m_loop.get()};
+    p->m_stream->setActive(true);
 }
 
 void PipeWireOutput::drain()
 {
-    const ThreadLoopGuard guard{p->loop.get()};
-    p->stream->flush(false);
+    const ThreadLoopGuard guard{p->m_loop.get()};
+    p->m_stream->flush(false);
 }
 
 bool PipeWireOutput::initialised() const
 {
-    return p->core && p->core->initialised();
+    return p->m_core && p->m_core->initialised();
 }
 
 QString PipeWireOutput::device() const
 {
-    return p->device;
+    return p->m_device;
 }
 
 OutputDevices PipeWireOutput::getAllDevices() const
@@ -377,19 +377,19 @@ OutputDevices PipeWireOutput::getAllDevices() const
 
     devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
 
-    if(!p->core || !p->core->initialised()) {
+    if(!p->m_core || !p->m_core->initialised()) {
         pw_init(nullptr, nullptr);
 
         if(!p->initCore()) {
             return {};
         }
 
-        std::ranges::copy(p->registry->devices(), std::back_inserter(devices));
+        std::ranges::copy(p->m_registry->devices(), std::back_inserter(devices));
 
         p->uninit();
     }
     else {
-        std::ranges::copy(p->registry->devices(), std::back_inserter(devices));
+        std::ranges::copy(p->m_registry->devices(), std::back_inserter(devices));
     }
 
     return devices;
@@ -399,45 +399,45 @@ OutputState PipeWireOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples = p->buffer.frameCount();
-    state.freeSamples   = p->stream->bufferSize() - state.queuedSamples;
+    state.queuedSamples = p->m_buffer.frameCount();
+    state.freeSamples   = p->m_stream->bufferSize() - state.queuedSamples;
 
     return state;
 }
 
 int PipeWireOutput::bufferSize() const
 {
-    return p->stream ? p->stream->bufferSize() : 0;
+    return p->m_stream ? p->m_stream->bufferSize() : 0;
 }
 
 int PipeWireOutput::write(const AudioBuffer& buffer)
 {
-    const ThreadLoopGuard guard{p->loop.get()};
+    const ThreadLoopGuard guard{p->m_loop.get()};
 
-    p->buffer.append(buffer.constData());
-    p->bufferPos += buffer.byteCount();
+    p->m_buffer.append(buffer.constData());
+    p->m_bufferPos += buffer.byteCount();
 
     return buffer.sampleCount();
 }
 
 void PipeWireOutput::setPaused(bool pause)
 {
-    const ThreadLoopGuard guard{p->loop.get()};
-    p->stream->setActive(!pause);
+    const ThreadLoopGuard guard{p->m_loop.get()};
+    p->m_stream->setActive(!pause);
 }
 
 void PipeWireOutput::setVolume(double volume)
 {
-    p->volume = static_cast<float>(volume);
+    p->m_volume = static_cast<float>(volume);
 
-    const ThreadLoopGuard guard{p->loop.get()};
-    p->stream->setVolume(static_cast<float>(volume));
+    const ThreadLoopGuard guard{p->m_loop.get()};
+    p->m_stream->setVolume(static_cast<float>(volume));
 }
 
 void PipeWireOutput::setDevice(const QString& device)
 {
     if(!device.isEmpty()) {
-        p->device = device;
+        p->m_device = device;
     }
 }
 } // namespace Fooyin::Pipewire

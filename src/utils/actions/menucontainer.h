@@ -40,7 +40,6 @@ public:
     using GroupList = std::vector<Group>;
 
     explicit MenuContainer(const Id& id, ActionManager* manager);
-    ~MenuContainer() override;
 
     [[nodiscard]] Id id() const override;
     [[nodiscard]] QMenu* menu() const override;
@@ -82,11 +81,16 @@ signals:
 protected:
     virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;
 
-    GroupList groups;
+    GroupList m_groups;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void itemDestroyed(QObject* sender);
+    GroupList::const_iterator findGroup(const Id& groupId) const;
+    QAction* determineInsertionLocation(GroupList::const_iterator group) const;
+
+    ActionManager* m_manager;
+    Id m_id;
+    DisabledBehavior m_disabledBehavior{Disable};
 };
 
 class MenuBarActionContainer : public MenuContainer

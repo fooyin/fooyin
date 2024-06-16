@@ -83,50 +83,50 @@ using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
 namespace Fooyin {
 struct FFmpegDecoder::Private
 {
-    FFmpegDecoder* self;
+    FFmpegDecoder* m_self;
 
-    FormatContextPtr context;
-    Stream stream;
-    Codec codec;
-    AudioFormat audioFormat;
+    FormatContextPtr m_context;
+    Stream m_stream;
+    Codec m_codec;
+    AudioFormat m_audioFormat;
 
-    Error error{NoError};
-    AVRational timeBase;
-    bool isSeekable{false};
-    bool draining{false};
-    bool isDecoding{false};
+    Error m_error{NoError};
+    AVRational m_timeBase;
+    bool m_isSeekable{false};
+    bool m_draining{false};
+    bool m_isDecoding{false};
 
-    AudioBuffer buffer;
-    int bufferPos{0};
-    uint64_t currentPts{0};
+    AudioBuffer m_buffer;
+    int m_bufferPos{0};
+    uint64_t m_currentPts{0};
 
-    explicit Private(FFmpegDecoder* self_)
-        : self{self_}
-        , timeBase{0, 0}
+    explicit Private(FFmpegDecoder* self)
+        : m_self{self}
+        , m_timeBase{0, 0}
     { }
 
     bool setup(const QString& source)
     {
-        context.reset();
-        stream = {};
-        codec  = {};
-        buffer = {};
+        m_context.reset();
+        m_stream = {};
+        m_codec  = {};
+        m_buffer = {};
 
-        error = Error::NoError;
+        m_error = Error::NoError;
 
         if(!createAVFormatContext(source)) {
             return false;
         }
 
-        isSeekable = !(context->ctx_flags & AVFMTCTX_UNSEEKABLE);
+        m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
 
-        if(!findStream(context)) {
+        if(!findStream(m_context)) {
             return false;
         }
 
-        audioFormat = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
+        m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar);
 
-        return createCodec(stream.avStream());
+        return createCodec(m_stream.avStream());
     }
 
     bool createAVFormatContext(const QString& source)
@@ -137,11 +137,11 @@ struct FFmpegDecoder::Private
         if(ret < 0) {
             if(ret == AVERROR(EACCES)) {
                 Utils::printError(QStringLiteral("Access denied: ") + source);
-                error = Error::AccessDeniedError;
+                m_error = Error::AccessDeniedError;
             }
             else if(ret == AVERROR(EINVAL)) {
                 Utils::printError(QStringLiteral("Invalid format: ") + source);
-                error = Error::FormatError;
+                m_error = Error::FormatError;
             }
             return false;
         }
@@ -149,13 +149,13 @@ struct FFmpegDecoder::Private
         if(avformat_find_stream_info(avContext, nullptr) < 0) {
             Utils::printError(QStringLiteral("Could not find stream info"));
             avformat_close_input(&avContext);
-            error = Error::ResourceError;
+            m_error = Error::ResourceError;
             return false;
         }
 
         //        av_dump_format(avContext, 0, data, 0);
 
-        context.reset(avContext);
+        m_context.reset(avContext);
 
         return true;
     }
@@ -167,13 +167,13 @@ struct FFmpegDecoder::Private
             const auto type    = avStream->codecpar->codec_type;
 
             if(type == AVMEDIA_TYPE_AUDIO) {
-                timeBase = avStream->time_base;
-                stream   = Fooyin::Stream{avStream};
+                m_timeBase = avStream->time_base;
+                m_stream   = Fooyin::Stream{avStream};
                 return true;
             }
         }
 
-        error = Error::ResourceError;
+        m_error = Error::ResourceError;
 
         return false;
     }
@@ -187,14 +187,14 @@ struct FFmpegDecoder::Private
         const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
         if(!avCodec) {
             Utils::printError(QStringLiteral("Could not find a decoder for stream"));
-            error = Error::ResourceError;
+            m_error = Error::ResourceError;
             return false;
         }
 
         Fooyin::CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
             Utils::printError(QStringLiteral("Could not allocate context"));
-            error = Error::ResourceError;
+            m_error = Error::ResourceError;
             return false;
         }
 
@@ -204,26 +204,26 @@ struct FFmpegDecoder::Private
 
         if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
             Utils::printError(QStringLiteral("Could not obtain codec parameters"));
-            error = Error::ResourceError;
+            m_error = Error::ResourceError;
             return {};
         }
 
-        avCodecContext.get()->pkt_timebase = timeBase;
+        avCodecContext.get()->pkt_timebase = m_timeBase;
 
         if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
             Utils::printError(QStringLiteral("Could not initialise codec context"));
-            error = Error::ResourceError;
+            m_error = Error::ResourceError;
             return {};
         }
 
-        codec = {std::move(avCodecContext), avStream};
+        m_codec = {std::move(avCodecContext), avStream};
 
         return true;
     }
 
     void decodeAudio(const Packet& packet)
     {
-        if(!isDecoding) {
+        if(!m_isDecoding) {
             return;
         }
 
@@ -245,26 +245,26 @@ struct FFmpegDecoder::Private
 
     [[nodiscard]] bool hasError() const
     {
-        return error != Error::NoError;
+        return m_error != Error::NoError;
     }
 
     [[nodiscard]] int sendAVPacket(const Packet& packet) const
     {
-        if(hasError() || !isDecoding) {
+        if(hasError() || !m_isDecoding) {
             return -1;
         }
 
-        return avcodec_send_packet(codec.context(), !packet.isValid() || draining ? nullptr : packet.avPacket());
+        return avcodec_send_packet(m_codec.context(), !packet.isValid() || m_draining ? nullptr : packet.avPacket());
     }
 
     void receiveAVFrames()
     {
-        if(hasError() || !isDecoding) {
+        if(hasError() || !m_isDecoding) {
             return;
         }
 
         auto avFrame     = FramePtr(av_frame_alloc());
-        const int result = avcodec_receive_frame(codec.context(), avFrame.get());
+        const int result = avcodec_receive_frame(m_codec.context(), avFrame.get());
 
         if(result == AVERROR_EOF) {
             return;
@@ -280,43 +280,43 @@ struct FFmpegDecoder::Private
             return;
         }
 
-        const Frame frame{std::move(avFrame), timeBase};
+        const Frame frame{std::move(avFrame), m_timeBase};
 
-        currentPts = frame.ptsMs();
+        m_currentPts = frame.ptsMs();
 
-        const auto sampleCount = audioFormat.bytesPerFrame() * frame.sampleCount();
+        const auto sampleCount = m_audioFormat.bytesPerFrame() * frame.sampleCount();
 
         if(av_sample_fmt_is_planar(frame.format())) {
-            buffer = {audioFormat, frame.ptsMs()};
-            buffer.resize(static_cast<size_t>(sampleCount));
-            interleave(frame.avFrame()->data, buffer);
+            m_buffer = {m_audioFormat, frame.ptsMs()};
+            m_buffer.resize(static_cast<size_t>(sampleCount));
+            interleave(frame.avFrame()->data, m_buffer);
         }
         else {
-            buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), audioFormat, frame.ptsMs()};
+            m_buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, frame.ptsMs()};
         }
     }
 
     void readNext()
     {
-        if(!isDecoding) {
+        if(!m_isDecoding) {
             return;
         }
 
         const Packet packet(PacketPtr{av_packet_alloc()});
-        const int readResult = av_read_frame(context.get(), packet.avPacket());
+        const int readResult = av_read_frame(m_context.get(), packet.avPacket());
         if(readResult < 0) {
             if(readResult != AVERROR_EOF) {
                 Utils::printError(readResult);
             }
-            else if(!draining) {
-                draining = true;
+            else if(!m_draining) {
+                m_draining = true;
                 decodeAudio(packet);
                 return;
             }
             return;
         }
 
-        if(packet.avPacket()->stream_index != codec.streamIndex()) {
+        if(packet.avPacket()->stream_index != m_codec.streamIndex()) {
             readNext();
             return;
         }
@@ -326,19 +326,19 @@ struct FFmpegDecoder::Private
 
     void seek(uint64_t pos) const
     {
-        if(!context || !isSeekable || hasError()) {
+        if(!m_context || !m_isSeekable || hasError()) {
             return;
         }
 
-        const int64_t timestamp = av_rescale_q(static_cast<int64_t>(pos), {1, 1000}, stream.avStream()->time_base);
+        const int64_t timestamp = av_rescale_q(static_cast<int64_t>(pos), {1, 1000}, m_stream.avStream()->time_base);
 
-        const int flags = pos < currentPts ? AVSEEK_FLAG_BACKWARD : 0;
-        if(av_seek_frame(context.get(), stream.index(), timestamp, flags) < 0) {
+        const int flags = pos < m_currentPts ? AVSEEK_FLAG_BACKWARD : 0;
+        if(av_seek_frame(m_context.get(), m_stream.index(), timestamp, flags) < 0) {
             qWarning() << "Could not seek to position: " << pos;
             return;
         }
 
-        avcodec_flush_buffers(codec.context());
+        avcodec_flush_buffers(m_codec.context());
     }
 };
 
@@ -355,27 +355,27 @@ bool FFmpegDecoder::init(const QString& source)
 
 void FFmpegDecoder::start()
 {
-    p->isDecoding = true;
+    p->m_isDecoding = true;
 }
 
 void FFmpegDecoder::stop()
 {
     p->seek(0);
-    p->isDecoding = false;
-    p->draining   = false;
-    p->currentPts = 0;
-    p->bufferPos  = 0;
-    p->buffer.clear();
+    p->m_isDecoding = false;
+    p->m_draining   = false;
+    p->m_currentPts = 0;
+    p->m_bufferPos  = 0;
+    p->m_buffer.clear();
 }
 
 AudioFormat FFmpegDecoder::format() const
 {
-    return p->audioFormat;
+    return p->m_audioFormat;
 }
 
 bool FFmpegDecoder::isSeekable() const
 {
-    return p->isSeekable;
+    return p->m_isSeekable;
 }
 
 void FFmpegDecoder::seek(uint64_t pos)
@@ -385,24 +385,24 @@ void FFmpegDecoder::seek(uint64_t pos)
 
 AudioBuffer FFmpegDecoder::readBuffer()
 {
-    if(!p->isDecoding || p->hasError()) {
+    if(!p->m_isDecoding || p->hasError()) {
         return {};
     }
 
-    if(!p->buffer.isValid()) {
+    if(!p->m_buffer.isValid()) {
         p->readNext();
     }
 
-    return std::exchange(p->buffer, {});
+    return std::exchange(p->m_buffer, {});
 }
 
 AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 {
-    if(!p->isDecoding || p->hasError()) {
+    if(!p->m_isDecoding || p->hasError()) {
         return {};
     }
 
-    if(!p->buffer.isValid()) {
+    if(!p->m_buffer.isValid()) {
         p->readNext();
     }
 
@@ -411,23 +411,23 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
     const int bytesRequested = static_cast<int>(bytes);
     int bytesWritten{0};
 
-    while(p->buffer.isValid() && bytesWritten < bytesRequested) {
+    while(p->m_buffer.isValid() && bytesWritten < bytesRequested) {
         if(!buffer.isValid()) {
-            buffer = {p->buffer.format(), p->buffer.startTime()};
+            buffer = {p->m_buffer.format(), p->m_buffer.startTime()};
         }
         const int remaining = bytesRequested - bytesWritten;
-        const int count     = p->buffer.byteCount() - p->bufferPos;
+        const int count     = p->m_buffer.byteCount() - p->m_bufferPos;
         if(count <= remaining) {
-            buffer.append(p->buffer.data() + p->bufferPos, count);
+            buffer.append(p->m_buffer.data() + p->m_bufferPos, count);
             bytesWritten += count;
-            p->buffer    = {};
-            p->bufferPos = 0;
+            p->m_buffer    = {};
+            p->m_bufferPos = 0;
             p->readNext();
         }
         else {
-            buffer.append(p->buffer.data() + p->bufferPos, remaining);
+            buffer.append(p->m_buffer.data() + p->m_bufferPos, remaining);
             bytesWritten += remaining;
-            p->bufferPos += remaining;
+            p->m_bufferPos += remaining;
         }
     }
 
@@ -436,6 +436,6 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 
 AudioDecoder::Error FFmpegDecoder::error() const
 {
-    return p->error;
+    return p->m_error;
 }
 } // namespace Fooyin

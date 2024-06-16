@@ -19,13 +19,15 @@
 
 #pragma once
 
+#include <core/playlist/playlist.h>
 #include <gui/fywidget.h>
 
 class QHBoxLayout;
 
 namespace Fooyin {
-class SettingsManager;
 class PlayerController;
+class SettingsManager;
+class ToolButton;
 
 class PlaylistControl : public FyWidget
 {
@@ -33,13 +35,20 @@ class PlaylistControl : public FyWidget
 
 public:
     explicit PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistControl() override;
 
     QString name() const override;
     QString layoutName() const override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void updateButtonStyle() const;
+    void setupMenus();
+    void shuffleClicked() const;
+    void setMode(Playlist::PlayModes mode) const;
+
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
+
+    ToolButton* m_repeat;
+    ToolButton* m_shuffle;
 };
 } // namespace Fooyin

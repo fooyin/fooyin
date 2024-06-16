@@ -106,208 +106,114 @@ void restoreExpandedState(QTreeView* view, QAbstractItemModel* model, QByteArray
 } // namespace
 
 namespace Fooyin {
-struct PlaylistOrganiser::Private
-{
-    PlaylistOrganiser* self;
-
-    ActionManager* actionManager;
-    SettingsManager* settings;
-    PlaylistController* playlistController;
-
-    QTreeView* organiserTree;
-    PlaylistOrganiserModel* model;
-
-    WidgetContext context;
-
-    QAction* removePlaylist;
-    Command* removeCmd;
-    QAction* renamePlaylist;
-    Command* renameCmd;
-    QAction* newGroup;
-    Command* newGroupCmd;
-    QAction* newPlaylist;
-    Command* newPlaylistCmd;
-
-    Id currentPlaylistId;
-    bool creatingPlaylist{false};
-
-    Private(PlaylistOrganiser* self_, ActionManager* actionManager_, PlaylistController* playlistController_,
-            SettingsManager* settings_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , settings{settings_}
-        , playlistController{playlistController_}
-        , organiserTree{new QTreeView(self)}
-        , model{new PlaylistOrganiserModel(playlistController->playlistHandler(),
-                                           playlistController->playerController())}
-        , context{self, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())}}
-        , removePlaylist{new QAction(tr("Remove"))}
-        , removeCmd{actionManager->registerAction(removePlaylist, Constants::Actions::Remove, context.context())}
-        , renamePlaylist{new QAction(tr("Rename"))}
-        , renameCmd{actionManager->registerAction(renamePlaylist, Constants::Actions::Rename, context.context())}
-        , newGroup{new QAction(tr("New Group"))}
-        , newGroupCmd{actionManager->registerAction(newGroup, "PlaylistOrganiser.NewGroup", context.context())}
-        , newPlaylist{new QAction(tr("Create Playlist"))}
-        , newPlaylistCmd{actionManager->registerAction(newPlaylist, "PlaylistOrganiser.NewPlaylist", context.context())}
-    {
-        organiserTree->setHeaderHidden(true);
-        organiserTree->setUniformRowHeights(true);
-        organiserTree->setSelectionBehavior(QAbstractItemView::SelectRows);
-        organiserTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
-        organiserTree->setDragEnabled(true);
-        organiserTree->setAcceptDrops(true);
-        organiserTree->setDragDropMode(QAbstractItemView::InternalMove);
-        organiserTree->setDefaultDropAction(Qt::MoveAction);
-        organiserTree->setDropIndicatorShown(true);
-        organiserTree->setAllColumnsShowFocus(true);
-
-        organiserTree->setModel(model);
-        organiserTree->setItemDelegate(new PlaylistOrganiserDelegate(self));
-
-        actionManager->addContextObject(&context);
-
-        removeCmd->setDefaultShortcut(QKeySequence::Delete);
-        renameCmd->setDefaultShortcut(Qt::Key_F2);
-        newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
-        newPlaylistCmd->setDefaultShortcut(QKeySequence::New);
-
-        QAction::connect(newGroup, &QAction::triggered, self, [this]() {
-            const auto indexes = organiserTree->selectionModel()->selectedIndexes();
-            createGroup(indexes.empty() ? QModelIndex{} : indexes.front());
-        });
-        QObject::connect(removePlaylist, &QAction::triggered, self,
-                         [this]() { model->removeItems(organiserTree->selectionModel()->selectedIndexes()); });
-        QObject::connect(renamePlaylist, &QAction::triggered, self, [this]() {
-            const auto indexes = organiserTree->selectionModel()->selectedIndexes();
-            organiserTree->edit(indexes.empty() ? QModelIndex{} : indexes.front());
-        });
-        QObject::connect(newPlaylist, &QAction::triggered, self, [this]() {
-            const auto indexes = organiserTree->selectionModel()->selectedIndexes();
-            createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front());
-        });
-    }
-
-    void selectionChanged()
-    {
-        const QModelIndexList selectedIndexes = organiserTree->selectionModel()->selectedIndexes();
-        if(selectedIndexes.empty()) {
-            return;
-        }
-
-        const QModelIndex firstIndex = selectedIndexes.front();
-        if(firstIndex.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem) {
-            return;
-        }
-
-        auto* playlist      = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
-        const Id playlistId = playlist->id();
-
-        if(std::exchange(currentPlaylistId, playlistId) != playlistId) {
-            playlistController->changeCurrentPlaylist(playlist);
-        }
-    }
-
-    void selectCurrentPlaylist()
-    {
-        auto* playlist = playlistController->currentPlaylist();
-        if(!playlist) {
-            return;
-        }
-
-        const Id playlistId = playlist->id();
-        if(std::exchange(currentPlaylistId, playlistId) != playlistId) {
-            const QModelIndex index = model->indexForPlaylist(playlist);
-            if(index.isValid()) {
-                organiserTree->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-            }
-        }
-    }
-
-    void createGroup(const QModelIndex& index) const
-    {
-        QModelIndex parent{index};
-        if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
-            parent = parent.parent();
-        }
-        const QModelIndex groupIndex = model->createGroup(parent);
-        organiserTree->edit(groupIndex);
-    }
-
-    void createPlaylist(const QModelIndex& index)
-    {
-        creatingPlaylist = true;
-
-        if(auto* playlist = playlistController->playlistHandler()->createEmptyPlaylist()) {
-            QModelIndex parent{index};
-            if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
-                parent = parent.parent();
-            }
-            const QModelIndex playlistIndex = model->createPlaylist(playlist, parent);
-            organiserTree->edit(playlistIndex);
-        }
-
-        creatingPlaylist = false;
-    }
-};
-
 PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistController* playlistController,
                                      SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, playlistController, settings)}
+    , m_actionManager{actionManager}
+    , m_settings{settings}
+    , m_playlistController{playlistController}
+    , m_organiserTree{new QTreeView(this)}
+    , m_model{new PlaylistOrganiserModel(playlistController->playlistHandler(), playlistController->playerController())}
+    , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())},
+                                  this)}
+    , m_removePlaylist{new QAction(tr("Remove"))}
+    , m_removeCmd{actionManager->registerAction(m_removePlaylist, Constants::Actions::Remove, m_context->context())}
+    , m_renamePlaylist{new QAction(tr("Rename"))}
+    , m_renameCmd{actionManager->registerAction(m_renamePlaylist, Constants::Actions::Rename, m_context->context())}
+    , m_newGroup{new QAction(tr("New Group"))}
+    , m_newGroupCmd{actionManager->registerAction(m_newGroup, "PlaylistOrganiser.NewGroup", m_context->context())}
+    , m_newPlaylist{new QAction(tr("Create Playlist"))}
+    , m_newPlaylistCmd{
+          actionManager->registerAction(m_newPlaylist, "PlaylistOrganiser.NewPlaylist", m_context->context())}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(m_organiserTree);
 
-    layout->addWidget(p->organiserTree);
+    m_organiserTree->setHeaderHidden(true);
+    m_organiserTree->setUniformRowHeights(true);
+    m_organiserTree->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_organiserTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_organiserTree->setDragEnabled(true);
+    m_organiserTree->setAcceptDrops(true);
+    m_organiserTree->setDragDropMode(QAbstractItemView::InternalMove);
+    m_organiserTree->setDefaultDropAction(Qt::MoveAction);
+    m_organiserTree->setDropIndicatorShown(true);
+    m_organiserTree->setAllColumnsShowFocus(true);
 
-    QObject::connect(p->model, &QAbstractItemModel::rowsMoved, this,
+    m_organiserTree->setModel(m_model);
+    m_organiserTree->setItemDelegate(new PlaylistOrganiserDelegate(this));
+
+    actionManager->addContextObject(m_context);
+
+    m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
+    m_renameCmd->setDefaultShortcut(Qt::Key_F2);
+    m_newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
+    m_newPlaylistCmd->setDefaultShortcut(QKeySequence::New);
+
+    QAction::connect(m_newGroup, &QAction::triggered, this, [this]() {
+        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        createGroup(indexes.empty() ? QModelIndex{} : indexes.front());
+    });
+    QObject::connect(m_removePlaylist, &QAction::triggered, this,
+                     [this]() { m_model->removeItems(m_organiserTree->selectionModel()->selectedIndexes()); });
+    QObject::connect(m_renamePlaylist, &QAction::triggered, this, [this]() {
+        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        m_organiserTree->edit(indexes.empty() ? QModelIndex{} : indexes.front());
+    });
+    QObject::connect(m_newPlaylist, &QAction::triggered, this, [this]() {
+        const auto indexes = m_organiserTree->selectionModel()->selectedIndexes();
+        createPlaylist(indexes.empty() ? QModelIndex{} : indexes.front());
+    });
+
+    QObject::connect(m_model, &QAbstractItemModel::rowsMoved, this,
                      [this](const QModelIndex& /*source*/, int /*first*/, int /*last*/, const QModelIndex& target) {
                          if(target.isValid()) {
-                             p->organiserTree->expand(target);
+                             m_organiserTree->expand(target);
                          }
                      });
-    QObject::connect(p->model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& index) {
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex& index) {
         if(index.isValid()) {
-            p->organiserTree->expand(index);
+            m_organiserTree->expand(index);
         }
     });
-    QObject::connect(p->organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this]() { p->selectionChanged(); });
+    QObject::connect(m_organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { selectionChanged(); });
 
     QObject::connect(
-        p->playlistController->playlistHandler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
-            if(!p->creatingPlaylist) {
+        m_playlistController->playlistHandler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
+            if(!m_creatingPlaylist) {
                 QMetaObject::invokeMethod(
-                    p->model, [this, playlist]() { p->model->playlistAdded(playlist); }, Qt::QueuedConnection);
+                    m_model, [this, playlist]() { m_model->playlistAdded(playlist); }, Qt::QueuedConnection);
             }
         });
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRemoved, p->model,
+    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistRemoved, m_model,
                      &PlaylistOrganiserModel::playlistRemoved);
-    QObject::connect(p->playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, p->model,
+    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, m_model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(p->playlistController, &PlaylistController::currentPlaylistChanged, this, [this]() {
+    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this, [this]() {
         QMetaObject::invokeMethod(
-            p->model, [this]() { p->selectCurrentPlaylist(); }, Qt::QueuedConnection);
+            m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
     });
-    QObject::connect(p->playlistController, &PlaylistController::playlistsLoaded, this,
-                     [this]() { p->selectCurrentPlaylist(); });
+    QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
+                     [this]() { selectCurrentPlaylist(); });
 
-    if(p->model->restoreModel(p->settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
-        const auto state = p->settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();
-        restoreExpandedState(p->organiserTree, p->model, state);
-        p->model->populateMissing();
+    if(m_model->restoreModel(m_settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
+        const auto state = m_settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();
+        restoreExpandedState(m_organiserTree, m_model, state);
+        m_model->populateMissing();
     }
     else {
-        p->model->populate();
+        m_model->populate();
     }
 
-    p->selectCurrentPlaylist();
+    selectCurrentPlaylist();
 }
 
 PlaylistOrganiser::~PlaylistOrganiser()
 {
-    p->settings->fileSet(QString::fromLatin1(OrganiserModel), p->model->saveModel());
-    p->settings->fileSet(QString::fromLatin1(OrganiserState), saveExpandedState(p->organiserTree, p->model));
+    m_settings->fileSet(QString::fromLatin1(OrganiserModel), m_model->saveModel());
+    m_settings->fileSet(QString::fromLatin1(OrganiserState), saveExpandedState(m_organiserTree, m_model));
 }
 
 QString PlaylistOrganiser::name() const
@@ -325,19 +231,81 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const QPoint point      = p->organiserTree->viewport()->mapFrom(this, event->pos());
-    const QModelIndex index = p->organiserTree->indexAt(point);
+    const QPoint point      = m_organiserTree->viewport()->mapFrom(this, event->pos());
+    const QModelIndex index = m_organiserTree->indexAt(point);
 
-    p->removePlaylist->setEnabled(index.isValid());
-    p->renamePlaylist->setEnabled(index.isValid());
+    m_removePlaylist->setEnabled(index.isValid());
+    m_renamePlaylist->setEnabled(index.isValid());
 
-    menu->addAction(p->newPlaylistCmd->action());
-    menu->addAction(p->newGroupCmd->action());
+    menu->addAction(m_newPlaylistCmd->action());
+    menu->addAction(m_newGroupCmd->action());
     menu->addSeparator();
-    menu->addAction(p->renameCmd->action());
-    menu->addAction(p->removeCmd->action());
+    menu->addAction(m_renameCmd->action());
+    menu->addAction(m_removeCmd->action());
 
     menu->popup(event->globalPos());
+}
+
+void PlaylistOrganiser::selectionChanged()
+{
+    const QModelIndexList selectedIndexes = m_organiserTree->selectionModel()->selectedIndexes();
+    if(selectedIndexes.empty()) {
+        return;
+    }
+
+    const QModelIndex firstIndex = selectedIndexes.front();
+    if(firstIndex.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem) {
+        return;
+    }
+
+    auto* playlist      = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
+    const Id playlistId = playlist->id();
+
+    if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
+        m_playlistController->changeCurrentPlaylist(playlist);
+    }
+}
+
+void PlaylistOrganiser::selectCurrentPlaylist()
+{
+    auto* playlist = m_playlistController->currentPlaylist();
+    if(!playlist) {
+        return;
+    }
+
+    const Id playlistId = playlist->id();
+    if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
+        const QModelIndex index = m_model->indexForPlaylist(playlist);
+        if(index.isValid()) {
+            m_organiserTree->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+        }
+    }
+}
+
+void PlaylistOrganiser::createGroup(const QModelIndex& index) const
+{
+    QModelIndex parent{index};
+    if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+        parent = parent.parent();
+    }
+    const QModelIndex groupIndex = m_model->createGroup(parent);
+    m_organiserTree->edit(groupIndex);
+}
+
+void PlaylistOrganiser::createPlaylist(const QModelIndex& index)
+{
+    m_creatingPlaylist = true;
+
+    if(auto* playlist = m_playlistController->playlistHandler()->createEmptyPlaylist()) {
+        QModelIndex parent{index};
+        if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+            parent = parent.parent();
+        }
+        const QModelIndex playlistIndex = m_model->createPlaylist(playlist, parent);
+        m_organiserTree->edit(playlistIndex);
+    }
+
+    m_creatingPlaylist = false;
 }
 } // namespace Fooyin
 

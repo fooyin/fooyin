@@ -33,58 +33,58 @@
 namespace Fooyin {
 struct CustomisableInput::Private
 {
-    CustomisableInput* self;
+    CustomisableInput* m_self;
 
-    QLineEdit* input;
-    QPushButton* optionsButton;
-    QPushButton* fontButton;
-    QPushButton* colourButton;
-    QFont font;
-    QColor colour;
-    State state;
+    QLineEdit* m_input;
+    QPushButton* m_optionsButton;
+    QPushButton* m_fontButton;
+    QPushButton* m_colourButton;
+    QFont m_font;
+    QColor m_colour;
+    State m_state;
 
-    explicit Private(CustomisableInput* self_)
-        : self{self_}
-        , input{new QLineEdit(self)}
-        , optionsButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), QStringLiteral(""), self)}
-        , fontButton{new QPushButton(self)}
-        , colourButton{new QPushButton(self)}
+    explicit Private(CustomisableInput* self)
+        : m_self{self}
+        , m_input{new QLineEdit(m_self)}
+        , m_optionsButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), QStringLiteral(""), m_self)}
+        , m_fontButton{new QPushButton(m_self)}
+        , m_colourButton{new QPushButton(m_self)}
     {
-        auto* layout = new QHBoxLayout(self);
+        auto* layout = new QHBoxLayout(m_self);
         layout->setContentsMargins(0, 0, 0, 0);
 
-        layout->addWidget(input);
-        layout->addWidget(optionsButton);
-        layout->addWidget(fontButton);
-        layout->addWidget(colourButton);
+        layout->addWidget(m_input);
+        layout->addWidget(m_optionsButton);
+        layout->addWidget(m_fontButton);
+        layout->addWidget(m_colourButton);
 
-        fontButton->hide();
-        colourButton->hide();
+        m_fontButton->hide();
+        m_colourButton->hide();
     }
 
     void toggleOptions() const
     {
-        fontButton->setHidden(!fontButton->isHidden());
-        colourButton->setHidden(!colourButton->isHidden());
+        m_fontButton->setHidden(!m_fontButton->isHidden());
+        m_colourButton->setHidden(!m_colourButton->isHidden());
     }
 
     void showFontDialog()
     {
         bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, font, self, tr("Select Font"));
-        if(ok && chosenFont != font) {
-            self->setFont(chosenFont);
-            state |= FontChanged;
+        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, m_self, tr("Select Font"));
+        if(ok && chosenFont != m_font) {
+            m_self->setFont(chosenFont);
+            m_state |= FontChanged;
         }
     }
 
     void showColourDialog()
     {
         const QColor chosenColour
-            = QColorDialog::getColor(colour, self, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
-        if(chosenColour.isValid() && chosenColour != colour) {
-            self->setColour(chosenColour);
-            state |= ColourChanged;
+            = QColorDialog::getColor(m_colour, m_self, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
+        if(chosenColour.isValid() && chosenColour != m_colour) {
+            m_self->setColour(chosenColour);
+            m_state |= ColourChanged;
         }
     }
 };
@@ -97,78 +97,78 @@ CustomisableInput::CustomisableInput(Attributes attributes, QWidget* parent)
     : ExpandableInput{attributes & CustomWidget, parent}
     , p{std::make_unique<Private>(this)}
 {
-    setFont(p->font);
+    setFont(p->m_font);
     setColour(QApplication::palette().text().color());
 
-    QObject::connect(p->optionsButton, &QPushButton::pressed, this, [this]() { p->toggleOptions(); });
-    QObject::connect(p->fontButton, &QPushButton::pressed, this, [this]() { p->showFontDialog(); });
-    QObject::connect(p->colourButton, &QPushButton::pressed, this, [this]() { p->showColourDialog(); });
+    QObject::connect(p->m_optionsButton, &QPushButton::pressed, this, [this]() { p->toggleOptions(); });
+    QObject::connect(p->m_fontButton, &QPushButton::pressed, this, [this]() { p->showFontDialog(); });
+    QObject::connect(p->m_colourButton, &QPushButton::pressed, this, [this]() { p->showColourDialog(); });
 
-    QObject::connect(p->input, &QLineEdit::textEdited, this, &ExpandableInput::textChanged);
+    QObject::connect(p->m_input, &QLineEdit::textEdited, this, &ExpandableInput::textChanged);
 }
 
 CustomisableInput::~CustomisableInput() = default;
 
 QString CustomisableInput::text() const
 {
-    return p->input->text();
+    return p->m_input->text();
 }
 
 QFont CustomisableInput::font() const
 {
-    return p->font;
+    return p->m_font;
 }
 
 QColor CustomisableInput::colour() const
 {
-    return p->colour;
+    return p->m_colour;
 }
 
 CustomisableInput::State CustomisableInput::state() const
 {
-    return p->state;
+    return p->m_state;
 }
 
 void CustomisableInput::setText(const QString& text)
 {
-    p->input->setText(text);
+    p->m_input->setText(text);
 }
 
 void CustomisableInput::setFont(const QFont& font)
 {
-    p->font = font;
+    p->m_font = font;
 
-    p->fontButton->setText(QStringLiteral("%1 (%2)").arg(font.family()).arg(font.pointSize()));
+    p->m_fontButton->setText(QStringLiteral("%1 (%2)").arg(font.family()).arg(font.pointSize()));
 }
 
 void CustomisableInput::setColour(const QColor& colour)
 {
-    p->colour = colour;
+    p->m_colour = colour;
 
     QPixmap px(20, 20);
     px.fill(colour);
-    p->colourButton->setIcon(px);
-    p->colourButton->setText(colour.name());
+    p->m_colourButton->setIcon(px);
+    p->m_colourButton->setText(colour.name());
 }
 
 void CustomisableInput::setState(State state)
 {
-    p->state = state;
+    p->m_state = state;
 }
 
 void CustomisableInput::setReadOnly(bool readOnly)
 {
     ExpandableInput::setReadOnly(readOnly);
 
-    p->input->setReadOnly(readOnly);
-    p->fontButton->setDisabled(readOnly);
-    p->colourButton->setDisabled(readOnly);
+    p->m_input->setReadOnly(readOnly);
+    p->m_fontButton->setDisabled(readOnly);
+    p->m_colourButton->setDisabled(readOnly);
 }
 
 void CustomisableInput::resetState()
 {
-    p->state &= ~FontChanged;
-    p->state &= ~ColourChanged;
+    p->m_state &= ~FontChanged;
+    p->m_state &= ~ColourChanged;
 }
 } // namespace Fooyin
 

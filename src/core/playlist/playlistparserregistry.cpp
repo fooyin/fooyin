@@ -22,32 +22,21 @@
 #include <core/playlist/playlistparser.h>
 
 namespace Fooyin {
-struct PlaylistParserRegistry::Private
-{
-    std::unordered_map<QString, std::unique_ptr<PlaylistParser>> m_parsers;
-};
-
-PlaylistParserRegistry::PlaylistParserRegistry()
-    : p{std::make_unique<Private>()}
-{ }
-
-PlaylistParserRegistry::~PlaylistParserRegistry() = default;
-
 PlaylistParser* PlaylistParserRegistry::registerParser(std::unique_ptr<PlaylistParser> parser)
 {
     const QString name = parser->name();
-    if(p->m_parsers.contains(name)) {
-        return p->m_parsers.at(name).get();
+    if(m_parsers.contains(name)) {
+        return m_parsers.at(name).get();
     }
 
-    return p->m_parsers.emplace(name, std::move(parser)).first->second.get();
+    return m_parsers.emplace(name, std::move(parser)).first->second.get();
 }
 
 QStringList PlaylistParserRegistry::supportedExtensions() const
 {
     QStringList extensions;
 
-    for(const auto& [_, parser] : p->m_parsers) {
+    for(const auto& [_, parser] : m_parsers) {
         extensions.append(parser->supportedExtensions());
     }
 
@@ -56,7 +45,7 @@ QStringList PlaylistParserRegistry::supportedExtensions() const
 
 PlaylistParser* PlaylistParserRegistry::parserForExtension(const QString& extension) const
 {
-    for(const auto& [_, parser] : p->m_parsers) {
+    for(const auto& [_, parser] : m_parsers) {
         if(parser->supportedExtensions().contains(extension)) {
             return parser.get();
         }

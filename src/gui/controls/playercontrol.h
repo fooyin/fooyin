@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
 class PlayerController;
+class SettingsManager;
+class ToolButton;
 
 class PlayerControl : public FyWidget
 {
@@ -33,13 +35,22 @@ class PlayerControl : public FyWidget
 public:
     PlayerControl(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
                   QWidget* parent = nullptr);
-    ~PlayerControl() override;
 
     QString name() const override;
     QString layoutName() const override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void updateButtonStyle() const;
+    void updateIcons() const;
+    void stateChanged(PlayState state) const;
+
+    ActionManager* m_actionManager;
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
+
+    ToolButton* m_stop;
+    ToolButton* m_prev;
+    ToolButton* m_playPause;
+    ToolButton* m_next;
 };
 } // namespace Fooyin

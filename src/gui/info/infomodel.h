@@ -19,65 +19,18 @@
 
 #pragma once
 
+#include "infoitem.h"
+#include "infopopulator.h"
+
 #include <core/trackfwd.h>
-#include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
-#include <set>
+#include <QFont>
+#include <QThread>
 
 namespace Fooyin {
-class InfoItem : public TreeItem<InfoItem>
-{
-public:
-    enum ItemType
-    {
-        Header = Qt::UserRole,
-        Entry
-    };
-
-    enum Role
-    {
-        Type = Qt::UserRole + 5,
-        Value
-    };
-
-    enum ValueType
-    {
-        Concat,
-        Average,
-        Total,
-        Max,
-        Percentage
-    };
-
-    using FormatFunc = std::function<QString(uint64_t)>;
-
-    InfoItem();
-    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType);
-    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc);
-
-    [[nodiscard]] ItemType type() const;
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QVariant value() const;
-
-    void addTrackValue(uint64_t value);
-    void addTrackValue(int value);
-    void addTrackValue(const QString& value);
-    void addTrackValue(const QStringList& values);
-
-private:
-    ItemType m_type;
-    ValueType m_valueType;
-
-    QString m_name;
-    std::vector<uint64_t> m_numValues;
-    mutable uint64_t m_numValue;
-    std::set<QString> m_values;
-    std::map<QString, int> m_percentValues;
-    mutable QString m_value;
-
-    FormatFunc m_formatNum;
-};
+struct InfoData;
+class InfoPopulator;
 
 class InfoModel : public TreeModel<InfoItem>
 {
@@ -93,16 +46,6 @@ public:
     };
     Q_ENUM(ItemParent)
 
-    enum Option
-    {
-        None     = 0,
-        Metadata = 1 << 0,
-        Location = 1 << 1,
-        General  = 1 << 2,
-        Default  = (Metadata | Location | General)
-    };
-    Q_DECLARE_FLAGS(Options, Option)
-
     explicit InfoModel(QObject* parent = nullptr);
     ~InfoModel() override;
 
@@ -110,14 +53,20 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
-    [[nodiscard]] Options options() const;
-    void setOption(Option option, bool enabled);
-    void setOptions(Options options);
+    [[nodiscard]] InfoItem::Options options() const;
+    void setOption(InfoItem::Option option, bool enabled);
+    void setOptions(InfoItem::Options options);
 
     void resetModel(const TrackList& tracks, const Track& playingTrack);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void populate(const InfoData& data);
+
+    QThread m_populatorThread;
+    InfoPopulator m_populator;
+    std::unordered_map<QString, InfoItem> m_nodes;
+
+    InfoItem::Options m_options{InfoItem::Default};
+    QFont m_headerFont;
 };
 } // namespace Fooyin

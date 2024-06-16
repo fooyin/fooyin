@@ -37,63 +37,63 @@ constexpr auto FadeInterval = 10;
 namespace Fooyin {
 struct AudioRenderer::Private
 {
-    AudioRenderer* self;
+    AudioRenderer* m_self;
 
-    std::unique_ptr<AudioOutput> audioOutput;
-    AudioFormat format;
-    double volume{0.0};
-    int bufferSize{0};
+    std::unique_ptr<AudioOutput> m_audioOutput;
+    AudioFormat m_format;
+    double m_volume{0.0};
+    int m_bufferSize{0};
 
-    bool bufferPrefilled{false};
+    bool m_bufferPrefilled{false};
 
-    ThreadQueue<AudioBuffer> bufferQueue{false};
-    AudioBuffer tempBuffer;
-    int totalSamplesWritten{0};
-    int currentBufferOffset{0};
+    ThreadQueue<AudioBuffer> m_bufferQueue{false};
+    AudioBuffer m_tempBuffer;
+    int m_totalSamplesWritten{0};
+    int m_currentBufferOffset{0};
 
-    bool isRunning{false};
+    bool m_isRunning{false};
 
-    QTimer* writeTimer;
+    QTimer* m_writeTimer;
 
-    QBasicTimer fadeTimer;
-    int fadeLength{0};
-    int fadeSteps{0};
-    int currentFadeStep{0};
-    double volumeChange{0.0};
-    double initialVolume{0.0};
+    QBasicTimer m_fadeTimer;
+    int m_fadeLength{0};
+    int m_fadeSteps{0};
+    int m_currentFadeStep{0};
+    double m_volumeChange{0.0};
+    double m_initialVolume{0.0};
 
-    explicit Private(AudioRenderer* self_)
-        : self{self_}
-        , writeTimer{new QTimer(self)}
+    explicit Private(AudioRenderer* self)
+        : m_self{self}
+        , m_writeTimer{new QTimer(m_self)}
     {
-        QObject::connect(writeTimer, &QTimer::timeout, self, [this]() { writeNext(); });
+        QObject::connect(m_writeTimer, &QTimer::timeout, m_self, [this]() { writeNext(); });
     }
 
     void resetFade(int length)
     {
-        if(fadeTimer.isActive()) {
-            fadeTimer.stop();
+        if(m_fadeTimer.isActive()) {
+            m_fadeTimer.stop();
         }
 
-        volumeChange    = 0;
-        currentFadeStep = 0;
-        fadeLength      = length;
-        fadeSteps       = static_cast<int>(static_cast<double>(fadeLength) / FadeInterval);
+        m_volumeChange    = 0;
+        m_currentFadeStep = 0;
+        m_fadeLength      = length;
+        m_fadeSteps       = static_cast<int>(static_cast<double>(m_fadeLength) / FadeInterval);
     }
 
     bool canWrite() const
     {
-        return isRunning && audioOutput->initialised();
+        return m_isRunning && m_audioOutput->initialised();
     }
 
     bool initOutput()
     {
-        if(!audioOutput->init(format)) {
+        if(!m_audioOutput->init(m_format)) {
             return false;
         }
 
-        audioOutput->setVolume(volume);
-        bufferSize = audioOutput->bufferSize();
+        m_audioOutput->setVolume(m_volume);
+        m_bufferSize = m_audioOutput->bufferSize();
         updateInterval();
 
         return true;
@@ -101,118 +101,118 @@ struct AudioRenderer::Private
 
     void resetBuffer()
     {
-        bufferPrefilled     = false;
-        totalSamplesWritten = 0;
-        currentBufferOffset = 0;
-        bufferQueue.clear();
-        tempBuffer.reset();
+        m_bufferPrefilled     = false;
+        m_totalSamplesWritten = 0;
+        m_currentBufferOffset = 0;
+        m_bufferQueue.clear();
+        m_tempBuffer.reset();
     }
 
     void outputStateChanged(AudioOutput::State state)
     {
         if(state == AudioOutput::State::Disconnected) {
-            emit self->outputStateChanged(state);
-            audioOutput->uninit();
-            bufferPrefilled = false;
+            emit m_self->outputStateChanged(state);
+            m_audioOutput->uninit();
+            m_bufferPrefilled = false;
         }
     }
 
     void pauseOutput(bool pause) const
     {
-        if(audioOutput && audioOutput->initialised()) {
-            audioOutput->setPaused(pause);
+        if(m_audioOutput && m_audioOutput->initialised()) {
+            m_audioOutput->setPaused(pause);
         }
     }
 
     void pause()
     {
-        isRunning = false;
-        writeTimer->stop();
+        m_isRunning = false;
+        m_writeTimer->stop();
 
         updateOutputVolume(0.0);
 
-        audioOutput->drain();
-        emit self->paused();
+        m_audioOutput->drain();
+        emit m_self->paused();
         pauseOutput(true);
     }
 
     void updateOutputVolume(double newVolume)
     {
-        volume = newVolume;
+        m_volume = newVolume;
 
-        if(audioOutput && audioOutput->initialised()) {
-            audioOutput->setVolume(volume);
+        if(m_audioOutput && m_audioOutput->initialised()) {
+            m_audioOutput->setVolume(m_volume);
         }
     }
 
     void updateInterval() const
     {
-        const auto interval = static_cast<int>(static_cast<double>(bufferSize) / format.sampleRate() * 1000 * 0.25);
-        writeTimer->setInterval(interval);
+        const auto interval = static_cast<int>(static_cast<double>(m_bufferSize) / m_format.sampleRate() * 1000 * 0.25);
+        m_writeTimer->setInterval(interval);
     }
 
     void writeNext()
     {
-        if(!canWrite() || bufferQueue.empty()) {
+        if(!canWrite() || m_bufferQueue.empty()) {
             return;
         }
 
-        const int samples = audioOutput->currentState().freeSamples;
+        const int samples = m_audioOutput->currentState().freeSamples;
 
-        if((samples == 0 && totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
-            if(canWrite() && !bufferPrefilled) {
-                bufferPrefilled = true;
-                audioOutput->start();
+        if((samples == 0 && m_totalSamplesWritten > 0) || (samples > 0 && renderAudio(samples) == samples)) {
+            if(canWrite() && !m_bufferPrefilled) {
+                m_bufferPrefilled = true;
+                m_audioOutput->start();
             }
         }
     }
 
     int writeAudioSamples(int samples)
     {
-        tempBuffer.clear();
+        m_tempBuffer.clear();
 
         int samplesBuffered{0};
 
-        const int sstride = format.bytesPerFrame();
+        const int sstride = m_format.bytesPerFrame();
 
-        while(isRunning && !bufferQueue.empty() && samplesBuffered < samples) {
-            const AudioBuffer& buffer = bufferQueue.front();
+        while(m_isRunning && !m_bufferQueue.empty() && samplesBuffered < samples) {
+            const AudioBuffer& buffer = m_bufferQueue.front();
 
             if(!buffer.isValid()) {
                 // End of file
-                currentBufferOffset = 0;
-                bufferQueue.dequeue();
-                QMetaObject::invokeMethod(self, &AudioRenderer::finished);
+                m_currentBufferOffset = 0;
+                m_bufferQueue.dequeue();
+                QMetaObject::invokeMethod(m_self, &AudioRenderer::finished);
                 return samplesBuffered;
             }
 
-            const int bytesLeft = buffer.byteCount() - currentBufferOffset;
+            const int bytesLeft = buffer.byteCount() - m_currentBufferOffset;
 
             if(bytesLeft <= 0) {
-                currentBufferOffset = 0;
-                emit self->bufferProcessed(buffer);
-                bufferQueue.dequeue();
+                m_currentBufferOffset = 0;
+                emit m_self->bufferProcessed(buffer);
+                m_bufferQueue.dequeue();
                 continue;
             }
 
             const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);
             const int bytes       = sampleCount * sstride;
-            const auto fdata      = buffer.constData().subspan(currentBufferOffset, static_cast<size_t>(bytes));
+            const auto fdata      = buffer.constData().subspan(m_currentBufferOffset, static_cast<size_t>(bytes));
 
-            if(!tempBuffer.isValid()) {
-                tempBuffer = {fdata, buffer.format(), buffer.startTime()};
+            if(!m_tempBuffer.isValid()) {
+                m_tempBuffer = {fdata, buffer.format(), buffer.startTime()};
             }
             else {
-                tempBuffer.append(fdata);
+                m_tempBuffer.append(fdata);
             }
 
             samplesBuffered += sampleCount;
-            currentBufferOffset += bytes;
+            m_currentBufferOffset += bytes;
         }
 
-        tempBuffer.fillRemainingWithSilence();
+        m_tempBuffer.fillRemainingWithSilence();
 
-        if(!tempBuffer.isValid()) {
+        if(!m_tempBuffer.isValid()) {
             return 0;
         }
 
@@ -225,12 +225,12 @@ struct AudioRenderer::Private
             return 0;
         }
 
-        if(!tempBuffer.isValid()) {
+        if(!m_tempBuffer.isValid()) {
             return 0;
         }
 
-        const int samplesWritten = audioOutput->write(tempBuffer);
-        totalSamplesWritten += samplesWritten;
+        const int samplesWritten = m_audioOutput->write(m_tempBuffer);
+        m_totalSamplesWritten += samplesWritten;
 
         return samplesWritten;
     }
@@ -245,21 +245,21 @@ AudioRenderer::AudioRenderer(QObject* parent)
 
 AudioRenderer::~AudioRenderer()
 {
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
+    if(p->m_audioOutput && p->m_audioOutput->initialised()) {
+        p->m_audioOutput->uninit();
     }
 }
 
 bool AudioRenderer::init(const AudioFormat& format)
 {
-    p->format = format;
+    p->m_format = format;
 
-    if(!p->audioOutput) {
+    if(!p->m_audioOutput) {
         return false;
     }
 
-    if(p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
+    if(p->m_audioOutput->initialised()) {
+        p->m_audioOutput->uninit();
     }
 
     return p->initOutput();
@@ -267,17 +267,17 @@ bool AudioRenderer::init(const AudioFormat& format)
 
 void AudioRenderer::start()
 {
-    if(std::exchange(p->isRunning, true)) {
+    if(std::exchange(p->m_isRunning, true)) {
         return;
     }
 
-    p->writeTimer->start();
+    p->m_writeTimer->start();
 }
 
 void AudioRenderer::stop()
 {
-    p->isRunning = false;
-    p->writeTimer->stop();
+    p->m_isRunning = false;
+    p->m_writeTimer->stop();
 
     p->resetFade(0);
     p->resetBuffer();
@@ -285,15 +285,15 @@ void AudioRenderer::stop()
 
 void AudioRenderer::closeOutput()
 {
-    if(p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
+    if(p->m_audioOutput->initialised()) {
+        p->m_audioOutput->uninit();
     }
 }
 
 void AudioRenderer::reset()
 {
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->reset();
+    if(p->m_audioOutput && p->m_audioOutput->initialised()) {
+        p->m_audioOutput->reset();
     }
 
     p->resetFade(0);
@@ -302,12 +302,12 @@ void AudioRenderer::reset()
 
 bool AudioRenderer::isPaused() const
 {
-    return !p->isRunning;
+    return !p->m_isRunning;
 }
 
 bool AudioRenderer::isFading() const
 {
-    return p->fadeTimer.isActive();
+    return p->m_fadeTimer.isActive();
 }
 
 void AudioRenderer::pause(bool paused, int fadeLength)
@@ -320,104 +320,104 @@ void AudioRenderer::pause(bool paused, int fadeLength)
             return;
         }
 
-        p->volumeChange = -(p->volume / p->fadeSteps);
+        p->m_volumeChange = -(p->m_volume / p->m_fadeSteps);
     }
     else {
         p->pauseOutput(false);
 
-        p->isRunning = true;
-        p->writeTimer->start();
+        p->m_isRunning = true;
+        p->m_writeTimer->start();
 
         if(fadeLength > 0) {
-            p->volumeChange = std::abs(p->initialVolume - p->volume) / p->fadeSteps;
+            p->m_volumeChange = std::abs(p->m_initialVolume - p->m_volume) / p->m_fadeSteps;
         }
         else {
-            p->updateOutputVolume(p->initialVolume);
+            p->updateOutputVolume(p->m_initialVolume);
             return;
         }
     }
 
-    p->fadeTimer.start(FadeInterval, this);
+    p->m_fadeTimer.start(FadeInterval, this);
 }
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
-    p->bufferQueue.enqueue(buffer);
+    p->m_bufferQueue.enqueue(buffer);
 }
 
 void AudioRenderer::updateOutput(const OutputCreator& output, const QString& device)
 {
     auto newOutput = output();
-    if(newOutput == p->audioOutput) {
+    if(newOutput == p->m_audioOutput) {
         return;
     }
 
-    const bool wasInitialised = p->audioOutput && p->audioOutput->initialised();
+    const bool wasInitialised = p->m_audioOutput && p->m_audioOutput->initialised();
 
     if(wasInitialised) {
-        p->audioOutput->uninit();
-        QObject::disconnect(p->audioOutput.get(), nullptr, this, nullptr);
+        p->m_audioOutput->uninit();
+        QObject::disconnect(p->m_audioOutput.get(), nullptr, this, nullptr);
     }
 
-    p->audioOutput = std::move(newOutput);
+    p->m_audioOutput = std::move(newOutput);
     if(!device.isEmpty()) {
-        p->audioOutput->setDevice(device);
+        p->m_audioOutput->setDevice(device);
     }
 
-    p->bufferPrefilled = false;
-    QObject::connect(p->audioOutput.get(), &AudioOutput::stateChanged, this,
+    p->m_bufferPrefilled = false;
+    QObject::connect(p->m_audioOutput.get(), &AudioOutput::stateChanged, this,
                      [this](const auto state) { p->outputStateChanged(state); });
 
     if(wasInitialised) {
-        p->audioOutput->init(p->format);
+        p->m_audioOutput->init(p->m_format);
     }
 }
 
 void AudioRenderer::updateDevice(const QString& device)
 {
-    if(!p->audioOutput) {
+    if(!p->m_audioOutput) {
         return;
     }
 
-    p->bufferPrefilled = false;
+    p->m_bufferPrefilled = false;
 
-    if(p->audioOutput && p->audioOutput->initialised()) {
-        p->audioOutput->uninit();
-        p->audioOutput->setDevice(device);
-        p->audioOutput->init(p->format);
+    if(p->m_audioOutput && p->m_audioOutput->initialised()) {
+        p->m_audioOutput->uninit();
+        p->m_audioOutput->setDevice(device);
+        p->m_audioOutput->init(p->m_format);
     }
     else {
-        p->audioOutput->setDevice(device);
+        p->m_audioOutput->setDevice(device);
     }
 }
 
 void AudioRenderer::updateVolume(double volume)
 {
-    p->initialVolume = volume;
+    p->m_initialVolume = volume;
     p->updateOutputVolume(volume);
 }
 
 void AudioRenderer::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() != p->fadeTimer.timerId()) {
+    if(event->timerId() != p->m_fadeTimer.timerId()) {
         return;
     }
 
-    if(p->currentFadeStep <= p->fadeSteps) {
-        p->updateOutputVolume(std::clamp(p->volume + p->volumeChange, 0.0, 1.0));
-        p->currentFadeStep++;
+    if(p->m_currentFadeStep <= p->m_fadeSteps) {
+        p->updateOutputVolume(std::clamp(p->m_volume + p->m_volumeChange, 0.0, 1.0));
+        p->m_currentFadeStep++;
         return;
     }
 
-    if(p->volumeChange < 0.0) {
+    if(p->m_volumeChange < 0.0) {
         // Faded out
         p->pause();
     }
     else {
-        p->updateOutputVolume(p->initialVolume);
+        p->updateOutputVolume(p->m_initialVolume);
     }
 
-    p->fadeTimer.stop();
+    p->m_fadeTimer.stop();
 }
 } // namespace Fooyin
 

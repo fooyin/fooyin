@@ -41,11 +41,6 @@ public:
     };
     Q_ENUM(Status)
 
-    LibraryInfo() = default;
-    LibraryInfo(QString name_, QString path_, int id_ = -1)
-        : name{std::move(name_)}
-        , path{std::move(path_)}
-        , id{id_} {};
     QString name;
     QString path;
     int id{-1};

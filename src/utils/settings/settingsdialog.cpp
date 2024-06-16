@@ -32,195 +32,50 @@
 #include <QTreeView>
 
 namespace Fooyin {
-struct SettingsDialog::Private
-{
-    SettingsDialog* self;
-
-    SettingsModel* model;
-    SimpleTreeView* categoryTree;
-    QStackedLayout* stackedLayout;
-    QDialogButtonBox* buttonBox;
-
-    PageList pages;
-    std::set<SettingsPage*> visitedPages;
-
-    Id currentCategory;
-    Id currentPage;
-
-    Private(SettingsDialog* self_, PageList pageList_)
-        : self{self_}
-        , model{new SettingsModel(self)}
-        , categoryTree{new SimpleTreeView(self)}
-        , stackedLayout{new QStackedLayout()}
-        , buttonBox{new QDialogButtonBox(QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Reset
-                                             | QDialogButtonBox::Ok | QDialogButtonBox::Apply
-                                             | QDialogButtonBox::Cancel,
-                                         self)}
-        , pages{std::move(pageList_)}
-    {
-        stackedLayout->setContentsMargins(0, 0, 0, 0);
-
-        model->setPages(pages);
-
-        categoryTree->setHeaderHidden(true);
-        categoryTree->setModel(model);
-        categoryTree->setFocus();
-        categoryTree->expandAll();
-
-        buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
-        buttonBox->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Reset Page"));
-        buttonBox->button(QDialogButtonBox::Reset)->setText(tr("Reset All"));
-
-        auto* mainGridLayout = new QGridLayout(self);
-        mainGridLayout->addWidget(categoryTree, 0, 0);
-        mainGridLayout->addLayout(stackedLayout, 0, 1);
-        mainGridLayout->addWidget(buttonBox, 1, 0, 1, 2);
-        mainGridLayout->setColumnStretch(1, 4);
-        mainGridLayout->setSizeConstraint(QLayout::SetMinimumSize);
-    }
-
-    void apply()
-    {
-        for(const auto& page : visitedPages) {
-            page->apply();
-        }
-    }
-
-    void reset()
-    {
-        if(auto* page = findPage(currentPage)) {
-            page->reset();
-            page->load();
-        }
-    }
-
-    void resetAll()
-    {
-        QMessageBox message;
-        message.setIcon(QMessageBox::Warning);
-        message.setText(QString::fromLatin1("Are you sure?"));
-        message.setInformativeText(tr("This will reset all settings to default."));
-
-        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        message.setDefaultButton(QMessageBox::No);
-
-        const int buttonClicked = message.exec();
-
-        if(buttonClicked == QMessageBox::Yes) {
-            QMetaObject::invokeMethod(self, &SettingsDialog::resettingAll);
-            for(auto* page : pages) {
-                page->load();
-            }
-        }
-    }
-
-    void showCategory(const QModelIndex& index)
-    {
-        auto* category = index.data(SettingsItem::Data).value<SettingsCategory*>();
-        if(!category) {
-            return;
-        }
-
-        checkCategoryWidget(category);
-
-        currentCategory = category->id;
-
-        const int currentTabIndex = category->tabWidget->currentIndex();
-        if(currentTabIndex != -1) {
-            auto* page  = category->pages.at(currentTabIndex);
-            currentPage = page->id();
-            visitedPages.emplace(page);
-        }
-        stackedLayout->setCurrentIndex(category->index);
-
-        self->setWindowTitle(tr("Settings") + QString::fromLatin1(": ") + category->name);
-    }
-
-    void checkCategoryWidget(SettingsCategory* category)
-    {
-        if(category->tabWidget) {
-            return;
-        }
-
-        auto* tabWidget = new QTabWidget();
-        tabWidget->setTabBarAutoHide(true);
-        tabWidget->setDocumentMode(true);
-
-        const auto addPageToTabWidget = [tabWidget](const auto& page) {
-            if(QWidget* widget = page->widget()) {
-                auto* scrollArea = new ScrollArea(tabWidget);
-                scrollArea->setWidget(widget);
-                tabWidget->addTab(scrollArea, page->name());
-
-                page->load();
-            }
-        };
-
-        std::ranges::for_each(category->pages, addPageToTabWidget);
-
-        QObject::connect(tabWidget, &QTabWidget::currentChanged, self, [this](int index) { currentTabChanged(index); });
-
-        category->tabWidget = tabWidget;
-        category->index     = stackedLayout->addWidget(tabWidget);
-    }
-
-    void currentChanged(const QModelIndex& current)
-    {
-        if(current.isValid()) {
-            showCategory(current);
-        }
-        else {
-            stackedLayout->setCurrentIndex(0);
-        }
-    }
-
-    void currentTabChanged(int index)
-    {
-        if(index < 0) {
-            return;
-        }
-
-        const QModelIndex modelIndex = categoryTree->currentIndex();
-        if(!modelIndex.isValid()) {
-            return;
-        }
-
-        auto* category     = modelIndex.data(SettingsItem::Data).value<SettingsCategory*>();
-        SettingsPage* page = category->pages.at(index);
-        currentPage        = page->id();
-        visitedPages.emplace(page);
-    }
-
-    SettingsPage* findPage(const Id& id)
-    {
-        auto it = std::ranges::find_if(std::as_const(pages), [&id](SettingsPage* page) { return page->id() == id; });
-        if(it != pages.cend()) {
-            return *it;
-        }
-        return nullptr;
-    }
-};
-
-SettingsDialog::SettingsDialog(const PageList& pages, QWidget* parent)
+SettingsDialog::SettingsDialog(PageList  pages, QWidget* parent)
     : QDialog{parent}
-    , p{std::make_unique<Private>(this, pages)}
+    , m_model{new SettingsModel(this)}
+    , m_categoryTree{new SimpleTreeView(this)}
+    , m_stackedLayout{new QStackedLayout()}
+    , m_buttonBox{new QDialogButtonBox(QDialogButtonBox::RestoreDefaults | QDialogButtonBox::Reset
+                                           | QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel,
+                                       this)}
+    , m_pages{std::move(pages)}
 {
     setWindowTitle(tr("Settings"));
     setModal(true);
 
-    QObject::connect(p->categoryTree->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
-                     [this](const QModelIndex& index) { p->currentChanged(index); });
-    QObject::connect(p->buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
-                     [this]() { p->apply(); });
-    QObject::connect(p->buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
-                     [this]() { p->resetAll(); });
-    QObject::connect(p->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QAbstractButton::clicked, this,
-                     [this]() { p->reset(); });
-    QObject::connect(p->buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
-    QObject::connect(p->buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
-}
+    m_stackedLayout->setContentsMargins(0, 0, 0, 0);
 
-SettingsDialog::~SettingsDialog() = default;
+    m_model->setPages(m_pages);
+
+    m_categoryTree->setHeaderHidden(true);
+    m_categoryTree->setModel(m_model);
+    m_categoryTree->setFocus();
+    m_categoryTree->expandAll();
+
+    m_buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+    m_buttonBox->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Reset Page"));
+    m_buttonBox->button(QDialogButtonBox::Reset)->setText(tr("Reset All"));
+
+    auto* mainGridLayout = new QGridLayout(this);
+    mainGridLayout->addWidget(m_categoryTree, 0, 0);
+    mainGridLayout->addLayout(m_stackedLayout, 0, 1);
+    mainGridLayout->addWidget(m_buttonBox, 1, 0, 1, 2);
+    mainGridLayout->setColumnStretch(1, 4);
+    mainGridLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+    QObject::connect(m_categoryTree->selectionModel(), &QItemSelectionModel::currentRowChanged, this,
+                     &SettingsDialog::currentChanged);
+    QObject::connect(m_buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
+                     &SettingsDialog::apply);
+    QObject::connect(m_buttonBox->button(QDialogButtonBox::Reset), &QAbstractButton::clicked, this,
+                     &SettingsDialog::resetAll);
+    QObject::connect(m_buttonBox->button(QDialogButtonBox::RestoreDefaults), &QAbstractButton::clicked, this,
+                     &SettingsDialog::reset);
+    QObject::connect(m_buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
+    QObject::connect(m_buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
+}
 
 void SettingsDialog::openSettings()
 {
@@ -234,14 +89,14 @@ void SettingsDialog::openPage(const Id& id)
         return;
     }
 
-    auto* category = p->model->categoryForPage(id);
+    auto* category = m_model->categoryForPage(id);
     if(!category) {
         qWarning() << "Page not found: " << id.name();
         return;
     }
 
-    const QModelIndex categoryIndex = p->model->indexForCategory(category->id);
-    p->categoryTree->setCurrentIndex(categoryIndex);
+    const QModelIndex categoryIndex = m_model->indexForCategory(category->id);
+    m_categoryTree->setCurrentIndex(categoryIndex);
 
     if(auto* widget = category->tabWidget) {
         const int pageIndex = category->findPageById(id);
@@ -253,7 +108,7 @@ void SettingsDialog::openPage(const Id& id)
 
 Id SettingsDialog::currentPage() const
 {
-    return p->currentPage;
+    return m_currentPage;
 }
 
 void SettingsDialog::done(int value)
@@ -263,8 +118,8 @@ void SettingsDialog::done(int value)
 
 void SettingsDialog::accept()
 {
-    p->apply();
-    for(const auto& page : p->pages) {
+    apply();
+    for(const auto& page : m_pages) {
         page->finish();
     }
     done(Accepted);
@@ -272,10 +127,131 @@ void SettingsDialog::accept()
 
 void SettingsDialog::reject()
 {
-    for(const auto& page : p->pages) {
+    for(const auto& page : m_pages) {
         page->finish();
     }
     done(Rejected);
+}
+
+void SettingsDialog::apply()
+{
+    for(const auto& page : m_visitedPages) {
+        page->apply();
+    }
+}
+
+void SettingsDialog::reset()
+{
+    if(auto* page = findPage(m_currentPage)) {
+        page->reset();
+        page->load();
+    }
+}
+
+void SettingsDialog::resetAll()
+{
+    QMessageBox message;
+    message.setIcon(QMessageBox::Warning);
+    message.setText(QString::fromLatin1("Are you sure?"));
+    message.setInformativeText(tr("This will reset all settings to default."));
+
+    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message.setDefaultButton(QMessageBox::No);
+
+    const int buttonClicked = message.exec();
+
+    if(buttonClicked == QMessageBox::Yes) {
+        QMetaObject::invokeMethod(this, &SettingsDialog::resettingAll);
+        for(auto* page : m_pages) {
+            page->load();
+        }
+    }
+}
+
+void SettingsDialog::showCategory(const QModelIndex& index)
+{
+    auto* category = index.data(SettingsItem::Data).value<SettingsCategory*>();
+    if(!category) {
+        return;
+    }
+
+    checkCategoryWidget(category);
+
+    m_currentCategory = category->id;
+
+    const int currentTabIndex = category->tabWidget->currentIndex();
+    if(currentTabIndex != -1) {
+        auto* page    = category->pages.at(currentTabIndex);
+        m_currentPage = page->id();
+        m_visitedPages.emplace(page);
+    }
+    m_stackedLayout->setCurrentIndex(category->index);
+
+    setWindowTitle(tr("Settings") + QString::fromLatin1(": ") + category->name);
+}
+
+void SettingsDialog::checkCategoryWidget(SettingsCategory* category)
+{
+    if(category->tabWidget) {
+        return;
+    }
+
+    auto* tabWidget = new QTabWidget();
+    tabWidget->setTabBarAutoHide(true);
+    tabWidget->setDocumentMode(true);
+
+    const auto addPageToTabWidget = [tabWidget](const auto& page) {
+        if(QWidget* widget = page->widget()) {
+            auto* scrollArea = new ScrollArea(tabWidget);
+            scrollArea->setWidget(widget);
+            tabWidget->addTab(scrollArea, page->name());
+
+            page->load();
+        }
+    };
+
+    std::ranges::for_each(category->pages, addPageToTabWidget);
+
+    QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &SettingsDialog::currentTabChanged);
+
+    category->tabWidget = tabWidget;
+    category->index     = m_stackedLayout->addWidget(tabWidget);
+}
+
+void SettingsDialog::currentChanged(const QModelIndex& current)
+{
+    if(current.isValid()) {
+        showCategory(current);
+    }
+    else {
+        m_stackedLayout->setCurrentIndex(0);
+    }
+}
+
+void SettingsDialog::currentTabChanged(int index)
+{
+    if(index < 0) {
+        return;
+    }
+
+    const QModelIndex modelIndex = m_categoryTree->currentIndex();
+    if(!modelIndex.isValid()) {
+        return;
+    }
+
+    auto* category     = modelIndex.data(SettingsItem::Data).value<SettingsCategory*>();
+    SettingsPage* page = category->pages.at(index);
+    m_currentPage      = page->id();
+    m_visitedPages.emplace(page);
+}
+
+SettingsPage* SettingsDialog::findPage(const Id& id)
+{
+    auto it = std::ranges::find_if(std::as_const(m_pages), [&id](SettingsPage* page) { return page->id() == id; });
+    if(it != m_pages.cend()) {
+        return *it;
+    }
+    return nullptr;
 }
 } // namespace Fooyin
 

@@ -50,123 +50,127 @@ struct WidgetSelection
 
 struct TrackSelectionController::Private
 {
-    TrackSelectionController* self;
+    TrackSelectionController* m_self;
 
-    ActionManager* actionManager;
-    SettingsManager* settings;
-    PlaylistController* playlistController;
-    PlaylistHandler* playlistHandler;
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    PlaylistController* m_playlistController;
+    PlaylistHandler* m_playlistHandler;
 
-    std::unordered_map<QWidget*, WidgetContext*> contextWidgets;
-    std::unordered_map<WidgetContext*, WidgetSelection> contextSelection;
-    WidgetContext* activeContext{nullptr};
+    std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
+    std::unordered_map<WidgetContext*, WidgetSelection> m_contextSelection;
+    WidgetContext* m_activeContext{nullptr};
 
-    ActionContainer* tracksMenu{nullptr};
-    ActionContainer* tracksQueueMenu{nullptr};
-    ActionContainer* tracksPlaylistMenu{nullptr};
+    ActionContainer* m_tracksMenu{nullptr};
+    ActionContainer* m_tracksQueueMenu{nullptr};
+    ActionContainer* m_tracksPlaylistMenu{nullptr};
 
-    QAction* addCurrent;
-    QAction* addActive;
-    QAction* sendCurrent;
-    QAction* sendNew;
-    QAction* addToQueue;
-    QAction* removeFromQueue;
-    QAction* openFolder;
-    QAction* openProperties;
+    QAction* m_addCurrent;
+    QAction* m_addActive;
+    QAction* m_sendCurrent;
+    QAction* m_sendNew;
+    QAction* m_addToQueue;
+    QAction* m_removeFromQueue;
+    QAction* m_openFolder;
+    QAction* m_openProperties;
 
-    Private(TrackSelectionController* self_, ActionManager* actionManager_, SettingsManager* settings_,
-            PlaylistController* playlistController_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , settings{settings_}
-        , playlistController{playlistController_}
-        , playlistHandler{playlistController->playlistHandler()}
-        , tracksMenu{actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
-        , tracksQueueMenu{actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
-        , tracksPlaylistMenu{actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
-        , addCurrent{new QAction(tr("Add to current playlist"), tracksPlaylistMenu)}
-        , addActive{new QAction(tr("Add to active playlist"), tracksPlaylistMenu)}
-        , sendCurrent{new QAction(tr("Send to current playlist"), tracksPlaylistMenu)}
-        , sendNew{new QAction(tr("Send to new playlist"), tracksPlaylistMenu)}
-        , addToQueue{new QAction(tr("Add to Playback Queue"), tracksMenu)}
-        , removeFromQueue{new QAction(tr("Remove from Playback Queue"), tracksMenu)}
-        , openFolder{new QAction(tr("Open Containing Folder"), tracksMenu)}
-        , openProperties{new QAction(tr("Properties"), tracksMenu)}
+    Private(TrackSelectionController* self, ActionManager* actionManager, SettingsManager* settings,
+            PlaylistController* playlistController)
+        : m_self{self}
+        , m_actionManager{actionManager}
+        , m_settings{settings}
+        , m_playlistController{playlistController}
+        , m_playlistHandler{m_playlistController->playlistHandler()}
+        , m_tracksMenu{m_actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
+        , m_tracksQueueMenu{m_actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
+        , m_tracksPlaylistMenu{m_actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
+        , m_addCurrent{new QAction(tr("Add to current playlist"), m_tracksPlaylistMenu)}
+        , m_addActive{new QAction(tr("Add to active playlist"), m_tracksPlaylistMenu)}
+        , m_sendCurrent{new QAction(tr("Send to current playlist"), m_tracksPlaylistMenu)}
+        , m_sendNew{new QAction(tr("Send to new playlist"), m_tracksPlaylistMenu)}
+        , m_addToQueue{new QAction(tr("Add to Playback Queue"), m_tracksMenu)}
+        , m_removeFromQueue{new QAction(tr("Remove from Playback Queue"), m_tracksMenu)}
+        , m_openFolder{new QAction(tr("Open Containing Folder"), m_tracksMenu)}
+        , m_openProperties{new QAction(tr("Properties"), m_tracksMenu)}
     {
         // Playlist menu
-        tracksPlaylistMenu->addSeparator();
+        m_tracksPlaylistMenu->addSeparator();
 
-        QObject::connect(addCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
-        tracksPlaylistMenu->addAction(actionManager->registerAction(addCurrent, "TrackSelection.AddCurrentPlaylist"));
+        QObject::connect(m_addCurrent, &QAction::triggered, m_tracksPlaylistMenu, [this]() { addToCurrentPlaylist(); });
+        m_tracksPlaylistMenu->addAction(
+            m_actionManager->registerAction(m_addCurrent, "TrackSelection.AddCurrentPlaylist"));
 
-        QObject::connect(addActive, &QAction::triggered, tracksPlaylistMenu, [this]() { addToActivePlaylist(); });
-        tracksPlaylistMenu->addAction(actionManager->registerAction(addActive, "TrackSelection.AddActivePlaylist"));
+        QObject::connect(m_addActive, &QAction::triggered, m_tracksPlaylistMenu, [this]() { addToActivePlaylist(); });
+        m_tracksPlaylistMenu->addAction(
+            m_actionManager->registerAction(m_addActive, "TrackSelection.AddActivePlaylist"));
 
-        QObject::connect(sendCurrent, &QAction::triggered, tracksPlaylistMenu, [this]() {
-            if(self->hasTracks()) {
-                const auto& selection = contextSelection.at(activeContext);
+        QObject::connect(m_sendCurrent, &QAction::triggered, m_tracksPlaylistMenu, [this]() {
+            if(m_self->hasTracks()) {
+                const auto& selection = m_contextSelection.at(m_activeContext);
                 sendToCurrentPlaylist(selection.playbackOnSend ? PlaylistAction::StartPlayback
                                                                : PlaylistAction::Switch);
             }
         });
-        tracksPlaylistMenu->addAction(actionManager->registerAction(sendCurrent, "TrackSelection.SendCurrentPlaylist"));
+        m_tracksPlaylistMenu->addAction(
+            m_actionManager->registerAction(m_sendCurrent, "TrackSelection.SendCurrentPlaylist"));
 
-        QObject::connect(sendNew, &QAction::triggered, tracksPlaylistMenu, [this]() {
-            if(self->hasTracks()) {
-                const auto& selection = contextSelection.at(activeContext);
+        QObject::connect(m_sendNew, &QAction::triggered, m_tracksPlaylistMenu, [this]() {
+            if(m_self->hasTracks()) {
+                const auto& selection = m_contextSelection.at(m_activeContext);
                 const auto options
                     = PlaylistAction::Switch
                     | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
                 sendToNewPlaylist(options, selection.name);
             }
         });
-        tracksPlaylistMenu->addAction(actionManager->registerAction(sendNew, "TrackSelection.SendNewPlaylist"));
+        m_tracksPlaylistMenu->addAction(m_actionManager->registerAction(m_sendNew, "TrackSelection.SendNewPlaylist"));
 
-        tracksPlaylistMenu->addSeparator();
+        m_tracksPlaylistMenu->addSeparator();
 
         // Tracks menu
-        tracksMenu->addSeparator();
+        m_tracksMenu->addSeparator();
 
-        QObject::connect(addToQueue, &QAction::triggered, tracksQueueMenu, [this]() {
-            if(self->hasTracks()) {
-                const auto& selection = contextSelection.at(activeContext);
-                playlistController->playerController()->queueTracks(selection.tracks);
+        QObject::connect(m_addToQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
+            if(m_self->hasTracks()) {
+                const auto& selection = m_contextSelection.at(m_activeContext);
+                m_playlistController->playerController()->queueTracks(selection.tracks);
             }
         });
-        tracksQueueMenu->addAction(actionManager->registerAction(addToQueue, Constants::Actions::AddToQueue));
+        m_tracksQueueMenu->addAction(m_actionManager->registerAction(m_addToQueue, Constants::Actions::AddToQueue));
 
-        QObject::connect(removeFromQueue, &QAction::triggered, tracksQueueMenu, [this]() {
-            if(self->hasTracks()) {
-                const auto& selection = contextSelection.at(activeContext);
-                playlistController->playerController()->dequeueTracks(selection.tracks);
+        QObject::connect(m_removeFromQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
+            if(m_self->hasTracks()) {
+                const auto& selection = m_contextSelection.at(m_activeContext);
+                m_playlistController->playerController()->dequeueTracks(selection.tracks);
             }
         });
-        tracksQueueMenu->addAction(actionManager->registerAction(removeFromQueue, Constants::Actions::RemoveFromQueue));
+        m_tracksQueueMenu->addAction(
+            m_actionManager->registerAction(m_removeFromQueue, Constants::Actions::RemoveFromQueue));
 
-        QObject::connect(openFolder, &QAction::triggered, tracksMenu, [this]() {
-            if(self->hasTracks()) {
-                const auto& selection = contextSelection.at(activeContext);
+        QObject::connect(m_openFolder, &QAction::triggered, m_tracksMenu, [this]() {
+            if(m_self->hasTracks()) {
+                const auto& selection = m_contextSelection.at(m_activeContext);
                 const QString dir     = QFileInfo{selection.tracks.front().filepath()}.absolutePath();
                 Utils::File::openDirectory(dir);
             }
         });
-        tracksMenu->addAction(actionManager->registerAction(openFolder, "TrackSelection.OpenFolder"));
+        m_tracksMenu->addAction(m_actionManager->registerAction(m_openFolder, "TrackSelection.OpenFolder"));
 
-        tracksMenu->addSeparator(Actions::Groups::Three);
+        m_tracksMenu->addSeparator(Actions::Groups::Three);
 
-        QObject::connect(openProperties, &QAction::triggered, self, [this]() {
-            QMetaObject::invokeMethod(self, &TrackSelectionController::requestPropertiesDialog);
+        QObject::connect(m_openProperties, &QAction::triggered, m_self, [this]() {
+            QMetaObject::invokeMethod(m_self, &TrackSelectionController::requestPropertiesDialog);
         });
-        tracksMenu->addAction(actionManager->registerAction(openProperties, "TrackSelection.OpenProperties"),
-                              Actions::Groups::Three);
+        m_tracksMenu->addAction(m_actionManager->registerAction(m_openProperties, "TrackSelection.OpenProperties"),
+                                Actions::Groups::Three);
 
         updateActionState();
     }
 
     WidgetContext* contextObject(QWidget* widget) const
     {
-        if(contextWidgets.contains(widget)) {
-            return contextWidgets.at(widget);
+        if(m_contextWidgets.contains(widget)) {
+            return m_contextWidgets.at(widget);
         }
         return nullptr;
     }
@@ -178,12 +182,12 @@ struct TrackSelectionController::Private
         }
 
         QWidget* widget = context->widget();
-        if(contextWidgets.contains(widget)) {
+        if(m_contextWidgets.contains(widget)) {
             return true;
         }
 
-        contextWidgets.emplace(widget, context);
-        QObject::connect(context, &QObject::destroyed, self, [this, context] { removeContextObject(context); });
+        m_contextWidgets.emplace(widget, context);
+        QObject::connect(context, &QObject::destroyed, m_self, [this, context] { removeContextObject(context); });
 
         return true;
     }
@@ -194,16 +198,16 @@ struct TrackSelectionController::Private
             return;
         }
 
-        QObject::disconnect(context, &QObject::destroyed, self, nullptr);
+        QObject::disconnect(context, &QObject::destroyed, m_self, nullptr);
 
-        if(!std::erase_if(contextWidgets, [context](const auto& v) { return v.second == context; })) {
+        if(!std::erase_if(m_contextWidgets, [context](const auto& v) { return v.second == context; })) {
             return;
         }
 
-        contextSelection.erase(context);
+        m_contextSelection.erase(context);
 
-        if(activeContext == context) {
-            activeContext = nullptr;
+        if(m_activeContext == context) {
+            m_activeContext = nullptr;
         }
     }
 
@@ -218,9 +222,9 @@ struct TrackSelectionController::Private
             while(focusedWidget) {
                 widgetContext = contextObject(focusedWidget);
                 if(widgetContext) {
-                    activeContext = widgetContext;
+                    m_activeContext = widgetContext;
                     updateActionState();
-                    QMetaObject::invokeMethod(self, &TrackSelectionController::selectionChanged);
+                    QMetaObject::invokeMethod(m_self, &TrackSelectionController::selectionChanged);
                     return;
                 }
                 focusedWidget = focusedWidget->parentWidget();
@@ -235,91 +239,91 @@ struct TrackSelectionController::Private
         }
 
         if(options & PlaylistAction::Switch) {
-            playlistController->changeCurrentPlaylist(playlist);
+            m_playlistController->changeCurrentPlaylist(playlist);
         }
         if(options & PlaylistAction::StartPlayback) {
-            playlistHandler->startPlayback(playlist);
+            m_playlistHandler->startPlayback(playlist);
         }
     }
 
     void sendToNewPlaylist(PlaylistAction::ActionOptions options = {}, const QString& playlistName = {}) const
     {
-        if(!self->hasTracks()) {
+        if(!m_self->hasTracks()) {
             return;
         }
 
         QString newName{playlistName};
 
-        const auto& selection = contextSelection.at(activeContext);
+        const auto& selection = m_contextSelection.at(m_activeContext);
 
         if(newName.isEmpty()) {
             newName = selection.name;
         }
 
         if(options & PlaylistAction::KeepActive) {
-            const auto* activePlaylist = playlistHandler->activePlaylist();
+            const auto* activePlaylist = m_playlistHandler->activePlaylist();
 
             if(!activePlaylist || activePlaylist->name() != newName) {
-                auto* playlist = playlistHandler->createPlaylist(newName, selection.tracks);
+                auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks);
                 handleActions(playlist, options);
                 return;
             }
             const QString keepActiveName = newName + QStringLiteral(" (") + tr("Playback") + QStringLiteral(")");
 
-            if(auto* keepActivePlaylist = playlistHandler->playlistByName(keepActiveName)) {
-                playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
+            if(auto* keepActivePlaylist = m_playlistHandler->playlistByName(keepActiveName)) {
+                m_playlistHandler->movePlaylistTracks(activePlaylist->id(), keepActivePlaylist->id());
             }
             else {
-                playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
+                m_playlistHandler->renamePlaylist(activePlaylist->id(), keepActiveName);
             }
         }
 
-        auto* playlist = playlistHandler->createPlaylist(newName, selection.tracks);
+        auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks);
         handleActions(playlist, options);
-        emit self->actionExecuted(TrackAction::SendNewPlaylist);
+        emit m_self->actionExecuted(TrackAction::SendNewPlaylist);
     }
 
     void sendToCurrentPlaylist(PlaylistAction::ActionOptions options = {}) const
     {
-        if(self->hasTracks()) {
-            const auto& selection = contextSelection.at(activeContext);
-            if(auto* currentPlaylist = playlistController->currentPlaylist()) {
-                playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
+        if(m_self->hasTracks()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
+                m_playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
                 handleActions(currentPlaylist, options);
-                emit self->actionExecuted(TrackAction::SendCurrentPlaylist);
+                emit m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
             }
         }
     }
 
     void addToCurrentPlaylist() const
     {
-        if(self->hasTracks()) {
-            const auto& selection = contextSelection.at(activeContext);
-            if(const auto* playlist = playlistController->currentPlaylist()) {
-                playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-                emit self->actionExecuted(TrackAction::AddCurrentPlaylist);
+        if(m_self->hasTracks()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            if(const auto* playlist = m_playlistController->currentPlaylist()) {
+                m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
+                emit m_self->actionExecuted(TrackAction::AddCurrentPlaylist);
             }
         }
     }
 
     void addToActivePlaylist() const
     {
-        if(self->hasTracks()) {
-            const auto& selection = contextSelection.at(activeContext);
-            if(const auto* playlist = playlistHandler->activePlaylist()) {
-                playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-                emit self->actionExecuted(TrackAction::AddActivePlaylist);
+        if(m_self->hasTracks()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            if(const auto* playlist = m_playlistHandler->activePlaylist()) {
+                m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
+                emit m_self->actionExecuted(TrackAction::AddActivePlaylist);
             }
         }
     }
 
     void updateActionState()
     {
-        const bool haveTracks = activeContext && contextSelection.contains(activeContext)
-                             && !contextSelection.at(activeContext).tracks.empty();
+        const bool haveTracks = m_activeContext && m_contextSelection.contains(m_activeContext)
+                             && !m_contextSelection.at(m_activeContext).tracks.empty();
 
         auto allTracksInSameFolder = [this]() {
-            const auto& selection   = contextSelection.at(activeContext);
+            const auto& selection   = m_contextSelection.at(m_activeContext);
             const QString firstPath = QFileInfo{selection.tracks.front().filepath()}.absolutePath();
             return std::ranges::all_of(selection.tracks | std::ranges::views::transform([](const Track& track) {
                                            return QFileInfo{track.filepath()}.absolutePath();
@@ -327,13 +331,13 @@ struct TrackSelectionController::Private
                                        [&firstPath](const QString& folderPath) { return folderPath == firstPath; });
         };
 
-        addCurrent->setEnabled(haveTracks);
-        addActive->setEnabled(haveTracks && playlistHandler->activePlaylist());
-        sendCurrent->setEnabled(haveTracks);
-        sendNew->setEnabled(haveTracks);
-        openFolder->setEnabled(haveTracks && allTracksInSameFolder());
-        openProperties->setEnabled(haveTracks);
-        addToQueue->setEnabled(haveTracks);
+        m_addCurrent->setEnabled(haveTracks);
+        m_addActive->setEnabled(haveTracks && m_playlistHandler->activePlaylist());
+        m_sendCurrent->setEnabled(haveTracks);
+        m_sendNew->setEnabled(haveTracks);
+        m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
+        m_openProperties->setEnabled(haveTracks);
+        m_addToQueue->setEnabled(haveTracks);
     }
 };
 
@@ -350,8 +354,8 @@ TrackSelectionController::~TrackSelectionController() = default;
 
 bool TrackSelectionController::hasTracks() const
 {
-    return p->activeContext && p->contextSelection.contains(p->activeContext)
-        && !p->contextSelection.at(p->activeContext).tracks.empty();
+    return p->m_activeContext && p->m_contextSelection.contains(p->m_activeContext)
+        && !p->m_contextSelection.at(p->m_activeContext).tracks.empty();
 }
 
 Track TrackSelectionController::selectedTrack() const
@@ -366,23 +370,23 @@ Track TrackSelectionController::selectedTrack() const
 
 TrackList TrackSelectionController::selectedTracks() const
 {
-    if(!p->activeContext || !p->contextSelection.contains(p->activeContext)) {
+    if(!p->m_activeContext || !p->m_contextSelection.contains(p->m_activeContext)) {
         return {};
     }
 
-    return p->contextSelection.at(p->activeContext).tracks;
+    return p->m_contextSelection.at(p->m_activeContext).tracks;
 }
 
 void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks,
                                                     const QString& title)
 {
     if(p->addContextObject(context)) {
-        auto& selection      = p->contextSelection[context];
+        auto& selection      = p->m_contextSelection[context];
         selection.firstIndex = index;
         selection.name       = title;
 
         if(!tracks.empty()) {
-            p->activeContext = context;
+            p->m_activeContext = context;
         }
 
         if(std::exchange(selection.tracks, tracks) == tracks) {
@@ -403,24 +407,24 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, cons
 void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool enabled)
 {
     if(p->addContextObject(context)) {
-        auto& selection          = p->contextSelection[context];
+        auto& selection          = p->m_contextSelection[context];
         selection.playbackOnSend = enabled;
     }
 }
 
 void TrackSelectionController::addTrackContextMenu(QMenu* menu) const
 {
-    Utils::appendMenuActions(p->tracksMenu->menu(), menu);
+    Utils::appendMenuActions(p->m_tracksMenu->menu(), menu);
 }
 
 void TrackSelectionController::addTrackQueueContextMenu(QMenu* menu) const
 {
-    Utils::appendMenuActions(p->tracksQueueMenu->menu(), menu);
+    Utils::appendMenuActions(p->m_tracksQueueMenu->menu(), menu);
 }
 
 void TrackSelectionController::addTrackPlaylistContextMenu(QMenu* menu) const
 {
-    Utils::appendMenuActions(p->tracksPlaylistMenu->menu(), menu);
+    Utils::appendMenuActions(p->m_tracksPlaylistMenu->menu(), menu);
 }
 
 void TrackSelectionController::executeAction(TrackAction action, PlaylistAction::ActionOptions options,
@@ -441,12 +445,12 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             break;
         case(TrackAction::Play): {
             if(hasTracks()) {
-                if(auto* playlist = p->playlistController->currentPlaylist()) {
-                    const auto& selection = p->contextSelection.at(p->activeContext);
+                if(auto* playlist = p->m_playlistController->currentPlaylist()) {
+                    const auto& selection = p->m_contextSelection.at(p->m_activeContext);
                     if(selection.firstIndex >= 0) {
                         playlist->changeCurrentIndex(selection.firstIndex);
                     }
-                    p->playlistHandler->startPlayback(playlist->id());
+                    p->m_playlistHandler->startPlayback(playlist->id());
                 }
             }
             break;

@@ -40,48 +40,48 @@
 namespace Fooyin {
 struct InfoWidget::Private
 {
-    InfoWidget* self;
+    InfoWidget* m_self;
 
-    TrackSelectionController* selectionController;
-    PlayerController* playerController;
-    SettingsManager* settings;
+    TrackSelectionController* m_selectionController;
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
 
-    InfoView* view;
-    InfoModel* model;
+    InfoView* m_view;
+    InfoModel* m_model;
 
-    int scrollPos{-1};
+    int m_scrollPos{-1};
 
-    Private(InfoWidget* self_, TrackSelectionController* selectionController_, PlayerController* playerController_,
-            SettingsManager* settings_)
-        : self{self_}
-        , selectionController{selectionController_}
-        , playerController{playerController_}
-        , settings{settings_}
-        , view{new InfoView(self)}
-        , model{new InfoModel(self)}
+    Private(InfoWidget* self, TrackSelectionController* selectionController, PlayerController* playerController,
+            SettingsManager* settings)
+        : m_self{self}
+        , m_selectionController{selectionController}
+        , m_playerController{playerController}
+        , m_settings{settings}
+        , m_view{new InfoView(m_self)}
+        , m_model{new InfoModel(m_self)}
     {
-        auto* layout = new QHBoxLayout(self);
+        auto* layout = new QHBoxLayout(m_self);
         layout->setContentsMargins(0, 0, 0, 0);
 
-        view->setRootIsDecorated(false);
-        view->setSelectionBehavior(QAbstractItemView::SelectRows);
-        view->setSelectionMode(QAbstractItemView::SingleSelection);
-        view->setItemsExpandable(false);
-        view->setIndentation(10);
-        view->setExpandsOnDoubleClick(false);
-        view->setTextElideMode(Qt::ElideRight);
-        view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-        view->setSortingEnabled(false);
-        view->setAlternatingRowColors(true);
-        view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        m_view->setRootIsDecorated(false);
+        m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_view->setSelectionMode(QAbstractItemView::SingleSelection);
+        m_view->setItemsExpandable(false);
+        m_view->setIndentation(10);
+        m_view->setExpandsOnDoubleClick(false);
+        m_view->setTextElideMode(Qt::ElideRight);
+        m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+        m_view->setSortingEnabled(false);
+        m_view->setAlternatingRowColors(true);
+        m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-        view->setItemDelegate(new ItemDelegate(self));
-        view->setModel(model);
+        m_view->setItemDelegate(new ItemDelegate(m_self));
+        m_view->setModel(m_model);
 
-        layout->addWidget(view);
+        layout->addWidget(m_view);
 
         spanHeaders();
-        view->expandAll();
+        m_view->expandAll();
 
         setHeaderHidden(settings->value<Settings::Gui::Internal::InfoHeader>());
         setScrollbarHidden(settings->value<Settings::Gui::Internal::InfoScrollBar>());
@@ -91,44 +91,44 @@ struct InfoWidget::Private
     void resetView()
     {
         spanHeaders();
-        view->expandAll();
+        m_view->expandAll();
 
-        if(scrollPos >= 0) {
-            view->verticalScrollBar()->setValue(std::exchange(scrollPos, -1));
+        if(m_scrollPos >= 0) {
+            m_view->verticalScrollBar()->setValue(std::exchange(m_scrollPos, -1));
         }
     }
 
     void spanHeaders() const
     {
-        const int rowCount = model->rowCount({});
+        const int rowCount = m_model->rowCount({});
 
         for(int row{0}; row < rowCount; ++row) {
-            const auto index = model->index(row, 0, {});
-            if(model->hasChildren(index)) {
-                view->setFirstColumnSpanned(row, {}, true);
+            const auto index = m_model->index(row, 0, {});
+            if(m_model->hasChildren(index)) {
+                m_view->setFirstColumnSpanned(row, {}, true);
             }
         }
     }
 
     void setHeaderHidden(bool showHeader) const
     {
-        view->setHeaderHidden(!showHeader);
+        m_view->setHeaderHidden(!showHeader);
     }
 
     void setScrollbarHidden(bool showScrollBar) const
     {
-        view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+        m_view->setVerticalScrollBarPolicy(!showScrollBar ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
     }
 
     void setAltRowColors(bool altColours) const
     {
-        view->setAlternatingRowColors(altColours);
+        m_view->setAlternatingRowColors(altColours);
     }
 
     void resetModel()
     {
-        scrollPos = view->verticalScrollBar()->value();
-        model->resetModel(selectionController->selectedTracks(), playerController->currentTrack());
+        m_scrollPos = m_view->verticalScrollBar()->value();
+        m_model->resetModel(m_selectionController->selectedTracks(), m_playerController->currentTrack());
     }
 };
 
@@ -142,13 +142,13 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
                      [this]() { p->resetModel(); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->resetView(); });
+    QObject::connect(p->m_model, &QAbstractItemModel::modelReset, this, [this]() { p->resetView(); });
 
     using namespace Settings::Gui::Internal;
 
-    p->settings->subscribe<InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
-    p->settings->subscribe<InfoScrollBar>(this, [this](bool enabled) { p->setScrollbarHidden(enabled); });
-    p->settings->subscribe<InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
+    p->m_settings->subscribe<InfoHeader>(this, [this](bool enabled) { p->setHeaderHidden(enabled); });
+    p->m_settings->subscribe<InfoScrollBar>(this, [this](bool enabled) { p->setScrollbarHidden(enabled); });
+    p->m_settings->subscribe<InfoAltColours>(this, [this](bool enabled) { p->setAltRowColors(enabled); });
 
     p->resetModel();
 }
@@ -167,14 +167,14 @@ QString InfoWidget::layoutName() const
 
 void InfoWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("Options")] = static_cast<int>(p->model->options());
+    layout[QStringLiteral("Options")] = static_cast<int>(p->m_model->options());
 }
 
 void InfoWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("Options"))) {
-        const auto options = static_cast<InfoModel::Options>(layout.value(QStringLiteral("Options")).toInt());
-        p->model->setOptions(options);
+        const auto options = static_cast<InfoItem::Options>(layout.value(QStringLiteral("Options")).toInt());
+        p->m_model->setOptions(options);
     }
 }
 
@@ -187,46 +187,46 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* showHeaders = new QAction(QStringLiteral("Show Header"), this);
     showHeaders->setCheckable(true);
-    showHeaders->setChecked(!p->view->isHeaderHidden());
+    showHeaders->setChecked(!p->m_view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<InfoHeader>(checked); });
+                     [this](bool checked) { p->m_settings->set<InfoHeader>(checked); });
 
     auto* showScrollBar = new QAction(QStringLiteral("Show Scrollbar"), menu);
     showScrollBar->setCheckable(true);
-    showScrollBar->setChecked(p->view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
+    showScrollBar->setChecked(p->m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<InfoScrollBar>(checked); });
+                     [this](bool checked) { p->m_settings->set<InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
     auto* altColours = new QAction(QStringLiteral("Alternating Row Colours"), this);
     altColours->setCheckable(true);
-    altColours->setChecked(p->view->alternatingRowColors());
+    altColours->setChecked(p->m_view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
-                     [this](bool checked) { p->settings->set<InfoAltColours>(checked); });
+                     [this](bool checked) { p->m_settings->set<InfoAltColours>(checked); });
 
-    const auto options = p->model->options();
+    const auto options = p->m_model->options();
 
     auto* showMetadata = new QAction(QStringLiteral("Metadata"), this);
     showMetadata->setCheckable(true);
-    showMetadata->setChecked(options & InfoModel::Metadata);
+    showMetadata->setChecked(options & InfoItem::Metadata);
     QAction::connect(showMetadata, &QAction::triggered, this, [this](bool checked) {
-        p->model->setOption(InfoModel::Metadata, checked);
+        p->m_model->setOption(InfoItem::Metadata, checked);
         p->resetModel();
     });
 
     auto* showLocation = new QAction(QStringLiteral("Location"), this);
     showLocation->setCheckable(true);
-    showLocation->setChecked(options & InfoModel::Location);
+    showLocation->setChecked(options & InfoItem::Location);
     QAction::connect(showLocation, &QAction::triggered, this, [this](bool checked) {
-        p->model->setOption(InfoModel::Location, checked);
+        p->m_model->setOption(InfoItem::Location, checked);
         p->resetModel();
     });
 
     auto* showGeneral = new QAction(QStringLiteral("General"), this);
     showGeneral->setCheckable(true);
-    showGeneral->setChecked(options & InfoModel::General);
+    showGeneral->setChecked(options & InfoItem::General);
     QAction::connect(showGeneral, &QAction::triggered, this, [this](bool checked) {
-        p->model->setOption(InfoModel::General, checked);
+        p->m_model->setOption(InfoItem::General, checked);
         p->resetModel();
     });
 

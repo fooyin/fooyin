@@ -19,6 +19,8 @@
 
 #include "infopopulator.h"
 
+#include "infomodel.h"
+
 #include <core/track.h>
 #include <utils/enum.h>
 #include <utils/utils.h>
@@ -155,7 +157,7 @@ struct InfoPopulator::Private
                           InfoItem::Percentage);
     }
 
-    void addTrackNodes(InfoModel::Options options, const TrackList& tracks)
+    void addTrackNodes(InfoItem::Options options, const TrackList& tracks)
     {
         const int total = static_cast<int>(tracks.size());
 
@@ -164,13 +166,13 @@ struct InfoPopulator::Private
                 return;
             }
 
-            if(options & InfoModel::Metadata) {
+            if(options & InfoItem::Metadata) {
                 addTrackMetadata(track);
             }
-            if(options & InfoModel::Location) {
+            if(options & InfoItem::Location) {
                 addTrackLocation(total, track);
             }
-            if(options & InfoModel::General) {
+            if(options & InfoItem::General) {
                 addTrackGeneral(total, track);
             }
         }
@@ -184,7 +186,7 @@ InfoPopulator::InfoPopulator(QObject* parent)
 
 InfoPopulator::~InfoPopulator() = default;
 
-void InfoPopulator::run(InfoModel::Options options, const TrackList& tracks)
+void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks)
 {
     setState(Running);
 

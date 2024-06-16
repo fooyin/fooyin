@@ -23,6 +23,9 @@
 
 #include <utils/treemodel.h>
 
+#include <QColor>
+#include <QIcon>
+
 namespace Fooyin {
 class Playlist;
 class PlayerController;
@@ -34,7 +37,6 @@ class PlaylistOrganiserModel : public TreeModel<PlaylistOrganiserItem>
 
 public:
     explicit PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController);
-    ~PlaylistOrganiserModel() override;
 
     void populate();
     void populateMissing();
@@ -67,7 +69,19 @@ public:
     void removeItems(const QModelIndexList& indexes);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    QByteArray saveIndexes(const QModelIndexList& indexes) const;
+    QModelIndexList restoreIndexes(QByteArray data);
+    void recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent);
+    QString findUniqueName(const QString& name) const;
+    void deleteNodes(PlaylistOrganiserItem* node);
+
+    PlaylistHandler* m_playlistHandler;
+    PlayerController* m_playerController;
+
+    std::unordered_map<QString, PlaylistOrganiserItem> m_nodes;
+
+    QColor m_playingColour;
+    QIcon m_playIcon;
+    QIcon m_pauseIcon;
 };
 } // namespace Fooyin

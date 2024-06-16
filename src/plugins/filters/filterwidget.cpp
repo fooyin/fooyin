@@ -73,62 +73,63 @@ Fooyin::TrackList fetchAllTracks(QTreeView* view)
 namespace Fooyin::Filters {
 struct FilterWidget::Private
 {
-    FilterWidget* self;
+    FilterWidget* m_self;
 
-    FilterColumnRegistry columnRegistry;
-    SettingsManager* settings;
+    FilterColumnRegistry m_columnRegistry;
+    SettingsManager* m_settings;
 
-    FilterView* view;
-    AutoHeaderView* header;
-    FilterModel* model;
+    FilterView* m_view;
+    AutoHeaderView* m_header;
+    FilterModel* m_model;
 
-    Id group;
-    int index{-1};
-    FilterColumnList columns;
-    bool multipleColumns{false};
-    TrackList tracks;
-    TrackList filteredTracks;
+    Id m_group;
+    int m_index{-1};
+    FilterColumnList m_columns;
+    bool m_multipleColumns{false};
+    TrackList m_tracks;
+    TrackList m_filteredTracks;
 
-    WidgetContext* widgetContext;
+    WidgetContext* m_widgetContext;
 
-    QString searchStr;
-    bool searching{false};
-    bool updating{false};
+    QString m_searchStr;
+    bool m_searching{false};
+    bool m_updating{false};
 
-    QByteArray headerState;
+    QByteArray m_headerState;
 
-    Private(FilterWidget* self_, SettingsManager* settings_)
-        : self{self_}
-        , columnRegistry{settings_}
-        , settings{settings_}
-        , view{new FilterView(self)}
-        , header{new AutoHeaderView(Qt::Horizontal, self)}
-        , model{new FilterModel(self)}
-        , widgetContext{new WidgetContext(self, Context{Id{"Fooyin.Context.FilterWidget."}.append(self->id())}, self)}
+    Private(FilterWidget* self, SettingsManager* settings)
+        : m_self{self}
+        , m_columnRegistry{settings}
+        , m_settings{settings}
+        , m_view{new FilterView(m_self)}
+        , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
+        , m_model{new FilterModel(m_self)}
+        , m_widgetContext{
+              new WidgetContext(m_self, Context{Id{"Fooyin.Context.FilterWidget."}.append(m_self->id())}, m_self)}
     {
-        view->setHeader(header);
-        view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_view->setHeader(m_header);
+        m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        header->setStretchEnabled(true);
-        header->setSortIndicatorShown(true);
-        header->setSectionsMovable(true);
-        header->setFirstSectionMovable(true);
-        header->setSectionsClickable(true);
-        header->setContextMenuPolicy(Qt::CustomContextMenu);
+        m_header->setStretchEnabled(true);
+        m_header->setSortIndicatorShown(true);
+        m_header->setSectionsMovable(true);
+        m_header->setFirstSectionMovable(true);
+        m_header->setSectionsClickable(true);
+        m_header->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        if(const auto column = columnRegistry.itemByIndex(0)) {
-            columns = {column.value()};
+        if(const auto column = m_columnRegistry.itemByIndex(0)) {
+            m_columns = {column.value()};
         }
 
-        model->setFont(settings->value<Settings::Filters::FilterFont>());
-        model->setColour(settings->value<Settings::Filters::FilterColour>());
-        model->setRowHeight(settings->value<Settings::Filters::FilterRowHeight>());
+        m_model->setFont(m_settings->value<Settings::Filters::FilterFont>());
+        m_model->setColour(m_settings->value<Settings::Filters::FilterColour>());
+        m_model->setRowHeight(m_settings->value<Settings::Filters::FilterRowHeight>());
     }
 
     [[nodiscard]] QString playlistNameFromSelection() const
     {
         QStringList titles;
-        const QModelIndexList selectedIndexes = view->selectionModel()->selectedIndexes();
+        const QModelIndexList selectedIndexes = m_view->selectionModel()->selectedIndexes();
         std::ranges::transform(selectedIndexes, std::back_inserter(titles),
                                [](const QModelIndex& selectedIndex) { return selectedIndex.data().toString(); });
         return titles.join(QStringLiteral(", "));
@@ -136,9 +137,9 @@ struct FilterWidget::Private
 
     void refreshFilteredTracks()
     {
-        filteredTracks.clear();
+        m_filteredTracks.clear();
 
-        const QModelIndexList selected = view->selectionModel()->selectedRows();
+        const QModelIndexList selected = m_view->selectionModel()->selectedRows();
 
         if(selected.empty()) {
             return;
@@ -148,114 +149,114 @@ struct FilterWidget::Private
 
         for(const auto& selectedIndex : selected) {
             if(!selectedIndex.parent().isValid()) {
-                selectedTracks = fetchAllTracks(view);
+                selectedTracks = fetchAllTracks(m_view);
                 break;
             }
             const auto newTracks = selectedIndex.data(FilterItem::Tracks).value<TrackList>();
             std::ranges::copy(newTracks, std::back_inserter(selectedTracks));
         }
 
-        filteredTracks = selectedTracks;
+        m_filteredTracks = selectedTracks;
     }
 
     void selectionChanged()
     {
-        if(searching || updating) {
+        if(m_searching || m_updating) {
             return;
         }
 
         refreshFilteredTracks();
 
-        emit self->selectionChanged(playlistNameFromSelection());
+        emit m_self->selectionChanged(playlistNameFromSelection());
     }
 
     void hideHeader(bool hide) const
     {
-        header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
-        header->adjustSize();
+        m_header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
+        m_header->adjustSize();
     }
 
     void filterHeaderMenu(const QPoint& pos)
     {
-        auto* menu = new QMenu(self);
+        auto* menu = new QMenu(m_self);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
         auto* filterList = new QActionGroup{menu};
         filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-        for(const auto& column : columnRegistry.items()) {
+        for(const auto& column : m_columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
             columnAction->setChecked(hasColumn(column.id));
-            columnAction->setEnabled(!hasColumn(column.id) || columns.size() > 1);
+            columnAction->setEnabled(!hasColumn(column.id) || m_columns.size() > 1);
             menu->addAction(columnAction);
             filterList->addAction(columnAction);
         }
 
         menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, self, [this](QAction* action) {
+        QObject::connect(filterList, &QActionGroup::triggered, m_self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                if(const auto column = columnRegistry.itemById(action->data().toInt())) {
-                    if(multipleColumns) {
-                        columns.push_back(column.value());
+                if(const auto column = m_columnRegistry.itemById(action->data().toInt())) {
+                    if(m_multipleColumns) {
+                        m_columns.push_back(column.value());
                     }
                     else {
-                        columns = {column.value()};
+                        m_columns = {column.value()};
                     }
                 }
             }
             else {
-                auto colIt
-                    = std::ranges::find_if(columns, [columnId](const FilterColumn& col) { return col.id == columnId; });
-                if(colIt != columns.end()) {
-                    const int removedIndex = static_cast<int>(std::distance(columns.begin(), colIt));
-                    if(model->removeColumn(removedIndex)) {
-                        columns.erase(colIt);
+                auto colIt = std::ranges::find_if(m_columns,
+                                                  [columnId](const FilterColumn& col) { return col.id == columnId; });
+                if(colIt != m_columns.end()) {
+                    const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
+                    if(m_model->removeColumn(removedIndex)) {
+                        m_columns.erase(colIt);
                     }
                 }
             }
 
-            tracks.clear();
-            QMetaObject::invokeMethod(self, &FilterWidget::filterUpdated);
+            m_tracks.clear();
+            QMetaObject::invokeMethod(m_self, &FilterWidget::filterUpdated);
         });
 
         menu->addSeparator();
         auto* multiColAction = new QAction(tr("Multiple Columns"), menu);
         multiColAction->setCheckable(true);
-        multiColAction->setChecked(multipleColumns);
-        multiColAction->setEnabled(columns.size() <= 1);
-        QObject::connect(multiColAction, &QAction::triggered, self,
-                         [this](bool checked) { multipleColumns = checked; });
+        multiColAction->setChecked(m_multipleColumns);
+        multiColAction->setEnabled(m_columns.size() <= 1);
+        QObject::connect(multiColAction, &QAction::triggered, m_self,
+                         [this](bool checked) { m_multipleColumns = checked; });
         menu->addAction(multiColAction);
 
         menu->addSeparator();
-        header->addHeaderContextMenu(menu, self->mapToGlobal(pos));
+        m_header->addHeaderContextMenu(menu, m_self->mapToGlobal(pos));
         menu->addSeparator();
-        header->addHeaderAlignmentMenu(menu, self->mapToGlobal(pos));
+        m_header->addHeaderAlignmentMenu(menu, m_self->mapToGlobal(pos));
 
         menu->addSeparator();
         auto* manageConnections = new QAction(tr("Manage Groups"), menu);
-        QObject::connect(manageConnections, &QAction::triggered, self,
-                         [this]() { QMetaObject::invokeMethod(self, &FilterWidget::requestEditConnections); });
+        QObject::connect(manageConnections, &QAction::triggered, m_self,
+                         [this]() { QMetaObject::invokeMethod(m_self, &FilterWidget::requestEditConnections); });
         menu->addAction(manageConnections);
 
-        menu->popup(self->mapToGlobal(pos));
+        menu->popup(m_self->mapToGlobal(pos));
     }
 
     bool hasColumn(int id) const
     {
-        return std::ranges::any_of(columns, [id](const FilterColumn& column) { return column.id == id; });
+        return std::ranges::any_of(m_columns, [id](const FilterColumn& column) { return column.id == id; });
     }
 
     void columnChanged(const Filters::FilterColumn& column)
     {
         if(hasColumn(column.id)) {
             std::ranges::replace_if(
-                columns, [&column](const FilterColumn& filterCol) { return filterCol.id == column.id; }, column);
+                m_columns, [&column](const FilterColumn& filterCol) { return filterCol.id == column.id; }, column);
 
-            QMetaObject::invokeMethod(self, &FilterWidget::filterUpdated);
+            QMetaObject::invokeMethod(m_self, &FilterWidget::filterUpdated);
         }
     }
 };
@@ -271,41 +272,42 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    p->view->setModel(p->model);
-    p->view->setItemDelegate(new FilterDelegate(this));
-    p->view->viewport()->installEventFilter(new ToolTipFilter(this));
+    p->m_view->setModel(p->m_model);
+    p->m_view->setItemDelegate(new FilterDelegate(this));
+    p->m_view->viewport()->installEventFilter(new ToolTipFilter(this));
 
-    layout->addWidget(p->view);
+    layout->addWidget(p->m_view);
 
-    p->hideHeader(!p->settings->value<Settings::Filters::FilterHeader>());
-    setScrollbarEnabled(p->settings->value<Settings::Filters::FilterScrollBar>());
-    p->view->setAlternatingRowColors(p->settings->value<Settings::Filters::FilterAltColours>());
+    p->hideHeader(!p->m_settings->value<Settings::Filters::FilterHeader>());
+    setScrollbarEnabled(p->m_settings->value<Settings::Filters::FilterScrollBar>());
+    p->m_view->setAlternatingRowColors(p->m_settings->value<Settings::Filters::FilterAltColours>());
 
-    QObject::connect(&p->columnRegistry, &FilterColumnRegistry::columnChanged, this,
+    QObject::connect(&p->m_columnRegistry, &FilterColumnRegistry::columnChanged, this,
                      [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
 
-    QObject::connect(p->model, &QAbstractItemModel::modelReset, this, [this]() { p->view->expandAll(); });
-    QObject::connect(p->header, &QHeaderView::sortIndicatorChanged, p->model, &FilterModel::sortOnColumn);
-    QObject::connect(p->header, &FilterView::customContextMenuRequested, this,
+    QObject::connect(p->m_model, &QAbstractItemModel::modelReset, this, [this]() { p->m_view->expandAll(); });
+    QObject::connect(p->m_header, &QHeaderView::sortIndicatorChanged, p->m_model, &FilterModel::sortOnColumn);
+    QObject::connect(p->m_header, &FilterView::customContextMenuRequested, this,
                      [this](const QPoint& pos) { p->filterHeaderMenu(pos); });
-    QObject::connect(p->view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    QObject::connect(p->m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { p->selectionChanged(); });
 
-    QObject::connect(p->view, &FilterView::doubleClicked, this,
+    QObject::connect(p->m_view, &FilterView::doubleClicked, this,
                      [this]() { emit doubleClicked(p->playlistNameFromSelection()); });
-    QObject::connect(p->view, &FilterView::middleClicked, this,
+    QObject::connect(p->m_view, &FilterView::middleClicked, this,
                      [this]() { emit middleClicked(p->playlistNameFromSelection()); });
 
-    p->settings->subscribe<Settings::Filters::FilterAltColours>(p->view, &QAbstractItemView::setAlternatingRowColors);
-    p->settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
-    p->settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
-    p->settings->subscribe<Settings::Filters::FilterFont>(this,
-                                                          [this](const QString& font) { p->model->setFont(font); });
-    p->settings->subscribe<Settings::Filters::FilterColour>(
-        this, [this](const QString& colour) { p->model->setColour(colour); });
-    p->settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
-        p->model->setRowHeight(height);
-        QMetaObject::invokeMethod(p->view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    p->m_settings->subscribe<Settings::Filters::FilterAltColours>(p->m_view,
+                                                                  &QAbstractItemView::setAlternatingRowColors);
+    p->m_settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
+    p->m_settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
+    p->m_settings->subscribe<Settings::Filters::FilterFont>(this,
+                                                            [this](const QString& font) { p->m_model->setFont(font); });
+    p->m_settings->subscribe<Settings::Filters::FilterColour>(
+        this, [this](const QString& colour) { p->m_model->setColour(colour); });
+    p->m_settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
+        p->m_model->setRowHeight(height);
+        QMetaObject::invokeMethod(p->m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     });
 }
 
@@ -316,52 +318,52 @@ FilterWidget::~FilterWidget()
 
 Id FilterWidget::group() const
 {
-    return p->group;
+    return p->m_group;
 }
 
 int FilterWidget::index() const
 {
-    return p->index;
+    return p->m_index;
 }
 
 bool FilterWidget::multipleColumns() const
 {
-    return p->multipleColumns;
+    return p->m_multipleColumns;
 }
 
 bool FilterWidget::isActive() const
 {
-    return !p->filteredTracks.empty();
+    return !p->m_filteredTracks.empty();
 }
 
 TrackList FilterWidget::tracks() const
 {
-    return p->tracks;
+    return p->m_tracks;
 }
 
 TrackList FilterWidget::filteredTracks() const
 {
-    return p->filteredTracks;
+    return p->m_filteredTracks;
 }
 
 QString FilterWidget::searchFilter() const
 {
-    return p->searchStr;
+    return p->m_searchStr;
 }
 
 WidgetContext* FilterWidget::widgetContext() const
 {
-    return p->widgetContext;
+    return p->m_widgetContext;
 }
 
 void FilterWidget::setGroup(const Id& group)
 {
-    p->group = group;
+    p->m_group = group;
 }
 
 void FilterWidget::setIndex(int index)
 {
-    p->index = index;
+    p->m_index = index;
 }
 
 void FilterWidget::refetchFilteredTracks()
@@ -371,26 +373,26 @@ void FilterWidget::refetchFilteredTracks()
 
 void FilterWidget::setFilteredTracks(const TrackList& tracks)
 {
-    p->filteredTracks = tracks;
+    p->m_filteredTracks = tracks;
 }
 
 void FilterWidget::clearFilteredTracks()
 {
-    p->filteredTracks.clear();
+    p->m_filteredTracks.clear();
 }
 
 void FilterWidget::reset(const TrackList& tracks)
 {
-    p->tracks = tracks;
-    p->model->reset(p->columns, tracks);
+    p->m_tracks = tracks;
+    p->m_model->reset(p->m_columns, tracks);
 }
 
 void FilterWidget::softReset(const TrackList& tracks)
 {
-    p->updating = true;
+    p->m_updating = true;
 
     QStringList selected;
-    const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
+    const QModelIndexList selectedRows = p->m_view->selectionModel()->selectedRows();
     for(const QModelIndex& index : selectedRows) {
         selected.emplace_back(index.data(Qt::DisplayRole).toString());
     }
@@ -398,14 +400,14 @@ void FilterWidget::softReset(const TrackList& tracks)
     reset(tracks);
 
     QObject::connect(
-        p->model, &FilterModel::modelUpdated, this,
+        p->m_model, &FilterModel::modelUpdated, this,
         [this, selected]() {
-            const QModelIndexList selectedIndexes = p->model->indexesForValues(selected);
+            const QModelIndexList selectedIndexes = p->m_model->indexesForValues(selected);
 
             QItemSelection indexesToSelect;
             indexesToSelect.reserve(selectedIndexes.size());
 
-            const int columnCount = static_cast<int>(p->columns.size());
+            const int columnCount = static_cast<int>(p->m_columns.size());
 
             for(const QModelIndex& index : selectedIndexes) {
                 if(index.isValid()) {
@@ -414,15 +416,15 @@ void FilterWidget::softReset(const TrackList& tracks)
                 }
             }
 
-            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
-            p->updating = false;
+            p->m_view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
+            p->m_updating = false;
         },
         Qt::SingleShotConnection);
 }
 
 void FilterWidget::setScrollbarEnabled(bool enabled)
 {
-    p->view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    p->m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
 QString FilterWidget::name() const
@@ -439,8 +441,8 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
 {
     QStringList columns;
 
-    for(int i{0}; const auto& column : p->columns) {
-        const auto alignment = p->model->columnAlignment(i++);
+    for(int i{0}; const auto& column : p->m_columns) {
+        const auto alignment = p->m_model->columnAlignment(i++);
         QString colStr       = QString::number(column.id);
 
         if(alignment != Qt::AlignLeft) {
@@ -452,18 +454,18 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
 
     layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
 
-    QByteArray state = p->header->saveHeaderState();
+    QByteArray state = p->m_header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout[QStringLiteral("Group")] = p->group.name();
-    layout[QStringLiteral("Index")] = p->index;
+    layout[QStringLiteral("Group")] = p->m_group.name();
+    layout[QStringLiteral("Index")] = p->m_index;
     layout[QStringLiteral("State")] = QString::fromUtf8(state.toBase64());
 }
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("Columns"))) {
-        p->columns.clear();
+        p->m_columns.clear();
 
         const QString columnData    = layout.value(QStringLiteral("Columns")).toString();
         const QStringList columnIds = columnData.split(QStringLiteral("|"));
@@ -471,14 +473,14 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         for(int i{0}; const auto& columnId : columnIds) {
             const auto column = columnId.split(QStringLiteral(":"));
 
-            if(const auto columnItem = p->columnRegistry.itemById(column.at(0).toInt())) {
-                p->columns.push_back(columnItem.value());
+            if(const auto columnItem = p->m_columnRegistry.itemById(column.at(0).toInt())) {
+                p->m_columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
-                    p->model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
+                    p->m_model->changeColumnAlignment(i, static_cast<Qt::Alignment>(column.at(1).toInt()));
                 }
                 else {
-                    p->model->changeColumnAlignment(i, Qt::AlignLeft);
+                    p->m_model->changeColumnAlignment(i, Qt::AlignLeft);
                 }
             }
             ++i;
@@ -486,11 +488,11 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     }
 
     if(layout.contains(QStringLiteral("Group"))) {
-        p->group = Id{layout.value(QStringLiteral("Group")).toString()};
+        p->m_group = Id{layout.value(QStringLiteral("Group")).toString()};
     }
 
     if(layout.contains(QStringLiteral("Index"))) {
-        p->index = layout.value(QStringLiteral("Index")).toInt();
+        p->m_index = layout.value(QStringLiteral("Index")).toInt();
     }
 
     emit filterUpdated();
@@ -502,24 +504,24 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
             return;
         }
 
-        p->headerState = qUncompress(state);
+        p->m_headerState = qUncompress(state);
     }
 }
 
 void FilterWidget::finalise()
 {
-    p->multipleColumns = p->columns.size() > 1;
+    p->m_multipleColumns = p->m_columns.size() > 1;
 
-    if(!p->columns.empty()) {
-        if(p->headerState.isEmpty()) {
-            p->header->setSortIndicator(0, Qt::AscendingOrder);
+    if(!p->m_columns.empty()) {
+        if(p->m_headerState.isEmpty()) {
+            p->m_header->setSortIndicator(0, Qt::AscendingOrder);
         }
         else {
             QObject::connect(
-                p->model, &QAbstractItemModel::modelReset, this,
+                p->m_model, &QAbstractItemModel::modelReset, this,
                 [this]() {
-                    p->header->restoreHeaderState(p->headerState);
-                    p->model->sortOnColumn(p->header->sortIndicatorSection(), p->header->sortIndicatorOrder());
+                    p->m_header->restoreHeaderState(p->m_headerState);
+                    p->m_model->sortOnColumn(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
                 },
                 Qt::SingleShotConnection);
         }
@@ -528,14 +530,14 @@ void FilterWidget::finalise()
 
 void FilterWidget::searchEvent(const QString& search)
 {
-    p->filteredTracks.clear();
+    p->m_filteredTracks.clear();
     emit requestSearch(search);
-    p->searchStr = search;
+    p->m_searchStr = search;
 }
 
 void FilterWidget::tracksAdded(const TrackList& tracks)
 {
-    p->model->addTracks(tracks);
+    p->m_model->addTracks(tracks);
 }
 
 void FilterWidget::tracksUpdated(const TrackList& tracks)
@@ -545,9 +547,9 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
         return;
     }
 
-    p->updating = true;
+    p->m_updating = true;
 
-    const QModelIndexList selectedRows = p->view->selectionModel()->selectedRows();
+    const QModelIndexList selectedRows = p->m_view->selectionModel()->selectedRows();
 
     QStringList selected;
     for(const QModelIndex& index : selectedRows) {
@@ -559,17 +561,17 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
         }
     }
 
-    p->model->updateTracks(tracks);
+    p->m_model->updateTracks(tracks);
 
     QObject::connect(
-        p->model, &FilterModel::modelUpdated, this,
+        p->m_model, &FilterModel::modelUpdated, this,
         [this, selected]() {
-            const QModelIndexList selectedIndexes = p->model->indexesForValues(selected);
+            const QModelIndexList selectedIndexes = p->m_model->indexesForValues(selected);
 
             QItemSelection indexesToSelect;
             indexesToSelect.reserve(selectedIndexes.size());
 
-            const int columnCount = static_cast<int>(p->columns.size());
+            const int columnCount = static_cast<int>(p->m_columns.size());
 
             for(const QModelIndex& index : selectedIndexes) {
                 if(index.isValid()) {
@@ -578,8 +580,8 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
                 }
             }
 
-            p->view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
-            p->updating = false;
+            p->m_view->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
+            p->m_updating = false;
             emit finishedUpdating();
         },
         Qt::SingleShotConnection);
@@ -587,17 +589,17 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
 void FilterWidget::tracksPlayed(const TrackList& tracks)
 {
-    p->model->refreshTracks(tracks);
+    p->m_model->refreshTracks(tracks);
 }
 
 void FilterWidget::tracksRemoved(const TrackList& tracks)
 {
-    p->model->removeTracks(tracks);
+    p->m_model->removeTracks(tracks);
 }
 
 void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(p->view->selectionModel()->selectedRows().empty()) {
+    if(p->m_view->selectionModel()->selectedRows().empty()) {
         return;
     }
 

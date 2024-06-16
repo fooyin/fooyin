@@ -29,29 +29,29 @@
 namespace Fooyin::Filters {
 struct FilterPopulator::Private
 {
-    FilterPopulator* self;
+    FilterPopulator* m_self;
 
-    ScriptRegistry registry;
-    ScriptParser parser;
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
 
-    QString currentColumns;
-    ParsedScript script;
+    QString m_currentColumns;
+    ParsedScript m_script;
 
-    FilterItem root;
-    PendingTreeData data;
+    FilterItem m_root;
+    PendingTreeData m_data;
 
-    explicit Private(FilterPopulator* self_)
-        : self{self_}
-        , parser{&registry}
+    explicit Private(FilterPopulator* self)
+        : m_self{self}
+        , m_parser{&m_registry}
     { }
 
     FilterItem* getOrInsertItem(const QStringList& columns)
     {
         const QString key = Utils::generateHash(columns.join(QStringLiteral("")));
-        if(!data.items.contains(key)) {
-            data.items.emplace(key, FilterItem{key, columns, &root});
+        if(!m_data.items.contains(key)) {
+            m_data.items.emplace(key, FilterItem{key, columns, &m_root});
         }
-        return &data.items.at(key);
+        return &m_data.items.at(key);
     }
 
     std::vector<FilterItem*> getOrInsertItems(const QList<QStringList>& columnSet)
@@ -67,12 +67,12 @@ struct FilterPopulator::Private
     void addTrackToNode(const Track& track, FilterItem* node)
     {
         node->addTrack(track);
-        data.trackParents[track.id()].push_back(node->key());
+        m_data.trackParents[track.id()].push_back(node->key());
     }
 
     void iterateTrack(const Track& track)
     {
-        const QString columns = parser.evaluate(script, track);
+        const QString columns = m_parser.evaluate(m_script, track);
 
         if(columns.contains(u"\037")) {
             const QStringList values = columns.split(QStringLiteral("\037"));
@@ -93,7 +93,7 @@ struct FilterPopulator::Private
     void runBatch(const TrackList& tracks)
     {
         for(const Track& track : tracks) {
-            if(!self->mayRun()) {
+            if(!m_self->mayRun()) {
                 return;
             }
 
@@ -102,12 +102,12 @@ struct FilterPopulator::Private
             }
         }
 
-        if(!self->mayRun()) {
+        if(!m_self->mayRun()) {
             return;
         }
 
-        emit self->populated(data);
-        data.clear();
+        emit m_self->populated(m_data);
+        m_data.clear();
     }
 };
 
@@ -122,11 +122,11 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)
 {
     setState(Running);
 
-    p->data.clear();
+    p->m_data.clear();
 
     const QString newColumns = columns.join(u"\036");
-    if(std::exchange(p->currentColumns, newColumns) != newColumns) {
-        p->script = p->parser.parse(p->currentColumns);
+    if(std::exchange(p->m_currentColumns, newColumns) != newColumns) {
+        p->m_script = p->m_parser.parse(p->m_currentColumns);
     }
 
     p->runBatch(tracks);

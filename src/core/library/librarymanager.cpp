@@ -52,26 +52,26 @@ void eraseLibrary(LibraryInfoMap& libraries, int id)
 
 struct LibraryManager::Private
 {
-    DbConnectionPoolPtr dbPool;
-    SettingsManager* settings;
-    LibraryDatabase libraryConnector;
-    TrackDatabase trackConnector;
-    LibraryInfoMap libraries;
+    DbConnectionPoolPtr m_dbPool;
+    SettingsManager* m_settings;
+    LibraryDatabase m_libraryConnector;
+    TrackDatabase m_trackConnector;
+    LibraryInfoMap m_libraries;
 
-    explicit Private(DbConnectionPoolPtr dbPool_, SettingsManager* settings_)
-        : dbPool{std::move(dbPool_)}
-        , settings{settings_}
+    explicit Private(DbConnectionPoolPtr dbPool, SettingsManager* settings)
+        : m_dbPool{std::move(dbPool)}
+        , m_settings{settings}
     {
-        const DbConnectionProvider dbProvider{dbPool};
+        const DbConnectionProvider dbProvider{m_dbPool};
 
-        libraryConnector.initialise(dbProvider);
-        trackConnector.initialise(dbProvider);
+        m_libraryConnector.initialise(dbProvider);
+        m_trackConnector.initialise(dbProvider);
     }
 
     [[nodiscard]] QString findUniqueName(const QString& name) const
     {
         const QString uniqueName{name.isEmpty() ? QStringLiteral("New Library") : name};
-        return Utils::findUniqueString(uniqueName, libraries, [](const auto& item) { return item.second.name; });
+        return Utils::findUniqueString(uniqueName, m_libraries, [](const auto& item) { return item.second.name; });
     }
 };
 
@@ -86,27 +86,27 @@ LibraryManager::~LibraryManager() = default;
 
 void LibraryManager::reset()
 {
-    p->libraries.clear();
-    p->libraryConnector.getAllLibraries(p->libraries);
+    p->m_libraries.clear();
+    p->m_libraryConnector.getAllLibraries(p->m_libraries);
 }
 
 const LibraryInfoMap& LibraryManager::allLibraries() const
 {
-    return p->libraries;
+    return p->m_libraries;
 }
 
 int LibraryManager::addLibrary(const QString& path, const QString& name)
 {
-    if(!checkNewPath(path, p->libraries)) {
+    if(!checkNewPath(path, p->m_libraries)) {
         return -1;
     }
 
     const QString libraryName = p->findUniqueName(name);
 
-    const auto id = p->libraryConnector.insertLibrary(path, libraryName);
+    const auto id = p->m_libraryConnector.insertLibrary(path, libraryName);
 
     if(id > 0) {
-        LibraryInfo& info = p->libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
+        LibraryInfo& info = p->m_libraries.emplace(id, LibraryInfo{libraryName, path, id}).first->second;
         emit libraryAdded(info);
         info.status = LibraryInfo::Status::Initialised;
         return id;
@@ -121,11 +121,11 @@ bool LibraryManager::removeLibrary(int id)
         return false;
     }
 
-    if(p->libraryConnector.removeLibrary(id)) {
-        eraseLibrary(p->libraries, id);
+    if(p->m_libraryConnector.removeLibrary(id)) {
+        eraseLibrary(p->m_libraries, id);
 
         emit removingLibraryTracks(id);
-        const auto tracksRemoved = p->trackConnector.deleteLibraryTracks(id);
+        const auto tracksRemoved = p->m_trackConnector.deleteLibraryTracks(id);
         emit libraryRemoved(id, tracksRemoved);
 
         return true;
@@ -141,8 +141,8 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
 
     const QString libraryName = p->findUniqueName(name);
 
-    if(p->libraryConnector.renameLibrary(id, libraryName)) {
-        p->libraries.at(id).name = libraryName;
+    if(p->m_libraryConnector.renameLibrary(id, libraryName)) {
+        p->m_libraries.at(id).name = libraryName;
         emit libraryRenamed(id, libraryName);
         return true;
     }
@@ -154,25 +154,25 @@ void LibraryManager::updateLibraryStatus(const LibraryInfo& library)
     if(!hasLibrary(library.id)) {
         return;
     }
-    p->libraries.at(library.id).status = library.status;
+    p->m_libraries.at(library.id).status = library.status;
     emit libraryStatusChanged(library);
 }
 
 bool LibraryManager::hasLibrary() const
 {
-    return !p->libraries.empty();
+    return !p->m_libraries.empty();
 }
 
 bool LibraryManager::hasLibrary(int id) const
 {
-    return p->libraries.contains(id);
+    return p->m_libraries.contains(id);
 }
 
 std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path) const
 {
-    auto it = std::ranges::find_if(std::as_const(p->libraries),
+    auto it = std::ranges::find_if(std::as_const(p->m_libraries),
                                    [path](const auto& info) { return info.second.path == path; });
-    if(it != p->libraries.end()) {
+    if(it != p->m_libraries.end()) {
         return it->second;
     }
     return {};
@@ -181,7 +181,7 @@ std::optional<LibraryInfo> LibraryManager::findLibraryByPath(const QString& path
 std::optional<LibraryInfo> LibraryManager::libraryInfo(int id) const
 {
     if(hasLibrary(id)) {
-        return p->libraries.at(id);
+        return p->m_libraries.at(id);
     }
     return {};
 }

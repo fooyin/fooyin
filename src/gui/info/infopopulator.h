@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "infomodel.h"
+#include "infoitem.h"
 
 #include <core/trackfwd.h>
 #include <utils/worker.h>
@@ -45,7 +45,7 @@ public:
     explicit InfoPopulator(QObject* parent = nullptr);
     ~InfoPopulator() override;
 
-    void run(InfoModel::Options options, const TrackList& tracks);
+    void run(InfoItem::Options options, const TrackList& tracks);
 
 signals:
     void populated(InfoData data);

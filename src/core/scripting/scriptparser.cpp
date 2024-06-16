@@ -19,7 +19,6 @@
 
 #include <core/scripting/scriptparser.h>
 
-#include <core/constants.h>
 #include <core/scripting/scriptscanner.h>
 #include <core/track.h>
 
@@ -50,43 +49,43 @@ QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringLi
 namespace Fooyin {
 struct ScriptParser::Private
 {
-    ScriptParser* self;
+    ScriptParser* m_self;
 
-    ScriptScanner scanner;
-    std::unique_ptr<ScriptRegistry> defaultRegistry;
-    ScriptRegistry* registry;
+    ScriptScanner m_scanner;
+    std::unique_ptr<ScriptRegistry> m_defaultRegistry;
+    ScriptRegistry* m_registry;
 
-    ScriptScanner::Token current;
-    ScriptScanner::Token previous;
+    ScriptScanner::Token m_current;
+    ScriptScanner::Token m_previous;
 
-    QString currentInput;
-    std::unordered_map<QString, ParsedScript> parsedScripts;
-    QStringList currentResult;
+    QString m_currentInput;
+    std::unordered_map<QString, ParsedScript> m_parsedScripts;
+    QStringList m_currentResult;
 
-    explicit Private(ScriptParser* self_)
-        : self{self_}
-        , defaultRegistry{std::make_unique<ScriptRegistry>()}
-        , registry{defaultRegistry.get()}
+    explicit Private(ScriptParser* self)
+        : m_self{self}
+        , m_defaultRegistry{std::make_unique<ScriptRegistry>()}
+        , m_registry{m_defaultRegistry.get()}
     { }
 
-    explicit Private(ScriptParser* self_, ScriptRegistry* registry_)
-        : self{self_}
-        , registry{registry_}
+    explicit Private(ScriptParser* self, ScriptRegistry* registry)
+        : m_self{self}
+        , m_registry{registry}
     { }
 
     void advance()
     {
-        previous = current;
+        m_previous = m_current;
 
-        current = scanner.next();
-        if(current.type == TokenType::TokError) {
-            errorAtCurrent(current.value.toString());
+        m_current = m_scanner.next();
+        if(m_current.type == TokenType::TokError) {
+            errorAtCurrent(m_current.value.toString());
         }
     }
 
     void consume(TokenType type, const QString& message)
     {
-        if(current.type == type) {
+        if(m_current.type == type) {
             advance();
             return;
         }
@@ -95,7 +94,7 @@ struct ScriptParser::Private
 
     [[nodiscard]] bool currentToken(TokenType type) const
     {
-        return current.type == type;
+        return m_current.type == type;
     }
 
     bool match(TokenType type)
@@ -109,7 +108,7 @@ struct ScriptParser::Private
 
     void errorAtCurrent(const QString& message)
     {
-        errorAt(current, message);
+        errorAt(m_current, message);
     }
 
     void errorAt(const ScriptScanner::Token& token, const QString& message)
@@ -130,18 +129,18 @@ struct ScriptParser::Private
         currentError.position = token.position;
         currentError.message  = errorMsg;
 
-        parsedScripts[currentInput].errors.emplace_back(currentError);
+        m_parsedScripts[m_currentInput].errors.emplace_back(currentError);
     }
 
     void error(const QString& message)
     {
-        errorAt(previous, message);
+        errorAt(m_previous, message);
     }
 
     Expression expression(const auto& tracks)
     {
         advance();
-        switch(previous.type) {
+        switch(m_previous.type) {
             case(TokenType::TokVar):
                 return variable(tracks);
             case(TokenType::TokFunc):
@@ -174,7 +173,7 @@ struct ScriptParser::Private
 
     Expression literal() const
     {
-        return {Expr::Literal, previous.value.toString()};
+        return {Expr::Literal, m_previous.value.toString()};
     }
 
     Expression quote()
@@ -184,10 +183,10 @@ struct ScriptParser::Private
 
         while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
             advance();
-            val.append(previous.value.toString());
+            val.append(m_previous.value.toString());
             if(currentToken(TokenType::TokEscape)) {
                 advance();
-                val.append(current.value.toString());
+                val.append(m_current.value.toString());
                 advance();
             }
         }
@@ -205,27 +204,27 @@ struct ScriptParser::Private
         QString value;
 
         auto checkExists = [this, &value, &tracks]() {
-            if(!registry->isVariable(value, tracks)) {
+            if(!m_registry->isVariable(value, tracks)) {
                 error(QStringLiteral("Variable not found"));
             }
         };
 
-        if(previous.type == TokenType::TokLeftAngle) {
+        if(m_previous.type == TokenType::TokLeftAngle) {
             advance();
             expr.type = Expr::VariableList;
-            value     = QString{previous.value.toString()}.toLower();
+            value     = QString{m_previous.value.toString()}.toLower();
             consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
             checkExists();
         }
-        else if(previous.type == TokenType::TokVar) {
+        else if(m_previous.type == TokenType::TokVar) {
             advance();
             expr.type = Expr::Variable;
-            value     = QString{previous.value.toString()}.toLower();
+            value     = QString{m_previous.value.toString()}.toLower();
             consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
         }
         else {
             expr.type = Expr::Variable;
-            value     = QString{previous.value.toString()}.toLower();
+            value     = QString{m_previous.value.toString()}.toLower();
             checkExists();
         }
 
@@ -238,15 +237,15 @@ struct ScriptParser::Private
     {
         advance();
 
-        if(previous.type != TokenType::TokLiteral) {
+        if(m_previous.type != TokenType::TokLiteral) {
             error(QStringLiteral("Expected function name"));
         }
 
         Expression expr{Expr::Function};
         FuncValue funcExpr;
-        funcExpr.name = QString{previous.value.toString()}.toLower();
+        funcExpr.name = QString{m_previous.value.toString()}.toLower();
 
-        if(!registry->isFunction(funcExpr.name)) {
+        if(!m_registry->isFunction(funcExpr.name)) {
             error(QStringLiteral("Function not found"));
         }
 
@@ -324,7 +323,7 @@ struct ScriptParser::Private
     ScriptResult evalVariable(const Expression& exp, const auto& tracks) const
     {
         const QString var   = std::get<QString>(exp.value);
-        ScriptResult result = registry->value(var, tracks);
+        ScriptResult result = m_registry->value(var, tracks);
 
         if(!result.cond) {
             return {};
@@ -340,7 +339,7 @@ struct ScriptParser::Private
     ScriptResult evalVariableList(const Expression& exp, const auto& tracks) const
     {
         const QString var = std::get<QString>(exp.value);
-        return registry->value(var, tracks);
+        return m_registry->value(var, tracks);
     }
 
     ScriptResult evalFunction(const Expression& exp, const auto& tracks) const
@@ -349,7 +348,7 @@ struct ScriptParser::Private
         ScriptValueList args;
         std::ranges::transform(func.args, std::back_inserter(args),
                                [this, &tracks](const Expression& arg) { return evalExpression(arg, tracks); });
-        return registry->function(func.name, args, tracks);
+        return m_registry->function(func.name, args, tracks);
     }
 
     ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const
@@ -425,22 +424,22 @@ struct ScriptParser::Private
 
     ParsedScript parse(const QString& input, const auto& tracks)
     {
-        if(input.isEmpty() || !registry) {
+        if(input.isEmpty() || !m_registry) {
             return {};
         }
 
-        if(parsedScripts.contains(input)) {
-            return parsedScripts.at(input);
+        if(m_parsedScripts.contains(input)) {
+            return m_parsedScripts.at(input);
         }
 
-        currentInput = input;
-        auto& script = parsedScripts[input];
-        script.input = input;
+        m_currentInput = input;
+        auto& script   = m_parsedScripts[input];
+        script.input   = input;
 
-        scanner.setup(input);
+        m_scanner.setup(input);
 
         advance();
-        while(current.type != TokenType::TokEos) {
+        while(m_current.type != TokenType::TokEos) {
             script.expressions.emplace_back(expression(tracks));
         }
 
@@ -451,11 +450,11 @@ struct ScriptParser::Private
 
     QString evaluate(const ParsedScript& input, const auto& tracks)
     {
-        if(!input.isValid() || !registry) {
+        if(!input.isValid() || !m_registry) {
             return {};
         }
 
-        currentResult.clear();
+        m_currentResult.clear();
 
         const ExpressionList expressions = input.expressions;
         for(const auto& expr : expressions) {
@@ -466,31 +465,31 @@ struct ScriptParser::Private
             }
 
             if(evalExpr.value.contains(u"\037")) {
-                const QStringList evalList = evalStringList(evalExpr, currentResult);
+                const QStringList evalList = evalStringList(evalExpr, m_currentResult);
                 if(!evalList.empty()) {
-                    currentResult = evalList;
+                    m_currentResult = evalList;
                 }
             }
             else {
-                if(currentResult.empty()) {
-                    currentResult.push_back(evalExpr.value);
+                if(m_currentResult.empty()) {
+                    m_currentResult.push_back(evalExpr.value);
                 }
                 else {
                     std::ranges::transform(
-                        currentResult, currentResult.begin(),
+                        m_currentResult, m_currentResult.begin(),
                         [&](const QString& retValue) -> QString { return retValue + evalExpr.value; });
                 }
             }
         }
 
-        if(currentResult.size() == 1) {
+        if(m_currentResult.size() == 1) {
             // Calling join on a QStringList with a single empty string will return a null QString, so return the first
             // result.
-            return currentResult.constFirst();
+            return m_currentResult.constFirst();
         }
 
-        if(currentResult.size() > 1) {
-            return currentResult.join(u"\037");
+        if(m_currentResult.size() > 1) {
+            return m_currentResult.join(u"\037");
         }
 
         return {};
@@ -580,6 +579,6 @@ QString ScriptParser::evaluate(const ParsedScript& input, const TrackList& track
 
 void ScriptParser::clearCache()
 {
-    p->parsedScripts.clear();
+    p->m_parsedScripts.clear();
 }
 } // namespace Fooyin

@@ -34,155 +34,42 @@
 #include <QMenu>
 
 namespace Fooyin {
-struct PlaylistControl::Private
-{
-    PlaylistControl* self;
-
-    PlayerController* playerController;
-    SettingsManager* settings;
-
-    ToolButton* repeat;
-    ToolButton* shuffle;
-
-    Private(PlaylistControl* self_, PlayerController* playerController_, SettingsManager* settings_)
-        : self{self_}
-        , playerController{playerController_}
-        , settings{settings_}
-        , repeat{new ToolButton(self)}
-        , shuffle{new ToolButton(self)}
-    {
-        repeat->setPopupMode(QToolButton::InstantPopup);
-
-        auto* repeatAction = new QAction(self);
-        repeatAction->setToolTip(tr("Repeat"));
-        repeat->setDefaultAction(repeatAction);
-
-        auto* shuffleAction = new QAction(self);
-        shuffleAction->setToolTip(tr("Shuffle"));
-        shuffle->setDefaultAction(shuffleAction);
-
-        setMode(playerController->playMode());
-
-        setupMenus();
-        updateButtonStyle();
-    }
-
-    void updateButtonStyle() const
-    {
-        const auto options
-            = static_cast<Settings::Gui::ToolButtonOptions>(settings->value<Settings::Gui::ToolButtonStyle>());
-
-        repeat->setStretchEnabled(options & Settings::Gui::Stretch);
-        repeat->setAutoRaise(!(options & Settings::Gui::Raise));
-
-        shuffle->setStretchEnabled(options & Settings::Gui::Stretch);
-        shuffle->setAutoRaise(!(options & Settings::Gui::Raise));
-    }
-
-    void setupMenus()
-    {
-        auto* menu = new QMenu(self);
-
-        auto* repeatGroup = new QActionGroup(menu);
-
-        auto* defaultAction  = new QAction(tr("Default"), repeatGroup);
-        auto* repeatPlaylist = new QAction(tr("Repeat playlist"), repeatGroup);
-        auto* repeatTrack    = new QAction(tr("Repeat track"), repeatGroup);
-
-        defaultAction->setCheckable(true);
-        repeatPlaylist->setCheckable(true);
-        repeatTrack->setCheckable(true);
-
-        auto playMode = playerController->playMode();
-
-        if(playMode & Playlist::RepeatPlaylist) {
-            repeatPlaylist->setChecked(true);
-        }
-        else if(playMode & Playlist::RepeatTrack) {
-            repeatTrack->setChecked(true);
-        }
-        else {
-            defaultAction->setChecked(true);
-        }
-
-        QObject::connect(defaultAction, &QAction::triggered, self, [this]() {
-            const auto pMode = playerController->playMode();
-            playerController->setPlayMode(pMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
-        });
-
-        QObject::connect(repeatPlaylist, &QAction::triggered, self, [this]() {
-            const auto pMode = playerController->playMode();
-            playerController->setPlayMode((pMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
-        });
-
-        QObject::connect(repeatTrack, &QAction::triggered, self, [this]() {
-            const auto pMode = playerController->playMode();
-            playerController->setPlayMode((pMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
-        });
-
-        menu->addAction(defaultAction);
-        menu->addAction(repeatPlaylist);
-        menu->addAction(repeatTrack);
-
-        repeat->setMenu(menu);
-    }
-
-    void shuffleClicked() const
-    {
-        Playlist::PlayModes mode = playerController->playMode();
-
-        if(mode & Playlist::ShuffleTracks) {
-            mode &= ~Playlist::ShuffleTracks;
-        }
-        else {
-            mode |= Playlist::ShuffleTracks;
-        }
-
-        playerController->setPlayMode(mode);
-    }
-
-    void setMode(Playlist::PlayModes mode) const
-    {
-        if(mode & Playlist::RepeatTrack || mode & Playlist::RepeatPlaylist) {
-            repeat->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
-                                                      self->palette().highlight().color()));
-        }
-        else {
-            repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
-        }
-
-        if(mode & Playlist::ShuffleTracks) {
-            shuffle->setIcon(
-                Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
-                                          self->palette().highlight().color()));
-        }
-        else {
-            shuffle->setIcon(Utils::iconFromTheme(Constants::Icons::Shuffle));
-        }
-    }
-};
-
 PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerController, settings)}
+    , m_playerController{playerController}
+    , m_settings{settings}
+    , m_repeat{new ToolButton(this)}
+    , m_shuffle{new ToolButton(this)}
 
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    layout->addWidget(p->repeat);
-    layout->addWidget(p->shuffle);
+    layout->addWidget(m_repeat);
+    layout->addWidget(m_shuffle);
 
-    QObject::connect(p->shuffle, &QToolButton::clicked, this, [this]() { p->shuffleClicked(); });
-    QObject::connect(playerController, &PlayerController::playModeChanged, this,
-                     [this](Playlist::PlayModes mode) { p->setMode(mode); });
+    m_repeat->setPopupMode(QToolButton::InstantPopup);
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->setMode(p->playerController->playMode()); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { p->updateButtonStyle(); });
+    auto* repeatAction = new QAction(this);
+    repeatAction->setToolTip(tr("Repeat"));
+    m_repeat->setDefaultAction(repeatAction);
+
+    auto* shuffleAction = new QAction(this);
+    shuffleAction->setToolTip(tr("Shuffle"));
+    m_shuffle->setDefaultAction(shuffleAction);
+
+    setMode(playerController->playMode());
+
+    setupMenus();
+    updateButtonStyle();
+
+    QObject::connect(m_shuffle, &QToolButton::clicked, this, &PlaylistControl::shuffleClicked);
+    QObject::connect(playerController, &PlayerController::playModeChanged, this, &PlaylistControl::setMode);
+
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { setMode(m_playerController->playMode()); });
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, &PlaylistControl::updateButtonStyle);
 }
-
-PlaylistControl::~PlaylistControl() = default;
 
 QString PlaylistControl::name() const
 {
@@ -192,6 +79,99 @@ QString PlaylistControl::name() const
 QString PlaylistControl::layoutName() const
 {
     return QStringLiteral("PlaylistControls");
+}
+
+void PlaylistControl::updateButtonStyle() const
+{
+    const auto options
+        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
+
+    m_repeat->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_repeat->setAutoRaise(!(options & Settings::Gui::Raise));
+
+    m_shuffle->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_shuffle->setAutoRaise(!(options & Settings::Gui::Raise));
+}
+
+void PlaylistControl::setupMenus()
+{
+    auto* menu = new QMenu(this);
+
+    auto* repeatGroup = new QActionGroup(menu);
+
+    auto* defaultAction  = new QAction(tr("Default"), repeatGroup);
+    auto* repeatPlaylist = new QAction(tr("Repeat playlist"), repeatGroup);
+    auto* repeatTrack    = new QAction(tr("Repeat track"), repeatGroup);
+
+    defaultAction->setCheckable(true);
+    repeatPlaylist->setCheckable(true);
+    repeatTrack->setCheckable(true);
+
+    auto playMode = m_playerController->playMode();
+
+    if(playMode & Playlist::RepeatPlaylist) {
+        repeatPlaylist->setChecked(true);
+    }
+    else if(playMode & Playlist::RepeatTrack) {
+        repeatTrack->setChecked(true);
+    }
+    else {
+        defaultAction->setChecked(true);
+    }
+
+    QObject::connect(defaultAction, &QAction::triggered, this, [this]() {
+        const auto pMode = m_playerController->playMode();
+        m_playerController->setPlayMode(pMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
+    });
+
+    QObject::connect(repeatPlaylist, &QAction::triggered, this, [this]() {
+        const auto pMode = m_playerController->playMode();
+        m_playerController->setPlayMode((pMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
+    });
+
+    QObject::connect(repeatTrack, &QAction::triggered, this, [this]() {
+        const auto pMode = m_playerController->playMode();
+        m_playerController->setPlayMode((pMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
+    });
+
+    menu->addAction(defaultAction);
+    menu->addAction(repeatPlaylist);
+    menu->addAction(repeatTrack);
+
+    m_repeat->setMenu(menu);
+}
+
+void PlaylistControl::shuffleClicked() const
+{
+    Playlist::PlayModes mode = m_playerController->playMode();
+
+    if(mode & Playlist::ShuffleTracks) {
+        mode &= ~Playlist::ShuffleTracks;
+    }
+    else {
+        mode |= Playlist::ShuffleTracks;
+    }
+
+    m_playerController->setPlayMode(mode);
+}
+
+void PlaylistControl::setMode(Playlist::PlayModes mode) const
+{
+    if(mode & Playlist::RepeatTrack || mode & Playlist::RepeatPlaylist) {
+        m_repeat->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
+                                                    palette().highlight().color()));
+    }
+    else {
+        m_repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
+    }
+
+    if(mode & Playlist::ShuffleTracks) {
+        m_shuffle->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
+                                                     palette().highlight().color()));
+    }
+    else {
+        m_shuffle->setIcon(Utils::iconFromTheme(Constants::Icons::Shuffle));
+    }
 }
 } // namespace Fooyin
 

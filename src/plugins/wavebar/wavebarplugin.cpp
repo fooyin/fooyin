@@ -54,38 +54,38 @@ Fooyin::DbConnection::DbParams dbConnectionParams()
 namespace Fooyin::WaveBar {
 struct WaveBarPlugin::Private
 {
-    WaveBarPlugin* self;
+    WaveBarPlugin* m_self;
 
-    ActionManager* actionManager;
-    PlayerController* playerController;
-    EngineController* engine;
-    TrackSelectionController* trackSelection;
-    WidgetProvider* widgetProvider;
-    SettingsManager* settings;
+    ActionManager* m_actionManager;
+    PlayerController* m_playerController;
+    EngineController* m_engine;
+    TrackSelectionController* m_trackSelection;
+    WidgetProvider* m_widgetProvider;
+    SettingsManager* m_settings;
 
-    DbConnectionPoolPtr dbPool;
-    std::unique_ptr<WaveformBuilder> waveBuilder;
+    DbConnectionPoolPtr m_dbPool;
+    std::unique_ptr<WaveformBuilder> m_waveBuilder;
 
-    std::unique_ptr<WaveBarSettings> waveBarSettings;
-    std::unique_ptr<WaveBarSettingsPage> waveBarSettingsPage;
-    std::unique_ptr<WaveBarGuiSettingsPage> waveBarGuiSettingsPage;
+    std::unique_ptr<WaveBarSettings> m_waveBarSettings;
+    std::unique_ptr<WaveBarSettingsPage> m_waveBarSettingsPage;
+    std::unique_ptr<WaveBarGuiSettingsPage> m_waveBarGuiSettingsPage;
 
-    explicit Private(WaveBarPlugin* self_)
-        : self{self_}
-        , dbPool{DbConnectionPool::create(dbConnectionParams(), QStringLiteral("wavebar"))}
+    explicit Private(WaveBarPlugin* self)
+        : m_self{self}
+        , m_dbPool{DbConnectionPool::create(dbConnectionParams(), QStringLiteral("wavebar"))}
     { }
 
     FyWidget* createWavebar()
     {
-        if(!waveBuilder) {
-            waveBuilder = std::make_unique<WaveformBuilder>(engine->createDecoder(), dbPool, settings);
+        if(!m_waveBuilder) {
+            m_waveBuilder = std::make_unique<WaveformBuilder>(m_engine->createDecoder(), m_dbPool, m_settings);
         }
 
-        auto* wavebar = new WaveBarWidget(waveBuilder.get(), playerController, settings);
+        auto* wavebar = new WaveBarWidget(m_waveBuilder.get(), m_playerController, m_settings);
 
-        const Track currTrack = playerController->currentTrack();
+        const Track currTrack = m_playerController->currentTrack();
         if(currTrack.isValid()) {
-            waveBuilder->generateAndScale(currTrack);
+            m_waveBuilder->generateAndScale(currTrack);
         }
 
         return wavebar;
@@ -93,16 +93,16 @@ struct WaveBarPlugin::Private
 
     void regenerateSelection(bool onlyMissing = false) const
     {
-        auto selectedTracks = trackSelection->selectedTracks();
+        auto selectedTracks = m_trackSelection->selectedTracks();
         if(selectedTracks.empty()) {
             return;
         }
 
-        const Track currentTrack = playerController->currentTrack();
+        const Track currentTrack = m_playerController->currentTrack();
         auto currIt              = std::ranges::find(selectedTracks, currentTrack);
-        if(waveBuilder && currIt != selectedTracks.cend()) {
+        if(m_waveBuilder && currIt != selectedTracks.cend()) {
             selectedTracks.erase(currIt);
-            waveBuilder->generateAndScale(currentTrack, !onlyMissing);
+            m_waveBuilder->generateAndScale(currentTrack, !onlyMissing);
         }
 
         if(selectedTracks.empty()) {
@@ -116,7 +116,7 @@ struct WaveBarPlugin::Private
         dialog->setWindowModality(Qt::WindowModal);
         dialog->setValue(0);
 
-        auto* builder = new WaveformBuilder(engine->createDecoder(), dbPool, settings, dialog);
+        auto* builder = new WaveformBuilder(m_engine->createDecoder(), m_dbPool, m_settings, dialog);
 
         QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog, [dialog, builder]() {
             if(dialog->wasCanceled()) {
@@ -133,7 +133,7 @@ struct WaveBarPlugin::Private
 
     void removeSelection()
     {
-        auto selectedTracks = trackSelection->selectedTracks();
+        auto selectedTracks = m_trackSelection->selectedTracks();
         if(selectedTracks.empty()) {
             return;
         }
@@ -144,9 +144,9 @@ struct WaveBarPlugin::Private
                 keys.emplace_back(WaveBarDatabase::cacheKey(track));
             }
 
-            const DbConnectionHandler dbHandler{dbPool};
+            const DbConnectionHandler dbHandler{m_dbPool};
             WaveBarDatabase waveDb;
-            waveDb.initialise(DbConnectionProvider{dbPool});
+            waveDb.initialise(DbConnectionProvider{m_dbPool});
             waveDb.initialiseDatabase();
 
             if(!waveDb.removeFromCache(keys)) {
@@ -157,9 +157,9 @@ struct WaveBarPlugin::Private
 
     void clearCache() const
     {
-        const DbConnectionHandler handler{dbPool};
+        const DbConnectionHandler handler{m_dbPool};
         WaveBarDatabase waveDb;
-        waveDb.initialise(DbConnectionProvider{dbPool});
+        waveDb.initialise(DbConnectionProvider{m_dbPool});
 
         if(!waveDb.clearCache()) {
             qDebug() << "[WaveBar] Unable to clear cache";
@@ -173,37 +173,37 @@ WaveBarPlugin::WaveBarPlugin()
 
 WaveBarPlugin::~WaveBarPlugin()
 {
-    if(p->waveBuilder) {
-        p->waveBuilder.reset();
+    if(p->m_waveBuilder) {
+        p->m_waveBuilder.reset();
     }
 }
 
 void WaveBarPlugin::initialise(const CorePluginContext& context)
 {
-    p->playerController = context.playerController;
-    p->engine           = context.engine;
-    p->settings         = context.settingsManager;
+    p->m_playerController = context.playerController;
+    p->m_engine           = context.engine;
+    p->m_settings         = context.settingsManager;
 }
 
 void WaveBarPlugin::initialise(const GuiPluginContext& context)
 {
-    p->actionManager  = context.actionManager;
-    p->trackSelection = context.trackSelection;
-    p->widgetProvider = context.widgetProvider;
+    p->m_actionManager  = context.actionManager;
+    p->m_trackSelection = context.trackSelection;
+    p->m_widgetProvider = context.widgetProvider;
 
-    p->waveBarSettings        = std::make_unique<WaveBarSettings>(p->settings);
-    p->waveBarSettingsPage    = std::make_unique<WaveBarSettingsPage>(p->settings);
-    p->waveBarGuiSettingsPage = std::make_unique<WaveBarGuiSettingsPage>(p->settings);
+    p->m_waveBarSettings        = std::make_unique<WaveBarSettings>(p->m_settings);
+    p->m_waveBarSettingsPage    = std::make_unique<WaveBarSettingsPage>(p->m_settings);
+    p->m_waveBarGuiSettingsPage = std::make_unique<WaveBarGuiSettingsPage>(p->m_settings);
 
-    QObject::connect(p->waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this,
+    QObject::connect(p->m_waveBarSettingsPage.get(), &WaveBarSettingsPage::clearCache, this,
                      [this]() { p->clearCache(); });
 
-    p->widgetProvider->registerWidget(
+    p->m_widgetProvider->registerWidget(
         QStringLiteral("WaveBar"), [this]() { return p->createWavebar(); }, tr("Waveform Seekbar"));
-    p->widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {tr("Controls")});
+    p->m_widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {tr("Controls")});
 
-    auto* selectionMenu = p->actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
-    auto* utilitiesMenu = p->actionManager->createMenu("Fooyin.Menu.Utilities");
+    auto* selectionMenu = p->m_actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
+    auto* utilitiesMenu = p->m_actionManager->createMenu("Fooyin.Menu.Utilities");
     utilitiesMenu->menu()->setTitle(tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
 

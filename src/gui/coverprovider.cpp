@@ -69,24 +69,24 @@ void saveThumbnail(const QImage& cover, const QString& key)
 namespace Fooyin {
 struct CoverProvider::Private
 {
-    CoverProvider* self;
+    CoverProvider* m_self;
 
-    SettingsManager* settings;
+    SettingsManager* m_settings;
 
-    double windowDpr{1.0};
-    bool usePlacerholder{true};
-    QString coverKey;
-    bool storeThumbnail{false};
-    bool limitThumbSize{true};
-    QPixmapCache::Key noCoverKey;
-    QSize size;
-    std::set<QString> pendingCovers;
-    std::set<QString> noCoverKeys;
-    ScriptParser parser;
+    double m_windowDpr{1.0};
+    bool m_usePlacerholder{true};
+    QString m_coverKey;
+    bool m_storeThumbnail{false};
+    bool m_limitThumbSize{true};
+    QPixmapCache::Key m_noCoverKey;
+    QSize m_size;
+    std::set<QString> m_pendingCovers;
+    std::set<QString> m_noCoverKeys;
 
-    CoverPaths paths;
+    ScriptParser m_parser;
+    CoverPaths m_paths;
 
-    std::mutex fetchGuard;
+    std::mutex m_fetchGuard;
 
     struct CoverLoaderResult
     {
@@ -94,21 +94,22 @@ struct CoverProvider::Private
         bool isThumb{false};
     };
 
-    explicit Private(CoverProvider* self_, SettingsManager* settings_)
-        : self{self_}
-        , settings{settings_}
-        , windowDpr{settings->value<Settings::Gui::MainWindowPixelRatio>()}
-        , size{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
-               settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
-        , paths{settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
+    explicit Private(CoverProvider* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
+        , m_windowDpr{m_settings->value<Settings::Gui::MainWindowPixelRatio>()}
+        , m_size{m_settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
+                 m_settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
+        , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     {
-        settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(self, [this](const int thumbSize) {
-            size = {thumbSize, thumbSize};
+        m_settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(m_self, [this](const int thumbSize) {
+            m_size = {thumbSize, thumbSize};
         });
-        settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
-            self, [this](const QVariant& var) { paths = var.value<CoverPaths>(); });
-        settings->subscribe<Settings::Gui::IconTheme>(self, [this]() { QPixmapCache::remove(noCoverKey); });
-        settings->subscribe<Settings::Gui::MainWindowPixelRatio>(self, [this](double ratio) { windowDpr = ratio; });
+        m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
+            m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
+        m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
+        m_settings->subscribe<Settings::Gui::MainWindowPixelRatio>(m_self,
+                                                                   [this](double ratio) { m_windowDpr = ratio; });
     }
 
     [[nodiscard]] static QPixmap loadCachedCover(const QString& key, bool isThumb = false)
@@ -125,15 +126,15 @@ struct CoverProvider::Private
     QPixmap loadNoCover()
     {
         QPixmap cachedCover;
-        if(QPixmapCache::find(noCoverKey, &cachedCover)) {
+        if(QPixmapCache::find(m_noCoverKey, &cachedCover)) {
             return cachedCover;
         }
 
         const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
         static const QSize coverSize{MaxSize, MaxSize};
-        const QPixmap cover = icon.pixmap(coverSize, windowDpr);
+        const QPixmap cover = icon.pixmap(coverSize, m_windowDpr);
 
-        noCoverKey = QPixmapCache::insert(cover);
+        m_noCoverKey = QPixmapCache::insert(cover);
 
         return cover;
     }
@@ -146,21 +147,21 @@ struct CoverProvider::Private
 
         QStringList filters;
 
-        const std::scoped_lock lock{fetchGuard};
+        const std::scoped_lock lock{m_fetchGuard};
 
         if(type == Track::Cover::Front) {
-            for(const auto& path : paths.frontCoverPaths) {
-                filters.emplace_back(parser.evaluate(path, track));
+            for(const auto& path : m_paths.frontCoverPaths) {
+                filters.emplace_back(m_parser.evaluate(path, track));
             }
         }
         else if(type == Track::Cover::Back) {
-            for(const auto& path : paths.backCoverPaths) {
-                filters.emplace_back(parser.evaluate(path, track));
+            for(const auto& path : m_paths.backCoverPaths) {
+                filters.emplace_back(m_parser.evaluate(path, track));
             }
         }
         else if(type == Track::Cover::Artist) {
-            for(const auto& path : paths.artistPaths) {
-                filters.emplace_back(parser.evaluate(path, track));
+            for(const auto& path : m_paths.artistPaths) {
+                filters.emplace_back(m_parser.evaluate(path, track));
             }
         }
 
@@ -181,8 +182,8 @@ struct CoverProvider::Private
     void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail)
     {
         auto loaderResult
-            = Utils::asyncExec([this, coverSize = size, dpr = windowDpr, thumbOverride = storeThumbnail,
-                                limit = limitThumbSize, key, track, type, thumbnail]() -> CoverLoaderResult {
+            = Utils::asyncExec([this, coverSize = m_size, dpr = m_windowDpr, thumbOverride = m_storeThumbnail,
+                                limit = m_limitThumbSize, key, track, type, thumbnail]() -> CoverLoaderResult {
                   QImage image;
 
                   bool isThumb{thumbnail};
@@ -230,8 +231,8 @@ struct CoverProvider::Private
                   return {image, thumbnail};
               });
 
-        loaderResult.then(self, [this, key, track](const CoverLoaderResult& result) {
-            pendingCovers.erase(key);
+        loaderResult.then(m_self, [this, key, track](const CoverLoaderResult& result) {
+            m_pendingCovers.erase(key);
 
             if(result.cover.isNull()) {
                 return;
@@ -243,7 +244,7 @@ struct CoverProvider::Private
                 qDebug() << "Failed to cache cover for:" << track.filepath();
             }
 
-            emit self->coverAdded(track);
+            emit m_self->coverAdded(track);
         });
     }
 };
@@ -255,27 +256,27 @@ CoverProvider::CoverProvider(SettingsManager* settings, QObject* parent)
 
 void CoverProvider::setUsePlaceholder(bool enabled)
 {
-    p->usePlacerholder = enabled;
+    p->m_usePlacerholder = enabled;
 }
 
 void CoverProvider::setCoverKey(const QString& name)
 {
-    p->coverKey = name;
+    p->m_coverKey = name;
 }
 
 void CoverProvider::resetCoverKey()
 {
-    p->coverKey.clear();
+    p->m_coverKey.clear();
 }
 
 void CoverProvider::setLimitThumbSize(bool enabled)
 {
-    p->limitThumbSize = enabled;
+    p->m_limitThumbSize = enabled;
 }
 
 void CoverProvider::setAlwaysStoreThumbnail(bool enabled)
 {
-    p->storeThumbnail = enabled;
+    p->m_storeThumbnail = enabled;
 }
 
 CoverProvider::~CoverProvider() = default;
@@ -283,49 +284,49 @@ CoverProvider::~CoverProvider() = default;
 QPixmap CoverProvider::trackCover(const Track& track, Track::Cover type) const
 {
     if(!track.isValid()) {
-        return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
+        return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    QString coverKey{p->coverKey};
+    QString coverKey{p->m_coverKey};
     if(coverKey.isEmpty()) {
         coverKey = generateCoverKey(track, type);
     }
 
-    if(!p->pendingCovers.contains(coverKey)) {
+    if(!p->m_pendingCovers.contains(coverKey)) {
         QPixmap cover = p->loadCachedCover(coverKey, false);
         if(!cover.isNull()) {
             return cover;
         }
 
-        p->pendingCovers.emplace(coverKey);
+        p->m_pendingCovers.emplace(coverKey);
         p->fetchCover(coverKey, track, type, false);
     }
 
-    return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
+    return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
 }
 
 QPixmap CoverProvider::trackCoverThumbnail(const Track& track, Track::Cover type) const
 {
     if(!track.isValid()) {
-        return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
+        return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
     }
 
-    QString coverKey{p->coverKey};
+    QString coverKey{p->m_coverKey};
     if(coverKey.isEmpty()) {
         coverKey = generateCoverKey(track, type);
     }
 
-    if(!p->pendingCovers.contains(coverKey)) {
+    if(!p->m_pendingCovers.contains(coverKey)) {
         QPixmap cover = p->loadCachedCover(coverKey, true);
         if(!cover.isNull()) {
             return cover;
         }
 
-        p->pendingCovers.emplace(coverKey);
+        p->m_pendingCovers.emplace(coverKey);
         p->fetchCover(coverKey, track, type, true);
     }
 
-    return p->usePlacerholder ? p->loadNoCover() : QPixmap{};
+    return p->m_usePlacerholder ? p->loadNoCover() : QPixmap{};
 }
 
 void CoverProvider::clearCache()

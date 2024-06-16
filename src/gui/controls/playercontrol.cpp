@@ -34,110 +34,46 @@
 #include <QMenu>
 
 namespace Fooyin {
-struct PlayerControl::Private
-{
-    PlayerControl* self;
-
-    ActionManager* actionManager;
-    PlayerController* playerController;
-    SettingsManager* settings;
-
-    ToolButton* stop;
-    ToolButton* prev;
-    ToolButton* playPause;
-    ToolButton* next;
-
-    Private(PlayerControl* self_, ActionManager* actionManager_, PlayerController* playerController_,
-            SettingsManager* settings_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , playerController{playerController_}
-        , settings{settings_}
-        , stop{new ToolButton(self)}
-        , prev{new ToolButton(self)}
-        , playPause{new ToolButton(self)}
-        , next{new ToolButton(self)}
-    {
-        if(auto* stopCmd = actionManager->command(Constants::Actions::Stop)) {
-            stop->setDefaultAction(stopCmd->action());
-        }
-        if(auto* prevCmd = actionManager->command(Constants::Actions::Previous)) {
-            prev->setDefaultAction(prevCmd->action());
-        }
-        if(auto* playCmd = actionManager->command(Constants::Actions::PlayPause)) {
-            playPause->setDefaultAction(playCmd->action());
-        }
-        if(auto* nextCmd = actionManager->command(Constants::Actions::Next)) {
-            next->setDefaultAction(nextCmd->action());
-        }
-
-        updateButtonStyle();
-    }
-
-    void updateButtonStyle() const
-    {
-        const auto options
-            = static_cast<Settings::Gui::ToolButtonOptions>(settings->value<Settings::Gui::ToolButtonStyle>());
-
-        stop->setStretchEnabled(options & Settings::Gui::Stretch);
-        stop->setAutoRaise(!(options & Settings::Gui::Raise));
-
-        prev->setStretchEnabled(options & Settings::Gui::Stretch);
-        prev->setAutoRaise(!(options & Settings::Gui::Raise));
-
-        playPause->setStretchEnabled(options & Settings::Gui::Stretch);
-        playPause->setAutoRaise(!(options & Settings::Gui::Raise));
-
-        next->setStretchEnabled(options & Settings::Gui::Stretch);
-        next->setAutoRaise(!(options & Settings::Gui::Raise));
-    }
-
-    void updateIcons() const
-    {
-        stop->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
-        prev->setIcon(Utils::iconFromTheme(Constants::Icons::Prev));
-        next->setIcon(Utils::iconFromTheme(Constants::Icons::Next));
-        stateChanged(playerController->playState());
-    }
-
-    void stateChanged(PlayState state) const
-    {
-        switch(state) {
-            case(PlayState::Stopped):
-                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
-                break;
-            case(PlayState::Playing):
-                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Pause));
-                break;
-            case(PlayState::Paused):
-                playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
-                break;
-        }
-    }
-};
-
 PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* playerController,
                              SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, playerController, settings)}
+    , m_actionManager{actionManager}
+    , m_playerController{playerController}
+    , m_settings{settings}
+    , m_stop{new ToolButton(this)}
+    , m_prev{new ToolButton(this)}
+    , m_playPause{new ToolButton(this)}
+    , m_next{new ToolButton(this)}
 {
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    layout->addWidget(p->stop);
-    layout->addWidget(p->prev);
-    layout->addWidget(p->playPause);
-    layout->addWidget(p->next);
+    layout->addWidget(m_stop);
+    layout->addWidget(m_prev);
+    layout->addWidget(m_playPause);
+    layout->addWidget(m_next);
 
-    QObject::connect(p->playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->stateChanged(state); });
+    if(auto* stopCmd = actionManager->command(Constants::Actions::Stop)) {
+        m_stop->setDefaultAction(stopCmd->action());
+    }
+    if(auto* prevCmd = actionManager->command(Constants::Actions::Previous)) {
+        m_prev->setDefaultAction(prevCmd->action());
+    }
+    if(auto* playCmd = actionManager->command(Constants::Actions::PlayPause)) {
+        m_playPause->setDefaultAction(playCmd->action());
+    }
+    if(auto* nextCmd = actionManager->command(Constants::Actions::Next)) {
+        m_next->setDefaultAction(nextCmd->action());
+    }
 
-    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { p->updateIcons(); });
-    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { p->updateButtonStyle(); });
+    updateButtonStyle();
+
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &PlayerControl::stateChanged);
+
+    settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { updateIcons(); });
+    settings->subscribe<Settings::Gui::ToolButtonStyle>(this, [this]() { updateButtonStyle(); });
 }
-
-PlayerControl::~PlayerControl() = default;
 
 QString PlayerControl::name() const
 {
@@ -147,6 +83,47 @@ QString PlayerControl::name() const
 QString PlayerControl::layoutName() const
 {
     return QStringLiteral("PlayerControls");
+}
+
+void PlayerControl::updateButtonStyle() const
+{
+    const auto options
+        = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
+
+    m_stop->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_stop->setAutoRaise(!(options & Settings::Gui::Raise));
+
+    m_prev->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_prev->setAutoRaise(!(options & Settings::Gui::Raise));
+
+    m_playPause->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_playPause->setAutoRaise(!(options & Settings::Gui::Raise));
+
+    m_next->setStretchEnabled(options & Settings::Gui::Stretch);
+    m_next->setAutoRaise(!(options & Settings::Gui::Raise));
+}
+
+void PlayerControl::updateIcons() const
+{
+    m_stop->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
+    m_prev->setIcon(Utils::iconFromTheme(Constants::Icons::Prev));
+    m_next->setIcon(Utils::iconFromTheme(Constants::Icons::Next));
+    stateChanged(m_playerController->playState());
+}
+
+void PlayerControl::stateChanged(PlayState state) const
+{
+    switch(state) {
+        case(PlayState::Stopped):
+            m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
+            break;
+        case(PlayState::Playing):
+            m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Pause));
+            break;
+        case(PlayState::Paused):
+            m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
+            break;
+    }
 }
 } // namespace Fooyin
 

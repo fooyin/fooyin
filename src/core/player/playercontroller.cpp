@@ -28,24 +28,24 @@
 namespace Fooyin {
 struct PlayerController::Private
 {
-    PlayerController* self;
+    PlayerController* m_self;
 
-    SettingsManager* settings;
+    SettingsManager* m_settings;
 
-    PlaylistTrack currentTrack;
-    uint64_t totalDuration{0};
-    PlayState playStatus{PlayState::Stopped};
-    Playlist::PlayModes playMode;
-    uint64_t position{0};
-    bool counted{false};
-    bool isQueueTrack{false};
+    PlaylistTrack m_currentTrack;
+    uint64_t m_totalDuration{0};
+    PlayState m_playStatus{PlayState::Stopped};
+    Playlist::PlayModes m_playMode;
+    uint64_t m_position{0};
+    bool m_counted{false};
+    bool m_isQueueTrack{false};
 
     PlaybackQueue queue;
 
-    Private(PlayerController* self_, SettingsManager* settings_)
-        : self{self_}
-        , settings{settings_}
-        , playMode{static_cast<Playlist::PlayModes>(settings->value<Settings::Core::PlayMode>())}
+    Private(PlayerController* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
+        , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
     { }
 };
 
@@ -54,8 +54,8 @@ PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
     , p{std::make_unique<Private>(this, settings)}
 {
     settings->subscribe<Settings::Core::PlayMode>(this, [this]() {
-        const auto mode = static_cast<Playlist::PlayModes>(p->settings->value<Settings::Core::PlayMode>());
-        if(std::exchange(p->playMode, mode) != mode) {
+        const auto mode = static_cast<Playlist::PlayModes>(p->m_settings->value<Settings::Core::PlayMode>());
+        if(std::exchange(p->m_playMode, mode) != mode) {
             emit playModeChanged(mode);
         }
     });
@@ -65,26 +65,26 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
-    p->playStatus = PlayState::Stopped;
-    p->position   = 0;
+    p->m_playStatus = PlayState::Stopped;
+    p->m_position   = 0;
 }
 
 void PlayerController::play()
 {
-    if(!p->currentTrack.isValid() && !p->queue.empty()) {
+    if(!p->m_currentTrack.isValid() && !p->queue.empty()) {
         changeCurrentTrack(p->queue.nextTrack());
-        emit tracksDequeued({p->currentTrack});
+        emit tracksDequeued({p->m_currentTrack});
     }
 
-    if(p->currentTrack.isValid() && p->playStatus != PlayState::Playing) {
-        p->playStatus = PlayState::Playing;
-        emit playStateChanged(p->playStatus);
+    if(p->m_currentTrack.isValid() && p->m_playStatus != PlayState::Playing) {
+        p->m_playStatus = PlayState::Playing;
+        emit playStateChanged(p->m_playStatus);
     }
 }
 
 void PlayerController::playPause()
 {
-    switch(p->playStatus) {
+    switch(p->m_playStatus) {
         case(PlayState::Playing):
             pause();
             break;
@@ -99,8 +99,8 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    if(std::exchange(p->playStatus, PlayState::Paused) != p->playStatus) {
-        emit playStateChanged(p->playStatus);
+    if(std::exchange(p->m_playStatus, PlayState::Paused) != p->m_playStatus) {
+        emit playStateChanged(p->m_playStatus);
     }
 }
 
@@ -112,32 +112,32 @@ void PlayerController::previous()
 void PlayerController::next()
 {
     if(p->queue.empty()) {
-        p->isQueueTrack = false;
+        p->m_isQueueTrack = false;
         emit nextTrack();
     }
     else {
-        p->currentTrack = {};
-        p->isQueueTrack = true;
+        p->m_currentTrack = {};
+        p->m_isQueueTrack = true;
         play();
     }
 }
 
 void PlayerController::stop()
 {
-    if(std::exchange(p->playStatus, PlayState::Stopped) != p->playStatus) {
+    if(std::exchange(p->m_playStatus, PlayState::Stopped) != p->m_playStatus) {
         reset();
-        emit playStateChanged(p->playStatus);
+        emit playStateChanged(p->m_playStatus);
     }
 }
 
 void PlayerController::setCurrentPosition(uint64_t ms)
 {
-    p->position = ms;
+    p->m_position = ms;
     // TODO: Only increment playCount based on total time listened excluding seeking.
-    if(!p->counted && ms >= p->totalDuration / 2) {
-        p->counted = true;
-        if(p->currentTrack.isValid()) {
-            emit trackPlayed(p->currentTrack.track);
+    if(!p->m_counted && ms >= p->m_totalDuration / 2) {
+        p->m_counted = true;
+        if(p->m_currentTrack.isValid()) {
+            emit trackPlayed(p->m_currentTrack.track);
         }
     }
     emit positionChanged(ms);
@@ -150,26 +150,26 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
 {
-    p->currentTrack  = track;
-    p->totalDuration = p->currentTrack.track.duration();
-    p->position      = 0;
-    p->counted       = false;
+    p->m_currentTrack  = track;
+    p->m_totalDuration = p->m_currentTrack.track.duration();
+    p->m_position      = 0;
+    p->m_counted       = false;
 
-    emit currentTrackChanged(p->currentTrack.track);
-    emit playlistTrackChanged(p->currentTrack);
+    emit currentTrackChanged(p->m_currentTrack.track);
+    emit playlistTrackChanged(p->m_currentTrack);
 }
 
 void PlayerController::updateCurrentTrackPlaylist(const Id& playlistId)
 {
-    if(std::exchange(p->currentTrack.playlistId, playlistId) != playlistId) {
-        emit playlistTrackChanged(p->currentTrack);
+    if(std::exchange(p->m_currentTrack.playlistId, playlistId) != playlistId) {
+        emit playlistTrackChanged(p->m_currentTrack);
     }
 }
 
 void PlayerController::updateCurrentTrackIndex(int index)
 {
-    if(std::exchange(p->currentTrack.indexInPlaylist, index) != index) {
-        emit playlistTrackChanged(p->currentTrack);
+    if(std::exchange(p->m_currentTrack.indexInPlaylist, index) != index) {
+        emit playlistTrackChanged(p->m_currentTrack);
     }
 }
 
@@ -180,73 +180,73 @@ PlaybackQueue PlayerController::playbackQueue() const
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
 {
-    p->settings->set<Settings::Core::PlayMode>(static_cast<int>(mode));
+    p->m_settings->set<Settings::Core::PlayMode>(static_cast<int>(mode));
 }
 
 void PlayerController::seek(uint64_t ms)
 {
-    if(p->totalDuration < 100) {
+    if(p->m_totalDuration < 100) {
         return;
     }
 
-    if(ms >= p->totalDuration - 100) {
+    if(ms >= p->m_totalDuration - 100) {
         next();
         return;
     }
 
-    if(std::exchange(p->position, ms) != ms) {
+    if(std::exchange(p->m_position, ms) != ms) {
         emit positionMoved(ms);
     }
 }
 
 void PlayerController::seekForward(uint64_t delta)
 {
-    seek(p->position + delta);
+    seek(p->m_position + delta);
 }
 
 void PlayerController::seekBackward(uint64_t delta)
 {
-    if(delta > p->position) {
+    if(delta > p->m_position) {
         seek(0);
     }
     else {
-        seek(p->position - delta);
+        seek(p->m_position - delta);
     }
 }
 
 PlayState PlayerController::playState() const
 {
-    return p->playStatus;
+    return p->m_playStatus;
 }
 
 Playlist::PlayModes PlayerController::playMode() const
 {
-    return p->playMode;
+    return p->m_playMode;
 }
 
 uint64_t PlayerController::currentPosition() const
 {
-    return p->position;
+    return p->m_position;
 }
 
 Track PlayerController::currentTrack() const
 {
-    return p->currentTrack.track;
+    return p->m_currentTrack.track;
 }
 
 int PlayerController::currentTrackId() const
 {
-    return p->currentTrack.isValid() ? p->currentTrack.track.id() : -1;
+    return p->m_currentTrack.isValid() ? p->m_currentTrack.track.id() : -1;
 }
 
 bool PlayerController::currentIsQueueTrack() const
 {
-    return p->isQueueTrack;
+    return p->m_isQueueTrack;
 }
 
 PlaylistTrack PlayerController::currentPlaylistTrack() const
 {
-    return p->currentTrack;
+    return p->m_currentTrack;
 }
 
 void PlayerController::queueTrack(const Track& track)

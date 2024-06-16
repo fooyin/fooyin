@@ -60,6 +60,8 @@ set(SOURCES
     dirbrowser/dirtree.h
     info/infodelegate.cpp
     info/infodelegate.h
+    info/infoitem.cpp
+    info/infoitem.h
     info/infomodel.cpp
     info/infomodel.h
     info/infopopulator.cpp

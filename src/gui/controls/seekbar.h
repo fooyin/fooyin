@@ -19,11 +19,15 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
-class SettingsManager;
 class PlayerController;
+class SeekContainer;
+class SettingsManager;
+class Track;
+class TrackSlider;
 
 class SeekBar : public FyWidget
 {
@@ -31,7 +35,6 @@ class SeekBar : public FyWidget
 
 public:
     SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
-    ~SeekBar() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -42,7 +45,16 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void reset();
+    void trackChanged(const Track& track);
+    void setCurrentPosition(uint64_t pos) const;
+    void stateChanged(PlayState state);
+
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
+
+    SeekContainer* m_container;
+    TrackSlider* m_slider;
+    uint64_t m_max;
 };
 } // namespace Fooyin

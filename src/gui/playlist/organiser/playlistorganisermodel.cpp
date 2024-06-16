@@ -109,146 +109,29 @@ QString playlistKey(const QString& name)
 } // namespace
 
 namespace Fooyin {
-struct PlaylistOrganiserModel::Private
-{
-    PlaylistOrganiserModel* self;
-
-    PlaylistHandler* playlistHandler;
-    PlayerController* playerController;
-
-    std::unordered_map<QString, PlaylistOrganiserItem> nodes;
-    QColor playingColour{QApplication::palette().highlight().color()};
-    QIcon playIcon{Utils::iconFromTheme(Constants::Icons::Play)};
-    QIcon pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)};
-
-    explicit Private(PlaylistOrganiserModel* self_, PlaylistHandler* playlistHandler_,
-                     PlayerController* playerController_)
-        : self{self_}
-        , playlistHandler{playlistHandler_}
-        , playerController{playerController_}
-    {
-        playingColour.setAlpha(90);
-    }
-
-    QByteArray saveIndexes(const QModelIndexList& indexes) const
-    {
-        QByteArray result;
-        QDataStream stream(&result, QIODevice::WriteOnly);
-
-        for(const QModelIndex& index : indexes) {
-            if(!index.isValid()) {
-                continue;
-            }
-            auto* item        = self->itemForIndex(index);
-            const QString key = item->type() == PlaylistOrganiserItem::GroupItem ? groupKey(item->title())
-                                                                                 : playlistKey(item->title());
-            stream << key;
-        }
-        return result;
-    }
-
-    QModelIndexList restoreIndexes(QByteArray data)
-    {
-        QModelIndexList result;
-        QDataStream stream(&data, QIODevice::ReadOnly);
-
-        while(!stream.atEnd()) {
-            QString key;
-            stream >> key;
-            if(nodes.contains(key)) {
-                result.push_back(self->indexOfItem(&nodes.at(key)));
-            }
-        }
-        return result;
-    }
-
-    void recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent)
-    {
-        int itemType;
-        stream >> itemType;
-
-        PlaylistOrganiserItem* currParent{parent};
-
-        if(itemType == static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
-            int playlistId;
-            stream >> playlistId;
-            if(Playlist* playlist = playlistHandler->playlistByDbId(playlistId)) {
-                auto* item = &nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, currParent})
-                                  .first->second;
-                currParent->appendChild(item);
-            }
-        }
-        else if(itemType == static_cast<int>(PlaylistOrganiserItem::GroupItem)) {
-            QString title;
-            stream >> title;
-            auto* item = &nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, currParent}).first->second;
-            currParent->appendChild(item);
-            currParent = item;
-        }
-
-        if(itemType != static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
-            qsizetype childCount;
-            stream >> childCount;
-            for(qsizetype row{0}; row < childCount; ++row) {
-                recurseSaveModel(stream, currParent);
-            }
-        }
-    }
-
-    QString findUniqueName(const QString& name) const
-    {
-        return Utils::findUniqueString(name, nodes, [](const auto& pair) { return pair.second.title(); });
-    }
-
-    void deleteNodes(PlaylistOrganiserItem* node)
-    {
-        if(!node) {
-            return;
-        }
-
-        const int count = node->childCount();
-        if(count > 0) {
-            for(int row{0}; row < count; ++row) {
-                if(PlaylistOrganiserItem* child = node->child(row)) {
-                    deleteNodes(child);
-                }
-            }
-        }
-
-        const QString title = node->title();
-
-        if(node->type() == PlaylistOrganiserItem::GroupItem) {
-            nodes.erase(groupKey(title));
-        }
-        else if(node->type() == PlaylistOrganiserItem::PlaylistItem) {
-            const Id id = node->playlist()->id();
-            nodes.erase(playlistKey(title));
-            playlistHandler->removePlaylist(id);
-        }
-    }
-};
-
 PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler, PlayerController* playerController)
-    : p{std::make_unique<Private>(this, playlistHandler, playerController)}
+    : m_playlistHandler{playlistHandler}
+    , m_playerController{playerController}
+    , m_playingColour{QApplication::palette().highlight().color()}
+    , m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
+    , m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
 {
-    QObject::connect(playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
+    QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this]() { emit dataChanged({}, {}, {Qt::BackgroundRole}); });
-    QObject::connect(playerController, &PlayerController::playStateChanged, this,
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
 }
-
-PlaylistOrganiserModel::~PlaylistOrganiserModel() = default;
 
 void PlaylistOrganiserModel::populate()
 {
     beginResetModel();
     resetRoot();
-    p->nodes.clear();
+    m_nodes.clear();
 
-    const PlaylistList playlists = p->playlistHandler->playlists();
+    const PlaylistList playlists = m_playlistHandler->playlists();
 
     for(const auto& playlist : playlists) {
-        auto* item = &p->nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()})
+        auto* item = &m_nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()})
                           .first->second;
         rootItem()->appendChild(item);
     }
@@ -258,15 +141,15 @@ void PlaylistOrganiserModel::populate()
 
 void PlaylistOrganiserModel::populateMissing()
 {
-    const PlaylistList playlists = p->playlistHandler->playlists();
+    const PlaylistList playlists = m_playlistHandler->playlists();
 
     for(const auto& playlist : playlists) {
         const QString key = playlistKey(playlist->name());
-        if(!p->nodes.contains(key)) {
+        if(!m_nodes.contains(key)) {
             const int row = rowCount({});
 
             beginInsertRows({}, row, row);
-            auto* item = &p->nodes.emplace(key, PlaylistOrganiserItem{playlist, rootItem()}).first->second;
+            auto* item = &m_nodes.emplace(key, PlaylistOrganiserItem{playlist, rootItem()}).first->second;
             rootItem()->appendChild(item);
             endInsertRows();
         }
@@ -322,10 +205,10 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
 
     beginResetModel();
     resetRoot();
-    p->nodes.clear();
+    m_nodes.clear();
 
     while(!stream.atEnd()) {
-        p->recurseSaveModel(stream, rootItem());
+        recurseSaveModel(stream, rootItem());
     }
 
     endResetModel();
@@ -336,8 +219,8 @@ bool PlaylistOrganiserModel::restoreModel(QByteArray data)
 QModelIndex PlaylistOrganiserModel::createGroup(const QModelIndex& parent)
 {
     auto* parentItem    = itemForIndex(parent);
-    const QString title = p->findUniqueName(QStringLiteral("New Group"));
-    auto* item          = &p->nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, parentItem}).first->second;
+    const QString title = findUniqueName(QStringLiteral("New Group"));
+    auto* item          = &m_nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, parentItem}).first->second;
 
     const int row = parentItem->childCount();
     beginInsertRows(parent, row, row);
@@ -351,7 +234,7 @@ QModelIndex PlaylistOrganiserModel::createPlaylist(Playlist* playlist, const QMo
 {
     auto* parentItem = itemForIndex(parent);
     auto* item
-        = &p->nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, parentItem}).first->second;
+        = &m_nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, parentItem}).first->second;
 
     const int row = parentItem->childCount();
     beginInsertRows(parent, row, row);
@@ -365,7 +248,7 @@ void PlaylistOrganiserModel::playlistAdded(Playlist* playlist)
 {
     beginInsertRows({}, rowCount({}), rowCount({}));
     auto* item
-        = &p->nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()}).first->second;
+        = &m_nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, rootItem()}).first->second;
     rootItem()->appendChild(item);
     endInsertRows();
 }
@@ -376,16 +259,16 @@ void PlaylistOrganiserModel::playlistRenamed(Playlist* playlist)
         return;
     }
 
-    const auto playlistIt = std::ranges::find_if(std::as_const(p->nodes), [playlist](const auto& pair) {
+    const auto playlistIt = std::ranges::find_if(std::as_const(m_nodes), [playlist](const auto& pair) {
         return pair.second.type() == PlaylistOrganiserItem::PlaylistItem
             && pair.second.playlist()->id() == playlist->id();
     });
 
-    if(playlistIt != p->nodes.end()) {
-        auto playlistItem  = p->nodes.extract(playlistIt);
+    if(playlistIt != m_nodes.end()) {
+        auto playlistItem  = m_nodes.extract(playlistIt);
         playlistItem.key() = playlistKey(playlist->name());
 
-        auto* item = &p->nodes.insert(std::move(playlistItem)).position->second;
+        auto* item = &m_nodes.insert(std::move(playlistItem)).position->second;
         item->setTitle(playlist->name());
 
         const QModelIndex index = indexForPlaylist(playlist);
@@ -400,11 +283,11 @@ void PlaylistOrganiserModel::playlistRemoved(Playlist* playlist)
     }
 
     const QString key = playlistKey(playlist->name());
-    if(!p->nodes.contains(key)) {
+    if(!m_nodes.contains(key)) {
         return;
     }
 
-    const auto* item = &p->nodes.at(key);
+    const auto* item = &m_nodes.at(key);
     const int row    = item->row();
     auto* parent     = item->parent();
 
@@ -413,7 +296,7 @@ void PlaylistOrganiserModel::playlistRemoved(Playlist* playlist)
     parent->resetChildren();
     endRemoveRows();
 
-    p->nodes.erase(key);
+    m_nodes.erase(key);
 }
 
 QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
@@ -423,8 +306,8 @@ QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
     }
 
     const QString key = playlistKey(playlist->name());
-    if(p->nodes.contains(key)) {
-        return indexOfItem(&p->nodes.at(key));
+    if(m_nodes.contains(key)) {
+        return indexOfItem(&m_nodes.at(key));
     }
     return {};
 }
@@ -462,8 +345,8 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
     auto* item      = itemForIndex(index);
     const auto type = item->type();
 
-    const bool currentIsActive = type == PlaylistOrganiserItem::PlaylistItem && p->playlistHandler->activePlaylist()
-                              && item->playlist()->id() == p->playlistHandler->activePlaylist()->id();
+    const bool currentIsActive = type == PlaylistOrganiserItem::PlaylistItem && m_playlistHandler->activePlaylist()
+                              && item->playlist()->id() == m_playlistHandler->activePlaylist()->id();
 
     switch(role) {
         case(Qt::DisplayRole):
@@ -478,18 +361,18 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
             return item->title();
         case(Qt::BackgroundRole): {
             if(currentIsActive) {
-                return p->playingColour;
+                return m_playingColour;
             }
             break;
         }
         case(Qt::DecorationRole):
             if(currentIsActive) {
-                const auto state = p->playerController->playState();
+                const auto state = m_playerController->playState();
                 if(state == PlayState::Playing) {
-                    return p->playIcon;
+                    return m_playIcon;
                 }
                 else if(state == PlayState::Paused) {
-                    return p->pauseIcon;
+                    return m_pauseIcon;
                 }
             }
             break;
@@ -517,19 +400,19 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
     if(type == PlaylistOrganiserItem::PlaylistItem) {
         const QString name = value.toString();
         if(item->title() != name) {
-            p->playlistHandler->renamePlaylist(item->playlist()->id(), name);
+            m_playlistHandler->renamePlaylist(item->playlist()->id(), name);
         }
     }
     else if(type == PlaylistOrganiserItem::GroupItem) {
         const QString oldTitle = item->title();
         const QString title    = value.toString();
         if(oldTitle != title) {
-            const QString newTitle = p->findUniqueName(title);
+            const QString newTitle = findUniqueName(title);
             item->setTitle(newTitle);
 
-            auto groupItem  = p->nodes.extract(groupKey(oldTitle));
+            auto groupItem  = m_nodes.extract(groupKey(oldTitle));
             groupItem.key() = groupKey(newTitle);
-            p->nodes.insert(std::move(groupItem));
+            m_nodes.insert(std::move(groupItem));
         }
     }
 
@@ -565,7 +448,7 @@ Qt::DropActions PlaylistOrganiserModel::supportedDragActions() const
 QMimeData* PlaylistOrganiserModel::mimeData(const QModelIndexList& indexes) const
 {
     auto* mimeData = new QMimeData();
-    mimeData->setData(QString::fromLatin1(OrganiserItems), p->saveIndexes(indexes));
+    mimeData->setData(QString::fromLatin1(OrganiserItems), saveIndexes(indexes));
     return mimeData;
 }
 
@@ -576,7 +459,7 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         return false;
     }
 
-    const QModelIndexList indexes = p->restoreIndexes(data->data(QString::fromLatin1(OrganiserItems)));
+    const QModelIndexList indexes = restoreIndexes(data->data(QString::fromLatin1(OrganiserItems)));
 
     const auto indexGroups = determineTrackIndexGroups(indexes);
 
@@ -653,12 +536,109 @@ void PlaylistOrganiserModel::removeItems(const QModelIndexList& indexes)
 
         beginRemoveRows(parent, firstRow, lastRow);
         while(lastRow >= firstRow) {
-            p->deleteNodes(itemForIndex(index(lastRow, 0, parent)));
+            deleteNodes(itemForIndex(index(lastRow, 0, parent)));
             parentItem->removeChild(lastRow);
             --lastRow;
         }
         parentItem->resetChildren();
         endRemoveRows();
+    }
+}
+
+QByteArray PlaylistOrganiserModel::saveIndexes(const QModelIndexList& indexes) const
+{
+    QByteArray result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+
+    for(const QModelIndex& index : indexes) {
+        if(!index.isValid()) {
+            continue;
+        }
+        auto* item = itemForIndex(index);
+        const QString key
+            = item->type() == PlaylistOrganiserItem::GroupItem ? groupKey(item->title()) : playlistKey(item->title());
+        stream << key;
+    }
+    return result;
+}
+
+QModelIndexList PlaylistOrganiserModel::restoreIndexes(QByteArray data)
+{
+    QModelIndexList result;
+    QDataStream stream(&data, QIODevice::ReadOnly);
+
+    while(!stream.atEnd()) {
+        QString key;
+        stream >> key;
+        if(m_nodes.contains(key)) {
+            result.push_back(indexOfItem(&m_nodes.at(key)));
+        }
+    }
+    return result;
+}
+
+void PlaylistOrganiserModel::recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent)
+{
+    int itemType;
+    stream >> itemType;
+
+    PlaylistOrganiserItem* currParent{parent};
+
+    if(itemType == static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
+        int playlistId;
+        stream >> playlistId;
+        if(Playlist* playlist = m_playlistHandler->playlistByDbId(playlistId)) {
+            auto* item = &m_nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, currParent})
+                              .first->second;
+            currParent->appendChild(item);
+        }
+    }
+    else if(itemType == static_cast<int>(PlaylistOrganiserItem::GroupItem)) {
+        QString title;
+        stream >> title;
+        auto* item = &m_nodes.emplace(groupKey(title), PlaylistOrganiserItem{title, currParent}).first->second;
+        currParent->appendChild(item);
+        currParent = item;
+    }
+
+    if(itemType != static_cast<int>(PlaylistOrganiserItem::PlaylistItem)) {
+        qsizetype childCount;
+        stream >> childCount;
+        for(qsizetype row{0}; row < childCount; ++row) {
+            recurseSaveModel(stream, currParent);
+        }
+    }
+}
+
+QString PlaylistOrganiserModel::findUniqueName(const QString& name) const
+{
+    return Utils::findUniqueString(name, m_nodes, [](const auto& pair) { return pair.second.title(); });
+}
+
+void PlaylistOrganiserModel::deleteNodes(PlaylistOrganiserItem* node)
+{
+    if(!node) {
+        return;
+    }
+
+    const int count = node->childCount();
+    if(count > 0) {
+        for(int row{0}; row < count; ++row) {
+            if(PlaylistOrganiserItem* child = node->child(row)) {
+                deleteNodes(child);
+            }
+        }
+    }
+
+    const QString title = node->title();
+
+    if(node->type() == PlaylistOrganiserItem::GroupItem) {
+        m_nodes.erase(groupKey(title));
+    }
+    else if(node->type() == PlaylistOrganiserItem::PlaylistItem) {
+        const Id id = node->playlist()->id();
+        m_nodes.erase(playlistKey(title));
+        m_playlistHandler->removePlaylist(id);
     }
 }
 } // namespace Fooyin

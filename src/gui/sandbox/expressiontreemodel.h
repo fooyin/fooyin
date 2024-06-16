@@ -23,6 +23,8 @@
 #include <utils/treeitem.h>
 #include <utils/treemodel.h>
 
+#include <QIcon>
+
 namespace Fooyin {
 class ExpressionTreeItem : public TreeItem<ExpressionTreeItem>
 {
@@ -45,14 +47,22 @@ class ExpressionTreeModel : public TreeModel<ExpressionTreeItem>
 {
 public:
     explicit ExpressionTreeModel(QObject* parent = nullptr);
-    ~ExpressionTreeModel() override;
 
     void populate(const ExpressionList& expressions);
 
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    ExpressionTreeItem* insertNode(const QString& key, const QString& name, const Expression& expression,
+                                   ExpressionTreeItem* parent);
+    QString generateKey(const QString& parentKey, const QString& name) const;
+    void iterateExpression(const Expression& expression, ExpressionTreeItem* parent);
+
+    std::unordered_map<QString, ExpressionTreeItem> m_nodes;
+
+    QIcon m_iconExpression;
+    QIcon m_iconLiteral;
+    QIcon m_iconVariable;
+    QIcon m_iconFunction;
 };
 } // namespace Fooyin

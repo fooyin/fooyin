@@ -21,10 +21,15 @@
 
 #include <gui/fywidget.h>
 
+class QTreeView;
+
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
+class Command;
 class PlaylistController;
+class PlaylistOrganiserModel;
+class SettingsManager;
+class WidgetContext;
 
 class PlaylistOrganiser : public FyWidget
 {
@@ -42,7 +47,30 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void selectionChanged();
+    void selectCurrentPlaylist();
+    void createGroup(const QModelIndex& index) const;
+    void createPlaylist(const QModelIndex& index);
+
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    PlaylistController* m_playlistController;
+
+    QTreeView* m_organiserTree;
+    PlaylistOrganiserModel* m_model;
+
+    WidgetContext* m_context;
+
+    QAction* m_removePlaylist;
+    Command* m_removeCmd;
+    QAction* m_renamePlaylist;
+    Command* m_renameCmd;
+    QAction* m_newGroup;
+    Command* m_newGroupCmd;
+    QAction* m_newPlaylist;
+    Command* m_newPlaylistCmd;
+
+    Id m_currentPlaylistId;
+    bool m_creatingPlaylist{false};
 };
 } // namespace Fooyin

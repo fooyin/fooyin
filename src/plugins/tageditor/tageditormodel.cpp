@@ -39,15 +39,15 @@ struct EditorPair
 
 struct TagEditorModel::Private
 {
-    TagEditorModel* self;
+    TagEditorModel* m_self;
 
-    SettingsManager* settings;
-    ScriptRegistry scriptRegistry;
+    SettingsManager* m_settings;
+    ScriptRegistry m_scriptRegistry;
 
-    TrackList tracks;
+    TrackList m_tracks;
 
-    // TODO: Make fields shown configurable
-    const std::vector<EditorPair> fields{
+    // TODO: Make m_fields shown configurable
+    const std::vector<EditorPair> m_fields{
         {QStringLiteral("Artist Name"), &Track::artist},
         {QStringLiteral("Track Title"), &Track::title},
         {QStringLiteral("Album Title"), &Track::album},
@@ -77,7 +77,7 @@ struct TagEditorModel::Private
              return track.metaValue(QString::fromLatin1(Constants::MetaData::Rating));
          }}};
 
-    const std::unordered_map<QString, QString> setFields{
+    const std::unordered_map<QString, QString> m_setFields{
         {QStringLiteral("Artist Name"), QString::fromLatin1(Constants::MetaData::Artist)},
         {QStringLiteral("Track Title"), QString::fromLatin1(Constants::MetaData::Title)},
         {QStringLiteral("Album Title"), QString::fromLatin1(Constants::MetaData::Album)},
@@ -93,39 +93,39 @@ struct TagEditorModel::Private
         {QStringLiteral("Comment"), QString::fromLatin1(Constants::MetaData::Comment)},
         {QStringLiteral("Rating"), QString::fromLatin1(Constants::MetaData::Rating)}};
 
-    TagEditorItem root;
-    TagFieldMap tags;
-    TagFieldMap customTags;
+    TagEditorItem m_root;
+    TagFieldMap m_tags;
+    TagFieldMap m_customTags;
 
-    explicit Private(TagEditorModel* self_, SettingsManager* settings_)
-        : self{self_}
-        , settings{settings_}
+    explicit Private(TagEditorModel* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
     { }
 
     bool isDefaultField(const QString& name) const
     {
-        return std::ranges::any_of(std::as_const(fields),
+        return std::ranges::any_of(std::as_const(m_fields),
                                    [name](const EditorPair& pair) { return pair.displayName == name; });
     }
 
     QString findSetField(const QString& name)
     {
-        if(!setFields.contains(name)) {
+        if(!m_setFields.contains(name)) {
             return {};
         }
-        return setFields.at(name);
+        return m_setFields.at(name);
     }
 
     void reset()
     {
-        root = {};
-        tags.clear();
-        customTags.clear();
+        m_root = {};
+        m_tags.clear();
+        m_customTags.clear();
     }
 
     void updateFields()
     {
-        for(const Track& track : tracks) {
+        for(const Track& track : m_tracks) {
             const auto trackTags = track.extraTags();
 
             for(const auto& [field, values] : Utils::asRange(trackTags)) {
@@ -133,12 +133,12 @@ struct TagEditorModel::Private
                     continue;
                 }
 
-                if(!customTags.contains(field)) {
-                    auto* item = &customTags.emplace(field, TagEditorItem{field, &root, false}).first->second;
-                    root.appendChild(item);
+                if(!m_customTags.contains(field)) {
+                    auto* item = &m_customTags.emplace(field, TagEditorItem{field, &m_root, false}).first->second;
+                    m_root.appendChild(item);
                 }
 
-                auto* fieldItem = &customTags.at(field);
+                auto* fieldItem = &m_customTags.at(field);
                 fieldItem->addTrackValue(values);
             }
         }
@@ -148,23 +148,23 @@ struct TagEditorModel::Private
 
     void updateEditorValues()
     {
-        if(tracks.empty()) {
+        if(m_tracks.empty()) {
             return;
         }
 
-        for(const auto& track : tracks) {
-            for(const auto& [field, var] : fields) {
+        for(const auto& track : m_tracks) {
+            for(const auto& [field, var] : m_fields) {
                 const auto result = var(track);
                 if(result.contains(u"\037")) {
-                    tags[field].addTrackValue(result.split(QStringLiteral("\037")));
+                    m_tags[field].addTrackValue(result.split(QStringLiteral("\037")));
                 }
                 else {
-                    tags[field].addTrackValue(result);
+                    m_tags[field].addTrackValue(result);
                 }
             }
 
-            for(auto& [field, node] : customTags) {
-                const auto result = scriptRegistry.value(field, track);
+            for(auto& [field, node] : m_customTags) {
+                const auto result = m_scriptRegistry.value(field, track);
                 if(!result.cond) {
                     node.addTrack();
                 }
@@ -174,7 +174,7 @@ struct TagEditorModel::Private
 
     void updateTrackMetadata(const QString& name, const QVariant& value)
     {
-        if(tracks.empty()) {
+        if(m_tracks.empty()) {
             return;
         }
 
@@ -202,51 +202,51 @@ struct TagEditorModel::Private
             }
         }
 
-        for(Track& track : tracks) {
+        for(Track& track : m_tracks) {
             if(track.hasCue()) {
                 continue;
             }
             if(isList) {
-                scriptRegistry.setValue(metadata, listValue, track);
+                m_scriptRegistry.setValue(metadata, listValue, track);
             }
             else if(isNumeric) {
-                scriptRegistry.setValue(metadata, intValue, track);
+                m_scriptRegistry.setValue(metadata, intValue, track);
             }
             else {
-                scriptRegistry.setValue(metadata, value.toString(), track);
+                m_scriptRegistry.setValue(metadata, value.toString(), track);
             }
         }
     }
 
     void addCustomTrackMetadata(const QString& name, const QString& value)
     {
-        if(tracks.empty()) {
+        if(m_tracks.empty()) {
             return;
         }
 
-        for(Track& track : tracks) {
+        for(Track& track : m_tracks) {
             track.addExtraTag(name, value);
         }
     }
 
     void replaceCustomTrackMetadata(const QString& name, const QString& value)
     {
-        if(tracks.empty()) {
+        if(m_tracks.empty()) {
             return;
         }
 
-        for(Track& track : tracks) {
+        for(Track& track : m_tracks) {
             track.replaceExtraTag(name, value);
         }
     }
 
     void removeCustomTrackMetadata(const QString& name)
     {
-        if(tracks.empty()) {
+        if(m_tracks.empty()) {
             return;
         }
 
-        for(Track& track : tracks) {
+        for(Track& track : m_tracks) {
             track.removeExtraTag(name);
         }
     }
@@ -263,15 +263,15 @@ void TagEditorModel::reset(const TrackList& tracks)
 {
     beginResetModel();
     p->reset();
-    p->tracks = tracks;
+    p->m_tracks = tracks;
 
-    for(const auto& [field, _] : p->fields) {
-        auto* item = &p->tags.emplace(field, TagEditorItem{field, &p->root, true}).first->second;
-        p->root.appendChild(item);
+    for(const auto& [field, _] : p->m_fields) {
+        auto* item = &p->m_tags.emplace(field, TagEditorItem{field, &p->m_root, true}).first->second;
+        p->m_root.appendChild(item);
     }
 
     p->updateFields();
-    p->root.sortCustomTags();
+    p->m_root.sortCustomTags();
 
     endResetModel();
 }
@@ -305,7 +305,7 @@ bool TagEditorModel::processQueue()
                     p->removeCustomTrackMetadata(node.name());
 
                     beginRemoveRows({}, node.row(), node.row());
-                    p->root.removeChild(node.row());
+                    p->m_root.removeChild(node.row());
                     endRemoveRows();
                     fieldsToRemove.push_back(node.name());
 
@@ -315,16 +315,16 @@ bool TagEditorModel::processQueue()
                 case(TagEditorItem::Changed): {
                     if(custom) {
                         const auto fieldIt
-                            = std::ranges::find_if(std::as_const(p->customTags), [node](const auto& pair) {
+                            = std::ranges::find_if(std::as_const(p->m_customTags), [node](const auto& pair) {
                                   return pair.second.name() == node.name();
                               });
-                        if(fieldIt != p->customTags.end()) {
-                            auto tagItem = p->customTags.extract(fieldIt);
+                        if(fieldIt != p->m_customTags.end()) {
+                            auto tagItem = p->m_customTags.extract(fieldIt);
 
                             p->removeCustomTrackMetadata(tagItem.key());
 
                             tagItem.key() = node.name();
-                            p->customTags.insert(std::move(tagItem));
+                            p->m_customTags.insert(std::move(tagItem));
 
                             p->replaceCustomTrackMetadata(node.name(), node.value());
                         }
@@ -349,11 +349,11 @@ bool TagEditorModel::processQueue()
         }
     };
 
-    updateChangedNodes(p->tags, false);
-    updateChangedNodes(p->customTags, true);
+    updateChangedNodes(p->m_tags, false);
+    updateChangedNodes(p->m_customTags, true);
 
     if(nodeChanged) {
-        emit trackMetadataChanged(p->tracks);
+        emit trackMetadataChanged(p->m_tracks);
     }
 
     return nodeChanged;
@@ -437,7 +437,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
 
 bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(p->tracks.empty()) {
+    if(p->m_tracks.empty()) {
         return false;
     }
 
@@ -449,7 +449,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
 
     switch(index.column()) {
         case(0): {
-            if(value == item->name() || p->customTags.contains(value.toString())) {
+            if(value == item->name() || p->m_customTags.contains(value.toString())) {
                 if(item->status() == TagEditorItem::Added) {
                     emit pendingRowCancelled();
                 }
@@ -494,14 +494,14 @@ QModelIndex TagEditorModel::index(int row, int column, const QModelIndex& parent
         return {};
     }
 
-    TagEditorItem* item = p->root.child(row);
+    TagEditorItem* item = p->m_root.child(row);
 
     return createIndex(row, column, item);
 }
 
 int TagEditorModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    return p->root.childCount();
+    return p->m_root.childCount();
 }
 
 int TagEditorModel::columnCount(const QModelIndex& /*parent*/) const
@@ -527,9 +527,9 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
         if(item) {
             if(item->status() == TagEditorItem::Added) {
                 beginRemoveRows({}, i, i);
-                p->root.removeChild(i);
+                p->m_root.removeChild(i);
                 endRemoveRows();
-                p->customTags.erase(defaultFieldText() + QString::number(row));
+                p->m_customTags.erase(defaultFieldText() + QString::number(row));
             }
             else {
                 item->setStatus(TagEditorItem::Removed);
@@ -548,14 +548,14 @@ QString TagEditorModel::defaultFieldText()
 
 void TagEditorModel::addPendingRow()
 {
-    TagEditorItem newItem{defaultFieldText(), &p->root, false};
+    TagEditorItem newItem{defaultFieldText(), &p->m_root, false};
     newItem.setStatus(TagEditorItem::Added);
 
-    const int row = p->root.childCount();
-    auto* item    = &p->customTags.emplace(defaultFieldText() + QString::number(row), newItem).first->second;
+    const int row = p->m_root.childCount();
+    auto* item    = &p->m_customTags.emplace(defaultFieldText() + QString::number(row), newItem).first->second;
 
     beginInsertRows({}, row, row);
-    p->root.appendChild(item);
+    p->m_root.appendChild(item);
     endInsertRows();
 }
 
@@ -563,7 +563,7 @@ void TagEditorModel::removePendingRow()
 {
     const int row = rowCount({}) - 1;
     beginRemoveRows({}, row, row);
-    p->root.removeChild(row);
+    p->m_root.removeChild(row);
     endRemoveRows();
 }
 } // namespace Fooyin::TagEditor

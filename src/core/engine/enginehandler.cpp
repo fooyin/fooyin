@@ -41,38 +41,39 @@ struct CurrentOutput
 
 struct EngineHandler::Private
 {
-    EngineHandler* self;
+    EngineHandler* m_self;
 
-    PlayerController* playerController;
-    SettingsManager* settings;
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
 
-    QThread engineThread;
-    AudioEngine* engine;
+    QThread m_engineThread;
+    AudioEngine* m_engine;
 
-    std::map<QString, OutputCreator> outputs;
-    CurrentOutput currentOutput;
+    std::map<QString, OutputCreator> m_outputs;
+    CurrentOutput m_currentOutput;
 
-    Private(EngineHandler* self_, PlayerController* playerController_, SettingsManager* settings_)
-        : self{self_}
-        , playerController{playerController_}
-        , settings{settings_}
-        , engine{new AudioPlaybackEngine(settings)}
+    Private(EngineHandler* self, PlayerController* playerController, SettingsManager* settings)
+        : m_self{self}
+        , m_playerController{playerController}
+        , m_settings{settings}
+        , m_engine{new AudioPlaybackEngine(m_settings)}
     {
-        engine->moveToThread(&engineThread);
-        engineThread.start();
+        m_engine->moveToThread(&m_engineThread);
+        m_engineThread.start();
 
-        QObject::connect(playerController, &PlayerController::currentTrackChanged, engine, &AudioEngine::changeTrack);
-        QObject::connect(playerController, &PlayerController::positionMoved, engine, &AudioEngine::seek);
-        QObject::connect(&engineThread, &QThread::finished, engine, &AudioEngine::deleteLater);
-        QObject::connect(engine, &AudioEngine::trackAboutToFinish, self, &EngineHandler::trackAboutToFinish);
-        QObject::connect(engine, &AudioEngine::positionChanged, playerController,
+        QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_engine,
+                         &AudioEngine::changeTrack);
+        QObject::connect(m_playerController, &PlayerController::positionMoved, m_engine, &AudioEngine::seek);
+        QObject::connect(&m_engineThread, &QThread::finished, m_engine, &AudioEngine::deleteLater);
+        QObject::connect(m_engine, &AudioEngine::trackAboutToFinish, m_self, &EngineHandler::trackAboutToFinish);
+        QObject::connect(m_engine, &AudioEngine::positionChanged, m_playerController,
                          &PlayerController::setCurrentPosition);
-        QObject::connect(engine, &AudioEngine::stateChanged, self,
+        QObject::connect(m_engine, &AudioEngine::stateChanged, m_self,
                          [this](PlaybackState state) { handleStateChange(state); });
-        QObject::connect(engine, &AudioEngine::trackStatusChanged, self,
+        QObject::connect(m_engine, &AudioEngine::trackStatusChanged, m_self,
                          [this](TrackStatus status) { handleTrackStatus(status); });
 
-        updateVolume(settings->value<Settings::Core::OutputVolume>());
+        updateVolume(m_settings->value<Settings::Core::OutputVolume>());
     }
 
     void handleStateChange(PlaybackState state) const
@@ -80,10 +81,10 @@ struct EngineHandler::Private
         switch(state) {
             case(PlaybackState::Error):
             case(PlaybackState::Stopped):
-                playerController->stop();
+                m_playerController->stop();
                 break;
             case(PlaybackState::Paused):
-                playerController->pause();
+                m_playerController->pause();
                 break;
             case(PlaybackState::Playing):
                 break;
@@ -94,10 +95,10 @@ struct EngineHandler::Private
     {
         switch(status) {
             case(TrackStatus::EndOfTrack):
-                playerController->next();
+                m_playerController->next();
                 break;
             case(TrackStatus::NoTrack):
-                playerController->stop();
+                m_playerController->stop();
                 break;
             case(TrackStatus::InvalidTrack):
             case(TrackStatus::LoadingTrack):
@@ -106,23 +107,23 @@ struct EngineHandler::Private
                 break;
         }
 
-        emit self->trackStatusChanged(status);
+        emit m_self->trackStatusChanged(status);
     }
 
     void playStateChanged(PlayState state)
     {
         QMetaObject::invokeMethod(
-            engine,
+            m_engine,
             [this, state]() {
                 switch(state) {
                     case(PlayState::Playing):
-                        engine->play();
+                        m_engine->play();
                         break;
                     case(PlayState::Paused):
-                        engine->pause();
+                        m_engine->pause();
                         break;
                     case(PlayState::Stopped):
-                        engine->stop();
+                        m_engine->stop();
                         break;
                 }
             },
@@ -132,12 +133,12 @@ struct EngineHandler::Private
     void changeOutput(const QString& output)
     {
         auto loadDefault = [this]() {
-            currentOutput = {outputs.cbegin()->first, QStringLiteral("default")};
-            emit self->outputChanged(currentOutput.name, currentOutput.device);
+            m_currentOutput = {m_outputs.cbegin()->first, QStringLiteral("default")};
+            emit m_self->outputChanged(m_currentOutput.name, m_currentOutput.device);
         };
 
         if(output.isEmpty()) {
-            if(outputs.empty() || !currentOutput.name.isEmpty()) {
+            if(m_outputs.empty() || !m_currentOutput.name.isEmpty()) {
                 return;
             }
             loadDefault();
@@ -152,31 +153,31 @@ struct EngineHandler::Private
         const QString& newName = newOutput.at(0);
         const QString& device  = newOutput.at(1);
 
-        if(outputs.empty()) {
+        if(m_outputs.empty()) {
             qWarning() << "No Outputs have been registered";
             return;
         }
 
-        if(!outputs.contains(newName)) {
+        if(!m_outputs.contains(newName)) {
             qWarning() << QStringLiteral("Output (%1) hasn't been registered").arg(newName);
             loadDefault();
             return;
         }
 
-        if(currentOutput.name != newName) {
-            currentOutput = {newName, device};
-            emit self->outputChanged(newName, device);
+        if(m_currentOutput.name != newName) {
+            m_currentOutput = {newName, device};
+            emit m_self->outputChanged(newName, device);
         }
-        else if(currentOutput.device != device) {
-            currentOutput.device = device;
-            emit self->deviceChanged(device);
+        else if(m_currentOutput.device != device) {
+            m_currentOutput.device = device;
+            emit m_self->deviceChanged(device);
         }
     }
 
     void updateVolume(double volume)
     {
         QMetaObject::invokeMethod(
-            engine, [this, volume]() { engine->setVolume(volume); }, Qt::QueuedConnection);
+            m_engine, [this, volume]() { m_engine->setVolume(volume); }, Qt::QueuedConnection);
     }
 };
 
@@ -188,35 +189,35 @@ EngineHandler::EngineHandler(PlayerController* playerController, SettingsManager
                      [this](PlayState state) { p->playStateChanged(state); });
 
     QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output, const QString& device) {
-        if(p->outputs.contains(output)) {
-            const auto& outputCreator = p->outputs.at(output);
+        if(p->m_outputs.contains(output)) {
+            const auto& outputCreator = p->m_outputs.at(output);
             QMetaObject::invokeMethod(
-                p->engine, [this, outputCreator, device]() { p->engine->setAudioOutput(outputCreator, device); });
+                p->m_engine, [this, outputCreator, device]() { p->m_engine->setAudioOutput(outputCreator, device); });
         }
     });
-    QObject::connect(this, &EngineHandler::deviceChanged, p->engine, &AudioEngine::setOutputDevice);
+    QObject::connect(this, &EngineHandler::deviceChanged, p->m_engine, &AudioEngine::setOutputDevice);
 
-    p->settings->subscribe<Settings::Core::AudioOutput>(this,
-                                                        [this](const QString& output) { p->changeOutput(output); });
-    p->settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
+    p->m_settings->subscribe<Settings::Core::AudioOutput>(this,
+                                                          [this](const QString& output) { p->changeOutput(output); });
+    p->m_settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateVolume(volume); });
 }
 
 EngineHandler::~EngineHandler()
 {
-    p->engineThread.quit();
-    p->engineThread.wait();
+    p->m_engineThread.quit();
+    p->m_engineThread.wait();
 }
 
 void EngineHandler::setup()
 {
-    p->changeOutput(p->settings->value<Settings::Core::AudioOutput>());
+    p->changeOutput(p->m_settings->value<Settings::Core::AudioOutput>());
 }
 
 OutputNames EngineHandler::getAllOutputs() const
 {
     OutputNames outputs;
 
-    for(const auto& [name, output] : p->outputs) {
+    for(const auto& [name, output] : p->m_outputs) {
         outputs.emplace_back(name);
     }
 
@@ -225,12 +226,12 @@ OutputNames EngineHandler::getAllOutputs() const
 
 OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 {
-    if(!p->outputs.contains(output)) {
+    if(!p->m_outputs.contains(output)) {
         qDebug() << "Output not found: " << output;
         return {};
     }
 
-    if(auto out = p->outputs.at(output)()) {
+    if(auto out = p->m_outputs.at(output)()) {
         return out->getAllDevices();
     }
 
@@ -239,11 +240,11 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 
 void EngineHandler::addOutput(const AudioOutputBuilder& output)
 {
-    if(p->outputs.contains(output.name)) {
+    if(p->m_outputs.contains(output.name)) {
         qDebug() << QStringLiteral("Output (%1) already registered").arg(output.name);
         return;
     }
-    p->outputs.emplace(output.name, output.creator);
+    p->m_outputs.emplace(output.name, output.creator);
 }
 
 std::unique_ptr<AudioDecoder> EngineHandler::createDecoder()

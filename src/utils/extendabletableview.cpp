@@ -88,138 +88,138 @@ private:
 
 struct ExtendableTableView::Private
 {
-    ExtendableTableView* self;
+    ExtendableTableView* m_self;
 
-    ActionManager* actionManager;
+    ActionManager* m_actionManager;
 
-    ExtendableTableModel* model{nullptr};
+    ExtendableTableModel* m_model{nullptr};
 
-    Tools tools;
-    WidgetContext* context;
+    Tools m_tools;
+    WidgetContext* m_context;
 
-    ExtendableToolArea* toolArea;
+    ExtendableToolArea* m_toolArea;
 
-    QAction* add;
-    QAction* remove;
-    QPointer<QAction> moveUp;
-    QPointer<QAction> moveDown;
+    QAction* m_add;
+    QAction* m_remove;
+    QPointer<QAction> m_moveUp;
+    QPointer<QAction> m_moveDown;
 
-    Command* addCommand;
-    Command* removeCommand;
+    Command* m_addCommand;
+    Command* m_removeCommand;
 
-    QToolButton* addButton;
-    QToolButton* removeButton;
-    QPointer<QToolButton> moveUpButton;
-    QPointer<QToolButton> moveDownButton;
+    QToolButton* m_addButton;
+    QToolButton* m_removeButton;
+    QPointer<QToolButton> m_moveUpButton;
+    QPointer<QToolButton> m_moveDownButton;
 
-    int column{0};
+    int m_column{0};
 
-    Private(ExtendableTableView* self_, ActionManager* actionManager_, const Tools& tools_)
-        : self{self_}
-        , actionManager{actionManager_}
-        , tools{tools_}
-        , context{new WidgetContext(
-              self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, self)}
-        , toolArea{new ExtendableToolArea(self)}
-        , add{new QAction(tr("Add"), self)}
-        , remove{new QAction(tr("Remove"), self)}
-        , addCommand{actionManager->registerAction(add, Constants::Actions::New, context->context())}
-        , removeCommand{actionManager->registerAction(remove, Constants::Actions::Remove, context->context())}
-        , addButton{new QToolButton(self)}
-        , removeButton{new QToolButton(self)}
+    Private(ExtendableTableView* self, ActionManager* actionManager, const Tools& tools)
+        : m_self{self}
+        , m_actionManager{actionManager}
+        , m_tools{tools}
+        , m_context{new WidgetContext(
+              m_self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, m_self)}
+        , m_toolArea{new ExtendableToolArea(m_self)}
+        , m_add{new QAction(tr("Add"), m_self)}
+        , m_remove{new QAction(tr("Remove"), m_self)}
+        , m_addCommand{m_actionManager->registerAction(m_add, Constants::Actions::New, m_context->context())}
+        , m_removeCommand{m_actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
+        , m_addButton{new QToolButton(m_self)}
+        , m_removeButton{new QToolButton(m_self)}
     {
-        actionManager->addContextObject(context);
+        m_actionManager->addContextObject(m_context);
 
-        addCommand->setDefaultShortcut(QKeySequence::New);
-        removeCommand->setDefaultShortcut(QKeySequence::Delete);
+        m_addCommand->setDefaultShortcut(QKeySequence::New);
+        m_removeCommand->setDefaultShortcut(QKeySequence::Delete);
 
-        QObject::connect(add, &QAction::triggered, self, [this]() { handleNewRow(); });
-        QObject::connect(remove, &QAction::triggered, self, [this]() { handleRemoveRow(); });
+        QObject::connect(m_add, &QAction::triggered, m_self, [this]() { handleNewRow(); });
+        QObject::connect(m_remove, &QAction::triggered, m_self, [this]() { handleRemoveRow(); });
 
-        addButton->setDefaultAction(addCommand->action());
-        toolArea->addTool(addButton);
-        removeButton->setDefaultAction(removeCommand->action());
-        toolArea->addTool(removeButton);
+        m_addButton->setDefaultAction(m_addCommand->action());
+        m_toolArea->addTool(m_addButton);
+        m_removeButton->setDefaultAction(m_removeCommand->action());
+        m_toolArea->addTool(m_removeButton);
 
         updateTools();
     }
 
     void updateToolArea() const
     {
-        const QRect rect        = self->contentsRect();
-        const int vHeaderWidth  = self->verticalHeader()->isVisible() ? self->verticalHeader()->width() : 0;
-        const int hHeaderHeight = self->horizontalHeader()->isVisible() ? self->horizontalHeader()->height() : 0;
+        const QRect rect        = m_self->contentsRect();
+        const int vHeaderWidth  = m_self->verticalHeader()->isVisible() ? m_self->verticalHeader()->width() : 0;
+        const int hHeaderHeight = m_self->horizontalHeader()->isVisible() ? m_self->horizontalHeader()->height() : 0;
         const int hScrollbarHeight
-            = self->horizontalScrollBar()->isVisible() ? self->horizontalScrollBar()->height() : 0;
+            = m_self->horizontalScrollBar()->isVisible() ? m_self->horizontalScrollBar()->height() : 0;
 
-        toolArea->setGeometry(rect.x(), rect.bottom() - ButtonAreaHeight - hScrollbarHeight, rect.width(),
-                              ButtonAreaHeight);
-        self->setViewportMargins(vHeaderWidth, hHeaderHeight, 0, ButtonAreaHeight);
+        m_toolArea->setGeometry(rect.x(), rect.bottom() - ButtonAreaHeight - hScrollbarHeight, rect.width(),
+                                ButtonAreaHeight);
+        m_self->setViewportMargins(vHeaderWidth, hHeaderHeight, 0, ButtonAreaHeight);
     }
 
     void updateTools()
     {
-        if(tools & Move) {
-            if(!moveUp) {
-                moveUp = new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Move Up"), self);
-                QObject::connect(moveUp, &QAction::triggered, self, [this]() { handleMoveUp(); });
+        if(m_tools & Move) {
+            if(!m_moveUp) {
+                m_moveUp = new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Move Up"), m_self);
+                QObject::connect(m_moveUp, &QAction::triggered, m_self, [this]() { handleMoveUp(); });
 
-                moveUpButton = new QToolButton(self);
-                moveUpButton->setDefaultAction(moveUp);
-                toolArea->addTool(moveUpButton);
+                m_moveUpButton = new QToolButton(m_self);
+                m_moveUpButton->setDefaultAction(m_moveUp);
+                m_toolArea->addTool(m_moveUpButton);
             }
-            if(!moveDown) {
-                moveDown = new QAction(Utils::iconFromTheme(Constants::Icons::Down), tr("Move Down"), self);
-                QObject::connect(moveDown, &QAction::triggered, self, [this]() { handleMoveDown(); });
+            if(!m_moveDown) {
+                m_moveDown = new QAction(Utils::iconFromTheme(Constants::Icons::Down), tr("Move Down"), m_self);
+                QObject::connect(m_moveDown, &QAction::triggered, m_self, [this]() { handleMoveDown(); });
 
-                moveDownButton = new QToolButton(self);
-                moveDownButton->setDefaultAction(moveDown);
-                toolArea->addTool(moveDownButton);
+                m_moveDownButton = new QToolButton(m_self);
+                m_moveDownButton->setDefaultAction(m_moveDown);
+                m_toolArea->addTool(m_moveDownButton);
             }
         }
         else {
-            if(moveUp) {
-                moveUp->deleteLater();
+            if(m_moveUp) {
+                m_moveUp->deleteLater();
             }
-            if(moveUpButton) {
-                moveUpButton->deleteLater();
+            if(m_moveUpButton) {
+                m_moveUpButton->deleteLater();
             }
-            if(moveDown) {
-                moveDown->deleteLater();
+            if(m_moveDown) {
+                m_moveDown->deleteLater();
             }
-            if(moveDownButton) {
-                moveDownButton->deleteLater();
+            if(m_moveDownButton) {
+                m_moveDownButton->deleteLater();
             }
         }
     }
 
     void handleNewRow()
     {
-        if(model) {
+        if(m_model) {
             QObject::connect(
-                model, &QAbstractItemModel::rowsInserted, self,
+                m_model, &QAbstractItemModel::rowsInserted, m_self,
                 [this](const QModelIndex& parent, int first) {
-                    const QModelIndex index = model->index(first, column, parent);
+                    const QModelIndex index = m_model->index(first, m_column, parent);
                     if(index.isValid()) {
-                        self->scrollTo(index);
-                        self->edit(index);
+                        m_self->scrollTo(index);
+                        m_self->edit(index);
                     }
                 },
                 Qt::SingleShotConnection);
 
-            model->addPendingRow();
+            m_model->addPendingRow();
         }
     }
 
     void handleRemoveRow() const
     {
-        if(model) {
-            const QModelIndexList selected = self->selectionModel()->selectedIndexes();
+        if(m_model) {
+            const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
 
             std::set<int> rows;
             std::ranges::transform(selected, std::inserter(rows, rows.begin()),
                                    [](const QModelIndex& index) { return index.row(); });
-            std::ranges::for_each(rows, [this](const int row) { model->removeRow(row); });
+            std::ranges::for_each(rows, [this](const int row) { m_model->removeRow(row); });
         }
     }
 
@@ -247,33 +247,33 @@ ExtendableTableView::~ExtendableTableView() = default;
 
 void ExtendableTableView::setTools(const Tools& tools)
 {
-    p->tools = tools;
+    p->m_tools = tools;
     p->updateTools();
 }
 
 void ExtendableTableView::setToolButtonStyle(Qt::ToolButtonStyle style)
 {
-    p->addButton->setToolButtonStyle(style);
-    p->removeButton->setToolButtonStyle(style);
+    p->m_addButton->setToolButtonStyle(style);
+    p->m_removeButton->setToolButtonStyle(style);
 
-    if(p->moveUpButton) {
-        p->moveUpButton->setToolButtonStyle(style);
+    if(p->m_moveUpButton) {
+        p->m_moveUpButton->setToolButtonStyle(style);
     }
-    if(p->moveDownButton) {
-        p->moveDownButton->setToolButtonStyle(style);
+    if(p->m_moveDownButton) {
+        p->m_moveDownButton->setToolButtonStyle(style);
     }
 }
 
 void ExtendableTableView::addCustomTool(QWidget* widget)
 {
     if(widget) {
-        p->toolArea->addCustomTool(widget);
+        p->m_toolArea->addCustomTool(widget);
     }
 }
 
 void ExtendableTableView::setExtendableModel(ExtendableTableModel* model)
 {
-    if(!model || std::exchange(p->model, model) == model) {
+    if(!model || std::exchange(p->m_model, model) == model) {
         return;
     }
 
@@ -292,27 +292,27 @@ void ExtendableTableView::setExtendableModel(ExtendableTableModel* model)
 
 void ExtendableTableView::setExtendableColumn(int column)
 {
-    p->column = column;
+    p->m_column = column;
 }
 
 QAction* ExtendableTableView::removeAction() const
 {
-    return p->remove;
+    return p->m_remove;
 }
 
 QAction* ExtendableTableView::moveUpAction() const
 {
-    return p->moveUp;
+    return p->m_moveUp;
 }
 
 QAction* ExtendableTableView::moveDownAction() const
 {
-    return p->moveDown;
+    return p->m_moveDown;
 }
 
 Context ExtendableTableView::context() const
 {
-    return p->context->context();
+    return p->m_context->context();
 }
 
 void ExtendableTableView::setupContextActions(QMenu* /*menu*/, const QPoint& /*pos*/) { }
@@ -342,9 +342,9 @@ void ExtendableTableView::contextMenuEvent(QContextMenuEvent* event)
     setupContextActions(menu, event->pos());
     menu->addSeparator();
 
-    menu->addAction(p->addCommand->action());
+    menu->addAction(p->m_addCommand->action());
     if(indexAt(event->pos()).isValid()) {
-        menu->addAction(p->removeCommand->action());
+        menu->addAction(p->m_removeCommand->action());
     }
 
     menu->popup(event->globalPos());

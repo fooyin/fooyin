@@ -30,37 +30,50 @@ public:
     ActionCommand(const Id& id);
     ~ActionCommand() override;
 
-    Id id() const override;
+    [[nodiscard]] Id id() const override;
 
-    QAction* action() const override;
-    QAction* actionForContext(const Id& context) const override;
+    [[nodiscard]] QAction* action() const override;
+    [[nodiscard]] QAction* actionForContext(const Id& context) const override;
 
-    Context context() const override;
+    [[nodiscard]] Context context() const override;
 
     void setAttribute(ProxyAction::Attribute attribute) override;
     void removeAttribute(ProxyAction::Attribute attribute) override;
-    bool hasAttribute(ProxyAction::Attribute attribute) const override;
+    [[nodiscard]] bool hasAttribute(ProxyAction::Attribute attribute) const override;
 
-    bool isActive() const override;
+    [[nodiscard]] bool isActive() const override;
 
     void setShortcut(const ShortcutList& shortcuts) override;
-    QString stringWithShortcut(const QString& str) const override;
+    [[nodiscard]] QString stringWithShortcut(const QString& str) const override;
     void actionWithShortcutToolTip(QAction* action) const override;
 
     void setDefaultShortcut(const QKeySequence& shortcut) override;
     void setDefaultShortcut(const ShortcutList& shortcuts) override;
-    ShortcutList defaultShortcuts() const override;
-    ShortcutList shortcuts() const override;
-    QKeySequence shortcut() const override;
+    [[nodiscard]] ShortcutList defaultShortcuts() const override;
+    [[nodiscard]] ShortcutList shortcuts() const override;
+    [[nodiscard]] QKeySequence shortcut() const override;
 
     void setDescription(const QString& text) override;
-    QString description() const override;
+    [[nodiscard]] QString description() const override;
 
     void setCurrentContext(const Context& newContext);
     void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void removeOverrideAction(QAction* actionToRemove);
+    [[nodiscard]] bool isEmpty() const;
+    void setActive(bool state);
+    void updateActiveState();
+
+    Id m_id;
+    Context m_context;
+    ShortcutList m_defaultKeys;
+    QString m_defaultText;
+
+    bool m_active{false};
+    bool m_shortcutIsInitialised{false};
+
+    std::map<Id, QPointer<QAction>> m_contextActionMap;
+    ProxyAction* m_action{nullptr};
 };
 } // namespace Fooyin

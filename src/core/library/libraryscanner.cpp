@@ -197,53 +197,53 @@ Fooyin::Track matchMissingTrack(const Fooyin::TrackFieldMap& missingFiles, const
 namespace Fooyin {
 struct LibraryScanner::Private
 {
-    LibraryScanner* self;
+    LibraryScanner* m_self;
 
-    DbConnectionPoolPtr dbPool;
-    PlaylistParserRegistry* parserRegistry;
-    SettingsManager* settings;
+    DbConnectionPoolPtr m_dbPool;
+    PlaylistParserRegistry* m_parserRegistry;
+    SettingsManager* m_settings;
 
-    std::unique_ptr<DbConnectionHandler> dbHandler;
+    std::unique_ptr<DbConnectionHandler> m_dbHandler;
 
-    LibraryInfo currentLibrary;
-    TrackDatabase trackDatabase;
-    CueParser* cueParser;
+    LibraryInfo m_currentLibrary;
+    TrackDatabase m_trackDatabase;
+    CueParser* m_cueParser;
 
-    TrackList tracksToStore;
-    TrackList tracksToUpdate;
+    TrackList m_tracksToStore;
+    TrackList m_tracksToUpdate;
 
-    TrackFieldMap trackPaths;
-    TrackFieldMap missingFiles;
-    TrackFieldMap missingHashes;
-    std::unordered_map<QString, TrackList> existingCueTracks;
-    std::unordered_map<QString, TrackList> missingCueTracks;
-    std::set<QString> cueFilesScanned;
+    TrackFieldMap m_trackPaths;
+    TrackFieldMap m_missingFiles;
+    TrackFieldMap m_missingHashes;
+    std::unordered_map<QString, TrackList> m_existingCueTracks;
+    std::unordered_map<QString, TrackList> m_missingCueTracks;
+    std::set<QString> m_cueFilesScanned;
 
-    int tracksProcessed{0};
-    double totalTracks{0};
-    int currentProgress{-1};
+    int m_tracksProcessed{0};
+    double m_totalTracks{0};
+    int m_currentProgress{-1};
 
-    std::unordered_map<int, LibraryWatcher> watchers;
+    std::unordered_map<int, LibraryWatcher> m_watchers;
 
-    Private(LibraryScanner* self_, DbConnectionPoolPtr dbPool_, PlaylistParserRegistry* parserRegistry_,
-            SettingsManager* settings_)
-        : self{self_}
-        , dbPool{std::move(dbPool_)}
-        , parserRegistry{parserRegistry_}
-        , settings{settings_}
-        , cueParser{static_cast<CueParser*>(parserRegistry->parserForExtension(QStringLiteral("*.cue")))}
+    Private(LibraryScanner* self, DbConnectionPoolPtr dbPool, PlaylistParserRegistry* parserRegistry,
+            SettingsManager* settings)
+        : m_self{self}
+        , m_dbPool{std::move(dbPool)}
+        , m_parserRegistry{parserRegistry}
+        , m_settings{settings}
+        , m_cueParser{static_cast<CueParser*>(m_parserRegistry->parserForExtension(QStringLiteral("*.cue")))}
     { }
 
     void cleanupScan()
     {
-        tracksToStore.clear();
-        tracksToUpdate.clear();
-        trackPaths.clear();
-        missingFiles.clear();
-        missingHashes.clear();
-        existingCueTracks.clear();
-        missingCueTracks.clear();
-        cueFilesScanned.clear();
+        m_tracksToStore.clear();
+        m_tracksToUpdate.clear();
+        m_trackPaths.clear();
+        m_missingFiles.clear();
+        m_missingHashes.clear();
+        m_existingCueTracks.clear();
+        m_missingCueTracks.clear();
+        m_cueFilesScanned.clear();
     }
 
     void addWatcher(const Fooyin::LibraryInfo& library)
@@ -251,34 +251,34 @@ struct LibraryScanner::Private
         auto watchPaths = [this, library](const QString& path) {
             QStringList dirs = Utils::File::getAllSubdirectories(path);
             dirs.append(path);
-            watchers[library.id].addPaths(dirs);
+            m_watchers[library.id].addPaths(dirs);
         };
 
         watchPaths(library.path);
 
-        QObject::connect(&watchers.at(library.id), &LibraryWatcher::libraryDirChanged, self,
+        QObject::connect(&m_watchers.at(library.id), &LibraryWatcher::libraryDirChanged, m_self,
                          [this, watchPaths, library](const QString& dir) {
                              watchPaths(dir);
-                             emit self->directoryChanged(library, dir);
+                             emit m_self->directoryChanged(library, dir);
                          });
     }
 
     void reportProgress()
     {
-        const int progress = static_cast<int>((tracksProcessed / totalTracks) * 100);
-        if(currentProgress != progress) {
-            currentProgress = progress;
-            emit self->progressChanged(currentProgress);
+        const int progress = static_cast<int>((m_tracksProcessed / m_totalTracks) * 100);
+        if(m_currentProgress != progress) {
+            m_currentProgress = progress;
+            emit m_self->progressChanged(m_currentProgress);
         }
     }
 
     void storeTracks(TrackList& tracks)
     {
-        if(!self->mayRun()) {
+        if(!m_self->mayRun()) {
             return;
         }
 
-        trackDatabase.storeTracks(tracks);
+        m_trackDatabase.storeTracks(tracks);
     }
 
     TrackList readPlaylistTracks(const QString& file) const
@@ -298,7 +298,7 @@ struct LibraryScanner::Private
         QDir dir{file};
         dir.cdUp();
 
-        if(auto* parser = parserRegistry->parserForExtension(info.suffix())) {
+        if(auto* parser = m_parserRegistry->parserForExtension(info.suffix())) {
             return parser->readPlaylist(&playlistFile, file, dir, true);
         }
 
@@ -315,7 +315,7 @@ struct LibraryScanner::Private
             return {};
         }
 
-        if(auto* parser = parserRegistry->parserForExtension(QStringLiteral("cue"))) {
+        if(auto* parser = m_parserRegistry->parserForExtension(QStringLiteral("cue"))) {
             TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), QStringLiteral(""), false);
             for(auto& plTrack : tracks) {
                 plTrack.generateHash();
@@ -337,37 +337,37 @@ struct LibraryScanner::Private
         }
 
         auto setTrackProps = [this, &baseDir](Track& track) {
-            if(currentLibrary.id >= 0) {
-                track.setLibraryId(currentLibrary.id);
+            if(m_currentLibrary.id >= 0) {
+                track.setLibraryId(m_currentLibrary.id);
                 track.setRelativePath(baseDir.relativeFilePath(track.filepath()));
             }
             track.generateHash();
             track.setIsEnabled(true);
         };
 
-        if(existingCueTracks.contains(cue)) {
-            const auto& tracks = existingCueTracks.at(cue);
+        if(m_existingCueTracks.contains(cue)) {
+            const auto& tracks = m_existingCueTracks.at(cue);
             if(tracks.front().modifiedTime() < lastModified || !onlyModified) {
                 const TrackList cueTracks = readPlaylistTracks(cue);
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
-                    tracksToUpdate.push_back(track);
-                    cueFilesScanned.emplace(track.filepath());
+                    m_tracksToUpdate.push_back(track);
+                    m_cueFilesScanned.emplace(track.filepath());
                 }
             }
             else {
                 for(const Track& track : tracks) {
-                    cueFilesScanned.emplace(track.filepath());
+                    m_cueFilesScanned.emplace(track.filepath());
                 }
             }
         }
         else {
-            if(missingCueTracks.contains(info.fileName())) {
-                TrackList refoundCueTracks = missingCueTracks.at(cue);
+            if(m_missingCueTracks.contains(info.fileName())) {
+                TrackList refoundCueTracks = m_missingCueTracks.at(cue);
                 for(Track& track : refoundCueTracks) {
                     track.setCuePath(cue);
-                    tracksToUpdate.push_back(track);
+                    m_tracksToUpdate.push_back(track);
                 }
             }
             else {
@@ -375,8 +375,8 @@ struct LibraryScanner::Private
                 for(const Track& cueTrack : cueTracks) {
                     Track track{cueTrack};
                     setTrackProps(track);
-                    tracksToStore.push_back(track);
-                    cueFilesScanned.emplace(track.filepath());
+                    m_tracksToStore.push_back(track);
+                    m_cueFilesScanned.emplace(track.filepath());
                 }
             }
         }
@@ -384,11 +384,11 @@ struct LibraryScanner::Private
 
     void readFile(const QString& file, const QDir& baseDir, bool onlyModified)
     {
-        if(!self->mayRun()) {
+        if(!m_self->mayRun()) {
             return;
         }
 
-        if(cueFilesScanned.contains(file)) {
+        if(m_cueFilesScanned.contains(file)) {
             return;
         }
 
@@ -402,35 +402,35 @@ struct LibraryScanner::Private
 
         auto setTrackProps = [this, &file, &baseDir](Track& track) {
             track.setFilePath(file);
-            if(currentLibrary.id >= 0) {
-                track.setLibraryId(currentLibrary.id);
+            if(m_currentLibrary.id >= 0) {
+                track.setLibraryId(m_currentLibrary.id);
                 track.setRelativePath(baseDir.relativeFilePath(file));
             }
             track.setIsEnabled(true);
         };
 
-        if(trackPaths.contains(file)) {
-            const Track& libraryTrack = trackPaths.at(file);
+        if(m_trackPaths.contains(file)) {
+            const Track& libraryTrack = m_trackPaths.at(file);
 
-            if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != currentLibrary.id
+            if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != m_currentLibrary.id
                || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
                 Track changedTrack{libraryTrack};
                 if(Tagging::readMetaData(changedTrack)) {
                     setTrackProps(changedTrack);
 
-                    missingFiles.erase(changedTrack.filename());
+                    m_missingFiles.erase(changedTrack.filename());
 
                     if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
                         TrackList cueTracks = readEmbeddedPlaylistTracks(changedTrack);
                         for(Track& cueTrack : cueTracks) {
                             setTrackProps(cueTrack);
-                            tracksToUpdate.push_back(cueTrack);
-                            missingHashes.erase(cueTrack.hash());
+                            m_tracksToUpdate.push_back(cueTrack);
+                            m_missingHashes.erase(cueTrack.hash());
                         }
                     }
                     else {
-                        tracksToUpdate.push_back(changedTrack);
-                        missingHashes.erase(changedTrack.hash());
+                        m_tracksToUpdate.push_back(changedTrack);
+                        m_missingHashes.erase(changedTrack.hash());
                     }
                 }
             }
@@ -439,14 +439,14 @@ struct LibraryScanner::Private
             Track track{file};
 
             if(Tagging::readMetaData(track)) {
-                Track refoundTrack = matchMissingTrack(missingFiles, missingHashes, track);
+                Track refoundTrack = matchMissingTrack(m_missingFiles, m_missingHashes, track);
 
                 if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
-                    missingHashes.erase(refoundTrack.hash());
-                    missingFiles.erase(refoundTrack.filename());
+                    m_missingHashes.erase(refoundTrack.hash());
+                    m_missingFiles.erase(refoundTrack.filename());
 
                     setTrackProps(refoundTrack);
-                    tracksToUpdate.push_back(refoundTrack);
+                    m_tracksToUpdate.push_back(refoundTrack);
                 }
                 else {
                     setTrackProps(track);
@@ -455,18 +455,18 @@ struct LibraryScanner::Private
                         TrackList cueTracks = readEmbeddedPlaylistTracks(track);
                         for(Track& cueTrack : cueTracks) {
                             setTrackProps(cueTrack);
-                            tracksToStore.push_back(cueTrack);
+                            m_tracksToStore.push_back(cueTrack);
                         }
                     }
                     else {
-                        tracksToStore.push_back(track);
+                        m_tracksToStore.push_back(track);
                     }
                 }
 
-                if(tracksToStore.size() >= BatchSize) {
-                    storeTracks(tracksToStore);
-                    emit self->scanUpdate({.addedTracks = tracksToStore, .updatedTracks = {}});
-                    tracksToStore.clear();
+                if(m_tracksToStore.size() >= BatchSize) {
+                    storeTracks(m_tracksToStore);
+                    emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
+                    m_tracksToStore.clear();
                 }
             }
         }
@@ -475,68 +475,68 @@ struct LibraryScanner::Private
     bool getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
     {
         for(const Track& track : tracks) {
-            trackPaths.emplace(track.filepath(), track);
+            m_trackPaths.emplace(track.filepath(), track);
 
             if(track.hasCue()) {
-                existingCueTracks[track.cuePath()].emplace_back(track);
+                m_existingCueTracks[track.cuePath()].emplace_back(track);
                 if(!QFileInfo::exists(track.cuePath())) {
-                    missingCueTracks[track.cuePath()].emplace_back(track);
+                    m_missingCueTracks[track.cuePath()].emplace_back(track);
                 }
             }
 
             if(!QFileInfo::exists(track.filepath())) {
-                missingFiles.emplace(track.filename(), track);
-                missingHashes.emplace(track.hash(), track);
+                m_missingFiles.emplace(track.filename(), track);
+                m_missingHashes.emplace(track.hash(), track);
             }
         }
 
         const QDir baseDir{path};
         const auto dirs = getDirectories(path);
 
-        tracksProcessed = 0;
-        totalTracks     = static_cast<double>(
+        m_tracksProcessed = 0;
+        m_totalTracks     = static_cast<double>(
             std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
                 return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
             }));
-        currentProgress = 0;
+        m_currentProgress = 0;
 
         for(const auto& [_, files, cues] : dirs) {
             for(const auto& cue : cues) {
-                if(!self->mayRun()) {
+                if(!m_self->mayRun()) {
                     return false;
                 }
 
                 readCue(cue, baseDir, onlyModified);
 
-                ++tracksProcessed;
+                ++m_tracksProcessed;
                 reportProgress();
             }
 
             for(const auto& file : files) {
-                if(!self->mayRun()) {
+                if(!m_self->mayRun()) {
                     return false;
                 }
 
                 readFile(file, baseDir, onlyModified);
 
-                ++tracksProcessed;
+                ++m_tracksProcessed;
                 reportProgress();
             }
         }
 
-        for(auto& track : missingFiles | std::views::values) {
+        for(auto& track : m_missingFiles | std::views::values) {
             if(track.isInLibrary() || track.isEnabled()) {
                 track.setLibraryId(-1);
                 track.setIsEnabled(false);
-                tracksToUpdate.push_back(track);
+                m_tracksToUpdate.push_back(track);
             }
         }
 
-        storeTracks(tracksToStore);
-        storeTracks(tracksToUpdate);
+        storeTracks(m_tracksToStore);
+        storeTracks(m_tracksToUpdate);
 
-        if(!tracksToStore.empty() || !tracksToUpdate.empty()) {
-            emit self->scanUpdate({tracksToStore, tracksToUpdate});
+        if(!m_tracksToStore.empty() || !m_tracksToUpdate.empty()) {
+            emit m_self->scanUpdate({m_tracksToStore, m_tracksToUpdate});
         }
 
         return true;
@@ -544,8 +544,8 @@ struct LibraryScanner::Private
 
     void changeLibraryStatus(LibraryInfo::Status status)
     {
-        currentLibrary.status = status;
-        emit self->statusChanged(currentLibrary);
+        m_currentLibrary.status = status;
+        emit m_self->statusChanged(m_currentLibrary);
     }
 };
 
@@ -561,8 +561,8 @@ void LibraryScanner::initialiseThread()
 {
     Worker::initialiseThread();
 
-    p->dbHandler = std::make_unique<DbConnectionHandler>(p->dbPool);
-    p->trackDatabase.initialise(DbConnectionProvider{p->dbPool});
+    p->m_dbHandler = std::make_unique<DbConnectionHandler>(p->m_dbPool);
+    p->m_trackDatabase.initialise(DbConnectionProvider{p->m_dbPool});
 }
 
 void LibraryScanner::stopThread()
@@ -585,7 +585,7 @@ void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled
                 emit statusChanged(updatedLibrary);
             }
         }
-        else if(!p->watchers.contains(library.id)) {
+        else if(!p->m_watchers.contains(library.id)) {
             p->addWatcher(library);
             LibraryInfo updatedLibrary{library};
             updatedLibrary.status = LibraryInfo::Status::Monitoring;
@@ -594,7 +594,7 @@ void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled
     }
 
     if(!enabled) {
-        p->watchers.clear();
+        p->m_watchers.clear();
     }
 }
 
@@ -602,11 +602,11 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
 {
     setState(Running);
 
-    p->currentLibrary = library;
+    p->m_currentLibrary = library;
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
-    if(p->currentLibrary.id >= 0 && QFileInfo::exists(p->currentLibrary.path)) {
-        if(p->settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->watchers.contains(library.id)) {
+    if(p->m_currentLibrary.id >= 0 && QFileInfo::exists(p->m_currentLibrary.path)) {
+        if(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->m_watchers.contains(library.id)) {
             p->addWatcher(library);
         }
         p->getAndSaveAllTracks(library.path, tracks, onlyModified);
@@ -617,7 +617,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
-        p->changeLibraryStatus(p->settings->value<Settings::Core::Internal::MonitorLibraries>()
+        p->changeLibraryStatus(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>()
                                    ? LibraryInfo::Status::Monitoring
                                    : LibraryInfo::Status::Idle);
         setState(Idle);
@@ -629,7 +629,7 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
 {
     setState(Running);
 
-    p->currentLibrary = library;
+    p->m_currentLibrary = library;
 
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
@@ -640,7 +640,7 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
-        p->changeLibraryStatus(p->settings->value<Settings::Core::Internal::MonitorLibraries>()
+        p->changeLibraryStatus(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>()
                                    ? LibraryInfo::Status::Monitoring
                                    : LibraryInfo::Status::Idle);
         setState(Idle);
@@ -659,9 +659,9 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
-    p->tracksProcessed = 0;
-    p->totalTracks     = static_cast<double>(tracks.size());
-    p->currentProgress = -1;
+    p->m_tracksProcessed = 0;
+    p->m_totalTracks     = static_cast<double>(tracks.size());
+    p->m_currentProgress = -1;
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
@@ -678,7 +678,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
         Track track{pendingTrack};
 
-        ++p->tracksProcessed;
+        ++p->m_tracksProcessed;
 
         if(trackMap.contains(track.filepath())) {
             tracksScanned.push_back(trackMap.at(track.filepath()));
@@ -708,8 +708,8 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
-    p->tracksProcessed = 0;
-    p->currentProgress = 0;
+    p->m_tracksProcessed = 0;
+    p->m_currentProgress = 0;
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
@@ -721,7 +721,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     const LibraryDirectories dirs = getDirectories(urls);
 
-    p->totalTracks = static_cast<double>(
+    p->m_totalTracks = static_cast<double>(
         std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
             return sum + dir.files.size() + dir.playlists.size();
         }));
@@ -757,7 +757,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 filesScanned.emplace(playlistTrack.filepath());
             }
 
-            ++p->tracksProcessed;
+            ++p->m_tracksProcessed;
             p->reportProgress();
         }
 
@@ -785,7 +785,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 }
             }
 
-            ++p->tracksProcessed;
+            ++p->m_tracksProcessed;
             p->reportProgress();
         }
     }

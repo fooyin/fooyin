@@ -39,13 +39,13 @@ bool checkFile(const QFileInfo& file)
 namespace Fooyin {
 struct LayoutProvider::Private
 {
-    LayoutList layouts;
-    Layout currentLayout;
-    QFile layoutFile{Gui::activeLayoutPath()};
+    LayoutList m_layouts;
+    Layout m_currentLayout;
+    QFile m_layoutFile{Gui::activeLayoutPath()};
 
     [[nodiscard]] bool layoutExists(const QString& name) const
     {
-        return std::ranges::any_of(layouts, [name](const Layout& layout) { return layout.name == name; });
+        return std::ranges::any_of(m_layouts, [name](const Layout& layout) { return layout.name == name; });
     }
 
     std::optional<Layout> addLayout(const QByteArray& json, bool import = false)
@@ -57,9 +57,9 @@ struct LayoutProvider::Private
         }
 
         const auto existingLayout = std::ranges::find_if(
-            std::as_const(layouts), [layout](const Layout& existing) { return existing.name == layout->name; });
+            std::as_const(m_layouts), [layout](const Layout& existing) { return existing.name == layout->name; });
 
-        if(existingLayout != layouts.cend()) {
+        if(existingLayout != m_layouts.cend()) {
             if(import) {
                 return *existingLayout;
             }
@@ -67,7 +67,7 @@ struct LayoutProvider::Private
             return {};
         }
 
-        layouts.push_back(layout.value());
+        m_layouts.push_back(layout.value());
         return layout;
     }
 };
@@ -82,30 +82,30 @@ LayoutProvider::~LayoutProvider() = default;
 
 Layout LayoutProvider::currentLayout() const
 {
-    return p->currentLayout;
+    return p->m_currentLayout;
 }
 
 void LayoutProvider::changeLayout(const Layout& layout)
 {
     std::ranges::replace_if(
-        p->layouts, [layout](const Layout& existing) { return existing.name == layout.name; }, layout);
+        p->m_layouts, [layout](const Layout& existing) { return existing.name == layout.name; }, layout);
 
-    p->currentLayout = layout;
+    p->m_currentLayout = layout;
 }
 
 void LayoutProvider::loadCurrentLayout()
 {
-    if(!p->layoutFile.exists()) {
+    if(!p->m_layoutFile.exists()) {
         return;
     }
 
-    if(!p->layoutFile.open(QIODevice::ReadOnly)) {
+    if(!p->m_layoutFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Couldn't open layout file.";
         return;
     }
 
-    const QByteArray json = p->layoutFile.readAll();
-    p->layoutFile.close();
+    const QByteArray json = p->m_layoutFile.readAll();
+    p->m_layoutFile.close();
 
     const auto layout = readLayout(json);
     if(!layout) {
@@ -118,25 +118,25 @@ void LayoutProvider::loadCurrentLayout()
         return;
     }
 
-    p->currentLayout = layout.value();
+    p->m_currentLayout = layout.value();
 }
 
 void LayoutProvider::saveCurrentLayout()
 {
-    if(!p->layoutFile.open(QIODevice::WriteOnly)) {
+    if(!p->m_layoutFile.open(QIODevice::WriteOnly)) {
         qCritical() << "Couldn't open layout file";
         return;
     }
 
-    const QByteArray json = QJsonDocument(p->currentLayout.json).toJson();
+    const QByteArray json = QJsonDocument(p->m_currentLayout.json).toJson();
 
-    p->layoutFile.write(json);
-    p->layoutFile.close();
+    p->m_layoutFile.write(json);
+    p->m_layoutFile.close();
 }
 
 LayoutList LayoutProvider::layouts() const
 {
-    return p->layouts;
+    return p->m_layouts;
 }
 
 void LayoutProvider::findLayouts()
@@ -248,7 +248,7 @@ bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
 
     const QFileInfo fileInfo{filepath};
     if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name)) {
-        p->layouts.push_back(layout);
+        p->m_layouts.push_back(layout);
     }
 
     return true;

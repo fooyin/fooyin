@@ -27,11 +27,6 @@
 namespace Fooyin {
 struct Layout
 {
-    Layout() = default;
-    Layout(QString name_, QJsonObject json_)
-        : name{std::move(name_)}
-        , json{std::move(json_)}
-    { }
     QString name;
     QJsonObject json;
 };
