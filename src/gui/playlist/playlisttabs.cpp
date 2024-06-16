@@ -373,7 +373,7 @@ void PlaylistTabs::dragMoveEvent(QDragMoveEvent* event)
 #if(QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
             p->m_hoverTimer.start(1s, this);
 #else
-            p->hoverTimer.start(1000, this);
+            p->m_hoverTimer.start(1000, this);
 #endif
         }
     }
