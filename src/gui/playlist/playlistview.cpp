@@ -214,7 +214,7 @@ PlaylistView::Private::Private(PlaylistView* self)
 
     QObject::connect(m_header, &QHeaderView::sectionResized, this, [this]() {
         if(m_columnResizeTimerId == 0) {
-            m_columnResizeTimerId = m_self->startTimer(0);
+            m_columnResizeTimerId = m_self->startTimer(20);
         }
     });
     QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() { m_self->viewport()->update(); });
@@ -262,9 +262,11 @@ void PlaylistView::Private::updateScrollBars()
     }
 
     const int vMax = contentsHeight - viewportHeight;
-    m_hidingScrollbar = verticalBar->isVisible() && vMax > 0;
+    if(verticalBar->isVisible() && vMax < 0) {
+        m_hidingScrollbar = true;
+    }
 
-    verticalBar->setRange(0, contentsHeight - viewportHeight);
+    verticalBar->setRange(0, vMax);
     verticalBar->setPageStep(viewportHeight);
     verticalBar->setSingleStep(std::max(viewportHeight / (itemsInViewport + 1), 2));
 
@@ -2277,11 +2279,11 @@ void PlaylistView::timerEvent(QTimerEvent* event)
     else if(event->timerId() == p->m_columnResizeTimerId) {
         killTimer(p->m_columnResizeTimerId);
         p->m_columnResizeTimerId = 0;
-        p->recalculatePadding();
         if(p->m_hidingScrollbar) {
             p->m_hidingScrollbar = false;
             return;
         }
+        p->recalculatePadding();
         updateGeometries();
         viewport()->update();
     }
