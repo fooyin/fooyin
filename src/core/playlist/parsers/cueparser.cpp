@@ -191,10 +191,10 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
     else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
         if(!skipFile && dir.exists()) {
             if(QDir::isAbsolutePath(value)) {
-                trackPath = value;
+                trackPath = QDir::cleanPath(value);
             }
             else {
-                trackPath = dir.absoluteFilePath(value);
+                trackPath = QDir::cleanPath(dir.absoluteFilePath(value));
             }
         }
         if(parts.size() > 2) {
