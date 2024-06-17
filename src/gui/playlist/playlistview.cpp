@@ -262,7 +262,7 @@ void PlaylistView::Private::updateScrollBars()
     }
 
     const int vMax = contentsHeight - viewportHeight;
-    if(verticalBar->isVisible() && vMax < 0) {
+    if(verticalBar->isVisible() && vMax <= 0) {
         m_hidingScrollbar = true;
     }
 
