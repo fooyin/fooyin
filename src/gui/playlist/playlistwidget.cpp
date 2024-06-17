@@ -357,11 +357,11 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
         return;
     }
 
-    auto loadState = [this, state](bool fetch = false) -> bool {
-        const auto& [index, end] = m_model->trackIndexAtPlaylistIndex(state->topIndex, fetch);
+    auto loadState = [this, state]() {
+        const auto& [index, end] = m_model->trackIndexAtPlaylistIndex(state->topIndex, true);
 
-        if(!index.isValid() || (!fetch && end)) {
-            return false;
+        if(!index.isValid()) {
+            return;
         }
 
         m_playlistView->playlistReset();
@@ -371,15 +371,10 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
         if(std::exchange(m_showPlaying, false)) {
             followCurrentTrack();
         }
-
-        return true;
     };
 
-    if(!loadState()) {
-        QObject::connect(
-            m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(true); },
-            Qt::SingleShotConnection);
-    }
+    QObject::connect(
+        m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(); }, Qt::SingleShotConnection);
 }
 
 void PlaylistWidgetPrivate::resetModel() const
