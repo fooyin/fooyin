@@ -27,6 +27,8 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/editabletabbar.h>
@@ -53,6 +55,7 @@ struct PlaylistTabs::Private
 {
     PlaylistTabs* m_self;
 
+    ActionManager* m_actionManager;
     PlaylistController* m_playlistController;
     PlaylistHandler* m_playlistHandler;
     TrackSelectionController* m_selectionController;
@@ -70,8 +73,10 @@ struct PlaylistTabs::Private
 
     Id m_lastActivePlaylist;
 
-    Private(PlaylistTabs* self, PlaylistController* playlistController, SettingsManager* settings)
+    Private(PlaylistTabs* self, ActionManager* actionManager, PlaylistController* playlistController,
+            SettingsManager* settings)
         : m_self{self}
+        , m_actionManager{actionManager}
         , m_playlistController{playlistController}
         , m_playlistHandler{m_playlistController->playlistHandler()}
         , m_selectionController{m_playlistController->selectionController()}
@@ -201,10 +206,10 @@ struct PlaylistTabs::Private
     }
 };
 
-PlaylistTabs::PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                           SettingsManager* settings, QWidget* parent)
+PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                           PlaylistController* playlistController, SettingsManager* settings, QWidget* parent)
     : WidgetContainer{widgetProvider, settings, parent}
-    , p{std::make_unique<Private>(this, playlistController, settings)}
+    , p{std::make_unique<Private>(this, actionManager, playlistController, settings)}
 {
     QObject::setObjectName(PlaylistTabs::name());
 
@@ -349,6 +354,12 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         menu->addAction(moveLeft);
         menu->addAction(moveRight);
+
+        menu->addSeparator();
+
+        if(auto* savePlaylist = p->m_actionManager->command(Constants::Actions::SavePlaylist)) {
+            menu->addAction(savePlaylist->action());
+        }
     }
 
     menu->popup(mapToGlobal(point));

@@ -24,17 +24,18 @@
 class QIcon;
 
 namespace Fooyin {
-class SettingsManager;
+class ActionManager;
 class Playlist;
 class PlaylistController;
+class SettingsManager;
 
 class PlaylistTabs : public WidgetContainer
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistTabs(WidgetProvider* widgetProvider, PlaylistController* playlistController,
-                          SettingsManager* settings, QWidget* parent = nullptr);
+    explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
+                          PlaylistController* playlistController, SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistTabs() override;
 
     void setupTabs();

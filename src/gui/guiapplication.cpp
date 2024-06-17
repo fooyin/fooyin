@@ -62,6 +62,7 @@
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "systemtrayicon.h"
+#include "utils/actions/command.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
 #include "widgets/lyricswidget.h"
@@ -378,6 +379,15 @@ struct GuiApplication::Private
                     settingsManager->value<Settings::Core::Internal::MuteVolume>());
             }
         });
+
+        QObject::connect(playlistController.get(), &PlaylistController::currentPlaylistChanged, mainWindow.get(),
+                         [this]() {
+                             if(auto* savePlaylistCommand = actionManager->command(Constants::Actions::SavePlaylist)) {
+                                 if(const auto* playlist = playlistController->currentPlaylist()) {
+                                     savePlaylistCommand->action()->setEnabled(playlist->trackCount() > 0);
+                                 }
+                             }
+                         });
     }
 
     void restoreIconTheme()
@@ -454,7 +464,8 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
             [this]() {
-                return new PlaylistTabs(&widgetProvider, playlistController.get(), settingsManager, mainWindow.get());
+                return new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(), settingsManager,
+                                        mainWindow.get());
             },
             tr("Playlist Tabs"));
         widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {tr("Splitters")});
