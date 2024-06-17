@@ -75,6 +75,8 @@
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/playlist/playlistparser.h>
+#include <core/playlist/playlistparserregistry.h>
 #include <core/plugins/coreplugincontext.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/coverprovider.h>
@@ -116,6 +118,7 @@ struct GuiApplication::Private
     LibraryManager* libraryManager;
     MusicLibrary* library;
     PlaylistHandler* playlistHandler;
+    PlaylistParserRegistry* playlistParsers;
 
     WidgetProvider widgetProvider;
     GuiSettings guiSettings;
@@ -158,7 +161,7 @@ struct GuiApplication::Private
 
     GuiPluginContext guiPluginContext;
 
-    ScriptParser parser;
+    ScriptParser scriptParser;
 
     explicit Private(GuiApplication* self_, const CorePluginContext& core)
         : self{self_}
@@ -170,6 +173,7 @@ struct GuiApplication::Private
         , libraryManager{core.libraryManager}
         , library{core.library}
         , playlistHandler{core.playlistHandler}
+        , playlistParsers{core.playlistParsers}
         , guiSettings{settingsManager}
         , editableLayout{std::make_unique<EditableLayout>(actionManager, &widgetProvider, &layoutProvider,
                                                           settingsManager)}
@@ -293,7 +297,7 @@ struct GuiApplication::Private
         }
         else {
             const QString script = settingsManager->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-            const QString title  = parser.evaluate(script, track);
+            const QString title  = scriptParser.evaluate(script, track);
             mainWindow->prependTitle(title);
         }
     }
@@ -335,6 +339,7 @@ struct GuiApplication::Private
         QObject::connect(fileMenu, &FileMenu::requestAddFiles, self, [this]() { addFiles(); });
         QObject::connect(fileMenu, &FileMenu::requestAddFolders, self, [this]() { addFolders(); });
         QObject::connect(fileMenu, &FileMenu::requestLoadPlaylist, self, [this]() { loadPlaylist(); });
+        QObject::connect(fileMenu, &FileMenu::requestSavePlaylist, self, [this]() { savePlaylist(); });
         QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
         QObject::connect(viewMenu, &ViewMenu::openScriptSandbox, self, [this]() {
             auto* sandboxDialog = new SandboxDialog(&selectionController, settingsManager, mainWindow.get());
@@ -647,7 +652,7 @@ struct GuiApplication::Private
             dir = lastPath;
         }
 
-        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), dir, playlistFilter);
+        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Load Playlist"), dir, playlistFilter);
 
         if(files.empty()) {
             return;
@@ -658,6 +663,55 @@ struct GuiApplication::Private
         const QFileInfo info{files.front().toLocalFile()};
 
         playlistInteractor.filesToNewPlaylist(info.completeBaseName(), files);
+    }
+
+    void savePlaylist() const
+    {
+        auto* playlist = playlistController->currentPlaylist();
+        if(!playlist || playlist->trackCount() == 0) {
+            return;
+        }
+
+        const QString playlistFilter
+            = Utils::extensionsToFilterList(playlistParsers->supportedSaveExtensions(), QStringLiteral("files"));
+
+        QUrl dir = QUrl::fromLocalFile(QDir::homePath());
+        if(const auto lastPath = settingsManager->fileValue(QString::fromLatin1(LastFilePath)).toString();
+           !lastPath.isEmpty()) {
+            dir = lastPath;
+        }
+
+        QString selectedFilter;
+        const auto file
+            = QFileDialog::getSaveFileUrl(mainWindow.get(), tr("Save Playlist"), dir, playlistFilter, &selectedFilter);
+
+        if(file.isEmpty()) {
+            return;
+        }
+
+        settingsManager->fileSet(QString::fromLatin1(LastFilePath), file);
+
+        const QString extension = Utils::extensionFromFilter(selectedFilter);
+        if(extension.isEmpty()) {
+            return;
+        }
+
+        if(auto* parser = playlistParsers->parserForExtension(extension)) {
+            QFile playlistFile{file.toLocalFile()};
+            if(!playlistFile.open(QIODevice::WriteOnly)) {
+                qWarning() << QStringLiteral("Could not open playlist file %1 for writing: %2")
+                                  .arg(playlistFile.fileName(), playlistFile.errorString());
+                return;
+            }
+
+            const QFileInfo info{playlistFile};
+            const QDir playlistDir{info.absolutePath()};
+            const auto pathType
+                = static_cast<PlaylistParser::PathType>(settingsManager->value<Settings::Core::PlaylistSavePathType>());
+            const bool writeMetadata = settingsManager->value<Settings::Core::PlaylistSaveMetadata>();
+
+            parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
+        }
     }
 };
 

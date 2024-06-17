@@ -49,6 +49,9 @@ FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
 FYUTILS_EXPORT QString capitalise(const QString& str);
 FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
+FYUTILS_EXPORT QStringList extensionsToWildcards(const QStringList& extensions);
+FYUTILS_EXPORT QString extensionsToFilterList(const QStringList& extensions, const QString& name);
+FYUTILS_EXPORT QString extensionFromFilter(const QString& filter);
 
 FYUTILS_EXPORT QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale = false);
 FYUTILS_EXPORT QPixmap scalePixmap(const QPixmap& image, int width, double dpr, bool upscale = false);

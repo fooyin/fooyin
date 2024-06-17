@@ -20,13 +20,14 @@
 #pragma once
 
 namespace Fooyin {
-class PluginManager;
-class SettingsManager;
 class EngineController;
 class PlayerController;
 class PlaylistHandler;
+class PlaylistParserRegistry;
+class PluginManager;
 class LibraryManager;
 class MusicLibrary;
+class SettingsManager;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -35,7 +36,7 @@ struct CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager_, EngineController* engine_, PlayerController* playerController_,
                       LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistHandler* playlistHandler_,
-                      SettingsManager* settingsManager_)
+                      SettingsManager* settingsManager_, PlaylistParserRegistry* playlistParsers_)
         : pluginManager{pluginManager_}
         , playerController{playerController_}
         , libraryManager{libraryManager_}
@@ -43,6 +44,7 @@ struct CorePluginContext
         , playlistHandler{playlistHandler_}
         , settingsManager{settingsManager_}
         , engine{engine_}
+        , playlistParsers{playlistParsers_}
     { }
 
     PluginManager* pluginManager;
@@ -52,5 +54,6 @@ struct CorePluginContext
     PlaylistHandler* playlistHandler;
     SettingsManager* settingsManager;
     EngineController* engine;
+    PlaylistParserRegistry* playlistParsers;
 };
 } // namespace Fooyin

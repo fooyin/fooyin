@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <memory>
 
 #include <QStringList>
@@ -26,12 +28,13 @@
 namespace Fooyin {
 class PlaylistParser;
 
-class PlaylistParserRegistry
+class FYCORE_EXPORT PlaylistParserRegistry
 {
 public:
     PlaylistParser* registerParser(std::unique_ptr<PlaylistParser> parser);
 
     [[nodiscard]] QStringList supportedExtensions() const;
+    [[nodiscard]] QStringList supportedSaveExtensions() const;
     [[nodiscard]] PlaylistParser* parserForExtension(const QString& extension) const;
 
 private:

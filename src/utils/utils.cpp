@@ -27,6 +27,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QRegularExpression>
 #include <QTime>
 #include <QWidget>
 
@@ -191,6 +192,37 @@ QByteArray detectEncoding(const QByteArray& content)
     ucsdet_close(csd);
 
     return encoding;
+}
+
+QStringList extensionsToWildcards(const QStringList& extensions)
+{
+    QStringList wildcards;
+    std::ranges::transform(extensions, std::back_inserter(wildcards),
+                           [](const QString& extension) { return QStringLiteral("*.%1").arg(extension); });
+    return wildcards;
+}
+
+QString extensionsToFilterList(const QStringList& extensions, const QString& name)
+{
+    QStringList filterList;
+
+    for(const QString& ext : extensions) {
+        filterList.append(QStringLiteral("%1 %2 (*.%3)").arg(ext, name, ext));
+    }
+
+    return filterList.join(u";;");
+}
+
+QString extensionFromFilter(const QString& filter)
+{
+    static const QRegularExpression re{QStringLiteral(R"(\*\.(\w+))")};
+    const QRegularExpressionMatch match = re.match(filter);
+
+    if(match.hasMatch()) {
+        return match.captured(1);
+    }
+
+    return {};
 }
 
 QPixmap scalePixmap(const QPixmap& image, const QSize& size, double dpr, bool upscale)

@@ -29,6 +29,7 @@ class FYCORE_EXPORT CueParser : public PlaylistParser
 public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QStringList supportedExtensions() const override;
+    [[nodiscard]] bool saveIsSupported() const override;
 
     TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
 };

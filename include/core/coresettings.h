@@ -29,18 +29,20 @@ namespace Fooyin::Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum CoreSettings : uint32_t
 {
-    Version             = 1 | Type::String,
-    FirstRun            = 2 | Type::Bool,
-    PlayMode            = 3 | Type::Int,
-    AutoRefresh         = 4 | Type::Bool,
-    LibrarySortScript   = 5 | Type::String,
-    ActivePlaylistId    = 6 | Type::Int,
-    AudioOutput         = 7 | Type::String,
-    OutputVolume        = 8 | Type::Double,
-    RewindPreviousTrack = 9 | Type::Bool,
-    GaplessPlayback     = 10 | Type::Bool,
-    Language            = 11 | Type::String,
-    BufferLength        = 12 | Type::Int,
+    Version              = 1 | Type::String,
+    FirstRun             = 2 | Type::Bool,
+    PlayMode             = 3 | Type::Int,
+    AutoRefresh          = 4 | Type::Bool,
+    LibrarySortScript    = 5 | Type::String,
+    ActivePlaylistId     = 6 | Type::Int,
+    AudioOutput          = 7 | Type::String,
+    OutputVolume         = 8 | Type::Double,
+    RewindPreviousTrack  = 9 | Type::Bool,
+    GaplessPlayback      = 10 | Type::Bool,
+    Language             = 11 | Type::String,
+    BufferLength         = 12 | Type::Int,
+    PlaylistSavePathType = 13 | Type::Int,
+    PlaylistSaveMetadata = 14 | Type::Bool
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Fooyin::Settings::Core

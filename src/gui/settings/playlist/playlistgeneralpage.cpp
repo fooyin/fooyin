@@ -27,6 +27,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -58,6 +59,9 @@ private:
 
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
+
+    QComboBox* m_exportPathType;
+    QCheckBox* m_exportMetadata;
 };
 
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
@@ -71,6 +75,8 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_tabsAddButton{new QCheckBox(tr("Show add button"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
+    , m_exportPathType{new QComboBox(this)}
+    , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -92,11 +98,15 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     behaviourLayout->addWidget(m_playbackFollowsCursor, 1, 0, 1, 2);
     behaviourLayout->addWidget(m_rewindPrevious, 2, 0, 1, 2);
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
-    auto* appearanceLayout = new QGridLayout(appearance);
+    auto* saving       = new QGroupBox(tr("Saving"), this);
+    auto* savingLayout = new QGridLayout(saving);
 
-    auto* tabsGroup       = new QGroupBox(tr("Playlist Tabs"), this);
-    auto* tabsGroupLayout = new QGridLayout(tabsGroup);
+    auto* pathTypeLabel = new QLabel(tr("Path type") + QStringLiteral(":"), this);
+
+    savingLayout->addWidget(pathTypeLabel, 0, 0);
+    savingLayout->addWidget(m_exportPathType, 0, 1);
+    savingLayout->addWidget(m_exportMetadata, 1, 0, 1, 2);
+    savingLayout->setColumnStretch(2, 1);
 
     auto* padding       = new QGroupBox(tr("Image Padding"), this);
     auto* paddingLayout = new QGridLayout(padding);
@@ -110,6 +120,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     paddingLayout->addWidget(m_imagePaddingTop, 1, 1);
     paddingLayout->setColumnStretch(2, 1);
 
+    auto* appearance       = new QGroupBox(tr("Appearance"), this);
+    auto* appearanceLayout = new QGridLayout(appearance);
+
     int row{0};
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
@@ -118,16 +131,24 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     appearanceLayout->setColumnStretch(2, 1);
     appearanceLayout->setRowStretch(appearanceLayout->rowCount(), 1);
 
+    auto* tabsGroup       = new QGroupBox(tr("Playlist Tabs"), this);
+    auto* tabsGroupLayout = new QGridLayout(tabsGroup);
+
     auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging"), this);
 
     tabsGroupLayout->addWidget(m_tabsAddButton, 0, 0);
     tabsGroupLayout->addWidget(addButtonLabel, 1, 0);
 
     layout->addWidget(behaviour, 0, 0);
-    layout->addWidget(appearance, 1, 0);
-    layout->addWidget(tabsGroup, 2, 0);
+    layout->addWidget(saving, 1, 0);
+    layout->addWidget(appearance, 2, 0);
+    layout->addWidget(tabsGroup, 3, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
+
+    m_exportPathType->addItem(QStringLiteral("Auto"));
+    m_exportPathType->addItem(QStringLiteral("Absolute"));
+    m_exportPathType->addItem(QStringLiteral("Relative"));
 }
 
 void PlaylistGeneralPageWidget::load()
@@ -135,6 +156,9 @@ void PlaylistGeneralPageWidget::load()
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
+
+    m_exportPathType->setCurrentIndex(static_cast<int>(m_settings->value<Settings::Core::PlaylistSavePathType>()));
+    m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
 
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
@@ -152,6 +176,9 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
 
+    m_settings->set<Settings::Core::PlaylistSavePathType>(m_exportPathType->currentIndex());
+    m_settings->set<Settings::Core::PlaylistSaveMetadata>(m_exportMetadata->isChecked());
+
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
@@ -167,6 +194,10 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
+    m_settings->reset<Settings::Core::RewindPreviousTrack>();
+
+    m_settings->reset<Settings::Core::PlaylistSavePathType>();
+    m_settings->reset<Settings::Core::PlaylistSaveMetadata>();
 
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();

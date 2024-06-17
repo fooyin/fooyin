@@ -64,10 +64,10 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addAction(loadPlaylistCommand, Actions::Groups::Two);
     QObject::connect(loadPlaylist, &QAction::triggered, this, &FileMenu::requestLoadPlaylist);
 
-    // auto* savePlaylist        = new QAction(tr("&Save Playlist"), this);
-    // auto* savePlaylistCommand = m_actionManager->registerAction(savePlaylist, Constants::Actions::SavePlaylist);
-    // fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
-    // QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
+    auto* savePlaylist        = new QAction(tr("&Save Playlist"), this);
+    auto* savePlaylistCommand = m_actionManager->registerAction(savePlaylist, Constants::Actions::SavePlaylist);
+    fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
+    QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
 
     fileMenu->addSeparator();
 

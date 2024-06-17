@@ -43,6 +43,19 @@ QStringList PlaylistParserRegistry::supportedExtensions() const
     return extensions;
 }
 
+QStringList PlaylistParserRegistry::supportedSaveExtensions() const
+{
+    QStringList extensions;
+
+    for(const auto& [_, parser] : m_parsers) {
+        if(parser->saveIsSupported()) {
+            extensions.append(parser->supportedExtensions());
+        }
+    }
+
+    return extensions;
+}
+
 PlaylistParser* PlaylistParserRegistry::parserForExtension(const QString& extension) const
 {
     for(const auto& [_, parser] : m_parsers) {

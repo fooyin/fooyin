@@ -94,6 +94,7 @@ set(SOURCES
     player/playercontroller.cpp
     playlist/playlist.cpp
     playlist/playlisthandler.cpp
+    playlist/playlistparser.cpp
     playlist/playlistparserregistry.cpp
     playlist/playlistparserregistry.h
     playlist/parsers/cueparser.cpp

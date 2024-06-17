@@ -91,7 +91,7 @@ struct Application::Private
         , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, self)}
         , pluginManager{settingsManager}
         , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
-                            library,        playlistHandler, settingsManager}
+                            library,        playlistHandler, settingsManager,  &parserRegistry}
     {
         registerTypes();
         registerPlaylistParsers();

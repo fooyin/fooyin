@@ -30,11 +30,24 @@ namespace Fooyin {
 class FYCORE_EXPORT PlaylistParser
 {
 public:
+    enum class PathType : uint8_t
+    {
+        Auto = 0,
+        Absolute,
+        Relative
+    };
+
     virtual ~PlaylistParser() = default;
 
     [[nodiscard]] virtual QString name() const                    = 0;
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
+    [[nodiscard]] virtual bool saveIsSupported() const            = 0;
 
     virtual TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) = 0;
+    virtual void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
+                              PathType type, bool writeMetdata);
+
+    static void detectEncoding(QTextStream& in, QIODevice* file);
+    static QString determineTrackPath(const QUrl& url, const QDir& dir, PathType type);
 };
 } // namespace Fooyin

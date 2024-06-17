@@ -29,7 +29,10 @@ class FYCORE_EXPORT M3uParser : public PlaylistParser
 public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QStringList supportedExtensions() const override;
+    [[nodiscard]] bool saveIsSupported() const override;
 
     TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
+    void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
+                      PathType type, bool writeMetdata) override;
 };
 } // namespace Fooyin

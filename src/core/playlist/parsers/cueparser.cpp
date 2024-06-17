@@ -48,24 +48,6 @@ struct CueSheet
     uint64_t lastModified{0};
 };
 
-void setupEncoding(QTextStream& in, QIODevice* file)
-{
-    const QByteArray data = file->peek(1024);
-    auto encoding         = QStringConverter::encodingForData(data);
-    if(encoding) {
-        in.setEncoding(encoding.value());
-    }
-    else {
-        const auto encodingName = Fooyin::Utils::detectEncoding(data);
-        if(!encodingName.isEmpty()) {
-            encoding = QStringConverter::encodingForName(encodingName.constData());
-            if(encoding) {
-                in.setEncoding(encoding.value());
-            }
-        }
-    }
-}
-
 QStringList splitCueLine(const QString& line)
 {
     static const QRegularExpression lineRegex{QLatin1String{CueLineRegex}};
@@ -250,7 +232,7 @@ void processCueLine(const QString& line, CueSheet& sheet, Fooyin::Track& track, 
     }
 }
 
-Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const QDir& dir, bool skipNotFound)
+Fooyin::TrackList readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound)
 {
     Fooyin::TrackList tracks;
 
@@ -266,8 +248,8 @@ Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const 
     Fooyin::Track track;
     QString trackPath;
 
-    QTextStream in{file};
-    setupEncoding(in, file);
+    QTextStream in{device};
+    Fooyin::PlaylistParser::detectEncoding(in, device);
 
     while(!in.atEnd()) {
         processCueLine(in.readLine().trimmed(), sheet, track, trackPath, dir, skipNotFound, false, tracks);
@@ -283,7 +265,7 @@ Fooyin::TrackList readCueTracks(QIODevice* file, const QString& filepath, const 
     return tracks;
 }
 
-Fooyin::TrackList readEmbeddedCueTracks(QIODevice* file, const QString& filepath)
+Fooyin::TrackList readEmbeddedCueTracks(QIODevice* device, const QString& filepath)
 {
     Fooyin::TrackList tracks;
     CueSheet sheet;
@@ -293,8 +275,8 @@ Fooyin::TrackList readEmbeddedCueTracks(QIODevice* file, const QString& filepath
     Fooyin::Track track;
     QString trackPath{filepath};
 
-    QTextStream in{file};
-    setupEncoding(in, file);
+    QTextStream in{device};
+    Fooyin::PlaylistParser::detectEncoding(in, device);
 
     while(!in.atEnd()) {
         processCueLine(in.readLine().trimmed(), sheet, track, trackPath, {}, false, true, tracks);
@@ -321,6 +303,12 @@ QStringList CueParser::supportedExtensions() const
 {
     static const QStringList extensions{QStringLiteral("cue")};
     return extensions;
+}
+
+bool CueParser::saveIsSupported() const
+{
+    // TODO: Implement saving cue files
+    return false;
 }
 
 TrackList CueParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound)

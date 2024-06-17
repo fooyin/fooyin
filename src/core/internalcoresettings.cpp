@@ -49,6 +49,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
     m_settings->createSetting<Language>(QStringLiteral(""), QStringLiteral("Language"));
     m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
+    m_settings->createSetting<PlaylistSavePathType>(0, QStringLiteral("Playlist/SavePathType"));
+    m_settings->createSetting<PlaylistSaveMetadata>(false, QStringLiteral("Playlist/SaveMetadata"));
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

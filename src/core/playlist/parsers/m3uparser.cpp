@@ -28,6 +28,7 @@
 #include <QDir>
 #include <QFile>
 #include <QRegularExpression>
+#include <QTextStream>
 
 namespace {
 enum class Type
@@ -84,12 +85,20 @@ QStringList M3uParser::supportedExtensions() const
     return extensions;
 }
 
+bool M3uParser::saveIsSupported() const
+{
+    return true;
+}
+
 TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir, bool skipNotFound)
 {
     Type type{Type::Standard};
     Metadata metadata;
 
-    QString m3u = QString::fromUtf8(device->readAll());
+    QTextStream in{device};
+    detectEncoding(in, device);
+
+    QString m3u = in.readAll();
     m3u.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
     m3u.replace(u'\r', u'\n');
 
@@ -124,7 +133,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                     path = line;
                 }
                 else {
-                    path = dir.absoluteFilePath(line);
+                    path = QDir::cleanPath(dir.absoluteFilePath(line));
                 }
             }
 
@@ -145,5 +154,27 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
     buffer.close();
 
     return tracks;
+}
+
+void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
+                             PathType type, bool writeMetdata)
+{
+    QTextStream stream{device};
+    if(extension == u"m3u") {
+        stream.setEncoding(QStringConverter::System);
+    }
+
+    if(writeMetdata) {
+        stream << "#EXTM3U\n";
+    }
+
+    for(const Track& track : tracks) {
+        if(writeMetdata) {
+            stream << QStringLiteral("#EXTINF:%1,%2 - %3\n")
+                          .arg(track.duration() / 1000)
+                          .arg(track.artist(), track.title());
+        }
+        stream << PlaylistParser::determineTrackPath(QUrl::fromLocalFile(track.filepath()), dir, type) << "\n";
+    }
 }
 } // namespace Fooyin
