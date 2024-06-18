@@ -1,36 +1,43 @@
 # Fooyin Roadmap
 
-This document outlines the upcoming features for fooyin - they are listed in no particular order.
+This document outlines the upcoming features for fooyin.
 
 ## New Features
 
-* ~~CUE support~~
-* ReplayGain support
-* ~~Playback queue~~
-* ~~MPRIS support~~
-* Query-based language for searching/filtering
-* Smart playlists
-* Album artwork features - downloading, storing in metadata/on disk
-* Lyric support - embedded and LRC (including enhanced LRC)
-* Audio conversion
-* Renaming/Copying/Moving files on disk
-* Integrate Last.fm for scrobbling
-* Integrate Discogs for metadata searching
-* Internet radio support
-* Archive support (Adding to library, playback)
+| Feature                                       | Release |
+|-----------------------------------------------|---------|
+| Playback queue                                | ✅ 0.4.0 |
+| MPRIS support                                 | ✅ 0.4.0 |
+| CUE support                                   | ✅ 0.5.0 |
+| ReplayGain support                            | ❓ TBD   |
+| Query-based language for searching/filtering  | ❓ TBD   |
+| Smart playlists                               | ❓ TBD   |
+| Album artwork features                        | ❓ TBD   |
+| Lyric support                                 | ❓ TBD   |
+| Audio conversion                              | ❓ TBD   |
+| Renaming/Copying/Moving files on disk         | ❓ TBD   |
+| Integrate Last.fm for scrobbling              | ❓ TBD   |
+| Integrate Discogs for metadata searching      | ❓ TBD   |
+| Internet radio support                        | ❓ TBD   |
+| Archive support (Adding to library, playback) | ❓ TBD   |
 
 ## Enhancements
-* ~~Support custom tags within scripts~~
-* ~~Add HTML-like tags to FooScript for formatting~~
-* Enhance playlist functionality - import/export options
-* Add album cover mode to filter widget
-* Per-playlist playback queue
+
+| Enhancement                                    | Release  |
+|------------------------------------------------|----------|
+| Support custom tags within scripts             | ✅ 0.4.0  |
+| Add HTML-like tags to FooScript for formatting | ✅ 0.4.0  |
+| Import/Export playlists                        | ✅ 0.5.0  |
+| Add icon/artwork mode to Library Filter        | 🔄 0.5.0 |
+| Per-playlist playback queue                    | ❓ TBD    |
 
 ## Widgets
 
-* ~~Directory browser~~
-* ~~Waveform seekbar~~
-* Musical spectrum
-* VU meter
-* Spectrogram
-* Playback queue viewer
+| Widget                | Release |
+|-----------------------|---------|
+| Directory browser     | ✅ 0.4.0 |
+| Waveform seekbar      | ✅ 0.4.0 |
+| Musical spectrum      | ❓ TBD   |
+| VU meter              | ❓ TBD   |
+| Spectrogram           | ❓ TBD   |
+| Playback queue viewer | ❓ TBD   |
