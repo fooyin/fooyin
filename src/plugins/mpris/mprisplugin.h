@@ -132,6 +132,7 @@ private:
     SettingsManager* m_settings;
 
     bool m_registered;
+    QString m_prevCoverKey;
     QVariantMap m_currentMetaData;
     CoverProvider* m_coverProvider;
 };

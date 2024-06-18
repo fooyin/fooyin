@@ -21,12 +21,13 @@
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/guipaths.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
+#include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
 
-#include "core/playlist/playlisthandler.h"
 #include "mprisplayer.h"
 #include "mprisroot.h"
 
@@ -95,7 +96,6 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
     m_coverProvider->setUsePlaceholder(false);
     m_coverProvider->setAlwaysStoreThumbnail(true);
     m_coverProvider->setLimitThumbSize(false);
-    m_coverProvider->setCoverKey(QStringLiteral("MPRISCOVER"));
 
     QObject::connect(m_windowController, &WindowController::isFullScreenChanged, this,
                      [this]() { notify(QStringLiteral("Fullscreen"), fullscreen()); });
@@ -131,6 +131,8 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
 
 void MprisPlugin::shutdown()
 {
+    CoverProvider::removeFromCache(m_prevCoverKey);
+
     if(!m_registered) {
         return;
     }
@@ -419,13 +421,19 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
     }
 
     if(m_coverProvider) {
-        const QPixmap cover = m_coverProvider->trackCoverThumbnail(track, Track::Cover::Front);
-        if(cover.isNull()) {
-            return;
+        const QString coverKey = Utils::generateHash(QStringLiteral("MPRIS"), track.albumHash());
+        if(m_prevCoverKey != coverKey) {
+            CoverProvider::removeFromCache(m_prevCoverKey);
+            m_prevCoverKey = coverKey;
+            m_coverProvider->setCoverKey(m_prevCoverKey);
+
+            const QPixmap cover = m_coverProvider->trackCoverThumbnail(track, Track::Cover::Front);
+            if(cover.isNull()) {
+                return;
+            }
         }
 
-        static const QString coverPath
-            = Fooyin::Gui::coverPath() + QStringLiteral("MPRISCOVER") + QStringLiteral(".jpg");
+        const QString coverPath = Fooyin::Gui::coverPath() + m_prevCoverKey + QStringLiteral(".jpg");
         m_currentMetaData[QStringLiteral("mpris:artUrl")] = QUrl::fromLocalFile(coverPath).toString();
     }
 }
