@@ -108,7 +108,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_layout{new QHBoxLayout(m_self)}
     , m_model{new PlaylistModel(m_library, m_playerController, settings, m_self)}
     , m_playlistView{new PlaylistView(m_self)}
-    , m_header{m_playlistView->header()}
+    , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
     , m_playlistContext{new WidgetContext(m_self, Context{Constants::Context::Playlist}, m_self)}
     , m_removeTrackAction{new QAction(tr("Remove"), m_self)}
@@ -121,11 +121,14 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     m_layout->setContentsMargins(0, 0, 0, 0);
 
     m_header->setStretchEnabled(true);
+    m_header->setSectionsClickable(true);
     m_header->setSectionsMovable(true);
     m_header->setFirstSectionMovable(true);
     m_header->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_header->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
     m_playlistView->setModel(m_model);
+    m_playlistView->setHeader(m_header);
     m_playlistView->setItemDelegate(new PlaylistDelegate(m_self));
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(m_self));
 

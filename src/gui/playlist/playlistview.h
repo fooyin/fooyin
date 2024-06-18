@@ -19,70 +19,24 @@
 
 #pragma once
 
-#include <QAbstractItemView>
+#include <utils/widgets/expandedtreeview.h>
 
 namespace Fooyin {
-class AutoHeaderView;
-
-class PlaylistView : public QAbstractItemView
+class PlaylistView : public ExpandedTreeView
 {
     Q_OBJECT
 
 public:
     explicit PlaylistView(QWidget* parent = nullptr);
-    ~PlaylistView() override;
-
-    void setModel(QAbstractItemModel* model) override;
-
-    [[nodiscard]] AutoHeaderView* header() const;
-
-    [[nodiscard]] bool isSpanning(int column) const;
-    void setSpan(int column, bool span);
 
     void playlistAboutToBeReset();
     void playlistReset();
 
-    [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
-    [[nodiscard]] int sizeHintForColumn(int column) const override;
-    void scrollTo(const QModelIndex& index, ScrollHint hint) override;
-    [[nodiscard]] QModelIndex indexAt(const QPoint& point) const override;
-
-    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding = false) const;
-    [[nodiscard]] QModelIndex indexAbove(const QModelIndex& index) const;
-    [[nodiscard]] QModelIndex indexBelow(const QModelIndex& index) const;
-
-    void doItemsLayout() override;
-    void reset() override;
-    void updateGeometries() override;
-
-    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles = {}) override;
-    void selectAll() override;
-
 protected:
-    bool viewportEvent(QEvent* event) override;
-    void dragMoveEvent(QDragMoveEvent* event) override;
-    void dragLeaveEvent(QDragLeaveEvent* event) override;
-    void dropEvent(QDropEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
-    void timerEvent(QTimerEvent* event) override;
-    void scrollContentsBy(int dx, int dy) override;
-    void rowsInserted(const QModelIndex& parent, int start, int end) override;
-    void rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end) override;
-    void rowsRemoved(const QModelIndex& parent, int first, int last);
-    void startDrag(Qt::DropActions supportedActions) override;
-    void verticalScrollbarValueChanged(int value) override;
-
-    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
-    [[nodiscard]] int horizontalOffset() const override;
-    [[nodiscard]] int verticalOffset() const override;
-    [[nodiscard]] bool isIndexHidden(const QModelIndex& index) const override;
-    void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags command) override;
-    void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
-    [[nodiscard]] QRegion visualRegionForSelection(const QItemSelection& selection) const override;
+    DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index) override;
 
 private:
-    class Private;
-    std::unique_ptr<Private> p;
+    bool m_playlistLoaded;
 };
 } // namespace Fooyin
