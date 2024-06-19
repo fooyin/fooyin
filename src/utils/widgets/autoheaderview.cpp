@@ -51,6 +51,8 @@ struct AutoHeaderView::Private
     int m_firstPos{-1};
     int m_mouseTarget{-1};
     int m_mouseSection{-1};
+    int m_resizingSection{-1};
+    int m_lastResizePos{-1};
     int m_firstPressed{-1};
     bool m_moving{false};
 
@@ -163,10 +165,6 @@ struct AutoHeaderView::Private
                 continue;
             }
 
-            if(!visible && width > MinSectionWidth) {
-                m_self->showSection(logical);
-            }
-
             if(width > 0) {
                 m_self->resizeSection(logical, width);
             }
@@ -179,7 +177,7 @@ struct AutoHeaderView::Private
             return;
         }
 
-        // Resize sections to right of section
+        // Resize section to right
         if(m_state == SectionState::Resizing) {
             m_sectionWidths[resizedSection] = static_cast<double>(newSize) / m_self->width();
 
@@ -190,10 +188,7 @@ struct AutoHeaderView::Private
 
             for(int section{0}; section < sectionCount; ++section) {
                 const int visualIndex = m_self->visualIndex(section);
-                if(visualIndex > resizedIndex) {
-                    if(m_self->isSectionHidden(section)) {
-                        m_sectionWidths[section] = 0.01;
-                    }
+                if(visualIndex == resizedIndex + 1) {
                     sectionToResize.push_back(section);
                 }
             }
@@ -201,15 +196,9 @@ struct AutoHeaderView::Private
             if(!sectionToResize.empty()) {
                 m_state = SectionState::None;
 
-                const int totalWidth     = m_self->width();
-                const int remainingWidth = static_cast<int>(0.01 * (m_self->count() - 1 - resizedSection) * totalWidth);
-                if(std::exchange(newSize, std::min(newSize, (totalWidth - remainingWidth))) != newSize) {
-                    m_self->resizeSection(resizedSection, newSize);
-                }
-                m_sectionWidths[resizedSection] = static_cast<double>(newSize) / m_self->width();
-
                 normaliseWidths(sectionToResize);
                 updateWidths(sectionToResize);
+
                 m_state = SectionState::Resizing;
             }
         }
@@ -248,6 +237,28 @@ struct AutoHeaderView::Private
 
         return -1;
     }
+
+    [[nodiscard]] bool shouldBlockResize(const int oldPos) const
+    {
+        if(!m_stretchEnabled) {
+            return false;
+        }
+
+        const int rightBoundary = (m_self->orientation() == Qt::Horizontal) ? m_self->width() : m_self->height();
+        const int rightSection  = m_self->logicalIndex(m_resizingSection + 1);
+
+        const bool isNotLastSection = m_resizingSection != m_self->count() - 2;
+        const bool posPastEnd       = isNotLastSection
+                             && m_lastResizePos > m_self->sectionViewportPosition(rightSection)
+                                                      + m_self->sectionSize(rightSection) - MinSectionWidth;
+        const bool posPastLastSection = !isNotLastSection && m_lastResizePos > rightBoundary - MinSectionWidth;
+
+        const bool posPastRightSection = m_resizingSection >= 0 && (posPastEnd || posPastLastSection);
+        const bool sectionAtMinSize    = m_self->sectionSize(rightSection) <= MinSectionWidth;
+        const bool isResizingSmaller   = m_lastResizePos >= oldPos;
+
+        return (posPastRightSection || (sectionAtMinSize && isResizingSmaller));
+    }
 };
 
 AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
@@ -255,6 +266,7 @@ AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
     , p{std::make_unique<Private>(this)}
 {
     setMinimumSectionSize(MinSectionWidth);
+    setTextElideMode(Qt::ElideRight);
 
     QObject::connect(this, &QHeaderView::sectionResized, this,
                      [this](int section, int /*oldSize*/, int newSize) { p->sectionResized(section, newSize); });
@@ -429,7 +441,13 @@ bool AutoHeaderView::isStretchEnabled() const
 void AutoHeaderView::setStretchEnabled(bool enabled)
 {
     if(std::exchange(p->m_stretchEnabled, enabled) != enabled && enabled) {
-        resetSections();
+        if(p->m_sectionWidths.empty()) {
+            resetSections();
+        }
+        else {
+            p->normaliseWidths();
+            p->updateWidths();
+        }
     }
     emit stretchChanged(enabled);
 }
@@ -637,29 +655,30 @@ void AutoHeaderView::mousePressEvent(QMouseEvent* event)
 void AutoHeaderView::mouseMoveEvent(QMouseEvent* event)
 {
     const QPoint position = event->position().toPoint();
-    const int pos         = orientation() == Qt::Horizontal ? position.x() : position.y();
-    const int handleIndex = p->sectionHandleAt(pos);
+    const int oldPos = std::exchange(p->m_lastResizePos, orientation() == Qt::Horizontal ? position.x() : position.y());
 
-    if(p->m_stretchEnabled && handleIndex == count() - 1) {
+    if(p->m_state != SectionState::Resizing || p->m_resizingSection < 0) {
+        p->m_resizingSection = p->sectionHandleAt(p->m_lastResizePos);
+    }
+
+    if(p->m_stretchEnabled && p->m_resizingSection == count() - 1) {
         return;
     }
 
     if(event->buttons() == Qt::NoButton) {
-        p->m_state        = SectionState::None;
-        p->m_firstPressed = -1;
+        p->m_state           = SectionState::None;
+        p->m_firstPressed    = -1;
+        p->m_resizingSection = -1;
     }
 
     if(p->m_state == SectionState::Resizing) {
-        const int rightBoundary = (orientation() == Qt::Horizontal) ? width() : height();
-        const int gripMargin    = style()->pixelMetric(QStyle::PM_HeaderGripMargin) / 2;
-
-        if(p->m_stretchEnabled && (pos + gripMargin) > rightBoundary) {
+        if(p->shouldBlockResize(oldPos)) {
             return;
         }
     }
     else if(p->m_state == SectionState::Moving) {
-        if(std::abs(pos - p->m_firstPos) >= QApplication::startDragDistance()) {
-            const int visual = visualIndexAt(pos);
+        if(std::abs(p->m_lastResizePos - p->m_firstPos) >= QApplication::startDragDistance()) {
+            const int visual = visualIndexAt(p->m_lastResizePos);
             if(visual >= 0) {
                 const int moving = visualIndex(p->m_mouseSection);
                 if(visual == moving) {
@@ -689,24 +708,14 @@ void AutoHeaderView::mouseReleaseEvent(QMouseEvent* event)
         }
     }
     else if(p->m_state == SectionState::Resizing) {
-        const int sectionCount = static_cast<int>(p->m_sectionWidths.size());
-
-        for(int section{0}; section < sectionCount; ++section) {
-            const double width   = p->m_sectionWidths.at(section);
-            const int pixelWidth = static_cast<int>(width * this->width());
-
-            if(pixelWidth < (MinSectionWidth / 2) && !isSectionHidden(section)) {
-                hideSection(section);
-            }
-        }
-
         p->normaliseWidths();
         p->updateWidths();
     }
 
-    p->m_firstPressed = -1;
-    p->m_moving       = false;
-    p->m_state        = SectionState::None;
+    p->m_firstPressed    = -1;
+    p->m_resizingSection = -1;
+    p->m_moving          = false;
+    p->m_state           = SectionState::None;
 
     QHeaderView::mouseReleaseEvent(event);
 }
