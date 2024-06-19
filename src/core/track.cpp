@@ -786,7 +786,9 @@ void Track::setSampleRate(int rate)
 
 void Track::setChannels(int channels)
 {
-    p->channels = channels;
+    if(channels > 0) {
+        p->channels = channels;
+    }
 }
 
 void Track::setBitDepth(int depth)
