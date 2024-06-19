@@ -18,6 +18,7 @@
         <file>icons/dark/scalable/actions/media-playback-pause.svg</file>
         <file>icons/dark/scalable/actions/media-playback-start.svg</file>
         <file>icons/dark/scalable/actions/media-playback-stop.svg</file>
+        <file>icons/dark/scalable/actions/media-playlist-repeat-song.svg</file>
         <file>icons/dark/scalable/actions/media-playlist-repeat.svg</file>
         <file>icons/dark/scalable/actions/media-playlist-shuffle.svg</file>
         <file>icons/dark/scalable/actions/media-skip-backward.svg</file>
@@ -51,6 +52,7 @@
         <file>icons/light/scalable/actions/media-playback-pause.svg</file>
         <file>icons/light/scalable/actions/media-playback-start.svg</file>
         <file>icons/light/scalable/actions/media-playback-stop.svg</file>
+        <file>icons/light/scalable/actions/media-playlist-repeat-song.svg</file>
         <file>icons/light/scalable/actions/media-playlist-repeat.svg</file>
         <file>icons/light/scalable/actions/media-playlist-shuffle.svg</file>
         <file>icons/light/scalable/actions/media-skip-backward.svg</file>

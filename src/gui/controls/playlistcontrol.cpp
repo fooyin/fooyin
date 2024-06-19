@@ -157,9 +157,13 @@ void PlaylistControl::shuffleClicked() const
 
 void PlaylistControl::setMode(Playlist::PlayModes mode) const
 {
-    if(mode & Playlist::RepeatTrack || mode & Playlist::RepeatPlaylist) {
+    if(mode & Playlist::RepeatPlaylist) {
         m_repeat->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
                                                     palette().highlight().color()));
+    }
+    else if(mode & Playlist::RepeatTrack) {
+        m_repeat->setIcon(Utils::changePixmapColour(
+            Utils::iconFromTheme(Constants::Icons::RepeatTrack).pixmap({128, 128}), palette().highlight().color()));
     }
     else {
         m_repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
