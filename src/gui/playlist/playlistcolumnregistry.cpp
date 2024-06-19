@@ -37,7 +37,7 @@ PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObjec
 void PlaylistColumnRegistry::loadDefaults()
 {
     addDefaultItem({.id = 0, .name = tr("Track"), .field = QStringLiteral("[%disc%.]$num(%track%,2)")});
-    addDefaultItem({.id = 1, .name = tr("Title"), .field = QStringLiteral("$if2(%title%,%filename%)")});
+    addDefaultItem({.id = 1, .name = tr("Title"), .field = QStringLiteral("%title%")});
     addDefaultItem({.id = 2, .name = tr("Artist"), .field = QStringLiteral("%artist%")});
     addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = QStringLiteral("[%albumartist% - ]%album%")});
     addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
