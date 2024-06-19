@@ -291,16 +291,22 @@ struct GuiApplication::Private
             self, [this](bool show) { trayIcon->setVisible(show); });
     }
 
-    void updateWindowTitle(const Track& track)
+    void updateWindowTitle()
     {
-        if(!track.isValid()) {
+        if(playerController->playState() == PlayState::Stopped) {
             mainWindow->resetTitle();
+            return;
         }
-        else {
-            const QString script = settingsManager->value<Settings::Gui::Internal::WindowTitleTrackScript>();
-            const QString title  = scriptParser.evaluate(script, track);
-            mainWindow->prependTitle(title);
+
+        const Track currentTrack = playerController->currentTrack();
+        if(!currentTrack.isValid()) {
+            mainWindow->resetTitle();
+            return;
         }
+
+        const QString script = settingsManager->value<Settings::Gui::Internal::WindowTitleTrackScript>();
+        const QString title  = scriptParser.evaluate(script, currentTrack);
+        mainWindow->setTitle(title);
     }
 
     static void removeExpiredCovers(const TrackList& tracks)
@@ -318,16 +324,11 @@ struct GuiApplication::Private
                          [](const TrackList& tracks) { removeExpiredCovers(tracks); });
 
         QObject::connect(playerController, &PlayerController::playStateChanged, mainWindow.get(),
-                         [this](PlayState state) {
-                             if(state == PlayState::Stopped) {
-                                 updateWindowTitle({});
-                             }
-                             else if(state == PlayState::Playing) {
-                                 updateWindowTitle(playerController->currentTrack());
-                             }
-                         });
+                         [this]() { updateWindowTitle(); });
+        settingsManager->subscribe<Settings::Gui::Internal::WindowTitleTrackScript>(self,
+                                                                                    [this]() { updateWindowTitle(); });
         QObject::connect(playerController, &PlayerController::currentTrackChanged, self,
-                         [this](const Track& track) { updateWindowTitle(track); });
+                         [this]() { updateWindowTitle(); });
         QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
                          &PlaylistController::handleTrackSelectionAction);
         QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, propertiesDialog,

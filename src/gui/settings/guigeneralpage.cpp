@@ -80,6 +80,8 @@ private:
 
     QCheckBox* m_buttonRaise;
     QCheckBox* m_buttonStretch;
+
+    QLineEdit* m_titleScript;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -98,6 +100,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_splitterHandleGap{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
+    , m_titleScript{new QLineEdit(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
@@ -142,11 +145,20 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     toolButtonGroupLayout->addWidget(m_buttonRaise);
     toolButtonGroupLayout->addWidget(m_buttonStretch);
 
+    auto* playbackScriptsGroup       = new QGroupBox(tr("Playback Scripts"), this);
+    auto* playbackScriptsGroupLayout = new QGridLayout(playbackScriptsGroup);
+
+    auto* titleLabel = new QLabel(tr("Window title") + QStringLiteral(":"), this);
+
+    playbackScriptsGroupLayout->addWidget(titleLabel, 0, 0);
+    playbackScriptsGroupLayout->addWidget(m_titleScript, 0, 1);
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
     mainLayout->addWidget(iconThemeBox, 1, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, 2, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, 3, 0, 1, 2);
+    mainLayout->addWidget(playbackScriptsGroup, 4, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -189,9 +201,11 @@ void GuiGeneralPageWidget::load()
     m_splitterHandleGap->setValue(m_settings->value<SplitterHandleSize>());
     m_splitterHandleGap->setEnabled(m_overrideSplitterHandle->isChecked());
 
-    const auto buttonOptions = m_settings->value<Settings::Gui::ToolButtonStyle>();
+    const auto buttonOptions = m_settings->value<ToolButtonStyle>();
     m_buttonRaise->setChecked(buttonOptions & Raise);
     m_buttonStretch->setChecked(buttonOptions & Stretch);
+
+    m_titleScript->setText(m_settings->value<Internal::WindowTitleTrackScript>());
 }
 
 void GuiGeneralPageWidget::apply()
@@ -237,7 +251,9 @@ void GuiGeneralPageWidget::apply()
     buttonOptions.setFlag(Raise, m_buttonRaise->isChecked());
     buttonOptions.setFlag(Stretch, m_buttonStretch->isChecked());
 
-    m_settings->set<Settings::Gui::ToolButtonStyle>(static_cast<int>(buttonOptions));
+    m_settings->set<ToolButtonStyle>(static_cast<int>(buttonOptions));
+
+    m_settings->set<Internal::WindowTitleTrackScript>(m_titleScript->text());
 }
 
 void GuiGeneralPageWidget::reset()
@@ -246,6 +262,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<SplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
+    m_settings->reset<Internal::WindowTitleTrackScript>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

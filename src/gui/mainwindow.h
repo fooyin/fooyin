@@ -57,7 +57,7 @@ public:
     void raiseWindow();
     void toggleVisibility();
 
-    void prependTitle(const QString& title);
+    void setTitle(const QString& title);
     void resetTitle();
 
 protected:

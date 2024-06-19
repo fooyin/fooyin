@@ -128,14 +128,9 @@ void MainWindow::toggleVisibility()
     }
 }
 
-void MainWindow::prependTitle(const QString& title)
+void MainWindow::setTitle(const QString& title)
 {
-    if(title.isEmpty()) {
-        resetTitle();
-    }
-    else {
-        setWindowTitle(title + QStringLiteral(" 𑁋 fooyin"));
-    }
+    setWindowTitle(title);
 }
 
 void MainWindow::resetTitle()
