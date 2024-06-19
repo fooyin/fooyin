@@ -36,8 +36,8 @@ class PlaylistControl : public FyWidget
 public:
     explicit PlaylistControl(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
 
-    QString name() const override;
-    QString layoutName() const override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 private:
     void updateButtonStyle() const;
@@ -50,5 +50,7 @@ private:
 
     ToolButton* m_repeat;
     ToolButton* m_shuffle;
+
+    QColor m_iconColour;
 };
 } // namespace Fooyin

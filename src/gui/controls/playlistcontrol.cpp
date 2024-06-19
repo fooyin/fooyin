@@ -40,6 +40,7 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
     , m_settings{settings}
     , m_repeat{new ToolButton(this)}
     , m_shuffle{new ToolButton(this)}
+    , m_iconColour{palette().highlight().color()}
 
 {
     auto* layout = new QHBoxLayout(this);
@@ -158,12 +159,12 @@ void PlaylistControl::shuffleClicked() const
 void PlaylistControl::setMode(Playlist::PlayModes mode) const
 {
     if(mode & Playlist::RepeatPlaylist) {
-        m_repeat->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}),
-                                                    palette().highlight().color()));
+        m_repeat->setIcon(
+            Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}), m_iconColour));
     }
     else if(mode & Playlist::RepeatTrack) {
         m_repeat->setIcon(Utils::changePixmapColour(
-            Utils::iconFromTheme(Constants::Icons::RepeatTrack).pixmap({128, 128}), palette().highlight().color()));
+            Utils::iconFromTheme(Constants::Icons::RepeatTrack).pixmap({128, 128}), m_iconColour));
     }
     else {
         m_repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
@@ -171,7 +172,7 @@ void PlaylistControl::setMode(Playlist::PlayModes mode) const
 
     if(mode & Playlist::ShuffleTracks) {
         m_shuffle->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
-                                                     palette().highlight().color()));
+                                                     m_iconColour));
     }
     else {
         m_shuffle->setIcon(Utils::iconFromTheme(Constants::Icons::Shuffle));
