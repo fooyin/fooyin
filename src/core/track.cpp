@@ -290,6 +290,20 @@ QString Track::artist() const
     return p->artists.empty() ? QStringLiteral("") : p->artists.join(u"\037");
 }
 
+QString Track::primaryArtist() const
+{
+    if(!artists().empty()) {
+        return artist();
+    }
+    if(!albumArtists().empty()) {
+        return albumArtist();
+    }
+    if(!composer().isEmpty()) {
+        return composer();
+    }
+    return performer();
+}
+
 QString Track::uniqueArtist() const
 {
     const auto uniqArtists = uniqueArtists();
@@ -309,6 +323,20 @@ QStringList Track::albumArtists() const
 QString Track::albumArtist() const
 {
     return p->albumArtists.empty() ? QStringLiteral("") : p->albumArtists.join(u"\037");
+}
+
+QString Track::primaryAlbumArtist() const
+{
+    if(!albumArtists().empty()) {
+        return albumArtist();
+    }
+    if(!artists().empty()) {
+        return artist();
+    }
+    if(!composer().isEmpty()) {
+        return composer();
+    }
+    return performer();
 }
 
 int Track::trackNumber() const

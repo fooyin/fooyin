@@ -101,10 +101,12 @@ public:
     [[nodiscard]] QStringList artists() const;
     [[nodiscard]] QStringList uniqueArtists() const;
     [[nodiscard]] QString artist() const;
+    [[nodiscard]] QString primaryArtist() const;
     [[nodiscard]] QString uniqueArtist() const;
     [[nodiscard]] QString album() const;
     [[nodiscard]] QStringList albumArtists() const;
     [[nodiscard]] QString albumArtist() const;
+    [[nodiscard]] QString primaryAlbumArtist() const;
     [[nodiscard]] int trackNumber() const;
     [[nodiscard]] int trackTotal() const;
     [[nodiscard]] int discNumber() const;

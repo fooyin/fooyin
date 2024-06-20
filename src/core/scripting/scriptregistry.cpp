@@ -111,34 +111,6 @@ QString trackTitle(const Fooyin::Track& track)
     return !track.title().isEmpty() ? track.title() : track.filename();
 }
 
-QString trackArtist(const Fooyin::Track& track)
-{
-    if(!track.artists().empty()) {
-        return track.artist();
-    }
-    if(!track.albumArtists().empty()) {
-        return track.albumArtist();
-    }
-    if(!track.composer().isEmpty()) {
-        return track.composer();
-    }
-    return track.performer();
-}
-
-QString trackAlbumArtist(const Fooyin::Track& track)
-{
-    if(!track.albumArtists().empty()) {
-        return track.albumArtist();
-    }
-    if(!track.artists().empty()) {
-        return track.artist();
-    }
-    if(!track.composer().isEmpty()) {
-        return track.composer();
-    }
-    return track.performer();
-}
-
 QString trackChannels(const Fooyin::Track& track)
 {
     switch(track.channels()) {
@@ -260,10 +232,10 @@ struct ScriptRegistry::Private
         using namespace Fooyin::Constants;
 
         m_metadata[QString::fromLatin1(MetaData::Title)]        = trackTitle;
-        m_metadata[QString::fromLatin1(MetaData::Artist)]       = trackArtist;
+        m_metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::primaryArtist;
         m_metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
         m_metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
-        m_metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = trackAlbumArtist;
+        m_metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::primaryAlbumArtist;
         m_metadata[QString::fromLatin1(MetaData::Track)]        = &Track::trackNumber;
         m_metadata[QString::fromLatin1(MetaData::TrackTotal)]   = &Track::trackTotal;
         m_metadata[QString::fromLatin1(MetaData::Disc)]         = &Track::discNumber;
