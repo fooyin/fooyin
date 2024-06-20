@@ -63,6 +63,16 @@ public:
     Playlist* createPlaylist(const QString& name, const TrackList& tracks);
     /** Returns the temporary playlist called @p name and replaces it's tracks if it exists, otherwise creates it. */
     Playlist* createTempPlaylist(const QString& name, const TrackList& tracks);
+    /** Creates and returns a playlist called @p name. If it already exists, the name will be changed. */
+    Playlist* createNewPlaylist(const QString& name);
+    /** Creates and returns a temporary playlist called @p name. If it already exists, the name will be changed. */
+    Playlist* createNewTempPlaylist(const QString& name);
+    /** Creates and returns a playlist called @p name with the provided tracks. If it already exists, the name will be
+     * changed. */
+    Playlist* createNewPlaylist(const QString& name, const TrackList& tracks);
+    /** Creates and returns a temporary playlist called @p name with the provided tracks. If it already exists, the name
+     * will be changed. */
+    Playlist* createNewTempPlaylist(const QString& name, const TrackList& tracks);
 
     /** Adds @p tracks to the end of the playlist with @p id if found. */
     void appendToPlaylist(const Id& id, const TrackList& tracks);

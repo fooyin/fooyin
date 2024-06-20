@@ -204,6 +204,8 @@ public:
     void setSort(const QString& sort);
     void clearWasModified();
 
+    static QString findCommonField(const TrackList& tracks);
+
     static QStringList supportedFileExtensions();
     static QStringList supportedMimeTypes();
 

@@ -429,6 +429,48 @@ Playlist* PlaylistHandler::createTempPlaylist(const QString& name, const TrackLi
     return playlist;
 }
 
+Playlist* PlaylistHandler::createNewPlaylist(const QString& name)
+{
+    const QString newName = p->findUniqueName(name);
+    auto* playlist        = p->addNewPlaylist(newName);
+
+    if(playlist) {
+        emit playlistAdded(playlist);
+    }
+
+    return playlist;
+}
+
+Playlist* PlaylistHandler::createNewTempPlaylist(const QString& name)
+{
+    const QString newName = p->findUniqueName(name);
+    return p->addNewPlaylist(newName, true);
+}
+
+Playlist* PlaylistHandler::createNewPlaylist(const QString& name, const TrackList& tracks)
+{
+    const QString newName = p->findUniqueName(name);
+    auto* playlist        = p->addNewPlaylist(newName);
+
+    if(playlist) {
+        playlist->replaceTracks(tracks);
+        emit playlistAdded(playlist);
+    }
+
+    return playlist;
+}
+
+Playlist* PlaylistHandler::createNewTempPlaylist(const QString& name, const TrackList& tracks)
+{
+    const QString newName = p->findUniqueName(name);
+    auto* playlist        = p->addNewPlaylist(newName, true);
+    if(playlist) {
+        playlist->replaceTracks(tracks);
+    }
+
+    return playlist;
+}
+
 void PlaylistHandler::appendToPlaylist(const Id& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
