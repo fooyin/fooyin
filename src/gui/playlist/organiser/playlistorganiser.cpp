@@ -20,9 +20,11 @@
 #include "playlistorganiser.h"
 
 #include "playlist/playlistcontroller.h"
+#include "playlist/playlistinteractor.h"
 #include "playlistorganiserdelegate.h"
 #include "playlistorganisermodel.h"
 
+#include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
@@ -106,14 +108,15 @@ void restoreExpandedState(QTreeView* view, QAbstractItemModel* model, QByteArray
 } // namespace
 
 namespace Fooyin {
-PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistController* playlistController,
+PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                      SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
-    , m_playlistController{playlistController}
+    , m_playlistInteractor{playlistInteractor}
+    , m_playerController{playlistInteractor->controller()->playerController()}
     , m_organiserTree{new QTreeView(this)}
-    , m_model{new PlaylistOrganiserModel(playlistController->playlistHandler(), playlistController->playerController())}
+    , m_model{new PlaylistOrganiserModel(playlistInteractor->handler(), m_playerController)}
     , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())},
                                   this)}
     , m_removePlaylist{new QAction(tr("Remove"))}
@@ -136,7 +139,7 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
     m_organiserTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
     m_organiserTree->setDragEnabled(true);
     m_organiserTree->setAcceptDrops(true);
-    m_organiserTree->setDragDropMode(QAbstractItemView::InternalMove);
+    m_organiserTree->setDragDropMode(QAbstractItemView::DragDrop);
     m_organiserTree->setDefaultDropAction(Qt::MoveAction);
     m_organiserTree->setDropIndicatorShown(true);
     m_organiserTree->setAllColumnsShowFocus(true);
@@ -177,25 +180,31 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistContr
             m_organiserTree->expand(index);
         }
     });
+    QObject::connect(m_model, &PlaylistOrganiserModel::filesDroppedOnPlaylist, this,
+                     &PlaylistOrganiser::filesToPlaylist);
+    QObject::connect(m_model, &PlaylistOrganiserModel::filesDroppedOnGroup, this, &PlaylistOrganiser::filesToGroup);
+    QObject::connect(m_model, &PlaylistOrganiserModel::tracksDroppedOnPlaylist, this,
+                     &PlaylistOrganiser::tracksToPlaylist);
+    QObject::connect(m_model, &PlaylistOrganiserModel::tracksDroppedOnGroup, this, &PlaylistOrganiser::tracksToGroup);
     QObject::connect(m_organiserTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this]() { selectionChanged(); });
 
     QObject::connect(
-        m_playlistController->playlistHandler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
+        m_playlistInteractor->handler(), &PlaylistHandler::playlistAdded, this, [this](Playlist* playlist) {
             if(!m_creatingPlaylist) {
                 QMetaObject::invokeMethod(
                     m_model, [this, playlist]() { m_model->playlistAdded(playlist); }, Qt::QueuedConnection);
             }
         });
-    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistRemoved, m_model,
+    QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRemoved, m_model,
                      &PlaylistOrganiserModel::playlistRemoved);
-    QObject::connect(m_playlistController->playlistHandler(), &PlaylistHandler::playlistRenamed, m_model,
+    QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, m_model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(m_playlistController, &PlaylistController::currentPlaylistChanged, this, [this]() {
+    QObject::connect(m_playlistInteractor->controller(), &PlaylistController::currentPlaylistChanged, this, [this]() {
         QMetaObject::invokeMethod(
             m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
     });
-    QObject::connect(m_playlistController, &PlaylistController::playlistsLoaded, this,
+    QObject::connect(m_playlistInteractor->controller(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
     if(m_model->restoreModel(m_settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
@@ -262,13 +271,13 @@ void PlaylistOrganiser::selectionChanged()
     const Id playlistId = playlist->id();
 
     if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
-        m_playlistController->changeCurrentPlaylist(playlist);
+        m_playlistInteractor->controller()->changeCurrentPlaylist(playlist);
     }
 }
 
 void PlaylistOrganiser::selectCurrentPlaylist()
 {
-    auto* playlist = m_playlistController->currentPlaylist();
+    auto* playlist = m_playlistInteractor->controller()->currentPlaylist();
     if(!playlist) {
         return;
     }
@@ -296,7 +305,7 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index)
 {
     m_creatingPlaylist = true;
 
-    if(auto* playlist = m_playlistController->playlistHandler()->createEmptyPlaylist()) {
+    if(auto* playlist = m_playlistInteractor->handler()->createEmptyPlaylist()) {
         QModelIndex parent{index};
         if(parent.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
             parent = parent.parent();
@@ -306,6 +315,57 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index)
     }
 
     m_creatingPlaylist = false;
+}
+
+void PlaylistOrganiser::filesToPlaylist(const QList<QUrl>& urls, const Id& id)
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    m_playlistInteractor->filesToPlaylist(id, urls);
+}
+
+void PlaylistOrganiser::filesToGroup(const QList<QUrl>& urls, const QString& group, int index)
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    m_playlistInteractor->filesToTracks(urls, [this, group, index](const TrackList& tracks) {
+        const QSignalBlocker block{m_playlistInteractor->handler()};
+        const QString name = Track::findCommonField(tracks);
+        if(auto* playlist = m_playlistInteractor->handler()->createNewPlaylist(name, tracks)) {
+            m_model->playlistInserted(playlist, group, index);
+        }
+    });
+}
+
+void PlaylistOrganiser::tracksToPlaylist(const std::vector<int>& trackIds, const Id& id)
+{
+    const auto tracks = m_playlistInteractor->library()->tracksForIds(trackIds);
+    if(tracks.empty()) {
+        return;
+    }
+
+    if(m_playlistInteractor->handler()->playlistById(id)) {
+        m_playlistInteractor->handler()->appendToPlaylist(id, tracks);
+    }
+}
+
+void PlaylistOrganiser::tracksToGroup(const std::vector<int>& trackIds, const QString& group, int index)
+{
+    const auto tracks = m_playlistInteractor->library()->tracksForIds(trackIds);
+    if(tracks.empty()) {
+        return;
+    }
+
+    const QSignalBlocker block{m_playlistInteractor->handler()};
+
+    const QString name = Track::findCommonField(tracks);
+    if(auto* playlist = m_playlistInteractor->handler()->createNewPlaylist(name, tracks)) {
+        m_model->playlistInserted(playlist, group, index);
+    }
 }
 } // namespace Fooyin
 

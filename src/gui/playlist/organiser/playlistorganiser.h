@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/track.h>
 #include <gui/fywidget.h>
 
 class QTreeView;
@@ -26,7 +27,8 @@ class QTreeView;
 namespace Fooyin {
 class ActionManager;
 class Command;
-class PlaylistController;
+class PlayerController;
+class PlaylistInteractor;
 class PlaylistOrganiserModel;
 class SettingsManager;
 class WidgetContext;
@@ -36,7 +38,7 @@ class PlaylistOrganiser : public FyWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistOrganiser(ActionManager* actionManager, PlaylistController* playlistController,
+    explicit PlaylistOrganiser(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                                SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistOrganiser() override;
 
@@ -52,9 +54,15 @@ private:
     void createGroup(const QModelIndex& index) const;
     void createPlaylist(const QModelIndex& index);
 
+    void filesToPlaylist(const QList<QUrl>& urls, const Id& id);
+    void filesToGroup(const QList<QUrl>& urls, const QString& group, int index);
+    void tracksToPlaylist(const std::vector<int>& trackIds, const Id& id);
+    void tracksToGroup(const std::vector<int>& trackIds, const QString& group, int index);
+
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
-    PlaylistController* m_playlistController;
+    PlaylistInteractor* m_playlistInteractor;
+    PlayerController* m_playerController;
 
     QTreeView* m_organiserTree;
     PlaylistOrganiserModel* m_model;

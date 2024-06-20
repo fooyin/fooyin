@@ -866,6 +866,41 @@ void Track::clearWasModified()
     p->metadataWasModified = false;
 }
 
+QString Track::findCommonField(const TrackList& tracks)
+{
+    QString name;
+
+    if(tracks.size() == 1) {
+        name = tracks.front().title();
+        if(name.isEmpty()) {
+            name = tracks.front().filename();
+        }
+    }
+    else {
+        const QString primaryArtist = tracks.front().primaryAlbumArtist();
+        const QString primaryAlbum  = tracks.front().album();
+
+        const bool sameArtist = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryArtist](const Track& track) {
+            return track.primaryAlbumArtist() == primaryArtist;
+        });
+        const bool sameAlbum  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryAlbum](const Track& track) {
+            return track.album() == primaryAlbum;
+        });
+
+        if(sameArtist && sameAlbum) {
+            name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
+        }
+        else if(sameArtist) {
+            name = primaryArtist;
+        }
+        else if(sameAlbum) {
+            name = primaryAlbum;
+        }
+    }
+
+    return name;
+}
+
 QStringList Track::supportedFileExtensions()
 {
     static const QStringList supportedExtensions

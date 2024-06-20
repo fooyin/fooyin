@@ -474,8 +474,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistOrganiser"),
             [this]() {
-                return new PlaylistOrganiser(actionManager, playlistController.get(), settingsManager,
-                                             mainWindow.get());
+                return new PlaylistOrganiser(actionManager, &playlistInteractor, settingsManager, mainWindow.get());
             },
             tr("Playlist Organiser"));
 

@@ -255,6 +255,27 @@ void PlaylistOrganiserModel::playlistAdded(Playlist* playlist)
     endInsertRows();
 }
 
+void PlaylistOrganiserModel::playlistInserted(Playlist* playlist, const QString& group, int index)
+{
+    const QString key = groupKey(group);
+    if(!group.isEmpty() && !m_nodes.contains(key)) {
+        return;
+    }
+
+    auto* groupItem              = group.isEmpty() ? rootItem() : &m_nodes.at(key);
+    const QModelIndex groupIndex = indexOfItem(groupItem);
+    int row{index};
+    if(row < 0 || row >= rowCount(groupIndex)) {
+        row = rowCount(groupIndex);
+    }
+
+    beginInsertRows(groupIndex, row, row);
+    auto* item
+        = &m_nodes.emplace(playlistKey(playlist->name()), PlaylistOrganiserItem{playlist, groupItem}).first->second;
+    groupItem->insertChild(row, item);
+    endInsertRows();
+}
+
 void PlaylistOrganiserModel::playlistRenamed(Playlist* playlist)
 {
     if(!playlist) {
@@ -316,18 +337,13 @@ QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
 
 Qt::ItemFlags PlaylistOrganiserModel::flags(const QModelIndex& index) const
 {
-    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
-
-    const auto type = index.data(PlaylistOrganiserItem::ItemType).toInt();
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index) | Qt::ItemIsDropEnabled;
 
     if(index.isValid()) {
         defaultFlags |= Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
     }
-    if(type == PlaylistOrganiserItem::PlaylistItem) {
+    if(!hasChildren(index)) {
         defaultFlags |= Qt::ItemNeverHasChildren;
-    }
-    else {
-        defaultFlags |= Qt::ItemIsDropEnabled;
     }
 
     return defaultFlags;
@@ -373,7 +389,7 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
                 if(state == PlayState::Playing) {
                     return m_playIcon;
                 }
-                else if(state == PlayState::Paused) {
+                if(state == PlayState::Paused) {
                     return m_pauseIcon;
                 }
             }
@@ -425,7 +441,7 @@ bool PlaylistOrganiserModel::setData(const QModelIndex& index, const QVariant& v
 
 QStringList PlaylistOrganiserModel::mimeTypes() const
 {
-    return {QString::fromLatin1(OrganiserItems)};
+    return {QString::fromLatin1(OrganiserItems), QString::fromLatin1(Constants::Mime::TrackIds)};
 }
 
 bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
@@ -434,12 +450,17 @@ bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropActi
     if(action == Qt::MoveAction && data->hasFormat(QString::fromLatin1(OrganiserItems))) {
         return true;
     }
+
+    if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)) || data->hasUrls()) {
+        return true;
+    }
+
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
 }
 
 Qt::DropActions PlaylistOrganiserModel::supportedDropActions() const
 {
-    return Qt::MoveAction;
+    return Qt::MoveAction | Qt::CopyAction;
 }
 
 Qt::DropActions PlaylistOrganiserModel::supportedDragActions() const
@@ -461,61 +482,35 @@ bool PlaylistOrganiserModel::dropMimeData(const QMimeData* data, Qt::DropAction 
         return false;
     }
 
-    const QModelIndexList indexes = restoreIndexes(data->data(QString::fromLatin1(OrganiserItems)));
-
-    const auto indexGroups = determineTrackIndexGroups(indexes);
-
-    if(row < 0) {
-        row = rowCount(parent);
-    }
-
-    for(const auto& group : indexGroups) {
-        const auto children = std::views::transform(std::as_const(group),
-                                                    [this](const QModelIndex& index) { return itemForIndex(index); });
-
-        auto* sourceParent       = children.front()->parent();
-        const QModelIndex source = indexOfItem(sourceParent);
-        auto* targetParent       = itemForIndex(parent);
-
-        int currRow{row};
-        const int firstRow = children.front()->row();
-        const int lastRow  = static_cast<int>(firstRow + children.size()) - 1;
-
-        if(source == parent && currRow >= firstRow && currRow <= lastRow + 1) {
-            continue;
-        }
-
-        beginMoveRows(source, firstRow, lastRow, parent, row);
-
-        for(PlaylistOrganiserItem* childItem : children) {
-            childItem->resetRow();
-            const int oldRow = childItem->row();
-            if(oldRow < currRow) {
-                targetParent->insertChild(currRow, childItem);
-                sourceParent->removeChild(oldRow);
-
-                if(source != parent) {
-                    ++currRow;
-                }
+    if(data->hasUrls()) {
+        if(auto* item = itemForIndex(parent)) {
+            if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
+                emit filesDroppedOnPlaylist(data->urls(), item->playlist()->id());
             }
             else {
-                sourceParent->removeChild(oldRow);
-                targetParent->insertChild(currRow, childItem);
-
-                ++currRow;
+                emit filesDroppedOnGroup(data->urls(), item->title(), row);
             }
+            return true;
         }
-        sourceParent->resetChildren();
-        targetParent->resetChildren();
+    }
+    else if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+        auto trackData = data->data(QString::fromLatin1(Constants::Mime::TrackIds));
+        std::vector<int> ids;
+        QDataStream stream(&trackData, QIODevice::ReadOnly);
+        stream >> ids;
 
-        endMoveRows();
-
-        row = currRow;
+        if(auto* item = itemForIndex(parent)) {
+            if(item->type() == PlaylistOrganiserItem::PlaylistItem) {
+                emit tracksDroppedOnPlaylist(ids, item->playlist()->id());
+            }
+            else {
+                emit tracksDroppedOnGroup(ids, item->title(), row);
+            }
+            return true;
+        }
     }
 
-    rootItem()->resetChildren();
-
-    return true;
+    return itemsDropped(data, row, parent);
 }
 
 void PlaylistOrganiserModel::removeItems(const QModelIndexList& indexes)
@@ -642,6 +637,72 @@ void PlaylistOrganiserModel::deleteNodes(PlaylistOrganiserItem* node)
         m_nodes.erase(playlistKey(title));
         m_playlistHandler->removePlaylist(id);
     }
+}
+
+bool PlaylistOrganiserModel::itemsDropped(const QMimeData* data, int row, const QModelIndex& parent)
+{
+    if(!data->hasFormat(QString::fromLatin1(OrganiserItems))) {
+        return false;
+    }
+
+    const QModelIndexList indexes = restoreIndexes(data->data(QString::fromLatin1(OrganiserItems)));
+    if(indexes.empty()) {
+        return false;
+    }
+
+    const auto indexGroups = determineTrackIndexGroups(indexes);
+
+    if(row < 0) {
+        row = rowCount(parent);
+    }
+
+    for(const auto& group : indexGroups) {
+        const auto children = std::views::transform(std::as_const(group),
+                                                    [this](const QModelIndex& index) { return itemForIndex(index); });
+
+        auto* sourceParent       = children.front()->parent();
+        const QModelIndex source = indexOfItem(sourceParent);
+        auto* targetParent       = itemForIndex(parent);
+
+        int currRow{row};
+        const int firstRow = children.front()->row();
+        const int lastRow  = static_cast<int>(firstRow + children.size()) - 1;
+
+        if(source == parent && currRow >= firstRow && currRow <= lastRow + 1) {
+            continue;
+        }
+
+        beginMoveRows(source, firstRow, lastRow, parent, row);
+
+        for(PlaylistOrganiserItem* childItem : children) {
+            childItem->resetRow();
+            const int oldRow = childItem->row();
+            if(oldRow < currRow) {
+                targetParent->insertChild(currRow, childItem);
+                sourceParent->removeChild(oldRow);
+
+                if(source != parent) {
+                    ++currRow;
+                }
+            }
+            else {
+                sourceParent->removeChild(oldRow);
+                targetParent->insertChild(currRow, childItem);
+
+                ++currRow;
+            }
+        }
+        sourceParent->resetChildren();
+        targetParent->resetChildren();
+
+        endMoveRows();
+
+        row = currRow;
+    }
+
+    rootItem()->resetChildren();
+
+    return true;
 }
 } // namespace Fooyin
 

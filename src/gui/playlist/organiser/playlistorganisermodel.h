@@ -21,12 +21,14 @@
 
 #include "playlistorganiseritem.h"
 
+#include <core/track.h>
 #include <utils/treemodel.h>
 
 #include <QColor>
 #include <QIcon>
 
 namespace Fooyin {
+class Id;
 class Playlist;
 class PlayerController;
 class PlaylistHandler;
@@ -47,6 +49,7 @@ public:
     QModelIndex createPlaylist(Playlist* playlist, const QModelIndex& parent);
 
     void playlistAdded(Playlist* playlist);
+    void playlistInserted(Playlist* playlist, const QString& group, int index);
     void playlistRenamed(Playlist* playlist);
     void playlistRemoved(Playlist* playlist);
 
@@ -68,12 +71,19 @@ public:
 
     void removeItems(const QModelIndexList& indexes);
 
+signals:
+    void filesDroppedOnPlaylist(const QList<QUrl>& urls, const Id& id);
+    void filesDroppedOnGroup(const QList<QUrl>& urls, const QString& group, int index);
+    void tracksDroppedOnPlaylist(const std::vector<int>& trackIds, const Id& id);
+    void tracksDroppedOnGroup(const std::vector<int>& trackIds, const QString& group, int index);
+
 private:
     QByteArray saveIndexes(const QModelIndexList& indexes) const;
     QModelIndexList restoreIndexes(QByteArray data);
     void recurseSaveModel(QDataStream& stream, PlaylistOrganiserItem* parent);
     QString findUniqueName(const QString& name) const;
     void deleteNodes(PlaylistOrganiserItem* node);
+    bool itemsDropped(const QMimeData* data, int row, const QModelIndex& parent);
 
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
