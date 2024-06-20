@@ -52,6 +52,7 @@ PlaylistBox::PlaylistBox(PlaylistController* playlistController, QWidget* parent
                      [this](const Playlist* playlist) { playlistRenamed(playlist); });
 
     setupBox();
+    currentPlaylistChanged(m_playlistController->currentPlaylist());
 }
 
 QString PlaylistBox::name() const
@@ -66,6 +67,9 @@ QString PlaylistBox::layoutName() const
 
 void PlaylistBox::setupBox()
 {
+    // Prevent currentIndexChanged triggering changePlaylist
+    const QSignalBlocker block{m_playlistBox};
+
     const auto& playlists = m_playlistHandler->playlists();
     for(const auto& playlist : playlists) {
         addPlaylist(playlist);
