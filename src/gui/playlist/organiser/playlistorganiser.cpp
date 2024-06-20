@@ -248,6 +248,14 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addAction(m_newPlaylistCmd->action());
     menu->addAction(m_newGroupCmd->action());
+
+    if(index.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+        if(auto* savePlaylist = m_actionManager->command(Constants::Actions::SavePlaylist)) {
+            menu->addSeparator();
+            menu->addAction(savePlaylist->action());
+        }
+    }
+
     menu->addSeparator();
     menu->addAction(m_renameCmd->action());
     menu->addAction(m_removeCmd->action());
