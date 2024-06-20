@@ -175,23 +175,6 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls)
 
     return dirs;
 }
-
-Fooyin::Track matchMissingTrack(const Fooyin::TrackFieldMap& missingFiles, const Fooyin::TrackFieldMap& missingHashes,
-                                Fooyin::Track& track)
-{
-    const QString filename = track.filename();
-    const QString hash     = track.hash();
-
-    if(missingFiles.contains(filename) && missingFiles.at(filename).duration() == track.duration()) {
-        return missingFiles.at(filename);
-    }
-
-    if(missingHashes.contains(hash) && missingHashes.at(hash).duration() == track.duration()) {
-        return missingHashes.at(hash);
-    }
-
-    return {};
-};
 } // namespace
 
 namespace Fooyin {
@@ -212,9 +195,9 @@ struct LibraryScanner::Private
     TrackList m_tracksToStore;
     TrackList m_tracksToUpdate;
 
-    TrackFieldMap m_trackPaths;
-    TrackFieldMap m_missingFiles;
-    TrackFieldMap m_missingHashes;
+    std::unordered_map<QString, Track> m_trackPaths;
+    std::unordered_map<QString, Track> m_missingFiles;
+    std::unordered_map<QString, Track> m_missingHashes;
     std::unordered_map<QString, TrackList> m_existingCueTracks;
     std::unordered_map<QString, TrackList> m_missingCueTracks;
     std::set<QString> m_cueFilesScanned;
@@ -271,6 +254,22 @@ struct LibraryScanner::Private
             emit m_self->progressChanged(m_currentProgress);
         }
     }
+
+    Track matchMissingTrack(Track& track)
+    {
+        const QString filename = track.filename();
+        const QString hash     = track.hash();
+
+        if(m_missingFiles.contains(filename) && m_missingFiles.at(filename).duration() == track.duration()) {
+            return m_missingFiles.at(filename);
+        }
+
+        if(m_missingHashes.contains(hash) && m_missingHashes.at(hash).duration() == track.duration()) {
+            return m_missingHashes.at(hash);
+        }
+
+        return {};
+    };
 
     void storeTracks(TrackList& tracks)
     {
@@ -439,7 +438,7 @@ struct LibraryScanner::Private
             Track track{file};
 
             if(Tagging::readMetaData(track)) {
-                Track refoundTrack = matchMissingTrack(m_missingFiles, m_missingHashes, track);
+                Track refoundTrack = matchMissingTrack(track);
 
                 if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
                     m_missingHashes.erase(refoundTrack.hash());
@@ -655,7 +654,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
     TrackList tracksScanned;
     TrackList tracksToStore;
 
-    TrackFieldMap trackMap;
+    std::unordered_map<QString, Track> trackMap;
     std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 

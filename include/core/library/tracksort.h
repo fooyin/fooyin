@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 
 #include <Qt>
 

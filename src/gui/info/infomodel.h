@@ -22,7 +22,6 @@
 #include "infoitem.h"
 #include "infopopulator.h"
 
-#include <core/trackfwd.h>
 #include <utils/treemodel.h>
 
 #include <QFont>

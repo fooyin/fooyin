@@ -23,7 +23,7 @@
 #include "playlistitem.h"
 #include "playlistitemmodels.h"
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <utils/id.h>
 #include <utils/worker.h>
 

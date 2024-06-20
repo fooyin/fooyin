@@ -683,7 +683,8 @@ void PlaylistHandler::startPlayback(Playlist* playlist)
 
 void PlaylistHandler::populatePlaylists(const TrackList& tracks)
 {
-    TrackIdMap idTracks;
+    std::unordered_map<int, Track> idTracks;
+
     for(const Track& track : tracks) {
         idTracks.emplace(track.id(), track);
     }

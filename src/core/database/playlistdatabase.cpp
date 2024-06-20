@@ -49,7 +49,7 @@ std::vector<PlaylistInfo> PlaylistDatabase::getAllPlaylists()
     return playlists;
 }
 
-TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks)
+TrackList PlaylistDatabase::getPlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks)
 {
     return populatePlaylistTracks(playlist, tracks);
 }
@@ -178,7 +178,8 @@ bool PlaylistDatabase::insertPlaylistTracks(int playlistId, const TrackList& tra
     return true;
 }
 
-TrackList PlaylistDatabase::populatePlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks)
+TrackList PlaylistDatabase::populatePlaylistTracks(const Playlist& playlist,
+                                                   const std::unordered_map<int, Track>& tracks)
 {
     const auto statement
         = QStringLiteral("SELECT TrackID FROM PlaylistTracks WHERE PlaylistID=:playlistId ORDER BY TrackIndex;");

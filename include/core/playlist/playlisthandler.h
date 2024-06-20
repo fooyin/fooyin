@@ -22,7 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/playlist/playlist.h>
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 
 #include <QObject>

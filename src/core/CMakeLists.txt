@@ -2,7 +2,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
-    ${CMAKE_SOURCE_DIR}/include/core/trackfwd.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioconverter.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiodecoder.h

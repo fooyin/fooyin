@@ -21,7 +21,7 @@
 
 #include "infoitem.h"
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <utils/worker.h>
 
 namespace Fooyin {

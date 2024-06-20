@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <gui/fywidget.h>
 #include <gui/propertiesdialog.h>
 #include <utils/extendabletableview.h>

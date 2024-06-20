@@ -25,6 +25,10 @@
 #include <QSharedDataPointer>
 
 namespace Fooyin {
+class Track;
+using TrackList = std::vector<Track>;
+using TrackIds  = std::vector<int>;
+
 /*!
  * Represents a music track and it's associated metadata.
  * Metadata which is not explicitly handled is accessed using Track::extraTags.
@@ -208,11 +212,6 @@ private:
     QSharedDataPointer<Private> p;
 };
 FYCORE_EXPORT size_t qHash(const Track& track);
-
-using TrackIds      = std::vector<int>;
-using TrackList     = std::vector<Track>;
-using TrackIdMap    = std::unordered_map<int, Track>;
-using TrackFieldMap = std::unordered_map<QString, Track>;
 } // namespace Fooyin
 
 FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);

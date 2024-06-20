@@ -105,8 +105,6 @@ struct Application::Private
         qRegisterMetaType<Track>("Track");
         qRegisterMetaType<TrackList>("TrackList");
         qRegisterMetaType<TrackIds>("TrackIds");
-        qRegisterMetaType<TrackIdMap>("TrackIdMap");
-        qRegisterMetaType<TrackFieldMap>("TrackFieldMap");
         qRegisterMetaType<OutputCreator>("OutputCreator");
         qRegisterMetaType<LibraryInfo>("LibraryInfo");
         qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");

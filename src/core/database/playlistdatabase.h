@@ -35,7 +35,7 @@ class PlaylistDatabase : public DbModule
 {
 public:
     std::vector<PlaylistInfo> getAllPlaylists();
-    TrackList getPlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
+    TrackList getPlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);
 
     int insertPlaylist(const QString& name, int index);
 
@@ -47,6 +47,6 @@ public:
 private:
     bool insertPlaylistTrack(int playlistId, const Fooyin::Track& track, int index);
     bool insertPlaylistTracks(int playlistId, const TrackList& tracks);
-    TrackList populatePlaylistTracks(const Playlist& playlist, const TrackIdMap& tracks);
+    TrackList populatePlaylistTracks(const Playlist& playlist, const std::unordered_map<int, Track>& tracks);
 };
 } // namespace Fooyin

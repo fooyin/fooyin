@@ -21,7 +21,7 @@
 
 #include "library/libraryinfo.h"
 
-#include <core/trackfwd.h>
+#include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 

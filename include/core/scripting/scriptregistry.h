@@ -22,7 +22,7 @@
 #include "fycore_export.h"
 
 #include <core/scripting/scriptvalue.h>
-#include <core/trackfwd.h>
+#include <core/track.h>
 
 #include <QObject>
 
