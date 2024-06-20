@@ -148,8 +148,8 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& option, const QM
         painter->setRenderHint(QPainter::Antialiasing);
         painter->drawRect(coverFrameRect);
 
-        const int width = coverRect.width();
-        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, width, opt.widget->devicePixelRatioF(), true));
+        const double pixelRatio = opt.widget ? opt.widget->devicePixelRatioF() : 1.0;
+        painter->drawPixmap(coverRect, Utils::scalePixmap(cover, coverSize, pixelRatio, true));
     }
 }
 
