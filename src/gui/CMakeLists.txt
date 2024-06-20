@@ -105,6 +105,8 @@ set(SOURCES
     playlist/organiser/playlistorganiseritem.h
     playlist/organiser/playlistorganisermodel.cpp
     playlist/organiser/playlistorganisermodel.h
+    playlist/playlistbox.cpp
+    playlist/playlistbox.h
     playlist/playlistcolumn.h
     playlist/playlistcolumnregistry.cpp
     playlist/playlistcolumnregistry.h

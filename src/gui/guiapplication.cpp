@@ -39,6 +39,7 @@
 #include "menubar/playbackmenu.h"
 #include "menubar/viewmenu.h"
 #include "playlist/organiser/playlistorganiser.h"
+#include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
@@ -461,6 +462,10 @@ struct GuiApplication::Private
             [this]() { return new HorizontalSplitterWidget(&widgetProvider, settingsManager, mainWindow.get()); },
             tr("Horizontal Splitter"));
         widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {tr("Splitters")});
+
+        widgetProvider.registerWidget(
+            QStringLiteral("PlaylistSwitcher"),
+            [this]() { return new PlaylistBox(playlistController.get(), mainWindow.get()); }, tr("Playlist Switcher"));
 
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
