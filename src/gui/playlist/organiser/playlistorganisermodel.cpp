@@ -116,6 +116,8 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
     , m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
     , m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
 {
+    m_playingColour.setAlpha(90);
+
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this]() { emit dataChanged({}, {}, {Qt::BackgroundRole}); });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
