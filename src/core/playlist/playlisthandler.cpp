@@ -236,6 +236,10 @@ struct PlaylistHandler::Private
 
     void restoreActivePlaylist()
     {
+        if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+            return;
+        }
+
         const int lastId = m_settings->value<Settings::Core::ActivePlaylistId>();
         if(lastId < 0) {
             return;
@@ -243,17 +247,16 @@ struct PlaylistHandler::Private
 
         auto playlist = std::ranges::find_if(std::as_const(m_playlists),
                                              [lastId](const auto& pl) { return pl->dbId() == lastId; });
-        if(playlist != m_playlists.cend()) {
-            m_activePlaylist = playlist->get();
-            emit m_self->activePlaylistChanged(m_activePlaylist);
-
-            if(m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
-                const int lastIndex = m_settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
-                m_activePlaylist->changeCurrentIndex(lastIndex);
-                m_playerController->changeCurrentTrack(
-                    {m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
-            }
+        if(playlist == m_playlists.cend()) {
+            return;
         }
+
+        m_activePlaylist = playlist->get();
+        emit m_self->activePlaylistChanged(m_activePlaylist);
+
+        const int lastIndex = m_settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
+        m_activePlaylist->changeCurrentIndex(lastIndex);
+        m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
     }
 
     Playlist* addNewPlaylist(const QString& name, bool isTemporary = false)
