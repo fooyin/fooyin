@@ -101,6 +101,19 @@ MusicLibrary* PlaylistInteractor::library() const
     return p->m_library;
 }
 
+void PlaylistInteractor::filesToPlaylist(const Id& id, const QList<QUrl>& urls) const
+{
+    if(urls.empty() || !id.isValid()) {
+        return;
+    }
+
+    p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
+        if(auto* playlist = p->m_controller->playlistHandler()->playlistById(id)) {
+            p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+        }
+    });
+}
+
 void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls) const
 {
     if(urls.empty()) {

@@ -26,6 +26,7 @@
 #include <QUrl>
 
 namespace Fooyin {
+class Id;
 class MusicLibrary;
 class PlaylistController;
 class PlaylistHandler;
@@ -44,6 +45,7 @@ public:
     [[nodiscard]] PlaylistController* controller() const;
     [[nodiscard]] MusicLibrary* library() const;
 
+    void filesToPlaylist(const Id& id, const QList<QUrl>& urls) const;
     void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false) const;
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
