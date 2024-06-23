@@ -17,15 +17,16 @@
  *
  */
 
+#include "utils/utils.h"
 #include <utils/widgets/expandedtreeview.h>
 
 #include <QDrag>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QMenu>
-#include <QPainter>
 #include <QScrollBar>
 #include <QStack>
+#include <QStylePainter>
 #include <QTimer>
 #include <QWindow>
 
@@ -69,6 +70,55 @@ QItemSelection selectRecursively(QAbstractItemModel* model, const QItemSelection
 } // namespace
 
 namespace Fooyin {
+struct ExpandedTreeViewItem
+{
+    QModelIndex index;
+    int parentItem{-1};
+    bool hasChildren{false};
+    bool hasMoreSiblings{false};
+    int childCount{0};
+    int columnCount{0};
+    int height{0};  // Row height
+    int padding{0}; // Padding at bottom of row
+
+    // Icon mode
+    int baseHeight{-1};    // Height of first item row (including icon)
+    int captionHeight{-1}; // Height of each additional row below
+    int x{-1};
+    int y{-1};
+    int width{-1};
+
+    constexpr bool operator==(const ExpandedTreeViewItem& other) const
+    {
+        return (index != other.index);
+    }
+
+    constexpr bool operator!=(const ExpandedTreeViewItem& other) const
+    {
+        return !(*this == other);
+    }
+
+    [[nodiscard]] constexpr bool isValid() const
+    {
+        return rect().isValid();
+    }
+
+    [[nodiscard]] constexpr QRect rect() const
+    {
+        return {x, y, width, height};
+    }
+
+    [[nodiscard]] constexpr QRect baseRect() const
+    {
+        return {x, y, width, baseHeight};
+    }
+
+    [[nodiscard]] constexpr QRect columnRect(int column) const
+    {
+        return {x, y + baseHeight + (captionHeight * (column - 1)), width, captionHeight};
+    }
+};
+
 struct ItemViewPaintPair
 {
     QRect rect;
@@ -82,6 +132,8 @@ enum class RectRule
     SingleSection
 };
 
+class BaseView;
+
 class ExpandedTreeView::Private : public QObject
 {
     Q_OBJECT
@@ -90,69 +142,52 @@ public:
     explicit Private(ExpandedTreeView* self);
 
     int itemCount() const;
-    void updateScrollBars();
-    int itemAtCoordinate(int coordinate, bool includePadding) const;
     QModelIndex modelIndex(int i, int column = 0) const;
     void select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
                 QItemSelectionModel::SelectionFlags command) const;
     void resizeColumnToContents(int column) const;
     void columnCountChanged(int oldCount, int newCount) const;
+    void columnResized(int logical, int oldSize, int newSize);
 
     void doDelayedItemsLayout(int delay = 0) const;
     void interruptDelayedItemsLayout() const;
     void layoutItems() const;
 
+    ExpandedTreeViewItem indexToListViewItem(const QModelIndex& index) const;
+
     int viewIndex(const QModelIndex& index) const;
     int indexRowSizeHint(const QModelIndex& index) const;
-    int indexSizeHint(const QModelIndex& index, bool span = false) const;
-    int indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const;
-    int itemHeight(int item) const;
-    int itemPadding(int item) const;
-    int coordinateForItem(int item) const;
     void insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem);
     bool hasVisibleChildren(const QModelIndex& parent) const;
-    void recalculatePadding();
-    void layout(int i, bool afterIsUninitialised = false);
     bool isIndexEnabled(const QModelIndex& index) const;
     bool isItemDisabled(int i) const;
     bool itemHasChildren(int i) const;
-    int itemAbove(int item) const;
-    int itemBelow(int item) const;
     void invalidateHeightCache(int item) const;
-    int pageUp(int i) const;
-    int pageDown(int i) const;
     int itemForHomeKey() const;
     int itemForEndKey() const;
-    void calcLogicalIndexes(std::vector<int>& logicalIndexes,
-                            std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions, int left,
-                            int right) const;
     void setHoverIndex(const QPersistentModelIndex& index);
 
     bool isIndexDropEnabled(const QModelIndex& index) const;
     QModelIndexList selectedDraggableIndexes(bool fullRow = false) const;
-    ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
-    void adjustViewOptionsForIndex(QStyleOptionViewItem* option, const QModelIndex& currentIndex) const;
-    QPixmap renderToPixmap(const QModelIndexList& indexes, QRect& rect) const;
     bool shouldAutoScroll() const;
     void startAutoScroll();
     void stopAutoScroll();
     void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
 
-    QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding = true) const;
     std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
-    void drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option, int firstVisibleItem,
-                          int firstVisibleItemOffset) const;
 
     bool isIndexValid(const QModelIndex& index) const;
-    int firstVisibleItem(int* offset) const;
-    int lastVisibleItem(int firstVisual, int offset) const;
-    std::pair<int, int> startAndEndColumns(const QRect& rect) const;
 
     ExpandedTreeView* m_self;
 
     QHeaderView* m_header;
     QAbstractItemModel* m_model{nullptr};
+    std::unique_ptr<BaseView> m_view;
+    ViewMode m_viewMode{ViewMode::Tree};
+
+    bool m_uniformRowHeights{false};
+    int m_itemWidth{200}; // Icon mode
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
@@ -163,7 +198,6 @@ public:
     mutable int m_lastViewedItem{0};
     int m_defaultItemHeight{20};
 
-    mutable std::pair<int, int> m_leftAndRight;
     std::set<int> m_spans;
 
     mutable QBasicTimer m_delayedLayout;
@@ -180,50 +214,872 @@ public:
     int m_columnResizeTimerId{0};
 };
 
-ExpandedTreeView::Private::Private(ExpandedTreeView* self)
-    : m_self{self}
-    , m_header{new QHeaderView(Qt::Horizontal, m_self)}
+class BaseView
 {
-    m_header->setSectionsClickable(true);
-    m_header->setContextMenuPolicy(Qt::CustomContextMenu);
-    m_header->setSectionsMovable(true);
-    m_header->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+public:
+    explicit BaseView(ExpandedTreeView* view, ExpandedTreeView::Private* viewP)
+        : m_view{view}
+        , m_p{viewP}
+    { }
 
-    QObject::connect(m_header, &QHeaderView::sectionResized, this, [this]() {
-        if(m_columnResizeTimerId == 0) {
-            m_columnResizeTimerId = m_self->startTimer(20);
+    virtual ~BaseView() = default;
+
+    virtual void invalidate() = 0;
+
+    virtual void doItemLayout()                                           = 0;
+    virtual void drawView(QPainter* painter, const QRegion& region) const = 0;
+
+    [[nodiscard]] virtual QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const = 0;
+    [[nodiscard]] virtual ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const                 = 0;
+    [[nodiscard]] virtual QModelIndex findIndexAt(const QPoint& point, bool incSpans, bool incPadding) const   = 0;
+    virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)                       = 0;
+    [[nodiscard]] virtual int sizeHintForColumn(int column) const                                              = 0;
+
+    [[nodiscard]] virtual int firstVisibleItem(int* offset) const                            = 0;
+    [[nodiscard]] virtual int lastVisibleItem(int firstVisual, int offset) const             = 0;
+    [[nodiscard]] virtual QPoint coordinateForItem(int item) const                           = 0;
+    [[nodiscard]] virtual int itemAtCoordinate(QPoint coordinate, bool includePadding) const = 0;
+    [[nodiscard]] virtual int itemAbove(int item) const                                      = 0;
+    [[nodiscard]] virtual int itemBelow(int item) const                                      = 0;
+    [[nodiscard]] virtual int itemLeft(int item) const                                       = 0;
+    [[nodiscard]] virtual int itemRight(int item) const                                      = 0;
+    [[nodiscard]] virtual int pageUp(int item) const                                         = 0;
+    [[nodiscard]] virtual int pageDown(int item) const                                       = 0;
+
+    virtual void renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const = 0;
+
+    virtual void updateScrollBars() = 0;
+    virtual void updateColumns() { }
+
+    void layout(int i, bool afterIsUninitialised = false);
+    [[nodiscard]] QRect mapToViewport(const QRect& rect) const;
+    [[nodiscard]] int indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const;
+    [[nodiscard]] std::pair<int, int> startAndEndColumns(const QRect& rect) const;
+    void calcLogicalIndexes(std::vector<int>& logicalIndexes,
+                            std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions, int left,
+                            int right) const;
+    [[nodiscard]] ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
+
+    [[nodiscard]] bool isIndexValid(const QModelIndex& index) const
+    {
+        return m_p->isIndexValid(index);
+    }
+
+    [[nodiscard]] QScrollBar* verticalScrollBar() const
+    {
+        return m_view->verticalScrollBar();
+    }
+
+    [[nodiscard]] QScrollBar* horizontalScrollBar() const
+    {
+        return m_view->horizontalScrollBar();
+    }
+
+    [[nodiscard]] Qt::ScrollBarPolicy verticalScrollBarPolicy() const
+    {
+        return m_view->verticalScrollBarPolicy();
+    }
+
+    [[nodiscard]] Qt::ScrollBarPolicy horizontalScrollBarPolicy() const
+    {
+        return m_view->horizontalScrollBarPolicy();
+    }
+
+    [[nodiscard]] int itemCount() const
+    {
+        return m_p->itemCount();
+    }
+
+    [[nodiscard]] int itemWidth() const
+    {
+        return m_p->m_itemWidth;
+    }
+
+    [[nodiscard]] std::vector<ExpandedTreeViewItem>& viewItems() const
+    {
+        return m_p->m_viewItems;
+    }
+
+    [[nodiscard]] ExpandedTreeViewItem& viewItem(int i) const
+    {
+        return m_p->m_viewItems.at(i);
+    }
+
+    [[nodiscard]] bool empty() const
+    {
+        return m_p->m_viewItems.empty();
+    }
+
+    [[nodiscard]] QWidget* viewport() const
+    {
+        return m_view->viewport();
+    }
+
+    [[nodiscard]] QSize viewportSize() const
+    {
+        return m_view->contentsRect().size();
+    }
+
+    [[nodiscard]] QAbstractItemModel* model() const
+    {
+        return m_p->m_model;
+    }
+
+    [[nodiscard]] QHeaderView* header() const
+    {
+        return m_p->m_header;
+    }
+
+    [[nodiscard]] QAbstractItemDelegate* delegate(const QModelIndex& idx) const
+    {
+        return m_view->itemDelegateForIndex(idx);
+    }
+
+    ExpandedTreeView* m_view;
+    ExpandedTreeView::Private* m_p;
+
+    mutable std::pair<int, int> m_leftAndRight;
+    QSize m_contentsSize;
+    mutable int m_uniformRowHeight;
+};
+
+void BaseView::layout(int i, bool afterIsUninitialised)
+{
+    const QModelIndex parent = i < 0 ? m_view->rootIndex() : m_p->modelIndex(i);
+
+    if(i >= 0 && !parent.isValid()) {
+        return;
+    }
+
+    int count{0};
+    if(model()->hasChildren(parent)) {
+        if(model()->canFetchMore(parent)) {
+            model()->fetchMore(parent);
+            const int itemHeight = m_p->m_defaultItemHeight <= 0 ? m_view->sizeHintForRow(0) : m_p->m_defaultItemHeight;
+            const int viewCount  = itemHeight ? m_view->viewport()->height() / itemHeight : 0;
+
+            int lastCount{-1};
+            while((count = model()->rowCount(parent)) < viewCount && count != lastCount
+                  && model()->canFetchMore(parent)) {
+                model()->fetchMore(parent);
+                lastCount = count;
+            }
         }
-    });
-    QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() { m_self->viewport()->update(); });
-    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, &ExpandedTreeView::Private::columnCountChanged);
-    QObject::connect(m_header, &QHeaderView::sectionHandleDoubleClicked, this,
-                     &ExpandedTreeView::Private::resizeColumnToContents);
-    QObject::connect(m_header, &QHeaderView::geometriesChanged, this, [this]() { m_self->updateGeometries(); });
+        else {
+            count = model()->rowCount(parent);
+        }
+    }
+
+    if(i == -1) {
+        m_p->m_viewItems.resize(count);
+        afterIsUninitialised = true;
+    }
+    else if(viewItem(i).childCount != count) {
+        if(!afterIsUninitialised) {
+            m_p->insertViewItems(i + 1, count, ExpandedTreeViewItem{});
+        }
+        else if(count > 0) {
+            m_p->m_viewItems.resize(itemCount() + count);
+        }
+    }
+
+    const int first{i + 1};
+    int children{0};
+    ExpandedTreeViewItem* item{nullptr};
+    QModelIndex currentIndex;
+
+    int columnCount{0};
+    const int total = model()->columnCount();
+    for(int column{0}; column < total; ++column) {
+        if(!header()->isSectionHidden(column)) {
+            ++columnCount;
+        }
+    }
+
+    for(int index{first}; index < first + count; ++index) {
+        currentIndex = model()->index(index - first, 0, parent);
+
+        const int last = index + children;
+
+        if(item) {
+            item->hasMoreSiblings = true;
+        }
+
+        item                  = &viewItem(last);
+        item->index           = currentIndex;
+        item->parentItem      = i;
+        item->height          = 0;
+        item->childCount      = 0;
+        item->hasMoreSiblings = false;
+        item->hasChildren     = model()->hasChildren(currentIndex);
+        item->columnCount     = columnCount;
+        item->width           = m_p->m_itemWidth;
+
+        if(item->hasChildren) {
+            layout(last, afterIsUninitialised);
+            item = &viewItem(last);
+            children += item->childCount;
+        }
+    }
+
+    while(i > -1) {
+        viewItem(i).childCount += count;
+        i = viewItem(i).parentItem;
+    }
 }
 
-int ExpandedTreeView::Private::itemCount() const
+QRect BaseView::mapToViewport(const QRect& rect) const
 {
-    return static_cast<int>(m_viewItems.size());
+    if(!rect.isValid()) {
+        return rect;
+    }
+
+    const QRect result{rect};
+    const int dx = -m_view->horizontalOffset();
+    const int dy = -m_view->verticalOffset();
+
+    return result.adjusted(dx, dy, dx, dy);
 }
 
-void ExpandedTreeView::Private::updateScrollBars()
+int BaseView::indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const
 {
-    QSize viewportSize = m_self->viewport()->size();
+    const int xHint = delegate(index)->sizeHint(option, index).width();
+    return std::max(hint, xHint);
+}
+
+std::pair<int, int> BaseView::startAndEndColumns(const QRect& rect) const
+{
+    const int start = std::min(header()->visualIndexAt(rect.left()), 0);
+    int end         = header()->visualIndexAt(rect.right());
+
+    if(end == -1) {
+        end = header()->count() - 1;
+    }
+
+    return {std::min(start, end), std::max(start, end)};
+}
+
+void BaseView::calcLogicalIndexes(std::vector<int>& logicalIndexes,
+                                  std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions, int left,
+                                  int right) const
+{
+    const int columnCount = header()->count();
+
+    int logicalIndexBeforeLeft{-1};
+    int logicalIndexAfterRight{-1};
+
+    for(int visualIndex{left - 1}; visualIndex >= 0; --visualIndex) {
+        const int logical = header()->logicalIndex(visualIndex);
+        if(!header()->isSectionHidden(logical)) {
+            logicalIndexBeforeLeft = logical;
+            break;
+        }
+    }
+
+    for(int visualIndex{left}; visualIndex < columnCount; ++visualIndex) {
+        const int logical = header()->logicalIndex(visualIndex);
+        if(!header()->isSectionHidden(logical)) {
+            if(visualIndex > right) {
+                logicalIndexAfterRight = logical;
+                break;
+            }
+            logicalIndexes.emplace_back(logical);
+        }
+    }
+
+    const auto count = static_cast<int>(logicalIndexes.size());
+    itemPositions.resize(count);
+
+    for(int visual{0}; visual < count; ++visual) {
+        const int logical     = logicalIndexes.at(visual);
+        const int nextLogical = (visual + 1) >= count ? logicalIndexAfterRight : logicalIndexes.at(visual + 1);
+        const int prevLogical = (visual - 1) < 0 ? logicalIndexBeforeLeft : logicalIndexes.at(visual - 1);
+
+        QStyleOptionViewItem::ViewItemPosition pos;
+
+        if(columnCount == 1 || (nextLogical == 0 && prevLogical == -1) || (logical == 0 && nextLogical == -1)
+           || m_view->isSpanning(logical)) {
+            pos = QStyleOptionViewItem::OnlyOne;
+        }
+        else if(nextLogical != 0 && prevLogical == -1) {
+            pos = QStyleOptionViewItem::Beginning;
+        }
+        else if(nextLogical == 0 || nextLogical == -1) {
+            pos = QStyleOptionViewItem::End;
+        }
+        else {
+            pos = QStyleOptionViewItem::Middle;
+        }
+
+        itemPositions[visual] = pos;
+    }
+}
+
+ItemViewPaintPairs BaseView::draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const
+{
+    ItemViewPaintPairs ret;
+
+    const QRect viewportRect = viewport()->rect();
+
+    for(const auto& index : indexes) {
+        if(!index.isValid() || m_view->isSpanning(index.column())) {
+            continue;
+        }
+
+        const QRect currentRect = m_view->visualRect(index);
+        if(currentRect.intersects(viewportRect)) {
+            ret.emplace_back(currentRect, index);
+            rect |= currentRect;
+        }
+    }
+
+    const QRect clipped = rect & viewportRect;
+    rect.setLeft(clipped.left());
+    rect.setRight(clipped.right());
+
+    return ret;
+}
+
+class TreeView : public BaseView
+{
+public:
+    using BaseView::BaseView;
+
+    void invalidate() override;
+
+    void doItemLayout() override;
+    void drawView(QPainter* painter, const QRegion& region) const override;
+
+    [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
+    [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
+    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight) override;
+    [[nodiscard]] int sizeHintForColumn(int column) const override;
+
+    [[nodiscard]] int firstVisibleItem(int* offset) const override;
+    [[nodiscard]] int lastVisibleItem(int firstVisual, int offset) const override;
+    [[nodiscard]] QPoint coordinateForItem(int item) const override;
+    [[nodiscard]] int itemAtCoordinate(QPoint coordinate, bool includePadding) const override;
+    [[nodiscard]] int itemAbove(int item) const override;
+    [[nodiscard]] int itemBelow(int item) const override;
+    [[nodiscard]] int itemLeft(int item) const override;
+    [[nodiscard]] int itemRight(int item) const override;
+    [[nodiscard]] int pageUp(int item) const override;
+    [[nodiscard]] int pageDown(int item) const override;
+
+    void renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const override;
+
+    void updateScrollBars() override;
+    void updateColumns() override;
+
+    [[nodiscard]] int itemHeight(int item) const;
+    [[nodiscard]] int itemPadding(int item) const;
+
+    void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                           int y) const;
+
+private:
+    [[nodiscard]] int indexRowSizeHint(const QModelIndex& index) const;
+    [[nodiscard]] int indexSizeHint(const QModelIndex& index, bool span = false) const;
+    void recalculatePadding();
+    void drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option, int firstVisibleItem,
+                          int firstVisibleItemOffset) const;
+    void adjustViewOptionsForIndex(QStyleOptionViewItem* option, const QModelIndex& currentIndex) const;
+};
+
+void TreeView::invalidate()
+{
+    m_uniformRowHeight = 0;
+}
+
+void TreeView::drawView(QPainter* painter, const QRegion& region) const
+{
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    if(empty() || header()->count() == 0) {
+        return;
+    }
+
+    int firstVisibleOffset{0};
+    const int firstVisible = firstVisibleItem(&firstVisibleOffset);
+    if(firstVisible < 0) {
+        return;
+    }
+
+    if(!m_p->m_spans.empty()) {
+        drawAndClipSpans(painter, opt, firstVisible, firstVisibleOffset);
+    }
+
+    const int count          = itemCount();
+    const int viewportWidth  = viewport()->width();
+    const bool multipleRects = (region.rectCount() > 1);
+    std::set<int> drawn;
+
+    for(const QRect& regionArea : region) {
+        const QRect area = multipleRects ? QRect{0, regionArea.y(), viewportWidth, regionArea.height()} : regionArea;
+        m_leftAndRight   = startAndEndColumns(area);
+
+        int i{firstVisible};
+        int y{firstVisibleOffset};
+
+        for(; i < count; ++i) {
+            const int height = itemHeight(i) + itemPadding(i);
+            if(y + height > area.top()) {
+                break;
+            }
+            y += height;
+        }
+
+        for(; i < count && y <= area.bottom(); ++i) {
+            const auto& item         = viewItem(i);
+            const QModelIndex& index = item.index;
+
+            opt.rect = visualRect(index, RectRule::FullRow, false);
+            opt.rect.setY(y);
+            opt.rect.setHeight(m_p->indexRowSizeHint(index));
+            opt.state |= QStyle::State_Open | (item.hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
+
+            if(item.hasChildren) {
+                opt.state |= QStyle::State_Children;
+            }
+            else {
+                opt.state &= ~QStyle::State_Children;
+            }
+
+            if(!multipleRects || !drawn.contains(i)) {
+                drawRow(painter, opt, item.index);
+
+                if(multipleRects) {
+                    drawn.emplace(i);
+                }
+            }
+
+            y += itemHeight(i) + item.padding;
+        }
+    }
+}
+
+void TreeView::doItemLayout()
+{
+    invalidate();
+    layout(-1);
+    recalculatePadding();
+}
+
+QRect TreeView::visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const
+{
+    if(!isIndexValid(index)) {
+        return {};
+    }
+
+    if(m_view->isIndexHidden(index) && rule != RectRule::FullRow) {
+        return {};
+    }
+
+    m_p->layoutItems();
+
+    const int viewIndex = m_p->viewIndex(index);
+    if(viewIndex < 0) {
+        return {};
+    }
+
+    const int column = index.column();
+    int x            = header()->sectionViewportPosition(column);
+    int width        = header()->sectionSize(column);
+
+    if(rule == RectRule::FullRow) {
+        x     = 0;
+        width = header()->length();
+    }
+
+    const int y = coordinateForItem(viewIndex).y();
+    int height  = indexSizeHint(index);
+
+    if(includePadding) {
+        height += itemPadding(viewIndex);
+    }
+
+    return {x, y, width, height};
+}
+
+ExpandedTreeViewItem TreeView::indexToViewItem(const QModelIndex& index) const
+{
+    if(index.isValid() && index.row() < itemCount()) {
+        return viewItem(index.row());
+    }
+
+    return {};
+}
+
+QModelIndex TreeView::findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const
+{
+    const int visualIndex = itemAtCoordinate(point, includePadding);
+    QModelIndex index     = m_p->modelIndex(visualIndex);
+    if(!index.isValid()) {
+        return {};
+    }
+
+    const int column = header()->logicalIndexAt(point.x());
+
+    if(!includeSpans && !model()->hasChildren(index) && m_view->isSpanning(column)) {
+        return {};
+    }
+
+    if(column == index.column()) {
+        return index;
+    }
+
+    if(column < 0) {
+        return {};
+    }
+
+    return index.sibling(index.row(), column);
+}
+
+void TreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
+{
+    bool sizeChanged{false};
+    const int topViewIndex = m_p->viewIndex(topLeft);
+
+    if(topViewIndex == 0) {
+        const int defaultHeight  = m_p->indexRowSizeHint(topLeft);
+        sizeChanged              = m_p->m_defaultItemHeight != defaultHeight;
+        m_p->m_defaultItemHeight = defaultHeight;
+    }
+
+    if(topViewIndex != -1) {
+        // Single row
+        if(topLeft.row() == bottomRight.row()) {
+            const int oldHeight = itemHeight(topViewIndex);
+            m_p->invalidateHeightCache(topViewIndex);
+            sizeChanged |= (oldHeight != itemHeight(topViewIndex));
+            if(topLeft.column() == 0) {
+                viewItem(topViewIndex).hasChildren = m_p->hasVisibleChildren(topLeft);
+            }
+        }
+        else {
+            const int bottomViewIndex = m_p->viewIndex(bottomRight);
+            for(int i = topViewIndex; i <= bottomViewIndex; ++i) {
+                const int oldHeight = itemHeight(i);
+                m_p->invalidateHeightCache(i);
+                sizeChanged |= (oldHeight != itemHeight(i));
+                if(topLeft.column() == 0) {
+                    viewItem(i).hasChildren = m_p->hasVisibleChildren(viewItem(i).index);
+                }
+            }
+        }
+    }
+
+    if(sizeChanged) {
+        updateScrollBars();
+        viewport()->update();
+    }
+}
+
+int TreeView::sizeHintForColumn(int column) const
+{
+    QStyleOptionViewItem option;
+    m_view->initViewItemOption(&option);
+
+    const int count = itemCount();
+
+    const int maximumProcessRows = header()->resizeContentsPrecision();
+
+    int offset{0};
+    int start = firstVisibleItem(&offset);
+    int end   = lastVisibleItem(start, offset);
+    if(start < 0 || end < 0 || end == count - 1) {
+        end = count - 1;
+        if(maximumProcessRows < 0) {
+            start = 0;
+        }
+        else if(maximumProcessRows == 0) {
+            start               = std::max(0, end - 1);
+            int remainingHeight = viewport()->height();
+            while(start > 0 && remainingHeight > 0) {
+                remainingHeight -= itemHeight(start);
+                --start;
+            }
+        }
+        else {
+            start = std::max(0, end - maximumProcessRows);
+        }
+    }
+
+    int width{0};
+    int rowsProcessed{0};
+
+    for(int i = start; i <= end; ++i) {
+        if(viewItem(i).hasChildren) {
+            continue;
+        }
+        QModelIndex index = viewItem(i).index;
+        index             = index.sibling(index.row(), column);
+        width             = indexWidthHint(index, width, option);
+        ++rowsProcessed;
+        if(rowsProcessed == maximumProcessRows) {
+            break;
+        }
+    }
+
+    --end;
+
+    const int actualBottom = count - 1;
+
+    if(maximumProcessRows == 0) {
+        rowsProcessed = 0;
+    }
+
+    while(rowsProcessed != maximumProcessRows && (start > 0 || end < actualBottom)) {
+        int index{-1};
+
+        if((rowsProcessed % 2 && start > 0) || end == actualBottom) {
+            while(start > 0) {
+                --start;
+                if(viewItem(start).hasChildren) {
+                    continue;
+                }
+                index = start;
+                break;
+            }
+        }
+        else {
+            while(end < actualBottom) {
+                ++end;
+                if(viewItem(end).hasChildren) {
+                    continue;
+                }
+                index = end;
+                break;
+            }
+        }
+        if(index < 0) {
+            continue;
+        }
+
+        QModelIndex viewIndex = viewItem(index).index;
+        viewIndex             = viewIndex.sibling(viewIndex.row(), column);
+        width                 = indexWidthHint(viewIndex, width, option);
+        ++rowsProcessed;
+    }
+
+    return width;
+}
+
+int TreeView::firstVisibleItem(int* offset) const
+{
+    const int value = verticalScrollBar()->value();
+    const int count = itemCount();
+
+    int y{0};
+    for(int i{0}; i < count; ++i) {
+        const int height = itemHeight(i) + itemPadding(i);
+        y += height;
+        if(y > value) {
+            if(offset) {
+                *offset = y - value - height;
+            }
+            return i;
+        }
+    }
+    return -1;
+}
+
+int TreeView::lastVisibleItem(int firstVisual, int offset) const
+{
+    if(firstVisual < 0 || offset < 0) {
+        firstVisual = firstVisibleItem(&offset);
+        if(firstVisual < 0) {
+            return -1;
+        }
+    }
+
+    int y{-offset};
+    const int value = viewport()->height();
+
+    const int count = itemCount();
+    for(int i{firstVisual}; i < count; ++i) {
+        y += itemHeight(i) + itemPadding(i);
+        if(y > value) {
+            return i;
+        }
+    }
+
+    return count - 1;
+}
+
+QPoint TreeView::coordinateForItem(int item) const
+{
+    const int vertScrollValue = verticalScrollBar()->value();
+
+    const auto& items = viewItems();
+    for(int index{0}, y{0}; const auto& viewItem : items) {
+        if(index == item) {
+            return {0, y - vertScrollValue};
+        }
+        y += itemHeight(index++) + viewItem.padding;
+    }
+
+    return {0, 0};
+}
+
+int TreeView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
+{
+    const int count = itemCount();
+    if(count == 0) {
+        return -1;
+    }
+
+    const int contentsCoord = coordinate.y() + verticalScrollBar()->value();
+
+    int itemCoord{0};
+    for(int index{0}; index < count; ++index) {
+        const int height  = itemHeight(index);
+        const int padding = itemPadding(index);
+        itemCoord += height + padding;
+
+        if(itemCoord > contentsCoord) {
+            if(includePadding && (itemCoord - padding) < contentsCoord) {
+                return -1;
+            }
+            return index >= count ? -1 : index;
+        }
+    }
+
+    return -1;
+}
+
+int TreeView::itemAbove(int item) const
+{
+    const int i{item};
+    while(m_p->isItemDisabled(--item) || m_p->itemHasChildren(item)) { }
+    return item < 0 ? i : item;
+}
+
+int TreeView::itemBelow(int item) const
+{
+    const int i{item};
+    while(m_p->isItemDisabled(++item) || m_p->itemHasChildren(item)) { }
+    return item >= itemCount() ? i : item;
+}
+
+int TreeView::itemLeft(int /*item*/) const
+{
+    return -1;
+}
+
+int TreeView::itemRight(int /*item*/) const
+{
+    return -1;
+}
+
+int TreeView::pageUp(int item) const
+{
+    auto coord = coordinateForItem(item);
+    coord.ry() -= viewport()->height();
+
+    int index = itemAtCoordinate(coord, false);
+
+    while(m_p->isItemDisabled(index) || m_p->itemHasChildren(index)) {
+        index--;
+    }
+
+    if(index == -1) {
+        index = 0;
+    }
+
+    while(m_p->isItemDisabled(index) || m_p->itemHasChildren(index)) {
+        index++;
+    }
+
+    return index >= itemCount() ? 0 : index;
+}
+
+int TreeView::pageDown(int item) const
+{
+    auto coord = coordinateForItem(item);
+    coord.ry() += viewport()->height();
+
+    int index = itemAtCoordinate(coord, false);
+
+    while(m_p->isItemDisabled(index) || m_p->itemHasChildren(index)) {
+        index++;
+    }
+
+    if(index == -1 || index >= itemCount()) {
+        index = itemCount() - 1;
+    }
+
+    while(m_p->isItemDisabled(index) || m_p->itemHasChildren(index)) {
+        index--;
+    }
+
+    return index == -1 ? itemCount() - 1 : index;
+}
+
+void TreeView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const
+{
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    opt.state |= QStyle::State_Selected;
+
+    int lastRow{0};
+    bool paintedBg{false};
+    for(const auto& [paintRect, index] : paintPairs) {
+        if(m_view->isSpanning(index.column())) {
+            continue;
+        }
+
+        if(std::exchange(lastRow, index.row()) != lastRow) {
+            paintedBg = false;
+        }
+
+        opt.rect = paintRect.translated(-rect.topLeft());
+        adjustViewOptionsForIndex(&opt, index);
+
+        const int cellHeight = indexSizeHint(index);
+        opt.rect.setHeight(cellHeight);
+
+        if(!paintedBg) {
+            const QRect cellRect{opt.rect};
+            paintedBg = true;
+
+            opt.rect.setRect(0, opt.rect.top(), header()->length(), cellHeight);
+
+            const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
+            if(bg != Qt::NoBrush) {
+                painter->fillRect(opt.rect, bg);
+            }
+            m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+
+            opt.rect = cellRect;
+        }
+
+        delegate(index)->paint(painter, opt, index);
+    }
+}
+
+void TreeView::updateScrollBars()
+{
+    QSize viewportSize = m_view->viewport()->size();
     if(!viewportSize.isValid()) {
         viewportSize = {0, 0};
     }
 
-    layoutItems();
+    m_p->layoutItems();
 
-    if(m_viewItems.empty()) {
-        m_self->doItemsLayout();
+    if(m_p->m_viewItems.empty()) {
+        m_view->doItemsLayout();
     }
 
     int itemsInViewport{0};
-    const int itemCount      = this->itemCount();
+    const int count          = itemCount();
     const int viewportHeight = viewportSize.height();
 
-    for(int height{0}, item = itemCount - 1; item >= 0; --item) {
+    for(int height{0}, item = count - 1; item >= 0; --item) {
         height += itemHeight(item);
         if(height > viewportHeight) {
             break;
@@ -231,29 +1087,29 @@ void ExpandedTreeView::Private::updateScrollBars()
         ++itemsInViewport;
     }
 
-    auto* verticalBar = m_self->verticalScrollBar();
+    auto* verticalBar = verticalScrollBar();
 
     int contentsHeight{0};
-    for(int i{0}; i < itemCount; ++i) {
+    for(int i{0}; i < count; ++i) {
         contentsHeight += itemHeight(i) + itemPadding(i);
     }
 
     const int vMax = contentsHeight - viewportHeight;
     if(verticalBar->isVisible() && vMax <= 0) {
-        m_hidingScrollbar = true;
+        m_p->m_hidingScrollbar = true;
     }
 
     verticalBar->setRange(0, vMax);
     verticalBar->setPageStep(viewportHeight);
     verticalBar->setSingleStep(std::max(viewportHeight / (itemsInViewport + 1), 2));
 
-    const int columnCount   = m_header->count();
+    const int columnCount   = header()->count();
     const int viewportWidth = viewportSize.width();
     int columnsInViewport{0};
 
     for(int width{0}, column = columnCount - 1; column >= 0; --column) {
-        const int logical = m_header->logicalIndex(column);
-        width += m_header->sectionSize(logical);
+        const int logical = header()->logicalIndex(column);
+        width += header()->sectionSize(logical);
         if(width > viewportWidth) {
             break;
         }
@@ -264,10 +1120,10 @@ void ExpandedTreeView::Private::updateScrollBars()
         columnsInViewport = std::max(1, columnsInViewport);
     }
 
-    auto* horizontalBar = m_self->horizontalScrollBar();
+    auto* horizontalBar = horizontalScrollBar();
 
-    const int horizontalLength = m_header->length();
-    const QSize maxSize        = m_self->maximumViewportSize();
+    const int horizontalLength = header()->length();
+    const QSize maxSize        = m_view->maximumViewportSize();
 
     if(maxSize.width() >= horizontalLength && verticalBar->maximum() <= 0) {
         viewportSize = maxSize;
@@ -278,30 +1134,1088 @@ void ExpandedTreeView::Private::updateScrollBars()
     horizontalBar->setSingleStep(std::max(viewportSize.width() / (columnsInViewport + 1), 2));
 }
 
-int ExpandedTreeView::Private::itemAtCoordinate(int coordinate, bool includePadding) const
+void TreeView::updateColumns()
 {
-    const int itemCount = this->itemCount();
-    if(itemCount == 0) {
-        return -1;
+    recalculatePadding();
+}
+
+int TreeView::itemHeight(int item) const
+{
+    if(empty()) {
+        return 0;
     }
 
-    const int contentsCoord = coordinate + m_self->verticalScrollBar()->value();
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
+        return m_uniformRowHeight;
+    }
 
-    int itemCoord{0};
-    for(int index{0}; index < itemCount; ++index) {
-        const int height  = itemHeight(index);
-        const int padding = itemPadding(index);
-        itemCoord += height + padding;
+    const QModelIndex& index = viewItem(item).index;
+    if(!index.isValid()) {
+        return 0;
+    }
 
-        if(itemCoord > contentsCoord) {
-            if(includePadding && (itemCoord - padding) < contentsCoord) {
-                return -1;
+    int height = viewItem(item).height;
+    if(height <= 0) {
+        height                = indexRowSizeHint(index);
+        viewItem(item).height = height;
+    }
+
+    height = std::max(height, 0);
+
+    if(m_p->m_uniformRowHeights) {
+        m_uniformRowHeight = height;
+    }
+
+    return height;
+}
+
+int TreeView::itemPadding(int item) const
+{
+    if(empty()) {
+        return 0;
+    }
+
+    return viewItem(item).padding;
+}
+
+void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    QStyleOptionViewItem opt{option};
+
+    const QModelIndex hover = m_p->m_hoverIndex;
+    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
+    const bool rowFocused   = m_view->hasFocus();
+
+    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
+
+    if(model()->hasChildren(index)) {
+        // Span first column of headers/subheaders
+        opt.rect.setX(0);
+        opt.rect.setWidth(header()->length());
+        m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+        delegate(index)->paint(painter, opt, index);
+        return;
+    }
+
+    const QPoint offset       = m_p->m_scrollDelayOffset;
+    const int y               = opt.rect.y() + offset.y();
+    const int left            = m_leftAndRight.first;
+    const int right           = m_leftAndRight.second;
+    const QModelIndex parent  = index.parent();
+    const QModelIndex current = m_view->currentIndex();
+
+    QModelIndex modelIndex;
+    std::vector<int> logicalIndices;
+    std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
+
+    calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
+
+    const auto count = static_cast<int>(logicalIndices.size());
+    bool paintedBg{false};
+    bool currentRowHasFocus{false};
+
+    for(int section{0}; section < count; ++section) {
+        const int headerSection = logicalIndices.at(section);
+        const bool spanning     = m_view->isSpanning(headerSection);
+
+        if(spanning) {
+            continue;
+        }
+
+        const int width    = header()->sectionSize(headerSection);
+        const int position = header()->sectionViewportPosition(headerSection) + offset.x();
+
+        modelIndex = model()->index(index.row(), headerSection, parent);
+
+        if(!modelIndex.isValid()) {
+            continue;
+        }
+
+        const auto icon      = index.data(Qt::DecorationRole).value<QPixmap>();
+        opt.icon             = QIcon{icon};
+        opt.decorationSize   = icon.deviceIndependentSize().toSize();
+        opt.viewItemPosition = viewItemPosList.at(section);
+
+        if(m_view->selectionModel()->isSelected(modelIndex)) {
+            opt.state |= QStyle::State_Selected;
+        }
+        if(rowFocused && (current == modelIndex)) {
+            currentRowHasFocus = true;
+        }
+
+        if(opt.state & QStyle::State_Enabled) {
+            QPalette::ColorGroup cg;
+            if((model()->flags(modelIndex) & Qt::ItemIsEnabled) == 0) {
+                opt.state &= ~QStyle::State_Enabled;
+                cg = QPalette::Disabled;
             }
-            return index >= itemCount ? -1 : index;
+            else if(opt.state & QStyle::State_Active) {
+                cg = QPalette::Active;
+            }
+            else {
+                cg = QPalette::Inactive;
+            }
+            opt.palette.setCurrentColorGroup(cg);
+        }
+
+        const int cellHeight = m_p->indexRowSizeHint(modelIndex);
+        if(cellHeight > 0) {
+            const QRect cellRect{position, y, width, cellHeight};
+
+            if(!paintedBg) {
+                // Some styles use a gradient for the selection bg which only covers each individual cell
+                // Show this as a single gradient across the entire row
+                paintedBg = true;
+                drawRowBackground(painter, opt, modelIndex, y);
+            }
+
+            opt.rect = cellRect;
+
+            delegate(modelIndex)->paint(painter, opt, modelIndex);
+        }
+    }
+
+    if(currentRowHasFocus) {
+        m_view->drawFocus(painter, opt, modelIndex, y);
+    }
+}
+
+void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
+                                 int y) const
+{
+    QStyleOptionViewItem opt{option};
+
+    const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
+
+    const auto paintRects = m_p->rectsToPaint(option, y);
+    for(const auto& rect : paintRects) {
+        if(rect.width() > 0) {
+            opt.rect = rect;
+            painter->fillRect(opt.rect, bg);
+            m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+        }
+    }
+}
+
+int TreeView::indexRowSizeHint(const QModelIndex& index) const
+{
+    if(!isIndexValid(index)) {
+        return 0;
+    }
+
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
+        return m_uniformRowHeight;
+    }
+
+    int start{-1};
+    int end{-1};
+    const int indexRow       = index.row();
+    const QModelIndex parent = index.parent();
+    int count                = header()->count();
+
+    if(count > 0 && m_view->isVisible()) {
+        start = std::min(header()->visualIndexAt(0), 0);
+    }
+    else {
+        count = model()->columnCount(parent);
+    }
+
+    end = count - 1;
+
+    if(end < start) {
+        std::swap(end, start);
+    }
+
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    opt.rect.setWidth(-1);
+    int height{-1};
+
+    for(int column{start}; column <= end; ++column) {
+        const int logical = count == 0 ? column : header()->logicalIndex(column);
+        if(header()->isSectionHidden(logical)) {
+            continue;
+        }
+
+        const QModelIndex colIndex = model()->index(indexRow, logical, parent);
+        if(colIndex.isValid()) {
+            const int hint = delegate(colIndex)->sizeHint(opt, colIndex).height();
+            height         = std::max(height, hint);
+        }
+    }
+
+    if(m_p->m_uniformRowHeights) {
+        m_uniformRowHeight = height;
+    }
+
+    return height;
+}
+
+int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
+{
+    if(!isIndexValid(index)) {
+        return 0;
+    }
+
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
+        return m_uniformRowHeight;
+    }
+
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    int height{0};
+    if(span && m_view->isSpanning(index.column())) {
+        height = header()->sectionSize(index.column());
+    }
+
+    const int column = index.column();
+    if(header()->isSectionHidden(column)) {
+        return 0;
+    }
+
+    opt.rect.setWidth(header()->sectionSize(column));
+    const int hint = delegate(index)->sizeHint(opt, index).height();
+    height         = std::max(height, hint);
+
+    if(m_p->m_uniformRowHeights) {
+        return m_uniformRowHeight = height;
+    }
+
+    return height;
+}
+
+void TreeView::recalculatePadding()
+{
+    if(empty()) {
+        return;
+    }
+
+    int max{0};
+
+    const int sectionCount = header()->count();
+    for(int section{0}; section < sectionCount; ++section) {
+        const auto columnIndex = model()->index(0, section, {});
+        if(columnIndex.isValid()) {
+            if(m_view->isSpanning(section)) {
+                max = std::max(max, header()->sectionSize(section));
+            }
+        }
+    }
+
+    int rowHeight{0};
+    auto& items = viewItems();
+
+    for(auto& item : items) {
+        item.padding = 0;
+
+        if(item.hasChildren || item.parentItem == -1) {
+            continue;
+        }
+
+        const QModelIndex parent = m_p->modelIndex(item.parentItem);
+        const int rowCount       = model()->rowCount(parent);
+        const int row            = item.index.row();
+
+        if(row == rowCount - 1) {
+            if(rowHeight == 0) {
+                // Assume all track rows have the same height
+                rowHeight = indexRowSizeHint(item.index);
+            }
+
+            const int sectionHeight = rowCount * rowHeight;
+            item.padding            = (max > sectionHeight) ? max - sectionHeight : 0;
+        }
+    }
+}
+
+void TreeView::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option, int firstVisibleItem,
+                                int firstVisibleItemOffset) const
+{
+    QStyleOptionViewItem opt{option};
+
+    const QRect rect = viewport()->rect();
+    QRegion region{rect};
+    const int count = itemCount();
+
+    int i{firstVisibleItem};
+    int y{firstVisibleItemOffset};
+
+    for(; i < count; ++i) {
+        const int height = itemHeight(i) + itemPadding(i);
+        if(y + height > rect.top()) {
+            break;
+        }
+        y += height;
+    }
+
+    for(; i < count && y <= rect.bottom(); ++i) {
+        const auto& item  = viewItem(i);
+        QModelIndex index = item.index;
+
+        if(!index.isValid() || model()->hasChildren(index)) {
+            y += itemHeight(i) + item.padding;
+            continue;
+        }
+
+        if(i == firstVisibleItem && index.row() > 0) {
+            index = index.siblingAtRow(0);
+        }
+
+        if(index.row() > 0) {
+            y += itemHeight(i) + item.padding;
+            continue;
+        }
+
+        y = visualRect(index, RectRule::FullRow, false).y();
+
+        m_leftAndRight           = startAndEndColumns(rect);
+        const int left           = m_leftAndRight.first;
+        const int right          = m_leftAndRight.second;
+        const QModelIndex parent = index.parent();
+
+        int position;
+        QModelIndex modelIndex;
+
+        std::vector<int> logicalIndices;
+        std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
+
+        calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
+
+        const auto sectionCount = static_cast<int>(logicalIndices.size());
+
+        for(int section{0}; section < sectionCount; ++section) {
+            const int headerSection = logicalIndices.at(section);
+            const bool spanning     = m_view->isSpanning(headerSection);
+
+            if(!spanning) {
+                continue;
+            }
+
+            const int width = header()->sectionSize(headerSection);
+            position        = header()->sectionViewportPosition(headerSection);
+
+            modelIndex = model()->index(0, headerSection, parent);
+            if(!modelIndex.isValid()) {
+                continue;
+            }
+
+            opt.rect = {position, y, width, indexSizeHint(modelIndex, true)};
+            delegate(modelIndex)->paint(painter, opt, modelIndex);
+            region -= opt.rect;
+        }
+
+        y += itemHeight(i) + item.padding;
+    }
+
+    painter->setClipRegion(region);
+}
+
+void TreeView::adjustViewOptionsForIndex(QStyleOptionViewItem* option, const QModelIndex& currentIndex) const
+{
+    const int row = m_p->viewIndex(currentIndex);
+    option->state = option->state | QStyle::State_Open
+                  | (viewItem(row).hasChildren ? QStyle::State_Children : QStyle::State_None)
+                  | (viewItem(row).hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
+
+    std::vector<int> logicalIndexes;
+    std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
+
+    const bool isSpanning = m_view->isSpanning(currentIndex.column());
+    const int left        = (isSpanning ? header()->visualIndex(0) : 0);
+    const int right       = (isSpanning ? header()->visualIndex(0) : header()->count() - 1);
+
+    calcLogicalIndexes(logicalIndexes, viewItemPosList, left, right);
+
+    const int visualIndex = static_cast<int>(
+        std::ranges::distance(logicalIndexes.cbegin(), std::ranges::find(logicalIndexes, currentIndex.column())));
+    option->viewItemPosition = viewItemPosList.at(visualIndex);
+}
+
+class IconView : public BaseView
+{
+public:
+    using BaseView::BaseView;
+
+    void invalidate() override;
+
+    void doItemLayout() override;
+    void drawView(QPainter* painter, const QRegion& region) const override;
+
+    [[nodiscard]] QRect visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const override;
+    [[nodiscard]] ExpandedTreeViewItem indexToViewItem(const QModelIndex& index) const override;
+    [[nodiscard]] QModelIndex findIndexAt(const QPoint& point, bool includeSpans, bool includePadding) const override;
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight) override;
+    [[nodiscard]] int sizeHintForColumn(int column) const override;
+
+    [[nodiscard]] int firstVisibleItem(int* offset = nullptr) const override;
+    [[nodiscard]] int lastVisibleItem(int firstVisual, int offset) const override;
+    [[nodiscard]] QPoint coordinateForItem(int item) const override;
+    [[nodiscard]] int itemAtCoordinate(QPoint coordinate, bool includePadding) const override;
+    [[nodiscard]] int itemAbove(int item) const override;
+    [[nodiscard]] int itemBelow(int item) const override;
+    [[nodiscard]] int itemLeft(int item) const override;
+    [[nodiscard]] int itemRight(int item) const override;
+    [[nodiscard]] int pageUp(int item) const override;
+    [[nodiscard]] int pageDown(int item) const override;
+
+    void renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const override;
+
+    void updateScrollBars() override;
+
+private:
+    struct SizeHint
+    {
+        int height{0};
+        int baseHeight{0};
+        int captionHeight{0};
+    };
+
+    void prepareItemLayout();
+    void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
+    [[nodiscard]] SizeHint indexSizeHint(const QModelIndex& index) const;
+    [[nodiscard]] int itemHeight(int item) const;
+    [[nodiscard]] int spacing() const;
+    [[nodiscard]] QSize iconSize() const;
+
+    QRect m_layoutBounds;
+    int m_segmentSize{0};
+    int m_itemSpacing{0};
+    int m_rowSpacing{10};
+    mutable int m_uniformBaseHeight{0};
+    mutable int m_uniformRowHeight{0};
+    mutable int m_uniformCaptionHeight{0};
+    mutable QSize m_iconSize;
+};
+
+void IconView::drawView(QPainter* painter, const QRegion& region) const
+{
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    if(m_p->m_viewItems.empty() || header()->count() == 0) {
+        return;
+    }
+
+    int firstVisibleOffset{0};
+    const int firstVisible = firstVisibleItem(&firstVisibleOffset);
+    if(firstVisible < 0) {
+        return;
+    }
+
+    const int count  = itemCount();
+    const QRect area = region.boundingRect();
+
+    m_leftAndRight = startAndEndColumns(area);
+
+    int i{firstVisible};
+    int y{firstVisibleOffset};
+    const int max{area.bottom()};
+    const int x{area.left()};
+
+    for(; i < count; i += m_segmentSize) {
+        const int height = itemHeight(i) + spacing();
+        if(y + height > area.top()) {
+            break;
+        }
+        y += height;
+    }
+
+    for(; i < count && y <= max; i += m_segmentSize) {
+        const auto& item    = viewItem(i);
+        const auto rowItems = itemsOnRow(item.y, x);
+        for(const auto& rowItem : rowItems) {
+            const QModelIndex& index = rowItem.index;
+            drawItem(painter, opt, index);
+        }
+        y += itemHeight(i) + spacing();
+    }
+}
+
+QRect IconView::visualRect(const QModelIndex& index, RectRule rule, bool /*includePadding*/) const
+{
+    if(!isIndexValid(index)) {
+        return {};
+    }
+
+    if(m_view->isIndexHidden(index) && rule != RectRule::FullRow) {
+        return {};
+    }
+
+    m_p->layoutItems();
+
+    const int viewIndex = m_p->viewIndex(index);
+    if(viewIndex < 0) {
+        return {};
+    }
+
+    if(rule == RectRule::FullRow) {
+        return mapToViewport(viewItem(viewIndex).rect());
+    }
+
+    const int visual = Utils::realVisualIndex(header(), index.column());
+
+    if(visual == 0) {
+        return mapToViewport(viewItem(viewIndex).baseRect());
+    }
+
+    return mapToViewport(viewItem(viewIndex).columnRect(visual));
+}
+
+void IconView::invalidate()
+{
+    m_uniformRowHeight     = 0;
+    m_uniformBaseHeight    = 0;
+    m_uniformCaptionHeight = 0;
+    m_segmentSize          = 0;
+    m_itemSpacing          = 0;
+    m_iconSize             = {};
+}
+
+void IconView::doItemLayout()
+{
+    invalidate();
+    layout(-1);
+    prepareItemLayout();
+
+    const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
+
+    const int segStartPosition{m_layoutBounds.left()};
+    const int segEndPosition{m_layoutBounds.right()};
+
+    int deltaSegPosition{0};
+    int segPosition{topLeft.y()};
+
+    // Determine the number of items per row
+    const int count = itemCount();
+    for(int i{0}; i < count; ++i) {
+        if(m_segmentSize == 0) {
+            if(topLeft.x() + (i + 1) * itemWidth() > segEndPosition) {
+                m_segmentSize = std::max(i, 1);
+                break;
+            }
+        }
+    }
+
+    if(m_segmentSize == 0) {
+        m_segmentSize = std::max(count, 1);
+    }
+
+    const int totalWidthAvailable = segEndPosition - segStartPosition;
+    const int totalItemWidth      = m_segmentSize * itemWidth();
+    const int remainingSpace      = totalWidthAvailable - totalItemWidth;
+    m_itemSpacing                 = std::max(m_itemSpacing, remainingSpace / (m_segmentSize + 1));
+
+    QRect rect{{}, topLeft};
+
+    for(int i{0}; i < count; ++i) {
+        auto& item = viewItem(i);
+
+        const int segColumn = i % m_segmentSize;
+        if(segColumn == 0 && i > 0) {
+            segPosition += deltaSegPosition;
+            deltaSegPosition = 0;
+        }
+
+        item.x = segStartPosition + m_itemSpacing + segColumn * (itemWidth() + m_itemSpacing);
+        item.y = segPosition;
+
+        deltaSegPosition = std::max(deltaSegPosition, itemHeight(i) + spacing());
+        rect |= item.rect();
+    }
+
+    m_contentsSize = rect.size();
+    m_contentsSize.rheight() += m_rowSpacing;
+}
+
+ExpandedTreeViewItem IconView::indexToViewItem(const QModelIndex& index) const
+{
+    if(index.isValid() && index.row() < itemCount()) {
+        return viewItem(index.row());
+    }
+
+    return {};
+}
+
+QModelIndex IconView::findIndexAt(const QPoint& point, bool /*includeSpans*/, bool /*includePadding*/) const
+{
+    const int count = itemCount();
+    if(count == 0) {
+        return {};
+    }
+
+    const int contentsXCoord = point.x() + horizontalScrollBar()->value();
+    const int contentsYCoord = point.y() + verticalScrollBar()->value();
+
+    for(int i{0}; i < count; ++i) {
+        const auto& item = viewItem(i);
+
+        if(item.rect().contains(contentsXCoord, contentsYCoord)) {
+            return item.index;
+        }
+    }
+
+    return {};
+}
+
+void IconView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/) { }
+
+int IconView::sizeHintForColumn(int /*column*/) const
+{
+    return -1;
+}
+
+void IconView::updateScrollBars()
+{
+    if(empty()) {
+        return;
+    }
+
+    verticalScrollBar()->setSingleStep(itemHeight(0) / 4);
+    verticalScrollBar()->setPageStep(viewport()->height());
+
+    const bool bothScrollBarsAuto = m_view->verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded
+                                 && m_view->horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded;
+
+    const QSize vpSize = viewportSize();
+
+    const bool horizontalWantsToShow = m_contentsSize.width() > vpSize.width();
+    bool verticalWantsToShow;
+    if(horizontalWantsToShow) {
+        verticalWantsToShow = m_contentsSize.height() > vpSize.height() - m_view->horizontalScrollBar()->height();
+    }
+    else {
+        verticalWantsToShow = m_contentsSize.height() > vpSize.height();
+    }
+
+    if(bothScrollBarsAuto && !verticalWantsToShow) {
+        verticalScrollBar()->setRange(0, 0);
+    }
+    else {
+        verticalScrollBar()->setRange(0, m_contentsSize.height() - viewport()->height());
+    }
+}
+
+IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
+{
+    if(!m_p->isIndexValid(index) || !m_view->itemDelegate()) {
+        return {0, 0, 0};
+    }
+
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+    opt.showDecorationSelected = true;
+    opt.decorationPosition     = QStyleOptionViewItem::Top;
+    opt.displayAlignment       = Qt::AlignCenter;
+
+    int height{0};
+    int baseHeight{0};
+    int captionHeight{0};
+
+    const int colCount = model()->columnCount(index.parent());
+    for(int col{0}; col < colCount; ++col) {
+        if(header()->isSectionHidden(col)) {
+            continue;
+        }
+
+        const auto colIndex = index.siblingAtColumn(col);
+        opt.decorationSize  = Utils::realVisualIndex(header(), colIndex.column()) == 0 ? iconSize() : QSize{};
+        const int hint      = delegate(colIndex)->sizeHint(opt, colIndex).height();
+
+        if(baseHeight == 0 && Utils::realVisualIndex(header(), colIndex.column()) == 0) {
+            baseHeight = hint;
+        }
+        else if(captionHeight == 0) {
+            captionHeight = hint;
+        }
+
+        height += hint;
+    }
+
+    return {height, baseHeight, captionHeight};
+}
+
+int IconView::itemHeight(int item) const
+{
+    if(m_p->m_viewItems.empty()) {
+        return 0;
+    }
+
+    const QModelIndex& index = m_p->m_viewItems.at(item).index;
+    if(!index.isValid()) {
+        return 0;
+    }
+
+    int height = viewItem(item).height;
+
+    if(height <= 0) {
+        if(m_uniformRowHeight == 0) {
+            const auto& [hint, baseHint, captionHint] = indexSizeHint(index);
+            m_uniformRowHeight                        = hint;
+            m_uniformBaseHeight                       = baseHint;
+            m_uniformCaptionHeight                    = captionHint;
+        }
+        height                       = m_uniformRowHeight;
+        viewItem(item).height        = height;
+        viewItem(item).baseHeight    = m_uniformBaseHeight;
+        viewItem(item).captionHeight = m_uniformCaptionHeight;
+    }
+
+    return std::max(height, 0);
+}
+
+int IconView::spacing() const
+{
+    return m_rowSpacing;
+}
+
+QSize IconView::iconSize() const
+{
+    if(m_iconSize.isValid()) {
+        return m_iconSize;
+    }
+
+    QSize size;
+
+    const int visibleCount = Utils::visibleSectionCount(header());
+    if(visibleCount > 1) {
+        int visualIndex{0};
+        while(header()->isSectionHidden(header()->logicalIndex(visualIndex))) {
+            ++visualIndex;
+        }
+
+        const int firstColumn = header()->logicalIndex(visualIndex);
+        const int width       = header()->sectionSize(firstColumn) / visibleCount;
+        size                  = {width, width};
+    }
+    else {
+        size = m_view->iconSize();
+    }
+
+    m_iconSize = size;
+    return m_iconSize;
+}
+
+void IconView::prepareItemLayout()
+{
+    m_layoutBounds = {{}, m_view->maximumViewportSize()};
+
+    const QStyle* style = m_view->style();
+
+    int frameAroundContents{0};
+    if(style->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents)) {
+        QStyleOption option;
+        option.initFrom(m_view);
+        frameAroundContents = m_view->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, m_view) * 2;
+    }
+
+    const int verticalMargin
+        = (verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded) && (verticalScrollBar()->isVisible())
+               && !style->pixelMetric(QStyle::PM_ScrollView_ScrollBarOverlap, nullptr, verticalScrollBar())
+            ? style->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, verticalScrollBar()) + frameAroundContents
+            : 0;
+    const int horizontalMargin
+        = horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded
+            ? style->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, horizontalScrollBar()) + frameAroundContents
+            : 0;
+
+    m_layoutBounds.adjust(0, 0, -verticalMargin, -horizontalMargin);
+}
+
+void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    QStyleOptionViewItem opt{option};
+
+    const QModelIndex hover = m_p->m_hoverIndex;
+    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
+    const bool rowFocused   = m_view->hasFocus();
+
+    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
+
+    // const QPoint offset       = m_p->m_scrollDelayOffset;
+    // const int y               = opt.rect.y() + offset.y();
+    const int left            = m_leftAndRight.first;
+    const int right           = m_leftAndRight.second;
+    const QModelIndex current = m_view->currentIndex();
+
+    std::vector<int> logicalIndices;
+    std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
+
+    calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
+
+    bool currentRowHasFocus{false};
+
+    if(m_view->selectionModel()->isSelected(index)) {
+        opt.state |= QStyle::State_Selected;
+    }
+    if(rowFocused && (current == index)) {
+        currentRowHasFocus = true;
+    }
+
+    if(opt.state & QStyle::State_Enabled) {
+        QPalette::ColorGroup cg;
+        if((model()->flags(index) & Qt::ItemIsEnabled) == 0) {
+            opt.state &= ~QStyle::State_Enabled;
+            cg = QPalette::Disabled;
+        }
+        else if(opt.state & QStyle::State_Active) {
+            cg = QPalette::Active;
+        }
+        else {
+            cg = QPalette::Inactive;
+        }
+        opt.palette.setCurrentColorGroup(cg);
+    }
+
+    const auto count = static_cast<int>(logicalIndices.size());
+
+    for(int section{0}; section < count; ++section) {
+        const int headerSection      = logicalIndices.at(section);
+        const QModelIndex modelIndex = model()->index(index.row(), headerSection, index.parent());
+
+        if(!modelIndex.isValid()) {
+            continue;
+        }
+
+        opt.rect = m_view->visualRect(modelIndex);
+
+        const int visualIndex = Utils::realVisualIndex(header(), headerSection);
+        if(visualIndex == 0) {
+            QStyleOptionViewItem mainOpt{opt};
+            mainOpt.decorationSize         = iconSize();
+            mainOpt.showDecorationSelected = true;
+            mainOpt.decorationPosition     = QStyleOptionViewItem::Top;
+            mainOpt.displayAlignment       = Qt::AlignCenter;
+
+            delegate(modelIndex)->paint(painter, mainOpt, modelIndex);
+        }
+        else {
+            opt.decorationSize = {0, 0};
+            delegate(modelIndex)->paint(painter, opt, modelIndex);
+        }
+    }
+
+    if(currentRowHasFocus) {
+        drawFocus(painter, opt, index);
+    }
+}
+
+void IconView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    QStyleOptionFocusRect focusOpt;
+    focusOpt.QStyleOption::operator=(option);
+    focusOpt.state |= QStyle::State_KeyboardFocusChange;
+    const QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
+    focusOpt.backgroundColor      = option.palette.color(
+        cg, m_view->selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
+
+    const auto item  = indexToViewItem(index);
+    const auto& rect = mapToViewport(item.rect());
+
+    if(rect.width() > 0) {
+        focusOpt.rect = QStyle::visualRect(m_view->layoutDirection(), viewport()->rect(), rect);
+        m_view->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, painter);
+    }
+}
+
+int IconView::firstVisibleItem(int* offset) const
+{
+    const int value = verticalScrollBar()->value();
+    const int count = itemCount();
+
+    int y{0};
+
+    for(int i{0}; i < count; i += m_segmentSize) {
+        const int height = itemHeight(i) + spacing();
+        y += height;
+        if(y > value) {
+            if(offset) {
+                *offset = y - value - height;
+            }
+            return i;
         }
     }
 
     return -1;
+}
+
+int IconView::lastVisibleItem(int firstVisual, int offset) const
+{
+    if(firstVisual < 0 || offset < 0) {
+        firstVisual = firstVisibleItem(&offset);
+        if(firstVisual < 0) {
+            return -1;
+        }
+    }
+
+    int y{-offset};
+    const int value = viewport()->height();
+
+    const int count = itemCount();
+    for(int i{firstVisual}; i < count; ++i) {
+        y += itemHeight(i);
+        if(y > value) {
+            return i;
+        }
+    }
+
+    return count - 1;
+}
+
+QPoint IconView::coordinateForItem(int item) const
+{
+    if(item < 0 || item >= itemCount()) {
+        return {0, 0};
+    }
+
+    const auto& itm = viewItem(item);
+
+    return {mapToViewport(itm.rect()).topLeft()};
+}
+
+int IconView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
+{
+    const int count = itemCount();
+    if(count == 0) {
+        return -1;
+    }
+
+    coordinate += {0, verticalScrollBar()->value()};
+
+    for(int i{0}; i < count; ++i) {
+        const auto& rect = includePadding ? viewItem(i).rect() : mapToViewport(viewItem(i).rect());
+        if(rect.contains(coordinate)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int IconView::itemAbove(int item) const
+{
+    const int i{item};
+    while(m_p->isItemDisabled(item -= m_segmentSize)) { }
+    return item < 0 ? i : item;
+}
+
+int IconView::itemBelow(int item) const
+{
+    const int i{item};
+    while(m_p->isItemDisabled(item += m_segmentSize)) { }
+    return item >= itemCount() ? i : item;
+}
+
+int IconView::itemLeft(int item) const
+{
+    if(item % m_segmentSize == 0) {
+        return item;
+    }
+    while(m_p->isItemDisabled(--item)) { }
+    return item;
+}
+
+int IconView::itemRight(int item) const
+{
+    if((item + 1) % m_segmentSize == 0) {
+        return item;
+    }
+    while(m_p->isItemDisabled(++item)) { }
+    return item;
+}
+
+int IconView::pageUp(int item) const
+{
+    auto coord = coordinateForItem(item);
+    coord.ry() -= viewport()->height();
+
+    return itemAtCoordinate(coord, true);
+}
+
+int IconView::pageDown(int item) const
+{
+    auto coord = coordinateForItem(item);
+    coord.ry() += viewport()->height();
+
+    return itemAtCoordinate(coord, true);
+}
+
+void IconView::renderToPixmap(QPainter* painter, const ItemViewPaintPairs& paintPairs, QRect& rect) const
+{
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
+
+    opt.state |= QStyle::State_Selected;
+
+    for(const auto& [paintRect, index] : paintPairs) {
+        QStyleOptionViewItem paintOpt{opt};
+
+        const int visualColumn = Utils::realVisualIndex(header(), index.column());
+        if(visualColumn == 0) {
+            paintOpt.decorationSize         = iconSize();
+            paintOpt.showDecorationSelected = true;
+            paintOpt.decorationPosition     = QStyleOptionViewItem::Top;
+            paintOpt.displayAlignment       = Qt::AlignCenter;
+        }
+        else {
+            paintOpt.decorationSize = {};
+        }
+
+        paintOpt.rect = paintRect.translated(-rect.topLeft());
+
+        delegate(index)->paint(painter, paintOpt, index);
+    }
+}
+
+std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
+{
+    std::vector<ExpandedTreeViewItem> result;
+
+    bool foundAjacant{false};
+    for(const auto& item : m_p->m_viewItems) {
+        if(item.y == y && item.x >= x) {
+            foundAjacant = true;
+            result.push_back(item);
+        }
+        else if(foundAjacant) {
+            break;
+        }
+    }
+
+    return result;
+}
+
+ExpandedTreeView::Private::Private(ExpandedTreeView* self)
+    : m_self{self}
+    , m_header{new QHeaderView(Qt::Horizontal, m_self)}
+{
+    m_header->setSectionsClickable(true);
+    m_header->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_header->setSectionsMovable(true);
+    m_header->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
+    QObject::connect(m_header, &QHeaderView::sectionResized, this, &ExpandedTreeView::Private::columnResized);
+    QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() { m_self->viewport()->update(); });
+    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, &ExpandedTreeView::Private::columnCountChanged);
+    QObject::connect(m_header, &QHeaderView::sectionHandleDoubleClicked, this,
+                     &ExpandedTreeView::Private::resizeColumnToContents);
+    QObject::connect(m_header, &QHeaderView::geometriesChanged, this, [this]() { m_self->updateGeometries(); });
+}
+
+int ExpandedTreeView::Private::itemCount() const
+{
+    return static_cast<int>(m_viewItems.size());
 }
 
 QModelIndex ExpandedTreeView::Private::modelIndex(int i, int column) const
@@ -408,6 +2322,18 @@ void ExpandedTreeView::Private::columnCountChanged(int oldCount, int newCount) c
     m_self->viewport()->update();
 }
 
+void ExpandedTreeView::Private::columnResized(int /*logical*/, int oldSize, int newSize)
+{
+    if(m_viewMode == ViewMode::Tree) {
+        if(m_columnResizeTimerId == 0) {
+            m_columnResizeTimerId = m_self->startTimer(20);
+        }
+    }
+    else if(Utils::visibleSectionCount(m_header) > 1 || newSize == 0 || (oldSize == 0 && newSize > 0)) {
+        doDelayedItemsLayout();
+    }
+}
+
 void ExpandedTreeView::Private::doDelayedItemsLayout(int delay) const
 {
     if(!m_delayedPendingLayout) {
@@ -428,6 +2354,15 @@ void ExpandedTreeView::Private::layoutItems() const
         interruptDelayedItemsLayout();
         m_self->doItemsLayout();
     }
+}
+
+ExpandedTreeViewItem ExpandedTreeView::Private::indexToListViewItem(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return {};
+    }
+
+    return m_view->indexToViewItem(index);
 }
 
 int ExpandedTreeView::Private::viewIndex(const QModelIndex& index) const
@@ -523,86 +2458,12 @@ int ExpandedTreeView::Private::indexRowSizeHint(const QModelIndex& index) const
     return height;
 }
 
-int ExpandedTreeView::Private::indexSizeHint(const QModelIndex& index, bool span) const
-{
-    if(!isIndexValid(index) || !m_self->itemDelegate()) {
-        return 0;
-    }
-
-    QStyleOptionViewItem opt;
-    m_self->initViewItemOption(&opt);
-
-    int height{0};
-    if(span && m_self->isSpanning(index.column())) {
-        height = m_header->sectionSize(index.column());
-    }
-
-    const int column = index.column();
-    if(m_header->isSectionHidden(column)) {
-        return 0;
-    }
-
-    opt.rect.setWidth(m_header->sectionSize(column));
-    const int hint = m_self->itemDelegateForIndex(index)->sizeHint(opt, index).height();
-    height         = std::max(height, hint);
-
-    return height;
-}
-
-int ExpandedTreeView::Private::indexWidthHint(const QModelIndex& index, int hint,
-                                              const QStyleOptionViewItem& option) const
-{
-    const int xHint = m_self->itemDelegateForIndex(index)->sizeHint(option, index).width();
-    return std::max(hint, xHint);
-}
-
-int ExpandedTreeView::Private::itemHeight(int item) const
-{
-    if(m_viewItems.empty()) {
-        return 0;
-    }
-
-    const QModelIndex& index = m_viewItems.at(item).index;
-    if(!index.isValid()) {
-        return 0;
-    }
-
-    int height = m_viewItems.at(item).height;
-    if(height <= 0) {
-        height                   = indexRowSizeHint(index);
-        m_viewItems[item].height = height;
-    }
-
-    return std::max(height, 0);
-}
-
-int ExpandedTreeView::Private::itemPadding(int item) const
-{
-    if(m_viewItems.empty()) {
-        return 0;
-    }
-
-    return m_viewItems.at(item).padding;
-}
-
-int ExpandedTreeView::Private::coordinateForItem(int item) const
-{
-    for(int index{0}, y{0}; const auto& viewItem : m_viewItems) {
-        if(index == item) {
-            return y - m_self->verticalScrollBar()->value();
-        }
-        y += itemHeight(index++) + viewItem.padding;
-    }
-
-    return 0;
-}
-
 void ExpandedTreeView::Private::insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem)
 {
     m_viewItems.insert(m_viewItems.begin() + pos, count, viewItem);
 
-    const int itemCount = this->itemCount();
-    for(int i{pos + count}; i < itemCount; i++) {
+    const int itmCount = itemCount();
+    for(int i{pos + count}; i < itmCount; i++) {
         if(m_viewItems.at(i).parentItem >= pos) {
             m_viewItems.at(i).parentItem += count;
         }
@@ -616,124 +2477,6 @@ bool ExpandedTreeView::Private::hasVisibleChildren(const QModelIndex& parent) co
     }
 
     return m_model->hasChildren(parent);
-}
-
-void ExpandedTreeView::Private::recalculatePadding()
-{
-    if(m_viewItems.empty()) {
-        return;
-    }
-
-    int max{0};
-
-    const int sectionCount = m_header->count();
-    for(int section{0}; section < sectionCount; ++section) {
-        const auto columnIndex = m_model->index(0, section, {});
-        if(columnIndex.isValid()) {
-            if(m_self->isSpanning(section)) {
-                max = std::max(max, m_header->sectionSize(section));
-            }
-        }
-    }
-
-    int rowHeight{0};
-
-    for(auto& item : m_viewItems) {
-        item.padding = 0;
-
-        if(item.hasChildren || item.parentItem == -1) {
-            continue;
-        }
-
-        const QModelIndex parent = modelIndex(item.parentItem);
-        const int rowCount       = m_model->rowCount(parent);
-        const int row            = item.index.row();
-
-        if(row == rowCount - 1) {
-            if(rowHeight == 0) {
-                // Assume all track rows have the same height
-                rowHeight = indexRowSizeHint(item.index);
-            }
-
-            const int sectionHeight = rowCount * rowHeight;
-            item.padding            = (max > sectionHeight) ? max - sectionHeight : 0;
-        }
-    }
-}
-
-void ExpandedTreeView::Private::layout(int i, bool afterIsUninitialised)
-{
-    const QModelIndex parent = i < 0 ? m_self->rootIndex() : modelIndex(i);
-
-    if(i >= 0 && !parent.isValid()) {
-        return;
-    }
-
-    int count{0};
-    if(m_model->hasChildren(parent)) {
-        if(m_model->canFetchMore(parent)) {
-            m_model->fetchMore(parent);
-            const int itemHeight = m_defaultItemHeight <= 0 ? m_self->sizeHintForRow(0) : m_defaultItemHeight;
-            const int viewCount  = itemHeight ? m_self->viewport()->height() / itemHeight : 0;
-
-            int lastCount{-1};
-            while((count = m_model->rowCount(parent)) < viewCount && count != lastCount
-                  && m_model->canFetchMore(parent)) {
-                m_model->fetchMore(parent);
-                lastCount = count;
-            }
-        }
-        else {
-            count = m_model->rowCount(parent);
-        }
-    }
-
-    if(i == -1) {
-        m_viewItems.resize(count);
-        afterIsUninitialised = true;
-    }
-    else if(m_viewItems[i].childCount != count) {
-        if(!afterIsUninitialised) {
-            insertViewItems(i + 1, count, ExpandedTreeViewItem{});
-        }
-        else if(count > 0) {
-            m_viewItems.resize(itemCount() + count);
-        }
-    }
-
-    const int first{i + 1};
-    int children{0};
-    ExpandedTreeViewItem* item{nullptr};
-    QModelIndex currentIndex;
-
-    for(int index{first}; index < first + count; ++index) {
-        currentIndex = m_model->index(index - first, 0, parent);
-
-        const int last = index + children;
-
-        if(item) {
-            item->hasMoreSiblings = true;
-        }
-
-        item                  = &m_viewItems[last];
-        item->index           = currentIndex;
-        item->parentItem      = i;
-        item->height          = 0;
-        item->childCount      = 0;
-        item->hasMoreSiblings = false;
-        item->hasChildren     = m_model->hasChildren(currentIndex);
-
-        if(item->hasChildren) {
-            layout(last, afterIsUninitialised);
-            item = &m_viewItems[last];
-            children += item->childCount;
-        }
-    }
-
-    while(i > -1) {
-        m_viewItems[i].childCount += count;
-        i = m_viewItems[i].parentItem;
-    }
 }
 
 bool ExpandedTreeView::Private::isIndexEnabled(const QModelIndex& index) const
@@ -760,61 +2503,9 @@ bool ExpandedTreeView::Private::itemHasChildren(int i) const
     return m_viewItems.at(i).hasChildren;
 }
 
-int ExpandedTreeView::Private::itemAbove(int item) const
-{
-    const int i{item};
-    while(isItemDisabled(--item) || itemHasChildren(item)) { }
-    return item < 0 ? i : item;
-}
-
-int ExpandedTreeView::Private::itemBelow(int item) const
-{
-    const int i{item};
-    while(isItemDisabled(++item) || itemHasChildren(item)) { }
-    return item >= itemCount() ? i : item;
-}
-
 void ExpandedTreeView::Private::invalidateHeightCache(int item) const
 {
     m_viewItems[item].height = 0;
-}
-
-int ExpandedTreeView::Private::pageUp(int i) const
-{
-    int index = itemAtCoordinate(coordinateForItem(i) - m_self->viewport()->height(), false);
-
-    while(isItemDisabled(index) || itemHasChildren(index)) {
-        index--;
-    }
-
-    if(index == -1) {
-        index = 0;
-    }
-
-    while(isItemDisabled(index) || itemHasChildren(index)) {
-        index++;
-    }
-
-    return index >= itemCount() ? 0 : index;
-}
-
-int ExpandedTreeView::Private::pageDown(int i) const
-{
-    int index = itemAtCoordinate(coordinateForItem(i) + m_self->viewport()->height(), false);
-
-    while(isItemDisabled(index) || itemHasChildren(index)) {
-        index++;
-    }
-
-    if(index == -1 || index >= itemCount()) {
-        index = itemCount() - 1;
-    }
-
-    while(isItemDisabled(index) || itemHasChildren(index)) {
-        index--;
-    }
-
-    return index == -1 ? itemCount() - 1 : index;
 }
 
 int ExpandedTreeView::Private::itemForHomeKey() const
@@ -835,62 +2526,6 @@ int ExpandedTreeView::Private::itemForEndKey() const
     return index == -1 ? itemCount() - 1 : index;
 }
 
-void ExpandedTreeView::Private::calcLogicalIndexes(std::vector<int>& logicalIndexes,
-                                                   std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions,
-                                                   int left, int right) const
-{
-    const int columnCount = m_header->count();
-
-    int logicalIndexBeforeLeft{-1};
-    int logicalIndexAfterRight{-1};
-
-    for(int visualIndex{left - 1}; visualIndex >= 0; --visualIndex) {
-        const int logical = m_header->logicalIndex(visualIndex);
-        if(!m_header->isSectionHidden(logical)) {
-            logicalIndexBeforeLeft = logical;
-            break;
-        }
-    }
-
-    for(int visualIndex{left}; visualIndex < columnCount; ++visualIndex) {
-        const int logical = m_header->logicalIndex(visualIndex);
-        if(!m_header->isSectionHidden(logical)) {
-            if(visualIndex > right) {
-                logicalIndexAfterRight = logical;
-                break;
-            }
-            logicalIndexes.emplace_back(logical);
-        }
-    }
-
-    const auto count = static_cast<int>(logicalIndexes.size());
-    itemPositions.resize(count);
-
-    for(int visual{0}; visual < count; ++visual) {
-        const int logical     = logicalIndexes.at(visual);
-        const int nextLogical = (visual + 1) >= count ? logicalIndexAfterRight : logicalIndexes.at(visual + 1);
-        const int prevLogical = (visual - 1) < 0 ? logicalIndexBeforeLeft : logicalIndexes.at(visual - 1);
-
-        QStyleOptionViewItem::ViewItemPosition pos;
-
-        if(columnCount == 1 || (nextLogical == 0 && prevLogical == -1) || (logical == 0 && nextLogical == -1)
-           || m_self->isSpanning(logical)) {
-            pos = QStyleOptionViewItem::OnlyOne;
-        }
-        else if(nextLogical != 0 && prevLogical == -1) {
-            pos = QStyleOptionViewItem::Beginning;
-        }
-        else if(nextLogical == 0 || nextLogical == -1) {
-            pos = QStyleOptionViewItem::End;
-        }
-        else {
-            pos = QStyleOptionViewItem::Middle;
-        }
-
-        itemPositions[visual] = pos;
-    }
-}
-
 void ExpandedTreeView::Private::setHoverIndex(const QPersistentModelIndex& index)
 {
     if(m_hoverIndex == index) {
@@ -899,8 +2534,8 @@ void ExpandedTreeView::Private::setHoverIndex(const QPersistentModelIndex& index
 
     auto* viewport = m_self->viewport();
 
-    const QRect oldHoverRect = visualRect(m_hoverIndex, RectRule::FullRow, false);
-    const QRect newHoverRect = visualRect(index, RectRule::FullRow, false);
+    const QRect oldHoverRect = m_view->visualRect(m_hoverIndex, RectRule::FullRow, false);
+    const QRect newHoverRect = m_view->visualRect(index, RectRule::FullRow, false);
 
     viewport->update(QRect{0, newHoverRect.y(), viewport->width(), newHoverRect.height()});
     viewport->update(QRect{0, oldHoverRect.y(), viewport->width(), oldHoverRect.height()});
@@ -924,112 +2559,6 @@ QModelIndexList ExpandedTreeView::Private::selectedDraggableIndexes(bool fullRow
     indexes.removeIf(isNotDragEnabled);
 
     return indexes;
-}
-
-ItemViewPaintPairs ExpandedTreeView::Private::draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const
-{
-    ItemViewPaintPairs ret;
-
-    const QRect viewportRect = m_self->viewport()->rect();
-
-    for(const auto& index : indexes) {
-        if(!index.isValid() || m_self->isSpanning(index.column())) {
-            continue;
-        }
-
-        const QRect currentRect = m_self->visualRect(index);
-        if(currentRect.intersects(viewportRect)) {
-            ret.emplace_back(currentRect, index);
-            rect |= currentRect;
-        }
-    }
-
-    const QRect clipped = rect & viewportRect;
-    rect.setLeft(clipped.left());
-    rect.setRight(clipped.right());
-
-    return ret;
-}
-
-void ExpandedTreeView::Private::adjustViewOptionsForIndex(QStyleOptionViewItem* option,
-                                                          const QModelIndex& currentIndex) const
-{
-    const int row = viewIndex(currentIndex);
-    option->state = option->state | QStyle::State_Open
-                  | (m_viewItems.at(row).hasChildren ? QStyle::State_Children : QStyle::State_None)
-                  | (m_viewItems.at(row).hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
-
-    std::vector<int> logicalIndexes;
-    std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
-
-    const bool isSpanning = m_self->isSpanning(currentIndex.column());
-    const int left        = (isSpanning ? m_header->visualIndex(0) : 0);
-    const int right       = (isSpanning ? m_header->visualIndex(0) : m_header->count() - 1);
-
-    calcLogicalIndexes(logicalIndexes, viewItemPosList, left, right);
-
-    const int visualIndex = static_cast<int>(
-        std::ranges::distance(logicalIndexes.cbegin(), std::ranges::find(logicalIndexes, currentIndex.column())));
-    option->viewItemPosition = viewItemPosList.at(visualIndex);
-}
-
-QPixmap ExpandedTreeView::Private::renderToPixmap(const QModelIndexList& indexes, QRect& rect) const
-{
-    const ItemViewPaintPairs paintPairs = draggablePaintPairs(indexes, rect);
-    if(paintPairs.empty()) {
-        return {};
-    }
-
-    QWindow* window    = m_self->windowHandle();
-    const double scale = window ? window->devicePixelRatio() : 1.0;
-
-    QPixmap pixmap(rect.size() * scale);
-    pixmap.setDevicePixelRatio(scale);
-
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-
-    QStyleOptionViewItem opt;
-    m_self->initViewItemOption(&opt);
-
-    opt.state |= QStyle::State_Selected;
-
-    int lastRow{0};
-    bool paintedBg{false};
-    for(const auto& [paintRect, index] : paintPairs) {
-        if(m_self->isSpanning(index.column())) {
-            continue;
-        }
-
-        if(std::exchange(lastRow, index.row()) != lastRow) {
-            paintedBg = false;
-        }
-
-        opt.rect = paintRect.translated(-rect.topLeft());
-        adjustViewOptionsForIndex(&opt, index);
-
-        const int cellHeight = indexSizeHint(index);
-        opt.rect.setHeight(cellHeight);
-
-        if(!paintedBg) {
-            const QRect cellRect{opt.rect};
-            paintedBg = true;
-
-            opt.rect.setRect(0, opt.rect.top(), m_header->length(), cellHeight);
-
-            const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
-            if(bg != Qt::NoBrush) {
-                painter.fillRect(opt.rect, bg);
-            }
-            m_self->style()->drawControl(QStyle::CE_ItemViewItem, &opt, &painter, m_self);
-
-            opt.rect = cellRect;
-        }
-
-        m_self->itemDelegateForIndex(index)->paint(&painter, opt, index);
-    }
-
-    return pixmap;
 }
 
 bool ExpandedTreeView::Private::shouldAutoScroll() const
@@ -1105,7 +2634,7 @@ bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dro
     int col{-1};
 
     if(index.isValid()) {
-        m_dropIndicatorPos = m_self->dropPosition(pos, visualRect(index, RectRule::FullRow, false), index);
+        m_dropIndicatorPos = m_self->dropPosition(pos, m_view->visualRect(index, RectRule::FullRow, false), index);
         switch(m_dropIndicatorPos) {
             case(AboveItem):
                 row   = index.row();
@@ -1132,42 +2661,6 @@ bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dro
     dropCol   = col;
 
     return true;
-}
-
-QRect ExpandedTreeView::Private::visualRect(const QModelIndex& index, RectRule rule, bool includePadding) const
-{
-    if(!isIndexValid(index)) {
-        return {};
-    }
-
-    if(m_self->isIndexHidden(index) && rule != RectRule::FullRow) {
-        return {};
-    }
-
-    layoutItems();
-
-    const int viewIndex = this->viewIndex(index);
-    if(viewIndex < 0) {
-        return {};
-    }
-
-    const int column = index.column();
-    int x            = m_header->sectionViewportPosition(column);
-    int width        = m_header->sectionSize(column);
-
-    if(rule == RectRule::FullRow) {
-        x     = 0;
-        width = m_header->length();
-    }
-
-    const int y = coordinateForItem(viewIndex);
-    int height  = indexSizeHint(index);
-
-    if(includePadding) {
-        height += itemPadding(viewIndex);
-    }
-
-    return {x, y, width, height};
 }
 
 std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionViewItem& option, int y) const
@@ -1208,145 +2701,9 @@ std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionVie
     return rects;
 }
 
-void ExpandedTreeView::Private::drawAndClipSpans(QPainter* painter, const QStyleOptionViewItem& option,
-                                                 int firstVisibleItem, int firstVisibleItemOffset) const
-{
-    QStyleOptionViewItem opt{option};
-
-    const QRect rect = m_self->viewport()->rect();
-    QRegion region{rect};
-    const int count = itemCount();
-
-    int i{firstVisibleItem};
-    int y{firstVisibleItemOffset};
-
-    for(; i < count; ++i) {
-        const int itemHeight = this->itemHeight(i) + itemPadding(i);
-        if(y + itemHeight > rect.top()) {
-            break;
-        }
-        y += itemHeight;
-    }
-
-    for(; i < count && y <= rect.bottom(); ++i) {
-        const auto& item  = m_viewItems.at(i);
-        QModelIndex index = item.index;
-
-        if(!index.isValid() || m_model->hasChildren(index)) {
-            y += itemHeight(i) + item.padding;
-            continue;
-        }
-
-        if(i == firstVisibleItem && index.row() > 0) {
-            index = index.siblingAtRow(0);
-        }
-
-        if(index.row() > 0) {
-            y += itemHeight(i) + item.padding;
-            continue;
-        }
-
-        y = visualRect(index, RectRule::FullRow, false).y();
-
-        m_leftAndRight           = startAndEndColumns(rect);
-        const int left           = m_leftAndRight.first;
-        const int right          = m_leftAndRight.second;
-        const QModelIndex parent = index.parent();
-
-        int position;
-        QModelIndex modelIndex;
-
-        std::vector<int> logicalIndices;
-        std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
-
-        calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
-
-        const auto sectionCount = static_cast<int>(logicalIndices.size());
-
-        for(int section{0}; section < sectionCount; ++section) {
-            const int headerSection = logicalIndices.at(section);
-            const bool spanning     = m_self->isSpanning(headerSection);
-
-            if(!spanning) {
-                continue;
-            }
-
-            const int width = m_header->sectionSize(headerSection);
-            position        = m_header->sectionViewportPosition(headerSection);
-
-            modelIndex = m_model->index(0, headerSection, parent);
-            if(!modelIndex.isValid()) {
-                continue;
-            }
-
-            opt.rect = {position, y, width, indexSizeHint(modelIndex, true)};
-            m_self->itemDelegateForIndex(modelIndex)->paint(painter, opt, modelIndex);
-            region -= opt.rect;
-        }
-
-        y += itemHeight(i) + item.padding;
-    }
-
-    painter->setClipRegion(region);
-}
-
 bool ExpandedTreeView::Private::isIndexValid(const QModelIndex& index) const
 {
     return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
-}
-
-int ExpandedTreeView::Private::firstVisibleItem(int* offset) const
-{
-    const int value = m_self->verticalScrollBar()->value();
-
-    int y{0};
-    for(int i{0}; i < itemCount(); ++i) {
-        const int itemHeight = this->itemHeight(i) + itemPadding(i);
-        y += itemHeight;
-        if(y > value) {
-            if(offset) {
-                *offset = y - value - itemHeight;
-            }
-            return i;
-        }
-    }
-    return -1;
-}
-
-int ExpandedTreeView::Private::lastVisibleItem(int firstVisual, int offset) const
-{
-    if(firstVisual < 0 || offset < 0) {
-        firstVisual = firstVisibleItem(&offset);
-        if(firstVisual < 0) {
-            return -1;
-        }
-    }
-
-    int y{-offset};
-    const int value = m_self->viewport()->height();
-
-    const int count = itemCount();
-    for(int i{firstVisual}; i < count; ++i) {
-        const int itemHeight = this->itemHeight(i) + itemPadding(i);
-        y += itemHeight;
-        if(y > value) {
-            return i;
-        }
-    }
-
-    return count - 1;
-}
-
-std::pair<int, int> ExpandedTreeView::Private::startAndEndColumns(const QRect& rect) const
-{
-    const int start = std::min(m_header->visualIndexAt(rect.left()), 0);
-    int end         = m_header->visualIndexAt(rect.right());
-
-    if(end == -1) {
-        end = m_header->count() - 1;
-    }
-
-    return {std::min(start, end), std::max(start, end)};
 }
 
 ExpandedTreeView::ExpandedTreeView(QWidget* parent)
@@ -1355,9 +2712,11 @@ ExpandedTreeView::ExpandedTreeView(QWidget* parent)
 {
     setObjectName(QStringLiteral("ExpandedTreeView"));
 
+    setViewMode(ViewMode::Tree);
+    // setIconSize({180, 180});
+
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setMouseTracking(true);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::MoveAction);
@@ -1399,11 +2758,7 @@ void ExpandedTreeView::setHeader(QHeaderView* header)
         }
     }
 
-    QObject::connect(p->m_header, &QHeaderView::sectionResized, this, [this]() {
-        if(p->m_columnResizeTimerId == 0) {
-            p->m_columnResizeTimerId = startTimer(20);
-        }
-    });
+    QObject::connect(p->m_header, &QHeaderView::sectionResized, p.get(), &ExpandedTreeView::Private::columnResized);
     QObject::connect(p->m_header, &QHeaderView::sectionMoved, this, [this]() { viewport()->update(); });
     QObject::connect(p->m_header, &QHeaderView::sectionCountChanged, p.get(),
                      &ExpandedTreeView::Private::columnCountChanged);
@@ -1446,9 +2801,65 @@ void ExpandedTreeView::setSpan(int column, bool span)
     }
 }
 
+ExpandedTreeView::ViewMode ExpandedTreeView::viewMode() const
+{
+    return p->m_viewMode;
+}
+
+void ExpandedTreeView::setViewMode(ViewMode mode)
+{
+    p->interruptDelayedItemsLayout();
+    p->m_viewItems.clear();
+    p->m_viewMode = mode;
+
+    p->m_view.reset();
+
+    if(mode == ViewMode::Tree) {
+        p->m_view = std::make_unique<TreeView>(this, p.get());
+    }
+    else {
+        p->m_view = std::make_unique<IconView>(this, p.get());
+    }
+
+    p->doDelayedItemsLayout();
+
+    emit viewModeChanged(mode);
+}
+
+bool ExpandedTreeView::uniformRowHeights() const
+{
+    return p->m_uniformRowHeights;
+}
+
+void ExpandedTreeView::setUniformRowHeights(bool enabled)
+{
+    p->m_uniformRowHeights = enabled;
+}
+
+int ExpandedTreeView::itemWidth() const
+{
+    return p->m_itemWidth;
+}
+
+void ExpandedTreeView::setItemWidth(int width)
+{
+    if(std::exchange(p->m_itemWidth, width) != width) {
+        p->doDelayedItemsLayout();
+    }
+}
+
+void ExpandedTreeView::setIconSize(const QSize& size)
+{
+    const auto oldSize = iconSize();
+    QAbstractItemView::setIconSize(size);
+    if(oldSize != size) {
+        p->doDelayedItemsLayout();
+    }
+}
+
 QRect ExpandedTreeView::visualRect(const QModelIndex& index) const
 {
-    return p->visualRect(index, RectRule::SingleSection);
+    return p->m_view->visualRect(index, RectRule::SingleSection, true);
 }
 
 int ExpandedTreeView::sizeHintForColumn(int column) const
@@ -1461,92 +2872,7 @@ int ExpandedTreeView::sizeHintForColumn(int column) const
 
     ensurePolished();
 
-    QStyleOptionViewItem option;
-    initViewItemOption(&option);
-    const auto viewItems = p->m_viewItems;
-    const int itemCount  = p->itemCount();
-
-    const int maximumProcessRows = p->m_header->resizeContentsPrecision();
-
-    int offset{0};
-    int start = p->firstVisibleItem(&offset);
-    int end   = p->lastVisibleItem(start, offset);
-    if(start < 0 || end < 0 || end == itemCount - 1) {
-        end = itemCount - 1;
-        if(maximumProcessRows < 0) {
-            start = 0;
-        }
-        else if(maximumProcessRows == 0) {
-            start               = std::max(0, end - 1);
-            int remainingHeight = viewport()->height();
-            while(start > 0 && remainingHeight > 0) {
-                remainingHeight -= p->itemHeight(start);
-                --start;
-            }
-        }
-        else {
-            start = std::max(0, end - maximumProcessRows);
-        }
-    }
-
-    int width{0};
-    int rowsProcessed{0};
-
-    for(int i = start; i <= end; ++i) {
-        if(viewItems.at(i).hasChildren) {
-            continue;
-        }
-        QModelIndex index = viewItems.at(i).index;
-        index             = index.sibling(index.row(), column);
-        width             = p->indexWidthHint(index, width, option);
-        ++rowsProcessed;
-        if(rowsProcessed == maximumProcessRows) {
-            break;
-        }
-    }
-
-    --end;
-
-    const int actualBottom = itemCount - 1;
-
-    if(maximumProcessRows == 0) {
-        rowsProcessed = 0;
-    }
-
-    while(rowsProcessed != maximumProcessRows && (start > 0 || end < actualBottom)) {
-        int index{-1};
-
-        if((rowsProcessed % 2 && start > 0) || end == actualBottom) {
-            while(start > 0) {
-                --start;
-                if(viewItems.at(start).hasChildren) {
-                    continue;
-                }
-                index = start;
-                break;
-            }
-        }
-        else {
-            while(end < actualBottom) {
-                ++end;
-                if(viewItems.at(end).hasChildren) {
-                    continue;
-                }
-                index = end;
-                break;
-            }
-        }
-        if(index < 0) {
-            continue;
-        }
-
-        QModelIndex viewIndex = viewItems.at(index).index;
-        viewIndex             = viewIndex.sibling(viewIndex.row(), column);
-        width                 = p->indexWidthHint(viewIndex, width, option);
-        ++rowsProcessed;
-    }
-
-    return width;
+    return p->m_view->sizeHintForColumn(column);
 }
 
 void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
@@ -1561,16 +2887,16 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
     }
 
     p->layoutItems();
-    p->updateScrollBars();
+    if(p->m_view) {
+        p->m_view->updateScrollBars();
+    }
 
-    const int item = p->viewIndex(index);
-    if(item < 0) {
+    const QRect rect = visualRect(index);
+    if(!rect.isValid()) {
         return;
     }
 
     const QRect area = viewport()->rect();
-    const QRect rect{p->m_header->sectionViewportPosition(index.column()), p->coordinateForItem(item),
-                     p->m_header->sectionSize(index.column()), p->itemHeight(item)};
 
     if(!rect.isEmpty()) {
         if(hint == EnsureVisible && area.contains(rect)) {
@@ -1624,27 +2950,7 @@ QModelIndex ExpandedTreeView::findIndexAt(const QPoint& point, bool includeSpans
 {
     p->layoutItems();
 
-    const int visualIndex = p->itemAtCoordinate(point.y(), includePadding);
-    QModelIndex index     = p->modelIndex(visualIndex);
-    if(!index.isValid()) {
-        return {};
-    }
-
-    const int column = p->m_header->logicalIndexAt(point.x());
-
-    if(!includeSpans && !p->m_model->hasChildren(index) && isSpanning(column)) {
-        return {};
-    }
-
-    if(column == index.column()) {
-        return index;
-    }
-
-    if(column < 0) {
-        return {};
-    }
-
-    return index.sibling(index.row(), column);
+    return p->m_view->findIndexAt(point, includeSpans, includePadding);
 }
 
 QModelIndex ExpandedTreeView::indexAbove(const QModelIndex& index) const
@@ -1691,8 +2997,7 @@ void ExpandedTreeView::doItemsLayout()
     p->m_viewItems.clear();
 
     if(p->m_model && p->m_model->hasChildren(rootIndex())) {
-        p->layout(-1);
-        p->recalculatePadding();
+        p->m_view->doItemLayout();
     }
 
     QAbstractItemView::doItemsLayout();
@@ -1728,7 +3033,9 @@ void ExpandedTreeView::updateGeometries()
 
     p->m_header->setGeometry(headerGeometry);
     QMetaObject::invokeMethod(p->m_header, "updateGeometries");
-    p->updateScrollBars();
+    if(p->m_view) {
+        p->m_view->updateScrollBars();
+    }
     p->m_updatingGeometry = false;
 
     QAbstractItemView::updateGeometries();
@@ -1736,42 +3043,7 @@ void ExpandedTreeView::updateGeometries()
 
 void ExpandedTreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles)
 {
-    bool sizeChanged{false};
-    const int topViewIndex = p->viewIndex(topLeft);
-
-    if(topViewIndex == 0) {
-        const int defaultHeight = p->indexRowSizeHint(topLeft);
-        sizeChanged             = p->m_defaultItemHeight != defaultHeight;
-        p->m_defaultItemHeight  = defaultHeight;
-    }
-
-    if(topViewIndex != -1) {
-        // Single row
-        if(topLeft.row() == bottomRight.row()) {
-            const int oldHeight = p->itemHeight(topViewIndex);
-            p->invalidateHeightCache(topViewIndex);
-            sizeChanged |= (oldHeight != p->itemHeight(topViewIndex));
-            if(topLeft.column() == 0) {
-                p->m_viewItems[topViewIndex].hasChildren = p->hasVisibleChildren(topLeft);
-            }
-        }
-        else {
-            const int bottomViewIndex = p->viewIndex(bottomRight);
-            for(int i = topViewIndex; i <= bottomViewIndex; ++i) {
-                const int oldHeight = p->itemHeight(i);
-                p->invalidateHeightCache(i);
-                sizeChanged |= (oldHeight != p->itemHeight(i));
-                if(topLeft.column() == 0) {
-                    p->m_viewItems[i].hasChildren = p->hasVisibleChildren(p->m_viewItems.at(i).index);
-                }
-            }
-        }
-    }
-
-    if(sizeChanged) {
-        p->updateScrollBars();
-        viewport()->update();
-    }
+    p->m_view->dataChanged(topLeft, bottomRight);
 
     QAbstractItemView::dataChanged(topLeft, bottomRight, roles);
 }
@@ -1836,7 +3108,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
     }
 
     if(index.isValid() && showDropIndicator()) {
-        const QRect rect      = p->visualRect(index, RectRule::FullRow, false);
+        const QRect rect      = p->m_view->visualRect(index, RectRule::FullRow, false);
         p->m_dropIndicatorPos = dropPosition(pos, rect, index);
 
         switch(p->m_dropIndicatorPos) {
@@ -1928,6 +3200,26 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     selectModel->select(selection, command);
 }
 
+void ExpandedTreeView::resizeEvent(QResizeEvent* event)
+{
+    if(p->m_delayedPendingLayout) {
+        return;
+    }
+
+    const QSize delta = event->size() - event->oldSize();
+
+    if(delta.isNull()) {
+        return;
+    }
+
+    if(p->m_viewMode == ViewMode::Icon && delta.width() != 0) {
+        p->doDelayedItemsLayout(100);
+    }
+    else {
+        QAbstractItemView::resizeEvent(event);
+    }
+}
+
 void ExpandedTreeView::dropEvent(QDropEvent* event)
 {
     if(dragDropMode() == InternalMove && (event->source() != this || !(event->possibleActions() & Qt::MoveAction))) {
@@ -1965,9 +3257,9 @@ void ExpandedTreeView::paintEvent(QPaintEvent* event)
 {
     p->layoutItems();
 
-    QPainter painter{viewport()};
+    QStylePainter painter{viewport()};
 
-    drawTree(&painter, event->region());
+    p->m_view->drawView(&painter, event->region());
 
     if(!p->m_viewItems.empty() && state() == QAbstractItemView::DraggingState) {
         QStyleOptionFrame opt;
@@ -1996,7 +3288,7 @@ void ExpandedTreeView::timerEvent(QTimerEvent* event)
             p->m_hidingScrollbar = false;
             return;
         }
-        p->recalculatePadding();
+        p->m_view->updateColumns();
         updateGeometries();
         viewport()->update();
     }
@@ -2086,7 +3378,21 @@ void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
     }
 
     QRect rect;
-    const QPixmap pixmap = p->renderToPixmap(p->selectedDraggableIndexes(), rect);
+    const ItemViewPaintPairs paintPairs = p->m_view->draggablePaintPairs(p->selectedDraggableIndexes(), rect);
+    if(paintPairs.empty()) {
+        return;
+    }
+
+    QWindow* window    = windowHandle();
+    const double scale = window ? window->devicePixelRatio() : 1.0;
+
+    QPixmap pixmap{rect.size() * scale};
+    pixmap.setDevicePixelRatio(scale);
+
+    pixmap.fill(Qt::transparent);
+    QPainter painter{&pixmap};
+
+    p->m_view->renderToPixmap(&painter, paintPairs, rect);
     rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
 
     auto* drag = new QDrag(this);
@@ -2145,11 +3451,6 @@ QAbstractItemView::DropIndicatorPosition ExpandedTreeView::dropPosition(const QP
     return dropPos;
 }
 
-std::vector<ExpandedTreeViewItem> ExpandedTreeView::viewItems() const
-{
-    return p->m_viewItems;
-}
-
 int ExpandedTreeView::itemCount() const
 {
     return p->itemCount();
@@ -2158,197 +3459,6 @@ int ExpandedTreeView::itemCount() const
 std::set<int> ExpandedTreeView::spans() const
 {
     return p->m_spans;
-}
-
-void ExpandedTreeView::drawTree(QPainter* painter, const QRegion& region) const
-{
-    QStyleOptionViewItem opt;
-    initViewItemOption(&opt);
-
-    if(p->m_viewItems.empty() || p->m_header->count() == 0) {
-        return;
-    }
-
-    int firstVisibleItemOffset{0};
-    const int firstVisibleItem = p->firstVisibleItem(&firstVisibleItemOffset);
-    if(firstVisibleItem < 0) {
-        return;
-    }
-
-    if(!p->m_spans.empty()) {
-        p->drawAndClipSpans(painter, opt, firstVisibleItem, firstVisibleItemOffset);
-    }
-
-    const int count          = itemCount();
-    const int viewportWidth  = viewport()->width();
-    const bool multipleRects = (region.rectCount() > 1);
-    std::set<int> drawn;
-
-    for(const QRect& regionArea : region) {
-        const QRect area  = multipleRects ? QRect{0, regionArea.y(), viewportWidth, regionArea.height()} : regionArea;
-        p->m_leftAndRight = p->startAndEndColumns(area);
-
-        int i{firstVisibleItem};
-        int y{firstVisibleItemOffset};
-
-        for(; i < count; ++i) {
-            const int itemHeight = p->itemHeight(i) + p->itemPadding(i);
-            if(y + itemHeight > area.top()) {
-                break;
-            }
-            y += itemHeight;
-        }
-
-        for(; i < count && y <= area.bottom(); ++i) {
-            const auto& item         = p->m_viewItems.at(i);
-            const QModelIndex& index = item.index;
-
-            opt.rect = p->visualRect(index, RectRule::FullRow, false);
-            opt.rect.setY(y);
-            opt.rect.setHeight(p->indexRowSizeHint(index));
-            opt.state |= QStyle::State_Open | (item.hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
-
-            if(item.hasChildren) {
-                opt.state |= QStyle::State_Children;
-            }
-            else {
-                opt.state &= ~QStyle::State_Children;
-            }
-
-            if(!multipleRects || !drawn.contains(i)) {
-                drawRow(painter, opt, item.index);
-
-                if(multipleRects) {
-                    drawn.emplace(i);
-                }
-            }
-
-            y += p->itemHeight(i) + item.padding;
-        }
-    }
-}
-
-void ExpandedTreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    if(!index.isValid()) {
-        return;
-    }
-
-    QStyleOptionViewItem opt{option};
-
-    const QModelIndex hover = p->m_hoverIndex;
-    const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
-    const bool rowFocused   = hasFocus();
-
-    opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
-
-    if(model()->hasChildren(index)) {
-        // Span first column of headers/subheaders
-        opt.rect.setX(0);
-        opt.rect.setWidth(p->m_header->length());
-        style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, this);
-        itemDelegateForIndex(index)->paint(painter, opt, index);
-        return;
-    }
-
-    const QPoint offset       = p->m_scrollDelayOffset;
-    const int y               = opt.rect.y() + offset.y();
-    const int left            = p->m_leftAndRight.first;
-    const int right           = p->m_leftAndRight.second;
-    const QModelIndex parent  = index.parent();
-    const QModelIndex current = currentIndex();
-
-    QModelIndex modelIndex;
-    std::vector<int> logicalIndices;
-    std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
-
-    p->calcLogicalIndexes(logicalIndices, viewItemPosList, left, right);
-
-    const auto count = static_cast<int>(logicalIndices.size());
-    bool paintedBg{false};
-    bool currentRowHasFocus{false};
-
-    for(int section{0}; section < count; ++section) {
-        const int headerSection = logicalIndices.at(section);
-        const bool spanning     = isSpanning(headerSection);
-
-        if(spanning) {
-            continue;
-        }
-
-        const int width    = p->m_header->sectionSize(headerSection);
-        const int position = p->m_header->sectionViewportPosition(headerSection) + offset.x();
-
-        modelIndex = model()->index(index.row(), headerSection, parent);
-
-        if(!modelIndex.isValid()) {
-            continue;
-        }
-
-        const auto icon      = index.data(Qt::DecorationRole).value<QPixmap>();
-        opt.icon             = QIcon{icon};
-        opt.decorationSize   = icon.deviceIndependentSize().toSize();
-        opt.viewItemPosition = viewItemPosList.at(section);
-
-        if(selectionModel()->isSelected(modelIndex)) {
-            opt.state |= QStyle::State_Selected;
-        }
-        if(rowFocused && (current == modelIndex)) {
-            currentRowHasFocus = true;
-        }
-
-        if(opt.state & QStyle::State_Enabled) {
-            QPalette::ColorGroup cg;
-            if((model()->flags(modelIndex) & Qt::ItemIsEnabled) == 0) {
-                opt.state &= ~QStyle::State_Enabled;
-                cg = QPalette::Disabled;
-            }
-            else if(opt.state & QStyle::State_Active) {
-                cg = QPalette::Active;
-            }
-            else {
-                cg = QPalette::Inactive;
-            }
-            opt.palette.setCurrentColorGroup(cg);
-        }
-
-        const int cellHeight = p->indexRowSizeHint(modelIndex);
-        if(cellHeight > 0) {
-            const QRect cellRect{position, y, width, cellHeight};
-
-            if(!paintedBg) {
-                // Some styles use a gradient for the selection bg which only covers each individual cell
-                // Show this as a single gradient across the entire row
-                paintedBg = true;
-                drawRowBackground(painter, opt, modelIndex, y);
-            }
-
-            opt.rect = cellRect;
-
-            itemDelegateForIndex(modelIndex)->paint(painter, opt, modelIndex);
-        }
-    }
-
-    if(currentRowHasFocus) {
-        drawFocus(painter, opt, modelIndex, y);
-    }
-}
-
-void ExpandedTreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option,
-                                         const QModelIndex& index, int y) const
-{
-    QStyleOptionViewItem opt{option};
-
-    const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
-
-    const auto paintRects = p->rectsToPaint(option, y);
-    for(const auto& rect : paintRects) {
-        if(rect.width() > 0) {
-            opt.rect = rect;
-            painter->fillRect(opt.rect, bg);
-            style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, this);
-        }
-    }
 }
 
 void ExpandedTreeView::drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
@@ -2378,7 +3488,7 @@ QModelIndex ExpandedTreeView::moveCursor(CursorAction cursorAction, Qt::Keyboard
     QModelIndex current = currentIndex();
     if(!current.isValid()) {
         const int count = p->m_header->count();
-        const int i     = p->itemBelow(-1);
+        const int i     = p->m_view->itemBelow(-1);
         int column{0};
 
         while(column < count && p->m_header->isSectionHidden(p->m_header->logicalIndex(column))) {
@@ -2397,25 +3507,22 @@ QModelIndex ExpandedTreeView::moveCursor(CursorAction cursorAction, Qt::Keyboard
     switch(cursorAction) {
         case(MoveNext):
         case(MoveDown):
-            return p->modelIndex(p->itemBelow(viewIndex), current.column());
+            return p->modelIndex(p->m_view->itemBelow(viewIndex), current.column());
         case(MovePrevious):
         case(MoveUp):
-            return p->modelIndex(p->itemAbove(viewIndex), current.column());
-        case(MovePageUp): {
-            return p->modelIndex(p->pageUp(viewIndex), current.column());
-        }
-        case(MovePageDown): {
-            return p->modelIndex(p->pageDown(viewIndex), current.column());
-        }
-        case(MoveHome): {
+            return p->modelIndex(p->m_view->itemAbove(viewIndex), current.column());
+        case(MovePageUp):
+            return p->modelIndex(p->m_view->pageUp(viewIndex), current.column());
+        case(MovePageDown):
+            return p->modelIndex(p->m_view->pageDown(viewIndex), current.column());
+        case(MoveHome):
             return p->modelIndex(p->itemForHomeKey(), current.column());
-        }
-        case(MoveEnd): {
+        case(MoveEnd):
             return p->modelIndex(p->itemForEndKey(), current.column());
-        }
         case(MoveLeft):
+            return p->modelIndex(p->m_view->itemLeft(viewIndex), current.column());
         case(MoveRight):
-            break;
+            return p->modelIndex(p->m_view->itemRight(viewIndex), current.column());
     }
 
     return current;
@@ -2477,10 +3584,10 @@ void ExpandedTreeView::currentChanged(const QModelIndex& current, const QModelIn
     QAbstractItemView::currentChanged(current, previous);
 
     if(previous.isValid()) {
-        viewport()->update(p->visualRect(previous, RectRule::FullRow, false));
+        viewport()->update(p->m_view->visualRect(previous, RectRule::FullRow, false));
     }
     if(current.isValid()) {
-        viewport()->update(p->visualRect(current, RectRule::FullRow, false));
+        viewport()->update(p->m_view->visualRect(current, RectRule::FullRow, false));
     }
 }
 
@@ -2489,6 +3596,17 @@ QRegion ExpandedTreeView::visualRegionForSelection(const QItemSelection& selecti
     QRegion selectionRegion;
 
     const QRect viewportRect = viewport()->rect();
+
+    if(p->m_viewMode == ViewMode::Icon) {
+        // We need to make sure the full width is passed,
+        // otherwise any sections outside an item's rect won't be updated/drawn
+        const auto indexes = selection.indexes();
+        for(const auto& index : indexes) {
+            auto rect = visualRect(index);
+            selectionRegion += QRect{0, rect.y(), viewportRect.width(), rect.height()};
+        }
+        return selectionRegion;
+    }
 
     for(const auto& range : selection) {
         if(!range.isValid()) {

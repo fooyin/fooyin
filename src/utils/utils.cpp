@@ -20,6 +20,7 @@
 #include <utils/utils.h>
 
 #include <QApplication>
+#include <QHeaderView>
 #include <QIcon>
 #include <QLabel>
 #include <QMainWindow>
@@ -310,6 +311,40 @@ void appendMenuActions(QMenu* originalMenu, QMenu* menu)
     for(QAction* action : actions) {
         menu->addAction(action);
     }
+}
+
+int visibleSectionCount(const QHeaderView* headerView)
+{
+    int visibleCount{0};
+    const int count = headerView->count();
+    for(int section{0}; section < count; ++section) {
+        if(!headerView->isSectionHidden(section)) {
+            ++visibleCount;
+        }
+    }
+    return visibleCount;
+}
+
+int realVisualIndex(const QHeaderView* headerView, int logicalIndex)
+{
+    if(headerView->isSectionHidden(logicalIndex)) {
+        return -1;
+    }
+
+    int realIndex{0};
+
+    const int count = headerView->count();
+    for(int i{0}; i < count; ++i) {
+        const int section = headerView->logicalIndex(i);
+        if(!headerView->isSectionHidden(section)) {
+            if(section == logicalIndex) {
+                return realIndex;
+            }
+            ++realIndex;
+        }
+    }
+
+    return -1;
 }
 
 bool isDarkMode()

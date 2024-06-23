@@ -15,4 +15,5 @@ create_fooyin_plugin_internal(
             settings/filtersettings.cpp
             settings/filterscolumnpage.cpp
             settings/filtersgeneralpage.cpp
+            settings/filtersguipage.cpp
 )

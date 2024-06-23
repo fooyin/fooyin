@@ -28,22 +28,18 @@
 class QHeaderView;
 
 namespace Fooyin {
-struct ExpandedTreeViewItem
-{
-    QModelIndex index;
-    int parentItem{-1};
-    bool hasChildren{false};
-    bool hasMoreSiblings{false};
-    int childCount{0};
-    int height{0};  // row height
-    int padding{0}; // padding at bottom of row
-};
-
 class FYUTILS_EXPORT ExpandedTreeView : public QAbstractItemView
 {
     Q_OBJECT
 
 public:
+    enum class ViewMode : uint8_t
+    {
+        Tree = 0,
+        Icon
+    };
+    Q_ENUM(ViewMode)
+
     explicit ExpandedTreeView(QWidget* parent = nullptr);
     ~ExpandedTreeView() override;
 
@@ -54,6 +50,16 @@ public:
 
     [[nodiscard]] bool isSpanning(int column) const;
     void setSpan(int column, bool span);
+
+    [[nodiscard]] ViewMode viewMode() const;
+    void setViewMode(ViewMode mode);
+
+    [[nodiscard]] bool uniformRowHeights() const;
+    void setUniformRowHeights(bool enabled);
+
+    [[nodiscard]] int itemWidth() const;
+    void setItemWidth(int width);
+    void setIconSize(const QSize& size);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
@@ -71,12 +77,16 @@ public:
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles) override;
     void selectAll() override;
 
+signals:
+    void viewModeChanged(ViewMode mode);
+
 protected:
     bool viewportEvent(QEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void scrollContentsBy(int dx, int dy) override;
@@ -87,14 +97,9 @@ protected:
     void verticalScrollbarValueChanged(int value) override;
     virtual DropIndicatorPosition dropPosition(const QPoint& pos, const QRect& rect, const QModelIndex& index);
 
-    [[nodiscard]] std::vector<ExpandedTreeViewItem> viewItems() const;
     [[nodiscard]] int itemCount() const;
     [[nodiscard]] std::set<int> spans() const;
 
-    void drawTree(QPainter* painter, const QRegion& region) const;
-    void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    void drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
-                           int y) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int y) const;
 
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
@@ -106,6 +111,10 @@ protected:
     [[nodiscard]] QRegion visualRegionForSelection(const QItemSelection& selection) const override;
 
 private:
+    friend class BaseView;
+    friend class TreeView;
+    friend class IconView;
+
     class Private;
     std::unique_ptr<Private> p;
 };

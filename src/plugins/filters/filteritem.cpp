@@ -32,6 +32,13 @@ bool sort(const QCollator& collator, int column, Qt::SortOrder order, const Fooy
         return false;
     }
 
+    if(lhs->isSummary() && !rhs->isSummary()) {
+        return true;
+    }
+    if(!lhs->isSummary() && rhs->isSummary()) {
+        return false;
+    }
+
     const auto cmp = collator.compare(lhs->column(column), rhs->column(column));
 
     if(cmp == 0) {
@@ -54,6 +61,7 @@ FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
+    , m_isSummary{false}
 { }
 
 QString FilterItem::key() const
@@ -92,6 +100,16 @@ void FilterItem::setColumns(const QStringList& columns)
 void FilterItem::removeColumn(int column)
 {
     m_columns.remove(column);
+}
+
+bool FilterItem::isSummary() const
+{
+    return m_isSummary;
+}
+
+void FilterItem::setIsSummary(bool isSummary)
+{
+    m_isSummary = isSummary;
 }
 
 void FilterItem::addTrack(const Track& track)

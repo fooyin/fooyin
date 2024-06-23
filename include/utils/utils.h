@@ -26,6 +26,7 @@
 
 class QColor;
 class QDir;
+class QHeaderView;
 class QIcon;
 class QImage;
 class QKeySequence;
@@ -62,6 +63,8 @@ FYUTILS_EXPORT QPixmap changePixmapColour(const QPixmap& orig, const QColor& col
 FYUTILS_EXPORT QMainWindow* getMainWindow();
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
+FYUTILS_EXPORT int visibleSectionCount(const QHeaderView* headerView);
+FYUTILS_EXPORT int realVisualIndex(const QHeaderView* headerView, int logicalIndex);
 
 FYUTILS_EXPORT bool isDarkMode();
 FYUTILS_EXPORT QIcon iconFromTheme(const QString& icon);

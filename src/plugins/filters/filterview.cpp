@@ -22,27 +22,22 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QPainter>
 
 namespace Fooyin::Filters {
 FilterView::FilterView(QWidget* parent)
-    : QTreeView(parent)
+    : ExpandedTreeView{parent}
 {
     setObjectName(QStringLiteral("FilterView"));
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setMouseTracking(true);
-    setRootIsDecorated(false);
-    setItemsExpandable(false);
-    setIndentation(0);
-    setExpandsOnDoubleClick(false);
     setTextElideMode(Qt::ElideRight);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragOnly);
     setDefaultDropAction(Qt::CopyAction);
     setDropIndicatorShown(true);
-    setSortingEnabled(false);
-    setUniformRowHeights(true);
+    // setUniformRowHeights(true);
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)
@@ -54,7 +49,7 @@ void FilterView::mousePressEvent(QMouseEvent* event)
         setDragEnabled(selectionModel()->isSelected(index));
     }
 
-    QTreeView::mousePressEvent(event);
+    ExpandedTreeView::mousePressEvent(event);
 
     if(!index.isValid()) {
         clearSelection();
@@ -71,12 +66,12 @@ void FilterView::mouseDoubleClickEvent(QMouseEvent* event)
         return;
     }
 
-    QTreeView::mouseDoubleClickEvent(event);
+    ExpandedTreeView::mouseDoubleClickEvent(event);
 }
 
 void FilterView::keyPressEvent(QKeyEvent* event)
 {
-    QTreeView::keyPressEvent(event);
+    ExpandedTreeView::keyPressEvent(event);
 
     const auto key = event->key();
     if(key == Qt::Key_Enter || key == Qt::Key_Return) { }
