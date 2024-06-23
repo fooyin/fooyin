@@ -184,13 +184,9 @@ struct AutoHeaderView::Private
             SectionIndexes sectionToResize;
 
             const int resizedIndex = m_self->visualIndex(resizedSection);
-            const int sectionCount = m_self->count();
-
-            for(int section{0}; section < sectionCount; ++section) {
-                const int visualIndex = m_self->visualIndex(section);
-                if(visualIndex == resizedIndex + 1) {
-                    sectionToResize.push_back(section);
-                }
+            const int rightSection = rightLogicalSection(resizedIndex);
+            if(rightSection >= 0) {
+                sectionToResize.push_back(rightSection);
             }
 
             if(!sectionToResize.empty()) {
@@ -214,7 +210,7 @@ struct AutoHeaderView::Private
 
         const int logicalIndex = m_self->logicalIndex(visualIndex);
         const int viewportPos  = m_self->sectionViewportPosition(logicalIndex);
-        const int gripMargin   = m_self->style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, m_self);
+        const int gripMargin   = m_self->style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, m_self) * 2;
 
         bool left  = pos < viewportPos + gripMargin;
         bool right = (pos > viewportPos + m_self->sectionSize(logicalIndex) - gripMargin);
@@ -238,26 +234,35 @@ struct AutoHeaderView::Private
         return -1;
     }
 
+    [[nodiscard]] int rightLogicalSection(int visual) const
+    {
+        const int count = m_self->count();
+        for(int i{visual + 1}; i < count; ++i) {
+            const int logical = m_self->logicalIndex(i);
+            if(!m_self->isSectionHidden(logical)) {
+                return logical;
+            }
+        }
+        return -1;
+    }
+
     [[nodiscard]] bool shouldBlockResize(const int oldPos) const
     {
         if(!m_stretchEnabled) {
             return false;
         }
 
-        const int rightBoundary = (m_self->orientation() == Qt::Horizontal) ? m_self->width() : m_self->height();
-        const int rightSection  = m_self->logicalIndex(m_resizingSection + 1);
+        const int rightSection  = rightLogicalSection(m_resizingSection);
+        const int rightSize     = m_self->sectionSize(rightSection);
+        const int rightBoundary = m_self->sectionViewportPosition(rightSection) + rightSize;
+        const int endBoundary   = (m_self->orientation() == Qt::Horizontal) ? m_self->width() : m_self->height();
 
-        const bool isNotLastSection = m_resizingSection != m_self->count() - 2;
-        const bool posPastEnd       = isNotLastSection
-                             && m_lastResizePos > m_self->sectionViewportPosition(rightSection)
-                                                      + m_self->sectionSize(rightSection) - MinSectionWidth;
-        const bool posPastLastSection = !isNotLastSection && m_lastResizePos > rightBoundary - MinSectionWidth;
-
-        const bool posPastRightSection = m_resizingSection >= 0 && (posPastEnd || posPastLastSection);
-        const bool sectionAtMinSize    = m_self->sectionSize(rightSection) <= MinSectionWidth;
+        const bool posPastEnd          = m_lastResizePos >= endBoundary - MinSectionWidth;
+        const bool posPastRightSection = m_resizingSection >= 0 && m_lastResizePos >= rightBoundary - MinSectionWidth;
+        const bool sectionAtMinSize    = rightSize <= MinSectionWidth;
         const bool isResizingSmaller   = m_lastResizePos >= oldPos;
 
-        return (posPastRightSection || (sectionAtMinSize && isResizingSmaller));
+        return (posPastEnd || posPastRightSection || (sectionAtMinSize && isResizingSmaller));
     }
 };
 
@@ -657,7 +662,7 @@ void AutoHeaderView::mouseMoveEvent(QMouseEvent* event)
     const QPoint position = event->position().toPoint();
     const int oldPos = std::exchange(p->m_lastResizePos, orientation() == Qt::Horizontal ? position.x() : position.y());
 
-    if(p->m_state != SectionState::Resizing || p->m_resizingSection < 0) {
+    if(p->m_state == SectionState::Resizing && p->m_resizingSection < 0) {
         p->m_resizingSection = p->sectionHandleAt(p->m_lastResizePos);
     }
 
