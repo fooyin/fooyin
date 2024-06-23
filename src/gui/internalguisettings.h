@@ -115,6 +115,8 @@ enum GuiInternalSettings : uint32_t
     ShowTrayIcon            = 47 | Type::Bool,
     TrayOnClose             = 48 | Type::Bool,
     LibTreeKeepAlive        = 49 | Type::Bool,
+    PlaylistTabsCloseButton = 50 | Type::Bool,
+    PlaylistTabsMiddleClose = 51 | Type::Bool
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

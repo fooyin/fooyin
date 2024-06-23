@@ -89,12 +89,15 @@ struct PlaylistTabs::Private
 
         m_tabs->setMovable(true);
         m_tabs->setExpanding(false);
+        m_tabs->setTabsClosable(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
         m_tabs->setAddButtonEnabled(m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
 
         m_layout->addWidget(m_tabs);
 
         m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsAddButton>(
             m_self, [this](bool enabled) { m_tabs->setAddButtonEnabled(enabled); });
+        m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsCloseButton>(
+            m_self, [this](bool enabled) { m_tabs->setTabsClosable(enabled); });
     }
 
     void tabChanged(int index) const
@@ -217,6 +220,25 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
 
     setupTabs();
 
+    QObject::connect(p->m_tabs, &EditableTabBar::middleClicked, this, [this](const int index) {
+        if(index >= 0 && p->m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>()) {
+            const Id id = p->m_tabs->tabData(index).value<Id>();
+            p->m_playlistHandler->removePlaylist(id);
+        }
+    });
+    QObject::connect(p->m_tabs, &QTabBar::tabCloseRequested, this, [this](const int index) {
+        if(index >= 0) {
+            const Id id = p->m_tabs->tabData(index).value<Id>();
+            p->m_playlistHandler->removePlaylist(id);
+        }
+    });
+    QObject::connect(p->m_tabs, &QTabBar::tabBarDoubleClicked, this, [this](const int index) {
+        if(index < 0) {
+            if(auto* playlist = p->m_playlistHandler->createEmptyPlaylist()) {
+                p->m_playlistController->changeCurrentPlaylist(playlist);
+            }
+        }
+    });
     QObject::connect(p->m_tabs, &EditableTabBar::addButtonClicked, this, [this]() {
         if(auto* playlist = p->m_playlistHandler->createEmptyPlaylist()) {
             p->m_playlistController->changeCurrentPlaylist(playlist);

@@ -94,32 +94,49 @@ void EditableTabBar::closeEditor()
 
 void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if(m_showAddButton) {
-        const QPoint pos = event->position().toPoint();
+    const QPoint pos = event->position().toPoint();
 
-        if(isAddButtonTab(pos)) {
-            return;
-        }
+    if(event->button() & Qt::MiddleButton) {
+        return;
     }
 
-    showEditor();
+    if(tabAt(pos) >= 0) {
+        if(m_showAddButton && isAddButtonTab(pos)) {
+            return;
+        }
+        showEditor();
+    }
+
     QTabBar::mouseDoubleClickEvent(event);
 }
 
 void EditableTabBar::mousePressEvent(QMouseEvent* event)
 {
-    if(m_showAddButton) {
-        const QPoint pos = event->position().toPoint();
+    const QPoint pos = event->position().toPoint();
 
-        if(isAddButtonTab(pos)) {
-            if(event->button() & Qt::LeftButton) {
-                emit addButtonClicked();
-            }
-            return;
+    if(m_showAddButton && isAddButtonTab(pos)) {
+        if(event->button() & Qt::LeftButton) {
+            emit addButtonClicked();
         }
+        return;
+    }
+
+    if(event->button() & Qt::MiddleButton) {
+        emit middleClicked(tabAt(pos));
     }
 
     QTabBar::mousePressEvent(event);
+}
+
+void EditableTabBar::wheelEvent(QWheelEvent* event)
+{
+    const QPoint pos = event->position().toPoint();
+
+    if(tabAt(pos) < 0) {
+        return;
+    }
+
+    QTabBar::wheelEvent(event);
 }
 
 bool EditableTabBar::isAddButtonTab(const QPoint& pos)

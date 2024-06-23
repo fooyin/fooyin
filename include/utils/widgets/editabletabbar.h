@@ -40,12 +40,14 @@ public:
     void closeEditor();
 
 signals:
+    void middleClicked(int index);
     void addButtonClicked();
     void tabTextChanged(int index, const QString& text);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     bool isAddButtonTab(const QPoint& pos);

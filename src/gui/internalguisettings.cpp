@@ -120,5 +120,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::ShowTrayIcon>(false, QStringLiteral("Interface/ShowTrayIcon"));
     m_settings->createSetting<Internal::TrayOnClose>(true, QStringLiteral("Interface/TrayOnClose"));
     m_settings->createSetting<Internal::LibTreeKeepAlive>(false, QStringLiteral("LibraryTree/KeepAlive"));
+    m_settings->createSetting<Internal::PlaylistTabsCloseButton>(false, QStringLiteral("PlaylistTabs/ShowCloseButton"));
+    m_settings->createSetting<Internal::PlaylistTabsMiddleClose>(false,
+                                                                 QStringLiteral("PlaylistTabs/CloseOnMiddleClick"));
 }
 } // namespace Fooyin
