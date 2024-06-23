@@ -88,7 +88,7 @@ struct PlaylistTabs::Private
         m_layout->setAlignment(Qt::AlignTop);
 
         m_tabs->setMovable(true);
-        m_tabs->setExpanding(false);
+        m_tabs->setExpanding(m_settings->value<Settings::Gui::Internal::PlaylistTabsExpand>());
         m_tabs->setTabsClosable(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
         m_tabs->setAddButtonEnabled(m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
 
@@ -98,6 +98,10 @@ struct PlaylistTabs::Private
             m_self, [this](bool enabled) { m_tabs->setAddButtonEnabled(enabled); });
         m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsCloseButton>(
             m_self, [this](bool enabled) { m_tabs->setTabsClosable(enabled); });
+        m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsExpand>(m_self, [this](bool enabled) {
+            m_tabs->setExpanding(enabled);
+            m_tabs->update();
+        });
     }
 
     void tabChanged(int index) const

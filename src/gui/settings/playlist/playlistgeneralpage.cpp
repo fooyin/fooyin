@@ -56,6 +56,7 @@ private:
     QCheckBox* m_header;
     QCheckBox* m_altColours;
 
+    QCheckBox* m_tabsExpand;
     QCheckBox* m_tabsAddButton;
     QCheckBox* m_tabsCloseButton;
     QCheckBox* m_tabsMiddleClose;
@@ -75,6 +76,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
+    , m_tabsExpand{new QCheckBox(tr("Expand tabs to fill empty space"), this)}
     , m_tabsAddButton{new QCheckBox(tr("Show add button"), this)}
     , m_tabsCloseButton{new QCheckBox(tr("Show delete button"), this)}
     , m_tabsMiddleClose{new QCheckBox(tr("Delete playlists on middle click"), this)}
@@ -141,10 +143,12 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
     auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging"), this);
 
-    tabsGroupLayout->addWidget(m_tabsAddButton, 0, 0);
-    tabsGroupLayout->addWidget(addButtonLabel, 1, 0);
-    tabsGroupLayout->addWidget(m_tabsCloseButton, 2, 0);
-    tabsGroupLayout->addWidget(m_tabsMiddleClose, 3, 0);
+    row = 0;
+    tabsGroupLayout->addWidget(m_tabsExpand, row++, 0);
+    tabsGroupLayout->addWidget(m_tabsAddButton, row++, 0);
+    tabsGroupLayout->addWidget(addButtonLabel, row++, 0);
+    tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
+    tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 
     layout->addWidget(behaviour, 0, 0);
     layout->addWidget(saving, 1, 0);
@@ -171,6 +175,7 @@ void PlaylistGeneralPageWidget::load()
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
 
+    m_tabsExpand->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsExpand>());
     m_tabsAddButton->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
     m_tabsCloseButton->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
     m_tabsMiddleClose->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>());
@@ -192,6 +197,7 @@ void PlaylistGeneralPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistAltColours>(m_altColours->isChecked());
 
+    m_settings->set<Settings::Gui::Internal::PlaylistTabsExpand>(m_tabsExpand->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistTabsAddButton>(m_tabsAddButton->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistTabsCloseButton>(m_tabsCloseButton->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistTabsMiddleClose>(m_tabsMiddleClose->isChecked());
@@ -214,6 +220,7 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
 
+    m_settings->reset<Settings::Gui::Internal::PlaylistTabsExpand>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsAddButton>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsCloseButton>();
     m_settings->reset<Settings::Gui::Internal::PlaylistTabsMiddleClose>();
