@@ -49,10 +49,8 @@ QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 
     opt.decorationSize = option.decorationSize;
 
-    const QWidget* widget = opt.widget;
-    const QStyle* style   = widget ? widget->style() : QApplication::style();
-
-    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, widget);
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, opt.widget);
 
     const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
     if(sizeHint.height() > 0) {

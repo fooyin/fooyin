@@ -159,7 +159,6 @@ public:
     ExpandedTreeViewItem indexToListViewItem(const QModelIndex& index) const;
 
     int viewIndex(const QModelIndex& index) const;
-    int indexRowSizeHint(const QModelIndex& index) const;
     void insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem);
     bool hasVisibleChildren(const QModelIndex& parent) const;
     bool isIndexEnabled(const QModelIndex& index) const;
@@ -641,7 +640,7 @@ void TreeView::drawView(QPainter* painter, const QRegion& region) const
 
             opt.rect = visualRect(index, RectRule::FullRow, false);
             opt.rect.setY(y);
-            opt.rect.setHeight(m_p->indexRowSizeHint(index));
+            opt.rect.setHeight(indexRowSizeHint(index));
             opt.state |= QStyle::State_Open | (item.hasMoreSiblings ? QStyle::State_Sibling : QStyle::State_None);
 
             if(item.hasChildren) {
@@ -747,7 +746,7 @@ void TreeView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottom
     const int topViewIndex = m_p->viewIndex(topLeft);
 
     if(topViewIndex == 0) {
-        const int defaultHeight  = m_p->indexRowSizeHint(topLeft);
+        const int defaultHeight  = indexRowSizeHint(topLeft);
         sizeChanged              = m_p->m_defaultItemHeight != defaultHeight;
         m_p->m_defaultItemHeight = defaultHeight;
     }
@@ -1269,7 +1268,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
             opt.palette.setCurrentColorGroup(cg);
         }
 
-        const int cellHeight = m_p->indexRowSizeHint(modelIndex);
+        const int cellHeight = indexRowSizeHint(modelIndex);
         if(cellHeight > 0) {
             const QRect cellRect{position, y, width, cellHeight};
 
@@ -2412,53 +2411,6 @@ int ExpandedTreeView::Private::viewIndex(const QModelIndex& index) const
     }
 
     return -1;
-}
-
-int ExpandedTreeView::Private::indexRowSizeHint(const QModelIndex& index) const
-{
-    if(!isIndexValid(index) || !m_self->itemDelegate()) {
-        return 0;
-    }
-
-    int start{-1};
-    int end{-1};
-    const int indexRow       = index.row();
-    const QModelIndex parent = index.parent();
-    int count                = m_header->count();
-
-    if(count > 0 && m_self->isVisible()) {
-        start = std::min(m_header->visualIndexAt(0), 0);
-    }
-    else {
-        count = m_model->columnCount(parent);
-    }
-
-    end = count - 1;
-
-    if(end < start) {
-        std::swap(end, start);
-    }
-
-    QStyleOptionViewItem opt;
-    m_self->initViewItemOption(&opt);
-
-    opt.rect.setWidth(-1);
-    int height{-1};
-
-    for(int column{start}; column <= end; ++column) {
-        const int logical = count == 0 ? column : m_header->logicalIndex(column);
-        if(m_header->isSectionHidden(logical)) {
-            continue;
-        }
-
-        const QModelIndex colIndex = m_model->index(indexRow, logical, parent);
-        if(colIndex.isValid()) {
-            const int hint = m_self->itemDelegateForIndex(colIndex)->sizeHint(opt, colIndex).height();
-            height         = std::max(height, hint);
-        }
-    }
-
-    return height;
 }
 
 void ExpandedTreeView::Private::insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem)
