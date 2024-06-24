@@ -325,6 +325,20 @@ int visibleSectionCount(const QHeaderView* headerView)
     return visibleCount;
 }
 
+int firstVisualIndex(const QHeaderView* headerView)
+{
+    int visibleCount{0};
+    const int count = headerView->count();
+    for(int section{0}; section < count; ++section) {
+        const int logical = headerView->logicalIndex(section);
+        if(!headerView->isSectionHidden(logical)) {
+            return visibleCount;
+        }
+        ++visibleCount;
+    }
+    return visibleCount;
+}
+
 int realVisualIndex(const QHeaderView* headerView, int logicalIndex)
 {
     if(headerView->isSectionHidden(logicalIndex)) {

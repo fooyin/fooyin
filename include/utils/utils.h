@@ -64,6 +64,7 @@ FYUTILS_EXPORT QMainWindow* getMainWindow();
 FYUTILS_EXPORT void showMessageBox(const QString& text, const QString& infoText);
 FYUTILS_EXPORT void appendMenuActions(QMenu* originalMenu, QMenu* menu);
 FYUTILS_EXPORT int visibleSectionCount(const QHeaderView* headerView);
+FYUTILS_EXPORT int firstVisualIndex(const QHeaderView* headerView);
 FYUTILS_EXPORT int realVisualIndex(const QHeaderView* headerView, int logicalIndex);
 
 FYUTILS_EXPORT bool isDarkMode();

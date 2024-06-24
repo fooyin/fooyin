@@ -1388,7 +1388,7 @@ int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
     height         = std::max(height, hint);
 
     if(m_p->m_uniformRowHeights) {
-        return m_uniformRowHeight = height;
+        m_uniformRowHeight = height;
     }
 
     return height;
@@ -3101,6 +3101,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
 
     if(!index.isValid() && p->itemCount() > 0) {
         index = p->m_viewItems.back().index;
+        index = index.siblingAtColumn(Utils::firstVisualIndex(p->m_header));
     }
 
     if(index.isValid() && showDropIndicator()) {
