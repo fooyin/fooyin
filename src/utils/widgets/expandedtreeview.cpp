@@ -2816,7 +2816,7 @@ void ExpandedTreeView::changeIconSize(const QSize& size)
 {
     if(iconSize() != size) {
         setIconSize(size);
-        p->doDelayedItemsLayout();
+        p->doDelayedItemsLayout(100);
     }
 }
 
