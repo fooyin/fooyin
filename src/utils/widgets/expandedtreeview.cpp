@@ -1592,7 +1592,6 @@ private:
     mutable int m_uniformBaseHeight{0};
     mutable int m_uniformRowHeight{0};
     mutable int m_uniformCaptionHeight{0};
-    mutable QSize m_iconSize;
 };
 
 void IconView::drawView(QPainter* painter, const QRegion& region) const
@@ -1676,7 +1675,6 @@ void IconView::invalidate()
     m_uniformCaptionHeight = 0;
     m_segmentSize          = 0;
     m_itemSpacing          = 0;
-    m_iconSize             = {};
 }
 
 void IconView::doItemLayout()
@@ -1878,29 +1876,7 @@ int IconView::spacing() const
 
 QSize IconView::iconSize() const
 {
-    if(m_iconSize.isValid()) {
-        return m_iconSize;
-    }
-
-    QSize size;
-
-    const int visibleCount = Utils::visibleSectionCount(header());
-    if(visibleCount > 1) {
-        int visualIndex{0};
-        while(header()->isSectionHidden(header()->logicalIndex(visualIndex))) {
-            ++visualIndex;
-        }
-
-        const int firstColumn = header()->logicalIndex(visualIndex);
-        const int width       = header()->sectionSize(firstColumn) / visibleCount;
-        size                  = {width, width};
-    }
-    else {
-        size = m_view->iconSize();
-    }
-
-    m_iconSize = size;
-    return m_iconSize;
+    return m_view->iconSize();
 }
 
 void IconView::prepareItemLayout()
