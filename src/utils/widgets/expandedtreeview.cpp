@@ -1192,6 +1192,10 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
+    if(m_view->alternatingRowColors()) {
+        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+    }
+
     if(model()->hasChildren(index)) {
         // Span first column of headers/subheaders
         opt.rect.setX(0);
