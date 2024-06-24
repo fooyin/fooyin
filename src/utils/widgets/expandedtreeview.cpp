@@ -1857,7 +1857,7 @@ IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
             size.captionHeight = hint.height();
         }
 
-        size.width = std::max(size.width, hint.width());
+        size.width = std::clamp(size.width, hint.width(), iconSize().width() + (2 * MinItemSpacing));
         size.height += hint.height();
     }
 
