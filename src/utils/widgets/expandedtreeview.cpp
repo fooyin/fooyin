@@ -28,7 +28,7 @@
 #include <QStack>
 #include <QStylePainter>
 #include <QTimer>
-#include <QWindow>
+#include <QWheelEvent>
 
 #include <set>
 
@@ -3162,6 +3162,22 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 
     auto command = selectionCommand(index, event);
     selectModel->select(selection, command);
+}
+
+void ExpandedTreeView::wheelEvent(QWheelEvent* event)
+{
+    if(!(event->modifiers() & Qt::ControlModifier)) {
+        QAbstractItemView::wheelEvent(event);
+        return;
+    }
+
+    const int delta     = event->angleDelta().y();
+    const int increment = (delta > 0) ? 1 : -1;
+    int newSize         = iconSize().width() + increment * 2;
+    newSize             = std::clamp(newSize, 16, 1024);
+    changeIconSize({newSize, newSize});
+
+    event->accept();
 }
 
 void ExpandedTreeView::resizeEvent(QResizeEvent* event)

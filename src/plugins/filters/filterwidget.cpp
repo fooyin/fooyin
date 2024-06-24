@@ -167,6 +167,8 @@ struct FilterWidget::Private
         QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, m_self, [this](ExpandedTreeView::ViewMode mode) {
             m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
         });
+        QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self,
+                         [this](const QSize& size) { m_settings->set<Settings::Filters::FilterIconSize>(size); });
         QObject::connect(m_view, &FilterView::doubleClicked, m_self,
                          [this]() { emit m_self->doubleClicked(playlistNameFromSelection()); });
         QObject::connect(m_view, &FilterView::middleClicked, m_self,
