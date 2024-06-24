@@ -100,9 +100,9 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     m_iconWidth->setMaximum(2048);
     m_iconHeight->setMaximum(2048);
 
-    m_itemWidth->setSingleStep(25);
-    m_iconWidth->setSingleStep(25);
-    m_iconHeight->setSingleStep(25);
+    m_itemWidth->setSingleStep(20);
+    m_iconWidth->setSingleStep(20);
+    m_iconHeight->setSingleStep(20);
 
     widthLabel->setIndent(25);
     heightLabel->setIndent(25);
