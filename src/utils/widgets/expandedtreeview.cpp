@@ -189,7 +189,6 @@ public:
     ViewMode m_viewMode{ViewMode::Tree};
 
     bool m_uniformRowHeights{false};
-    int m_itemWidth{200}; // Icon mode
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
@@ -290,11 +289,6 @@ public:
     [[nodiscard]] int itemCount() const
     {
         return m_p->itemCount();
-    }
-
-    [[nodiscard]] int itemWidth() const
-    {
-        return m_p->m_itemWidth;
     }
 
     [[nodiscard]] std::vector<ExpandedTreeViewItem>& viewItems() const
@@ -415,7 +409,6 @@ void BaseView::layout(int i, bool afterIsUninitialised)
         item->hasMoreSiblings = false;
         item->hasChildren     = model()->hasChildren(currentIndex);
         item->columnCount     = columnCount;
-        item->width           = m_p->m_itemWidth;
 
         if(item->hasChildren) {
             layout(last, afterIsUninitialised);
@@ -1577,6 +1570,7 @@ public:
 private:
     struct SizeHint
     {
+        int width{0};
         int height{0};
         int baseHeight{0};
         int captionHeight{0};
@@ -1587,6 +1581,7 @@ private:
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
     [[nodiscard]] SizeHint indexSizeHint(const QModelIndex& index) const;
+    [[nodiscard]] int itemWidth(int item) const;
     [[nodiscard]] int itemHeight(int item) const;
     [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
@@ -1596,6 +1591,7 @@ private:
     int m_itemSpacing{MinItemSpacing};
     int m_rowSpacing{IconRowSpacing};
     mutable int m_uniformBaseHeight{0};
+    mutable int m_uniformRowWidth{0};
     mutable int m_uniformRowHeight{0};
     mutable int m_uniformCaptionHeight{0};
 };
@@ -1676,6 +1672,7 @@ QRect IconView::visualRect(const QModelIndex& index, RectRule rule, bool /*inclu
 
 void IconView::invalidate()
 {
+    m_uniformRowWidth      = 0;
     m_uniformRowHeight     = 0;
     m_uniformBaseHeight    = 0;
     m_uniformCaptionHeight = 0;
@@ -1705,7 +1702,7 @@ void IconView::doItemLayout()
     // Determine the number of items per row
     const int count = itemCount();
     for(int i{1}; i <= count; ++i) {
-        const int requiredWidth = i * itemWidth() + (i - 1) * m_itemSpacing;
+        const int requiredWidth = i * itemWidth(0) + (i - 1) * m_itemSpacing;
         if(requiredWidth > (segEndPosition - segStartPosition)) {
             m_segmentSize = (i == 1) ? 1 : i - 1;
             break;
@@ -1720,7 +1717,7 @@ void IconView::doItemLayout()
     }
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
-    const int totalItemWidth      = m_segmentSize * itemWidth();
+    const int totalItemWidth      = m_segmentSize * itemWidth(0);
     const int totalPadding        = totalWidthAvailable - totalItemWidth;
 
     m_itemSpacing = std::max(0, totalPadding / (m_segmentSize + 1));
@@ -1741,7 +1738,7 @@ void IconView::doItemLayout()
             deltaSegPosition = 0;
         }
 
-        item.x = segStartPosition + m_itemSpacing + segColumn * (itemWidth() + m_itemSpacing);
+        item.x = segStartPosition + m_itemSpacing + segColumn * (itemWidth(i) + m_itemSpacing);
         item.y = segPosition;
 
         deltaSegPosition = std::max(deltaSegPosition, itemHeight(i) + spacing());
@@ -1797,7 +1794,7 @@ void IconView::updateScrollBars()
 
     verticalScrollBar()->setSingleStep(itemHeight(0) / 4);
     verticalScrollBar()->setPageStep(viewport()->height());
-    horizontalScrollBar()->setSingleStep(itemWidth() / 4);
+    horizontalScrollBar()->setSingleStep(itemWidth(0) / 4);
     horizontalScrollBar()->setPageStep(viewport()->width());
 
     const bool bothScrollBarsAuto = m_view->verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded
@@ -1841,9 +1838,7 @@ IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
     opt.decorationPosition     = QStyleOptionViewItem::Top;
     opt.displayAlignment       = Qt::AlignCenter;
 
-    int height{0};
-    int baseHeight{0};
-    int captionHeight{0};
+    SizeHint size;
 
     const int colCount = model()->columnCount(index.parent());
     for(int col{0}; col < colCount; ++col) {
@@ -1853,19 +1848,45 @@ IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
 
         const auto colIndex = index.siblingAtColumn(col);
         opt.decorationSize  = Utils::realVisualIndex(header(), colIndex.column()) == 0 ? iconSize() : QSize{};
-        const int hint      = delegate(colIndex)->sizeHint(opt, colIndex).height();
+        const QSize hint    = delegate(colIndex)->sizeHint(opt, colIndex);
 
-        if(baseHeight == 0 && Utils::realVisualIndex(header(), colIndex.column()) == 0) {
-            baseHeight = hint;
+        if(size.baseHeight == 0 && Utils::realVisualIndex(header(), colIndex.column()) == 0) {
+            size.baseHeight = hint.height();
         }
-        else if(captionHeight == 0) {
-            captionHeight = hint;
+        else if(size.captionHeight == 0) {
+            size.captionHeight = hint.height();
         }
 
-        height += hint;
+        size.width = std::max(size.width, hint.width());
+        size.height += hint.height();
     }
 
-    return {height, baseHeight, captionHeight};
+    return size;
+}
+
+int IconView::itemWidth(int item) const
+{
+    if(empty()) {
+        return 0;
+    }
+
+    const QModelIndex& index = m_p->m_viewItems.at(item).index;
+    if(!index.isValid()) {
+        return 0;
+    }
+
+    int width = viewItem(item).width;
+
+    if(width <= 0) {
+        if(m_uniformRowWidth == 0) {
+            const SizeHint hint = indexSizeHint(index);
+            m_uniformRowWidth   = hint.width;
+        }
+        width                = m_uniformRowWidth;
+        viewItem(item).width = width;
+    }
+
+    return std::max(width, 0);
 }
 
 int IconView::itemHeight(int item) const
@@ -1883,10 +1904,10 @@ int IconView::itemHeight(int item) const
 
     if(height <= 0) {
         if(m_uniformRowHeight == 0) {
-            const auto& [hint, baseHint, captionHint] = indexSizeHint(index);
-            m_uniformRowHeight                        = hint;
-            m_uniformBaseHeight                       = baseHint;
-            m_uniformCaptionHeight                    = captionHint;
+            const SizeHint hint    = indexSizeHint(index);
+            m_uniformRowHeight     = hint.height;
+            m_uniformBaseHeight    = hint.baseHeight;
+            m_uniformCaptionHeight = hint.captionHeight;
         }
         height                       = m_uniformRowHeight;
         viewItem(item).height        = height;
@@ -2791,23 +2812,10 @@ void ExpandedTreeView::setUniformRowHeights(bool enabled)
     p->m_uniformRowHeights = enabled;
 }
 
-int ExpandedTreeView::itemWidth() const
+void ExpandedTreeView::changeIconSize(const QSize& size)
 {
-    return p->m_itemWidth;
-}
-
-void ExpandedTreeView::setItemWidth(int width)
-{
-    if(std::exchange(p->m_itemWidth, width) != width) {
-        p->doDelayedItemsLayout();
-    }
-}
-
-void ExpandedTreeView::setIconSize(const QSize& size)
-{
-    const auto oldSize = iconSize();
-    QAbstractItemView::setIconSize(size);
-    if(oldSize != size) {
+    if(iconSize() != size) {
+        setIconSize(size);
         p->doDelayedItemsLayout();
     }
 }

@@ -134,8 +134,7 @@ struct FilterWidget::Private
         hideHeader(!m_settings->value<Settings::Filters::FilterHeader>());
         setScrollbarEnabled(m_settings->value<Settings::Filters::FilterScrollBar>());
         m_view->setAlternatingRowColors(m_settings->value<Settings::Filters::FilterAltColours>());
-        m_view->setItemWidth(m_settings->value<Settings::Filters::FilterIconItemWidth>());
-        m_view->setIconSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize());
+        m_view->changeIconSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize());
 
         setupConnections();
 
@@ -151,10 +150,8 @@ struct FilterWidget::Private
             m_model->setRowHeight(height);
             QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
         });
-        m_settings->subscribe<Settings::Filters::FilterIconItemWidth>(
-            m_self, [this](const int width) { m_view->setItemWidth(width); });
         m_settings->subscribe<Settings::Filters::FilterIconSize>(
-            m_self, [this](const auto& size) { m_view->setIconSize(size.toSize()); });
+            m_self, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
     }
 
     void setupConnections()

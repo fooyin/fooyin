@@ -43,8 +43,7 @@ enum FiltersSettings : uint32_t
     FilterRowHeight       = 11 | Type::Int,
     FilterSendPlayback    = 12 | Type::Bool,
     FilterKeepAlive       = 13 | Type::Bool,
-    FilterIconItemWidth   = 14 | Type::Int,
-    FilterIconSize        = 15 | Type::Variant
+    FilterIconSize        = 14 | Type::Variant
 };
 Q_ENUM_NS(FiltersSettings)
 } // namespace Settings::Filters

@@ -57,7 +57,6 @@ private:
     ColourButton* m_colourButton;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
-    QSpinBox* m_itemWidth;
     QSpinBox* m_iconWidth;
     QSpinBox* m_iconHeight;
 };
@@ -71,7 +70,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     , m_colourButton{new ColourButton(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
     , m_rowHeight{new QSpinBox(this)}
-    , m_itemWidth{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
     , m_iconHeight{new QSpinBox(this)}
 {
@@ -86,37 +84,26 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     auto* artworkMode   = new QGroupBox(tr("Artwork Mode"), this);
     auto* artworkLayout = new QGridLayout(artworkMode);
 
-    auto* itemWidthLabel = new QLabel(tr("Item width") + QStringLiteral(":"), this);
-    auto* iconSizeLabel  = new QLabel(tr("Artwork") + QStringLiteral(":"), this);
-
     auto* widthLabel  = new QLabel(tr("Width") + QStringLiteral(":"), this);
     auto* heightLabel = new QLabel(tr("Height") + QStringLiteral(":"), this);
 
-    m_itemWidth->setSuffix(QStringLiteral("px"));
     m_iconWidth->setSuffix(QStringLiteral("px"));
     m_iconHeight->setSuffix(QStringLiteral("px"));
 
-    m_itemWidth->setMaximum(2048);
     m_iconWidth->setMaximum(2048);
     m_iconHeight->setMaximum(2048);
 
-    m_itemWidth->setSingleStep(20);
     m_iconWidth->setSingleStep(20);
     m_iconHeight->setSingleStep(20);
 
-    widthLabel->setIndent(25);
-    heightLabel->setIndent(25);
-
-    artworkLayout->addWidget(itemWidthLabel, 0, 0);
-    artworkLayout->addWidget(m_itemWidth, 0, 1);
-    artworkLayout->addWidget(iconSizeLabel, 1, 0);
-    artworkLayout->addWidget(widthLabel, 2, 0);
-    artworkLayout->addWidget(m_iconWidth, 2, 1);
-    artworkLayout->addWidget(heightLabel, 3, 0);
-    artworkLayout->addWidget(m_iconHeight, 3, 1);
+    int row{0};
+    artworkLayout->addWidget(widthLabel, row, 0);
+    artworkLayout->addWidget(m_iconWidth, row++, 1);
+    artworkLayout->addWidget(heightLabel, row, 0);
+    artworkLayout->addWidget(m_iconHeight, row++, 1);
     artworkLayout->setColumnStretch(2, 1);
 
-    int row{0};
+    row = 0;
     appearanceLayout->addWidget(m_filterHeaders, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_filterScrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altRowColours, row++, 0, 1, 2);
@@ -148,7 +135,6 @@ void FiltersGuiPageWidget::load()
     m_overrideRowHeight->setChecked(m_settings->value<Settings::Filters::FilterRowHeight>() > 0);
     m_rowHeight->setValue(m_settings->value<Settings::Filters::FilterRowHeight>());
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
-    m_itemWidth->setValue(m_settings->value<Settings::Filters::FilterIconItemWidth>());
 
     const auto iconSize = m_settings->value<Settings::Filters::FilterIconSize>().toSize();
     m_iconWidth->setValue(iconSize.width());
@@ -175,7 +161,6 @@ void FiltersGuiPageWidget::apply()
         m_settings->reset<Settings::Filters::FilterRowHeight>();
     }
 
-    m_settings->set<Settings::Filters::FilterIconItemWidth>(m_itemWidth->value());
     const QSize iconSize{m_iconWidth->value(), m_iconHeight->value()};
     m_settings->set<Settings::Filters::FilterIconSize>(iconSize);
 }
@@ -189,7 +174,6 @@ void FiltersGuiPageWidget::reset()
     m_settings->reset<Settings::Filters::FilterFont>();
     m_settings->reset<Settings::Filters::FilterColour>();
     m_settings->reset<Settings::Filters::FilterRowHeight>();
-    m_settings->reset<Settings::Filters::FilterIconItemWidth>();
     m_settings->reset<Settings::Filters::FilterIconSize>();
 }
 

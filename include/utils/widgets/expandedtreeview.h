@@ -57,9 +57,7 @@ public:
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
 
-    [[nodiscard]] int itemWidth() const;
-    void setItemWidth(int width);
-    void setIconSize(const QSize& size);
+    void changeIconSize(const QSize& size);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;
     [[nodiscard]] int sizeHintForColumn(int column) const override;
