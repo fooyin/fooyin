@@ -3387,11 +3387,10 @@ void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
         return;
     }
 
-    QWindow* window    = windowHandle();
-    const double scale = window ? window->devicePixelRatio() : 1.0;
-
-    QPixmap pixmap{rect.size() * scale};
-    pixmap.setDevicePixelRatio(scale);
+    const qreal dpr = devicePixelRatioF();
+    const auto size = rect.size() * dpr;
+    QPixmap pixmap{size};
+    pixmap.setDevicePixelRatio(dpr);
 
     pixmap.fill(Qt::transparent);
     QPainter painter{&pixmap};
