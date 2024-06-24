@@ -37,7 +37,7 @@ FilterView::FilterView(QWidget* parent)
     setDragDropMode(QAbstractItemView::DragOnly);
     setDefaultDropAction(Qt::CopyAction);
     setDropIndicatorShown(true);
-    // setUniformRowHeights(true);
+    setUniformRowHeights(true);
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)

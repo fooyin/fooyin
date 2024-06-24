@@ -340,7 +340,7 @@ public:
 
     mutable std::pair<int, int> m_leftAndRight;
     QSize m_contentsSize;
-    mutable int m_uniformRowHeight;
+    mutable int m_uniformRowHeight{0};
 };
 
 void BaseView::layout(int i, bool afterIsUninitialised)
@@ -1685,24 +1685,33 @@ void IconView::doItemLayout()
 {
     invalidate();
     layout(-1);
+
+    if(empty()) {
+        return;
+    }
+
     prepareItemLayout();
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
     const int segStartPosition{m_layoutBounds.left()};
-    const int segEndPosition{m_layoutBounds.right() - m_itemSpacing};
+    const int segEndPosition{m_layoutBounds.right()};
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
 
     // Determine the number of items per row
     const int count = itemCount();
-    for(int i{0}; i < count; ++i) {
-        if(m_segmentSize == 0) {
-            if(topLeft.x() + (i + 1) * (itemWidth() + m_itemSpacing) > segEndPosition) {
-                m_segmentSize = std::max(i, 1);
-                break;
+    for(int i{1}; i <= count; ++i) {
+        const int requiredWidth = i * itemWidth() + (i - 1) * m_itemSpacing;
+        if(requiredWidth > (segEndPosition - segStartPosition)) {
+            if(i == 1) {
+                m_segmentSize = 1;
             }
+            else {
+                m_segmentSize = i - 1;
+            }
+            break;
         }
     }
 
@@ -1711,9 +1720,9 @@ void IconView::doItemLayout()
     }
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
-    const int totalItemWidth      = m_segmentSize * (itemWidth() + m_itemSpacing);
-    const int remainingSpace      = totalWidthAvailable - totalItemWidth;
-    m_itemSpacing                 = std::max(m_itemSpacing, remainingSpace / (m_segmentSize + 1));
+    const int totalItemWidth      = m_segmentSize * itemWidth();
+    const int totalPadding        = totalWidthAvailable - totalItemWidth;
+    m_itemSpacing                 = std::max(0, totalPadding / (m_segmentSize + 1));
 
     QRect rect{{}, topLeft};
 
@@ -1734,7 +1743,7 @@ void IconView::doItemLayout()
     }
 
     m_contentsSize = rect.size();
-    m_contentsSize.rheight() += m_rowSpacing;
+    m_contentsSize.rwidth() += m_itemSpacing;
 }
 
 ExpandedTreeViewItem IconView::indexToViewItem(const QModelIndex& index) const
@@ -1782,6 +1791,8 @@ void IconView::updateScrollBars()
 
     verticalScrollBar()->setSingleStep(itemHeight(0) / 4);
     verticalScrollBar()->setPageStep(viewport()->height());
+    horizontalScrollBar()->setSingleStep(itemWidth() / 4);
+    horizontalScrollBar()->setPageStep(viewport()->width());
 
     const bool bothScrollBarsAuto = m_view->verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded
                                  && m_view->horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded;
@@ -1789,7 +1800,7 @@ void IconView::updateScrollBars()
     const QSize vpSize = viewportSize();
 
     const bool horizontalWantsToShow = m_contentsSize.width() > vpSize.width();
-    bool verticalWantsToShow;
+    bool verticalWantsToShow         = m_contentsSize.height() > vpSize.height();
     if(horizontalWantsToShow) {
         verticalWantsToShow = m_contentsSize.height() > vpSize.height() - m_view->horizontalScrollBar()->height();
     }
@@ -1802,6 +1813,13 @@ void IconView::updateScrollBars()
     }
     else {
         verticalScrollBar()->setRange(0, m_contentsSize.height() - viewport()->height());
+    }
+
+    if(bothScrollBarsAuto && !horizontalWantsToShow) {
+        horizontalScrollBar()->setRange(0, 0);
+    }
+    else {
+        horizontalScrollBar()->setRange(0, m_contentsSize.width() - viewport()->width());
     }
 }
 

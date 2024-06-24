@@ -113,8 +113,6 @@ struct FilterWidget::Private
     {
         m_view->setModel(m_model);
         m_view->setHeader(m_header);
-        m_view->setUniformRowHeights(true);
-        m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_view->setItemDelegate(new FilterDelegate(m_self));
         m_view->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
