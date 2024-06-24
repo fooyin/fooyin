@@ -24,12 +24,12 @@
 #include "filterpopulator.h"
 
 #include <core/track.h>
+#include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QColor>
 #include <QFont>
-#include <QFontMetrics>
 #include <QIODevice>
 #include <QMimeData>
 #include <QSize>
@@ -68,28 +68,35 @@ struct FilterModel::Private
 
     QThread m_populatorThread;
     FilterPopulator m_populator;
+    CoverProvider m_coverProvider;
 
-    FilterItem m_allNode;
+    FilterItem m_summaryNode;
     ItemKeyMap m_nodes;
     TrackIdNodeMap m_trackParents;
 
     FilterColumnList m_columns;
     int m_sortColumn{0};
     Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
+    bool m_showDecoration{false};
 
     using ColumnAlignments = std::vector<Qt::Alignment>;
     mutable ColumnAlignments m_columnAlignments;
 
+    bool m_showSummary{true};
     int m_rowHeight{0};
     QFont m_font;
     QColor m_colour;
 
     TrackList m_tracksPendingRemoval;
 
-    explicit Private(FilterModel* self)
+    explicit Private(FilterModel* self, SettingsManager* settings)
         : m_self{self}
+        , m_coverProvider{settings}
     {
         m_populator.moveToThread(&m_populatorThread);
+
+        QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, m_self,
+                         [this](const Track& track) { coverUpdated(track); });
     }
 
     void beginReset()
@@ -98,8 +105,23 @@ struct FilterModel::Private
         m_nodes.clear();
         m_trackParents.clear();
 
-        m_allNode = FilterItem{QStringLiteral(""), {}, m_self->rootItem()};
-        m_self->rootItem()->appendChild(&m_allNode);
+        if(m_showSummary) {
+            addSummary();
+        }
+    }
+
+    void addSummary()
+    {
+        m_summaryNode = FilterItem{QStringLiteral(""), {}, m_self->rootItem()};
+        m_summaryNode.setIsSummary(true);
+        m_self->rootItem()->insertChild(0, &m_summaryNode);
+    }
+
+    void removeSummary()
+    {
+        const int row = m_summaryNode.row();
+        m_self->rootItem()->removeChild(row);
+        m_summaryNode = {};
     }
 
     void batchFinished(PendingTreeData data)
@@ -123,21 +145,27 @@ struct FilterModel::Private
         QMetaObject::invokeMethod(m_self, &FilterModel::modelUpdated);
     }
 
-    int uniqueValues(int column)
+    int uniqueValues(int column) const
     {
         std::set<QString> columnUniques;
 
-        const auto children = m_allNode.children();
+        const auto children = m_self->rootItem()->children();
 
         for(FilterItem* item : children) {
-            columnUniques.emplace(item->column(column));
+            if(!item->isSummary()) {
+                columnUniques.emplace(item->column(column));
+            }
         }
 
         return static_cast<int>(columnUniques.size());
     }
 
-    void updateAllNode()
+    void updateSummary()
     {
+        if(!m_showSummary) {
+            return;
+        }
+
         const int columnCount = m_self->columnCount({});
 
         QStringList nodeColumns;
@@ -146,23 +174,25 @@ struct FilterModel::Private
                 QString{tr("All (%1 %2s)")}.arg(uniqueValues(column)).arg(m_columns.at(column).name.toLower()));
         }
 
-        m_allNode.setColumns(nodeColumns);
+        m_summaryNode.setColumns(nodeColumns);
     }
 
     void populateModel(PendingTreeData& data)
     {
+        auto* parent = m_self->rootItem();
+
         for(const auto& [key, item] : data.items) {
             if(m_nodes.contains(key)) {
                 m_nodes.at(key).addTracks(item.tracks());
             }
             else {
                 if(!m_resetting) {
-                    const int row = m_allNode.childCount();
-                    m_self->beginInsertRows(m_self->indexOfItem(&m_allNode), row, row);
+                    const int row = parent->childCount();
+                    m_self->beginInsertRows(m_self->indexOfItem(parent), row, row);
                 }
 
                 FilterItem* child = &m_nodes.emplace(key, item).first->second;
-                m_allNode.appendChild(child);
+                parent->appendChild(child);
 
                 if(!m_resetting) {
                     m_self->endInsertRows();
@@ -171,14 +201,32 @@ struct FilterModel::Private
         }
         m_trackParents.merge(data.trackParents);
 
-        m_allNode.sortChildren(m_sortColumn, m_sortOrder);
-        updateAllNode();
+        parent->sortChildren(m_sortColumn, m_sortOrder);
+        updateSummary();
+    }
+
+    void coverUpdated(const Track& track)
+    {
+        if(!m_trackParents.contains(track.id())) {
+            return;
+        }
+
+        const auto parents = m_trackParents.at(track.id());
+
+        for(const QString& parentKey : parents) {
+            if(m_nodes.contains(parentKey)) {
+                auto* parentItem = &m_nodes.at(parentKey);
+
+                const QModelIndex nodeIndex = m_self->indexOfItem(parentItem);
+                emit m_self->dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
+            }
+        }
     }
 };
 
-FilterModel::FilterModel(QObject* parent)
+FilterModel::FilterModel(SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<Private>(this, settings)}
 {
     QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
@@ -212,8 +260,13 @@ void FilterModel::sortOnColumn(int column, Qt::SortOrder order)
     p->m_sortOrder  = order;
 
     emit layoutAboutToBeChanged();
-    p->m_allNode.sortChildren(column, order);
+    rootItem()->sortChildren(column, order);
     emit layoutChanged();
+}
+
+bool FilterModel::showSummary() const
+{
+    return p->m_showSummary;
 }
 
 void FilterModel::setFont(const QString& font)
@@ -240,10 +293,37 @@ void FilterModel::setRowHeight(int height)
     emit dataChanged({}, {});
 }
 
+void FilterModel::setShowSummary(bool show)
+{
+    const bool prev = std::exchange(p->m_showSummary, show);
+    if(prev == show) {
+        return;
+    }
+
+    if(show) {
+        beginInsertRows({}, 0, 0);
+        p->addSummary();
+        p->updateSummary();
+        endInsertRows();
+    }
+    else {
+        const int row = p->m_summaryNode.row();
+        beginRemoveRows({}, row, row);
+        p->removeSummary();
+        endRemoveRows();
+    }
+}
+
+void FilterModel::setShowDecoration(bool show)
+{
+    p->m_showDecoration = show;
+}
+
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
     defaultFlags |= Qt::ItemIsDragEnabled;
+
     return defaultFlags;
 }
 
@@ -305,6 +385,16 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         }
         case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());
+        case(FilterItem::IsSummary):
+            return item->isSummary();
+        case(Qt::DecorationRole):
+            if(p->m_showDecoration) {
+                if(item->trackCount() > 0) {
+                    return p->m_coverProvider.trackCoverThumbnail(item->tracks().front());
+                }
+                return p->m_coverProvider.trackCoverThumbnail({});
+            }
+            break;
         case(Qt::SizeHintRole):
             return QSize{0, p->m_rowHeight};
         case(Qt::FontRole):
@@ -363,19 +453,25 @@ void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
     p->m_columnAlignments[column] = alignment;
 }
 
+void FilterModel::resetColumnAlignment(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, p->m_columnAlignments.size())) {
+        return;
+    }
+
+    p->m_columnAlignments.erase(p->m_columnAlignments.begin() + column);
+}
+
+void FilterModel::resetColumnAlignments()
+{
+    p->m_columnAlignments.clear();
+}
+
 QModelIndexList FilterModel::indexesForValues(const QStringList& values, int column) const
 {
     QModelIndexList indexes;
 
-    if(values.contains(QStringLiteral(""))) {
-        indexes.append(indexOfItem(&p->m_allNode));
-
-        if(values.size() == 1) {
-            return indexes;
-        }
-    }
-
-    const auto rows = p->m_allNode.children();
+    const auto rows = rootItem()->children();
     for(const auto& child : rows) {
         if(values.contains(child->column(column))) {
             indexes.append(indexOfItem(child));
@@ -462,19 +558,21 @@ void FilterModel::removeTracks(const TrackList& tracks)
         }
     }
 
+    auto* parent = rootItem();
+
     for(FilterItem* item : items) {
         if(item->trackCount() == 0) {
-            const QModelIndex parentIndex = indexOfItem(&p->m_allNode);
-            const int row                 = item->row();
+            const QModelIndex parentIndex;
+            const int row = item->row();
             beginRemoveRows(parentIndex, row, row);
-            p->m_allNode.removeChild(row);
-            p->m_allNode.resetChildren();
+            parent->removeChild(row);
+            parent->resetChildren();
             endRemoveRows();
             p->m_nodes.erase(item->key());
         }
     }
 
-    p->updateAllNode();
+    p->updateSummary();
 }
 
 bool FilterModel::removeColumn(int column)
@@ -486,9 +584,7 @@ bool FilterModel::removeColumn(int column)
     beginRemoveColumns({}, column, column);
 
     p->m_columns.erase(p->m_columns.cbegin() + column);
-    if(std::cmp_less(column, p->m_columns.size())) {
-        p->m_columnAlignments.erase(p->m_columnAlignments.cbegin() + column);
-    }
+    resetColumnAlignment(column);
 
     for(auto& [_, node] : p->m_nodes) {
         node.removeColumn(column);

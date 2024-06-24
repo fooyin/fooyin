@@ -25,7 +25,10 @@
 #include <core/track.h>
 #include <utils/treemodel.h>
 
-namespace Fooyin::Filters {
+namespace Fooyin {
+class SettingsManager;
+
+namespace Filters {
 struct FilterOptions;
 
 class FilterModel : public TreeModel<FilterItem>
@@ -33,16 +36,19 @@ class FilterModel : public TreeModel<FilterItem>
     Q_OBJECT
 
 public:
-    explicit FilterModel(QObject* parent = nullptr);
+    explicit FilterModel(SettingsManager* settings, QObject* parent = nullptr);
     ~FilterModel() override;
 
     [[nodiscard]] int sortColumn() const;
     [[nodiscard]] Qt::SortOrder sortOrder() const;
     void sortOnColumn(int column, Qt::SortOrder order);
+    [[nodiscard]] bool showSummary() const;
 
     void setFont(const QString& font);
     void setColour(const QColor& colour);
     void setRowHeight(int height);
+    void setShowSummary(bool show);
+    void setShowDecoration(bool show);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -54,8 +60,10 @@ public:
     [[nodiscard]] Qt::DropActions supportedDragActions() const override;
     [[nodiscard]] QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
-    Qt::Alignment columnAlignment(int column) const;
+    [[nodiscard]] Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
+    void resetColumnAlignment(int column);
+    void resetColumnAlignments();
 
     [[nodiscard]] QModelIndexList indexesForValues(const QStringList& values, int column = 0) const;
 
@@ -74,4 +82,5 @@ private:
     struct Private;
     std::unique_ptr<Private> p;
 };
-} // namespace Fooyin::Filters
+} // namespace Filters
+} // namespace Fooyin

@@ -24,6 +24,7 @@
 #include "settings/filterscolumnpage.h"
 #include "settings/filtersettings.h"
 #include "settings/filtersgeneralpage.h"
+#include "settings/filtersguipage.h"
 
 #include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
@@ -46,6 +47,7 @@ struct FiltersPlugin::Private
     std::unique_ptr<FiltersSettings> filterSettings;
 
     std::unique_ptr<FiltersGeneralPage> generalPage;
+    std::unique_ptr<FiltersGuiPage> guiPage;
     std::unique_ptr<FiltersColumnPage> columnsPage;
 
     void registerLayouts() const
@@ -108,6 +110,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         tr("Library Filter"));
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
+    p->guiPage     = std::make_unique<FiltersGuiPage>(p->settings);
     p->columnsPage = std::make_unique<FiltersColumnPage>(p->actionManager, p->settings);
 
     p->registerLayouts();

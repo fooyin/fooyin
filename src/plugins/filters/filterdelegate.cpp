@@ -19,33 +19,38 @@
 
 #include "filterdelegate.h"
 
+#include <utils/utils.h>
+
 #include <QApplication>
 #include <QPainter>
 
 namespace Fooyin::Filters {
 void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    QStyleOptionViewItem opt = option;
+    QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
 
-    QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+    // initStyleOption will override decorationSize when converting the QPixmap to a QIcon, so restore it here
+    opt.decorationSize = option.decorationSize;
+    const auto image   = index.data(Qt::DecorationRole).value<QPixmap>();
+    if(!image.isNull()) {
+        opt.icon = Utils::scalePixmap(image, opt.decorationSize, opt.widget->devicePixelRatioF(), true);
+    }
 
-    painter->save();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
 
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
-
-    painter->restore();
+    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 }
 
 QSize FilterDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    QStyleOptionViewItem opt = option;
+    QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
 
-    const QWidget* widget = opt.widget;
-    const QStyle* style   = widget ? widget->style() : QApplication::style();
+    opt.decorationSize = option.decorationSize;
 
-    QSize size = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, widget);
+    const QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    QSize size          = style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, opt.widget);
 
     const QSize sizeHint = index.data(Qt::SizeHintRole).toSize();
     if(sizeHint.height() > 0) {

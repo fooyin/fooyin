@@ -19,22 +19,18 @@
 
 #pragma once
 
-#include <utils/widgets/expandedtreeview.h>
+#include <utils/settings/settingspage.h>
 
-namespace Fooyin::Filters {
-class FilterView : public ExpandedTreeView
+namespace Fooyin {
+class SettingsManager;
+
+namespace Filters {
+class FiltersGuiPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit FilterView(QWidget* parent = nullptr);
-
-signals:
-    void middleClicked();
-
-protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseDoubleClickEvent(QMouseEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
+    explicit FiltersGuiPage(SettingsManager* settings);
 };
-} // namespace Fooyin::Filters
+} // namespace Filters
+} // namespace Fooyin

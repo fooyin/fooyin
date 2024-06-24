@@ -55,8 +55,6 @@ public:
     void reset(const TrackList& tracks);
     void softReset(const TrackList& tracks);
 
-    void setScrollbarEnabled(bool enabled);
-
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;

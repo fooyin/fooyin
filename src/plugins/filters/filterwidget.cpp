@@ -32,6 +32,7 @@
 #include <core/track.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
 #include <utils/widgets/autoheaderview.h>
@@ -46,26 +47,29 @@
 #include <set>
 
 namespace {
-Fooyin::TrackList fetchAllTracks(QTreeView* view)
+Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 {
     std::set<int> ids;
     Fooyin::TrackList tracks;
 
-    const QModelIndex parent = view->model()->index(0, 0, {});
-    const int rowCount       = view->model()->rowCount(parent);
+    const QModelIndex parent;
+    const int rowCount = view->model()->rowCount(parent);
 
-    for(int row = 0; row < rowCount; ++row) {
+    for(int row{0}; row < rowCount; ++row) {
         const QModelIndex index = view->model()->index(row, 0, parent);
-        const auto indexTracks  = index.data(Fooyin::Filters::FilterItem::Tracks).value<Fooyin::TrackList>();
+        if(!index.data(Fooyin::Filters::FilterItem::IsSummary).toBool()) {
+            const auto indexTracks = index.data(Fooyin::Filters::FilterItem::Tracks).value<Fooyin::TrackList>();
 
-        for(const Fooyin::Track& track : indexTracks) {
-            const int id = track.id();
-            if(!ids.contains(id)) {
-                ids.emplace(id);
-                tracks.push_back(track);
+            for(const Fooyin::Track& track : indexTracks) {
+                const int id = track.id();
+                if(!ids.contains(id)) {
+                    ids.emplace(id);
+                    tracks.push_back(track);
+                }
             }
         }
     }
+
     return tracks;
 }
 } // namespace
@@ -103,12 +107,14 @@ struct FilterWidget::Private
         , m_settings{settings}
         , m_view{new FilterView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
-        , m_model{new FilterModel(m_self)}
+        , m_model{new FilterModel(m_settings, m_self)}
         , m_widgetContext{
               new WidgetContext(m_self, Context{Id{"Fooyin.Context.FilterWidget."}.append(m_self->id())}, m_self)}
     {
+        m_view->setModel(m_model);
         m_view->setHeader(m_header);
-        m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_view->setItemDelegate(new FilterDelegate(m_self));
+        m_view->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
         m_header->setStretchEnabled(true);
         m_header->setSortIndicatorShown(true);
@@ -124,6 +130,49 @@ struct FilterWidget::Private
         m_model->setFont(m_settings->value<Settings::Filters::FilterFont>());
         m_model->setColour(m_settings->value<Settings::Filters::FilterColour>());
         m_model->setRowHeight(m_settings->value<Settings::Filters::FilterRowHeight>());
+
+        hideHeader(!m_settings->value<Settings::Filters::FilterHeader>());
+        setScrollbarEnabled(m_settings->value<Settings::Filters::FilterScrollBar>());
+        m_view->setAlternatingRowColors(m_settings->value<Settings::Filters::FilterAltColours>());
+        m_view->changeIconSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize());
+
+        setupConnections();
+
+        m_settings->subscribe<Settings::Filters::FilterAltColours>(m_view, &QAbstractItemView::setAlternatingRowColors);
+        m_settings->subscribe<Settings::Filters::FilterHeader>(m_self, [this](bool enabled) { hideHeader(!enabled); });
+        m_settings->subscribe<Settings::Filters::FilterScrollBar>(
+            m_self, [this](bool enabled) { setScrollbarEnabled(enabled); });
+        m_settings->subscribe<Settings::Filters::FilterFont>(m_self,
+                                                             [this](const QString& font) { m_model->setFont(font); });
+        m_settings->subscribe<Settings::Filters::FilterColour>(
+            m_self, [this](const QString& colour) { m_model->setColour(colour); });
+        m_settings->subscribe<Settings::Filters::FilterRowHeight>(m_self, [this](const int height) {
+            m_model->setRowHeight(height);
+            QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+        });
+        m_settings->subscribe<Settings::Filters::FilterIconSize>(
+            m_self, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
+    }
+
+    void setupConnections()
+    {
+        QObject::connect(&m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
+                         [this](const Filters::FilterColumn& column) { columnChanged(column); });
+
+        QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_model, &FilterModel::sortOnColumn);
+        QObject::connect(m_header, &FilterView::customContextMenuRequested, m_self,
+                         [this](const QPoint& pos) { filterHeaderMenu(pos); });
+        QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
+                         [this]() { selectionChanged(); });
+        QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, m_self, [this](ExpandedTreeView::ViewMode mode) {
+            m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
+        });
+        QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self,
+                         [this](const QSize& size) { m_settings->set<Settings::Filters::FilterIconSize>(size); });
+        QObject::connect(m_view, &FilterView::doubleClicked, m_self,
+                         [this]() { emit m_self->doubleClicked(playlistNameFromSelection()); });
+        QObject::connect(m_view, &FilterView::middleClicked, m_self,
+                         [this]() { emit m_self->middleClicked(playlistNameFromSelection()); });
     }
 
     [[nodiscard]] QString playlistNameFromSelection() const
@@ -148,7 +197,7 @@ struct FilterWidget::Private
         TrackList selectedTracks;
 
         for(const auto& selectedIndex : selected) {
-            if(!selectedIndex.parent().isValid()) {
+            if(selectedIndex.data(FilterItem::IsSummary).toBool()) {
                 selectedTracks = fetchAllTracks(m_view);
                 break;
             }
@@ -174,6 +223,49 @@ struct FilterWidget::Private
     {
         m_header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
         m_header->adjustSize();
+    }
+
+    void setScrollbarEnabled(bool enabled) const
+    {
+        m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    }
+
+    void addDisplayMenu(QMenu* menu)
+    {
+        auto* displayMenu  = new QMenu(tr("Display"), menu);
+        auto* displayGroup = new QActionGroup(displayMenu);
+
+        auto* displayList = new QAction(tr("Columns"), displayGroup);
+        auto* displayIcon = new QAction(tr("Artwork"), displayGroup);
+
+        displayList->setCheckable(true);
+        displayIcon->setCheckable(true);
+
+        const auto currentMode = m_view->viewMode();
+        if(currentMode == ExpandedTreeView::ViewMode::Tree) {
+            displayList->setChecked(true);
+        }
+        else {
+            displayIcon->setChecked(true);
+        }
+
+        QObject::connect(displayList, &QAction::triggered, m_self,
+                         [this]() { m_view->setViewMode(ExpandedTreeView::ViewMode::Tree); });
+        QObject::connect(displayIcon, &QAction::triggered, m_self,
+                         [this]() { m_view->setViewMode(ExpandedTreeView::ViewMode::Icon); });
+
+        auto* displaySummary = new QAction(tr("Summary item"), displayMenu);
+        displaySummary->setCheckable(true);
+        displaySummary->setChecked(m_model->showSummary());
+        QObject::connect(displaySummary, &QAction::triggered, m_self,
+                         [this](bool checked) { m_model->setShowSummary(checked); });
+
+        displayMenu->addAction(displayList);
+        displayMenu->addAction(displayIcon);
+        displayMenu->addSeparator();
+        displayMenu->addAction(displaySummary);
+
+        menu->addMenu(displayMenu);
     }
 
     void filterHeaderMenu(const QPoint& pos)
@@ -236,6 +328,8 @@ struct FilterWidget::Private
         menu->addSeparator();
         m_header->addHeaderAlignmentMenu(menu, m_self->mapToGlobal(pos));
 
+        addDisplayMenu(menu);
+
         menu->addSeparator();
         auto* manageConnections = new QAction(tr("Manage Groups"), menu);
         QObject::connect(manageConnections, &QAction::triggered, m_self,
@@ -245,7 +339,7 @@ struct FilterWidget::Private
         menu->popup(m_self->mapToGlobal(pos));
     }
 
-    bool hasColumn(int id) const
+    [[nodiscard]] bool hasColumn(int id) const
     {
         return std::ranges::any_of(m_columns, [id](const FilterColumn& column) { return column.id == id; });
     }
@@ -272,43 +366,7 @@ FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    p->m_view->setModel(p->m_model);
-    p->m_view->setItemDelegate(new FilterDelegate(this));
-    p->m_view->viewport()->installEventFilter(new ToolTipFilter(this));
-
     layout->addWidget(p->m_view);
-
-    p->hideHeader(!p->m_settings->value<Settings::Filters::FilterHeader>());
-    setScrollbarEnabled(p->m_settings->value<Settings::Filters::FilterScrollBar>());
-    p->m_view->setAlternatingRowColors(p->m_settings->value<Settings::Filters::FilterAltColours>());
-
-    QObject::connect(&p->m_columnRegistry, &FilterColumnRegistry::columnChanged, this,
-                     [this](const Filters::FilterColumn& column) { p->columnChanged(column); });
-
-    QObject::connect(p->m_model, &QAbstractItemModel::modelReset, this, [this]() { p->m_view->expandAll(); });
-    QObject::connect(p->m_header, &QHeaderView::sortIndicatorChanged, p->m_model, &FilterModel::sortOnColumn);
-    QObject::connect(p->m_header, &FilterView::customContextMenuRequested, this,
-                     [this](const QPoint& pos) { p->filterHeaderMenu(pos); });
-    QObject::connect(p->m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this]() { p->selectionChanged(); });
-
-    QObject::connect(p->m_view, &FilterView::doubleClicked, this,
-                     [this]() { emit doubleClicked(p->playlistNameFromSelection()); });
-    QObject::connect(p->m_view, &FilterView::middleClicked, this,
-                     [this]() { emit middleClicked(p->playlistNameFromSelection()); });
-
-    p->m_settings->subscribe<Settings::Filters::FilterAltColours>(p->m_view,
-                                                                  &QAbstractItemView::setAlternatingRowColors);
-    p->m_settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { p->hideHeader(!enabled); });
-    p->m_settings->subscribe<Settings::Filters::FilterScrollBar>(this, &FilterWidget::setScrollbarEnabled);
-    p->m_settings->subscribe<Settings::Filters::FilterFont>(this,
-                                                            [this](const QString& font) { p->m_model->setFont(font); });
-    p->m_settings->subscribe<Settings::Filters::FilterColour>(
-        this, [this](const QString& colour) { p->m_model->setColour(colour); });
-    p->m_settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
-        p->m_model->setRowHeight(height);
-        QMetaObject::invokeMethod(p->m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-    });
 }
 
 FilterWidget::~FilterWidget()
@@ -422,11 +480,6 @@ void FilterWidget::softReset(const TrackList& tracks)
         Qt::SingleShotConnection);
 }
 
-void FilterWidget::setScrollbarEnabled(bool enabled)
-{
-    p->m_view->setVerticalScrollBarPolicy(enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-}
-
 QString FilterWidget::name() const
 {
     return tr("Library Filter");
@@ -452,22 +505,24 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
         columns.push_back(colStr);
     }
 
-    layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
+    layout[u"Columns"]     = columns.join(QStringLiteral("|"));
+    layout[u"Display"]     = static_cast<int>(p->m_view->viewMode());
+    layout[u"ShowSummary"] = p->m_model->showSummary();
 
     QByteArray state = p->m_header->saveHeaderState();
     state            = qCompress(state, 9);
 
-    layout[QStringLiteral("Group")] = p->m_group.name();
-    layout[QStringLiteral("Index")] = p->m_index;
-    layout[QStringLiteral("State")] = QString::fromUtf8(state.toBase64());
+    layout[u"Group"] = p->m_group.name();
+    layout[u"Index"] = p->m_index;
+    layout[u"State"] = QString::fromUtf8(state.toBase64());
 }
 
 void FilterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("Columns"))) {
+    if(layout.contains(u"Columns")) {
         p->m_columns.clear();
 
-        const QString columnData    = layout.value(QStringLiteral("Columns")).toString();
+        const QString columnData    = layout.value(u"Columns").toString();
         const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
@@ -487,18 +542,26 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         }
     }
 
-    if(layout.contains(QStringLiteral("Group"))) {
-        p->m_group = Id{layout.value(QStringLiteral("Group")).toString()};
+    if(layout.contains(u"Display")) {
+        p->m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value(u"Display").toInt()));
     }
 
-    if(layout.contains(QStringLiteral("Index"))) {
-        p->m_index = layout.value(QStringLiteral("Index")).toInt();
+    if(layout.contains(u"ShowSummary")) {
+        p->m_model->setShowSummary(layout.value(u"ShowSummary").toBool());
+    }
+
+    if(layout.contains(u"Group")) {
+        p->m_group = Id{layout.value(u"Group").toString()};
+    }
+
+    if(layout.contains(u"Index")) {
+        p->m_index = layout.value(u"Index").toInt();
     }
 
     emit filterUpdated();
 
-    if(layout.contains(QStringLiteral("State"))) {
-        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
+    if(layout.contains(u"State")) {
+        auto state = QByteArray::fromBase64(layout.value(u"State").toString().toUtf8());
 
         if(state.isEmpty()) {
             return;

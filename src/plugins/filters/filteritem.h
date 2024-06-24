@@ -33,6 +33,7 @@ public:
     enum FilterItemRole
     {
         Tracks = Qt::UserRole,
+        IsSummary
     };
 
     FilterItem() = default;
@@ -49,6 +50,9 @@ public:
     void setColumns(const QStringList& columns);
     void removeColumn(int column);
 
+    [[nodiscard]] bool isSummary() const;
+    void setIsSummary(bool isSummary);
+
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);
     void removeTrack(const Track& track);
@@ -61,5 +65,6 @@ private:
     QString m_key;
     QStringList m_columns;
     TrackList m_tracks;
+    bool m_isSummary;
 };
 } // namespace Fooyin::Filters
