@@ -34,6 +34,9 @@
 
 using namespace std::chrono_literals;
 
+constexpr auto MinItemSpacing = 10;
+constexpr auto IconRowSpacing = 10;
+
 namespace {
 void selectChildren(QAbstractItemModel* model, const QModelIndex& parentIndex, QItemSelection& selection)
 {
@@ -1591,8 +1594,8 @@ private:
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
-    int m_itemSpacing{10};
-    int m_rowSpacing{10};
+    int m_itemSpacing{MinItemSpacing};
+    int m_rowSpacing{IconRowSpacing};
     mutable int m_uniformBaseHeight{0};
     mutable int m_uniformRowHeight{0};
     mutable int m_uniformCaptionHeight{0};
@@ -1678,7 +1681,7 @@ void IconView::invalidate()
     m_uniformBaseHeight    = 0;
     m_uniformCaptionHeight = 0;
     m_segmentSize          = 0;
-    m_itemSpacing          = 10;
+    m_itemSpacing          = MinItemSpacing;
 }
 
 void IconView::doItemLayout()
@@ -1705,24 +1708,28 @@ void IconView::doItemLayout()
     for(int i{1}; i <= count; ++i) {
         const int requiredWidth = i * itemWidth() + (i - 1) * m_itemSpacing;
         if(requiredWidth > (segEndPosition - segStartPosition)) {
-            if(i == 1) {
-                m_segmentSize = 1;
-            }
-            else {
-                m_segmentSize = i - 1;
-            }
+            m_segmentSize = (i == 1) ? 1 : i - 1;
             break;
         }
     }
 
+    double maxPaddingRatio{1.0};
+
     if(m_segmentSize == 0) {
-        m_segmentSize = std::max(count, 1);
+        m_segmentSize   = std::max(count, 1);
+        maxPaddingRatio = 0.15;
     }
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth();
     const int totalPadding        = totalWidthAvailable - totalItemWidth;
-    m_itemSpacing                 = std::max(0, totalPadding / (m_segmentSize + 1));
+
+    m_itemSpacing = std::max(0, totalPadding / (m_segmentSize + 1));
+
+    const int maxPadding = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
+    if(maxPadding > 0 && m_itemSpacing > maxPadding) {
+        m_itemSpacing = MinItemSpacing;
+    }
 
     QRect rect{{}, topLeft};
 
