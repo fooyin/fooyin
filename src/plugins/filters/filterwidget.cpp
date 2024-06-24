@@ -238,8 +238,8 @@ struct FilterWidget::Private
         auto* displayMenu  = new QMenu(tr("Display"), menu);
         auto* displayGroup = new QActionGroup(displayMenu);
 
-        auto* displayList = new QAction(tr("List"), displayGroup);
-        auto* displayIcon = new QAction(tr("Icon"), displayGroup);
+        auto* displayList = new QAction(tr("Columns"), displayGroup);
+        auto* displayIcon = new QAction(tr("Artwork"), displayGroup);
 
         displayList->setCheckable(true);
         displayIcon->setCheckable(true);
