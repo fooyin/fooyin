@@ -62,6 +62,8 @@ public:
 
     [[nodiscard]] Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
+    void resetColumnAlignment(int column);
+    void resetColumnAlignments();
 
     [[nodiscard]] QModelIndexList indexesForValues(const QStringList& values, int column = 0) const;
 

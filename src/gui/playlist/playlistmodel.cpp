@@ -1153,9 +1153,7 @@ bool PlaylistModel::removeColumn(int column)
     beginRemoveColumns({}, column, column);
 
     m_columns.erase(m_columns.cbegin() + column);
-    if(std::cmp_less(column, m_columns.size())) {
-        m_columnAlignments.erase(m_columnAlignments.cbegin() + column);
-    }
+    resetColumnAlignment(column);
 
     for(auto& [_, node] : m_nodes) {
         node.removeColumn(column);

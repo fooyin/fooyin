@@ -453,6 +453,20 @@ void FilterModel::changeColumnAlignment(int column, Qt::Alignment alignment)
     p->m_columnAlignments[column] = alignment;
 }
 
+void FilterModel::resetColumnAlignment(int column)
+{
+    if(column < 0 || std::cmp_greater_equal(column, p->m_columnAlignments.size())) {
+        return;
+    }
+
+    p->m_columnAlignments.erase(p->m_columnAlignments.begin() + column);
+}
+
+void FilterModel::resetColumnAlignments()
+{
+    p->m_columnAlignments.clear();
+}
+
 QModelIndexList FilterModel::indexesForValues(const QStringList& values, int column) const
 {
     QModelIndexList indexes;
@@ -570,9 +584,7 @@ bool FilterModel::removeColumn(int column)
     beginRemoveColumns({}, column, column);
 
     p->m_columns.erase(p->m_columns.cbegin() + column);
-    if(std::cmp_less(column, p->m_columns.size())) {
-        p->m_columnAlignments.erase(p->m_columnAlignments.cbegin() + column);
-    }
+    resetColumnAlignment(column);
 
     for(auto& [_, node] : p->m_nodes) {
         node.removeColumn(column);
