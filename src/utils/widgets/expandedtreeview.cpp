@@ -1587,7 +1587,7 @@ private:
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
-    int m_itemSpacing{0};
+    int m_itemSpacing{10};
     int m_rowSpacing{10};
     mutable int m_uniformBaseHeight{0};
     mutable int m_uniformRowHeight{0};
@@ -1674,7 +1674,7 @@ void IconView::invalidate()
     m_uniformBaseHeight    = 0;
     m_uniformCaptionHeight = 0;
     m_segmentSize          = 0;
-    m_itemSpacing          = 0;
+    m_itemSpacing          = 10;
 }
 
 void IconView::doItemLayout()
@@ -1686,7 +1686,7 @@ void IconView::doItemLayout()
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
     const int segStartPosition{m_layoutBounds.left()};
-    const int segEndPosition{m_layoutBounds.right()};
+    const int segEndPosition{m_layoutBounds.right() - m_itemSpacing};
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
@@ -1695,7 +1695,7 @@ void IconView::doItemLayout()
     const int count = itemCount();
     for(int i{0}; i < count; ++i) {
         if(m_segmentSize == 0) {
-            if(topLeft.x() + (i + 1) * itemWidth() > segEndPosition) {
+            if(topLeft.x() + (i + 1) * (itemWidth() + m_itemSpacing) > segEndPosition) {
                 m_segmentSize = std::max(i, 1);
                 break;
             }
@@ -1707,7 +1707,7 @@ void IconView::doItemLayout()
     }
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
-    const int totalItemWidth      = m_segmentSize * itemWidth();
+    const int totalItemWidth      = m_segmentSize * (itemWidth() + m_itemSpacing);
     const int remainingSpace      = totalWidthAvailable - totalItemWidth;
     m_itemSpacing                 = std::max(m_itemSpacing, remainingSpace / (m_segmentSize + 1));
 
@@ -1919,8 +1919,6 @@ void IconView::drawItem(QPainter* painter, const QStyleOptionViewItem& option, c
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
-    // const QPoint offset       = m_p->m_scrollDelayOffset;
-    // const int y               = opt.rect.y() + offset.y();
     const int left            = m_leftAndRight.first;
     const int right           = m_leftAndRight.second;
     const QModelIndex current = m_view->currentIndex();
