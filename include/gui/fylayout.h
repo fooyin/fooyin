@@ -21,6 +21,8 @@
 
 #include "fygui_export.h"
 
+#include <QJsonObject>
+
 namespace Fooyin {
 class FYGUI_EXPORT FyLayout
 {

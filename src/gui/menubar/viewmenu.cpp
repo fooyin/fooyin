@@ -39,7 +39,8 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     m_layoutEditing
         = new QAction(Utils::iconFromTheme(Constants::Icons::LayoutEditing), tr("Layout &Editing Mode"), this);
-    viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing));
+    viewMenu->addAction(m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing),
+                        Actions::Groups::One);
     QObject::connect(m_layoutEditing, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
@@ -49,7 +50,8 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
                                                         [this](bool enabled) { m_layoutEditing->setChecked(enabled); });
 
     auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
-    viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup));
+    viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup),
+                        Actions::Groups::One);
     QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
     viewMenu->addSeparator();

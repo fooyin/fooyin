@@ -63,7 +63,6 @@
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "systemtrayicon.h"
-#include "utils/actions/command.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
 #include "widgets/lyricswidget.h"
@@ -92,7 +91,9 @@
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/windowcontroller.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -224,6 +225,7 @@ struct GuiApplication::Private
 
         initialisePlugins();
         layoutProvider.findLayouts();
+        setupLayoutMenu();
         editableLayout->initialise();
         mainWindow->setCentralWidget(editableLayout.get());
 
@@ -243,6 +245,23 @@ struct GuiApplication::Private
         }
 
         initialiseTray();
+    }
+
+    void setupLayoutMenu()
+    {
+        auto* viewActionMenu = actionManager->actionContainer(Constants::Menus::View);
+
+        auto* layoutMenu = actionManager->createMenu(Constants::Menus::ViewLayout);
+        layoutMenu->menu()->setTitle(tr("&Layout"));
+        viewActionMenu->addMenu(layoutMenu, Actions::Groups::One);
+
+        const auto layouts = layoutProvider.layouts();
+        for(const auto& layout : layouts) {
+            auto* layoutAction = new QAction(layout.name(), mainWindow.get());
+            QObject::connect(layoutAction, &QAction::triggered, mainWindow.get(),
+                             [this, layout]() { editableLayout->changeLayout(layout); });
+            layoutMenu->addAction(layoutAction);
+        }
     }
 
     void initialisePlugins()
