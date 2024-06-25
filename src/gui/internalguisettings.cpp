@@ -76,7 +76,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         QStringLiteral("%trackcount% $ifequal(%trackcount%,1,Track,Tracks) | %playtime%"),
         QStringLiteral("StatusWidget/SelectionScript"));
 
-    m_settings->createSetting<Internal::LibTreeDoubleClick>(5, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
+    m_settings->createSetting<Internal::LibTreeDoubleClick>(0, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
     m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
                                                                 QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));

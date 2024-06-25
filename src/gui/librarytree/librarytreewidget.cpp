@@ -23,10 +23,12 @@
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
+#include "playlist/playlistcontroller.h"
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
+#include <core/playlist/playlisthandler.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
@@ -41,6 +43,8 @@
 #include <QVBoxLayout>
 
 #include <stack>
+
+constexpr auto LibTreePlaylist = "␟LibTreePlaylist␟";
 
 namespace {
 QModelIndexList filterAncestors(const QModelIndexList& indexes)
@@ -94,6 +98,48 @@ Fooyin::TrackList getSelectedTracks(const QTreeView* treeView, Fooyin::MusicLibr
 
     return tracks;
 }
+
+QModelIndexList getAllChildren(QAbstractItemModel* model, const QModelIndex& parent)
+{
+    QModelIndexList children;
+
+    if(model->canFetchMore(parent)) {
+        model->fetchMore(parent);
+    }
+
+    const int childCount = model->rowCount(parent);
+    for(int row{0}; row < childCount; ++row) {
+        const QModelIndex child = model->index(row, 0, parent);
+        children.append(child);
+        children.append(getAllChildren(model, child));
+    }
+
+    return children;
+}
+
+QModelIndexList filterLeafNodes(QAbstractItemModel* model, const QModelIndexList& indexes)
+{
+    QModelIndexList leafNodes;
+    QSet<QModelIndex> processedIndexes;
+
+    for(const QModelIndex& index : indexes) {
+        const QModelIndexList children = getAllChildren(model, index);
+
+        if(children.isEmpty()) {
+            leafNodes.append(index);
+        }
+        else {
+            for(const QModelIndex& child : children) {
+                if(model->rowCount(child) == 0 && !processedIndexes.contains(child)) {
+                    leafNodes.append(child);
+                    processedIndexes.insert(child);
+                }
+            }
+        }
+    }
+
+    return leafNodes;
+}
 } // namespace
 
 namespace Fooyin {
@@ -104,6 +150,7 @@ struct LibraryTreeWidget::Private
     LibraryTreeWidget* m_self;
 
     MusicLibrary* m_library;
+    PlaylistHandler* m_playlistHandler;
     LibraryTreeGroupRegistry m_groupsRegistry;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
@@ -125,12 +172,16 @@ struct LibraryTreeWidget::Private
     bool m_updating{false};
     QByteArray m_pendingState;
 
-    Private(LibraryTreeWidget* self, MusicLibrary* library, TrackSelectionController* trackSelection,
+    Playlist* m_playlist{nullptr};
+    std::map<int, QString> m_playlistGroups;
+
+    Private(LibraryTreeWidget* self, MusicLibrary* library, PlaylistController* playlistController,
             SettingsManager* settings)
         : m_self{self}
         , m_library{library}
+        , m_playlistHandler{playlistController->playlistHandler()}
         , m_groupsRegistry{settings}
-        , m_trackSelection{trackSelection}
+        , m_trackSelection{playlistController->selectionController()}
         , m_settings{settings}
         , m_layout{new QVBoxLayout(m_self)}
         , m_libraryTree{new LibraryTreeView(m_self)}
@@ -146,7 +197,8 @@ struct LibraryTreeWidget::Private
         m_libraryTree->setModel(m_model);
         m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
-        m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::Play);
+        m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
+                                               || m_doubleClickAction == TrackAction::Play);
         m_libraryTree->setAnimated(true);
 
         setScrollbarEnabled(m_settings->value<LibTreeScrollBar>());
@@ -164,7 +216,8 @@ struct LibraryTreeWidget::Private
 
         m_settings->subscribe<LibTreeDoubleClick>(m_self, [this](int action) {
             m_doubleClickAction = static_cast<TrackAction>(action);
-            m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::Play);
+            m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
+                                                   || m_doubleClickAction == TrackAction::Play);
         });
         m_settings->subscribe<LibTreeMiddleClick>(
             m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
@@ -211,6 +264,14 @@ struct LibraryTreeWidget::Private
         }
 
         parent->addMenu(groupMenu);
+    }
+
+    void addPlayMenu(QMenu* menu)
+    {
+        auto* playAction = new QAction(tr("Play"), menu);
+        QObject::connect(playAction, &QAction::triggered, m_self,
+                         [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
+        menu->addAction(playAction);
     }
 
     void setScrollbarEnabled(bool enabled) const
@@ -274,7 +335,7 @@ struct LibraryTreeWidget::Private
     [[nodiscard]] QString playlistNameFromSelection() const
     {
         QString title;
-        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedIndexes();
+        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedRows();
         for(const auto& index : selectedIndexes) {
             if(!title.isEmpty()) {
                 title.append(QStringLiteral(", "));
@@ -284,20 +345,101 @@ struct LibraryTreeWidget::Private
         return title;
     }
 
-    void handleDoubleClick() const
+    void handlePlayback(const QModelIndexList& indexes, int row = 0)
     {
-        if(m_doubleClickAction != TrackAction::Play) {
-            PlaylistAction::ActionOptions options;
+        m_playlistGroups.clear();
 
-            if(m_settings->value<LibTreeAutoSwitch>()) {
-                options |= PlaylistAction::Switch;
-            }
-            if(m_settings->value<LibTreeSendPlayback>()) {
-                options |= PlaylistAction::StartPlayback;
-            }
+        const QModelIndexList leafNodes = filterLeafNodes(m_model, indexes);
 
-            m_trackSelection->executeAction(m_doubleClickAction, options, playlistNameFromSelection());
+        if(leafNodes.empty()) {
+            return;
         }
+
+        TrackList tracks;
+
+        QModelIndex parent;
+        for(const QModelIndex& index : leafNodes) {
+            if(index.data(LibraryTreeItem::TrackCount).toInt() != 1) {
+                continue;
+            }
+
+            if(!parent.isValid()) {
+                parent = index.parent();
+            }
+            else if(index.parent() != parent) {
+                if(m_playlistGroups.empty()) {
+                    m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+                }
+                parent = index.parent();
+
+                m_playlistGroups[static_cast<int>(tracks.size())] = parent.data(Qt::DisplayRole).toString();
+            }
+            const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
+            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+        }
+
+        if(tracks.empty()) {
+            return;
+        }
+
+        if(parent.isValid() && m_playlistGroups.empty()) {
+            m_playlistGroups[0] = parent.data(Qt::DisplayRole).toString();
+        }
+
+        m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(LibTreePlaylist), tracks);
+        if(m_playlist) {
+            m_playlist->changeCurrentIndex(row);
+            m_playlistHandler->startPlayback(m_playlist);
+        }
+    }
+
+    void handlePlayTrack()
+    {
+        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedIndexes();
+        if(selectedIndexes.empty()) {
+            return;
+        }
+
+        const QModelIndex index = selectedIndexes.front();
+
+        if(m_model->hasChildren(index)) {
+            return;
+        }
+
+        const int row            = index.row();
+        const QModelIndex parent = index.parent();
+        const int count          = m_model->rowCount(parent);
+
+        QModelIndexList trackIndexes;
+
+        for(int i{0}; i < count; ++i) {
+            trackIndexes.emplace_back(m_model->index(i, 0, parent));
+        }
+
+        handlePlayback(trackIndexes, row);
+    }
+
+    void handleDoubleClick()
+    {
+        if(m_doubleClickAction == TrackAction::None) {
+            return;
+        }
+
+        if(m_doubleClickAction == TrackAction::Play) {
+            handlePlayTrack();
+            return;
+        }
+
+        PlaylistAction::ActionOptions options;
+
+        if(m_settings->value<LibTreeAutoSwitch>()) {
+            options |= PlaylistAction::Switch;
+        }
+        if(m_settings->value<LibTreeSendPlayback>()) {
+            options |= PlaylistAction::StartPlayback;
+        }
+
+        m_trackSelection->executeAction(m_doubleClickAction, options, playlistNameFromSelection());
     }
 
     void handleMiddleClick() const
@@ -494,10 +636,10 @@ struct LibraryTreeWidget::Private
     }
 };
 
-LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, TrackSelectionController* trackSelection,
+LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* playlistController,
                                      SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, trackSelection, settings)}
+    , p{std::make_unique<Private>(this, library, playlistController, settings)}
 {
     setObjectName(LibraryTreeWidget::name());
 
@@ -567,6 +709,35 @@ void LibraryTreeWidget::searchEvent(const QString& search)
     p->searchChanged(search);
 }
 
+void LibraryTreeWidget::playstateChanged(PlayState state)
+{
+    p->m_model->setPlayState(state);
+}
+
+void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist)
+{
+    if(!playlist || !p->m_playlist) {
+        return;
+    }
+
+    if(playlist->id() != p->m_playlist->id()) {
+        p->m_model->setPlayingPath({}, {});
+    }
+}
+
+void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
+{
+    if(!p->m_playlist || p->m_playlist->id() != track.playlistId) {
+        return;
+    }
+
+    auto groupIt = p->m_playlistGroups.upper_bound(track.indexInPlaylist);
+    if(groupIt != p->m_playlistGroups.cbegin()) {
+        --groupIt;
+    }
+    p->m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
+}
+
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
@@ -575,6 +746,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     const bool hasSelection = !p->m_libraryTree->selectionModel()->selectedRows().empty();
 
     if(hasSelection) {
+        p->addPlayMenu(menu);
         p->m_trackSelection->addTrackPlaylistContextMenu(menu);
     }
 

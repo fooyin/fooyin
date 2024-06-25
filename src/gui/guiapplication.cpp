@@ -492,7 +492,15 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("LibraryTree"),
             [this]() {
-                return new LibraryTreeWidget(library, &selectionController, settingsManager, mainWindow.get());
+                auto* libraryTree
+                    = new LibraryTreeWidget(library, playlistController.get(), settingsManager, mainWindow.get());
+                QObject::connect(playerController, &PlayerController::playStateChanged, libraryTree,
+                                 &LibraryTreeWidget::playstateChanged);
+                QObject::connect(playerController, &PlayerController::playlistTrackChanged, libraryTree,
+                                 &LibraryTreeWidget::playlistTrackChanged);
+                QObject::connect(playlistHandler, &PlaylistHandler::activePlaylistChanged, libraryTree,
+                                 &LibraryTreeWidget::activePlaylistChanged);
+                return libraryTree;
             },
             tr("Library Tree"));
 

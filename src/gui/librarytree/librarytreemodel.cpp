@@ -22,7 +22,9 @@
 #include "librarytreepopulator.h"
 
 #include <gui/guiconstants.h>
+#include <utils/utils.h>
 
+#include <QApplication>
 #include <QColor>
 #include <QFont>
 #include <QIODevice>
@@ -90,13 +92,24 @@ struct LibraryTreeModel::Private
 
     TrackList m_tracksPendingRemoval;
 
+    PlayState m_playingState;
+    QString m_parentNode;
+    QString m_playingPath;
     int m_rowHeight{0};
     QFont m_font;
     QColor m_colour;
+    QColor m_playingColour;
+    QPixmap m_playingIcon;
+    QPixmap m_pausedIcon;
 
     explicit Private(LibraryTreeModel* self)
         : m_self{self}
+        , m_playingColour{QApplication::palette().highlight().color()}
+        , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
+        , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
     {
+        m_playingColour.setAlpha(90);
+
         m_populator.moveToThread(&m_populatorThread);
     }
 
@@ -366,6 +379,19 @@ void LibraryTreeModel::setRowHeight(int height)
     emit dataChanged({}, {});
 }
 
+void LibraryTreeModel::setPlayState(PlayState state)
+{
+    p->m_playingState = state;
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+}
+
+void LibraryTreeModel::setPlayingPath(const QString& parentNode, const QString& path)
+{
+    p->m_parentNode  = parentNode;
+    p->m_playingPath = path;
+    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+}
+
 Qt::ItemFlags LibraryTreeModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
@@ -398,6 +424,27 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     const auto* item = itemForIndex(index);
 
+    if(p->m_playingState != PlayState::Stopped) {
+        const bool isPlayingTrack = item->childCount() == 0 && item->trackCount() == 1
+                                 && item->tracks().front().uniqueFilepath() == p->m_playingPath
+                                 && item->parent()->title() == p->m_parentNode;
+        if(isPlayingTrack) {
+            if(role == Qt::BackgroundRole) {
+                return p->m_playingColour;
+            }
+            if(role == Qt::DecorationRole) {
+                switch(p->m_playingState) {
+                    case(PlayState::Playing):
+                        return p->m_playingIcon;
+                    case(PlayState::Paused):
+                        return p->m_pausedIcon;
+                    case(PlayState::Stopped):
+                        break;
+                }
+            }
+        }
+    }
+
     switch(role) {
         case(Qt::DisplayRole):
         case(Qt::ToolTipRole): {
@@ -412,6 +459,8 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             return item->key();
         case(LibraryTreeItem::Tracks):
             return QVariant::fromValue(item->tracks());
+        case(LibraryTreeItem::TrackCount):
+            return item->trackCount();
         case(Qt::FontRole):
             return p->m_font;
         case(Qt::ForegroundRole):

@@ -22,6 +22,7 @@
 #include "librarytreegroup.h"
 #include "librarytreeitem.h"
 
+#include <core/player/playerdefs.h>
 #include <utils/treemodel.h>
 
 namespace Fooyin {
@@ -38,6 +39,8 @@ public:
     void setFont(const QString& font);
     void setColour(const QColor& colour);
     void setRowHeight(int height);
+    void setPlayState(PlayState state);
+    void setPlayingPath(const QString& parentNode, const QString& path);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

@@ -36,6 +36,7 @@ public:
         Level,
         Key,
         Tracks,
+        TrackCount,
     };
 
     LibraryTreeItem();

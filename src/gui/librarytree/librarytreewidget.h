@@ -19,28 +19,36 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
+
 #include "gui/fywidget.h"
 
 namespace Fooyin {
-class SettingsManager;
 class MusicLibrary;
-class TrackSelectionController;
+class Playlist;
+class PlaylistController;
+class SettingsManager;
 
 class LibraryTreeWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    LibraryTreeWidget(MusicLibrary* library, TrackSelectionController* trackSelection, SettingsManager* settings,
+    LibraryTreeWidget(MusicLibrary* library, PlaylistController* playlistController, SettingsManager* settings,
                       QWidget* parent = nullptr);
 
-    QString name() const override;
-    QString layoutName() const override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
     void searchEvent(const QString& search) override;
+
+public slots:
+    void playstateChanged(PlayState state);
+    void activePlaylistChanged(Playlist* playlist);
+    void playlistTrackChanged(const PlaylistTrack& track);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
