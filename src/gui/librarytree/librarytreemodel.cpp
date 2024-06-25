@@ -28,7 +28,9 @@
 #include <QColor>
 #include <QFont>
 #include <QIODevice>
+#include <QIcon>
 #include <QMimeData>
+#include <QPalette>
 #include <QSize>
 #include <QThread>
 
