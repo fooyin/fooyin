@@ -78,6 +78,7 @@ struct FilterModel::Private
     int m_sortColumn{0};
     Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
     bool m_showDecoration{false};
+    bool m_showLabels{true};
 
     using ColumnAlignments = std::vector<Qt::Alignment>;
     mutable ColumnAlignments m_columnAlignments;
@@ -319,6 +320,11 @@ void FilterModel::setShowDecoration(bool show)
     p->m_showDecoration = show;
 }
 
+void FilterModel::setShowLabels(bool show)
+{
+    p->m_showLabels = show;
+}
+
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
@@ -380,8 +386,11 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
     switch(role) {
         case(Qt::DisplayRole):
         case(Qt::ToolTipRole): {
-            const QString& name = item->column(col);
-            return !name.isEmpty() ? name : QStringLiteral("?");
+            if(p->m_showLabels) {
+                const QString& name = item->column(col);
+                return !name.isEmpty() ? name : QStringLiteral("?");
+            }
+            break;
         }
         case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());

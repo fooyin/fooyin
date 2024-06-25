@@ -49,6 +49,7 @@ public:
     void setRowHeight(int height);
     void setShowSummary(bool show);
     void setShowDecoration(bool show);
+    void setShowLabels(bool show);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

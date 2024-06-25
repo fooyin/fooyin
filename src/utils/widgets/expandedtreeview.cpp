@@ -186,8 +186,9 @@ public:
     QHeaderView* m_header;
     QAbstractItemModel* m_model{nullptr};
     std::unique_ptr<BaseView> m_view;
-    ViewMode m_viewMode{ViewMode::Tree};
 
+    ViewMode m_viewMode{ViewMode::Tree};
+    CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
     bool m_uniformRowHeights{false};
 
     mutable bool m_delayedPendingLayout{false};
@@ -1713,7 +1714,7 @@ void IconView::doItemLayout()
 
     if(m_segmentSize == 0) {
         m_segmentSize   = std::max(count, 1);
-        maxPaddingRatio = 0.15;
+        maxPaddingRatio = 0.13;
     }
 
     const int totalWidthAvailable = segEndPosition - segStartPosition;
@@ -1848,7 +1849,8 @@ IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
 
         const auto colIndex = index.siblingAtColumn(col);
         opt.decorationSize  = Utils::realVisualIndex(header(), colIndex.column()) == 0 ? iconSize() : QSize{};
-        const QSize hint    = delegate(colIndex)->sizeHint(opt, colIndex);
+
+        const QSize hint = delegate(colIndex)->sizeHint(opt, colIndex);
 
         if(size.baseHeight == 0 && Utils::realVisualIndex(header(), colIndex.column()) == 0) {
             size.baseHeight = hint.height();
@@ -1858,6 +1860,14 @@ IconView::SizeHint IconView::indexSizeHint(const QModelIndex& index) const
         }
 
         size.width = std::clamp(size.width, hint.width(), iconSize().width() + (2 * MinItemSpacing));
+
+        if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::None) {
+            size.height        = iconSize().height();
+            size.baseHeight    = size.height;
+            size.captionHeight = 0;
+            return size;
+        }
+
         size.height += hint.height();
     }
 
@@ -2800,6 +2810,16 @@ void ExpandedTreeView::setViewMode(ViewMode mode)
     p->doDelayedItemsLayout();
 
     emit viewModeChanged(mode);
+}
+
+ExpandedTreeView::CaptionDisplay ExpandedTreeView::captionDisplay() const
+{
+    return p->m_captionDisplay;
+}
+
+void ExpandedTreeView::setCaptionDisplay(CaptionDisplay display)
+{
+    p->m_captionDisplay = display;
 }
 
 bool ExpandedTreeView::uniformRowHeights() const

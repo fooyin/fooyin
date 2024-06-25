@@ -219,6 +219,17 @@ struct FilterWidget::Private
         emit m_self->selectionChanged(playlistNameFromSelection());
     }
 
+    void updateCaptions(ExpandedTreeView::CaptionDisplay captions) const
+    {
+        if(captions == ExpandedTreeView::CaptionDisplay::None) {
+            m_model->setShowLabels(false);
+        }
+        else {
+            m_model->setShowLabels(true);
+        }
+        m_view->setCaptionDisplay(captions);
+    }
+
     void hideHeader(bool hide) const
     {
         m_header->setFixedHeight(hide ? 0 : QWIDGETSIZE_MAX);
@@ -235,24 +246,39 @@ struct FilterWidget::Private
         auto* displayMenu  = new QMenu(tr("Display"), menu);
         auto* displayGroup = new QActionGroup(displayMenu);
 
-        auto* displayList = new QAction(tr("Columns"), displayGroup);
-        auto* displayIcon = new QAction(tr("Artwork"), displayGroup);
+        auto* displayList      = new QAction(tr("Columns"), displayGroup);
+        auto* displayArtBottom = new QAction(tr("Artwork (bottom labels)"), displayGroup);
+        auto* displayArtNone   = new QAction(tr("Artwork (no labels)"), displayGroup);
 
         displayList->setCheckable(true);
-        displayIcon->setCheckable(true);
+        displayArtBottom->setCheckable(true);
+        displayArtNone->setCheckable(true);
 
-        const auto currentMode = m_view->viewMode();
+        const auto currentMode     = m_view->viewMode();
+        const auto currentCaptions = m_view->captionDisplay();
+
         if(currentMode == ExpandedTreeView::ViewMode::Tree) {
             displayList->setChecked(true);
         }
+        else if(currentCaptions == ExpandedTreeView::CaptionDisplay::Bottom) {
+            displayArtBottom->setChecked(true);
+        }
         else {
-            displayIcon->setChecked(true);
+            displayArtNone->setChecked(true);
         }
 
-        QObject::connect(displayList, &QAction::triggered, m_self,
-                         [this]() { m_view->setViewMode(ExpandedTreeView::ViewMode::Tree); });
-        QObject::connect(displayIcon, &QAction::triggered, m_self,
-                         [this]() { m_view->setViewMode(ExpandedTreeView::ViewMode::Icon); });
+        QObject::connect(displayList, &QAction::triggered, m_self, [this]() {
+            m_view->setViewMode(ExpandedTreeView::ViewMode::Tree);
+            updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
+        });
+        QObject::connect(displayArtBottom, &QAction::triggered, m_self, [this]() {
+            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
+            updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
+        });
+        QObject::connect(displayArtNone, &QAction::triggered, m_self, [this]() {
+            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
+            updateCaptions(ExpandedTreeView::CaptionDisplay::None);
+        });
 
         auto* displaySummary = new QAction(tr("Summary item"), displayMenu);
         displaySummary->setCheckable(true);
@@ -261,7 +287,8 @@ struct FilterWidget::Private
                          [this](bool checked) { m_model->setShowSummary(checked); });
 
         displayMenu->addAction(displayList);
-        displayMenu->addAction(displayIcon);
+        displayMenu->addAction(displayArtBottom);
+        displayMenu->addAction(displayArtNone);
         displayMenu->addSeparator();
         displayMenu->addAction(displaySummary);
 
@@ -507,6 +534,7 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
 
     layout[u"Columns"]     = columns.join(QStringLiteral("|"));
     layout[u"Display"]     = static_cast<int>(p->m_view->viewMode());
+    layout[u"Captions"]    = static_cast<int>(p->m_view->captionDisplay());
     layout[u"ShowSummary"] = p->m_model->showSummary();
 
     QByteArray state = p->m_header->saveHeaderState();
@@ -544,6 +572,10 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains(u"Display")) {
         p->m_view->setViewMode(static_cast<ExpandedTreeView::ViewMode>(layout.value(u"Display").toInt()));
+    }
+
+    if(layout.contains(u"Captions")) {
+        p->updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value(u"Captions").toInt()));
     }
 
     if(layout.contains(u"ShowSummary")) {

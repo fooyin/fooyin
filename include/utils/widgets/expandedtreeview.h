@@ -40,6 +40,13 @@ public:
     };
     Q_ENUM(ViewMode)
 
+    enum class CaptionDisplay : uint8_t
+    {
+        None = 0,
+        Bottom
+    };
+    Q_ENUM(CaptionDisplay)
+
     explicit ExpandedTreeView(QWidget* parent = nullptr);
     ~ExpandedTreeView() override;
 
@@ -53,6 +60,9 @@ public:
 
     [[nodiscard]] ViewMode viewMode() const;
     void setViewMode(ViewMode mode);
+
+    [[nodiscard]] CaptionDisplay captionDisplay() const;
+    void setCaptionDisplay(CaptionDisplay display);
 
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
