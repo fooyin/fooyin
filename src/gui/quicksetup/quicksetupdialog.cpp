@@ -64,7 +64,7 @@ void QuickSetupDialog::changeLayout(const QItemSelection& selected, const QItemS
         return;
     }
 
-    const auto layout = indexes.constFirst().data(QuickSetupModel::Layout).value<Layout>();
+    const auto layout = indexes.constFirst().data(QuickSetupModel::Layout).value<FyLayout>();
 
     emit layoutChanged(layout);
 }

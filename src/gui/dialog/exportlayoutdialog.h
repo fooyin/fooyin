@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,35 +19,37 @@
 
 #pragma once
 
-#include "gui/layoutprovider.h"
-
 #include <QDialog>
-#include <QItemSelection>
 
-class QListView;
-class QPushButton;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
 
 namespace Fooyin {
-class QuickSetupModel;
+class EditableLayout;
+class LayoutProvider;
 
-class QuickSetupDialog : public QDialog
+class ExportLayoutDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
+    ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
-signals:
-    void layoutChanged(const FyLayout& layout);
+    [[nodiscard]] QSize sizeHint() const override;
 
-protected:
-    void showEvent(QShowEvent* event) override;
+public slots:
+    void accept() override;
 
 private:
-    void changeLayout(const QItemSelection& selected, const QItemSelection& deselected);
+    void exportLayout();
 
-    QListView* m_layoutList;
-    QuickSetupModel* m_model;
-    QPushButton* m_accept;
+    EditableLayout* m_editableLayout;
+    LayoutProvider* m_layoutProvider;
+
+    QLineEdit* m_nameEdit;
+    QLineEdit* m_pathEdit;
+    QCheckBox* m_saveWindowSize;
+    QLabel* m_errorLabel;
 };
 } // namespace Fooyin

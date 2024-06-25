@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,25 @@
 
 #include "fygui_export.h"
 
-#include <gui/fylayout.h>
-
-#include <QJsonObject>
-#include <QString>
-
 namespace Fooyin {
-class FYGUI_EXPORT LayoutProvider
+class FYGUI_EXPORT FyLayout
 {
 public:
-    explicit LayoutProvider();
-    ~LayoutProvider();
+    FyLayout() = default;
+    FyLayout(QString name, QJsonObject json);
+    explicit FyLayout(const QByteArray& file);
 
-    [[nodiscard]] FyLayout currentLayout() const;
-    [[nodiscard]] LayoutList layouts() const;
+    [[nodiscard]] bool isValid() const;
 
-    void findLayouts();
-    void loadCurrentLayout();
-    void saveCurrentLayout();
+    [[nodiscard]] QString name() const;
+    [[nodiscard]] QJsonObject json() const;
 
-    void registerLayout(const FyLayout& layout);
-    void registerLayout(const QByteArray& json);
-    void changeLayout(const FyLayout& layout);
-
-    FyLayout importLayout(const QString& path);
-    bool exportLayout(const FyLayout& layout, const QString& path);
+    void saveWindowSize();
+    void loadWindowSize() const;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    QString m_name;
+    QJsonObject m_json;
 };
+using LayoutList = std::vector<FyLayout>;
 } // namespace Fooyin

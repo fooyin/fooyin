@@ -32,7 +32,7 @@ namespace {
 bool checkFile(const QFileInfo& file)
 {
     return file.exists() && file.isFile() && file.isReadable()
-        && file.completeSuffix().compare(QStringLiteral("fyl"), Qt::CaseInsensitive) == 0;
+        && file.suffix().compare(QStringLiteral("fyl"), Qt::CaseInsensitive) == 0;
 }
 } // namespace
 
@@ -40,34 +40,33 @@ namespace Fooyin {
 struct LayoutProvider::Private
 {
     LayoutList m_layouts;
-    Layout m_currentLayout;
+    FyLayout m_currentLayout;
     QFile m_layoutFile{Gui::activeLayoutPath()};
 
     [[nodiscard]] bool layoutExists(const QString& name) const
     {
-        return std::ranges::any_of(m_layouts, [name](const Layout& layout) { return layout.name == name; });
+        return std::ranges::any_of(m_layouts, [name](const FyLayout& layout) { return layout.name() == name; });
     }
 
-    std::optional<Layout> addLayout(const QByteArray& json, bool import = false)
+    FyLayout addLayout(const FyLayout& layout, bool import = false)
     {
-        auto layout = LayoutProvider::readLayout(json);
-        if(!layout) {
+        if(!layout.isValid()) {
             qInfo() << "Attempted to load an invalid layout";
             return {};
         }
 
         const auto existingLayout = std::ranges::find_if(
-            std::as_const(m_layouts), [layout](const Layout& existing) { return existing.name == layout->name; });
+            std::as_const(m_layouts), [layout](const FyLayout& existing) { return existing.name() == layout.name(); });
 
         if(existingLayout != m_layouts.cend()) {
             if(import) {
                 return *existingLayout;
             }
-            qInfo() << "A layout with the same name (" << layout->name << ") already exists";
+            qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
             return {};
         }
 
-        m_layouts.push_back(layout.value());
+        m_layouts.push_back(layout);
         return layout;
     }
 };
@@ -80,58 +79,9 @@ LayoutProvider::LayoutProvider()
 
 LayoutProvider::~LayoutProvider() = default;
 
-Layout LayoutProvider::currentLayout() const
+FyLayout LayoutProvider::currentLayout() const
 {
     return p->m_currentLayout;
-}
-
-void LayoutProvider::changeLayout(const Layout& layout)
-{
-    std::ranges::replace_if(
-        p->m_layouts, [layout](const Layout& existing) { return existing.name == layout.name; }, layout);
-
-    p->m_currentLayout = layout;
-}
-
-void LayoutProvider::loadCurrentLayout()
-{
-    if(!p->m_layoutFile.exists()) {
-        return;
-    }
-
-    if(!p->m_layoutFile.open(QIODevice::ReadOnly)) {
-        qCritical() << "Couldn't open layout file.";
-        return;
-    }
-
-    const QByteArray json = p->m_layoutFile.readAll();
-    p->m_layoutFile.close();
-
-    const auto layout = readLayout(json);
-    if(!layout) {
-        qInfo() << "Attempted to load an invalid layout";
-        return;
-    }
-
-    if(p->layoutExists(layout->name)) {
-        qInfo() << "A layout with the same name (" << layout->name << ") already exists";
-        return;
-    }
-
-    p->m_currentLayout = layout.value();
-}
-
-void LayoutProvider::saveCurrentLayout()
-{
-    if(!p->m_layoutFile.open(QIODevice::WriteOnly)) {
-        qCritical() << "Couldn't open layout file";
-        return;
-    }
-
-    const QByteArray json = QJsonDocument(p->m_currentLayout.json).toJson();
-
-    p->m_layoutFile.write(json);
-    p->m_layoutFile.close();
 }
 
 LayoutList LayoutProvider::layouts() const
@@ -171,40 +121,71 @@ void LayoutProvider::findLayouts()
         newLayout.close();
 
         if(!json.isEmpty()) {
-            p->addLayout(json);
+            p->addLayout(FyLayout{json});
         }
     }
 }
 
+void LayoutProvider::loadCurrentLayout()
+{
+    if(!p->m_layoutFile.exists()) {
+        return;
+    }
+
+    if(!p->m_layoutFile.open(QIODevice::ReadOnly)) {
+        qCritical() << "Couldn't open layout file.";
+        return;
+    }
+
+    const QByteArray json = p->m_layoutFile.readAll();
+    p->m_layoutFile.close();
+
+    const FyLayout layout{json};
+    if(!layout.isValid()) {
+        qInfo() << "Attempted to load an invalid layout";
+        return;
+    }
+
+    if(p->layoutExists(layout.name())) {
+        qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
+        return;
+    }
+
+    p->m_currentLayout = layout;
+}
+
+void LayoutProvider::saveCurrentLayout()
+{
+    if(!p->m_layoutFile.open(QIODevice::WriteOnly)) {
+        qCritical() << "Couldn't open layout file";
+        return;
+    }
+
+    const QByteArray json = QJsonDocument(p->m_currentLayout.json()).toJson();
+
+    p->m_layoutFile.write(json);
+    p->m_layoutFile.close();
+}
+
+void LayoutProvider::registerLayout(const FyLayout& layout)
+{
+    p->addLayout(layout);
+}
+
 void LayoutProvider::registerLayout(const QByteArray& json)
 {
-    p->addLayout(json);
+    p->addLayout(FyLayout{json});
 }
 
-std::optional<Layout> LayoutProvider::readLayout(const QByteArray& json)
+void LayoutProvider::changeLayout(const FyLayout& layout)
 {
-    const auto doc = QJsonDocument::fromJson(json);
+    std::ranges::replace_if(
+        p->m_layouts, [layout](const FyLayout& existing) { return existing.name() == layout.name(); }, layout);
 
-    if(doc.isEmpty() || !doc.isObject()) {
-        return {};
-    }
-
-    const auto layoutObject = doc.object();
-
-    if(layoutObject.empty() || !layoutObject.contains(QStringLiteral("Name"))) {
-        return {};
-    }
-
-    const QString name = layoutObject.value(QStringLiteral("Name")).toString();
-
-    if(name.isEmpty()) {
-        return {};
-    }
-
-    return Layout{name, layoutObject};
+    p->m_currentLayout = layout;
 }
 
-std::optional<Layout> LayoutProvider::importLayout(const QString& path)
+FyLayout LayoutProvider::importLayout(const QString& path)
 {
     QFile file{path};
     const QFileInfo fileInfo{file};
@@ -226,10 +207,10 @@ std::optional<Layout> LayoutProvider::importLayout(const QString& path)
         file.copy(newFile);
     }
 
-    return p->addLayout(json, true);
+    return p->addLayout(FyLayout{json}, true);
 }
 
-bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
+bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
 {
     QString filepath{path};
     if(!filepath.contains(QStringLiteral(".fyl"))) {
@@ -241,13 +222,17 @@ bool LayoutProvider::exportLayout(const Layout& layout, const QString& path)
         return false;
     }
 
-    const QByteArray json = QJsonDocument(layout.json).toJson();
+    const QByteArray json = QJsonDocument(layout.json()).toJson();
 
-    file.write(json);
+    const auto bytesWritten = file.write(json);
     file.close();
 
+    if(bytesWritten < 0) {
+        return false;
+    }
+
     const QFileInfo fileInfo{filepath};
-    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name)) {
+    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name())) {
         p->m_layouts.push_back(layout);
     }
 

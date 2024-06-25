@@ -1,6 +1,7 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/coverprovider.h
     ${CMAKE_SOURCE_DIR}/include/gui/editablelayout.h
+    ${CMAKE_SOURCE_DIR}/include/gui/fylayout.h
     ${CMAKE_SOURCE_DIR}/include/gui/fywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/guiconstants.h
     ${CMAKE_SOURCE_DIR}/include/gui/guipaths.h
@@ -22,6 +23,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     coverprovider.cpp
     editablelayout.cpp
+    fylayout.cpp
     fywidget.cpp
     guiapplication.cpp
     guiapplication.h
@@ -49,6 +51,8 @@ set(SOURCES
     controls/volumecontrol.h
     dialog/aboutdialog.cpp
     dialog/aboutdialog.h
+    dialog/exportlayoutdialog.cpp
+    dialog/exportlayoutdialog.h
     dialog/propertiesdialog.cpp
     dirbrowser/dirbrowser.cpp
     dirbrowser/dirbrowser.h

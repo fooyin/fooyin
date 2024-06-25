@@ -43,7 +43,7 @@ QVariant QuickSetupModel::data(const QModelIndex& index, int role) const
 
     switch(role) {
         case(Qt::DisplayRole):
-            return layout.name;
+            return layout.name();
         case(Role::Layout):
             return QVariant::fromValue(layout);
         default:

@@ -27,11 +27,11 @@
 
 namespace Fooyin {
 class ActionManager;
+class Id;
 class LayoutProvider;
 class SettingsManager;
 class WidgetProvider;
-class Id;
-struct Layout;
+struct FyLayout;
 
 class FYGUI_EXPORT EditableLayout : public QWidget
 {
@@ -43,7 +43,7 @@ public:
     ~EditableLayout() override;
 
     void initialise();
-    std::optional<Layout> saveCurrentToLayout(const QString& name);
+    FyLayout saveCurrentToLayout(const QString& name);
 
     [[nodiscard]] FyWidget* findWidget(const Id& id) const;
     [[nodiscard]] WidgetList findWidgetsByName(const QString& name) const;
@@ -51,9 +51,9 @@ public:
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
-    void changeLayout(const Layout& layout);
+    void changeLayout(const FyLayout& layout);
     void saveLayout();
-    bool loadLayout(const Layout& layout);
+    bool loadLayout(const FyLayout& layout);
 
     static QJsonObject saveWidget(FyWidget* widget);
     static QJsonObject saveBaseWidget(FyWidget* widget);

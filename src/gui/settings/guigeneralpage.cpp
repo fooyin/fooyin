@@ -19,6 +19,7 @@
 
 #include "guigeneralpage.h"
 
+#include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 
@@ -282,38 +283,32 @@ void GuiGeneralPageWidget::importLayout()
         return;
     }
 
-    if(const auto layout = m_layoutProvider->importLayout(layoutFile)) {
-        QMessageBox message;
-        message.setIcon(QMessageBox::Warning);
-        message.setText(QStringLiteral("Replace existing layout?"));
-        message.setInformativeText(tr("Unless exported, the current layout will be lost."));
+    const auto layout = m_layoutProvider->importLayout(layoutFile);
+    if(!layout.isValid()) {
+        Utils::showMessageBox(tr("Invalid Layout"), tr("Layout could not be imported."));
+        return;
+    }
 
-        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        message.setDefaultButton(QMessageBox::No);
+    QMessageBox message;
+    message.setIcon(QMessageBox::Warning);
+    message.setText(QStringLiteral("Replace existing layout?"));
+    message.setInformativeText(tr("Unless exported, the current layout will be lost."));
 
-        const int buttonClicked = message.exec();
+    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message.setDefaultButton(QMessageBox::No);
 
-        if(buttonClicked == QMessageBox::Yes) {
-            m_editableLayout->changeLayout(layout.value());
-        }
+    const int buttonClicked = message.exec();
+
+    if(buttonClicked == QMessageBox::Yes) {
+        m_editableLayout->changeLayout(layout);
     }
 }
 
 void GuiGeneralPageWidget::exportLayout()
 {
-    bool success{false};
-    const QString name = QInputDialog::getText(this, tr("Export layout"), tr("Layout Name") + QStringLiteral(":"),
-                                               QLineEdit::Normal, QStringLiteral(""), &success);
-
-    if(success && !name.isEmpty()) {
-        const QString saveFile = QFileDialog::getSaveFileName(
-            this, QStringLiteral("Save Layout"), Gui::layoutsPath() + name, QStringLiteral("Fooyin Layout (*.fyl)"));
-        if(!saveFile.isEmpty()) {
-            if(auto layout = m_editableLayout->saveCurrentToLayout(name)) {
-                m_layoutProvider->exportLayout(layout.value(), saveFile);
-            }
-        }
-    }
+    auto* exportDialog = new ExportLayoutDialog(m_editableLayout, m_layoutProvider, this);
+    QObject::connect(exportDialog, &QDialog::finished, exportDialog, &QObject::deleteLater);
+    exportDialog->show();
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,

@@ -551,7 +551,7 @@ void EditableLayout::initialise()
     changeLayout(p->m_layoutProvider->currentLayout());
 }
 
-std::optional<Layout> EditableLayout::saveCurrentToLayout(const QString& name)
+FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
 {
     QJsonObject root;
     QJsonArray array;
@@ -574,7 +574,7 @@ std::optional<Layout> EditableLayout::saveCurrentToLayout(const QString& name)
 
     const QByteArray json = QJsonDocument(root).toJson();
 
-    return LayoutProvider::readLayout(json);
+    return FyLayout{json};
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
@@ -627,7 +627,7 @@ bool EditableLayout::eventFilter(QObject* watched, QEvent* event)
     return true;
 }
 
-void EditableLayout::changeLayout(const Layout& layout)
+void EditableLayout::changeLayout(const FyLayout& layout)
 {
     p->m_root->reset();
 
@@ -645,29 +645,33 @@ void EditableLayout::changeLayout(const Layout& layout)
 
 void EditableLayout::saveLayout()
 {
-    if(const auto layout = saveCurrentToLayout(QStringLiteral("Default"))) {
-        p->m_layoutProvider->changeLayout(layout.value());
+    const auto layout = saveCurrentToLayout(QStringLiteral("Default"));
+    if(layout.isValid()) {
+        p->m_layoutProvider->changeLayout(layout);
         p->m_layoutProvider->saveCurrentLayout();
     }
 }
 
-bool EditableLayout::loadLayout(const Layout& layout)
+bool EditableLayout::loadLayout(const FyLayout& layout)
 {
-    if(layout.json.isEmpty()) {
+    if(!layout.isValid()) {
         return false;
     }
+
+    const auto json = layout.json();
 
     p->m_layoutHistory->clear();
+    layout.loadWindowSize();
 
-    if(!layout.json.contains(QStringLiteral("Widgets"))) {
+    if(!json.contains(QStringLiteral("Widgets"))) {
         return false;
     }
 
-    if(!layout.json.value(QStringLiteral("Widgets")).isArray()) {
+    if(!json.value(QStringLiteral("Widgets")).isArray()) {
         return false;
     }
 
-    const auto rootWidgets = layout.json.value(QStringLiteral("Widgets")).toArray();
+    const auto rootWidgets = json.value(QStringLiteral("Widgets")).toArray();
 
     if(rootWidgets.empty() || !rootWidgets.cbegin()->isObject()) {
         return false;
