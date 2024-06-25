@@ -163,9 +163,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
 void CoverWidget::rescaleCover() const
 {
-    const QSize scale      = size() * 4;
     const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-    m_coverLabel->setPixmap(m_cover.scaled(scale, aspectRatio).scaled(size(), aspectRatio, Qt::SmoothTransformation));
+    m_coverLabel->setPixmap(m_cover.scaled(size(), aspectRatio, Qt::SmoothTransformation));
 }
 
 void CoverWidget::reloadCover()
