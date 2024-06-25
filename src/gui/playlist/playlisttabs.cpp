@@ -157,6 +157,13 @@ struct PlaylistTabs::Private
         }
     }
 
+    void createEmptyPlaylist()
+    {
+        if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
+            m_playlistController->changeCurrentPlaylist(playlist);
+        }
+    }
+
     void activatePlaylistChanged(const Playlist* playlist)
     {
         if(!playlist) {
@@ -225,7 +232,10 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     setupTabs();
 
     QObject::connect(p->m_tabs, &EditableTabBar::middleClicked, this, [this](const int index) {
-        if(index >= 0 && p->m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>()) {
+        if(index < 0) {
+            p->createEmptyPlaylist();
+        }
+        else if(p->m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>()) {
             const Id id = p->m_tabs->tabData(index).value<Id>();
             p->m_playlistHandler->removePlaylist(id);
         }
@@ -243,11 +253,7 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
             }
         }
     });
-    QObject::connect(p->m_tabs, &EditableTabBar::addButtonClicked, this, [this]() {
-        if(auto* playlist = p->m_playlistHandler->createEmptyPlaylist()) {
-            p->m_playlistController->changeCurrentPlaylist(playlist);
-        }
-    });
+    QObject::connect(p->m_tabs, &EditableTabBar::addButtonClicked, this, [this]() { p->createEmptyPlaylist(); });
     QObject::connect(p->m_tabs, &EditableTabBar::tabTextChanged, this, [this](int index, const QString& text) {
         const Id id = p->m_tabs->tabData(index).value<Id>();
         p->m_playlistHandler->renamePlaylist(id, text);
