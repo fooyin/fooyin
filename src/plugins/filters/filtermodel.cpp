@@ -79,6 +79,7 @@ struct FilterModel::Private
     Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
     bool m_showDecoration{false};
     bool m_showLabels{true};
+    Track::Cover m_coverType{Track::Cover::Front};
 
     using ColumnAlignments = std::vector<Qt::Alignment>;
     mutable ColumnAlignments m_columnAlignments;
@@ -270,6 +271,11 @@ bool FilterModel::showSummary() const
     return p->m_showSummary;
 }
 
+Track::Cover FilterModel::coverType() const
+{
+    return p->m_coverType;
+}
+
 void FilterModel::setFont(const QString& font)
 {
     if(font.isEmpty()) {
@@ -323,6 +329,13 @@ void FilterModel::setShowDecoration(bool show)
 void FilterModel::setShowLabels(bool show)
 {
     p->m_showLabels = show;
+}
+
+void FilterModel::setCoverType(Track::Cover type)
+{
+    if(std::exchange(p->m_coverType, type) != type) {
+        emit dataChanged({}, {}, {Qt::DecorationRole});
+    }
 }
 
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
@@ -399,9 +412,9 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(Qt::DecorationRole):
             if(p->m_showDecoration) {
                 if(item->trackCount() > 0) {
-                    return p->m_coverProvider.trackCoverThumbnail(item->tracks().front());
+                    return p->m_coverProvider.trackCoverThumbnail(item->tracks().front(), p->m_coverType);
                 }
-                return p->m_coverProvider.trackCoverThumbnail({});
+                return p->m_coverProvider.trackCoverThumbnail({}, p->m_coverType);
             }
             break;
         case(Qt::SizeHintRole):

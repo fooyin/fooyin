@@ -43,6 +43,7 @@ public:
     [[nodiscard]] Qt::SortOrder sortOrder() const;
     void sortOnColumn(int column, Qt::SortOrder order);
     [[nodiscard]] bool showSummary() const;
+    [[nodiscard]] Track::Cover coverType() const;
 
     void setFont(const QString& font);
     void setColour(const QColor& colour);
@@ -50,6 +51,7 @@ public:
     void setShowSummary(bool show);
     void setShowDecoration(bool show);
     void setShowLabels(bool show);
+    void setCoverType(Track::Cover type);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

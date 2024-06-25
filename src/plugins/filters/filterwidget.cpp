@@ -280,17 +280,49 @@ struct FilterWidget::Private
             updateCaptions(ExpandedTreeView::CaptionDisplay::None);
         });
 
-        auto* displaySummary = new QAction(tr("Summary item"), displayMenu);
+        auto* displaySummary = new QAction(tr("Summary Item"), displayMenu);
         displaySummary->setCheckable(true);
         displaySummary->setChecked(m_model->showSummary());
         QObject::connect(displaySummary, &QAction::triggered, m_self,
                          [this](bool checked) { m_model->setShowSummary(checked); });
+
+        auto* coverGroup = new QActionGroup(displayMenu);
+
+        auto* coverFront  = new QAction(tr("Front Cover"), coverGroup);
+        auto* coverBack   = new QAction(tr("Back Cover"), coverGroup);
+        auto* coverArtist = new QAction(tr("Artist"), coverGroup);
+
+        coverFront->setCheckable(true);
+        coverBack->setCheckable(true);
+        coverArtist->setCheckable(true);
+
+        const auto currentType = m_model->coverType();
+        if(currentType == Track::Cover::Front) {
+            coverFront->setChecked(true);
+        }
+        else if(currentType == Track::Cover::Back) {
+            coverBack->setChecked(true);
+        }
+        else {
+            coverArtist->setChecked(true);
+        }
+
+        QObject::connect(coverFront, &QAction::triggered, m_self,
+                         [this]() { m_model->setCoverType(Track::Cover::Front); });
+        QObject::connect(coverBack, &QAction::triggered, m_self,
+                         [this]() { m_model->setCoverType(Track::Cover::Back); });
+        QObject::connect(coverArtist, &QAction::triggered, m_self,
+                         [this]() { m_model->setCoverType(Track::Cover::Artist); });
 
         displayMenu->addAction(displayList);
         displayMenu->addAction(displayArtBottom);
         displayMenu->addAction(displayArtNone);
         displayMenu->addSeparator();
         displayMenu->addAction(displaySummary);
+        displayMenu->addSeparator();
+        displayMenu->addAction(coverFront);
+        displayMenu->addAction(coverBack);
+        displayMenu->addAction(coverArtist);
 
         menu->addMenu(displayMenu);
     }
@@ -535,6 +567,7 @@ void FilterWidget::saveLayoutData(QJsonObject& layout)
     layout[u"Columns"]     = columns.join(QStringLiteral("|"));
     layout[u"Display"]     = static_cast<int>(p->m_view->viewMode());
     layout[u"Captions"]    = static_cast<int>(p->m_view->captionDisplay());
+    layout[u"Artwork"]     = static_cast<int>(p->m_model->coverType());
     layout[u"ShowSummary"] = p->m_model->showSummary();
 
     QByteArray state = p->m_header->saveHeaderState();
@@ -576,6 +609,10 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains(u"Captions")) {
         p->updateCaptions(static_cast<ExpandedTreeView::CaptionDisplay>(layout.value(u"Captions").toInt()));
+    }
+
+    if(layout.contains(u"Artwork")) {
+        p->m_model->setCoverType(static_cast<Track::Cover>(layout.value(u"Artwork").toInt()));
     }
 
     if(layout.contains(u"ShowSummary")) {
