@@ -26,12 +26,17 @@ constexpr int StarScaleFactor = 20;
 
 namespace Fooyin {
 StarRating::StarRating()
-    : StarRating{0, 5}
+    : StarRating{0, 5, false}
 { }
 
 StarRating::StarRating(int starCount, int maxStarCount)
+    : StarRating{starCount, maxStarCount, false}
+{ }
+
+StarRating::StarRating(int starCount, int maxStarCount, bool alwaysDisplay)
     : m_count{starCount}
     , m_maxCount{maxStarCount}
+    , m_alwaysDisplay{alwaysDisplay}
 {
     double angle{-0.314};
     for(int i{0}; i < 5; ++i) {
@@ -60,6 +65,11 @@ void StarRating::setMaxStarCount(int maxStarCount)
     m_maxCount = maxStarCount;
 }
 
+void StarRating::setAlwaysDisplay(bool display)
+{
+    m_alwaysDisplay = display;
+}
+
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode) const
 {
     painter->save();
@@ -82,7 +92,7 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
             painter->setPen(Qt::NoPen);
             painter->drawPolygon(m_starPolygon, Qt::WindingFill);
         }
-        else if(mode == EditMode::Editable) {
+        else if(m_alwaysDisplay || mode == EditMode::Editable) {
             painter->setPen(dotPen);
             painter->drawPoint(QPointF{0.5, 0.5});
         }

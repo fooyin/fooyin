@@ -40,13 +40,15 @@ public:
     };
 
     StarRating();
-    explicit StarRating(int starCount, int maxStarCount);
+    StarRating(int starCount, int maxStarCount);
+    StarRating(int starCount, int maxStarCount, bool alwaysDisplay);
 
     [[nodiscard]] int starCount() const;
     [[nodiscard]] int maxStarCount() const;
 
     void setStarCount(int starCount);
     void setMaxStarCount(int maxStarCount);
+    void setAlwaysDisplay(bool display);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode) const;
     [[nodiscard]] QSize sizeHint() const;
@@ -55,6 +57,7 @@ private:
     QPolygonF m_starPolygon;
     int m_count;
     int m_maxCount;
+    bool m_alwaysDisplay;
 };
 } // namespace Fooyin
 
