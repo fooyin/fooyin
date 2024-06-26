@@ -42,6 +42,9 @@ public:
     explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
 
     [[nodiscard]] int sizeHintForRow(int row) const override;
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
 };
 
 class TagEditorWidget : public PropertiesTabWidget
@@ -60,9 +63,6 @@ public:
 
 signals:
     void trackMetadataChanged(const TrackList& tracks);
-
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
     void saveState() const;

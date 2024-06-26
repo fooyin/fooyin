@@ -54,7 +54,14 @@ public:
 
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
-{ }
+{
+    setItemDelegateForColumn(1, new TagEditorDelegate(this));
+    setItemDelegateForRow(13, new StarDelegate(this));
+    setTextElideMode(Qt::ElideRight);
+    horizontalHeader()->setStretchLastSection(true);
+    horizontalHeader()->setSectionsClickable(false);
+    verticalHeader()->setVisible(false);
+}
 
 int TagEditorView::sizeHintForRow(int row) const
 {
@@ -64,6 +71,18 @@ int TagEditorView::sizeHintForRow(int row) const
 
     // Only resize rows based on first column
     return model()->index(row, 0, {}).data(Qt::SizeHintRole).toSize().height();
+}
+
+void TagEditorView::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::RightButton) {
+        // Don't start editing on right-click
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+    else {
+        setEditTriggers(QAbstractItemView::AllEditTriggers);
+    }
+    QTableView::mousePressEvent(event);
 }
 
 TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
@@ -85,13 +104,6 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
-    m_view->setItemDelegateForColumn(1, new TagEditorDelegate(this));
-    m_view->setItemDelegateForRow(13, new StarDelegate(this));
-    m_view->setTextElideMode(Qt::ElideRight);
-    m_view->horizontalHeader()->setStretchLastSection(true);
-    m_view->horizontalHeader()->setSectionsClickable(false);
-    m_view->verticalHeader()->setVisible(false);
-    m_view->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     m_actionManager->addContextObject(m_context);
 
@@ -101,7 +113,6 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
         m_view->resizeRowsToContents();
         restoreState();
     });
-    QObject::connect(m_model, &TagEditorModel::trackMetadataChanged, this, &TagEditorWidget::trackMetadataChanged);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
         m_view->removeAction()->setEnabled(!selected.empty());
@@ -127,9 +138,13 @@ QString TagEditorWidget::layoutName() const
 
 void TagEditorWidget::apply()
 {
-    const bool changed = m_model->processQueue();
+    if(!m_model->haveChanges()) {
+        return;
+    }
 
-    if(!changed || m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+        m_model->applyChanges();
+        emit trackMetadataChanged(m_model->tracks());
         return;
     }
 
@@ -150,11 +165,10 @@ void TagEditorWidget::apply()
         if(dontAskAgain->isChecked()) {
             m_settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
         }
-        m_model->processQueue();
+        m_model->applyChanges();
+        emit trackMetadataChanged(m_model->tracks());
     }
 }
-
-void TagEditorWidget::contextMenuEvent(QContextMenuEvent* /*event*/) { }
 
 void TagEditorWidget::saveState() const
 {

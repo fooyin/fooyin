@@ -43,13 +43,18 @@ TagEditorItem::TagEditorItem()
 TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefault)
     : TreeStatusItem{parent}
     , m_isDefault{isDefault}
-    , m_name{std::move(title)}
+    , m_title{std::move(title)}
     , m_trackCount{0}
 { }
 
-QString TagEditorItem::name() const
+QString TagEditorItem::title() const
 {
-    return m_name;
+    return m_title;
+}
+
+QString TagEditorItem::changedTitle() const
+{
+    return m_changedTitle;
 }
 
 QString TagEditorItem::value() const
@@ -72,9 +77,24 @@ QString TagEditorItem::value() const
     return m_value;
 }
 
-QStringList TagEditorItem::values() const
+QString TagEditorItem::changedValue() const
 {
-    return m_values;
+    if(m_changedValue.isEmpty()) {
+        QStringList nonEmptyValues{m_changedValues};
+        nonEmptyValues.removeAll(QStringLiteral(""));
+
+        QCollator collator;
+        collator.setNumericMode(true);
+
+        std::ranges::sort(nonEmptyValues, collator);
+        m_changedValue = nonEmptyValues.join(QStringLiteral("; "));
+
+        if(m_trackCount > 1 && nonEmptyValues.size() > 1) {
+            m_changedValue.prepend(QStringLiteral("<<multiple items>> "));
+        }
+    }
+
+    return m_changedValue;
 }
 
 bool TagEditorItem::isDefault() const
@@ -126,15 +146,42 @@ void TagEditorItem::addTrackValue(const QStringList& values)
     m_trackCount++;
 }
 
-void TagEditorItem::setValue(const QStringList& values)
+bool TagEditorItem::setValue(const QStringList& values)
 {
-    m_values = values;
-    m_value.clear();
+    if(m_values == values) {
+        if(status() == None) {
+            return false;
+        }
+        if(status() == Changed) {
+            m_changedValues.clear();
+            m_changedValue.clear();
+            setStatus(None);
+            return false;
+        }
+    }
+
+    m_changedValues = values;
+    m_changedValue.clear();
+
+    return true;
 }
 
-void TagEditorItem::setTitle(const QString& title)
+bool TagEditorItem::setTitle(const QString& title)
 {
-    m_name = title;
+    if(m_title == title) {
+        if(status() == None) {
+            return false;
+        }
+        if(status() == Changed) {
+            m_changedTitle.clear();
+            setStatus(None);
+            return false;
+        }
+    }
+
+    m_changedTitle = title;
+
+    return true;
 }
 
 void TagEditorItem::sortCustomTags()
@@ -152,9 +199,25 @@ void TagEditorItem::sortCustomTags()
         = std::ranges::find_if(sortedChildren, [](const TagEditorItem* item) { return item && !item->isDefault(); });
 
     std::ranges::sort(defaultEnd, sortedChildren.end(), [collator](const TagEditorItem* lhs, const TagEditorItem* rhs) {
-        return collator.compare(lhs->name(), rhs->name()) < 0;
+        return collator.compare(lhs->title(), rhs->title()) < 0;
     });
 
     m_children = sortedChildren;
+}
+
+void TagEditorItem::applyChanges()
+{
+    m_title  = m_changedTitle;
+    m_values = m_changedValues;
+    m_value  = m_changedValue;
+    reset();
+}
+
+void TagEditorItem::reset()
+{
+    m_changedTitle.clear();
+    m_changedValue.clear();
+    m_changedValues.clear();
+    setStatus(None);
 }
 } // namespace Fooyin::TagEditor

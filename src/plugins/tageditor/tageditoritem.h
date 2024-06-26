@@ -35,25 +35,31 @@ public:
     TagEditorItem();
     TagEditorItem(QString title, TagEditorItem* parent, bool isDefault);
 
-    [[nodiscard]] QString name() const;
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] QString changedTitle() const;
     [[nodiscard]] QString value() const;
-    [[nodiscard]] QStringList values() const;
+    [[nodiscard]] QString changedValue() const;
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
 
     void addTrack();
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
-    void setValue(const QStringList& values);
-    void setTitle(const QString& title);
+    bool setValue(const QStringList& values);
+    bool setTitle(const QString& title);
 
     void sortCustomTags();
+    void applyChanges();
+    void reset();
 
 private:
     bool m_isDefault;
-    QString m_name;
+    QString m_title;
+    QString m_changedTitle;
     QStringList m_values;
+    QStringList m_changedValues;
     mutable QString m_value;
+    mutable QString m_changedValue;
     int m_trackCount;
 };
 } // namespace Fooyin::TagEditor

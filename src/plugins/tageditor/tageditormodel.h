@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <utils/extendabletableview.h>
 #include <core/track.h>
+#include <utils/extendabletableview.h>
 #include <utils/tablemodel.h>
 
 namespace Fooyin {
@@ -35,8 +35,10 @@ public:
     explicit TagEditorModel(SettingsManager* settings, QObject* parent = nullptr);
     ~TagEditorModel() override;
 
+    [[nodiscard]] TrackList tracks() const;
     void reset(const TrackList& tracks);
-    bool processQueue();
+    bool haveChanges();
+    void applyChanges();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -46,15 +48,10 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
 
-    [[nodiscard]] bool removeRows(int row, int count,  const QModelIndex &parent) override;
-
-    [[nodiscard]] static QString defaultFieldText();
+    [[nodiscard]] bool removeRows(int row, int count, const QModelIndex& parent) override;
 
     void addPendingRow() override;
     void removePendingRow() override;
-
-signals:
-    void trackMetadataChanged(const TrackList& tracks);
 
 private:
     struct Private;
