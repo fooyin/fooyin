@@ -78,7 +78,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_tabsExpand{new QCheckBox(tr("Expand tabs to fill empty space"), this)}
     , m_tabsAddButton{new QCheckBox(tr("Show add button"), this)}
-    , m_tabsCloseButton{new QCheckBox(tr("Show delete button"), this)}
+    , m_tabsCloseButton{new QCheckBox(tr("Show delete button on tabs"), this)}
     , m_tabsMiddleClose{new QCheckBox(tr("Delete playlists on middle click"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
@@ -141,12 +141,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* tabsGroup       = new QGroupBox(tr("Playlist Tabs"), this);
     auto* tabsGroupLayout = new QGridLayout(tabsGroup);
 
-    auto* addButtonLabel = new QLabel(tr("⚠ This will disable moving tabs by dragging"), this);
-
     row = 0;
     tabsGroupLayout->addWidget(m_tabsExpand, row++, 0);
     tabsGroupLayout->addWidget(m_tabsAddButton, row++, 0);
-    tabsGroupLayout->addWidget(addButtonLabel, row++, 0);
     tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
     tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 

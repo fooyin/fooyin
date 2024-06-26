@@ -50,6 +50,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/fontbutton.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
+    ${CMAKE_SOURCE_DIR}/include/utils/widgets/singletabbedwidget.h
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/tooltip.h
     clickablelabel.cpp
     crypto.cpp
@@ -102,6 +103,7 @@ set(SOURCES
     widgets/fontbutton.cpp
     widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp
+    widgets/singletabbedwidget.cpp
     widgets/tooltip.cpp
 )
 

@@ -23,40 +23,15 @@
 #include <utils/utils.h>
 #include <utils/widgets/popuplineedit.h>
 
-#include <QIcon>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 namespace Fooyin {
 EditableTabBar::EditableTabBar(QWidget* parent)
     : QTabBar{parent}
     , m_lineEdit{nullptr}
-    , m_showAddButton{false}
-    , m_addButtonAdded{false}
 {
     setMovable(true);
-}
-
-bool EditableTabBar::addButtonEnabled() const
-{
-    return m_showAddButton;
-}
-
-void EditableTabBar::setAddButtonEnabled(bool enabled)
-{
-    if(std::exchange(m_showAddButton, enabled) == enabled) {
-        return;
-    }
-
-    if(m_showAddButton) {
-        m_addButtonAdded = true;
-        insertTab(0, Utils::iconFromTheme(Constants::Icons::Add), QStringLiteral(""));
-        setMovable(false);
-    }
-    else if(m_addButtonAdded) {
-        m_addButtonAdded = false;
-        removeTab(0);
-        setMovable(true);
-    }
 }
 
 void EditableTabBar::showEditor()
@@ -101,9 +76,6 @@ void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
     }
 
     if(tabAt(pos) >= 0) {
-        if(m_showAddButton && isAddButtonTab(pos)) {
-            return;
-        }
         showEditor();
     }
 
@@ -113,13 +85,6 @@ void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 void EditableTabBar::mousePressEvent(QMouseEvent* event)
 {
     const QPoint pos = event->position().toPoint();
-
-    if(m_showAddButton && isAddButtonTab(pos)) {
-        if(event->button() & Qt::LeftButton) {
-            emit addButtonClicked();
-        }
-        return;
-    }
 
     if(event->button() & Qt::MiddleButton) {
         emit middleClicked(tabAt(pos));
@@ -137,18 +102,6 @@ void EditableTabBar::wheelEvent(QWheelEvent* event)
     }
 
     QTabBar::wheelEvent(event);
-}
-
-bool EditableTabBar::isAddButtonTab(const QPoint& pos)
-{
-    if(tabRect(currentIndex()).contains(pos)) {
-        return currentIndex() == 0;
-    }
-    if(isTabEnabled(0) && tabRect(0).contains(pos)) {
-        return true;
-    }
-
-    return false;
 }
 } // namespace Fooyin
 

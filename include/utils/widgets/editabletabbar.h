@@ -33,9 +33,6 @@ class FYUTILS_EXPORT EditableTabBar : public QTabBar
 public:
     explicit EditableTabBar(QWidget* parent = nullptr);
 
-    [[nodiscard]] bool addButtonEnabled() const;
-    void setAddButtonEnabled(bool enabled);
-
     void showEditor();
     void closeEditor();
 
@@ -50,10 +47,6 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-    bool isAddButtonTab(const QPoint& pos);
-
     PopupLineEdit* m_lineEdit;
-    bool m_showAddButton;
-    bool m_addButtonAdded;
 };
 } // namespace Fooyin
