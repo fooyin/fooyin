@@ -22,6 +22,7 @@
 #include "fyutils_export.h"
 
 #include <chrono>
+#include <string>
 
 namespace Fooyin {
 class FYUTILS_EXPORT Timer
