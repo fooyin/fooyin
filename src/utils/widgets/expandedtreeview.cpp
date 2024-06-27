@@ -193,7 +193,7 @@ public:
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
-    bool m_hidingScrollbar{false};
+    int m_hidingScrollbar{0};
     bool m_layingOutItems{false};
 
     mutable std::vector<ExpandedTreeViewItem> m_viewItems;
@@ -1092,7 +1092,7 @@ void TreeView::updateScrollBars()
 
     const int vMax = contentsHeight - viewportHeight;
     if(verticalBar->isVisible() && vMax <= 0) {
-        m_p->m_hidingScrollbar = true;
+        m_p->m_hidingScrollbar = 2;
     }
 
     verticalBar->setRange(0, vMax);
@@ -2355,9 +2355,12 @@ void ExpandedTreeView::Private::columnCountChanged(int oldCount, int newCount) c
     m_self->viewport()->update();
 }
 
-void ExpandedTreeView::Private::columnResized(int /*logical*/, int oldSize, int newSize)
+void ExpandedTreeView::Private::columnResized(int logical, int oldSize, int newSize)
 {
     if(m_viewMode == ViewMode::Tree) {
+        if(m_spans.contains(logical)) {
+            m_view->updateColumns();
+        }
         if(m_columnResizeTimerId == 0) {
             m_columnResizeTimerId = m_self->startTimer(20);
         }
@@ -3016,7 +3019,10 @@ void ExpandedTreeView::updateGeometries()
 
     p->m_header->setGeometry(headerGeometry);
     QMetaObject::invokeMethod(p->m_header, "updateGeometries");
-    if(p->m_view) {
+    if(p->m_hidingScrollbar > 0) {
+        --p->m_hidingScrollbar;
+    }
+    else if(p->m_view) {
         p->m_view->updateScrollBars();
     }
     p->m_updatingGeometry = false;
@@ -3284,11 +3290,6 @@ void ExpandedTreeView::timerEvent(QTimerEvent* event)
     else if(event->timerId() == p->m_columnResizeTimerId) {
         killTimer(p->m_columnResizeTimerId);
         p->m_columnResizeTimerId = 0;
-        if(p->m_hidingScrollbar) {
-            p->m_hidingScrollbar = false;
-            return;
-        }
-        p->m_view->updateColumns();
         updateGeometries();
         viewport()->update();
     }
