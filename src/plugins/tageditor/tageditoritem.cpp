@@ -44,6 +44,8 @@ TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefaul
     : TreeStatusItem{parent}
     , m_isDefault{isDefault}
     , m_title{std::move(title)}
+    , m_titleChanged{false}
+    , m_valueChanged{false}
     , m_trackCount{0}
 { }
 
@@ -55,6 +57,11 @@ QString TagEditorItem::title() const
 QString TagEditorItem::changedTitle() const
 {
     return m_changedTitle;
+}
+
+bool TagEditorItem::titleChanged() const
+{
+    return m_titleChanged;
 }
 
 QString TagEditorItem::value() const
@@ -95,6 +102,11 @@ QString TagEditorItem::changedValue() const
     }
 
     return m_changedValue;
+}
+
+bool TagEditorItem::valueChanged() const
+{
+    return m_valueChanged;
 }
 
 bool TagEditorItem::isDefault() const
@@ -153,6 +165,7 @@ bool TagEditorItem::setValue(const QStringList& values)
             return false;
         }
         if(status() == Changed) {
+            m_valueChanged = false;
             m_changedValues.clear();
             m_changedValue.clear();
             setStatus(None);
@@ -162,6 +175,7 @@ bool TagEditorItem::setValue(const QStringList& values)
 
     m_changedValues = values;
     m_changedValue.clear();
+    m_valueChanged = true;
 
     return true;
 }
@@ -173,6 +187,7 @@ bool TagEditorItem::setTitle(const QString& title)
             return false;
         }
         if(status() == Changed) {
+            m_titleChanged = false;
             m_changedTitle.clear();
             setStatus(None);
             return false;
@@ -180,6 +195,7 @@ bool TagEditorItem::setTitle(const QString& title)
     }
 
     m_changedTitle = title;
+    m_titleChanged = true;
 
     return true;
 }
@@ -207,7 +223,9 @@ void TagEditorItem::sortCustomTags()
 
 void TagEditorItem::applyChanges()
 {
-    m_title  = m_changedTitle;
+    if(!m_isDefault || !m_changedTitle.isEmpty()) {
+        m_title = m_changedTitle;
+    }
     m_values = m_changedValues;
     m_value  = m_changedValue;
     reset();
@@ -215,6 +233,8 @@ void TagEditorItem::applyChanges()
 
 void TagEditorItem::reset()
 {
+    m_titleChanged = false;
+    m_valueChanged = false;
     m_changedTitle.clear();
     m_changedValue.clear();
     m_changedValues.clear();

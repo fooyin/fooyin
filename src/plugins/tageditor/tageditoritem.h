@@ -37,8 +37,10 @@ public:
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString changedTitle() const;
+    [[nodiscard]] bool titleChanged() const;
     [[nodiscard]] QString value() const;
     [[nodiscard]] QString changedValue() const;
+    [[nodiscard]] bool valueChanged() const;
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
 
@@ -56,10 +58,12 @@ private:
     bool m_isDefault;
     QString m_title;
     QString m_changedTitle;
+    bool m_titleChanged;
     QStringList m_values;
     QStringList m_changedValues;
     mutable QString m_value;
     mutable QString m_changedValue;
+    bool m_valueChanged;
     int m_trackCount;
 };
 } // namespace Fooyin::TagEditor

@@ -351,7 +351,7 @@ void TagEditorModel::applyChanges()
                         }
                     }
                     else {
-                        p->updateTrackMetadata(node.changedTitle(), node.changedValue());
+                        p->updateTrackMetadata(node.title(), node.changedValue());
                         node.applyChanges();
                     }
 
@@ -427,7 +427,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
 
     if(role == Qt::DisplayRole || role == Qt::EditRole) {
         if(index.column() == 0) {
-            const QString title = !item->changedTitle().isEmpty() ? item->changedTitle() : item->title();
+            const QString title = item->titleChanged() ? item->changedTitle() : item->title();
             if(role == Qt::EditRole) {
                 return title;
             }
@@ -444,7 +444,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                                                    : QVariant::fromValue(StarRating{item->value().toInt(), 5});
         }
 
-        return !item->changedValue().isEmpty() ? item->changedValue() : item->value();
+        return item->valueChanged() ? item->changedValue() : item->value();
     }
 
     return {};
@@ -489,7 +489,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
 
             if(index.row() == 13) {
                 const auto rating = value.value<StarRating>();
-                setValue          = QString::number(rating.starCount());
+                setValue          = rating.starCount() == 0 ? QString{} : QString::number(rating.starCount());
             }
 
             if(!setValue.isEmpty()) {
