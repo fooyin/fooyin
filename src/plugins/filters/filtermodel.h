@@ -25,11 +25,26 @@
 #include <core/track.h>
 #include <utils/treemodel.h>
 
+#include <QCollator>
+#include <QSortFilterProxyModel>
+
 namespace Fooyin {
 class SettingsManager;
 
 namespace Filters {
 struct FilterOptions;
+
+class FilterSortModel : public QSortFilterProxyModel
+{
+public:
+    explicit FilterSortModel(QObject* parent = nullptr);
+
+protected:
+    [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
+private:
+    QCollator m_collator;
+};
 
 class FilterModel : public TreeModel<FilterItem>
 {
@@ -39,9 +54,6 @@ public:
     explicit FilterModel(SettingsManager* settings, QObject* parent = nullptr);
     ~FilterModel() override;
 
-    [[nodiscard]] int sortColumn() const;
-    [[nodiscard]] Qt::SortOrder sortOrder() const;
-    void sortOnColumn(int column, Qt::SortOrder order);
     [[nodiscard]] bool showSummary() const;
     [[nodiscard]] Track::Cover coverType() const;
 

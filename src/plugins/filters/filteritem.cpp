@@ -22,40 +22,6 @@
 #include <core/library/tracksort.h>
 #include <core/track.h>
 
-#include <QCollator>
-
-namespace {
-bool sort(const QCollator& collator, int column, Qt::SortOrder order, const Fooyin::Filters::FilterItem* lhs,
-          const Fooyin::Filters::FilterItem* rhs)
-{
-    if(!lhs || !rhs) {
-        return false;
-    }
-
-    if(lhs->isSummary() && !rhs->isSummary()) {
-        return true;
-    }
-    if(!lhs->isSummary() && rhs->isSummary()) {
-        return false;
-    }
-
-    const auto cmp = collator.compare(lhs->column(column), rhs->column(column));
-
-    if(cmp == 0) {
-        if(std::cmp_less(column, lhs->columns().size() - 1)) {
-            return sort(collator, column + 1, Qt::AscendingOrder, lhs, rhs);
-        }
-        return false;
-    }
-
-    if(order == Qt::AscendingOrder) {
-        return cmp < 0;
-    }
-
-    return cmp > 0;
-}
-} // namespace
-
 namespace Fooyin::Filters {
 FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
@@ -142,22 +108,5 @@ void FilterItem::replaceTrack(const Track& track)
 void FilterItem::sortTracks()
 {
     m_tracks = Sorting::sortTracks(m_tracks);
-}
-
-void FilterItem::sortChildren(int column, Qt::SortOrder order)
-{
-    std::vector<FilterItem*> sortedChildren{m_children};
-
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    std::ranges::sort(sortedChildren, [collator, column, order](const FilterItem* lhs, const FilterItem* rhs) {
-        return sort(collator, column, order, lhs, rhs);
-    });
-    m_children = sortedChildren;
-
-    for(const auto& child : m_children) {
-        child->sortTracks();
-    }
 }
 } // namespace Fooyin::Filters

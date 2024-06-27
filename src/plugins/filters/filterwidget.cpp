@@ -85,6 +85,7 @@ struct FilterWidget::Private
     FilterView* m_view;
     AutoHeaderView* m_header;
     FilterModel* m_model;
+    FilterSortModel* m_sortProxy;
 
     Id m_group;
     int m_index{-1};
@@ -108,10 +109,12 @@ struct FilterWidget::Private
         , m_view{new FilterView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
         , m_model{new FilterModel(m_settings, m_self)}
+        , m_sortProxy{new FilterSortModel(m_self)}
         , m_widgetContext{
               new WidgetContext(m_self, Context{Id{"Fooyin.Context.FilterWidget."}.append(m_self->id())}, m_self)}
     {
-        m_view->setModel(m_model);
+        m_sortProxy->setSourceModel(m_model);
+        m_view->setModel(m_sortProxy);
         m_view->setHeader(m_header);
         m_view->setItemDelegate(new FilterDelegate(m_self));
         m_view->viewport()->installEventFilter(new ToolTipFilter(m_self));
@@ -159,7 +162,7 @@ struct FilterWidget::Private
         QObject::connect(&m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
                          [this](const Filters::FilterColumn& column) { columnChanged(column); });
 
-        QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_model, &FilterModel::sortOnColumn);
+        QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
         QObject::connect(m_header, &FilterView::customContextMenuRequested, m_self,
                          [this](const QPoint& pos) { filterHeaderMenu(pos); });
         QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
@@ -653,7 +656,7 @@ void FilterWidget::finalise()
                 p->m_model, &QAbstractItemModel::modelReset, this,
                 [this]() {
                     p->m_header->restoreHeaderState(p->m_headerState);
-                    p->m_model->sortOnColumn(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
+                    p->m_sortProxy->sort(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
                 },
                 Qt::SingleShotConnection);
         }

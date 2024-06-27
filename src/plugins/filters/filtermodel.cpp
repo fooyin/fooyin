@@ -57,9 +57,45 @@ QByteArray saveTracks(const QModelIndexList& indexes)
 
     return result;
 }
+
+Fooyin::Filters::FilterItem* filterItem(const QModelIndex& index)
+{
+    return static_cast<Fooyin::Filters::FilterItem*>(index.internalPointer());
+}
 } // namespace
 
 namespace Fooyin::Filters {
+FilterSortModel::FilterSortModel(QObject* parent)
+    : QSortFilterProxyModel{parent}
+{
+    m_collator.setNumericMode(true);
+}
+
+bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
+{
+    const auto* leftItem  = filterItem(left);
+    const auto* rightItem = filterItem(right);
+
+    if(!leftItem || !rightItem) {
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+
+    if(leftItem->isSummary() && !rightItem->isSummary()) {
+        return sortOrder() == Qt::AscendingOrder;
+    }
+    if(!leftItem->isSummary() && rightItem->isSummary()) {
+        return sortOrder() != Qt::AscendingOrder;
+    }
+
+    const auto cmp = m_collator.compare(leftItem->column(left.column()), rightItem->column(right.column()));
+
+    if(cmp == 0) {
+        return false;
+    }
+
+    return cmp < 0;
+}
+
 struct FilterModel::Private
 {
     FilterModel* m_self;
@@ -75,8 +111,6 @@ struct FilterModel::Private
     TrackIdNodeMap m_trackParents;
 
     FilterColumnList m_columns;
-    int m_sortColumn{0};
-    Qt::SortOrder m_sortOrder{Qt::AscendingOrder};
     bool m_showDecoration{false};
     bool m_showLabels{true};
     Track::Cover m_coverType{Track::Cover::Front};
@@ -181,29 +215,36 @@ struct FilterModel::Private
 
     void populateModel(PendingTreeData& data)
     {
-        auto* parent = m_self->rootItem();
+        std::vector<FilterItem> newItems;
 
         for(const auto& [key, item] : data.items) {
             if(m_nodes.contains(key)) {
                 m_nodes.at(key).addTracks(item.tracks());
             }
             else {
-                if(!m_resetting) {
-                    const int row = parent->childCount();
-                    m_self->beginInsertRows(m_self->indexOfItem(parent), row, row);
-                }
-
-                FilterItem* child = &m_nodes.emplace(key, item).first->second;
-                parent->appendChild(child);
-
-                if(!m_resetting) {
-                    m_self->endInsertRows();
-                }
+                newItems.push_back(item);
             }
         }
+
+        auto* parent   = m_self->rootItem();
+        const int row  = parent->childCount();
+        const int last = row + static_cast<int>(newItems.size()) - 1;
+
+        if(!m_resetting) {
+            m_self->beginInsertRows({}, row, last);
+        }
+
+        for(const auto& item : newItems) {
+            FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
+            parent->appendChild(child);
+        }
+
+        if(!m_resetting) {
+            m_self->endInsertRows();
+        }
+
         m_trackParents.merge(data.trackParents);
 
-        parent->sortChildren(m_sortColumn, m_sortOrder);
         updateSummary();
     }
 
@@ -244,26 +285,6 @@ FilterModel::~FilterModel()
     p->m_populator.stopThread();
     p->m_populatorThread.quit();
     p->m_populatorThread.wait();
-}
-
-int FilterModel::sortColumn() const
-{
-    return p->m_sortColumn;
-};
-
-Qt::SortOrder FilterModel::sortOrder() const
-{
-    return p->m_sortOrder;
-}
-
-void FilterModel::sortOnColumn(int column, Qt::SortOrder order)
-{
-    p->m_sortColumn = column;
-    p->m_sortOrder  = order;
-
-    emit layoutAboutToBeChanged();
-    rootItem()->sortChildren(column, order);
-    emit layoutChanged();
 }
 
 bool FilterModel::showSummary() const

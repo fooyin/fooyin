@@ -59,8 +59,6 @@ public:
     void replaceTrack(const Track& track);
     void sortTracks();
 
-    void sortChildren(int column, Qt::SortOrder order);
-
 private:
     QString m_key;
     QStringList m_columns;
