@@ -19,10 +19,10 @@
 
 #include <gui/coverprovider.h>
 
-#include "core/tagging/tagreader.h"
 #include "internalguisettings.h"
 
 #include <core/scripting/scriptparser.h>
+#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
@@ -70,7 +70,7 @@ namespace Fooyin {
 struct CoverProvider::Private
 {
     CoverProvider* m_self;
-
+    std::shared_ptr<TagLoader> m_tagLoader;
     SettingsManager* m_settings;
 
     double m_windowDpr{1.0};
@@ -86,7 +86,8 @@ struct CoverProvider::Private
     ScriptParser m_parser;
     CoverPaths m_paths;
 
-    std::mutex m_fetchGuard;
+    std::shared_mutex m_dirGuard;
+    std::mutex m_parserGuard;
 
     struct CoverLoaderResult
     {
@@ -94,8 +95,9 @@ struct CoverProvider::Private
         bool isThumb{false};
     };
 
-    explicit Private(CoverProvider* self, SettingsManager* settings)
+    explicit Private(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
         : m_self{self}
+        , m_tagLoader{std::move(tagLoader)}
         , m_settings{settings}
         , m_windowDpr{m_settings->value<Settings::Gui::MainWindowPixelRatio>()}
         , m_size{m_settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
@@ -147,7 +149,7 @@ struct CoverProvider::Private
 
         QStringList filters;
 
-        const std::scoped_lock lock{m_fetchGuard};
+        const std::shared_lock lock{m_dirGuard};
 
         if(type == Track::Cover::Front) {
             for(const auto& path : m_paths.frontCoverPaths) {
@@ -206,9 +208,12 @@ struct CoverProvider::Private
                   }
 
                   if(image.isNull()) {
-                      const QByteArray coverData = Tagging::readCover(track, type);
-                      if(!coverData.isEmpty()) {
-                          image.loadFromData(coverData);
+                      const std::scoped_lock lock{m_parserGuard};
+                      if(auto* tagParser = m_tagLoader->parserForTrack(track)) {
+                          const QByteArray coverData = tagParser->readCover(track, type);
+                          if(!coverData.isEmpty()) {
+                              image.loadFromData(coverData);
+                          }
                       }
                   }
 
@@ -249,9 +254,9 @@ struct CoverProvider::Private
     }
 };
 
-CoverProvider::CoverProvider(SettingsManager* settings, QObject* parent)
+CoverProvider::CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<Private>(this, std::move(tagLoader), settings)}
 { }
 
 void CoverProvider::setUsePlaceholder(bool enabled)

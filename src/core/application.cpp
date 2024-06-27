@@ -27,14 +27,16 @@
 #include "library/unifiedmusiclibrary.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
-#include "playlist/playlistparserregistry.h"
+#include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
+#include "tagging/taglibparser.h"
 #include "translations.h"
 
 #include <core/engine/outputplugin.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
+#include <core/tagging/tagloader.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
@@ -64,10 +66,11 @@ struct Application::Private
     CoreSettings coreSettings;
     Translations translations;
     Database* database;
+    std::shared_ptr<TagLoader> tagLoader;
     PlayerController* playerController;
     EngineHandler engine;
     LibraryManager* libraryManager;
-    PlaylistParserRegistry parserRegistry;
+    std::shared_ptr<PlaylistLoader> playlistLoader;
     UnifiedMusicLibrary* library;
     PlaylistHandler* playlistHandler;
 
@@ -83,17 +86,21 @@ struct Application::Private
         , coreSettings{settingsManager}
         , translations{settingsManager}
         , database{new Database(self)}
+        , tagLoader{std::make_shared<TagLoader>()}
         , playerController{new PlayerController(settingsManager, self)}
         , engine{playerController, settingsManager}
         , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, self)}
-        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), &parserRegistry, settingsManager,
-                                          self)}
-        , playlistHandler{new PlaylistHandler(database->connectionPool(), playerController, settingsManager, self)}
+        , playlistLoader{std::make_shared<PlaylistLoader>()}
+        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), playlistLoader, tagLoader,
+                                          settingsManager, self)}
+        , playlistHandler{new PlaylistHandler(database->connectionPool(), tagLoader, playerController, settingsManager,
+                                              self)}
         , pluginManager{settingsManager}
-        , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
-                            library,        playlistHandler, settingsManager,  &parserRegistry}
+        , corePluginContext{&pluginManager,  &engine,         playerController, libraryManager, library,
+                            playlistHandler, settingsManager, playlistLoader,   tagLoader}
     {
         registerTypes();
+        registerTagParsers();
         registerPlaylistParsers();
         loadPlugins();
 
@@ -112,8 +119,13 @@ struct Application::Private
 
     void registerPlaylistParsers()
     {
-        parserRegistry.registerParser(std::make_unique<CueParser>());
-        parserRegistry.registerParser(std::make_unique<M3uParser>());
+        playlistLoader->addParser(std::make_unique<CueParser>(tagLoader));
+        playlistLoader->addParser(std::make_unique<M3uParser>(tagLoader));
+    }
+
+    void registerTagParsers()
+    {
+        tagLoader->addParser({QStringLiteral("TagLib"), std::make_unique<TagLibParser>()});
     }
 
     void loadPlugins()

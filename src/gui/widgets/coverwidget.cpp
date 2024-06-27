@@ -38,12 +38,12 @@
 
 namespace Fooyin {
 CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
-                         SettingsManager* settings, QWidget* parent)
+                         std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
     , m_trackSelection{trackSelection}
     , m_settings{settings}
-    , m_coverProvider{new CoverProvider(settings, this)}
+    , m_coverProvider{new CoverProvider(std::move(tagLoader), settings, this)}
     , m_displayOption{static_cast<CoverDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{true}

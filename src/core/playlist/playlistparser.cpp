@@ -24,6 +24,15 @@
 #include <QUrl>
 
 namespace Fooyin {
+PlaylistParser::PlaylistParser(std::shared_ptr<TagLoader> tagLoader)
+    : m_tagLoader{std::move(tagLoader)}
+{ }
+
+void Fooyin::PlaylistParser::savePlaylist(QIODevice* /*device*/, const QString& /*extension*/,
+                                          const TrackList& /*tracks*/, const QDir& /*dir*/, PathType /*type*/,
+                                          bool /*writeMetdata*/)
+{ }
+
 QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, PathType type)
 {
     if(!url.isLocalFile()) {
@@ -61,8 +70,15 @@ void PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
     }
 }
 
-void Fooyin::PlaylistParser::savePlaylist(QIODevice* /*device*/, const QString& /*extension*/,
-                                          const TrackList& /*tracks*/, const QDir& /*dir*/, PathType /*type*/,
-                                          bool /*writeMetdata*/)
-{ }
+Track PlaylistParser::readMetadata(const Track& track)
+{
+    if(auto* parser = m_tagLoader->parserForTrack(track)) {
+        Track readTrack{track};
+        parser->readMetaData(readTrack);
+        return readTrack;
+    }
+
+    return track;
+}
+
 } // namespace Fooyin

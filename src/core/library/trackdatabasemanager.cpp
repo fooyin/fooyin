@@ -20,15 +20,19 @@
 #include "trackdatabasemanager.h"
 
 #include "database/trackdatabase.h"
-#include "tagging/tagwriter.h"
 
+#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 
+#include <QFileInfo>
+
 namespace Fooyin {
-TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* parent)
+TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+                                           QObject* parent)
     : Worker{parent}
     , m_dbPool{std::move(dbPool)}
+    , m_tagLoader{std::move(tagLoader)}
 { }
 
 void TrackDatabaseManager::initialiseThread()
@@ -51,8 +55,12 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
 
     for(const Track& track : tracks) {
         Track updatedTrack{track};
-        if(Tagging::writeMetaData(updatedTrack) && m_trackDatabase.updateTrack(updatedTrack)) {
-            tracksUpdated.emplace_back(updatedTrack);
+        if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
+            if(parser->writeMetaData(updatedTrack) && m_trackDatabase.updateTrack(updatedTrack)) {
+                const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
+                updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+                tracksUpdated.emplace_back(updatedTrack);
+            }
         }
     }
 

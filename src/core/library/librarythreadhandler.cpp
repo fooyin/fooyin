@@ -67,13 +67,14 @@ struct LibraryThreadHandler::Private
     int m_currentRequestId{-1};
 
     Private(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
-            PlaylistParserRegistry* parserRegistry, SettingsManager* settings)
+            std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
+            SettingsManager* settings)
         : m_self{self}
         , m_dbPool{std::move(dbPool)}
         , m_library{library}
         , m_settings{settings}
-        , m_scanner{m_dbPool, parserRegistry, m_settings}
-        , m_trackDatabaseManager{m_dbPool}
+        , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader, m_settings}
+        , m_trackDatabaseManager{m_dbPool, tagLoader}
     {
         m_scanner.moveToThread(&m_thread);
         m_trackDatabaseManager.moveToThread(&m_thread);
@@ -281,10 +282,12 @@ struct LibraryThreadHandler::Private
 };
 
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
-                                           PlaylistParserRegistry* parserRegistry, SettingsManager* settings,
+                                           std::shared_ptr<PlaylistLoader> playlistLoader,
+                                           std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), library, parserRegistry, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), library, std::move(playlistLoader), std::move(tagLoader),
+                                  settings)}
 {
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);

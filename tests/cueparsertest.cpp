@@ -28,8 +28,15 @@
 namespace Fooyin::Testing {
 class CueParserTest : public ::testing::Test
 {
+public:
+    CueParserTest()
+        : m_tagLoader{std::make_shared<TagLoader>()}
+        , m_parser{std::make_unique<CueParser>(m_tagLoader)}
+    { }
+
 protected:
-    std::unique_ptr<PlaylistParser> m_parser{std::make_unique<CueParser>()};
+    std::shared_ptr<TagLoader> m_tagLoader;
+    std::unique_ptr<PlaylistParser> m_parser;
 };
 
 TEST_F(CueParserTest, SingleCue)

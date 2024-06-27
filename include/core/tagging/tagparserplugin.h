@@ -19,25 +19,32 @@
 
 #pragma once
 
-#include "fycore_export.h"
+#include <core/tagging/tagparser.h>
 
-#include <memory>
-
-#include <QStringList>
+#include <QtPlugin>
 
 namespace Fooyin {
-class PlaylistParser;
+struct TagParserContext
+{
+    QString name;
+    std::unique_ptr<TagParser> parser;
+};
 
-class FYCORE_EXPORT PlaylistParserRegistry
+/*!
+ * An abstract interface for plugins which add a parser for tags/metadata.
+ */
+class TagParserPlugin
 {
 public:
-    PlaylistParser* registerParser(std::unique_ptr<PlaylistParser> parser);
+    virtual ~TagParserPlugin() = default;
 
-    [[nodiscard]] QStringList supportedExtensions() const;
-    [[nodiscard]] QStringList supportedSaveExtensions() const;
-    [[nodiscard]] PlaylistParser* parserForExtension(const QString& extension) const;
-
-private:
-    std::unordered_map<QString, std::unique_ptr<PlaylistParser>> m_parsers;
+    /*!
+     * This is called after all core plugins have been initialised.
+     * This must return the name of the parser and a  a unique_ptr
+     * to a TagParser subclass.
+     */
+    virtual TagParserContext registerTagParser() = 0;
 };
 } // namespace Fooyin
+
+Q_DECLARE_INTERFACE(Fooyin::TagParserPlugin, "com.fooyin.plugin.tagging.parser")

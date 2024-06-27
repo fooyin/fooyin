@@ -19,9 +19,6 @@
 
 #include "m3uparser.h"
 
-#include "tagging/tagreader.h"
-#include "utils/utils.h"
-
 #include <core/track.h>
 
 #include <QBuffer>
@@ -137,8 +134,8 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 }
             }
 
-            Track track{path};
-            if(Tagging::readMetaData(track) || !skipNotFound) {
+            if(QFile::exists(path) || !skipNotFound) {
+                Track track = PlaylistParser::readMetadata(Track{path});
                 if(track.title().isEmpty() && !metadata.title.isEmpty()) {
                     track.setTitle(metadata.title);
                 }

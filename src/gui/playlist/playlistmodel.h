@@ -31,13 +31,14 @@
 #include <QThread>
 
 namespace Fooyin {
-class SettingsManager;
+class CoverProvider;
 class MusicLibrary;
-class PlayerController;
 class Playlist;
+class PlayerController;
+class PlaylistInteractor;
 struct PlaylistPreset;
 struct PlaylistTrack;
-class CoverProvider;
+class SettingsManager;
 
 struct TrackIndexResult
 {
@@ -71,7 +72,7 @@ class PlaylistModel : public TreeModel<PlaylistItem>
     Q_OBJECT
 
 public:
-    PlaylistModel(MusicLibrary* library, PlayerController* playerController, SettingsManager* settings,
+    PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider, SettingsManager* settings,
                   QObject* parent = nullptr);
     ~PlaylistModel() override;
 

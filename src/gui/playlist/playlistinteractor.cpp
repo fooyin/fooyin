@@ -91,7 +91,7 @@ PlaylistHandler* PlaylistInteractor::handler() const
     return p->m_handler;
 }
 
-PlaylistController* PlaylistInteractor::controller() const
+PlaylistController* PlaylistInteractor::playlistController() const
 {
     return p->m_controller;
 }
@@ -99,6 +99,11 @@ PlaylistController* PlaylistInteractor::controller() const
 MusicLibrary* PlaylistInteractor::library() const
 {
     return p->m_library;
+}
+
+PlayerController* PlaylistInteractor::playerController() const
+{
+    return p->m_controller->playerController();
 }
 
 void PlaylistInteractor::filesToPlaylist(const Id& id, const QList<QUrl>& urls) const

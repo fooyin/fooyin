@@ -21,10 +21,16 @@
 
 #include "fycore_export.h"
 
-#include <core/track.h>
+#include <core/tagging/tagparser.h>
 
-#include <memory>
+namespace Fooyin {
+class FYCORE_EXPORT TagLibParser : public TagParser
+{
+public:
+    [[nodiscard]] QStringList supportedExtensions() const override;
 
-namespace Fooyin::Tagging {
-FYCORE_EXPORT bool writeMetaData(Track& track);
-} // namespace Fooyin::Tagging
+    bool readMetaData(Track& track) override;
+    QByteArray readCover(const Track& track, Track::Cover cover) override;
+    bool writeMetaData(const Track& track) override;
+};
+} // namespace Fooyin

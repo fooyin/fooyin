@@ -82,6 +82,7 @@ public:
      */
     void scheduleNextIndex(int index);
 
+    int nextIndex(int delta, PlayModes mode);
     /*!
      * Returns the next track to be played based on the @p delta from the current
      * index and the @p mode.
@@ -120,6 +121,7 @@ private:
 
     void replaceTracks(const TrackList& tracks);
     void appendTracks(const TrackList& tracks);
+    void updateTrackAtIndex(int index, const Track& track);
     std::vector<int> removeTracks(const std::vector<int>& indexes);
 
     /** Removes all tracks, including all shuffle order history */

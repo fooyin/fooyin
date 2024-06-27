@@ -19,15 +19,18 @@
 
 #pragma once
 
+#include <memory>
+
 namespace Fooyin {
 class EngineController;
 class PlayerController;
 class PlaylistHandler;
-class PlaylistParserRegistry;
+class PlaylistLoader;
 class PluginManager;
 class LibraryManager;
 class MusicLibrary;
 class SettingsManager;
+class TagLoader;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -36,7 +39,8 @@ struct CorePluginContext
 {
     CorePluginContext(PluginManager* pluginManager_, EngineController* engine_, PlayerController* playerController_,
                       LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistHandler* playlistHandler_,
-                      SettingsManager* settingsManager_, PlaylistParserRegistry* playlistParsers_)
+                      SettingsManager* settingsManager_, std::shared_ptr<PlaylistLoader> playlistLoader_,
+                      std::shared_ptr<TagLoader> tagLoader_)
         : pluginManager{pluginManager_}
         , playerController{playerController_}
         , libraryManager{libraryManager_}
@@ -44,7 +48,8 @@ struct CorePluginContext
         , playlistHandler{playlistHandler_}
         , settingsManager{settingsManager_}
         , engine{engine_}
-        , playlistParsers{playlistParsers_}
+        , playlistLoader{std::move(playlistLoader_)}
+        , tagLoader{std::move(tagLoader_)}
     { }
 
     PluginManager* pluginManager;
@@ -54,6 +59,7 @@ struct CorePluginContext
     PlaylistHandler* playlistHandler;
     SettingsManager* settingsManager;
     EngineController* engine;
-    PlaylistParserRegistry* playlistParsers;
+    std::shared_ptr<PlaylistLoader> playlistLoader;
+    std::shared_ptr<TagLoader> tagLoader;
 };
 } // namespace Fooyin

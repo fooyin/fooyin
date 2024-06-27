@@ -27,8 +27,9 @@
 
 namespace Fooyin {
 class LibraryManager;
-class PlaylistParserRegistry;
+class PlaylistLoader;
 class SettingsManager;
+class TagLoader;
 
 struct ScanResult
 {
@@ -41,8 +42,8 @@ class LibraryScanner : public Worker
     Q_OBJECT
 
 public:
-    explicit LibraryScanner(DbConnectionPoolPtr dbPool, PlaylistParserRegistry* parserRegistry,
-                            SettingsManager* settings, QObject* parent = nullptr);
+    explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
+                            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;

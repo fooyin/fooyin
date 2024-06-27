@@ -26,8 +26,9 @@
 
 namespace Fooyin {
 class EditableLayout;
-class SettingsManager;
 class MusicLibrary;
+class SettingsManager;
+class TagLoader;
 class TrackSelectionController;
 
 namespace Filters {
@@ -50,7 +51,7 @@ class FilterController : public QObject
 
 public:
     FilterController(MusicLibrary* library, TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                     SettingsManager* settings, QObject* parent = nullptr);
+                     std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
     ~FilterController() override;
 
     FilterWidget* createFilter();

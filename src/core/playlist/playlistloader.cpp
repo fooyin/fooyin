@@ -17,13 +17,17 @@
  *
  */
 
-#include "playlistparserregistry.h"
+#include "playlistloader.h"
 
 #include <core/playlist/playlistparser.h>
 
+#include <mutex>
+
 namespace Fooyin {
-PlaylistParser* PlaylistParserRegistry::registerParser(std::unique_ptr<PlaylistParser> parser)
+PlaylistParser* PlaylistLoader::addParser(std::unique_ptr<PlaylistParser> parser)
 {
+    const std::unique_lock lock{m_parserMutex};
+
     const QString name = parser->name();
     if(m_parsers.contains(name)) {
         return m_parsers.at(name).get();
@@ -32,8 +36,10 @@ PlaylistParser* PlaylistParserRegistry::registerParser(std::unique_ptr<PlaylistP
     return m_parsers.emplace(name, std::move(parser)).first->second.get();
 }
 
-QStringList PlaylistParserRegistry::supportedExtensions() const
+QStringList PlaylistLoader::supportedExtensions() const
 {
+    const std::shared_lock lock{m_parserMutex};
+
     QStringList extensions;
 
     for(const auto& [_, parser] : m_parsers) {
@@ -43,8 +49,10 @@ QStringList PlaylistParserRegistry::supportedExtensions() const
     return extensions;
 }
 
-QStringList PlaylistParserRegistry::supportedSaveExtensions() const
+QStringList PlaylistLoader::supportedSaveExtensions() const
 {
+    const std::shared_lock lock{m_parserMutex};
+
     QStringList extensions;
 
     for(const auto& [_, parser] : m_parsers) {
@@ -56,8 +64,10 @@ QStringList PlaylistParserRegistry::supportedSaveExtensions() const
     return extensions;
 }
 
-PlaylistParser* PlaylistParserRegistry::parserForExtension(const QString& extension) const
+PlaylistParser* PlaylistLoader::parserForExtension(const QString& extension) const
 {
+    const std::shared_lock lock{m_parserMutex};
+
     for(const auto& [_, parser] : m_parsers) {
         if(parser->supportedExtensions().contains(extension)) {
             return parser.get();

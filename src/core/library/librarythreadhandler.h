@@ -28,10 +28,11 @@
 
 namespace Fooyin {
 class MusicLibrary;
-class PlaylistParserRegistry;
+class PlaylistLoader;
 struct ScanResult;
 struct ScanRequest;
 class SettingsManager;
+class TagLoader;
 
 class LibraryThreadHandler : public QObject
 {
@@ -39,7 +40,8 @@ class LibraryThreadHandler : public QObject
 
 public:
     explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
-                                  PlaylistParserRegistry* parserRegistry, SettingsManager* settings,
+                                  std::shared_ptr<PlaylistLoader> playlistLoader,
+                                  std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
                                   QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 

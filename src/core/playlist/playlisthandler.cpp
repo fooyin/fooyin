@@ -74,6 +74,7 @@ struct PlaylistHandler::Private
     PlaylistHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
+    std::shared_ptr<TagLoader> m_tagLoader;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
     PlaylistDatabase m_playlistConnector;
@@ -84,10 +85,11 @@ struct PlaylistHandler::Private
     Playlist* m_activePlaylist{nullptr};
     Playlist* m_scheduledPlaylist{nullptr};
 
-    Private(PlaylistHandler* self, DbConnectionPoolPtr dbPool, PlayerController* playerController,
-            SettingsManager* settings)
+    Private(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+            PlayerController* playerController, SettingsManager* settings)
         : m_self{self}
         , m_dbPool{std::move(dbPool)}
+        , m_tagLoader{std::move(tagLoader)}
         , m_playerController{playerController}
         , m_settings{settings}
     {
@@ -116,7 +118,16 @@ struct PlaylistHandler::Private
             return;
         }
 
-        m_playerController->changeCurrentTrack({track, m_activePlaylist->id(), index});
+        Track nextTrk{track};
+        if(!nextTrk.metadataWasRead()) {
+            if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
+                if(parser->readMetaData(nextTrk)) {
+                    m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
+                }
+            }
+        }
+
+        m_playerController->changeCurrentTrack({nextTrk, m_activePlaylist->id(), index});
         m_playerController->play();
     }
 
@@ -132,14 +143,14 @@ struct PlaylistHandler::Private
             return;
         }
 
-        const Track nextTrack = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
+        const Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
 
-        if(!nextTrack.isValid()) {
+        if(!nextTrk.isValid()) {
             m_playerController->stop();
             return;
         }
 
-        startNextTrack(nextTrack, m_activePlaylist->currentTrackIndex());
+        startNextTrack(nextTrk, m_activePlaylist->currentTrackIndex());
     }
 
     Track nextTrack(int delta)
@@ -151,7 +162,18 @@ struct PlaylistHandler::Private
             return {};
         }
 
-        return m_activePlaylist->nextTrack(delta, m_playerController->playMode());
+        Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
+
+        if(!nextTrk.metadataWasRead()) {
+            if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
+                if(parser->readMetaData(nextTrk)) {
+                    const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
+                    m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
+                }
+            }
+        }
+
+        return nextTrk;
     }
 
     void next()
@@ -284,10 +306,10 @@ struct PlaylistHandler::Private
     }
 };
 
-PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, PlayerController* playerController,
-                                 SettingsManager* settings, QObject* parent)
+PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+                                 PlayerController* playerController, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), playerController, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), std::move(tagLoader), playerController, settings)}
 {
     p->reloadPlaylists();
 

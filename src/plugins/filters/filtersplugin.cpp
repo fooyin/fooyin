@@ -26,6 +26,7 @@
 #include "settings/filtersgeneralpage.h"
 #include "settings/filtersguipage.h"
 
+#include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -38,6 +39,7 @@ struct FiltersPlugin::Private
     ActionManager* actionManager;
     SettingsManager* settings;
     MusicLibrary* library;
+    std::shared_ptr<TagLoader> tagLoader;
     PlayerController* playerController;
     LayoutProvider* layoutProvider;
     WidgetProvider* widgetProvider;
@@ -92,6 +94,7 @@ void FiltersPlugin::initialise(const CorePluginContext& context)
     p->library          = context.library;
     p->playerController = context.playerController;
     p->settings         = context.settingsManager;
+    p->tagLoader        = context.tagLoader;
 }
 
 void FiltersPlugin::initialise(const GuiPluginContext& context)
@@ -103,7 +106,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 
     p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
     p->filterController
-        = new FilterController(p->library, p->trackSelection, context.editableLayout, p->settings, this);
+        = new FilterController(p->library, p->trackSelection, context.editableLayout, p->tagLoader, p->settings, this);
 
     p->widgetProvider->registerWidget(
         QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); },

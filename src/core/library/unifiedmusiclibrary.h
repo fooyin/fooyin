@@ -26,6 +26,7 @@
 namespace Fooyin {
 class SettingsManager;
 struct LibraryInfo;
+class TagLoader;
 
 class UnifiedMusicLibrary : public MusicLibrary
 {
@@ -33,7 +34,8 @@ class UnifiedMusicLibrary : public MusicLibrary
 
 public:
     UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
-                        PlaylistParserRegistry* parserRegistry, SettingsManager* settings, QObject* parent = nullptr);
+                        std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
+                        SettingsManager* settings, QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
     void loadAllTracks() override;

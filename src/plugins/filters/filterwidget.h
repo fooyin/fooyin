@@ -23,8 +23,9 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
-class SettingsManager;
 class AutoHeaderView;
+class CoverProvider;
+class SettingsManager;
 class WidgetContext;
 
 namespace Filters {
@@ -34,7 +35,7 @@ class FilterWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;

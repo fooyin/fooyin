@@ -19,8 +19,6 @@
 
 #include <core/playlist/playlist.h>
 
-#include "tagging/tagreader.h"
-
 #include <core/track.h>
 #include <utils/crypto.h>
 
@@ -65,18 +63,6 @@ struct Playlist::Private
         , m_name{std::move(name)}
         , m_index{index}
     { }
-
-    void readTrack(int trackIndex)
-    {
-        if(trackIndex < 0 || std::cmp_greater_equal(trackIndex, m_tracks.size())) {
-            return;
-        }
-
-        Track& track = m_tracks.at(trackIndex);
-        if(!track.metadataWasRead()) {
-            Tagging::readMetaData(track);
-        }
-    }
 
     void createShuffleOrder()
     {
@@ -246,6 +232,11 @@ void Playlist::scheduleNextIndex(int index)
     }
 }
 
+int Playlist::nextIndex(int delta, PlayModes mode)
+{
+    return p->getNextIndex(delta, mode);
+}
+
 Track Playlist::nextTrack(int delta, PlayModes mode)
 {
     const int index = p->getNextIndex(delta, mode);
@@ -253,8 +244,6 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
     if(index < 0) {
         return {};
     }
-
-    p->readTrack(index);
 
     return p->m_tracks.at(index);
 }
@@ -275,7 +264,6 @@ Track Playlist::nextTrackChange(int delta, PlayModes mode)
 void Playlist::changeCurrentIndex(int index)
 {
     p->m_currentTrackIndex = index;
-    p->readTrack(index);
 }
 
 void Playlist::reset()
@@ -348,6 +336,17 @@ void Playlist::appendTracks(const TrackList& tracks)
     std::ranges::copy(tracks, std::back_inserter(p->m_tracks));
     p->m_tracksModified = true;
     p->m_shuffleOrder.clear();
+}
+
+void Playlist::updateTrackAtIndex(int index, const Track& track)
+{
+    if(index < 0 || std::cmp_greater_equal(index, p->m_tracks.size())) {
+        return;
+    }
+
+    if(p->m_tracks.at(index).uniqueFilepath() == track.uniqueFilepath()) {
+        p->m_tracks[index] = track;
+    }
 }
 
 std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)

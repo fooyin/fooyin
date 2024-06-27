@@ -21,20 +21,25 @@
 
 #include "fycore_export.h"
 
-#include <core/playlist/playlistparser.h>
+#include <memory>
+#include <shared_mutex>
+
+#include <QStringList>
 
 namespace Fooyin {
-class FYCORE_EXPORT M3uParser : public PlaylistParser
+class PlaylistParser;
+
+class FYCORE_EXPORT PlaylistLoader
 {
 public:
-    using PlaylistParser::PlaylistParser;
+    PlaylistParser* addParser(std::unique_ptr<PlaylistParser> parser);
 
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool saveIsSupported() const override;
+    [[nodiscard]] QStringList supportedExtensions() const;
+    [[nodiscard]] QStringList supportedSaveExtensions() const;
+    [[nodiscard]] PlaylistParser* parserForExtension(const QString& extension) const;
 
-    TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
-    void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
-                      PathType type, bool writeMetdata) override;
+private:
+    std::unordered_map<QString, std::unique_ptr<PlaylistParser>> m_parsers;
+    mutable std::shared_mutex m_parserMutex;
 };
 } // namespace Fooyin

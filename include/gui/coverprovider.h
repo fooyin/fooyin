@@ -33,6 +33,7 @@ class QSize;
 
 namespace Fooyin {
 class SettingsManager;
+class TagLoader;
 
 /*!
  * Provides access to track album artwork.
@@ -42,7 +43,7 @@ class FYGUI_EXPORT CoverProvider : public QObject
     Q_OBJECT
 
 public:
-    explicit CoverProvider(SettingsManager* settings, QObject* parent = nullptr);
+    explicit CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
     ~CoverProvider() override;
 
     /*!

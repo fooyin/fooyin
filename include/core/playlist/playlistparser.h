@@ -21,6 +21,7 @@
 
 #include "fycore_export.h"
 
+#include <core/tagging/tagloader.h>
 #include <core/track.h>
 
 #include <QDir>
@@ -37,6 +38,7 @@ public:
         Relative
     };
 
+    explicit PlaylistParser(std::shared_ptr<TagLoader> tagLoader);
     virtual ~PlaylistParser() = default;
 
     [[nodiscard]] virtual QString name() const                    = 0;
@@ -49,5 +51,11 @@ public:
 
     static void detectEncoding(QTextStream& in, QIODevice* file);
     static QString determineTrackPath(const QUrl& url, const QDir& dir, PathType type);
+
+protected:
+    Track readMetadata(const Track& track);
+
+private:
+    std::shared_ptr<TagLoader> m_tagLoader;
 };
 } // namespace Fooyin

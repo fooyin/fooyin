@@ -114,7 +114,7 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_actionManager{actionManager}
     , m_settings{settings}
     , m_playlistInteractor{playlistInteractor}
-    , m_playerController{playlistInteractor->controller()->playerController()}
+    , m_playerController{playlistInteractor->playlistController()->playerController()}
     , m_organiserTree{new QTreeView(this)}
     , m_model{new PlaylistOrganiserModel(playlistInteractor->handler(), m_playerController)}
     , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())},
@@ -200,11 +200,11 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, m_model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(m_playlistInteractor->controller(), &PlaylistController::currentPlaylistChanged, this, [this]() {
+    QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistChanged, this, [this]() {
         QMetaObject::invokeMethod(
             m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
     });
-    QObject::connect(m_playlistInteractor->controller(), &PlaylistController::playlistsLoaded, this,
+    QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
     if(m_model->restoreModel(m_settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
@@ -279,13 +279,13 @@ void PlaylistOrganiser::selectionChanged()
     const Id playlistId = playlist->id();
 
     if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
-        m_playlistInteractor->controller()->changeCurrentPlaylist(playlist);
+        m_playlistInteractor->playlistController()->changeCurrentPlaylist(playlist);
     }
 }
 
 void PlaylistOrganiser::selectCurrentPlaylist()
 {
-    auto* playlist = m_playlistInteractor->controller()->currentPlaylist();
+    auto* playlist = m_playlistInteractor->playlistController()->currentPlaylist();
     if(!playlist) {
         return;
     }

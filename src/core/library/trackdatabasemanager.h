@@ -21,18 +21,21 @@
 
 #include "database/trackdatabase.h"
 
+#include <core/tagging/tagparser.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
 class Database;
+class TagLoader;
 
 class TrackDatabaseManager : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, QObject* parent = nullptr);
+    explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+                                  QObject* parent = nullptr);
 
     void initialiseThread() override;
 
@@ -48,6 +51,7 @@ public slots:
 
 private:
     DbConnectionPoolPtr m_dbPool;
+    std::shared_ptr<TagLoader> m_tagLoader;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     TrackDatabase m_trackDatabase;
 };

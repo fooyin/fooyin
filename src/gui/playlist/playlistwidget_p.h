@@ -56,7 +56,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                          SettingsManager* settings);
+                          CoverProvider* coverProvider, SettingsManager* settings);
 
     void setupConnections();
     void setupActions();

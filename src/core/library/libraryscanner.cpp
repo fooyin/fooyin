@@ -24,16 +24,17 @@
 #include "library/libraryinfo.h"
 #include "librarywatcher.h"
 #include "playlist/parsers/cueparser.h"
-#include "playlist/playlistparserregistry.h"
-#include "tagging/tagreader.h"
+#include "playlist/playlistloader.h"
 
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistparser.h>
+#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/timer.h>
 
 #include <QBuffer>
 #include <QDir>
@@ -103,8 +104,8 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
         QStringList playlists;
 
         if(info.isDir()) {
-            const QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-            for(const auto& subDir : subDirs) {
+            QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+            for(const auto& subDir : subDirs | std::views::reverse) {
                 stack.emplace(subDir.absoluteFilePath());
             }
             const QFileInfoList foundFiles = dir.entryInfoList(fileExtensions, QDir::Files);
@@ -183,7 +184,8 @@ struct LibraryScanner::Private
     LibraryScanner* m_self;
 
     DbConnectionPoolPtr m_dbPool;
-    PlaylistParserRegistry* m_parserRegistry;
+    std::shared_ptr<PlaylistLoader> m_playlistLoader;
+    std::shared_ptr<TagLoader> m_tagLoader;
     SettingsManager* m_settings;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
@@ -208,13 +210,14 @@ struct LibraryScanner::Private
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
 
-    Private(LibraryScanner* self, DbConnectionPoolPtr dbPool, PlaylistParserRegistry* parserRegistry,
-            SettingsManager* settings)
+    Private(LibraryScanner* self, DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
+            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
         : m_self{self}
         , m_dbPool{std::move(dbPool)}
-        , m_parserRegistry{parserRegistry}
+        , m_playlistLoader{std::move(playlistLoader)}
+        , m_tagLoader{std::move(tagLoader)}
         , m_settings{settings}
-        , m_cueParser{static_cast<CueParser*>(m_parserRegistry->parserForExtension(QStringLiteral("*.cue")))}
+        , m_cueParser{static_cast<CueParser*>(m_playlistLoader->parserForExtension(QStringLiteral("*.cue")))}
     { }
 
     void cleanupScan()
@@ -297,7 +300,7 @@ struct LibraryScanner::Private
         QDir dir{file};
         dir.cdUp();
 
-        if(auto* parser = m_parserRegistry->parserForExtension(info.suffix())) {
+        if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
             return parser->readPlaylist(&playlistFile, file, dir, true);
         }
 
@@ -314,7 +317,7 @@ struct LibraryScanner::Private
             return {};
         }
 
-        if(auto* parser = m_parserRegistry->parserForExtension(QStringLiteral("cue"))) {
+        if(auto* parser = m_playlistLoader->parserForExtension(QStringLiteral("cue"))) {
             TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), QStringLiteral(""), false);
             for(auto& plTrack : tracks) {
                 plTrack.generateHash();
@@ -414,7 +417,8 @@ struct LibraryScanner::Private
             if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != m_currentLibrary.id
                || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
                 Track changedTrack{libraryTrack};
-                if(Tagging::readMetaData(changedTrack)) {
+                auto* tagParser = m_tagLoader->parserForTrack(changedTrack);
+                if(tagParser && tagParser->readMetaData(changedTrack)) {
                     setTrackProps(changedTrack);
 
                     m_missingFiles.erase(changedTrack.filename());
@@ -437,7 +441,8 @@ struct LibraryScanner::Private
         else {
             Track track{file};
 
-            if(Tagging::readMetaData(track)) {
+            auto* tagParser = m_tagLoader->parserForTrack(track);
+            if(tagParser && tagParser->readMetaData(track)) {
                 Track refoundTrack = matchMissingTrack(track);
 
                 if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
@@ -548,10 +553,10 @@ struct LibraryScanner::Private
     }
 };
 
-LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, PlaylistParserRegistry* parserRegistry,
-                               SettingsManager* settings, QObject* parent)
+LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
+                               std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), parserRegistry, settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), std::move(playlistLoader), std::move(tagLoader), settings)}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -604,6 +609,8 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     p->m_currentLibrary = library;
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
+    const Timer timer;
+
     if(p->m_currentLibrary.id >= 0 && QFileInfo::exists(p->m_currentLibrary.path)) {
         if(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->m_watchers.contains(library.id)) {
             p->addWatcher(library);
@@ -611,6 +618,8 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         p->getAndSaveAllTracks(library.path, tracks, onlyModified);
         p->cleanupScan();
     }
+
+    qDebug() << "[Library] Scan of" << library.name << "took" << timer.elapsedFormatted();
 
     if(state() == Paused) {
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
@@ -682,8 +691,10 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
         if(trackMap.contains(track.filepath())) {
             tracksScanned.push_back(trackMap.at(track.filepath()));
         }
-        else if(Tagging::readMetaData(track)) {
-            tracksToStore.push_back(track);
+        else if(auto* parser = p->m_tagLoader->parserForTrack(track)) {
+            if(parser->readMetaData(track)) {
+                tracksToStore.push_back(track);
+            }
         }
 
         p->reportProgress();
@@ -765,14 +776,13 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 if(trackMap.contains(file)) {
                     const auto existingTracks = trackMap.equal_range(file);
                     for(auto it = existingTracks.first; it != existingTracks.second; ++it) {
-                        if(!it->second.hasCue()) {
-                            tracksScanned.push_back(it->second);
-                        }
+                        tracksScanned.push_back(it->second);
                     }
                 }
                 else {
                     Track track{file};
-                    if(Tagging::readMetaData(track)) {
+                    auto* tagParser = p->m_tagLoader->parserForTrack(track);
+                    if(tagParser && tagParser->readMetaData(track)) {
                         if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                             const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
                             std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));

@@ -29,7 +29,7 @@
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
-class SettingsManager;
+class CoverProvider;
 
 namespace Filters {
 struct FilterOptions;
@@ -53,7 +53,7 @@ class FilterModel : public TreeModel<FilterItem>
     Q_OBJECT
 
 public:
-    explicit FilterModel(SettingsManager* settings, QObject* parent = nullptr);
+    explicit FilterModel(CoverProvider* coverProvider, QObject* parent = nullptr);
     ~FilterModel() override;
 
     [[nodiscard]] bool showSummary() const;

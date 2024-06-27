@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,23 @@
 
 #pragma once
 
-#include "fycore_export.h"
+#include "fyutils_export.h"
 
-#include <core/track.h>
+#include <chrono>
 
-#include <taglib/audioproperties.h>
-
-#include <QString>
-
-class QPixmap;
-
-namespace Fooyin::Tagging {
-enum class Quality : uint8_t
+namespace Fooyin {
+class FYUTILS_EXPORT Timer
 {
-    Fast = 0,
-    Average,
-    Accurate,
-};
+    using Clock     = std::chrono::steady_clock;
+    using TimePoint = Clock::time_point;
 
-FYCORE_EXPORT bool readMetaData(Track& track, Quality quality = Quality::Average);
-FYCORE_EXPORT QByteArray readCover(const Track& track, Track::Cover cover = Track::Cover::Front);
-} // namespace Fooyin::Tagging
+public:
+    void reset();
+
+    [[nodiscard]] std::chrono::milliseconds elapsed() const;
+    [[nodiscard]] std::string elapsedFormatted() const;
+
+private:
+    TimePoint m_start{Clock::now()};
+};
+} // namespace Fooyin

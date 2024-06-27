@@ -30,14 +30,14 @@ class QMenu;
 class QUndoCommand;
 
 namespace Fooyin {
-class SettingsManager;
 class PlayerController;
-enum class PlayState;
-enum class TrackAction;
 class Playlist;
+enum class PlayState;
 class PlaylistHandler;
-class TrackSelectionController;
 struct PlaylistTrack;
+class SettingsManager;
+enum class TrackAction;
+class TrackSelectionController;
 
 struct PlaylistViewState
 {

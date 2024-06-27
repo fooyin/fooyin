@@ -104,7 +104,7 @@ struct FilterModel::Private
 
     QThread m_populatorThread;
     FilterPopulator m_populator;
-    CoverProvider m_coverProvider;
+    CoverProvider* m_coverProvider;
 
     FilterItem m_summaryNode;
     ItemKeyMap m_nodes;
@@ -125,13 +125,13 @@ struct FilterModel::Private
 
     TrackList m_tracksPendingRemoval;
 
-    explicit Private(FilterModel* self, SettingsManager* settings)
+    explicit Private(FilterModel* self, CoverProvider* coverProvider)
         : m_self{self}
-        , m_coverProvider{settings}
+        , m_coverProvider{coverProvider}
     {
         m_populator.moveToThread(&m_populatorThread);
 
-        QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, m_self,
+        QObject::connect(m_coverProvider, &CoverProvider::coverAdded, m_self,
                          [this](const Track& track) { coverUpdated(track); });
     }
 
@@ -274,9 +274,9 @@ struct FilterModel::Private
     }
 };
 
-FilterModel::FilterModel(SettingsManager* settings, QObject* parent)
+FilterModel::FilterModel(CoverProvider* coverProvider, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<Private>(this, coverProvider)}
 {
     QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
@@ -440,9 +440,9 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(Qt::DecorationRole):
             if(p->m_showDecoration) {
                 if(item->trackCount() > 0) {
-                    return p->m_coverProvider.trackCoverThumbnail(item->tracks().front(), p->m_coverType);
+                    return p->m_coverProvider->trackCoverThumbnail(item->tracks().front(), p->m_coverType);
                 }
-                return p->m_coverProvider.trackCoverThumbnail({}, p->m_coverType);
+                return p->m_coverProvider->trackCoverThumbnail({}, p->m_coverType);
             }
             break;
         case(Qt::SizeHintRole):

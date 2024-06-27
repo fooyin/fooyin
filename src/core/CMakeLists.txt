@@ -27,6 +27,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
+    ${CMAKE_SOURCE_DIR}/include/core/tagging/tagloader.h
     application.cpp
     application.h
     corepaths.cpp
@@ -94,8 +95,8 @@ set(SOURCES
     playlist/playlist.cpp
     playlist/playlisthandler.cpp
     playlist/playlistparser.cpp
-    playlist/playlistparserregistry.cpp
-    playlist/playlistparserregistry.h
+    playlist/playlistloader.cpp
+    playlist/playlistloader.h
     playlist/parsers/cueparser.cpp
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp
@@ -118,10 +119,9 @@ set(SOURCES
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
     tagging/tagdefs.h
-    tagging/tagreader.cpp
-    tagging/tagreader.h
-    tagging/tagwriter.cpp
-    tagging/tagwriter.h
+    tagging/taglibparser.cpp
+    tagging/taglibparser.h
+    tagging/tagloader.cpp
 )
 
 create_fooyin_library(

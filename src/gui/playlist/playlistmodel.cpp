@@ -20,6 +20,7 @@
 #include "playlistmodel.h"
 
 #include "internalguisettings.h"
+#include "playlistinteractor.h"
 #include "playlistitem.h"
 #include "playlistpopulator.h"
 #include "playlistpreset.h"
@@ -534,19 +535,19 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 } // namespace
 
 namespace Fooyin {
-PlaylistModel::PlaylistModel(MusicLibrary* library, PlayerController* playerController, SettingsManager* settings,
-                             QObject* parent)
+PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
+                             SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , m_library{library}
+    , m_library{playlistInteractor->library()}
     , m_settings{settings}
-    , m_coverProvider{new CoverProvider(settings, this)}
+    , m_coverProvider{coverProvider}
     , m_resetting{false}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}
     , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , m_coverSize{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
                   settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
-    , m_populator{playerController}
+    , m_populator{playlistInteractor->playerController()}
     , m_playlistLoaded{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}

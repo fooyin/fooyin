@@ -21,20 +21,24 @@
 
 #include "fycore_export.h"
 
-#include <core/playlist/playlistparser.h>
+#include <core/tagging/tagparserplugin.h>
 
 namespace Fooyin {
-class FYCORE_EXPORT M3uParser : public PlaylistParser
+class TagParser;
+class Track;
+
+class FYCORE_EXPORT TagLoader final
 {
 public:
-    using PlaylistParser::PlaylistParser;
+    TagLoader();
+    ~TagLoader();
 
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool saveIsSupported() const override;
+    [[nodiscard]] TagParser* parserForTrack(const Track& track) const;
 
-    TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
-    void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
-                      PathType type, bool writeMetdata) override;
+    void addParser(TagParserContext parserContext);
+
+private:
+    struct Private;
+    std::unique_ptr<Private> p;
 };
 } // namespace Fooyin

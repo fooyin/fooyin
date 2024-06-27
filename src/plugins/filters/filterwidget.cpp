@@ -102,13 +102,13 @@ struct FilterWidget::Private
 
     QByteArray m_headerState;
 
-    Private(FilterWidget* self, SettingsManager* settings)
+    Private(FilterWidget* self, CoverProvider* coverProvider, SettingsManager* settings)
         : m_self{self}
         , m_columnRegistry{settings}
         , m_settings{settings}
         , m_view{new FilterView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
-        , m_model{new FilterModel(m_settings, m_self)}
+        , m_model{new FilterModel(coverProvider, m_self)}
         , m_sortProxy{new FilterSortModel(m_self)}
         , m_widgetContext{
               new WidgetContext(m_self, Context{Id{"Fooyin.Context.FilterWidget."}.append(m_self->id())}, m_self)}
@@ -417,9 +417,9 @@ struct FilterWidget::Private
     }
 };
 
-FilterWidget::FilterWidget(SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<Private>(this, coverProvider, settings)}
 {
     setObjectName(FilterWidget::name());
 

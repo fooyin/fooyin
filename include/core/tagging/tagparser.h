@@ -19,22 +19,18 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
-#include <core/playlist/playlistparser.h>
+#include <core/track.h>
 
 namespace Fooyin {
-class FYCORE_EXPORT M3uParser : public PlaylistParser
+class TagParser
 {
 public:
-    using PlaylistParser::PlaylistParser;
+    virtual ~TagParser() = default;
 
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool saveIsSupported() const override;
+    [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
 
-    TrackList readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound) override;
-    void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
-                      PathType type, bool writeMetdata) override;
+    virtual bool readMetaData(Track& track)                              = 0;
+    virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
+    virtual bool writeMetaData(const Track& track)                       = 0;
 };
 } // namespace Fooyin

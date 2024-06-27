@@ -28,8 +28,15 @@
 namespace Fooyin::Testing {
 class M3uParserTest : public ::testing::Test
 {
+public:
+    M3uParserTest()
+        : m_tagLoader{std::make_shared<TagLoader>()}
+        , m_parser{std::make_unique<M3uParser>(m_tagLoader)}
+    { }
+
 protected:
-    std::unique_ptr<PlaylistParser> m_parser{std::make_unique<M3uParser>()};
+    std::shared_ptr<TagLoader> m_tagLoader;
+    std::unique_ptr<PlaylistParser> m_parser;
 };
 
 TEST_F(M3uParserTest, StandardM3u)

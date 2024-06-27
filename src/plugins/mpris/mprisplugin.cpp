@@ -67,6 +67,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
     m_playlistHandler  = context.playlistHandler;
+    m_tagLoader        = context.tagLoader;
     m_settings         = context.settingsManager;
 
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
@@ -91,7 +92,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
 void MprisPlugin::initialise(const GuiPluginContext& context)
 {
     m_windowController = context.windowController;
-    m_coverProvider    = new CoverProvider(m_settings, this);
+    m_coverProvider    = new CoverProvider(m_tagLoader, m_settings, this);
 
     m_coverProvider->setUsePlaceholder(false);
     m_coverProvider->setAlwaysStoreThumbnail(true);

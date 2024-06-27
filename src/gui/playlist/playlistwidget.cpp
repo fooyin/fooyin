@@ -91,13 +91,14 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
 namespace Fooyin {
 using namespace Settings::Gui::Internal;
 
-PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager_,
-                                             PlaylistInteractor* playlistInteractor, SettingsManager* settings)
+PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
+                                             PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
+                                             SettingsManager* settings)
     : m_self{self}
-    , m_actionManager{actionManager_}
+    , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
-    , m_playlistController{m_playlistInteractor->controller()}
-    , m_playerController{m_playlistController->playerController()}
+    , m_playlistController{m_playlistInteractor->playlistController()}
+    , m_playerController{playlistInteractor->playerController()}
     , m_selectionController{m_playlistController->selectionController()}
     , m_library{playlistInteractor->library()}
     , m_settings{settings}
@@ -106,7 +107,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_presetRegistry{m_settings}
     , m_sortRegistry{m_settings}
     , m_layout{new QHBoxLayout(m_self)}
-    , m_model{new PlaylistModel(m_library, m_playerController, settings, m_self)}
+    , m_model{new PlaylistModel(m_playlistInteractor, coverProvider, settings, m_self)}
     , m_playlistView{new PlaylistView(m_self)}
     , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
@@ -1059,9 +1060,9 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 }
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                               SettingsManager* settings, QWidget* parent)
+                               CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, coverProvider, settings)}
 {
     setObjectName(PlaylistWidget::name());
 }

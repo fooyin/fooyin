@@ -25,6 +25,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
+#include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/async.h>
@@ -64,6 +65,7 @@ struct FilterController::Private
     MusicLibrary* m_library;
     TrackSelectionController* m_trackSelection;
     EditableLayout* m_editableLayout;
+    CoverProvider m_coverProvider;
     SettingsManager* m_settings;
 
     FilterManager* m_manager;
@@ -76,11 +78,12 @@ struct FilterController::Private
     TrackAction m_middleClickAction;
 
     explicit Private(FilterController* self, MusicLibrary* library, TrackSelectionController* trackSelection,
-                     EditableLayout* editableLayout, SettingsManager* settings)
+                     EditableLayout* editableLayout, std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
         : m_self{self}
         , m_library{library}
         , m_trackSelection{trackSelection}
         , m_editableLayout{editableLayout}
+        , m_coverProvider{std::move(tagLoader), settings}
         , m_settings{settings}
         , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
         , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterDoubleClick>())}
@@ -448,9 +451,10 @@ struct FilterController::Private
 };
 
 FilterController::FilterController(MusicLibrary* library, TrackSelectionController* trackSelection,
-                                   EditableLayout* editableLayout, SettingsManager* settings, QObject* parent)
+                                   EditableLayout* editableLayout, std::shared_ptr<TagLoader> tagLoader,
+                                   SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, library, trackSelection, editableLayout, settings)}
+    , p{std::make_unique<Private>(this, library, trackSelection, editableLayout, std::move(tagLoader), settings)}
 {
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
@@ -469,7 +473,7 @@ FilterController::~FilterController() = default;
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->m_settings);
+    auto* widget = new FilterWidget(&p->m_coverProvider, p->m_settings);
 
     auto& group = p->m_groups[p->vdefaultId];
     group.id    = p->vdefaultId;

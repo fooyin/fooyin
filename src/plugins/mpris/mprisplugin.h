@@ -128,6 +128,7 @@ private:
 
     PlayerController* m_playerController;
     PlaylistHandler* m_playlistHandler;
+    std::shared_ptr<TagLoader> m_tagLoader;
     WindowController* m_windowController;
     SettingsManager* m_settings;
 

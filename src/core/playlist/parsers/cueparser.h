@@ -22,27 +22,16 @@
 #include "fycore_export.h"
 
 #include <core/playlist/playlistparser.h>
+#include <core/tagging/tagparser.h>
 #include <core/track.h>
 
-namespace Fooyin {
-struct CueSheet
-{
-    QString cuePath;
-    QString type;
-    QString albumArtist;
-    QString album;
-    QString composer;
-    QString genre;
-    QString date;
-    QString comment;
-    int disc{-1};
-    uint64_t lastModified{0};
-};
+struct CueSheet;
 
+namespace Fooyin {
 class FYCORE_EXPORT CueParser : public PlaylistParser
 {
 public:
-    CueParser();
+    using PlaylistParser::PlaylistParser;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QStringList supportedExtensions() const override;
@@ -53,14 +42,7 @@ public:
 private:
     TrackList readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound);
     TrackList readEmbeddedCueTracks(QIODevice* device, const QString& filepath);
-    void processCueLine(const QString& line, Track& track, QString& trackPath, const QDir& dir, bool skipNotFound,
-                        bool skipFile, TrackList& tracks);
-    void readRemLine(const QStringList& lineParts);
-    void finaliseTrack(Track& track);
-    void finaliseLastTrack(Track& track, const QString& trackPath, bool skipNotFound, TrackList& tracks);
-
-    CueSheet m_sheet;
-    bool m_hasValidIndex;
-    Track m_currentFile;
+    void processCueLine(CueSheet& sheet, const QString& line, Fooyin::Track& track, QString& trackPath, const QDir& dir,
+                        bool skipNotFound, bool skipFile, Fooyin::TrackList& tracks);
 };
 } // namespace Fooyin

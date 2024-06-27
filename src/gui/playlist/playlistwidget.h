@@ -23,18 +23,19 @@
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
+class CoverProvider;
+class MusicLibrary;
 class PlaylistInteractor;
 class PlaylistWidgetPrivate;
-class MusicLibrary;
+class SettingsManager;
 
 class PlaylistWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                            SettingsManager* settings, QWidget* parent = nullptr);
+    PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
+                   SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;

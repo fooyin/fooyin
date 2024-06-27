@@ -28,6 +28,7 @@
 namespace Fooyin {
 class Id;
 class MusicLibrary;
+class PlayerController;
 class PlaylistController;
 class PlaylistHandler;
 class PlaylistWidget;
@@ -42,8 +43,9 @@ public:
     ~PlaylistInteractor() override;
 
     [[nodiscard]] PlaylistHandler* handler() const;
-    [[nodiscard]] PlaylistController* controller() const;
+    [[nodiscard]] PlaylistController* playlistController() const;
     [[nodiscard]] MusicLibrary* library() const;
+    [[nodiscard]] PlayerController* playerController() const;
 
     void filesToPlaylist(const Id& id, const QList<QUrl>& urls) const;
     void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
