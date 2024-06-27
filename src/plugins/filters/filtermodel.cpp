@@ -265,6 +265,13 @@ struct FilterModel::Private
             }
         }
     }
+
+    void dataUpdated(const QList<int>& roles = {}) const
+    {
+        const QModelIndex topLeft     = m_self->index(0, 0, {});
+        const QModelIndex bottomRight = m_self->index(m_self->rowCount({}) - 1, m_self->columnCount({}) - 1, {});
+        emit m_self->dataChanged(topLeft, bottomRight, roles);
+    }
 };
 
 FilterModel::FilterModel(SettingsManager* settings, QObject* parent)
@@ -306,19 +313,19 @@ void FilterModel::setFont(const QString& font)
         p->m_font.fromString(font);
     }
 
-    emit dataChanged({}, {}, {Qt::FontRole, Qt::SizeHintRole});
+    p->dataUpdated({Qt::FontRole, Qt::SizeHintRole});
 }
 
 void FilterModel::setColour(const QColor& colour)
 {
     p->m_colour = colour;
-    emit dataChanged({}, {});
+    p->dataUpdated();
 }
 
 void FilterModel::setRowHeight(int height)
 {
     p->m_rowHeight = height;
-    emit dataChanged({}, {});
+    p->dataUpdated();
 }
 
 void FilterModel::setShowSummary(bool show)
@@ -355,7 +362,7 @@ void FilterModel::setShowLabels(bool show)
 void FilterModel::setCoverType(Track::Cover type)
 {
     if(std::exchange(p->m_coverType, type) != type) {
-        emit dataChanged({}, {}, {Qt::DecorationRole});
+        p->dataUpdated({Qt::DecorationRole});
     }
 }
 
@@ -403,7 +410,7 @@ bool FilterModel::setHeaderData(int section, Qt::Orientation /*orientation*/, co
 
     changeColumnAlignment(section, value.value<Qt::Alignment>());
 
-    emit dataChanged({}, {}, {Qt::TextAlignmentRole});
+    p->dataUpdated({Qt::TextAlignmentRole});
 
     return true;
 }

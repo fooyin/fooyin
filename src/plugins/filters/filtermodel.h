@@ -36,6 +36,8 @@ struct FilterOptions;
 
 class FilterSortModel : public QSortFilterProxyModel
 {
+    Q_OBJECT
+
 public:
     explicit FilterSortModel(QObject* parent = nullptr);
 

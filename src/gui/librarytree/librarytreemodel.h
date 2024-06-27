@@ -86,6 +86,8 @@ public:
 signals:
     void modelLoaded();
     void modelUpdated();
+    // QSortFilterProxyModel won't forward dataChanged if indexes are invalid, so use a custom signal
+    void dataUpdated(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles = {});
 
 private:
     struct Private;

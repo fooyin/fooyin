@@ -407,32 +407,32 @@ void LibraryTreeModel::setFont(const QString& font)
         p->m_font.fromString(font);
     }
 
-    emit dataChanged({}, {}, {Qt::FontRole, Qt::SizeHintRole});
+    emit dataUpdated({}, {}, {Qt::FontRole, Qt::SizeHintRole});
 }
 
 void LibraryTreeModel::setColour(const QColor& colour)
 {
     p->m_colour = colour;
-    emit dataChanged({}, {});
+    emit dataUpdated({}, {});
 }
 
 void LibraryTreeModel::setRowHeight(int height)
 {
     p->m_rowHeight = height;
-    emit dataChanged({}, {});
+    emit dataUpdated({}, {});
 }
 
 void LibraryTreeModel::setPlayState(PlayState state)
 {
     p->m_playingState = state;
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    emit dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
 void LibraryTreeModel::setPlayingPath(const QString& parentNode, const QString& path)
 {
     p->m_parentNode  = parentNode;
     p->m_playingPath = path;
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    emit dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
 }
 
 Qt::ItemFlags LibraryTreeModel::flags(const QModelIndex& index) const
