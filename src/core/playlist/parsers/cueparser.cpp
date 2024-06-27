@@ -112,13 +112,12 @@ TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, c
 {
     TrackList tracks;
 
-    CueSheet sheet;
-    sheet.cuePath = filepath;
+    m_sheet.cuePath = filepath;
 
     const QFileInfo cueInfo{filepath};
     const QDateTime lastModified{cueInfo.lastModified()};
     if(lastModified.isValid()) {
-        sheet.lastModified = static_cast<uint64_t>(lastModified.toMSecsSinceEpoch());
+        m_sheet.lastModified = static_cast<uint64_t>(lastModified.toMSecsSinceEpoch());
     }
 
     Track track;
@@ -130,8 +129,8 @@ TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, c
     while(!in.atEnd()) {
         processCueLine(in.readLine().trimmed(), track, trackPath, dir, skipNotFound, false, tracks);
 
-        if(sheet.type == u"BINARY") {
-            qInfo() << "[CUE] Unsupported file type:" << sheet.type;
+        if(m_sheet.type == u"BINARY") {
+            qInfo() << "[CUE] Unsupported file type:" << m_sheet.type;
             return {};
         }
     }
@@ -144,9 +143,8 @@ TrackList CueParser::readCueTracks(QIODevice* device, const QString& filepath, c
 TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& filepath)
 {
     TrackList tracks;
-    CueSheet sheet;
 
-    sheet.cuePath = QStringLiteral("Embedded");
+    m_sheet.cuePath = QStringLiteral("Embedded");
 
     Track track;
     QString trackPath{filepath};
@@ -157,8 +155,8 @@ TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QString& fil
     while(!in.atEnd()) {
         processCueLine(in.readLine().trimmed(), track, trackPath, {}, false, true, tracks);
 
-        if(sheet.type == u"BINARY") {
-            qInfo() << "[CUE] Unsupported file type:" << sheet.type;
+        if(m_sheet.type == u"BINARY") {
+            qInfo() << "[CUE] Unsupported file type:" << m_sheet.type;
             return {};
         }
     }
