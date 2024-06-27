@@ -40,7 +40,11 @@ std::string Timer::elapsedFormatted() const
     const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedMs);
     const auto microseconds = elapsedMs - milliseconds;
 
-    return std::format("{:01}:{:02}.{:03}{:03}", minutes.count(), seconds.count(), milliseconds.count(),
-                       microseconds.count());
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(1) << minutes.count() << ":" << std::setfill('0') << std::setw(2)
+        << seconds.count() << "." << std::setfill('0') << std::setw(3) << milliseconds.count() << std::setfill('0')
+        << std::setw(3) << microseconds.count();
+
+    return oss.str();
 }
 } // namespace Fooyin
