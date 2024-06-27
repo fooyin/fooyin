@@ -116,19 +116,17 @@ struct LibraryTreeModel::Private
     LibraryTreeModel* m_self;
 
     QString m_grouping;
-
     bool m_loaded{false};
     bool m_resetting{false};
 
     QThread m_populatorThread;
     LibraryTreePopulator m_populator;
 
-    LibraryTreeItem m_allNode;
+    LibraryTreeItem m_summaryNode;
     NodeKeyMap m_pendingNodes;
     ItemKeyMap m_nodes;
     TrackIdNodeMap m_trackParents;
     std::unordered_set<QString> m_addedNodes;
-    int m_trackCount{0};
     bool m_addingTracks{false};
 
     TrackList m_tracksPendingRemoval;
@@ -154,12 +152,12 @@ struct LibraryTreeModel::Private
         m_populator.moveToThread(&m_populatorThread);
     }
 
-    void updateAllNode()
+    void updateSummary()
     {
-        m_allNode.setTitle(QStringLiteral("All Music (%1)").arg(m_trackCount));
+        m_summaryNode.setTitle(QStringLiteral("All Music (%1)").arg(m_self->rootItem()->childCount() - 1));
     }
 
-    void removeTracks(const TrackList& tracks, bool updateCount)
+    void removeTracks(const TrackList& tracks)
     {
         std::set<LibraryTreeItem*, cmpItems> items;
         std::set<LibraryTreeItem*> pendingItems;
@@ -205,10 +203,7 @@ struct LibraryTreeModel::Private
             }
         }
 
-        if(updateCount) {
-            m_trackCount -= static_cast<int>(tracks.size());
-            updateAllNode();
-        }
+        updateSummary();
     }
 
     void mergeTrackParents(const TrackIdNodeMap& parents)
@@ -238,7 +233,7 @@ struct LibraryTreeModel::Private
         }
 
         if(!m_tracksPendingRemoval.empty()) {
-            removeTracks(m_tracksPendingRemoval, false);
+            removeTracks(m_tracksPendingRemoval);
         }
 
         populateModel(data);
@@ -340,7 +335,7 @@ struct LibraryTreeModel::Private
         }
         mergeTrackParents(data.trackParents);
 
-        const QModelIndex allIndex = m_self->indexOfItem(&m_allNode);
+        const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
         emit m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
 
         if(m_resetting) {
@@ -358,7 +353,8 @@ struct LibraryTreeModel::Private
         else {
             updatePendingNodes(data);
         }
-        updateAllNode();
+
+        updateSummary();
     }
 
     void beginReset()
@@ -368,8 +364,9 @@ struct LibraryTreeModel::Private
         m_pendingNodes.clear();
         m_addedNodes.clear();
 
-        m_allNode = LibraryTreeItem{QStringLiteral("All Music"), m_self->rootItem(), -1};
-        m_self->rootItem()->appendChild(&m_allNode);
+        m_summaryNode = LibraryTreeItem{QStringLiteral("All Music"), m_self->rootItem(), -1};
+        m_self->rootItem()->appendChild(&m_summaryNode);
+        updateSummary();
     }
 };
 
@@ -381,7 +378,7 @@ LibraryTreeModel::LibraryTreeModel(QObject* parent)
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
 
     QObject::connect(&p->m_populator, &Worker::finished, this, [this]() {
-        p->updateAllNode();
+        p->updateSummary();
         p->m_populator.stopThread();
         p->m_populatorThread.quit();
         if(!p->m_loaded) {
@@ -640,7 +637,6 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     }
 
     p->m_addingTracks = true;
-    p->m_trackCount += static_cast<int>(tracks.size());
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd] { p->m_populator.run(p->m_grouping, tracksToAdd); });
@@ -686,7 +682,7 @@ void LibraryTreeModel::refreshTracks(const TrackList& tracks)
 
 void LibraryTreeModel::removeTracks(const TrackList& tracks)
 {
-    p->removeTracks(tracks, true);
+    p->removeTracks(tracks);
 }
 
 void LibraryTreeModel::changeGrouping(const LibraryTreeGrouping& grouping)
@@ -710,8 +706,7 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         return;
     }
 
-    p->m_resetting  = true;
-    p->m_trackCount = static_cast<int>(tracks.size());
+    p->m_resetting = true;
 
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] { p->m_populator.run(p->m_grouping, tracks); });
 }
