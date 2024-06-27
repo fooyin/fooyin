@@ -99,7 +99,7 @@ bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& 
     }
 
     if(rightItem->level() == -1) {
-        return sortOrder() == Qt::AscendingOrder;
+        return sortOrder() != Qt::AscendingOrder;
     }
 
     const auto cmp = m_collator.compare(leftItem->title(), rightItem->title());

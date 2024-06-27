@@ -649,6 +649,7 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* 
 
     setFeature(FyWidget::Search);
 
+    QObject::connect(p->m_model, &LibraryTreeModel::dataUpdated, p->m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(p->m_model, &LibraryTreeModel::modelLoaded, this,
                      [this]() { p->restoreState(p->m_pendingState); });
     QObject::connect(p->m_libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
