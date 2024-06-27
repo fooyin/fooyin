@@ -160,6 +160,7 @@ struct LibraryTreeWidget::Private
     QVBoxLayout* m_layout;
     LibraryTreeView* m_libraryTree;
     LibraryTreeModel* m_model;
+    LibraryTreeSortModel* m_sortProxy;
 
     WidgetContext* m_widgetContext;
 
@@ -186,6 +187,7 @@ struct LibraryTreeWidget::Private
         , m_layout{new QVBoxLayout(m_self)}
         , m_libraryTree{new LibraryTreeView(m_self)}
         , m_model{new LibraryTreeModel(m_self)}
+        , m_sortProxy{new LibraryTreeSortModel(m_self)}
         , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                             m_self)}
         , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeDoubleClick>())}
@@ -194,7 +196,8 @@ struct LibraryTreeWidget::Private
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->addWidget(m_libraryTree);
 
-        m_libraryTree->setModel(m_model);
+        m_sortProxy->setSourceModel(m_model);
+        m_libraryTree->setModel(m_sortProxy);
         m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
         m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
@@ -349,7 +352,7 @@ struct LibraryTreeWidget::Private
     {
         m_playlistGroups.clear();
 
-        const QModelIndexList leafNodes = filterLeafNodes(m_model, indexes);
+        const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, indexes);
 
         if(leafNodes.empty()) {
             return;
@@ -402,18 +405,18 @@ struct LibraryTreeWidget::Private
 
         const QModelIndex index = selectedIndexes.front();
 
-        if(m_model->hasChildren(index)) {
+        if(m_sortProxy->hasChildren(index)) {
             return;
         }
 
         const int row            = index.row();
         const QModelIndex parent = index.parent();
-        const int count          = m_model->rowCount(parent);
+        const int count          = m_sortProxy->rowCount(parent);
 
         QModelIndexList trackIndexes;
 
         for(int i{0}; i < count; ++i) {
-            trackIndexes.emplace_back(m_model->index(i, 0, parent));
+            trackIndexes.emplace_back(m_sortProxy->index(i, 0, parent));
         }
 
         handlePlayback(trackIndexes, row);
@@ -508,9 +511,9 @@ struct LibraryTreeWidget::Private
                 if(!expandedTitles.contains(title)) {
                     expandedTitles.emplace_back(title);
                 }
-                const int rowCount = m_model->rowCount(index);
+                const int rowCount = m_sortProxy->rowCount(index);
                 for(int row{0}; row < rowCount; ++row) {
-                    checkExpanded.emplace(m_model->index(row, 0, index));
+                    checkExpanded.emplace(m_sortProxy->index(row, 0, index));
                 }
             }
         }
@@ -530,7 +533,7 @@ struct LibraryTreeWidget::Private
 
         for(const QModelIndex& index : expandedIndexes) {
             if(index.isValid()) {
-                m_libraryTree->setExpanded(index, true);
+                m_libraryTree->setExpanded(m_sortProxy->mapFromSource(index), true);
             }
         }
 
@@ -539,7 +542,8 @@ struct LibraryTreeWidget::Private
 
         for(const QModelIndex& index : selectedIndexes) {
             if(index.isValid()) {
-                indexesToSelect.append({index, index});
+                const QModelIndex proxyIndex = m_sortProxy->mapFromSource(index);
+                indexesToSelect.append({proxyIndex, proxyIndex});
             }
         }
 
@@ -570,9 +574,9 @@ struct LibraryTreeWidget::Private
                     keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toString());
                 }
 
-                const int childCount = m_model->rowCount(index);
+                const int childCount = m_sortProxy->rowCount(index);
                 for(int row{0}; row < childCount; ++row) {
-                    indexes.push(m_model->index(row, 0, index));
+                    indexes.push(m_sortProxy->index(row, 0, index));
                 }
             }
         }
@@ -593,7 +597,7 @@ struct LibraryTreeWidget::Private
                 m_libraryTree,
                 [this, topKey]() {
                     if(const QModelIndex topIndex = m_model->indexForKey(topKey); topIndex.isValid()) {
-                        m_libraryTree->scrollTo(topIndex, QAbstractItemView::PositionAtTop);
+                        m_libraryTree->scrollTo(m_sortProxy->mapFromSource(topIndex), QAbstractItemView::PositionAtTop);
                     }
                 },
                 Qt::QueuedConnection);
@@ -603,7 +607,7 @@ struct LibraryTreeWidget::Private
 
         const QString& key = keys.at(currentIndex);
         if(const auto index = m_model->indexForKey(key); index.isValid()) {
-            m_libraryTree->expand(index);
+            m_libraryTree->expand(m_sortProxy->mapFromSource(index));
             QMetaObject::invokeMethod(
                 m_libraryTree,
                 [this, topKey, keys, currentIndex]() { restoreIndexState(topKey, keys, currentIndex + 1); },

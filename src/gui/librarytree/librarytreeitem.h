@@ -59,8 +59,6 @@ public:
     void replaceTrack(const Track& track);
     void sortTracks();
 
-    void sortChildren();
-
 private:
     bool m_pending;
     int m_level;

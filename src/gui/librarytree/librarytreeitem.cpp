@@ -21,8 +21,6 @@
 
 #include <core/library/tracksort.h>
 
-#include <QCollator>
-
 namespace Fooyin {
 LibraryTreeItem::LibraryTreeItem()
     : LibraryTreeItem{QStringLiteral(""), nullptr, -1}
@@ -111,35 +109,5 @@ void LibraryTreeItem::replaceTrack(const Track& track)
 void LibraryTreeItem::sortTracks()
 {
     m_tracks = Sorting::sortTracks(m_tracks);
-}
-
-void LibraryTreeItem::sortChildren()
-{
-    std::vector<LibraryTreeItem*> sortedChildren{m_children};
-
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    std::sort(sortedChildren.begin(), sortedChildren.end(),
-              [collator](const LibraryTreeItem* lhs, const LibraryTreeItem* rhs) {
-                  if(lhs->m_level == -1) {
-                      return true;
-                  }
-                  if(rhs->m_level == -1) {
-                      return false;
-                  }
-
-                  const auto cmp = collator.compare(lhs->m_title, rhs->m_title);
-                  if(cmp == 0) {
-                      return false;
-                  }
-                  return cmp < 0;
-              });
-    m_children = sortedChildren;
-
-    for(auto& child : m_children) {
-        child->sortChildren();
-        child->sortTracks();
-    }
 }
 } // namespace Fooyin

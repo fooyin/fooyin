@@ -25,8 +25,25 @@
 #include <core/player/playerdefs.h>
 #include <utils/treemodel.h>
 
+#include <QCollator>
+#include <QSortFilterProxyModel>
+
 namespace Fooyin {
 struct LibraryTreeAppearance;
+
+class LibraryTreeSortModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    explicit LibraryTreeSortModel(QObject* parent = nullptr);
+
+protected:
+    [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
+private:
+    QCollator m_collator;
+};
 
 class LibraryTreeModel : public TreeModel<LibraryTreeItem>
 {

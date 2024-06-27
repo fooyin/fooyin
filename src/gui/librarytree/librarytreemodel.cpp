@@ -71,15 +71,53 @@ struct cmpItems
         return cmpItemsReverse(pItem1, pItem2);
     }
 };
+
+Fooyin::LibraryTreeItem* treeItem(const QModelIndex& index)
+{
+    return static_cast<Fooyin::LibraryTreeItem*>(index.internalPointer());
+}
 } // namespace
 
 namespace Fooyin {
+LibraryTreeSortModel::LibraryTreeSortModel(QObject* parent)
+    : QSortFilterProxyModel{parent}
+{
+    m_collator.setNumericMode(true);
+}
+
+bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
+{
+    const auto* leftItem  = treeItem(left);
+    const auto* rightItem = treeItem(right);
+
+    if(!leftItem || !rightItem) {
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+
+    if(leftItem->level() == -1) {
+        return sortOrder() == Qt::AscendingOrder;
+    }
+
+    if(rightItem->level() == -1) {
+        return sortOrder() == Qt::AscendingOrder;
+    }
+
+    const auto cmp = m_collator.compare(leftItem->title(), rightItem->title());
+
+    if(cmp == 0) {
+        return false;
+    }
+
+    return cmp < 0;
+}
+
 struct LibraryTreeModel::Private
 {
     LibraryTreeModel* m_self;
 
     QString m_grouping;
 
+    bool m_loaded{false};
     bool m_resetting{false};
 
     QThread m_populatorThread;
@@ -91,6 +129,7 @@ struct LibraryTreeModel::Private
     TrackIdNodeMap m_trackParents;
     std::unordered_set<QString> m_addedNodes;
     int m_trackCount{0};
+    bool m_addingTracks{false};
 
     TrackList m_tracksPendingRemoval;
 
@@ -113,12 +152,6 @@ struct LibraryTreeModel::Private
         m_playingColour.setAlpha(90);
 
         m_populator.moveToThread(&m_populatorThread);
-    }
-
-    void sortTree() const
-    {
-        m_self->rootItem()->sortChildren();
-        m_self->rootItem()->resetChildren();
     }
 
     void updateAllNode()
@@ -219,7 +252,12 @@ struct LibraryTreeModel::Private
             m_self->fetchMore({});
         }
 
-        QMetaObject::invokeMethod(m_self, &LibraryTreeModel::modelUpdated);
+        if(m_addingTracks) {
+            m_addingTracks = false;
+        }
+        else {
+            QMetaObject::invokeMethod(m_self, &LibraryTreeModel::modelUpdated);
+        }
     }
 
     void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds)
@@ -315,7 +353,7 @@ struct LibraryTreeModel::Private
                     child->setPending(false);
                 }
             }
-            sortTree();
+            m_self->rootItem()->resetChildren();
         }
         else {
             updatePendingNodes(data);
@@ -346,7 +384,10 @@ LibraryTreeModel::LibraryTreeModel(QObject* parent)
         p->updateAllNode();
         p->m_populator.stopThread();
         p->m_populatorThread.quit();
-        emit modelLoaded();
+        if(!p->m_loaded) {
+            p->m_loaded = true;
+            emit modelLoaded();
+        }
     });
 }
 
@@ -508,9 +549,7 @@ void LibraryTreeModel::fetchMore(const QModelIndex& parent)
     }
     endInsertRows();
 
-    emit layoutAboutToBeChanged();
-    p->sortTree();
-    emit layoutChanged();
+    rootItem()->resetChildren();
 
     rows.erase(rows.begin(), rows.begin() + rowCount);
 
@@ -600,6 +639,7 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
         return;
     }
 
+    p->m_addingTracks = true;
     p->m_trackCount += static_cast<int>(tracks.size());
     p->m_populatorThread.start();
 
@@ -619,7 +659,7 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     }
 
     p->m_tracksPendingRemoval = tracksToUpdate;
-
+    p->m_addingTracks         = false;
     p->m_populatorThread.start();
 
     QMetaObject::invokeMethod(&p->m_populator,
