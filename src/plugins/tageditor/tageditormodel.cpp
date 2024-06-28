@@ -440,8 +440,8 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(index.row() == 13) {
-            return !item->changedValue().isEmpty() ? QVariant::fromValue(StarRating{item->changedValue().toInt(), 5})
-                                                   : QVariant::fromValue(StarRating{item->value().toInt(), 5});
+            return item->valueChanged() ? QVariant::fromValue(StarRating{item->changedValue().toInt(), 5})
+                                        : QVariant::fromValue(StarRating{item->value().toInt(), 5});
         }
 
         return item->valueChanged() ? item->changedValue() : item->value();
