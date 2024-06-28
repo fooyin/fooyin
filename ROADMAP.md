@@ -28,7 +28,7 @@ This document outlines the upcoming features for fooyin.
 | Support custom tags within scripts             | ✅ 0.4.0  |
 | Add HTML-like tags to FooScript for formatting | ✅ 0.4.0  |
 | Import/Export playlists                        | ✅ 0.5.0  |
-| Add icon/artwork mode to Library Filter        | 🔄 0.5.0 |
+| Add icon/artwork mode to Library Filter        | ✅ 0.5.0 |
 | Per-playlist playback queue                    | ❓ TBD    |
 
 ## Widgets

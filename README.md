@@ -36,8 +36,10 @@ Only Linux is supported at present, though support for other platforms is coming
 * [x] Customisable keyboard shortcuts
 * [x] Filter library on any field(s)
 * [x] Create and manage playlists
+* [x] Import/export playlists (M3U/M3U8)
 * [x] Extensible using a plugin system
 * [x] Tag editor
+* [x] Library tree, with support for direct playback
 * [x] Directory browser, with support for direct playback
 * [x] Waveform seekbar
 * [x] MPRIS support
