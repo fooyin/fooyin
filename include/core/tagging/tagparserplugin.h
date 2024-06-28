@@ -24,26 +24,16 @@
 #include <QtPlugin>
 
 namespace Fooyin {
-struct TagParserContext
-{
-    QString name;
-    std::unique_ptr<TagParser> parser;
-};
-
 /*!
- * An abstract interface for plugins which add a parser for tags/metadata.
+ * An abstract interface for tag/metadata reader plugins.
  */
 class TagParserPlugin
 {
 public:
     virtual ~TagParserPlugin() = default;
 
-    /*!
-     * This is called after all core plugins have been initialised.
-     * This must return the name of the parser and a  a unique_ptr
-     * to a TagParser subclass.
-     */
-    virtual TagParserContext registerTagParser() = 0;
+    [[nodiscard]] virtual QString name() const                      = 0;
+    [[nodiscard]] virtual std::unique_ptr<TagParser> parser() const = 0;
 };
 } // namespace Fooyin
 

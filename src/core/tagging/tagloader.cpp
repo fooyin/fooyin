@@ -47,11 +47,9 @@ TagParser* TagLoader::parserForTrack(const Track& track) const
     return nullptr;
 }
 
-void TagLoader::addParser(TagParserContext parserContext)
+void TagLoader::addParser(const QString& name, std::unique_ptr<TagParser> parser)
 {
     const std::unique_lock lock{p->m_parserMutex};
-
-    const auto& name = parserContext.name;
 
     if(p->m_parsers.contains(name)) {
         qDebug() << QStringLiteral("Tag Parser (%1) already registered").arg(name);
@@ -59,11 +57,11 @@ void TagLoader::addParser(TagParserContext parserContext)
     }
 
     // TODO: Add order/priority to handle multiple parsers supporting same extensions
-    auto extensions = parserContext.parser->supportedExtensions();
+    auto extensions = parser->supportedExtensions();
     for(const auto& extension : extensions) {
-        p->m_extensionToParserMap[extension].emplace_back(parserContext.parser.get());
+        p->m_extensionToParserMap[extension].emplace_back(parser.get());
     }
 
-    p->m_parsers.emplace(parserContext.name, std::move(parserContext.parser));
+    p->m_parsers.emplace(name, std::move(parser));
 }
 } // namespace Fooyin

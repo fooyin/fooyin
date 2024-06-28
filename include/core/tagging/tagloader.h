@@ -35,7 +35,7 @@ public:
 
     [[nodiscard]] TagParser* parserForTrack(const Track& track) const;
 
-    void addParser(TagParserContext parserContext);
+    void addParser(const QString& name, std::unique_ptr<TagParser> parser);
 
 private:
     struct Private;
