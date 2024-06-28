@@ -503,7 +503,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="76"/>
         <source>Fading</source>
-        <translation type="unfinished"></translation>
+        <translation>Fading</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="82"/>
@@ -533,17 +533,17 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="108"/>
         <source>Fade In</source>
-        <translation type="unfinished"></translation>
+        <translation>Fade In</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="109"/>
         <source>Fade Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Fade Out</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="110"/>
         <source>Pause/Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Pause/Stop</translation>
     </message>
 </context>
 <context>
@@ -551,7 +551,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="53"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Override height</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
@@ -808,7 +808,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="91"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep alive</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
@@ -843,7 +843,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="84"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Override row height</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="118"/>
@@ -858,7 +858,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="132"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>If this is the active playlist, keep it alive when changing selection</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="171"/>
@@ -931,12 +931,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Show system tray icon</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="91"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimise to tray on close</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
@@ -961,17 +961,17 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="123"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>Start maximized</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="125"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Start hidden to tray</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="126"/>
@@ -1089,7 +1089,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="497"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Seekbar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="505"/>
@@ -1104,7 +1104,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="516"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyrics</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="524"/>
@@ -1149,7 +1149,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="598"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>All Supported Media Files (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="599"/>
@@ -1159,7 +1159,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="600"/>
         <source>Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlists (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="611"/>
@@ -1225,12 +1225,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="99"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>Raise</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="100"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Stretch</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="102"/>
@@ -1265,7 +1265,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="139"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Tool Buttons</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="272"/>
@@ -1366,12 +1366,12 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="326"/>
         <source>Channels</source>
-        <translation type="unfinished">Channels</translation>
+        <translation>Channels</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="330"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bit Depth</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="334"/>
@@ -1386,7 +1386,7 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="340"/>
         <source>Codec</source>
-        <translation type="unfinished">Codec</translation>
+        <translation>Codec</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="297"/>
@@ -1434,7 +1434,7 @@
     <message>
         <location filename="../../src/gui/info/infoview.cpp" line="33"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>No Selection</translation>
     </message>
 </context>
 <context>
@@ -1491,12 +1491,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="43"/>
         <source>&amp;Refresh Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Refresh Libraries</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="48"/>
         <source>Re&amp;scan Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Re&amp;scan Libraries</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
@@ -1546,7 +1546,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="76"/>
         <source>Sort tracks in library by</source>
-        <translation type="unfinished"></translation>
+        <translation>Sort tracks in library by</translation>
     </message>
 </context>
 <context>
@@ -1554,12 +1554,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="67"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Refresh</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="71"/>
         <source>Rescan</source>
-        <translation type="unfinished"></translation>
+        <translation>Rescan</translation>
     </message>
 </context>
 <context>
@@ -1585,17 +1585,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="106"/>
         <source>Grouping</source>
-        <translation type="unfinished">Grouping</translation>
+        <translation>Grouping</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Library Tree</translation>
+        <translation>Library Tree</translation>
     </message>
 </context>
 <context>
@@ -1687,12 +1687,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="81"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Keep alive</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Restore state on startup</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="86"/>
@@ -1703,7 +1703,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Override row height</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="95"/>
@@ -1718,12 +1718,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="109"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>If this is the active playlist, keep it alive when changing selection</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="118"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="123"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="../../src/gui/widgets/lyricswidget.cpp" line="53"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Lyrics</translation>
     </message>
 </context>
 <context>
@@ -1969,7 +1969,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>Bit Depth</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
@@ -2111,7 +2111,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternating row colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
@@ -2238,7 +2238,7 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="222"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="226"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>Override height</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
@@ -2582,7 +2582,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="375"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Seekbar</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="411"/>
@@ -2929,7 +2929,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="61"/>
         <source>Show Playing &amp;Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Show Playing &amp;Track</translation>
     </message>
 </context>
 <context>
@@ -3107,7 +3107,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Silence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="87"/>
@@ -3142,7 +3142,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="136"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Draw a line in place of silence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="142"/>
@@ -3172,12 +3172,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="186"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="196"/>
         <source>Number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of samples</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="197"/>
@@ -3185,12 +3185,15 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of samples (per channel) to use 
+for waveform data. Higher values will result 
+in a more accurate and detailed waveform at the 
+cost of using more disk space in the cache.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="314"/>
         <source>Disk Cache Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk Cache Usage</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="189"/>
@@ -3208,12 +3211,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="148"/>
         <source>Show Labels</source>
-        <translation type="unfinished">Show Labels</translation>
+        <translation>Show Labels</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="158"/>
         <source>Show Elapsed Total</source>
-        <translation type="unfinished">Show Elapsed Total</translation>
+        <translation>Show Elapsed Total</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="166"/>
@@ -3233,7 +3236,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="170"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Silence</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="203"/>
