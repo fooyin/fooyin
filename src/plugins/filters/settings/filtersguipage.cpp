@@ -96,12 +96,18 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     m_iconWidth->setSingleStep(20);
     m_iconHeight->setSingleStep(20);
 
+    auto* iconSizeHint = new QLabel(
+        QStringLiteral("🛈 ")
+            + tr("Size can also be changed using %1 in the widget.").arg(QStringLiteral("<b>Ctrl+Scroll</b>")),
+        this);
+
     int row{0};
     artworkLayout->addWidget(widthLabel, row, 0);
     artworkLayout->addWidget(m_iconWidth, row++, 1);
     artworkLayout->addWidget(heightLabel, row, 0);
     artworkLayout->addWidget(m_iconHeight, row++, 1);
-    artworkLayout->setColumnStretch(2, 1);
+    artworkLayout->addWidget(iconSizeHint, row, 0, 1, 3);
+    artworkLayout->setColumnStretch(3, 1);
 
     row = 0;
     appearanceLayout->addWidget(m_filterHeaders, row++, 0, 1, 2);
