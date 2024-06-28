@@ -19,6 +19,8 @@
 
 #include <utils/timer.h>
 
+#include <iomanip>
+
 namespace Fooyin {
 void Timer::reset()
 {
