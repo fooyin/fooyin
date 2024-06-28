@@ -239,13 +239,13 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     return {};
 }
 
-void EngineHandler::addOutput(const AudioOutputBuilder& output)
+void EngineHandler::addOutput(const QString& name, OutputCreator output)
 {
-    if(p->m_outputs.contains(output.name)) {
-        qDebug() << QStringLiteral("Output (%1) already registered").arg(output.name);
+    if(p->m_outputs.contains(name)) {
+        qDebug() << QStringLiteral("Output (%1) already registered").arg(name);
         return;
     }
-    p->m_outputs.emplace(output.name, output.creator);
+    p->m_outputs.emplace(name, std::move(output));
 }
 } // namespace Fooyin
 

@@ -24,12 +24,6 @@
 #include <QtPlugin>
 
 namespace Fooyin {
-struct AudioOutputBuilder
-{
-    QString name;
-    OutputCreator creator;
-};
-
 /*!
  * An abstract interface for plugins which add an audio output.
  */
@@ -38,12 +32,8 @@ class OutputPlugin
 public:
     virtual ~OutputPlugin() = default;
 
-    /*!
-     * This is called after all core plugins have been initialised.
-     * This must return the name of the output and a function which
-     * returns a unique_ptr to an AudioOutput subclass.
-     */
-    virtual AudioOutputBuilder registerOutput() = 0;
+    [[nodiscard]] virtual QString name() const          = 0;
+    [[nodiscard]] virtual OutputCreator creator() const = 0;
 };
 } // namespace Fooyin
 

@@ -50,7 +50,7 @@ public:
      * Adds an audio output.
      * @note output.name must be unique.
      */
-    virtual void addOutput(const AudioOutputBuilder& output) = 0;
+    virtual void addOutput(const QString& name, OutputCreator output) = 0;
 
 signals:
     void outputChanged(const QString& output, const QString& device);

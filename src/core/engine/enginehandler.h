@@ -44,7 +44,7 @@ public:
 
     [[nodiscard]] OutputNames getAllOutputs() const override;
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;
-    void addOutput(const AudioOutputBuilder& output) override;
+    void addOutput(const QString& name, OutputCreator output) override;
 
 private:
     struct Private;

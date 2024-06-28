@@ -130,7 +130,7 @@ struct Application::Private
 
     void registerTagParsers()
     {
-        tagLoader->addParser({.name = QStringLiteral("TagLib"), .parser = std::make_unique<TagLibParser>()});
+        tagLoader->addParser(QStringLiteral("TagLib"), std::make_unique<TagLibParser>());
     }
 
     void registerDecoders()
@@ -148,15 +148,11 @@ struct Application::Private
         pluginManager.initialisePlugins<CorePlugin>(
             [this](CorePlugin* plugin) { plugin->initialise(corePluginContext); });
 
-        pluginManager.initialisePlugins<OutputPlugin>([this](OutputPlugin* plugin) {
-            const AudioOutputBuilder builder = plugin->registerOutput();
-            engine.addOutput(builder);
-        });
+        pluginManager.initialisePlugins<OutputPlugin>(
+            [this](OutputPlugin* plugin) { engine.addOutput(plugin->name(), plugin->creator()); });
 
-        pluginManager.initialisePlugins<TagParserPlugin>([this](TagParserPlugin* plugin) {
-            TagParserContext parser = plugin->registerTagParser();
-            tagLoader->addParser(std::move(parser));
-        });
+        pluginManager.initialisePlugins<TagParserPlugin>(
+            [this](TagParserPlugin* plugin) { tagLoader->addParser(plugin->name(), plugin->parser()); });
 
         pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
             decoderProvider->addDecoder(plugin->name(), plugin->supportedExtensions(), plugin->creator());
