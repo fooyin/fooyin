@@ -24,6 +24,8 @@
 namespace Fooyin {
 class InfoView : public QTreeView
 {
+    Q_OBJECT
+
 public:
     explicit InfoView(QWidget* parent = nullptr);
 
