@@ -377,6 +377,15 @@ TrackList TrackSelectionController::selectedTracks() const
     return p->m_contextSelection.at(p->m_activeContext).tracks;
 }
 
+int TrackSelectionController::selectedTrackCount() const
+{
+    if(!p->m_activeContext || !p->m_contextSelection.contains(p->m_activeContext)) {
+        return 0;
+    }
+
+    return static_cast<int>(p->m_contextSelection.at(p->m_activeContext).tracks.size());
+}
+
 void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks,
                                                     const QString& title)
 {

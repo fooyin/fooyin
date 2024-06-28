@@ -80,6 +80,8 @@ constexpr auto TrackSelection = "Fooyin.Menu.Tracks";
 constexpr auto TracksPlaylist = "Fooyin.Menu.Tracks.Playlist";
 constexpr auto Playlist       = "Fooyin.Menu.Playlist";
 constexpr auto PlaylistAddTo  = "Fooyin.Menu.Playlist.AddTo";
+constexpr auto Tagging        = "Fooyin.Menu.Tagging";
+constexpr auto Utilities      = "Fooyin.Menu.Utilities";
 } // namespace Context
 } // namespace Menus
 
@@ -137,6 +139,12 @@ constexpr auto Rename          = "Edit.Rename";
 constexpr auto Mute            = "Volume.Mute";
 constexpr auto AddToQueue      = "Playback.AddToQueue";
 constexpr auto RemoveFromQueue = "Playback.RemoveFromQueue";
+constexpr auto Rate0           = "Tagging.Rate0";
+constexpr auto Rate1           = "Tagging.Rate1";
+constexpr auto Rate2           = "Tagging.Rate2";
+constexpr auto Rate3           = "Tagging.Rate3";
+constexpr auto Rate4           = "Tagging.Rate4";
+constexpr auto Rate5           = "Tagging.Rate5";
 } // namespace Actions
 
 namespace Mime {

@@ -67,6 +67,7 @@ public:
 
     [[nodiscard]] Track selectedTrack() const;
     [[nodiscard]] TrackList selectedTracks() const;
+    [[nodiscard]] int selectedTrackCount() const;
     void changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks, const QString& title = {});
     void changeSelectedTracks(WidgetContext* context, const TrackList& tracks, const QString& title = {});
     void changePlaybackOnSend(WidgetContext* context, bool enabled);

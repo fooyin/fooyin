@@ -204,6 +204,7 @@ struct GuiApplication::Private
     {
         setupConnections();
         registerActions();
+        setupRatingMenu();
         restoreIconTheme();
         registerLayouts();
         registerWidgets();
@@ -395,6 +396,59 @@ struct GuiApplication::Private
                                  }
                              }
                          });
+    }
+
+    void setupRatingMenu()
+    {
+        auto* selectionMenu = actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
+        auto* taggingMenu   = actionManager->createMenu(Constants::Menus::Context::Tagging);
+        taggingMenu->menu()->setTitle(tr("Tagging"));
+        selectionMenu->addMenu(taggingMenu);
+
+        auto* rate0 = new QAction(tr("Rate 0"), mainWindow.get());
+        auto* rate1 = new QAction(tr("Rate 1"), mainWindow.get());
+        auto* rate2 = new QAction(tr("Rate 2"), mainWindow.get());
+        auto* rate3 = new QAction(tr("Rate 3"), mainWindow.get());
+        auto* rate4 = new QAction(tr("Rate 4"), mainWindow.get());
+        auto* rate5 = new QAction(tr("Rate 5"), mainWindow.get());
+
+        actionManager->registerAction(rate0, Constants::Actions::Rate0);
+        actionManager->registerAction(rate1, Constants::Actions::Rate1);
+        actionManager->registerAction(rate2, Constants::Actions::Rate2);
+        actionManager->registerAction(rate3, Constants::Actions::Rate3);
+        actionManager->registerAction(rate4, Constants::Actions::Rate4);
+        actionManager->registerAction(rate5, Constants::Actions::Rate5);
+
+        auto setRating = [this](const int rating) {
+            if(selectionController.selectedTrackCount() == 1) {
+                const auto tracks = selectionController.selectedTracks();
+                Track track       = tracks.front();
+                if(track.ratingStars() != rating) {
+                    track.setRatingStars(rating);
+                    core.library->updateTrackMetadata({track});
+                }
+            }
+        };
+
+        QObject::connect(rate0, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(0); });
+        QObject::connect(rate1, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(1); });
+        QObject::connect(rate2, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(2); });
+        QObject::connect(rate3, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(3); });
+        QObject::connect(rate4, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(4); });
+        QObject::connect(rate5, &QAction::triggered, mainWindow.get(), [setRating]() { setRating(5); });
+
+        auto* ratingMenu = new QMenu(tr("Rating"), taggingMenu->menu());
+        ratingMenu->addAction(rate0);
+        ratingMenu->addAction(rate1);
+        ratingMenu->addAction(rate2);
+        ratingMenu->addAction(rate3);
+        ratingMenu->addAction(rate4);
+        ratingMenu->addAction(rate5);
+        taggingMenu->menu()->addMenu(ratingMenu);
+
+        QObject::connect(
+            &selectionController, &TrackSelectionController::selectionChanged, mainWindow.get(),
+            [this, ratingMenu]() { ratingMenu->setEnabled(selectionController.selectedTrackCount() == 1); });
     }
 
     void restoreIconTheme() const
