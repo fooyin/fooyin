@@ -503,7 +503,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="76"/>
         <source>Fading</source>
-        <translation type="unfinished"></translation>
+        <translation>淡入淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="82"/>
@@ -533,17 +533,17 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="108"/>
         <source>Fade In</source>
-        <translation type="unfinished"></translation>
+        <translation>淡入</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="109"/>
         <source>Fade Out</source>
-        <translation type="unfinished"></translation>
+        <translation>淡出</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="110"/>
         <source>Pause/Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停/停止</translation>
     </message>
 </context>
 <context>
@@ -808,7 +808,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="91"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>保持活力</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="94"/>
@@ -931,7 +931,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="90"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>显示系统托盘图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="91"/>
@@ -961,12 +961,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="123"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>正常</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>显示最大化主窗口</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="125"/>
@@ -1089,7 +1089,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="497"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>拖动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="505"/>
@@ -1104,7 +1104,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="516"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>歌词</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="524"/>
@@ -1366,12 +1366,12 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="326"/>
         <source>Channels</source>
-        <translation type="unfinished">声道</translation>
+        <translation>声道</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="330"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>位深</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="334"/>
@@ -1386,7 +1386,7 @@
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="340"/>
         <source>Codec</source>
-        <translation type="unfinished">编解码器</translation>
+        <translation>编解码器</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infomodel.cpp" line="297"/>
@@ -1585,17 +1585,17 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="106"/>
         <source>Grouping</source>
-        <translation type="unfinished">分组</translation>
+        <translation>分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
         <source>Library Tree</source>
-        <translation type="unfinished">媒体库树</translation>
+        <translation>媒体库树</translation>
     </message>
 </context>
 <context>
@@ -1687,7 +1687,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="81"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>保持活力</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="83"/>
@@ -1723,7 +1723,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="118"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="123"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="../../src/gui/widgets/lyricswidget.cpp" line="53"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>歌词</translation>
     </message>
 </context>
 <context>
@@ -1969,7 +1969,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="54"/>
         <source>Bit Depth</source>
-        <translation type="unfinished"></translation>
+        <translation>位深</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="55"/>
@@ -2111,7 +2111,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="70"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
@@ -2582,7 +2582,7 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="375"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>拖动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="411"/>
@@ -3172,7 +3172,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="186"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="196"/>
@@ -3208,12 +3208,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="148"/>
         <source>Show Labels</source>
-        <translation type="unfinished">显示标签</translation>
+        <translation>显示标签</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="158"/>
         <source>Show Elapsed Total</source>
-        <translation type="unfinished">剩余时间模式</translation>
+        <translation>剩余时间模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="166"/>
