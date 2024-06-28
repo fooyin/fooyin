@@ -30,7 +30,7 @@ std::chrono::milliseconds Timer::elapsed() const
     return std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_start);
 }
 
-std::string Timer::elapsedFormatted() const
+QString Timer::elapsedFormatted() const
 {
     auto elapsedMs     = elapsed();
     const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(elapsedMs);
@@ -45,6 +45,6 @@ std::string Timer::elapsedFormatted() const
         << seconds.count() << "." << std::setfill('0') << std::setw(3) << milliseconds.count() << std::setfill('0')
         << std::setw(3) << microseconds.count();
 
-    return oss.str();
+    return QString::fromStdString(oss.str());
 }
 } // namespace Fooyin

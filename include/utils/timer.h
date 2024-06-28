@@ -21,8 +21,9 @@
 
 #include "fyutils_export.h"
 
+#include <QString>
+
 #include <chrono>
-#include <string>
 
 namespace Fooyin {
 class FYUTILS_EXPORT Timer
@@ -34,7 +35,7 @@ public:
     void reset();
 
     [[nodiscard]] std::chrono::milliseconds elapsed() const;
-    [[nodiscard]] std::string elapsedFormatted() const;
+    [[nodiscard]] QString elapsedFormatted() const;
 
 private:
     TimePoint m_start{Clock::now()};
