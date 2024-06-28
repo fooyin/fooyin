@@ -125,4 +125,5 @@ LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsMan
 }
 } // namespace Fooyin
 
+#include "librarysortingpage.moc"
 #include "moc_librarysortingpage.cpp"
