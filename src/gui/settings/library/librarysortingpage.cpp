@@ -37,6 +37,8 @@
 namespace Fooyin {
 class LibrarySortingPageWidget : public SettingsPageWidget
 {
+    Q_OBJECT
+
 public:
     explicit LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings);
 
