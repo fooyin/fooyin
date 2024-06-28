@@ -166,7 +166,9 @@ struct FilterWidget::Private
         QObject::connect(m_header, &FilterView::customContextMenuRequested, m_self,
                          [this](const QPoint& pos) { filterHeaderMenu(pos); });
         QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
-                         [this]() { selectionChanged(); });
+                         [this](const QItemSelection& selected, const QItemSelection& deselected) {
+                             selectionChanged(selected, deselected);
+                         });
         QObject::connect(m_view, &ExpandedTreeView::viewModeChanged, m_self, [this](ExpandedTreeView::ViewMode mode) {
             m_model->setShowDecoration(mode == ExpandedTreeView::ViewMode::Icon);
         });
@@ -211,9 +213,13 @@ struct FilterWidget::Private
         m_filteredTracks = selectedTracks;
     }
 
-    void selectionChanged()
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
     {
         if(m_searching || m_updating) {
+            return;
+        }
+
+        if(selected.indexes().empty() && deselected.indexes().empty()) {
             return;
         }
 

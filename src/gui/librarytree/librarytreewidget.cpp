@@ -291,9 +291,13 @@ struct LibraryTreeWidget::Private
         menu->popup(m_self->mapToGlobal(pos));
     }
 
-    void selectionChanged() const
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
     {
         if(m_updating) {
+            return;
+        }
+
+        if(selected.indexes().empty() && deselected.indexes().empty()) {
             return;
         }
 
@@ -655,7 +659,9 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* 
     QObject::connect(p->m_libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
     QObject::connect(p->m_libraryTree, &LibraryTreeView::middleClicked, this, [this]() { p->handleMiddleClick(); });
     QObject::connect(p->m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this]() { p->selectionChanged(); });
+                     [this](const QItemSelection& selected, const QItemSelection& deselected) {
+                         p->selectionChanged(selected, deselected);
+                     });
     QObject::connect(p->m_libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
                      [this](const QPoint& pos) { p->setupHeaderContextMenu(pos); });
     QObject::connect(&p->m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
