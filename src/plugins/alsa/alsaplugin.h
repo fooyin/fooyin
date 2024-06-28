@@ -32,6 +32,7 @@ class AlsaPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::OutputPlugin)
 
 public:
-    AudioOutputBuilder registerOutput() override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] OutputCreator creator() const override;
 };
 } // namespace Fooyin::Alsa

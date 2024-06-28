@@ -33,6 +33,7 @@ class PipeWirePlugin : public QObject,
     Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
-    AudioOutputBuilder registerOutput() override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] OutputCreator creator() const override;
 };
 } // namespace Fooyin::Pipewire

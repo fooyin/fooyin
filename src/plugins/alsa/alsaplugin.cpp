@@ -22,11 +22,16 @@
 #include "alsaoutput.h"
 
 namespace Fooyin::Alsa {
-AudioOutputBuilder AlsaPlugin::registerOutput()
+QString AlsaPlugin::name() const
 {
-    return {.name = QStringLiteral("ALSA"), .creator = []() {
-                return std::make_unique<AlsaOutput>();
-            }};
+    return QStringLiteral("ALSA");
+}
+
+OutputCreator AlsaPlugin::creator() const
+{
+    return []() {
+        return std::make_unique<AlsaOutput>();
+    };
 }
 } // namespace Fooyin::Alsa
 

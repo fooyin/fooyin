@@ -22,11 +22,16 @@
 #include "pipewireoutput.h"
 
 namespace Fooyin::Pipewire {
-AudioOutputBuilder PipeWirePlugin::registerOutput()
+QString PipeWirePlugin::name() const
 {
-    return {.name = QStringLiteral("PipeWire"), .creator = []() {
-                return std::make_unique<PipeWireOutput>();
-            }};
+    return QStringLiteral("PipeWire");
+}
+
+OutputCreator PipeWirePlugin::creator() const
+{
+    return []() {
+        return std::make_unique<PipeWireOutput>();
+    };
 }
 } // namespace Fooyin::Pipewire
 

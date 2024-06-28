@@ -22,14 +22,17 @@
 #include "sdloutput.h"
 
 namespace Fooyin::Sdl {
-AudioOutputBuilder SdlPlugin::registerOutput()
+QString SdlPlugin::name() const
 {
-    return {.name = QStringLiteral("SDL2"), .creator = []() {
-                return std::make_unique<SdlOutput>();
-            }};
+    return QStringLiteral("SDL2");
 }
 
-void SdlPlugin::shutdown() { }
+OutputCreator SdlPlugin::creator() const
+{
+    return []() {
+        return std::make_unique<SdlOutput>();
+    };
+}
 } // namespace Fooyin::Sdl
 
 #include "moc_sdlplugin.cpp"

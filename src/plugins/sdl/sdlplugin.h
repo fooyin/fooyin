@@ -33,7 +33,7 @@ class SdlPlugin : public QObject,
     Q_INTERFACES(Fooyin::OutputPlugin)
 
 public:
-    AudioOutputBuilder registerOutput() override;
-    void shutdown() override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] OutputCreator creator() const override;
 };
 } // namespace Fooyin::Sdl
