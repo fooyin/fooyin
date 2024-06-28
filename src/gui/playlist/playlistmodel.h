@@ -60,6 +60,14 @@ struct TrackIndexRange
 };
 using TrackIndexRangeList = std::vector<TrackIndexRange>;
 
+struct ParentChildIndexRanges
+{
+    Fooyin::PlaylistItem* parent;
+    std::vector<TrackIndexRange> ranges;
+};
+
+using ParentChildRangesList = std::vector<ParentChildIndexRanges>;
+
 struct MoveOperationGroup
 {
     int index;
@@ -182,6 +190,7 @@ private:
     bool movePlaylistRows(const QModelIndex& source, int firstRow, int lastRow, const QModelIndex& target, int row,
                           const PlaylistItemList& children);
     bool removePlaylistRows(int row, int count, const QModelIndex& parent);
+    bool removePlaylistRows(int row, int count, PlaylistItem* parent);
 
     void fetchChildren(PlaylistItem* parentItem, PlaylistItem* child);
 
@@ -196,6 +205,8 @@ private:
     void coverUpdated(const Track& track);
 
     [[nodiscard]] bool trackIsPlaying(const Track& track, int index) const;
+
+    ParentChildRangesList determineRowGroups(const QModelIndexList& indexes);
 
     using MoveOperationItemGroups = std::vector<PlaylistItemList>;
 

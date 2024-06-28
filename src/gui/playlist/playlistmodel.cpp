@@ -259,50 +259,6 @@ ItemPtrSet optimiseSelection(const ItemPtrSet& selection)
     return optimisedSelection;
 }
 
-struct ParentChildIndexRanges
-{
-    QModelIndex parent;
-    std::vector<Fooyin::TrackIndexRange> ranges;
-};
-
-using ParentChildRangesList = std::vector<ParentChildIndexRanges>;
-
-ParentChildRangesList determineRowGroups(const QModelIndexList& indexes)
-{
-    ParentChildRangesList indexGroups;
-
-    QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
-
-    auto startOfSequence = sortedIndexes.cbegin();
-    while(startOfSequence != sortedIndexes.cend()) {
-        auto endOfSequence
-            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
-                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
-              });
-        if(endOfSequence != sortedIndexes.cend()) {
-            std::advance(endOfSequence, 1);
-        }
-
-        Fooyin::TrackIndexRange indexRange;
-        indexRange.first = startOfSequence->row();
-        indexRange.last  = std::prev(endOfSequence)->row();
-
-        const QModelIndex parent = startOfSequence->parent();
-        auto it = std::ranges::find_if(indexGroups, [&parent](const auto& range) { return range.parent == parent; });
-        if(it != indexGroups.end()) {
-            it->ranges.push_back(indexRange);
-        }
-        else {
-            indexGroups.emplace_back(parent, std::vector<Fooyin::TrackIndexRange>{indexRange});
-        }
-
-        startOfSequence = endOfSequence;
-    }
-
-    return indexGroups;
-}
-
 Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& indexes, const QModelIndex& target = {},
                                                       int row = -1)
 {
@@ -1963,11 +1919,13 @@ bool PlaylistModel::movePlaylistRows(const QModelIndex& source, int firstRow, in
         return false;
     }
 
-    beginMoveRows(source, firstRow, lastRow, target, row);
-    dropMoveRows(source, children, target, row);
-    endMoveRows();
+    if(beginMoveRows(source, firstRow, lastRow, target, row)) {
+        dropMoveRows(source, children, target, row);
+        endMoveRows();
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& parent)
@@ -1985,11 +1943,39 @@ bool PlaylistModel::removePlaylistRows(int row, int count, const QModelIndex& pa
     int lastRow = row + count - 1;
     beginRemoveRows(parent, row, lastRow);
     while(lastRow >= row) {
-        deleteNodes(itemForIndex(index(lastRow, 0, parent)));
+        auto* childItem = parentItem->child(lastRow);
         parentItem->removeChild(lastRow);
+        deleteNodes(childItem);
         --lastRow;
     }
     parentItem->resetChildren();
+    endRemoveRows();
+
+    return true;
+}
+
+bool PlaylistModel::removePlaylistRows(int row, int count, PlaylistItem* parent)
+{
+    if(!parent) {
+        return false;
+    }
+
+    const int numRows = parent->childCount();
+    if(row < 0 || (row + count - 1) >= numRows) {
+        return false;
+    }
+
+    const QModelIndex parentIndex = indexOfItem(parent);
+    int lastRow                   = row + count - 1;
+
+    beginRemoveRows(parentIndex, row, lastRow);
+    while(lastRow >= row) {
+        auto* childItem = parent->child(lastRow);
+        parent->removeChild(lastRow);
+        deleteNodes(childItem);
+        --lastRow;
+    }
+    parent->resetChildren();
     endRemoveRows();
 
     return true;
@@ -2219,6 +2205,42 @@ bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
     return m_currentPlayState != PlayState::Stopped && m_currentPlaylist
         && m_currentPlayingTrack.playlistId == m_currentPlaylist->id() && m_currentPlayingTrack.track.id() == track.id()
         && m_currentPlayingTrack.indexInPlaylist == index;
+}
+
+ParentChildRangesList PlaylistModel::determineRowGroups(const QModelIndexList& indexes)
+{
+    ParentChildRangesList indexGroups;
+
+    QModelIndexList sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes, cmpTrackIndices);
+
+    auto startOfSequence = sortedIndexes.cbegin();
+    while(startOfSequence != sortedIndexes.cend()) {
+        auto endOfSequence
+            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
+                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
+              });
+        if(endOfSequence != sortedIndexes.cend()) {
+            std::advance(endOfSequence, 1);
+        }
+
+        TrackIndexRange indexRange;
+        indexRange.first = startOfSequence->row();
+        indexRange.last  = std::prev(endOfSequence)->row();
+
+        auto* parent = itemForIndex(startOfSequence->parent());
+        auto it = std::ranges::find_if(indexGroups, [&parent](const auto& range) { return range.parent == parent; });
+        if(it != indexGroups.end()) {
+            it->ranges.push_back(indexRange);
+        }
+        else {
+            indexGroups.emplace_back(parent, std::vector<TrackIndexRange>{indexRange});
+        }
+
+        startOfSequence = endOfSequence;
+    }
+
+    return indexGroups;
 }
 
 PlaylistModel::MoveOperationMap PlaylistModel::determineMoveOperationGroups(const MoveOperation& operation, bool merge)
