@@ -141,6 +141,11 @@ struct Application::Private
             const AudioOutputBuilder builder = plugin->registerOutput();
             engine.addOutput(builder);
         });
+
+        pluginManager.initialisePlugins<TagParserPlugin>([this](TagParserPlugin* plugin) {
+            TagParserContext parser = plugin->registerTagParser();
+            tagLoader->addParser(std::move(parser));
+        });
     }
 
     void startSaveTimer()
