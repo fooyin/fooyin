@@ -58,7 +58,7 @@ struct WaveBarPlugin::Private
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
-    EngineController* m_engine;
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
     TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
@@ -78,7 +78,7 @@ struct WaveBarPlugin::Private
     FyWidget* createWavebar()
     {
         if(!m_waveBuilder) {
-            m_waveBuilder = std::make_unique<WaveformBuilder>(m_engine->createDecoder(), m_dbPool, m_settings);
+            m_waveBuilder = std::make_unique<WaveformBuilder>(m_decoderProvider, m_dbPool, m_settings);
         }
 
         auto* wavebar = new WaveBarWidget(m_waveBuilder.get(), m_playerController, m_settings);
@@ -116,7 +116,7 @@ struct WaveBarPlugin::Private
         dialog->setWindowModality(Qt::WindowModal);
         dialog->setValue(0);
 
-        auto* builder = new WaveformBuilder(m_engine->createDecoder(), m_dbPool, m_settings, dialog);
+        auto* builder = new WaveformBuilder(m_decoderProvider, m_dbPool, m_settings, dialog);
 
         QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog, [dialog, builder]() {
             if(dialog->wasCanceled()) {
@@ -181,7 +181,7 @@ WaveBarPlugin::~WaveBarPlugin()
 void WaveBarPlugin::initialise(const CorePluginContext& context)
 {
     p->m_playerController = context.playerController;
-    p->m_engine           = context.engine;
+    p->m_decoderProvider  = context.decoderProvider;
     p->m_settings         = context.settingsManager;
 }
 

@@ -20,6 +20,7 @@
 #include "waveformgenerator.h"
 
 #include <core/engine/audioconverter.h>
+#include <core/engine/decoderprovider.h>
 #include <utils/math.h>
 #include <utils/paths.h>
 
@@ -96,9 +97,10 @@ Fooyin::WaveBar::WaveformData<OutputType> convertCache(const Fooyin::WaveBar::Wa
 } // namespace
 
 namespace Fooyin::WaveBar {
-WaveformGenerator::WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool, QObject* parent)
+WaveformGenerator::WaveformGenerator(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
+                                     QObject* parent)
     : Worker{parent}
-    , m_decoder{std::move(decoder)}
+    , m_decoderProvider{std::move(decoderProvider)}
     , m_dbPool{std::move(dbPool)}
 {
     m_requiredFormat.setSampleFormat(SampleFormat::F32);
@@ -251,11 +253,20 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
 
 QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
 {
-    m_decoder->stop();
+    if(m_decoder) {
+        m_decoder->stop();
+    }
     m_data = {};
 
     if(!track.isValid()) {
         return {};
+    }
+
+    if(!m_decoder || !m_decoder->supportedExtensions().contains(track.extension())) {
+        m_decoder = m_decoderProvider->createDecoderForTrack(track);
+        if(!m_decoder) {
+            return {};
+        }
     }
 
     if(!m_decoder->init(track.filepath())) {

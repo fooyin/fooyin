@@ -31,6 +31,7 @@ class LibraryManager;
 class MusicLibrary;
 class SettingsManager;
 class TagLoader;
+class DecoderProvider;
 
 /*!
  * Passed to core plugins in CorePlugin::initialise.
@@ -40,7 +41,7 @@ struct CorePluginContext
     CorePluginContext(PluginManager* pluginManager_, EngineController* engine_, PlayerController* playerController_,
                       LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistHandler* playlistHandler_,
                       SettingsManager* settingsManager_, std::shared_ptr<PlaylistLoader> playlistLoader_,
-                      std::shared_ptr<TagLoader> tagLoader_)
+                      std::shared_ptr<TagLoader> tagLoader_, std::shared_ptr<DecoderProvider> decoderProvider_)
         : pluginManager{pluginManager_}
         , playerController{playerController_}
         , libraryManager{libraryManager_}
@@ -50,6 +51,7 @@ struct CorePluginContext
         , engine{engine_}
         , playlistLoader{std::move(playlistLoader_)}
         , tagLoader{std::move(tagLoader_)}
+        , decoderProvider{std::move(decoderProvider_)}
     { }
 
     PluginManager* pluginManager;
@@ -61,5 +63,6 @@ struct CorePluginContext
     EngineController* engine;
     std::shared_ptr<PlaylistLoader> playlistLoader;
     std::shared_ptr<TagLoader> tagLoader;
+    std::shared_ptr<DecoderProvider> decoderProvider;
 };
 } // namespace Fooyin

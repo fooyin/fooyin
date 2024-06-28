@@ -20,7 +20,6 @@
 #include "enginehandler.h"
 
 #include "audioplaybackengine.h"
-#include "engine/ffmpeg/ffmpegdecoder.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioengine.h>
@@ -49,14 +48,15 @@ struct EngineHandler::Private
     QThread m_engineThread;
     AudioEngine* m_engine;
 
-    std::map<QString, OutputCreator> m_outputs;
+    std::unordered_map<QString, OutputCreator> m_outputs;
     CurrentOutput m_currentOutput;
 
-    Private(EngineHandler* self, PlayerController* playerController, SettingsManager* settings)
+    Private(EngineHandler* self, std::shared_ptr<DecoderProvider> decoderProvider, PlayerController* playerController,
+            SettingsManager* settings)
         : m_self{self}
         , m_playerController{playerController}
         , m_settings{settings}
-        , m_engine{new AudioPlaybackEngine(m_settings)}
+        , m_engine{new AudioPlaybackEngine(std::move(decoderProvider), m_settings)}
     {
         m_engine->moveToThread(&m_engineThread);
         m_engineThread.start();
@@ -181,9 +181,10 @@ struct EngineHandler::Private
     }
 };
 
-EngineHandler::EngineHandler(PlayerController* playerController, SettingsManager* settings, QObject* parent)
+EngineHandler::EngineHandler(std::shared_ptr<DecoderProvider> decoderProvider, PlayerController* playerController,
+                             SettingsManager* settings, QObject* parent)
     : EngineController{parent}
-    , p{std::make_unique<Private>(this, playerController, settings)}
+    , p{std::make_unique<Private>(this, std::move(decoderProvider), playerController, settings)}
 {
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->playStateChanged(state); });
@@ -245,11 +246,6 @@ void EngineHandler::addOutput(const AudioOutputBuilder& output)
         return;
     }
     p->m_outputs.emplace(output.name, output.creator);
-}
-
-std::unique_ptr<AudioDecoder> EngineHandler::createDecoder()
-{
-    return std::make_unique<FFmpegDecoder>();
 }
 } // namespace Fooyin
 

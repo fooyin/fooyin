@@ -24,7 +24,6 @@
 #include "waveformgenerator.h"
 #include "waveformrescaler.h"
 
-#include <core/engine/audiodecoder.h>
 #include <core/track.h>
 
 #include <QObject>
@@ -32,6 +31,7 @@
 
 namespace Fooyin {
 class AudioBuffer;
+class DecoderProvider;
 class SettingsManager;
 
 namespace WaveBar {
@@ -40,7 +40,7 @@ class WaveformBuilder : public QObject
     Q_OBJECT
 
 public:
-    explicit WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool,
+    explicit WaveformBuilder(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
                              SettingsManager* settings, QObject* parent = nullptr);
     ~WaveformBuilder() override;
 

@@ -22,6 +22,7 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "engine/enginehandler.h"
+#include "engine/ffmpeg/ffmpegdecoder.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/unifiedmusiclibrary.h"
@@ -32,6 +33,7 @@
 #include "tagging/taglibparser.h"
 #include "translations.h"
 
+#include <core/engine/decoderprovider.h>
 #include <core/engine/outputplugin.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -67,6 +69,7 @@ struct Application::Private
     Translations translations;
     Database* database;
     std::shared_ptr<TagLoader> tagLoader;
+    std::shared_ptr<DecoderProvider> decoderProvider;
     PlayerController* playerController;
     EngineHandler engine;
     LibraryManager* libraryManager;
@@ -87,8 +90,9 @@ struct Application::Private
         , translations{settingsManager}
         , database{new Database(self)}
         , tagLoader{std::make_shared<TagLoader>()}
+        , decoderProvider{std::make_shared<DecoderProvider>()}
         , playerController{new PlayerController(settingsManager, self)}
-        , engine{playerController, settingsManager}
+        , engine{decoderProvider, playerController, settingsManager}
         , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, self)}
         , playlistLoader{std::make_shared<PlaylistLoader>()}
         , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), playlistLoader, tagLoader,
@@ -97,9 +101,10 @@ struct Application::Private
                                               self)}
         , pluginManager{settingsManager}
         , corePluginContext{&pluginManager,  &engine,         playerController, libraryManager, library,
-                            playlistHandler, settingsManager, playlistLoader,   tagLoader}
+                            playlistHandler, settingsManager, playlistLoader,   tagLoader,      decoderProvider}
     {
         registerTypes();
+        registerDecoders();
         registerTagParsers();
         registerPlaylistParsers();
         loadPlugins();
@@ -125,7 +130,13 @@ struct Application::Private
 
     void registerTagParsers()
     {
-        tagLoader->addParser({QStringLiteral("TagLib"), std::make_unique<TagLibParser>()});
+        tagLoader->addParser({.name = QStringLiteral("TagLib"), .parser = std::make_unique<TagLibParser>()});
+    }
+
+    void registerDecoders()
+    {
+        decoderProvider->addDecoder(QStringLiteral("FFmpeg"), FFmpegDecoder::extensions(),
+                                    []() { return std::make_unique<FFmpegDecoder>(); });
     }
 
     void loadPlugins()
@@ -145,6 +156,10 @@ struct Application::Private
         pluginManager.initialisePlugins<TagParserPlugin>([this](TagParserPlugin* plugin) {
             TagParserContext parser = plugin->registerTagParser();
             tagLoader->addParser(std::move(parser));
+        });
+
+        pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
+            decoderProvider->addDecoder(plugin->name(), plugin->supportedExtensions(), plugin->creator());
         });
     }
 

@@ -24,9 +24,10 @@
 #include <QObject>
 
 namespace Fooyin {
-class SettingsManager;
-class PlayerController;
 struct AudioOutputBuilder;
+class DecoderProvider;
+class PlayerController;
+class SettingsManager;
 
 using OutputNames = std::vector<QString>;
 
@@ -35,7 +36,8 @@ class EngineHandler : public EngineController
     Q_OBJECT
 
 public:
-    explicit EngineHandler(PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
+    explicit EngineHandler(std::shared_ptr<DecoderProvider> decoderProvider, PlayerController* playerController,
+                           SettingsManager* settings, QObject* parent = nullptr);
     ~EngineHandler() override;
 
     void setup();
@@ -43,8 +45,6 @@ public:
     [[nodiscard]] OutputNames getAllOutputs() const override;
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;
     void addOutput(const AudioOutputBuilder& output) override;
-
-    std::unique_ptr<AudioDecoder> createDecoder() override;
 
 private:
     struct Private;

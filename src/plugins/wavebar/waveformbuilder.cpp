@@ -26,11 +26,11 @@
 #include <utility>
 
 namespace Fooyin::WaveBar {
-WaveformBuilder::WaveformBuilder(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool,
+WaveformBuilder::WaveformBuilder(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
                                  SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
-    , m_generator{std::move(decoder), std::move(dbPool)}
+    , m_generator{std::move(decoderProvider), std::move(dbPool)}
     , m_width{0}
     , m_samplesPerChannel{settings->value<Settings::WaveBar::NumSamples>()}
     , m_rescale{false}

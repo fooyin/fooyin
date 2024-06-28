@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,23 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/engine/audiodecoder.h>
+#include <core/engine/decoderplugin.h>
 
 namespace Fooyin {
-class AudioFormat;
-class AudioBuffer;
+class Track;
 
-class FFmpegDecoder : public AudioDecoder
+class FYCORE_EXPORT DecoderProvider final
 {
 public:
-    FFmpegDecoder();
-    ~FFmpegDecoder() override;
+    DecoderProvider();
+    ~DecoderProvider();
 
-    [[nodiscard]] QStringList supportedExtensions() const override;
+    [[nodiscard]] std::unique_ptr<AudioDecoder> createDecoderForTrack(const Track& track) const;
 
-    bool init(const QString& source) override;
-
-    void start() override;
-    void stop() override;
-
-    [[nodiscard]] bool isSeekable() const override;
-    void seek(uint64_t pos) override;
-
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
-
-    static QStringList extensions();
+    void addDecoder(const QString& name, const QStringList& supportedExtensions, const DecoderCreator& creator);
 
 private:
     struct Private;

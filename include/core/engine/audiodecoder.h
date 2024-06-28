@@ -25,7 +25,7 @@ namespace Fooyin {
 class AudioDecoder
 {
 public:
-    enum Error
+    enum class Error : uint32_t
     {
         NoError,
         ResourceError,
@@ -36,17 +36,19 @@ public:
 
     virtual ~AudioDecoder() = default;
 
+    [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
+
     virtual bool init(const QString& source) = 0;
     virtual void start()                     = 0;
     virtual void stop()                      = 0;
 
-    virtual bool isSeekable() const = 0;
-    virtual void seek(uint64_t pos) = 0;
+    [[nodiscard]] virtual bool isSeekable() const = 0;
+    virtual void seek(uint64_t pos)               = 0;
 
-    virtual AudioBuffer readBuffer()             = 0;
     virtual AudioBuffer readBuffer(size_t bytes) = 0;
 
-    virtual AudioFormat format() const = 0;
-    virtual Error error() const        = 0;
+    [[nodiscard]] virtual AudioFormat format() const = 0;
+    [[nodiscard]] virtual Error error() const        = 0;
 };
+using DecoderCreator = std::function<std::unique_ptr<AudioDecoder>()>;
 } // namespace Fooyin

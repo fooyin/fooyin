@@ -90,7 +90,7 @@ struct FFmpegDecoder::Private
     Codec m_codec;
     AudioFormat m_audioFormat;
 
-    Error m_error{NoError};
+    Error m_error{Error::NoError};
     AVRational m_timeBase;
     bool m_isSeekable{false};
     bool m_draining{false};
@@ -346,6 +346,11 @@ FFmpegDecoder::FFmpegDecoder()
     : p{std::make_unique<Private>(this)}
 { }
 
+QStringList FFmpegDecoder::supportedExtensions() const
+{
+    return FFmpegDecoder::extensions();
+}
+
 FFmpegDecoder::~FFmpegDecoder() = default;
 
 bool FFmpegDecoder::init(const QString& source)
@@ -381,19 +386,6 @@ bool FFmpegDecoder::isSeekable() const
 void FFmpegDecoder::seek(uint64_t pos)
 {
     p->seek(pos);
-}
-
-AudioBuffer FFmpegDecoder::readBuffer()
-{
-    if(!p->m_isDecoding || p->hasError()) {
-        return {};
-    }
-
-    if(!p->m_buffer.isValid()) {
-        p->readNext();
-    }
-
-    return std::exchange(p->m_buffer, {});
 }
 
 AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
@@ -437,5 +429,15 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 AudioDecoder::Error FFmpegDecoder::error() const
 {
     return p->m_error;
+}
+
+QStringList FFmpegDecoder::extensions()
+{
+    static QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
+                                  QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
+                                  QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
+                                  QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
+                                  QStringLiteral("webm"), QStringLiteral("mp4")};
+    return extensions;
 }
 } // namespace Fooyin

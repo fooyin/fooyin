@@ -8,6 +8,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioformat.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiooutput.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/decoderprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
@@ -60,6 +61,7 @@ set(SOURCES
     engine/audiorenderer.h
     engine/enginehandler.cpp
     engine/enginehandler.h
+    engine/decoderprovider.cpp
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegcodec.h
     engine/ffmpeg/ffmpegdecoder.cpp

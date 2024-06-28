@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/engine/audioengine.h>
+#include <core/engine/decoderprovider.h>
 
 namespace Fooyin {
 class SettingsManager;
@@ -29,7 +30,8 @@ class AudioPlaybackEngine : public AudioEngine
     Q_OBJECT
 
 public:
-    explicit AudioPlaybackEngine(SettingsManager* settings, QObject* parent = nullptr);
+    explicit AudioPlaybackEngine(std::shared_ptr<DecoderProvider> decoderProvider, SettingsManager* settings,
+                                 QObject* parent = nullptr);
     ~AudioPlaybackEngine() override;
 
 public slots:

@@ -28,7 +28,6 @@
 
 namespace Fooyin {
 struct AudioOutputBuilder;
-class AudioDecoder;
 
 using OutputNames = std::vector<QString>;
 
@@ -52,8 +51,6 @@ public:
      * @note output.name must be unique.
      */
     virtual void addOutput(const AudioOutputBuilder& output) = 0;
-
-    virtual std::unique_ptr<AudioDecoder> createDecoder() = 0;
 
 signals:
     void outputChanged(const QString& output, const QString& device);

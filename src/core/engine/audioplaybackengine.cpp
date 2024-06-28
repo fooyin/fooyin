@@ -21,7 +21,6 @@
 
 #include "audioclock.h"
 #include "audiorenderer.h"
-#include "engine/ffmpeg/ffmpegdecoder.h"
 #include "internalcoresettings.h"
 
 #include <core/coresettings.h>
@@ -50,6 +49,8 @@ struct AudioPlaybackEngine::Private
 {
     AudioPlaybackEngine* m_self;
 
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    std::unique_ptr<AudioDecoder> m_decoder;
     SettingsManager* m_settings;
 
     AudioClock m_clock;
@@ -74,7 +75,6 @@ struct AudioPlaybackEngine::Private
     Track m_currentTrack;
     AudioFormat m_format;
 
-    std::unique_ptr<AudioDecoder> m_decoder;
     AudioRenderer* m_renderer;
 
     QBasicTimer m_bufferTimer;
@@ -82,11 +82,12 @@ struct AudioPlaybackEngine::Private
 
     FadingIntervals m_fadeIntervals;
 
-    explicit Private(AudioPlaybackEngine* self, SettingsManager* settings)
+    explicit Private(AudioPlaybackEngine* self, std::shared_ptr<DecoderProvider> decoderProvider,
+                     SettingsManager* settings)
         : m_self{self}
+        , m_decoderProvider{std::move(decoderProvider)}
         , m_settings{settings}
         , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
-        , m_decoder{std::make_unique<FFmpegDecoder>()}
         , m_renderer{new AudioRenderer(m_self)}
         , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
     {
@@ -114,7 +115,7 @@ struct AudioPlaybackEngine::Private
 
     void readNextBuffer()
     {
-        if(m_totalBufferTime >= m_bufferLength) {
+        if(!m_decoder || m_totalBufferTime >= m_bufferLength) {
             return;
         }
 
@@ -192,6 +193,10 @@ struct AudioPlaybackEngine::Private
 
     void play()
     {
+        if(!m_decoder) {
+            return;
+        }
+
         if(m_outputState == AudioOutput::State::Disconnected) {
             if(m_renderer->init(m_format)) {
                 m_outputState = AudioOutput::State::None;
@@ -272,7 +277,9 @@ struct AudioPlaybackEngine::Private
 
     void startPlayback()
     {
-        m_decoder->start();
+        if(m_decoder) {
+            m_decoder->start();
+        }
         startBufferTimer();
         m_renderer->start();
     }
@@ -317,14 +324,17 @@ struct AudioPlaybackEngine::Private
             m_renderer->closeOutput();
             m_outputState = AudioOutput::State::Disconnected;
         }
-        m_decoder->stop();
+        if(m_decoder) {
+            m_decoder->stop();
+        }
         m_totalBufferTime = 0;
     }
 };
 
-AudioPlaybackEngine::AudioPlaybackEngine(SettingsManager* settings, QObject* parent)
+AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<DecoderProvider> decoderProvider, SettingsManager* settings,
+                                         QObject* parent)
     : AudioEngine{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<Private>(this, std::move(decoderProvider), settings)}
 { }
 
 AudioPlaybackEngine::~AudioPlaybackEngine()
@@ -340,7 +350,7 @@ AudioPlaybackEngine::~AudioPlaybackEngine()
 
 void AudioPlaybackEngine::seek(uint64_t pos)
 {
-    if(!p->m_decoder->isSeekable()) {
+    if(!p->m_decoder || !p->m_decoder->isSeekable()) {
         return;
     }
 
@@ -363,6 +373,13 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 {
     const Track prevTrack = std::exchange(p->m_currentTrack, track);
 
+    if(!p->m_decoder || !p->m_decoder->supportedExtensions().contains(track.extension())) {
+        p->m_decoder = p->m_decoderProvider->createDecoderForTrack(track);
+        if(!p->m_decoder) {
+            return;
+        }
+    }
+
     auto setupDuration = [this, &track]() {
         p->m_duration      = track.duration();
         p->m_startPosition = track.offset();
@@ -371,6 +388,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     };
 
     if(p->m_ending && track.filepath() == prevTrack.filepath() && p->m_endPosition == track.offset()) {
+        // Multi-file track
         emit positionChanged(0);
         p->m_ending = false;
         p->m_clock.sync(0);

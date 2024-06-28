@@ -27,13 +27,16 @@
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
-namespace Fooyin::WaveBar {
+namespace Fooyin {
+class DecoderProvider;
+
+namespace WaveBar {
 class WaveformGenerator : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit WaveformGenerator(std::unique_ptr<AudioDecoder> decoder, DbConnectionPoolPtr dbPool,
+    explicit WaveformGenerator(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
                                QObject* parent = nullptr);
 
 signals:
@@ -49,6 +52,7 @@ private:
     QString setup(const Track& track, int samplesPerChannel);
     void processBuffer(const AudioBuffer& buffer);
 
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
     std::unique_ptr<AudioDecoder> m_decoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
@@ -60,4 +64,5 @@ private:
     int m_samplesPerChannel;
     WaveformData<float> m_data;
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin
