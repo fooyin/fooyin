@@ -222,6 +222,9 @@ struct LibraryScanner::Private
 
     void cleanupScan()
     {
+        m_tracksProcessed = 0;
+        m_totalTracks     = 0;
+        m_currentProgress = -1;
         m_tracksToStore.clear();
         m_tracksToUpdate.clear();
         m_trackPaths.clear();
@@ -251,7 +254,7 @@ struct LibraryScanner::Private
 
     void reportProgress()
     {
-        const int progress = static_cast<int>((m_tracksProcessed / m_totalTracks) * 100);
+        const int progress = std::max(0, static_cast<int>((m_tracksProcessed / m_totalTracks) * 100));
         if(m_currentProgress != progress) {
             m_currentProgress = progress;
             emit m_self->progressChanged(m_currentProgress);
@@ -493,6 +496,8 @@ struct LibraryScanner::Private
                 m_missingHashes.emplace(track.hash(), track);
             }
         }
+
+        reportProgress();
 
         const QDir baseDir{path};
         const auto dirs = getDirectories(path);
