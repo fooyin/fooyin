@@ -694,7 +694,12 @@ void Track::setRating(float rating)
 
 void Track::setRatingStars(int rating)
 {
-    p->rating = static_cast<float>(rating) / MaxStarCount;
+    if(rating == 0) {
+        p->rating = -1;
+    }
+    else {
+        p->rating = static_cast<float>(rating) / MaxStarCount;
+    }
 }
 
 QString Track::metaValue(const QString& name) const
