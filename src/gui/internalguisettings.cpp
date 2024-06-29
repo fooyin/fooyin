@@ -123,7 +123,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistTabsCloseButton>(false, QStringLiteral("PlaylistTabs/ShowCloseButton"));
     m_settings->createSetting<Internal::PlaylistTabsMiddleClose>(false,
                                                                  QStringLiteral("PlaylistTabs/CloseOnMiddleClick"));
-    m_settings->createSetting<Internal::PlaylistTabsExpand>(true, QStringLiteral("PlaylistTabs/ExpandToFill"));
+    m_settings->createSetting<Internal::PlaylistTabsExpand>(false, QStringLiteral("PlaylistTabs/ExpandToFill"));
     m_settings->createSetting<Internal::LibTreeAnimated>(true, QStringLiteral("LibraryTree/Animated"));
 }
 } // namespace Fooyin
