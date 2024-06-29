@@ -311,7 +311,7 @@ void WaveBarSettingsPageWidget::updateCacheSize()
     const QFile cacheFile{cachePath()};
     const QString cacheSize = Utils::formatFileSize(cacheFile.size());
 
-    m_cacheSizeLabel->setText(tr("Disk Cache Usage") + QStringLiteral(": %1").arg(cacheSize));
+    m_cacheSizeLabel->setText(tr("Disk cache usage") + QStringLiteral(": %1").arg(cacheSize));
 }
 
 WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)
