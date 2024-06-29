@@ -551,7 +551,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="53"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="68"/>
@@ -569,52 +569,52 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="41"/>
         <source>Save window size</source>
-        <translation type="unfinished"></translation>
+        <translation>保存窗口大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="44"/>
         <source>Export Layout</source>
-        <translation type="unfinished">导出布局</translation>
+        <translation>导出布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="54"/>
         <source>Path</source>
-        <translation type="unfinished">路径</translation>
+        <translation>路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="56"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="99"/>
         <source>Failed to save the current layout</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前布局失败</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="112"/>
         <source>Failed to export layout</source>
-        <translation type="unfinished"></translation>
+        <translation>导出布局失败</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
         <source>Save Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>保存布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
         <source>%1 Layout %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1的布局 %2</translation>
     </message>
 </context>
 <context>
@@ -660,12 +660,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="62"/>
         <source>&amp;Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>加载播放列表(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="67"/>
         <source>&amp;Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保存播放列表(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="74"/>
@@ -764,42 +764,42 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="255"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="258"/>
         <source>Columns</source>
-        <translation type="unfinished">列</translation>
+        <translation>列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="259"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑封面 (底部标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="260"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑封面 (无标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="292"/>
         <source>Summary Item</source>
-        <translation type="unfinished"></translation>
+        <translation>汇总项</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="300"/>
         <source>Front Cover</source>
-        <translation type="unfinished">封面</translation>
+        <translation>封面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="301"/>
         <source>Back Cover</source>
-        <translation type="unfinished">背面</translation>
+        <translation>背面</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="302"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="386"/>
@@ -964,17 +964,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="190"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="191"/>
         <source>Plugins</source>
-        <translation type="unfinished">插件</translation>
+        <translation>插件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="191"/>
         <source>Filters</source>
-        <translation type="unfinished">筛选器</translation>
+        <translation>筛选器</translation>
     </message>
 </context>
 <context>
@@ -982,52 +982,52 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Show headers</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="67"/>
         <source>Show scrollbars</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="68"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="76"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="79"/>
         <source>Font</source>
-        <translation type="unfinished">字体</translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="80"/>
         <source>Colour</source>
-        <translation type="unfinished">颜色</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="84"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑封面模式</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="87"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>宽度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="88"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="101"/>
@@ -1080,7 +1080,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="91"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭时最小化到托盘</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
@@ -1115,7 +1115,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="125"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>启动后最小化到系统托盘</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="126"/>
@@ -1138,7 +1138,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="244"/>
         <source>&amp;Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>布局(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="272"/>
@@ -1172,42 +1172,42 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="405"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>标记</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="408"/>
         <source>Rate 0</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为0</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="409"/>
         <source>Rate 1</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为1</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="410"/>
         <source>Rate 2</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为2</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="411"/>
         <source>Rate 3</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为3</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="412"/>
         <source>Rate 4</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为4</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="413"/>
         <source>Rate 5</source>
-        <translation type="unfinished"></translation>
+        <translation>评分为5</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="440"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>评分</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="510"/>
@@ -1235,7 +1235,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="527"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表切换器</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="535"/>
@@ -1343,7 +1343,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="675"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>所有支持的媒体文件 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="676"/>
@@ -1354,7 +1354,7 @@
         <location filename="../../src/gui/guiapplication.cpp" line="677"/>
         <location filename="../../src/gui/guiapplication.cpp" line="718"/>
         <source>Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表 (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="688"/>
@@ -1369,12 +1369,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="726"/>
         <source>Load Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>加载播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="757"/>
         <source>Save Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>保存播放列表</translation>
     </message>
 </context>
 <context>
@@ -1420,22 +1420,22 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="97"/>
         <source>Override root margin</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖顶级容器边距</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="100"/>
         <source>Override splitter handle size</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖分割器手柄大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="102"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>凸起</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="103"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>拉伸</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
@@ -1470,27 +1470,27 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="143"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>工具按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="149"/>
         <source>Playback Scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>播放脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="152"/>
         <source>Window title</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="288"/>
         <source>Invalid Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>无效布局</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="288"/>
         <source>Layout could not be imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导入布局。</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="295"/>
@@ -1511,137 +1511,137 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="64"/>
         <source>Metadata</source>
-        <translation type="unfinished">元数据</translation>
+        <translation>元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="67"/>
         <source>Location</source>
-        <translation type="unfinished">位置</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="70"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="99"/>
         <source>Artist</source>
-        <translation type="unfinished">艺术家</translation>
+        <translation>艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="102"/>
         <source>Title</source>
-        <translation type="unfinished">标题</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="103"/>
         <source>Album</source>
-        <translation type="unfinished">专辑</translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="104"/>
         <source>Date</source>
-        <translation type="unfinished">日期</translation>
+        <translation>日期</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="105"/>
         <source>Genre</source>
-        <translation type="unfinished">流派</translation>
+        <translation>流派</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="106"/>
         <source>Album Artist</source>
-        <translation type="unfinished">专辑艺术家</translation>
+        <translation>专辑艺术家</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="109"/>
         <source>Track Number</source>
-        <translation type="unfinished">音轨号</translation>
+        <translation>音轨号</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="117"/>
         <source>File Names</source>
-        <translation type="unfinished">文件名称</translation>
+        <translation>文件名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="117"/>
         <source>File Name</source>
-        <translation type="unfinished">文件名称</translation>
+        <translation>文件名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="119"/>
         <source>Folder Names</source>
-        <translation type="unfinished">目录名称</translation>
+        <translation>目录名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="119"/>
         <source>Folder Name</source>
-        <translation type="unfinished">目录名称</translation>
+        <translation>目录名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="123"/>
         <source>File Path</source>
-        <translation type="unfinished">文件路径</translation>
+        <translation>文件路径</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="126"/>
         <source>Total Size</source>
-        <translation type="unfinished">总大小</translation>
+        <translation>总大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="126"/>
         <source>File Size</source>
-        <translation type="unfinished">文件大小</translation>
+        <translation>文件大小</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="129"/>
         <source>Last Modified</source>
-        <translation type="unfinished">上次修改</translation>
+        <translation>上次修改</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="133"/>
         <source>Added</source>
-        <translation type="unfinished">添加时间</translation>
+        <translation>添加时间</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="141"/>
         <source>Tracks</source>
-        <translation type="unfinished">音轨</translation>
+        <translation>音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="144"/>
         <source>Duration</source>
-        <translation type="unfinished">时长</translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="146"/>
         <source>Channels</source>
-        <translation type="unfinished">声道</translation>
+        <translation>声道</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="148"/>
         <source>Bit Depth</source>
-        <translation type="unfinished">位深</translation>
+        <translation>位深</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="150"/>
         <source>Avg. Bitrate</source>
-        <translation type="unfinished">平均比特率</translation>
+        <translation>平均比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="150"/>
         <source>Bitrate</source>
-        <translation type="unfinished">比特率</translation>
+        <translation>比特率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="154"/>
         <source>Sample Rate</source>
-        <translation type="unfinished">采样率</translation>
+        <translation>采样率</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="156"/>
         <source>Codec</source>
-        <translation type="unfinished">编解码器</translation>
+        <translation>编解码器</translation>
     </message>
 </context>
 <context>
@@ -1649,7 +1649,7 @@
     <message>
         <location filename="../../src/gui/info/infoview.cpp" line="33"/>
         <source>No Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>无选择</translation>
     </message>
 </context>
 <context>
@@ -1706,12 +1706,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="43"/>
         <source>&amp;Refresh Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>刷新媒体库(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="48"/>
         <source>Re&amp;scan Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>重新扫描媒体库(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
@@ -1761,7 +1761,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarysortingpage.cpp" line="78"/>
         <source>Sort tracks in library by</source>
-        <translation type="unfinished"></translation>
+        <translation>排序方式</translation>
     </message>
 </context>
 <context>
@@ -1769,12 +1769,12 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="67"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>刷新</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="71"/>
         <source>Rescan</source>
-        <translation type="unfinished"></translation>
+        <translation>重新扫描</translation>
     </message>
 </context>
 <context>
@@ -1907,12 +1907,12 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="84"/>
         <source>Restore state on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>启动时恢复状态</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="85"/>
         <source>Expand/collapse animation</source>
-        <translation type="unfinished"></translation>
+        <translation>展开/折叠动画</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="88"/>
@@ -1923,7 +1923,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="97"/>
@@ -1958,7 +1958,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="177"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="178"/>
@@ -1996,7 +1996,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="82"/>
         <source>Loading Library…</source>
-        <translation type="unfinished"></translation>
+        <translation>加载媒体库…</translation>
     </message>
 </context>
 <context>
@@ -2004,7 +2004,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="304"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="731"/>
@@ -2101,7 +2101,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表切换器</translation>
     </message>
 </context>
 <context>
@@ -2318,7 +2318,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished"></translation>
+        <translation>展开选项卡</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
@@ -2328,27 +2328,27 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
         <source>Show delete button on tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>在选项卡上显示删除按钮</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="82"/>
         <source>Delete playlists on middle click</source>
-        <translation type="unfinished"></translation>
+        <translation>在中键点击时删除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="86"/>
         <source>Write metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>写入元数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
         <source>Saving</source>
-        <translation type="unfinished"></translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
         <source>Path type</source>
-        <translation type="unfinished"></translation>
+        <translation>路径类型</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="141"/>
@@ -2505,7 +2505,7 @@
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="222"/>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="226"/>
         <source>Override height</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="228"/>
@@ -3196,7 +3196,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="63"/>
         <source>Show Playing &amp;Track</source>
-        <translation type="unfinished"></translation>
+        <translation>显示正在播放的歌曲(&amp;T)</translation>
     </message>
 </context>
 <context>
@@ -3209,12 +3209,12 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="240"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="241"/>
         <source>Slider</source>
-        <translation type="unfinished"></translation>
+        <translation>滑块</translation>
     </message>
 </context>
 <context>
@@ -3384,7 +3384,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>静默</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="87"/>
@@ -3454,7 +3454,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="196"/>
         <source>Number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>样本数量</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="197"/>
@@ -3467,7 +3467,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="314"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>磁盘缓存使用情况</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="189"/>
@@ -3510,7 +3510,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="170"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>静默</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="203"/>
