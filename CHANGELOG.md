@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.5.1](https://github.com/fooyin/fooyin/releases/tag/v0.5.1) (2024-06-29)
+
+### Improvements
+
+* Playback
+  - Add option to silently continue playback if track unavailable
+  - Show message box for ALSA device errors
+* Library Tree: Make animation of expand/collapse configurable
+* Volume Control: Add slider mode
+
+### Fixes
+
+* Playlist
+  - Fix unscrollable view when changing playlist
+  - Fix selection playlists refreshing during library scans
+* Engine: Fix silence when resuming from a stopped state with fading enabled
+* ExpandedTreeView: Stop autoscrolling to selection if partly visible
+* Filters: Fix restoring selection on track update
+* Library Tree: Fix text colour for playing row
+* Scripting: Fix usage of custom tags
+
+
 ## [0.5.0](https://github.com/fooyin/fooyin/releases/tag/v0.5.0) (2024-06-28)
 
 ### New Features
@@ -44,7 +66,6 @@
   - Fix incorrect colour of icons when changing playmode 
 * Engine: Fix crash when stopping playback without a valid track
 * Track: Fix channel count being incorrectly displayed as 0
-
 
 
 ## [0.4.5](https://github.com/fooyin/fooyin/releases/tag/v0.4.5) (2024-06-05)

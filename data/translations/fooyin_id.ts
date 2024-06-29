@@ -1136,241 +1136,256 @@
 <context>
     <name>Fooyin::GuiApplication</name>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="244"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="245"/>
         <source>&amp;Layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="272"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="273"/>
         <source>Plugins not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="273"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="274"/>
         <source>Some plugins are required for full functionality.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="274"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="275"/>
         <source>Plugin search locations:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="277"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="278"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="378"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="381"/>
         <source>Mute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="405"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="408"/>
         <source>Tagging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="408"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="411"/>
         <source>Rate 0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="409"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="412"/>
         <source>Rate 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="410"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="413"/>
         <source>Rate 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="411"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="414"/>
         <source>Rate 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="412"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="415"/>
         <source>Rate 4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="413"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="416"/>
         <source>Rate 5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="440"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="443"/>
         <source>Rating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="510"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="513"/>
         <source>Dummy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="516"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Vertical Splitter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="523"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="536"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="546"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="520"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="526"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="539"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="549"/>
         <source>Splitters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="522"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="525"/>
         <source>Horizontal Splitter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="527"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="530"/>
         <source>Playlist Switcher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="535"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="538"/>
         <source>Playlist Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="541"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="544"/>
         <source>Playlist Organiser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="545"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="548"/>
         <source>Tab Stack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="553"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="556"/>
         <source>Library Tree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="558"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="561"/>
         <source>Player Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="559"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="565"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="570"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="575"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="562"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="568"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="573"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="578"/>
         <source>Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="564"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="567"/>
         <source>Playlist Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="569"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="572"/>
         <source>Volume Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="574"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="577"/>
         <source>Seekbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="582"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="585"/>
         <source>Selection Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="590"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="593"/>
         <source>Artwork Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="594"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="597"/>
         <source>Lyrics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="603"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="606"/>
         <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="607"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="610"/>
         <source>Spacer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="618"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="621"/>
         <source>Status Bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="623"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="626"/>
         <source>Search Bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="637"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="640"/>
         <source>Directory Browser</source>
         <translation type="unfinished">Peramban Direktori</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="644"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="647"/>
         <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="651"/>
-        <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="655"/>
-        <source>Stop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="675"/>
-        <source>All Supported Media Files (%1)</source>
+        <location filename="../../src/gui/guiapplication.cpp" line="658"/>
+        <source>Playback Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="676"/>
+        <source>Track Not Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="681"/>
+        <source>Continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="683"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="687"/>
+        <source>Always continue playing if a track is unavailable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="711"/>
+        <source>All Supported Media Files (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="712"/>
         <source>Audio Files (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="677"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="718"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="713"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="754"/>
         <source>Playlists (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="688"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="724"/>
         <source>Add Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="701"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="737"/>
         <source>Add Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="726"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="762"/>
         <source>Load Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="757"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="793"/>
         <source>Save Playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2276,12 +2291,12 @@
 <context>
     <name>Fooyin::PlaylistGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="233"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="241"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="234"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="242"/>
         <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2289,102 +2304,112 @@
 <context>
     <name>Fooyin::PlaylistGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="73"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="74"/>
         <source>Cursor follows playback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="74"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
         <source>Playback follows cursor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="75"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="76"/>
         <source>Rewind track on previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="76"/>
-        <source>Show scrollbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="77"/>
-        <source>Show header</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
-        <source>Expand tabs to fill empty space</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
-        <source>Show add button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
-        <source>Show delete button on tabs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="82"/>
-        <source>Delete playlists on middle click</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="86"/>
-        <source>Write metadata</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="108"/>
-        <source>Saving</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="111"/>
-        <source>Path type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="141"/>
-        <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="118"/>
-        <source>Image Padding</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="121"/>
-        <source>Left/Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="122"/>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
-        <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
+        <source>Skip unavailable tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="78"/>
+        <source>Show scrollbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
+        <source>Show header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="81"/>
+        <source>Expand tabs to fill empty space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="82"/>
+        <source>Show add button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="83"/>
+        <source>Show delete button on tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="84"/>
+        <source>Delete playlists on middle click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="88"/>
+        <source>Write metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="95"/>
+        <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="113"/>
+        <source>Saving</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="116"/>
+        <source>Path type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="146"/>
+        <source>Playlist Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="123"/>
+        <source>Image Padding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="126"/>
+        <source>Left/Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="127"/>
+        <source>Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="92"/>
+        <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
         <source>Alternating row colours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="101"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="105"/>
         <source>Behaviour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="130"/>
+        <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="135"/>
         <source>Appearance</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2593,12 +2618,12 @@
 <context>
     <name>Fooyin::PlaylistView</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistview.cpp" line="60"/>
+        <location filename="../../src/gui/playlist/playlistview.cpp" line="69"/>
         <source>Loading Playlist…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistview.cpp" line="64"/>
+        <location filename="../../src/gui/playlist/playlistview.cpp" line="73"/>
         <source>Empty Playlist</source>
         <translation type="unfinished"></translation>
     </message>
