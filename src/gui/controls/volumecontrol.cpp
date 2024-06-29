@@ -31,7 +31,10 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
+#include <QActionGroup>
 #include <QApplication>
+#include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
@@ -44,6 +47,12 @@ using namespace std::chrono_literals;
 constexpr double MinVolume = 0.01;
 
 namespace Fooyin {
+enum class Mode
+{
+    Icon,
+    Slider
+};
+
 struct VolumeControl::Private
 {
     VolumeControl* m_self;
@@ -51,37 +60,80 @@ struct VolumeControl::Private
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
-    ToolButton* m_volumeIcon;
-    HoverMenu* m_volumeMenu;
+    Mode m_mode{Mode::Icon};
+    QVBoxLayout* m_layout;
+    QPointer<ToolButton> m_volumeIcon;
+    QPointer<HoverMenu> m_volumeMenu;
+    QPointer<QVBoxLayout> m_menuLayout;
     LogSlider* m_volumeSlider;
 
     Private(VolumeControl* self, ActionManager* actionManager, SettingsManager* settings)
         : m_self{self}
         , m_actionManager{actionManager}
         , m_settings{settings}
-        , m_volumeIcon{new ToolButton(m_self)}
-        , m_volumeMenu{new HoverMenu(m_self)}
+        , m_layout{new QVBoxLayout(m_self)}
         , m_volumeSlider{new LogSlider(Qt::Vertical, m_self)}
     {
-        auto* volumeLayout = new QVBoxLayout(m_volumeMenu);
-        volumeLayout->addWidget(m_volumeSlider);
+        m_layout->setContentsMargins({});
+        m_layout->setSpacing(0);
 
-        if(auto* muteCmd = m_actionManager->command(Constants::Actions::Mute)) {
-            m_volumeIcon->setDefaultAction(muteCmd->action());
-        }
-
-        m_volumeSlider->setMinimumHeight(100);
         m_volumeSlider->setRange(MinVolume, 1.0);
         m_volumeSlider->setNaturalValue(m_settings->value<Settings::Core::OutputVolume>());
+        QObject::connect(m_volumeSlider, &LogSlider::logValueChanged, m_volumeSlider,
+                         [this](double volume) { volumeChanged(volume); });
 
-        m_volumeMenu->hide();
+        setMode(m_mode, true);
+    }
 
-        updateDisplay(m_settings->value<Settings::Core::OutputVolume>());
-        updateButtonStyle();
+    void setMode(Mode mode, bool init = false)
+    {
+        if(std::exchange(m_mode, mode) == mode && !init) {
+            return;
+        }
+
+        if(m_mode == Mode::Icon) {
+            m_volumeMenu = new HoverMenu(m_self);
+            m_menuLayout = new QVBoxLayout(m_volumeMenu);
+            m_volumeIcon = new ToolButton(m_self);
+
+            QObject::connect(m_volumeIcon, &ToolButton::entered, m_volumeMenu, [this]() { showVolumeMenu(); });
+            if(auto* muteCmd = m_actionManager->command(Constants::Actions::Mute)) {
+                m_volumeIcon->setDefaultAction(muteCmd->action());
+            }
+
+            m_volumeSlider->setOrientation(Qt::Vertical);
+            m_volumeSlider->setMinimumSize(0, 100);
+            m_menuLayout->addWidget(m_volumeSlider);
+
+            m_layout->addWidget(m_volumeIcon);
+            m_volumeMenu->hide();
+
+            updateDisplay(m_settings->value<Settings::Core::OutputVolume>());
+            updateButtonStyle();
+        }
+        else {
+            if(m_volumeIcon) {
+                m_volumeIcon->deleteLater();
+            }
+            if(m_volumeMenu) {
+                m_volumeMenu->deleteLater();
+            }
+            if(m_menuLayout) {
+                m_menuLayout->deleteLater();
+            }
+
+            m_volumeSlider->setOrientation(Qt::Horizontal);
+            m_volumeSlider->setMinimumSize(75, 0);
+            m_layout->addWidget(m_volumeSlider);
+        }
     }
 
     void updateButtonStyle() const
     {
+        if(!m_volumeIcon) {
+            return;
+        }
+
         const auto options
             = static_cast<Settings::Gui::ToolButtonOptions>(m_settings->value<Settings::Gui::ToolButtonStyle>());
 
@@ -91,6 +143,10 @@ struct VolumeControl::Private
 
     void showVolumeMenu() const
     {
+        if(!m_volumeMenu) {
+            return;
+        }
+
         const int menuWidth  = m_volumeMenu->sizeHint().width();
         const int menuHeight = m_volumeMenu->sizeHint().height();
 
@@ -102,7 +158,7 @@ struct VolumeControl::Private
         const int x = !menuWidth - 15;
         const int y = displayAbove ? (!m_self->height() - menuHeight - 10) : (m_self->height() + 10);
 
-        const QPoint pos(m_self->mapToGlobal(QPoint(x, y)));
+        const QPoint pos(m_self->mapToGlobal(QPoint{x, y}));
         m_volumeMenu->move(pos);
         m_volumeMenu->show();
         m_volumeMenu->setFocus(Qt::ActiveWindowFocusReason);
@@ -144,17 +200,6 @@ VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* sett
     : FyWidget{parent}
     , p{std::make_unique<Private>(this, actionManager, settings)}
 {
-    auto* layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    layout->addWidget(p->m_volumeIcon);
-
-    QObject::connect(p->m_volumeIcon, &ToolButton::entered, this, [this]() { p->showVolumeMenu(); });
-
-    QObject::connect(p->m_volumeSlider, &LogSlider::logValueChanged, this,
-                     [this](double volume) { p->volumeChanged(volume); });
-
     settings->subscribe<Settings::Core::OutputVolume>(this, [this](double volume) { p->updateDisplay(volume); });
     settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { p->updateDisplay(p->m_settings->value<Settings::Core::OutputVolume>()); });
@@ -171,6 +216,43 @@ QString VolumeControl::name() const
 QString VolumeControl::layoutName() const
 {
     return QStringLiteral("VolumeControls");
+}
+
+void VolumeControl::saveLayoutData(QJsonObject& layout)
+{
+    layout[u"Mode"] = static_cast<int>(p->m_mode);
+}
+
+void VolumeControl::loadLayoutData(const QJsonObject& layout)
+{
+    if(layout.contains(u"Mode")) {
+        p->setMode(static_cast<Mode>(layout.value(u"Mode").toInt()));
+    }
+}
+
+void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
+{
+    auto* menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* modeGroup = new QActionGroup(this);
+
+    auto* iconMode   = new QAction(tr("Icon"), modeGroup);
+    auto* sliderMode = new QAction(tr("Slider"), modeGroup);
+
+    iconMode->setCheckable(true);
+    sliderMode->setCheckable(true);
+
+    iconMode->setChecked(p->m_mode == Mode::Icon);
+    sliderMode->setChecked(p->m_mode == Mode::Slider);
+
+    QObject::connect(iconMode, &QAction::triggered, this, [this]() { p->setMode(Mode::Icon); });
+    QObject::connect(sliderMode, &QAction::triggered, this, [this]() { p->setMode(Mode::Slider); });
+
+    menu->addAction(iconMode);
+    menu->addAction(sliderMode);
+
+    menu->popup(event->globalPos());
 }
 
 void VolumeControl::wheelEvent(QWheelEvent* event)
