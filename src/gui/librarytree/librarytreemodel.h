@@ -29,8 +29,6 @@
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
-struct LibraryTreeAppearance;
-
 class LibraryTreeSortModel : public QSortFilterProxyModel
 {
     Q_OBJECT

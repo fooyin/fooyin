@@ -117,7 +117,8 @@ enum GuiInternalSettings : uint32_t
     LibTreeKeepAlive        = 49 | Type::Bool,
     PlaylistTabsCloseButton = 50 | Type::Bool,
     PlaylistTabsMiddleClose = 51 | Type::Bool,
-    PlaylistTabsExpand      = 52 | Type::Bool
+    PlaylistTabsExpand      = 52 | Type::Bool,
+    LibTreeAnimated         = 53 | Type::Bool
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
