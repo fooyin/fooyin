@@ -337,7 +337,6 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         }
         else {
             p->updateOutputVolume(p->m_initialVolume);
-            return;
         }
     }
 
