@@ -44,7 +44,7 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
 void LibraryTreeView::setLoading(bool isLoading)
 {
     m_isLoading = isLoading;
-    update();
+    viewport()->update();
 }
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
