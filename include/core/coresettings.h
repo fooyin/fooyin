@@ -42,7 +42,8 @@ enum CoreSettings : uint32_t
     Language             = 11 | Type::String,
     BufferLength         = 12 | Type::Int,
     PlaylistSavePathType = 13 | Type::Int,
-    PlaylistSaveMetadata = 14 | Type::Bool
+    PlaylistSaveMetadata = 14 | Type::Bool,
+    SkipUnavailable      = 15 | Type::Bool
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Fooyin::Settings::Core

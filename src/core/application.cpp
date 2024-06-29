@@ -227,6 +227,11 @@ Application::Application(QObject* parent)
                      [this](const TrackList& tracks) { p->playlistHandler->tracksPlayed(tracks); });
     QObject::connect(&p->engine, &EngineHandler::trackAboutToFinish, p->playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
+    QObject::connect(&p->engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
+        if(status == TrackStatus::InvalidTrack) {
+            p->playerController->pause();
+        }
+    });
 
     p->library->loadAllTracks();
     p->engine.setup();

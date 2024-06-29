@@ -99,6 +99,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -646,23 +647,40 @@ struct GuiApplication::Private
 
     void showTrackNotFoundMessage(const Track& track) const
     {
+        if(settings->value<Settings::Core::SkipUnavailable>()) {
+            core.playerController->next();
+            core.playerController->play();
+            return;
+        }
+
         QMessageBox message;
         message.setIcon(QMessageBox::Warning);
         message.setText(tr("Track Not Found"));
         message.setInformativeText(track.filepath());
 
         message.addButton(QMessageBox::Ok);
+        if(auto* button = message.button(QMessageBox::Ok)) {
+            button->setText(tr("Continue"));
+        }
         QPushButton* stopButton = message.addButton(tr("Stop"), QMessageBox::ActionRole);
         stopButton->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
         message.setDefaultButton(QMessageBox::Ok);
 
+        auto* alwaysSkip = new QCheckBox(tr("Always continue playing if a track is unavailable"), &message);
+        message.setCheckBox(alwaysSkip);
+
         message.exec();
+
+        if(alwaysSkip->isChecked()) {
+            settings->set<Settings::Core::SkipUnavailable>(true);
+        }
 
         if(message.clickedButton() == stopButton) {
             core.playerController->stop();
         }
         else {
             core.playerController->next();
+            core.playerController->play();
         }
     }
 
