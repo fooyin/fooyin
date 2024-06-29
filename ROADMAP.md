@@ -20,6 +20,7 @@ This document outlines the upcoming features for fooyin.
 | Integrate Discogs for metadata searching      | ❓ TBD   |
 | Internet radio support                        | ❓ TBD   |
 | Archive support (Adding to library, playback) | ❓ TBD   |
+| DSP plugins                                   | ❓ TBD   |
 
 ## Enhancements
 
