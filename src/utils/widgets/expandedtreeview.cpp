@@ -1694,7 +1694,7 @@ void IconView::doItemLayout()
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
-    const int segStartPosition{m_layoutBounds.left()};
+    const int segStartPosition{m_layoutBounds.left() + m_itemSpacing};
     const int segEndPosition{m_layoutBounds.right()};
 
     int deltaSegPosition{0};
@@ -1748,6 +1748,7 @@ void IconView::doItemLayout()
 
     m_contentsSize = rect.size();
     m_contentsSize.rwidth() += m_itemSpacing;
+    m_contentsSize.rheight() += m_rowSpacing;
 }
 
 ExpandedTreeViewItem IconView::indexToViewItem(const QModelIndex& index) const
