@@ -82,7 +82,7 @@ public:
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
 
-    [[nodiscard]] QModelIndexList indexesForValues(const QStringList& values, int column = 0) const;
+    [[nodiscard]] QModelIndexList indexesForKeys(const QStringList& keys) const;
 
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);

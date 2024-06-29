@@ -520,7 +520,7 @@ void FilterWidget::softReset(const TrackList& tracks)
     QStringList selected;
     const QModelIndexList selectedRows = p->m_view->selectionModel()->selectedRows();
     for(const QModelIndex& index : selectedRows) {
-        selected.emplace_back(index.data(Qt::DisplayRole).toString());
+        selected.emplace_back(index.data(FilterItem::Key).toString());
     }
 
     reset(tracks);
@@ -528,7 +528,7 @@ void FilterWidget::softReset(const TrackList& tracks)
     QObject::connect(
         p->m_model, &FilterModel::modelUpdated, this,
         [this, selected]() {
-            const QModelIndexList selectedIndexes = p->m_model->indexesForValues(selected);
+            const QModelIndexList selectedIndexes = p->m_model->indexesForKeys(selected);
 
             QItemSelection indexesToSelect;
             indexesToSelect.reserve(selectedIndexes.size());
@@ -537,8 +537,9 @@ void FilterWidget::softReset(const TrackList& tracks)
 
             for(const QModelIndex& index : selectedIndexes) {
                 if(index.isValid()) {
-                    const QModelIndex last = index.siblingAtColumn(columnCount - 1);
-                    indexesToSelect.append({index, last.isValid() ? last : index});
+                    const QModelIndex proxyIndex = p->m_sortProxy->mapFromSource(index);
+                    const QModelIndex last       = proxyIndex.siblingAtColumn(columnCount - 1);
+                    indexesToSelect.append({proxyIndex, last.isValid() ? last : proxyIndex});
                 }
             }
 
@@ -694,11 +695,8 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
     QStringList selected;
     for(const QModelIndex& index : selectedRows) {
-        if(!index.parent().isValid()) {
-            selected.emplace_back(QStringLiteral(""));
-        }
-        else {
-            selected.emplace_back(index.data(Qt::DisplayRole).toString());
+        if(index.isValid()) {
+            selected.emplace_back(index.data(FilterItem::Key).toString());
         }
     }
 
@@ -707,7 +705,7 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
     QObject::connect(
         p->m_model, &FilterModel::modelUpdated, this,
         [this, selected]() {
-            const QModelIndexList selectedIndexes = p->m_model->indexesForValues(selected);
+            const QModelIndexList selectedIndexes = p->m_model->indexesForKeys(selected);
 
             QItemSelection indexesToSelect;
             indexesToSelect.reserve(selectedIndexes.size());
@@ -716,8 +714,9 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
             for(const QModelIndex& index : selectedIndexes) {
                 if(index.isValid()) {
-                    const QModelIndex last = index.siblingAtColumn(columnCount - 1);
-                    indexesToSelect.append({index, last.isValid() ? last : index});
+                    const QModelIndex proxyIndex = p->m_sortProxy->mapFromSource(index);
+                    const QModelIndex last       = proxyIndex.siblingAtColumn(columnCount - 1);
+                    indexesToSelect.append({proxyIndex, last.isValid() ? last : proxyIndex});
                 }
             }
 

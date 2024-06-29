@@ -435,6 +435,8 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         }
         case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());
+        case(FilterItem::Key):
+            return item->key();
         case(FilterItem::IsSummary):
             return item->isSummary();
         case(Qt::DecorationRole):
@@ -517,13 +519,13 @@ void FilterModel::resetColumnAlignments()
     p->m_columnAlignments.clear();
 }
 
-QModelIndexList FilterModel::indexesForValues(const QStringList& values, int column) const
+QModelIndexList FilterModel::indexesForKeys(const QStringList& keys) const
 {
     QModelIndexList indexes;
 
     const auto rows = rootItem()->children();
     for(const auto& child : rows) {
-        if(values.contains(child->column(column))) {
+        if(keys.contains(child->key())) {
             indexes.append(indexOfItem(child));
         }
     }

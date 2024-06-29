@@ -33,6 +33,7 @@ public:
     enum FilterItemRole
     {
         Tracks = Qt::UserRole,
+        Key,
         IsSummary
     };
 
