@@ -31,13 +31,10 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     setHeaderHidden(true);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragOnly);
-    setDefaultDropAction(Qt::CopyAction);
-    setDropIndicatorShown(true);
     setSortingEnabled(true);
 
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
-    setWordWrap(true);
     setTextElideMode(Qt::ElideRight);
 }
 
