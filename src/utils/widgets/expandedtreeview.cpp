@@ -3019,12 +3019,14 @@ void ExpandedTreeView::updateGeometries()
 
     p->m_header->setGeometry(headerGeometry);
     QMetaObject::invokeMethod(p->m_header, "updateGeometries");
-    if(p->m_hidingScrollbar > 0) {
+
+    if(!p->m_layingOutItems && p->m_hidingScrollbar > 0) {
         --p->m_hidingScrollbar;
     }
     else if(p->m_view) {
         p->m_view->updateScrollBars();
     }
+
     p->m_updatingGeometry = false;
 
     QAbstractItemView::updateGeometries();
