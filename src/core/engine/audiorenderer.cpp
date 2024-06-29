@@ -109,6 +109,11 @@ struct AudioRenderer::Private
         m_tempBuffer.reset();
     }
 
+    bool validOutputState() const
+    {
+        return m_audioOutput && m_audioOutput->initialised() && m_audioOutput->error().isEmpty();
+    }
+
     void outputStateChanged(AudioOutput::State state)
     {
         if(state == AudioOutput::State::Disconnected || state == AudioOutput::State::Error) {
@@ -121,7 +126,7 @@ struct AudioRenderer::Private
 
     void pauseOutput(bool pause) const
     {
-        if(m_audioOutput && m_audioOutput->initialised()) {
+        if(validOutputState()) {
             m_audioOutput->setPaused(pause);
         }
     }
@@ -133,7 +138,7 @@ struct AudioRenderer::Private
 
         updateOutputVolume(0.0);
 
-        if(m_audioOutput && m_audioOutput->initialised()) {
+        if(validOutputState()) {
             m_audioOutput->drain();
         }
         emit m_self->paused();
@@ -144,7 +149,7 @@ struct AudioRenderer::Private
     {
         m_volume = newVolume;
 
-        if(m_audioOutput && m_audioOutput->initialised()) {
+        if(validOutputState()) {
             m_audioOutput->setVolume(m_volume);
         }
     }

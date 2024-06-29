@@ -159,6 +159,7 @@ struct AlsaOutput::Private
             m_pcmHandle.reset();
         }
         m_started = false;
+        m_error.clear();
     }
 
     bool checkError(int error, const QString& message)
@@ -397,6 +398,9 @@ struct AlsaOutput::Private
 
         // Give ALSA a number of chances to recover
         for(int n = 0; n < 5; ++n) {
+            if(!m_pcmHandle) {
+                return false;
+            }
             int err = snd_pcm_status(m_pcmHandle.get(), status);
             if(err == -EPIPE || err == -EINTR || err == -ESTRPIPE) {
                 if(!autoRecoverAttempted) {
@@ -599,7 +603,9 @@ void AlsaOutput::setPaused(bool pause)
         return;
     }
 
-    p->recoverState();
+    if(!p->recoverState()) {
+        return;
+    }
 
     const auto state = snd_pcm_state(p->m_pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
