@@ -142,7 +142,7 @@ struct ScriptParser::Private
         advance();
         switch(m_previous.type) {
             case(TokenType::TokVar):
-                return variable(tracks);
+                return variable();
             case(TokenType::TokFunc):
                 return function(tracks);
             case(TokenType::TokQuote):
@@ -196,36 +196,22 @@ struct ScriptParser::Private
         return expr;
     }
 
-    Expression variable(const auto& tracks)
+    Expression variable()
     {
         advance();
 
         Expression expr;
         QString value;
 
-        auto checkExists = [this, &value, &tracks]() {
-            if(!m_registry->isVariable(value, tracks)) {
-                error(QStringLiteral("Variable not found"));
-            }
-        };
-
         if(m_previous.type == TokenType::TokLeftAngle) {
             advance();
             expr.type = Expr::VariableList;
             value     = QString{m_previous.value.toString()}.toLower();
             consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
-            checkExists();
-        }
-        else if(m_previous.type == TokenType::TokVar) {
-            advance();
-            expr.type = Expr::Variable;
-            value     = QString{m_previous.value.toString()}.toLower();
-            consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
         }
         else {
             expr.type = Expr::Variable;
             value     = QString{m_previous.value.toString()}.toLower();
-            checkExists();
         }
 
         expr.value = value;
