@@ -21,10 +21,13 @@
 
 #include <QHeaderView>
 #include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
 
 namespace Fooyin {
 LibraryTreeView::LibraryTreeView(QWidget* parent)
     : QTreeView{parent}
+    , m_isLoading{false}
 {
     setUniformRowHeights(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -36,6 +39,12 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
     setTextElideMode(Qt::ElideRight);
+}
+
+void LibraryTreeView::setLoading(bool isLoading)
+{
+    m_isLoading = isLoading;
+    update();
 }
 
 void LibraryTreeView::mousePressEvent(QMouseEvent* event)
@@ -57,6 +66,24 @@ void LibraryTreeView::mouseDoubleClickEvent(QMouseEvent* event)
         return;
     }
     QTreeView::mouseDoubleClickEvent(event);
+}
+
+void LibraryTreeView::paintEvent(QPaintEvent* event)
+{
+    QPainter painter{viewport()};
+
+    auto drawCentreText = [this, &painter](const QString& text) {
+        QRect textRect = painter.fontMetrics().boundingRect(text);
+        textRect.moveCenter(viewport()->rect().center());
+        painter.drawText(textRect, Qt::AlignCenter, text);
+    };
+
+    if(m_isLoading) {
+        drawCentreText(tr("Loading Library…"));
+        return;
+    }
+
+    QTreeView::paintEvent(event);
 }
 } // namespace Fooyin
 

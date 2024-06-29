@@ -633,6 +633,8 @@ struct LibraryTreeWidget::Private
                     if(const QModelIndex topIndex = m_model->indexForKey(topKey); topIndex.isValid()) {
                         m_libraryTree->scrollTo(m_sortProxy->mapFromSource(topIndex), QAbstractItemView::PositionAtTop);
                     }
+                    m_libraryTree->setLoading(false);
+                    m_libraryTree->setAnimated(m_settings->value<Settings::Gui::Internal::LibTreeAnimated>());
                 },
                 Qt::QueuedConnection);
 
@@ -657,6 +659,9 @@ struct LibraryTreeWidget::Private
         if(state.isEmpty() || !m_settings->value<LibTreeRestoreState>()) {
             return;
         }
+
+        // Disable animation during state restore to prevent visual artifacts
+        m_libraryTree->setAnimated(false);
 
         QByteArray data{state};
         QDataStream stream{&data, QIODeviceBase::ReadOnly};
@@ -749,6 +754,9 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 
     if(layout.contains(QStringLiteral("State"))) {
         p->m_pendingState = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
+        if(!p->m_pendingState.isEmpty() && p->m_settings->value<LibTreeRestoreState>()) {
+            p->m_libraryTree->setLoading(true);
+        }
     }
 }
 

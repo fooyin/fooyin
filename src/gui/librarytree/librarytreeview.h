@@ -30,11 +30,17 @@ class LibraryTreeView : public QTreeView
 public:
     explicit LibraryTreeView(QWidget* parent = nullptr);
 
+    void setLoading(bool isLoading);
+
 signals:
     void middleClicked();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
+
+private:
+    bool m_isLoading;
 };
 } // namespace Fooyin
