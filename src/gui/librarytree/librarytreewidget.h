@@ -19,13 +19,10 @@
 
 #pragma once
 
-#include <core/player/playerdefs.h>
-
 #include "gui/fywidget.h"
 
 namespace Fooyin {
 class MusicLibrary;
-class Playlist;
 class PlaylistController;
 class SettingsManager;
 
@@ -44,11 +41,6 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     void searchEvent(const QString& search) override;
-
-public slots:
-    void playstateChanged(PlayState state);
-    void activePlaylistChanged(Playlist* playlist);
-    void playlistTrackChanged(const PlaylistTrack& track);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

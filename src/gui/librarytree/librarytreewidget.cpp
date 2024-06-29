@@ -28,6 +28,8 @@
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
+#include <core/player/playercontroller.h>
+#include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/widgetcontext.h>
@@ -216,6 +218,7 @@ struct LibraryTreeWidget::Private
         m_model->setFont(m_settings->value<LibTreeFont>());
         m_model->setColour(m_settings->value<LibTreeColour>());
         m_model->setRowHeight(m_settings->value<LibTreeRowHeight>());
+        m_model->setPlayState(playlistController->playerController()->playState());
 
         m_settings->subscribe<LibTreeDoubleClick>(m_self, [this](int action) {
             m_doubleClickAction = static_cast<TrackAction>(action);
@@ -249,6 +252,30 @@ struct LibraryTreeWidget::Private
             m_model->changeGrouping(m_grouping);
             reset();
         }
+    }
+
+    void activePlaylistChanged(Playlist* playlist) const
+    {
+        if(!playlist || !m_playlist) {
+            return;
+        }
+
+        if(playlist->id() != m_playlist->id()) {
+            m_model->setPlayingPath({}, {});
+        }
+    }
+
+    void playlistTrackChanged(const PlaylistTrack& track)
+    {
+        if(!m_playlist || m_playlist->id() != track.playlistId) {
+            return;
+        }
+
+        auto groupIt = m_playlistGroups.upper_bound(track.indexInPlaylist);
+        if(groupIt != m_playlistGroups.cbegin()) {
+            --groupIt;
+        }
+        m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
     }
 
     void addGroupMenu(QMenu* parent)
@@ -683,6 +710,13 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* 
                      [this](const TrackList& tracks) { p->m_model->refreshTracks(tracks); });
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->m_model, &LibraryTreeModel::removeTracks);
     QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
+
+    QObject::connect(playlistController->playerController(), &PlayerController::playStateChanged, this,
+                     [this](PlayState state) { p->m_model->setPlayState(state); });
+    QObject::connect(playlistController->playerController(), &PlayerController::playlistTrackChanged, this,
+                     [this](const auto& track) { p->playlistTrackChanged(track); });
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
+                     [this](auto* playlist) { p->activePlaylistChanged(playlist); });
 }
 
 QString LibraryTreeWidget::name() const
@@ -719,35 +753,6 @@ void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 void LibraryTreeWidget::searchEvent(const QString& search)
 {
     p->searchChanged(search);
-}
-
-void LibraryTreeWidget::playstateChanged(PlayState state)
-{
-    p->m_model->setPlayState(state);
-}
-
-void LibraryTreeWidget::activePlaylistChanged(Playlist* playlist)
-{
-    if(!playlist || !p->m_playlist) {
-        return;
-    }
-
-    if(playlist->id() != p->m_playlist->id()) {
-        p->m_model->setPlayingPath({}, {});
-    }
-}
-
-void LibraryTreeWidget::playlistTrackChanged(const PlaylistTrack& track)
-{
-    if(!p->m_playlist || p->m_playlist->id() != track.playlistId) {
-        return;
-    }
-
-    auto groupIt = p->m_playlistGroups.upper_bound(track.indexInPlaylist);
-    if(groupIt != p->m_playlistGroups.cbegin()) {
-        --groupIt;
-    }
-    p->m_model->setPlayingPath(groupIt->second, track.track.uniqueFilepath());
 }
 
 void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
