@@ -20,6 +20,7 @@
 #include "librarytreewidget.h"
 
 #include "internalguisettings.h"
+#include "librarytreedelegate.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
 #include "librarytreeview.h"
@@ -200,6 +201,7 @@ struct LibraryTreeWidget::Private
 
         m_sortProxy->setSourceModel(m_model);
         m_libraryTree->setModel(m_sortProxy);
+        m_libraryTree->setItemDelegate(new LibraryTreeDelegate(m_self));
         m_libraryTree->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
         m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
