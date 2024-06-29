@@ -2552,10 +2552,6 @@ QModelIndexList ExpandedTreeView::Private::selectedDraggableIndexes(bool fullRow
 
 bool ExpandedTreeView::Private::shouldAutoScroll() const
 {
-    if(!m_self->hasAutoScroll()) {
-        return false;
-    }
-
     const QRect area       = m_self->viewport()->rect();
     const int scrollMargin = m_self->autoScrollMargin();
 
@@ -2702,18 +2698,9 @@ ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     setObjectName(QStringLiteral("ExpandedTreeView"));
 
     setViewMode(ViewMode::Tree);
-    // setIconSize({180, 180});
 
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
-    setDefaultDropAction(Qt::MoveAction);
-    setDropIndicatorShown(true);
-    setTextElideMode(Qt::ElideRight);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-
-    viewport()->setAcceptDrops(true);
+    setAutoScroll(false);
 }
 
 ExpandedTreeView::~ExpandedTreeView()

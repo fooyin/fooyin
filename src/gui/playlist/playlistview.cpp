@@ -29,6 +29,15 @@ PlaylistView::PlaylistView(QWidget* parent)
     , m_playlistLoaded{false}
 {
     setObjectName(QStringLiteral("PlaylistView"));
+
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDefaultDropAction(Qt::MoveAction);
+    setDropIndicatorShown(true);
+    setTextElideMode(Qt::ElideRight);
+    viewport()->setAcceptDrops(true);
 }
 
 void PlaylistView::playlistAboutToBeReset()

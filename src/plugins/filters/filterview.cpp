@@ -38,7 +38,6 @@ FilterView::FilterView(QWidget* parent)
     setDefaultDropAction(Qt::CopyAction);
     setDropIndicatorShown(true);
     setUniformRowHeights(true);
-    setAutoScroll(false);
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)
