@@ -47,6 +47,7 @@ struct EngineHandler::Private
 
     QThread m_engineThread;
     AudioEngine* m_engine;
+    PlaybackState m_engineState{PlaybackState::Stopped};
 
     std::unordered_map<QString, OutputCreator> m_outputs;
     CurrentOutput m_currentOutput;
@@ -70,14 +71,17 @@ struct EngineHandler::Private
                          &PlayerController::setCurrentPosition);
         QObject::connect(m_engine, &AudioEngine::stateChanged, m_self,
                          [this](PlaybackState state) { handleStateChange(state); });
+        QObject::connect(m_engine, &AudioEngine::deviceError, m_self, &EngineController::engineError);
         QObject::connect(m_engine, &AudioEngine::trackStatusChanged, m_self,
                          [this](TrackStatus status) { handleTrackStatus(status); });
 
         updateVolume(m_settings->value<Settings::Core::OutputVolume>());
     }
 
-    void handleStateChange(PlaybackState state) const
+    void handleStateChange(PlaybackState state)
     {
+        m_engineState = state;
+
         switch(state) {
             case(PlaybackState::Error):
             case(PlaybackState::Stopped):
@@ -112,6 +116,10 @@ struct EngineHandler::Private
 
     void playStateChanged(PlayState state)
     {
+        if(m_engineState == PlaybackState::Error) {
+            return;
+        }
+
         QMetaObject::invokeMethod(
             m_engine,
             [this, state]() {

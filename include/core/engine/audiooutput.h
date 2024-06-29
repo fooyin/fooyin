@@ -54,6 +54,7 @@ public:
     enum class State
     {
         None,
+        Error,
         Disconnected
     };
 
@@ -81,9 +82,9 @@ public:
     virtual void start() = 0;
 
     /** Returns @c true if the driver was successfully initialised in @fn init. */
-    virtual bool initialised() const = 0;
+    [[nodiscard]] virtual bool initialised() const = 0;
     /** Returns the current driver device being used for playback. */
-    virtual QString device() const = 0;
+    [[nodiscard]] virtual QString device() const = 0;
 
     /*!
      *  Returns the current state of the output.
@@ -96,13 +97,13 @@ public:
      *  Returns the size of the audio driver buffer in samples.
      *  @note this will only be called if @fn initialised returns @c true.
      */
-    virtual int bufferSize() const = 0;
+    [[nodiscard]] virtual int bufferSize() const = 0;
     /*!
      *  Returns a list of all device names and descriptions for this driver.
      *  @note this may be called on multiple instances, so don't rely on a
      *  single initialised state.
      */
-    virtual OutputDevices getAllDevices() const = 0;
+    [[nodiscard]] virtual OutputDevices getAllDevices() const = 0;
 
     /*!
      * Writes the audio data contained in the @p buffer to the audio driver.
@@ -124,6 +125,9 @@ public:
      * @note this may be called regardless of the current initialised state.
      */
     virtual void setDevice(const QString& device) = 0;
+
+    /** Returns the last error message, if any. */
+    [[nodiscard]] virtual QString error() const = 0;
 
 signals:
     void stateChanged(State state);

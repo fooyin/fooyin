@@ -161,9 +161,9 @@ struct GuiApplication::Private
     ScriptParser scriptParser;
     CoverProvider coverProvider;
 
-    explicit Private(GuiApplication* self_, const CorePluginContext& core_)
+    explicit Private(GuiApplication* self_, CorePluginContext core_)
         : self{self_}
-        , core{core_}
+        , core{std::move(core_)}
         , settings{core.settingsManager}
         , actionManager{new ActionManager(settings, self)}
         , guiSettings{settings}
@@ -363,6 +363,8 @@ struct GuiApplication::Private
                 playlistController->changeCurrentPlaylist(activePlaylist);
             }
         });
+        QObject::connect(core.engine, &EngineController::engineError, self,
+                         [this](const QString& error) { showEngineError(error); });
         QObject::connect(core.engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
             if(status == TrackStatus::InvalidTrack) {
                 const Track track = core.playerController->currentTrack();
@@ -643,6 +645,22 @@ struct GuiApplication::Private
     {
         propertiesDialog->addTab(
             tr("Details"), [this]() { return new InfoWidget(core.playerController, &selectionController, settings); });
+    }
+
+    void showEngineError(const QString& error) const
+    {
+        if(error.isEmpty()) {
+            return;
+        }
+
+        QMessageBox message;
+        message.setIcon(QMessageBox::Warning);
+        message.setText(tr("Playback Error"));
+        message.setInformativeText(error);
+
+        message.addButton(QMessageBox::Ok);
+
+        message.exec();
     }
 
     void showTrackNotFoundMessage(const Track& track) const

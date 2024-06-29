@@ -55,6 +55,7 @@ public:
 signals:
     void outputChanged(const QString& output, const QString& device);
     void deviceChanged(const QString& device);
+    void engineError(const QString& error);
     void trackStatusChanged(TrackStatus status);
     void trackAboutToFinish();
 };

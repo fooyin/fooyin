@@ -144,6 +144,12 @@ struct AudioPlaybackEngine::Private
         if(m_outputState == AudioOutput::State::Disconnected) {
             m_self->pause();
         }
+        else if(m_outputState == AudioOutput::State::Error) {
+            m_self->stop();
+            if(!m_renderer->deviceError().isEmpty()) {
+                emit m_self->deviceError(m_renderer->deviceError());
+            }
+        }
     }
 
     void updateState(PlaybackState newState)

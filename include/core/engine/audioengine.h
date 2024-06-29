@@ -67,6 +67,7 @@ public:
     virtual void setOutputDevice(const QString& device)                             = 0;
 
 signals:
+    void deviceError(const QString& error);
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
     void positionChanged(uint64_t ms);

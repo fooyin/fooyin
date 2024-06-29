@@ -440,4 +440,10 @@ void PipeWireOutput::setDevice(const QString& device)
         p->m_device = device;
     }
 }
+
+QString PipeWireOutput::error() const
+{
+    // TODO
+    return {};
+}
 } // namespace Fooyin::Pipewire

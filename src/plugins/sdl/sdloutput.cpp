@@ -195,6 +195,12 @@ void SdlOutput::setDevice(const QString& device)
     }
 }
 
+QString SdlOutput::error() const
+{
+    // TODO
+    return {};
+}
+
 void SdlOutput::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_eventTimer.timerId()) {

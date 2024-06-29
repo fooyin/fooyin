@@ -24,44 +24,9 @@
 #include <QDebug>
 
 namespace {
-bool checkError(int error, const QString& message)
-{
-    if(error < 0) {
-        qWarning() << QStringLiteral("[ALSA] %1 - %2").arg(QString::fromLatin1(snd_strerror(error)), message);
-        return true;
-    }
-    return false;
-}
-
 void printError(const QString& message)
 {
     qWarning() << QStringLiteral("[ALSA] %1").arg(message);
-}
-
-bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams)
-{
-    if(requestedFormat < 0) {
-        return false;
-    }
-
-    snd_pcm_format_mask_t* mask;
-    snd_pcm_format_mask_alloca(&mask);
-    snd_pcm_hw_params_get_format_mask(hwParams, mask);
-    const bool isSupported = snd_pcm_format_mask_test(mask, requestedFormat);
-    QStringList supportedFormats;
-
-    for(int format = 0; format <= SND_PCM_FORMAT_LAST; ++format) {
-        if(snd_pcm_format_mask_test(mask, snd_pcm_format_t(format))) {
-            supportedFormats.emplace_back(QString::fromLatin1(snd_pcm_format_name(snd_pcm_format_t(format))));
-        }
-    }
-
-    if(!isSupported) {
-        qInfo() << "[ALSA] Format not supported: " << snd_pcm_format_name(requestedFormat);
-        qInfo() << "[ALSA] Supported formats: " << supportedFormats.join(QStringLiteral(", "));
-    }
-
-    return isSupported;
 }
 
 snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
@@ -115,92 +80,6 @@ struct DeviceString
     }
 };
 
-struct PcmHandleDeleter
-{
-    void operator()(snd_pcm_t* handle) const
-    {
-        if(handle) {
-            snd_pcm_close(handle);
-        }
-    }
-};
-using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
-
-struct CtlHandleDeleter
-{
-    void operator()(snd_ctl_t* handle) const
-    {
-        if(handle) {
-            snd_ctl_close(handle);
-        }
-    }
-};
-using CtlHandleUPtr = std::unique_ptr<snd_ctl_t, CtlHandleDeleter>;
-
-void getHardwareDevices(Fooyin::OutputDevices& devices)
-{
-    snd_pcm_stream_name(SND_PCM_STREAM_PLAYBACK);
-
-    int card{-1};
-    snd_ctl_card_info_t* cardinfo{nullptr};
-    snd_ctl_card_info_alloca(&cardinfo);
-
-    while(true) {
-        int err = snd_card_next(&card);
-        if(checkError(err, QStringLiteral("Unable to get soundcard"))) {
-            break;
-        }
-
-        if(card < 0) {
-            break;
-        }
-
-        char str[32];
-        snprintf(str, sizeof(str) - 1, "hw:%d", card);
-
-        snd_ctl_t* rawHandle;
-        err = snd_ctl_open(&rawHandle, str, 0);
-        if(checkError(err, QStringLiteral("Unable to open soundcard (%1)").arg(card))) {
-            continue;
-        }
-        const CtlHandleUPtr handle = {rawHandle, CtlHandleDeleter()};
-
-        err = snd_ctl_card_info(handle.get(), cardinfo);
-        if(checkError(err, QStringLiteral("Control failure for soundcard (%1)").arg(card))) {
-            continue;
-        }
-
-        int dev{-1};
-        snd_pcm_info_t* pcminfo{nullptr};
-        snd_pcm_info_alloca(&pcminfo);
-        while(true) {
-            err = snd_ctl_pcm_next_device(handle.get(), &dev);
-            if(checkError(err, QStringLiteral("Failed to get device for soundcard (%1)").arg(card))) {
-                continue;
-            }
-            if(dev < 0) {
-                break;
-            }
-
-            snd_pcm_info_set_device(pcminfo, dev);
-            snd_pcm_info_set_subdevice(pcminfo, 0);
-            snd_pcm_info_set_stream(pcminfo, SND_PCM_STREAM_PLAYBACK);
-
-            err = snd_ctl_pcm_info(handle.get(), pcminfo);
-            if(checkError(err, QStringLiteral("Failed to get control info for soundcard (%1)").arg(card))) {
-                continue;
-            }
-
-            Fooyin::OutputDevice device;
-            device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
-            device.desc = QStringLiteral("%1 - %2 %3")
-                              .arg(device.name, QString::fromLatin1(snd_ctl_card_info_get_name(cardinfo)),
-                                   QString::fromLatin1(snd_pcm_info_get_name(pcminfo)));
-            devices.emplace_back(device);
-        }
-    }
-}
-
 void getPcmDevices(Fooyin::OutputDevices& devices)
 {
     DeviceHint deviceHint;
@@ -228,6 +107,28 @@ void getPcmDevices(Fooyin::OutputDevices& devices)
         }
     }
 }
+
+struct PcmHandleDeleter
+{
+    void operator()(snd_pcm_t* handle) const
+    {
+        if(handle) {
+            snd_pcm_close(handle);
+        }
+    }
+};
+using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
+
+struct CtlHandleDeleter
+{
+    void operator()(snd_ctl_t* handle) const
+    {
+        if(handle) {
+            snd_ctl_close(handle);
+        }
+    }
+};
+using CtlHandleUPtr = std::unique_ptr<snd_ctl_t, CtlHandleDeleter>;
 } // namespace
 
 namespace Fooyin::Alsa {
@@ -246,6 +147,7 @@ struct AlsaOutput::Private
     double m_volume{1.0};
     QString m_device{QStringLiteral("default")};
     bool m_started{false};
+    QString m_error;
 
     explicit Private(AlsaOutput* self)
         : m_self{self}
@@ -254,10 +156,111 @@ struct AlsaOutput::Private
     void reset()
     {
         if(m_pcmHandle) {
-            m_self->drain();
             m_pcmHandle.reset();
         }
         m_started = false;
+    }
+
+    bool checkError(int error, const QString& message)
+    {
+        if(error < 0) {
+            m_error = message;
+            qWarning() << QStringLiteral("%1 - %2").arg(QString::fromLatin1(snd_strerror(error)), message);
+            QMetaObject::invokeMethod(m_self, [this]() { emit m_self->stateChanged(State::Error); });
+            return true;
+        }
+        return false;
+    }
+
+    bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams)
+    {
+        if(requestedFormat < 0) {
+            return false;
+        }
+
+        snd_pcm_format_mask_t* mask;
+        snd_pcm_format_mask_alloca(&mask);
+        snd_pcm_hw_params_get_format_mask(hwParams, mask);
+        const bool isSupported = snd_pcm_format_mask_test(mask, requestedFormat);
+        QStringList supportedFormats;
+
+        for(int format = 0; format <= SND_PCM_FORMAT_LAST; ++format) {
+            if(snd_pcm_format_mask_test(mask, snd_pcm_format_t(format))) {
+                supportedFormats.emplace_back(QString::fromLatin1(snd_pcm_format_name(snd_pcm_format_t(format))));
+            }
+        }
+
+        if(!isSupported) {
+            checkError(-1, QStringLiteral("[ALSA] Format not supported: %1")
+                               .arg(QString::fromLatin1(snd_pcm_format_name(requestedFormat))));
+            qInfo() << "[ALSA] Supported formats: " << supportedFormats.join(QStringLiteral(", "));
+        }
+
+        return isSupported;
+    }
+
+    void getHardwareDevices(Fooyin::OutputDevices& devices)
+    {
+        snd_pcm_stream_name(SND_PCM_STREAM_PLAYBACK);
+
+        int card{-1};
+        snd_ctl_card_info_t* cardinfo{nullptr};
+        snd_ctl_card_info_alloca(&cardinfo);
+
+        while(true) {
+            int err = snd_card_next(&card);
+            if(checkError(err, QStringLiteral("Unable to get soundcard"))) {
+                break;
+            }
+
+            if(card < 0) {
+                break;
+            }
+
+            char str[32];
+            snprintf(str, sizeof(str) - 1, "hw:%d", card);
+
+            snd_ctl_t* rawHandle;
+            err = snd_ctl_open(&rawHandle, str, 0);
+            if(checkError(err, QStringLiteral("Unable to open soundcard (%1)").arg(card))) {
+                continue;
+            }
+            const CtlHandleUPtr handle = {rawHandle, CtlHandleDeleter()};
+
+            err = snd_ctl_card_info(handle.get(), cardinfo);
+            if(checkError(err, QStringLiteral("Control failure for soundcard (%1)").arg(card))) {
+                continue;
+            }
+
+            int dev{-1};
+            snd_pcm_info_t* pcminfo{nullptr};
+            snd_pcm_info_alloca(&pcminfo);
+            while(true) {
+                err = snd_ctl_pcm_next_device(handle.get(), &dev);
+                if(checkError(err, QStringLiteral("Failed to get device for soundcard (%1)").arg(card))) {
+                    continue;
+                }
+                if(dev < 0) {
+                    break;
+                }
+
+                snd_pcm_info_set_device(pcminfo, dev);
+                snd_pcm_info_set_subdevice(pcminfo, 0);
+                snd_pcm_info_set_stream(pcminfo, SND_PCM_STREAM_PLAYBACK);
+
+                err = snd_ctl_pcm_info(handle.get(), pcminfo);
+                if(checkError(err, QStringLiteral("Failed to get control info for soundcard (%1)").arg(card))) {
+                    continue;
+                }
+
+                Fooyin::OutputDevice device;
+                device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
+                device.desc = QStringLiteral("%1 - %2 %3")
+                                  .arg(device.name, QString::fromLatin1(snd_ctl_card_info_get_name(cardinfo)),
+                                       QString::fromLatin1(snd_pcm_info_get_name(pcminfo)));
+                devices.emplace_back(device);
+            }
+        }
     }
 
     bool initAlsa()
@@ -515,8 +518,8 @@ void AlsaOutput::uninit()
 
 void AlsaOutput::reset()
 {
-    checkError(snd_pcm_drop(p->m_pcmHandle.get()), QStringLiteral("ALSA drop error"));
-    checkError(snd_pcm_prepare(p->m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
+    p->checkError(snd_pcm_drop(p->m_pcmHandle.get()), QStringLiteral("ALSA drop error"));
+    p->checkError(snd_pcm_prepare(p->m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
 
     p->m_started = false;
     p->recoverState();
@@ -562,7 +565,7 @@ OutputDevices AlsaOutput::getAllDevices() const
     OutputDevices devices;
 
     getPcmDevices(devices);
-    getHardwareDevices(devices);
+    p->getHardwareDevices(devices);
 
     return devices;
 }
@@ -580,7 +583,7 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
     snd_pcm_sframes_t err{0};
     err = snd_pcm_writei(p->m_pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
-    if(checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
+    if(p->checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
         return 0;
     }
     if(err != frameCount) {
@@ -600,10 +603,10 @@ void AlsaOutput::setPaused(bool pause)
 
     const auto state = snd_pcm_state(p->m_pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
-        checkError(snd_pcm_pause(p->m_pcmHandle.get(), 1), QStringLiteral("Couldn't pause device"));
+        p->checkError(snd_pcm_pause(p->m_pcmHandle.get(), 1), QStringLiteral("Couldn't pause device"));
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
-        checkError(snd_pcm_pause(p->m_pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
+        p->checkError(snd_pcm_pause(p->m_pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
     }
 }
 
@@ -617,5 +620,10 @@ void AlsaOutput::setDevice(const QString& device)
     if(!device.isEmpty()) {
         p->m_device = device;
     }
+}
+
+QString AlsaOutput::error() const
+{
+    return p->m_error;
 }
 } // namespace Fooyin::Alsa

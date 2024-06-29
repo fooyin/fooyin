@@ -51,6 +51,8 @@ public:
     void updateDevice(const QString& device);
     void updateVolume(double volume);
 
+    [[nodiscard]] QString deviceError() const;
+
 signals:
     void paused();
     void outputStateChanged(AudioOutput::State state);

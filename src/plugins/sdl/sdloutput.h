@@ -50,6 +50,8 @@ public:
     void setVolume(double volume) override;
     void setDevice(const QString& device) override;
 
+    [[nodiscard]] QString error() const override;
+
 protected:
     void timerEvent(QTimerEvent* event) override;
 

@@ -61,6 +61,7 @@ struct AudioRenderer::Private
     int m_currentFadeStep{0};
     double m_volumeChange{0.0};
     double m_initialVolume{0.0};
+    QString m_lastDeviceError;
 
     explicit Private(AudioRenderer* self)
         : m_self{self}
@@ -110,7 +111,8 @@ struct AudioRenderer::Private
 
     void outputStateChanged(AudioOutput::State state)
     {
-        if(state == AudioOutput::State::Disconnected) {
+        if(state == AudioOutput::State::Disconnected || state == AudioOutput::State::Error) {
+            m_lastDeviceError = m_audioOutput->error();
             emit m_self->outputStateChanged(state);
             m_audioOutput->uninit();
             m_bufferPrefilled = false;
@@ -131,7 +133,9 @@ struct AudioRenderer::Private
 
         updateOutputVolume(0.0);
 
-        m_audioOutput->drain();
+        if(m_audioOutput && m_audioOutput->initialised()) {
+            m_audioOutput->drain();
+        }
         emit m_self->paused();
         pauseOutput(true);
     }
@@ -395,6 +399,11 @@ void AudioRenderer::updateVolume(double volume)
 {
     p->m_initialVolume = volume;
     p->updateOutputVolume(volume);
+}
+
+QString AudioRenderer::deviceError() const
+{
+    return p->m_lastDeviceError;
 }
 
 void AudioRenderer::timerEvent(QTimerEvent* event)
