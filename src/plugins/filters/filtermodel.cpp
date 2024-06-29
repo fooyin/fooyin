@@ -654,6 +654,10 @@ void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks
         p->m_populatorThread.start();
     }
 
+    if(tracks.empty() && p->m_nodes.empty()) {
+        return;
+    }
+
     p->m_columns = columns;
 
     p->m_resetting = true;
