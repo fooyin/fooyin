@@ -87,6 +87,24 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
     return tracks;
 }
 
+void getAllTrackIndexes(QAbstractItemModel* model, const QModelIndex& parent, QModelIndexList& indexList)
+{
+    while(model->canFetchMore(parent)) {
+        model->fetchMore(parent);
+    }
+
+    const int rowCount = model->rowCount(parent);
+    for(int row{0}; row < rowCount; ++row) {
+        const QModelIndex index = model->index(row, 0, parent);
+        if(index.data(Fooyin::PlaylistItem::Role::Type).toInt() == Fooyin::PlaylistItem::Track) {
+            indexList.append(index);
+        }
+        else if(model->hasChildren(index)) {
+            getAllTrackIndexes(model, index, indexList);
+        }
+    }
+}
+
 QModelIndexList filterSelectedIndexes(const QAbstractItemView* view)
 {
     QModelIndexList filteredIndexes;
@@ -996,6 +1014,61 @@ void PlaylistWidgetPrivate::followCurrentTrack() const
     m_playlistView->setCurrentIndex(modelIndex);
 }
 
+void PlaylistWidgetPrivate::cropSelection() const
+{
+    if(!m_playlistController->currentPlaylist()) {
+        return;
+    }
+
+    m_playlistController->playlistHandler()->clearSchedulePlaylist();
+
+    const auto selected = filterSelectedIndexes(m_playlistView);
+
+    const int selectedCount      = static_cast<int>(selected.size());
+    const int playlistTrackCount = m_playlistController->currentPlaylist()->trackCount();
+
+    if(selectedCount >= playlistTrackCount) {
+        // Nothing to do
+        return;
+    }
+
+    QModelIndexList allTrackIndexes;
+    getAllTrackIndexes(m_model, {}, allTrackIndexes);
+
+    QModelIndexList tracksToRemove;
+    std::vector<int> indexes;
+
+    for(const QModelIndex& index : selected) {
+        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+            allTrackIndexes.removeAll(index);
+        }
+    }
+
+    for(const QModelIndex& index : allTrackIndexes) {
+        indexes.emplace_back(index.data(PlaylistItem::Index).toInt());
+        tracksToRemove.push_back(index);
+    }
+
+    const TrackList oldTracks = m_playlistController->currentPlaylist()->tracks();
+
+    m_playlistController->playlistHandler()->removePlaylistTracks(m_playlistController->currentPlaylist()->id(),
+                                                                  indexes);
+
+    if(selectedCount > 500 || playlistTrackCount - selectedCount > 500) {
+        // Faster to reset
+        auto* resetCmd = new ResetTracks(m_playerController, m_model, m_playlistController->currentPlaylistId(),
+                                         oldTracks, m_playlistController->currentPlaylist()->tracks());
+        m_playlistController->addToHistory(resetCmd);
+    }
+    else {
+        auto* delCmd = new RemoveTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
+                                        PlaylistModel::saveTrackGroups(tracksToRemove));
+        m_playlistController->addToHistory(delCmd);
+    }
+
+    m_model->updateHeader(m_playlistController->currentPlaylist());
+}
+
 void PlaylistWidgetPrivate::sortTracks(const QString& script) const
 {
     if(!m_playlistController->currentPlaylist()) {
@@ -1251,6 +1324,10 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         if(auto* removeCmd = p->m_actionManager->command(Constants::Actions::Remove)) {
             menu->addAction(removeCmd->action());
         }
+
+        auto* crop = new QAction(tr("&Crop"), this);
+        QObject::connect(crop, &QAction::triggered, this, [this]() { p->cropSelection(); });
+        menu->addAction(crop);
 
         p->addSortMenu(menu, selected.size() == 1);
     }

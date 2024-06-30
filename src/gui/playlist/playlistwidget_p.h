@@ -107,6 +107,7 @@ public:
     void doubleClicked(const QModelIndex& index) const;
     void followCurrentTrack() const;
 
+    void cropSelection() const;
     void sortTracks(const QString& script) const;
     void sortColumn(int column, Qt::SortOrder order);
     void resetSort(bool force = false);
