@@ -923,6 +923,17 @@ void PlaylistModel::resetColumnAlignments()
     m_columnAlignments.clear();
 }
 
+void PlaylistModel::reset(const TrackList& tracks)
+{
+    m_populator.stopThread();
+
+    m_playlistLoaded = false;
+    m_resetting      = true;
+
+    QMetaObject::invokeMethod(
+        &m_populator, [this, tracks] { m_populator.run(m_currentPlaylist->id(), m_currentPreset, m_columns, tracks); });
+}
+
 void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
 {
     if(preset.isValid()) {
@@ -936,17 +947,11 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
         return;
     }
 
-    m_populator.stopThread();
-
-    m_playlistLoaded  = false;
-    m_resetting       = true;
     m_currentPlaylist = playlist;
 
     updateHeader(playlist);
 
-    QMetaObject::invokeMethod(&m_populator, [this, playlist] {
-        m_populator.run(m_currentPlaylist->id(), m_currentPreset, m_columns, playlist->tracks());
-    });
+    reset(m_currentPlaylist->tracks());
 }
 
 PlaylistTrack PlaylistModel::playingTrack() const

@@ -668,12 +668,11 @@ void PlaylistWidgetPrivate::tracksRemoved() const
 
     const auto selected = filterSelectedIndexes(m_playlistView);
 
-    RemoveTracks* delCmd{nullptr};
+    PlaylistCommand* delCmd{nullptr};
 
     if(selected.size() == m_playlistController->currentPlaylist()->trackCount()) {
-        delCmd = new RemoveTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
-                                  TrackGroups{{0, m_playlistController->currentPlaylist()->tracks()}});
-        m_playlistController->playlistHandler()->clearPlaylistTracks(m_playlistController->currentPlaylist()->id());
+        delCmd = new ResetTracks(m_playerController, m_model, m_playlistController->currentPlaylistId(),
+                                 m_playlistController->currentPlaylist()->tracks(), {});
     }
     else {
         QModelIndexList trackSelection;
@@ -686,16 +685,23 @@ void PlaylistWidgetPrivate::tracksRemoved() const
             }
         }
 
-        m_playlistController->playlistHandler()->removePlaylistTracks(m_playlistController->currentPlaylist()->id(),
-                                                                      indexes);
-
-        delCmd = new RemoveTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
-                                  PlaylistModel::saveTrackGroups(trackSelection));
+        if(selected.size() > 500) {
+            // Faster to reset
+            const TrackList oldTracks = m_playlistController->currentPlaylist()->tracks();
+            m_playlistController->playlistHandler()->removePlaylistTracks(m_playlistController->currentPlaylist()->id(),
+                                                                          indexes);
+            delCmd = new ResetTracks(m_playerController, m_model, m_playlistController->currentPlaylistId(), oldTracks,
+                                     m_playlistController->currentPlaylist()->tracks());
+        }
+        else {
+            m_playlistController->playlistHandler()->removePlaylistTracks(m_playlistController->currentPlaylist()->id(),
+                                                                          indexes);
+            delCmd = new RemoveTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
+                                      PlaylistModel::saveTrackGroups(trackSelection));
+        }
     }
 
-    if(delCmd) {
-        m_playlistController->addToHistory(delCmd);
-    }
+    m_playlistController->addToHistory(delCmd);
 
     m_model->updateHeader(m_playlistController->currentPlaylist());
 }

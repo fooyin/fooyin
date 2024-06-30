@@ -111,6 +111,7 @@ public:
     void changeColumnAlignment(int column, Qt::Alignment alignment);
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
+    void reset(const TrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     PlaylistTrack playingTrack() const;

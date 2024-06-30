@@ -456,7 +456,7 @@ void PlaylistController::savePlaylistState(Playlist* playlist, const PlaylistVie
 
 void PlaylistController::addToHistory(QUndoCommand* command)
 {
-    if(!p->m_currentPlaylist) {
+    if(!command || !p->m_currentPlaylist) {
         return;
     }
 
