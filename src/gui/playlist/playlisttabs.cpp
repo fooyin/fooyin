@@ -456,19 +456,25 @@ void PlaylistTabs::timerEvent(QTimerEvent* event)
 
 void PlaylistTabs::dropEvent(QDropEvent* event)
 {
-    if(!event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
-        event->ignore();
-        return;
-    }
+    p->m_hoverTimer.stop();
 
-    if(p->m_currentHoverIndex < 0) {
-        p->m_selectionController->executeAction(TrackAction::SendNewPlaylist, PlaylistAction::Switch);
+    const QPoint point = event->position().toPoint();
+    auto* tabBar       = p->m_tabs->tabBar();
+    const int index    = tabBar->tabAt(tabBar->mapFrom(this, point));
+
+    const Id id = tabBar->tabData(index).value<Id>();
+
+    if(event->mimeData()->hasUrls()) {
+        emit filesDropped(event->mimeData()->urls(), id);
+        event->acceptProposedAction();
+    }
+    else if(event->mimeData()->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds))) {
+        emit tracksDropped(event->mimeData()->data(QString::fromLatin1(Constants::Mime::TrackIds)), id);
+        event->acceptProposedAction();
     }
     else {
-        p->m_selectionController->executeAction(TrackAction::AddCurrentPlaylist);
+        event->ignore();
     }
-
-    event->acceptProposedAction();
 }
 
 QString PlaylistTabs::name() const

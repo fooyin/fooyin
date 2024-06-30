@@ -532,8 +532,13 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("PlaylistTabs"),
             [this]() {
-                return new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(), settings,
-                                        mainWindow.get());
+                auto* playlistTabs = new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(),
+                                                      settings, mainWindow.get());
+                QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, &playlistInteractor,
+                                 &PlaylistInteractor::filesToPlaylist);
+                QObject::connect(playlistTabs, &PlaylistTabs::tracksDropped, &playlistInteractor,
+                                 &PlaylistInteractor::trackMimeToPlaylist);
+                return playlistTabs;
             },
             tr("Playlist Tabs"));
         widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {tr("Splitters")});

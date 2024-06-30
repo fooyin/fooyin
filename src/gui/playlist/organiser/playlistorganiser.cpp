@@ -200,10 +200,11 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, m_model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistChanged, this, [this]() {
-        QMetaObject::invokeMethod(
-            m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
-    });
+    QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistChanged, this,
+                     [this]() {
+                         QMetaObject::invokeMethod(
+                             m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
+                     });
     QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
@@ -331,7 +332,7 @@ void PlaylistOrganiser::filesToPlaylist(const QList<QUrl>& urls, const Id& id)
         return;
     }
 
-    m_playlistInteractor->filesToPlaylist(id, urls);
+    m_playlistInteractor->filesToPlaylist(urls, id);
 }
 
 void PlaylistOrganiser::filesToGroup(const QList<QUrl>& urls, const QString& group, int index)

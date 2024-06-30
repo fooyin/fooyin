@@ -76,6 +76,18 @@ struct PlaylistInteractor::Private
                              }
                          });
     }
+
+    TrackList tracksFromMimeData(QByteArray data)
+    {
+        Fooyin::TrackIds ids;
+        QDataStream stream(&data, QIODevice::ReadOnly);
+
+        stream >> ids;
+
+        Fooyin::TrackList tracks = m_library->tracksForIds(ids);
+
+        return tracks;
+    }
 };
 
 PlaylistInteractor::PlaylistInteractor(PlaylistHandler* handler, PlaylistController* controller, MusicLibrary* library,
@@ -106,17 +118,29 @@ PlayerController* PlaylistInteractor::playerController() const
     return p->m_controller->playerController();
 }
 
-void PlaylistInteractor::filesToPlaylist(const Id& id, const QList<QUrl>& urls) const
+void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const Id& id) const
 {
-    if(urls.empty() || !id.isValid()) {
+    if(urls.empty()) {
         return;
     }
 
-    p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
-        if(auto* playlist = p->m_controller->playlistHandler()->playlistById(id)) {
-            p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
-        }
-    });
+    if(id.isValid()) {
+        p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
+            if(auto* playlist = p->m_handler->playlistById(id)) {
+                p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+                p->m_controller->changeCurrentPlaylist(playlist);
+            }
+        });
+    }
+    else {
+        p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
+            const QString playlistName = Track::findCommonField(scannedTracks);
+            if(auto* playlist = p->m_handler->createNewPlaylist(playlistName, scannedTracks)) {
+                p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+                p->m_controller->changeCurrentPlaylist(playlist);
+            }
+        });
+    }
 }
 
 void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls) const
@@ -201,5 +225,23 @@ void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::funct
     }
 
     p->scanFiles(urls, func);
+}
+
+void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const Id& id)
+{
+    const TrackList tracks = p->tracksFromMimeData(data);
+    if(tracks.empty()) {
+        return;
+    }
+
+    if(id.isValid()) {
+        p->m_handler->appendToPlaylist(id, tracks);
+    }
+    else {
+        const QString playlistName = Track::findCommonField(tracks);
+        if(auto* playlist = p->m_handler->createPlaylist(playlistName, tracks)) {
+            p->m_controller->changeCurrentPlaylist(playlist);
+        }
+    }
 }
 } // namespace Fooyin

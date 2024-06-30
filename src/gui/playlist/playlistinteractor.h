@@ -47,12 +47,14 @@ public:
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PlayerController* playerController() const;
 
-    void filesToPlaylist(const Id& id, const QList<QUrl>& urls) const;
+    void filesToPlaylist(const QList<QUrl>& urls, const Id& id) const;
     void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false) const;
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
     void filesToActivePlaylist(const QList<QUrl>& urls) const;
     void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const;
+
+    void trackMimeToPlaylist(const QByteArray& data, const Id& id);
 
 private:
     struct Private;

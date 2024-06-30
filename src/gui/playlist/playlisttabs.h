@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/track.h>
 #include <gui/widgetcontainer.h>
 
 class QIcon;
@@ -63,6 +64,10 @@ public:
     void removeWidget(int index) override;
     void replaceWidget(int index, FyWidget* newWidget) override;
     void moveWidget(int index, int newIndex) override;
+
+signals:
+    void filesDropped(const QList<QUrl>& urls, const Id& playlistId);
+    void tracksDropped(const QByteArray& data, const Id& playlistId);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
