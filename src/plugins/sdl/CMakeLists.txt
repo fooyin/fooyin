@@ -1,6 +1,7 @@
 find_package(SDL2 QUIET)
 
 if(NOT SDL2_FOUND)
+    message(STATUS "SDL2 not found; skipping sdl plugin.")
     return()
 endif()
 

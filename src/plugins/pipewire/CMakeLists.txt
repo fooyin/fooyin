@@ -1,6 +1,7 @@
 find_package(PipeWire QUIET)
 
 if(NOT PIPEWIRE_FOUND)
+    message(STATUS "PipeWire not found; skipping pipewire plugin.")
     return()
 endif()
 
