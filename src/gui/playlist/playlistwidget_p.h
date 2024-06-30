@@ -92,7 +92,11 @@ public:
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;
+
     void clearTracks() const;
+    void cutTracks() const;
+    void copyTracks() const;
+    void pasteTracks() const;
 
     void playlistTracksAdded(const TrackList& tracks, int index) const;
     void handleTracksChanged(const std::vector<int>& indexes, bool allNew);
@@ -113,6 +117,7 @@ public:
     void resetSort(bool force = false);
 
     void addSortMenu(QMenu* parent, bool disabled);
+    void addClipboardMenu(QMenu* parent, bool hasSelection) const;
     void addPresetMenu(QMenu* parent);
 
     PlaylistWidget* m_self;
@@ -142,6 +147,9 @@ public:
 
     WidgetContext* m_playlistContext;
 
+    QAction* m_cutAction;
+    QAction* m_copyAction;
+    QAction* m_pasteAction;
     QAction* m_removeTrackAction;
     QAction* m_addToQueueAction;
     QAction* m_removeFromQueueAction;

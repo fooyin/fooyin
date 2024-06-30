@@ -49,6 +49,7 @@ struct PlaylistController::Private
 
     std::unordered_map<Playlist*, QUndoStack> m_histories;
     std::unordered_map<Playlist*, PlaylistViewState> m_states;
+    TrackList m_clipboard;
 
     Private(PlaylistController* self, PlaylistHandler* handler, PlayerController* playerController,
             TrackSelectionController* selectionController, SettingsManager* settings)
@@ -518,6 +519,22 @@ void PlaylistController::redoPlaylistChanges()
 void PlaylistController::clearHistory()
 {
     p->m_histories.clear();
+}
+
+bool PlaylistController::clipboardEmpty() const
+{
+    return p->m_clipboard.empty();
+}
+
+TrackList PlaylistController::clipboard() const
+{
+    return p->m_clipboard;
+}
+
+void PlaylistController::setClipboard(const TrackList& tracks)
+{
+    p->m_clipboard = tracks;
+    emit clipboardChanged();
 }
 
 void PlaylistController::handleTrackSelectionAction(TrackAction action)

@@ -91,6 +91,10 @@ public:
     void redoPlaylistChanges();
     void clearHistory();
 
+    [[nodiscard]] bool clipboardEmpty() const;
+    [[nodiscard]] TrackList clipboard() const;
+    void setClipboard(const TrackList& tracks);
+
 signals:
     void playlistsLoaded();
     void currentPlaylistChanged(Playlist* prevPlaylist, Playlist* playlist);
@@ -101,6 +105,7 @@ signals:
     void currentPlaylistQueueChanged(const std::vector<int>& tracks);
 
     void playStateChanged(PlayState state);
+    void clipboardChanged();
     void playlistHistoryChanged();
     void playingTrackChanged(const PlaylistTrack& track);
     void showCurrentTrack();

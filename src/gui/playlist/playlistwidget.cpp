@@ -55,6 +55,22 @@
 #include <stack>
 
 namespace {
+Fooyin::TrackList getTracks(const QModelIndexList& indexes)
+{
+    Fooyin::TrackList tracks;
+
+    for(const QModelIndex& index : indexes) {
+        if(index.isValid() && index.data(Fooyin::PlaylistItem::Type).toInt() == Fooyin::PlaylistItem::Track) {
+            auto track = index.data(Fooyin::PlaylistItem::ItemData).value<Fooyin::Track>();
+            if(track.isValid()) {
+                tracks.emplace_back(track);
+            }
+        }
+    }
+
+    return tracks;
+}
+
 Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList& indexes)
 {
     Fooyin::TrackList tracks;
@@ -147,6 +163,9 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
     , m_playlistContext{new WidgetContext(m_self, Context{Constants::Context::Playlist}, m_self)}
+    , m_cutAction{new QAction(tr("Cut"), m_self)}
+    , m_copyAction{new QAction(tr("Copy"), m_self)}
+    , m_pasteAction{new QAction(tr("Paste"), m_self)}
     , m_removeTrackAction{new QAction(tr("Remove"), m_self)}
     , m_addToQueueAction{new QAction(tr("Add to Playback Queue"), m_self)}
     , m_removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), m_self)}
@@ -259,6 +278,35 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(m_playlistController, &PlaylistController::playlistHistoryChanged, this,
                      [this, redoAction]() { redoAction->setEnabled(m_playlistController->canRedo()); });
     redoAction->setEnabled(m_playlistController->canRedo());
+
+    editMenu->addSeparator();
+
+    auto* cutCommand
+        = m_actionManager->registerAction(m_cutAction, Constants::Actions::Cut, m_playlistContext->context());
+    cutCommand->setDefaultShortcut(QKeySequence::Cut);
+    editMenu->addAction(cutCommand);
+    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { m_cutAction->setEnabled(m_playlistView->selectionModel()->hasSelection()); });
+    QObject::connect(m_cutAction, &QAction::triggered, this, &PlaylistWidgetPrivate::cutTracks);
+    m_cutAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
+
+    auto* copyCommand
+        = m_actionManager->registerAction(m_copyAction, Constants::Actions::Copy, m_playlistContext->context());
+    copyCommand->setDefaultShortcut(QKeySequence::Copy);
+    editMenu->addAction(copyCommand);
+    QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { m_copyAction->setEnabled(m_playlistView->selectionModel()->hasSelection()); });
+    QObject::connect(m_copyAction, &QAction::triggered, this, &PlaylistWidgetPrivate::copyTracks);
+    m_copyAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
+
+    auto* pasteCommand
+        = m_actionManager->registerAction(m_pasteAction, Constants::Actions::Paste, m_playlistContext->context());
+    pasteCommand->setDefaultShortcut(QKeySequence::Paste);
+    editMenu->addAction(m_pasteAction);
+    QObject::connect(m_playlistController, &PlaylistController::clipboardChanged, this,
+                     [this]() { m_pasteAction->setEnabled(!m_playlistController->clipboardEmpty()); });
+    QObject::connect(m_pasteAction, &QAction::triggered, this, &PlaylistWidgetPrivate::pasteTracks);
+    m_pasteAction->setEnabled(!m_playlistController->clipboardEmpty());
 
     editMenu->addSeparator();
 
@@ -749,6 +797,50 @@ void PlaylistWidgetPrivate::clearTracks() const
     m_playlistController->addToHistory(clearCmd);
 }
 
+void PlaylistWidgetPrivate::cutTracks() const
+{
+    if(!m_playlistController->currentPlaylist()) {
+        return;
+    }
+
+    const auto selected    = filterSelectedIndexes(m_playlistView);
+    const TrackList tracks = getTracks(selected);
+
+    m_playlistController->setClipboard(tracks);
+    tracksRemoved();
+}
+
+void PlaylistWidgetPrivate::copyTracks() const
+{
+    if(!m_playlistController->currentPlaylist()) {
+        return;
+    }
+
+    const auto selected    = filterSelectedIndexes(m_playlistView);
+    const TrackList tracks = getTracks(selected);
+
+    m_playlistController->setClipboard(tracks);
+}
+
+void PlaylistWidgetPrivate::pasteTracks() const
+{
+    if(m_playlistController->clipboardEmpty()) {
+        return;
+    }
+
+    const auto selected = filterSelectedIndexes(m_playlistView);
+    const auto tracks   = m_playlistController->clipboard();
+
+    int insertIndex{-1};
+    if(!selected.empty()) {
+        insertIndex = selected.front().data(PlaylistItem::Index).toInt();
+    }
+
+    auto* insertCmd = new InsertTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
+                                       {{insertIndex, tracks}});
+    m_playlistController->addToHistory(insertCmd);
+}
+
 void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int index) const
 {
     auto* insertCmd = new InsertTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
@@ -1157,6 +1249,18 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent, bool disabled)
     parent->addMenu(sortMenu);
 }
 
+void PlaylistWidgetPrivate::addClipboardMenu(QMenu* parent, bool hasSelection) const
+{
+    if(hasSelection) {
+        parent->addAction(m_cutAction);
+        parent->addAction(m_copyAction);
+    }
+
+    if(!m_playlistController->clipboardEmpty()) {
+        parent->addAction(m_pasteAction);
+    }
+}
+
 void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 {
     auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), parent);
@@ -1330,8 +1434,11 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         menu->addAction(crop);
 
         p->addSortMenu(menu, selected.size() == 1);
+        menu->addSeparator();
     }
 
+    p->addClipboardMenu(menu, hasSelection);
+    menu->addSeparator();
     p->addPresetMenu(menu);
 
     if(hasSelection) {
