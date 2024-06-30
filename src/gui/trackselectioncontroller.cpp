@@ -257,7 +257,10 @@ struct TrackSelectionController::Private
         const auto& selection = m_contextSelection.at(m_activeContext);
 
         if(newName.isEmpty()) {
-            newName = selection.name;
+            if(!selection.name.isEmpty()) {
+                newName = selection.name;
+            }
+            newName = Track::findCommonField(selection.tracks);
         }
 
         if(options & PlaylistAction::KeepActive) {
@@ -278,10 +281,11 @@ struct TrackSelectionController::Private
             }
         }
 
-        auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks);
-        playlist->changeCurrentIndex(-1);
-        handleActions(playlist, options);
-        emit m_self->actionExecuted(TrackAction::SendNewPlaylist);
+        if(auto* playlist = m_playlistHandler->createPlaylist(newName, selection.tracks)) {
+            playlist->changeCurrentIndex(-1);
+            handleActions(playlist, options);
+            emit m_self->actionExecuted(TrackAction::SendNewPlaylist);
+        }
     }
 
     void sendToCurrentPlaylist(PlaylistAction::ActionOptions options = {}) const

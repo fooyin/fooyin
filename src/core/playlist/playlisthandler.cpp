@@ -289,16 +289,20 @@ struct PlaylistHandler::Private
             return m_playlists.at(existingIndex).get();
         }
 
+
         if(isTemporary) {
-            auto* playlist = m_playlists.emplace_back(Playlist::create(name)).get();
+        const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
+            auto* playlist = m_playlists.emplace_back(Playlist::create(tempName)).get();
             return playlist;
         }
 
+        const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Playlist"));
+
         const int index = nextValidIndex();
-        const int dbId  = m_playlistConnector.insertPlaylist(name, index);
+        const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index);
 
         if(dbId >= 0) {
-            auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, name, index)).get();
+            auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index)).get();
             return playlist;
         }
 
