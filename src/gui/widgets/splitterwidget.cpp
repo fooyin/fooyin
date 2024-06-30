@@ -295,7 +295,10 @@ void SplitterWidget::moveWidget(int index, int newIndex)
 
 QString SplitterWidget::name() const
 {
-    return tr("%1 Splitter").arg(m_splitter->orientation() == Qt::Vertical ? tr("Vertical") : tr("Horizontal"));
+    if(m_splitter->orientation() == Qt::Vertical) {
+        return tr("Splitter (Top/Bottom)");
+    }
+    return tr("Splitter (Left/Right)");
 }
 
 QString SplitterWidget::layoutName() const

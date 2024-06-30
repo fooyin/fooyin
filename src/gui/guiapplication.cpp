@@ -516,13 +516,13 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("SplitterVertical"),
             [this]() { return new VerticalSplitterWidget(&widgetProvider, settings, mainWindow.get()); },
-            tr("Vertical Splitter"));
+            tr("Splitter (Top/Bottom)"));
         widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
             QStringLiteral("SplitterHorizontal"),
             [this]() { return new HorizontalSplitterWidget(&widgetProvider, settings, mainWindow.get()); },
-            tr("Horizontal Splitter"));
+            tr("Splitter (Left/Right)"));
         widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {tr("Splitters")});
 
         widgetProvider.registerWidget(
