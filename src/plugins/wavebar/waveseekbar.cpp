@@ -356,11 +356,6 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
     const bool drawMin     = minScale > 0;
     const double centreGap = drawMax && drawMin ? m_centreGap : 0;
 
-    if(!m_data.complete || (m_mode & WaveMode::Silence && drawMax && drawMin)) {
-        const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
-        drawSilence(painter, first, last, centreY);
-    }
-
     double rmsScale{1.0};
     if(m_mode & WaveMode::Rms && !(m_mode & WaveMode::MinMax)) {
         rmsScale = *std::ranges::max_element(rms);
@@ -368,6 +363,16 @@ void WaveSeekBar::drawChannel(QPainter& painter, int channel, double height, int
 
     const auto total           = static_cast<int>(max.size());
     const auto currentPosition = positionFromValue(m_position);
+
+    if(!m_data.complete) {
+        const auto finalX  = total * m_sampleWidth;
+        const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
+        drawSilence(painter, finalX, rect().width(), centreY);
+    }
+    else if(m_mode & WaveMode::Silence && drawMax && drawMin) {
+        const auto centreY = static_cast<double>(centre + (centreGap > 0 ? centreGap / 2 : 0));
+        drawSilence(painter, first, last, centreY);
+    }
 
     for(int i{first}; i <= last && i < total; ++i) {
         const auto x        = static_cast<double>(i * m_sampleWidth);
