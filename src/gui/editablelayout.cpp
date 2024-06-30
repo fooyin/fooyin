@@ -412,6 +412,11 @@ struct EditableLayout::Private
                 menu->addAction(remove);
             }
 
+            if(isDummy) {
+                // Don't show parent menus
+                return;
+            }
+
             prevWidget    = currentWidget;
             currentWidget = parent;
             --level;
