@@ -169,6 +169,8 @@ set(SOURCES
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/playbackpage.cpp
+    settings/playbackpage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp

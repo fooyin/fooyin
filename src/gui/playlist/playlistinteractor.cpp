@@ -202,6 +202,25 @@ void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const Q
     p->scanFiles(urls, handleScanResult);
 }
 
+void PlaylistInteractor::filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls,
+                                                   bool play) const
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
+        if(auto* playlist = p->m_handler->createPlaylist(playlistName, scannedTracks)) {
+            p->m_controller->changeCurrentPlaylist(playlist);
+            if(play) {
+                p->m_handler->startPlayback(playlist);
+            }
+        }
+    };
+
+    p->scanFiles(urls, handleScanResult);
+}
+
 void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
 {
     if(!p->m_handler->activePlaylist()) {

@@ -51,6 +51,7 @@ public:
     void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false) const;
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
+    void filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
     void filesToActivePlaylist(const QList<QUrl>& urls) const;
     void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const;
 

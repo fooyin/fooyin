@@ -56,6 +56,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreegrouppage.h"
 #include "settings/librarytree/librarytreepage.h"
+#include "settings/playbackpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistpresetspage.h"
@@ -149,6 +150,7 @@ struct GuiApplication::Private
     PlaylistGeneralPage playlistGeneralPage;
     PlaylistPresetsPage playlistPresetsPage;
     PlaylistColumnPage playlistColumnPage;
+    PlaybackPage playbackPage;
     EnginePage enginePage;
     DirBrowserPage dirBrowserPage;
     LibraryTreePage libraryTreePage;
@@ -193,6 +195,7 @@ struct GuiApplication::Private
         , playlistGeneralPage{settings}
         , playlistPresetsPage{settings}
         , playlistColumnPage{actionManager, settings}
+        , playbackPage{settings}
         , enginePage{settings, core.engine}
         , dirBrowserPage{settings}
         , libraryTreePage{settings}
@@ -750,7 +753,13 @@ struct GuiApplication::Private
 
     void openFiles(const QList<QUrl>& urls) const
     {
-        playlistInteractor.filesToNewPlaylist(QStringLiteral("Default"), urls, true);
+        const QString playlistName = settings->value<Settings::Core::OpenFilesPlaylist>();
+        if(settings->value<Settings::Core::OpenFilesSendTo>()) {
+            playlistInteractor.filesToNewPlaylistReplace(playlistName, urls, true);
+        }
+        else {
+            playlistInteractor.filesToNewPlaylist(playlistName, urls, true);
+        }
     }
 
     void loadPlaylist() const

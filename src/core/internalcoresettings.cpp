@@ -60,6 +60,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
                                                          QStringLiteral("Engine/FadingIntervals"));
     m_settings->createSetting<SkipUnavailable>(false, QStringLiteral("Playlist/SkipUnavailable"));
+    m_settings->createSetting<OpenFilesPlaylist>(QStringLiteral("Default"),
+                                                 QStringLiteral("Playlist/OpenFilesPlaylist"));
+    m_settings->createSetting<OpenFilesSendTo>(false, QStringLiteral("Playlist/OpenFilesSendToPlaylist"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

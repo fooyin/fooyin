@@ -48,11 +48,6 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QCheckBox* m_cursorFollowsPlayback;
-    QCheckBox* m_playbackFollowsCursor;
-    QCheckBox* m_rewindPrevious;
-    QCheckBox* m_skipUnavailable;
-
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
@@ -71,10 +66,6 @@ private:
 
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
-    , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
-    , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
-    , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
@@ -89,11 +80,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
-    m_rewindPrevious->setToolTip(tr(
-        "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
-    m_skipUnavailable->setToolTip(
-        tr("If the current track in a playlist is unavailable, silently continue to the next track"));
-
     m_imagePadding->setMinimum(0);
     m_imagePadding->setMaximum(100);
     m_imagePadding->setSuffix(QStringLiteral("px"));
@@ -101,14 +87,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     m_imagePaddingTop->setMinimum(0);
     m_imagePaddingTop->setMaximum(100);
     m_imagePaddingTop->setSuffix(QStringLiteral("px"));
-
-    auto* behaviour       = new QGroupBox(tr("Behaviour"), this);
-    auto* behaviourLayout = new QGridLayout(behaviour);
-
-    behaviourLayout->addWidget(m_cursorFollowsPlayback, 0, 0, 1, 2);
-    behaviourLayout->addWidget(m_playbackFollowsCursor, 1, 0, 1, 2);
-    behaviourLayout->addWidget(m_rewindPrevious, 2, 0, 1, 2);
-    behaviourLayout->addWidget(m_skipUnavailable, 3, 0, 1, 2);
 
     auto* saving       = new QGroupBox(tr("Saving"), this);
     auto* savingLayout = new QGridLayout(saving);
@@ -152,10 +130,9 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
     tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 
-    layout->addWidget(behaviour, 0, 0);
-    layout->addWidget(saving, 1, 0);
-    layout->addWidget(appearance, 2, 0);
-    layout->addWidget(tabsGroup, 3, 0);
+    layout->addWidget(saving, 0, 0);
+    layout->addWidget(appearance, 1, 0);
+    layout->addWidget(tabsGroup, 2, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
 
@@ -166,11 +143,6 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
 void PlaylistGeneralPageWidget::load()
 {
-    m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
-    m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
-    m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_skipUnavailable->setChecked(m_settings->value<Settings::Core::SkipUnavailable>());
-
     m_exportPathType->setCurrentIndex(static_cast<int>(m_settings->value<Settings::Core::PlaylistSavePathType>()));
     m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
 
@@ -189,11 +161,6 @@ void PlaylistGeneralPageWidget::load()
 
 void PlaylistGeneralPageWidget::apply()
 {
-    m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
-    m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
-    m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->set<Settings::Core::SkipUnavailable>(m_skipUnavailable->isChecked());
-
     m_settings->set<Settings::Core::PlaylistSavePathType>(m_exportPathType->currentIndex());
     m_settings->set<Settings::Core::PlaylistSaveMetadata>(m_exportMetadata->isChecked());
 
@@ -212,12 +179,6 @@ void PlaylistGeneralPageWidget::apply()
 
 void PlaylistGeneralPageWidget::reset()
 {
-    m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
-    m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
-    m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->reset<Settings::Core::SkipUnavailable>();
-
     m_settings->reset<Settings::Core::PlaylistSavePathType>();
     m_settings->reset<Settings::Core::PlaylistSaveMetadata>();
 

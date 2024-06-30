@@ -158,6 +158,7 @@ constexpr auto TrackIds      = "application/x-fooyin-trackIds";
 namespace Page {
 constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
 constexpr auto Engine             = "Fooyin.Page.Engine";
+constexpr auto Playback           = "Fooyin.Page.Playback";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
