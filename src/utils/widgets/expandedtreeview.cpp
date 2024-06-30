@@ -237,6 +237,7 @@ public:
     virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)                       = 0;
     [[nodiscard]] virtual int sizeHintForColumn(int column) const                                              = 0;
 
+    [[nodiscard]] virtual int itemHeight(int item) const                                     = 0;
     [[nodiscard]] virtual int firstVisibleItem(int* offset) const                            = 0;
     [[nodiscard]] virtual int lastVisibleItem(int firstVisual, int offset) const             = 0;
     [[nodiscard]] virtual QPoint coordinateForItem(int item) const                           = 0;
@@ -568,7 +569,7 @@ public:
     void updateScrollBars() override;
     void updateColumns() override;
 
-    [[nodiscard]] int itemHeight(int item) const;
+    [[nodiscard]] int itemHeight(int item) const override;
     [[nodiscard]] int itemPadding(int item) const;
 
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
@@ -869,6 +870,24 @@ int TreeView::firstVisibleItem(int* offset) const
     const int value = verticalScrollBar()->value();
     const int count = itemCount();
 
+    if(m_view->verticalScrollMode() == QAbstractItemView::ScrollPerItem) {
+        if(offset) {
+            *offset = 0;
+        }
+        return (value < 0 || value >= count) ? -1 : value;
+    }
+
+    if(m_p->m_uniformRowHeights) {
+        if(m_uniformRowHeight <= 0) {
+            return -1;
+        }
+
+        if(offset) {
+            *offset = -(value % m_uniformRowHeight);
+        }
+        return value / m_uniformRowHeight;
+    }
+
     int y{0};
     for(int i{0}; i < count; ++i) {
         const int height = itemHeight(i) + itemPadding(i);
@@ -910,12 +929,46 @@ QPoint TreeView::coordinateForItem(int item) const
 {
     const int vertScrollValue = verticalScrollBar()->value();
 
-    const auto& items = viewItems();
-    for(int index{0}, y{0}; const auto& viewItem : items) {
-        if(index == item) {
-            return {0, y - vertScrollValue};
+    if(m_view->verticalScrollMode() == QAbstractItemView::ScrollPerPixel) {
+        if(m_p->m_uniformRowHeights) {
+            return {0, (item * m_uniformRowHeight) - vertScrollValue};
         }
-        y += itemHeight(index++) + viewItem.padding;
+        const auto& items = viewItems();
+        for(int index{0}, y{0}; const auto& viewItem : items) {
+            if(index == item) {
+                return {0, y - vertScrollValue};
+            }
+            y += itemHeight(index++) + viewItem.padding;
+        }
+    }
+    else {
+        int topViewItemIndex{vertScrollValue};
+        if(m_p->m_uniformRowHeights) {
+            return {0, m_uniformRowHeight * (item - topViewItemIndex)};
+        }
+
+        const int count = itemCount();
+        if(item >= topViewItemIndex) {
+            int viewItemCoordinate = 0;
+            int viewItemIndex      = topViewItemIndex;
+            while(viewItemIndex < count) {
+                if(viewItemIndex == item) {
+                    return {0, viewItemCoordinate};
+                }
+                viewItemCoordinate += itemHeight(viewItemIndex);
+                ++viewItemIndex;
+            }
+            return {0, viewItemCoordinate};
+        }
+
+        int viewItemCoordinate{0};
+        for(int viewItemIndex = topViewItemIndex; viewItemIndex > 0; --viewItemIndex) {
+            if(viewItemIndex == item) {
+                return {0, viewItemCoordinate};
+            }
+            viewItemCoordinate -= itemHeight(viewItemIndex - 1);
+        }
+        return {0, viewItemCoordinate};
     }
 
     return {0, 0};
@@ -927,20 +980,62 @@ int TreeView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
     if(count == 0) {
         return -1;
     }
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight <= 0) {
+        return -1;
+    }
 
-    const int contentsCoord = coordinate.y() + verticalScrollBar()->value();
+    const int vertScrollValue = verticalScrollBar()->value();
 
-    int itemCoord{0};
-    for(int index{0}; index < count; ++index) {
-        const int height  = itemHeight(index);
-        const int padding = itemPadding(index);
-        itemCoord += height + padding;
+    if(m_view->verticalScrollMode() == QAbstractItemView::ScrollPerPixel) {
+        if(m_p->m_uniformRowHeights) {
+            const int viewItemIndex = (coordinate.y() + vertScrollValue) / m_uniformRowHeight;
+            return ((viewItemIndex >= count || viewItemIndex < 0) ? -1 : viewItemIndex);
+        }
 
-        if(itemCoord > contentsCoord) {
-            if(includePadding && (itemCoord - padding) < contentsCoord) {
-                return -1;
+        const int contentsCoord = coordinate.y() + vertScrollValue;
+
+        int itemCoord{0};
+        for(int index{0}; index < count; ++index) {
+            const int height  = itemHeight(index);
+            const int padding = itemPadding(index);
+            itemCoord += height + padding;
+
+            if(itemCoord > contentsCoord) {
+                if(includePadding && (itemCoord - padding) < contentsCoord) {
+                    return -1;
+                }
+                return index >= count ? -1 : index;
             }
-            return index >= count ? -1 : index;
+        }
+    }
+    else {
+        int topViewItemIndex{vertScrollValue};
+        if(m_p->m_uniformRowHeights) {
+            if(coordinate.y() < 0) {
+                coordinate.ry() -= m_uniformRowHeight - 1;
+            }
+            const int viewItemIndex = topViewItemIndex + (coordinate.y() / m_uniformRowHeight);
+            return ((viewItemIndex >= itemCount() || viewItemIndex < 0) ? -1 : viewItemIndex);
+        }
+        if(coordinate.y() >= 0) {
+            // In or below viewport
+            int viewItemCoordinate{0};
+            for(int viewItemIndex = topViewItemIndex; viewItemIndex < count; ++viewItemIndex) {
+                viewItemCoordinate += itemHeight(viewItemIndex);
+                if(viewItemCoordinate > coordinate.y()) {
+                    return (viewItemIndex >= count ? -1 : viewItemIndex);
+                }
+            }
+        }
+        else {
+            // Above viewport
+            int viewItemCoordinate{0};
+            for(int viewItemIndex = topViewItemIndex; viewItemIndex >= 0; --viewItemIndex) {
+                if(viewItemCoordinate <= coordinate.y()) {
+                    return (viewItemIndex >= count ? -1 : viewItemIndex);
+                }
+                viewItemCoordinate -= itemHeight(viewItemIndex);
+            }
         }
     }
 
@@ -1075,29 +1170,49 @@ void TreeView::updateScrollBars()
     const int count          = itemCount();
     const int viewportHeight = viewportSize.height();
 
-    for(int height{0}, item = count - 1; item >= 0; --item) {
-        height += itemHeight(item);
-        if(height > viewportHeight) {
-            break;
+    if(m_p->m_uniformRowHeights) {
+        if(m_uniformRowHeight <= 0) {
+            itemsInViewport = count;
         }
-        ++itemsInViewport;
+        else {
+            itemsInViewport = viewportSize.height() / m_uniformRowHeight;
+        }
+    }
+    else {
+        for(int height{0}, item = count - 1; item >= 0; --item) {
+            height += itemHeight(item);
+            if(height > viewportHeight) {
+                break;
+            }
+            ++itemsInViewport;
+        }
     }
 
     auto* verticalBar = verticalScrollBar();
 
-    int contentsHeight{0};
-    for(int i{0}; i < count; ++i) {
-        contentsHeight += itemHeight(i) + itemPadding(i);
+    if(m_view->verticalScrollMode() == QAbstractItemView::ScrollPerItem) {
+        if(!empty()) {
+            itemsInViewport = std::max(1, itemsInViewport);
+        }
+        verticalBar->setRange(0, count - itemsInViewport);
+        verticalBar->setPageStep(itemsInViewport);
+        verticalBar->setSingleStep(1);
     }
+    else {
+        int contentsHeight{0};
+        for(int i{0}; i < count; ++i) {
+            contentsHeight += itemHeight(i) + itemPadding(i);
+        }
 
-    const int vMax = contentsHeight - viewportHeight;
-    if(verticalBar->isVisible() && vMax <= 0) {
-        m_p->m_hidingScrollbar = 2;
+        const int vMax = contentsHeight - viewportHeight;
+        if(verticalBar->isVisible() && vMax <= 0) {
+            m_p->m_hidingScrollbar = 2;
+        }
+
+        verticalBar->setRange(0, vMax);
+        verticalBar->setPageStep(viewportHeight);
+        verticalBar->setSingleStep(std::max(viewportHeight / (itemsInViewport + 1), 2));
     }
-
-    verticalBar->setRange(0, vMax);
-    verticalBar->setPageStep(viewportHeight);
-    verticalBar->setSingleStep(std::max(viewportHeight / (itemsInViewport + 1), 2));
 
     const int columnCount   = header()->count();
     const int viewportWidth = viewportSize.width();
@@ -1583,7 +1698,7 @@ private:
     [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
     [[nodiscard]] SizeHint indexSizeHint(const QModelIndex& index) const;
     [[nodiscard]] int itemWidth(int item) const;
-    [[nodiscard]] int itemHeight(int item) const;
+    [[nodiscard]] int itemHeight(int item) const override;
     [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
 
@@ -2701,7 +2816,6 @@ ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     setViewMode(ViewMode::Tree);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    setAutoScroll(false);
 }
 
 ExpandedTreeView::~ExpandedTreeView()
@@ -2870,10 +2984,40 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
         return;
     }
 
+    int item = p->viewIndex(index);
+    if(item < 0) {
+        return;
+    }
+
     const QRect area = viewport()->rect();
 
-    if(!rect.isEmpty()) {
-        if(hint == EnsureVisible && area.contains(rect)) {
+    if(p->m_viewMode != ViewMode::Icon && verticalScrollMode() == QAbstractItemView::ScrollPerItem) {
+        const int top    = verticalScrollBar()->value();
+        const int bottom = top + verticalScrollBar()->pageStep();
+        if(hint == EnsureVisible && item >= top && item < bottom) {
+            // Already visible
+        }
+        else if(hint == PositionAtTop || (hint == EnsureVisible && item < top)) {
+            verticalScrollBar()->setValue(item);
+        }
+        else { // PositionAtBottom or PositionAtCenter
+            const int currentItemHeight = p->m_view->itemHeight(item);
+            int y = (hint == PositionAtCenter ? area.height() / 2 + currentItemHeight - 1 : area.height());
+            if(y > currentItemHeight) {
+                while(item >= 0) {
+                    y -= p->m_view->itemHeight(item);
+                    if(y < 0) {
+                        item++;
+                        break;
+                    }
+                    item--;
+                }
+            }
+            verticalScrollBar()->setValue(item);
+        }
+    }
+    else if(!rect.isEmpty()) {
+        if(hint == EnsureVisible && area.intersects(rect)) {
             viewport()->update(rect);
         }
         else {
@@ -3290,7 +3434,12 @@ void ExpandedTreeView::timerEvent(QTimerEvent* event)
 void ExpandedTreeView::scrollContentsBy(int dx, int dy)
 {
     if(dx) {
+        const int oldOffset = p->m_header->offset();
         p->m_header->setOffset(horizontalScrollBar()->value());
+        if(horizontalScrollMode() == QAbstractItemView::ScrollPerItem) {
+            const int newOffset = p->m_header->offset();
+            dx                  = isRightToLeft() ? newOffset - oldOffset : oldOffset - newOffset;
+        }
     }
 
     const int itemHeight = p->m_defaultItemHeight <= 0 ? sizeHintForRow(0) : p->m_defaultItemHeight;
@@ -3306,6 +3455,29 @@ void ExpandedTreeView::scrollContentsBy(int dx, int dy)
         verticalScrollBar()->update();
         viewport()->update();
         return;
+    }
+
+    if(dy && p->m_viewMode != ViewMode::Icon && verticalScrollMode() == QAbstractItemView::ScrollPerItem) {
+        const int currentScrollbarValue  = verticalScrollBar()->value();
+        const int previousScrollbarValue = currentScrollbarValue + dy;
+        const int currentViewIndex       = currentScrollbarValue; // First visible item
+        const int previousViewIndex      = previousScrollbarValue;
+        dy                               = 0;
+
+        if(previousViewIndex < currentViewIndex) { // Scrolling down
+            for(int i = previousViewIndex; i < currentViewIndex; ++i) {
+                if(i < itemCount()) {
+                    dy -= p->m_view->itemHeight(i);
+                }
+            }
+        }
+        else if(previousViewIndex > currentViewIndex) { // Scrolling up
+            for(int i{previousViewIndex - 1}; i >= currentViewIndex; --i) {
+                if(i < itemCount()) {
+                    dy += p->m_view->itemHeight(i);
+                }
+            }
+        }
     }
 
     p->m_scrollDelayOffset = {-dx, -dy};
@@ -3525,6 +3697,21 @@ int ExpandedTreeView::horizontalOffset() const
 
 int ExpandedTreeView::verticalOffset() const
 {
+    if(p->m_viewMode != ViewMode::Icon && verticalScrollMode() == QAbstractItemView::ScrollPerItem) {
+        if(p->m_uniformRowHeights) {
+            return verticalScrollBar()->value() * p->m_view->m_uniformRowHeight;
+        }
+
+        p->layoutItems();
+
+        int offset{0};
+        const int count = std::min(itemCount(), verticalScrollBar()->value());
+        for(int i{0}; i < count; ++i) {
+            offset += p->m_view->itemHeight(i);
+        }
+        return offset;
+    }
+
     return verticalScrollBar()->value();
 }
 
