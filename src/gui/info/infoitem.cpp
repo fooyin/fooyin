@@ -27,7 +27,11 @@ namespace {
 QString formatPercentage(const std::map<QString, int>& values)
 {
     if(values.size() == 1) {
-        return values.cbegin()->first;
+        const auto val = values.cbegin();
+        if(val->first == u"-1") {
+            return {};
+        }
+        return val->first;
     }
 
     int count{0};
