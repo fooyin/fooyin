@@ -176,7 +176,7 @@ public:
     void stopAutoScroll();
     void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
-
+    std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
     std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
 
     bool isIndexValid(const QModelIndex& index) const;
@@ -2388,57 +2388,58 @@ void ExpandedTreeView::Private::select(const QModelIndex& topIndex, const QModel
     const int top    = viewIndex(topIndex);
     const int bottom = viewIndex(bottomIndex);
 
-    const int left{0};
-    const int right{m_header->count() - 1};
+    const auto colRanges = columnRanges(topIndex, bottomIndex);
 
-    QModelIndex previous;
-    QItemSelectionRange currentRange;
-    QStack<QItemSelectionRange> rangeStack;
+    for(const auto& [left, right] : colRanges) {
+        QModelIndex previous;
+        QItemSelectionRange currentRange;
+        QStack<QItemSelectionRange> rangeStack;
 
-    for(int i{top}; i <= bottom; ++i) {
-        QModelIndex index         = modelIndex(i);
-        const auto parent         = index.parent();
-        const auto previousParent = previous.parent();
+        for(int i{top}; i <= bottom; ++i) {
+            QModelIndex index         = modelIndex(i);
+            const auto parent         = index.parent();
+            const auto previousParent = previous.parent();
 
-        if(previous.isValid() && parent == previousParent) {
-            if(std::abs(previous.row() - index.row()) > 1) {
+            if(previous.isValid() && parent == previousParent) {
+                if(std::abs(previous.row() - index.row()) > 1) {
+                    if(currentRange.isValid()) {
+                        selection.append(currentRange);
+                    }
+                    currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
+                }
+                else {
+                    const auto tl = m_model->index(currentRange.top(), currentRange.left(), currentRange.parent());
+                    currentRange  = {tl, index.sibling(index.row(), right)};
+                }
+            }
+            else if(previous.isValid() && parent == m_model->index(previous.row(), 0, previousParent)) {
+                rangeStack.push(currentRange);
+                currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
+            }
+            else {
                 if(currentRange.isValid()) {
                     selection.append(currentRange);
                 }
-                currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
-            }
-            else {
-                const auto tl = m_model->index(currentRange.top(), currentRange.left(), currentRange.parent());
-                currentRange  = {tl, index.sibling(index.row(), right)};
-            }
-        }
-        else if(previous.isValid() && parent == m_model->index(previous.row(), 0, previousParent)) {
-            rangeStack.push(currentRange);
-            currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
-        }
-        else {
-            if(currentRange.isValid()) {
-                selection.append(currentRange);
-            }
 
-            if(rangeStack.empty()) {
-                currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
+                if(rangeStack.empty()) {
+                    currentRange = {index.sibling(index.row(), left), index.sibling(index.row(), right)};
+                }
+                else {
+                    currentRange = rangeStack.pop();
+                    index        = currentRange.bottomRight();
+                    --i;
+                }
             }
-            else {
-                currentRange = rangeStack.pop();
-                index        = currentRange.bottomRight();
-                --i;
-            }
+            previous = index;
         }
-        previous = index;
-    }
 
-    if(currentRange.isValid()) {
-        selection.append(currentRange);
-    }
+        if(currentRange.isValid()) {
+            selection.append(currentRange);
+        }
 
-    for(int i{0}; i < rangeStack.size(); ++i) {
-        selection.append(rangeStack.at(i));
+        for(int i{0}; i < rangeStack.size(); ++i) {
+            selection.append(rangeStack.at(i));
+        }
     }
 
     m_self->selectionModel()->select(selection, command);
@@ -2761,6 +2762,49 @@ bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dro
     dropCol   = col;
 
     return true;
+}
+
+std::vector<std::pair<int, int>> ExpandedTreeView::Private::columnRanges(const QModelIndex& topIndex,
+                                                                         const QModelIndex& bottomIndex) const
+{
+    const int topVisual    = m_header->visualIndex(topIndex.column());
+    const int bottomVisual = m_header->visualIndex(bottomIndex.column());
+
+    const int start = qMin(topVisual, bottomVisual);
+    const int end   = qMax(topVisual, bottomVisual);
+
+    std::vector<int> logicalIndexes;
+
+    for(int c{start}; c <= end; c++) {
+        const int logical = m_header->logicalIndex(c);
+        if(!m_header->isSectionHidden(logical)) {
+            logicalIndexes.emplace_back(logical);
+        }
+    }
+    std::sort(logicalIndexes.begin(), logicalIndexes.end());
+
+    std::vector<std::pair<int, int>> ret;
+    std::pair<int, int> current{-2, -2};
+    const auto count = static_cast<int>(logicalIndexes.size());
+
+    for(int i{0}; i < count; ++i) {
+        const int logicalColumn = logicalIndexes.at(i);
+        if(current.second + 1 != logicalColumn) {
+            if(current.first != -2) {
+                ret.emplace_back(current);
+            }
+            current.first = current.second = logicalColumn;
+        }
+        else {
+            current.second++;
+        }
+    }
+
+    if(current.first != -2) {
+        ret.emplace_back(current);
+    }
+
+    return ret;
 }
 
 std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionViewItem& option, int y) const
@@ -3851,6 +3895,29 @@ QRegion ExpandedTreeView::visualRegionForSelection(const QItemSelection& selecti
     }
 
     return selectionRegion;
+}
+
+QModelIndexList ExpandedTreeView::selectedIndexes() const
+{
+    QModelIndexList viewSelected;
+    QModelIndexList modelSelected;
+
+    if(selectionModel()) {
+        modelSelected = selectionModel()->selectedIndexes();
+    }
+
+    const auto count = static_cast<int>(modelSelected.size());
+    for(int i{0}; i < count; ++i) {
+        QModelIndex index = modelSelected.at(i);
+        while(index.isValid() && !isIndexHidden(index)) {
+            index = index.parent();
+        }
+        if(index.isValid()) {
+            continue;
+        }
+        viewSelected.append(modelSelected.at(i));
+    }
+    return viewSelected;
 }
 } // namespace Fooyin
 

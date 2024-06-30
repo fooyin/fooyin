@@ -19,9 +19,12 @@
 
 #include "playlistcommands.h"
 
+#include "playlist/playlistcontroller.h"
+#include "playlist/playlistwidget_p.h"
 #include "playlistmodel.h"
 
 #include <core/player/playercontroller.h>
+#include <core/playlist/playlisthandler.h>
 
 namespace {
 std::map<int, QPersistentModelIndex> saveQueuedIndexes(Fooyin::PlayerController* playerController,
@@ -74,7 +77,8 @@ PlaylistCommand::PlaylistCommand(PlayerController* playerController, PlaylistMod
     , m_playlistId{playlistId}
 { }
 
-InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups)
+InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+                           TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
 { }
@@ -103,7 +107,8 @@ void InsertTracks::redo()
     m_model->insertTracks(m_trackGroups);
 }
 
-RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups)
+RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+                           TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
 { }
@@ -132,7 +137,8 @@ void RemoveTracks::redo()
     restoreQueuedIndexes(m_playerController, queuedIndexes);
 }
 
-MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, MoveOperation operation)
+MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+                       MoveOperation operation)
     : PlaylistCommand{playerController, model, playlistId}
     , m_operation{std::move(operation)}
 { }
@@ -153,5 +159,48 @@ void MoveTracks::redo()
     m_undoOperation = m_model->moveTracks(m_operation);
 
     restoreQueuedIndexes(m_playerController, queuedIndexes);
+}
+
+ResetTracks::ResetTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+                         TrackList oldTracks, TrackList newTracks)
+    : PlaylistCommand{playerController, model, playlistId}
+    , m_oldTracks{std::move(oldTracks)}
+    , m_newTracks{std::move(newTracks)}
+{ }
+
+void ResetTracks::undo()
+{
+    const auto queuedIndexes = saveQueuedIndexes(m_playerController, m_model, m_playlistId);
+
+    auto* model            = m_model;
+    auto* playerController = m_playerController;
+    QObject::connect(
+        model, &PlaylistModel::playlistLoaded, model,
+        [model, playerController, queuedIndexes]() {
+            model->tracksChanged();
+            restoreQueuedIndexes(playerController, queuedIndexes);
+        },
+        Qt::SingleShotConnection);
+
+    m_model->tracksAboutToBeChanged();
+    m_model->reset(m_oldTracks);
+}
+
+void ResetTracks::redo()
+{
+    const auto queuedIndexes = saveQueuedIndexes(m_playerController, m_model, m_playlistId);
+
+    auto* model            = m_model;
+    auto* playerController = m_playerController;
+    QObject::connect(
+        model, &PlaylistModel::playlistLoaded, model,
+        [model, playerController, queuedIndexes]() {
+            model->tracksChanged();
+            restoreQueuedIndexes(playerController, queuedIndexes);
+        },
+        Qt::SingleShotConnection);
+
+    m_model->tracksAboutToBeChanged();
+    m_model->reset(m_newTracks);
 }
 } // namespace Fooyin

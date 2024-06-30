@@ -86,6 +86,23 @@ Fooyin::TrackList getAllTracks(QAbstractItemModel* model, const QModelIndexList&
     }
     return tracks;
 }
+
+QModelIndexList filterSelectedIndexes(const QAbstractItemView* view)
+{
+    QModelIndexList filteredIndexes;
+    const auto indexes = view->selectionModel()->selectedIndexes();
+
+    if(!indexes.isEmpty()) {
+        const int column = indexes.first().column();
+        for(const auto& index : indexes) {
+            if(index.column() == column) {
+                filteredIndexes.append(index);
+            }
+        }
+    }
+
+    return filteredIndexes;
+}
 } // namespace
 
 namespace Fooyin {
@@ -230,10 +247,7 @@ void PlaylistWidgetPrivate::setupActions()
     auto* clearAction = new QAction(PlaylistWidget::tr("&Clear"), m_self);
     editMenu->addAction(
         m_actionManager->registerAction(clearAction, Constants::Actions::Clear, m_playlistContext->context()));
-    QObject::connect(clearAction, &QAction::triggered, this, [this]() {
-        m_playlistView->selectAll();
-        tracksRemoved();
-    });
+    QObject::connect(clearAction, &QAction::triggered, this, [this]() { clearTracks(); });
 
     auto* selectAllAction = new QAction(PlaylistWidget::tr("&Select All"), m_self);
     auto* selectAllCmd
@@ -393,7 +407,7 @@ std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
 {
     std::vector<int> selectedPlaylistIndexes;
 
-    const auto selected = m_playlistView->selectionModel()->selectedRows();
+    const auto selected = filterSelectedIndexes(m_playlistView);
     for(const QModelIndex& index : selected) {
         selectedPlaylistIndexes.emplace_back(index.data(PlaylistItem::Index).toInt());
     }
@@ -462,7 +476,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
     std::set<int> trackIndexes;
     int firstIndex{-1};
 
-    const QModelIndexList indexes = m_playlistView->selectionModel()->selectedRows();
+    const QModelIndexList indexes = filterSelectedIndexes(m_playlistView);
 
     for(const QModelIndex& index : indexes) {
         const auto type = index.data(PlaylistItem::Type).toInt();
@@ -516,7 +530,7 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
     const TrackList tracks = getAllTracks(m_model, {QModelIndex{}});
 
     if(!tracks.empty()) {
-        const QModelIndexList selected = m_playlistView->selectionModel()->selectedRows();
+        const QModelIndexList selected = filterSelectedIndexes(m_playlistView);
         if(!selected.empty()) {
             const int firstIndex           = selected.front().data(PlaylistItem::Role::Index).toInt();
             const TrackList selectedTracks = getAllTracks(m_model, selected);
@@ -547,7 +561,7 @@ void PlaylistWidgetPrivate::playSelectedTracks() const
         return;
     }
 
-    const auto selected = m_playlistView->selectionModel()->selectedRows();
+    const auto selected = filterSelectedIndexes(m_playlistView);
 
     if(selected.empty()) {
         return;
@@ -572,7 +586,7 @@ void PlaylistWidgetPrivate::queueSelectedTracks() const
         return;
     }
 
-    const auto selected = m_playlistView->selectionModel()->selectedRows();
+    const auto selected = filterSelectedIndexes(m_playlistView);
     const Id playlistId = m_playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
@@ -596,7 +610,7 @@ void PlaylistWidgetPrivate::dequeueSelectedTracks() const
         return;
     }
 
-    const auto selected = m_playlistView->selectionModel()->selectedRows();
+    const auto selected = filterSelectedIndexes(m_playlistView);
     const Id playlistId = m_playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
@@ -650,7 +664,7 @@ void PlaylistWidgetPrivate::tracksRemoved() const
 
     m_playlistController->playlistHandler()->clearSchedulePlaylist();
 
-    const auto selected = m_playlistView->selectionModel()->selectedRows();
+    const auto selected = filterSelectedIndexes(m_playlistView);
 
     RemoveTracks* delCmd{nullptr};
 
@@ -695,6 +709,18 @@ void PlaylistWidgetPrivate::tracksMoved(const MoveOperation& operation) const
     m_playlistController->addToHistory(moveCmd);
 
     m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
+}
+
+void PlaylistWidgetPrivate::clearTracks() const
+{
+    if(!m_playlistController->currentPlaylist()) {
+        return;
+    }
+
+    const TrackList oldTracks = m_playlistController->currentPlaylist()->tracks();
+    auto* clearCmd
+        = new ResetTracks(m_playerController, m_model, m_playlistController->currentPlaylistId(), oldTracks, {});
+    m_playlistController->addToHistory(clearCmd);
 }
 
 void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int index) const
@@ -976,7 +1002,7 @@ void PlaylistWidgetPrivate::sortTracks(const QString& script) const
     };
 
     if(m_playlistView->selectionModel()->hasSelection()) {
-        const auto selected = m_playlistView->selectionModel()->selectedRows();
+        const auto selected = filterSelectedIndexes(m_playlistView);
 
         std::vector<int> indexesToSort;
 
@@ -1204,7 +1230,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const auto selected     = p->m_playlistView->selectionModel()->selectedRows();
+    const auto selected     = filterSelectedIndexes(p->m_playlistView);
     const bool hasSelection = !selected.empty();
 
     if(hasSelection) {

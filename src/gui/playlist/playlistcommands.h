@@ -66,8 +66,7 @@ private:
 class MoveTracks : public PlaylistCommand
 {
 public:
-    explicit MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
-                        MoveOperation operation);
+    MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, MoveOperation operation);
 
     void undo() override;
     void redo() override;
@@ -75,5 +74,19 @@ public:
 private:
     MoveOperation m_operation;
     MoveOperation m_undoOperation;
+};
+
+class ResetTracks : public PlaylistCommand
+{
+public:
+    ResetTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackList oldTracks,
+                TrackList newTracks);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    TrackList m_oldTracks;
+    TrackList m_newTracks;
 };
 } // namespace Fooyin

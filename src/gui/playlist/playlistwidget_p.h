@@ -92,6 +92,7 @@ public:
     void tracksInserted(const TrackGroups& tracks) const;
     void tracksRemoved() const;
     void tracksMoved(const MoveOperation& operation) const;
+    void clearTracks() const;
 
     void playlistTracksAdded(const TrackList& tracks, int index) const;
     void handleTracksChanged(const std::vector<int>& indexes, bool allNew);
