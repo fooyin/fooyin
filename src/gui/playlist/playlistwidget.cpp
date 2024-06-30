@@ -463,7 +463,9 @@ void PlaylistWidgetPrivate::selectAll() const
     while(m_model->canFetchMore({})) {
         m_model->fetchMore({});
     }
-    m_playlistView->selectAll();
+
+    QMetaObject::invokeMethod(
+        m_playlistView, [this]() { m_playlistView->selectAll(); }, Qt::QueuedConnection);
 }
 
 void PlaylistWidgetPrivate::selectionChanged() const
