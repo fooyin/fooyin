@@ -28,6 +28,7 @@
 #include <utils/fileutils.h>
 #include <utils/utils.h>
 
+#include <QIODevice>
 #include <QMainWindow>
 #include <QProgressDialog>
 
