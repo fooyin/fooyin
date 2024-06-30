@@ -882,9 +882,13 @@ QString Track::findCommonField(const TrackList& tracks)
         }
     }
     else {
+        const QString primaryGenre  = tracks.front().genre();
         const QString primaryArtist = tracks.front().primaryAlbumArtist();
         const QString primaryAlbum  = tracks.front().album();
 
+        const bool sameGenre  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryGenre](const Track& track) {
+            return track.genre() == primaryGenre;
+        });
         const bool sameArtist = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryArtist](const Track& track) {
             return track.primaryAlbumArtist() == primaryArtist;
         });
@@ -895,11 +899,14 @@ QString Track::findCommonField(const TrackList& tracks)
         if(sameArtist && sameAlbum) {
             name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
         }
+        else if(sameAlbum) {
+            name = primaryAlbum;
+        }
         else if(sameArtist) {
             name = primaryArtist;
         }
-        else if(sameAlbum) {
-            name = primaryAlbum;
+        else if(sameGenre) {
+            name = primaryGenre;
         }
     }
 
