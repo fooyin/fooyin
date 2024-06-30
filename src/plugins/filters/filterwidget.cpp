@@ -174,19 +174,8 @@ struct FilterWidget::Private
         });
         QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self,
                          [this](const QSize& size) { m_settings->set<Settings::Filters::FilterIconSize>(size); });
-        QObject::connect(m_view, &FilterView::doubleClicked, m_self,
-                         [this]() { emit m_self->doubleClicked(playlistNameFromSelection()); });
-        QObject::connect(m_view, &FilterView::middleClicked, m_self,
-                         [this]() { emit m_self->middleClicked(playlistNameFromSelection()); });
-    }
-
-    [[nodiscard]] QString playlistNameFromSelection() const
-    {
-        QStringList titles;
-        const QModelIndexList selectedIndexes = m_view->selectionModel()->selectedIndexes();
-        std::ranges::transform(selectedIndexes, std::back_inserter(titles),
-                               [](const QModelIndex& selectedIndex) { return selectedIndex.data().toString(); });
-        return titles.join(QStringLiteral(", "));
+        QObject::connect(m_view, &FilterView::doubleClicked, m_self, [this]() { emit m_self->doubleClicked(); });
+        QObject::connect(m_view, &FilterView::middleClicked, m_self, [this]() { emit m_self->middleClicked(); });
     }
 
     void refreshFilteredTracks()
@@ -225,7 +214,7 @@ struct FilterWidget::Private
 
         refreshFilteredTracks();
 
-        emit m_self->selectionChanged(playlistNameFromSelection());
+        emit m_self->selectionChanged();
     }
 
     void updateCaptions(ExpandedTreeView::CaptionDisplay captions) const

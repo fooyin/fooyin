@@ -44,7 +44,6 @@ struct WidgetSelection
 {
     TrackList tracks;
     int firstIndex{0};
-    QString name{TrackSelectionController::tr("New playlist")};
     bool playbackOnSend{false};
 };
 
@@ -120,7 +119,7 @@ struct TrackSelectionController::Private
                 const auto options
                     = PlaylistAction::Switch
                     | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
-                sendToNewPlaylist(options, selection.name);
+                sendToNewPlaylist(options);
             }
         });
         m_tracksPlaylistMenu->addAction(m_actionManager->registerAction(m_sendNew, "TrackSelection.SendNewPlaylist"));
@@ -252,16 +251,8 @@ struct TrackSelectionController::Private
             return;
         }
 
-        QString newName{playlistName};
-
         const auto& selection = m_contextSelection.at(m_activeContext);
-
-        if(newName.isEmpty()) {
-            if(!selection.name.isEmpty()) {
-                newName = selection.name;
-            }
-            newName = Track::findCommonField(selection.tracks);
-        }
+        const QString newName = !playlistName.isEmpty() ? playlistName : Track::findCommonField(selection.tracks);
 
         if(options & PlaylistAction::KeepActive) {
             const auto* activePlaylist = m_playlistHandler->activePlaylist();
@@ -391,13 +382,11 @@ int TrackSelectionController::selectedTrackCount() const
     return static_cast<int>(p->m_contextSelection.at(p->m_activeContext).tracks.size());
 }
 
-void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks,
-                                                    const QString& title)
+void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks)
 {
     if(p->addContextObject(context)) {
         auto& selection      = p->m_contextSelection[context];
         selection.firstIndex = index;
-        selection.name       = title;
 
         if(!tracks.empty()) {
             p->m_activeContext = context;
@@ -412,10 +401,9 @@ void TrackSelectionController::changeSelectedTracks(WidgetContext* context, int 
     }
 }
 
-void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackList& tracks,
-                                                    const QString& title)
+void TrackSelectionController::changeSelectedTracks(WidgetContext* context, const TrackList& tracks)
 {
-    changeSelectedTracks(context, 0, tracks, title);
+    changeSelectedTracks(context, 0, tracks);
 }
 
 void TrackSelectionController::changePlaybackOnSend(WidgetContext* context, bool enabled)

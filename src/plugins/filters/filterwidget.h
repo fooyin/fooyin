@@ -70,13 +70,13 @@ public:
     void tracksRemoved(const TrackList& tracks);
 
 signals:
-    void doubleClicked(const QString& playlistName);
-    void middleClicked(const QString& playlistName);
+    void doubleClicked();
+    void middleClicked();
 
     void filterDeleted();
     void filterUpdated();
     void finishedUpdating();
-    void selectionChanged(const QString& playlistName);
+    void selectionChanged();
     void requestHeaderMenu(AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos);
     void requestEditConnections();

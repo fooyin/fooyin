@@ -96,7 +96,7 @@ struct FilterController::Private
         m_settings->subscribe<Settings::Filters::FilterSendPlayback>(m_self, [this]() { updateAllPlaylistActions(); });
     }
 
-    void handleAction(const TrackAction& action, const QString& playlistName) const
+    void handleAction(const TrackAction& action) const
     {
         PlaylistAction::ActionOptions options;
 
@@ -107,7 +107,7 @@ struct FilterController::Private
             options |= PlaylistAction::StartPlayback;
         }
 
-        m_trackSelection->executeAction(action, options, playlistName);
+        m_trackSelection->executeAction(action, options);
     }
 
     Id findContainingGroup(FilterWidget* widget)
@@ -299,9 +299,9 @@ struct FilterController::Private
         }
     }
 
-    void selectionChanged(FilterWidget* filter, const QString& playlistName)
+    void selectionChanged(FilterWidget* filter)
     {
-        m_trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks(), playlistName);
+        m_trackSelection->changeSelectedTracks(filter->widgetContext(), filter->filteredTracks());
 
         if(m_settings->value<Settings::Filters::FilterPlaylistEnabled>()) {
             PlaylistAction::ActionOptions options{PlaylistAction::None};
@@ -481,16 +481,13 @@ FilterWidget* FilterController::createFilter()
     widget->setIndex(static_cast<int>(group.filters.size()));
     group.filters.push_back(widget);
 
-    QObject::connect(widget, &FilterWidget::doubleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->m_doubleClickAction, playlistName); });
-    QObject::connect(widget, &FilterWidget::middleClicked, this,
-                     [this](const QString& playlistName) { p->handleAction(p->m_middleClickAction, playlistName); });
+    QObject::connect(widget, &FilterWidget::doubleClicked, this, [this]() { p->handleAction(p->m_doubleClickAction); });
+    QObject::connect(widget, &FilterWidget::middleClicked, this, [this]() { p->handleAction(p->m_middleClickAction); });
     QObject::connect(widget, &FilterWidget::requestSearch, this,
                      [this, widget](const QString& search) { p->searchChanged(widget, search); });
     QObject::connect(widget, &FilterWidget::requestContextMenu, this,
                      [this](const QPoint& pos) { p->filterContextMenu(pos); });
-    QObject::connect(widget, &FilterWidget::selectionChanged, this,
-                     [this, widget](const QString& playlistName) { p->selectionChanged(widget, playlistName); });
+    QObject::connect(widget, &FilterWidget::selectionChanged, this, [this, widget]() { p->selectionChanged(widget); });
     QObject::connect(widget, &FilterWidget::filterUpdated, this, [this, widget]() { p->handleFilterUpdated(widget); });
     QObject::connect(widget, &FilterWidget::filterDeleted, this, [this, widget]() { removeFilter(widget); });
     QObject::connect(widget, &FilterWidget::requestEditConnections, this,

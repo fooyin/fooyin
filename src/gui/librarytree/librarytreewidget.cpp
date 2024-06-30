@@ -332,7 +332,7 @@ struct LibraryTreeWidget::Private
         }
 
         const TrackList tracks = getSelectedTracks(m_libraryTree, m_library);
-        m_trackSelection->changeSelectedTracks(m_widgetContext, tracks, playlistNameFromSelection());
+        m_trackSelection->changeSelectedTracks(m_widgetContext, tracks);
 
         if(m_settings->value<LibTreePlaylistEnabled>()) {
             PlaylistAction::ActionOptions options{None};
@@ -367,19 +367,6 @@ struct LibraryTreeWidget::Private
 
         m_prevSearchTracks = tracks;
         m_model->reset(tracks);
-    }
-
-    [[nodiscard]] QString playlistNameFromSelection() const
-    {
-        QString title;
-        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedRows();
-        for(const auto& index : selectedIndexes) {
-            if(!title.isEmpty()) {
-                title.append(QStringLiteral(", "));
-            }
-            title.append(index.data().toString());
-        }
-        return title;
     }
 
     void handlePlayback(const QModelIndexList& indexes, int row = 0)
@@ -476,7 +463,7 @@ struct LibraryTreeWidget::Private
             options |= PlaylistAction::StartPlayback;
         }
 
-        m_trackSelection->executeAction(m_doubleClickAction, options, playlistNameFromSelection());
+        m_trackSelection->executeAction(m_doubleClickAction, options);
     }
 
     void handleMiddleClick() const
@@ -490,7 +477,7 @@ struct LibraryTreeWidget::Private
             options |= PlaylistAction::StartPlayback;
         }
 
-        m_trackSelection->executeAction(m_middleClickAction, options, playlistNameFromSelection());
+        m_trackSelection->executeAction(m_middleClickAction, options);
     }
 
     void handleTracksAdded(const TrackList& tracks) const
