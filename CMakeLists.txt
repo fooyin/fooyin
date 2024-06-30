@@ -257,37 +257,39 @@ if(BUILD_TRANSLATIONS)
         COMPONENTS LinguistTools
     )
 
-    set(translation_dir
-        "${PROJECT_SOURCE_DIR}/data/translations"
-        CACHE PATH "Path to the *.ts translation files"
-    )
+    if(Qt6LinguistTools_FOUND)
+        set(translation_dir
+            "${PROJECT_SOURCE_DIR}/data/translations"
+            CACHE PATH "Path to the *.ts translation files"
+        )
 
-    # Detect new .ts files
-    set_property(
-            DIRECTORY
-            APPEND
-            PROPERTY CMAKE_CONFIGURE_DEPENDS ${translation_dir}
-    )
+        # Detect new .ts files
+        set_property(
+                DIRECTORY
+                APPEND
+                PROPERTY CMAKE_CONFIGURE_DEPENDS ${translation_dir}
+        )
 
-    file(GLOB_RECURSE ts_files ${translation_dir}/*.ts)
-    # Exclude the translation source
-    list(REMOVE_ITEM ts_files ${translation_dir}/fooyin.ts)
+        file(GLOB_RECURSE ts_files ${translation_dir}/*.ts)
+        # Exclude the translation source
+        list(REMOVE_ITEM ts_files ${translation_dir}/fooyin.ts)
 
-    set_source_files_properties(
-        ${ts_files} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/data"
-    )
+        set_source_files_properties(
+            ${ts_files} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/data"
+        )
 
-    qt_add_lrelease(
-        fooyin_lib
-        TS_FILES
-        ${ts_files}
-        NO_GLOBAL_TARGET
-        QM_FILES_OUTPUT_VARIABLE
-        qm_files
-    )
+        qt_add_lrelease(
+            fooyin_lib
+            TS_FILES
+            ${ts_files}
+            NO_GLOBAL_TARGET
+            QM_FILES_OUTPUT_VARIABLE
+            qm_files
+        )
 
-    if(NOT CMAKE_SKIP_INSTALL_RULES)
-        install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
+        if(NOT CMAKE_SKIP_INSTALL_RULES)
+            install(FILES ${qm_files} DESTINATION ${TRANSLATION_INSTALL_DIR})
+        endif()
     endif()
 endif()
 
