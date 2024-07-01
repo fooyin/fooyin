@@ -337,16 +337,20 @@ QModelIndex PlaylistOrganiserModel::indexForPlaylist(Playlist* playlist)
 
 Qt::ItemFlags PlaylistOrganiserModel::flags(const QModelIndex& index) const
 {
-    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index) | Qt::ItemIsDropEnabled;
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
     if(index.isValid()) {
-        defaultFlags |= Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
+        flags |= Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
     }
     if(!hasChildren(index)) {
-        defaultFlags |= Qt::ItemNeverHasChildren;
+        flags |= Qt::ItemNeverHasChildren;
     }
 
-    return defaultFlags;
+    if(index.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem) {
+        flags |= Qt::ItemIsDropEnabled;
+    }
+
+    return flags;
 }
 
 bool PlaylistOrganiserModel::hasChildren(const QModelIndex& parent) const
@@ -448,7 +452,7 @@ bool PlaylistOrganiserModel::canDropMimeData(const QMimeData* data, Qt::DropActi
                                              const QModelIndex& parent) const
 {
     if(action == Qt::MoveAction && data->hasFormat(QString::fromLatin1(OrganiserItems))) {
-        return parent.data(PlaylistOrganiserItem::ItemType).toInt() != PlaylistOrganiserItem::PlaylistItem;
+        return true;
     }
 
     if(data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)) || data->hasUrls()) {
