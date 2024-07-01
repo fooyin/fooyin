@@ -992,10 +992,10 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
     return {};
 }
 
-QModelIndex PlaylistModel::indexAtPlaylistIndex(int index)
+QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool includeEnd)
 {
     const auto result = trackIndexAtPlaylistIndex(index, true);
-    return result.endOfPlaylist ? QModelIndex{} : result.index;
+    return !includeEnd && result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
 void PlaylistModel::insertTracks(const TrackGroups& tracks)

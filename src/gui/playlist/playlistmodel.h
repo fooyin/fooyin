@@ -116,7 +116,7 @@ public:
 
     PlaylistTrack playingTrack() const;
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
-    QModelIndex indexAtPlaylistIndex(int index);
+    QModelIndex indexAtPlaylistIndex(int index, bool includeEnd = false);
 
     void insertTracks(const TrackGroups& tracks);
     void updateTracks(const std::vector<int>& indexes);

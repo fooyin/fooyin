@@ -839,6 +839,17 @@ void PlaylistWidgetPrivate::pasteTracks() const
     auto* insertCmd = new InsertTracks(m_playerController, m_model, m_playlistController->currentPlaylist()->id(),
                                        {{insertIndex, tracks}});
     m_playlistController->addToHistory(insertCmd);
+
+    QObject::connect(
+        m_model, &PlaylistModel::playlistTracksChanged, m_playlistView,
+        [this, insertIndex]() {
+            const QModelIndex index = m_model->indexAtPlaylistIndex(insertIndex, true);
+            if(index.isValid()) {
+                m_playlistView->scrollTo(index, QAbstractItemView::EnsureVisible);
+                m_playlistView->setCurrentIndex(index);
+            }
+        },
+        static_cast<Qt::ConnectionType>(Qt::SingleShotConnection | Qt::QueuedConnection));
 }
 
 void PlaylistWidgetPrivate::playlistTracksAdded(const TrackList& tracks, int index) const
