@@ -152,10 +152,10 @@ struct Application::Private
             [this](OutputPlugin* plugin) { engine.addOutput(plugin->name(), plugin->creator()); });
 
         pluginManager.initialisePlugins<TagParserPlugin>(
-            [this](TagParserPlugin* plugin) { tagLoader->addParser(plugin->name(), plugin->parser()); });
+            [this](TagParserPlugin* plugin) { tagLoader->addParser(plugin->parserName(), plugin->tagParser()); });
 
         pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
-            decoderProvider->addDecoder(plugin->name(), plugin->supportedExtensions(), plugin->creator());
+            decoderProvider->addDecoder(plugin->decoderName(), plugin->supportedExtensions(), plugin->decoderCreator());
         });
     }
 

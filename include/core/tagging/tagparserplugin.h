@@ -32,7 +32,7 @@ class TagParserPlugin
 public:
     virtual ~TagParserPlugin() = default;
 
-    [[nodiscard]] virtual QString name() const                      = 0;
+    [[nodiscard]] virtual QString parserName() const                = 0;
     [[nodiscard]] virtual std::unique_ptr<TagParser> parser() const = 0;
 };
 } // namespace Fooyin

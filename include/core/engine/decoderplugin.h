@@ -32,9 +32,9 @@ class DecoderPlugin
 public:
     virtual ~DecoderPlugin() = default;
 
-    [[nodiscard]] virtual QString name() const                    = 0;
+    [[nodiscard]] virtual QString decoderName() const             = 0;
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
-    [[nodiscard]] virtual DecoderCreator creator() const          = 0;
+    [[nodiscard]] virtual DecoderCreator decoderCreator() const   = 0;
 };
 } // namespace Fooyin
 
