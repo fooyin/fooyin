@@ -38,4 +38,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::DecoderPlugin, "org.fooyin.fooyin.plugin.engine.decocder")
+Q_DECLARE_INTERFACE(Fooyin::DecoderPlugin, "org.fooyin.fooyin.plugin.engine.decoder")
