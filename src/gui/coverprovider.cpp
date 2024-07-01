@@ -86,7 +86,7 @@ struct CoverProvider::Private
     ScriptParser m_parser;
     CoverPaths m_paths;
 
-    std::shared_mutex m_dirGuard;
+    std::mutex m_dirGuard;
     std::mutex m_parserGuard;
 
     struct CoverLoaderResult
@@ -143,13 +143,13 @@ struct CoverProvider::Private
 
     QString findDirectoryCover(const Track& track, Track::Cover type)
     {
+        const std::scoped_lock lock{m_dirGuard};
+
         if(!track.isValid()) {
             return {};
         }
 
         QStringList filters;
-
-        const std::shared_lock lock{m_dirGuard};
 
         if(type == Track::Cover::Front) {
             for(const auto& path : m_paths.frontCoverPaths) {
