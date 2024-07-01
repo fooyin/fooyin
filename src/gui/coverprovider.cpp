@@ -143,8 +143,6 @@ struct CoverProvider::Private
 
     QString findDirectoryCover(const Track& track, Track::Cover type)
     {
-        const std::scoped_lock lock{m_dirGuard};
-
         if(!track.isValid()) {
             return {};
         }
@@ -196,6 +194,7 @@ struct CoverProvider::Private
                   }
 
                   if(image.isNull()) {
+                      const std::scoped_lock lock{m_dirGuard};
                       const QString dirPath = findDirectoryCover(track, type);
                       if(!dirPath.isEmpty()) {
                           image.load(dirPath);
