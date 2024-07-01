@@ -1170,13 +1170,8 @@ void TreeView::updateScrollBars()
     const int count          = itemCount();
     const int viewportHeight = viewportSize.height();
 
-    if(m_p->m_uniformRowHeights) {
-        if(m_uniformRowHeight <= 0) {
-            itemsInViewport = count;
-        }
-        else {
-            itemsInViewport = viewportSize.height() / m_uniformRowHeight;
-        }
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
+        itemsInViewport = viewportSize.height() / m_uniformRowHeight;
     }
     else {
         for(int height{0}, item = count - 1; item >= 0; --item) {
