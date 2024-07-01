@@ -27,6 +27,7 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
@@ -42,7 +43,6 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QPointer>
-#include <QPushButton>
 #include <QTabBar>
 #include <QTimer>
 
@@ -126,16 +126,19 @@ struct PlaylistTabs::Private
         m_buttonsLayout = new QHBoxLayout(m_buttonsWidget);
 
         if(hasAddButton) {
-            auto* addButton = new QPushButton(Utils::iconFromTheme(Constants::Icons::Add), QStringLiteral(""), m_self);
-            addButton->setFlat(true);
-            QObject::connect(addButton, &QPushButton::pressed, m_self, [this]() { createEmptyPlaylist(); });
+            auto* addButton = new ToolButton(m_self);
+            addButton->setToolTip(tr("Add playlist"));
+            addButton->setIcon(Utils::iconFromTheme(Constants::Icons::Add));
+            addButton->setAutoRaise(true);
+            QObject::connect(addButton, &ToolButton::pressed, m_self, [this]() { createEmptyPlaylist(); });
             m_buttonsLayout->addWidget(addButton);
         }
         if(hasClearButton) {
-            auto* clearButton
-                = new QPushButton(Utils::iconFromTheme(Constants::Icons::Clear), QStringLiteral(""), m_self);
-            clearButton->setFlat(true);
-            QObject::connect(clearButton, &QPushButton::pressed, m_self, [this]() { clearCurrentPlaylist(); });
+            auto* clearButton = new ToolButton(m_self);
+            clearButton->setToolTip(tr("Clear playlist"));
+            clearButton->setIcon(Utils::iconFromTheme(Constants::Icons::Clear));
+            clearButton->setAutoRaise(true);
+            QObject::connect(clearButton, &ToolButton::pressed, m_self, [this]() { clearCurrentPlaylist(); });
             m_buttonsLayout->addWidget(clearButton);
         }
 
