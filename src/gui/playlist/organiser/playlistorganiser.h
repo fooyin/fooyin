@@ -42,8 +42,8 @@ public:
                                SettingsManager* settings, QWidget* parent = nullptr);
     ~PlaylistOrganiser() override;
 
-    QString name() const override;
-    QString layoutName() const override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

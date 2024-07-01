@@ -57,5 +57,4 @@ private:
     QString m_title;
     Playlist* m_playlist;
 };
-
 } // namespace Fooyin
