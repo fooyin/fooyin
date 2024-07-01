@@ -33,8 +33,8 @@ public:
     virtual ~TagParserPlugin() = default;
 
     [[nodiscard]] virtual QString parserName() const                = 0;
-    [[nodiscard]] virtual std::unique_ptr<TagParser> parser() const = 0;
+    [[nodiscard]] virtual std::unique_ptr<TagParser> tagParser() const = 0;
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::TagParserPlugin, "com.fooyin.plugin.tagging.parser")
+Q_DECLARE_INTERFACE(Fooyin::TagParserPlugin, "org.fooyin.fooyin.plugin.tagging.parser")

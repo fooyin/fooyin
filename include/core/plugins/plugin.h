@@ -29,7 +29,7 @@ namespace Fooyin {
  * fooyin plugin. It must also use the same IID as this interface like so:
  *
  * @code
- *     Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "metadata.json")
+ *     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "metadata.json")
  * @endcode
  */
 class Plugin
@@ -46,4 +46,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::Plugin, "com.fooyin.plugin/1.0")
+Q_DECLARE_INTERFACE(Fooyin::Plugin, "org.fooyin.fooyin.plugin/1.0")

@@ -44,4 +44,4 @@ public:
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::CorePlugin, "com.fooyin.plugin.core")
+Q_DECLARE_INTERFACE(Fooyin::CorePlugin, "org.fooyin.fooyin.plugin.core")

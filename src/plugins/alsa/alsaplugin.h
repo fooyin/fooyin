@@ -28,7 +28,7 @@ class AlsaPlugin : public QObject,
                    public OutputPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.fooyin.plugin/1.0" FILE "alsa.json")
+    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "alsa.json")
     Q_INTERFACES(Fooyin::Plugin Fooyin::OutputPlugin)
 
 public:
