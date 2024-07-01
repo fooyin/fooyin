@@ -144,6 +144,8 @@ class ExpandedTreeView::Private : public QObject
 public:
     explicit Private(ExpandedTreeView* self);
 
+    void setHeader(QHeaderView* header);
+
     int itemCount() const;
     QModelIndex modelIndex(int i, int column = 0) const;
     void select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
@@ -1345,9 +1347,6 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
             continue;
         }
 
-        const auto icon      = index.data(Qt::DecorationRole).value<QPixmap>();
-        opt.icon             = QIcon{icon};
-        opt.decorationSize   = icon.deviceIndependentSize().toSize();
         opt.viewItemPosition = viewItemPosList.at(section);
 
         if(m_view->selectionModel()->isSelected(modelIndex)) {
@@ -1426,6 +1425,7 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
     const int indexRow       = index.row();
     const QModelIndex parent = index.parent();
     int count                = header()->count();
+    const bool headerIsEmpty = (count == 0);
 
     if(count > 0 && m_view->isVisible()) {
         start = std::min(header()->visualIndexAt(0), 0);
@@ -1434,7 +1434,14 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
         count = model()->columnCount(parent);
     }
 
-    end = count - 1;
+    if(m_view->isRightToLeft()) {
+        start = (start == -1 ? count - 1 : start);
+        end   = 0;
+    }
+    else {
+        start = (start == -1 ? 0 : start);
+        end   = count - 1;
+    }
 
     if(end < start) {
         std::swap(end, start);
@@ -1447,7 +1454,7 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
     int height{-1};
 
     for(int column{start}; column <= end; ++column) {
-        const int logical = count == 0 ? column : header()->logicalIndex(column);
+        const int logical = headerIsEmpty ? column : header()->logicalIndex(column);
         if(header()->isSectionHidden(logical)) {
             continue;
         }
@@ -2342,11 +2349,19 @@ std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
 ExpandedTreeView::Private::Private(ExpandedTreeView* self)
     : m_self{self}
     , m_header{new QHeaderView(Qt::Horizontal, m_self)}
+{ }
+
+void ExpandedTreeView::Private::setHeader(QHeaderView* header)
 {
-    m_header->setSectionsClickable(true);
-    m_header->setContextMenuPolicy(Qt::CustomContextMenu);
-    m_header->setSectionsMovable(true);
-    m_header->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    m_header = header;
+    m_header->setParent(m_self);
+
+    if(!m_header->model()) {
+        m_header->setModel(m_self->model());
+        if(m_self->selectionModel()) {
+            m_header->setSelectionModel(m_self->selectionModel());
+        }
+    }
 
     QObject::connect(m_header, &QHeaderView::sectionResized, this, &ExpandedTreeView::Private::columnResized);
     QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() { m_self->viewport()->update(); });
@@ -2354,6 +2369,8 @@ ExpandedTreeView::Private::Private(ExpandedTreeView* self)
     QObject::connect(m_header, &QHeaderView::sectionHandleDoubleClicked, this,
                      &ExpandedTreeView::Private::resizeColumnToContents);
     QObject::connect(m_header, &QHeaderView::geometriesChanged, this, [this]() { m_self->updateGeometries(); });
+
+    m_self->updateGeometries();
 }
 
 int ExpandedTreeView::Private::itemCount() const
@@ -2851,6 +2868,7 @@ ExpandedTreeView::ExpandedTreeView(QWidget* parent)
 {
     setObjectName(QStringLiteral("ExpandedTreeView"));
 
+    p->setHeader(p->m_header);
     setViewMode(ViewMode::Tree);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -2877,25 +2895,7 @@ void ExpandedTreeView::setHeader(QHeaderView* header)
         delete p->m_header;
     }
 
-    p->m_header = header;
-    p->m_header->setParent(this);
-
-    if(!p->m_header->model()) {
-        p->m_header->setModel(model());
-        if(selectionModel()) {
-            p->m_header->setSelectionModel(selectionModel());
-        }
-    }
-
-    QObject::connect(p->m_header, &QHeaderView::sectionResized, p.get(), &ExpandedTreeView::Private::columnResized);
-    QObject::connect(p->m_header, &QHeaderView::sectionMoved, this, [this]() { viewport()->update(); });
-    QObject::connect(p->m_header, &QHeaderView::sectionCountChanged, p.get(),
-                     &ExpandedTreeView::Private::columnCountChanged);
-    QObject::connect(p->m_header, &QHeaderView::sectionHandleDoubleClicked, p.get(),
-                     &ExpandedTreeView::Private::resizeColumnToContents);
-    QObject::connect(p->m_header, &QHeaderView::geometriesChanged, this, [this]() { updateGeometries(); });
-
-    updateGeometries();
+    p->setHeader(header);
 }
 
 void ExpandedTreeView::setModel(QAbstractItemModel* model)
@@ -2908,8 +2908,11 @@ void ExpandedTreeView::setModel(QAbstractItemModel* model)
         QObject::disconnect(p->m_model, nullptr, this, nullptr);
     }
 
-    p->m_model = model;
-
+    p->m_viewItems.clear();
+    p->m_updatingGeometry = true;
+    p->m_header->setModel(model);
+    p->m_updatingGeometry = false;
+    p->m_model            = model;
     QAbstractItemView::setModel(model);
 
     QObject::connect(model, &QAbstractItemModel::rowsRemoved, this, &ExpandedTreeView::rowsRemoved);
