@@ -7,6 +7,7 @@
         <file>icons/dark/scalable/actions/audio-volume-low.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/dark/scalable/actions/audio-volume-muted.svg</file>
+        <file>icons/dark/scalable/actions/edit-clear.svg</file>
         <file>icons/dark/scalable/actions/fooyin.svg</file>
         <file>icons/dark/scalable/actions/format-text-bold.svg</file>
         <file>icons/dark/scalable/actions/go-down.svg</file>
@@ -41,6 +42,7 @@
         <file>icons/light/scalable/actions/audio-volume-low.svg</file>
         <file>icons/light/scalable/actions/audio-volume-medium.svg</file>
         <file>icons/light/scalable/actions/audio-volume-muted.svg</file>
+        <file>icons/light/scalable/actions/edit-clear.svg</file>
         <file>icons/light/scalable/actions/fooyin.svg</file>
         <file>icons/light/scalable/actions/format-text-bold.svg</file>
         <file>icons/light/scalable/actions/go-down.svg</file>

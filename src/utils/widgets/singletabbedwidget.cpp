@@ -641,8 +641,6 @@ void SingleTabbedWidget::paintEvent(QPaintEvent* /*event*/)
             opt.rect.moveLeft(w->x() + opt.rect.x());
             opt.rect.moveTop(w->y() + opt.rect.y());
             painter.drawPrimitive(QStyle::PE_FrameTabBarBase, opt);
-            // painter.setPen(QPen(opt.palette.light(), 0));
-            // painter.drawLine(opt.rect.topLeft(), opt.rect.topRight());
         }
         if(auto* w = cornerWidget(Qt::TopRightCorner)) {
             QStyleOptionTabBarBase opt;

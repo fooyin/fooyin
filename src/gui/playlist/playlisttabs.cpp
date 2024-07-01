@@ -66,6 +66,8 @@ struct PlaylistTabs::Private
     QVBoxLayout* m_layout;
     SingleTabbedWidget* m_tabs;
     QPointer<FyWidget> m_tabsWidget;
+    QWidget* m_buttonsWidget{nullptr};
+    QHBoxLayout* m_buttonsLayout{nullptr};
 
     QBasicTimer m_hoverTimer;
     int m_currentHoverIndex{-1};
@@ -93,12 +95,12 @@ struct PlaylistTabs::Private
         m_tabs->setMovable(true);
         m_tabs->setTabsClosable(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
         m_tabs->tabBar()->setExpanding(m_settings->value<Settings::Gui::Internal::PlaylistTabsExpand>());
-        setupAddButton(m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>());
+        setupButtons();
 
         m_layout->addWidget(m_tabs);
 
-        m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsAddButton>(
-            m_self, [this](bool enabled) { setupAddButton(enabled); });
+        m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsAddButton>(m_self, [this]() { setupButtons(); });
+        m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsClearButton>(m_self, [this]() { setupButtons(); });
         m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsCloseButton>(
             m_self, [this](bool enabled) { m_tabs->setTabsClosable(enabled); });
         m_settings->subscribe<Settings::Gui::Internal::PlaylistTabsExpand>(m_self, [this](bool enabled) {
@@ -107,17 +109,37 @@ struct PlaylistTabs::Private
         });
     }
 
-    void setupAddButton(bool enable)
+    void setupButtons()
     {
-        if(enable && !m_tabs->cornerWidget(Qt::TopLeftCorner)) {
+        const bool hasAddButton   = m_settings->value<Settings::Gui::Internal::PlaylistTabsAddButton>();
+        const bool hasClearButton = m_settings->value<Settings::Gui::Internal::PlaylistTabsClearButton>();
+
+        m_tabs->setCornerWidget(nullptr, Qt::TopLeftCorner);
+        m_buttonsWidget = nullptr;
+        m_buttonsLayout = nullptr;
+
+        if(!hasAddButton && !hasClearButton) {
+            return;
+        }
+
+        m_buttonsWidget = new QWidget(m_self);
+        m_buttonsLayout = new QHBoxLayout(m_buttonsWidget);
+
+        if(hasAddButton) {
             auto* addButton = new QPushButton(Utils::iconFromTheme(Constants::Icons::Add), QStringLiteral(""), m_self);
             addButton->setFlat(true);
             QObject::connect(addButton, &QPushButton::pressed, m_self, [this]() { createEmptyPlaylist(); });
-            m_tabs->setCornerWidget(addButton, Qt::TopLeftCorner);
+            m_buttonsLayout->addWidget(addButton);
         }
-        else if(!enable && m_tabs->cornerWidget(Qt::TopLeftCorner)) {
-            m_tabs->setCornerWidget(nullptr, Qt::TopLeftCorner);
+        if(hasClearButton) {
+            auto* clearButton
+                = new QPushButton(Utils::iconFromTheme(Constants::Icons::Clear), QStringLiteral(""), m_self);
+            clearButton->setFlat(true);
+            QObject::connect(clearButton, &QPushButton::pressed, m_self, [this]() { clearCurrentPlaylist(); });
+            m_buttonsLayout->addWidget(clearButton);
         }
+
+        m_tabs->setCornerWidget(m_buttonsWidget, Qt::TopLeftCorner);
     }
 
     void tabChanged(int index) const
@@ -175,6 +197,17 @@ struct PlaylistTabs::Private
         if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
             m_playlistController->changeCurrentPlaylist(playlist);
         }
+    }
+
+    void clearCurrentPlaylist() const
+    {
+        const int index = m_tabs->currentIndex();
+        if(index < 0) {
+            return;
+        }
+
+        const Id id = m_tabs->tabBar()->tabData(index).value<Id>();
+        m_playlistHandler->clearPlaylistTracks(id);
     }
 
     void activatePlaylistChanged(const Playlist* playlist)

@@ -46,6 +46,7 @@ constexpr auto Down        = "go-down";
 constexpr auto GoNext      = "go-next";
 constexpr auto GoPrevious  = "go-previous";
 constexpr auto Close       = "window-close";
+constexpr auto Clear       = "edit-clear";
 
 constexpr auto ScriptExpression = "script-expression";
 constexpr auto ScriptVariable   = "script-variable";
