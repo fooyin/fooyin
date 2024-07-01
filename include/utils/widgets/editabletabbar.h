@@ -31,10 +31,19 @@ class FYUTILS_EXPORT EditableTabBar : public QTabBar
     Q_OBJECT
 
 public:
+    enum class EditMode
+    {
+        Dialog,
+        Inline
+    };
+
     explicit EditableTabBar(QWidget* parent = nullptr);
 
     void showEditor();
     void closeEditor();
+
+    void setEditTitle(const QString& title);
+    void setEditMode(EditMode mode);
 
 signals:
     void middleClicked(int index);
@@ -47,6 +56,8 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
+    QString m_title;
+    EditMode m_mode;
     PopupLineEdit* m_lineEdit;
 };
 } // namespace Fooyin

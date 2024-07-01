@@ -48,6 +48,8 @@ TabStackWidget::TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* 
 
     layout->addWidget(m_tabs);
 
+    m_tabs->editableTabBar()->setEditTitle(tr("Playlist"));
+
     QObject::connect(m_tabs->tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
         if(from >= 0 && from < static_cast<int>(m_widgets.size())) {
             auto* widget = m_widgets.at(from);
@@ -91,7 +93,7 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(const auto position
        = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
-        m_tabs->setTabPosition(position.value());
+        changeTabPosition(position.value());
     }
 
     const auto widgets = layout.value(QStringLiteral("Widgets")).toArray();
@@ -334,6 +336,21 @@ int TabStackWidget::indexOfWidget(const Id& id) const
 
 void TabStackWidget::changeTabPosition(QTabWidget::TabPosition position) const
 {
+    if(m_tabs->tabPosition() == position) {
+        return;
+    }
+
+    switch(position) {
+        case(QTabWidget::North):
+        case(QTabWidget::South):
+            m_tabs->editableTabBar()->setEditMode(EditableTabBar::EditMode::Inline);
+            break;
+        case(QTabWidget::West):
+        case(QTabWidget::East):
+            m_tabs->editableTabBar()->setEditMode(EditableTabBar::EditMode::Dialog);
+            break;
+    }
+
     m_tabs->setTabPosition(position);
     m_tabs->adjustSize();
 }
