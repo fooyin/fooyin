@@ -174,7 +174,8 @@ struct SingleTabbedWidget::Private
 
         m_tabBar->setGeometry(tabRect);
         if(m_widget) {
-            m_widget->setGeometry(contentsRect);
+            m_widget->setGeometry(m_panelRect.x(), contentsRect.y(), m_panelRect.width(),
+                                  (m_panelRect.y() + m_panelRect.height()) - contentsRect.y());
         }
         if(m_leftCornerWidget) {
             m_leftCornerWidget->setGeometry(leftCornerRect);
