@@ -1453,6 +1453,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     p->addClipboardMenu(menu, hasSelection);
     menu->addSeparator();
     p->addPresetMenu(menu);
+    menu->addSeparator();
 
     if(hasSelection) {
         if(auto* addQueueCmd = p->m_actionManager->command(Constants::Actions::AddToQueue)) {
