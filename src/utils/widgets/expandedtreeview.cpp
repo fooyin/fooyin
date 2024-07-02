@@ -3257,11 +3257,20 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
 
     event->ignore();
 
-    if(event->modifiers() & Qt::ControlModifier) {
+    bool changedAction{false};
+
+    auto acceptAction = [&changedAction, event]() {
+        if(changedAction) {
+            event->accept();
+        }
+        else {
+            event->acceptProposedAction();
+        }
+    };
+
+    if(event->source() != this || event->modifiers() & Qt::ControlModifier) {
+        changedAction = true;
         event->setDropAction(Qt::CopyAction);
-    }
-    else {
-        event->setDropAction(Qt::MoveAction);
     }
 
     QModelIndex index = findIndexAt(pos, true);
@@ -3280,7 +3289,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
             case(AboveItem): {
                 if(p->isIndexDropEnabled(index.parent())) {
                     p->m_dropIndicatorRect = {rect.left(), rect.top(), rect.width(), 0};
-                    event->acceptProposedAction();
+                    acceptAction();
                 }
                 else {
                     p->m_dropIndicatorRect = {};
@@ -3290,7 +3299,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
             case(BelowItem): {
                 if(p->isIndexDropEnabled(index.parent())) {
                     p->m_dropIndicatorRect = {rect.left(), rect.bottom(), rect.width(), 0};
-                    event->acceptProposedAction();
+                    acceptAction();
                 }
                 else {
                     p->m_dropIndicatorRect = {};
@@ -3306,7 +3315,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
                 p->m_dropIndicatorRect = {};
 
                 if(p->isIndexDropEnabled({})) {
-                    event->acceptProposedAction();
+                    acceptAction();
                 }
                 break;
             }
@@ -3317,7 +3326,7 @@ void ExpandedTreeView::dragMoveEvent(QDragMoveEvent* event)
         p->m_dropIndicatorPos  = OnViewport;
 
         if(p->isIndexDropEnabled({})) {
-            event->acceptProposedAction();
+            acceptAction();
         }
     }
 
