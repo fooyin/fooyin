@@ -1325,7 +1325,7 @@ QString PlaylistWidget::layoutName() const
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("SingleMode")] = p->m_singleMode;
+    layout[u"SingleMode"] = p->m_singleMode;
 
     if(!p->m_columns.empty()) {
         QStringList columns;
@@ -1341,7 +1341,7 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
             columns.push_back(colStr);
         }
 
-        layout[QStringLiteral("Columns")] = columns.join(QStringLiteral("|"));
+        layout[u"Columns"] = columns.join(QStringLiteral("|"));
     }
 
     p->resetSort();
@@ -1349,21 +1349,21 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
     if(!p->m_singleMode || !p->m_headerState.isEmpty()) {
         QByteArray state
             = p->m_singleMode && !p->m_headerState.isEmpty() ? p->m_headerState : p->m_header->saveHeaderState();
-        state                                 = qCompress(state, 9);
-        layout[QStringLiteral("HeaderState")] = QString::fromUtf8(state.toBase64());
+        state                  = qCompress(state, 9);
+        layout[u"HeaderState"] = QString::fromUtf8(state.toBase64());
     }
 }
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("SingleMode"))) {
-        p->m_singleMode = layout.value(QStringLiteral("SingleMode")).toBool();
+    if(layout.contains(u"SingleMode")) {
+        p->m_singleMode = layout.value(u"SingleMode").toBool();
     }
 
-    if(layout.contains(QStringLiteral("Columns"))) {
+    if(layout.contains(u"Columns")) {
         p->m_columns.clear();
 
-        const QString columnData    = layout.value(QStringLiteral("Columns")).toString();
+        const QString columnData    = layout.value(u"Columns").toString();
         const QStringList columnIds = columnData.split(QStringLiteral("|"));
 
         for(int i{0}; const auto& columnId : columnIds) {
@@ -1385,14 +1385,13 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         p->updateSpans();
     }
 
-    if(layout.contains(QStringLiteral("HeaderState"))) {
-        auto state = QByteArray::fromBase64(layout.value(QStringLiteral("HeaderState")).toString().toUtf8());
+    if(layout.contains(u"HeaderState")) {
+        const auto headerState = layout.value(u"HeaderState").toString().toUtf8();
 
-        if(state.isEmpty()) {
-            return;
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
+            const auto state = QByteArray::fromBase64(headerState);
+            p->m_headerState = qUncompress(state);
         }
-
-        p->m_headerState = qUncompress(state);
     }
 }
 
@@ -1406,11 +1405,10 @@ void PlaylistWidget::finalise()
     p->m_header->setSortIndicatorShown(!p->m_singleMode);
 
     if(!p->m_singleMode && !p->m_columns.empty() && !p->m_headerState.isEmpty()) {
-        if(!p->m_columns.empty() && !p->m_headerState.isEmpty()) {
-            QObject::connect(
-                p->m_model, &QAbstractItemModel::modelReset, this,
-                [this]() { p->m_header->restoreHeaderState(p->m_headerState); }, Qt::SingleShotConnection);
-        }
+        QObject::connect(
+            p->m_model, &PlaylistModel::playlistLoaded, p->m_header,
+            [this]() { p->m_header->restoreHeaderState(p->m_headerState); },
+            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
     }
 
     if(!p->m_singleMode && p->m_columns.empty()) {
