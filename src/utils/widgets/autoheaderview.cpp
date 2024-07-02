@@ -601,7 +601,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
                         static_cast<int>(p->m_sectionWidths.size())});
 
         for(int section{0}; section < sectionCount; ++section) {
-            setSectionHidden(section, pixelWidths[section] <= MinSectionWidth);
+            setSectionHidden(section, pixelWidths[section] < MinSectionWidth);
             moveSection(visualIndex(logicalIndexes[section]), section);
 
             if(!p->m_stretchEnabled) {
