@@ -261,6 +261,10 @@ void PlayerController::queueTrack(const PlaylistTrack& track)
 
 void PlayerController::queueTracks(const TrackList& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
     QueueTracks tracksToQueue;
     for(const Track& track : tracks) {
         tracksToQueue.emplace_back(track);
@@ -271,8 +275,19 @@ void PlayerController::queueTracks(const TrackList& tracks)
 
 void PlayerController::queueTracks(const QueueTracks& tracks)
 {
-    p->queue.addTracks(tracks);
-    emit tracksQueued(tracks);
+    if(tracks.empty()) {
+        return;
+    }
+
+    QueueTracks tracksToAdd{tracks};
+
+    const int freeTracks = p->queue.freeSpace();
+    if(std::cmp_greater_equal(tracks.size(), freeTracks)) {
+        tracksToAdd = {tracks.begin(), tracks.begin() + freeTracks};
+    }
+
+    p->queue.addTracks(tracksToAdd);
+    emit tracksQueued(tracksToAdd);
 }
 
 void PlayerController::dequeueTrack(const Track& track)
@@ -287,6 +302,10 @@ void PlayerController::dequeueTrack(const PlaylistTrack& track)
 
 void PlayerController::dequeueTracks(const TrackList& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
     QueueTracks tracksToDequeue;
     for(const Track& track : tracks) {
         tracksToDequeue.emplace_back(track);
@@ -297,14 +316,49 @@ void PlayerController::dequeueTracks(const TrackList& tracks)
 
 void PlayerController::dequeueTracks(const QueueTracks& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
     const auto removedTracks = p->queue.removeTracks(tracks);
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }
 }
 
+void PlayerController::dequeueTracks(const std::vector<int>& indexes)
+{
+    if(indexes.empty()) {
+        return;
+    }
+
+    QueueTracks dequeuedTracks;
+
+    std::vector<int> sortedIndexes{indexes};
+    std::sort(sortedIndexes.rbegin(), sortedIndexes.rend());
+
+    auto tracks      = p->queue.tracks();
+    const auto count = static_cast<int>(tracks.size());
+    for(const int index : sortedIndexes) {
+        if(index >= 0 && index < count) {
+            dequeuedTracks.emplace_back(tracks.at(index));
+            tracks.erase(tracks.begin() + index);
+        }
+    }
+
+    p->queue.replaceTracks(tracks);
+
+    if(!dequeuedTracks.empty()) {
+        emit tracksDequeued(dequeuedTracks);
+    }
+}
+
 void PlayerController::replaceTracks(const QueueTracks& tracks)
 {
+    if(tracks.empty()) {
+        return;
+    }
+
     QueueTracks removed;
 
     const auto currentTracks = p->queue.tracks();
@@ -313,8 +367,7 @@ void PlayerController::replaceTracks(const QueueTracks& tracks)
     std::ranges::copy_if(currentTracks, std::back_inserter(removed),
                          [&newTracks](const PlaylistTrack& oldTrack) { return !newTracks.contains(oldTrack); });
 
-    p->queue.clear();
-    p->queue.addTracks(tracks);
+    p->queue.replaceTracks(tracks);
 
     emit trackQueueChanged(removed, tracks);
 }

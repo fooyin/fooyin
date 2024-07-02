@@ -101,6 +101,7 @@ public:
     void dequeueTrack(const PlaylistTrack& track);
     void dequeueTracks(const TrackList& tracks);
     void dequeueTracks(const QueueTracks& tracks);
+    void dequeueTracks(const std::vector<int>& indexes);
 
     void replaceTracks(const QueueTracks& tracks);
     void clearPlaylistQueue(const Id& playlistId);
@@ -121,6 +122,7 @@ signals:
 
     void tracksQueued(const QueueTracks& tracks);
     void tracksDequeued(const QueueTracks& tracks);
+    void trackIndexesDequeued(const QueueTracks& tracks);
     void trackQueueChanged(const QueueTracks& removed, const QueueTracks& added);
 
 private:

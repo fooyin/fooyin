@@ -25,7 +25,6 @@
 #include <core/track.h>
 
 #include <map>
-#include <set>
 
 namespace Fooyin {
 using PlaylistIndexes = std::map<int, std::vector<int>>;
@@ -41,11 +40,13 @@ public:
     [[nodiscard]] QueueTracks tracks() const;
     [[nodiscard]] PlaylistTrack track(int index) const;
     [[nodiscard]] int trackCount() const;
+    [[nodiscard]] int freeSpace() const;
     [[nodiscard]] PlaylistIndexes indexesForPlaylist(const Id& id) const;
 
     PlaylistTrack nextTrack();
 
     void addTracks(const QueueTracks& tracks);
+    void replaceTracks(const QueueTracks& tracks);
     QueueTracks removeTracks(const QueueTracks& tracks);
     QueueTracks removePlaylistTracks(const Id& playlistId);
 
