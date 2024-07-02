@@ -259,8 +259,9 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    const QRect textRect = opt.rect;
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
+    QRect textRect{opt.rect};
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
+    textRect.adjust(textMargin, 0, -textMargin, 0);
 
     QIcon::Mode mode{QIcon::Normal};
     if(!(opt.state & QStyle::State_Enabled)) {
@@ -277,11 +278,11 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>();
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>();
 
-        const QRect rightRect     = textRect.adjusted(textRect.center().x() - textRect.left(), 0, -textMargin, 0);
+        const QRect rightRect     = textRect.adjusted(textRect.center().x() - textRect.left(), 0, 0, 0);
         auto [_, totalRightWidth] = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse,
                                                    Qt::AlignVCenter | Qt::AlignRight);
 
-        const QRect leftRect = textRect.adjusted(indent + textMargin, 0, -totalRightWidth, 0);
+        const QRect leftRect = textRect.adjusted(indent, 0, -totalRightWidth, 0);
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft);
 
         if(!icon.isNull()) {
@@ -307,8 +308,7 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         else {
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>();
 
-            const QRect columnRect = textRect.adjusted(textMargin, 0, -textMargin, 0);
-            drawTextBlocks(painter, opt, columnRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
+            drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
 
             const auto icon = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
             if(!icon.isNull()) {
