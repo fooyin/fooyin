@@ -354,6 +354,39 @@ void QueueViewerModel::removeTracks(const QueueTracks& tracks)
     }
 }
 
+void QueueViewerModel::removeIndexes(const std::vector<int>& indexes)
+{
+    auto startOfSequence = indexes.cbegin();
+    while(startOfSequence != indexes.cend()) {
+        auto endOfSequence
+            = std::adjacent_find(startOfSequence, indexes.cend(), [](int a, int b) { return b != a + 1; });
+        if(endOfSequence != indexes.cend()) {
+            std::advance(endOfSequence, 1);
+        }
+
+        const int firstRow = *startOfSequence;
+        int lastRow        = *std::prev(endOfSequence);
+
+        beginRemoveRows({}, firstRow, lastRow);
+        while(lastRow >= firstRow) {
+            auto* child      = rootItem()->child(lastRow);
+            const auto track = child->track().track;
+            if(m_trackParents.contains(track.albumHash())) {
+                std::erase_if(m_trackParents.at(track.albumHash()),
+                              [&child](const auto& item) { return item == child; });
+            }
+            rootItem()->removeChild(lastRow);
+            m_trackItems.erase(m_trackItems.begin() + lastRow);
+            --lastRow;
+        }
+        endRemoveRows();
+
+        startOfSequence = endOfSequence;
+
+        rootItem()->resetChildren();
+    }
+}
+
 void QueueViewerModel::reset(const QueueTracks& tracks)
 {
     const auto titleScript    = m_settings->value<Settings::Gui::Internal::QueueViewerLeftScript>();

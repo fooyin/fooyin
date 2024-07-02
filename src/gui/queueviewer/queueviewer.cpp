@@ -128,6 +128,8 @@ struct QueueViewer::Private
         QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::addTracks);
         QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model,
                          &QueueViewerModel::removeTracks);
+        QObject::connect(m_playerController, &PlayerController::trackIndexesDequeued, m_model,
+                         &QueueViewerModel::removeIndexes);
         QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self, [this](const QSize& size) {
             m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
         });

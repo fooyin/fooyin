@@ -122,7 +122,7 @@ signals:
 
     void tracksQueued(const QueueTracks& tracks);
     void tracksDequeued(const QueueTracks& tracks);
-    void trackIndexesDequeued(const QueueTracks& tracks);
+    void trackIndexesDequeued(const std::vector<int>& indexes);
     void trackQueueChanged(const QueueTracks& removed, const QueueTracks& added);
 
 private:

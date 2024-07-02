@@ -55,6 +55,7 @@ public:
     void insertTracks(int row, const QueueTracks& tracks);
     void addTracks(const QueueTracks& tracks);
     void removeTracks(const QueueTracks& tracks);
+    void removeIndexes(const std::vector<int>& indexes);
 
     void reset(const QueueTracks& tracks);
     QueueTracks queueTracks() const;

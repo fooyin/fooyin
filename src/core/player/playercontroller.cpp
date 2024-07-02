@@ -332,7 +332,7 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
         return;
     }
 
-    QueueTracks dequeuedTracks;
+    std::vector<int> dequeuedIndexes;
 
     std::vector<int> sortedIndexes{indexes};
     std::sort(sortedIndexes.rbegin(), sortedIndexes.rend());
@@ -341,15 +341,16 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
     const auto count = static_cast<int>(tracks.size());
     for(const int index : sortedIndexes) {
         if(index >= 0 && index < count) {
-            dequeuedTracks.emplace_back(tracks.at(index));
+            dequeuedIndexes.emplace_back(index);
             tracks.erase(tracks.begin() + index);
         }
     }
 
     p->queue.replaceTracks(tracks);
 
-    if(!dequeuedTracks.empty()) {
-        emit tracksDequeued(dequeuedTracks);
+    if(!dequeuedIndexes.empty()) {
+        std::ranges::sort(dequeuedIndexes);
+        emit trackIndexesDequeued(dequeuedIndexes);
     }
 }
 
