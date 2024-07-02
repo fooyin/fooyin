@@ -1225,12 +1225,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>分割器 (上/下)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="528"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>分割器 (左/右)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="533"/>
@@ -1333,7 +1333,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="666"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>播放错误</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="684"/>
@@ -1343,7 +1343,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="689"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>继续</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="691"/>
@@ -2108,12 +2108,12 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="134"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="135"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
 </context>
 <context>
@@ -2121,22 +2121,22 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="59"/>
         <source>Cursor follows playback</source>
-        <translation type="unfinished">光标跟随播放</translation>
+        <translation>光标跟随播放</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="60"/>
         <source>Playback follows cursor</source>
-        <translation type="unfinished">播放跟随光标</translation>
+        <translation>播放跟随光标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="61"/>
         <source>Rewind track on previous</source>
-        <translation type="unfinished">切换上一曲前先倒带</translation>
+        <translation>切换上一曲前先倒带</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="62"/>
         <source>Skip unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过不可用的曲目</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="63"/>
@@ -2146,7 +2146,7 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="68"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished">重播当前曲目，如果曲目开播不足 5 秒钟则播放上一曲</translation>
+        <translation>重播当前曲目，如果曲目开播不足 5 秒钟则播放上一曲</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="71"/>
@@ -2161,7 +2161,7 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="74"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="82"/>
@@ -2701,7 +2701,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1432"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>裁剪(&amp;C)</translation>
     </message>
 </context>
 <context>
@@ -2709,17 +2709,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="166"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>剪切</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="167"/>
         <source>Copy</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="168"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>粘贴</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="169"/>
@@ -3061,12 +3061,12 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="299"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>分割器 (上/下)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="301"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>分割器 (左/右)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="311"/>
