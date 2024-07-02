@@ -91,9 +91,13 @@ Track::Track(const QString& filepath)
     setFilePath(filepath);
 }
 
+Track::~Track()                             = default;
+Track::Track(const Track& other)            = default;
+Track& Track::operator=(const Track& other) = default;
+
 bool Track::operator==(const Track& other) const
 {
-    return filepath() == other.filepath() && offset() == other.offset() && hash() == other.hash();
+    return uniqueFilepath() == other.uniqueFilepath() && hash() == other.hash();
 }
 
 bool Track::operator!=(const Track& other) const
@@ -101,9 +105,10 @@ bool Track::operator!=(const Track& other) const
     return !(*this == other);
 }
 
-Track::~Track()                             = default;
-Track::Track(const Track& other)            = default;
-Track& Track::operator=(const Track& other) = default;
+bool Track::operator<(const Track& other) const
+{
+    return uniqueFilepath() < other.uniqueFilepath();
+}
 
 QString Track::generateHash()
 {

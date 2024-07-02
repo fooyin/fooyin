@@ -78,6 +78,7 @@ public:
     Track& operator=(const Track& other);
     bool operator==(const Track& other) const;
     bool operator!=(const Track& other) const;
+    bool operator<(const Track& other) const;
 
     QString generateHash();
 
