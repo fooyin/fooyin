@@ -71,6 +71,10 @@ Ctnr filter(const Ctnr& container, Pred pred)
 template <typename T>
 void move(std::vector<T>& v, size_t from, size_t to)
 {
+    if(from == to) {
+        return;
+    }
+
     if(from > to) {
         std::rotate(v.rend() - from - 1, v.rend() - from, v.rend() - to);
     }
