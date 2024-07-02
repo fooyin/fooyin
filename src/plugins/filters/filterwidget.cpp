@@ -629,13 +629,12 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
     emit filterUpdated();
 
     if(layout.contains(u"State")) {
-        auto state = QByteArray::fromBase64(layout.value(u"State").toString().toUtf8());
+        const auto headerState = layout.value(u"State").toString().toUtf8();
 
-        if(state.isEmpty()) {
-            return;
+        if(!headerState.isEmpty() && headerState.isValidUtf8()) {
+            const auto state = QByteArray::fromBase64(headerState);
+            p->m_headerState = qUncompress(state);
         }
-
-        p->m_headerState = qUncompress(state);
     }
 }
 
@@ -649,12 +648,12 @@ void FilterWidget::finalise()
         }
         else {
             QObject::connect(
-                p->m_model, &QAbstractItemModel::modelReset, this,
+                p->m_model, &QAbstractItemModel::modelReset, p->m_header,
                 [this]() {
                     p->m_header->restoreHeaderState(p->m_headerState);
                     p->m_sortProxy->sort(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
                 },
-                Qt::SingleShotConnection);
+                static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
         }
     }
 }
