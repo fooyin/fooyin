@@ -404,7 +404,7 @@ void MprisPlugin::loadMetaData(const PlaylistTrack& playlistTrack)
     const auto& [track, _, index] = playlistTrack;
 
     if(m_currentMetaData.empty()) {
-        m_currentMetaData[QStringLiteral("mpris:trackid")]     = formatTrackId(index);
+        m_currentMetaData[QStringLiteral("mpris:trackid")]     = formatTrackId(std::max(0, index));
         m_currentMetaData[QStringLiteral("mpris:length")]      = static_cast<quint64>(track.duration() * 1000);
         m_currentMetaData[QStringLiteral("xesam:url")]         = track.filepath();
         m_currentMetaData[QStringLiteral("xesam:title")]       = track.title();
