@@ -19,6 +19,7 @@
 
 #include "playlistmodel.h"
 
+#include "guiutils.h"
 #include "internalguisettings.h"
 #include "playlistinteractor.h"
 #include "playlistitem.h"
@@ -39,15 +40,14 @@
 #include <utils/widgets/autoheaderview.h>
 
 #include <QApplication>
-#include <QFontMetrics>
 #include <QIODevice>
-#include <QIcon>
 #include <QMimeData>
-#include <QPalette>
 
 #include <queue>
 #include <span>
 #include <stack>
+
+constexpr auto MaxPlaylistTracks = 250;
 
 namespace {
 bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* pItem2, bool reverse = false)
@@ -374,14 +374,19 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     return result;
 }
 
-Fooyin::TrackList restoreTracks(Fooyin::MusicLibrary* library, QByteArray data)
+Fooyin::QueueTracks savePlaylistTracks(const Fooyin::Id& playlistId, const QModelIndexList& indexes)
 {
-    Fooyin::TrackIds ids;
-    QDataStream stream(&data, QIODevice::ReadOnly);
+    Fooyin::QueueTracks tracks;
 
-    stream >> ids;
+    for(const QModelIndex& index : indexes) {
+        const auto track           = index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>();
+        const auto indexInPlaylist = index.data(Fooyin::PlaylistItem::Role::Index).toInt();
+        tracks.emplace_back(track, playlistId, indexInPlaylist);
 
-    Fooyin::TrackList tracks = library->tracksForIds(ids);
+        if(std::cmp_greater_equal(tracks.size(), MaxPlaylistTracks)) {
+            break;
+        }
+    }
 
     return tracks;
 }
@@ -751,7 +756,8 @@ int PlaylistModel::columnCount(const QModelIndex& /*parent*/) const
 
 QStringList PlaylistModel::mimeTypes() const
 {
-    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::TrackIds)};
+    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::TrackIds),
+            QString::fromLatin1(Constants::Mime::QueueTracks)};
 }
 
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
@@ -1525,7 +1531,7 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
         return true;
     }
 
-    const TrackList tracks = restoreTracks(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
+    const auto tracks = Gui::tracksFromMimeData(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
     if(tracks.empty()) {
         return false;
     }
@@ -1799,6 +1805,8 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
         mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
                           saveIndexes(sortedIndexes, m_currentPlaylist));
         mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
+                          Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
     }
 }
 

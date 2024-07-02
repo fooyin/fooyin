@@ -155,6 +155,7 @@ constexpr auto Rate5           = "Tagging.Rate5";
 namespace Mime {
 constexpr auto PlaylistItems = "application/x-fooyin-playlistitems";
 constexpr auto TrackIds      = "application/x-fooyin-trackIds";
+constexpr auto QueueTracks   = "application/x-fooyin-queuetracks";
 } // namespace Mime
 
 namespace Page {

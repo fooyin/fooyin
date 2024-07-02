@@ -28,6 +28,8 @@ set(SOURCES
     guiapplication.cpp
     guiapplication.h
     guipaths.cpp
+    guiutils.cpp
+    guiutils.h
     internalguisettings.cpp
     internalguisettings.h
     layoutcommands.cpp
