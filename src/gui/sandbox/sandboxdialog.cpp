@@ -94,16 +94,15 @@ struct SandboxDialog::Private
 
     void updateResults(const Expression& expression)
     {
-        if(!m_trackSelection->hasTracks()) {
-            return;
-        }
-
         ParsedScript script;
         script.expressions = {expression};
 
-        const auto track  = m_trackSelection->selectedTracks().front();
-        const auto result = m_parser.evaluate(script, track);
+        Track track;
+        if(m_trackSelection->hasTracks()) {
+            track = m_trackSelection->selectedTracks().front();
+        }
 
+        const auto result = m_parser.evaluate(script, track);
         m_results->setText(result);
     }
 
