@@ -60,6 +60,16 @@ public:
         child->m_parent = static_cast<Item*>(this);
     }
 
+    virtual void moveChild(int oldRow, int newRow)
+    {
+        if(oldRow < newRow) {
+            Utils::move(m_children, oldRow, newRow - 1);
+        }
+        else {
+            Utils::move(m_children, oldRow, newRow);
+        }
+    }
+
     virtual void removeChild(int index)
     {
         if(index < 0 && index >= childCount()) {
