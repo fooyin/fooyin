@@ -98,6 +98,8 @@ public:
     /** Returns all tracks for all libraries */
     [[nodiscard]] virtual TrackList tracks() const = 0;
 
+    /** Returns the track with an id of @p id, or an invalid track if not found.  */
+    [[nodiscard]] virtual Track trackForId(int id) const = 0;
     /** Returns a TrackList containing each track (if) found with an id from @p ids  */
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 

@@ -51,6 +51,7 @@ public:
     [[nodiscard]] bool isEmpty() const override;
 
     [[nodiscard]] TrackList tracks() const override;
+    [[nodiscard]] Track trackForId(int id) const override;
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
 
     void updateTrackMetadata(const TrackList& tracks) override;

@@ -322,14 +322,22 @@ TrackList UnifiedMusicLibrary::tracks() const
     return p->m_tracks;
 }
 
+Track UnifiedMusicLibrary::trackForId(int id) const
+{
+    auto trackIt = std::ranges::find_if(p->m_tracks, [id](const Track& track) { return track.id() == id; });
+    if(trackIt != p->m_tracks.cend()) {
+        return *trackIt;
+    }
+    return {};
+}
+
 TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
 {
     TrackList tracks;
     tracks.reserve(ids.size());
 
     for(const int id : ids) {
-        auto trackIt
-            = std::ranges::find_if(std::as_const(p->m_tracks), [id](const Track& track) { return track.id() == id; });
+        auto trackIt = std::ranges::find_if(p->m_tracks, [id](const Track& track) { return track.id() == id; });
         if(trackIt != p->m_tracks.cend()) {
             tracks.push_back(*trackIt);
         }
