@@ -1225,12 +1225,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="522"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitter (Top/Bottom)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="528"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitter (Left/Right)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="533"/>
@@ -1333,7 +1333,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="666"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Playback Error</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="684"/>
@@ -1343,7 +1343,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="689"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Continue</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="691"/>
@@ -1353,7 +1353,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="695"/>
         <source>Always continue playing if a track is unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation>Always continue playing if a track is unavailable</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="719"/>
@@ -2108,12 +2108,12 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="134"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="135"/>
         <source>Playback</source>
-        <translation type="unfinished">Playback</translation>
+        <translation>Playback</translation>
     </message>
 </context>
 <context>
@@ -2121,57 +2121,57 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="59"/>
         <source>Cursor follows playback</source>
-        <translation type="unfinished">Cursor follows playback</translation>
+        <translation>Cursor follows playback</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="60"/>
         <source>Playback follows cursor</source>
-        <translation type="unfinished">Playback follows cursor</translation>
+        <translation>Playback follows cursor</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="61"/>
         <source>Rewind track on previous</source>
-        <translation type="unfinished">Rewind track on previous</translation>
+        <translation>Rewind track on previous</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="62"/>
         <source>Skip unavailable tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Skip unavailable tracks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="63"/>
         <source>Always send to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Always send to playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="68"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished">If the current track has been playing for more than 5s, restart it instead of moving to the previous track</translation>
+        <translation>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="71"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation type="unfinished"></translation>
+        <translation>If the current track in a playlist is unavailable, silently continue to the next track</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="72"/>
         <source>When opening files, always send to playlist, replacing all existing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>When opening files, always send to playlist, replacing all existing tracks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="74"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="82"/>
         <source>External files</source>
-        <translation type="unfinished"></translation>
+        <translation>External files</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="85"/>
         <source>Playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist name</translation>
     </message>
 </context>
 <context>
@@ -2701,7 +2701,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1432"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Crop</translation>
     </message>
 </context>
 <context>
@@ -2709,17 +2709,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="166"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Cut</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="167"/>
         <source>Copy</source>
-        <translation type="unfinished">Copy</translation>
+        <translation>Copy</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="168"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Paste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="169"/>
@@ -3061,12 +3061,12 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="299"/>
         <source>Splitter (Top/Bottom)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitter (Top/Bottom)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="301"/>
         <source>Splitter (Left/Right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Splitter (Left/Right)</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="311"/>
