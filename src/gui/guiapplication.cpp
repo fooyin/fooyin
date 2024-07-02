@@ -44,6 +44,7 @@
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
+#include "queueviewer/queueviewer.h"
 #include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
@@ -62,6 +63,7 @@
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
 #include "settings/shortcuts/shortcutspage.h"
+#include "settings/widgets/playbackqueuepage.h"
 #include "settings/widgets/statuswidgetpage.h"
 #include "systemtrayicon.h"
 #include "widgets/coverwidget.h"
@@ -155,6 +157,7 @@ struct GuiApplication::Private
     DirBrowserPage dirBrowserPage;
     LibraryTreePage libraryTreePage;
     LibraryTreeGroupPage libraryTreeGroupPage;
+    PlaybackQueuePage playbackQueuePage;
     StatusWidgetPage statusWidgetPage;
     PluginPage pluginPage;
 
@@ -200,6 +203,7 @@ struct GuiApplication::Private
         , dirBrowserPage{settings}
         , libraryTreePage{settings}
         , libraryTreeGroupPage{actionManager, settings}
+        , playbackQueuePage{settings}
         , statusWidgetPage{settings}
         , pluginPage{settings, core.pluginManager}
         , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,
@@ -550,6 +554,15 @@ struct GuiApplication::Private
             QStringLiteral("PlaylistOrganiser"),
             [this]() { return new PlaylistOrganiser(actionManager, &playlistInteractor, settings, mainWindow.get()); },
             tr("Playlist Organiser"));
+
+        widgetProvider.registerWidget(
+            QStringLiteral("PlaybackQueue"),
+            [this]() {
+                return new QueueViewer(actionManager, &playlistInteractor, core.tagLoader, core.settingsManager,
+                                       mainWindow.get());
+            },
+            tr("Playback Queue"));
+        widgetProvider.setLimit(QStringLiteral("PlaybackQueue"), 1);
 
         widgetProvider.registerWidget(
             QStringLiteral("TabStack"),

@@ -147,6 +147,16 @@ set(SOURCES
     playlist/playlistwidget_p.h
     playlist/presetregistry.cpp
     playlist/presetregistry.h
+    queueviewer/queueviewer.cpp
+    queueviewer/queueviewer.h
+    queueviewer/queueviewerdelegate.cpp
+    queueviewer/queueviewerdelegate.h
+    queueviewer/queuevieweritem.cpp
+    queueviewer/queuevieweritem.h
+    queueviewer/queueviewermodel.cpp
+    queueviewer/queueviewermodel.h
+    queueviewer/queueviewerview.cpp
+    queueviewer/queueviewerview.h
     quicksetup/quicksetupdialog.cpp
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupmodel.cpp
@@ -207,6 +217,8 @@ set(SOURCES
     settings/shortcuts/shortcutsmodel.h
     settings/shortcuts/shortcutspage.cpp
     settings/shortcuts/shortcutspage.h
+    settings/widgets/playbackqueuepage.cpp
+    settings/widgets/playbackqueuepage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
     widgets/coverwidget.cpp

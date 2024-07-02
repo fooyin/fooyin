@@ -121,6 +121,13 @@ enum GuiInternalSettings : uint32_t
     LibTreeAnimated         = 53 | Type::Bool,
     PlaylistTabsClearButton = 54 | Type::Bool,
     LibTreeHeader           = 55 | Type::Bool,
+    QueueViewerShowIcon     = 56 | Type::Bool,
+    QueueViewerIconSize     = 57 | Type::Variant,
+    QueueViewerHeader       = 58 | Type::Bool,
+    QueueViewerScrollBar    = 59 | Type::Bool,
+    QueueViewerAltColours   = 60 | Type::Bool,
+    QueueViewerLeftScript   = 61 | Type::String,
+    QueueViewerRightScript  = 62 | Type::String
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

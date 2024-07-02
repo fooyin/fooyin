@@ -127,5 +127,15 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::LibTreeAnimated>(true, QStringLiteral("LibraryTree/Animated"));
     m_settings->createSetting<Internal::PlaylistTabsClearButton>(false, QStringLiteral("PlaylistTabs/ShowClearButton"));
     m_settings->createSetting<Internal::LibTreeHeader>(true, QStringLiteral("LibraryTree/Header"));
+    m_settings->createSetting<Internal::QueueViewerShowIcon>(true, QStringLiteral("PlaybackQueue/ShowIcon"));
+    m_settings->createSetting<Internal::QueueViewerIconSize>(QSize{36, 36}, QStringLiteral("PlaybackQueue/IconSize"));
+    m_settings->createSetting<Internal::QueueViewerHeader>(true, QStringLiteral("PlaybackQueue/Header"));
+    m_settings->createSetting<Internal::QueueViewerScrollBar>(true, QStringLiteral("PlaybackQueue/Scrollbar"));
+    m_settings->createSetting<Internal::QueueViewerAltColours>(false,
+                                                               QStringLiteral("PlaybackQueue/AlternatingColours"));
+    m_settings->createSetting<Internal::QueueViewerLeftScript>(QStringLiteral("%title%$crlf()%album%"),
+                                                               QStringLiteral("PlaybackQueue/LeftScript"));
+    m_settings->createSetting<Internal::QueueViewerRightScript>(QStringLiteral("%duration%"),
+                                                                QStringLiteral("PlaybackQueue/RightScript"));
 }
 } // namespace Fooyin
