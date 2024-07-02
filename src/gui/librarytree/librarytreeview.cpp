@@ -36,6 +36,8 @@ LibraryTreeView::LibraryTreeView(QWidget* parent)
     setDragDropMode(QAbstractItemView::DragOnly);
     setSortingEnabled(true);
 
+    header()->setSortIndicatorShown(false);
+    header()->setSectionsClickable(false);
     header()->setSortIndicator(0, Qt::AscendingOrder);
     header()->setContextMenuPolicy(Qt::CustomContextMenu);
     setTextElideMode(Qt::ElideRight);

@@ -207,6 +207,7 @@ struct LibraryTreeWidget::Private
         m_libraryTree->setExpandsOnDoubleClick(m_doubleClickAction == TrackAction::None
                                                || m_doubleClickAction == TrackAction::Play);
         m_libraryTree->setAnimated(m_settings->value<Settings::Gui::Internal::LibTreeAnimated>());
+        m_libraryTree->setHeaderHidden(!m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
 
         setScrollbarEnabled(m_settings->value<LibTreeScrollBar>());
         m_libraryTree->setAlternatingRowColors(m_settings->value<LibTreeAltColours>());
@@ -232,6 +233,7 @@ struct LibraryTreeWidget::Private
         m_settings->subscribe<LibTreeSendPlayback>(
             m_self, [this](bool enabled) { m_trackSelection->changePlaybackOnSend(m_widgetContext, enabled); });
         m_settings->subscribe<LibTreeAnimated>(m_self, [this](bool enable) { m_libraryTree->setAnimated(enable); });
+        m_settings->subscribe<LibTreeHeader>(m_self, [this](bool enable) { m_libraryTree->setHeaderHidden(!enable); });
         m_settings->subscribe<LibTreeScrollBar>(m_self, [this](bool show) { setScrollbarEnabled(show); });
         m_settings->subscribe<LibTreeAltColours>(
             m_self, [this](bool enable) { m_libraryTree->setAlternatingRowColors(enable); });

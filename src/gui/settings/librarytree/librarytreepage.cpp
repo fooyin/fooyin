@@ -64,6 +64,7 @@ private:
     QCheckBox* m_restoreState;
 
     QCheckBox* m_animated;
+    QCheckBox* m_header;
     QCheckBox* m_showScrollbar;
     QCheckBox* m_altColours;
     FontButton* m_fontButton;
@@ -83,6 +84,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     , m_playlistName{new QLineEdit(this)}
     , m_restoreState{new QCheckBox(tr("Restore state on startup"), this)}
     , m_animated{new QCheckBox(tr("Expand/collapse animation"), this)}
+    , m_header{new QCheckBox(tr("Show header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
     , m_fontButton{new FontButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
@@ -132,6 +134,7 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
 
     int row{0};
     appearanceGroupLayout->addWidget(m_animated, row++, 0, 1, 2);
+    appearanceGroupLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_showScrollbar, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_altColours, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
@@ -208,6 +211,7 @@ void LibraryTreePageWidget::load()
     m_playlistName->setText(m_settings->value<Settings::Gui::Internal::LibTreeAutoPlaylist>());
 
     m_animated->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAnimated>());
+    m_header->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
     m_fontButton->setButtonFont(m_settings->value<Settings::Gui::Internal::LibTreeFont>());
@@ -231,6 +235,7 @@ void LibraryTreePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::LibTreeAutoPlaylist>(m_playlistName->text());
 
     m_settings->set<Settings::Gui::Internal::LibTreeAnimated>(m_animated->isChecked());
+    m_settings->set<Settings::Gui::Internal::LibTreeHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
 
@@ -261,6 +266,7 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeAutoPlaylist>();
 
     m_settings->reset<Settings::Gui::Internal::LibTreeAnimated>();
+    m_settings->reset<Settings::Gui::Internal::LibTreeHeader>();
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
     m_settings->reset<Settings::Gui::Internal::LibTreeFont>();
