@@ -22,6 +22,7 @@
 #include "gui/fywidget.h"
 
 namespace Fooyin {
+class ActionManager;
 class MusicLibrary;
 class PlaylistController;
 class SettingsManager;
@@ -31,8 +32,8 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
-    LibraryTreeWidget(MusicLibrary* library, PlaylistController* playlistController, SettingsManager* settings,
-                      QWidget* parent = nullptr);
+    LibraryTreeWidget(ActionManager* actionManager, MusicLibrary* library, PlaylistController* playlistController,
+                      SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

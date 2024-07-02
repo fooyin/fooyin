@@ -572,7 +572,8 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("LibraryTree"),
             [this]() {
-                return new LibraryTreeWidget(core.library, playlistController.get(), settings, mainWindow.get());
+                return new LibraryTreeWidget(actionManager, core.library, playlistController.get(), settings,
+                                             mainWindow.get());
             },
             tr("Library Tree"));
 

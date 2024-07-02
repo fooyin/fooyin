@@ -28,11 +28,13 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
-#include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
+#include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/tooltipfilter.h>
@@ -152,8 +154,10 @@ struct LibraryTreeWidget::Private
 {
     LibraryTreeWidget* m_self;
 
+    ActionManager* m_actionManager;
     MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
+    PlayerController* m_playerController;
     LibraryTreeGroupRegistry m_groupsRegistry;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
@@ -167,6 +171,9 @@ struct LibraryTreeWidget::Private
 
     WidgetContext* m_widgetContext;
 
+    QAction* m_addToQueueAction;
+    QAction* m_removeFromQueueAction;
+
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
 
@@ -179,11 +186,13 @@ struct LibraryTreeWidget::Private
     Playlist* m_playlist{nullptr};
     std::map<int, QString> m_playlistGroups;
 
-    Private(LibraryTreeWidget* self, MusicLibrary* library, PlaylistController* playlistController,
-            SettingsManager* settings)
+    Private(LibraryTreeWidget* self, ActionManager* actionManager, MusicLibrary* library,
+            PlaylistController* playlistController, SettingsManager* settings)
         : m_self{self}
+        , m_actionManager{actionManager}
         , m_library{library}
         , m_playlistHandler{playlistController->playlistHandler()}
+        , m_playerController{playlistController->playerController()}
         , m_groupsRegistry{settings}
         , m_trackSelection{playlistController->selectionController()}
         , m_settings{settings}
@@ -193,6 +202,8 @@ struct LibraryTreeWidget::Private
         , m_sortProxy{new LibraryTreeSortModel(m_self)}
         , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                             m_self)}
+        , m_addToQueueAction{new QAction(tr("Add to Playback Queue"), m_self)}
+        , m_removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), m_self)}
         , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeDoubleClick>())}
         , m_middleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeMiddleClick>())}
     {
@@ -216,12 +227,22 @@ struct LibraryTreeWidget::Private
             changeGrouping(initialGroup.value());
         }
 
+        m_actionManager->addContextObject(m_widgetContext);
         m_trackSelection->changePlaybackOnSend(m_widgetContext, m_settings->value<LibTreeSendPlayback>());
 
         m_model->setFont(m_settings->value<LibTreeFont>());
         m_model->setColour(m_settings->value<LibTreeColour>());
         m_model->setRowHeight(m_settings->value<LibTreeRowHeight>());
         m_model->setPlayState(playlistController->playerController()->playState());
+
+        m_addToQueueAction->setEnabled(false);
+        m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, m_widgetContext->context());
+        QObject::connect(m_addToQueueAction, &QAction::triggered, m_self, [this]() { queueSelectedTracks(); });
+
+        m_removeFromQueueAction->setVisible(false);
+        m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
+                                        m_widgetContext->context());
+        QObject::connect(m_removeFromQueueAction, &QAction::triggered, m_self, [this]() { dequeueSelectedTracks(); });
 
         m_settings->subscribe<LibTreeDoubleClick>(m_self, [this](int action) {
             m_doubleClickAction = static_cast<TrackAction>(action);
@@ -333,8 +354,19 @@ struct LibraryTreeWidget::Private
             return;
         }
 
+        std::set<Track> trackIndexes;
         const TrackList tracks = getSelectedTracks(m_libraryTree, m_library);
         m_trackSelection->changeSelectedTracks(m_widgetContext, tracks);
+
+        for(const Track& track : tracks) {
+            trackIndexes.emplace(track);
+        }
+
+        m_addToQueueAction->setEnabled(true);
+        const auto queuedTracks = m_playerController->playbackQueue().tracks();
+        const bool canDeque     = std::ranges::any_of(
+            queuedTracks, [&trackIndexes](const PlaylistTrack& track) { return trackIndexes.contains(track.track); });
+        m_removeFromQueueAction->setVisible(canDeque);
 
         if(m_settings->value<LibTreePlaylistEnabled>()) {
             PlaylistAction::ActionOptions options{None};
@@ -349,6 +381,62 @@ struct LibraryTreeWidget::Private
             const QString autoPlaylist = m_settings->value<LibTreeAutoPlaylist>();
             m_trackSelection->executeAction(TrackAction::SendNewPlaylist, options, autoPlaylist);
         }
+    }
+
+    void queueSelectedTracks() const
+    {
+        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedIndexes();
+        if(selectedIndexes.empty()) {
+            return;
+        }
+
+        const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, selectedIndexes);
+
+        if(leafNodes.empty()) {
+            return;
+        }
+
+        TrackList tracks;
+
+        for(const QModelIndex& index : leafNodes) {
+            const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
+            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+        }
+
+        if(tracks.empty()) {
+            return;
+        }
+
+        m_playerController->queueTracks(tracks);
+        m_removeFromQueueAction->setVisible(true);
+    }
+
+    void dequeueSelectedTracks() const
+    {
+        const QModelIndexList selectedIndexes = m_libraryTree->selectionModel()->selectedIndexes();
+        if(selectedIndexes.empty()) {
+            return;
+        }
+
+        const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, selectedIndexes);
+
+        if(leafNodes.empty()) {
+            return;
+        }
+
+        TrackList tracks;
+
+        for(const QModelIndex& index : leafNodes) {
+            const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
+            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
+        }
+
+        if(tracks.empty()) {
+            return;
+        }
+
+        m_playerController->dequeueTracks(tracks);
+        m_removeFromQueueAction->setVisible(false);
     }
 
     void searchChanged(const QString& search)
@@ -668,10 +756,10 @@ struct LibraryTreeWidget::Private
     }
 };
 
-LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* playlistController,
-                                     SettingsManager* settings, QWidget* parent)
+LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, MusicLibrary* library,
+                                     PlaylistController* playlistController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, library, playlistController, settings)}
+    , p{std::make_unique<Private>(this, actionManager, library, playlistController, settings)}
 {
     setObjectName(LibraryTreeWidget::name());
 
@@ -707,11 +795,11 @@ LibraryTreeWidget::LibraryTreeWidget(MusicLibrary* library, PlaylistController* 
     QObject::connect(library, &MusicLibrary::tracksDeleted, p->m_model, &LibraryTreeModel::removeTracks);
     QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
 
-    QObject::connect(playlistController->playerController(), &PlayerController::playStateChanged, this,
+    QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this,
                      [this](PlayState state) { p->m_model->setPlayState(state); });
-    QObject::connect(playlistController->playerController(), &PlayerController::playlistTrackChanged, this,
+    QObject::connect(p->m_playerController, &PlayerController::playlistTrackChanged, this,
                      [this](const auto& track) { p->playlistTrackChanged(track); });
-    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::activePlaylistChanged, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this](auto* playlist) { p->activePlaylistChanged(playlist); });
 }
 
@@ -759,7 +847,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    const bool hasSelection = !p->m_libraryTree->selectionModel()->selectedRows().empty();
+    const bool hasSelection = p->m_libraryTree->selectionModel()->hasSelection();
 
     if(hasSelection) {
         p->addPlayMenu(menu);
@@ -767,8 +855,17 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     }
 
     p->addGroupMenu(menu);
+    menu->addSeparator();
 
     if(hasSelection) {
+        if(auto* addQueueCmd = p->m_actionManager->command(Constants::Actions::AddToQueue)) {
+            menu->addAction(addQueueCmd->action());
+        }
+
+        if(auto* removeQueueCmd = p->m_actionManager->command(Constants::Actions::RemoveFromQueue)) {
+            menu->addAction(removeQueueCmd->action());
+        }
+
         p->m_trackSelection->addTrackContextMenu(menu);
     }
 
