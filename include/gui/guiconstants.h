@@ -78,6 +78,7 @@ namespace Context {
 constexpr auto Layout         = "Fooyin.Menu.Layout";
 constexpr auto AddWidget      = "Fooyin.Menu.Widget.Add";
 constexpr auto TrackSelection = "Fooyin.Menu.Tracks";
+constexpr auto TrackQueue     = "Fooyin.Menu.Queue";
 constexpr auto TracksPlaylist = "Fooyin.Menu.Tracks.Playlist";
 constexpr auto Playlist       = "Fooyin.Menu.Playlist";
 constexpr auto PlaylistAddTo  = "Fooyin.Menu.Playlist.AddTo";

@@ -81,7 +81,7 @@ struct TrackSelectionController::Private
         , m_playlistController{playlistController}
         , m_playlistHandler{m_playlistController->playlistHandler()}
         , m_tracksMenu{m_actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
-        , m_tracksQueueMenu{m_actionManager->createMenu(Constants::Menus::Context::TrackSelection)}
+        , m_tracksQueueMenu{m_actionManager->createMenu(Constants::Menus::Context::TrackQueue)}
         , m_tracksPlaylistMenu{m_actionManager->createMenu(Constants::Menus::Context::TracksPlaylist)}
         , m_addCurrent{new QAction(tr("Add to current playlist"), m_tracksPlaylistMenu)}
         , m_addActive{new QAction(tr("Add to active playlist"), m_tracksPlaylistMenu)}
