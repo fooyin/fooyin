@@ -250,6 +250,11 @@ QString sep()
     return QDir::separator();
 }
 
+QString crlf()
+{
+    return QStringLiteral("\n");
+}
+
 QString tab(const QStringList& vec)
 {
     if(vec.empty()) {

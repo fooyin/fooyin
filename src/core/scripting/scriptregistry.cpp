@@ -193,6 +193,7 @@ struct ScriptRegistry::Private
         m_funcs[QStringLiteral("stricmp")]        = Fooyin::Scripting::stricmp;
         m_funcs[QStringLiteral("longer")]         = Fooyin::Scripting::longer;
         m_funcs[QStringLiteral("sep")]            = Fooyin::Scripting::sep;
+        m_funcs[QStringLiteral("crlf")]           = Fooyin::Scripting::crlf;
         m_funcs[QStringLiteral("tab")]            = Fooyin::Scripting::tab;
         m_funcs[QStringLiteral("swapprefix")]     = Fooyin::Scripting::swapPrefix;
         m_funcs[QStringLiteral("stripprefix")]    = Fooyin::Scripting::stripPrefix;
