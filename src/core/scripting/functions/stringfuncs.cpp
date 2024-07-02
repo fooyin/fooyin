@@ -335,10 +335,18 @@ QString pad(const QStringList& vec)
     }
 
     const QString& str = vec.at(0);
-    const int len      = vec.at(1).toInt();
+    bool numSuccess{false};
+    const int len = vec.at(1).toInt(&numSuccess);
+
+    if(!numSuccess) {
+        return {};
+    }
 
     if(count == 3) {
-        return str.leftJustified(len, vec.at(2).front());
+        const QString& padChar = vec.at(2);
+        if(!padChar.isEmpty()) {
+            return str.leftJustified(len, padChar.front());
+        }
     }
 
     return str.leftJustified(len);
@@ -353,10 +361,18 @@ QString padRight(const QStringList& vec)
     }
 
     const QString& str = vec.at(0);
-    const int len      = vec.at(1).toInt();
+    bool numSuccess{false};
+    const int len = vec.at(1).toInt(&numSuccess);
+
+    if(!numSuccess) {
+        return {};
+    }
 
     if(count == 3) {
-        return str.rightJustified(len, vec.at(2).front());
+        const QString& padChar = vec.at(2);
+        if(!padChar.isEmpty()) {
+            return str.rightJustified(len, padChar.front());
+        }
     }
 
     return str.rightJustified(len);
