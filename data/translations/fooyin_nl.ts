@@ -3275,7 +3275,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="202"/>
         <source>Waveform Seekbar</source>
-        <translation>Spoelbalk van stemmingsbalk</translation>
+        <translation>Spoelbalk van golfvorm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="203"/>
@@ -3290,17 +3290,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="210"/>
         <source>Regenerate waveform data</source>
-        <translation>Stemmingsbalkgegevens opnieuw genereren</translation>
+        <translation>Golfvormgegevens opnieuw genereren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="214"/>
         <source>Generate missing waveform data</source>
-        <translation>Ontbrekende stemmingsbalkgegevens genereren</translation>
+        <translation>Ontbrekende golfvormgegevens genereren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="218"/>
         <source>Remove waveform data</source>
-        <translation>Stemmingsbalkgegevens wissen</translation>
+        <translation>Golfvormgegevens wissen</translation>
     </message>
 </context>
 <context>
@@ -3435,7 +3435,7 @@ for waveform data. Higher values will result
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
         <translation>Het aantal te gebruiken samples (per kanaal)
-in de stemmingsbalkgegevens. Hogere waarden
+in de golfvormgegevens. Hogere waarden
 leiden tot een juistere en gedetailleerdere weergave,
 maar het schijfgebruik neemt hierdoor toe.</translation>
     </message>
