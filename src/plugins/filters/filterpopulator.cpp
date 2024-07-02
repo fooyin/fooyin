@@ -19,7 +19,6 @@
 
 #include "filterpopulator.h"
 
-#include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 #include <core/track.h>
@@ -90,11 +89,11 @@ struct FilterPopulator::Private
         }
     }
 
-    void runBatch(const TrackList& tracks)
+    bool runBatch(const TrackList& tracks)
     {
         for(const Track& track : tracks) {
             if(!m_self->mayRun()) {
-                return;
+                return false;
             }
 
             if(track.isInLibrary()) {
@@ -103,11 +102,13 @@ struct FilterPopulator::Private
         }
 
         if(!m_self->mayRun()) {
-            return;
+            return false;
         }
 
         emit m_self->populated(m_data);
         m_data.clear();
+
+        return true;
     }
 };
 
@@ -129,13 +130,13 @@ void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)
         p->m_script = p->m_parser.parse(p->m_currentColumns);
     }
 
-    p->runBatch(tracks);
-
-    if(Worker::mayRun()) {
-        emit finished();
-    }
+    const bool success = p->runBatch(tracks);
 
     setState(Idle);
+
+    if(success) {
+        emit finished();
+    }
 }
 } // namespace Fooyin::Filters
 

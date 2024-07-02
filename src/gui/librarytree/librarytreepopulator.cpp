@@ -94,17 +94,17 @@ struct LibraryTreePopulator::Private
         }
     }
 
-    void runBatch(int size)
+    bool runBatch(int size)
     {
         if(size <= 0) {
-            return;
+            return true;
         }
 
         auto tracksBatch = std::ranges::views::take(m_pendingTracks, size);
 
         for(const Track& track : tracksBatch) {
             if(!m_self->mayRun()) {
-                return;
+                return false;
             }
 
             if(track.isInLibrary()) {
@@ -113,7 +113,7 @@ struct LibraryTreePopulator::Private
         }
 
         if(!m_self->mayRun()) {
-            return;
+            return false;
         }
 
         emit m_self->populated(m_data);
@@ -126,7 +126,7 @@ struct LibraryTreePopulator::Private
         m_data.clear();
 
         const auto remaining = static_cast<int>(m_pendingTracks.size());
-        runBatch(std::min(remaining, BatchSize));
+        return runBatch(std::min(remaining, BatchSize));
     }
 };
 
@@ -148,11 +148,13 @@ void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks)
     }
 
     p->m_pendingTracks = tracks;
-    p->runBatch(InitialBatchSize);
+    const bool success = p->runBatch(InitialBatchSize);
 
     setState(Idle);
 
-    emit finished();
+    if(success) {
+        emit finished();
+    }
 }
 } // namespace Fooyin
 
