@@ -371,6 +371,21 @@ int realVisualIndex(const QHeaderView* headerView, int logicalIndex)
     return -1;
 }
 
+std::vector<int> logicalIndexOrder(const QHeaderView* headerView)
+{
+    std::vector<int> indexes;
+
+    const int count = headerView->count();
+    for(int section{0}; section < count; ++section) {
+        const int logical = headerView->logicalIndex(section);
+        if(!headerView->isSectionHidden(logical)) {
+            indexes.emplace_back(logical);
+        }
+    }
+
+    return indexes;
+}
+
 bool isDarkMode()
 {
     const QPalette palette{QApplication::palette()};

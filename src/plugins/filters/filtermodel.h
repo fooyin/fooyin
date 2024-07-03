@@ -62,10 +62,12 @@ public:
     void setFont(const QString& font);
     void setColour(const QColor& colour);
     void setRowHeight(int height);
+
     void setShowSummary(bool show);
     void setShowDecoration(bool show);
     void setShowLabels(bool show);
     void setCoverType(Track::Cover type);
+    void setColumnOrder(const std::vector<int>& order);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;

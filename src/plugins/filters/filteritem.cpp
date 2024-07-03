@@ -28,7 +28,13 @@ FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
     , m_isSummary{false}
-{ }
+{
+    for(QString& str : m_columns) {
+        if(str.isEmpty()) {
+            str = QStringLiteral("?");
+        }
+    }
+}
 
 QString FilterItem::key() const
 {

@@ -35,6 +35,7 @@
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
+#include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
@@ -162,6 +163,10 @@ struct FilterWidget::Private
         QObject::connect(&m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
                          [this](const Filters::FilterColumn& column) { columnChanged(column); });
 
+        QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_self,
+                         [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
+        QObject::connect(m_header, &QHeaderView::sectionMoved, m_self,
+                         [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
         QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
         QObject::connect(m_header, &FilterView::customContextMenuRequested, m_self,
                          [this](const QPoint& pos) { filterHeaderMenu(pos); });
@@ -246,10 +251,12 @@ struct FilterWidget::Private
 
         auto* displayList      = new QAction(tr("Columns"), displayGroup);
         auto* displayArtBottom = new QAction(tr("Artwork (bottom labels)"), displayGroup);
+        auto* displayArtLeft   = new QAction(tr("Artwork (right labels)"), displayGroup);
         auto* displayArtNone   = new QAction(tr("Artwork (no labels)"), displayGroup);
 
         displayList->setCheckable(true);
         displayArtBottom->setCheckable(true);
+        displayArtLeft->setCheckable(true);
         displayArtNone->setCheckable(true);
 
         const auto currentMode     = m_view->viewMode();
@@ -261,19 +268,30 @@ struct FilterWidget::Private
         else if(currentCaptions == ExpandedTreeView::CaptionDisplay::Bottom) {
             displayArtBottom->setChecked(true);
         }
+        else if(currentCaptions == ExpandedTreeView::CaptionDisplay::Right) {
+            displayArtLeft->setChecked(true);
+        }
         else {
             displayArtNone->setChecked(true);
         }
 
         QObject::connect(displayList, &QAction::triggered, m_self, [this]() {
+            m_model->setColumnOrder({});
             m_view->setViewMode(ExpandedTreeView::ViewMode::Tree);
             updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
         });
         QObject::connect(displayArtBottom, &QAction::triggered, m_self, [this]() {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
             m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
             updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
         });
+        QObject::connect(displayArtLeft, &QAction::triggered, m_self, [this]() {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
+            updateCaptions(ExpandedTreeView::CaptionDisplay::Right);
+        });
         QObject::connect(displayArtNone, &QAction::triggered, m_self, [this]() {
+            m_model->setColumnOrder({});
             m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
             updateCaptions(ExpandedTreeView::CaptionDisplay::None);
         });
@@ -314,6 +332,7 @@ struct FilterWidget::Private
 
         displayMenu->addAction(displayList);
         displayMenu->addAction(displayArtBottom);
+        displayMenu->addAction(displayArtLeft);
         displayMenu->addAction(displayArtNone);
         displayMenu->addSeparator();
         displayMenu->addAction(displaySummary);
@@ -649,12 +668,14 @@ void FilterWidget::finalise()
     if(!p->m_columns.empty()) {
         if(p->m_headerState.isEmpty()) {
             p->m_header->setSortIndicator(0, Qt::AscendingOrder);
+            p->m_model->setColumnOrder(Utils::logicalIndexOrder(p->m_header));
         }
         else {
             QObject::connect(
                 p->m_model, &QAbstractItemModel::modelReset, p->m_header,
                 [this]() {
                     p->m_header->restoreHeaderState(p->m_headerState);
+                    p->m_model->setColumnOrder(Utils::logicalIndexOrder(p->m_header));
                     p->m_sortProxy->sort(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
                 },
                 static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));

@@ -43,7 +43,8 @@ public:
     enum class CaptionDisplay : uint8_t
     {
         None = 0,
-        Bottom
+        Bottom,
+        Right
     };
     Q_ENUM(CaptionDisplay)
 

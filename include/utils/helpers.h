@@ -29,8 +29,8 @@
 #include <QString>
 
 namespace Fooyin::Utils {
-template <typename Ctnr, typename Element>
-int findIndex(const Ctnr& c, const Element& e)
+template <typename Cntr, typename Element>
+int findIndex(const Cntr& c, const Element& e)
 {
     int index  = -1;
     auto eIter = std::ranges::find(std::as_const(c), e);
@@ -46,10 +46,10 @@ bool contains(const std::vector<Element>& c, const Element& f)
     return std::ranges::find(std::as_const(c), f) != c.cend();
 }
 
-template <typename T, typename Hash, typename Ctnr>
-Ctnr intersection(const Ctnr& v1, const Ctnr& v2)
+template <typename T, typename Hash, typename Cntr>
+Cntr intersection(const Cntr& v1, const Cntr& v2)
 {
-    Ctnr result;
+    Cntr result;
     std::unordered_set<T, Hash> first{v1.cbegin(), v1.cend()};
 
     auto commonElements = v2 | std::views::filter([&first](const auto& elem) { return first.contains(elem); });
@@ -60,12 +60,24 @@ Ctnr intersection(const Ctnr& v1, const Ctnr& v2)
     return result;
 }
 
-template <typename Ctnr, typename Pred>
-Ctnr filter(const Ctnr& container, Pred pred)
+template <typename Cntr, typename Pred>
+Cntr filter(const Cntr& container, Pred pred)
 {
-    Ctnr result;
+    Cntr result;
     std::ranges::copy_if(std::as_const(container), std::back_inserter(result), pred);
     return result;
+}
+
+template <typename Cntr>
+Cntr sortByIndexes(const Cntr& target, const std::vector<int>& indexes)
+{
+    Cntr sorted(target.size());
+
+    for(size_t i{0}; i < indexes.size(); ++i) {
+        sorted[i] = target[indexes.at(i)];
+    }
+
+    return sorted;
 }
 
 template <typename T>

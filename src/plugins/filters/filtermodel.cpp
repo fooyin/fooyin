@@ -26,6 +26,7 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <utils/helpers.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QColor>
@@ -114,6 +115,7 @@ struct FilterModel::Private
     bool m_showDecoration{false};
     bool m_showLabels{true};
     Track::Cover m_coverType{Track::Cover::Front};
+    std::vector<int> m_columnOrder;
 
     using ColumnAlignments = std::vector<Qt::Alignment>;
     mutable ColumnAlignments m_columnAlignments;
@@ -366,6 +368,11 @@ void FilterModel::setCoverType(Track::Cover type)
     }
 }
 
+void FilterModel::setColumnOrder(const std::vector<int>& order)
+{
+    p->m_columnOrder = order;
+}
+
 Qt::ItemFlags FilterModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
@@ -428,8 +435,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(Qt::DisplayRole):
         case(Qt::ToolTipRole): {
             if(p->m_showLabels) {
-                const QString& name = item->column(col);
-                return !name.isEmpty() ? name : QStringLiteral("?");
+                if(!p->m_columnOrder.empty()) {
+                    return Utils::sortByIndexes(item->columns(), p->m_columnOrder).join(QChar::LineSeparator);
+                }
+                return item->column(col);
             }
             break;
         }
