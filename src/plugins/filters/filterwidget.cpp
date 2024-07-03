@@ -737,6 +737,16 @@ void FilterWidget::contextMenuEvent(QContextMenuEvent* event)
 
     emit requestContextMenu(event->globalPos());
 }
+
+void FilterWidget::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        emit doubleClicked();
+    }
+
+    FyWidget::keyPressEvent(event);
+}
 } // namespace Fooyin::Filters
 
 #include "moc_filterwidget.cpp"
