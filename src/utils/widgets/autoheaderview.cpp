@@ -19,8 +19,6 @@
 
 #include <utils/widgets/autoheaderview.h>
 
-#include <utils/helpers.h>
-
 #include <QActionGroup>
 #include <QApplication>
 #include <QIODevice>
@@ -138,7 +136,7 @@ struct AutoHeaderView::Private
             return;
         }
 
-        const int sectionCount = m_self->count();
+        const int sectionCount = static_cast<int>(m_sectionWidths.size());
         const int finalRow     = lastVisibleIndex();
 
         int totalWidth{0};
@@ -264,6 +262,14 @@ struct AutoHeaderView::Private
 
         return (posPastEnd || posPastRightSection || (sectionAtMinSize && isResizingSmaller));
     }
+
+    void columnsAboutToBeRemoved(int first, int last)
+    {
+        const auto count = static_cast<int>(m_sectionWidths.size());
+        if(first >= 0 && first < count && last >= 0 && last < count) {
+            m_sectionWidths.remove(first, last - first + 1);
+        }
+    }
 };
 
 AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
@@ -299,10 +305,9 @@ void AutoHeaderView::setModel(QAbstractItemModel* model)
 
     QHeaderView::setModel(model);
 
-    QObject::connect(model, &QAbstractItemModel::columnsAboutToBeRemoved, this,
-                     [this](const QModelIndex& /*parent*/, int first, int last) {
-                         p->m_sectionWidths.remove(first, last - first + 1);
-                     });
+    QObject::connect(
+        model, &QAbstractItemModel::columnsAboutToBeRemoved, this,
+        [this](const QModelIndex& /*parent*/, int first, int last) { p->columnsAboutToBeRemoved(first, last); });
     QObject::connect(model, &QAbstractItemModel::columnsRemoved, this, [this]() {
         p->normaliseWidths();
         p->updateWidths();
