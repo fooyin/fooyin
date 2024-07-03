@@ -69,14 +69,6 @@ void FilterView::mouseDoubleClickEvent(QMouseEvent* event)
 
     ExpandedTreeView::mouseDoubleClickEvent(event);
 }
-
-void FilterView::keyPressEvent(QKeyEvent* event)
-{
-    ExpandedTreeView::keyPressEvent(event);
-
-    const auto key = event->key();
-    if(key == Qt::Key_Enter || key == Qt::Key_Return) { }
-}
 } // namespace Fooyin::Filters
 
 #include "moc_filterview.cpp"
