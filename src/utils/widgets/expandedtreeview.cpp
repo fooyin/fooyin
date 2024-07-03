@@ -192,6 +192,7 @@ public:
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
     bool m_uniformRowHeights{false};
+    bool m_selectBeforeDrag{false};
 
     mutable bool m_delayedPendingLayout{false};
     bool m_updatingGeometry{false};
@@ -2978,6 +2979,16 @@ void ExpandedTreeView::setUniformRowHeights(bool enabled)
     p->m_uniformRowHeights = enabled;
 }
 
+bool ExpandedTreeView::selectBeforeDrag() const
+{
+    return p->m_selectBeforeDrag;
+}
+
+void ExpandedTreeView::setSelectBeforeDrag(bool enabled)
+{
+    p->m_selectBeforeDrag = enabled;
+}
+
 void ExpandedTreeView::changeIconSize(const QSize& size)
 {
     if(iconSize() != size) {
@@ -3358,7 +3369,7 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     auto* selectModel            = selectionModel();
     const QModelIndex modelIndex = index.siblingAtColumn(0);
 
-    if(!model()->hasChildren(modelIndex)) {
+    if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
         setDragEnabled(selectModel->isSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
         QAbstractItemView::mousePressEvent(event);
         return;

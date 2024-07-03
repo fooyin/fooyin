@@ -39,6 +39,7 @@ FilterView::FilterView(QWidget* parent)
     setDropIndicatorShown(true);
     setUniformRowHeights(true);
     setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+    setSelectBeforeDrag(true);
 }
 
 void FilterView::mousePressEvent(QMouseEvent* event)

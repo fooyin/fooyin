@@ -67,6 +67,9 @@ public:
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
 
+    [[nodiscard]] bool selectBeforeDrag() const;
+    void setSelectBeforeDrag(bool enabled);
+
     void changeIconSize(const QSize& size);
 
     [[nodiscard]] QRect visualRect(const QModelIndex& index) const override;

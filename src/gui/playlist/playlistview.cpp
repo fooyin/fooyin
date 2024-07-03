@@ -37,6 +37,7 @@ PlaylistView::PlaylistView(QWidget* parent)
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setTextElideMode(Qt::ElideRight);
+    setSelectBeforeDrag(true);
     viewport()->setAcceptDrops(true);
 }
 
