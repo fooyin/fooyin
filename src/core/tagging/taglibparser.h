@@ -29,8 +29,8 @@ class FYCORE_EXPORT TagLibParser : public TagParser
 public:
     [[nodiscard]] QStringList supportedExtensions() const override;
 
-    bool readMetaData(Track& track) override;
-    QByteArray readCover(const Track& track, Track::Cover cover) override;
-    bool writeMetaData(const Track& track) override;
+    [[nodiscard]] bool readMetaData(Track& track) const override;
+    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) const override;
+    [[nodiscard]] bool writeMetaData(const Track& track) const override;
 };
 } // namespace Fooyin

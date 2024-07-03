@@ -29,8 +29,8 @@ public:
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
 
-    virtual bool readMetaData(Track& track)                              = 0;
-    virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
-    virtual bool writeMetaData(const Track& track)                       = 0;
+    [[nodiscard]] virtual bool readMetaData(Track& track) const                              = 0;
+    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) const = 0;
+    [[nodiscard]] virtual bool writeMetaData(const Track& track) const                       = 0;
 };
 } // namespace Fooyin

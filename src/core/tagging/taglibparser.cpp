@@ -1249,7 +1249,7 @@ QStringList TagLibParser::supportedExtensions() const
     return extensions;
 }
 
-bool TagLibParser::readMetaData(Track& track)
+bool TagLibParser::readMetaData(Track& track) const
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -1423,7 +1423,7 @@ bool TagLibParser::readMetaData(Track& track)
     return true;
 }
 
-QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover)
+QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover) const
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -1526,7 +1526,7 @@ QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover)
     return {};
 }
 
-bool TagLibParser::writeMetaData(const Track& track)
+bool TagLibParser::writeMetaData(const Track& track) const
 {
     const QString filepath = track.filepath();
 
