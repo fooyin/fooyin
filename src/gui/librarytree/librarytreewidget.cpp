@@ -43,6 +43,7 @@
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QJsonObject>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -870,6 +871,16 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     }
 
     menu->popup(event->globalPos());
+}
+
+void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
+{
+    const auto key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
+        p->handleDoubleClick();
+    }
+
+    FyWidget::keyPressEvent(event);
 }
 } // namespace Fooyin
 
