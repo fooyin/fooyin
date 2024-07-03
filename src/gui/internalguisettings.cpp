@@ -26,6 +26,8 @@
 #include <QIcon>
 #include <QPalette>
 
+constexpr int PixmapCacheSize = 32;
+
 namespace {
 Fooyin::CoverPaths defaultCoverPaths()
 {
@@ -108,7 +110,9 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::TrackCoverDisplayOption>(0, QStringLiteral("Artwork/DisplayOption"));
     m_settings->createSetting<Internal::PlaylistImagePadding>(5, QStringLiteral("PlaylistWidget/ImagePadding"));
     m_settings->createSetting<Internal::PlaylistImagePaddingTop>(0, QStringLiteral("PlaylistWidget/ImagePaddingTop"));
-    m_settings->createSetting<Internal::PixmapCacheSize>(20, QStringLiteral("Interface/PixmapCacheSize"));
+    m_settings->createSetting<Internal::PixmapCacheSize>(
+        static_cast<int>(PixmapCacheSize * std::pow(qApp->devicePixelRatio(), 2)),
+        QStringLiteral("Interface/PixmapCacheSize"));
     m_settings->createSetting<Internal::ArtworkThumbnailSize>(200, QStringLiteral("Interface/ArtworkThumbnailSize"));
     m_settings->createSetting<Internal::LibTreeSendPlayback>(true, QStringLiteral("LibraryTree/StartPlaybackOnSend"));
     m_settings->createSetting<Internal::DirBrowserSendPlayback>(true,
