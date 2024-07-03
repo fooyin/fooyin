@@ -20,6 +20,7 @@
 #include <utils/utils.h>
 
 #include <QApplication>
+#include <QFontMetrics>
 #include <QHeaderView>
 #include <QIcon>
 #include <QLabel>
@@ -150,6 +151,15 @@ QString appendShortcut(const QString& str, const QKeySequence& shortcut)
     return QString::fromLatin1("<div style=\"white-space:pre\">%1 "
                                "<span style=\"color: gray; font-size: small\">%2</span></div>")
         .arg(string, shortcut.toString(QKeySequence::NativeText));
+}
+
+QString elideTextWithBreaks(const QString& text, const QFontMetrics& fontMetrics, int maxWidth, Qt::TextElideMode mode)
+{
+    QStringList lines = text.split(QChar::LineSeparator);
+    for(auto i{0}; i < lines.size(); ++i) {
+        lines[i] = fontMetrics.elidedText(lines[i], mode, maxWidth);
+    }
+    return lines.join(QChar::LineSeparator);
 }
 
 void setMinimumWidth(QLabel* label, const QString& text)
