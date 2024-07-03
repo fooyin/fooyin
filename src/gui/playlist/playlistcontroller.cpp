@@ -92,6 +92,10 @@ struct PlaylistController::Private
 
     void handleTracksQueued(const QueueTracks& tracks) const
     {
+        if(!m_currentPlaylist) {
+            return;
+        }
+
         std::set<int> uniqueIndexes;
 
         for(const auto& track : tracks) {
@@ -109,7 +113,7 @@ struct PlaylistController::Private
 
     void handleTracksDequeued(const QueueTracks& tracks) const
     {
-        if(m_clearingQueue) {
+        if(!m_currentPlaylist || m_clearingQueue) {
             return;
         }
 
@@ -133,8 +137,39 @@ struct PlaylistController::Private
         }
     }
 
+    void handleTracksDequeued(const PlaylistIndexes& indexes) const
+    {
+        if(!m_currentPlaylist || m_clearingQueue) {
+            return;
+        }
+
+        std::set<int> uniqueIndexes;
+
+        if(indexes.contains(m_currentPlaylist->id())) {
+            const auto playlistIndexes = indexes.at(m_currentPlaylist->id());
+            for(const auto& trackIndex : playlistIndexes) {
+                uniqueIndexes.emplace(trackIndex);
+            }
+        }
+
+        const auto queuedTracks = m_playerController->playbackQueue().indexesForPlaylist(m_currentPlaylist->id());
+        for(const auto& trackIndex : queuedTracks | std::views::keys) {
+            uniqueIndexes.emplace(trackIndex);
+        }
+
+        const std::vector<int> playlistIndexes{uniqueIndexes.cbegin(), uniqueIndexes.cend()};
+
+        if(!indexes.empty()) {
+            emit m_self->currentPlaylistQueueChanged(playlistIndexes);
+        }
+    }
+
     void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added)
     {
+        if(!m_currentPlaylist) {
+            return;
+        }
+
         std::set<int> uniqueIndexes;
 
         auto gatherIndexes = [this, &uniqueIndexes](const QueueTracks& tracks) {
@@ -305,6 +340,8 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
         [this](const QueueTracks& removed, const QueueTracks& added) { p->handleQueueChanged(removed, added); });
     QObject::connect(playerController, &PlayerController::tracksDequeued, this,
                      [this](const QueueTracks& tracks) { p->handleTracksDequeued(tracks); });
+    QObject::connect(playerController, &PlayerController::trackIndexesDequeued, this,
+                     [this](const PlaylistIndexes& indexes) { p->handleTracksDequeued(indexes); });
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      &PlaylistController::playStateChanged);
 }

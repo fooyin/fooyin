@@ -27,8 +27,11 @@
 #include <map>
 
 namespace Fooyin {
-using PlaylistIndexes = std::map<int, std::vector<int>>;
-using QueueTracks     = std::vector<PlaylistTrack>;
+// Queue positions for each playlist
+using PlaylistIndexes = std::map<Id, std::vector<int>>;
+// Queue positions of a playlist track index
+using PlaylistTrackIndexes = std::map<int, std::vector<int>>;
+using QueueTracks          = std::vector<PlaylistTrack>;
 
 class FYCORE_EXPORT PlaybackQueue
 {
@@ -41,7 +44,8 @@ public:
     [[nodiscard]] PlaylistTrack track(int index) const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] int freeSpace() const;
-    [[nodiscard]] PlaylistIndexes indexesForPlaylist(const Id& id) const;
+    [[nodiscard]] PlaylistIndexes playlistIndexes() const;
+    [[nodiscard]] PlaylistTrackIndexes indexesForPlaylist(const Id& id) const;
 
     PlaylistTrack nextTrack();
 

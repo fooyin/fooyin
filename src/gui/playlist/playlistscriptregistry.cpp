@@ -22,7 +22,7 @@
 namespace Fooyin {
 struct PlaylistScriptRegistry::Private
 {
-    PlaylistIndexes m_playlistQueue;
+    PlaylistTrackIndexes m_playlistQueue;
 
     Id m_playlistId;
     int m_trackIndex{0};

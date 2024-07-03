@@ -53,9 +53,20 @@ int PlaybackQueue::freeSpace() const
     return MaxQueue - trackCount();
 }
 
-PlaylistIndexes PlaybackQueue::indexesForPlaylist(const Id& id) const
+PlaylistIndexes PlaybackQueue::playlistIndexes() const
 {
     PlaylistIndexes indexes;
+
+    for(const auto& track : m_tracks) {
+        indexes[track.playlistId].emplace_back(track.indexInPlaylist);
+    }
+
+    return indexes;
+}
+
+PlaylistTrackIndexes PlaybackQueue::indexesForPlaylist(const Id& id) const
+{
+    PlaylistTrackIndexes indexes;
 
     for(auto i{0}; const auto& track : m_tracks) {
         if(track.playlistId == id) {
