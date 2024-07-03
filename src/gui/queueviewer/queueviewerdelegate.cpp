@@ -31,25 +31,27 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
-
     opt.decorationSize = option.decorationSize;
 
-    const QString rightText = index.data(QueueViewerItem::RightText).toString();
-
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+    QStyle* style        = opt.widget ? opt.widget->style() : QApplication::style();
+    const auto colour    = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
     const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
+    QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
     textRect.adjust(textMargin, 0, -textMargin, 0);
 
-    const auto rightBounds = painter->boundingRect(textRect, Qt::AlignRight | Qt::TextWrapAnywhere, rightText);
+    const QString right = index.data(QueueViewerItem::RightText).toString();
 
-    const auto colour = option.state & QStyle::State_Selected ? QPalette::HighlightedText : QPalette::NoRole;
-    style->drawItemText(painter, textRect, Qt::AlignRight, opt.palette, true,
-                        painter->fontMetrics().elidedText(rightText, Qt::ElideRight, textRect.width()), colour);
+    const auto rightBounds = painter->boundingRect(textRect, Qt::AlignRight | Qt::TextWrapAnywhere, right);
 
-    opt.rect.setRight(rightBounds.x() - textMargin);
+    QRect leftRect{textRect};
+    leftRect.setRight(rightBounds.x() - textMargin);
+    opt.text = Utils::elideTextWithBreaks(opt.text, painter->fontMetrics(), leftRect.width(), Qt::ElideRight);
 
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, option.widget);
+
+    const QString rightText
+        = Utils::elideTextWithBreaks(right, painter->fontMetrics(), textRect.width(), Qt::ElideRight);
+    style->drawItemText(painter, textRect, Qt::AlignRight, opt.palette, true, rightText, colour);
 }
 
 QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
