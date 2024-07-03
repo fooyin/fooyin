@@ -283,10 +283,14 @@ void QueueViewerModel::insertTracks(int row, const QueueTracks& tracks)
     beginInsertRows({}, first, last);
 
     for(const auto& track : tracks) {
-        auto* item = m_trackItems.emplace_back(std::make_unique<QueueViewerItem>(track)).get();
+        m_trackItems.insert(m_trackItems.begin() + first, std::make_unique<QueueViewerItem>(track));
+        auto* item = m_trackItems.at(first).get();
+
         item->generateTitle(&m_scriptParser, titleScript, subtitleScript);
-        rootItem()->insertChild(first++, item);
+        rootItem()->insertChild(first, item);
         m_trackParents[track.track.albumHash()].emplace_back(item);
+
+        ++first;
     }
 
     endInsertRows();
