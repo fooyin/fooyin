@@ -121,7 +121,7 @@ protected:
     void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags command) override;
     void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
     [[nodiscard]] QRegion visualRegionForSelection(const QItemSelection& selection) const override;
-    QModelIndexList selectedIndexes() const override;
+    [[nodiscard]] QModelIndexList selectedIndexes() const override;
 
 private:
     friend class BaseView;

@@ -181,6 +181,7 @@ public:
     std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
     std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
 
+    QPoint offset() const;
     bool isIndexValid(const QModelIndex& index) const;
 
     ExpandedTreeView* m_self;
@@ -207,6 +208,7 @@ public:
 
     mutable QBasicTimer m_delayedLayout;
 
+    QPoint m_pressedPos;
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;
@@ -2858,6 +2860,12 @@ std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionVie
     return rects;
 }
 
+QPoint ExpandedTreeView::Private::offset() const
+{
+    return {m_self->isRightToLeft() ? -m_self->horizontalOffset() : m_self->horizontalOffset(),
+            m_self->verticalOffset()};
+}
+
 bool ExpandedTreeView::Private::isIndexValid(const QModelIndex& index) const
 {
     return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
@@ -3369,6 +3377,8 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     auto* selectModel            = selectionModel();
     const QModelIndex modelIndex = index.siblingAtColumn(0);
 
+    p->m_pressedPos = pos + p->offset();
+
     if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
         setDragEnabled(selectModel->isSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
         QAbstractItemView::mousePressEvent(event);
@@ -3621,6 +3631,7 @@ void ExpandedTreeView::startDrag(Qt::DropActions supportedActions)
     auto* drag = new QDrag(this);
     drag->setPixmap(pixmap);
     drag->setMimeData(mimeData);
+    drag->setHotSpot(p->m_pressedPos - rect.topLeft());
 
     Qt::DropAction dropAction = Qt::IgnoreAction;
     if(supportedActions & defaultDropAction()) {
