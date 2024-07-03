@@ -87,6 +87,24 @@ void LibraryTreeView::paintEvent(QPaintEvent* event)
 
     QTreeView::paintEvent(event);
 }
+
+QModelIndex LibraryTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
+{
+    const QModelIndex current = currentIndex();
+
+    if(cursorAction == MoveLeft) {
+        if(isExpanded(current)) {
+            collapse(current);
+            return current;
+        }
+        if(current.parent().isValid()) {
+            // Move to parent if collapsed
+            return current.parent();
+        }
+    }
+
+    return QTreeView::moveCursor(cursorAction, modifiers);
+}
 } // namespace Fooyin
 
 #include "moc_librarytreeview.cpp"
