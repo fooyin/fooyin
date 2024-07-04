@@ -1415,6 +1415,11 @@ void PlaylistWidget::finalise()
             [this]() { p->m_header->restoreHeaderState(p->m_headerState); },
             static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
     }
+}
+
+void PlaylistWidget::showEvent(QShowEvent* event)
+{
+    FyWidget::showEvent(event);
 
     if(!p->m_singleMode && p->m_columns.empty()) {
         p->setSingleMode(false);
