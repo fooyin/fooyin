@@ -53,6 +53,7 @@ struct AutoHeaderView::Private
     int m_lastResizePos{-1};
     int m_firstPressed{-1};
     bool m_moving{false};
+    bool m_restoringState{false};
 
     explicit Private(AutoHeaderView* self)
         : m_self{self}
@@ -270,6 +271,28 @@ struct AutoHeaderView::Private
             m_sectionWidths.remove(first, last - first + 1);
         }
     }
+
+    void sectionCountChanged(int oldCount, int newCount)
+    {
+        if(m_restoringState) {
+            return;
+        }
+
+        if(!m_stretchEnabled || newCount == oldCount) {
+            return;
+        }
+
+        if(newCount > oldCount) {
+            m_sectionWidths.resize(newCount);
+            const auto ratio = static_cast<double>(newCount - oldCount) / static_cast<double>(newCount);
+            for(int section{oldCount}; section < newCount; ++section) {
+                m_sectionWidths[section] = ratio;
+            }
+        }
+
+        normaliseWidths();
+        updateWidths();
+    }
 };
 
 AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
@@ -281,20 +304,8 @@ AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
 
     QObject::connect(this, &QHeaderView::sectionResized, this,
                      [this](int section, int /*oldSize*/, int newSize) { p->sectionResized(section, newSize); });
-
-    QObject::connect(this, &QHeaderView::sectionCountChanged, this, [this](int oldCount, int newCount) {
-        if(p->m_stretchEnabled && newCount != oldCount) {
-            if(newCount > oldCount) {
-                p->m_sectionWidths.resize(newCount);
-                const auto ratio = static_cast<double>(newCount - oldCount) / static_cast<double>(newCount);
-                for(int section{oldCount}; section < newCount; ++section) {
-                    p->m_sectionWidths[section] = ratio;
-                }
-            }
-            p->normaliseWidths();
-            p->updateWidths();
-        }
-    });
+    QObject::connect(this, &QHeaderView::sectionCountChanged, this,
+                     [this](int oldCount, int newCount) { p->sectionCountChanged(oldCount, newCount); });
 }
 
 void AutoHeaderView::setModel(QAbstractItemModel* model)
@@ -467,7 +478,8 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
     auto* toggleStretch = new QAction(tr("Auto-size sections"), menu);
     toggleStretch->setCheckable(true);
     toggleStretch->setChecked(p->m_stretchEnabled);
-    QObject::connect(toggleStretch, &QAction::triggered, this, [this]() { setStretchEnabled(!p->m_stretchEnabled); });
+    // QObject::connect(toggleStretch, &QAction::triggered, this, [this]() { setStretchEnabled(!p->m_stretchEnabled);
+    // });
     menu->addAction(toggleStretch);
 
     menu->addSeparator();
@@ -584,6 +596,8 @@ QByteArray AutoHeaderView::saveHeaderState() const
 
 void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 {
+    p->m_restoringState = true;
+
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
     int sortSection{0};
 
@@ -639,6 +653,8 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
             p->updateWidths();
         }
     }
+
+    p->m_restoringState = false;
 }
 
 void AutoHeaderView::mousePressEvent(QMouseEvent* event)

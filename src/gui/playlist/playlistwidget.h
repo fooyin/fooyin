@@ -45,7 +45,6 @@ public:
     void finalise() override;
 
 protected:
-    void showEvent(QShowEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
