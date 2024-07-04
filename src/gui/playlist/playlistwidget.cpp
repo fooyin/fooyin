@@ -201,6 +201,9 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
 void PlaylistWidgetPrivate::setupConnections()
 {
+    QObject::connect(m_header, &QHeaderView::sectionResized, m_self, [this](int column, int /*oldSize*/, int newSize) {
+        m_model->setPixmapColumnSize(column, newSize);
+    });
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, this, &PlaylistWidgetPrivate::sortColumn);
     QObject::connect(m_header, &QHeaderView::customContextMenuRequested, this,
                      &PlaylistWidgetPrivate::customHeaderMenuRequested);

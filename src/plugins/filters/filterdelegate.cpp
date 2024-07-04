@@ -32,13 +32,7 @@ void FilterDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option
 
     // initStyleOption will override decorationSize when converting the QPixmap to a QIcon, so restore it here
     opt.decorationSize = option.decorationSize;
-    const auto image   = index.data(Qt::DecorationRole).value<QPixmap>();
-    if(!image.isNull()) {
-        opt.icon = Utils::scalePixmap(image, opt.decorationSize, opt.widget->devicePixelRatioF(), true);
-    }
-
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
+    QStyle* style      = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
 }
 

@@ -109,7 +109,7 @@ struct FilterWidget::Private
         , m_settings{settings}
         , m_view{new FilterView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
-        , m_model{new FilterModel(coverProvider, m_self)}
+        , m_model{new FilterModel(coverProvider, m_settings, m_self)}
         , m_sortProxy{new FilterSortModel(m_self)}
         , m_widgetContext{
               new WidgetContext(m_self, Context{Id{"Fooyin.Context.FilterWidget."}.append(m_self->id())}, m_self)}

@@ -22,11 +22,13 @@
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filterpopulator.h"
+#include "settings/filtersettings.h"
 
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/helpers.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/widgets/autoheaderview.h>
 
 #include <QColor>
@@ -100,9 +102,9 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
 struct FilterModel::Private
 {
     FilterModel* m_self;
+    SettingsManager* m_settings;
 
     bool m_resetting{false};
-
     QThread m_populatorThread;
     FilterPopulator m_populator;
     CoverProvider* m_coverProvider;
@@ -113,6 +115,7 @@ struct FilterModel::Private
 
     FilterColumnList m_columns;
     bool m_showDecoration{false};
+    QSize m_decorationSize;
     bool m_showLabels{true};
     Track::Cover m_coverType{Track::Cover::Front};
     std::vector<int> m_columnOrder;
@@ -127,14 +130,19 @@ struct FilterModel::Private
 
     TrackList m_tracksPendingRemoval;
 
-    explicit Private(FilterModel* self, CoverProvider* coverProvider)
+    explicit Private(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings)
         : m_self{self}
+        , m_settings{settings}
         , m_coverProvider{coverProvider}
+        , m_decorationSize{m_settings->value<Settings::Filters::FilterIconSize>().toSize()}
     {
         m_populator.moveToThread(&m_populatorThread);
 
         QObject::connect(m_coverProvider, &CoverProvider::coverAdded, m_self,
                          [this](const Track& track) { coverUpdated(track); });
+
+        m_settings->subscribe<Settings::Filters::FilterIconSize>(
+            m_self, [this](const auto& size) { m_decorationSize = size.toSize(); });
     }
 
     void beginReset()
@@ -276,9 +284,9 @@ struct FilterModel::Private
     }
 };
 
-FilterModel::FilterModel(CoverProvider* coverProvider, QObject* parent)
+FilterModel::FilterModel(CoverProvider* coverProvider, SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this, coverProvider)}
+    , p{std::make_unique<Private>(this, coverProvider, settings)}
 {
     QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
@@ -451,9 +459,10 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(Qt::DecorationRole):
             if(p->m_showDecoration) {
                 if(item->trackCount() > 0) {
-                    return p->m_coverProvider->trackCoverThumbnail(item->tracks().front(), p->m_coverType);
+                    return p->m_coverProvider->trackCoverThumbnail(item->tracks().front(), p->m_decorationSize,
+                                                                   p->m_coverType);
                 }
-                return p->m_coverProvider->trackCoverThumbnail({}, p->m_coverType);
+                return p->m_coverProvider->trackCoverThumbnail({}, p->m_decorationSize, p->m_coverType);
             }
             break;
         case(Qt::SizeHintRole):

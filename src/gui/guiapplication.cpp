@@ -859,7 +859,6 @@ GuiApplication::GuiApplication(const CorePluginContext& core)
 
     updateCache(p->settings->value<Settings::Gui::Internal::PixmapCacheSize>());
     p->settings->subscribe<Settings::Gui::Internal::PixmapCacheSize>(this, updateCache);
-    p->settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(this, CoverProvider::clearCache);
 
     QObject::connect(p->settings->settingsDialog(), &SettingsDialogController::opening, this, [this]() {
         const bool isLayoutEditing = p->settings->value<Settings::Gui::LayoutEditing>();

@@ -122,6 +122,7 @@ signals:
     void Seeked(int64_t position);
 
 private:
+    QString currentCoverPath() const;
     void notify(const QString& name, const QVariant& value);
     void trackChanged(const PlaylistTrack& playlistTrack);
     void loadMetaData(const PlaylistTrack& playlistTrack);
@@ -133,7 +134,7 @@ private:
     SettingsManager* m_settings;
 
     bool m_registered;
-    QString m_prevCoverKey;
+    QString m_currCoverKey;
     QVariantMap m_currentMetaData;
     CoverProvider* m_coverProvider;
 };

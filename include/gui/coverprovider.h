@@ -43,6 +43,19 @@ class FYGUI_EXPORT CoverProvider : public QObject
     Q_OBJECT
 
 public:
+    enum ThumbnailSize : uint16_t
+    {
+        None        = 0,
+        Tiny        = 32,
+        Small       = 64,
+        MediumSmall = 96,
+        Medium      = 128,
+        Large       = 192,
+        VeryLarge   = 256,
+        ExtraLarge  = 512,
+        Huge        = 1024
+    };
+
     explicit CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
     ~CoverProvider() override;
 
@@ -52,22 +65,6 @@ public:
      * @note this is enabled by default.
      */
     void setUsePlaceholder(bool enabled);
-    /*!
-     * Sets the key to be used when saving to cache/disk.
-     * Useful for keeping a temporary buffer of a single cover.
-     * @note the album hash of a track is used by default.
-     * @note use @fn resetCoverKey to restore.
-     */
-    void setCoverKey(const QString& name);
-    /** Restores default behaviour of using a track's album hash as the key. */
-    void resetCoverKey();
-    /*!
-     * If @c true, limits thumbnails to the current thumbnail size setting.
-     * @note this is enabled by default.
-     */
-    void setLimitThumbSize(bool enabled);
-    /** If @c true, overrides the default behaviour of only storing thumbnails for embedded artwork. */
-    void setAlwaysStoreThumbnail(bool enabled);
 
     /*!
      * This will return the picture of @p type for the @p track if it exists in the cache.
@@ -89,16 +86,28 @@ public:
      *
      * @param track the track for which the cover will be found.
      * @param type the type of cover to find.
+     * @param size the size of the cover to return.
      * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
      */
-    [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, Track::Cover type = Track::Cover::Front) const;
+    [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, ThumbnailSize size,
+                                              Track::Cover type = Track::Cover::Front) const;
+    /*!
+     * This is an overloaded function.
+     *
+     * @param track the track for which the cover will be found.
+     * @param type the type of cover to find.
+     * @param size the size of the cover to return.
+     * @returns the cover if already in the cache or on disk, the 'no cover' cover if not.
+     */
+    [[nodiscard]] QPixmap trackCoverThumbnail(const Track& track, const QSize& size,
+                                              Track::Cover type = Track::Cover::Front) const;
 
+    /** Returns an equivlant thubmnail size for the given @p size */
+    static ThumbnailSize findThumbnailSize(const QSize& size);
     /** Clears the QPixmapCache as well as the on-disk cache. */
     static void clearCache();
     /** Removes all covers of the @p track from the cache. */
     static void removeFromCache(const Track& track);
-    /** Removes the cover with the @p key from the cache. */
-    static void removeFromCache(const QString& key);
 
 signals:
     /** Emitted after a @fn trackCover or @fn trackCoverThumbnail call if and when the cover is added to the cache. */

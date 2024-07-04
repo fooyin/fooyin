@@ -506,8 +506,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}
     , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
-    , m_coverSize{settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>(),
-                  settings->value<Settings::Gui::Internal::ArtworkThumbnailSize>()}
     , m_populator{playlistInteractor->playerController()}
     , m_playlistLoaded{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
@@ -535,10 +533,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_settings->subscribe<Settings::Gui::Internal::PlaylistAltColours>(this, [this](bool enabled) {
         m_altColours = enabled;
         emit dataChanged({}, {}, {Qt::BackgroundRole});
-    });
-    m_settings->subscribe<Settings::Gui::Internal::ArtworkThumbnailSize>(this, [this](int size) {
-        m_coverSize = {size, size};
-        emit dataChanged({}, {}, {Qt::DecorationRole});
     });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePadding>(this, [this](int padding) {
         m_pixmapPadding = padding;
@@ -929,6 +923,19 @@ void PlaylistModel::resetColumnAlignments()
     m_columnAlignments.clear();
 }
 
+void PlaylistModel::setPixmapColumnSize(int column, int size)
+{
+    if(std::cmp_greater_equal(column, m_columnSizes.size())) {
+        m_columnSizes.resize(column + 1);
+    }
+    m_columnSizes[column] = size;
+}
+
+void PlaylistModel::setPixmapColumnSizes(const std::vector<int>& sizes)
+{
+    m_columnSizes = sizes;
+}
+
 void PlaylistModel::reset(const TrackList& tracks)
 {
     m_populator.stopThread();
@@ -1121,6 +1128,9 @@ bool PlaylistModel::removeColumn(int column)
     beginRemoveColumns({}, column, column);
 
     m_columns.erase(m_columns.cbegin() + column);
+    if(column < 0 || std::cmp_greater_equal(column, m_columnSizes.size())) {
+        m_columnSizes.erase(m_columnSizes.cbegin() + column);
+    }
     resetColumnAlignment(column);
 
     for(auto& [_, node] : m_nodes) {
@@ -1325,6 +1335,22 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const bool singleColumnMode = m_columns.empty();
     const bool isPlaying        = trackIsPlaying(track.track(), item->index());
 
+    auto getCover = [this, &index, column](const Track::Cover type) -> QVariant {
+        if(std::cmp_greater_equal(column, m_columnSizes.size())) {
+            return {};
+        }
+        const int size          = m_columnSizes.at(column);
+        const QModelIndex first = index.siblingAtRow(0);
+        if(!first.isValid()) {
+            return {};
+        }
+        if(const auto* firstSibling = itemForIndex(first)) {
+            const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
+            return QVariant::fromValue(m_coverProvider->trackCoverThumbnail(firstTrack.track(), {size, size}, type));
+        }
+        return {};
+    };
+
     switch(role) {
         case(Qt::ToolTipRole): {
             if(!singleColumnMode) {
@@ -1338,18 +1364,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             }
 
             const QString field = m_columns.at(column).field;
-
-            auto getCover = [this, &index](const Track::Cover type) -> QVariant {
-                const QModelIndex first = index.siblingAtRow(0);
-                if(!first.isValid()) {
-                    return {};
-                }
-                if(const auto* firstSibling = itemForIndex(first)) {
-                    const auto firstTrack = std::get<PlaylistTrackItem>(firstSibling->data());
-                    return QVariant::fromValue(m_coverProvider->trackCoverThumbnail(firstTrack.track(), type));
-                }
-                return {};
-            };
 
             if(field == QString::fromLatin1(FrontCover)) {
                 return getCover(Track::Cover::Front);
@@ -1380,11 +1394,9 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             if(!track.track().isEnabled()) {
                 return m_disabledColour;
             }
-
             if(isPlaying) {
                 return m_playingColour;
             }
-
             if(m_altColours) {
                 return item->row() & 1 ? QApplication::palette().base().color()
                                        : QApplication::palette().alternateBase().color();
@@ -1451,7 +1463,8 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
                 return {};
             }
-            return m_coverProvider->trackCoverThumbnail(header.tracks().front(), Track::Cover::Front);
+            return m_coverProvider->trackCoverThumbnail(header.tracks().front(), CoverProvider::Large,
+                                                        Track::Cover::Front);
         }
         default:
             break;

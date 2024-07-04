@@ -88,14 +88,12 @@ struct QueueViewer::Private
 
     void setupSettings()
     {
-        m_model->setShowIcon(m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>());
         m_view->changeIconSize(m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize());
         m_view->header()->setHidden(!m_settings->value<Settings::Gui::Internal::QueueViewerHeader>());
         m_view->verticalScrollBar()->setVisible(m_settings->value<Settings::Gui::Internal::QueueViewerScrollBar>());
         m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::QueueViewerAltColours>());
 
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_model, [this](const bool show) {
-            m_model->setShowIcon(show);
+        m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_view, [this]() {
             QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
         });
         m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(

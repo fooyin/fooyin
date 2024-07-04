@@ -128,7 +128,8 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<TagLoader> tagLoader, Setting
     : TreeModel{parent}
     , m_settings{settings}
     , m_coverProvider{std::move(tagLoader), settings}
-    , m_showIcon{true}
+    , m_showIcon{m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>()}
+    , m_iconSize{m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize()}
 {
     QObject::connect(&m_coverProvider, &CoverProvider::coverAdded, this, [this](const Track& track) {
         if(m_trackParents.contains(track.albumHash())) {
@@ -142,6 +143,14 @@ QueueViewerModel::QueueViewerModel(std::shared_ptr<TagLoader> tagLoader, Setting
 
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerLeftScript>(this, &QueueViewerModel::regenerateTitles);
     m_settings->subscribe<Settings::Gui::Internal::QueueViewerRightScript>(this, &QueueViewerModel::regenerateTitles);
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(this, [this](const bool show) {
+        m_showIcon = show;
+        emit dataChanged({}, {}, {Qt::DecorationRole});
+    });
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(this, [this](const auto& size) {
+        m_iconSize = size.toSize();
+        emit dataChanged({}, {}, {Qt::DecorationRole});
+    });
 }
 
 Qt::ItemFlags QueueViewerModel::flags(const QModelIndex& index) const
@@ -197,7 +206,7 @@ QVariant QueueViewerModel::data(const QModelIndex& index, int role) const
             break;
         case(Qt::DecorationRole):
             if(m_showIcon) {
-                return m_coverProvider.trackCoverThumbnail(item->track().track);
+                return m_coverProvider.trackCoverThumbnail(item->track().track, m_iconSize);
             }
             break;
         case(QueueViewerItem::Track):
@@ -418,12 +427,6 @@ QueueTracks QueueViewerModel::queueTracks() const
     }
 
     return tracks;
-}
-
-void QueueViewerModel::setShowIcon(bool show)
-{
-    m_showIcon = show;
-    emit dataChanged({}, {}, {Qt::DecorationRole});
 }
 
 void QueueViewerModel::regenerateTitles()

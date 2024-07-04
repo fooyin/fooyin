@@ -59,7 +59,6 @@ public:
 
     void reset(const QueueTracks& tracks);
     QueueTracks queueTracks() const;
-    void setShowIcon(bool show);
 
 signals:
     void queueChanged();
@@ -77,5 +76,6 @@ private:
     std::vector<std::unique_ptr<QueueViewerItem>> m_trackItems;
     std::unordered_map<QString, std::vector<QueueViewerItem*>> m_trackParents;
     bool m_showIcon;
+    QSize m_iconSize;
 };
 } // namespace Fooyin

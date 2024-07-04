@@ -107,10 +107,15 @@ public:
     [[nodiscard]] bool haveTracks() const;
 
     MoveOperation moveTracks(const MoveOperation& operation);
+
     Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
+
+    void setPixmapColumnSize(int column, int size);
+    void setPixmapColumnSizes(const std::vector<int>& sizes);
+
     void reset(const TrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
@@ -243,7 +248,6 @@ private:
     QColor m_disabledColour;
 
     bool m_altColours;
-    QSize m_coverSize;
     QThread m_populatorThread;
     PlaylistPopulator m_populator;
 
@@ -256,6 +260,7 @@ private:
     PlaylistPreset m_currentPreset;
     PlaylistColumnList m_columns;
     std::vector<Qt::Alignment> m_columnAlignments;
+    std::vector<int> m_columnSizes;
     std::vector<int> m_pixmapColumns;
     int m_pixmapPadding;
     int m_pixmapPaddingTop;
