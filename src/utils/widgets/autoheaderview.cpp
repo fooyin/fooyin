@@ -605,6 +605,12 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
             = std::min({count(), static_cast<int>(logicalIndexes.size()), static_cast<int>(pixelWidths.size()),
                         static_cast<int>(p->m_sectionWidths.size())});
 
+        if(parentWidget()) {
+            qDebug() << QStringLiteral("[%1] Restoring state for %2 section(s)")
+                            .arg(parentWidget()->objectName())
+                            .arg(sectionCount);
+        }
+
         for(int section{0}; section < sectionCount; ++section) {
             setSectionHidden(section, pixelWidths[section] < MinSectionWidth);
             moveSection(visualIndex(logicalIndexes[section]), section);
@@ -613,6 +619,9 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
                 resizeSection(section, pixelWidths[section]);
             }
         }
+    }
+    else {
+        qDebug() << "Header state empty";
     }
 
     setSortIndicator(sortSection, sortOrder);
