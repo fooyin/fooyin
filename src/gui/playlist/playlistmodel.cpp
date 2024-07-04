@@ -953,10 +953,12 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
         m_currentPreset = preset;
     }
 
-    m_columns       = columns;
-    m_pixmapColumns = pixmapColumns();
+    if(std::exchange(m_columns, columns) != columns) {
+        // Notify header view as soon as possible so we can restore header state correctly
+        emit headerDataChanged(Qt::Horizontal, 0, columnCount({}) - 1);
+    }
 
-    emit playlistLoading();
+    m_pixmapColumns = pixmapColumns();
 
     if(!playlist) {
         return;

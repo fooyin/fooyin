@@ -1411,7 +1411,7 @@ void PlaylistWidget::finalise()
 
     if(!p->m_singleMode && !p->m_columns.empty() && !p->m_headerState.isEmpty()) {
         QObject::connect(
-            p->m_model, &PlaylistModel::playlistLoading, p->m_header,
+            p->m_model, &QAbstractItemModel::headerDataChanged, p->m_header,
             [this]() { p->m_header->restoreHeaderState(p->m_headerState); },
             static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
     }
