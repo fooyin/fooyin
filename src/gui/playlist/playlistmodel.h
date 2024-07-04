@@ -138,6 +138,7 @@ public:
     void tracksChanged();
 
 signals:
+    void playlistLoading();
     void playlistLoaded();
     void filesDropped(const QList<QUrl>& urls, int index);
     void tracksInserted(const TrackGroups& groups);

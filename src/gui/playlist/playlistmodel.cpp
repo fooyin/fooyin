@@ -956,12 +956,13 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
     m_columns       = columns;
     m_pixmapColumns = pixmapColumns();
 
+    emit playlistLoading();
+
     if(!playlist) {
         return;
     }
 
     m_currentPlaylist = playlist;
-
     updateHeader(playlist);
 
     reset(m_currentPlaylist->tracks());

@@ -466,10 +466,8 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
 
 void PlaylistWidgetPrivate::resetModel() const
 {
-    if(m_playlistController->currentPlaylist()) {
-        m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
-                       m_playlistController->currentPlaylist());
-    }
+    m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
+                   m_playlistController->currentPlaylist());
 }
 
 std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
@@ -1413,7 +1411,7 @@ void PlaylistWidget::finalise()
 
     if(!p->m_singleMode && !p->m_columns.empty() && !p->m_headerState.isEmpty()) {
         QObject::connect(
-            p->m_model, &PlaylistModel::playlistLoaded, p->m_header,
+            p->m_model, &PlaylistModel::playlistLoading, p->m_header,
             [this]() { p->m_header->restoreHeaderState(p->m_headerState); },
             static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
     }
