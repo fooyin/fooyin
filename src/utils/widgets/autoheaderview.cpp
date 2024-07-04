@@ -621,7 +621,9 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         }
     }
     else {
-        qDebug() << "Header state empty";
+        if(parentWidget()) {
+            qDebug() << QStringLiteral("[%1] Header state empty").arg(parentWidget()->objectName());
+        }
     }
 
     setSortIndicator(sortSection, sortOrder);
