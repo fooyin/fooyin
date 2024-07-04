@@ -138,19 +138,6 @@ QString findDirectoryCover(const Fooyin::CoverPaths& paths, const Fooyin::Track&
     return {};
 }
 
-struct CoverLoader
-{
-    QString key;
-    Fooyin::Track track;
-    Fooyin::Track::Cover type;
-    std::shared_ptr<Fooyin::TagLoader> tagLoader;
-    Fooyin::CoverPaths paths;
-    double dpr{1.0};
-    bool isThumb{false};
-    CoverProvider::ThumbnailSize size{CoverProvider::None};
-    QImage cover;
-};
-
 QImage readImage(const QString& path, int requestedSize, const QString& hintType)
 {
     const QMimeDatabase mimeDb;
@@ -172,12 +159,17 @@ QImage readImage(const QString& path, int requestedSize, const QString& hintType
 
     const auto size    = reader.size();
     const auto maxSize = requestedSize == 0 ? MaxSize : requestedSize;
-    if(size.width() > maxSize || size.height() > maxSize) {
-        const auto scaledSize = calculateScaledSize(size, maxSize);
+    const auto dpr     = Fooyin::Utils::windowDpr();
+
+    if(size.width() > maxSize || size.height() > maxSize || dpr > 1.0) {
+        const auto scaledSize = calculateScaledSize(size, static_cast<int>(maxSize * dpr));
         reader.setScaledSize(scaledSize);
     }
 
-    return reader.read();
+    QImage image = reader.read();
+    image.setDevicePixelRatio(dpr);
+
+    return image;
 }
 
 QImage readImage(QByteArray data)
@@ -208,6 +200,18 @@ QImage readImage(QByteArray data)
 
     return reader.read();
 }
+
+struct CoverLoader
+{
+    QString key;
+    Fooyin::Track track;
+    Fooyin::Track::Cover type;
+    std::shared_ptr<Fooyin::TagLoader> tagLoader;
+    Fooyin::CoverPaths paths;
+    bool isThumb{false};
+    CoverProvider::ThumbnailSize size{CoverProvider::None};
+    QImage cover;
+};
 
 QImage loadImageFromDirectory(CoverLoader& loader)
 {
@@ -240,7 +244,7 @@ QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath
 
     if(loader.isThumb && !cover.isNull() && !QFileInfo::exists(cachePath)) {
         saveThumbnail(cover, loader.key);
-        cover = Fooyin::Utils::scaleImage(cover, loader.size, loader.dpr);
+        cover = Fooyin::Utils::scaleImage(cover, loader.size, Fooyin::Utils::windowDpr());
     }
 
     return cover;
@@ -278,7 +282,6 @@ struct CoverProvider::Private
     std::shared_ptr<TagLoader> m_tagLoader;
     SettingsManager* m_settings;
 
-    double m_windowDpr{1.0};
     bool m_usePlacerholder{true};
     QPixmapCache::Key m_noCoverKey;
     std::set<QString> m_pendingCovers;
@@ -290,14 +293,11 @@ struct CoverProvider::Private
         : m_self{self}
         , m_tagLoader{std::move(tagLoader)}
         , m_settings{settings}
-        , m_windowDpr{m_settings->value<Settings::Gui::MainWindowPixelRatio>()}
         , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
     {
         m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
             m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
         m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
-        m_settings->subscribe<Settings::Gui::MainWindowPixelRatio>(m_self,
-                                                                   [this](double ratio) { m_windowDpr = ratio; });
     }
 
     QPixmap loadNoCover()
@@ -309,7 +309,7 @@ struct CoverProvider::Private
 
         const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
         static const QSize coverSize{MaxSize, MaxSize};
-        const QPixmap cover = icon.pixmap(coverSize, m_windowDpr);
+        const QPixmap cover = icon.pixmap(coverSize, Utils::windowDpr());
 
         m_noCoverKey = QPixmapCache::insert(cover);
 
@@ -324,7 +324,8 @@ struct CoverProvider::Private
             return;
         }
 
-        const QPixmap cover = QPixmap::fromImage(loader.cover);
+        QPixmap cover = QPixmap::fromImage(loader.cover);
+        cover.setDevicePixelRatio(Utils::windowDpr());
 
         if(!QPixmapCache::insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover)) {
             qDebug() << "Failed to cache cover for:" << loader.track.filepath();
@@ -342,7 +343,6 @@ struct CoverProvider::Private
         loader.type      = type;
         loader.tagLoader = m_tagLoader;
         loader.paths     = m_paths;
-        loader.dpr       = m_windowDpr;
         loader.isThumb   = thumbnail;
         loader.size      = size;
 

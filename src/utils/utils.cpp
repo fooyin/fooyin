@@ -32,6 +32,7 @@
 #include <QRegularExpression>
 #include <QTime>
 #include <QWidget>
+#include <QWindow>
 
 #include <unicode/ucsdet.h>
 
@@ -305,6 +306,19 @@ QMainWindow* getMainWindow()
     }
 
     return nullptr;
+}
+
+double windowDpr()
+{
+    double dpr{1.0};
+
+    if(auto* window = getMainWindow()) {
+        if(auto* handle = window->windowHandle()) {
+            dpr = handle->devicePixelRatio();
+        }
+    }
+
+    return dpr;
 }
 
 void showMessageBox(const QString& text, const QString& infoText)
