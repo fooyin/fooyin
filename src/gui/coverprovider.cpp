@@ -458,7 +458,7 @@ void CoverProvider::removeFromCache(const Track& track)
     removeKey(generateCoverKey(track, Track::Cover::Artist));
 
     for(const auto type : {Track::Cover::Front, Track::Cover::Back, Track::Cover::Artist}) {
-        for(const auto size : {Tiny, Small, MediumSmall, Medium, Large, VeryLarge, ExtraLarge}) {
+        for(const auto size : {Tiny, Small, MediumSmall, Medium, Large, VeryLarge, ExtraLarge, Huge}) {
             QPixmapCache::remove(generateThumbCoverKey(generateCoverKey(track, type), size));
         }
     }
