@@ -140,12 +140,12 @@ public:
 signals:
     void playlistLoaded();
     void filesDropped(const QList<QUrl>& urls, int index);
-    void tracksInserted(const TrackGroups& groups);
-    void tracksMoved(const MoveOperation& operation);
+    void tracksInserted(const Fooyin::TrackGroups& groups);
+    void tracksMoved(const Fooyin::MoveOperation& operation);
     void playlistTracksChanged(int index);
 
 public slots:
-    void playingTrackChanged(const PlaylistTrack& track);
+    void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void playStateChanged(PlayState state);
 
 private:

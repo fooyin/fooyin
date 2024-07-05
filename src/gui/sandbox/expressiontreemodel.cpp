@@ -28,7 +28,7 @@
 
 namespace Fooyin {
 ExpressionTreeItem::ExpressionTreeItem()
-    : ExpressionTreeItem{QStringLiteral(""), QStringLiteral(""), {}}
+    : ExpressionTreeItem{{}, {}, {}}
 { }
 
 ExpressionTreeItem::ExpressionTreeItem(QString key, QString name, Expression expression)

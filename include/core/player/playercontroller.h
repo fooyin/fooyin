@@ -109,7 +109,7 @@ public:
 
 signals:
     void playStateChanged(PlayState state);
-    void playModeChanged(Playlist::PlayModes mode);
+    void playModeChanged(Fooyin::Playlist::PlayModes mode);
 
     void nextTrack();
     void previousTrack();
@@ -117,14 +117,14 @@ signals:
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);
 
-    void currentTrackChanged(const Track& track);
-    void playlistTrackChanged(const PlaylistTrack& track);
-    void trackPlayed(const Track& track);
+    void currentTrackChanged(const Fooyin::Track& track);
+    void playlistTrackChanged(const Fooyin::PlaylistTrack& track);
+    void trackPlayed(const Fooyin::Track& track);
 
-    void tracksQueued(const QueueTracks& tracks);
-    void tracksDequeued(const QueueTracks& tracks);
-    void trackIndexesDequeued(const PlaylistIndexes& indexes);
-    void trackQueueChanged(const QueueTracks& removed, const QueueTracks& added);
+    void tracksQueued(const Fooyin::QueueTracks& tracks);
+    void tracksDequeued(const Fooyin::QueueTracks& tracks);
+    void trackIndexesDequeued(const Fooyin::PlaylistIndexes& indexes);
+    void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
 
 private:
     struct Private;

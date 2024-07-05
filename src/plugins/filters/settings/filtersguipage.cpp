@@ -66,7 +66,7 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
-    , m_fontButton{new FontButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), QStringLiteral(""), this)}
+    , m_fontButton{new FontButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), {}, this)}
     , m_colourButton{new ColourButton(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
     , m_rowHeight{new QSpinBox(this)}

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <QtConcurrent>
+#include <QtConcurrentRun>
 
 namespace Fooyin::Utils {
 template <typename Func>

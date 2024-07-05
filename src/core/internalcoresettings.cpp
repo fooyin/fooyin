@@ -43,11 +43,11 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
         QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
         QStringLiteral("Library/SortScript"));
     m_settings->createSetting<ActivePlaylistId>(-1, QStringLiteral("Playlist/ActivePlaylistId"));
-    m_settings->createSetting<AudioOutput>(QStringLiteral(""), QStringLiteral("Engine/AudioOutput"));
+    m_settings->createSetting<AudioOutput>(QString{}, QStringLiteral("Engine/AudioOutput"));
     m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
     m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
-    m_settings->createSetting<Language>(QStringLiteral(""), QStringLiteral("Language"));
+    m_settings->createSetting<Language>(QString{}, QStringLiteral("Language"));
     m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
     m_settings->createSetting<PlaylistSavePathType>(0, QStringLiteral("Playlist/SavePathType"));
     m_settings->createSetting<PlaylistSaveMetadata>(false, QStringLiteral("Playlist/SaveMetadata"));

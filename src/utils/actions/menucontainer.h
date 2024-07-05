@@ -76,7 +76,7 @@ public:
     virtual bool update() = 0;
 
 signals:
-    void requestUpdate(MenuContainer* container);
+    void requestUpdate(Fooyin::MenuContainer* container);
 
 protected:
     virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;

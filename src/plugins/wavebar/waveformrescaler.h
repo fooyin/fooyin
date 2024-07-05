@@ -33,12 +33,12 @@ public:
     explicit WaveformRescaler(QObject* parent = nullptr);
 
 signals:
-    void waveformRescaled(const WaveformData<float>& data);
+    void waveformRescaled(const Fooyin::WaveBar::WaveformData<float>& data);
 
 public slots:
     void rescale();
     void rescale(int width);
-    void rescale(const WaveformData<float>& data, int width);
+    void rescale(const Fooyin::WaveBar::WaveformData<float>& data, int width);
 
     void changeSampleWidth(int width);
     void changeDownmix(DownmixOption option);

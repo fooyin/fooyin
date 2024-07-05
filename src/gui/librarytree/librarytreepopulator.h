@@ -53,7 +53,7 @@ public:
     void run(const QString& grouping, const TrackList& tracks);
 
 signals:
-    void populated(PendingTreeData data);
+    void populated(Fooyin::PendingTreeData data);
 
 private:
     struct Private;

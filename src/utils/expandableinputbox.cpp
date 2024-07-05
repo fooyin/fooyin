@@ -140,8 +140,8 @@ struct ExpandableInputBox::Private
         , attributes{attributes_}
         , widgetLayout{new QHBoxLayout()}
         , blockLayout{new QGridLayout()}
-        , addBlock{new QPushButton(Utils::iconFromTheme(AddIcon), QStringLiteral(""), self)}
-        , deleteBlock{new QPushButton(Utils::iconFromTheme(RemoveIcon), QStringLiteral(""), self)}
+        , addBlock{new QPushButton(Utils::iconFromTheme(AddIcon), {}, self)}
+        , deleteBlock{new QPushButton(Utils::iconFromTheme(RemoveIcon), {}, self)}
     {
         auto* layout = new QGridLayout(self);
         layout->setContentsMargins(0, 0, 0, 0);

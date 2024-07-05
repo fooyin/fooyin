@@ -37,7 +37,7 @@ public:
 public slots:
     void seek(uint64_t pos) override;
 
-    void changeTrack(const Track& track) override;
+    void changeTrack(const Fooyin::Track& track) override;
 
     void play() override;
     void pause() override;
@@ -45,7 +45,7 @@ public slots:
 
     void setVolume(double volume) override;
 
-    void setAudioOutput(const OutputCreator& output, const QString& device) override;
+    void setAudioOutput(const Fooyin::OutputCreator& output, const QString& device) override;
     void setOutputDevice(const QString& device) override;
 
 protected:

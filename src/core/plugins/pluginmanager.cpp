@@ -69,9 +69,7 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
             const QString error = pluginLoader->errorString();
 
             auto pluginMetadata = metaData.value(QStringLiteral("MetaData"));
-            auto version        = metaData.value(QStringLiteral("Version"));
-
-            QString name = pluginMetadata.toObject().value(QStringLiteral("Name")).toString();
+            QString name        = pluginMetadata.toObject().value(QStringLiteral("Name")).toString();
 
             if(name.isEmpty()) {
                 name = file.fileName();

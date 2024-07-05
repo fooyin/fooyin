@@ -57,7 +57,7 @@ void TagLoader::addParser(const QString& name, std::unique_ptr<TagParser> parser
     }
 
     // TODO: Add order/priority to handle multiple parsers supporting same extensions
-    auto extensions = parser->supportedExtensions();
+    const auto extensions = parser->supportedExtensions();
     for(const auto& extension : extensions) {
         p->m_extensionToParserMap[extension].emplace_back(parser.get());
     }

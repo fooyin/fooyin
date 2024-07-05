@@ -56,11 +56,11 @@ public:
     [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const;
 
 signals:
-    void libraryAdded(const LibraryInfo& library);
+    void libraryAdded(const Fooyin::LibraryInfo& library);
     void removingLibraryTracks(int id);
     void libraryRemoved(int id, const std::set<int> tracksRemoved);
     void libraryRenamed(int id, const QString& name);
-    void libraryStatusChanged(const LibraryInfo& info);
+    void libraryStatusChanged(const Fooyin::LibraryInfo& info);
 
 private:
     struct Private;

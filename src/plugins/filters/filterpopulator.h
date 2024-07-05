@@ -51,7 +51,7 @@ public:
     void run(const QStringList& columns, const TrackList& tracks);
 
 signals:
-    void populated(PendingTreeData data);
+    void populated(Fooyin::Filters::PendingTreeData data);
 
 private:
     struct Private;

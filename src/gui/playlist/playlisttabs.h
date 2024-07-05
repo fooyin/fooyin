@@ -66,8 +66,8 @@ public:
     void moveWidget(int index, int newIndex) override;
 
 signals:
-    void filesDropped(const QList<QUrl>& urls, const Id& playlistId);
-    void tracksDropped(const QByteArray& data, const Id& playlistId);
+    void filesDropped(const QList<QUrl>& urls, const Fooyin::Id& playlistId);
+    void tracksDropped(const QByteArray& data, const Fooyin::Id& playlistId);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

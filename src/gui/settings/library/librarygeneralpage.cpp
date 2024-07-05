@@ -50,8 +50,8 @@ public:
     void setupContextActions(QMenu* menu, const QPoint& pos) override;
 
 signals:
-    void refreshLibrary(const LibraryInfo& info);
-    void rescanLibrary(const LibraryInfo& info);
+    void refreshLibrary(const Fooyin::LibraryInfo& info);
+    void rescanLibrary(const Fooyin::LibraryInfo& info);
 };
 
 void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)

@@ -56,7 +56,7 @@ public:
 signals:
     void paused();
     void outputStateChanged(AudioOutput::State state);
-    void bufferProcessed(const AudioBuffer& buffer);
+    void bufferProcessed(const Fooyin::AudioBuffer& buffer);
     void finished();
 
 protected:

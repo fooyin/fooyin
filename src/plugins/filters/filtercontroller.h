@@ -67,9 +67,9 @@ public:
     bool removeFilter(FilterWidget* widget);
 
 signals:
-    void tracksRemoved(const TrackList& tracks);
-    void tracksUpdated(const TrackList& tracks);
-    void tracksPlayed(const TrackList& tracks);
+    void tracksRemoved(const Fooyin::TrackList& tracks);
+    void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksPlayed(const Fooyin::TrackList& tracks);
 
 private:
     struct Private;

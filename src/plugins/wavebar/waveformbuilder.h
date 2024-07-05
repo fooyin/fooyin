@@ -51,7 +51,7 @@ public:
 signals:
     void generatingWaveform();
     void waveformGenerated();
-    void waveformRescaled(const WaveformData<float>& data);
+    void waveformRescaled(const Fooyin::WaveBar::WaveformData<float>& data);
 
 private:
     void updateRescaler();

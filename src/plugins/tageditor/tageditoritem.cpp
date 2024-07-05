@@ -37,7 +37,7 @@ bool withinCharLimit(const QStringList& strings)
 
 namespace Fooyin::TagEditor {
 TagEditorItem::TagEditorItem()
-    : TagEditorItem{QStringLiteral(""), nullptr, true}
+    : TagEditorItem{{}, nullptr, true}
 { }
 
 TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefault)
@@ -68,7 +68,7 @@ QString TagEditorItem::value() const
 {
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
-        nonEmptyValues.removeAll(QStringLiteral(""));
+        nonEmptyValues.removeAll(QString{});
 
         QCollator collator;
         collator.setNumericMode(true);
@@ -88,7 +88,7 @@ QString TagEditorItem::changedValue() const
 {
     if(m_changedValue.isEmpty()) {
         QStringList nonEmptyValues{m_changedValues};
-        nonEmptyValues.removeAll(QStringLiteral(""));
+        nonEmptyValues.removeAll(QString{});
 
         QCollator collator;
         collator.setNumericMode(true);

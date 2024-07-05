@@ -23,7 +23,7 @@
 
 namespace Fooyin {
 LibraryTreeItem::LibraryTreeItem()
-    : LibraryTreeItem{QStringLiteral(""), nullptr, -1}
+    : LibraryTreeItem{{}, nullptr, -1}
 { }
 
 LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int level)

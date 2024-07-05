@@ -49,6 +49,6 @@ using ExpressionValue = std::variant<QString, FuncValue, ExpressionList>;
 struct Expression
 {
     Expr::Type type{Expr::Null};
-    ExpressionValue value{QStringLiteral("")};
+    ExpressionValue value{QString{}};
 };
 } // namespace Fooyin

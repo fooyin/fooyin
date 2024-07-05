@@ -95,11 +95,14 @@ void LayoutProvider::findLayouts()
     QList<QDir> stack{Gui::layoutsPath()};
 
     while(!stack.isEmpty()) {
-        const QDir dir = stack.takeFirst();
-        for(const auto& subDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        const QDir dir     = stack.takeFirst();
+        const auto subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for(const auto& subDir : subDirs) {
             stack.append(QDir{subDir.absoluteFilePath()});
         }
-        for(const auto& file : dir.entryInfoList({QStringLiteral("*.fyl")}, QDir::Files)) {
+
+        const auto dirFiles = dir.entryInfoList({QStringLiteral("*.fyl")}, QDir::Files);
+        for(const auto& file : dirFiles) {
             files.append(file.absoluteFilePath());
         }
     }

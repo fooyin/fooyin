@@ -227,7 +227,7 @@ struct PipeWireOutput::Private
 
         const ThreadLoopGuard guard{m_loop.get()};
 
-        const auto dev = m_device != u"default" ? m_device : QStringLiteral("");
+        const auto dev = m_device != u"default" ? m_device : QString{};
 
         m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, dev);
         m_stream->addListener(streamEvents, this);

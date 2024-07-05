@@ -24,7 +24,7 @@
 
 namespace Fooyin {
 PopupLineEdit::PopupLineEdit(QWidget* parent)
-    : PopupLineEdit{QStringLiteral(""), parent}
+    : PopupLineEdit{{}, parent}
 { }
 
 PopupLineEdit::PopupLineEdit(const QString& contents, QWidget* parent)

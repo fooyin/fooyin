@@ -81,10 +81,10 @@ public:
     void updateHeaders(const ItemList& headers);
 
 signals:
-    void populated(PendingData data);
-    void populatedTrackGroup(PendingData data);
-    void tracksUpdated(ItemList tracks);
-    void headersUpdated(ItemKeyMap headers);
+    void populated(Fooyin::PendingData data);
+    void populatedTrackGroup(Fooyin::PendingData data);
+    void tracksUpdated(Fooyin::ItemList tracks);
+    void headersUpdated(Fooyin::ItemKeyMap headers);
 
 private:
     struct Private;

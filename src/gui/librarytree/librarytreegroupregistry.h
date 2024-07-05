@@ -34,7 +34,7 @@ public:
     explicit LibraryTreeGroupRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void groupingChanged(const LibraryTreeGrouping& grouping);
+    void groupingChanged(const Fooyin::LibraryTreeGrouping& grouping);
 
 protected:
     void loadDefaults() override;

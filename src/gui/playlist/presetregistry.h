@@ -36,7 +36,7 @@ public:
     explicit PresetRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void presetChanged(const PlaylistPreset& preset);
+    void presetChanged(const Fooyin::PlaylistPreset& preset);
 
 protected:
     void loadDefaults() override;

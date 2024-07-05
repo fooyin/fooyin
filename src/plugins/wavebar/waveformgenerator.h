@@ -41,7 +41,7 @@ public:
 
 signals:
     void generatingWaveform();
-    void waveformGenerated(const WaveformData<float>& data);
+    void waveformGenerated(const Fooyin::WaveBar::WaveformData<float>& data);
 
 public slots:
     void initialiseThread() override;

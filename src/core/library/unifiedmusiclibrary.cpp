@@ -29,6 +29,8 @@
 #include <utils/async.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QDateTime>
+
 #include <ranges>
 
 using namespace std::chrono_literals;

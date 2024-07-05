@@ -36,7 +36,7 @@ public:
     explicit SortingRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void sortChanged(const SortScript& preset);
+    void sortChanged(const Fooyin::SortScript& preset);
 
 protected:
     void loadDefaults() override;

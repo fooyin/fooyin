@@ -62,12 +62,12 @@ public:
 
 signals:
     void progressChanged(int id, int percent);
-    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks);
-    void statusChanged(const LibraryInfo& library);
-    void scanUpdate(const ScanResult& result);
-    void tracksUpdated(const TrackList& tracks);
+    void scannedTracks(int id, const Fooyin::TrackList& newTracks, const Fooyin::TrackList& existingTracks);
+    void statusChanged(const Fooyin::LibraryInfo& library);
+    void scanUpdate(const Fooyin::ScanResult& result);
+    void tracksUpdated(const Fooyin::TrackList& tracks);
 
-    void gotTracks(const TrackList& result);
+    void gotTracks(const Fooyin::TrackList& result);
 
 private:
     struct Private;

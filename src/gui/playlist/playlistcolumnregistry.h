@@ -34,7 +34,7 @@ public:
     explicit PlaylistColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void columnChanged(const PlaylistColumn& column);
+    void columnChanged(const Fooyin::PlaylistColumn& column);
 
 protected:
     void loadDefaults() override;

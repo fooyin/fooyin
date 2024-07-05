@@ -43,7 +43,7 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, QWidget* parent)
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() {
         auto track = m_playerController->currentTrack();
-        auto lyrics = track.extraTag(QStringLiteral("LYRICS")).join(QStringLiteral(""));
+        auto lyrics = track.extraTag(QStringLiteral("LYRICS")).join(QString{});
         m_lyricsTextArea->setText(lyrics);
     });
 }

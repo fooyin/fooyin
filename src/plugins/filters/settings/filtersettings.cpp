@@ -39,7 +39,7 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
     m_settings->createSetting<FilterAutoPlaylist>(QStringLiteral("Filter Results"),
                                                   QStringLiteral("Filters/SelectionPlaylistName"));
-    m_settings->createSetting<FilterFont>(QStringLiteral(""), QStringLiteral("Filters/Font"));
+    m_settings->createSetting<FilterFont>(QString{}, QStringLiteral("Filters/Font"));
     m_settings->createSetting<FilterColour>(QApplication::palette().text().color().name(),
                                             QStringLiteral("Filters/Colour"));
     m_settings->createSetting<FilterRowHeight>(0, QStringLiteral("Filters/RowHeight"));

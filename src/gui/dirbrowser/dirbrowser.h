@@ -52,8 +52,8 @@ signals:
 
 public slots:
     void playstateChanged(PlayState state);
-    void activePlaylistChanged(Playlist* playlist);
-    void playlistTrackChanged(const PlaylistTrack& track);
+    void activePlaylistChanged(Fooyin::Playlist* playlist);
+    void playlistTrackChanged(const Fooyin::PlaylistTrack& track);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

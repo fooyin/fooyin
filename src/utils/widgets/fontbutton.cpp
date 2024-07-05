@@ -23,7 +23,7 @@
 
 namespace Fooyin {
 FontButton::FontButton(QWidget* parent)
-    : FontButton{{}, QStringLiteral(""), parent}
+    : FontButton{{}, {}, parent}
 { }
 
 FontButton::FontButton(const QString& text, QWidget* parent)

@@ -65,7 +65,7 @@ public:
 
 signals:
     void commandsChanged();
-    void contextChanged(const Context& context);
+    void contextChanged(const Fooyin::Context& context);
 
 private:
     struct Private;

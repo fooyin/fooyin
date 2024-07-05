@@ -321,7 +321,7 @@ struct LibraryScanner::Private
         }
 
         if(auto* parser = m_playlistLoader->parserForExtension(QStringLiteral("cue"))) {
-            TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), QStringLiteral(""), false);
+            TrackList tracks = parser->readPlaylist(&buffer, track.filepath(), {}, false);
             for(auto& plTrack : tracks) {
                 plTrack.generateHash();
             }

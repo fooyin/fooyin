@@ -38,7 +38,7 @@ public:
     explicit QuickSetupDialog(LayoutProvider* layoutProvider, QWidget* parent = nullptr);
 
 signals:
-    void layoutChanged(const FyLayout& layout);
+    void layoutChanged(const Fooyin::FyLayout& layout);
 
 protected:
     void showEvent(QShowEvent* event) override;

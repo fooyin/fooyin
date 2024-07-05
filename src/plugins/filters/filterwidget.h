@@ -77,7 +77,7 @@ signals:
     void filterUpdated();
     void finishedUpdating();
     void selectionChanged();
-    void requestHeaderMenu(AutoHeaderView* header, const QPoint& pos);
+    void requestHeaderMenu(Fooyin::AutoHeaderView* header, const QPoint& pos);
     void requestContextMenu(const QPoint& pos);
     void requestEditConnections();
     void requestSearch(const QString& search);

@@ -62,7 +62,7 @@ public:
     void apply() override;
 
 signals:
-    void trackMetadataChanged(const TrackList& tracks);
+    void trackMetadataChanged(const Fooyin::TrackList& tracks);
 
 private:
     void saveState() const;

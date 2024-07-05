@@ -202,7 +202,7 @@ void EnginePageWidget::setupOutputs()
 {
     const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
 
-    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : QStringLiteral("");
+    const QString outName = !currentOutput.empty() ? currentOutput.at(0) : QString{};
     const auto outputs    = m_engine->getAllOutputs();
 
     m_outputBox->clear();
@@ -233,7 +233,7 @@ void EnginePageWidget::setupDevices(const QString& output)
         return;
     }
 
-    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : QStringLiteral("");
+    const QString currentDevice = currentOutput.size() > 1 ? currentOutput.at(1) : QString{};
     const auto outputDevices    = m_engine->getOutputDevices(output);
 
     for(const auto& [name, desc] : outputDevices) {

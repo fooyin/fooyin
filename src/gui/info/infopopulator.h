@@ -48,7 +48,7 @@ public:
     void run(InfoItem::Options options, const TrackList& tracks);
 
 signals:
-    void populated(InfoData data);
+    void populated(Fooyin::InfoData data);
 
 private:
     struct Private;

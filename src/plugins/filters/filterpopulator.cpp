@@ -46,7 +46,7 @@ struct FilterPopulator::Private
 
     FilterItem* getOrInsertItem(const QStringList& columns)
     {
-        const QString key = Utils::generateHash(columns.join(QStringLiteral("")));
+        const QString key = Utils::generateHash(columns.join(QString{}));
         if(!m_data.items.contains(key)) {
             m_data.items.emplace(key, FilterItem{key, columns, &m_root});
         }

@@ -167,10 +167,7 @@ QString PluginInfo::vendor() const
 
 QString PluginInfo::identifier() const
 {
-    return QString{m_vendor + QStringLiteral(".") + m_name}
-        .simplified()
-        .replace(QStringLiteral(" "), QStringLiteral(""))
-        .toLower();
+    return QString{m_vendor + u"." + m_name}.simplified().replace(QLatin1String(" "), QString{}).toLower();
 }
 
 QString PluginInfo::category() const

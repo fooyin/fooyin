@@ -154,8 +154,8 @@ void PluginPageWidget::reset() { }
 
 void PluginPageWidget::installPlugin()
 {
-    const QString filepath = QFileDialog::getOpenFileName(this, QStringLiteral("Install Plugin"), QStringLiteral(""),
-                                                          QStringLiteral("Fooyin Plugin (*.so)"));
+    const QString filepath = QFileDialog::getOpenFileName(this, tr("Install Plugin"), QString{},
+                                                          tr("%1 Plugin").arg(u"fooyin") + u" (*.fyl)");
 
     if(filepath.isEmpty()) {
         return;

@@ -158,7 +158,7 @@ struct FilterModel::Private
 
     void addSummary()
     {
-        m_summaryNode = FilterItem{QStringLiteral(""), {}, m_self->rootItem()};
+        m_summaryNode = FilterItem{{}, {}, m_self->rootItem()};
         m_summaryNode.setIsSummary(true);
         m_self->rootItem()->insertChild(0, &m_summaryNode);
     }

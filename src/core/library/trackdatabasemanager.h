@@ -40,13 +40,13 @@ public:
     void initialiseThread() override;
 
 signals:
-    void gotTracks(const TrackList& tracks);
-    void updatedTracks(const TrackList& tracks);
+    void gotTracks(const Fooyin::TrackList& tracks);
+    void updatedTracks(const Fooyin::TrackList& tracks);
 
 public slots:
     void getAllTracks();
-    void updateTracks(const TrackList& tracks);
-    void updateTrackStats(const TrackList& track);
+    void updateTracks(const Fooyin::TrackList& tracks);
+    void updateTrackStats(const Fooyin::TrackList& track);
     void cleanupTracks();
 
 private:

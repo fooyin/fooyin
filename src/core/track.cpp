@@ -82,7 +82,7 @@ struct Track::Private : public QSharedData
 };
 
 Track::Track()
-    : Track{QStringLiteral("")}
+    : Track{{}}
 { }
 
 Track::Track(const QString& filepath)
@@ -292,7 +292,7 @@ QStringList Track::uniqueArtists() const
 
 QString Track::artist() const
 {
-    return p->artists.empty() ? QStringLiteral("") : p->artists.join(u"\037");
+    return p->artists.empty() ? QString{} : p->artists.join(u"\037");
 }
 
 QString Track::primaryArtist() const
@@ -312,7 +312,7 @@ QString Track::primaryArtist() const
 QString Track::uniqueArtist() const
 {
     const auto uniqArtists = uniqueArtists();
-    return uniqArtists.isEmpty() ? QStringLiteral("") : uniqArtists.join(u"\037");
+    return uniqArtists.isEmpty() ? QString{} : uniqArtists.join(u"\037");
 }
 
 QString Track::album() const
@@ -327,7 +327,7 @@ QStringList Track::albumArtists() const
 
 QString Track::albumArtist() const
 {
-    return p->albumArtists.empty() ? QStringLiteral("") : p->albumArtists.join(u"\037");
+    return p->albumArtists.empty() ? QString{} : p->albumArtists.join(u"\037");
 }
 
 QString Track::primaryAlbumArtist() const
@@ -371,7 +371,7 @@ QStringList Track::genres() const
 
 QString Track::genre() const
 {
-    return p->genres.empty() ? QStringLiteral("") : p->genres.join(u"\037");
+    return p->genres.empty() ? QString{} : p->genres.join(u"\037");
 }
 
 QString Track::composer() const

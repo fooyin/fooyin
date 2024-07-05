@@ -53,7 +53,7 @@ bool sortShortcutItems(const Fooyin::ShortcutItem* lhs, const Fooyin::ShortcutIt
 
 namespace Fooyin {
 ShortcutItem::ShortcutItem()
-    : ShortcutItem{QStringLiteral(""), nullptr, nullptr}
+    : ShortcutItem{{}, nullptr, nullptr}
 { }
 
 ShortcutItem::ShortcutItem(QString title, Command* command, ShortcutItem* parent)

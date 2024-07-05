@@ -1148,7 +1148,7 @@ void PlaylistWidgetPrivate::cropSelection() const
         }
     }
 
-    for(const QModelIndex& index : allTrackIndexes) {
+    for(const QModelIndex& index : std::as_const(allTrackIndexes)) {
         indexes.emplace_back(index.data(PlaylistItem::Index).toInt());
         tracksToRemove.push_back(index);
     }

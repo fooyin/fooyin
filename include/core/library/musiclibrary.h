@@ -111,13 +111,13 @@ public:
 
 signals:
     void scanProgress(int id, int percent);
-    void tracksScanned(int id, const TrackList& tracks);
+    void tracksScanned(int id, const Fooyin::TrackList& tracks);
 
-    void tracksLoaded(const TrackList& tracks);
-    void tracksAdded(const TrackList& tracks);
-    void tracksUpdated(const TrackList& tracks);
-    void tracksPlayed(const TrackList& tracks);
-    void tracksDeleted(const TrackList& tracks);
-    void tracksSorted(const TrackList& tracks);
+    void tracksLoaded(const Fooyin::TrackList& tracks);
+    void tracksAdded(const Fooyin::TrackList& tracks);
+    void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksPlayed(const Fooyin::TrackList& tracks);
+    void tracksDeleted(const Fooyin::TrackList& tracks);
+    void tracksSorted(const Fooyin::TrackList& tracks);
 };
 } // namespace Fooyin

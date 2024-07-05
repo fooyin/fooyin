@@ -35,7 +35,7 @@ public:
     explicit FilterColumnRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
-    void columnChanged(const FilterColumn& field);
+    void columnChanged(const Fooyin::Filters::FilterColumn& field);
 
 protected:
     void loadDefaults() override;

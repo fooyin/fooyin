@@ -276,8 +276,8 @@ void GuiGeneralPageWidget::showQuickSetup()
 
 void GuiGeneralPageWidget::importLayout()
 {
-    const QString layoutFile = QFileDialog::getOpenFileName(this, QStringLiteral("Open Layout"), QStringLiteral(""),
-                                                            QStringLiteral("Fooyin Layout (*.fyl)"));
+    const QString layoutFile
+        = QFileDialog::getOpenFileName(this, tr("Open Layout"), {}, tr("%1 Layout").arg(u"fooyin") + u" (*.fyl)");
 
     if(layoutFile.isEmpty()) {
         return;
@@ -291,7 +291,7 @@ void GuiGeneralPageWidget::importLayout()
 
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(QStringLiteral("Replace existing layout?"));
+    message.setText(tr("Replace existing layout?"));
     message.setInformativeText(tr("Unless exported, the current layout will be lost."));
 
     message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);

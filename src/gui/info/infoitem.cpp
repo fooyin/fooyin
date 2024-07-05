@@ -72,7 +72,7 @@ QString sortJoinSet(const std::set<QString>& values)
 
 namespace Fooyin {
 InfoItem::InfoItem()
-    : InfoItem{Header, QStringLiteral(""), nullptr, ValueType::Concat, {}}
+    : InfoItem{Header, {}, nullptr, ValueType::Concat, {}}
 { }
 
 InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType)

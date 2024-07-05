@@ -32,10 +32,13 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QBuffer>
 #include <QByteArray>
+#include <QDir>
 #include <QFileInfo>
 #include <QIcon>
 #include <QImageReader>
+#include <QMimeDatabase>
 #include <QPixmapCache>
 
 #include <set>

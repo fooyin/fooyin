@@ -51,17 +51,17 @@ public:
 
 signals:
     void progressChanged(int percent);
-    void statusChanged(const LibraryInfo& library);
-    void scanUpdate(const ScanResult& result);
-    void scannedTracks(const TrackList& newTracks, const TrackList& existingTracks);
-    void directoryChanged(const LibraryInfo& library, const QString& dir);
+    void statusChanged(const Fooyin::LibraryInfo& library);
+    void scanUpdate(const Fooyin::ScanResult& result);
+    void scannedTracks(const Fooyin::TrackList& newTracks, const Fooyin::TrackList& existingTracks);
+    void directoryChanged(const Fooyin::LibraryInfo& library, const QString& dir);
 
 public slots:
-    void setupWatchers(const LibraryInfoMap& libraries, bool enabled);
-    void scanLibrary(const LibraryInfo& library, const TrackList& tracks, bool onlyModified);
-    void scanLibraryDirectory(const LibraryInfo& library, const QString& dir, const TrackList& tracks);
-    void scanTracks(const TrackList& libraryTracks, const TrackList& tracks);
-    void scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls);
+    void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
+    void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified);
+    void scanLibraryDirectory(const Fooyin::LibraryInfo& library, const QString& dir, const Fooyin::TrackList& tracks);
+    void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks);
+    void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
 
 private:
     struct Private;
