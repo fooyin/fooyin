@@ -192,6 +192,8 @@ public:
     mutable std::vector<ExpandedTreeViewItem> m_viewItems;
     mutable int m_lastViewedItem{0};
     int m_defaultItemHeight{20};
+    int m_uniformHeightRole{-1};
+    std::unordered_map<int, int> m_uniformRoleHeights;
 
     std::set<int> m_spans;
 
@@ -582,6 +584,7 @@ private:
 void TreeView::invalidate()
 {
     m_uniformRowHeight = 0;
+    m_p->m_uniformRoleHeights.clear();
 }
 
 void TreeView::drawView(QPainter* painter, const QRegion& region) const
@@ -1412,6 +1415,14 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
         return m_uniformRowHeight;
     }
 
+    int uniformData{-1};
+    if(m_p->m_uniformHeightRole >= 0) {
+        uniformData = index.data(m_p->m_uniformHeightRole).toInt();
+        if(m_p->m_uniformRoleHeights.contains(uniformData)) {
+            return m_p->m_uniformRoleHeights.at(uniformData);
+        }
+    }
+
     int start{-1};
     int end{-1};
     const int indexRow       = index.row();
@@ -1460,6 +1471,12 @@ int TreeView::indexRowSizeHint(const QModelIndex& index) const
 
     if(m_p->m_uniformRowHeights) {
         m_uniformRowHeight = height;
+    }
+
+    if(m_p->m_uniformHeightRole >= 0) {
+        if(!m_p->m_uniformRoleHeights.contains(uniformData)) {
+            m_p->m_uniformRoleHeights.emplace(uniformData, height);
+        }
     }
 
     return height;
@@ -3003,6 +3020,16 @@ bool ExpandedTreeView::uniformRowHeights() const
 void ExpandedTreeView::setUniformRowHeights(bool enabled)
 {
     p->m_uniformRowHeights = enabled;
+}
+
+int ExpandedTreeView::uniformHeightRole() const
+{
+    return p->m_uniformHeightRole;
+}
+
+void ExpandedTreeView::setUniformHeightRole(int role)
+{
+    p->m_uniformHeightRole = role;
 }
 
 bool ExpandedTreeView::selectBeforeDrag() const

@@ -68,6 +68,9 @@ public:
     [[nodiscard]] bool uniformRowHeights() const;
     void setUniformRowHeights(bool enabled);
 
+    [[nodiscard]] int uniformHeightRole() const;
+    void setUniformHeightRole(int role);
+
     [[nodiscard]] bool selectBeforeDrag() const;
     void setSelectBeforeDrag(bool enabled);
 
