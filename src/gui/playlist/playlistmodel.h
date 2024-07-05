@@ -205,7 +205,7 @@ private:
     void mergeHeaders();
     void updateHeaders();
     void updateTrackIndexes();
-    void deleteNodes(PlaylistItem* parent);
+    void deleteNodes(PlaylistItem* node);
 
     std::vector<int> pixmapColumns() const;
     void coverUpdated(const Track& track);

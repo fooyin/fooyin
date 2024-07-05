@@ -47,7 +47,7 @@ public:
     void setVolume(double volume) override;
     void setDevice(const QString& device) override;
 
-    QString error() const override;
+    [[nodiscard]] QString error() const override;
 
 private:
     struct Private;

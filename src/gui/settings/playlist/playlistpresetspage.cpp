@@ -93,17 +93,17 @@ public:
         m_rightScript->setPlainText(script);
     }
 
-    QString leftScript() const
+    [[nodiscard]] QString leftScript() const
     {
         return m_leftScript->toPlainText();
     }
 
-    QString rightScript() const
+    [[nodiscard]] QString rightScript() const
     {
         return m_rightScript->toPlainText();
     }
 
-    int rowHeight() const
+    [[nodiscard]] int rowHeight() const
     {
         return m_overrideHeight->isChecked() ? m_rowHeight->value() : 0;
     }
@@ -408,8 +408,8 @@ void PlaylistPresetsPageWidget::deletePreset()
 
 void PlaylistPresetsPageWidget::updatePreset()
 {
-    const int presetId = m_presetBox->currentData().toInt();
-    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    const int presetId   = m_presetBox->currentData().toInt();
+    const auto regPreset = m_presetRegistry.itemById(presetId);
     if(!regPreset) {
         return;
     }
@@ -440,16 +440,14 @@ void PlaylistPresetsPageWidget::updatePreset()
 
 void PlaylistPresetsPageWidget::clonePreset()
 {
-    const int presetId = m_presetBox->currentData().toInt();
-    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    const int presetId   = m_presetBox->currentData().toInt();
+    const auto regPreset = m_presetRegistry.itemById(presetId);
     if(!regPreset) {
         return;
     }
 
-    auto preset = regPreset.value();
-
-    PlaylistPreset clonedPreset{preset};
-    clonedPreset.name                = tr("Copy of %1").arg(preset.name);
+    PlaylistPreset clonedPreset{regPreset.value()};
+    clonedPreset.name                = tr("Copy of %1").arg(clonedPreset.name);
     clonedPreset.isDefault           = false;
     const PlaylistPreset addedPreset = m_presetRegistry.addItem(clonedPreset);
     if(addedPreset.isValid()) {
@@ -460,20 +458,14 @@ void PlaylistPresetsPageWidget::clonePreset()
 
 void PlaylistPresetsPageWidget::selectionChanged()
 {
-    const int presetId = m_presetBox->currentData().toInt();
-    const auto regPreset     = m_presetRegistry.itemById(presetId);
+    const int presetId   = m_presetBox->currentData().toInt();
+    const auto regPreset = m_presetRegistry.itemById(presetId);
     if(!regPreset) {
         return;
     }
 
-    auto preset = regPreset.value();
-
-    if(!preset.isValid()) {
-        return;
-    }
-
     clearBlocks();
-    setupPreset(preset);
+    setupPreset(regPreset.value());
 }
 
 void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)

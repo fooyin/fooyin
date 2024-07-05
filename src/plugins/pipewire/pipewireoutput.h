@@ -41,7 +41,7 @@ public:
     [[nodiscard]] OutputDevices getAllDevices() const override;
 
     OutputState currentState() override;
-    int bufferSize() const override;
+    [[nodiscard]] int bufferSize() const override;
     int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;
 

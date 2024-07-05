@@ -41,11 +41,9 @@ LyricsWidget::LyricsWidget(PlayerController* playerController, QWidget* parent)
     layout->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_lyricsTextArea);
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() {
-        auto track = m_playerController->currentTrack();
-        auto lyrics = track.extraTag(QStringLiteral("LYRICS")).join(QString{});
-        m_lyricsTextArea->setText(lyrics);
-    });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &LyricsWidget::updateLyrics);
+
+    updateLyrics(m_playerController->currentTrack());
 }
 
 QString LyricsWidget::name() const
@@ -58,4 +56,14 @@ QString LyricsWidget::layoutName() const
     return QStringLiteral("Lyrics");
 }
 
+void LyricsWidget::updateLyrics(const Track& track)
+{
+    if(!track.isValid()) {
+        return;
+    }
+
+    const QString lyrics = track.extraTag(QStringLiteral("LYRICS")).join(QString{});
+    m_lyricsTextArea->setText(lyrics);
 }
+
+} // namespace Fooyin

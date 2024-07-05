@@ -36,8 +36,8 @@ public:
     PlayerControl(ActionManager* actionManager, PlayerController* playerController, SettingsManager* settings,
                   QWidget* parent = nullptr);
 
-    QString name() const override;
-    QString layoutName() const override;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 private:
     void updateButtonStyle() const;

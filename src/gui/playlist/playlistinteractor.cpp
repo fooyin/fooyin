@@ -78,7 +78,7 @@ struct PlaylistInteractor::Private
                          });
     }
 
-    TrackList tracksFromMimeData(QByteArray data)
+    TrackList tracksFromMimeData(QByteArray data) const
     {
         Fooyin::TrackIds ids;
         QDataStream stream(&data, QIODevice::ReadOnly);

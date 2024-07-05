@@ -66,7 +66,7 @@ public:
     virtual void insertAction(QAction* beforeAction, Command* action)          = 0;
     virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
 
-    DisabledBehavior disabledBehavior() const override;
+    [[nodiscard]] DisabledBehavior disabledBehavior() const override;
     void setDisabledBehavior(DisabledBehavior behavior) override;
 
     bool isEmpty() override;
@@ -85,8 +85,8 @@ protected:
 
 private:
     void itemDestroyed(QObject* sender);
-    GroupList::const_iterator findGroup(const Id& groupId) const;
-    QAction* determineInsertionLocation(GroupList::const_iterator group) const;
+    [[nodiscard]] GroupList::const_iterator findGroup(const Id& groupId) const;
+    [[nodiscard]] QAction* determineInsertionLocation(GroupList::const_iterator group) const;
 
     ActionManager* m_manager;
     Id m_id;

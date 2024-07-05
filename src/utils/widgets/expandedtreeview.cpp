@@ -1006,7 +1006,7 @@ int TreeView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
         }
     }
     else {
-        int topViewItemIndex{vertScrollValue};
+        const int topViewItemIndex{vertScrollValue};
         if(m_p->m_uniformRowHeights) {
             if(coordinate.y() < 0) {
                 coordinate.ry() -= m_uniformRowHeight - 1;
@@ -1937,7 +1937,8 @@ void IconView::updateScrollBars()
     const QSize vpSize = viewportSize();
 
     const bool horizontalWantsToShow = m_contentsSize.width() > vpSize.width();
-    bool verticalWantsToShow         = m_contentsSize.height() > vpSize.height();
+    bool verticalWantsToShow{false};
+
     if(horizontalWantsToShow) {
         verticalWantsToShow = m_contentsSize.height() > vpSize.height() - m_view->horizontalScrollBar()->height();
     }

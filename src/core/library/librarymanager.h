@@ -58,7 +58,7 @@ public:
 signals:
     void libraryAdded(const Fooyin::LibraryInfo& library);
     void removingLibraryTracks(int id);
-    void libraryRemoved(int id, const std::set<int> tracksRemoved);
+    void libraryRemoved(int id, const std::set<int>& tracksRemoved);
     void libraryRenamed(int id, const QString& name);
     void libraryStatusChanged(const Fooyin::LibraryInfo& info);
 

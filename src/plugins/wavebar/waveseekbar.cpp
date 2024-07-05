@@ -247,7 +247,7 @@ void WaveSeekBar::mouseReleaseEvent(QMouseEvent* event)
     stopSeeking();
     m_pressPos = {};
 
-    m_position = valueFromPosition(event->position().x());
+    m_position = valueFromPosition(static_cast<int>(event->position().x()));
     emit sliderMoved(m_position);
 }
 

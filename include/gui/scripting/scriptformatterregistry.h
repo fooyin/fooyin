@@ -33,7 +33,7 @@ public:
     ScriptFormatterRegistry();
     ~ScriptFormatterRegistry();
 
-    bool isFormatFunc(const QString& option) const;
+    [[nodiscard]] bool isFormatFunc(const QString& option) const;
     void format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
 
 private:

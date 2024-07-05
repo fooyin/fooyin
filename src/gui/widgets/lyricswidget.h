@@ -25,19 +25,23 @@ class QTextEdit;
 
 namespace Fooyin {
 class PlayerController;
+class Track;
 
 class LyricsWidget : public FyWidget
 {
     Q_OBJECT
-public:
-    LyricsWidget(PlayerController* playerController, QWidget* parent);
 
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QString layoutName() const;
+public:
+    explicit LyricsWidget(PlayerController* playerController, QWidget* parent = nullptr);
+
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString layoutName() const override;
 
 private:
-    PlayerController* m_playerController{nullptr};
-    QTextEdit* m_lyricsTextArea{nullptr};
+    void updateLyrics(const Track& track);
+
+    PlayerController* m_playerController;
+    QTextEdit* m_lyricsTextArea;
 };
 
 } // namespace Fooyin

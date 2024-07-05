@@ -36,7 +36,7 @@ public:
     DbTransaction& operator=(const DbTransaction& other) = delete;
     DbTransaction& operator=(DbTransaction&& other)      = delete;
 
-    operator bool() const;
+    explicit operator bool() const;
 
     bool commit();
     bool rollback();

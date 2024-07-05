@@ -52,7 +52,8 @@ struct AudioBuffer::Private : QSharedData
     void fillRemainingWithSilence()
     {
         const bool unsignedFormat = m_format.sampleFormat() == SampleFormat::U8;
-        std::fill(m_buffer.begin() + m_buffer.size(), m_buffer.begin() + m_buffer.capacity(),
+        std::fill(m_buffer.begin() + static_cast<long>(m_buffer.size()),
+                  m_buffer.begin() + static_cast<long>(m_buffer.capacity()),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
@@ -124,7 +125,7 @@ void AudioBuffer::append(const std::byte* data, size_t size)
 void AudioBuffer::erase(size_t size)
 {
     if(isValid()) {
-        p->m_buffer.erase(p->m_buffer.begin(), p->m_buffer.begin() + size);
+        p->m_buffer.erase(p->m_buffer.begin(), p->m_buffer.begin() + static_cast<long>(size));
     }
 }
 

@@ -31,7 +31,7 @@ class ScriptHighlighter : public QSyntaxHighlighter
     Q_OBJECT
 
 public:
-    ScriptHighlighter(QTextDocument* parent = nullptr);
+    explicit ScriptHighlighter(QTextDocument* parent = nullptr);
 
 protected:
     void highlightBlock(const QString& text) override;

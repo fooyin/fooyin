@@ -26,19 +26,19 @@
 namespace Fooyin {
 struct Frame::Private : QSharedData
 {
-    FramePtr frame{nullptr};
+    FramePtr frame;
     AVRational timeBase;
 
     explicit Private(FramePtr frame_, AVRational timeBase_)
         : frame{std::move(frame_)}
-        , timeBase{std::move(timeBase_)}
+        , timeBase{timeBase_}
     { }
 };
 
 Frame::Frame() = default;
 
 Frame::Frame(FramePtr frame, AVRational timeBase)
-    : p{new Private(std::move(frame), std::move(timeBase))}
+    : p{new Private(std::move(frame), timeBase)}
 { }
 
 Frame::Frame(const Frame& other)            = default;

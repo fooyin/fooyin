@@ -217,13 +217,13 @@ QModelIndex DirProxyModel::index(int row, int column, const QModelIndex& parent)
     return createIndex(row, column, m_nodes.at(row).get());
 }
 
-int DirProxyModel::rowCount(const QModelIndex& parent) const
+int DirProxyModel::rowCount(const QModelIndex& index) const
 {
     if(!m_flat) {
-        return QSortFilterProxyModel::rowCount(parent);
+        return QSortFilterProxyModel::rowCount(index);
     }
 
-    return parent.isValid() ? 0 : nodeCount();
+    return index.isValid() ? 0 : nodeCount();
 }
 
 int DirProxyModel::columnCount(const QModelIndex& /*index*/) const

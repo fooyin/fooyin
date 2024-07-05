@@ -24,11 +24,11 @@
 namespace Fooyin {
 class SettingsManager;
 
-class ArtworkPage: public SettingsPage
+class ArtworkPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    ArtworkPage(SettingsManager* settings);
+    explicit ArtworkPage(SettingsManager* settings);
 };
 } // namespace Fooyin

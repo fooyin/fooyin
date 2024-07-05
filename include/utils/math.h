@@ -20,7 +20,7 @@
 #pragma once
 
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace Fooyin::Math {
 #if(defined(__GNUC__) && defined(__x86_64__))

@@ -165,9 +165,9 @@ public:
     void setAlbum(const QString& title);
     void setAlbumArtists(const QStringList& artists);
     void setTrackNumber(int num);
-    void setTrackTotal(int num);
+    void setTrackTotal(int total);
     void setDiscNumber(int num);
-    void setDiscTotal(int num);
+    void setDiscTotal(int total);
     void setGenres(const QStringList& genres);
     void setComposer(const QString& composer);
     void setPerformer(const QString& performer);
@@ -185,7 +185,7 @@ public:
     void removeExtraTag(const QString& tag);
     void replaceExtraTag(const QString& tag, const QString& value);
     void clearExtraTags();
-    void storeExtraTags(const QByteArray& json);
+    void storeExtraTags(const QByteArray& tags);
 
     void setOffset(uint64_t offset);
     void setDuration(uint64_t duration);

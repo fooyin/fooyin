@@ -25,7 +25,7 @@ namespace Fooyin {
 class SettingsDatabase : public DbModule
 {
 public:
-    QString value(const QString& name, QString defaultValue = {}) const;
+    [[nodiscard]] QString value(const QString& name, QString defaultValue = {}) const;
     bool set(const QString& name, const QVariant& value) const;
 };
 } // namespace Fooyin

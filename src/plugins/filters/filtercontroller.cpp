@@ -283,7 +283,7 @@ struct FilterController::Private
         }
     }
 
-    void updateFilterPlaylistActions(FilterWidget* filterWidget)
+    void updateFilterPlaylistActions(FilterWidget* filterWidget) const
     {
         const bool startPlayback = m_settings->value<Settings::Filters::FilterSendPlayback>();
 
@@ -439,14 +439,14 @@ struct FilterController::Private
             return;
         }
 
-        FilterGroup& group = m_groups.at(groupId);
+        const FilterGroup& group = m_groups.at(groupId);
 
-        const bool reset         = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
-        TrackList tracksToFilter = reset ? m_library->tracks() : filter->tracks();
+        const bool reset = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
+        const TrackList tracksToFilter = reset ? m_library->tracks() : filter->tracks();
 
         Utils::asyncExec([search, tracksToFilter]() {
             return Filter::filterTracks(tracksToFilter, search);
-        }).then(m_self, [filter](TrackList filteredTracks) { filter->reset(filteredTracks); });
+        }).then(m_self, [filter](const TrackList& filteredTracks) { filter->reset(filteredTracks); });
     }
 };
 

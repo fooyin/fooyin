@@ -48,8 +48,8 @@ QString genres(const TrackList& tracks)
         uniqueGenres.insert(genreSet.cbegin(), genreSet.cend());
     }
 
-    QStringList genreList{uniqueGenres.cbegin(), uniqueGenres.cend()};
+    const QStringList genreList{uniqueGenres.cbegin(), uniqueGenres.cend()};
 
-    return genreList.join(QStringLiteral(" / "));
+    return genreList.join(u" / ");
 }
 } // namespace Fooyin::Scripting

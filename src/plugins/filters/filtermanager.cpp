@@ -82,7 +82,7 @@ struct FilterManager::Private
         m_ungroupedColour.setAlpha(20);
     }
 
-    void enterGroupMode()
+    void enterGroupMode() const
     {
         m_clearGroups->setText(tr("Clear Group"));
 

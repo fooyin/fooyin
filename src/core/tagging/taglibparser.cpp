@@ -661,13 +661,9 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
         const auto* coverFrame        = static_cast<PictureFrame*>(frame);
         const PictureFrame::Type type = coverFrame->type();
 
-        if(cover == Fooyin::Track::Cover::Front && (type == PictureFrame::FrontCover || type == PictureFrame::Other)) {
-            picture = coverFrame->picture();
-        }
-        else if(cover == Fooyin::Track::Cover::Back && type == PictureFrame::BackCover) {
-            picture = coverFrame->picture();
-        }
-        else if(cover == Fooyin::Track::Cover::Artist && type == PictureFrame::Artist) {
+        if((cover == Fooyin::Track::Cover::Front && (type == PictureFrame::FrontCover || type == PictureFrame::Other))
+           || (cover == Fooyin::Track::Cover::Back && type == PictureFrame::BackCover)
+           || (cover == Fooyin::Track::Cover::Artist && type == PictureFrame::Artist)) {
             picture = coverFrame->picture();
         }
     }
@@ -1072,13 +1068,9 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
     for(const auto& pic : pictures) {
         const auto type = pic->type();
 
-        if(cover == Fooyin::Track::Cover::Front && (type == FlacPicture::FrontCover || type == FlacPicture::Other)) {
-            picture = pic->data();
-        }
-        else if(cover == Fooyin::Track::Cover::Back && type == FlacPicture::BackCover) {
-            picture = pic->data();
-        }
-        else if(cover == Fooyin::Track::Cover::Artist && type == FlacPicture::Artist) {
+        if((cover == Fooyin::Track::Cover::Front && (type == FlacPicture::FrontCover || type == FlacPicture::Other))
+           || (cover == Fooyin::Track::Cover::Back && type == FlacPicture::BackCover)
+           || (cover == Fooyin::Track::Cover::Artist && type == FlacPicture::Artist)) {
             picture = pic->data();
         }
     }
@@ -1212,13 +1204,9 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
         const Picture pic = attribute.toPicture();
         const auto type   = pic.type();
 
-        if(cover == Fooyin::Track::Cover::Front && (type == Picture::FrontCover || type == Picture::Other)) {
-            picture = pic.picture();
-        }
-        else if(cover == Fooyin::Track::Cover::Back && type == Picture::BackCover) {
-            picture = pic.picture();
-        }
-        else if(cover == Fooyin::Track::Cover::Artist && type == Picture::Artist) {
+        if((cover == Fooyin::Track::Cover::Front && (type == Picture::FrontCover || type == Picture::Other))
+           || (cover == Fooyin::Track::Cover::Back && type == Picture::BackCover)
+           || (cover == Fooyin::Track::Cover::Artist && type == Picture::Artist)) {
             picture = pic.picture();
         }
     }

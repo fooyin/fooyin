@@ -120,8 +120,8 @@ uint8_t convertFloatToU8(const float inSample)
     const int prevRoundingMode = std::fegetround();
     std::fesetround(FE_TONEAREST);
 
-    static constexpr auto minS8 = static_cast<int>(std::numeric_limits<int8_t>::min());
-    static constexpr auto maxS8 = static_cast<int>(std::numeric_limits<int8_t>::max());
+    static constexpr auto minS8 = static_cast<int>(std::numeric_limits<uint8_t>::min());
+    static constexpr auto maxS8 = static_cast<int>(std::numeric_limits<uint8_t>::max());
 
     int intSample = Fooyin::Math::fltToInt(inSample * 0x80);
     intSample     = std::clamp(intSample, minS8, maxS8);
@@ -155,7 +155,7 @@ int32_t convertFloatToS32(const float inSample)
     static constexpr int minS32 = std::numeric_limits<int32_t>::min();
     static constexpr int maxS32 = std::numeric_limits<int32_t>::max();
 
-    int intSample = Fooyin::Math::fltToInt(inSample * 0x80000000);
+    int intSample = Fooyin::Math::fltToInt(inSample * static_cast<float>(0x80000000));
     intSample     = std::clamp(intSample, minS32, maxS32);
 
     std::fesetround(prevRoundingMode);

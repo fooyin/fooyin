@@ -52,15 +52,15 @@ public:
 
     void setText(const QString& text);
     void setButtonText(const QString& text);
-    QPushButton* button() const;
-    QLabel* label() const;
+    [[nodiscard]] QPushButton* button() const;
+    [[nodiscard]] QLabel* label() const;
 
     void connectOverlay(OverlayWidget* other);
     void disconnectOverlay(OverlayWidget* other);
 
     void addWidget(QWidget* widget);
 
-    QColor colour() const;
+    [[nodiscard]] QColor colour() const;
     void setColour(const QColor& colour);
     void resetColour();
 

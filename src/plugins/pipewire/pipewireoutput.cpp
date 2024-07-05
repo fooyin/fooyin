@@ -329,11 +329,7 @@ bool PipeWireOutput::init(const AudioFormat& format)
 
     pw_init(nullptr, nullptr);
 
-    if(!p->initCore() || !p->initStream()) {
-        return false;
-    }
-
-    return true;
+    return p->initCore() && p->initStream();
 }
 
 void PipeWireOutput::uninit()

@@ -27,7 +27,7 @@ class ActionCommand : public Command
     Q_OBJECT
 
 public:
-    ActionCommand(const Id& id);
+    explicit ActionCommand(const Id& id);
     ~ActionCommand() override;
 
     [[nodiscard]] Id id() const override;

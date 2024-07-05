@@ -45,7 +45,7 @@ public:
     using QSortFilterProxyModel::QSortFilterProxyModel;
 
 protected:
-    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+    [[nodiscard]] bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
         if(left.column() == 4 && right.column() == 4) {
             const bool leftChecked  = sourceModel()->data(left, Qt::CheckStateRole).toBool();

@@ -48,7 +48,7 @@ public:
     static void insertViews(const QSqlDatabase& db);
 
 private:
-    int trackCount() const;
+    [[nodiscard]] int trackCount() const;
     bool insertTrack(Track& track) const;
     bool insertOrUpdateStats(const Track& track) const;
     void removeUnmanagedTracks() const;

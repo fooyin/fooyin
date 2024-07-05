@@ -64,12 +64,12 @@ public:
         m_customToolLayout->addWidget(widget);
     }
 
-    QSize minimumSizeHint() const override
+    [[nodiscard]] QSize minimumSizeHint() const override
     {
         return {0, ButtonAreaHeight};
     }
 
-    QSize sizeHint() const override
+    [[nodiscard]] QSize sizeHint() const override
     {
         return {0, ButtonAreaHeight};
     }

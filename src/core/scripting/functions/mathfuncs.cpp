@@ -28,18 +28,20 @@ QString baseOperation(const QStringList& vec, const QChar op)
     double total = vec.front().toDouble();
     for(int i = 1; i < static_cast<int>(vec.size()); ++i) {
         const double num = vec.at(i).toDouble();
-        switch(op.cell()) {
-            case '+':
+        switch(op.unicode()) {
+            case('+'):
                 total += num;
                 break;
-            case '-':
+            case('-'):
                 total -= num;
                 break;
-            case '*':
+            case('*'):
                 total *= num;
                 break;
-            case '/':
+            case('/'):
                 total /= num;
+                break;
+            default:
                 break;
         }
     }
