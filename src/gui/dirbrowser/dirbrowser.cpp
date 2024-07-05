@@ -258,7 +258,7 @@ struct DirBrowser::Private
 
         QList<QUrl> files;
 
-        for(const QModelIndex& index : selected) {
+        for(const QModelIndex& index : std::as_const(selected)) {
             if(index.isValid()) {
                 const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
                 if(filePath.isDir()) {
@@ -306,6 +306,16 @@ struct DirBrowser::Private
                 break;
             case(TrackAction::AddActivePlaylist):
                 m_playlistInteractor->filesToActivePlaylist(files);
+                break;
+            case(TrackAction::AddToQueue):
+                m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
+                    m_playlistInteractor->playerController()->queueTracks(tracks);
+                });
+                break;
+            case(TrackAction::SendToQueue):
+                m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
+                    m_playlistInteractor->playerController()->replaceTracks(tracks);
+                });
                 break;
             case(TrackAction::None):
                 break;
@@ -642,12 +652,22 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(sendNew, &QAction::triggered, this,
                      [this]() { p->handleAction(TrackAction::SendNewPlaylist, true); });
 
+    auto* addQueue = new QAction(tr("Add to playback queue"), menu);
+    QObject::connect(addQueue, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::AddToQueue, true); });
+
+    auto* sendQueue = new QAction(tr("Send to playback queue"), menu);
+    QObject::connect(sendQueue, &QAction::triggered, this,
+                     [this]() { p->handleAction(TrackAction::SendToQueue, true); });
+
     menu->addAction(playAction);
     menu->addSeparator();
     menu->addAction(addCurrent);
     menu->addAction(addActive);
     menu->addAction(sendCurrent);
     menu->addAction(sendNew);
+    menu->addSeparator();
+    menu->addAction(addQueue);
+    menu->addAction(sendQueue);
     menu->addSeparator();
 
     const QModelIndex index = p->m_dirTree->indexAt(p->m_dirTree->mapFromGlobal(event->globalPos()));
