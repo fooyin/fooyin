@@ -9,7 +9,6 @@ create_fooyin_plugin_internal(
             filtermanager.cpp
             filtermodel.cpp
             filterpopulator.cpp
-            filterview.cpp
             filterwidget.cpp
             settings/filterscolumnmodel.cpp
             settings/filtersettings.cpp

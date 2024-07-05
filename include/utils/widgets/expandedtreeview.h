@@ -94,6 +94,7 @@ public:
 
 signals:
     void viewModeChanged(ViewMode mode);
+    void middleClicked(const QModelIndex& index);
 
 protected:
     bool viewportEvent(QEvent* event) override;
@@ -101,6 +102,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void paintEvent(QPaintEvent* event) override;

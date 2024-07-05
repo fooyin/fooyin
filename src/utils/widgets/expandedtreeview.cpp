@@ -3425,6 +3425,11 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 
     p->m_pressedPos = pos + p->offset();
 
+    if(event->button() == Qt::MiddleButton) {
+        QMetaObject::invokeMethod(
+            this, [this, index]() { emit middleClicked((index)); }, Qt::QueuedConnection);
+    }
+
     if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
         setDragEnabled(selectModel->isSelected(modelIndex)); // Prevent drag-and-drop when first selecting leafs
         QAbstractItemView::mousePressEvent(event);
@@ -3439,6 +3444,14 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 
     auto command = selectionCommand(index, event);
     selectModel->select(selection, command);
+}
+
+void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::MiddleButton) {
+        return;
+    }
+    QAbstractItemView::mouseDoubleClickEvent(event);
 }
 
 void ExpandedTreeView::wheelEvent(QWheelEvent* event)

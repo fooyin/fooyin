@@ -25,7 +25,6 @@
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filtermodel.h"
-#include "filterview.h"
 #include "settings/filtersettings.h"
 
 #include <core/library/trackfilter.h>
@@ -39,6 +38,7 @@
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
+#include <utils/widgets/expandedtreeview.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -85,7 +85,7 @@ struct FilterWidget::Private
     FilterColumnRegistry m_columnRegistry;
     SettingsManager* m_settings;
 
-    FilterView* m_view;
+    ExpandedTreeView* m_view;
     AutoHeaderView* m_header;
     FilterModel* m_model;
     FilterSortModel* m_sortProxy;
@@ -109,7 +109,7 @@ struct FilterWidget::Private
         : m_self{self}
         , m_columnRegistry{settings}
         , m_settings{settings}
-        , m_view{new FilterView(m_self)}
+        , m_view{new ExpandedTreeView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
         , m_model{new FilterModel(coverProvider, m_settings, m_self)}
         , m_sortProxy{new FilterSortModel(m_self)}
@@ -121,6 +121,17 @@ struct FilterWidget::Private
         m_view->setHeader(m_header);
         m_view->setItemDelegate(new FilterDelegate(m_self));
         m_view->viewport()->installEventFilter(new ToolTipFilter(m_self));
+
+        m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+        m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        m_view->setTextElideMode(Qt::ElideRight);
+        m_view->setDragEnabled(true);
+        m_view->setDragDropMode(QAbstractItemView::DragOnly);
+        m_view->setDefaultDropAction(Qt::CopyAction);
+        m_view->setDropIndicatorShown(true);
+        m_view->setUniformRowHeights(true);
+        m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+        m_view->setSelectBeforeDrag(true);
 
         m_header->setStretchEnabled(true);
         m_header->setSortIndicatorShown(true);
@@ -170,7 +181,7 @@ struct FilterWidget::Private
         QObject::connect(m_header, &QHeaderView::sectionMoved, m_self,
                          [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
         QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
-        QObject::connect(m_header, &FilterView::customContextMenuRequested, m_self,
+        QObject::connect(m_header, &ExpandedTreeView::customContextMenuRequested, m_self,
                          [this](const QPoint& pos) { filterHeaderMenu(pos); });
         QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
                          [this](const QItemSelection& selected, const QItemSelection& deselected) {
@@ -181,12 +192,12 @@ struct FilterWidget::Private
         });
         QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self,
                          [this](const QSize& size) { m_settings->set<Settings::Filters::FilterIconSize>(size); });
-        QObject::connect(m_view, &FilterView::doubleClicked, m_self, [this](const QModelIndex& index) {
+        QObject::connect(m_view, &ExpandedTreeView::doubleClicked, m_self, [this](const QModelIndex& index) {
             if(index.isValid()) {
                 emit m_self->doubleClicked();
             }
         });
-        QObject::connect(m_view, &FilterView::middleClicked, m_self, [this](const QModelIndex& index) {
+        QObject::connect(m_view, &ExpandedTreeView::middleClicked, m_self, [this](const QModelIndex& index) {
             if(index.isValid()) {
                 emit m_self->middleClicked();
             }
