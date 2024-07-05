@@ -19,8 +19,8 @@
 
 #include "filterscolumnpage.h"
 
-#include "constants.h"
 #include "filtercolumnregistry.h"
+#include "filterconstants.h"
 #include "filterscolumnmodel.h"
 
 #include <utils/extendabletableview.h>

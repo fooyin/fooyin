@@ -19,7 +19,7 @@
 
 #include "filtersgeneralpage.h"
 
-#include "constants.h"
+#include "filterconstants.h"
 #include "filtersettings.h"
 
 #include <gui/guiconstants.h>

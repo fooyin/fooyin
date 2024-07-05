@@ -20,6 +20,7 @@
 #include "filterwidget.h"
 
 #include "filtercolumnregistry.h"
+#include "filterconstants.h"
 #include "filterdelegate.h"
 #include "filterfwd.h"
 #include "filteritem.h"
@@ -33,6 +34,7 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/enum.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
@@ -349,8 +351,9 @@ struct FilterWidget::Private
         auto* menu = new QMenu(m_self);
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
-        auto* filterList = new QActionGroup{menu};
-        filterList->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+        auto* columnsMenu = new QMenu(tr("Columns"), menu);
+        auto* columnGroup = new QActionGroup{menu};
+        columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
         for(const auto& column : m_columnRegistry.items()) {
             auto* columnAction = new QAction(column.name, menu);
@@ -358,12 +361,12 @@ struct FilterWidget::Private
             columnAction->setCheckable(true);
             columnAction->setChecked(hasColumn(column.id));
             columnAction->setEnabled(!hasColumn(column.id) || m_columns.size() > 1);
-            menu->addAction(columnAction);
-            filterList->addAction(columnAction);
+            columnsMenu->addAction(columnAction);
+            columnGroup->addAction(columnAction);
         }
 
-        menu->setDefaultAction(filterList->checkedAction());
-        QObject::connect(filterList, &QActionGroup::triggered, m_self, [this](QAction* action) {
+        menu->setDefaultAction(columnGroup->checkedAction());
+        QObject::connect(columnGroup, &QActionGroup::triggered, m_self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
                 if(const auto column = m_columnRegistry.itemById(action->data().toInt())) {
@@ -390,15 +393,22 @@ struct FilterWidget::Private
             QMetaObject::invokeMethod(m_self, &FilterWidget::filterUpdated);
         });
 
-        menu->addSeparator();
         auto* multiColAction = new QAction(tr("Multiple Columns"), menu);
         multiColAction->setCheckable(true);
         multiColAction->setChecked(m_multipleColumns);
         multiColAction->setEnabled(m_columns.size() <= 1);
         QObject::connect(multiColAction, &QAction::triggered, m_self,
                          [this](bool checked) { m_multipleColumns = checked; });
-        menu->addAction(multiColAction);
+        columnsMenu->addSeparator();
+        columnsMenu->addAction(multiColAction);
 
+        auto* moreSettings = new QAction(tr("More…"), columnsMenu);
+        QObject::connect(moreSettings, &QAction::triggered, m_self,
+                         [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::FiltersFields); });
+        columnsMenu->addSeparator();
+        columnsMenu->addAction(moreSettings);
+
+        menu->addMenu(columnsMenu);
         menu->addSeparator();
         m_header->addHeaderContextMenu(menu, m_self->mapToGlobal(pos));
         menu->addSeparator();
