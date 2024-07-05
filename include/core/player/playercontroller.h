@@ -103,6 +103,7 @@ public:
     void dequeueTracks(const QueueTracks& tracks);
     void dequeueTracks(const std::vector<int>& indexes);
 
+    void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);
     void clearPlaylistQueue(const Id& playlistId);
 

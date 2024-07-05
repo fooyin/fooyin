@@ -391,24 +391,7 @@ struct LibraryTreeWidget::Private
             return;
         }
 
-        const QModelIndexList leafNodes = filterLeafNodes(m_sortProxy, selectedIndexes);
-
-        if(leafNodes.empty()) {
-            return;
-        }
-
-        TrackList tracks;
-
-        for(const QModelIndex& index : leafNodes) {
-            const auto indexTracks = index.data(LibraryTreeItem::Tracks).value<TrackList>();
-            tracks.insert(tracks.end(), indexTracks.cbegin(), indexTracks.cend());
-        }
-
-        if(tracks.empty()) {
-            return;
-        }
-
-        m_playerController->queueTracks(tracks);
+        m_trackSelection->executeAction(TrackAction::AddToQueue);
         m_removeFromQueueAction->setVisible(true);
     }
 
@@ -534,8 +517,12 @@ struct LibraryTreeWidget::Private
         handlePlayback(trackIndexes, row);
     }
 
-    void handleDoubleClick()
+    void handleDoubleClick(const QModelIndex& index)
     {
+        if(!index.isValid()) {
+            return;
+        }
+
         if(m_doubleClickAction == TrackAction::None) {
             return;
         }
@@ -555,10 +542,16 @@ struct LibraryTreeWidget::Private
         }
 
         m_trackSelection->executeAction(m_doubleClickAction, options);
+        m_removeFromQueueAction->setVisible(m_doubleClickAction == TrackAction::AddToQueue
+                                            || m_doubleClickAction == TrackAction::SendToQueue);
     }
 
-    void handleMiddleClick() const
+    void handleMiddleClick(const QModelIndex& index) const
     {
+        if(!index.isValid()) {
+            return;
+        }
+
         PlaylistAction::ActionOptions options;
 
         if(m_settings->value<LibTreeAutoSwitch>()) {
@@ -569,6 +562,8 @@ struct LibraryTreeWidget::Private
         }
 
         m_trackSelection->executeAction(m_middleClickAction, options);
+        m_removeFromQueueAction->setVisible(m_middleClickAction == TrackAction::AddToQueue
+                                            || m_middleClickAction == TrackAction::SendToQueue);
     }
 
     void handleTracksAdded(const TrackList& tracks) const
@@ -769,8 +764,10 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, MusicLibrary*
     QObject::connect(p->m_model, &LibraryTreeModel::dataUpdated, p->m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(p->m_model, &LibraryTreeModel::modelLoaded, this,
                      [this]() { p->restoreState(p->m_pendingState); });
-    QObject::connect(p->m_libraryTree, &LibraryTreeView::doubleClicked, this, [this]() { p->handleDoubleClick(); });
-    QObject::connect(p->m_libraryTree, &LibraryTreeView::middleClicked, this, [this]() { p->handleMiddleClick(); });
+    QObject::connect(p->m_libraryTree, &LibraryTreeView::doubleClicked, this,
+                     [this](const QModelIndex& index) { p->handleDoubleClick(index); });
+    QObject::connect(p->m_libraryTree, &LibraryTreeView::middleClicked, this,
+                     [this](const QModelIndex& index) { p->handleMiddleClick(index); });
     QObject::connect(p->m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      [this](const QItemSelection& selected, const QItemSelection& deselected) {
                          p->selectionChanged(selected, deselected);
@@ -877,7 +874,7 @@ void LibraryTreeWidget::keyPressEvent(QKeyEvent* event)
 {
     const auto key = event->key();
     if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        p->handleDoubleClick();
+        p->handleDoubleClick(p->m_libraryTree->currentIndex());
     }
 
     FyWidget::keyPressEvent(event);

@@ -58,7 +58,7 @@ void FilterView::mousePressEvent(QMouseEvent* event)
     }
 
     if(event->button() == Qt::MiddleButton) {
-        emit middleClicked();
+        emit middleClicked(index);
     }
 }
 

@@ -181,8 +181,16 @@ struct FilterWidget::Private
         });
         QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self,
                          [this](const QSize& size) { m_settings->set<Settings::Filters::FilterIconSize>(size); });
-        QObject::connect(m_view, &FilterView::doubleClicked, m_self, [this]() { emit m_self->doubleClicked(); });
-        QObject::connect(m_view, &FilterView::middleClicked, m_self, [this]() { emit m_self->middleClicked(); });
+        QObject::connect(m_view, &FilterView::doubleClicked, m_self, [this](const QModelIndex& index) {
+            if(index.isValid()) {
+                emit m_self->doubleClicked();
+            }
+        });
+        QObject::connect(m_view, &FilterView::middleClicked, m_self, [this](const QModelIndex& index) {
+            if(index.isValid()) {
+                emit m_self->middleClicked();
+            }
+        });
     }
 
     void refreshFilteredTracks()

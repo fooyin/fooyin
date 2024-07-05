@@ -40,7 +40,9 @@ enum class TrackAction
     AddActivePlaylist,
     SendCurrentPlaylist,
     SendNewPlaylist,
-    Play
+    Play,
+    AddToQueue,
+    SendToQueue
 };
 
 namespace PlaylistAction {

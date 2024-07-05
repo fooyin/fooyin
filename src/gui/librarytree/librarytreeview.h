@@ -33,7 +33,7 @@ public:
     void setLoading(bool isLoading);
 
 signals:
-    void middleClicked();
+    void middleClicked(const QModelIndex& index);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

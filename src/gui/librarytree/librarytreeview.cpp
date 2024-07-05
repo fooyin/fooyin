@@ -53,12 +53,14 @@ void LibraryTreeView::mousePressEvent(QMouseEvent* event)
 {
     QTreeView::mousePressEvent(event);
 
-    if(!indexAt(event->position().toPoint()).isValid()) {
+    const QModelIndex index = indexAt(event->position().toPoint());
+
+    if(!index.isValid()) {
         clearSelection();
     }
 
     if(event->button() == Qt::MiddleButton) {
-        emit middleClicked();
+        emit middleClicked(index);
     }
 }
 

@@ -354,6 +354,20 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
     }
 }
 
+void PlayerController::replaceTracks(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    QueueTracks tracksToQueue;
+    for(const Track& track : tracks) {
+        tracksToQueue.emplace_back(track);
+    }
+
+    replaceTracks(tracksToQueue);
+}
+
 void PlayerController::replaceTracks(const QueueTracks& tracks)
 {
     if(tracks.empty()) {

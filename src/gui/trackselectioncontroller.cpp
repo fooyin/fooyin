@@ -313,6 +313,24 @@ struct TrackSelectionController::Private
         }
     }
 
+    void addToQueue() const
+    {
+        if(m_self->hasTracks()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            m_playlistController->playerController()->queueTracks(selection.tracks);
+            emit m_self->actionExecuted(TrackAction::AddToQueue);
+        }
+    }
+
+    void sendToQueue() const
+    {
+        if(m_self->hasTracks()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            m_playlistController->playerController()->replaceTracks(selection.tracks);
+            emit m_self->actionExecuted(TrackAction::SendToQueue);
+        }
+    }
+
     void updateActionState()
     {
         const bool haveTracks = m_activeContext && m_contextSelection.contains(m_activeContext)
@@ -457,6 +475,12 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             }
             break;
         }
+        case(TrackAction::AddToQueue):
+            p->addToQueue();
+            break;
+        case(TrackAction::SendToQueue):
+            p->sendToQueue();
+            break;
         case(TrackAction::None):
             break;
     }
