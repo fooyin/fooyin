@@ -234,6 +234,22 @@ struct DirBrowser::Private
         m_dirTree->setUpdatesEnabled(true);
     }
 
+    [[nodiscard]] QueueTracks loadQueueTracks(const TrackList& tracks) const
+    {
+        QueueTracks queueTracks;
+
+        Id playlistId;
+        if(m_playlist) {
+            playlistId = m_playlist->id();
+        }
+
+        for(const Track& track : tracks) {
+            queueTracks.emplace_back(track, playlistId);
+        }
+
+        return queueTracks;
+    }
+
     void handleAction(TrackAction action, bool onlySelection)
     {
         QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
@@ -309,12 +325,12 @@ struct DirBrowser::Private
                 break;
             case(TrackAction::AddToQueue):
                 m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                    m_playlistInteractor->playerController()->queueTracks(tracks);
+                    m_playlistInteractor->playerController()->queueTracks(loadQueueTracks(tracks));
                 });
                 break;
             case(TrackAction::SendToQueue):
                 m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                    m_playlistInteractor->playerController()->replaceTracks(tracks);
+                    m_playlistInteractor->playerController()->replaceTracks(loadQueueTracks(tracks));
                 });
                 break;
             case(TrackAction::None):
