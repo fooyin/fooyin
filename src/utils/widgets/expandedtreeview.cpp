@@ -936,7 +936,7 @@ QPoint TreeView::coordinateForItem(int item) const
         }
     }
     else {
-        int topViewItemIndex{vertScrollValue};
+        const int topViewItemIndex{vertScrollValue};
         if(m_p->m_uniformRowHeights) {
             return {0, m_uniformRowHeight * (item - topViewItemIndex)};
         }
@@ -1682,13 +1682,14 @@ private:
     void drawItem(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawFocus(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-    void setupDecorationProps(QStyleOptionViewItem* props) const;
+    void setupDecorationProps(QStyleOptionViewItem* opt) const;
     [[nodiscard]] std::vector<ExpandedTreeViewItem> itemsOnRow(int y, int x) const;
     [[nodiscard]] QSize indexSizeHint(const QModelIndex& index) const;
     [[nodiscard]] int itemWidth(int item) const;
     [[nodiscard]] int itemHeight(int item) const override;
     [[nodiscard]] int spacing() const;
     [[nodiscard]] QSize iconSize() const;
+    [[nodiscard]] bool haveSideCaptions() const;
 
     QRect m_layoutBounds;
     int m_segmentSize{0};
@@ -1793,11 +1794,19 @@ void IconView::doItemLayout()
 
     const QPoint topLeft{m_layoutBounds.x(), m_layoutBounds.y() + m_rowSpacing};
 
-    const int segStartPosition{m_layoutBounds.left() + m_itemSpacing};
-    const int segEndPosition{m_layoutBounds.right() - m_itemSpacing};
+    int segStartPosition{m_layoutBounds.left()};
+    int segEndPosition{m_layoutBounds.right()};
 
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
+
+    if(haveSideCaptions()) {
+        m_rowSpacing = 0;
+    }
+    else {
+        segStartPosition += m_itemSpacing;
+        segEndPosition -= m_itemSpacing;
+    }
 
     // Determine the number of items per row
     const int count = itemCount();
@@ -1819,17 +1828,13 @@ void IconView::doItemLayout()
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
     const int totalPadding        = totalWidthAvailable - totalItemWidth;
+    const int itmWidth            = haveSideCaptions() ? header()->length() / m_segmentSize : itemWidth(0);
+    const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
     m_itemSpacing = std::max(0, totalPadding / (m_segmentSize + 1));
 
-    const int maxPadding = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
     if(maxPadding > 0 && m_itemSpacing > maxPadding) {
         m_itemSpacing = MinItemSpacing;
-    }
-
-    int itmWidth = itemWidth(0);
-    if(m_p->m_captionDisplay != ExpandedTreeView::CaptionDisplay::Bottom) {
-        itmWidth = totalWidthAvailable / m_segmentSize;
     }
 
     QRect rect{{}, topLeft};
@@ -1843,12 +1848,13 @@ void IconView::doItemLayout()
             deltaSegPosition = 0;
         }
 
-        if(m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Bottom) {
-            item.x = segStartPosition + m_itemSpacing + segColumn * (itmWidth + m_itemSpacing);
-        }
-        else {
+        if(haveSideCaptions()) {
             item.x = segStartPosition + segColumn * itmWidth;
         }
+        else {
+            item.x = segStartPosition + m_itemSpacing + segColumn * (itmWidth + m_itemSpacing);
+        }
+
         item.y     = segPosition;
         item.width = itmWidth;
 
@@ -1995,7 +2001,7 @@ int IconView::itemWidth(int item) const
         return 0;
     }
 
-    const QModelIndex& index = m_p->m_viewItems.at(item).index;
+    const QModelIndex& index = viewItem(item).index;
     if(!index.isValid()) {
         return 0;
     }
@@ -2020,7 +2026,7 @@ int IconView::itemHeight(int item) const
         return 0;
     }
 
-    const QModelIndex& index = m_p->m_viewItems.at(item).index;
+    const QModelIndex& index = viewItem(item).index;
     if(!index.isValid()) {
         return 0;
     }
@@ -2047,6 +2053,11 @@ int IconView::spacing() const
 QSize IconView::iconSize() const
 {
     return m_view->iconSize();
+}
+
+bool IconView::haveSideCaptions() const
+{
+    return m_p->m_captionDisplay == ExpandedTreeView::CaptionDisplay::Right;
 }
 
 void IconView::prepareItemLayout()
@@ -2344,7 +2355,7 @@ std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
 
     bool foundAjacant{false};
     for(const auto& item : m_p->m_viewItems) {
-        if(item.y == y && item.x >= x) {
+        if(item.y == y && item.x + item.width >= x) {
             foundAjacant = true;
             result.push_back(item);
         }
@@ -3854,12 +3865,12 @@ QRegion ExpandedTreeView::visualRegionForSelection(const QItemSelection& selecti
     const QRect viewportRect = viewport()->rect();
 
     if(p->m_viewMode == ViewMode::Icon) {
-        // We need to make sure the full width is passed,
-        // otherwise any sections outside an item's rect won't be updated/drawn
         const auto indexes = selection.indexes();
         for(const auto& index : indexes) {
             auto rect = visualRect(index);
-            selectionRegion += QRect{0, rect.y(), viewportRect.width(), rect.height()};
+            if(viewportRect.intersects(rect)) {
+                selectionRegion += rect;
+            }
         }
         return selectionRegion;
     }
