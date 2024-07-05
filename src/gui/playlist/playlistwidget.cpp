@@ -163,6 +163,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
     , m_playlistContext{new WidgetContext(m_self, Context{Constants::Context::Playlist}, m_self)}
+    , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
     , m_cutAction{new QAction(tr("Cut"), m_self)}
     , m_copyAction{new QAction(tr("Copy"), m_self)}
     , m_pasteAction{new QAction(tr("Paste"), m_self)}
@@ -210,6 +211,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_playlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &PlaylistWidgetPrivate::selectionChanged);
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
+    QObject::connect(m_playlistView, &ExpandedTreeView::middleClicked, this, &PlaylistWidgetPrivate::middleClicked);
 
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView,
                      &QAbstractItemView::clearSelection);
@@ -249,6 +251,8 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(&m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
                      &PlaylistWidgetPrivate::onColumnChanged);
 
+    m_settings->subscribe<LibTreeMiddleClick>(
+        m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
     m_settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
     m_settings->subscribe<PlaylistCurrentPreset>(this, [this](int presetId) {
@@ -649,7 +653,7 @@ void PlaylistWidgetPrivate::playSelectedTracks() const
     }
 }
 
-void PlaylistWidgetPrivate::queueSelectedTracks() const
+void PlaylistWidgetPrivate::queueSelectedTracks(bool send) const
 {
     if(!m_playlistController->currentPlaylist()) {
         return;
@@ -669,7 +673,13 @@ void PlaylistWidgetPrivate::queueSelectedTracks() const
         }
     }
 
-    m_playerController->queueTracks(tracks);
+    if(send) {
+        m_playerController->replaceTracks(tracks);
+    }
+    else {
+        m_playerController->queueTracks(tracks);
+    }
+
     m_removeFromQueueAction->setVisible(true);
 }
 
@@ -1081,10 +1091,19 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     menu->popup(m_self->mapToGlobal(pos));
 }
 
-void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& /*index*/) const
+void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& index) const
 {
-    m_selectionController->executeAction(TrackAction::Play);
-    m_playlistView->clearSelection();
+    if(index.isValid()) {
+        m_selectionController->executeAction(TrackAction::Play);
+        m_playlistView->clearSelection();
+    }
+}
+
+void PlaylistWidgetPrivate::middleClicked(const QModelIndex& index) const
+{
+    if(index.isValid()) {
+        queueSelectedTracks(m_middleClickAction == TrackAction::SendToQueue);
+    }
 }
 
 void PlaylistWidgetPrivate::followCurrentTrack() const

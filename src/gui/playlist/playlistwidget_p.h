@@ -26,6 +26,7 @@
 
 #include <core/library/sortingregistry.h>
 #include <core/player/playbackqueue.h>
+#include <gui/trackselectioncontroller.h>
 
 #include <QString>
 
@@ -85,7 +86,7 @@ public:
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex);
     void playSelectedTracks() const;
-    void queueSelectedTracks() const;
+    void queueSelectedTracks(bool send = false) const;
     void dequeueSelectedTracks() const;
 
     void scanDroppedTracks(const QList<QUrl>& urls, int index);
@@ -109,6 +110,7 @@ public:
 
     void changeState(PlayState state) const;
     void doubleClicked(const QModelIndex& index) const;
+    void middleClicked(const QModelIndex& index) const;
     void followCurrentTrack() const;
 
     void cropSelection() const;
@@ -146,6 +148,7 @@ public:
     QByteArray m_headerState;
 
     WidgetContext* m_playlistContext;
+    TrackAction m_middleClickAction;
 
     QAction* m_cutAction;
     QAction* m_copyAction;

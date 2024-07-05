@@ -24,6 +24,7 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -48,6 +49,8 @@ public:
 private:
     SettingsManager* m_settings;
 
+    QComboBox* m_middleClick;
+
     QCheckBox* m_scrollBars;
     QCheckBox* m_header;
     QCheckBox* m_altColours;
@@ -67,6 +70,7 @@ private:
 
 PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     : m_settings{settings}
+    , m_middleClick{new QComboBox(this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
@@ -80,7 +84,14 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_exportPathType{new QComboBox(this)}
     , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
 {
-    auto* layout = new QGridLayout(this);
+    auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
+    auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
+
+    auto* middleClickLabel = new QLabel(tr("Middle-click") + u":", this);
+
+    clickBehaviourLayout->addWidget(middleClickLabel, 0, 0);
+    clickBehaviourLayout->addWidget(m_middleClick, 0, 1);
+    clickBehaviourLayout->setColumnStretch(clickBehaviourLayout->columnCount(), 1);
 
     m_imagePadding->setMinimum(0);
     m_imagePadding->setMaximum(100);
@@ -93,7 +104,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* saving       = new QGroupBox(tr("Saving"), this);
     auto* savingLayout = new QGridLayout(saving);
 
-    auto* pathTypeLabel = new QLabel(tr("Path type") + QStringLiteral(":"), this);
+    auto* pathTypeLabel = new QLabel(tr("Path type") + u":", this);
 
     savingLayout->addWidget(pathTypeLabel, 0, 0);
     savingLayout->addWidget(m_exportPathType, 0, 1);
@@ -133,11 +144,14 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     tabsGroupLayout->addWidget(m_tabsCloseButton, row++, 0);
     tabsGroupLayout->addWidget(m_tabsMiddleClose, row++, 0);
 
-    layout->addWidget(saving, 0, 0);
-    layout->addWidget(appearance, 1, 0);
-    layout->addWidget(tabsGroup, 2, 0);
+    auto* mainLayout = new QGridLayout(this);
 
-    layout->setRowStretch(layout->rowCount(), 1);
+    row = 0;
+    mainLayout->addWidget(clickBehaviour, row++, 0);
+    mainLayout->addWidget(saving, row++, 0);
+    mainLayout->addWidget(appearance, row++, 0);
+    mainLayout->addWidget(tabsGroup, row++, 0);
+    mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     m_exportPathType->addItem(QStringLiteral("Auto"));
     m_exportPathType->addItem(QStringLiteral("Absolute"));
@@ -146,6 +160,24 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
 void PlaylistGeneralPageWidget::load()
 {
+    using ActionIndexMap = std::map<int, int>;
+    ActionIndexMap middleActions;
+
+    auto addTrackAction = [](QComboBox* box, const QString& text, TrackAction action, ActionIndexMap& actionMap) {
+        const int actionValue = static_cast<int>(action);
+        actionMap.emplace(actionValue, box->count());
+        box->addItem(text, actionValue);
+    };
+
+    addTrackAction(m_middleClick, tr("None"), TrackAction::None, middleActions);
+    addTrackAction(m_middleClick, tr("Add to playback queue"), TrackAction::AddToQueue, middleActions);
+    addTrackAction(m_middleClick, tr("Send to playback queue"), TrackAction::SendToQueue, middleActions);
+
+    auto middleAction = m_settings->value<Settings::Gui::Internal::PlaylistMiddleClick>();
+    if(middleActions.contains(middleAction)) {
+        m_middleClick->setCurrentIndex(middleActions.at(middleAction));
+    }
+
     m_exportPathType->setCurrentIndex(static_cast<int>(m_settings->value<Settings::Core::PlaylistSavePathType>()));
     m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
 
@@ -165,6 +197,8 @@ void PlaylistGeneralPageWidget::load()
 
 void PlaylistGeneralPageWidget::apply()
 {
+    m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
+
     m_settings->set<Settings::Core::PlaylistSavePathType>(m_exportPathType->currentIndex());
     m_settings->set<Settings::Core::PlaylistSaveMetadata>(m_exportMetadata->isChecked());
 
@@ -184,6 +218,8 @@ void PlaylistGeneralPageWidget::apply()
 
 void PlaylistGeneralPageWidget::reset()
 {
+    m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
+
     m_settings->reset<Settings::Core::PlaylistSavePathType>();
     m_settings->reset<Settings::Core::PlaylistSaveMetadata>();
 
