@@ -478,8 +478,7 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
     auto* toggleStretch = new QAction(tr("Auto-size sections"), menu);
     toggleStretch->setCheckable(true);
     toggleStretch->setChecked(p->m_stretchEnabled);
-    // QObject::connect(toggleStretch, &QAction::triggered, this, [this]() { setStretchEnabled(!p->m_stretchEnabled);
-    // });
+    QObject::connect(toggleStretch, &QAction::triggered, this, [this]() { setStretchEnabled(!p->m_stretchEnabled); });
     menu->addAction(toggleStretch);
 
     menu->addSeparator();
