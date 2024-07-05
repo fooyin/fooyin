@@ -39,9 +39,10 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
     QRect textRect       = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
     textRect.adjust(textMargin, 0, -textMargin, 0);
 
-    const QString right = index.data(QueueViewerItem::RightText).toString();
+    const QString right   = index.data(QueueViewerItem::RightText).toString();
+    const auto rightAlign = static_cast<int>(Qt::AlignVCenter | Qt::AlignRight);
 
-    const auto rightBounds = painter->boundingRect(textRect, Qt::AlignRight | Qt::TextWrapAnywhere, right);
+    const auto rightBounds = painter->boundingRect(textRect, rightAlign | Qt::TextWrapAnywhere, right);
 
     QRect leftRect{textRect};
     leftRect.setRight(rightBounds.x() - textMargin);
@@ -51,7 +52,7 @@ void QueueViewerDelegate::paint(QPainter* painter, const QStyleOptionViewItem& o
 
     const QString rightText
         = Utils::elideTextWithBreaks(right, painter->fontMetrics(), textRect.width(), Qt::ElideRight);
-    style->drawItemText(painter, textRect, Qt::AlignRight, opt.palette, true, rightText, colour);
+    style->drawItemText(painter, textRect, rightAlign, opt.palette, true, rightText, colour);
 }
 
 QSize QueueViewerDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

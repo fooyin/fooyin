@@ -209,6 +209,8 @@ QVariant QueueViewerModel::data(const QModelIndex& index, int role) const
                 return m_coverProvider.trackCoverThumbnail(item->track().track, m_iconSize);
             }
             break;
+        case(Qt::TextAlignmentRole):
+            return static_cast<int>(Qt::AlignVCenter | Qt::AlignLeft);
         case(QueueViewerItem::Track):
             return QVariant::fromValue(item->track());
         default:
