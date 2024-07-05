@@ -236,12 +236,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="671"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="674"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>发送到至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="695"/>
@@ -362,13 +362,13 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="145"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="146"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>发送到至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
@@ -815,7 +815,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="275"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑封面 (右标签)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="276"/>
@@ -850,7 +850,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="424"/>
         <source>More…</source>
-        <translation type="unfinished">更多…</translation>
+        <translation>更多…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="439"/>
@@ -1008,13 +1008,13 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="131"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="139"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="132"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="140"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>发送到至播放队列</translation>
     </message>
 </context>
 <context>
@@ -1308,7 +1308,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="564"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="569"/>
@@ -2010,7 +2010,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="87"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="90"/>
@@ -2086,13 +2086,13 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="185"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="193"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="186"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="194"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>发送到至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="179"/>
@@ -2114,7 +2114,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="206"/>
         <source>Add to Playback Queue</source>
-        <translation type="unfinished">添加至播放队列</translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="207"/>
@@ -2284,17 +2284,17 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="167"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="168"/>
         <source>Widgets</source>
-        <translation type="unfinished">小部件</translation>
+        <translation>小部件</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="168"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>至播放队列</translation>
     </message>
 </context>
 <context>
@@ -2302,52 +2302,52 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="63"/>
         <source>Show header</source>
-        <translation type="unfinished">显示标题</translation>
+        <translation>显示标题</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="64"/>
         <source>Show scrollbar</source>
-        <translation type="unfinished">显示滚动条</translation>
+        <translation>显示滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="65"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished">交替行颜色</translation>
+        <translation>交替行颜色</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="66"/>
         <source>Icon</source>
-        <translation type="unfinished">图标</translation>
+        <translation>图标</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="70"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="73"/>
         <source>Left script</source>
-        <translation type="unfinished"></translation>
+        <translation>左脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="74"/>
         <source>Right script</source>
-        <translation type="unfinished"></translation>
+        <translation>右脚本</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="81"/>
         <source>Appearance</source>
-        <translation type="unfinished">外观</translation>
+        <translation>外观</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="88"/>
         <source>Width</source>
-        <translation type="unfinished">宽度</translation>
+        <translation>宽度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="89"/>
         <source>Height</source>
-        <translation type="unfinished">高度</translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
@@ -2600,12 +2600,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="87"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">点击行为</translation>
+        <translation>点击行为</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="90"/>
         <source>Middle-click</source>
-        <translation type="unfinished">单击中键</translation>
+        <translation>单击中键</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="104"/>
@@ -2625,17 +2625,17 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="172"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>添加至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="174"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>发送到至播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -3082,12 +3082,12 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="72"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="199"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>至播放队列</translation>
     </message>
 </context>
 <context>
@@ -3095,7 +3095,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="189"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>至播放队列</translation>
     </message>
 </context>
 <context>
@@ -3408,7 +3408,7 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="51"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="64"/>
