@@ -409,6 +409,8 @@ void QueueViewerModel::reset(const QueueTracks& tracks)
 
     beginResetModel();
     resetRoot();
+    m_trackItems.clear();
+    m_trackParents.clear();
 
     for(const auto& track : tracks) {
         auto* item = m_trackItems.emplace_back(std::make_unique<QueueViewerItem>(track)).get();
