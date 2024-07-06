@@ -29,6 +29,7 @@
 
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
+#include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/crypto.h>
@@ -58,6 +59,9 @@ struct QueueViewer::Private
     QAction* m_remove;
     Command* m_removeCmd;
 
+    QAction* m_clear;
+    Command* m_clearCmd;
+
     Private(QueueViewer* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
             std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
         : m_self{self}
@@ -71,6 +75,8 @@ struct QueueViewer::Private
                                       m_self)}
         , m_remove{new QAction(tr("Remove"))}
         , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
+        , m_clear{new QAction(tr("&Clear"))}
+        , m_clearCmd{actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context())}
     {
         auto* layout = new QVBoxLayout(m_self);
         layout->setContentsMargins({});
@@ -78,8 +84,6 @@ struct QueueViewer::Private
 
         m_view->setModel(m_model);
         m_view->setItemDelegate(new QueueViewerDelegate(m_self));
-
-        actionManager->addContextObject(m_context);
 
         setupSettings();
         setupActions();
@@ -108,11 +112,26 @@ struct QueueViewer::Private
 
     void setupActions()
     {
+        m_actionManager->addContextObject(m_context);
+
         m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
         QObject::connect(m_remove, &QAction::triggered, m_self, [this]() { removeSelectedTracks(); });
         QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
                          [this]() { m_remove->setEnabled(m_view->selectionModel()->hasSelection()); });
         m_remove->setEnabled(m_view->selectionModel()->hasSelection());
+
+        auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
+
+        editMenu->addAction(m_clearCmd);
+        QObject::connect(m_clear, &QAction::triggered, m_self, [this]() { m_playerController->clearQueue(); });
+        m_clear->setEnabled(m_model->rowCount({}) > 0);
+
+        auto* selectAllAction = new QAction(tr("&Select All"), m_self);
+        auto* selectAllCmd
+            = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_context->context());
+        selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
+        editMenu->addAction(selectAllCmd);
+        QObject::connect(selectAllAction, &QAction::triggered, m_self, [this]() { m_view->selectAll(); });
     }
 
     void setupConnections()
@@ -126,6 +145,8 @@ struct QueueViewer::Private
         QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::addTracks);
         QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model,
                          &QueueViewerModel::removeTracks);
+        QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_self, [this]() { handleRowsChanged(); });
+        QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, m_self, [this]() { handleRowsChanged(); });
         QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self, [this](const QSize& size) {
             m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
         });
@@ -136,6 +157,11 @@ struct QueueViewer::Private
         if(!m_changingQueue) {
             m_model->reset(m_playerController->playbackQueue().tracks());
         }
+    }
+
+    void handleRowsChanged()
+    {
+        m_clear->setEnabled(m_model->rowCount({}) > 0);
     }
 
     void removeSelectedTracks() const
@@ -206,14 +232,13 @@ QString QueueViewer::layoutName() const
 
 void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
 {
-    if(!p->m_view->selectionModel()->hasSelection()) {
-        return;
-    }
-
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    menu->addAction(p->m_removeCmd->action());
+    if(p->m_view->selectionModel()->hasSelection()) {
+        menu->addAction(p->m_removeCmd->action());
+    }
+    menu->addAction(p->m_clearCmd->action());
 
     menu->popup(event->globalPos());
 }

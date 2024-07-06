@@ -106,6 +106,7 @@ public:
     void replaceTracks(const TrackList& tracks);
     void replaceTracks(const QueueTracks& tracks);
     void clearPlaylistQueue(const Id& playlistId);
+    void clearQueue();
 
 signals:
     void playStateChanged(PlayState state);

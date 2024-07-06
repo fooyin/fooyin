@@ -356,10 +356,6 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
 
 void PlayerController::replaceTracks(const TrackList& tracks)
 {
-    if(tracks.empty()) {
-        return;
-    }
-
     QueueTracks tracksToQueue;
     for(const Track& track : tracks) {
         tracksToQueue.emplace_back(track);
@@ -370,10 +366,6 @@ void PlayerController::replaceTracks(const TrackList& tracks)
 
 void PlayerController::replaceTracks(const QueueTracks& tracks)
 {
-    if(tracks.empty()) {
-        return;
-    }
-
     QueueTracks removed;
 
     const auto currentTracks = p->queue.tracks();
@@ -390,6 +382,15 @@ void PlayerController::replaceTracks(const QueueTracks& tracks)
 void PlayerController::clearPlaylistQueue(const Id& playlistId)
 {
     const auto removedTracks = p->queue.removePlaylistTracks(playlistId);
+    if(!removedTracks.empty()) {
+        emit tracksDequeued(removedTracks);
+    }
+}
+
+void PlayerController::clearQueue()
+{
+    const auto removedTracks = p->queue.tracks();
+    p->queue.clear();
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }
