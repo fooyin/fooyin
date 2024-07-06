@@ -25,7 +25,6 @@
 namespace Fooyin {
 class PlayerController;
 class SeekContainer;
-class SettingsManager;
 class Track;
 class TrackSlider;
 
@@ -34,7 +33,7 @@ class SeekBar : public FyWidget
     Q_OBJECT
 
 public:
-    SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit SeekBar(PlayerController* playerController, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -51,8 +50,6 @@ private:
     void stateChanged(PlayState state);
 
     PlayerController* m_playerController;
-    SettingsManager* m_settings;
-
     SeekContainer* m_container;
     TrackSlider* m_slider;
     uint64_t m_max;

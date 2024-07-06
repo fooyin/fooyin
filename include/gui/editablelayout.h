@@ -27,11 +27,11 @@
 
 namespace Fooyin {
 class ActionManager;
+class FyLayout;
 class Id;
 class LayoutProvider;
 class SettingsManager;
 class WidgetProvider;
-struct FyLayout;
 
 class FYGUI_EXPORT EditableLayout : public QWidget
 {

@@ -277,10 +277,9 @@ void TrackSlider::updateToolTip()
     m_toolTip->setSubtext(deltaText);
 }
 
-SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
+SeekBar::SeekBar(PlayerController* playerController, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
-    , m_settings{settings}
     , m_container{new SeekContainer(playerController, this)}
     , m_slider{new TrackSlider(this)}
 {

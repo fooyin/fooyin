@@ -596,8 +596,8 @@ struct GuiApplication::Private
         widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {tr("Controls")});
 
         widgetProvider.registerWidget(
-            QStringLiteral("SeekBar"),
-            [this]() { return new SeekBar(core.playerController, settings, mainWindow.get()); }, tr("Seekbar"));
+            QStringLiteral("SeekBar"), [this]() { return new SeekBar(core.playerController, mainWindow.get()); },
+            tr("Seekbar"));
         widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 
         widgetProvider.registerWidget(

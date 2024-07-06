@@ -54,16 +54,16 @@ PlayerControl::PlayerControl(ActionManager* actionManager, PlayerController* pla
     layout->addWidget(m_playPause);
     layout->addWidget(m_next);
 
-    if(auto* stopCmd = actionManager->command(Constants::Actions::Stop)) {
+    if(auto* stopCmd = m_actionManager->command(Constants::Actions::Stop)) {
         m_stop->setDefaultAction(stopCmd->action());
     }
-    if(auto* prevCmd = actionManager->command(Constants::Actions::Previous)) {
+    if(auto* prevCmd = m_actionManager->command(Constants::Actions::Previous)) {
         m_prev->setDefaultAction(prevCmd->action());
     }
-    if(auto* playCmd = actionManager->command(Constants::Actions::PlayPause)) {
+    if(auto* playCmd = m_actionManager->command(Constants::Actions::PlayPause)) {
         m_playPause->setDefaultAction(playCmd->action());
     }
-    if(auto* nextCmd = actionManager->command(Constants::Actions::Next)) {
+    if(auto* nextCmd = m_actionManager->command(Constants::Actions::Next)) {
         m_next->setDefaultAction(nextCmd->action());
     }
 

@@ -39,7 +39,7 @@ TEST_F(TagReaderTest, AiffRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::AIFF);
     EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
@@ -68,7 +68,7 @@ TEST_F(TagReaderTest, FlacRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::FLAC);
     EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
@@ -97,7 +97,7 @@ TEST_F(TagReaderTest, M4aRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::MP4);
     EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
@@ -125,7 +125,7 @@ TEST_F(TagReaderTest, Mp3Read)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::MPEG);
     EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
@@ -154,7 +154,7 @@ TEST_F(TagReaderTest, OggRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::OggVorbis);
     EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
@@ -183,7 +183,7 @@ TEST_F(TagReaderTest, OpusRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::OggOpus);
     EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
@@ -212,7 +212,7 @@ TEST_F(TagReaderTest, WavRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    m_tagParser->readMetaData(track);
+    ASSERT_TRUE(m_tagParser->readMetaData(track));
 
     EXPECT_EQ(track.type(), Track::Type::WAV);
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));
