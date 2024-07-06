@@ -159,7 +159,7 @@ struct QueueViewer::Private
         }
     }
 
-    void handleRowsChanged()
+    void handleRowsChanged() const
     {
         m_clear->setEnabled(m_model->rowCount({}) > 0);
     }

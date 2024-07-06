@@ -167,6 +167,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_cutAction{new QAction(tr("Cut"), m_self)}
     , m_copyAction{new QAction(tr("Copy"), m_self)}
     , m_pasteAction{new QAction(tr("Paste"), m_self)}
+    , m_clearAction{new QAction(tr("&Clear"), m_self)}
     , m_removeTrackAction{new QAction(tr("Remove"), m_self)}
     , m_addToQueueAction{new QAction(tr("Add to Playback Queue"), m_self)}
     , m_removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), m_self)}
@@ -317,12 +318,12 @@ void PlaylistWidgetPrivate::setupActions()
 
     editMenu->addSeparator();
 
-    auto* clearAction = new QAction(PlaylistWidget::tr("&Clear"), m_self);
     editMenu->addAction(
-        m_actionManager->registerAction(clearAction, Constants::Actions::Clear, m_playlistContext->context()));
-    QObject::connect(clearAction, &QAction::triggered, this, [this]() { clearTracks(); });
+        m_actionManager->registerAction(m_clearAction, Constants::Actions::Clear, m_playlistContext->context()));
+    QObject::connect(m_clearAction, &QAction::triggered, this, [this]() { clearTracks(); });
+    m_clearAction->setEnabled(m_model->rowCount({}) > 0);
 
-    auto* selectAllAction = new QAction(PlaylistWidget::tr("&Select All"), m_self);
+    auto* selectAllAction = new QAction(tr("&Select All"), m_self);
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_playlistContext->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
@@ -382,6 +383,7 @@ void PlaylistWidgetPrivate::resetTree()
     resetSort();
     m_playlistView->playlistAboutToBeReset();
     restoreState(m_playlistController->currentPlaylist());
+    m_clearAction->setEnabled(m_model->rowCount({}) > 0);
 }
 
 PlaylistViewState PlaylistWidgetPrivate::getState(Playlist* playlist) const

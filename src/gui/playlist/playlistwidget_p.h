@@ -153,6 +153,7 @@ public:
     QAction* m_cutAction;
     QAction* m_copyAction;
     QAction* m_pasteAction;
+    QAction* m_clearAction;
     QAction* m_removeTrackAction;
     QAction* m_addToQueueAction;
     QAction* m_removeFromQueueAction;
