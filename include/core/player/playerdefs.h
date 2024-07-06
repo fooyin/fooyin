@@ -59,7 +59,8 @@ struct PlaylistTrack
 
     bool operator<(const PlaylistTrack& other) const
     {
-        return std::tie(playlistId, indexInPlaylist) < std::tie(other.playlistId, other.indexInPlaylist);
+        return std::tie(track, playlistId, indexInPlaylist)
+             < std::tie(other.track, other.playlistId, other.indexInPlaylist);
     }
 };
 } // namespace Fooyin
