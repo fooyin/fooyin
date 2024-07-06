@@ -120,19 +120,6 @@ struct AutoHeaderView::Private
         }
     }
 
-    [[nodiscard]] int lastVisibleIndex() const
-    {
-        const int sectionCount = m_self->count();
-
-        for(int section{sectionCount - 1}; section >= 0; --section) {
-            const int logical = m_self->logicalIndex(section);
-            if(!m_self->isSectionHidden(logical)) {
-                return logical;
-            }
-        }
-        return -1;
-    }
-
     void updateWidths(const SectionIndexes& sections = {}) const
     {
         if(!m_stretchEnabled) {
@@ -140,9 +127,7 @@ struct AutoHeaderView::Private
         }
 
         const int sectionCount = static_cast<int>(m_sectionWidths.size());
-        const int finalRow     = lastVisibleIndex();
-
-        int totalWidth{0};
+        const int headerWidth  = m_self->width();
 
         for(int section{0}; section < sectionCount; ++section) {
             const int logical = m_self->logicalIndex(section);
@@ -153,14 +138,7 @@ struct AutoHeaderView::Private
 
             const bool visible           = !m_self->isSectionHidden(logical);
             const double normalisedWidth = m_sectionWidths.at(logical);
-            const int headerWidth        = m_self->width();
-            const int width              = !visible            ? 0
-                                         : logical == finalRow ? (headerWidth - totalWidth)
-                                                               : static_cast<int>(normalisedWidth * headerWidth);
-
-            if(visible) {
-                totalWidth += width;
-            }
+            const int width              = !visible ? 0 : static_cast<int>(normalisedWidth * headerWidth);
 
             if(!sections.empty() && !sections.contains(logical)) {
                 continue;
