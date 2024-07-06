@@ -34,4 +34,7 @@ FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<int16_t>
 
 FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<uint64_t>& vec);
 FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<uint64_t>& vec);
+
+FYUTILS_EXPORT QDataStream& operator<<(QDataStream& stream, const std::vector<QByteArray>& vec);
+FYUTILS_EXPORT QDataStream& operator>>(QDataStream& stream, std::vector<QByteArray>& vec);
 } // namespace Fooyin

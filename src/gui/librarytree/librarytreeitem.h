@@ -21,6 +21,7 @@
 
 #include <core/track.h>
 
+#include <utils/crypto.h>
 #include <utils/treeitem.h>
 
 #include <QObject>
@@ -47,11 +48,11 @@ public:
     [[nodiscard]] QString title() const;
     [[nodiscard]] TrackList tracks() const;
     [[nodiscard]] int trackCount() const;
-    [[nodiscard]] QString key() const;
+    [[nodiscard]] Md5Hash key() const;
 
     void setPending(bool pending);
     void setTitle(const QString& title);
-    void setKey(const QString& key);
+    void setKey(const Md5Hash& key);
 
     void addTrack(const Track& track);
     void addTracks(const TrackList& tracks);
@@ -62,7 +63,7 @@ public:
 private:
     bool m_pending;
     int m_level;
-    QString m_key;
+    Md5Hash m_key;
     QString m_title;
     TrackList m_tracks;
 };

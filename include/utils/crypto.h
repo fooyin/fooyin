@@ -26,25 +26,39 @@
 #include <QCryptographicHash>
 #include <QString>
 
-namespace Fooyin::Utils {
+namespace Fooyin {
+using Md5Hash = QByteArray;
+
+namespace Utils {
+template <typename T>
+void addDataToHash(QCryptographicHash& hash, const T& arg)
+{
+    hash.addData(arg.toUtf8());
+}
+
+template <>
+inline void addDataToHash(QCryptographicHash& hash, const QByteArray& arg)
+{
+    hash.addData(arg);
+}
+
 template <typename... Args>
 QString generateHash(const Args&... args)
 {
     QCryptographicHash hash{QCryptographicHash::Md5};
-    (hash.addData(args.toUtf8()), ...);
+    (addDataToHash(hash, args), ...);
 
     return QString::fromUtf8(hash.result().toHex());
 }
 
 template <typename... Args>
-uint64_t generateIntHash(const Args&... args)
+Md5Hash generateMd5Hash(const Args&... args)
 {
     QCryptographicHash hash{QCryptographicHash::Md5};
-    (hash.addData(args.toUtf8()), ...);
-    const auto value = static_cast<uint64_t>(qHash(hash.result(), qGlobalQHashSeed()));
-
-    return value;
+    (addDataToHash(hash, args), ...);
+    return hash.result();
 }
 
 FYUTILS_EXPORT QString generateUniqueHash();
-} // namespace Fooyin::Utils
+} // namespace Utils
+} // namespace Fooyin

@@ -20,6 +20,8 @@
 #pragma once
 
 #include <core/track.h>
+#include <utils/crypto.h>
+#include <utils/id.h>
 #include <utils/treeitem.h>
 
 #include <QStringList>
@@ -38,9 +40,9 @@ public:
     };
 
     FilterItem() = default;
-    explicit FilterItem(QString key, QStringList columns, FilterItem* parent);
+    FilterItem(Md5Hash key, QStringList columns, FilterItem* parent);
 
-    [[nodiscard]] QString key() const;
+    [[nodiscard]] Md5Hash key() const;
 
     [[nodiscard]] QStringList columns() const;
     [[nodiscard]] QString column(int column) const;
@@ -61,7 +63,7 @@ public:
     void sortTracks();
 
 private:
-    QString m_key;
+    Md5Hash m_key;
     QStringList m_columns;
     TrackList m_tracks;
     bool m_isSummary;

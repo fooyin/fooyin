@@ -36,11 +36,10 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
-#include <utils/async.h>
+#include <utils/datastream.h>
 #include <utils/tooltipfilter.h>
 
 #include <QActionGroup>
-#include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -666,9 +665,10 @@ struct LibraryTreeWidget::Private
         stream.setVersion(QDataStream::Qt_6_0);
 
         const QModelIndex topIndex = m_libraryTree->indexAt({0, 0});
-        stream << topIndex.data(LibraryTreeItem::Key).toString();
+        const auto topKey          = topIndex.data(LibraryTreeItem::Key).toByteArray();
+        stream << topKey;
 
-        QStringList keysToSave;
+        std::vector<Md5Hash> keysToSave;
         std::stack<QModelIndex> indexes;
         indexes.emplace();
 
@@ -678,7 +678,7 @@ struct LibraryTreeWidget::Private
 
             if(m_libraryTree->isExpanded(index) || !index.isValid()) {
                 if(index.isValid()) {
-                    keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toString());
+                    keysToSave.emplace_back(index.data(LibraryTreeItem::Key).toByteArray());
                 }
 
                 const int childCount = m_sortProxy->rowCount(index);
@@ -696,7 +696,7 @@ struct LibraryTreeWidget::Private
         return data;
     }
 
-    void restoreIndexState(const QString& topKey, const QStringList& keys, int currentIndex = 0)
+    void restoreIndexState(const Md5Hash& topKey, const std::vector<Md5Hash>& keys, int currentIndex = 0)
     {
         // We use queued connections here so any expand calls have a chance to load their children in fetchMore
         if(std::cmp_greater_equal(currentIndex, keys.size())) {
@@ -714,7 +714,7 @@ struct LibraryTreeWidget::Private
             return;
         }
 
-        const QString& key = keys.at(currentIndex);
+        const auto& key = keys.at(currentIndex);
         if(const auto index = m_model->indexForKey(key); index.isValid()) {
             m_libraryTree->expand(m_sortProxy->mapFromSource(index));
             QMetaObject::invokeMethod(
@@ -742,10 +742,10 @@ struct LibraryTreeWidget::Private
 
         data = qUncompress(data);
 
-        QString topKey;
+        Md5Hash topKey;
         stream >> topKey;
 
-        QStringList keysToRestore;
+        std::vector<Md5Hash> keysToRestore;
         stream >> keysToRestore;
 
         restoreIndexState(topKey, keysToRestore);

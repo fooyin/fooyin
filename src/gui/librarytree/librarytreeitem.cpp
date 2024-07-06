@@ -30,7 +30,6 @@ LibraryTreeItem::LibraryTreeItem(QString title, LibraryTreeItem* parent, int lev
     : TreeItem{parent}
     , m_pending{false}
     , m_level{level}
-    , m_key{QStringLiteral("0")}
     , m_title{std::move(title)}
 { }
 
@@ -59,7 +58,7 @@ int LibraryTreeItem::trackCount() const
     return static_cast<int>(m_tracks.size());
 }
 
-QString LibraryTreeItem::key() const
+Md5Hash LibraryTreeItem::key() const
 {
     return m_key;
 }
@@ -74,7 +73,7 @@ void LibraryTreeItem::setTitle(const QString& title)
     m_title = title;
 }
 
-void LibraryTreeItem::setKey(const QString& key)
+void LibraryTreeItem::setKey(const Md5Hash& key)
 {
     m_key = key;
 }

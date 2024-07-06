@@ -45,10 +45,10 @@ struct PlaylistPopulator::Private
     ScriptFormatter m_formatter;
 
     int m_trackDepth{0};
-    uint64_t m_prevBaseHeaderKey;
+    Md5Hash m_prevBaseHeaderKey;
     UId m_prevHeaderKey;
     int m_prevIndex{0};
-    std::vector<uint64_t> m_prevBaseSubheaderKey;
+    std::vector<Md5Hash> m_prevBaseSubheaderKey;
     std::vector<UId> m_prevSubheaderKey;
 
     std::vector<PlaylistContainerItem> m_subheaders;
@@ -77,7 +77,7 @@ struct PlaylistPopulator::Private
     }
 
     PlaylistItem* getOrInsertItem(const UId& key, PlaylistItem::ItemType type, const Data& item, PlaylistItem* parent,
-                                  const uint64_t baseKey)
+                                  const Md5Hash& baseKey)
     {
         auto [node, inserted] = m_data.items.try_emplace(key, PlaylistItem{type, item, parent});
         if(inserted) {
@@ -120,11 +120,11 @@ struct PlaylistPopulator::Private
         };
 
         auto generateHeaderKey = [&row, &evaluateBlocks]() {
-            return Utils::generateIntHash(evaluateBlocks(row.title), evaluateBlocks(row.subtitle),
+            return Utils::generateMd5Hash(evaluateBlocks(row.title), evaluateBlocks(row.subtitle),
                                           evaluateBlocks(row.sideText), evaluateBlocks(row.info));
         };
 
-        const uint64_t baseKey = generateHeaderKey();
+        const auto baseKey = generateHeaderKey();
         UId key{UId::create()};
         if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
             key = m_prevHeaderKey;
@@ -194,7 +194,7 @@ struct PlaylistPopulator::Private
                 continue;
             }
 
-            const uint64_t baseKey = Utils::generateIntHash(QString::number(parent->baseKey()), subheaderKey);
+            const auto baseKey = Utils::generateMd5Hash(parent->baseKey(), subheaderKey);
             UId key{UId::create()};
             if(static_cast<int>(m_prevSubheaderKey.size()) > i && m_prevBaseSubheaderKey.at(i) == baseKey
                && index == m_prevIndex + 1) {
@@ -264,8 +264,8 @@ struct PlaylistPopulator::Private
         playlistTrack.setDepth(m_trackDepth);
         playlistTrack.calculateSize();
 
-        const uint64_t baseKey
-            = Utils::generateIntHash(parent->key().toString(UId::Id128), track.hash(), QString::number(index));
+        const auto baseKey
+            = Utils::generateMd5Hash(parent->key().toString(UId::Id128), track.hash(), QString::number(index));
         const UId key{UId::create()};
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);

@@ -21,12 +21,13 @@
 
 #include "librarytreeitem.h"
 
+#include <utils/crypto.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
-using ItemKeyMap     = std::unordered_map<QString, LibraryTreeItem>;
-using NodeKeyMap     = std::unordered_map<QString, std::vector<QString>>;
-using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
+using ItemKeyMap     = std::unordered_map<Md5Hash, LibraryTreeItem>;
+using NodeKeyMap     = std::unordered_map<Md5Hash, std::vector<Md5Hash>>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<Md5Hash>>;
 
 struct PendingTreeData
 {

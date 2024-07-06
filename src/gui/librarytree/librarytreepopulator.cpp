@@ -22,8 +22,6 @@
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 
-#include <utils/crypto.h>
-
 constexpr int InitialBatchSize = 3000;
 constexpr int BatchSize        = 4000;
 
@@ -48,7 +46,7 @@ struct LibraryTreePopulator::Private
         , m_data{}
     { }
 
-    LibraryTreeItem* getOrInsertItem(const QString& key, const LibraryTreeItem* parent, const QString& title, int level)
+    LibraryTreeItem* getOrInsertItem(const Md5Hash& key, const LibraryTreeItem* parent, const QString& title, int level)
     {
         auto [node, inserted] = m_data.items.try_emplace(key, LibraryTreeItem{title, nullptr, level});
         if(inserted) {
@@ -81,7 +79,7 @@ struct LibraryTreePopulator::Private
 
             for(int level{0}; const QString& item : items) {
                 const QString title = item.trimmed();
-                const QString key   = Utils::generateHash(parent->key(), title);
+                const auto key      = Utils::generateMd5Hash(parent->key(), title);
 
                 auto* node = getOrInsertItem(key, parent, title, level);
 

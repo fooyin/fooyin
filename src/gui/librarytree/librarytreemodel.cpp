@@ -127,7 +127,7 @@ struct LibraryTreeModel::Private
     NodeKeyMap m_pendingNodes;
     ItemKeyMap m_nodes;
     TrackIdNodeMap m_trackParents;
-    std::unordered_set<QString> m_addedNodes;
+    std::unordered_set<Md5Hash> m_addedNodes;
     bool m_addingTracks{false};
 
     TrackList m_tracksPendingRemoval;
@@ -170,7 +170,7 @@ struct LibraryTreeModel::Private
             }
 
             const auto trackNodes = m_trackParents[id];
-            for(const QString& node : trackNodes) {
+            for(const auto& node : trackNodes) {
                 if(m_nodes.contains(node)) {
                     LibraryTreeItem* item = &m_nodes[node];
                     item->removeTrack(track);
@@ -214,7 +214,7 @@ struct LibraryTreeModel::Private
 
             auto trackIt = m_trackParents.find(id);
             if(trackIt != m_trackParents.end()) {
-                for(const QString& key : children) {
+                for(const auto& key : children) {
                     if(m_nodes.contains(key)) {
                         trackIt->second.emplace_back(key);
                     }
@@ -296,14 +296,14 @@ struct LibraryTreeModel::Private
         std::set<QModelIndex> nodesToCheck;
 
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == QStringLiteral("0") ? m_self->rootItem()
-                         : m_nodes.contains(parentKey)      ? &m_nodes.at(parentKey)
-                                                            : nullptr;
+            auto* parent = parentKey.isEmpty()         ? m_self->rootItem()
+                         : m_nodes.contains(parentKey) ? &m_nodes.at(parentKey)
+                                                       : nullptr;
             if(!parent) {
                 continue;
             }
 
-            for(const QString& row : rows) {
+            for(const auto& row : rows) {
                 auto* node = m_nodes.contains(row) ? &m_nodes.at(row) : nullptr;
 
                 if(node && node->pending() && !m_addedNodes.contains(row)) {
@@ -341,9 +341,9 @@ struct LibraryTreeModel::Private
 
         if(m_resetting) {
             for(const auto& [parentKey, rows] : data.nodes) {
-                auto* parent = parentKey == QStringLiteral("0") ? m_self->rootItem() : &m_nodes.at(parentKey);
+                auto* parent = parentKey.isEmpty() ? m_self->rootItem() : &m_nodes.at(parentKey);
 
-                for(const QString& row : rows) {
+                for(const auto& row : rows) {
                     LibraryTreeItem* child = &m_nodes.at(row);
                     parent->appendChild(child);
                     child->setPending(false);
@@ -497,7 +497,7 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
         case(LibraryTreeItem::Level):
             return item->level();
         case(LibraryTreeItem::Key):
-            return item->key();
+            return QVariant::fromValue(item->key());
         case(LibraryTreeItem::Tracks):
             return QVariant::fromValue(item->tracks());
         case(LibraryTreeItem::TrackCount):
@@ -539,7 +539,7 @@ void LibraryTreeModel::fetchMore(const QModelIndex& parent)
     const auto rowsToInsert = std::ranges::views::take(rows, rowCount);
 
     beginInsertRows(parent, row, row + rowCount - 1);
-    for(const QString& pendingRow : rowsToInsert) {
+    for(const auto& pendingRow : rowsToInsert) {
         LibraryTreeItem* child = &p->m_nodes.at(pendingRow);
         parentItem->appendChild(child);
         child->setPending(false);
@@ -617,7 +617,7 @@ QModelIndexList LibraryTreeModel::indexesForTracks(const TrackList& tracks) cons
         }
 
         const auto trackNodes = p->m_trackParents[id];
-        for(const QString& node : trackNodes) {
+        for(const auto& node : trackNodes) {
             if(p->m_nodes.contains(node) && !p->m_nodes[node].pending()) {
                 parents.emplace_back(indexOfItem(&p->m_nodes[node]));
             }
@@ -712,7 +712,7 @@ void LibraryTreeModel::reset(const TrackList& tracks)
     QMetaObject::invokeMethod(&p->m_populator, [this, tracks] { p->m_populator.run(p->m_grouping, tracks); });
 }
 
-QModelIndex LibraryTreeModel::indexForKey(const QString& key)
+QModelIndex LibraryTreeModel::indexForKey(const Md5Hash& key)
 {
     while(!p->m_nodes.contains(key) && canFetchMore({})) {
         fetchMore({});

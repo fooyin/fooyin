@@ -85,7 +85,7 @@ public:
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
 
-    [[nodiscard]] QModelIndexList indexesForKeys(const QStringList& keys) const;
+    [[nodiscard]] QModelIndexList indexesForKeys(const std::vector<Md5Hash>& keys) const;
 
     void addTracks(const TrackList& tracks);
     void updateTracks(const TrackList& tracks);

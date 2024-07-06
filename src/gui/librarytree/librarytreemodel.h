@@ -79,7 +79,7 @@ public:
     void changeGrouping(const LibraryTreeGrouping& grouping);
     void reset(const TrackList& tracks);
 
-    [[nodiscard]] QModelIndex indexForKey(const QString& key);
+    [[nodiscard]] QModelIndex indexForKey(const Md5Hash& key);
 
 signals:
     void modelLoaded();

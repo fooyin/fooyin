@@ -267,7 +267,7 @@ struct FilterModel::Private
 
         const auto parents = m_trackParents.at(track.id());
 
-        for(const QString& parentKey : parents) {
+        for(const auto& parentKey : parents) {
             if(m_nodes.contains(parentKey)) {
                 auto* parentItem = &m_nodes.at(parentKey);
 
@@ -454,7 +454,7 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
         case(FilterItem::Tracks):
             return QVariant::fromValue(item->tracks());
         case(FilterItem::Key):
-            return item->key();
+            return QVariant::fromValue(item->key());
         case(FilterItem::IsSummary):
             return item->isSummary();
         case(Qt::DecorationRole):
@@ -538,13 +538,15 @@ void FilterModel::resetColumnAlignments()
     p->m_columnAlignments.clear();
 }
 
-QModelIndexList FilterModel::indexesForKeys(const QStringList& keys) const
+QModelIndexList FilterModel::indexesForKeys(const std::vector<Md5Hash>& keys) const
 {
     QModelIndexList indexes;
 
+    const std::set<Md5Hash> uniqueKeys{keys.cbegin(), keys.cend()};
+
     const auto rows = rootItem()->children();
     for(const auto& child : rows) {
-        if(keys.contains(child->key())) {
+        if(uniqueKeys.contains(child->key())) {
             indexes.append(indexOfItem(child));
         }
     }
@@ -620,7 +622,7 @@ void FilterModel::removeTracks(const TrackList& tracks)
         const int id = track.id();
         if(p->m_trackParents.contains(id)) {
             const auto trackNodes = p->m_trackParents[id];
-            for(const QString& node : trackNodes) {
+            for(const auto& node : trackNodes) {
                 FilterItem* item = &p->m_nodes[node];
                 item->removeTrack(track);
                 items.emplace(item);

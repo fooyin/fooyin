@@ -34,7 +34,6 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     , m_state{State::None}
     , m_type{type}
     , m_data{std::move(data)}
-    , m_baseKey{0}
     , m_index{-1}
 { }
 
@@ -58,7 +57,7 @@ Data& PlaylistItem::data() const
     return m_data;
 }
 
-uint64_t PlaylistItem::baseKey() const
+Md5Hash PlaylistItem::baseKey() const
 {
     return m_baseKey;
 }
@@ -88,7 +87,7 @@ void PlaylistItem::setData(const Data& data)
     m_data = data;
 }
 
-void PlaylistItem::setBaseKey(uint64_t key)
+void PlaylistItem::setBaseKey(const Md5Hash& key)
 {
     m_baseKey = key;
 }

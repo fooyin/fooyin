@@ -23,7 +23,7 @@
 #include <core/track.h>
 
 namespace Fooyin::Filters {
-FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
+FilterItem::FilterItem(Md5Hash key, QStringList columns, FilterItem* parent)
     : TreeItem{parent}
     , m_key{std::move(key)}
     , m_columns{std::move(columns)}
@@ -36,7 +36,7 @@ FilterItem::FilterItem(QString key, QStringList columns, FilterItem* parent)
     }
 }
 
-QString FilterItem::key() const
+Md5Hash FilterItem::key() const
 {
     return m_key;
 }

@@ -25,8 +25,8 @@
 #include <utils/worker.h>
 
 namespace Fooyin::Filters {
-using ItemKeyMap     = std::map<QString, FilterItem>;
-using TrackIdNodeMap = std::unordered_map<int, std::vector<QString>>;
+using ItemKeyMap     = std::map<Md5Hash, FilterItem>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<Md5Hash>>;
 
 struct PendingTreeData
 {

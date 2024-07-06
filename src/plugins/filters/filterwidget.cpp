@@ -554,10 +554,10 @@ void FilterWidget::softReset(const TrackList& tracks)
 {
     p->m_updating = true;
 
-    QStringList selected;
+    std::vector<Md5Hash> selected;
     const QModelIndexList selectedRows = p->m_view->selectionModel()->selectedRows();
     for(const QModelIndex& index : selectedRows) {
-        selected.emplace_back(index.data(FilterItem::Key).toString());
+        selected.emplace_back(index.data(FilterItem::Key).toByteArray());
     }
 
     reset(tracks);
@@ -735,10 +735,10 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
 
     const QModelIndexList selectedRows = p->m_view->selectionModel()->selectedRows();
 
-    QStringList selected;
+    std::vector<Md5Hash> selected;
     for(const QModelIndex& index : selectedRows) {
         if(index.isValid()) {
-            selected.emplace_back(index.data(FilterItem::Key).toString());
+            selected.emplace_back(index.data(FilterItem::Key).toByteArray());
         }
     }
 

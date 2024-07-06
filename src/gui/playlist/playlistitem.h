@@ -21,6 +21,7 @@
 
 #include "playlistitemmodels.h"
 
+#include <utils/crypto.h>
 #include <utils/id.h>
 #include <utils/treeitem.h>
 
@@ -72,14 +73,14 @@ public:
     [[nodiscard]] State state() const;
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] Data& data() const;
-    [[nodiscard]] uint64_t baseKey() const;
+    [[nodiscard]] Md5Hash baseKey() const;
     [[nodiscard]] UId key() const;
     [[nodiscard]] int index() const;
 
     void setPending(bool pending);
     void setState(State state);
     void setData(const Data& data);
-    void setBaseKey(uint64_t key);
+    void setBaseKey(const Md5Hash& key);
     void setKey(const UId& key);
     void setIndex(int index);
 
@@ -94,7 +95,7 @@ private:
     State m_state;
     ItemType m_type;
     mutable Data m_data;
-    uint64_t m_baseKey;
+    Md5Hash m_baseKey;
     UId m_key;
     int m_index;
 };
