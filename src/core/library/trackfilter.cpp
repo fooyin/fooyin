@@ -37,13 +37,13 @@ bool matchSearch(const Fooyin::Track& track, const QString& search)
 
     return containsSearch(track.artist(), search) || containsSearch(track.title(), search)
         || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search)
-        || containsSearch(track.filename(), search);
+        || containsSearch(track.filename(), search) || containsSearch(track.filepath(), search);
 }
 } // namespace
 
 namespace Fooyin::Filter {
 TrackList filterTracks(const TrackList& tracks, const QString& search)
 {
-    return Fooyin::Utils::filter(tracks, [search](const Fooyin::Track& track) { return matchSearch(track, search); });
+    return Utils::filter(tracks, [search](const Track& track) { return matchSearch(track, search); });
 }
 } // namespace Fooyin::Filter
