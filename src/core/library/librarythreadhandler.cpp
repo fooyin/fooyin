@@ -253,6 +253,19 @@ struct LibraryThreadHandler::Private
         }
     }
 
+    void updateProgress(int current, int total)
+    {
+        ScanProgress progress;
+        progress.id      = m_currentRequestId;
+        progress.total   = total;
+        progress.current = current;
+        if(!m_scanRequests.empty()) {
+            progress.type = m_scanRequests.front().type;
+        }
+
+        emit m_self->progressChanged(progress);
+    }
+
     void finishScanRequest()
     {
         if(const auto request = currentRequest()) {
@@ -295,7 +308,7 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
                      &LibraryThreadHandler::tracksUpdated);
     QObject::connect(&p->m_scanner, &Worker::finished, this, [this]() { p->finishScanRequest(); });
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
-                     [this](int percent) { emit progressChanged(p->m_currentRequestId, percent); });
+                     [this](int current, int total) { p->updateProgress(current, total); });
     QObject::connect(&p->m_scanner, &LibraryScanner::scannedTracks, this,
                      [this](const TrackList& newTracks, const TrackList& existingTracks) {
                          emit scannedTracks(p->m_currentRequestId, newTracks, existingTracks);

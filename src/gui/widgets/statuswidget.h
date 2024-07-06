@@ -42,7 +42,7 @@ signals:
     void clicked();
 
 public slots:
-    void libraryScanProgress(int id, int progress);
+    void showMessage(const QString& message);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

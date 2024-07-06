@@ -49,6 +49,22 @@ struct ScanRequest
     std::function<void()> cancel;
 };
 
+struct ScanProgress
+{
+    ScanRequest::Type type;
+    int id{-1};
+    int total{0};
+    int current{0};
+
+    [[nodiscard]] int percentage() const
+    {
+        if(id < 0 || total == 0) {
+            return 0;
+        }
+        return std::max(0, static_cast<int>((static_cast<double>(current) / total) * 100));
+    }
+};
+
 /*!
  * Represents a music library containing Track objects.
  * Acts as a unified library view for all tracks in all libraries,
@@ -110,7 +126,7 @@ public:
     virtual void updateTrackStats(const Track& track) = 0;
 
 signals:
-    void scanProgress(int id, int percent);
+    void scanProgress(const Fooyin::ScanProgress& progress);
     void tracksScanned(int id, const Fooyin::TrackList& tracks);
 
     void tracksLoaded(const Fooyin::TrackList& tracks);

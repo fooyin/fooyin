@@ -58,8 +58,8 @@ struct PlaylistInteractor::Private
         const ScanRequest request = m_library->scanFiles(files);
 
         QObject::connect(m_library, &MusicLibrary::scanProgress, scanDialog,
-                         [scanDialog, request](int id, int percent) {
-                             if(id != request.id) {
+                         [scanDialog, request](const ScanProgress& progress) {
+                             if(progress.id != request.id) {
                                  return;
                              }
 
@@ -68,7 +68,7 @@ struct PlaylistInteractor::Private
                                  scanDialog->close();
                              }
 
-                             scanDialog->setValue(percent);
+                             scanDialog->setValue(progress.percentage());
                          });
 
         QObject::connect(m_library, &MusicLibrary::tracksScanned, scanDialog,

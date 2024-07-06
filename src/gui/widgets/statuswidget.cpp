@@ -44,7 +44,6 @@ namespace Fooyin {
 struct StatusWidget::Private
 {
     StatusWidget* m_self;
-
     PlayerController* m_playerController;
     TrackSelectionController* m_selectionController;
 
@@ -144,12 +143,6 @@ struct StatusWidget::Private
         }
     }
 
-    void updateScanText(int progress)
-    {
-        const auto scanText = QStringLiteral("Scanning library: %1%").arg(progress);
-        showMessage(scanText, 5000);
-    }
-
     void updateSelectionText()
     {
         m_selectionText->setText(m_scriptParser.evaluate(m_selectionScript, m_selectionController->selectedTracks()));
@@ -214,9 +207,9 @@ QString StatusWidget::layoutName() const
     return QStringLiteral("StatusBar");
 }
 
-void StatusWidget::libraryScanProgress(int /*id*/, int progress)
+void StatusWidget::showMessage(const QString& message)
 {
-    p->updateScanText(progress);
+    p->showMessage(message, 5000);
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)

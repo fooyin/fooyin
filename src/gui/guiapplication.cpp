@@ -142,6 +142,7 @@ struct GuiApplication::Private
 
     PropertiesDialog* propertiesDialog;
     WindowController* windowController;
+    StatusWidget* statusWidget{nullptr};
 
     GeneralPage generalPage;
     GuiGeneralPage guiGeneralPage;
@@ -634,10 +635,11 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("StatusBar"),
             [this]() {
-                auto* statusWidget
+                statusWidget
                     = new StatusWidget(core.playerController, &selectionController, settings, mainWindow.get());
+                QObject::connect(statusWidget, &QObject::destroyed, statusWidget, [this]() { statusWidget = nullptr; });
                 QObject::connect(core.library, &MusicLibrary::scanProgress, statusWidget,
-                                 &StatusWidget::libraryScanProgress);
+                                 [this](const ScanProgress& progress) { showScanProgress(progress); });
                 return statusWidget;
             },
             tr("Status Bar"));
@@ -683,6 +685,29 @@ struct GuiApplication::Private
         message.addButton(QMessageBox::Ok);
 
         message.exec();
+    }
+
+    void showScanProgress(const ScanProgress& progress) const
+    {
+        if(!statusWidget || progress.id < 0 || progress.total == 0) {
+            return;
+        }
+
+        QString scanType;
+        switch(progress.type) {
+            case(ScanRequest::Files):
+                scanType = QStringLiteral("files");
+                break;
+            case(ScanRequest::Tracks):
+                scanType = QStringLiteral("tracks");
+                break;
+            case(ScanRequest::Library):
+                scanType = QStringLiteral("library");
+                break;
+        }
+
+        const auto scanText = QStringLiteral("Scanning %1: %2%").arg(scanType).arg(progress.percentage());
+        statusWidget->showMessage(scanText);
     }
 
     void showTrackNotFoundMessage(const Track& track) const

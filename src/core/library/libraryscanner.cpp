@@ -205,8 +205,7 @@ struct LibraryScanner::Private
     std::set<QString> m_cueFilesScanned;
 
     int m_tracksProcessed{0};
-    double m_totalTracks{0};
-    int m_currentProgress{-1};
+    int m_totalTracks{0};
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
 
@@ -224,7 +223,6 @@ struct LibraryScanner::Private
     {
         m_tracksProcessed = 0;
         m_totalTracks     = 0;
-        m_currentProgress = -1;
         m_tracksToStore.clear();
         m_tracksToUpdate.clear();
         m_trackPaths.clear();
@@ -252,13 +250,15 @@ struct LibraryScanner::Private
                          });
     }
 
-    void reportProgress()
+    void reportProgress() const
     {
-        const int progress = std::max(0, static_cast<int>((m_tracksProcessed / m_totalTracks) * 100));
-        if(m_currentProgress != progress) {
-            m_currentProgress = progress;
-            emit m_self->progressChanged(m_currentProgress);
-        }
+        emit m_self->progressChanged(m_tracksProcessed, m_totalTracks);
+    }
+
+    void fileScanned()
+    {
+        ++m_tracksProcessed;
+        reportProgress();
     }
 
     Track matchMissingTrack(Track& track)
@@ -503,11 +503,9 @@ struct LibraryScanner::Private
         const auto dirs = getDirectories(path);
 
         m_tracksProcessed = 0;
-        m_totalTracks     = static_cast<double>(
-            std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
-                return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
-            }));
-        m_currentProgress = 0;
+        m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
+            return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
+        });
 
         for(const auto& [_, files, cues] : dirs) {
             for(const auto& cue : cues) {
@@ -517,8 +515,7 @@ struct LibraryScanner::Private
 
                 readCue(cue, baseDir, onlyModified);
 
-                ++m_tracksProcessed;
-                reportProgress();
+                fileScanned();
             }
 
             for(const auto& file : files) {
@@ -528,8 +525,7 @@ struct LibraryScanner::Private
 
                 readFile(file, baseDir, onlyModified);
 
-                ++m_tracksProcessed;
-                reportProgress();
+                fileScanned();
             }
         }
 
@@ -578,7 +574,12 @@ void LibraryScanner::stopThread()
 {
     if(state() == Running) {
         QMetaObject::invokeMethod(
-            this, [this]() { emit progressChanged(100); }, Qt::QueuedConnection);
+            this,
+            [this]() {
+                p->m_tracksProcessed = p->m_totalTracks;
+                emit progressChanged(p->m_tracksProcessed, p->m_totalTracks);
+            },
+            Qt::QueuedConnection);
     }
 
     setState(Idle);
@@ -674,7 +675,6 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
     p->m_tracksProcessed = 0;
     p->m_totalTracks     = static_cast<double>(tracks.size());
-    p->m_currentProgress = -1;
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
@@ -691,8 +691,6 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
 
         Track track{pendingTrack};
 
-        ++p->m_tracksProcessed;
-
         if(trackMap.contains(track.filepath())) {
             tracksScanned.push_back(trackMap.at(track.filepath()));
         }
@@ -702,7 +700,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
             }
         }
 
-        p->reportProgress();
+        p->fileScanned();
     }
 
     p->storeTracks(tracksToStore);
@@ -724,22 +722,21 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                            [](const Track& track) { return std::make_pair(track.filepath(), track); });
 
     p->m_tracksProcessed = 0;
-    p->m_currentProgress = 0;
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
             setState(Idle);
-            emit progressChanged(100);
+            p->m_tracksProcessed = p->m_totalTracks;
+            p->reportProgress();
             emit finished();
         }
     };
 
     const LibraryDirectories dirs = getDirectories(urls);
 
-    p->m_totalTracks = static_cast<double>(
-        std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
-            return sum + dir.files.size() + dir.playlists.size();
-        }));
+    p->m_totalTracks = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
+        return sum + dir.files.size() + dir.playlists.size();
+    });
     std::set<QString> filesScanned;
 
     for(const auto& [_, files, playlists] : dirs) {
@@ -772,8 +769,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 filesScanned.emplace(playlistTrack.filepath());
             }
 
-            ++p->m_tracksProcessed;
-            p->reportProgress();
+            p->fileScanned();
         }
 
         for(const auto& file : files) {
@@ -799,8 +795,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 }
             }
 
-            ++p->m_tracksProcessed;
-            p->reportProgress();
+            p->fileScanned();
         }
     }
 
