@@ -27,6 +27,7 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <utils/datastream.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/autoheaderview.h>
@@ -56,7 +57,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
                                [](const Fooyin::Track& track) { return track.id(); });
     }
 
-    stream << trackIds;
+    Fooyin::operator<<(stream, trackIds);
 
     return result;
 }

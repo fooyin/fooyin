@@ -216,6 +216,3 @@ private:
 };
 FYCORE_EXPORT size_t qHash(const Track& track);
 } // namespace Fooyin
-
-FYCORE_EXPORT QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& tracks);
-FYCORE_EXPORT QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& tracks);

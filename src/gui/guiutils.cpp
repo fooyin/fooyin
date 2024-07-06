@@ -20,6 +20,7 @@
 #include "guiutils.h"
 
 #include <core/library/musiclibrary.h>
+#include <utils/datastream.h>
 
 #include <QIODevice>
 

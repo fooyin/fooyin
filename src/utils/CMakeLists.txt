@@ -2,6 +2,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/async.h
     ${CMAKE_SOURCE_DIR}/include/utils/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/utils/crypto.h
+    ${CMAKE_SOURCE_DIR}/include/utils/datastream.h
     ${CMAKE_SOURCE_DIR}/include/utils/enum.h
     ${CMAKE_SOURCE_DIR}/include/utils/expandableinputbox.h
     ${CMAKE_SOURCE_DIR}/include/utils/expandingcombobox.h
@@ -55,6 +56,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/widgets/tooltip.h
     clickablelabel.cpp
     crypto.cpp
+    datastream.cpp
     expandableinputbox.cpp
     expandingcombobox.cpp
     extendabletableview.cpp

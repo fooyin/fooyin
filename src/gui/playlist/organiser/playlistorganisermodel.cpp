@@ -22,11 +22,11 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <gui/guiconstants.h>
+#include <utils/datastream.h>
 #include <utils/utils.h>
 
 #include <QApplication>
 #include <QIODevice>
-#include <QIcon>
 #include <QMimeData>
 #include <QPalette>
 

@@ -22,41 +22,14 @@
 #include <core/track.h>
 #include <utils/crypto.h>
 #include <utils/database/dbquery.h>
+#include <utils/datastream.h>
 
 namespace {
 using Fooyin::WaveBar::WaveformData;
 
-QDataStream& operator<<(QDataStream& stream, const std::vector<int16_t>& vec)
-{
-    stream << static_cast<int>(vec.size());
-
-    for(const int16_t sample : vec) {
-        stream << sample;
-    }
-
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, std::vector<int16_t>& vec)
-{
-    int size;
-    stream >> size;
-
-    vec.reserve(size);
-
-    while(size > 0) {
-        --size;
-
-        int16_t sample;
-        stream >> sample;
-        vec.emplace_back(sample);
-    }
-    return stream;
-}
-
 QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::ChannelData>& data)
 {
-    int size;
+    quint32 size;
     stream >> size;
 
     data.reserve(size);
@@ -65,9 +38,9 @@ QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::
         --size;
 
         WaveformData<int16_t>::ChannelData channel;
-        stream >> channel.max;
-        stream >> channel.min;
-        stream >> channel.rms;
+        Fooyin::operator>>(stream, channel.max);
+        Fooyin::operator>>(stream, channel.min);
+        Fooyin::operator>>(stream, channel.rms);
         data.emplace_back(channel);
     }
     return stream;
@@ -75,12 +48,12 @@ QDataStream& operator>>(QDataStream& stream, std::vector<WaveformData<int16_t>::
 
 QDataStream& operator<<(QDataStream& stream, const std::vector<WaveformData<int16_t>::ChannelData>& data)
 {
-    stream << static_cast<int>(data.size());
+    stream << static_cast<quint32>(data.size());
 
     for(const auto& channel : data) {
-        stream << channel.max;
-        stream << channel.min;
-        stream << channel.rms;
+        Fooyin::operator<<(stream, channel.max);
+        Fooyin::operator<<(stream, channel.min);
+        Fooyin::operator<<(stream, channel.rms);
     }
 
     return stream;

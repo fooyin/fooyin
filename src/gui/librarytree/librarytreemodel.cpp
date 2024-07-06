@@ -22,6 +22,7 @@
 #include "librarytreepopulator.h"
 
 #include <gui/guiconstants.h>
+#include <utils/datastream.h>
 #include <utils/utils.h>
 
 #include <QApplication>
@@ -279,7 +280,7 @@ struct LibraryTreeModel::Private
         QByteArray result;
         QDataStream stream(&result, QIODevice::WriteOnly);
 
-        Fooyin::TrackIds trackIds;
+        TrackIds trackIds;
 
         for(const QModelIndex& index : indexes) {
             traverseTree(index, trackIds);

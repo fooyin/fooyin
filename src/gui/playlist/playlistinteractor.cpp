@@ -25,6 +25,7 @@
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
+#include <utils/datastream.h>
 #include <utils/fileutils.h>
 #include <utils/utils.h>
 

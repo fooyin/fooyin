@@ -959,30 +959,3 @@ size_t qHash(const Track& track)
     return qHash(track.uniqueFilepath());
 }
 } // namespace Fooyin
-
-QDataStream& operator<<(QDataStream& stream, const Fooyin::TrackIds& trackIds)
-{
-    stream << static_cast<int>(trackIds.size());
-
-    for(const int id : trackIds) {
-        stream << id;
-    }
-    return stream;
-}
-
-QDataStream& operator>>(QDataStream& stream, Fooyin::TrackIds& trackIds)
-{
-    int size;
-    stream >> size;
-
-    trackIds.reserve(size);
-
-    while(size > 0) {
-        --size;
-
-        int trackId;
-        stream >> trackId;
-        trackIds.push_back(trackId);
-    }
-    return stream;
-}

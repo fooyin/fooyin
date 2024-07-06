@@ -35,6 +35,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/crypto.h>
+#include <utils/datastream.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -369,7 +370,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
         return index.data(Fooyin::PlaylistItem::Role::ItemData).value<Fooyin::Track>().id();
     });
 
-    stream << trackIds;
+    Fooyin::operator<<(stream, trackIds);
 
     return result;
 }
