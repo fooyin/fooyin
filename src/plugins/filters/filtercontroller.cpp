@@ -441,6 +441,15 @@ struct FilterController::Private
 
         const FilterGroup& group = m_groups.at(groupId);
 
+        if(filter->searchFilter().length() >= 2 && search.length() < 2) {
+            filter->reset(m_library->tracks());
+            return;
+        }
+
+        if(search.length() < 2) {
+            return;
+        }
+
         const bool reset = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
         const TrackList tracksToFilter = reset ? m_library->tracks() : filter->tracks();
 

@@ -424,12 +424,16 @@ struct LibraryTreeWidget::Private
 
     void searchChanged(const QString& search)
     {
-        const bool reset = m_prevSearch.length() > search.length();
-        m_prevSearch     = search;
+        const bool reset   = m_prevSearch.length() > search.length();
+        const QString prev = std::exchange(m_prevSearch, search);
 
-        if(search.isEmpty()) {
+        if(prev.length() >= 2 && search.length() < 2) {
             m_prevSearchTracks.clear();
             m_model->reset(m_library->tracks());
+            return;
+        }
+
+        if(search.length() < 2) {
             return;
         }
 
