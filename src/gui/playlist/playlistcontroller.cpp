@@ -19,13 +19,11 @@
 
 #include "playlistcontroller.h"
 
-#include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
-#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QIODevice>
@@ -44,7 +42,6 @@ struct PlaylistController::Private
 
     bool m_loaded{false};
     Playlist* m_currentPlaylist{nullptr};
-    bool m_clearingQueue{false};
     bool m_changingTracks{false};
 
     std::unordered_map<Playlist*, QUndoStack> m_histories;
@@ -113,7 +110,7 @@ struct PlaylistController::Private
 
     void handleTracksDequeued(const QueueTracks& tracks) const
     {
-        if(!m_currentPlaylist || m_clearingQueue) {
+        if(!m_currentPlaylist) {
             return;
         }
 
@@ -139,7 +136,7 @@ struct PlaylistController::Private
 
     void handleTracksDequeued(const PlaylistIndexes& indexes) const
     {
-        if(!m_currentPlaylist || m_clearingQueue) {
+        if(!m_currentPlaylist) {
             return;
         }
 
@@ -203,9 +200,14 @@ struct PlaylistController::Private
             m_histories.erase(playlist);
             m_states.erase(playlist);
 
-            m_clearingQueue = true;
-            m_playerController->clearPlaylistQueue(playlist->id());
-            m_clearingQueue = false;
+            auto queueTracks = m_playerController->playbackQueue().tracks();
+            for(auto& track : queueTracks) {
+                if(track.playlistId == playlist->id()) {
+                    track.playlistId      = {};
+                    track.indexInPlaylist = -1;
+                }
+            }
+            m_playerController->replaceTracks(queueTracks);
         }
 
         if(playlist == m_currentPlaylist) {
@@ -412,7 +414,7 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
     for(const auto& playlist : playlists) {
         if(playlist != p->m_currentPlaylist) {
             auto* switchPl = new QAction(playlist->name(), playlistMenu);
-            const UId id = playlist->id();
+            const UId id   = playlist->id();
             QObject::connect(switchPl, &QAction::triggered, playlistMenu, [this, id]() { changeCurrentPlaylist(id); });
             playlistMenu->addAction(switchPl);
         }
