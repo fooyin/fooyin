@@ -106,8 +106,7 @@ QueueTracks PlaybackQueue::removeTracks(const QueueTracks& tracks)
     std::set<PlaylistTrack> tracksToRemove{tracks.cbegin(), tracks.cend()};
 
     auto matchingTrack = [&tracksToRemove](const PlaylistTrack& track) {
-        const bool isSame = tracksToRemove.contains(track);
-        return isSame;
+        return tracksToRemove.contains(track);
     };
 
     std::ranges::copy_if(m_tracks, std::back_inserter(removedTracks), matchingTrack);

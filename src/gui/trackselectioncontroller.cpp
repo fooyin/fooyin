@@ -133,6 +133,7 @@ struct TrackSelectionController::Private
             if(m_self->hasTracks()) {
                 const auto& selection = m_contextSelection.at(m_activeContext);
                 m_playlistController->playerController()->queueTracks(selection.tracks);
+                updateActionState();
             }
         });
         m_tracksQueueMenu->addAction(m_actionManager->registerAction(m_addToQueue, Constants::Actions::AddToQueue));
@@ -141,6 +142,7 @@ struct TrackSelectionController::Private
             if(m_self->hasTracks()) {
                 const auto& selection = m_contextSelection.at(m_activeContext);
                 m_playlistController->playerController()->dequeueTracks(selection.tracks);
+                updateActionState();
             }
         });
         m_tracksQueueMenu->addAction(
@@ -336,6 +338,18 @@ struct TrackSelectionController::Private
         const bool haveTracks = m_activeContext && m_contextSelection.contains(m_activeContext)
                              && !m_contextSelection.at(m_activeContext).tracks.empty();
 
+        auto canDequeue = [this]() {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            std::set<Track> selectedTracks;
+            for(const Track& track : selection.tracks) {
+                selectedTracks.emplace(track);
+            }
+            const auto queuedTracks = m_playlistController->playerController()->playbackQueue().tracks();
+            return std::ranges::any_of(queuedTracks, [&selectedTracks](const PlaylistTrack& track) {
+                return selectedTracks.contains(track.track);
+            });
+        };
+
         auto allTracksInSameFolder = [this]() {
             const auto& selection   = m_contextSelection.at(m_activeContext);
             const QString firstPath = QFileInfo{selection.tracks.front().filepath()}.absolutePath();
@@ -352,6 +366,7 @@ struct TrackSelectionController::Private
         m_openFolder->setEnabled(haveTracks && allTracksInSameFolder());
         m_openProperties->setEnabled(haveTracks);
         m_addToQueue->setEnabled(haveTracks);
+        m_removeFromQueue->setVisible(haveTracks && canDequeue());
     }
 };
 
