@@ -24,6 +24,7 @@
 #include "playlistitemmodels.h"
 
 #include <core/track.h>
+#include <utils/crypto.h>
 #include <utils/id.h>
 #include <utils/worker.h>
 
@@ -33,18 +34,18 @@ struct PlaylistPreset;
 
 using ItemList        = std::vector<PlaylistItem>;
 using TrackItemMap    = std::unordered_map<Track, PlaylistItem, Track::TrackHash>;
-using ItemKeyMap      = std::unordered_map<QString, PlaylistItem>;
-using ContainerKeyMap = std::unordered_map<QString, PlaylistContainerItem*>;
-using NodeKeyMap      = std::unordered_map<QString, std::vector<QString>>;
-using TrackIdNodeMap  = std::unordered_map<int, std::vector<QString>>;
-using IndexGroupMap   = std::map<int, std::vector<QString>>;
+using ItemKeyMap      = std::unordered_map<UId, PlaylistItem, UId::UIdHash>;
+using ContainerKeyMap = std::unordered_map<UId, PlaylistContainerItem*, UId::UIdHash>;
+using NodeKeyMap      = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
+using TrackIdNodeMap  = std::unordered_map<int, std::vector<UId>>;
+using IndexGroupMap   = std::map<int, std::vector<UId>>;
 
 struct PendingData
 {
-    Id playlistId;
+    UId playlistId;
     ItemKeyMap items;
     NodeKeyMap nodes;
-    std::vector<QString> containerOrder;
+    std::vector<UId> containerOrder;
     TrackIdNodeMap trackParents;
 
     QString parent;
@@ -72,11 +73,11 @@ public:
     explicit PlaylistPopulator(PlayerController* playerController, QObject* parent = nullptr);
     ~PlaylistPopulator() override;
 
-    void run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
              const TrackList& tracks);
-    void runTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void runTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                    const std::map<int, TrackList>& tracks);
-    void updateTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+    void updateTracks(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                       const TrackItemMap& tracks);
     void updateHeaders(const ItemList& headers);
 

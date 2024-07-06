@@ -119,7 +119,7 @@ struct ExtendableTableView::Private
         , m_actionManager{actionManager}
         , m_tools{tools}
         , m_context{new WidgetContext(
-              m_self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateRandomHash())}, m_self)}
+              m_self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateUniqueHash())}, m_self)}
         , m_toolArea{new ExtendableToolArea(m_self)}
         , m_add{new QAction(tr("Add"), m_self)}
         , m_remove{new QAction(tr("Remove"), m_self)}

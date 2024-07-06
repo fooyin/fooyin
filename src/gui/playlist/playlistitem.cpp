@@ -34,8 +34,7 @@ PlaylistItem::PlaylistItem(ItemType type, Data data, PlaylistItem* parent)
     , m_state{State::None}
     , m_type{type}
     , m_data{std::move(data)}
-    , m_baseKey{QStringLiteral("0")}
-    , m_key{QStringLiteral("0")}
+    , m_baseKey{0}
     , m_index{-1}
 { }
 
@@ -59,12 +58,12 @@ Data& PlaylistItem::data() const
     return m_data;
 }
 
-QString PlaylistItem::baseKey() const
+uint64_t PlaylistItem::baseKey() const
 {
     return m_baseKey;
 }
 
-QString PlaylistItem::key() const
+UId PlaylistItem::key() const
 {
     return m_key;
 }
@@ -89,12 +88,12 @@ void PlaylistItem::setData(const Data& data)
     m_data = data;
 }
 
-void PlaylistItem::setBaseKey(const QString& key)
+void PlaylistItem::setBaseKey(uint64_t key)
 {
     m_baseKey = key;
 }
 
-void PlaylistItem::setKey(const QString& key)
+void PlaylistItem::setKey(const UId& key)
 {
     m_key = key;
 }

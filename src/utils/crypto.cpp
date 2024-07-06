@@ -24,19 +24,6 @@
 #include <QUuid>
 
 namespace Fooyin::Utils {
-QString generateRandomHash()
-{
-    const QString uniqueId  = QUuid::createUuid().toString();
-    const QString timestamp = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs);
-
-    QCryptographicHash hash(QCryptographicHash::Sha256);
-    hash.addData(uniqueId.toUtf8());
-    hash.addData(timestamp.toUtf8());
-
-    QString headerKey = QString::fromUtf8(hash.result().toHex());
-    return headerKey;
-}
-
 QString generateUniqueHash()
 {
     return QUuid::createUuid().toString(QUuid::Id128);

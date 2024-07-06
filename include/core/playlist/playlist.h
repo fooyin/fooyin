@@ -57,7 +57,7 @@ public:
 
     ~Playlist();
 
-    [[nodiscard]] Id id() const;
+    [[nodiscard]] UId id() const;
     [[nodiscard]] int dbId() const;
     [[nodiscard]] QString name() const;
     [[nodiscard]] int index() const;

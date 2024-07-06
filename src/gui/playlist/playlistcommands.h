@@ -31,18 +31,18 @@ class PlayerController;
 class PlaylistCommand : public QUndoCommand
 {
 public:
-    PlaylistCommand(PlayerController* playerController, PlaylistModel* model, const Id& playlistId);
+    PlaylistCommand(PlayerController* playerController, PlaylistModel* model, const UId& playlistId);
 
 protected:
     PlayerController* m_playerController;
     PlaylistModel* m_model;
-    Id m_playlistId;
+    UId m_playlistId;
 };
 
 class InsertTracks : public PlaylistCommand
 {
 public:
-    InsertTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups);
+    InsertTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
@@ -54,7 +54,7 @@ private:
 class RemoveTracks : public PlaylistCommand
 {
 public:
-    RemoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackGroups groups);
+    RemoveTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId, TrackGroups groups);
 
     void undo() override;
     void redo() override;
@@ -66,7 +66,8 @@ private:
 class MoveTracks : public PlaylistCommand
 {
 public:
-    MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, MoveOperation operation);
+    MoveTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
+               MoveOperation operation);
 
     void undo() override;
     void redo() override;
@@ -79,7 +80,7 @@ private:
 class ResetTracks : public PlaylistCommand
 {
 public:
-    ResetTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId, TrackList oldTracks,
+    ResetTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId, TrackList oldTracks,
                 TrackList newTracks);
 
     void undo() override;

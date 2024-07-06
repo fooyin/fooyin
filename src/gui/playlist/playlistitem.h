@@ -21,6 +21,7 @@
 
 #include "playlistitemmodels.h"
 
+#include <utils/id.h>
 #include <utils/treeitem.h>
 
 namespace Fooyin {
@@ -71,15 +72,15 @@ public:
     [[nodiscard]] State state() const;
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] Data& data() const;
-    [[nodiscard]] QString baseKey() const;
-    [[nodiscard]] QString key() const;
+    [[nodiscard]] uint64_t baseKey() const;
+    [[nodiscard]] UId key() const;
     [[nodiscard]] int index() const;
 
     void setPending(bool pending);
     void setState(State state);
     void setData(const Data& data);
-    void setBaseKey(const QString& key);
-    void setKey(const QString& key);
+    void setBaseKey(uint64_t key);
+    void setKey(const UId& key);
     void setIndex(int index);
 
     void removeColumn(int column);
@@ -93,8 +94,8 @@ private:
     State m_state;
     ItemType m_type;
     mutable Data m_data;
-    QString m_baseKey;
-    QString m_key;
+    uint64_t m_baseKey;
+    UId m_key;
     int m_index;
 };
 using PlaylistItemList = std::vector<PlaylistItem*>;

@@ -238,7 +238,7 @@ struct DirBrowser::Private
     {
         QueueTracks queueTracks;
 
-        Id playlistId;
+        UId playlistId;
         if(m_playlist) {
             playlistId = m_playlist->id();
         }

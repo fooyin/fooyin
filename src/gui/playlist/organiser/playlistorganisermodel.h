@@ -22,6 +22,7 @@
 #include "playlistorganiseritem.h"
 
 #include <core/track.h>
+#include <utils/id.h>
 #include <utils/treemodel.h>
 
 #include <QColor>
@@ -72,9 +73,9 @@ public:
     void removeItems(const QModelIndexList& indexes);
 
 signals:
-    void filesDroppedOnPlaylist(const QList<QUrl>& urls, const Fooyin::Id& id);
+    void filesDroppedOnPlaylist(const QList<QUrl>& urls, const Fooyin::UId& id);
     void filesDroppedOnGroup(const QList<QUrl>& urls, const QString& group, int index);
-    void tracksDroppedOnPlaylist(const std::vector<int>& trackIds, const Fooyin::Id& id);
+    void tracksDroppedOnPlaylist(const std::vector<int>& trackIds, const Fooyin::UId& id);
     void tracksDroppedOnGroup(const std::vector<int>& trackIds, const QString& group, int index);
 
 private:

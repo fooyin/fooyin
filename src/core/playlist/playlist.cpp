@@ -35,7 +35,7 @@ struct Playlist::PrivateKey
 
 struct Playlist::Private
 {
-    Id m_id;
+    UId m_id;
     int m_dbId{-1};
     QString m_name;
     int m_index{-1};
@@ -52,13 +52,11 @@ struct Playlist::Private
     bool m_tracksModified{false};
 
     explicit Private(QString name)
-        : m_id{Utils::generateUniqueHash()}
-        , m_name{std::move(name)}
-        , m_isTemporary{true}
+        : Private{-1, std::move(name), -1}
     { }
 
     Private(int dbId, QString name, int index)
-        : m_id{Utils::generateUniqueHash()}
+        : m_id{UId::create()}
         , m_dbId{dbId}
         , m_name{std::move(name)}
         , m_index{index}
@@ -153,7 +151,7 @@ Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index)
 
 Playlist::~Playlist() = default;
 
-Id Playlist::id() const
+UId Playlist::id() const
 {
     return p->m_id;
 }

@@ -28,7 +28,7 @@
 
 namespace Fooyin {
 // Queue positions for each playlist
-using PlaylistIndexes = std::map<Id, std::vector<int>>;
+using PlaylistIndexes = std::map<UId, std::vector<int>>;
 // Queue positions of a playlist track index
 using PlaylistTrackIndexes = std::map<int, std::vector<int>>;
 using QueueTracks          = std::vector<PlaylistTrack>;
@@ -45,14 +45,14 @@ public:
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] int freeSpace() const;
     [[nodiscard]] PlaylistIndexes playlistIndexes() const;
-    [[nodiscard]] PlaylistTrackIndexes indexesForPlaylist(const Id& id) const;
+    [[nodiscard]] PlaylistTrackIndexes indexesForPlaylist(const UId& id) const;
 
     PlaylistTrack nextTrack();
 
     void addTracks(const QueueTracks& tracks);
     void replaceTracks(const QueueTracks& tracks);
     QueueTracks removeTracks(const QueueTracks& tracks);
-    QueueTracks removePlaylistTracks(const Id& playlistId);
+    QueueTracks removePlaylistTracks(const UId& playlistId);
 
     void clear();
 

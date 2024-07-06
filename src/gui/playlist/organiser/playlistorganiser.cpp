@@ -117,7 +117,7 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_playerController{playlistInteractor->playlistController()->playerController()}
     , m_organiserTree{new QTreeView(this)}
     , m_model{new PlaylistOrganiserModel(playlistInteractor->handler(), m_playerController)}
-    , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateRandomHash())},
+    , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateUniqueHash())},
                                   this)}
     , m_removePlaylist{new QAction(tr("Remove"))}
     , m_removeCmd{actionManager->registerAction(m_removePlaylist, Constants::Actions::Remove, m_context->context())}
@@ -276,8 +276,8 @@ void PlaylistOrganiser::selectionChanged()
         return;
     }
 
-    auto* playlist      = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
-    const Id playlistId = playlist->id();
+    auto* playlist         = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
+    const UId playlistId = playlist->id();
 
     if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
         m_playlistInteractor->playlistController()->changeCurrentPlaylist(playlist);
@@ -291,7 +291,7 @@ void PlaylistOrganiser::selectCurrentPlaylist()
         return;
     }
 
-    const Id playlistId = playlist->id();
+    const UId playlistId = playlist->id();
     if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
         const QModelIndex index = m_model->indexForPlaylist(playlist);
         if(index.isValid()) {
@@ -326,7 +326,7 @@ void PlaylistOrganiser::createPlaylist(const QModelIndex& index)
     m_creatingPlaylist = false;
 }
 
-void PlaylistOrganiser::filesToPlaylist(const QList<QUrl>& urls, const Id& id)
+void PlaylistOrganiser::filesToPlaylist(const QList<QUrl>& urls, const UId& id)
 {
     if(urls.empty()) {
         return;
@@ -350,7 +350,7 @@ void PlaylistOrganiser::filesToGroup(const QList<QUrl>& urls, const QString& gro
     });
 }
 
-void PlaylistOrganiser::tracksToPlaylist(const std::vector<int>& trackIds, const Id& id)
+void PlaylistOrganiser::tracksToPlaylist(const std::vector<int>& trackIds, const UId& id)
 {
     const auto tracks = m_playlistInteractor->library()->tracksForIds(trackIds);
     if(tracks.empty()) {

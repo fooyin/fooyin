@@ -661,8 +661,8 @@ void PlaylistWidgetPrivate::queueSelectedTracks(bool send) const
         return;
     }
 
-    const auto selected = filterSelectedIndexes(m_playlistView);
-    const Id playlistId = m_playlistController->currentPlaylist()->id();
+    const auto selected  = filterSelectedIndexes(m_playlistView);
+    const UId playlistId = m_playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
 
@@ -691,8 +691,8 @@ void PlaylistWidgetPrivate::dequeueSelectedTracks() const
         return;
     }
 
-    const auto selected = filterSelectedIndexes(m_playlistView);
-    const Id playlistId = m_playlistController->currentPlaylist()->id();
+    const auto selected  = filterSelectedIndexes(m_playlistView);
+    const UId playlistId = m_playlistController->currentPlaylist()->id();
 
     QueueTracks tracks;
 

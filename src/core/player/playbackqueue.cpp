@@ -64,7 +64,7 @@ PlaylistIndexes PlaybackQueue::playlistIndexes() const
     return indexes;
 }
 
-PlaylistTrackIndexes PlaybackQueue::indexesForPlaylist(const Id& id) const
+PlaylistTrackIndexes PlaybackQueue::indexesForPlaylist(const UId& id) const
 {
     PlaylistTrackIndexes indexes;
 
@@ -116,7 +116,7 @@ QueueTracks PlaybackQueue::removeTracks(const QueueTracks& tracks)
     return removedTracks;
 }
 
-QueueTracks PlaybackQueue::removePlaylistTracks(const Id& playlistId)
+QueueTracks PlaybackQueue::removePlaylistTracks(const UId& playlistId)
 {
     QueueTracks removedTracks;
 

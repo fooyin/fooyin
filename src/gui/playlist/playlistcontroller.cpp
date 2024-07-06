@@ -412,7 +412,7 @@ void PlaylistController::addPlaylistMenu(QMenu* menu)
     for(const auto& playlist : playlists) {
         if(playlist != p->m_currentPlaylist) {
             auto* switchPl = new QAction(playlist->name(), playlistMenu);
-            const Id id    = playlist->id();
+            const UId id = playlist->id();
             QObject::connect(switchPl, &QAction::triggered, playlistMenu, [this, id]() { changeCurrentPlaylist(id); });
             playlistMenu->addAction(switchPl);
         }
@@ -426,9 +426,9 @@ Playlist* PlaylistController::currentPlaylist() const
     return p->m_currentPlaylist;
 }
 
-Id PlaylistController::currentPlaylistId() const
+UId PlaylistController::currentPlaylistId() const
 {
-    return p->m_currentPlaylist ? p->m_currentPlaylist->id() : Id{};
+    return p->m_currentPlaylist ? p->m_currentPlaylist->id() : UId{};
 }
 
 void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
@@ -450,14 +450,14 @@ void PlaylistController::changeCurrentPlaylist(Playlist* playlist)
     emit currentPlaylistChanged(prevPlaylist, playlist);
 }
 
-void PlaylistController::changeCurrentPlaylist(const Id& id)
+void PlaylistController::changeCurrentPlaylist(const UId& id)
 {
     if(auto* playlist = p->m_handler->playlistById(id)) {
         changeCurrentPlaylist(playlist);
     }
 }
 
-void PlaylistController::changePlaylistIndex(const Id& playlistId, int index)
+void PlaylistController::changePlaylistIndex(const UId& playlistId, int index)
 {
     p->m_handler->changePlaylistIndex(playlistId, index);
 }

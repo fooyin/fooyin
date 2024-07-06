@@ -23,9 +23,7 @@
 #include "playlistscriptregistry.h"
 
 #include <core/player/playercontroller.h>
-#include <utils/crypto.h>
 
-#include <QCryptographicHash>
 #include <QTimer>
 
 #include <ranges>
@@ -47,11 +45,11 @@ struct PlaylistPopulator::Private
     ScriptFormatter m_formatter;
 
     int m_trackDepth{0};
-    QString m_prevBaseHeaderKey;
-    QString m_prevHeaderKey;
+    uint64_t m_prevBaseHeaderKey;
+    UId m_prevHeaderKey;
     int m_prevIndex{0};
-    std::vector<QString> m_prevBaseSubheaderKey;
-    std::vector<QString> m_prevSubheaderKey;
+    std::vector<uint64_t> m_prevBaseSubheaderKey;
+    std::vector<UId> m_prevSubheaderKey;
 
     std::vector<PlaylistContainerItem> m_subheaders;
 
@@ -74,12 +72,12 @@ struct PlaylistPopulator::Private
         m_trackDepth = 0;
         m_prevBaseSubheaderKey.clear();
         m_prevSubheaderKey.clear();
-        m_prevBaseHeaderKey.clear();
-        m_prevHeaderKey.clear();
+        m_prevBaseHeaderKey = 0;
+        m_prevHeaderKey     = {};
     }
 
-    PlaylistItem* getOrInsertItem(const QString& key, PlaylistItem::ItemType type, const Data& item,
-                                  PlaylistItem* parent, const QString& baseKey)
+    PlaylistItem* getOrInsertItem(const UId& key, PlaylistItem::ItemType type, const Data& item, PlaylistItem* parent,
+                                  const uint64_t baseKey)
     {
         auto [node, inserted] = m_data.items.try_emplace(key, PlaylistItem{type, item, parent});
         if(inserted) {
@@ -122,13 +120,13 @@ struct PlaylistPopulator::Private
         };
 
         auto generateHeaderKey = [&row, &evaluateBlocks]() {
-            return Utils::generateHash(evaluateBlocks(row.title), evaluateBlocks(row.subtitle),
-                                       evaluateBlocks(row.sideText), evaluateBlocks(row.info));
+            return Utils::generateIntHash(evaluateBlocks(row.title), evaluateBlocks(row.subtitle),
+                                          evaluateBlocks(row.sideText), evaluateBlocks(row.info));
         };
 
-        const QString baseKey = generateHeaderKey();
-        QString key           = Utils::generateRandomHash();
-        if(!m_prevHeaderKey.isEmpty() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
+        const uint64_t baseKey = generateHeaderKey();
+        UId key{UId::create()};
+        if(m_prevHeaderKey.isValid() && m_prevBaseHeaderKey == baseKey && index == m_prevIndex + 1) {
             key = m_prevHeaderKey;
         }
         m_prevBaseHeaderKey = baseKey;
@@ -191,13 +189,13 @@ struct PlaylistPopulator::Private
             const QString subheaderKey = generateSubheaderKey(subheader);
 
             if(subheaderKey.isEmpty()) {
-                m_prevBaseSubheaderKey[i].clear();
-                m_prevSubheaderKey[i].clear();
+                m_prevBaseSubheaderKey[i] = 0;
+                m_prevSubheaderKey[i]     = {};
                 continue;
             }
 
-            const QString baseKey = Utils::generateHash(parent->baseKey(), subheaderKey);
-            QString key           = Utils::generateRandomHash();
+            const uint64_t baseKey = Utils::generateIntHash(QString::number(parent->baseKey()), subheaderKey);
+            UId key{UId::create()};
             if(static_cast<int>(m_prevSubheaderKey.size()) > i && m_prevBaseSubheaderKey.at(i) == baseKey
                && index == m_prevIndex + 1) {
                 key = m_prevSubheaderKey.at(i);
@@ -266,8 +264,9 @@ struct PlaylistPopulator::Private
         playlistTrack.setDepth(m_trackDepth);
         playlistTrack.calculateSize();
 
-        const QString baseKey = Utils::generateHash(parent->key(), track.hash(), QString::number(index));
-        const QString key     = Utils::generateRandomHash();
+        const uint64_t baseKey
+            = Utils::generateIntHash(parent->key().toString(UId::Id128), track.hash(), QString::number(index));
+        const UId key{UId::create()};
 
         auto* trackItem = getOrInsertItem(key, PlaylistItem::Track, playlistTrack, parent, baseKey);
         m_data.trackParents[track.id()].push_back(key);
@@ -314,7 +313,7 @@ struct PlaylistPopulator::Private
     void runTracksGroup(const std::map<int, TrackList>& tracks)
     {
         for(const auto& [index, trackGroup] : tracks) {
-            std::vector<QString> trackKeys;
+            std::vector<UId> trackKeys;
 
             int trackIndex{index};
 
@@ -346,7 +345,7 @@ PlaylistPopulator::PlaylistPopulator(PlayerController* playerController, QObject
     qRegisterMetaType<PendingData>();
 }
 
-void PlaylistPopulator::run(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
+void PlaylistPopulator::run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                             const TrackList& tracks)
 {
     setState(Running);
@@ -366,8 +365,8 @@ void PlaylistPopulator::run(const Id& playlistId, const PlaylistPreset& preset, 
     setState(Idle);
 }
 
-void PlaylistPopulator::runTracks(const Id& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
-                                  const std::map<int, TrackList>& tracks)
+void PlaylistPopulator::runTracks(const UId& playlistId, const PlaylistPreset& preset,
+                                  const PlaylistColumnList& columns, const std::map<int, TrackList>& tracks)
 {
     setState(Running);
 
@@ -383,7 +382,7 @@ void PlaylistPopulator::runTracks(const Id& playlistId, const PlaylistPreset& pr
     setState(Idle);
 }
 
-void PlaylistPopulator::updateTracks(const Id& playlistId, const PlaylistPreset& preset,
+void PlaylistPopulator::updateTracks(const UId& playlistId, const PlaylistPreset& preset,
                                      const PlaylistColumnList& columns, const TrackItemMap& tracks)
 {
     setState(Running);

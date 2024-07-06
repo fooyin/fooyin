@@ -637,7 +637,7 @@ void PlaylistOrganiserModel::deleteNodes(PlaylistOrganiserItem* node)
         m_nodes.erase(groupKey(title));
     }
     else if(node->type() == PlaylistOrganiserItem::PlaylistItem) {
-        const Id id = node->playlist()->id();
+        const UId id = node->playlist()->id();
         m_nodes.erase(playlistKey(title));
         m_playlistHandler->removePlaylist(id);
     }

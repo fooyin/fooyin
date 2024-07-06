@@ -159,8 +159,6 @@ private:
     QVariant headerData(PlaylistItem* item, int column, int role) const;
     QVariant subheaderData(PlaylistItem* item, int column, int role) const;
 
-    PlaylistItem* itemForKey(const QString& key);
-
     struct DropTargetResult
     {
         QModelIndex fullMergeTarget;
@@ -255,7 +253,7 @@ private:
     NodeKeyMap m_pendingNodes;
     ItemKeyMap m_nodes;
     TrackIdNodeMap m_trackParents;
-    std::map<int, QString> m_trackIndexes;
+    std::map<int, UId> m_trackIndexes;
 
     PlaylistPreset m_currentPreset;
     PlaylistColumnList m_columns;

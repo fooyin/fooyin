@@ -19,7 +19,7 @@
 
 #include <utils/id.h>
 
-namespace Fooyin {
+namespace {
 uint32_t idFromString(const QString& str)
 {
     uint32_t result{0};
@@ -27,6 +27,22 @@ uint32_t idFromString(const QString& str)
         result = std::hash<QString>{}(str);
     }
     return result;
+}
+} // namespace
+
+namespace Fooyin {
+UId::UId(const QUuid& id)
+    : QUuid{id}
+{ }
+
+UId UId::create()
+{
+    return UId{QUuid::createUuid()};
+}
+
+bool UId::isValid() const
+{
+    return !isNull();
 }
 
 Id::Id(const QString& str)

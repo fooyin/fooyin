@@ -119,7 +119,7 @@ PlayerController* PlaylistInteractor::playerController() const
     return p->m_controller->playerController();
 }
 
-void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const Id& id) const
+void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id) const
 {
     if(urls.empty()) {
         return;
@@ -134,7 +134,7 @@ void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const Id& id) 
         });
     }
     else {
-        p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
+        p->scanFiles(urls, [this](const TrackList& scannedTracks) {
             const QString playlistName = Track::findCommonField(scannedTracks);
             if(auto* playlist = p->m_handler->createNewPlaylist(playlistName, scannedTracks)) {
                 p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
@@ -247,7 +247,7 @@ void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::funct
     p->scanFiles(urls, func);
 }
 
-void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const Id& id)
+void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const UId& id)
 {
     const TrackList tracks = p->tracksFromMimeData(data);
     if(tracks.empty()) {

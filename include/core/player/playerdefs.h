@@ -33,7 +33,7 @@ enum class PlayState
 struct PlaylistTrack
 {
     Track track;
-    Id playlistId;
+    UId playlistId;
     int indexInPlaylist{-1};
 
     [[nodiscard]] bool isValid() const

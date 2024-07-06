@@ -94,7 +94,7 @@ void PlaylistBox::removePlaylist(const Playlist* playlist)
     const int count = m_playlistBox->count();
 
     for(int i{0}; i < count; ++i) {
-        if(m_playlistBox->itemData(i).value<Id>() == playlist->id()) {
+        if(m_playlistBox->itemData(i).value<UId>() == playlist->id()) {
             m_playlistBox->removeItem(i);
         }
     }
@@ -109,7 +109,7 @@ void PlaylistBox::playlistRenamed(const Playlist* playlist) const
     const int count = m_playlistBox->count();
 
     for(int i{0}; i < count; ++i) {
-        if(m_playlistBox->itemData(i).value<Id>() == playlist->id()) {
+        if(m_playlistBox->itemData(i).value<UId>() == playlist->id()) {
             m_playlistBox->setItemText(i, playlist->name());
         }
     }
@@ -122,10 +122,10 @@ void PlaylistBox::currentPlaylistChanged(const Playlist* playlist) const
     }
 
     const int count = m_playlistBox->count();
-    const Id id     = playlist->id();
+    const UId id  = playlist->id();
 
     for(int i{0}; i < count; ++i) {
-        if(m_playlistBox->itemData(i).value<Id>() == id) {
+        if(m_playlistBox->itemData(i).value<UId>() == id) {
             // Prevent currentIndexChanged triggering changePlaylist
             const QSignalBlocker block{m_playlistBox};
             m_playlistBox->setCurrentIndex(i);
@@ -139,7 +139,7 @@ void PlaylistBox::changePlaylist(int index)
         return;
     }
 
-    const Id id = m_playlistBox->itemData(index).value<Id>();
+    const auto id = m_playlistBox->itemData(index).value<UId>();
     m_playlistController->changeCurrentPlaylist(id);
 }
 } // namespace Fooyin

@@ -26,12 +26,12 @@
 #include <QUrl>
 
 namespace Fooyin {
-class Id;
 class MusicLibrary;
 class PlayerController;
 class PlaylistController;
 class PlaylistHandler;
 class PlaylistWidget;
+class UId;
 
 class PlaylistInteractor : public QObject
 {
@@ -47,7 +47,7 @@ public:
     [[nodiscard]] MusicLibrary* library() const;
     [[nodiscard]] PlayerController* playerController() const;
 
-    void filesToPlaylist(const QList<QUrl>& urls, const Id& id) const;
+    void filesToPlaylist(const QList<QUrl>& urls, const UId& id) const;
     void filesToCurrentPlaylist(const QList<QUrl>& urls) const;
     void filesToCurrentPlaylistReplace(const QList<QUrl>& urls, bool play = false) const;
     void filesToNewPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play = false) const;
@@ -55,7 +55,7 @@ public:
     void filesToActivePlaylist(const QList<QUrl>& urls) const;
     void filesToTracks(const QList<QUrl>& urls, const std::function<void(const TrackList&)>& func) const;
 
-    void trackMimeToPlaylist(const QByteArray& data, const Id& id);
+    void trackMimeToPlaylist(const QByteArray& data, const UId& id);
 
 private:
     struct Private;

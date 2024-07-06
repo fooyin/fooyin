@@ -75,7 +75,7 @@ struct PlaylistTabs::Private
     QIcon m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)};
     QIcon m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)};
 
-    Id m_lastActivePlaylist;
+    UId m_lastActivePlaylist;
 
     Private(PlaylistTabs* self, ActionManager* actionManager, PlaylistController* playlistController,
             SettingsManager* settings)
@@ -147,7 +147,7 @@ struct PlaylistTabs::Private
 
     void tabChanged(int index) const
     {
-        const Id id = m_tabs->tabBar()->tabData(index).value<Id>();
+        const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
         if(id == m_playlistController->currentPlaylistId()) {
             return;
         }
@@ -160,7 +160,7 @@ struct PlaylistTabs::Private
 
     void tabMoved(int /*from*/, int to) const
     {
-        const Id id = m_tabs->tabBar()->tabData(to).value<Id>();
+        const auto id = m_tabs->tabBar()->tabData(to).value<UId>();
         if(id.isValid()) {
             m_playlistController->changePlaylistIndex(id, to);
         }
@@ -173,10 +173,10 @@ struct PlaylistTabs::Private
         }
 
         const int count = m_tabs->tabBar()->count();
-        const Id id     = playlist->id();
+        const UId id  = playlist->id();
 
         for(int i{0}; i < count; ++i) {
-            if(m_tabs->tabBar()->tabData(i).value<Id>() == id) {
+            if(m_tabs->tabBar()->tabData(i).value<UId>() == id) {
                 m_tabs->tabBar()->setCurrentIndex(i);
             }
         }
@@ -209,7 +209,7 @@ struct PlaylistTabs::Private
             return;
         }
 
-        const Id id = m_tabs->tabBar()->tabData(index).value<Id>();
+        const auto id = m_tabs->tabBar()->tabData(index).value<UId>();
         m_playlistHandler->clearPlaylistTracks(id);
     }
 
@@ -220,15 +220,15 @@ struct PlaylistTabs::Private
         }
 
         const int count = m_tabs->tabBar()->count();
-        const Id id     = playlist->id();
+        const UId id  = playlist->id();
 
         for(int i{0}; i < count; ++i) {
-            const Id tabId = m_tabs->tabBar()->tabData(i).value<Id>();
+            const auto tabId = m_tabs->tabBar()->tabData(i).value<UId>();
 
             if(tabId == id) {
                 updateTabIcon(i, m_playlistController->playState());
             }
-            else if(m_lastActivePlaylist.isValid() && tabId == m_lastActivePlaylist) {
+            else if(!m_lastActivePlaylist.isNull() && tabId == m_lastActivePlaylist) {
                 updateTabIcon(i, PlayState::Stopped);
             }
         }
@@ -245,7 +245,7 @@ struct PlaylistTabs::Private
         const int count = m_tabs->tabBar()->count();
 
         for(int i{0}; i < count; ++i) {
-            const Id tabId = m_tabs->tabBar()->tabData(i).value<Id>();
+            const auto tabId = m_tabs->tabBar()->tabData(i).value<UId>();
 
             if(tabId == m_lastActivePlaylist) {
                 updateTabIcon(i, state);
@@ -262,7 +262,7 @@ struct PlaylistTabs::Private
         const int count = m_tabs->tabBar()->count();
 
         for(int i{0}; i < count; ++i) {
-            if(m_tabs->tabBar()->tabData(i).value<Id>() == playlist->id()) {
+            if(m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
                 m_tabs->tabBar()->setTabText(i, playlist->name());
             }
         }
@@ -285,13 +285,13 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
             p->createEmptyPlaylist();
         }
         else if(p->m_settings->value<Settings::Gui::Internal::PlaylistTabsMiddleClose>()) {
-            const Id id = p->m_tabs->tabBar()->tabData(index).value<Id>();
+            const auto id = p->m_tabs->tabBar()->tabData(index).value<UId>();
             p->m_playlistHandler->removePlaylist(id);
         }
     });
     QObject::connect(p->m_tabs, &SingleTabbedWidget::tabCloseRequested, this, [this](const int index) {
         if(index >= 0) {
-            const Id id = p->m_tabs->tabBar()->tabData(index).value<Id>();
+            const auto id = p->m_tabs->tabBar()->tabData(index).value<UId>();
             p->m_playlistHandler->removePlaylist(id);
         }
     });
@@ -304,7 +304,7 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     });
     QObject::connect(p->m_tabs->tabBar(), &EditableTabBar::tabTextChanged, this,
                      [this](int index, const QString& text) {
-                         const Id id = p->m_tabs->tabBar()->tabData(index).value<Id>();
+                         const auto id = p->m_tabs->tabBar()->tabData(index).value<UId>();
                          p->m_playlistHandler->renamePlaylist(id, text);
                      });
     QObject::connect(p->m_tabs, &SingleTabbedWidget::tabBarClicked, this, [this](int index) { p->tabChanged(index); });
@@ -361,7 +361,7 @@ void PlaylistTabs::removePlaylist(const Playlist* playlist)
     }
 
     for(int i{0}; i < p->m_tabs->count(); ++i) {
-        if(p->m_tabs->tabBar()->tabData(i).value<Id>() == playlist->id()) {
+        if(p->m_tabs->tabBar()->tabData(i).value<UId>() == playlist->id()) {
             p->m_tabs->removeTab(i);
         }
     }
@@ -401,7 +401,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(createPlaylist);
 
     if(index >= 0) {
-        const Id id = tabBar->tabData(index).value<Id>();
+        const auto id = tabBar->tabData(index).value<UId>();
 
         auto* renamePlAction = new QAction(tr("Rename Playlist"), menu);
         QObject::connect(renamePlAction, &QAction::triggered, tabBar, &EditableTabBar::showEditor);
@@ -498,7 +498,7 @@ void PlaylistTabs::dropEvent(QDropEvent* event)
     auto* tabBar       = p->m_tabs->tabBar();
     const int index    = tabBar->tabAt(tabBar->mapFrom(this, point));
 
-    const Id id = tabBar->tabData(index).value<Id>();
+    const auto id = tabBar->tabData(index).value<UId>();
 
     if(event->mimeData()->hasUrls()) {
         emit filesDropped(event->mimeData()->urls(), id);

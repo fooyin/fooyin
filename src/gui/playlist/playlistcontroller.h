@@ -74,11 +74,11 @@ public:
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
-    [[nodiscard]] Id currentPlaylistId() const;
+    [[nodiscard]] UId currentPlaylistId() const;
 
     void changeCurrentPlaylist(Playlist* playlist);
-    void changeCurrentPlaylist(const Id& id);
-    void changePlaylistIndex(const Id& playlistId, int index);
+    void changeCurrentPlaylist(const UId& id);
+    void changePlaylistIndex(const UId& playlistId, int index);
     void clearCurrentPlaylist();
 
     [[nodiscard]] std::optional<PlaylistViewState> playlistState(Playlist* playlist) const;

@@ -54,9 +54,9 @@ private:
     void createGroup(const QModelIndex& index) const;
     void createPlaylist(const QModelIndex& index);
 
-    void filesToPlaylist(const QList<QUrl>& urls, const Id& id);
+    void filesToPlaylist(const QList<QUrl>& urls, const UId& id);
     void filesToGroup(const QList<QUrl>& urls, const QString& group, int index);
-    void tracksToPlaylist(const std::vector<int>& trackIds, const Id& id);
+    void tracksToPlaylist(const std::vector<int>& trackIds, const UId& id);
     void tracksToGroup(const std::vector<int>& trackIds, const QString& group, int index);
 
     ActionManager* m_actionManager;
@@ -78,7 +78,7 @@ private:
     QAction* m_newPlaylist;
     Command* m_newPlaylistCmd;
 
-    Id m_currentPlaylistId;
+    UId m_currentPlaylistId;
     bool m_creatingPlaylist{false};
 };
 } // namespace Fooyin

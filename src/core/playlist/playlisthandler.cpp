@@ -237,7 +237,7 @@ struct PlaylistHandler::Private
         return nextValidIndex;
     }
 
-    [[nodiscard]] bool validId(const Id& id) const
+    [[nodiscard]] bool validId(const UId& id) const
     {
         auto it = std::ranges::find_if(std::as_const(m_playlists),
                                        [id](const auto& playlist) { return playlist->id() == id; });
@@ -289,10 +289,9 @@ struct PlaylistHandler::Private
             return m_playlists.at(existingIndex).get();
         }
 
-
         if(isTemporary) {
-        const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
-            auto* playlist = m_playlists.emplace_back(Playlist::create(tempName)).get();
+            const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
+            auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName)).get();
             return playlist;
         }
 
@@ -330,7 +329,7 @@ PlaylistHandler::~PlaylistHandler()
     p->m_playlists.clear();
 }
 
-Playlist* PlaylistHandler::playlistById(const Id& id) const
+Playlist* PlaylistHandler::playlistById(const UId& id) const
 {
     if(!id.isValid()) {
         return nullptr;
@@ -497,7 +496,7 @@ Playlist* PlaylistHandler::createNewTempPlaylist(const QString& name, const Trac
     return playlist;
 }
 
-void PlaylistHandler::appendToPlaylist(const Id& id, const TrackList& tracks)
+void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
         const int index = playlist->trackCount();
@@ -506,7 +505,7 @@ void PlaylistHandler::appendToPlaylist(const Id& id, const TrackList& tracks)
     }
 }
 
-void PlaylistHandler::replacePlaylistTracks(const Id& id, const TrackList& tracks)
+void PlaylistHandler::replacePlaylistTracks(const UId& id, const TrackList& tracks)
 {
     if(auto* playlist = playlistById(id)) {
         const auto size = tracks.empty() ? playlist->tracks().size() : tracks.size();
@@ -520,7 +519,7 @@ void PlaylistHandler::replacePlaylistTracks(const Id& id, const TrackList& track
     }
 }
 
-void PlaylistHandler::movePlaylistTracks(const Id& id, const Id& replaceId)
+void PlaylistHandler::movePlaylistTracks(const UId& id, const UId& replaceId)
 {
     auto updateQueue = [this, &id, &replaceId]() {
         auto queueTracks = p->m_playerController->playbackQueue().tracks();
@@ -546,7 +545,7 @@ void PlaylistHandler::movePlaylistTracks(const Id& id, const Id& replaceId)
     }
 }
 
-void PlaylistHandler::removePlaylistTracks(const Id& id, const std::vector<int>& indexes)
+void PlaylistHandler::removePlaylistTracks(const UId& id, const std::vector<int>& indexes)
 {
     if(auto* playlist = playlistById(id)) {
         const auto removedIndexes = playlist->removeTracks(indexes);
@@ -554,12 +553,12 @@ void PlaylistHandler::removePlaylistTracks(const Id& id, const std::vector<int>&
     }
 }
 
-void PlaylistHandler::clearPlaylistTracks(const Id& id)
+void PlaylistHandler::clearPlaylistTracks(const UId& id)
 {
     replacePlaylistTracks(id, TrackList{});
 }
 
-void PlaylistHandler::changePlaylistIndex(const Id& id, int index)
+void PlaylistHandler::changePlaylistIndex(const UId& id, int index)
 {
     if(auto* playlist = playlistById(id)) {
         if(!playlist->isTemporary()) {
@@ -569,7 +568,7 @@ void PlaylistHandler::changePlaylistIndex(const Id& id, int index)
     }
 }
 
-void PlaylistHandler::changeActivePlaylist(const Id& id)
+void PlaylistHandler::changeActivePlaylist(const UId& id)
 {
     auto playlist
         = std::ranges::find_if(std::as_const(p->m_playlists), [id](const auto& pl) { return pl->id() == id; });
@@ -585,7 +584,7 @@ void PlaylistHandler::changeActivePlaylist(Playlist* playlist)
     emit activePlaylistChanged(playlist);
 }
 
-void PlaylistHandler::schedulePlaylist(const Id& id)
+void PlaylistHandler::schedulePlaylist(const UId& id)
 {
     const auto playlist
         = std::ranges::find_if(std::as_const(p->m_playlists), [id](const auto& pl) { return pl->id() == id; });
@@ -614,7 +613,7 @@ Track PlaylistHandler::previousTrack()
     return p->nextTrack(-1);
 }
 
-void PlaylistHandler::renamePlaylist(const Id& id, const QString& name)
+void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)
 {
     if(playlistCount() < 1) {
         return;
@@ -638,7 +637,7 @@ void PlaylistHandler::renamePlaylist(const Id& id, const QString& name)
     emit playlistRenamed(playlist);
 }
 
-void PlaylistHandler::removePlaylist(const Id& id)
+void PlaylistHandler::removePlaylist(const UId& id)
 {
     auto* playlist = playlistById(id);
     if(!playlist) {
@@ -716,7 +715,7 @@ void PlaylistHandler::savePlaylists()
     }
 }
 
-void PlaylistHandler::savePlaylist(const Id& id)
+void PlaylistHandler::savePlaylist(const UId& id)
 {
     if(auto* playlistToSave = playlistById(id)) {
         p->updateIndices();
@@ -724,7 +723,7 @@ void PlaylistHandler::savePlaylist(const Id& id)
     }
 }
 
-void PlaylistHandler::startPlayback(const Id& id)
+void PlaylistHandler::startPlayback(const UId& id)
 {
     if(auto* playlist = playlistById(id)) {
         changeActivePlaylist(id);

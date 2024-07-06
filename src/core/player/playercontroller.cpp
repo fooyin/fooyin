@@ -159,7 +159,7 @@ void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
     emit playlistTrackChanged(p->m_currentTrack);
 }
 
-void PlayerController::updateCurrentTrackPlaylist(const Id& playlistId)
+void PlayerController::updateCurrentTrackPlaylist(const UId& playlistId)
 {
     if(std::exchange(p->m_currentTrack.playlistId, playlistId) != playlistId) {
         emit playlistTrackChanged(p->m_currentTrack);
@@ -379,7 +379,7 @@ void PlayerController::replaceTracks(const QueueTracks& tracks)
     emit trackQueueChanged(removed, tracks);
 }
 
-void PlayerController::clearPlaylistQueue(const Id& playlistId)
+void PlayerController::clearPlaylistQueue(const UId& playlistId)
 {
     const auto removedTracks = p->queue.removePlaylistTracks(playlistId);
     if(!removedTracks.empty()) {

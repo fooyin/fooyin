@@ -71,7 +71,7 @@ struct QueueViewer::Private
         , m_settings{settings}
         , m_view{new QueueViewerView(m_self)}
         , m_model{new QueueViewerModel(std::move(tagLoader), settings, m_self)}
-        , m_context{new WidgetContext(m_self, Context{Id{"Context.QueueViewer."}.append(Utils::generateRandomHash())},
+        , m_context{new WidgetContext(m_self, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())},
                                       m_self)}
         , m_remove{new QAction(tr("Remove"))}
         , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}

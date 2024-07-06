@@ -24,7 +24,7 @@ struct PlaylistScriptRegistry::Private
 {
     PlaylistTrackIndexes m_playlistQueue;
 
-    Id m_playlistId;
+    UId m_playlistId;
     int m_trackIndex{0};
     int m_trackDepth{0};
 
@@ -107,7 +107,7 @@ PlaylistScriptRegistry::PlaylistScriptRegistry()
 
 PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;
 
-void PlaylistScriptRegistry::setup(const Id& playlistId, const PlaybackQueue& queue)
+void PlaylistScriptRegistry::setup(const UId& playlistId, const PlaybackQueue& queue)
 {
     p->m_playlistId = playlistId;
     if(playlistId.isValid()) {

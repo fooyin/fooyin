@@ -157,8 +157,8 @@ int determineDropIndex(const QAbstractItemModel* model, const QModelIndex& paren
 
 Fooyin::PlaylistItem* cloneParent(Fooyin::ItemKeyMap& nodes, Fooyin::PlaylistItem* parent)
 {
-    const QString parentKey = Fooyin::Utils::generateRandomHash();
-    auto* newParent         = &nodes.emplace(parentKey, *parent).first->second;
+    const auto parentKey{Fooyin::UId::create()};
+    auto* newParent = &nodes.emplace(parentKey, *parent).first->second;
     newParent->setKey(parentKey);
     newParent->resetRow();
     newParent->clearChildren();
@@ -374,7 +374,7 @@ QByteArray saveTracks(const QModelIndexList& indexes)
     return result;
 }
 
-Fooyin::QueueTracks savePlaylistTracks(const Fooyin::Id& playlistId, const QModelIndexList& indexes)
+Fooyin::QueueTracks savePlaylistTracks(const Fooyin::UId& playlistId, const QModelIndexList& indexes)
 {
     Fooyin::QueueTracks tracks;
 
@@ -429,7 +429,7 @@ bool dropOnSamePlaylist(QByteArray data, Fooyin::Playlist* playlist)
 
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    Fooyin::Id playlistId;
+    Fooyin::UId playlistId;
     stream >> playlistId;
 
     return playlistId == playlist->id();
@@ -444,7 +444,7 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data, Fooyi
     QModelIndexList result;
     QDataStream stream(&data, QIODevice::ReadOnly);
 
-    Fooyin::Id playlistId;
+    Fooyin::UId playlistId;
     stream >> playlistId;
 
     if(playlistId != playlist->id()) {
@@ -662,7 +662,7 @@ QVariant PlaylistModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == PlaylistItem::BaseKey) {
-        return item->baseKey();
+        return QVariant::fromValue(item->baseKey());
     }
 
     if(role == PlaylistItem::SingleColumnMode) {
@@ -698,7 +698,7 @@ void PlaylistModel::fetchMore(const QModelIndex& parent)
     const auto rowsToInsert = std::views::take(rows, rowCount);
 
     beginInsertRows(parent, row, row + rowCount - 1);
-    for(const QString& pendingRow : rowsToInsert) {
+    for(const auto& pendingRow : rowsToInsert) {
         PlaylistItem& child = m_nodes.at(pendingRow);
         fetchChildren(parentItem, &child);
     }
@@ -989,7 +989,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
         }
 
         if(m_trackIndexes.contains(index)) {
-            const QString key = m_trackIndexes.at(index);
+            const auto key = m_trackIndexes.at(index);
             if(m_nodes.contains(key)) {
                 auto& item = m_nodes.at(key);
                 return {indexOfItem(&item), false};
@@ -999,7 +999,7 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
 
     // End of playlist - return last track index
     const auto lastIndex = static_cast<int>(m_trackIndexes.size()) - 1;
-    const QString key    = m_trackIndexes.at(lastIndex);
+    const auto key       = m_trackIndexes.at(lastIndex);
     if(m_nodes.contains(key)) {
         auto& item = m_nodes.at(key);
         return {indexOfItem(&item), true};
@@ -1227,9 +1227,9 @@ void PlaylistModel::populateModel(PendingData& data)
 
     if(m_resetting) {
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey == QStringLiteral("0") ? itemForIndex({}) : &m_nodes.at(parentKey);
+            auto* parent = parentKey.isNull() ? itemForIndex({}) : &m_nodes.at(parentKey);
 
-            for(const QString& row : rows) {
+            for(const auto& row : rows) {
                 PlaylistItem* child = &m_nodes.at(row);
                 parent->appendChild(child);
                 child->setPending(false);
@@ -1318,7 +1318,7 @@ void PlaylistModel::mergeTrackParents(const TrackIdNodeMap& parents)
 
         auto trackIt = m_trackParents.find(id);
         if(trackIt != m_trackParents.end()) {
-            for(const QString& key : nodes) {
+            for(const auto& key : nodes) {
                 if(m_nodes.contains(key)) {
                     trackIt->second.emplace_back(key);
                 }
@@ -1498,17 +1498,6 @@ QVariant PlaylistModel::subheaderData(PlaylistItem* item, int column, int role) 
     }
 
     return {};
-}
-
-PlaylistItem* PlaylistModel::itemForKey(const QString& key)
-{
-    if(key == QStringLiteral("0")) {
-        return rootItem();
-    }
-    if(m_nodes.contains(key)) {
-        return &m_nodes.at(key);
-    }
-    return nullptr;
 }
 
 bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, int row, int /*column*/,
@@ -1751,17 +1740,17 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 {
     updateTrackIndexes();
 
-    auto cmpParentKeys = [data](const QString& key1, const QString& key2) {
+    auto cmpParentKeys = [data](const UId& key1, const UId& key2) {
         if(key1 == key2) {
             return false;
         }
         return std::ranges::find(data.containerOrder, key1) < std::ranges::find(data.containerOrder, key2);
     };
-    using ParentItemMap = std::map<QString, PlaylistItemList, decltype(cmpParentKeys)>;
+    using ParentItemMap = std::map<UId, PlaylistItemList, decltype(cmpParentKeys)>;
     std::map<int, ParentItemMap> itemData;
 
-    auto nodeForKey = [this, &data](const QString& key) -> PlaylistItem* {
-        if(key == QStringLiteral("0")) {
+    auto nodeForKey = [this, &data](const UId& key) -> PlaylistItem* {
+        if(key.isNull()) {
             return rootItem();
         }
         if(data.items.contains(key)) {
@@ -1772,7 +1761,7 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 
     for(const auto& [index, childKeys] : data.indexNodes) {
         ParentItemMap childrenMap(cmpParentKeys);
-        for(const QString& childKey : childKeys) {
+        for(const auto& childKey : childKeys) {
             if(PlaylistItem* child = nodeForKey(childKey)) {
                 if(child->parent()) {
                     childrenMap[child->parent()->key()].push_back(child);
@@ -1898,8 +1887,8 @@ int PlaylistModel::dropCopyRowsRecursive(const QModelIndex& source, const Playli
     auto* sourceParent = itemForIndex(source);
     for(Fooyin::PlaylistItem* childItem : rows) {
         childItem->resetRow();
-        const QString newKey = Fooyin::Utils::generateRandomHash();
-        auto* newChild       = &m_nodes.emplace(newKey, *childItem).first->second;
+        const auto newKey{UId::create()};
+        auto* newChild = &m_nodes.emplace(newKey, *childItem).first->second;
         newChild->clearChildren();
         newChild->setKey(newKey);
 
@@ -2012,12 +2001,12 @@ bool PlaylistModel::removePlaylistRows(int row, int count, PlaylistItem* parent)
 
 void PlaylistModel::fetchChildren(PlaylistItem* parent, PlaylistItem* child)
 {
-    const QString key = child->key();
+    const auto key = child->key();
 
     if(m_pendingNodes.contains(key)) {
         auto& childRows = m_pendingNodes.at(key);
 
-        for(const QString& childRow : childRows) {
+        for(const auto& childRow : childRows) {
             PlaylistItem& childItem = m_nodes.at(childRow);
             fetchChildren(child, &childItem);
         }
@@ -2209,7 +2198,7 @@ void PlaylistModel::coverUpdated(const Track& track)
     const auto parents   = m_trackParents.at(track.id());
     const bool hasPixmap = !m_pixmapColumns.empty();
 
-    for(const QString& parentKey : parents) {
+    for(const auto& parentKey : parents) {
         if(m_nodes.contains(parentKey)) {
             auto* parentItem = &m_nodes.at(parentKey);
 
@@ -2305,7 +2294,7 @@ PlaylistModel::TrackItemResult PlaylistModel::itemForTrackIndex(int index)
     }
 
     if(m_trackIndexes.contains(index)) {
-        const QString key = m_trackIndexes.at(index);
+        const auto& key = m_trackIndexes.at(index);
         if(m_nodes.contains(key)) {
             return {&m_nodes.at(key), false};
         }

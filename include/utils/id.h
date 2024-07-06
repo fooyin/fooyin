@@ -23,10 +23,30 @@
 
 #include <QMetaType>
 #include <QString>
+#include <QUuid>
 
 #include <set>
 
 namespace Fooyin {
+class FYUTILS_EXPORT UId : public QUuid
+{
+public:
+    struct UIdHash
+    {
+        std::size_t operator()(const UId& id) const
+        {
+            return static_cast<std::size_t>(qHash(id));
+        }
+    };
+
+    UId() = default;
+    explicit UId(const QUuid& id);
+
+    static UId create();
+
+    [[nodiscard]] bool isValid() const;
+};
+
 class FYUTILS_EXPORT Id
 {
 public:

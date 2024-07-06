@@ -21,6 +21,8 @@
 
 #include "fyutils_export.h"
 
+#include <utils/id.h>
+
 #include <QCryptographicHash>
 #include <QString>
 
@@ -31,10 +33,18 @@ QString generateHash(const Args&... args)
     QCryptographicHash hash{QCryptographicHash::Md5};
     (hash.addData(args.toUtf8()), ...);
 
-    QString headerKey = QString::fromUtf8(hash.result().toHex());
-    return headerKey;
+    return QString::fromUtf8(hash.result().toHex());
 }
 
-FYUTILS_EXPORT QString generateRandomHash();
+template <typename... Args>
+uint64_t generateIntHash(const Args&... args)
+{
+    QCryptographicHash hash{QCryptographicHash::Md5};
+    (hash.addData(args.toUtf8()), ...);
+    const auto value = static_cast<uint64_t>(qHash(hash.result(), qGlobalQHashSeed()));
+
+    return value;
+}
+
 FYUTILS_EXPORT QString generateUniqueHash();
 } // namespace Fooyin::Utils

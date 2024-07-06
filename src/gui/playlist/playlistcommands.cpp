@@ -28,7 +28,7 @@
 
 namespace {
 std::map<int, QPersistentModelIndex> saveQueuedIndexes(Fooyin::PlayerController* playerController,
-                                                       Fooyin::PlaylistModel* model, const Fooyin::Id& playlistId)
+                                                       Fooyin::PlaylistModel* model, const Fooyin::UId& playlistId)
 {
     std::map<int, QPersistentModelIndex> indexes;
 
@@ -70,14 +70,14 @@ void restoreQueuedIndexes(Fooyin::PlayerController* playerController,
 } // namespace
 
 namespace Fooyin {
-PlaylistCommand::PlaylistCommand(PlayerController* playerController, PlaylistModel* model, const Id& playlistId)
+PlaylistCommand::PlaylistCommand(PlayerController* playerController, PlaylistModel* model, const UId& playlistId)
     : QUndoCommand{nullptr}
     , m_playerController{playerController}
     , m_model{model}
     , m_playlistId{playlistId}
 { }
 
-InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+InsertTracks::InsertTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
                            TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
@@ -107,7 +107,7 @@ void InsertTracks::redo()
     m_model->insertTracks(m_trackGroups);
 }
 
-RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+RemoveTracks::RemoveTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
                            TrackGroups groups)
     : PlaylistCommand{playerController, model, playlistId}
     , m_trackGroups{std::move(groups)}
@@ -137,7 +137,7 @@ void RemoveTracks::redo()
     restoreQueuedIndexes(m_playerController, queuedIndexes);
 }
 
-MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+MoveTracks::MoveTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
                        MoveOperation operation)
     : PlaylistCommand{playerController, model, playlistId}
     , m_operation{std::move(operation)}
@@ -161,7 +161,7 @@ void MoveTracks::redo()
     restoreQueuedIndexes(m_playerController, queuedIndexes);
 }
 
-ResetTracks::ResetTracks(PlayerController* playerController, PlaylistModel* model, const Id& playlistId,
+ResetTracks::ResetTracks(PlayerController* playerController, PlaylistModel* model, const UId& playlistId,
                          TrackList oldTracks, TrackList newTracks)
     : PlaylistCommand{playerController, model, playlistId}
     , m_oldTracks{std::move(oldTracks)}
