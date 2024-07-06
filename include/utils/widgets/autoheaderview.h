@@ -61,6 +61,7 @@ public:
 
 signals:
     void stretchChanged(bool enabled);
+    void stateRestored();
     void leftClicked(int section, const QPoint& pos);
 
 protected:

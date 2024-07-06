@@ -176,8 +176,11 @@ struct FilterWidget::Private
         QObject::connect(&m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
                          [this](const Filters::FilterColumn& column) { columnChanged(column); });
 
-        QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_self,
-                         [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
+        QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_self, [this]() {
+            if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+                m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+            }
+        });
         QObject::connect(m_header, &QHeaderView::sectionMoved, m_self,
                          [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
         QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);
@@ -243,6 +246,18 @@ struct FilterWidget::Private
         emit m_self->selectionChanged();
     }
 
+    void updateViewMode(ExpandedTreeView::ViewMode mode) const
+    {
+        m_view->setViewMode(mode);
+
+        if(mode == ExpandedTreeView::ViewMode::Tree) {
+            m_model->setColumnOrder({});
+        }
+        else {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+        }
+    }
+
     void updateCaptions(ExpandedTreeView::CaptionDisplay captions) const
     {
         if(captions == ExpandedTreeView::CaptionDisplay::None) {
@@ -251,6 +266,7 @@ struct FilterWidget::Private
         else {
             m_model->setShowLabels(true);
         }
+
         m_view->setCaptionDisplay(captions);
     }
 
@@ -283,13 +299,16 @@ struct FilterWidget::Private
         const auto currentMode     = m_view->viewMode();
         const auto currentCaptions = m_view->captionDisplay();
 
+        using ViewMode       = ExpandedTreeView::ViewMode;
+        using CaptionDisplay = ExpandedTreeView::CaptionDisplay;
+
         if(currentMode == ExpandedTreeView::ViewMode::Tree) {
             displayList->setChecked(true);
         }
-        else if(currentCaptions == ExpandedTreeView::CaptionDisplay::Bottom) {
+        else if(currentCaptions == CaptionDisplay::Bottom) {
             displayArtBottom->setChecked(true);
         }
-        else if(currentCaptions == ExpandedTreeView::CaptionDisplay::Right) {
+        else if(currentCaptions == CaptionDisplay::Right) {
             displayArtLeft->setChecked(true);
         }
         else {
@@ -297,24 +316,20 @@ struct FilterWidget::Private
         }
 
         QObject::connect(displayList, &QAction::triggered, m_self, [this]() {
-            m_model->setColumnOrder({});
-            m_view->setViewMode(ExpandedTreeView::ViewMode::Tree);
-            updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
+            updateViewMode(ViewMode::Tree);
+            updateCaptions(CaptionDisplay::Bottom);
         });
         QObject::connect(displayArtBottom, &QAction::triggered, m_self, [this]() {
-            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
-            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
-            updateCaptions(ExpandedTreeView::CaptionDisplay::Bottom);
+            updateViewMode(ViewMode::Icon);
+            updateCaptions(CaptionDisplay::Bottom);
         });
         QObject::connect(displayArtLeft, &QAction::triggered, m_self, [this]() {
-            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
-            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
-            updateCaptions(ExpandedTreeView::CaptionDisplay::Right);
+            updateViewMode(ViewMode::Icon);
+            updateCaptions(CaptionDisplay::Right);
         });
         QObject::connect(displayArtNone, &QAction::triggered, m_self, [this]() {
-            m_model->setColumnOrder({});
-            m_view->setViewMode(ExpandedTreeView::ViewMode::Icon);
-            updateCaptions(ExpandedTreeView::CaptionDisplay::None);
+            updateViewMode(ViewMode::Icon);
+            updateCaptions(CaptionDisplay::None);
         });
 
         auto* displaySummary = new QAction(tr("Summary Item"), displayMenu);
@@ -696,18 +711,19 @@ void FilterWidget::finalise()
 
     if(!p->m_columns.empty()) {
         if(p->m_headerState.isEmpty()) {
+            p->updateViewMode(p->m_view->viewMode());
             p->m_header->setSortIndicator(0, Qt::AscendingOrder);
-            p->m_model->setColumnOrder(Utils::logicalIndexOrder(p->m_header));
         }
         else {
             QObject::connect(
-                p->m_model, &QAbstractItemModel::modelReset, p->m_header,
+                p->m_header, &AutoHeaderView::stateRestored, this,
                 [this]() {
-                    p->m_header->restoreHeaderState(p->m_headerState);
-                    p->m_model->setColumnOrder(Utils::logicalIndexOrder(p->m_header));
+                    p->updateViewMode(p->m_view->viewMode());
                     p->m_sortProxy->sort(p->m_header->sortIndicatorSection(), p->m_header->sortIndicatorOrder());
                 },
-                static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
+                Qt::SingleShotConnection);
+
+            p->m_header->restoreHeaderState(p->m_headerState);
         }
     }
 }

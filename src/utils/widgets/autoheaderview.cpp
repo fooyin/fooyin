@@ -53,7 +53,9 @@ struct AutoHeaderView::Private
     int m_lastResizePos{-1};
     int m_firstPressed{-1};
     bool m_moving{false};
-    bool m_restoringState{false};
+
+    int m_pendingColumns{0};
+    QByteArray m_pendingState;
 
     explicit Private(AutoHeaderView* self)
         : m_self{self}
@@ -274,7 +276,8 @@ struct AutoHeaderView::Private
 
     void sectionCountChanged(int oldCount, int newCount)
     {
-        if(m_restoringState) {
+        if(m_pendingColumns > 0 && !m_pendingState.isEmpty() && newCount == m_pendingColumns) {
+            m_self->restoreHeaderState(m_pendingState);
             return;
         }
 
@@ -595,8 +598,6 @@ QByteArray AutoHeaderView::saveHeaderState() const
 
 void AutoHeaderView::restoreHeaderState(const QByteArray& state)
 {
-    p->m_restoringState = true;
-
     Qt::SortOrder sortOrder{Qt::AscendingOrder};
     int sortSection{0};
 
@@ -608,6 +609,13 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         stream.setVersion(QDataStream::Qt_6_0);
 
         stream >> pixelWidths;
+
+        if(std::cmp_not_equal(pixelWidths.size(), count())) {
+            p->m_pendingColumns = static_cast<int>(pixelWidths.size());
+            p->m_pendingState   = state;
+            return;
+        }
+
         stream >> logicalIndexes;
         stream >> p->m_sectionWidths;
         stream >> p->m_stretchEnabled;
@@ -653,7 +661,10 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         }
     }
 
-    p->m_restoringState = false;
+    p->m_pendingColumns = 0;
+    p->m_pendingState.clear();
+
+    emit stateRestored();
 }
 
 void AutoHeaderView::mousePressEvent(QMouseEvent* event)

@@ -1431,10 +1431,7 @@ void PlaylistWidget::finalise()
     p->m_header->setSortIndicatorShown(!p->m_singleMode);
 
     if(!p->m_singleMode && !p->m_columns.empty() && !p->m_headerState.isEmpty()) {
-        QObject::connect(
-            p->m_model, &QAbstractItemModel::modelReset, p->m_header,
-            [this]() { p->m_header->restoreHeaderState(p->m_headerState); },
-            static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
+        p->m_header->restoreHeaderState(p->m_headerState);
     }
 
     if(!p->m_singleMode && p->m_columns.empty()) {
