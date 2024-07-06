@@ -177,6 +177,7 @@ struct FilterController::Private
         menu->setAttribute(Qt::WA_DeleteOnClose);
 
         m_trackSelection->addTrackPlaylistContextMenu(menu);
+        m_trackSelection->addTrackQueueContextMenu(menu);
         m_trackSelection->addTrackContextMenu(menu);
 
         menu->popup(pos);
