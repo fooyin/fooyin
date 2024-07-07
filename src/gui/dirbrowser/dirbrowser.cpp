@@ -148,6 +148,7 @@ struct DirBrowser::Private
 {
     DirBrowser* m_self;
 
+    QStringList m_supportedExtensions;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistHandler* m_playlistHandler;
     SettingsManager* m_settings;
@@ -171,8 +172,10 @@ struct DirBrowser::Private
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
 
-    Private(DirBrowser* self, PlaylistInteractor* playlistInteractor, SettingsManager* settings)
+    Private(DirBrowser* self, QStringList supportedExtensions, PlaylistInteractor* playlistInteractor,
+            SettingsManager* settings)
         : m_self{self}
+        , m_supportedExtensions{std::move(supportedExtensions)}
         , m_playlistInteractor{playlistInteractor}
         , m_playlistHandler{m_playlistInteractor->handler()}
         , m_settings{settings}
@@ -194,7 +197,7 @@ struct DirBrowser::Private
         checkIconProvider();
 
         m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        m_model->setNameFilters(Track::supportedFileExtensions());
+        m_model->setNameFilters(Utils::extensionsToWildcards(m_supportedExtensions));
         m_model->setNameFilterDisables(false);
         m_model->setReadOnly(true);
 
@@ -279,12 +282,11 @@ struct DirBrowser::Private
                 const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
                 if(filePath.isDir()) {
                     if(!onlySelection) {
-                        files.append(
-                            Utils::File::getUrlsInDir(filePath.absoluteFilePath(), Track::supportedFileExtensions()));
+                        files.append(Utils::File::getUrlsInDir(filePath.absoluteFilePath(), m_supportedExtensions));
                     }
                     else {
-                        files.append(Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(),
-                                                                        Track::supportedFileExtensions()));
+                        files.append(
+                            Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(), m_supportedExtensions));
                     }
                 }
                 else {
@@ -543,9 +545,10 @@ struct DirBrowser::Private
     }
 };
 
-DirBrowser::DirBrowser(PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent)
+DirBrowser::DirBrowser(QStringList supportedExtensions, PlaylistInteractor* playlistInteractor,
+                       SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playlistInteractor, settings)}
+    , p{std::make_unique<Private>(this, std::move(supportedExtensions), playlistInteractor, settings)}
 {
     QObject::connect(p->m_dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });

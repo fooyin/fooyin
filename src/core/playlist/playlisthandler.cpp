@@ -122,6 +122,7 @@ struct PlaylistHandler::Private
         if(!nextTrk.metadataWasRead()) {
             if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
                 if(parser->readMetaData(nextTrk)) {
+                    nextTrk.generateHash();
                     m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
                 }
             }
@@ -167,6 +168,7 @@ struct PlaylistHandler::Private
         if(!nextTrk.metadataWasRead()) {
             if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
                 if(parser->readMetaData(nextTrk)) {
+                    nextTrk.generateHash();
                     const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
                     m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
                 }

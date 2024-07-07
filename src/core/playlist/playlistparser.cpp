@@ -75,6 +75,7 @@ Track PlaylistParser::readMetadata(const Track& track)
     if(auto* parser = m_tagLoader->parserForTrack(track)) {
         Track readTrack{track};
         if(parser->readMetaData(readTrack)) {
+            readTrack.generateHash();
             return readTrack;
         }
     }

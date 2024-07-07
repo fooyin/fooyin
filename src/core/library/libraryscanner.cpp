@@ -35,6 +35,7 @@
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/timer.h>
+#include <utils/utils.h>
 
 #include <QBuffer>
 #include <QDir>
@@ -84,14 +85,13 @@ std::optional<QString> findMatchingCue(const QFileInfo& file)
     return {};
 }
 
-LibraryDirectories getDirectories(const QString& baseDirectory)
+LibraryDirectories getDirectories(const QString& baseDirectory, const QStringList& trackExtensions)
 {
     LibraryDirectories dirs;
 
     std::stack<QDir> stack;
     stack.emplace(baseDirectory);
 
-    static const QStringList fileExtensions = Fooyin::Track::supportedFileExtensions();
     static const QStringList playlistExtensions{Fooyin::Playlist::supportedPlaylistExtensions()};
     static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
@@ -108,7 +108,7 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
             for(const auto& subDir : subDirs | std::views::reverse) {
                 stack.emplace(subDir.absoluteFilePath());
             }
-            const QFileInfoList foundFiles = dir.entryInfoList(fileExtensions, QDir::Files);
+            const QFileInfoList foundFiles = dir.entryInfoList(trackExtensions, QDir::Files);
             for(const auto& file : foundFiles) {
                 files.append(file.absoluteFilePath());
             }
@@ -121,7 +121,7 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
         }
         else {
             dir.cdUp();
-            if(hasMatchingExtension(info.fileName(), fileExtensions)) {
+            if(hasMatchingExtension(info.fileName(), trackExtensions)) {
                 files.append(info.absoluteFilePath());
                 if(const auto cue = findMatchingCue(info)) {
                     playlists.append(cue.value());
@@ -138,11 +138,10 @@ LibraryDirectories getDirectories(const QString& baseDirectory)
     return dirs;
 }
 
-LibraryDirectories getDirectories(const QList<QUrl>& urls)
+LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& trackExtensions)
 {
     std::unordered_map<QString, LibraryDirectory> processedDirs;
 
-    static const QStringList fileExtensions = Fooyin::Track::supportedFileExtensions();
     static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
     for(const QUrl& url : urls) {
@@ -151,7 +150,7 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls)
 
         if(processedDirs.contains(dir)) {
             auto& libDir = processedDirs.at(dir);
-            if(hasMatchingExtension(file.fileName(), fileExtensions)) {
+            if(hasMatchingExtension(file.fileName(), trackExtensions)) {
                 libDir.files.append(file.absoluteFilePath());
             }
             else if(!libDir.playlists.contains(file.absoluteFilePath())
@@ -160,7 +159,7 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls)
             }
         }
         else {
-            const auto libDirs = getDirectories(file.absoluteFilePath());
+            const auto libDirs = getDirectories(file.absoluteFilePath(), trackExtensions);
             for(const auto& libDir : libDirs) {
                 processedDirs.emplace(libDir.directory, libDir);
             }
@@ -286,6 +285,36 @@ struct LibraryScanner::Private
         m_trackDatabase.storeTracks(tracks);
     }
 
+    bool readFileProperties(Track& track)
+    {
+        const QFileInfo fileInfo{track.filepath()};
+        if(fileInfo.size() <= 0) {
+            return false;
+        }
+
+        track.setFileSize(fileInfo.size());
+
+        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+        const QDateTime modifiedTime = fileInfo.lastModified();
+        track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+
+        return true;
+    }
+
+    [[nodiscard]] bool readTrackMetadata(Track& track) const
+    {
+        if(auto* tagParser = m_tagLoader->parserForTrack(track)) {
+            if(tagParser->readMetaData(track)) {
+                track.generateHash();
+                return true;
+            }
+            qDebug() << "Failed to read metadata for" << track.filepath();
+        }
+
+        qDebug() << "Unsupported file:" << track.filepath();
+        return false;
+    }
+
     TrackList readPlaylistTracks(const QString& file) const
     {
         if(file.isEmpty()) {
@@ -406,7 +435,9 @@ struct LibraryScanner::Private
         }
 
         auto setTrackProps = [this, &file, &baseDir](Track& track) {
+            readFileProperties(track);
             track.setFilePath(file);
+
             if(m_currentLibrary.id >= 0) {
                 track.setLibraryId(m_currentLibrary.id);
                 track.setRelativePath(baseDir.relativeFilePath(file));
@@ -420,61 +451,61 @@ struct LibraryScanner::Private
             if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != m_currentLibrary.id
                || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
                 Track changedTrack{libraryTrack};
-                auto* tagParser = m_tagLoader->parserForTrack(changedTrack);
-                if(tagParser && tagParser->readMetaData(changedTrack)) {
-                    setTrackProps(changedTrack);
+                if(!readTrackMetadata(changedTrack)) {
+                    return;
+                }
 
-                    m_missingFiles.erase(changedTrack.filename());
+                setTrackProps(changedTrack);
+                m_missingFiles.erase(changedTrack.filename());
 
-                    if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                        TrackList cueTracks = readEmbeddedPlaylistTracks(changedTrack);
-                        for(Track& cueTrack : cueTracks) {
-                            setTrackProps(cueTrack);
-                            m_tracksToUpdate.push_back(cueTrack);
-                            m_missingHashes.erase(cueTrack.hash());
-                        }
+                if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                    TrackList cueTracks = readEmbeddedPlaylistTracks(changedTrack);
+                    for(Track& cueTrack : cueTracks) {
+                        setTrackProps(cueTrack);
+                        m_tracksToUpdate.push_back(cueTrack);
+                        m_missingHashes.erase(cueTrack.hash());
                     }
-                    else {
-                        m_tracksToUpdate.push_back(changedTrack);
-                        m_missingHashes.erase(changedTrack.hash());
-                    }
+                }
+                else {
+                    m_tracksToUpdate.push_back(changedTrack);
+                    m_missingHashes.erase(changedTrack.hash());
                 }
             }
         }
+
         else {
             Track track{file};
+            if(!readTrackMetadata(track)) {
+                return;
+            }
 
-            auto* tagParser = m_tagLoader->parserForTrack(track);
-            if(tagParser && tagParser->readMetaData(track)) {
-                Track refoundTrack = matchMissingTrack(track);
+            Track refoundTrack = matchMissingTrack(track);
+            if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
+                m_missingHashes.erase(refoundTrack.hash());
+                m_missingFiles.erase(refoundTrack.filename());
 
-                if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
-                    m_missingHashes.erase(refoundTrack.hash());
-                    m_missingFiles.erase(refoundTrack.filename());
+                setTrackProps(refoundTrack);
+                m_tracksToUpdate.push_back(refoundTrack);
+            }
+            else {
+                setTrackProps(track);
 
-                    setTrackProps(refoundTrack);
-                    m_tracksToUpdate.push_back(refoundTrack);
+                if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                    TrackList cueTracks = readEmbeddedPlaylistTracks(track);
+                    for(Track& cueTrack : cueTracks) {
+                        setTrackProps(cueTrack);
+                        m_tracksToStore.push_back(cueTrack);
+                    }
                 }
                 else {
-                    setTrackProps(track);
-
-                    if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                        TrackList cueTracks = readEmbeddedPlaylistTracks(track);
-                        for(Track& cueTrack : cueTracks) {
-                            setTrackProps(cueTrack);
-                            m_tracksToStore.push_back(cueTrack);
-                        }
-                    }
-                    else {
-                        m_tracksToStore.push_back(track);
-                    }
+                    m_tracksToStore.push_back(track);
                 }
+            }
 
-                if(m_tracksToStore.size() >= BatchSize) {
-                    storeTracks(m_tracksToStore);
-                    emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
-                    m_tracksToStore.clear();
-                }
+            if(m_tracksToStore.size() >= BatchSize) {
+                storeTracks(m_tracksToStore);
+                emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
+                m_tracksToStore.clear();
             }
         }
     }
@@ -500,7 +531,7 @@ struct LibraryScanner::Private
         reportProgress();
 
         const QDir baseDir{path};
-        const auto dirs = getDirectories(path);
+        const auto dirs = getDirectories(path, Utils::extensionsToWildcards(m_tagLoader->supportedFileExtensions()));
 
         m_tracksProcessed = 0;
         m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
@@ -696,6 +727,7 @@ void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList&
         }
         else if(auto* parser = p->m_tagLoader->parserForTrack(track)) {
             if(parser->readMetaData(track)) {
+                track.generateHash();
                 tracksToStore.push_back(track);
             }
         }
@@ -732,7 +764,8 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
     };
 
-    const LibraryDirectories dirs = getDirectories(urls);
+    const LibraryDirectories dirs
+        = getDirectories(urls, Utils::extensionsToWildcards(p->m_tagLoader->supportedFileExtensions()));
 
     p->m_totalTracks = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
         return sum + dir.files.size() + dir.playlists.size();
@@ -741,6 +774,11 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     for(const auto& [_, files, playlists] : dirs) {
         if(!mayRun()) {
+            handleFinished();
+            return;
+        }
+
+        if(files.empty() && playlists.empty()) {
             handleFinished();
             return;
         }
@@ -782,15 +820,16 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 }
                 else {
                     Track track{file};
-                    auto* tagParser = p->m_tagLoader->parserForTrack(track);
-                    if(tagParser && tagParser->readMetaData(track)) {
-                        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                            const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
-                            std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
-                        }
-                        else {
-                            tracksToStore.push_back(track);
-                        }
+                    if(!p->readTrackMetadata(track)) {
+                        continue;
+                    }
+
+                    if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                        const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
+                        std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
+                    }
+                    else {
+                        tracksToStore.push_back(track);
                     }
                 }
             }

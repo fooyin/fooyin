@@ -33,6 +33,7 @@ public:
     TagLoader();
     ~TagLoader();
 
+    [[nodiscard]] QStringList supportedFileExtensions() const;
     [[nodiscard]] TagParser* parserForTrack(const Track& track) const;
 
     void addParser(const QString& name, std::unique_ptr<TagParser> parser);

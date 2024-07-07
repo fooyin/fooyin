@@ -33,6 +33,7 @@ public:
     DecoderProvider();
     ~DecoderProvider();
 
+    [[nodiscard]] QStringList supportedFileExtensions() const;
     [[nodiscard]] std::unique_ptr<AudioDecoder> createDecoderForTrack(const Track& track) const;
 
     void addDecoder(const QString& name, const QStringList& supportedExtensions, const DecoderCreator& creator);

@@ -216,7 +216,7 @@ struct LibraryThreadHandler::Private
         return request;
     }
 
-    std::optional<LibraryScanRequest> currentRequest() const
+    [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const
     {
         const auto requestIt = std::ranges::find_if(
             m_scanRequests, [this](const auto& request) { return request.id == m_currentRequestId; });

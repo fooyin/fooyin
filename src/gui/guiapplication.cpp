@@ -265,8 +265,7 @@ struct GuiApplication::Private
     void initialisePlugins()
     {
         if(core.pluginManager->allPluginInfo().empty()) {
-            QMetaObject::invokeMethod(
-                self, []() { showPluginsNotFoundMessage(); }, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(self, []() { showPluginsNotFoundMessage(); }, Qt::QueuedConnection);
             return;
         }
 
@@ -652,7 +651,8 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("DirectoryBrowser"),
             [this]() {
-                auto* browser = new DirBrowser(&playlistInteractor, settings, mainWindow.get());
+                auto* browser = new DirBrowser(core.tagLoader->supportedFileExtensions(), &playlistInteractor, settings,
+                                               mainWindow.get());
                 QObject::connect(core.playerController, &PlayerController::playStateChanged, browser,
                                  &DirBrowser::playstateChanged);
                 QObject::connect(core.playerController, &PlayerController::playlistTrackChanged, browser,
@@ -751,8 +751,9 @@ struct GuiApplication::Private
 
     void addFiles() const
     {
-        const QString audioExtensions    = Track::supportedFileExtensions().join(QStringLiteral(" "));
-        const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(QStringLiteral(" "));
+        const QString audioExtensions
+            = Utils::extensionsToWildcards(core.tagLoader->supportedFileExtensions()).join(u" ");
+        const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(u" ");
         const QString allExtensions      = QStringLiteral("%1 %2").arg(audioExtensions, playlistExtensions);
 
         const QString allFilter      = tr("All Supported Media Files (%1)").arg(allExtensions);
@@ -767,8 +768,7 @@ struct GuiApplication::Private
             dir = lastPath;
         }
 
-        const auto files
-            = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), dir, filters.join(QStringLiteral(";;")));
+        const auto files = QFileDialog::getOpenFileUrls(mainWindow.get(), tr("Add Files"), dir, filters.join(u";;"));
 
         if(files.empty()) {
             return;

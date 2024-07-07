@@ -1239,18 +1239,7 @@ QStringList TagLibParser::supportedExtensions() const
 
 bool TagLibParser::readMetaData(Track& track) const
 {
-    const auto filepath = track.filepath();
-    const QFileInfo fileInfo{filepath};
-
-    if(fileInfo.size() <= 0) {
-        return false;
-    }
-
-    track.setFileSize(fileInfo.size());
-
-    track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-    const QDateTime modifiedTime = fileInfo.lastModified();
-    track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+    const QString filepath = track.filepath();
 
     TagLib::FileStream stream(filepath.toUtf8().constData(), true);
     if(!stream.isOpen()) {
@@ -1406,7 +1395,6 @@ bool TagLibParser::readMetaData(Track& track) const
     }
 
     track.setType(typeForMime(mimeType));
-    track.generateHash();
 
     return true;
 }

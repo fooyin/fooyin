@@ -36,6 +36,19 @@ TagLoader::TagLoader()
 
 TagLoader::~TagLoader() = default;
 
+QStringList TagLoader::supportedFileExtensions() const
+{
+    const std::shared_lock lock{p->m_parserMutex};
+
+    QStringList extensions;
+
+    for(const auto& [ext, _] : p->m_extensionToParserMap) {
+        extensions.emplace_back(ext);
+    }
+
+    return extensions;
+}
+
 TagParser* TagLoader::parserForTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};

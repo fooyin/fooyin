@@ -207,7 +207,6 @@ public:
 
     static QString findCommonField(const TrackList& tracks);
 
-    static QStringList supportedFileExtensions();
     static QStringList supportedMimeTypes();
 
 private:

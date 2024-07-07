@@ -38,6 +38,19 @@ DecoderProvider::DecoderProvider()
 
 DecoderProvider::~DecoderProvider() = default;
 
+QStringList DecoderProvider::supportedFileExtensions() const
+{
+    const std::shared_lock lock{p->m_decoderMutex};
+
+    QStringList extensions;
+
+    for(const auto& [ext, _] : p->m_extensionToDecoderMap) {
+        extensions.emplace_back(ext);
+    }
+
+    return extensions;
+}
+
 std::unique_ptr<AudioDecoder> DecoderProvider::createDecoderForTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
