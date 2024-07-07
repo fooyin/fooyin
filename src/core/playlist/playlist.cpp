@@ -52,7 +52,9 @@ struct Playlist::Private
     bool m_tracksModified{false};
 
     explicit Private(QString name)
-        : Private{-1, std::move(name), -1}
+        : m_id{UId::create()}
+        , m_name{std::move(name)}
+        , m_isTemporary{true}
     { }
 
     Private(int dbId, QString name, int index)
