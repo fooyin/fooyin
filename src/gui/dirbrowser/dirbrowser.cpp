@@ -172,10 +172,10 @@ struct DirBrowser::Private
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
 
-    Private(DirBrowser* self, QStringList supportedExtensions, PlaylistInteractor* playlistInteractor,
+    Private(DirBrowser* self, const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
             SettingsManager* settings)
         : m_self{self}
-        , m_supportedExtensions{std::move(supportedExtensions)}
+        , m_supportedExtensions{Utils::extensionsToWildcards(supportedExtensions)}
         , m_playlistInteractor{playlistInteractor}
         , m_playlistHandler{m_playlistInteractor->handler()}
         , m_settings{settings}
@@ -197,7 +197,7 @@ struct DirBrowser::Private
         checkIconProvider();
 
         m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        m_model->setNameFilters(Utils::extensionsToWildcards(m_supportedExtensions));
+        m_model->setNameFilters(m_supportedExtensions);
         m_model->setNameFilterDisables(false);
         m_model->setReadOnly(true);
 
@@ -545,10 +545,10 @@ struct DirBrowser::Private
     }
 };
 
-DirBrowser::DirBrowser(QStringList supportedExtensions, PlaylistInteractor* playlistInteractor,
+DirBrowser::DirBrowser(const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
                        SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, std::move(supportedExtensions), playlistInteractor, settings)}
+    , p{std::make_unique<Private>(this, supportedExtensions, playlistInteractor, settings)}
 {
     QObject::connect(p->m_dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });

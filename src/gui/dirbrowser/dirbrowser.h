@@ -39,8 +39,8 @@ public:
         List,
     };
 
-    DirBrowser(QStringList supportedExtensions, PlaylistInteractor* playlistInteractor, SettingsManager* settings,
-               QWidget* parent = nullptr);
+    DirBrowser(const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
+               SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
 
     [[nodiscard]] QString name() const override;
