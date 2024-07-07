@@ -123,8 +123,8 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
-           ICU::uc
-           ICU::i18n
+    PRIVATE ICU::uc
+            ICU::i18n
 )
 
 target_include_directories(
