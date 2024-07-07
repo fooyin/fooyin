@@ -747,6 +747,9 @@ void PlaylistHandler::startPlayback(Playlist* playlist)
 
     changeActivePlaylist(playlist);
     playlist->reset();
+    if(playlist->currentTrackIndex() < 0) {
+        playlist->changeCurrentIndex(0);
+    }
     p->startNextTrack(playlist->currentTrack(), playlist->currentTrackIndex());
 }
 
