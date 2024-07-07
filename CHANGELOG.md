@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.3](https://github.com/fooyin/fooyin/releases/tag/v0.5.3) (2024-07-07)
+
+### Fixes
+
+* LibraryScanner
+  - Fix reading file properties for external files
+  - Fix reading duration for cue tracks
+* Playlist: Fix start playback on send to new playlist failing
+
+
 ## [0.5.2](https://github.com/fooyin/fooyin/releases/tag/v0.5.2) (2024-07-07)
 
 ### New Features

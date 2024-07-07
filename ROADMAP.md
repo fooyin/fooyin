@@ -9,7 +9,7 @@ This document outlines the upcoming features for fooyin.
 | Playback queue                                | ✅ 0.4.0   |
 | MPRIS support                                 | ✅ 0.4.0   |
 | CUE support                                   | ✅ 0.5.0   |
-| Scrobbling                                    | 🔄 0.5.3  |
+| Scrobbling                                    | 🔄 0.5.5   |
 | ReplayGain support                            | ❓ TBD     |
 | Query-based language for searching/filtering  | ❓ TBD     |
 | Smart playlists                               | ❓ TBD     |
