@@ -24,6 +24,8 @@
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::TagEditor {
+class TagEditorWidget;
+
 class TagEditorPlugin : public QObject,
                         public Plugin,
                         public CorePlugin,
@@ -38,8 +40,11 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
+    TagEditorWidget* createEditor();
+
     ActionManager* m_actionManager;
     MusicLibrary* m_library;
+    std::shared_ptr<TagLoader> m_tagLoader;
     TrackSelectionController* m_trackSelection;
     PropertiesDialog* m_propertiesDialog;
     WidgetProvider* m_widgetProvider;

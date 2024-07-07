@@ -41,10 +41,15 @@ class TagEditorView : public ExtendableTableView
 public:
     explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
 
+    void setTagEditTriggers(EditTrigger triggers);
+
     [[nodiscard]] int sizeHintForRow(int row) const override;
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
+
+private:
+    EditTrigger m_editTrigger;
 };
 
 class TagEditorWidget : public PropertiesTabWidget
@@ -52,8 +57,8 @@ class TagEditorWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
-                             QWidget* parent = nullptr);
+    explicit TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,
+                             SettingsManager* settings, QWidget* parent = nullptr);
     ~TagEditorWidget() override;
 
     [[nodiscard]] QString name() const override;

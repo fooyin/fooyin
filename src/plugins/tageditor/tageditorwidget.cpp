@@ -39,6 +39,8 @@
 namespace Fooyin::TagEditor {
 class TagEditorDelegate : public MultiLineEditDelegate
 {
+    Q_OBJECT
+
 public:
     using MultiLineEditDelegate::MultiLineEditDelegate;
 
@@ -54,6 +56,7 @@ public:
 
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
+    , m_editTrigger{EditTrigger::AllEditTriggers}
 {
     setItemDelegateForColumn(1, new TagEditorDelegate(this));
     setItemDelegateForRow(13, new StarDelegate(this));
@@ -61,6 +64,12 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     horizontalHeader()->setStretchLastSection(true);
     horizontalHeader()->setSectionsClickable(false);
     verticalHeader()->setVisible(false);
+}
+
+void TagEditorView::setTagEditTriggers(EditTrigger triggers)
+{
+    m_editTrigger = triggers;
+    setEditTriggers(triggers);
 }
 
 int TagEditorView::sizeHintForRow(int row) const
@@ -77,16 +86,16 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::RightButton) {
         // Don't start editing on right-click
-        setEditTriggers(QAbstractItemView::NoEditTriggers);
+        setTagEditTriggers(QAbstractItemView::NoEditTriggers);
     }
     else {
-        setEditTriggers(QAbstractItemView::AllEditTriggers);
+        setTagEditTriggers(m_editTrigger);
     }
     QTableView::mousePressEvent(event);
 }
 
-TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionManager, SettingsManager* settings,
-                                 QWidget* parent)
+TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,
+                                 SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_actionManager{actionManager}
     , m_settings{settings}
@@ -117,6 +126,8 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, ActionManager* actionM
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
         m_view->removeAction()->setEnabled(!selected.empty());
     });
+
+    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
 
     m_model->reset(tracks);
 }
@@ -189,3 +200,4 @@ void TagEditorWidget::restoreState() const
 } // namespace Fooyin::TagEditor
 
 #include "moc_tageditorwidget.cpp"
+#include "tageditorwidget.moc"

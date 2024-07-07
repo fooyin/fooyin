@@ -22,6 +22,7 @@
 #include "tageditorwidget.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/tagging/tagloader.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
 #include <gui/trackselectioncontroller.h>
@@ -35,8 +36,9 @@
 namespace Fooyin::TagEditor {
 void TagEditorPlugin::initialise(const CorePluginContext& context)
 {
-    m_settings = context.settingsManager;
-    m_library  = context.library;
+    m_settings  = context.settingsManager;
+    m_library   = context.library;
+    m_tagLoader = context.tagLoader;
 }
 
 void TagEditorPlugin::initialise(const GuiPluginContext& context)
@@ -46,19 +48,21 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     m_propertiesDialog = context.propertiesDialog;
     m_widgetProvider   = context.widgetProvider;
 
-    //    m_factory->registerWidget(
-    //        "TagEditor",
-    //        [this]() {
-    //            return new TagEditorWidget(m_trackSelection, m_library, m_settings);
-    //        },
-    //        "Tag Editor");
+    // m_widgetProvider->registerWidget(
+    //     QStringLiteral("TagEditor"), [this]() { return createEditor(); }, QStringLiteral("Tag Editor"));
 
-    m_propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() {
-        auto* tagEditor = new TagEditorWidget(m_trackSelection->selectedTracks(), m_actionManager, m_settings);
-        QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library,
-                         &MusicLibrary::updateTrackMetadata);
-        return tagEditor;
-    });
+    m_propertiesDialog->insertTab(0, QStringLiteral("Metadata"), [this]() { return createEditor(); });
+}
+
+TagEditorWidget* TagEditorPlugin::createEditor()
+{
+    const auto tracks = m_trackSelection->selectedTracks();
+    const bool canWrite
+        = std::ranges::all_of(tracks, [this](const Track& track) { return m_tagLoader->canWriteTrack(track); });
+
+    auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
+    QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::updateTrackMetadata);
+    return tagEditor;
 }
 } // namespace Fooyin::TagEditor
 
