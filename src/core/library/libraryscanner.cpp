@@ -800,7 +800,6 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
                 if(!trackMap.contains(trackKey)) {
                     Track track{playlistTrack};
-                    p->readFileProperties(track);
                     track.generateHash();
                     tracksToStore.push_back(track);
                 }
