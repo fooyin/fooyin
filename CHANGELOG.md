@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.5.2](https://github.com/fooyin/fooyin/releases/tag/v0.5.2) (2024-07-07)
+
+### New Features
+
+* Playback queue viewer/editor
+
+### Improvements
+
+* Playlist
+  - Add cut, copy, paste and crop actions ([#156](https://github.com/fooyin/fooyin/issues/156))
+  - Find a common field to use as playlist name when sending to a new playlist
+  - Add options to control behaviour when opening files externally
+  - Add middle-click options to add to playback queue
+  - Improve performance of large playlists
+* Playlist Tabs
+  - Add optional clear button ([#114](https://github.com/fooyin/fooyin/issues/114))
+  - Support dropping tracks to create a playlist
+  - Support dropping external files
+  - Set expand setting to off by default
+* Layout editing mode:
+  - Give splitters a more descriptive and accurate name ([#161](https://github.com/fooyin/fooyin/issues/161))
+  - Don't show parent splitter menu when adding widgets to a new splitter ([#162](https://github.com/fooyin/fooyin/issues/162))
+* Library Filter
+  - Add right labels option
+  - Improve artwork mode margins
+  - Improve scrolling behaviour
+* Library Tree
+  - Go up on left key press ([#169](https://github.com/fooyin/fooyin/issues/169))
+  - Trigger double-click on enter/return key press
+* Search
+  - Add filepath to search fields
+  - Only start searching at 2 characters
+* Artwork: Add responsive thumbnails
+* Tab Stack: Use dialog for editing tab names when set to east or west position
+* Translations: Dutch added ([#168](https://github.com/fooyin/fooyin/issues/168))
+
+### Fixes
+
+* Playlist
+  - Fix select all not selecting all for large playlists
+  - Fix clear not clearing large playlists
+  - Fix an instance of header state not bring restored ([#166](https://github.com/fooyin/fooyin/issues/166))
+* Library Filter
+  - Fix unscrollable view
+  - Fix empty view with no library
+* CoverProvider: Fix crashes when attempting to read directory artwork ([#163](https://github.com/fooyin/fooyin/issues/163))
+* Engine: Fix crash when changing device in an error state
+* Playlist Tabs: Resolve crash when dropping tracks
+* Scripting: Fix crashes using pad functions ([#167](https://github.com/fooyin/fooyin/issues/167))
+* Selection Info: Avoid showing invalid values
+
+
 ## [0.5.1](https://github.com/fooyin/fooyin/releases/tag/v0.5.1) (2024-06-29)
 
 ### Improvements
