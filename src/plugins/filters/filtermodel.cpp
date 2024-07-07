@@ -154,6 +154,7 @@ struct FilterModel::Private
 
         if(m_showSummary) {
             addSummary();
+            updateSummary();
         }
     }
 
@@ -173,6 +174,10 @@ struct FilterModel::Private
 
     void batchFinished(PendingTreeData data)
     {
+        if(m_nodes.empty()) {
+            m_resetting = true;
+        }
+
         if(m_resetting) {
             m_self->beginResetModel();
             beginReset();
@@ -677,11 +682,14 @@ void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks
         p->m_populatorThread.start();
     }
 
+    p->m_columns = columns;
+
     if(tracks.empty() && p->m_nodes.empty()) {
+        beginResetModel();
+        p->beginReset();
+        endResetModel();
         return;
     }
-
-    p->m_columns = columns;
 
     p->m_resetting = true;
 
