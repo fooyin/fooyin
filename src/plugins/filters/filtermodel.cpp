@@ -684,7 +684,7 @@ void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks
 
     p->m_columns = columns;
 
-    if(tracks.empty() && p->m_nodes.empty()) {
+    if(tracks.empty()) {
         beginResetModel();
         p->beginReset();
         endResetModel();
