@@ -59,7 +59,7 @@ struct ScanProgress
     [[nodiscard]] int percentage() const
     {
         if(id < 0 || total == 0) {
-            return 0;
+            return 100;
         }
         return std::max(0, static_cast<int>((static_cast<double>(current) / total) * 100));
     }
