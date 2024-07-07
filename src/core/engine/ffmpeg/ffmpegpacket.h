@@ -43,12 +43,7 @@ using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 class Packet
 {
 public:
-    Packet() = default;
-    explicit Packet(PacketPtr packet);
-
-    Packet(Packet&& other) noexcept;
-    Packet(const Packet& other)            = delete;
-    Packet& operator=(const Packet& other) = delete;
+    Packet();
 
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] AVPacket* avPacket() const;

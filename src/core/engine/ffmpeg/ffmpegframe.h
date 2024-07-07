@@ -24,8 +24,6 @@ extern "C"
 #include <libavutil/frame.h>
 }
 
-#include <QSharedDataPointer>
-
 #include <memory>
 
 namespace Fooyin {
@@ -43,13 +41,8 @@ using FramePtr = std::unique_ptr<AVFrame, FrameDeleter>;
 class Frame
 {
 public:
-    Frame();
-    explicit Frame(FramePtr frame, AVRational timeBase);
+    explicit Frame(AVRational timeBase);
     ~Frame();
-
-    Frame(const Frame& other);
-    Frame& operator=(const Frame& other);
-    Frame(Frame&& other) noexcept;
 
     [[nodiscard]] bool isValid() const;
 
@@ -67,7 +60,7 @@ public:
     [[nodiscard]] uint64_t end() const;
 
 private:
-    struct Private;
-    QSharedDataPointer<Private> p;
+    FramePtr m_frame;
+    AVRational m_timeBase;
 };
 } // namespace Fooyin

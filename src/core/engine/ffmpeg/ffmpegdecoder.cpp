@@ -191,7 +191,7 @@ struct FFmpegDecoder::Private
             return false;
         }
 
-        Fooyin::CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
+        CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
         if(!avCodecContext) {
             Utils::printError(QStringLiteral("Could not allocate context"));
             m_error = Error::ResourceError;
@@ -263,8 +263,8 @@ struct FFmpegDecoder::Private
             return;
         }
 
-        auto avFrame     = FramePtr(av_frame_alloc());
-        const int result = avcodec_receive_frame(m_codec.context(), avFrame.get());
+        const Frame frame{m_timeBase};
+        const int result = avcodec_receive_frame(m_codec.context(), frame.avFrame());
 
         if(result == AVERROR_EOF) {
             return;
@@ -279,8 +279,6 @@ struct FFmpegDecoder::Private
             qWarning() << "Error receiving decoded frame";
             return;
         }
-
-        const Frame frame{std::move(avFrame), m_timeBase};
 
         m_currentPts = frame.ptsMs();
 
@@ -302,7 +300,7 @@ struct FFmpegDecoder::Private
             return;
         }
 
-        const Packet packet(PacketPtr{av_packet_alloc()});
+        const Packet packet;
         const int readResult = av_read_frame(m_context.get(), packet.avPacket());
         if(readResult < 0) {
             if(readResult != AVERROR_EOF) {

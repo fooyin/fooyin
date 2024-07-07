@@ -42,7 +42,7 @@ using CodecContextPtr = std::unique_ptr<AVCodecContext, CodecContextDeleter>;
 class Codec
 {
 public:
-    Codec();
+    Codec() = default;
     Codec(CodecContextPtr context, AVStream* stream);
 
     Codec(Codec&& other) noexcept;

@@ -24,37 +24,21 @@
 #include <QDebug>
 
 namespace Fooyin {
-struct Frame::Private : QSharedData
-{
-    FramePtr frame;
-    AVRational timeBase;
-
-    explicit Private(FramePtr frame_, AVRational timeBase_)
-        : frame{std::move(frame_)}
-        , timeBase{timeBase_}
-    { }
-};
-
-Frame::Frame() = default;
-
-Frame::Frame(FramePtr frame, AVRational timeBase)
-    : p{new Private(std::move(frame), timeBase)}
+Frame::Frame(AVRational timeBase)
+    : m_frame{av_frame_alloc()}
+    , m_timeBase{timeBase}
 { }
-
-Frame::Frame(const Frame& other)            = default;
-Frame& Frame::operator=(const Frame& other) = default;
-Frame::Frame(Frame&& other) noexcept        = default;
 
 Frame::~Frame() = default;
 
 bool Frame::isValid() const
 {
-    return p && p->frame;
+    return !!m_frame;
 }
 
 AVFrame* Frame::avFrame() const
 {
-    return isValid() ? p->frame.get() : nullptr;
+    return isValid() ? m_frame.get() : nullptr;
 }
 
 int Frame::channelCount() const
@@ -64,15 +48,15 @@ int Frame::channelCount() const
     }
 
 #if OLD_CHANNEL_LAYOUT
-    return p->frame->channels;
+    return m_frame->channels;
 #else
-    return p->frame->ch_layout.nb_channels;
+    return m_frame->ch_layout.nb_channels;
 #endif
 }
 
 int Frame::sampleRate() const
 {
-    return isValid() ? p->frame->sample_rate : 0;
+    return isValid() ? m_frame->sample_rate : 0;
 }
 
 AVSampleFormat Frame::format() const
@@ -80,20 +64,20 @@ AVSampleFormat Frame::format() const
     if(!isValid()) {
         return AV_SAMPLE_FMT_NONE;
     }
-    return static_cast<AVSampleFormat>(p->frame->format);
+    return static_cast<AVSampleFormat>(m_frame->format);
 }
 
 int Frame::sampleCount() const
 {
-    return isValid() ? p->frame->nb_samples : 0;
+    return isValid() ? m_frame->nb_samples : 0;
 }
 
 uint64_t Frame::ptsMs() const
 {
-    if(!isValid() || p->frame->pts < 0) {
+    if(!isValid() || m_frame->pts < 0) {
         return 0;
     }
-    return av_rescale_q(p->frame->pts, p->timeBase, {1, 1000});
+    return av_rescale_q(m_frame->pts, m_timeBase, {1, 1000});
 }
 
 uint64_t Frame::durationMs() const
@@ -102,9 +86,9 @@ uint64_t Frame::durationMs() const
         return 0;
     }
 #if OLD_FRAME
-    return av_rescale_q(p->frame->pkt_duration, p->timeBase, {1, 1000});
+    return av_rescale_q(m_frame->pkt_duration, m_timeBase, {1, 1000});
 #else
-    return av_rescale_q(p->frame->duration, p->timeBase, {1, 1000});
+    return av_rescale_q(m_frame->duration, m_timeBase, {1, 1000});
 #endif
 }
 
@@ -114,9 +98,9 @@ uint64_t Frame::end() const
         return 0;
     }
 #if OLD_FRAME
-    return p->frame->pts + p->frame->pkt_duration;
+    return m_frame->pts + m_frame->pkt_duration;
 #else
-    return p->frame->pts + p->frame->duration;
+    return m_frame->pts + m_frame->duration;
 #endif
 }
 } // namespace Fooyin

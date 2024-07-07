@@ -20,8 +20,6 @@
 #include "ffmpegcodec.h"
 
 namespace Fooyin {
-Codec::Codec() = default;
-
 Codec::Codec(CodecContextPtr context, AVStream* stream)
     : m_context{std::move(context)}
     , m_stream{stream}

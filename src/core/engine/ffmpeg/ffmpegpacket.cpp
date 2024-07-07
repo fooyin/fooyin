@@ -20,12 +20,8 @@
 #include "ffmpegpacket.h"
 
 namespace Fooyin {
-Packet::Packet(PacketPtr packet)
-    : m_packet{std::move(packet)}
-{ }
-
-Packet::Packet(Packet&& other) noexcept
-    : m_packet{std::move(other.m_packet)}
+Packet::Packet()
+    : m_packet{av_packet_alloc()}
 { }
 
 bool Packet::isValid() const
