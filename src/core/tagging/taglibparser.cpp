@@ -586,6 +586,7 @@ void readTrackTotalPair(const QString& trackNumbers, Fooyin::Track& track)
         track.setTrackNumber(trackNumbers.toInt());
     }
 }
+
 void readDiscTotalPair(const QString& discNumbers, Fooyin::Track& track)
 {
     const qsizetype splitIdx = discNumbers.indexOf(QStringLiteral("/"));
@@ -1235,6 +1236,16 @@ QStringList TagLibParser::supportedExtensions() const
                                         QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
                                         QStringLiteral("webm"), QStringLiteral("mp4")};
     return extensions;
+}
+
+bool TagLibParser::canReadCover() const
+{
+    return true;
+}
+
+bool TagLibParser::canWriteMetaData() const
+{
+    return true;
 }
 
 bool TagLibParser::readMetaData(Track& track) const

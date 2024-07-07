@@ -19,18 +19,22 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/track.h>
 
 namespace Fooyin {
-class TagParser
+class FYCORE_EXPORT TagParser
 {
 public:
     virtual ~TagParser() = default;
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
+    [[nodiscard]] virtual bool canReadCover() const               = 0;
+    [[nodiscard]] virtual bool canWriteMetaData() const           = 0;
 
-    [[nodiscard]] virtual bool readMetaData(Track& track) const                              = 0;
-    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) const = 0;
-    [[nodiscard]] virtual bool writeMetaData(const Track& track) const                       = 0;
+    [[nodiscard]] virtual bool readMetaData(Track& track) const = 0;
+    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) const;
+    [[nodiscard]] virtual bool writeMetaData(const Track& track) const;
 };
 } // namespace Fooyin

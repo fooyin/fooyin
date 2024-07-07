@@ -49,6 +49,36 @@ QStringList TagLoader::supportedFileExtensions() const
     return extensions;
 }
 
+bool TagLoader::canReadTrack(const Track& track) const
+{
+    const std::shared_lock lock{p->m_parserMutex};
+    return p->m_extensionToParserMap.contains(track.extension());
+}
+
+bool TagLoader::canReadTrackCover(const Track& track) const
+{
+    const std::shared_lock lock{p->m_parserMutex};
+
+    if(!p->m_extensionToParserMap.contains(track.extension())) {
+        return false;
+    }
+
+    const auto parsers = p->m_extensionToParserMap.at(track.extension());
+    return std::any_of(parsers.cbegin(), parsers.cend(), [](const auto& parser) { return parser->canReadCover(); });
+}
+
+bool TagLoader::canWriteTrack(const Track& track) const
+{
+    const std::shared_lock lock{p->m_parserMutex};
+
+    if(!p->m_extensionToParserMap.contains(track.extension())) {
+        return false;
+    }
+
+    const auto parsers = p->m_extensionToParserMap.at(track.extension());
+    return std::any_of(parsers.cbegin(), parsers.cend(), [](const auto& parser) { return parser->canWriteMetaData(); });
+}
+
 TagParser* TagLoader::parserForTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};

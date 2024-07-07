@@ -121,6 +121,7 @@ set(SOURCES
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
     tagging/tagdefs.h
+    tagging/tagparser.cpp
     tagging/taglibparser.cpp
     tagging/taglibparser.h
     tagging/tagloader.cpp

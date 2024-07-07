@@ -28,6 +28,8 @@ class FYCORE_EXPORT TagLibParser : public TagParser
 {
 public:
     [[nodiscard]] QStringList supportedExtensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
 
     [[nodiscard]] bool readMetaData(Track& track) const override;
     [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) const override;

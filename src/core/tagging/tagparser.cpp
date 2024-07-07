@@ -17,33 +17,16 @@
  *
  */
 
-#pragma once
-
-#include "fycore_export.h"
-
-#include <core/tagging/tagparserplugin.h>
+#include <core/tagging/tagparser.h>
 
 namespace Fooyin {
-class TagParser;
-class Track;
-
-class FYCORE_EXPORT TagLoader final
+QByteArray TagParser::readCover(const Track& /*track*/, Track::Cover /*cover*/) const
 {
-public:
-    TagLoader();
-    ~TagLoader();
+    return {};
+}
 
-    [[nodiscard]] QStringList supportedFileExtensions() const;
-    [[nodiscard]] bool canReadTrack(const Track& track) const;
-    [[nodiscard]] bool canReadTrackCover(const Track& track) const;
-    [[nodiscard]] bool canWriteTrack(const Track& track) const;
-
-    [[nodiscard]] TagParser* parserForTrack(const Track& track) const;
-
-    void addParser(const QString& name, std::unique_ptr<TagParser> parser);
-
-private:
-    struct Private;
-    std::unique_ptr<Private> p;
-};
+bool TagParser::writeMetaData(const Track& /*track*/) const
+{
+    return false;
+}
 } // namespace Fooyin
