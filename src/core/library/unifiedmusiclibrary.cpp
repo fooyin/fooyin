@@ -69,7 +69,12 @@ struct UnifiedMusicLibrary::Private
         , m_dbPool{std::move(dbPool)}
         , m_settings{settings}
         , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(tagLoader), m_settings}
-    { }
+    {
+        m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self,
+                                                                 [this](const QString& sort) { changeSort(sort); });
+        m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
+            m_self, [this](bool enabled) { m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), enabled); });
+    }
 
     void loadTracks(const TrackList& trackToLoad)
     {
@@ -167,9 +172,9 @@ struct UnifiedMusicLibrary::Private
         });
     }
 
-    void removeLibrary(int id, const std::set<int>& tracksRemoved)
+    void removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved)
     {
-        if(id < 0) {
+        if(library.id < 0) {
             return;
         }
 
@@ -178,7 +183,7 @@ struct UnifiedMusicLibrary::Private
         TrackList updatedTracks;
 
         for(auto& track : m_tracks) {
-            if(track.libraryId() == id) {
+            if(track.libraryId() == library.id) {
                 if(tracksRemoved.contains(track.id())) {
                     removedTracks.push_back(track);
                     continue;
@@ -191,8 +196,6 @@ struct UnifiedMusicLibrary::Private
         }
 
         m_tracks = newTracks;
-
-        m_threadHandler.libraryRemoved(id);
 
         emit m_self->tracksDeleted(removedTracks);
         emit m_self->tracksUpdated(updatedTracks);
@@ -210,6 +213,15 @@ struct UnifiedMusicLibrary::Private
             emit m_self->tracksSorted(m_tracks);
         });
     }
+
+    void handleTracksLoaded()
+    {
+        m_threadHandler.setupWatchers(m_libraryManager->allLibraries(),
+                                      m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+        if(m_settings->value<Settings::Core::AutoRefresh>()) {
+            m_self->refreshAll();
+        }
+    }
 };
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
@@ -220,41 +232,32 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     , p{std::make_unique<Private>(this, libraryManager, std::move(dbPool), std::move(playlistLoader),
                                   std::move(tagLoader), settings)}
 {
-    connect(p->m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
-    connect(p->m_libraryManager, &LibraryManager::libraryRemoved, this,
-            [this](int id, const std::set<int>& tracksRemoved) { p->removeLibrary(id, tracksRemoved); });
+    QObject::connect(p->m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
+    QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, this,
+                     [this](const LibraryInfo& library) { p->m_threadHandler.libraryRemoved(library.id); });
+    QObject::connect(p->m_libraryManager, &LibraryManager::libraryRemoved, this,
+                     [this](const LibraryInfo& library, const std::set<int>& tracksRemoved) {
+                         p->removeLibrary(library, tracksRemoved);
+                     });
 
-    connect(&p->m_threadHandler, &LibraryThreadHandler::progressChanged, this, &UnifiedMusicLibrary::scanProgress);
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::progressChanged, this,
+                     &UnifiedMusicLibrary::scanProgress);
 
-    connect(&p->m_threadHandler, &LibraryThreadHandler::statusChanged, this,
-            [this](const LibraryInfo& library) { p->libraryStatusChanged(library); });
-    connect(&p->m_threadHandler, &LibraryThreadHandler::scanUpdate, this,
-            [this](const ScanResult& result) { p->handleScanResult(result); });
-    connect(&p->m_threadHandler, &LibraryThreadHandler::scannedTracks, this,
-            [this](int id, const TrackList& newTracks, const TrackList& existingTracks) {
-                p->scannedTracks(id, newTracks, existingTracks);
-            });
-    connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
-            [this](const TrackList& tracks) { p->updateTracks(tracks); });
-    connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
-            [this](const TrackList& tracks) { p->loadTracks(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::statusChanged, this,
+                     [this](const LibraryInfo& library) { p->libraryStatusChanged(library); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scanUpdate, this,
+                     [this](const ScanResult& result) { p->handleScanResult(result); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scannedTracks, this,
+                     [this](int id, const TrackList& newTracks, const TrackList& existingTracks) {
+                         p->scannedTracks(id, newTracks, existingTracks);
+                     });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
+                     [this](const TrackList& tracks) { p->updateTracks(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
+                     [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
-    p->m_settings->subscribe<Settings::Core::LibrarySortScript>(this,
-                                                                [this](const QString& sort) { p->changeSort(sort); });
-
-    connect(
-        this, &MusicLibrary::tracksLoaded, this,
-        [this]() {
-            p->m_threadHandler.setupWatchers(p->m_libraryManager->allLibraries(),
-                                             p->m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-            if(p->m_settings->value<Settings::Core::AutoRefresh>()) {
-                refreshAll();
-            }
-        },
-        Qt::QueuedConnection);
-
-    p->m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
-        this, [this](bool enabled) { p->m_threadHandler.setupWatchers(p->m_libraryManager->allLibraries(), enabled); });
+    QObject::connect(
+        this, &MusicLibrary::tracksLoaded, this, [this]() { p->handleTracksLoaded(); }, Qt::QueuedConnection);
 }
 
 UnifiedMusicLibrary::~UnifiedMusicLibrary()

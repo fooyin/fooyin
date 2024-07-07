@@ -219,7 +219,7 @@ Application::Application(QObject* parent)
     QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library,
                      &UnifiedMusicLibrary::trackWasPlayed);
     QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
-    QObject::connect(p->libraryManager, &LibraryManager::removingLibraryTracks, p->playlistHandler,
+    QObject::connect(p->libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler,
                      [this](const TrackList& tracks) { p->playlistHandler->tracksUpdated(tracks); });
@@ -271,8 +271,7 @@ void Application::shutdown()
 
 void Application::quit()
 {
-    QMetaObject::invokeMethod(
-        QCoreApplication::instance(), []() { QCoreApplication::quit(); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(QCoreApplication::instance(), []() { QCoreApplication::quit(); }, Qt::QueuedConnection);
 }
 
 void Application::restart()

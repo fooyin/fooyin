@@ -121,15 +121,18 @@ bool LibraryManager::removeLibrary(int id)
         return false;
     }
 
+    const auto library = p->m_libraries.at(id);
+    emit libraryAboutToBeRemoved(library);
+
     if(p->m_libraryConnector.removeLibrary(id)) {
         eraseLibrary(p->m_libraries, id);
 
-        emit removingLibraryTracks(id);
         const auto tracksRemoved = p->m_trackConnector.deleteLibraryTracks(id);
-        emit libraryRemoved(id, tracksRemoved);
+        emit libraryRemoved(library, tracksRemoved);
 
         return true;
     }
+
     return false;
 }
 
@@ -143,9 +146,10 @@ bool LibraryManager::renameLibrary(int id, const QString& name)
 
     if(p->m_libraryConnector.renameLibrary(id, libraryName)) {
         p->m_libraries.at(id).name = libraryName;
-        emit libraryRenamed(id, libraryName);
+        emit libraryRenamed(p->m_libraries.at(id));
         return true;
     }
+
     return false;
 }
 

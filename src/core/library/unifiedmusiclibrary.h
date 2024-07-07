@@ -24,8 +24,8 @@
 #include <core/library/musiclibrary.h>
 
 namespace Fooyin {
-class SettingsManager;
 struct LibraryInfo;
+class SettingsManager;
 class TagLoader;
 
 class UnifiedMusicLibrary : public MusicLibrary
