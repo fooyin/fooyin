@@ -92,6 +92,7 @@ void FilterItem::addTrack(const Track& track)
 void FilterItem::addTracks(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
+    sortTracks();
 }
 
 void FilterItem::removeTrack(const Track& track)
@@ -107,8 +108,7 @@ void FilterItem::replaceTrack(const Track& track)
     if(m_tracks.empty()) {
         return;
     }
-    std::ranges::replace_if(
-        m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
+    std::ranges::replace_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
 }
 
 void FilterItem::sortTracks()
