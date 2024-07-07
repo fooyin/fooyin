@@ -75,6 +75,10 @@ Track PlaylistParser::readMetadata(const Track& track)
     if(auto* parser = m_tagLoader->parserForTrack(track)) {
         Track readTrack{track};
         if(parser->readMetaData(readTrack)) {
+            const QFileInfo fileInfo{track.filepath()};
+            readTrack.setFileSize(fileInfo.size());
+            readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+
             readTrack.generateHash();
             return readTrack;
         }
