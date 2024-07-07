@@ -19,10 +19,6 @@
 
 #pragma once
 
-#include <QString>
-
-#include <cstdint>
-
 struct AVStream;
 
 namespace Fooyin {
@@ -36,9 +32,6 @@ public:
 
     [[nodiscard]] AVStream* avStream() const;
     [[nodiscard]] int index() const;
-
-    // Returns duration in milliseconds
-    [[nodiscard]] uint64_t duration() const;
 
 private:
     AVStream* m_stream;

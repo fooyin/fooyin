@@ -41,11 +41,6 @@ int Stream::index() const
     return m_stream->index;
 }
 
-uint64_t Stream::duration() const
-{
-    return av_rescale_q(m_stream->duration, m_stream->time_base, {1, 1000});
-}
-
 AVStream* Stream::avStream() const
 {
     return m_stream;
