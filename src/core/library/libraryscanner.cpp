@@ -800,6 +800,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
                 if(!trackMap.contains(trackKey)) {
                     Track track{playlistTrack};
+                    p->readFileProperties(track);
                     track.generateHash();
                     tracksToStore.push_back(track);
                 }
@@ -823,6 +824,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                     if(!p->readTrackMetadata(track)) {
                         continue;
                     }
+                    p->readFileProperties(track);
 
                     if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                         const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
