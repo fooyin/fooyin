@@ -313,6 +313,9 @@ struct LibraryScanner::Private
     {
         const QFileInfo fileInfo{track.filepath()};
 
+        if(track.addedTime() == 0) {
+            track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+        }
         if(track.modifiedTime() == 0) {
             const QDateTime modifiedTime = fileInfo.lastModified();
             track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
@@ -552,6 +555,10 @@ struct LibraryScanner::Private
                 Track changedTrack{libraryTrack};
                 if(!readTrackMetadata(changedTrack)) {
                     return;
+                }
+
+                if(lastModifiedTime.isValid()) {
+                    changedTrack.setModifiedTime(lastModified);
                 }
 
                 updateExistingTrack(changedTrack, baseDir, file);
