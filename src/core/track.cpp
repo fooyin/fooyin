@@ -222,6 +222,8 @@ QString Track::typeString() const
             return QStringLiteral("Vorbis");
         case(Type::ASF):
             return QStringLiteral("ASF");
+        case(Type::DTS):
+            return QStringLiteral("DTS");
         case(Type::Unknown):
         default:
             return QStringLiteral("Unknown");

@@ -59,6 +59,7 @@ public:
         OggOpus   = 9,
         OggVorbis = 10,
         ASF       = 11,
+        DTS       = 12
     };
 
     enum class Cover : int
