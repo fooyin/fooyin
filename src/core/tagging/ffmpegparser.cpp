@@ -315,7 +315,7 @@ QByteArray FFmpegParser::readCover(const Track& track, Track::Cover cover) const
                 }
             }
 
-            if((cover == Track::Cover::Front && coverType.contains(u"front"))
+            if((cover == Track::Cover::Front && (coverType.isEmpty() || coverType.contains(u"front")))
                || (cover == Track::Cover::Back && coverType.contains(u"back"))
                || (cover == Track::Cover::Artist && coverType.contains(u"artist"))) {
                 const AVPacket pkt = avStream->attached_pic;
