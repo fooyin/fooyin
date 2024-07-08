@@ -30,6 +30,7 @@
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
+#include "tagging/ffmpegparser.h"
 #include "tagging/taglibparser.h"
 #include "translations.h"
 
@@ -131,6 +132,7 @@ struct Application::Private
     void registerTagParsers()
     {
         tagLoader->addParser(QStringLiteral("TagLib"), std::make_unique<TagLibParser>());
+        tagLoader->addParser(QStringLiteral("FFmpeg"), std::make_unique<FFmpegParser>());
     }
 
     void registerDecoders()

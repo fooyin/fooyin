@@ -435,7 +435,7 @@ QStringList FFmpegDecoder::extensions()
                                         QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
                                         QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
                                         QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
-                                        QStringLiteral("webm"), QStringLiteral("mp4")};
+                                        QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
     return extensions;
 }
 } // namespace Fooyin

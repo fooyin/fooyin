@@ -120,6 +120,8 @@ set(SOURCES
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
+    tagging/ffmpegparser.cpp
+    tagging/ffmpegparser.h
     tagging/tagdefs.h
     tagging/tagparser.cpp
     tagging/taglibparser.cpp
