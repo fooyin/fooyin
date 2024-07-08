@@ -191,7 +191,6 @@ struct LibraryScanner::Private
 
     LibraryInfo m_currentLibrary;
     TrackDatabase m_trackDatabase;
-    CueParser* m_cueParser;
 
     TrackList m_tracksToStore;
     TrackList m_tracksToUpdate;
@@ -215,7 +214,6 @@ struct LibraryScanner::Private
         , m_playlistLoader{std::move(playlistLoader)}
         , m_tagLoader{std::move(tagLoader)}
         , m_settings{settings}
-        , m_cueParser{static_cast<CueParser*>(m_playlistLoader->parserForExtension(QStringLiteral("*.cue")))}
     { }
 
     void cleanupScan()
