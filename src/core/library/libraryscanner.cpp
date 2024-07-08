@@ -55,6 +55,12 @@ struct LibraryDirectory
 };
 using LibraryDirectories = std::vector<LibraryDirectory>;
 
+bool fileIsValid(const QString& file)
+{
+    const QFileInfo fileInfo{file};
+    return fileInfo.size() > 0;
+}
+
 bool hasMatchingExtension(const QString& file, const QStringList& extensions)
 {
     if(file.isEmpty()) {
@@ -109,7 +115,10 @@ LibraryDirectories getDirectories(const QString& baseDirectory, const QStringLis
             }
             const QFileInfoList foundFiles = dir.entryInfoList(trackExtensions, QDir::Files);
             for(const auto& file : foundFiles) {
-                files.append(file.absoluteFilePath());
+                const QString path = file.absoluteFilePath();
+                if(fileIsValid(path)) {
+                    files.append(path);
+                }
             }
             const QFileInfoList foundCues = dir.entryInfoList(cueExtensions, QDir::Files);
             for(const auto& file : foundCues) {
@@ -150,7 +159,10 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& tr
         if(processedDirs.contains(dir)) {
             auto& libDir = processedDirs.at(dir);
             if(hasMatchingExtension(file.fileName(), trackExtensions)) {
-                libDir.files.append(file.absoluteFilePath());
+                const QString path = file.absoluteFilePath();
+                if(fileIsValid(path)) {
+                    libDir.files.append(file.absoluteFilePath());
+                }
             }
             else if(!libDir.playlists.contains(file.absoluteFilePath())
                     && hasMatchingExtension(file.fileName(), cueExtensions)) {
@@ -282,18 +294,32 @@ struct LibraryScanner::Private
         m_trackDatabase.storeTracks(tracks);
     }
 
-    bool readFileProperties(Track& track)
+    void checkBatchFinished()
+    {
+        if(m_tracksToStore.size() >= BatchSize || m_tracksToUpdate.size() > BatchSize) {
+            if(m_tracksToStore.size() >= BatchSize) {
+                storeTracks(m_tracksToStore);
+            }
+            if(m_tracksToUpdate.size() >= BatchSize) {
+                storeTracks(m_tracksToUpdate);
+            }
+            emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
+            m_tracksToStore.clear();
+            m_tracksToUpdate.clear();
+        }
+    }
+
+    void readFileProperties(Track& track)
     {
         const QFileInfo fileInfo{track.filepath()};
-        if(fileInfo.size() <= 0) {
-            return false;
+
+        if(track.modifiedTime() == 0) {
+            const QDateTime modifiedTime = fileInfo.lastModified();
+            track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
         }
-
-        const QDateTime modifiedTime = fileInfo.lastModified();
-        track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-        track.setFileSize(fileInfo.size());
-
-        return true;
+        if(track.fileSize() == 0) {
+            track.setFileSize(fileInfo.size());
+        }
     }
 
     [[nodiscard]] bool readTrackMetadata(Track& track) const
@@ -355,6 +381,45 @@ struct LibraryScanner::Private
         return {};
     }
 
+    void updateExistingCueTracks(const TrackList& tracks, const QDir& dir, const QString& cue)
+    {
+        std::unordered_map<QString, Track> existingTrackPaths;
+        for(const Track& track : tracks) {
+            existingTrackPaths.emplace(track.uniqueFilepath(), track);
+        }
+
+        const TrackList cueTracks = readPlaylistTracks(cue);
+        for(const Track& cueTrack : cueTracks) {
+            Track track{cueTrack};
+            if(existingTrackPaths.contains(track.uniqueFilepath())) {
+                track.setId(existingTrackPaths.at(track.uniqueFilepath()).id());
+            }
+            setTrackProps(track, dir);
+            m_tracksToUpdate.push_back(track);
+            m_cueFilesScanned.emplace(track.filepath());
+        }
+    }
+
+    void addNewCueTracks(const QString& cue, const QDir& dir, const QString& filename)
+    {
+        if(m_missingCueTracks.contains(filename)) {
+            TrackList refoundCueTracks = m_missingCueTracks.at(cue);
+            for(Track& track : refoundCueTracks) {
+                track.setCuePath(cue);
+                m_tracksToUpdate.push_back(track);
+            }
+        }
+        else {
+            const TrackList cueTracks = readPlaylistTracks(cue);
+            for(const Track& cueTrack : cueTracks) {
+                Track track{cueTrack};
+                setTrackProps(track, dir);
+                m_tracksToStore.push_back(track);
+                m_cueFilesScanned.emplace(track.filepath());
+            }
+        }
+    }
+
     void readCue(const QString& cue, const QDir& baseDir, bool onlyModified)
     {
         const QFileInfo info{cue};
@@ -365,25 +430,10 @@ struct LibraryScanner::Private
             lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
         }
 
-        auto setTrackProps = [this, &baseDir](Track& track) {
-            if(m_currentLibrary.id >= 0) {
-                track.setLibraryId(m_currentLibrary.id);
-                track.setRelativePath(baseDir.relativeFilePath(track.filepath()));
-            }
-            track.generateHash();
-            track.setIsEnabled(true);
-        };
-
         if(m_existingCueTracks.contains(cue)) {
             const auto& tracks = m_existingCueTracks.at(cue);
             if(tracks.front().modifiedTime() < lastModified || !onlyModified) {
-                const TrackList cueTracks = readPlaylistTracks(cue);
-                for(const Track& cueTrack : cueTracks) {
-                    Track track{cueTrack};
-                    setTrackProps(track);
-                    m_tracksToUpdate.push_back(track);
-                    m_cueFilesScanned.emplace(track.filepath());
-                }
+                updateExistingCueTracks(tracks, baseDir, cue);
             }
             else {
                 for(const Track& track : tracks) {
@@ -392,21 +442,86 @@ struct LibraryScanner::Private
             }
         }
         else {
-            if(m_missingCueTracks.contains(info.fileName())) {
-                TrackList refoundCueTracks = m_missingCueTracks.at(cue);
-                for(Track& track : refoundCueTracks) {
-                    track.setCuePath(cue);
-                    m_tracksToUpdate.push_back(track);
+            addNewCueTracks(cue, baseDir, info.fileName());
+        }
+    }
+
+    void setTrackProps(Track& track, const QDir& dir)
+    {
+        setTrackProps(track, dir, track.filepath());
+    };
+
+    void setTrackProps(Track& track, const QDir& dir, const QString& file)
+    {
+        readFileProperties(track);
+        track.setFilePath(file);
+
+        if(m_currentLibrary.id >= 0) {
+            track.setLibraryId(m_currentLibrary.id);
+            track.setRelativePath(dir.relativeFilePath(file));
+        }
+        track.generateHash();
+        track.setIsEnabled(true);
+    };
+
+    void updateExistingTrack(Track& track, const QDir& dir, const QString& file)
+    {
+        setTrackProps(track, dir, file);
+        m_missingFiles.erase(track.filename());
+
+        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+            std::unordered_map<QString, Track> existingTrackPaths;
+            if(m_existingCueTracks.contains(track.filepath())) {
+                const auto& tracks = m_existingCueTracks.at(track.filepath());
+                for(const Track& existingTrack : tracks) {
+                    existingTrackPaths.emplace(existingTrack.uniqueFilepath(), existingTrack);
+                }
+            }
+
+            TrackList cueTracks = readEmbeddedPlaylistTracks(track);
+            for(Track& cueTrack : cueTracks) {
+                if(existingTrackPaths.contains(cueTrack.uniqueFilepath())) {
+                    cueTrack.setId(existingTrackPaths.at(cueTrack.uniqueFilepath()).id());
+                }
+                setTrackProps(cueTrack, dir, file);
+                m_tracksToUpdate.push_back(cueTrack);
+                m_missingHashes.erase(cueTrack.hash());
+            }
+        }
+        else {
+            m_tracksToUpdate.push_back(track);
+            m_missingHashes.erase(track.hash());
+        }
+    }
+
+    void readNewTrack(const QDir& dir, const QString& file)
+    {
+        Track track{file};
+        if(!readTrackMetadata(track)) {
+            return;
+        }
+
+        Track refoundTrack = matchMissingTrack(track);
+        if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
+            m_missingHashes.erase(refoundTrack.hash());
+            m_missingFiles.erase(refoundTrack.filename());
+
+            setTrackProps(refoundTrack, dir, file);
+            m_tracksToUpdate.push_back(refoundTrack);
+        }
+        else {
+            setTrackProps(track, dir, file);
+            track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+
+            if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                TrackList cueTracks = readEmbeddedPlaylistTracks(track);
+                for(Track& cueTrack : cueTracks) {
+                    setTrackProps(cueTrack, dir, file);
+                    m_tracksToStore.push_back(cueTrack);
                 }
             }
             else {
-                const TrackList cueTracks = readPlaylistTracks(cue);
-                for(const Track& cueTrack : cueTracks) {
-                    Track track{cueTrack};
-                    setTrackProps(track);
-                    m_tracksToStore.push_back(track);
-                    m_cueFilesScanned.emplace(track.filepath());
-                }
+                m_tracksToStore.push_back(track);
             }
         }
     }
@@ -429,17 +544,6 @@ struct LibraryScanner::Private
             lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
         }
 
-        auto setTrackProps = [this, &file, &baseDir](Track& track) {
-            readFileProperties(track);
-            track.setFilePath(file);
-
-            if(m_currentLibrary.id >= 0) {
-                track.setLibraryId(m_currentLibrary.id);
-                track.setRelativePath(baseDir.relativeFilePath(file));
-            }
-            track.setIsEnabled(true);
-        };
-
         if(m_trackPaths.contains(file)) {
             const Track& libraryTrack = m_trackPaths.at(file);
 
@@ -450,59 +554,11 @@ struct LibraryScanner::Private
                     return;
                 }
 
-                setTrackProps(changedTrack);
-                m_missingFiles.erase(changedTrack.filename());
-
-                if(changedTrack.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                    TrackList cueTracks = readEmbeddedPlaylistTracks(changedTrack);
-                    for(Track& cueTrack : cueTracks) {
-                        setTrackProps(cueTrack);
-                        m_tracksToUpdate.push_back(cueTrack);
-                        m_missingHashes.erase(cueTrack.hash());
-                    }
-                }
-                else {
-                    m_tracksToUpdate.push_back(changedTrack);
-                    m_missingHashes.erase(changedTrack.hash());
-                }
+                updateExistingTrack(changedTrack, baseDir, file);
             }
         }
-
         else {
-            Track track{file};
-            if(!readTrackMetadata(track)) {
-                return;
-            }
-
-            Track refoundTrack = matchMissingTrack(track);
-            if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
-                m_missingHashes.erase(refoundTrack.hash());
-                m_missingFiles.erase(refoundTrack.filename());
-
-                setTrackProps(refoundTrack);
-                m_tracksToUpdate.push_back(refoundTrack);
-            }
-            else {
-                setTrackProps(track);
-                track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-
-                if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                    TrackList cueTracks = readEmbeddedPlaylistTracks(track);
-                    for(Track& cueTrack : cueTracks) {
-                        setTrackProps(cueTrack);
-                        m_tracksToStore.push_back(cueTrack);
-                    }
-                }
-                else {
-                    m_tracksToStore.push_back(track);
-                }
-            }
-
-            if(m_tracksToStore.size() >= BatchSize) {
-                storeTracks(m_tracksToStore);
-                emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
-                m_tracksToStore.clear();
-            }
+            readNewTrack(baseDir, file);
         }
     }
 
@@ -512,9 +568,10 @@ struct LibraryScanner::Private
             m_trackPaths.emplace(track.filepath(), track);
 
             if(track.hasCue()) {
-                m_existingCueTracks[track.cuePath()].emplace_back(track);
-                if(!QFileInfo::exists(track.cuePath())) {
-                    m_missingCueTracks[track.cuePath()].emplace_back(track);
+                const auto cuePath = track.cuePath() == u"Embedded" ? track.filepath() : track.cuePath();
+                m_existingCueTracks[cuePath].emplace_back(track);
+                if(!QFileInfo::exists(cuePath)) {
+                    m_missingCueTracks[cuePath].emplace_back(track);
                 }
             }
 
@@ -553,6 +610,7 @@ struct LibraryScanner::Private
                 readFile(file, baseDir, onlyModified);
 
                 fileScanned();
+                checkBatchFinished();
             }
         }
 
