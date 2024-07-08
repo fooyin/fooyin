@@ -23,7 +23,6 @@
 #include "internalcoresettings.h"
 #include "library/libraryinfo.h"
 #include "librarywatcher.h"
-#include "playlist/parsers/cueparser.h"
 #include "playlist/playlistloader.h"
 
 #include <core/playlist/playlist.h>
@@ -290,11 +289,9 @@ struct LibraryScanner::Private
             return false;
         }
 
-        track.setFileSize(fileInfo.size());
-
-        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
         const QDateTime modifiedTime = fileInfo.lastModified();
         track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+        track.setFileSize(fileInfo.size());
 
         return true;
     }
@@ -487,6 +484,7 @@ struct LibraryScanner::Private
             }
             else {
                 setTrackProps(track);
+                track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
                 if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                     TrackList cueTracks = readEmbeddedPlaylistTracks(track);
@@ -822,6 +820,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                         continue;
                     }
                     p->readFileProperties(track);
+                    track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
                     if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                         const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
