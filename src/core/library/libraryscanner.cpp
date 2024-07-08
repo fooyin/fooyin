@@ -839,11 +839,6 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
             return;
         }
 
-        if(files.empty() && playlists.empty()) {
-            handleFinished();
-            return;
-        }
-
         for(const auto& playlist : playlists) {
             const TrackList playlistTracks = p->readPlaylistTracks(playlist);
             for(const Track& playlistTrack : playlistTracks) {
@@ -901,9 +896,13 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
     }
 
-    p->storeTracks(tracksToStore);
+    if(!tracksToStore.empty()) {
+        p->storeTracks(tracksToStore);
+    }
 
-    emit scannedTracks(tracksToStore, tracksScanned);
+    if(!tracksToStore.empty() || !tracksScanned.empty()) {
+        emit scannedTracks(tracksToStore, tracksScanned);
+    }
 
     handleFinished();
 }
