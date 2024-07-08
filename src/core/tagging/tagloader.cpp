@@ -52,18 +52,19 @@ QStringList TagLoader::supportedFileExtensions() const
 bool TagLoader::canReadTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};
-    return p->m_extensionToParserMap.contains(track.extension());
+    return p->m_extensionToParserMap.contains(track.extension().toLower());
 }
 
 bool TagLoader::canReadTrackCover(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};
 
-    if(!p->m_extensionToParserMap.contains(track.extension())) {
+    const QString ext = track.extension().toLower();
+    if(!p->m_extensionToParserMap.contains(ext)) {
         return false;
     }
 
-    const auto parsers = p->m_extensionToParserMap.at(track.extension());
+    const auto parsers = p->m_extensionToParserMap.at(ext);
     return std::any_of(parsers.cbegin(), parsers.cend(), [](const auto& parser) { return parser->canReadCover(); });
 }
 
@@ -71,11 +72,12 @@ bool TagLoader::canWriteTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};
 
-    if(!p->m_extensionToParserMap.contains(track.extension())) {
+    const QString ext = track.extension().toLower();
+    if(!p->m_extensionToParserMap.contains(ext)) {
         return false;
     }
 
-    const auto parsers = p->m_extensionToParserMap.at(track.extension());
+    const auto parsers = p->m_extensionToParserMap.at(ext);
     return std::any_of(parsers.cbegin(), parsers.cend(), [](const auto& parser) { return parser->canWriteMetaData(); });
 }
 
@@ -83,8 +85,9 @@ TagParser* TagLoader::parserForTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_parserMutex};
 
-    if(p->m_extensionToParserMap.contains(track.extension())) {
-        return p->m_extensionToParserMap.at(track.extension()).front();
+    const QString ext = track.extension().toLower();
+    if(p->m_extensionToParserMap.contains(ext)) {
+        return p->m_extensionToParserMap.at(ext).front();
     }
 
     return nullptr;
@@ -102,7 +105,7 @@ void TagLoader::addParser(const QString& name, std::unique_ptr<TagParser> parser
     // TODO: Add order/priority to handle multiple parsers supporting same extensions
     const auto extensions = parser->supportedExtensions();
     for(const auto& extension : extensions) {
-        p->m_extensionToParserMap[extension].emplace_back(parser.get());
+        p->m_extensionToParserMap[extension.toLower()].emplace_back(parser.get());
     }
 
     p->m_parsers.emplace(name, std::move(parser));
