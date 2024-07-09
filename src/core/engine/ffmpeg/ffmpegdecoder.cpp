@@ -294,7 +294,6 @@ struct FFmpegDecoder::Private
         }
 
         if(result == AVERROR(EAGAIN)) {
-            readNext();
             return result;
         }
 
