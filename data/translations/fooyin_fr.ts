@@ -19,7 +19,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Éditer</translation>
+        <translation>&amp;Édition</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
@@ -196,12 +196,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="430"/>
         <source>Go back</source>
-        <translation>Revenir en arrière</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="432"/>
         <source>Go forwards</source>
-        <translation type="unfinished">Refaire</translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="602"/>
@@ -236,7 +236,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="671"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter à la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="674"/>
@@ -362,7 +362,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="145"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter à la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
@@ -1008,7 +1008,7 @@
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="131"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="139"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter à la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="132"/>
@@ -1308,7 +1308,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="565"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;Attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="570"/>
@@ -1406,7 +1406,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="728"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poursuivre</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="730"/>
@@ -1563,7 +1563,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="280"/>
         <source>Open Layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importation d&apos;une Disposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="280"/>
@@ -1583,7 +1583,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="294"/>
         <source>Replace existing layout?</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer la Disposition actuelle&#x202f;?</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="295"/>
@@ -2086,7 +2086,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="185"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="193"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter à la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="186"/>
@@ -2294,7 +2294,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="168"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;Attente</translation>
     </message>
 </context>
 <context>
@@ -2327,12 +2327,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="73"/>
         <source>Left script</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Script à gauche</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="74"/>
         <source>Right script</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Script à droite</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="81"/>
@@ -2580,7 +2580,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="79"/>
         <source>Show clear button</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le bouton &quot;supprimer&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="80"/>
@@ -2630,7 +2630,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter à la file d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="174"/>
@@ -3016,12 +3016,12 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="157"/>
         <source>Install Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Installer un Plugin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="158"/>
         <source>%1 Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plugin %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="165"/>
@@ -3097,7 +3097,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="225"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;Attente</translation>
     </message>
 </context>
 <context>
@@ -3105,7 +3105,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="189"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;Attente</translation>
     </message>
 </context>
 <context>
@@ -3113,7 +3113,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerview.cpp" line="74"/>
         <source>Empty Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>File d&apos;attente vide</translation>
     </message>
 </context>
 <context>
@@ -3542,7 +3542,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="63"/>
         <source>Show Playing &amp;Track</source>
-        <translation>Monter la &amp;Piste en cours de lecture</translation>
+        <translation>Montrer la &amp;Piste en cours de lecture</translation>
     </message>
 </context>
 <context>
