@@ -21,7 +21,6 @@
 
 #include "ffmpegcodec.h"
 #include "ffmpegframe.h"
-#include "ffmpegpacket.h"
 #include "ffmpegstream.h"
 #include "ffmpegutils.h"
 
@@ -35,6 +34,8 @@
 #elif defined(__clang__)
 #pragma clang diagnostic ignored "-Wold-style-cast"
 #endif
+
+constexpr AVRational TimeBaseMs = {1, 1000};
 
 using namespace std::chrono_literals;
 
@@ -78,6 +79,17 @@ struct FormatContextDeleter
     }
 };
 using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
+
+struct PacketDeleter
+{
+    void operator()(AVPacket* packet) const
+    {
+        if(packet) {
+            av_packet_free(&packet);
+        }
+    }
+};
+using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 } // namespace
 
 namespace Fooyin {
@@ -94,11 +106,13 @@ struct FFmpegDecoder::Private
     AVRational m_timeBase;
     bool m_isSeekable{false};
     bool m_draining{false};
+    bool m_eof{false};
     bool m_isDecoding{false};
 
     AudioBuffer m_buffer;
     int m_bufferPos{0};
-    uint64_t m_currentPts{0};
+    int64_t m_seekPos{0};
+    int m_skipBytes{0};
 
     explicit Private(FFmpegDecoder* self)
         : m_self{self}
@@ -153,7 +167,10 @@ struct FFmpegDecoder::Private
             return false;
         }
 
-        //        av_dump_format(avContext, 0, data, 0);
+        // Needed for seeking of APE files
+        avContext->flags |= AVFMT_FLAG_GENPTS;
+
+        // av_dump_format(avContext, 0, source.toUtf8().constData(), 0);
 
         m_context.reset(avContext);
 
@@ -221,7 +238,7 @@ struct FFmpegDecoder::Private
         return true;
     }
 
-    void decodeAudio(const Packet& packet)
+    void decodeAudio(const PacketPtr& packet)
     {
         if(!m_isDecoding) {
             return;
@@ -234,7 +251,7 @@ struct FFmpegDecoder::Private
             result = sendAVPacket(packet);
 
             if(result != AVERROR(EAGAIN)) {
-                qWarning() << "Unexpected decoder behavior";
+                Utils::printError(QStringLiteral("Unexpected decoder behavior"));
             }
         }
 
@@ -248,43 +265,47 @@ struct FFmpegDecoder::Private
         return m_error != Error::NoError;
     }
 
-    [[nodiscard]] int sendAVPacket(const Packet& packet) const
+    [[nodiscard]] int sendAVPacket(const PacketPtr& packet) const
     {
         if(hasError() || !m_isDecoding) {
             return -1;
         }
 
-        return avcodec_send_packet(m_codec.context(), !packet.isValid() || m_draining ? nullptr : packet.avPacket());
+        if(!packet || m_draining) {
+            return avcodec_send_packet(m_codec.context(), nullptr);
+        }
+
+        return avcodec_send_packet(m_codec.context(), packet.get());
     }
 
-    void receiveAVFrames()
+    int receiveAVFrames()
     {
         if(hasError() || !m_isDecoding) {
-            return;
+            return 0;
         }
 
         const Frame frame{m_timeBase};
         const int result = avcodec_receive_frame(m_codec.context(), frame.avFrame());
 
         if(result == AVERROR_EOF) {
-            return;
+            m_draining = true;
+            decodeAudio({});
+            return result;
         }
 
         if(result == AVERROR(EAGAIN)) {
             readNext();
-            return;
+            return result;
         }
 
         if(result < 0) {
-            qWarning() << "Error receiving decoded frame";
-            return;
+            Utils::printError(QStringLiteral("Error receiving decoded frame"));
+            return result;
         }
-
-        m_currentPts = frame.ptsMs();
 
         const auto sampleCount = m_audioFormat.bytesPerFrame() * frame.sampleCount();
 
-        if(av_sample_fmt_is_planar(frame.format())) {
+        if(m_codec.isPlanar()) {
             m_buffer = {m_audioFormat, frame.ptsMs()};
             m_buffer.resize(static_cast<size_t>(sampleCount));
             interleave(frame.avFrame()->data, m_buffer);
@@ -292,6 +313,22 @@ struct FFmpegDecoder::Private
         else {
             m_buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, frame.ptsMs()};
         }
+
+        // Handle seeking of APE files
+        if(m_skipBytes > 0) {
+            const auto len = std::min(sampleCount, m_skipBytes);
+            m_skipBytes -= len;
+
+            if(sampleCount - len == 0) {
+                m_buffer = {};
+            }
+            else {
+                std::memmove(m_buffer.data(), m_buffer.data() + len, sampleCount - len);
+                m_buffer.resize(sampleCount - len);
+            }
+        }
+
+        return result;
     }
 
     void readNext()
@@ -300,43 +337,69 @@ struct FFmpegDecoder::Private
             return;
         }
 
-        const Packet packet;
-        const int readResult = av_read_frame(m_context.get(), packet.avPacket());
+        // Exhaust the current packet first
+        if(receiveAVFrames() == 0) {
+            return;
+        }
+
+        const PacketPtr packet{av_packet_alloc()};
+        const int readResult = av_read_frame(m_context.get(), packet.get());
         if(readResult < 0) {
-            if(readResult != AVERROR_EOF) {
-                Utils::printError(readResult);
-            }
-            else if(!m_draining) {
-                m_draining = true;
+            if(readResult == AVERROR_EOF && !m_eof) {
                 decodeAudio(packet);
+                m_eof = true;
+            }
+            else {
+                receiveAVFrames();
                 return;
             }
             return;
         }
 
-        if(packet.avPacket()->stream_index != m_codec.streamIndex()) {
+        m_eof = false;
+
+        if(packet->stream_index != m_codec.streamIndex()) {
             readNext();
             return;
         }
 
+        if(m_seekPos > 0 && m_codec.context()->codec_id == AV_CODEC_ID_APE) {
+            const auto packetPts = av_rescale_q_rnd(packet->pts, m_timeBase, TimeBaseMs, AVRounding::AV_ROUND_DOWN);
+            m_skipBytes          = m_audioFormat.bytesForDuration(std::abs(m_seekPos - packetPts));
+        }
+        m_seekPos = -1;
+
         decodeAudio(packet);
+
+        while(!m_buffer.isValid()) {
+            readNext();
+        }
     }
 
-    void seek(uint64_t pos) const
+    void seek(uint64_t pos)
     {
         if(!m_context || !m_isSeekable || hasError()) {
             return;
         }
 
-        const int64_t timestamp = av_rescale_q(static_cast<int64_t>(pos), {1, 1000}, m_stream.avStream()->time_base);
+        m_seekPos = static_cast<int64_t>(pos);
 
-        const int flags = pos < m_currentPts ? AVSEEK_FLAG_BACKWARD : 0;
-        if(av_seek_frame(m_context.get(), m_stream.index(), timestamp, flags) < 0) {
-            qWarning() << "Could not seek to position: " << pos;
-            return;
+        constexpr static AVRational avTb{1, AV_TIME_BASE};
+
+        constexpr static auto min = std::numeric_limits<int64_t>::min();
+        constexpr static auto max = std::numeric_limits<int64_t>::max();
+
+        const auto target = av_rescale_q_rnd(m_seekPos, TimeBaseMs, avTb, AVRounding::AV_ROUND_DOWN);
+
+        if(auto ret = avformat_seek_file(m_context.get(), -1, min, target, max, 0) < 0) {
+            Utils::printError(ret);
         }
-
         avcodec_flush_buffers(m_codec.context());
+
+        m_bufferPos = 0;
+        m_buffer.clear();
+        m_eof       = false;
+        m_skipBytes = 0;
     }
 };
 
@@ -364,9 +427,9 @@ void FFmpegDecoder::start()
 void FFmpegDecoder::stop()
 {
     p->seek(0);
+    p->m_eof        = false;
     p->m_isDecoding = false;
     p->m_draining   = false;
-    p->m_currentPts = 0;
     p->m_bufferPos  = 0;
     p->m_buffer.clear();
 }

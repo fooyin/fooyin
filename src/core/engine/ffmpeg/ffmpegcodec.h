@@ -56,6 +56,7 @@ public:
     [[nodiscard]] AVCodecContext* context() const;
     [[nodiscard]] AVStream* stream() const;
     [[nodiscard]] int streamIndex() const;
+    [[nodiscard]] bool isPlanar() const;
 
 private:
     CodecContextPtr m_context;

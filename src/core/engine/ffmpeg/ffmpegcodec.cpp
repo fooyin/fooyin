@@ -56,4 +56,9 @@ int Codec::streamIndex() const
 {
     return m_stream ? m_stream->index : -1;
 }
+
+bool Codec::isPlanar() const
+{
+    return av_sample_fmt_is_planar(m_context->sample_fmt);
+}
 } // namespace Fooyin
