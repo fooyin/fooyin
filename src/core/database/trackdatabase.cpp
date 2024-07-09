@@ -76,15 +76,15 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":title"), track.title()},
             {QStringLiteral(":trackNumber"), track.trackNumber()},
             {QStringLiteral(":trackTotal"), track.trackTotal()},
-            {QStringLiteral(":artists"), track.artists()},
-            {QStringLiteral(":albumArtist"), track.albumArtists()},
+            {QStringLiteral(":artists"), track.artist()},
+            {QStringLiteral(":albumArtist"), track.albumArtist()},
             {QStringLiteral(":album"), track.album()},
             {QStringLiteral(":discNumber"), track.discNumber()},
             {QStringLiteral(":discTotal"), track.discTotal()},
             {QStringLiteral(":date"), track.date()},
             {QStringLiteral(":composer"), track.composer()},
             {QStringLiteral(":performer"), track.performer()},
-            {QStringLiteral(":genres"), track.genres()},
+            {QStringLiteral(":genres"), track.genre()},
             {QStringLiteral(":comment"), track.comment()},
             {QStringLiteral(":cuePath"), track.cuePath()},
             {QStringLiteral(":offset"), static_cast<quint64>(track.offset())},
@@ -111,15 +111,15 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setTitle(q.value(3).toString());
     track.setTrackNumber(q.value(4).toInt());
     track.setTrackTotal(q.value(5).toInt());
-    track.setArtists(q.value(6).toStringList());
-    track.setAlbumArtists(q.value(7).toStringList());
+    track.setArtists(q.value(6).toString().split(u'\037'));
+    track.setAlbumArtists(q.value(7).toString().split(u'\037'));
     track.setAlbum(q.value(8).toString());
     track.setDiscNumber(q.value(9).toInt());
     track.setDiscTotal(q.value(10).toInt());
     track.setDate(q.value(11).toString());
     track.setComposer(q.value(12).toString());
     track.setPerformer(q.value(13).toString());
-    track.setGenres(q.value(14).toStringList());
+    track.setGenres(q.value(14).toString().split(u'\037'));
     track.setComment(q.value(15).toString());
     track.setCuePath(q.value(16).toString());
     track.setOffset(q.value(17).toULongLong());
