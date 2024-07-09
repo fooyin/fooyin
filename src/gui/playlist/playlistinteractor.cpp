@@ -138,7 +138,6 @@ void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id)
         p->scanFiles(urls, [this](const TrackList& scannedTracks) {
             const QString playlistName = Track::findCommonField(scannedTracks);
             if(auto* playlist = p->m_handler->createNewPlaylist(playlistName, scannedTracks)) {
-                p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
                 p->m_controller->changeCurrentPlaylist(playlist);
             }
         });
