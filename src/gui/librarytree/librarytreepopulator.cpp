@@ -63,18 +63,18 @@ struct LibraryTreePopulator::Private
 
     void iterateTrack(const Track& track)
     {
-        LibraryTreeItem* parent = &m_root;
-
         const QString field = m_parser.evaluate(m_script, track);
         if(field.isNull()) {
             return;
         }
 
-        const QStringList values = field.split(QStringLiteral("\037"), Qt::SkipEmptyParts);
+        const QStringList values = field.split(u'\037', Qt::SkipEmptyParts);
         for(const QString& value : values) {
             if(value.isNull()) {
                 continue;
             }
+
+            LibraryTreeItem* parent = &m_root;
             const QStringList items = value.split(QStringLiteral("||"));
 
             for(int level{0}; const QString& item : items) {
