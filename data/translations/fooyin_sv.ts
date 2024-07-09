@@ -170,7 +170,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="132"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artist</translation>
     </message>
 </context>
 <context>
@@ -183,7 +183,7 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="84"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj Färg</translation>
     </message>
 </context>
 <context>
@@ -259,7 +259,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="218"/>
         <source>Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="218"/>
@@ -282,7 +282,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="75"/>
         <source>Show icons</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa ikoner</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="76"/>
@@ -292,7 +292,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="77"/>
         <source>Show controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa kontroller</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
@@ -312,7 +312,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="86"/>
         <source>Double-click</source>
-        <translation type="unfinished"></translation>
+        <translation>Dubbelklick</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="87"/>
@@ -391,7 +391,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Right-Click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Högerklicka för att lägga till en ny widget</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
@@ -404,7 +404,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inställningar</translation>
     </message>
 </context>
 <context>
@@ -412,17 +412,17 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="296"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänster</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="296"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Upp</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="304"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Höger</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="304"/>
@@ -478,7 +478,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="378"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="392"/>
@@ -548,7 +548,7 @@
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="83"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhet</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/enginepage.cpp" line="85"/>
@@ -604,7 +604,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="41"/>
         <source>Save window size</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara fönsterstorlek</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="44"/>
@@ -614,7 +614,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="54"/>
@@ -629,7 +629,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Spara</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="99"/>
