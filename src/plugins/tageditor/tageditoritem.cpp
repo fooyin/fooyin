@@ -47,6 +47,7 @@ TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefaul
     , m_titleChanged{false}
     , m_valueChanged{false}
     , m_trackCount{0}
+    , m_multipleValues{false}
 { }
 
 QString TagEditorItem::title() const
@@ -76,8 +77,8 @@ QString TagEditorItem::value() const
         std::ranges::sort(nonEmptyValues, collator);
         m_value = nonEmptyValues.join(QStringLiteral("; "));
 
-        if(m_trackCount > 1 && nonEmptyValues.size() > 1) {
-            m_value.prepend(QStringLiteral("<<multiple items>> "));
+        if(m_trackCount > 1 && m_multipleValues) {
+            m_value.prepend(QStringLiteral("<<multiple values>> "));
         }
     }
 
@@ -96,8 +97,8 @@ QString TagEditorItem::changedValue() const
         std::ranges::sort(nonEmptyValues, collator);
         m_changedValue = nonEmptyValues.join(QStringLiteral("; "));
 
-        if(m_trackCount > 1 && nonEmptyValues.size() > 1) {
-            m_changedValue.prepend(QStringLiteral("<<multiple items>> "));
+        if(m_trackCount > 1 && m_multipleValues) {
+            m_changedValue.prepend(QStringLiteral("<<multiple values>> "));
         }
     }
 
@@ -126,11 +127,14 @@ void TagEditorItem::addTrack()
 
 void TagEditorItem::addTrackValue(const QString& value)
 {
-    if(!value.isEmpty() && m_values.size() < MaxValueCount && !m_values.contains(value)) {
-        if(m_trackCount == 0 || withinCharLimit(m_values)) {
-            m_values.append(value);
-            m_values.sort();
+    if(!value.isEmpty() && !m_values.contains(value)) {
+        if(m_values.size() < MaxValueCount) {
+            if(m_trackCount == 0 || withinCharLimit(m_values)) {
+                m_values.append(value);
+                m_values.sort();
+            }
         }
+        m_multipleValues = m_trackCount >= 1;
     }
 
     m_trackCount++;
@@ -142,17 +146,19 @@ void TagEditorItem::addTrackValue(const QStringList& values)
         return;
     }
 
-    if(m_values.size() < MaxValueCount) {
-        for(const auto& trackValue : values) {
-            if(m_values.contains(trackValue)) {
-                continue;
-            }
+    for(const auto& trackValue : values) {
+        if(m_values.contains(trackValue)) {
+            continue;
+        }
 
+        if(m_values.size() < MaxValueCount) {
             if(m_trackCount == 0 || withinCharLimit(m_values)) {
                 m_values.append(trackValue);
                 m_values.sort();
             }
         }
+
+        m_multipleValues = m_trackCount >= 1;
     }
 
     m_trackCount++;

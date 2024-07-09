@@ -65,5 +65,6 @@ private:
     mutable QString m_changedValue;
     bool m_valueChanged;
     int m_trackCount;
+    bool m_multipleValues;
 };
 } // namespace Fooyin::TagEditor
