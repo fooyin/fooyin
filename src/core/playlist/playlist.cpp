@@ -77,7 +77,7 @@ struct Playlist::Private
         }
     }
 
-    int getRandomIndex(PlayModes mode)
+    int getShuffleIndex(PlayModes mode)
     {
         if(m_shuffleOrder.empty()) {
             createShuffleOrder();
@@ -101,7 +101,7 @@ struct Playlist::Private
         return -1;
     }
 
-    int getNextIndex(int delta, PlayModes mode)
+    int getNextIndex(int delta, PlayModes mode, bool onlyCheck)
     {
         if(m_tracks.empty()) {
             return -1;
@@ -120,7 +120,10 @@ struct Playlist::Private
                 if(!(mode & RepeatTrack)) {
                     m_shuffleIndex += delta;
                 }
-                nextIndex = getRandomIndex(mode);
+                nextIndex = getShuffleIndex(mode);
+                if(onlyCheck) {
+                    m_shuffleIndex -= delta;
+                }
             }
             else if(mode & RepeatPlaylist) {
                 nextIndex += delta;
@@ -234,12 +237,12 @@ void Playlist::scheduleNextIndex(int index)
 
 int Playlist::nextIndex(int delta, PlayModes mode)
 {
-    return p->getNextIndex(delta, mode);
+    return p->getNextIndex(delta, mode, true);
 }
 
 Track Playlist::nextTrack(int delta, PlayModes mode)
 {
-    const int index = p->getNextIndex(delta, mode);
+    const int index = p->getNextIndex(delta, mode, true);
 
     if(index < 0) {
         return {};
@@ -250,7 +253,7 @@ Track Playlist::nextTrack(int delta, PlayModes mode)
 
 Track Playlist::nextTrackChange(int delta, PlayModes mode)
 {
-    const int index = p->getNextIndex(delta, mode);
+    const int index = p->getNextIndex(delta, mode, false);
 
     if(index < 0) {
         return {};
