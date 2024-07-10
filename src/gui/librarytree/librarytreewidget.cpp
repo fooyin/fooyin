@@ -26,6 +26,7 @@
 #include "librarytreeview.h"
 #include "playlist/playlistcontroller.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/player/playercontroller.h>
@@ -37,9 +38,11 @@
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/datastream.h>
+#include <utils/fileutils.h>
 #include <utils/tooltipfilter.h>
 
 #include <QActionGroup>
+#include <QFileInfo>
 #include <QHeaderView>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -328,6 +331,47 @@ struct LibraryTreeWidget::Private
         QObject::connect(playAction, &QAction::triggered, m_self,
                          [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
         menu->addAction(playAction);
+    }
+
+    void addOpenMenu(QMenu* menu) const
+    {
+        const auto selected = m_libraryTree->selectionModel()->selectedRows();
+        if(selected.size() != 1) {
+            return;
+        }
+
+        if(m_grouping.id != 2) {
+            // Only add if in folder structure view
+            return;
+        }
+
+        const auto tracks = selected.front().data(LibraryTreeItem::Tracks).value<TrackList>();
+        if(tracks.empty()) {
+            return;
+        }
+
+        const auto libId   = tracks.front().libraryId();
+        const auto library = m_library->libraryInfo(libId);
+        if(!library) {
+            return;
+        }
+
+        QString dir{library->path};
+        QStringList parentDirs;
+
+        QModelIndex index{selected.front()};
+        while(index.isValid()) {
+            parentDirs.prepend(index.data().toString());
+            index = index.parent();
+        }
+
+        dir += u"/" + parentDirs.join(u'/');
+        const QFileInfo info{dir};
+        if(info.exists() && info.isDir()) {
+            auto* openFolder = new QAction(tr("Open Folder"), m_self);
+            QObject::connect(openFolder, &QAction::triggered, m_self, [dir]() { Utils::File::openDirectory(dir); });
+            menu->addAction(openFolder);
+        }
     }
 
     void setScrollbarEnabled(bool enabled) const
@@ -869,6 +913,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
         }
 
         menu->addSeparator();
+        p->addOpenMenu(menu);
         p->m_trackSelection->addTrackContextMenu(menu);
     }
 
