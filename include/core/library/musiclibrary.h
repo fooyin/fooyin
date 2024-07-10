@@ -81,6 +81,8 @@ public:
 
     /** Returns @c true if a library has been added by the user */
     [[nodiscard]] virtual bool hasLibrary() const = 0;
+    /** Returns the library info with the id @p id if it exists */
+    [[nodiscard]] virtual std::optional<LibraryInfo> libraryInfo(int id) const = 0;
 
     /** Loads all tracks from the database */
     virtual void loadAllTracks() = 0;

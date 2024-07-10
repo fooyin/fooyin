@@ -48,6 +48,7 @@ public:
     ScanRequest scanFiles(const QList<QUrl>& files) override;
 
     [[nodiscard]] bool hasLibrary() const override;
+    [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const override;
     [[nodiscard]] bool isEmpty() const override;
 
     [[nodiscard]] TrackList tracks() const override;

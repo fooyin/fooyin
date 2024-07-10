@@ -317,6 +317,11 @@ bool UnifiedMusicLibrary::hasLibrary() const
     return p->m_libraryManager->hasLibrary();
 }
 
+std::optional<LibraryInfo> UnifiedMusicLibrary::libraryInfo(int id) const
+{
+    return p->m_libraryManager->libraryInfo(id);
+}
+
 bool UnifiedMusicLibrary::isEmpty() const
 {
     return p->m_tracks.empty();
