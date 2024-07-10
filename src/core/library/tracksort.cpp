@@ -22,6 +22,7 @@
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
+#include <mutex>
 #include <ranges>
 
 #include <QCollator>
@@ -30,6 +31,8 @@ namespace {
 Fooyin::ParsedScript parseScript(const QString& sort)
 {
     static Fooyin::ScriptParser parser;
+    static std::mutex parserGuard;
+    const std::scoped_lock lock{parserGuard};
 
     return parser.parse(sort);
 }
@@ -44,6 +47,8 @@ TrackList calcSortFields(const QString& sort, const TrackList& tracks)
 TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
 {
     static ScriptParser parser;
+    static std::mutex parserGuard;
+    const std::scoped_lock lock{parserGuard};
 
     TrackList calcTracks{tracks};
     for(Track& track : calcTracks) {
