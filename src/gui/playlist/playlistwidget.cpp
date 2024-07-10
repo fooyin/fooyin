@@ -537,8 +537,7 @@ void PlaylistWidgetPrivate::selectAll() const
         m_model->fetchMore({});
     }
 
-    QMetaObject::invokeMethod(
-        m_playlistView, [this]() { m_playlistView->selectAll(); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_playlistView, [this]() { m_playlistView->selectAll(); }, Qt::QueuedConnection);
 }
 
 void PlaylistWidgetPrivate::selectionChanged() const
@@ -1483,6 +1482,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
             menu->addAction(removeQueueCmd->action());
         }
 
+        menu->addSeparator();
         p->m_selectionController->addTrackContextMenu(menu);
     }
 

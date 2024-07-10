@@ -868,6 +868,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
             menu->addAction(removeQueueCmd->action());
         }
 
+        menu->addSeparator();
         p->m_trackSelection->addTrackContextMenu(menu);
     }
 

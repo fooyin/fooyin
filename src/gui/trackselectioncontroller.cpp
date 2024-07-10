@@ -128,8 +128,6 @@ struct TrackSelectionController::Private
         m_tracksPlaylistMenu->addSeparator();
 
         // Tracks menu
-        m_tracksMenu->addSeparator();
-
         QObject::connect(m_addToQueue, &QAction::triggered, m_tracksQueueMenu, [this]() {
             if(m_self->hasTracks()) {
                 const auto& selection = m_contextSelection.at(m_activeContext);

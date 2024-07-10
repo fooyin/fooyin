@@ -178,6 +178,7 @@ struct FilterController::Private
 
         m_trackSelection->addTrackPlaylistContextMenu(menu);
         m_trackSelection->addTrackQueueContextMenu(menu);
+        menu->addSeparator();
         m_trackSelection->addTrackContextMenu(menu);
 
         menu->popup(pos);
