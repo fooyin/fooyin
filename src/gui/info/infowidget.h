@@ -19,13 +19,17 @@
 
 #pragma once
 
+#include "internalguisettings.h"
+
 #include <gui/propertiesdialog.h>
 
 #include <QWidget>
 
 namespace Fooyin {
-class SettingsManager;
+class InfoView;
+class InfoModel;
 class PlayerController;
+class SettingsManager;
 class TrackSelectionController;
 
 class InfoWidget : public PropertiesTabWidget
@@ -46,7 +50,16 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void resetModel();
+    void resetView();
+
+    TrackSelectionController* m_selectionController;
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
+
+    InfoView* m_view;
+    InfoModel* m_model;
+    SelectionDisplay m_displayOption;
+    int m_scrollPos;
 };
 } // namespace Fooyin

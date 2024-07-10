@@ -30,6 +30,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QGroupBox>
@@ -83,6 +84,9 @@ private:
     QCheckBox* m_buttonStretch;
 
     QLineEdit* m_titleScript;
+
+    QRadioButton* m_preferPlaying;
+    QRadioButton* m_preferSelection;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -102,6 +106,8 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
     , m_titleScript{new QLineEdit(this)}
+    , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
+    , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
@@ -154,12 +160,23 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     playbackScriptsGroupLayout->addWidget(titleLabel, 0, 0);
     playbackScriptsGroupLayout->addWidget(m_titleScript, 0, 1);
 
+    auto* selectionGroupBox    = new QGroupBox(tr("Selection Info"), this);
+    auto* selectionGroup       = new QButtonGroup(this);
+    auto* selectionGroupLayout = new QVBoxLayout(selectionGroupBox);
+
+    selectionGroup->addButton(m_preferPlaying);
+    selectionGroup->addButton(m_preferSelection);
+
+    selectionGroupLayout->addWidget(m_preferPlaying);
+    selectionGroupLayout->addWidget(m_preferSelection);
+
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(setupBox, 0, 0, 1, 2);
     mainLayout->addWidget(iconThemeBox, 1, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, 2, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, 3, 0, 1, 2);
     mainLayout->addWidget(playbackScriptsGroup, 4, 0, 1, 2);
+    mainLayout->addWidget(selectionGroupBox, 5, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -207,6 +224,14 @@ void GuiGeneralPageWidget::load()
     m_buttonStretch->setChecked(buttonOptions & Stretch);
 
     m_titleScript->setText(m_settings->value<Internal::WindowTitleTrackScript>());
+
+    const auto option = static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>());
+    if(option == SelectionDisplay::PreferPlaying) {
+        m_preferPlaying->setChecked(true);
+    }
+    else {
+        m_preferSelection->setChecked(true);
+    }
 }
 
 void GuiGeneralPageWidget::apply()
@@ -255,6 +280,11 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<ToolButtonStyle>(static_cast<int>(buttonOptions));
 
     m_settings->set<Internal::WindowTitleTrackScript>(m_titleScript->text());
+
+    const SelectionDisplay option
+        = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
+
+    m_settings->set<Settings::Gui::Internal::InfoDisplayPrefer>(static_cast<int>(option));
 }
 
 void GuiGeneralPageWidget::reset()
@@ -264,6 +294,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<Internal::WindowTitleTrackScript>();
+    m_settings->reset<Internal::InfoDisplayPrefer>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

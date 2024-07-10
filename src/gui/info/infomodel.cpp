@@ -126,7 +126,7 @@ void InfoModel::setOptions(InfoItem::Options options)
     m_options = options;
 }
 
-void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
+void InfoModel::resetModel(const TrackList& tracks)
 {
     if(m_populatorThread.isRunning()) {
         m_populator.stopThread();
@@ -135,13 +135,7 @@ void InfoModel::resetModel(const TrackList& tracks, const Track& playingTrack)
         m_populatorThread.start();
     }
 
-    TrackList infoTracks{tracks};
-
-    if(infoTracks.empty() && playingTrack.isValid()) {
-        infoTracks.push_back(playingTrack);
-    }
-
-    QMetaObject::invokeMethod(&m_populator, [this, infoTracks] { m_populator.run(m_options, infoTracks); });
+    QMetaObject::invokeMethod(&m_populator, [this, tracks] { m_populator.run(m_options, tracks); });
 }
 
 void InfoModel::populate(const InfoData& data)

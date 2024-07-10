@@ -44,7 +44,8 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_trackSelection{trackSelection}
     , m_settings{settings}
     , m_coverProvider{new CoverProvider(std::move(tagLoader), settings, this)}
-    , m_displayOption{static_cast<CoverDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
+    , m_displayOption{static_cast<SelectionDisplay>(
+          m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
     , m_keepAspectRatio{true}
     , m_resizeTimer{new QTimer(this)}
@@ -67,7 +68,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     QObject::connect(m_resizeTimer, &QTimer::timeout, this, &CoverWidget::rescaleCover);
 
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverDisplayOption>(this, [this](const int option) {
-        m_displayOption = static_cast<CoverDisplay>(option);
+        m_displayOption = static_cast<SelectionDisplay>(option);
         reloadCover();
     });
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { reloadCover(); });
@@ -171,7 +172,7 @@ void CoverWidget::reloadCover()
 {
     Track track;
 
-    if(m_displayOption == CoverDisplay::PreferSelection && m_trackSelection->hasTracks()) {
+    if(m_displayOption == SelectionDisplay::PreferSelection && m_trackSelection->hasTracks()) {
         track = m_trackSelection->selectedTrack();
     }
     else {

@@ -108,9 +108,9 @@ ArtworkPageWidget::ArtworkPageWidget(SettingsManager* settings)
 void ArtworkPageWidget::load()
 {
     const auto option
-        = static_cast<CoverDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>());
+        = static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>());
 
-    if(option == CoverDisplay::PreferPlaying) {
+    if(option == SelectionDisplay::PreferPlaying) {
         m_preferPlaying->setChecked(true);
     }
     else {
@@ -128,8 +128,8 @@ void ArtworkPageWidget::load()
 
 void ArtworkPageWidget::apply()
 {
-    const CoverDisplay option
-        = m_preferPlaying->isChecked() ? CoverDisplay::PreferPlaying : CoverDisplay::PreferSelection;
+    const SelectionDisplay option
+        = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
 
     m_settings->set<Settings::Gui::Internal::TrackCoverDisplayOption>(static_cast<int>(option));
 

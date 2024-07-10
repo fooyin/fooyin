@@ -141,5 +141,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::QueueViewerRightScript>(QStringLiteral("%duration%"),
                                                                 QStringLiteral("PlaybackQueue/RightScript"));
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, QStringLiteral("PlaylistWidget/MiddleClickBehaviour"));
+    m_settings->createSetting<Internal::InfoDisplayPrefer>(0, QStringLiteral("SelectionInfo/PreferDisplay"));
 }
 } // namespace Fooyin

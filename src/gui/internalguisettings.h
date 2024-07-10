@@ -32,7 +32,7 @@ enum class IconThemeOption : uint8_t
     Dark,
 };
 
-enum class CoverDisplay : uint8_t
+enum class SelectionDisplay : uint8_t
 {
     PreferPlaying = 0,
     PreferSelection
@@ -127,7 +127,8 @@ enum GuiInternalSettings : uint32_t
     QueueViewerAltColours   = 59 | Type::Bool,
     QueueViewerLeftScript   = 60 | Type::String,
     QueueViewerRightScript  = 61 | Type::String,
-    PlaylistMiddleClick     = 62 | Type::Int
+    PlaylistMiddleClick     = 62 | Type::Int,
+    InfoDisplayPrefer       = 63 | Type::Int
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

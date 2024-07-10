@@ -56,7 +56,7 @@ public:
     void setOption(InfoItem::Option option, bool enabled);
     void setOptions(InfoItem::Options options);
 
-    void resetModel(const TrackList& tracks, const Track& playingTrack);
+    void resetModel(const TrackList& tracks);
 
 private:
     void populate(const InfoData& data);

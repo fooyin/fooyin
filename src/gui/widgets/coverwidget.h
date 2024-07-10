@@ -63,7 +63,7 @@ private:
     SettingsManager* m_settings;
     CoverProvider* m_coverProvider;
 
-    CoverDisplay m_displayOption;
+    SelectionDisplay m_displayOption;
     Track::Cover m_coverType;
     bool m_keepAspectRatio;
     QTimer* m_resizeTimer;
