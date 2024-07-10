@@ -31,6 +31,7 @@ constexpr auto Performer   = "PERFORMER";
 constexpr auto Comment     = "COMMENT";
 constexpr auto Date        = "DATE";
 constexpr auto Rating      = "RATING";
+constexpr auto RatingAlt   = "FMPS_RATING";
 constexpr auto TrackNumber = "TRACKNUMBER";
 constexpr auto TrackTotal  = "TRACKTOTAL";
 constexpr auto DiscNumber  = "DISCNUMBER";

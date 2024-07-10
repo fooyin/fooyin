@@ -388,7 +388,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             = {Fooyin::Tag::Title,       Fooyin::Tag::Artist,     Fooyin::Tag::Album,      Fooyin::Tag::AlbumArtist,
                Fooyin::Tag::TrackNumber, Fooyin::Tag::TrackTotal, Fooyin::Tag::DiscNumber, Fooyin::Tag::DiscTotal,
                Fooyin::Tag::Genre,       Fooyin::Tag::Composer,   Fooyin::Tag::Performer,  Fooyin::Tag::Comment,
-               Fooyin::Tag::Date,        Fooyin::Tag::Rating};
+               Fooyin::Tag::Date,        Fooyin::Tag::Rating,     Fooyin::Tag::RatingAlt};
 
         track.clearExtraTags();
 
@@ -459,7 +459,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
             = {Fooyin::Tag::Title,       Fooyin::Tag::Artist,     Fooyin::Tag::Album,      Fooyin::Tag::AlbumArtist,
                Fooyin::Tag::TrackNumber, Fooyin::Tag::TrackTotal, Fooyin::Tag::DiscNumber, Fooyin::Tag::DiscTotal,
                Fooyin::Tag::Genre,       Fooyin::Tag::Composer,   Fooyin::Tag::Performer,  Fooyin::Tag::Comment,
-               Fooyin::Tag::Date,        Fooyin::Tag::Rating};
+               Fooyin::Tag::Date,        Fooyin::Tag::Rating,     Fooyin::Tag::RatingAlt};
 
         const auto customTags = track.extraTags();
         for(const auto& [tag, values] : Fooyin::Utils::asRange(customTags)) {
