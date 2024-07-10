@@ -59,7 +59,6 @@ struct UnifiedMusicLibrary::Private
     LibraryThreadHandler m_threadHandler;
 
     TrackList m_tracks;
-    std::unordered_map<QString, Track> m_pendingStatUpdates;
 
     Private(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
             std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
@@ -260,16 +259,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
         this, &MusicLibrary::tracksLoaded, this, [this]() { p->handleTracksLoaded(); }, Qt::QueuedConnection);
 }
 
-UnifiedMusicLibrary::~UnifiedMusicLibrary()
-{
-    if(!p->m_pendingStatUpdates.empty()) {
-        TrackList tracksToUpdate;
-        for(const Track& track : p->m_pendingStatUpdates | std::views::values) {
-            tracksToUpdate.emplace_back(track);
-        }
-        p->m_threadHandler.saveUpdatedTrackStats(tracksToUpdate);
-    }
-}
+UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
 
 void UnifiedMusicLibrary::loadAllTracks()
 {
@@ -376,23 +366,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
 {
     const QString hash  = track.hash();
     const auto currTime = QDateTime::currentMSecsSinceEpoch();
-    int playCount       = track.playCount();
-
-    bool isPending{false};
-
-    if(track.isInDatabase()) {
-        Track updatedTrack{track};
-
-        if(updatedTrack.firstPlayed() == 0) {
-            updatedTrack.setFirstPlayed(currTime);
-        }
-        updatedTrack.setLastPlayed(currTime);
-        updatedTrack.setPlayCount(track.playCount() + 1);
-
-        playCount = updatedTrack.playCount();
-        p->m_pendingStatUpdates.emplace(hash, updatedTrack);
-        isPending = true;
-    }
+    const int playCount = track.playCount() + 1;
 
     TrackList tracksToUpdate;
     for(const auto& libraryTrack : p->m_tracks) {
@@ -400,16 +374,13 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
             Track sameHashTrack{libraryTrack};
             sameHashTrack.setFirstPlayed(currTime);
             sameHashTrack.setLastPlayed(currTime);
-            sameHashTrack.setPlayCount(playCount > 0 ? playCount : sameHashTrack.playCount() + 1);
+            sameHashTrack.setPlayCount(playCount);
 
             tracksToUpdate.emplace_back(sameHashTrack);
-            if(!isPending) {
-                p->m_pendingStatUpdates.emplace(hash, sameHashTrack);
-                isPending = true;
-            }
         }
     }
 
+    p->m_threadHandler.saveUpdatedTrackStats(tracksToUpdate);
     p->updatePlayedTracks(tracksToUpdate);
 }
 
