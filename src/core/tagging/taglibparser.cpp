@@ -403,27 +403,32 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
     }
 }
 
+template <typename T>
+void replaceOrErase(TagLib::PropertyMap& props, const TagLib::String& key, const T& value)
+{
+    if(value.isEmpty()) {
+        props.erase(key);
+    }
+    else {
+        if constexpr(std::is_same_v<T, QStringList>) {
+            props.replace(key, convertStringList(value));
+        }
+        else if constexpr(std::is_same_v<T, QString>) {
+            props.replace(key, convertString(value));
+        }
+    }
+}
+
 void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Track& track, bool skipExtra = false)
 {
     if(!track.isValid()) {
         return;
     }
 
-    if(!track.title().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Title, convertString(track.title()));
-    }
-
-    if(!track.artists().empty()) {
-        oldProperties.replace(Fooyin::Tag::Artist, convertStringList(track.artists()));
-    }
-
-    if(!track.album().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Album, convertString(track.album()));
-    }
-
-    if(!track.albumArtist().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::AlbumArtist, convertString(track.albumArtist()));
-    }
+    replaceOrErase(oldProperties, Fooyin::Tag::Title, track.title());
+    replaceOrErase(oldProperties, Fooyin::Tag::Artist, track.artists());
+    replaceOrErase(oldProperties, Fooyin::Tag::Album, track.album());
+    replaceOrErase(oldProperties, Fooyin::Tag::AlbumArtist, track.albumArtists());
 
     if(track.trackNumber() >= 0) {
         const auto trackNums = TStringToQString(oldProperties[Fooyin::Tag::TrackNumber].toString()).split(u'/');
@@ -431,7 +436,7 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
         if(trackNums.size() > 1) {
             trackNumber += QStringLiteral("/") + QString::number(track.trackTotal());
         }
-        oldProperties.replace(Fooyin::Tag::TrackNumber, convertString(trackNumber));
+        replaceOrErase(oldProperties, Fooyin::Tag::TrackNumber, trackNumber);
     }
 
     if(track.discNumber() >= 0) {
@@ -440,28 +445,14 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
         if(discNums.size() > 1) {
             discNumber += QStringLiteral("/") + QString::number(track.discTotal());
         }
-        oldProperties.replace(Fooyin::Tag::DiscNumber, convertString(discNumber));
+        replaceOrErase(oldProperties, Fooyin::Tag::DiscNumber, discNumber);
     }
 
-    if(!track.genres().empty()) {
-        oldProperties.replace(Fooyin::Tag::Genre, convertStringList(track.genres()));
-    }
-
-    if(!track.composer().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Composer, convertString(track.composer()));
-    }
-
-    if(!track.performer().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Performer, convertString(track.performer()));
-    }
-
-    if(!track.comment().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Comment, convertString(track.comment()));
-    }
-
-    if(!track.date().isEmpty()) {
-        oldProperties.replace(Fooyin::Tag::Date, convertString(track.date()));
-    }
+    replaceOrErase(oldProperties, Fooyin::Tag::Genre, track.genres());
+    replaceOrErase(oldProperties, Fooyin::Tag::Composer, track.composer());
+    replaceOrErase(oldProperties, Fooyin::Tag::Performer, track.performer());
+    replaceOrErase(oldProperties, Fooyin::Tag::Comment, track.comment());
+    replaceOrErase(oldProperties, Fooyin::Tag::Date, track.date());
 
     if(!skipExtra) {
         static const std::set<TagLib::String> baseTags
