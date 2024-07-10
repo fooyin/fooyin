@@ -691,7 +691,7 @@ void Track::setYear(int year)
 
 void Track::setRating(float rating)
 {
-    if(rating > 0 && rating < 1.0) {
+    if(rating > 0 && rating <= 1.0) {
         p->rating = rating;
     }
     else {
