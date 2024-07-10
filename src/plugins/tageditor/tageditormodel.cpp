@@ -206,7 +206,8 @@ struct TagEditorModel::Private
         bool intValueIsValid{false};
 
         if(isList) {
-            listValue = value.toString().split(QStringLiteral("; "));
+            listValue = value.toString().split(u';', Qt::SkipEmptyParts);
+            std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
         }
         else if(isNumeric) {
             intValue = value.toInt(&intValueIsValid);
