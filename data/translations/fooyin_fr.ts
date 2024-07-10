@@ -1356,7 +1356,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="616"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished">Panneau des illustrations</translation>
+        <translation>Panneau des illustrations</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="620"/>
@@ -2150,7 +2150,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="78"/>
         <source>&amp;Order</source>
-        <translation>&amp;Ordre de Lecture</translation>
+        <translation>&amp;Mode de Lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
