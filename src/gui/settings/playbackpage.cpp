@@ -18,10 +18,12 @@
  */
 
 #include "playbackpage.h"
-#include "gui/guisettings.h"
+
+#include "core/internalcoresettings.h"
 
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -45,6 +47,8 @@ public:
 private:
     SettingsManager* m_settings;
 
+    QCheckBox* m_restorePlayback;
+
     QCheckBox* m_cursorFollowsPlayback;
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
@@ -56,6 +60,7 @@ private:
 
 PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     : m_settings{settings}
+    , m_restorePlayback{new QCheckBox(tr("Save/restore playback state"), this)}
     , m_cursorFollowsPlayback{new QCheckBox(tr("Cursor follows playback"), this)}
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
@@ -65,6 +70,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 {
     auto* layout = new QGridLayout(this);
 
+    m_restorePlayback->setToolTip(tr("Save playback state on exit and restore it on next startup"));
     m_rewindPrevious->setToolTip(tr(
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
     m_skipUnavailable->setToolTip(
@@ -74,10 +80,12 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    generalGroupLayout->addWidget(m_cursorFollowsPlayback, 0, 0, 1, 2);
-    generalGroupLayout->addWidget(m_playbackFollowsCursor, 1, 0, 1, 2);
-    generalGroupLayout->addWidget(m_rewindPrevious, 2, 0, 1, 2);
-    generalGroupLayout->addWidget(m_skipUnavailable, 3, 0, 1, 2);
+    int row{0};
+    generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
 
     auto* externalGroup       = new QGroupBox(tr("External files"), this);
     auto* externalGroupLayout = new QGridLayout(externalGroup);
@@ -95,6 +103,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
 void PlaybackPageWidget::load()
 {
+    m_restorePlayback->setChecked(m_settings->value<Settings::Core::Internal::SavePlaybackState>());
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
@@ -106,6 +115,7 @@ void PlaybackPageWidget::load()
 
 void PlaybackPageWidget::apply()
 {
+    m_settings->set<Settings::Core::Internal::SavePlaybackState>(m_restorePlayback->isChecked());
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
@@ -117,6 +127,7 @@ void PlaybackPageWidget::apply()
 
 void PlaybackPageWidget::reset()
 {
+    m_settings->reset<Settings::Core::Internal::SavePlaybackState>();
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
