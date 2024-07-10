@@ -86,11 +86,12 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::RightButton) {
         // Don't start editing on right-click
-        setTagEditTriggers(QAbstractItemView::NoEditTriggers);
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
     }
     else {
-        setTagEditTriggers(m_editTrigger);
+        setEditTriggers(m_editTrigger);
     }
+
     QTableView::mousePressEvent(event);
 }
 
