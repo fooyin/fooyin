@@ -27,6 +27,7 @@
 
 namespace Fooyin {
 class Database;
+class SettingsManager;
 class TagLoader;
 
 class TrackDatabaseManager : public Worker
@@ -35,7 +36,7 @@ class TrackDatabaseManager : public Worker
 
 public:
     explicit TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
-                                  QObject* parent = nullptr);
+                                  SettingsManager* settings, QObject* parent = nullptr);
 
     void initialiseThread() override;
 
@@ -52,6 +53,8 @@ public slots:
 private:
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<TagLoader> m_tagLoader;
+    SettingsManager* m_settings;
+
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     TrackDatabase m_trackDatabase;
 };

@@ -37,7 +37,9 @@ public:
 
     [[nodiscard]] TrackList tracks() const;
     void reset(const TrackList& tracks);
+
     bool haveChanges();
+    bool haveOnlyStatChanges();
     void applyChanges();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

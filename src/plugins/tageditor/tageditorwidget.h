@@ -68,6 +68,7 @@ public:
 
 signals:
     void trackMetadataChanged(const Fooyin::TrackList& tracks);
+    void trackStatsChanged(const Fooyin::TrackList& tracks);
 
 private:
     void saveState() const;

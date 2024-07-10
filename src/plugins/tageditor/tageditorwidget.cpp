@@ -19,6 +19,7 @@
 
 #include "tageditorwidget.h"
 
+#include "core/coresettings.h"
 #include "tageditoritem.h"
 #include "tageditormodel.h"
 
@@ -154,9 +155,22 @@ void TagEditorWidget::apply()
         return;
     }
 
-    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+    const bool updateStats = m_model->haveOnlyStatChanges()
+                          && !m_settings->value<Settings::Core::SaveRatingToMetadata>()
+                          && !m_settings->value<Settings::Core::SavePlaycountToMetadata>();
+
+    auto applyChanges = [this, updateStats]() {
         m_model->applyChanges();
-        emit trackMetadataChanged(m_model->tracks());
+        if(updateStats) {
+            emit trackStatsChanged(m_model->tracks());
+        }
+        else {
+            emit trackMetadataChanged(m_model->tracks());
+        }
+    };
+
+    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+        applyChanges();
         return;
     }
 
@@ -177,8 +191,7 @@ void TagEditorWidget::apply()
         if(dontAskAgain->isChecked()) {
             m_settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
         }
-        m_model->applyChanges();
-        emit trackMetadataChanged(m_model->tracks());
+        applyChanges();
     }
 }
 

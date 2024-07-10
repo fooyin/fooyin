@@ -439,7 +439,12 @@ struct GuiApplication::Private
                 Track track       = tracks.front();
                 if(track.ratingStars() != rating) {
                     track.setRatingStars(rating);
-                    core.library->updateTrackMetadata({track});
+                    if(settings->value<Settings::Core::SaveRatingToMetadata>()) {
+                        core.library->updateTrackMetadata({track});
+                    }
+                    else {
+                        core.library->updateTrackStats(track);
+                    }
                 }
             }
         };

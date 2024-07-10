@@ -25,7 +25,7 @@ QByteArray TagParser::readCover(const Track& /*track*/, Track::Cover /*cover*/) 
     return {};
 }
 
-bool TagParser::writeMetaData(const Track& /*track*/) const
+bool TagParser::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/) const
 {
     return false;
 }

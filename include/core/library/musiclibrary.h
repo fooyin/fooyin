@@ -124,6 +124,8 @@ public:
     /** Updates the metdata in the database for @p tracks and writes metdata to files  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
 
+    /** Updates the statistics (playcount, rating etc) in the database for @p tracks  */
+    virtual void updateTrackStats(const TrackList& tracks) = 0;
     /** Updates the statistics (playcount, rating etc) in the database for @p track  */
     virtual void updateTrackStats(const Track& track) = 0;
 

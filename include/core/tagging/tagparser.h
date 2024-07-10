@@ -24,9 +24,16 @@
 #include <core/track.h>
 
 namespace Fooyin {
+
 class FYCORE_EXPORT TagParser
 {
 public:
+    struct WriteOptions
+    {
+        bool writeRating{false};
+        bool writePlaycount{false};
+    };
+
     virtual ~TagParser() = default;
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
@@ -35,6 +42,6 @@ public:
 
     [[nodiscard]] virtual bool readMetaData(Track& track) const = 0;
     [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) const;
-    [[nodiscard]] virtual bool writeMetaData(const Track& track) const;
+    [[nodiscard]] virtual bool writeMetaData(const Track& track, const WriteOptions& options) const;
 };
 } // namespace Fooyin

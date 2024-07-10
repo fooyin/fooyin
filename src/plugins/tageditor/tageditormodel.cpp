@@ -302,6 +302,14 @@ bool TagEditorModel::haveChanges()
                                [](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
 }
 
+bool TagEditorModel::haveOnlyStatChanges()
+{
+    return std::ranges::all_of(
+               p->m_tags,
+               [](const auto& tag) { return tag.first == u"Rating" || tag.second.status() == TagEditorItem::None; })
+        && p->m_tags.at(QStringLiteral("Rating")).status() == TagEditorItem::Changed;
+}
+
 void TagEditorModel::applyChanges()
 {
     const auto updateChangedNodes = [this](TagFieldMap& tags, bool custom) {

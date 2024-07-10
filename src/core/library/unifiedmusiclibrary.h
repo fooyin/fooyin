@@ -56,6 +56,7 @@ public:
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
 
     void updateTrackMetadata(const TrackList& tracks) override;
+    void updateTrackStats(const TrackList& tracks) override;
     void updateTrackStats(const Track& track) override;
 
     void trackWasPlayed(const Track& track);

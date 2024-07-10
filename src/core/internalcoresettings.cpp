@@ -63,6 +63,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<OpenFilesPlaylist>(QStringLiteral("Default"),
                                                  QStringLiteral("Playlist/OpenFilesPlaylist"));
     m_settings->createSetting<OpenFilesSendTo>(false, QStringLiteral("Playlist/OpenFilesSendToPlaylist"));
+    m_settings->createSetting<SaveRatingToMetadata>(false, QStringLiteral("Library/SaveRatingToFile"));
+    m_settings->createSetting<SavePlaycountToMetadata>(false, QStringLiteral("Library/SavePlaycountToFile"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

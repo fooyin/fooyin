@@ -313,6 +313,11 @@ bool TrackDatabase::updateTrack(const Track& track)
     return query.exec();
 }
 
+bool TrackDatabase::updateTrackStats(const Track& track)
+{
+    return insertOrUpdateStats(track);
+}
+
 bool TrackDatabase::updateTrackStats(const TrackList& tracks)
 {
     bool success{true};

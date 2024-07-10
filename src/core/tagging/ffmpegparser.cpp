@@ -327,7 +327,7 @@ QByteArray FFmpegParser::readCover(const Track& track, Track::Cover cover) const
     return {};
 }
 
-bool FFmpegParser::writeMetaData(const Track& /*track*/) const
+bool FFmpegParser::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/) const
 {
     return false;
 }

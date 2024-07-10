@@ -56,12 +56,14 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
 
 TagEditorWidget* TagEditorPlugin::createEditor()
 {
-    const auto tracks = m_trackSelection->selectedTracks();
+    const auto selected = m_trackSelection->selectedTracks();
     const bool canWrite
-        = std::ranges::all_of(tracks, [this](const Track& track) { return m_tagLoader->canWriteTrack(track); });
+        = std::ranges::all_of(selected, [this](const Track& track) { return m_tagLoader->canWriteTrack(track); });
 
-    auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
+    auto* tagEditor = new TagEditorWidget(selected, !canWrite, m_actionManager, m_settings);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::updateTrackMetadata);
+    QObject::connect(tagEditor, &TagEditorWidget::trackStatsChanged, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
     return tagEditor;
 }
 } // namespace Fooyin::TagEditor

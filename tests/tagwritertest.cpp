@@ -60,7 +60,7 @@ TEST_F(TagWriterTest, AiffWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -116,7 +116,7 @@ TEST_F(TagWriterTest, FlacWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -172,7 +172,7 @@ TEST_F(TagWriterTest, M4aWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -228,7 +228,7 @@ TEST_F(TagWriterTest, Mp3Write)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -284,7 +284,7 @@ TEST_F(TagWriterTest, OggWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -340,7 +340,7 @@ TEST_F(TagWriterTest, OpusWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {
@@ -396,7 +396,7 @@ TEST_F(TagWriterTest, WavWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_tagParser->writeMetaData(track));
+        ASSERT_TRUE(m_tagParser->writeMetaData(track, {}));
     }
 
     {

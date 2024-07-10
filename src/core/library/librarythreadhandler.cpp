@@ -74,7 +74,7 @@ struct LibraryThreadHandler::Private
         , m_library{library}
         , m_settings{settings}
         , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader, m_settings}
-        , m_trackDatabaseManager{m_dbPool, tagLoader}
+        , m_trackDatabaseManager{m_dbPool, tagLoader, m_settings}
     {
         m_scanner.moveToThread(&m_thread);
         m_trackDatabaseManager.moveToThread(&m_thread);

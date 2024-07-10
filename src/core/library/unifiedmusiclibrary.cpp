@@ -362,6 +362,11 @@ void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
     p->m_threadHandler.saveUpdatedTrackStats(tracks);
 }
 
+void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)
+{
+    p->m_threadHandler.saveUpdatedTrackStats(tracks);
+}
+
 void UnifiedMusicLibrary::updateTrackStats(const Track& track)
 {
     p->m_threadHandler.saveUpdatedTrackStats({track});

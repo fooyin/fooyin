@@ -36,7 +36,8 @@ public:
     [[nodiscard]] TrackList tracksByHash(const QString& hash) const;
 
     bool updateTrack(const Track& track);
-    bool updateTrackStats(const TrackList& track);
+    bool updateTrackStats(const Track& track);
+    bool updateTrackStats(const TrackList& tracks);
 
     bool deleteTrack(int id);
     bool deleteTracks(const TrackList& tracks);

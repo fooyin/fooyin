@@ -663,7 +663,8 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
     return {picture.data(), static_cast<qsizetype>(picture.size())};
 }
 
-void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track)
+void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
+                    const Fooyin::TagParser::WriteOptions& options)
 {
     id3Tags->removeFrames("TRCK");
 
@@ -683,25 +684,28 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track)
         id3Tags->addFrame(discFrame.release());
     }
 
-    id3Tags->removeFrames("FMPS_Rating");
+    if(options.writeRating) {
+        id3Tags->removeFrames("FMPS_Rating");
 
-    const auto rating = QString::number(track.rating());
-    auto ratingFrame  = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Rating", TagLib::String::UTF8);
-    ratingFrame->setText(convertString(rating));
-    id3Tags->addFrame(ratingFrame.release());
+        const auto rating = QString::number(track.rating());
+        auto ratingFrame
+            = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Rating", TagLib::String::UTF8);
+        ratingFrame->setText(convertString(rating));
+        id3Tags->addFrame(ratingFrame.release());
 
-    TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
-    const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
-    if(map.contains("POPM")) {
-        frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(map["POPM"].front());
+        TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
+        const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
+        if(map.contains("POPM")) {
+            frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(map["POPM"].front());
+        }
+
+        if(!frame) {
+            frame = new TagLib::ID3v2::PopularimeterFrame();
+            id3Tags->addFrame(frame);
+        }
+
+        frame->setRating(ratingToPopm(track.rating()));
     }
-
-    if(!frame) {
-        frame = new TagLib::ID3v2::PopularimeterFrame();
-        id3Tags->addFrame(frame);
-    }
-
-    frame->setRating(ratingToPopm(track.rating()));
 }
 
 void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
@@ -761,7 +765,7 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track)
+void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
 {
     const QString trackNumber = getTrackNumber(track);
     if(trackNumber.isEmpty()) {
@@ -779,12 +783,14 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track)
         apeTags->addValue("DISC", convertString(discNumber), true);
     }
 
-    if(track.rating() > 0) {
-        apeTags->setItem("FMPS_Rating",
-                         TagLib::APE::Item{"FMPS_Rating", convertString(QString::number(track.rating()))});
-    }
-    else {
-        apeTags->removeItem("FMPS_Rating");
+    if(options.writeRating) {
+        if(track.rating() > 0) {
+            apeTags->setItem("FMPS_Rating",
+                             TagLib::APE::Item{"FMPS_Rating", convertString(QString::number(track.rating()))});
+        }
+        else {
+            apeTags->removeItem("FMPS_Rating");
+        }
     }
 }
 
@@ -943,7 +949,7 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
     return freeFormName;
 }
 
-void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
+void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
 {
     const int trackNumber = track.trackNumber();
     const int trackTotal  = track.trackTotal();
@@ -966,7 +972,10 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track)
     }
 
     mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, TagLib::StringList{convertString(track.performer())});
-    mp4Tags->setItem(Fooyin::Mp4::RatingAlt, TagLib::StringList(convertString(QString::number(track.rating()))));
+
+    if(options.writeRating) {
+        mp4Tags->setItem(Fooyin::Mp4::RatingAlt, TagLib::StringList(convertString(QString::number(track.rating()))));
+    }
 
     static const std::set<QString> baseMp4Tags
         = {QString::fromLatin1(Fooyin::Tag::Title),       QString::fromLatin1(Fooyin::Tag::Artist),
@@ -1070,7 +1079,8 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
     return {};
 }
 
-void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track)
+void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
+                      const Fooyin::TagParser::WriteOptions& options)
 {
     if(track.trackNumber() < 0) {
         xiphTags->removeFields(Fooyin::Tag::TrackNumber);
@@ -1100,11 +1110,13 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         xiphTags->addField(Fooyin::Tag::DiscTotal, TagLib::String::number(track.discTotal()), true);
     }
 
-    if(track.rating() <= 0) {
-        xiphTags->removeFields("FMPS_RATING");
-    }
-    else {
-        xiphTags->addField("FMPS_RATING", convertString(QString::number(track.rating())), true);
+    if(options.writeRating) {
+        if(track.rating() <= 0) {
+            xiphTags->removeFields("FMPS_RATING");
+        }
+        else {
+            xiphTags->addField("FMPS_RATING", convertString(QString::number(track.rating())), true);
+        }
     }
 }
 
@@ -1206,11 +1218,14 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track)
+void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
 {
     asfTags->setAttribute("WM/TrackNumber", TagLib::String::number(track.trackNumber()));
     asfTags->setAttribute("WM/PartOfSet", TagLib::String::number(track.discNumber()));
-    asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
+
+    if(options.writeRating) {
+        asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
+    }
 }
 } // namespace
 
@@ -1496,7 +1511,7 @@ QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover) const
     return {};
 }
 
-bool TagLibParser::writeMetaData(const Track& track) const
+bool TagLibParser::writeMetaData(const Track& track, const WriteOptions& options) const
 {
     const QString filepath = track.filepath();
 
@@ -1529,7 +1544,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasID3v2Tag()) {
-                writeID3v2Tags(file.ID3v2Tag(), track);
+                writeID3v2Tags(file.ID3v2Tag(), track, options);
             }
             file.save();
         }
@@ -1539,7 +1554,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasID3v2Tag()) {
-                writeID3v2Tags(file.tag(), track);
+                writeID3v2Tags(file.tag(), track, options);
             }
             file.save();
         }
@@ -1549,7 +1564,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasID3v2Tag()) {
-                writeID3v2Tags(file.ID3v2Tag(), track);
+                writeID3v2Tags(file.ID3v2Tag(), track, options);
             }
             file.save();
         }
@@ -1559,7 +1574,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasAPETag()) {
-                writeApeTags(file.APETag(), track);
+                writeApeTags(file.APETag(), track, options);
             }
             file.save();
         }
@@ -1569,7 +1584,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasAPETag()) {
-                writeApeTags(file.APETag(), track);
+                writeApeTags(file.APETag(), track, options);
             }
             file.save();
         }
@@ -1579,7 +1594,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasAPETag()) {
-                writeApeTags(file.APETag(), track);
+                writeApeTags(file.APETag(), track, options);
             }
             file.save();
         }
@@ -1589,7 +1604,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file, true);
             if(file.hasMP4Tag()) {
-                writeMp4Tags(file.tag(), track);
+                writeMp4Tags(file.tag(), track, options);
             }
             file.save();
         }
@@ -1603,7 +1618,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.hasXiphComment()) {
-                writeXiphComment(file.xiphComment(), track);
+                writeXiphComment(file.xiphComment(), track, options);
             }
             file.save();
         }
@@ -1613,7 +1628,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.tag()) {
-                writeXiphComment(file.tag(), track);
+                writeXiphComment(file.tag(), track, options);
             }
             file.save();
         }
@@ -1622,7 +1637,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         TagLib::Ogg::Opus::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file);
-            writeXiphComment(file.tag(), track);
+            writeXiphComment(file.tag(), track, options);
             file.save();
         }
     }
@@ -1631,7 +1646,7 @@ bool TagLibParser::writeMetaData(const Track& track) const
         if(file.isValid()) {
             writeProperties(file);
             if(file.tag()) {
-                writeAsfTags(file.tag(), track);
+                writeAsfTags(file.tag(), track, options);
             }
             file.save();
         }
