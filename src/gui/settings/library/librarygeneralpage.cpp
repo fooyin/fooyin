@@ -131,8 +131,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
 
     auto* mainLayout = new QGridLayout(this);
 
-    m_savePlaycounts->setHidden(true);
-
     int row{0};
     mainLayout->addWidget(m_libraryView, row++, 0, 1, 2);
     mainLayout->addWidget(m_autoRefresh, row++, 0, 1, 2);

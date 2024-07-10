@@ -620,6 +620,16 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
         }
     }
 
+    if(frames.contains("FMPS_Playcount") && track.playCount() <= 0) {
+        const TagLib::ID3v2::FrameList& countFrame = frames["FMPS_Playcount"];
+        if(!countFrame.isEmpty()) {
+            const int count = convertString(countFrame.front()->toString()).toInt();
+            if(count > 0) {
+                track.setPlayCount(count);
+            }
+        }
+    }
+
     if(frames.contains("POPM")) {
         // Use only first rating
         if(auto* ratingFrame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(frames["POPM"].front())) {
@@ -706,6 +716,29 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
 
         frame->setRating(ratingToPopm(track.rating()));
     }
+
+    if(options.writePlaycount) {
+        id3Tags->removeFrames("FMPS_Playcount");
+
+        const auto count = QString::number(track.playCount());
+        auto countFrame
+            = std::make_unique<TagLib::ID3v2::TextIdentificationFrame>("FMPS_Playcount", TagLib::String::UTF8);
+        countFrame->setText(convertString(count));
+        id3Tags->addFrame(countFrame.release());
+
+        TagLib::ID3v2::PopularimeterFrame* frame{nullptr};
+        const TagLib::ID3v2::FrameListMap& map = id3Tags->frameListMap();
+        if(map.contains("POPM")) {
+            frame = dynamic_cast<TagLib::ID3v2::PopularimeterFrame*>(map["POPM"].front());
+        }
+
+        if(!frame) {
+            frame = new TagLib::ID3v2::PopularimeterFrame();
+            id3Tags->addFrame(frame);
+        }
+
+        frame->setCounter(static_cast<unsigned int>(track.playCount()));
+    }
 }
 
 void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
@@ -736,6 +769,13 @@ void readApeTags(const TagLib::APE::Tag* apeTags, Fooyin::Track& track)
         const float rating = convertString(items["FMPS_RATING"].toString()).toFloat();
         if(rating > 0 && rating <= 1.0) {
             track.setRating(rating);
+        }
+    }
+
+    if(items.contains("FMPS_PLAYCOUNT") && track.rating() <= 0) {
+        const int count = convertString(items["FMPS_PLAYCOUNT"].toString()).toInt();
+        if(count > 0) {
+            track.setPlayCount(count);
         }
     }
 }
@@ -784,12 +824,20 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, const F
     }
 
     if(options.writeRating) {
-        if(track.rating() > 0) {
-            apeTags->setItem("FMPS_Rating",
-                             TagLib::APE::Item{"FMPS_Rating", convertString(QString::number(track.rating()))});
+        if(track.rating() <= 0) {
+            apeTags->removeItem("FMPS_RATING");
         }
         else {
-            apeTags->removeItem("FMPS_Rating");
+            apeTags->setItem("FMPS_RATING", {"FMPS_RATING", convertString(QString::number(track.rating()))});
+        }
+    }
+
+    if(options.writePlaycount) {
+        if(track.playCount() <= 0) {
+            apeTags->removeItem("FMPS_PLAYCOUNT");
+        }
+        else {
+            apeTags->setItem("FMPS_PLAYCOUNT", {"FMPS_PLAYCOUNT", convertString(QString::number(track.rating()))});
         }
     }
 }
@@ -876,6 +924,13 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
         const float rating = convertString(items[Fooyin::Mp4::RatingAlt].toStringList().toString("\n")).toFloat();
         if(rating > 0) {
             track.setRating(rating);
+        }
+    }
+
+    if(items.contains(Fooyin::Mp4::PlayCount) && track.playCount() <= 0) {
+        const int count = items[Fooyin::Mp4::PlayCount].toInt();
+        if(count > 0) {
+            track.setPlayCount(count);
         }
     }
 
@@ -971,10 +1026,19 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, const F
         mp4Tags->setItem("disk", {discNumber, discTotal});
     }
 
-    mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, TagLib::StringList{convertString(track.performer())});
+    mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, {convertString(track.performer())});
 
     if(options.writeRating) {
-        mp4Tags->setItem(Fooyin::Mp4::RatingAlt, TagLib::StringList(convertString(QString::number(track.rating()))));
+        mp4Tags->setItem(Fooyin::Mp4::RatingAlt, {convertString(QString::number(track.rating()))});
+    }
+
+    if(options.writePlaycount) {
+        if(track.playCount() <= 0) {
+            mp4Tags->removeItem(Fooyin::Mp4::PlayCount);
+        }
+        else {
+            mp4Tags->setItem(Fooyin::Mp4::PlayCount, {convertString(QString::number(track.playCount()))});
+        }
     }
 
     static const std::set<QString> baseMp4Tags
@@ -1051,6 +1115,16 @@ void readXiphComment(const TagLib::Ogg::XiphComment* xiphTags, Fooyin::Track& tr
             }
         }
     }
+
+    if(fields.contains("FMPS_PLAYCOUNT") && track.playCount() <= 0) {
+        const TagLib::StringList& countList = fields["FMPS_PLAYCOUNT"];
+        if(!countList.isEmpty()) {
+            const int count = convertString(countList.front()).toInt();
+            if(count > 0) {
+                track.setPlayCount(count);
+            }
+        }
+    }
 }
 
 QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, Fooyin::Track::Cover cover)
@@ -1118,6 +1192,15 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
             xiphTags->addField("FMPS_RATING", convertString(QString::number(track.rating())), true);
         }
     }
+
+    if(options.writePlaycount) {
+        if(track.playCount() <= 0) {
+            xiphTags->removeFields("FMPS_PLAYCOUNT");
+        }
+        else {
+            xiphTags->addField("FMPS_PLAYCOUNT", convertString(QString::number(track.playCount())));
+        }
+    }
 }
 
 void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
@@ -1149,11 +1232,21 @@ void readAsfTags(const TagLib::ASF::Tag* asfTags, Fooyin::Track& track)
     }
 
     if(map.contains("FMPS/Rating") && track.rating() <= 0) {
-        const TagLib::ASF::AttributeList& rating = map["FMPS/Rating"];
-        if(!rating.isEmpty()) {
-            const float rate = convertString(map["FMPS/Rating"].front().toString()).toFloat();
+        const TagLib::ASF::AttributeList& ratings = map["FMPS/Rating"];
+        if(!ratings.isEmpty()) {
+            const float rate = convertString(ratings.front().toString()).toFloat();
             if(rate > 0 && rate <= 1.0) {
                 track.setRating(rate);
+            }
+        }
+    }
+
+    if(map.contains("FMPS/Playcount") && track.rating() <= 0) {
+        const TagLib::ASF::AttributeList& counts = map["FMPS/Playcount"];
+        if(!counts.isEmpty()) {
+            const int count = convertString(counts.front().toString()).toInt();
+            if(count > 0) {
+                track.setPlayCount(count);
             }
         }
     }
@@ -1225,6 +1318,15 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, const F
 
     if(options.writeRating) {
         asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
+    }
+
+    if(options.writePlaycount) {
+        if(track.playCount() <= 0) {
+            asfTags->removeItem("FMPS/Playcount");
+        }
+        else {
+            asfTags->setAttribute("FMPS/Playcount", convertString(QString::number(track.playCount())));
+        }
     }
 }
 } // namespace
