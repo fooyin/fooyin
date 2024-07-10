@@ -339,6 +339,10 @@ struct GuiApplication::Private
     {
         QObject::connect(core.library, &MusicLibrary::tracksUpdated, self,
                          [](const TrackList& tracks) { removeExpiredCovers(tracks); });
+        QObject::connect(core.library, &MusicLibrary::tracksUpdated, &selectionController,
+                         &TrackSelectionController::tracksUpdated);
+        QObject::connect(core.library, &MusicLibrary::tracksDeleted, &selectionController,
+                         &TrackSelectionController::tracksRemoved);
 
         QObject::connect(core.playerController, &PlayerController::playStateChanged, mainWindow.get(),
                          [this]() { updateWindowTitle(); });

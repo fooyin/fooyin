@@ -85,6 +85,10 @@ signals:
     void selectionChanged();
     void requestPropertiesDialog();
 
+public slots:
+    void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksRemoved(const Fooyin::TrackList& tracks);
+
 private:
     struct Private;
     std::unique_ptr<Private> p;

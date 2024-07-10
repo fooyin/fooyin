@@ -21,6 +21,7 @@
 
 #include "database/playlistdatabase.h"
 #include "internalcoresettings.h"
+#include "library/libraryutils.h"
 
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
@@ -32,41 +33,6 @@
 #include <utility>
 
 constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
-
-namespace {
-enum class CommonOperation : uint8_t
-{
-    Update = 0,
-    Remove
-};
-
-std::vector<int> updateCommonTracks(Fooyin::TrackList& tracks, const Fooyin::TrackList& updatedTracks,
-                                    CommonOperation operation)
-{
-    std::vector<int> indexes;
-
-    Fooyin::TrackList result;
-    result.reserve(tracks.size());
-
-    for(auto trackIt{tracks.begin()}; trackIt != tracks.end(); ++trackIt) {
-        auto updatedIt = std::ranges::find_if(updatedTracks, [&trackIt](const Fooyin::Track& updatedTrack) {
-            return updatedTrack.isInDatabase() && trackIt->id() == updatedTrack.id();
-        });
-        if(updatedIt != updatedTracks.end()) {
-            indexes.push_back(static_cast<int>(std::distance(tracks.begin(), trackIt)));
-            if(operation == CommonOperation::Update) {
-                result.push_back(*updatedIt);
-            }
-        }
-        else {
-            result.push_back(*trackIt);
-        }
-    }
-
-    tracks = result;
-    return indexes;
-}
-} // namespace
 
 namespace Fooyin {
 struct PlaylistHandler::Private
@@ -775,7 +741,7 @@ void PlaylistHandler::tracksUpdated(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Update);
+        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
@@ -788,7 +754,7 @@ void PlaylistHandler::tracksPlayed(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Update);
+        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Update);
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
@@ -801,7 +767,7 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
-        const auto updatedIndexes = updateCommonTracks(playlistTracks, tracks, CommonOperation::Remove);
+        const auto updatedIndexes = Utils::updateCommonTracks(playlistTracks, tracks, Utils::CommonOperation::Remove);
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);

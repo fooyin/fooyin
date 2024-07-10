@@ -19,6 +19,7 @@
 
 #include <gui/trackselectioncontroller.h>
 
+#include "core/library/libraryutils.h"
 #include "playlist/playlistcontroller.h"
 
 #include <core/player/playercontroller.h>
@@ -498,6 +499,20 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
             break;
         case(TrackAction::None):
             break;
+    }
+}
+
+void TrackSelectionController::tracksUpdated(const TrackList& tracks)
+{
+    for(auto& [_, selection] : p->m_contextSelection) {
+        Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Update);
+    }
+}
+
+void TrackSelectionController::tracksRemoved(const TrackList& tracks)
+{
+    for(auto& [_, selection] : p->m_contextSelection) {
+        Utils::updateCommonTracks(selection.tracks, tracks, Utils::CommonOperation::Remove);
     }
 }
 } // namespace Fooyin

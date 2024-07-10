@@ -80,6 +80,8 @@ set(SOURCES
     library/librarysort.h
     library/librarythreadhandler.cpp
     library/librarythreadhandler.h
+    library/libraryutils.cpp
+    library/libraryutils.h
     library/librarywatcher.cpp
     library/librarywatcher.h
     library/sortingregistry.cpp
