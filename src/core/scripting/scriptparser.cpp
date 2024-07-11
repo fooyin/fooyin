@@ -122,7 +122,7 @@ struct ScriptParser::Private
             errorMsg += QStringLiteral(": '") + token.value.toString() + QStringLiteral("'");
         }
 
-        errorMsg += QString::fromLatin1(" (%1)").arg(message);
+        errorMsg += QStringLiteral(" (%1)").arg(message);
 
         ScriptError currentError;
         currentError.value    = token.value.toString();

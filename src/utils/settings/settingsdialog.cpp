@@ -152,7 +152,7 @@ void SettingsDialog::resetAll()
 {
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(QString::fromLatin1("Are you sure?"));
+    message.setText(tr("Are you sure?"));
     message.setInformativeText(tr("This will reset all settings to default."));
 
     message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -187,7 +187,7 @@ void SettingsDialog::showCategory(const QModelIndex& index)
     }
     m_stackedLayout->setCurrentIndex(category->index);
 
-    setWindowTitle(tr("Settings") + QString::fromLatin1(": ") + category->name);
+    setWindowTitle(tr("Settings") + QLatin1String(": ") + category->name);
 }
 
 void SettingsDialog::checkCategoryWidget(SettingsCategory* category)

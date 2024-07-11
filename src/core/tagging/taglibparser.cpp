@@ -230,7 +230,7 @@ QString findMp4Tag(const TagLib::String& tag)
 TagLib::String findMp4Tag(const QString& tag)
 {
     for(const auto& [key, value] : tagToMp4) {
-        if(tag == QString::fromLatin1(key)) {
+        if(tag == QLatin1String(key)) {
             return value;
         }
     }

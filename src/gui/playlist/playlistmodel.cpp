@@ -497,8 +497,7 @@ void updateHeaderChildren(Fooyin::PlaylistItem* header)
 
 QStyleOptionViewItem::Position getIconPosition(const QString& text)
 {
-    const QString icon = QLatin1String(Fooyin::PlayingIcon);
-    const int iconPos  = text.indexOf(icon);
+    const auto iconPos = text.indexOf(QLatin1String(Fooyin::PlayingIcon));
 
     if(iconPos == 0) {
         return QStyleOptionViewItem::Left;
@@ -763,16 +762,16 @@ int PlaylistModel::columnCount(const QModelIndex& /*parent*/) const
 
 QStringList PlaylistModel::mimeTypes() const
 {
-    return {QLatin1String(Constants::Mime::PlaylistItems), QLatin1String(Constants::Mime::TrackIds),
-            QLatin1String(Constants::Mime::QueueTracks)};
+    return {QString::fromLatin1(Constants::Mime::PlaylistItems), QString::fromLatin1(Constants::Mime::TrackIds),
+            QString::fromLatin1(Constants::Mime::QueueTracks)};
 }
 
 bool PlaylistModel::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
                                     const QModelIndex& parent) const
 {
     if((action == Qt::MoveAction || action == Qt::CopyAction)
-       && (data->hasUrls() || data->hasFormat(QLatin1String(Constants::Mime::PlaylistItems))
-           || data->hasFormat(QLatin1String(Constants::Mime::TrackIds)))) {
+       && (data->hasUrls() || data->hasFormat(QString::fromLatin1(Constants::Mime::PlaylistItems))
+           || data->hasFormat(QString::fromLatin1(Constants::Mime::TrackIds)))) {
         return true;
     }
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);
@@ -1526,12 +1525,12 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
         return true;
     }
 
-    const QByteArray playlistData = data->data(QLatin1String(Constants::Mime::PlaylistItems));
+    const QByteArray playlistData = data->data(QString::fromLatin1(Constants::Mime::PlaylistItems));
     const bool samePlaylist       = dropOnSamePlaylist(playlistData, m_currentPlaylist);
 
     if(samePlaylist && action == Qt::MoveAction) {
         const QModelIndexList indexes
-            = restoreIndexes(this, data->data(QLatin1String(Constants::Mime::PlaylistItems)), m_currentPlaylist);
+            = restoreIndexes(this, data->data(QString::fromLatin1(Constants::Mime::PlaylistItems)), m_currentPlaylist);
         const TrackIndexRangeList indexRanges = determineTrackIndexGroups(indexes, parent, row);
 
         const int finalIndex = m_currentPlaylist->trackCount() - 1;
@@ -1552,7 +1551,7 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
         return true;
     }
 
-    const auto tracks = Gui::tracksFromMimeData(m_library, data->data(QLatin1String(Constants::Mime::TrackIds)));
+    const auto tracks = Gui::tracksFromMimeData(m_library, data->data(QString::fromLatin1(Constants::Mime::TrackIds)));
     if(tracks.empty()) {
         return false;
     }
@@ -1823,10 +1822,10 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
     if(mimeData) {
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, cmpTrackIndices);
-        mimeData->setData(QLatin1String(Constants::Mime::PlaylistItems),
+        mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
                           saveIndexes(sortedIndexes, m_currentPlaylist));
-        mimeData->setData(QLatin1String(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
-        mimeData->setData(QLatin1String(Constants::Mime::QueueTracks),
+        mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
+        mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
                           Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
     }
 }

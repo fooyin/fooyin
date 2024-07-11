@@ -166,7 +166,7 @@ struct AlsaOutput::Private
     {
         if(error < 0) {
             m_error = message;
-            qWarning() << QStringLiteral("%1 - %2").arg(QString::fromLatin1(snd_strerror(error)), message);
+            qWarning() << QStringLiteral("%1 - %2").arg(QLatin1String(snd_strerror(error)), message);
             QMetaObject::invokeMethod(m_self, [this]() { emit m_self->stateChanged(State::Error); });
             return true;
         }
@@ -193,7 +193,7 @@ struct AlsaOutput::Private
 
         if(!isSupported) {
             checkError(-1, QStringLiteral("[ALSA] Format not supported: %1")
-                               .arg(QString::fromLatin1(snd_pcm_format_name(requestedFormat))));
+                               .arg(QLatin1String(snd_pcm_format_name(requestedFormat))));
             qInfo() << "[ALSA] Supported formats: " << supportedFormats.join(QStringLiteral(", "));
         }
 
@@ -257,8 +257,8 @@ struct AlsaOutput::Private
                 Fooyin::OutputDevice device;
                 device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
                 device.desc = QStringLiteral("%1 - %2 %3")
-                                  .arg(device.name, QString::fromLatin1(snd_ctl_card_info_get_name(cardinfo)),
-                                       QString::fromLatin1(snd_pcm_info_get_name(pcminfo)));
+                                  .arg(device.name, QLatin1String(snd_ctl_card_info_get_name(cardinfo)),
+                                       QLatin1String(snd_pcm_info_get_name(pcminfo)));
                 devices.emplace_back(device);
             }
         }

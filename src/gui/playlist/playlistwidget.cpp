@@ -998,8 +998,8 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 void PlaylistWidgetPrivate::updateSpans()
 {
     auto isPixmap = [](const QString& field) {
-        return field == QString::fromLatin1(FrontCover) || field == QString::fromLatin1(BackCover)
-            || field == QString::fromLatin1(ArtistPicture);
+        return field == QLatin1String(FrontCover) || field == QLatin1String(BackCover)
+            || field == QLatin1String(ArtistPicture);
     };
 
     for(auto i{0}; const auto& column : m_columns) {
