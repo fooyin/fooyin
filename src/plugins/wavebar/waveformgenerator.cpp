@@ -153,7 +153,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
         }
 
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid() || buffer.endTime() > endTime) {
+        if(!buffer.isValid() || (track.hasCue() && buffer.endTime() > endTime)) {
             m_data.complete = true;
             break;
         }
@@ -224,7 +224,7 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
         }
 
         auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid() || buffer.endTime() > endTime) {
+        if(!buffer.isValid() || (track.hasCue() && buffer.endTime() > endTime)) {
             m_data.complete = true;
             break;
         }

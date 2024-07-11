@@ -130,7 +130,7 @@ struct AudioPlaybackEngine::Private
             m_renderer->queueBuffer(buffer);
         }
 
-        if(!buffer.isValid() || buffer.endTime() >= m_endPosition) {
+        if(!buffer.isValid() || (m_currentTrack.hasCue() && buffer.endTime() >= m_endPosition)) {
             m_bufferTimer.stop();
             m_renderer->queueBuffer({});
             m_ending = true;
