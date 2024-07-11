@@ -42,8 +42,6 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 3, .name = tr("Artist/Album"), .field = QStringLiteral("[%albumartist% - ]%album%")});
     addDefaultItem({.id = 4, .name = tr("Album Artist"), .field = QStringLiteral("%albumartist%")});
     addDefaultItem({.id = 5, .name = tr("Album"), .field = QStringLiteral("%album%")});
-    addDefaultItem(
-        {.id = 6, .name = tr("Playcount"), .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
     addDefaultItem({.id = 7, .name = tr("Duration"), .field = QStringLiteral("%duration%")});
     addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon)});
     addDefaultItem({.id = 9, .name = tr("Codec"), .field = QStringLiteral("%codec%")});
@@ -53,6 +51,10 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 16, .name = tr("Channels"), .field = QStringLiteral("%channels%")});
     addDefaultItem({.id = 18, .name = tr("Bit Depth"), .field = QStringLiteral("%bitdepth%")});
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
+    addDefaultItem(
+        {.id = 6, .name = tr("Playcount"), .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
+    addDefaultItem({.id = 19, .name = tr("First Played"), .field = QStringLiteral("%firstplayed%")});
+    addDefaultItem({.id = 20, .name = tr("Last Played"), .field = QStringLiteral("%lastplayed%")});
     addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QString::fromLatin1(FrontCover), .isPixmap = true});
     addDefaultItem({.id = 14, .name = tr("Back Cover"), .field = QString::fromLatin1(BackCover), .isPixmap = true});
     addDefaultItem(

@@ -30,6 +30,8 @@
 #include <core/track.h>
 #include <utils/utils.h>
 
+#include <QDateTime>
+
 namespace {
 using NativeFunc      = std::function<QString(const QStringList&)>;
 using NativeVoidFunc  = std::function<QString()>;
@@ -121,6 +123,17 @@ QString trackChannels(const Fooyin::Track& track)
         default:
             return QStringLiteral("%1ch").arg(track.channels());
     }
+}
+
+QString formatDateTime(const uint64_t ms)
+{
+    if(ms == 0) {
+        return {};
+    }
+
+    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(ms);
+    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
+    return formattedDateTime;
 }
 } // namespace
 
@@ -259,6 +272,12 @@ struct ScriptRegistry::Private
         };
         m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
             return QStringLiteral("%1 Hz").arg(track.sampleRate());
+        };
+        m_metadata[QString::fromLatin1(MetaData::FirstPlayed)] = [](const Track& track) {
+            return formatDateTime(track.firstPlayed());
+        };
+        m_metadata[QString::fromLatin1(MetaData::LastPlayed)] = [](const Track& track) {
+            return formatDateTime(track.lastPlayed());
         };
         m_metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
         m_metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
