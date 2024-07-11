@@ -42,7 +42,7 @@ constexpr auto BufferInterval = 5ms;
 constexpr auto BufferInterval = 5;
 #endif
 
-constexpr auto MaxDecodeLength = 1000;
+constexpr auto MaxDecodeLength = 200;
 
 namespace Fooyin {
 struct AudioPlaybackEngine::Private
