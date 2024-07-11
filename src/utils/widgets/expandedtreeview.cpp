@@ -2524,6 +2524,10 @@ void ExpandedTreeView::Private::columnCountChanged(int oldCount, int newCount) c
 
 void ExpandedTreeView::Private::columnResized(int logical, int oldSize, int newSize)
 {
+    if(m_delayedPendingLayout) {
+        return;
+    }
+
     if(m_viewMode == ViewMode::Tree) {
         if(m_spans.contains(logical)) {
             m_view->updateColumns();
@@ -3426,8 +3430,7 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
     p->m_pressedPos = pos + p->offset();
 
     if(event->button() == Qt::MiddleButton) {
-        QMetaObject::invokeMethod(
-            this, [this, index]() { emit middleClicked((index)); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [this, index]() { emit middleClicked((index)); }, Qt::QueuedConnection);
     }
 
     if(p->m_selectBeforeDrag && !model()->hasChildren(modelIndex)) {
