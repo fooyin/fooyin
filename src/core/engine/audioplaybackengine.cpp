@@ -264,6 +264,18 @@ struct AudioPlaybackEngine::Private
         }
     }
 
+    void setupDuration()
+    {
+        m_duration = m_currentTrack.duration();
+        if(m_duration == 0) {
+            // Handle cases without a total number of samples
+            m_duration = std::numeric_limits<uint64_t>::max();
+        }
+        m_startPosition = m_currentTrack.offset();
+        m_endPosition   = m_startPosition + m_duration;
+        m_lastPosition  = m_startPosition;
+    };
+
     bool updateFormat(const AudioFormat& nextFormat)
     {
         const auto prevFormat = std::exchange(m_format, nextFormat);
@@ -386,19 +398,12 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         }
     }
 
-    auto setupDuration = [this, &track]() {
-        p->m_duration      = track.duration();
-        p->m_startPosition = track.offset();
-        p->m_endPosition   = p->m_startPosition + p->m_duration;
-        p->m_lastPosition  = p->m_startPosition;
-    };
-
     if(p->m_ending && track.filepath() == prevTrack.filepath() && p->m_endPosition == track.offset()) {
         // Multi-file track
         emit positionChanged(0);
         p->m_ending = false;
         p->m_clock.sync(0);
-        setupDuration();
+        p->setupDuration();
         p->changeTrackStatus(TrackStatus::BufferedTrack);
         if(p->m_state == PlaybackState::Playing) {
             p->play();
@@ -434,7 +439,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     p->changeTrackStatus(TrackStatus::LoadedTrack);
 
-    setupDuration();
+    p->setupDuration();
 
     if(track.offset() > 0) {
         p->m_decoder->seek(track.offset());

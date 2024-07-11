@@ -131,7 +131,7 @@ QString formatDateTime(const uint64_t ms)
         return {};
     }
 
-    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(ms);
+    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(ms));
     QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
     return formattedDateTime;
 }
@@ -258,10 +258,18 @@ struct ScriptRegistry::Private
         m_metadata[QString::fromLatin1(MetaData::Composer)]     = &Track::composer;
         m_metadata[QString::fromLatin1(MetaData::Performer)]    = &Track::performer;
         m_metadata[QString::fromLatin1(MetaData::Duration)]     = [](const Track& track) {
-            return Utils::msToString(track.duration());
+            const auto duration = track.duration();
+            if(duration == 0) {
+                return QString{};
+            }
+            return Utils::msToString(duration);
         };
         m_metadata[QString::fromLatin1(MetaData::DurationSecs)] = [](const Track& track) {
-            return QString::number(track.duration() / 1000);
+            const auto duration = track.duration();
+            if(duration == 0) {
+                return QString{};
+            }
+            return QString::number(duration / 1000);
         };
         m_metadata[QString::fromLatin1(MetaData::Comment)]  = &Track::comment;
         m_metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
