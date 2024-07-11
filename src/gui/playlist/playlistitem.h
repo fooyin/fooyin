@@ -56,7 +56,8 @@ public:
         SingleColumnMode,
         Column,
         ImagePadding,
-        ImagePaddingTop
+        ImagePaddingTop,
+        DecorationPosition
     };
 
     enum class State

@@ -189,7 +189,7 @@ struct PlaylistPopulator::Private
             const QString subheaderKey = generateSubheaderKey(subheader);
 
             if(subheaderKey.isEmpty()) {
-                m_prevBaseSubheaderKey[i] = 0;
+                m_prevBaseSubheaderKey[i] = {};
                 m_prevSubheaderKey[i]     = {};
                 continue;
             }

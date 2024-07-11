@@ -259,10 +259,6 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
 
     const bool singleColumn = index.data(PlaylistItem::Role::SingleColumnMode).toBool();
 
-    QRect textRect{opt.rect};
-    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, nullptr, opt.widget) * 2;
-    textRect.adjust(textMargin, 0, -textMargin, 0);
-
     QIcon::Mode mode{QIcon::Normal};
     if(!(opt.state & QStyle::State_Enabled)) {
         mode = QIcon::Disabled;
@@ -270,11 +266,15 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
     else if(opt.state & QStyle::State_Selected) {
         mode = QIcon::Selected;
     }
-    opt.decorationAlignment = opt.displayAlignment;
+
+    const int textMargin = style->pixelMetric(QStyle::PM_FocusFrameHMargin, &opt, opt.widget) * 2;
 
     if(singleColumn) {
-        const auto icon      = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
-        const int indent     = icon.isNull() ? 0 : opt.decorationSize.width() + textMargin;
+        QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+        QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+        textRect.adjust(textMargin, 0, -textMargin, 0);
+
+        const int indent     = opt.icon.isNull() ? 0 : textMargin;
         const auto leftSide  = index.data(PlaylistItem::Role::Left).value<RichText>();
         const auto rightSide = index.data(PlaylistItem::Role::Right).value<RichText>();
 
@@ -282,12 +282,12 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
         auto [_, totalRightWidth] = drawTextBlocks(painter, opt, rightRect, rightSide | std::views::reverse,
                                                    Qt::AlignVCenter | Qt::AlignRight);
 
-        const QRect leftRect = textRect.adjusted(indent, 0, -totalRightWidth, 0);
+        const QRect leftRect = textRect.adjusted(0, 0, -totalRightWidth, 0);
         drawTextBlocks(painter, opt, leftRect, leftSide, Qt::AlignVCenter | Qt::AlignLeft);
 
-        if(!icon.isNull()) {
-            opt.rect.setX(opt.rect.x() + textMargin);
-            opt.icon.paint(painter, opt.rect, Qt::AlignVCenter | Qt::AlignLeft, mode, QIcon::On);
+        if(!opt.icon.isNull()) {
+            iconRect.moveLeft(iconRect.x() + indent);
+            opt.icon.paint(painter, iconRect, Qt::AlignVCenter | Qt::AlignLeft, mode, QIcon::On);
         }
     }
     else {
@@ -306,13 +306,28 @@ void paintTrack(QPainter* painter, const QStyleOptionViewItem& option, const QMo
             }
         }
         else {
+            const auto decPos
+                = index.data(PlaylistItem::Role::DecorationPosition).value<QStyleOptionViewItem::Position>();
+
+            if(!opt.icon.isNull()) {
+                opt.decorationPosition = decPos;
+            }
+
+            QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+            textRect.adjust(textMargin, 0, -textMargin, 0);
+
             const auto columnText = index.data(PlaylistItem::Role::Column).value<RichText>();
 
-            drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
+            const auto& [bound, totalWidth]
+                = drawTextBlocks(painter, opt, textRect, columnText, Qt::AlignVCenter | opt.displayAlignment);
 
-            const auto icon = QIcon{index.data(Qt::DecorationRole).value<QPixmap>()};
-            if(!icon.isNull()) {
-                opt.icon.paint(painter, opt.rect, opt.decorationAlignment, mode, QIcon::On);
+            if(!opt.icon.isNull()) {
+                QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+                if(decPos == QStyleOptionViewItem::Right) {
+                    iconRect = textRect.adjusted(totalWidth + textMargin, 0, totalWidth + textMargin, 0);
+                }
+                opt.icon.paint(painter, columnText.empty() ? opt.rect : iconRect, opt.displayAlignment, mode,
+                               QIcon::On);
             }
         }
     }
