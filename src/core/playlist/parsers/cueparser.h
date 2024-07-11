@@ -42,7 +42,7 @@ public:
 private:
     TrackList readCueTracks(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound);
     TrackList readEmbeddedCueTracks(QIODevice* device, const QString& filepath);
-    void processCueLine(CueSheet& sheet, const QString& line, Fooyin::Track& track, QString& trackPath, const QDir& dir,
-                        bool skipNotFound, bool skipFile, Fooyin::TrackList& tracks);
+    void processCueLine(CueSheet& sheet, const QString& line, Track& track, QString& trackPath, const QDir& dir,
+                        TrackList& tracks);
 };
 } // namespace Fooyin

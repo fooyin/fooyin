@@ -20,7 +20,6 @@
 #include "cueparser.h"
 
 #include <core/track.h>
-#include <utils/utils.h>
 
 #include <QBuffer>
 #include <QDebug>
@@ -46,6 +45,9 @@ struct CueSheet
 
     Fooyin::Track currentFile;
     bool hasValidIndex{false};
+    bool addedTrack{false};
+    bool skipNotFound{false};
+    bool skipFile{false};
 };
 
 namespace {
@@ -127,15 +129,26 @@ void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track)
     track.setComposer(sheet.composer);
 }
 
-void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, bool skipNotFound,
-                       Fooyin::TrackList& tracks)
+void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, Fooyin::TrackList& tracks)
 {
-    if(track.isValid() && (QFile::exists(trackPath) || !skipNotFound)) {
+    if(track.isValid() && (QFile::exists(trackPath) || !sheet.skipNotFound)) {
         finaliseTrack(sheet, track);
         if(track.duration() > 0) {
             track.setDuration(track.duration() - track.offset());
         }
         tracks.emplace_back(track);
+    }
+}
+
+void finaliseDurations(Fooyin::TrackList& tracks)
+{
+    for(auto it = tracks.begin(); it != tracks.end() - 1; ++it) {
+        auto& currentTrack = *it;
+        auto& nextTrack    = *(it + 1);
+
+        if(currentTrack.filepath() == nextTrack.filepath()) {
+            currentTrack.setDuration(nextTrack.offset() - currentTrack.offset());
+        }
     }
 }
 } // namespace
@@ -173,7 +186,9 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
     Fooyin::TrackList tracks;
 
     CueSheet sheet;
-    sheet.cuePath = filepath;
+    sheet.cuePath      = filepath;
+    sheet.skipNotFound = skipNotFound;
+    sheet.skipFile     = false;
 
     const QFileInfo cueInfo{filepath};
     const QDateTime lastModified{cueInfo.lastModified()};
@@ -188,7 +203,7 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
     Fooyin::PlaylistParser::detectEncoding(in, device);
 
     while(!in.atEnd()) {
-        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, dir, skipNotFound, false, tracks);
+        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, dir, tracks);
 
         if(sheet.type == u"BINARY") {
             qInfo() << "[CUE] Unsupported file type:" << sheet.type;
@@ -196,7 +211,8 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
         }
     }
 
-    finaliseLastTrack(sheet, track, trackPath, skipNotFound, tracks);
+    finaliseLastTrack(sheet, track, trackPath, tracks);
+    finaliseDurations(tracks);
 
     return tracks;
 }
@@ -206,7 +222,9 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
     Fooyin::TrackList tracks;
 
     CueSheet sheet;
-    sheet.cuePath = QStringLiteral("Embedded");
+    sheet.cuePath      = QStringLiteral("Embedded");
+    sheet.skipNotFound = false;
+    sheet.skipFile     = true;
 
     Fooyin::Track track;
     QString trackPath{filepath};
@@ -215,7 +233,7 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
     Fooyin::PlaylistParser::detectEncoding(in, device);
 
     while(!in.atEnd()) {
-        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, {}, false, true, tracks);
+        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, {}, tracks);
 
         if(sheet.type == u"BINARY") {
             qInfo() << "[CUE] Unsupported file type:" << sheet.type;
@@ -223,13 +241,14 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
         }
     }
 
-    finaliseLastTrack(sheet, track, filepath, false, tracks);
+    finaliseLastTrack(sheet, track, filepath, tracks);
+    finaliseDurations(tracks);
 
     return tracks;
 }
 
 void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& track, QString& trackPath, const QDir& dir,
-                               bool skipNotFound, bool skipFile, TrackList& tracks)
+                               TrackList& tracks)
 {
     const QStringList parts = splitCueLine(line);
     if(parts.size() < 2) {
@@ -265,7 +284,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         }
     }
     else if(field.compare(u"FILE", Qt::CaseInsensitive) == 0) {
-        if(!skipFile && dir.exists()) {
+        if(!sheet.skipFile && dir.exists()) {
             if(QDir::isAbsolutePath(value)) {
                 trackPath = QDir::cleanPath(value);
             }
@@ -274,10 +293,15 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             }
         }
 
-        if(QFile::exists(trackPath) || !skipNotFound) {
-            sheet.currentFile   = PlaylistParser::readMetadata(Track{trackPath});
-            sheet.hasValidIndex = false;
-            track               = sheet.currentFile;
+        if(track.isValid() && !sheet.addedTrack && sheet.hasValidIndex) {
+            finaliseTrack(sheet, track);
+            tracks.emplace_back(track);
+            sheet.addedTrack = true;
+        }
+
+        if(QFile::exists(trackPath) || !sheet.skipNotFound) {
+            sheet.currentFile = PlaylistParser::readMetadata(Track{trackPath});
+            track             = sheet.currentFile;
 
             if(parts.size() > 2) {
                 sheet.type = parts.at(2);
@@ -288,13 +312,15 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         readRemLine(sheet, parts.sliced(1));
     }
     else if(field.compare(u"TRACK", Qt::CaseInsensitive) == 0) {
-        if(QFile::exists(trackPath) || !skipNotFound) {
-            if(track.isValid() && sheet.hasValidIndex) {
+        if(QFile::exists(trackPath) || !sheet.skipNotFound) {
+            if(track.isValid() && !sheet.addedTrack && sheet.hasValidIndex) {
                 finaliseTrack(sheet, track);
                 tracks.emplace_back(track);
             }
 
-            track = sheet.currentFile;
+            track               = sheet.currentFile;
+            sheet.hasValidIndex = false;
+            sheet.addedTrack    = false;
 
             if(const int trackNum = parts.at(1).toInt(); trackNum > 0) {
                 track.setTrackNumber(trackNum);
@@ -305,14 +331,6 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         if(value == u"01" && parts.size() > 2) {
             if(const auto start = msfToMs(parts.at(2))) {
                 track.setOffset(start.value());
-
-                if(const auto count = tracks.size(); count > 0) {
-                    Fooyin::Track& prevTrack = tracks.at(count - 1);
-                    if(sheet.hasValidIndex && prevTrack.filepath() == track.filepath()) {
-                        prevTrack.setDuration(track.offset() - prevTrack.offset());
-                    }
-                }
-
                 sheet.hasValidIndex = true;
             }
         }
