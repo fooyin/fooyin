@@ -133,7 +133,7 @@ void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QStrin
 {
     if(track.isValid() && (QFile::exists(trackPath) || !sheet.skipNotFound)) {
         finaliseTrack(sheet, track);
-        if(track.duration() > 0) {
+        if(track.duration() > 0 && track.duration() > track.offset()) {
             track.setDuration(track.duration() - track.offset());
         }
         tracks.emplace_back(track);
@@ -143,11 +143,11 @@ void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QStrin
 void finaliseDurations(Fooyin::TrackList& tracks)
 {
     for(auto it = tracks.begin(); it != tracks.end() - 1; ++it) {
-        auto& currentTrack = *it;
-        auto& nextTrack    = *(it + 1);
+        auto currentTrack = it;
+        auto nextTrack    = it + 1;
 
-        if(currentTrack.filepath() == nextTrack.filepath()) {
-            currentTrack.setDuration(nextTrack.offset() - currentTrack.offset());
+        if(currentTrack->filepath() == nextTrack->filepath()) {
+            currentTrack->setDuration(nextTrack->offset() - currentTrack->offset());
         }
     }
 }
