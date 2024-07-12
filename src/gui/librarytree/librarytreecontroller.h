@@ -19,19 +19,22 @@
 
 #pragma once
 
-#include <utils/settings/settingspage.h>
+#include <QObject>
 
 namespace Fooyin {
-class ActionManager;
 class LibraryTreeGroupRegistry;
 class SettingsManager;
 
-class LibraryTreeGroupPage : public SettingsPage
+class LibraryTreeController : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                         SettingsManager* settings);
+    explicit LibraryTreeController(SettingsManager* settings, QObject* parent = nullptr);
+
+    [[nodiscard]] LibraryTreeGroupRegistry* groupRegistry() const;
+
+private:
+    LibraryTreeGroupRegistry* m_groupRegistry;
 };
 } // namespace Fooyin

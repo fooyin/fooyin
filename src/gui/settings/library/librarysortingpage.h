@@ -24,12 +24,13 @@
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
+class SortingRegistry;
 
 class LibrarySortingPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings);
+    LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry, SettingsManager* settings);
 };
 } // namespace Fooyin

@@ -29,13 +29,15 @@ class SettingsManager;
 class WidgetContext;
 
 namespace Filters {
+class FilterColumnRegistry;
 
 class FilterWidget : public FyWidget
 {
     Q_OBJECT
 
 public:
-    explicit FilterWidget(CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit FilterWidget(FilterColumnRegistry* columnRegistry, CoverProvider* coverProvider, SettingsManager* settings,
+                          QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;

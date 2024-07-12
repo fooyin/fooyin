@@ -36,23 +36,24 @@ class LibraryTreeGroupPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit LibraryTreeGroupPageWidget(ActionManager* actionManager, SettingsManager* settings);
+    explicit LibraryTreeGroupPageWidget(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry);
 
     void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    LibraryTreeGroupRegistry m_groupsRegistry;
+    LibraryTreeGroupRegistry* m_groupsRegistry;
 
     ExtendableTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
 };
 
-LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionManager, SettingsManager* settings)
-    : m_groupsRegistry{settings}
+LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionManager,
+                                                       LibraryTreeGroupRegistry* groupsRegistry)
+    : m_groupsRegistry{groupsRegistry}
     , m_groupList{new ExtendableTableView(actionManager, this)}
-    , m_model{new LibraryTreeGroupModel(&m_groupsRegistry, this)}
+    , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
 {
     m_groupList->setExtendableModel(m_model);
 
@@ -96,16 +97,18 @@ void LibraryTreeGroupPageWidget::apply()
 
 void LibraryTreeGroupPageWidget::reset()
 {
-    m_groupsRegistry.reset();
+    m_groupsRegistry->reset();
 }
 
-LibraryTreeGroupPage::LibraryTreeGroupPage(ActionManager* actionManager, SettingsManager* settings)
+LibraryTreeGroupPage::LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
+                                           SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibraryTreeGroups);
     setName(tr("Grouping"));
     setCategory({tr("Widgets"), tr("Library Tree")});
-    setWidgetCreator([actionManager, settings] { return new LibraryTreeGroupPageWidget(actionManager, settings); });
+    setWidgetCreator(
+        [actionManager, groupsRegistry] { return new LibraryTreeGroupPageWidget(actionManager, groupsRegistry); });
 }
 } // namespace Fooyin
 

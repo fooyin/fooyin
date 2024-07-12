@@ -17,21 +17,18 @@
  *
  */
 
-#pragma once
+#include "librarytreecontroller.h"
 
-#include <utils/settings/settingspage.h>
+#include "librarytreegroupregistry.h"
 
 namespace Fooyin {
-class ActionManager;
-class LibraryTreeGroupRegistry;
-class SettingsManager;
+LibraryTreeController::LibraryTreeController(SettingsManager* settings, QObject* parent)
+    : QObject{parent}
+    , m_groupRegistry{new LibraryTreeGroupRegistry(settings, this)}
+{ }
 
-class LibraryTreeGroupPage : public SettingsPage
+LibraryTreeGroupRegistry* LibraryTreeController::groupRegistry() const
 {
-    Q_OBJECT
-
-public:
-    LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                         SettingsManager* settings);
-};
+    return m_groupRegistry;
+}
 } // namespace Fooyin

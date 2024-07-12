@@ -36,7 +36,7 @@ class PlaylistColumnPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
+    explicit PlaylistColumnPageWidget(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry);
 
     void load() override;
     void apply() override;
@@ -44,17 +44,17 @@ public:
 
 private:
     ActionManager* m_actionManager;
-    PlaylistColumnRegistry m_columnsRegistry;
+    PlaylistColumnRegistry* m_columnsRegistry;
 
     ExtendableTableView* m_columnList;
     PlaylistColumnModel* m_model;
 };
 
-PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
+PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry)
     : m_actionManager{actionManager}
-    , m_columnsRegistry{settings}
+    , m_columnsRegistry{columnRegistry}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
-    , m_model{new PlaylistColumnModel(&m_columnsRegistry, this)}
+    , m_model{new PlaylistColumnModel(m_columnsRegistry, this)}
 {
     m_columnList->setExtendableModel(m_model);
 
@@ -96,16 +96,18 @@ void PlaylistColumnPageWidget::apply()
 
 void PlaylistColumnPageWidget::reset()
 {
-    m_columnsRegistry.reset();
+    m_columnsRegistry->reset();
 }
 
-PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings)
+PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry,
+                                       SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistColumns);
     setName(tr("Columns"));
     setCategory({tr("Playlist"), tr("Columns")});
-    setWidgetCreator([actionManager, settings] { return new PlaylistColumnPageWidget(actionManager, settings); });
+    setWidgetCreator(
+        [actionManager, columnRegistry] { return new PlaylistColumnPageWidget(actionManager, columnRegistry); });
 }
 } // namespace Fooyin
 

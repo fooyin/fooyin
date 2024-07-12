@@ -29,6 +29,7 @@
 #include "dirbrowser/dirbrowser.h"
 #include "info/infowidget.h"
 #include "internalguisettings.h"
+#include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
 #include "mainwindow.h"
 #include "menubar/editmenu.h"
@@ -133,6 +134,7 @@ struct GuiApplication::Private
     PlaylistInteractor playlistInteractor;
     TrackSelectionController selectionController;
     SearchController* searchController;
+    LibraryTreeController* libraryTreeController;
 
     FileMenu* fileMenu;
     EditMenu* editMenu;
@@ -183,6 +185,7 @@ struct GuiApplication::Private
         , playlistInteractor{core.playlistHandler, playlistController.get(), core.library}
         , selectionController{actionManager, settings, playlistController.get()}
         , searchController{new SearchController(editableLayout.get(), self)}
+        , libraryTreeController{new LibraryTreeController(settings, self)}
         , fileMenu{new FileMenu(actionManager, settings, self)}
         , editMenu{new EditMenu(actionManager, settings, self)}
         , viewMenu{new ViewMenu(actionManager, settings, self)}
@@ -195,16 +198,16 @@ struct GuiApplication::Private
         , guiGeneralPage{&layoutProvider, editableLayout.get(), settings}
         , artworkPage{settings}
         , libraryGeneralPage{actionManager, core.libraryManager, core.library, settings}
-        , librarySortingPage{actionManager, settings}
+        , librarySortingPage{actionManager, core.sortingRegistry, settings}
         , shortcutsPage{actionManager, settings}
         , playlistGeneralPage{settings}
-        , playlistPresetsPage{settings}
-        , playlistColumnPage{actionManager, settings}
+        , playlistPresetsPage{playlistController->presetRegistry(), settings}
+        , playlistColumnPage{actionManager, playlistController->columnRegistry(), settings}
         , playbackPage{settings}
         , enginePage{settings, core.engine}
         , dirBrowserPage{settings}
         , libraryTreePage{settings}
-        , libraryTreeGroupPage{actionManager, settings}
+        , libraryTreeGroupPage{actionManager, libraryTreeController->groupRegistry(), settings}
         , playbackQueuePage{settings}
         , statusWidgetPage{settings}
         , pluginPage{settings, core.pluginManager}
@@ -631,7 +634,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("LibraryTree"),
             [this]() {
-                return new LibraryTreeWidget(actionManager, core.library, playlistController.get(), settings,
+                return new LibraryTreeWidget(actionManager, playlistController.get(), libraryTreeController, core,
                                              mainWindow.get());
             },
             tr("Library Tree"));
@@ -681,8 +684,7 @@ struct GuiApplication::Private
         widgetProvider.registerWidget(
             QStringLiteral("Playlist"),
             [this]() {
-                return new PlaylistWidget(actionManager, &playlistInteractor, &coverProvider, settings,
-                                          mainWindow.get());
+                return new PlaylistWidget(actionManager, &playlistInteractor, &coverProvider, core, mainWindow.get());
             },
             tr("Playlist"));
         widgetProvider.setLimit(QStringLiteral("Playlist"), 1);

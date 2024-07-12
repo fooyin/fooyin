@@ -19,6 +19,7 @@
 
 #include "filtercontroller.h"
 
+#include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
 #include "settings/filtersettings.h"
@@ -69,6 +70,7 @@ struct FilterController::Private
     SettingsManager* m_settings;
 
     FilterManager* m_manager;
+    FilterColumnRegistry* m_columnRegistry;
 
     Id vdefaultId{"Default"};
     FilterGroups m_groups;
@@ -86,6 +88,7 @@ struct FilterController::Private
         , m_coverProvider{std::move(tagLoader), settings}
         , m_settings{settings}
         , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
+        , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
         , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterDoubleClick>())}
         , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterMiddleClick>())}
     {
@@ -482,9 +485,14 @@ FilterController::FilterController(MusicLibrary* library, TrackSelectionControll
 
 FilterController::~FilterController() = default;
 
+FilterColumnRegistry* FilterController::columnRegistry() const
+{
+    return p->m_columnRegistry;
+}
+
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(&p->m_coverProvider, p->m_settings);
+    auto* widget = new FilterWidget(p->m_columnRegistry, &p->m_coverProvider, p->m_settings);
 
     auto& group = p->m_groups[p->vdefaultId];
     group.id    = p->vdefaultId;

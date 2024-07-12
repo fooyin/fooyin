@@ -23,6 +23,7 @@
 
 namespace Fooyin {
 class ActionManager;
+class PlaylistColumnRegistry;
 class SettingsManager;
 
 class PlaylistColumnPage : public SettingsPage
@@ -30,6 +31,6 @@ class PlaylistColumnPage : public SettingsPage
     Q_OBJECT
 
 public:
-    PlaylistColumnPage(ActionManager* actionManager, SettingsManager* settings);
+    PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry, SettingsManager* settings);
 };
 } // namespace Fooyin

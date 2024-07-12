@@ -114,7 +114,8 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 
     p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
     p->guiPage     = std::make_unique<FiltersGuiPage>(p->settings);
-    p->columnsPage = std::make_unique<FiltersColumnPage>(p->actionManager, p->settings);
+    p->columnsPage
+        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterController->columnRegistry(), p->settings);
 
     p->registerLayouts();
 }

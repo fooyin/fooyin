@@ -82,7 +82,7 @@ struct FilterWidget::Private
 {
     FilterWidget* m_self;
 
-    FilterColumnRegistry m_columnRegistry;
+    FilterColumnRegistry* m_columnRegistry;
     SettingsManager* m_settings;
 
     ExpandedTreeView* m_view;
@@ -105,9 +105,10 @@ struct FilterWidget::Private
 
     QByteArray m_headerState;
 
-    Private(FilterWidget* self, CoverProvider* coverProvider, SettingsManager* settings)
+    Private(FilterWidget* self, FilterColumnRegistry* columnRegistry, CoverProvider* coverProvider,
+            SettingsManager* settings)
         : m_self{self}
-        , m_columnRegistry{settings}
+        , m_columnRegistry{columnRegistry}
         , m_settings{settings}
         , m_view{new ExpandedTreeView(m_self)}
         , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
@@ -140,7 +141,7 @@ struct FilterWidget::Private
         m_header->setSectionsClickable(true);
         m_header->setContextMenuPolicy(Qt::CustomContextMenu);
 
-        if(const auto column = m_columnRegistry.itemByIndex(0)) {
+        if(const auto column = m_columnRegistry->itemByIndex(0)) {
             m_columns = {column.value()};
         }
 
@@ -154,27 +155,14 @@ struct FilterWidget::Private
         m_view->changeIconSize(m_settings->value<Settings::Filters::FilterIconSize>().toSize());
 
         setupConnections();
-
-        m_settings->subscribe<Settings::Filters::FilterAltColours>(m_view, &QAbstractItemView::setAlternatingRowColors);
-        m_settings->subscribe<Settings::Filters::FilterHeader>(m_self, [this](bool enabled) { hideHeader(!enabled); });
-        m_settings->subscribe<Settings::Filters::FilterScrollBar>(
-            m_self, [this](bool enabled) { setScrollbarEnabled(enabled); });
-        m_settings->subscribe<Settings::Filters::FilterFont>(m_self,
-                                                             [this](const QString& font) { m_model->setFont(font); });
-        m_settings->subscribe<Settings::Filters::FilterColour>(
-            m_self, [this](const QString& colour) { m_model->setColour(colour); });
-        m_settings->subscribe<Settings::Filters::FilterRowHeight>(m_self, [this](const int height) {
-            m_model->setRowHeight(height);
-            QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-        });
-        m_settings->subscribe<Settings::Filters::FilterIconSize>(
-            m_self, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
     }
 
     void setupConnections()
     {
-        QObject::connect(&m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
+        QObject::connect(m_columnRegistry, &FilterColumnRegistry::columnChanged, m_self,
                          [this](const Filters::FilterColumn& column) { columnChanged(column); });
+        QObject::connect(m_columnRegistry, &FilterColumnRegistry::itemRemoved, m_self,
+                         [this](int id) { columnRemoved(id); });
 
         QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_self, [this]() {
             if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
@@ -205,6 +193,21 @@ struct FilterWidget::Private
                 emit m_self->middleClicked();
             }
         });
+
+        m_settings->subscribe<Settings::Filters::FilterAltColours>(m_view, &QAbstractItemView::setAlternatingRowColors);
+        m_settings->subscribe<Settings::Filters::FilterHeader>(m_self, [this](bool enabled) { hideHeader(!enabled); });
+        m_settings->subscribe<Settings::Filters::FilterScrollBar>(
+            m_self, [this](bool enabled) { setScrollbarEnabled(enabled); });
+        m_settings->subscribe<Settings::Filters::FilterFont>(m_self,
+                                                             [this](const QString& font) { m_model->setFont(font); });
+        m_settings->subscribe<Settings::Filters::FilterColour>(
+            m_self, [this](const QString& colour) { m_model->setColour(colour); });
+        m_settings->subscribe<Settings::Filters::FilterRowHeight>(m_self, [this](const int height) {
+            m_model->setRowHeight(height);
+            QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+        });
+        m_settings->subscribe<Settings::Filters::FilterIconSize>(
+            m_self, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
     }
 
     void refreshFilteredTracks()
@@ -389,7 +392,7 @@ struct FilterWidget::Private
         auto* columnGroup = new QActionGroup{menu};
         columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-        for(const auto& column : m_columnRegistry.items()) {
+        for(const auto& column : m_columnRegistry->items()) {
             auto* columnAction = new QAction(column.name, menu);
             columnAction->setData(column.id);
             columnAction->setCheckable(true);
@@ -403,7 +406,7 @@ struct FilterWidget::Private
         QObject::connect(columnGroup, &QActionGroup::triggered, m_self, [this](QAction* action) {
             const int columnId = action->data().toInt();
             if(action->isChecked()) {
-                if(const auto column = m_columnRegistry.itemById(action->data().toInt())) {
+                if(const auto column = m_columnRegistry->itemById(action->data().toInt())) {
                     if(m_multipleColumns) {
                         m_columns.push_back(column.value());
                     }
@@ -464,20 +467,34 @@ struct FilterWidget::Private
         return std::ranges::any_of(m_columns, [id](const FilterColumn& column) { return column.id == id; });
     }
 
-    void columnChanged(const Filters::FilterColumn& column)
+    void columnChanged(const FilterColumn& changedColumn)
     {
-        if(hasColumn(column.id)) {
-            std::ranges::replace_if(
-                m_columns, [&column](const FilterColumn& filterCol) { return filterCol.id == column.id; }, column);
+        auto existingIt = std::find_if(m_columns.begin(), m_columns.end(), [&changedColumn](const auto& column) {
+            return (column.isDefault && changedColumn.isDefault && column.name == changedColumn.name)
+                || column.id == changedColumn.id;
+        });
 
+        if(existingIt != m_columns.end()) {
+            *existingIt = changedColumn;
+            QMetaObject::invokeMethod(m_self, &FilterWidget::filterUpdated);
+        }
+    }
+
+    void columnRemoved(int id)
+    {
+        FilterColumnList columns;
+        std::ranges::copy_if(m_columns, std::back_inserter(columns),
+                             [id](const auto& column) { return column.id != id; });
+        if(std::exchange(m_columns, columns) != columns) {
             QMetaObject::invokeMethod(m_self, &FilterWidget::filterUpdated);
         }
     }
 };
 
-FilterWidget::FilterWidget(CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, CoverProvider* coverProvider,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, coverProvider, settings)}
+    , p{std::make_unique<Private>(this, columnRegistry, coverProvider, settings)}
 {
     setObjectName(FilterWidget::name());
 
@@ -651,7 +668,7 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         for(int i{0}; const auto& columnId : columnIds) {
             const auto column = columnId.split(QStringLiteral(":"));
 
-            if(const auto columnItem = p->m_columnRegistry.itemById(column.at(0).toInt())) {
+            if(const auto columnItem = p->m_columnRegistry->itemById(column.at(0).toInt())) {
                 p->m_columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {

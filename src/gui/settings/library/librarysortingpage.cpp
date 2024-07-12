@@ -40,14 +40,15 @@ class LibrarySortingPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings);
+    explicit LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortingRegistry,
+                                      SettingsManager* settings);
 
     void load() override;
     void apply() override;
     void reset() override;
 
 private:
-    SortingRegistry m_sortRegistry;
+    SortingRegistry* m_sortRegistry;
     SettingsManager* m_settings;
 
     ExtendableTableView* m_sortList;
@@ -56,11 +57,12 @@ private:
     QPlainTextEdit* m_sortScript;
 };
 
-LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SettingsManager* settings)
-    : m_sortRegistry{settings}
+LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortingRegistry,
+                                                   SettingsManager* settings)
+    : m_sortRegistry{sortingRegistry}
     , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
-    , m_model{new SortingModel(&m_sortRegistry, this)}
+    , m_model{new SortingModel(m_sortRegistry, this)}
     , m_sortScript{new QPlainTextEdit(this)}
 {
     m_sortList->setExtendableModel(m_model);
@@ -111,17 +113,20 @@ void LibrarySortingPageWidget::apply()
 
 void LibrarySortingPageWidget::reset()
 {
-    m_sortRegistry.reset();
+    m_sortRegistry->reset();
     m_settings->reset<Settings::Core::LibrarySortScript>();
 }
 
-LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SettingsManager* settings)
+LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry,
+                                       SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));
     setCategory({tr("Library"), tr("Sorting")});
-    setWidgetCreator([actionManager, settings] { return new LibrarySortingPageWidget(actionManager, settings); });
+    setWidgetCreator([actionManager, sortingRegistry, settings] {
+        return new LibrarySortingPageWidget(actionManager, sortingRegistry, settings);
+    });
 }
 } // namespace Fooyin
 

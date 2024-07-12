@@ -38,7 +38,7 @@ class FiltersColumnPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings);
+    explicit FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry);
 
     void load() override;
     void apply() override;
@@ -46,17 +46,17 @@ public:
 
 private:
     ActionManager* m_actionManager;
-    FilterColumnRegistry m_columnsRegistry;
+    FilterColumnRegistry* m_columnsRegistry;
 
     ExtendableTableView* m_columnList;
     FiltersColumnModel* m_model;
 };
 
-FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, SettingsManager* settings)
+FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, FilterColumnRegistry* columnRegistry)
     : m_actionManager{actionManager}
-    , m_columnsRegistry{settings}
+    , m_columnsRegistry{columnRegistry}
     , m_columnList{new ExtendableTableView(m_actionManager, this)}
-    , m_model{new FiltersColumnModel(&m_columnsRegistry, this)}
+    , m_model{new FiltersColumnModel(m_columnsRegistry, this)}
 {
     m_columnList->setExtendableModel(m_model);
 
@@ -98,16 +98,18 @@ void FiltersColumnPageWidget::apply()
 
 void FiltersColumnPageWidget::reset()
 {
-    m_columnsRegistry.reset();
+    m_columnsRegistry->reset();
 }
 
-FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings)
+FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
+                                     SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Columns"));
     setCategory({tr("Plugins"), tr("Filters")});
-    setWidgetCreator([actionManager, settings] { return new FiltersColumnPageWidget(actionManager, settings); });
+    setWidgetCreator(
+        [actionManager, columnRegistry] { return new FiltersColumnPageWidget(actionManager, columnRegistry); });
 }
 } // namespace Fooyin::Filters
 

@@ -161,7 +161,7 @@ class PlaylistPresetsPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistPresetsPageWidget(SettingsManager* settings);
+    explicit PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -179,9 +179,8 @@ private:
 
     void clearBlocks();
 
+    PresetRegistry* m_presetRegistry;
     SettingsManager* m_settings;
-
-    PresetRegistry m_presetRegistry;
 
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
@@ -210,9 +209,9 @@ private:
     QPushButton* m_clonePreset;
 };
 
-PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(SettingsManager* settings)
-    : m_settings{settings}
-    , m_presetRegistry{settings}
+PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings)
+    : m_presetRegistry{presetRegistry}
+    , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerTitle{new QTextEdit(this)}
@@ -334,7 +333,7 @@ void PlaylistPresetsPageWidget::load()
     m_presetBox->clear();
 
     const int currentPreset = m_settings->value<Settings::Gui::Internal::PlaylistCurrentPreset>();
-    const auto presets      = m_presetRegistry.items();
+    const auto presets      = m_presetRegistry->items();
 
     for(const auto& preset : presets) {
         m_presetBox->insertItem(preset.index, preset.name, preset.id);
@@ -351,7 +350,7 @@ void PlaylistPresetsPageWidget::apply()
 
 void PlaylistPresetsPageWidget::reset()
 {
-    m_presetRegistry.reset();
+    m_presetRegistry->reset();
 }
 
 void PlaylistPresetsPageWidget::newPreset()
@@ -365,7 +364,7 @@ void PlaylistPresetsPageWidget::newPreset()
 
     if(success && !text.isEmpty()) {
         preset.name                      = text;
-        const PlaylistPreset addedPreset = m_presetRegistry.addItem(preset);
+        const PlaylistPreset addedPreset = m_presetRegistry->addItem(preset);
         if(addedPreset.isValid()) {
             m_presetBox->addItem(addedPreset.name, addedPreset.id);
             m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
@@ -377,7 +376,7 @@ void PlaylistPresetsPageWidget::renamePreset()
 {
     const int presetId = m_presetBox->currentData().toInt();
 
-    if(const auto regPreset = m_presetRegistry.itemById(presetId)) {
+    if(const auto regPreset = m_presetRegistry->itemById(presetId)) {
         auto preset = regPreset.value();
 
         bool success{false};
@@ -386,7 +385,7 @@ void PlaylistPresetsPageWidget::renamePreset()
 
         if(success && !text.isEmpty()) {
             preset.name = text;
-            if(m_presetRegistry.changeItem(preset)) {
+            if(m_presetRegistry->changeItem(preset)) {
                 m_presetBox->setItemText(m_presetBox->currentIndex(), preset.name);
             }
         }
@@ -401,7 +400,7 @@ void PlaylistPresetsPageWidget::deletePreset()
 
     const int presetId = m_presetBox->currentData().toInt();
 
-    if(m_presetRegistry.removeById(presetId)) {
+    if(m_presetRegistry->removeById(presetId)) {
         m_presetBox->removeItem(m_presetBox->currentIndex());
     }
 }
@@ -409,7 +408,7 @@ void PlaylistPresetsPageWidget::deletePreset()
 void PlaylistPresetsPageWidget::updatePreset()
 {
     const int presetId   = m_presetBox->currentData().toInt();
-    const auto regPreset = m_presetRegistry.itemById(presetId);
+    const auto regPreset = m_presetRegistry->itemById(presetId);
     if(!regPreset) {
         return;
     }
@@ -435,13 +434,13 @@ void PlaylistPresetsPageWidget::updatePreset()
     preset.track.rightText.script = m_trackRightText->toPlainText();
     preset.track.rowHeight        = m_overrideTrackHeight->isChecked() ? m_trackRowHeight->value() : 0;
 
-    m_presetRegistry.changeItem(preset);
+    m_presetRegistry->changeItem(preset);
 }
 
 void PlaylistPresetsPageWidget::clonePreset()
 {
     const int presetId   = m_presetBox->currentData().toInt();
-    const auto regPreset = m_presetRegistry.itemById(presetId);
+    const auto regPreset = m_presetRegistry->itemById(presetId);
     if(!regPreset) {
         return;
     }
@@ -449,7 +448,7 @@ void PlaylistPresetsPageWidget::clonePreset()
     PlaylistPreset clonedPreset{regPreset.value()};
     clonedPreset.name                = tr("Copy of %1").arg(clonedPreset.name);
     clonedPreset.isDefault           = false;
-    const PlaylistPreset addedPreset = m_presetRegistry.addItem(clonedPreset);
+    const PlaylistPreset addedPreset = m_presetRegistry->addItem(clonedPreset);
     if(addedPreset.isValid()) {
         m_presetBox->addItem(addedPreset.name, addedPreset.id);
         m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
@@ -459,7 +458,7 @@ void PlaylistPresetsPageWidget::clonePreset()
 void PlaylistPresetsPageWidget::selectionChanged()
 {
     const int presetId   = m_presetBox->currentData().toInt();
-    const auto regPreset = m_presetRegistry.itemById(presetId);
+    const auto regPreset = m_presetRegistry->itemById(presetId);
     if(!regPreset) {
         return;
     }
@@ -522,13 +521,13 @@ void PlaylistPresetsPageWidget::clearBlocks()
     m_subHeaders->clearBlocks();
 }
 
-PlaylistPresetsPage::PlaylistPresetsPage(SettingsManager* settings)
+PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings)
     : SettingsPage{settings->settingsDialog()}
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
     setCategory({tr("Playlist"), tr("Presets")});
-    setWidgetCreator([settings] { return new PlaylistPresetsPageWidget(settings); });
+    setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
 }
 } // namespace Fooyin
 

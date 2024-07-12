@@ -19,6 +19,9 @@
 
 #include "playlistcontroller.h"
 
+#include "playlistcolumnregistry.h"
+#include "presetregistry.h"
+
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -38,6 +41,8 @@ struct PlaylistController::Private
     PlaylistHandler* m_handler;
     PlayerController* m_playerController;
     TrackSelectionController* m_selectionController;
+    PresetRegistry* m_presetRegistry;
+    PlaylistColumnRegistry* m_columnRegistry;
     SettingsManager* m_settings;
 
     bool m_loaded{false};
@@ -54,6 +59,8 @@ struct PlaylistController::Private
         , m_handler{handler}
         , m_playerController{playerController}
         , m_selectionController{selectionController}
+        , m_presetRegistry{new PresetRegistry(settings, m_self)}
+        , m_columnRegistry{new PlaylistColumnRegistry(settings, m_self)}
         , m_settings{settings}
     { }
 
@@ -369,6 +376,16 @@ PlaylistHandler* PlaylistController::playlistHandler() const
 TrackSelectionController* PlaylistController::selectionController() const
 {
     return p->m_selectionController;
+}
+
+PresetRegistry* PlaylistController::presetRegistry() const
+{
+    return p->m_presetRegistry;
+}
+
+PlaylistColumnRegistry* PlaylistController::columnRegistry() const
+{
+    return p->m_columnRegistry;
 }
 
 bool PlaylistController::playlistsHaveLoaded() const

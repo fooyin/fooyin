@@ -76,6 +76,8 @@ set(SOURCES
     info/infoview.h
     info/infowidget.cpp
     info/infowidget.h
+    librarytree/librarytreecontroller.cpp
+    librarytree/librarytreecontroller.h
     librarytree/librarytreedelegate.cpp
     librarytree/librarytreedelegate.h
     librarytree/librarytreegroup.h

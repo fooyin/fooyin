@@ -32,6 +32,7 @@ class TagLoader;
 class TrackSelectionController;
 
 namespace Filters {
+class FilterColumnRegistry;
 class FilterWidget;
 
 struct FilterGroup
@@ -53,6 +54,8 @@ public:
     FilterController(MusicLibrary* library, TrackSelectionController* trackSelection, EditableLayout* editableLayout,
                      std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
     ~FilterController() override;
+
+    [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
 
     FilterWidget* createFilter();
 

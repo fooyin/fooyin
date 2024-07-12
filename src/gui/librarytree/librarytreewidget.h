@@ -23,6 +23,8 @@
 
 namespace Fooyin {
 class ActionManager;
+struct CorePluginContext;
+class LibraryTreeController;
 class MusicLibrary;
 class PlaylistController;
 class SettingsManager;
@@ -32,8 +34,8 @@ class LibraryTreeWidget : public FyWidget
     Q_OBJECT
 
 public:
-    LibraryTreeWidget(ActionManager* actionManager, MusicLibrary* library, PlaylistController* playlistController,
-                      SettingsManager* settings, QWidget* parent = nullptr);
+    LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
+                      LibraryTreeController* controller, const CorePluginContext& core, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

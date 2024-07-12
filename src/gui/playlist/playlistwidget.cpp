@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 #include "playlist/playlistinteractor.h"
 #include "playlist/playlistscriptregistry.h"
+#include "playlistcolumnregistry.h"
 #include "playlistcommands.h"
 #include "playlistcontroller.h"
 #include "playlistdelegate.h"
@@ -32,6 +33,7 @@
 #include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/plugins/coreplugincontext.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
@@ -144,7 +146,7 @@ using namespace Settings::Gui::Internal;
 
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
                                              PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                                             SettingsManager* settings)
+                                             const CorePluginContext& core)
     : m_self{self}
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
@@ -152,13 +154,13 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_playerController{playlistInteractor->playerController()}
     , m_selectionController{m_playlistController->selectionController()}
     , m_library{playlistInteractor->library()}
-    , m_settings{settings}
+    , m_settings{core.settingsManager}
     , m_settingsDialog{m_settings->settingsDialog()}
-    , m_columnRegistry{m_settings}
-    , m_presetRegistry{m_settings}
-    , m_sortRegistry{m_settings}
+    , m_columnRegistry{m_playlistController->columnRegistry()}
+    , m_presetRegistry{m_playlistController->presetRegistry()}
+    , m_sortRegistry{core.sortingRegistry}
     , m_layout{new QHBoxLayout(m_self)}
-    , m_model{new PlaylistModel(m_playlistInteractor, coverProvider, settings, m_self)}
+    , m_model{new PlaylistModel(m_playlistInteractor, coverProvider, m_settings, m_self)}
     , m_playlistView{new PlaylistView(m_self)}
     , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
@@ -248,8 +250,10 @@ void PlaylistWidgetPrivate::setupConnections()
             m_showPlaying = true;
         }
     });
-    QObject::connect(&m_presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
-    QObject::connect(&m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
+    QObject::connect(m_presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
+    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this,
+                     &PlaylistWidgetPrivate::onColumnRemoved);
+    QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
                      &PlaylistWidgetPrivate::onColumnChanged);
 
     m_settings->subscribe<LibTreeMiddleClick>(
@@ -257,7 +261,7 @@ void PlaylistWidgetPrivate::setupConnections()
     m_settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
     m_settings->subscribe<PlaylistCurrentPreset>(this, [this](int presetId) {
-        if(const auto preset = m_presetRegistry.itemById(presetId)) {
+        if(const auto preset = m_presetRegistry->itemById(presetId)) {
             changePreset(preset.value());
         }
     });
@@ -348,12 +352,22 @@ void PlaylistWidgetPrivate::setupActions()
 
 void PlaylistWidgetPrivate::onColumnChanged(const PlaylistColumn& changedColumn)
 {
-    auto existingIt = std::find_if(m_columns.begin(), m_columns.end(), [&changedColumn](const PlaylistColumn& column) {
-        return column.id == changedColumn.id;
+    auto existingIt = std::find_if(m_columns.begin(), m_columns.end(), [&changedColumn](const auto& column) {
+        return (column.isDefault && changedColumn.isDefault && column.name == changedColumn.name)
+            || column.id == changedColumn.id;
     });
 
     if(existingIt != m_columns.end()) {
         *existingIt = changedColumn;
+        resetModel();
+    }
+}
+
+void PlaylistWidgetPrivate::onColumnRemoved(int id)
+{
+    PlaylistColumnList columns;
+    std::ranges::copy_if(m_columns, std::back_inserter(columns), [id](const auto& column) { return column.id != id; });
+    if(std::exchange(m_columns, columns) != columns) {
         resetModel();
     }
 }
@@ -945,19 +959,19 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
 
     if(!m_singleMode) {
         if(m_columns.empty()) {
-            if(const auto column = m_columnRegistry.itemById(8)) {
+            if(const auto column = m_columnRegistry->itemById(8)) {
                 m_columns.push_back(column.value());
             }
-            if(const auto column = m_columnRegistry.itemById(3)) {
+            if(const auto column = m_columnRegistry->itemById(3)) {
                 m_columns.push_back(column.value());
             }
-            if(const auto column = m_columnRegistry.itemById(0)) {
+            if(const auto column = m_columnRegistry->itemById(0)) {
                 m_columns.push_back(column.value());
             }
-            if(const auto column = m_columnRegistry.itemById(1)) {
+            if(const auto column = m_columnRegistry->itemById(1)) {
                 m_columns.push_back(column.value());
             }
-            if(const auto column = m_columnRegistry.itemById(7)) {
+            if(const auto column = m_columnRegistry->itemById(7)) {
                 m_columns.push_back(column.value());
             }
         }
@@ -1019,52 +1033,8 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if(!m_singleMode) {
-        auto* columnsMenu = new QMenu(tr("Columns"), menu);
-        auto* columnGroup = new QActionGroup{menu};
-        columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+        addColumnsMenu(menu);
 
-        auto hasColumn = [this](int id) {
-            return std::ranges::any_of(m_columns, [id](const PlaylistColumn& column) { return column.id == id; });
-        };
-
-        for(const auto& column : m_columnRegistry.items()) {
-            auto* columnAction = new QAction(column.name, columnsMenu);
-            columnAction->setData(column.id);
-            columnAction->setCheckable(true);
-            columnAction->setChecked(hasColumn(column.id));
-            columnsMenu->addAction(columnAction);
-            columnGroup->addAction(columnAction);
-        }
-
-        QObject::connect(columnGroup, &QActionGroup::triggered, m_self, [this](QAction* action) {
-            const int columnId = action->data().toInt();
-            if(action->isChecked()) {
-                if(const auto column = m_columnRegistry.itemById(action->data().toInt())) {
-                    m_columns.push_back(column.value());
-                    updateSpans();
-                    changePreset(m_currentPreset);
-                }
-            }
-            else {
-                auto colIt = std::ranges::find_if(m_columns,
-                                                  [columnId](const PlaylistColumn& col) { return col.id == columnId; });
-                if(colIt != m_columns.end()) {
-                    const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
-                    if(m_model->removeColumn(removedIndex)) {
-                        m_columns.erase(colIt);
-                        updateSpans();
-                    }
-                }
-            }
-        });
-
-        auto* moreSettings = new QAction(tr("More…"), columnsMenu);
-        QObject::connect(moreSettings, &QAction::triggered, m_self,
-                         [this]() { m_settingsDialog->openAtPage(Constants::Page::PlaylistColumns); });
-        columnsMenu->addSeparator();
-        columnsMenu->addAction(moreSettings);
-
-        menu->addMenu(columnsMenu);
         menu->addSeparator();
         m_header->addHeaderContextMenu(menu, m_self->mapToGlobal(pos));
         menu->addSeparator();
@@ -1086,7 +1056,6 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     menu->addAction(columnModeAction);
 
     menu->addSeparator();
-
     addPresetMenu(menu);
 
     menu->popup(m_self->mapToGlobal(pos));
@@ -1270,7 +1239,7 @@ void PlaylistWidgetPrivate::addSortMenu(QMenu* parent, bool disabled)
         sortMenu->setEnabled(false);
     }
     else {
-        const auto& groups = m_sortRegistry.items();
+        const auto& groups = m_sortRegistry->items();
         for(const auto& script : groups) {
             auto* switchSort = new QAction(script.name, sortMenu);
             QObject::connect(switchSort, &QAction::triggered, m_self, [this, script]() { sortTracks(script.script); });
@@ -1297,7 +1266,7 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 {
     auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), parent);
 
-    const auto& presets = m_presetRegistry.items();
+    const auto& presets = m_presetRegistry->items();
 
     for(const auto& preset : presets) {
         auto* switchPreset = new QAction(preset.name, presetsMenu);
@@ -1315,10 +1284,60 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
     parent->addMenu(presetsMenu);
 }
 
+void PlaylistWidgetPrivate::addColumnsMenu(QMenu* parent)
+{
+    auto* columnsMenu = new QMenu(tr("Columns"), parent);
+    auto* columnGroup = new QActionGroup{parent};
+    columnGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+
+    auto hasColumn = [this](int id) {
+        return std::ranges::any_of(m_columns, [id](const PlaylistColumn& column) { return column.id == id; });
+    };
+
+    for(const auto& column : m_columnRegistry->items()) {
+        auto* columnAction = new QAction(column.name, columnsMenu);
+        columnAction->setData(column.id);
+        columnAction->setCheckable(true);
+        columnAction->setChecked(hasColumn(column.id));
+        columnsMenu->addAction(columnAction);
+        columnGroup->addAction(columnAction);
+    }
+
+    QObject::connect(columnGroup, &QActionGroup::triggered, m_self, [this](QAction* action) {
+        const int columnId = action->data().toInt();
+        if(action->isChecked()) {
+            if(const auto column = m_columnRegistry->itemById(action->data().toInt())) {
+                m_columns.push_back(column.value());
+                updateSpans();
+                changePreset(m_currentPreset);
+            }
+        }
+        else {
+            auto colIt
+                = std::ranges::find_if(m_columns, [columnId](const PlaylistColumn& col) { return col.id == columnId; });
+            if(colIt != m_columns.end()) {
+                const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
+                if(m_model->removeColumn(removedIndex)) {
+                    m_columns.erase(colIt);
+                    updateSpans();
+                }
+            }
+        }
+    });
+
+    auto* moreSettings = new QAction(tr("More…"), columnsMenu);
+    QObject::connect(moreSettings, &QAction::triggered, m_self,
+                     [this]() { m_settingsDialog->openAtPage(Constants::Page::PlaylistColumns); });
+    columnsMenu->addSeparator();
+    columnsMenu->addAction(moreSettings);
+
+    parent->addMenu(columnsMenu);
+}
+
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                               CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
+                               CoverProvider* coverProvider, const CorePluginContext& core, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, coverProvider, settings)}
+    , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, coverProvider, core)}
 {
     setObjectName(PlaylistWidget::name());
 }
@@ -1390,7 +1409,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         for(int i{0}; const auto& columnId : columnIds) {
             const auto column = columnId.split(QStringLiteral(":"));
 
-            if(const auto columnItem = p->m_columnRegistry.itemById(column.at(0).toInt())) {
+            if(const auto columnItem = p->m_columnRegistry->itemById(column.at(0).toInt())) {
                 p->m_columns.push_back(columnItem.value());
 
                 if(column.size() > 1) {
@@ -1422,7 +1441,7 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 
 void PlaylistWidget::finalise()
 {
-    if(const auto preset = p->m_presetRegistry.itemById(p->m_settings->value<PlaylistCurrentPreset>())) {
+    if(const auto preset = p->m_presetRegistry->itemById(p->m_settings->value<PlaylistCurrentPreset>())) {
         p->m_currentPreset = preset.value();
     }
 

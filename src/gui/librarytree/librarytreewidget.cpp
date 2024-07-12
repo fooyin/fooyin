@@ -20,6 +20,7 @@
 #include "librarytreewidget.h"
 
 #include "internalguisettings.h"
+#include "librarytree/librarytreecontroller.h"
 #include "librarytreedelegate.h"
 #include "librarytreegroupregistry.h"
 #include "librarytreemodel.h"
@@ -32,6 +33,7 @@
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/plugins/coreplugincontext.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
@@ -161,7 +163,7 @@ struct LibraryTreeWidget::Private
     MusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     PlayerController* m_playerController;
-    LibraryTreeGroupRegistry m_groupsRegistry;
+    LibraryTreeGroupRegistry* m_groupsRegistry;
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
 
@@ -189,16 +191,16 @@ struct LibraryTreeWidget::Private
     Playlist* m_playlist{nullptr};
     std::map<int, QString> m_playlistGroups;
 
-    Private(LibraryTreeWidget* self, ActionManager* actionManager, MusicLibrary* library,
-            PlaylistController* playlistController, SettingsManager* settings)
+    Private(LibraryTreeWidget* self, ActionManager* actionManager, PlaylistController* playlistController,
+            LibraryTreeController* controller, const CorePluginContext& core)
         : m_self{self}
         , m_actionManager{actionManager}
-        , m_library{library}
+        , m_library{core.library}
         , m_playlistHandler{playlistController->playlistHandler()}
         , m_playerController{playlistController->playerController()}
-        , m_groupsRegistry{settings}
+        , m_groupsRegistry{controller->groupRegistry()}
         , m_trackSelection{playlistController->selectionController()}
-        , m_settings{settings}
+        , m_settings{core.settingsManager}
         , m_layout{new QVBoxLayout(m_self)}
         , m_libraryTree{new LibraryTreeView(m_self)}
         , m_model{new LibraryTreeModel(m_self)}
@@ -226,7 +228,7 @@ struct LibraryTreeWidget::Private
         setScrollbarEnabled(m_settings->value<LibTreeScrollBar>());
         m_libraryTree->setAlternatingRowColors(m_settings->value<LibTreeAltColours>());
 
-        if(const auto initialGroup = m_groupsRegistry.itemByIndex(0)) {
+        if(const auto initialGroup = m_groupsRegistry->itemByIndex(0)) {
             changeGrouping(initialGroup.value());
         }
 
@@ -246,6 +248,50 @@ struct LibraryTreeWidget::Private
         m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
                                         m_widgetContext->context());
         QObject::connect(m_removeFromQueueAction, &QAction::triggered, m_self, [this]() { dequeueSelectedTracks(); });
+
+        setupConnections();
+    }
+
+    void setupConnections()
+    {
+        QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
+        QObject::connect(m_model, &LibraryTreeModel::modelLoaded, m_self, [this]() { restoreState(m_pendingState); });
+
+        QObject::connect(m_libraryTree, &LibraryTreeView::doubleClicked, m_self,
+                         [this](const QModelIndex& index) { handleDoubleClick(index); });
+        QObject::connect(m_libraryTree, &LibraryTreeView::middleClicked, m_self,
+                         [this](const QModelIndex& index) { handleMiddleClick(index); });
+        QObject::connect(m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
+                         [this](const QItemSelection& selected, const QItemSelection& deselected) {
+                             selectionChanged(selected, deselected);
+                         });
+        QObject::connect(m_libraryTree->header(), &QHeaderView::customContextMenuRequested, m_self,
+                         [this](const QPoint& pos) { setupHeaderContextMenu(pos); });
+        QObject::connect(m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, m_self,
+                         [this](const LibraryTreeGrouping& changedGrouping) {
+                             if(m_grouping.id == changedGrouping.id) {
+                                 changeGrouping(changedGrouping);
+                             }
+                         });
+
+        QObject::connect(m_library, &MusicLibrary::tracksLoaded, m_self, [this]() { reset(); });
+        QObject::connect(m_library, &MusicLibrary::tracksAdded, m_self,
+                         [this](const TrackList& tracks) { handleTracksAdded(tracks); });
+        QObject::connect(m_library, &MusicLibrary::tracksScanned, m_model,
+                         [this](int /*id*/, const TrackList& tracks) { handleTracksAdded(tracks); });
+        QObject::connect(m_library, &MusicLibrary::tracksUpdated, m_self,
+                         [this](const TrackList& tracks) { handleTracksUpdated(tracks); });
+        QObject::connect(m_library, &MusicLibrary::tracksPlayed, m_self,
+                         [this](const TrackList& tracks) { m_model->refreshTracks(tracks); });
+        QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_model, &LibraryTreeModel::removeTracks);
+        QObject::connect(m_library, &MusicLibrary::tracksSorted, m_self, [this]() { reset(); });
+
+        QObject::connect(m_playerController, &PlayerController::playStateChanged, m_self,
+                         [this](PlayState state) { m_model->setPlayState(state); });
+        QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, m_self,
+                         [this](const auto& track) { playlistTrackChanged(track); });
+        QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, m_self,
+                         [this](auto* playlist) { activePlaylistChanged(playlist); });
 
         m_settings->subscribe<LibTreeDoubleClick>(m_self, [this](int action) {
             m_doubleClickAction = static_cast<TrackAction>(action);
@@ -312,7 +358,7 @@ struct LibraryTreeWidget::Private
 
         auto* treeGroups = new QActionGroup(groupMenu);
 
-        const auto groups = m_groupsRegistry.items();
+        const auto groups = m_groupsRegistry->items();
         for(const auto& group : groups) {
             auto* switchGroup = new QAction(group.name, groupMenu);
             QObject::connect(switchGroup, &QAction::triggered, m_self, [this, group]() { changeGrouping(group); });
@@ -800,53 +846,14 @@ struct LibraryTreeWidget::Private
     }
 };
 
-LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, MusicLibrary* library,
-                                     PlaylistController* playlistController, SettingsManager* settings, QWidget* parent)
+LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
+                                     LibraryTreeController* controller, const CorePluginContext& core, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, library, playlistController, settings)}
+    , p{std::make_unique<Private>(this, actionManager, playlistController, controller, core)}
 {
     setObjectName(LibraryTreeWidget::name());
 
     setFeature(FyWidget::Search);
-
-    QObject::connect(p->m_model, &LibraryTreeModel::dataUpdated, p->m_libraryTree, &QTreeView::dataChanged);
-    QObject::connect(p->m_model, &LibraryTreeModel::modelLoaded, this,
-                     [this]() { p->restoreState(p->m_pendingState); });
-    QObject::connect(p->m_libraryTree, &LibraryTreeView::doubleClicked, this,
-                     [this](const QModelIndex& index) { p->handleDoubleClick(index); });
-    QObject::connect(p->m_libraryTree, &LibraryTreeView::middleClicked, this,
-                     [this](const QModelIndex& index) { p->handleMiddleClick(index); });
-    QObject::connect(p->m_libraryTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this](const QItemSelection& selected, const QItemSelection& deselected) {
-                         p->selectionChanged(selected, deselected);
-                     });
-    QObject::connect(p->m_libraryTree->header(), &QHeaderView::customContextMenuRequested, this,
-                     [this](const QPoint& pos) { p->setupHeaderContextMenu(pos); });
-    QObject::connect(&p->m_groupsRegistry, &LibraryTreeGroupRegistry::groupingChanged, this,
-                     [this](const LibraryTreeGrouping& changedGrouping) {
-                         if(p->m_grouping.id == changedGrouping.id) {
-                             p->changeGrouping(changedGrouping);
-                         }
-                     });
-
-    QObject::connect(library, &MusicLibrary::tracksLoaded, this, [this]() { p->reset(); });
-    QObject::connect(library, &MusicLibrary::tracksAdded, this,
-                     [this](const TrackList& tracks) { p->handleTracksAdded(tracks); });
-    QObject::connect(library, &MusicLibrary::tracksScanned, p->m_model,
-                     [this](int /*id*/, const TrackList& tracks) { p->handleTracksAdded(tracks); });
-    QObject::connect(library, &MusicLibrary::tracksUpdated, this,
-                     [this](const TrackList& tracks) { p->handleTracksUpdated(tracks); });
-    QObject::connect(library, &MusicLibrary::tracksPlayed, this,
-                     [this](const TrackList& tracks) { p->m_model->refreshTracks(tracks); });
-    QObject::connect(library, &MusicLibrary::tracksDeleted, p->m_model, &LibraryTreeModel::removeTracks);
-    QObject::connect(library, &MusicLibrary::tracksSorted, this, [this]() { p->reset(); });
-
-    QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->m_model->setPlayState(state); });
-    QObject::connect(p->m_playerController, &PlayerController::playlistTrackChanged, this,
-                     [this](const auto& track) { p->playlistTrackChanged(track); });
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
-                     [this](auto* playlist) { p->activePlaylistChanged(playlist); });
 }
 
 QString LibraryTreeWidget::name() const
@@ -868,7 +875,7 @@ void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("Grouping"))) {
-        if(const auto grouping = p->m_groupsRegistry.itemById(layout.value(QStringLiteral("Grouping")).toInt())) {
+        if(const auto grouping = p->m_groupsRegistry->itemById(layout.value(QStringLiteral("Grouping")).toInt())) {
             if(grouping->isValid()) {
                 p->changeGrouping(grouping.value());
             }

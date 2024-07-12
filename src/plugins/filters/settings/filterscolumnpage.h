@@ -26,12 +26,14 @@ class ActionManager;
 class SettingsManager;
 
 namespace Filters {
+class FilterColumnRegistry;
+
 class FiltersColumnPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    FiltersColumnPage(ActionManager* actionManager, SettingsManager* settings);
+    FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, SettingsManager* settings);
 };
 } // namespace Filters
 } // namespace Fooyin

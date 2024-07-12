@@ -32,9 +32,11 @@ class QUndoCommand;
 namespace Fooyin {
 class PlayerController;
 class Playlist;
-enum class PlayState;
+class PlaylistColumnRegistry;
 class PlaylistHandler;
 struct PlaylistTrack;
+enum class PlayState;
+class PresetRegistry;
 class SettingsManager;
 enum class TrackAction;
 class TrackSelectionController;
@@ -58,6 +60,8 @@ public:
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] PlaylistHandler* playlistHandler() const;
     [[nodiscard]] TrackSelectionController* selectionController() const;
+    [[nodiscard]] PresetRegistry* presetRegistry() const;
+    [[nodiscard]] PlaylistColumnRegistry* columnRegistry() const;
 
     [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;

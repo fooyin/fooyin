@@ -25,6 +25,7 @@
 #include "engine/ffmpeg/ffmpegdecoder.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
+#include "library/sortingregistry.h"
 #include "library/unifiedmusiclibrary.h"
 #include "playlist/parsers/cueparser.h"
 #include "playlist/parsers/m3uparser.h"
@@ -77,6 +78,7 @@ struct Application::Private
     std::shared_ptr<PlaylistLoader> playlistLoader;
     UnifiedMusicLibrary* library;
     PlaylistHandler* playlistHandler;
+    SortingRegistry* sortingRegistry;
 
     PluginManager pluginManager;
     CorePluginContext corePluginContext;
@@ -100,9 +102,11 @@ struct Application::Private
                                           settingsManager, self)}
         , playlistHandler{new PlaylistHandler(database->connectionPool(), tagLoader, playerController, settingsManager,
                                               self)}
+        , sortingRegistry{new SortingRegistry(settingsManager, self)}
         , pluginManager{settingsManager}
-        , corePluginContext{&pluginManager,  &engine,         playerController, libraryManager, library,
-                            playlistHandler, settingsManager, playlistLoader,   tagLoader,      decoderProvider}
+        , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
+                            library,        playlistHandler, settingsManager,  playlistLoader,
+                            tagLoader,      decoderProvider, sortingRegistry}
     {
         registerTypes();
         registerDecoders();

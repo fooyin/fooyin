@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "playlistcolumnregistry.h"
 #include "playlistmodel.h"
 #include "playlistpreset.h"
 #include "presetregistry.h"
@@ -36,20 +35,22 @@ class QAction;
 
 namespace Fooyin {
 class ActionManager;
-class SettingsManager;
-class SettingsDialogController;
 class AutoHeaderView;
-class WidgetContext;
+struct CorePluginContext;
+class MusicLibrary;
 class Playlist;
-class TrackSelectionController;
-class PlaylistWidget;
+class PlaylistColumnRegistry;
 class PlaylistController;
 class PlaylistInteractor;
 class PlaylistModel;
-class PlaylistView;
-class MusicLibrary;
-struct PlaylistViewState;
 struct PlaylistTrack;
+class PlaylistView;
+struct PlaylistViewState;
+class PlaylistWidget;
+class SettingsManager;
+class SettingsDialogController;
+class TrackSelectionController;
+class WidgetContext;
 
 class PlaylistWidgetPrivate : public QObject
 {
@@ -57,12 +58,13 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                          CoverProvider* coverProvider, SettingsManager* settings);
+                          CoverProvider* coverProvider, const CorePluginContext& core);
 
     void setupConnections();
     void setupActions();
 
     void onColumnChanged(const PlaylistColumn& column);
+    void onColumnRemoved(int id);
     void onPresetChanged(const PlaylistPreset& preset);
     void changePreset(const PlaylistPreset& preset);
 
@@ -121,6 +123,7 @@ public:
     void addSortMenu(QMenu* parent, bool disabled);
     void addClipboardMenu(QMenu* parent, bool hasSelection) const;
     void addPresetMenu(QMenu* parent);
+    void addColumnsMenu(QMenu* parent);
 
     PlaylistWidget* m_self;
 
@@ -133,9 +136,9 @@ public:
     SettingsManager* m_settings;
     SettingsDialogController* m_settingsDialog;
 
-    PlaylistColumnRegistry m_columnRegistry;
-    PresetRegistry m_presetRegistry;
-    SortingRegistry m_sortRegistry;
+    PlaylistColumnRegistry* m_columnRegistry;
+    PresetRegistry* m_presetRegistry;
+    SortingRegistry* m_sortRegistry;
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;

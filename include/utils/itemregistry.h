@@ -32,18 +32,10 @@
 
 template <typename T>
 concept ValidRegistry = requires(T t) {
-    {
-        t.id
-    } -> std::convertible_to<int>;
-    {
-        t.name
-    } -> std::convertible_to<QString>;
-    {
-        t.index
-    } -> std::convertible_to<int>;
-    {
-        t.isDefault
-    } -> std::convertible_to<bool>;
+    { t.id } -> std::convertible_to<int>;
+    { t.name } -> std::convertible_to<QString>;
+    { t.index } -> std::convertible_to<int>;
+    { t.isDefault } -> std::convertible_to<bool>;
 };
 
 namespace Fooyin {
@@ -58,6 +50,7 @@ public:
 
 signals:
     void itemChanged(int id);
+    void itemRemoved(int id);
 };
 
 /*!
@@ -76,13 +69,7 @@ public:
         : RegistryBase{parent}
         , m_settings{settings}
         , m_settingKey{std::move(settingKey)}
-    {
-        if(!m_settings->contains(m_settingKey)) {
-            m_settings->createSetting(m_settingKey, {});
-        }
-
-        m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
-    }
+    { }
 
     [[nodiscard]] ItemList items() const
     {
@@ -102,9 +89,7 @@ public:
         newItem.index = static_cast<int>(m_items.size());
 
         m_items.push_back(newItem);
-
         saveItems();
-
         return newItem;
     }
 
@@ -126,9 +111,8 @@ public:
         }
         *itemIt = changedItem;
 
-        saveItems();
         emit itemChanged(changedItem.id);
-
+        saveItems();
         return true;
     }
 
@@ -180,16 +164,7 @@ public:
             return false;
         }
 
-        saveItems();
-        return true;
-    }
-
-    bool removeByIndex(int index)
-    {
-        if(std::erase_if(m_items, [index](const auto& item) { return !item.isDefault && item.index == index; }) == 0) {
-            return false;
-        }
-
+        emit itemRemoved(id);
         saveItems();
         return true;
     }
@@ -213,9 +188,7 @@ public:
 
         byteArray = qCompress(byteArray, 9);
 
-        m_settings->unsubscribe(m_settingKey, this);
-        m_settings->set(m_settingKey, byteArray);
-        m_settings->subscribe(m_settingKey, this, &ItemRegistry::loadItems);
+        m_settings->fileSet(m_settingKey, byteArray);
     }
 
     void loadItems()
@@ -224,7 +197,7 @@ public:
         m_items.clear();
         loadDefaults();
 
-        QByteArray byteArray = m_settings->value(m_settingKey).toByteArray();
+        QByteArray byteArray = m_settings->fileValue(m_settingKey).toByteArray();
 
         ItemList defaultItemsToAdjust;
 
@@ -263,19 +236,18 @@ public:
             if(itemIt != m_items.end()) {
                 itemToAdjust.id = findValidId();
                 *itemIt         = itemToAdjust;
+                emit itemChanged(itemToAdjust.id);
             }
         }
-
-        checkChangedItems(oldItems);
     }
 
     void reset()
     {
-        m_settings->reset(m_settingKey);
+        m_settings->fileRemove(m_settingKey);
     }
 
 protected:
-    virtual void loadDefaults(){};
+    virtual void loadDefaults() { }
 
     void addDefaultItem(const Item& item)
     {
@@ -311,17 +283,6 @@ private:
         auto ids         = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
         const int nextId = *std::ranges::max_element(ids) + 1;
         return nextId;
-    }
-
-    void checkChangedItems(const ItemList& oldItems)
-    {
-        for(const auto& item : m_items) {
-            auto it = std::ranges::find_if(
-                oldItems, [item](const auto& oldItem) { return !oldItem.isDefault && oldItem.id == item.id; });
-            if(it != oldItems.cend() && *it != item) {
-                emit itemChanged(it->id);
-            }
-        }
     }
 
     SettingsManager* m_settings;
