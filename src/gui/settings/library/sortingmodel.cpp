@@ -92,7 +92,7 @@ void SortingModel::processQueue()
                 break;
             }
             case(SortingItem::Removed): {
-                if(m_sortRegistry->removeByIndex(sortScript.index)) {
+                if(m_sortRegistry->removeById(sortScript.id)) {
                     beginRemoveRows({}, node.row(), node.row());
                     m_root.removeChild(node.row());
                     endRemoveRows();

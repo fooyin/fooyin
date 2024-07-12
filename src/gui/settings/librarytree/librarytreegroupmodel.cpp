@@ -94,7 +94,7 @@ void LibraryTreeGroupModel::processQueue()
                 break;
             }
             case(LibraryTreeGroupItem::Removed): {
-                if(m_groupsRegistry->removeByIndex(group.index)) {
+                if(m_groupsRegistry->removeById(group.id)) {
                     beginRemoveRows({}, node.row(), node.row());
                     m_root.removeChild(node.row());
                     endRemoveRows();

@@ -95,7 +95,7 @@ void PlaylistColumnModel::processQueue()
                 break;
             }
             case(ColumnItem::Removed): {
-                if(m_columnsRegistry->removeByIndex(column.index)) {
+                if(m_columnsRegistry->removeById(column.id)) {
                     beginRemoveRows({}, node.row(), node.row());
                     m_root.removeChild(node.row());
                     endRemoveRows();
