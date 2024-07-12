@@ -35,7 +35,6 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QScrollBar>
-#include <QTreeView>
 
 namespace Fooyin {
 InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
@@ -188,14 +187,21 @@ void InfoWidget::resetModel()
 {
     m_scrollPos = m_view->verticalScrollBar()->value();
 
-    if(m_displayOption == SelectionDisplay::PreferPlaying && m_playerController->currentTrack().isValid()) {
-        m_model->resetModel({m_playerController->currentTrack()});
+    const Track currentTrack = m_playerController->currentTrack();
+
+    setUpdatesEnabled(false);
+
+    if(m_displayOption == SelectionDisplay::PreferPlaying && currentTrack.isValid()) {
+        m_model->resetModel({currentTrack});
     }
     else if(m_selectionController->hasTracks()) {
         m_model->resetModel(m_selectionController->selectedTracks());
     }
+    else if(currentTrack.isValid()) {
+        m_model->resetModel({currentTrack});
+    }
     else {
-        m_model->resetModel({m_playerController->currentTrack()});
+        m_model->resetModel({});
     }
 }
 
@@ -215,5 +221,7 @@ void InfoWidget::resetView()
     if(m_scrollPos >= 0) {
         m_view->verticalScrollBar()->setValue(std::exchange(m_scrollPos, -1));
     }
+
+    setUpdatesEnabled(true);
 }
 } // namespace Fooyin
