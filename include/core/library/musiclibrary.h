@@ -31,7 +31,7 @@ struct LibraryInfo;
 /*!
  * There are three types of scan request:
  * - Files: Scans a list of files; emits tracksScanned when finished.
- * - Tracks: Scans a TrackList; emits tracksScanned when finished.
+ * - Tracks: Scans a TrackList; emits tracksUpdated when finished.
  * - Library: Scans an entire library; emits tracksAdded, tracksUpdated, tracksDeleted.
  * In-progress requests can be cancelled early using cancel().
  */

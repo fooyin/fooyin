@@ -754,51 +754,57 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
     }
 }
 
-void LibraryScanner::scanTracks(const TrackList& libraryTracks, const TrackList& tracks)
+void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackList& tracks)
 {
     setState(Running);
 
-    TrackList tracksScanned;
-    TrackList tracksToStore;
-
-    std::unordered_map<QString, Track> trackMap;
-    std::ranges::transform(libraryTracks, std::inserter(trackMap, trackMap.end()),
-                           [](const Track& track) { return std::make_pair(track.filepath(), track); });
-
     p->m_tracksProcessed = 0;
-    p->m_totalTracks     = static_cast<double>(tracks.size());
+    p->m_totalTracks     = static_cast<int>(tracks.size());
 
     const auto handleFinished = [this]() {
         if(state() != Paused) {
             setState(Idle);
+            p->m_tracksProcessed = p->m_totalTracks;
+            p->reportProgress();
             emit finished();
         }
     };
 
-    for(const Track& pendingTrack : tracks) {
+    TrackList tracksToUpdate;
+
+    for(const Track& track : tracks) {
         if(!mayRun()) {
             handleFinished();
             return;
         }
 
-        Track track{pendingTrack};
-
-        if(trackMap.contains(track.filepath())) {
-            tracksScanned.push_back(trackMap.at(track.filepath()));
+        if(track.hasCue()) {
+            continue;
         }
-        else if(auto* parser = p->m_tagLoader->parserForTrack(track)) {
-            if(parser->readMetaData(track)) {
-                track.generateHash();
-                tracksToStore.push_back(track);
+
+        Track updatedTrack{track.filepath()};
+
+        if(auto* parser = p->m_tagLoader->parserForTrack(updatedTrack)) {
+            if(parser->readMetaData(updatedTrack)) {
+                updatedTrack.setId(track.id());
+                updatedTrack.setLibraryId(track.libraryId());
+                updatedTrack.setAddedTime(track.addedTime());
+                p->readFileProperties(updatedTrack);
+                updatedTrack.generateHash();
+
+                tracksToUpdate.push_back(updatedTrack);
             }
         }
 
         p->fileScanned();
     }
 
-    p->storeTracks(tracksToStore);
+    if(!tracksToUpdate.empty()) {
+        p->storeTracks(tracksToUpdate);
+        p->m_trackDatabase.updateTrackStats(tracksToUpdate);
 
-    emit scannedTracks(tracksToStore, tracksScanned);
+        emit scanUpdate({{}, tracksToUpdate});
+    }
 
     handleFinished();
 }

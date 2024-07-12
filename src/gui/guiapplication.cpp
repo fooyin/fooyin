@@ -107,6 +107,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QPixmapCache>
+#include <QProgressDialog>
 #include <QPushButton>
 
 constexpr auto LastFilePath = "Interface/LastFilePath";
@@ -213,6 +214,7 @@ struct GuiApplication::Private
     {
         setupConnections();
         registerActions();
+        setupScanMenu();
         setupRatingMenu();
         restoreIconTheme();
         registerLayouts();
@@ -412,9 +414,57 @@ struct GuiApplication::Private
                          });
     }
 
+    void rescanTracks(const TrackList& tracks) const
+    {
+        auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
+                                               Utils::getMainWindow());
+        scanDialog->setAttribute(Qt::WA_DeleteOnClose);
+        scanDialog->setModal(true);
+        scanDialog->setValue(0);
+
+        const ScanRequest request = core.library->scanTracks(tracks);
+
+        QObject::connect(core.library, &MusicLibrary::scanProgress, scanDialog,
+                         [scanDialog, request](const ScanProgress& progress) {
+                             if(progress.id != request.id) {
+                                 return;
+                             }
+
+                             if(scanDialog->wasCanceled()) {
+                                 request.cancel();
+                                 scanDialog->close();
+                             }
+
+                             scanDialog->setValue(progress.percentage());
+                         });
+    }
+
+    void setupScanMenu()
+    {
+        auto* selectionMenu = actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
+        auto* taggingMenu   = actionManager->createMenu(Constants::Menus::Context::Tagging);
+        taggingMenu->menu()->setTitle(tr("Tagging"));
+        selectionMenu->addMenu(taggingMenu);
+
+        auto* rescanAction = new QAction(tr("Rescan"), mainWindow.get());
+
+        auto rescan = [this]() {
+            if(selectionController.hasTracks()) {
+                const auto tracks = selectionController.selectedTracks();
+                rescanTracks(tracks);
+            }
+        };
+
+        QObject::connect(rescanAction, &QAction::triggered, mainWindow.get(), [rescan]() { rescan(); });
+        taggingMenu->menu()->addAction(rescanAction);
+
+        QObject::connect(&selectionController, &TrackSelectionController::selectionChanged, mainWindow.get(),
+                         [this, rescanAction]() { rescanAction->setEnabled(selectionController.hasTracks()); });
+    }
+
     void setupRatingMenu()
     {
-        auto* selectionMenu = actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
+        auto* selectionMenu = actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
         auto* taggingMenu   = actionManager->createMenu(Constants::Menus::Context::Tagging);
         taggingMenu->menu()->setTitle(tr("Tagging"));
         selectionMenu->addMenu(taggingMenu);
