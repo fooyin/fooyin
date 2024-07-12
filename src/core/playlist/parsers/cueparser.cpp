@@ -142,6 +142,10 @@ void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QStrin
 
 void finaliseDurations(Fooyin::TrackList& tracks)
 {
+    if(tracks.size() <= 1) {
+        return;
+    }
+
     for(auto it = tracks.begin(); it != tracks.end() - 1; ++it) {
         auto currentTrack = it;
         auto nextTrack    = it + 1;
