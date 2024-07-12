@@ -270,7 +270,7 @@ struct PipeWireOutput::Private
 
         auto* pwBuffer = self->m_stream->dequeueBuffer();
         if(!pwBuffer) {
-            qWarning() << "PW: No available output buffers";
+            qWarning() << "[PW] No available output buffers";
             return;
         }
 
@@ -279,7 +279,7 @@ struct PipeWireOutput::Private
         const auto size = std::min(data.maxsize, self->m_bufferPos);
         auto* dst       = data.data;
 
-        std::memcpy(dst, self->m_buffer.data(), self->m_bufferPos);
+        std::memcpy(dst, self->m_buffer.data(), size);
         self->m_bufferPos -= size;
         self->m_buffer.erase(size);
 
