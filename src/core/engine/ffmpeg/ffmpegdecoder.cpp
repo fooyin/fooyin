@@ -319,7 +319,7 @@ struct FFmpegDecoder::Private
             m_skipBytes -= len;
 
             if(sampleCount - len == 0) {
-                m_buffer = {};
+                m_buffer.clear();
             }
             else {
                 std::memmove(m_buffer.data(), m_buffer.data() + len, sampleCount - len);
@@ -369,10 +369,6 @@ struct FFmpegDecoder::Private
         m_seekPos = -1;
 
         decodeAudio(packet);
-
-        while(!m_buffer.isValid()) {
-            readNext();
-        }
     }
 
     void seek(uint64_t pos)
