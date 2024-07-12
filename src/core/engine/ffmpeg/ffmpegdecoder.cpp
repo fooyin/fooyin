@@ -48,12 +48,15 @@ void interleaveSamples(uint8_t** in, Fooyin::AudioBuffer& buffer)
     const int bps      = format.bytesPerSample();
     auto* out          = buffer.data();
 
-    for(int i{0}; i < samples; ++i) {
-        for(int ch{0}; ch < channels; ++ch) {
-            const auto inOffset  = i * bps;
-            const auto outOffset = (i * channels + ch) * bps;
-            std::memmove(out + outOffset, in[ch] + inOffset, bps);
-        }
+    const int totalSamples = samples * channels;
+
+    for(int i{0}; i < totalSamples; ++i) {
+        const int sampleIndex  = i / channels;
+        const int channelIndex = i % channels;
+
+        const auto inOffset  = sampleIndex * bps;
+        const auto outOffset = i * bps;
+        std::memmove(out + outOffset, in[channelIndex] + inOffset, bps);
     }
 }
 

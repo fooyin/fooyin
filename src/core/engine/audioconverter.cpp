@@ -38,20 +38,23 @@ void convert(const Fooyin::AudioFormat& inputFormat, const std::byte* input, con
     const int inChannels  = inputFormat.channelCount();
     const int outChannels = outputFormat.channelCount();
 
-    for(int i{0}; i < sampleCount; ++i) {
-        for(int ch{0}; ch < outChannels; ++ch) {
-            if(channelMap.at(ch) < 0) {
-                continue;
-            }
+    const int totalSamples = sampleCount * outChannels;
 
-            InputType inSample;
-            const auto inOffset = (i * inChannels + channelMap.at(ch)) * inBps;
-            std::memcpy(&inSample, input + inOffset, inBps);
+    for(int i{0}; i < totalSamples; ++i) {
+        const int sampleIndex  = i / outChannels;
+        const int channelIndex = i % outChannels;
 
-            OutputType outSample = conversionFunc(inSample);
-            const auto outOffset = (i * outChannels + channelMap.at(ch)) * outBps;
-            std::memcpy(output + outOffset, &outSample, outBps);
+        if(channelMap.at(channelIndex) < 0) {
+            continue;
         }
+
+        InputType inSample;
+        const auto inOffset = (sampleIndex * inChannels + channelMap.at(channelIndex)) * inBps;
+        std::memcpy(&inSample, input + inOffset, inBps);
+
+        OutputType outSample = conversionFunc(inSample);
+        const auto outOffset = i * outBps;
+        std::memcpy(output + outOffset, &outSample, outBps);
     }
 }
 
