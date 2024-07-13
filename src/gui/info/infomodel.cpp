@@ -32,7 +32,9 @@ InfoModel::InfoModel(QObject* parent)
     : TreeModel{parent}
 {
     m_populator.moveToThread(&m_populatorThread);
+
     m_headerFont.setPointSize(m_headerFont.pointSize() + HeaderFontDelta);
+    m_headerFont.setBold(true);
 
     QObject::connect(&m_populator, &InfoPopulator::populated, this, &InfoModel::populate);
     QObject::connect(&m_populator, &Worker::finished, this, [this]() {

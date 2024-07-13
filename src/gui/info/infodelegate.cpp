@@ -61,8 +61,6 @@ void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModel
 namespace Fooyin {
 void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    painter->save();
-
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
@@ -75,8 +73,6 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
             paintEntry(painter, opt, index);
             break;
     }
-
-    painter->restore();
 }
 } // namespace Fooyin
 
