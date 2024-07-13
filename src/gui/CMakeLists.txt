@@ -196,6 +196,8 @@ set(SOURCES
     settings/guigeneralpage.h
     settings/guithemespage.cpp
     settings/guithemespage.h
+    settings/networkpage.cpp
+    settings/networkpage.h
     settings/shellintegrationpage.cpp
     settings/shellintegrationpage.h
     settings/dirbrowser/dirbrowserpage.cpp

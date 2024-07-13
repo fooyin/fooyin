@@ -39,6 +39,7 @@
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/outputplugin.h>
+#include <core/network/networkaccessmanager.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
@@ -111,6 +112,7 @@ public:
     UnifiedMusicLibrary* m_library;
     PlaylistHandler* m_playlistHandler;
     SortingRegistry* m_sortingRegistry;
+    std::shared_ptr<NetworkAccessManager> m_networkManager;
 
     PluginManager m_pluginManager;
     CorePluginContext m_corePluginContext;
@@ -135,9 +137,10 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController, m_settings,
                                             m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
+    , m_networkManager{new NetworkAccessManager(m_settings, m_self)}
     , m_pluginManager{m_settings}
-    , m_corePluginContext{&m_engine,         m_playerController, m_libraryManager, m_library,
-                          m_playlistHandler, m_settings,         m_audioLoader,    m_sortingRegistry}
+    , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
+                          m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
 {
     registerTypes();
     registerInputs();

@@ -16,6 +16,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/trackfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
+    ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playercontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playerdefs.h
@@ -103,6 +104,7 @@ set(SOURCES
     library/tracksort.cpp
     library/unifiedmusiclibrary.cpp
     library/unifiedmusiclibrary.h
+    network/networkaccessmanager.cpp
     player/playbackqueue.cpp
     player/playercontroller.cpp
     playlist/playlist.cpp
@@ -148,6 +150,7 @@ target_link_libraries(
            Qt6::Widgets
            Qt6::Sql
            Qt6::Concurrent
+           Qt6::Network
            Taglib::Taglib
            Fooyin::Utils
            ${FFMPEG_LIBRARIES}
