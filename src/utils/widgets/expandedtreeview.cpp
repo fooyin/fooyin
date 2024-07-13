@@ -78,6 +78,7 @@ struct ExpandedTreeViewItem
 {
     QModelIndex index;
     int parentItem{-1};
+    int level{0};
     bool hasChildren{false};
     bool hasMoreSiblings{false};
     int childCount{0};
@@ -168,7 +169,7 @@ public:
     void doAutoScroll();
     bool dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex);
     std::vector<std::pair<int, int>> columnRanges(const QModelIndex& topIndex, const QModelIndex& bottomIndex) const;
-    std::vector<QRect> rectsToPaint(const QStyleOptionViewItem& option, int y) const;
+    std::vector<QRect> rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option, int y) const;
 
     QPoint offset() const;
     bool isIndexValid(const QModelIndex& index) const;
@@ -192,6 +193,7 @@ public:
     mutable std::vector<ExpandedTreeViewItem> m_viewItems;
     mutable int m_lastViewedItem{0};
     int m_defaultItemHeight{20};
+    int m_indent{0};
     int m_uniformHeightRole{-1};
     std::unordered_map<int, int> m_uniformRoleHeights;
 
@@ -378,6 +380,7 @@ void BaseView::layout(int i, bool afterIsUninitialised)
     }
 
     const int first{i + 1};
+    const int level = (i >= 0 ? viewItem(i).level + 1 : 0);
     int children{0};
     ExpandedTreeViewItem* item{nullptr};
     QModelIndex currentIndex;
@@ -402,6 +405,7 @@ void BaseView::layout(int i, bool afterIsUninitialised)
         item                  = &viewItem(last);
         item->index           = currentIndex;
         item->parentItem      = i;
+        item->level           = level;
         item->height          = 0;
         item->childCount      = 0;
         item->hasMoreSiblings = false;
@@ -436,7 +440,14 @@ QRect BaseView::mapToViewport(const QRect& rect) const
 
 int BaseView::indexWidthHint(const QModelIndex& index, int hint, const QStyleOptionViewItem& option) const
 {
-    const int xHint = delegate(index)->sizeHint(option, index).width();
+    int indent{0};
+
+    const int viewIndex = m_p->viewIndex(index);
+    if(viewIndex >= 0) {
+        indent = viewItem(viewIndex).level * m_p->m_indent;
+    }
+
+    const int xHint = delegate(index)->sizeHint(option, index).width() + indent;
     return std::max(hint, xHint);
 }
 
@@ -567,6 +578,7 @@ public:
 
     [[nodiscard]] int itemHeight(int item) const override;
     [[nodiscard]] int itemPadding(int item) const;
+    [[nodiscard]] int itemIdentation(int item) const;
 
     void drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     void drawRowBackground(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index,
@@ -1244,7 +1256,7 @@ void TreeView::updateColumns()
 
 int TreeView::itemHeight(int item) const
 {
-    if(empty()) {
+    if(item < 0 || std::cmp_greater_equal(item, m_p->m_viewItems.size())) {
         return 0;
     }
 
@@ -1274,11 +1286,21 @@ int TreeView::itemHeight(int item) const
 
 int TreeView::itemPadding(int item) const
 {
-    if(empty()) {
+    if(item < 0 || std::cmp_greater_equal(item, m_p->m_viewItems.size())) {
         return 0;
     }
 
     return viewItem(item).padding;
+}
+
+int TreeView::itemIdentation(int item) const
+{
+    if(item < 0 || std::cmp_greater_equal(item, m_p->m_viewItems.size())) {
+        return 0;
+    }
+
+    const int level = viewItem(item).level;
+    return level * m_p->m_indent;
 }
 
 void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -1315,6 +1337,8 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
     const QModelIndex parent  = index.parent();
     const QModelIndex current = m_view->currentIndex();
 
+    const auto& item = viewItem(m_p->viewIndex(index));
+
     QModelIndex modelIndex;
     std::vector<int> logicalIndices;
     std::vector<QStyleOptionViewItem::ViewItemPosition> viewItemPosList;
@@ -1333,11 +1357,7 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
             continue;
         }
 
-        const int width    = header()->sectionSize(headerSection);
-        const int position = header()->sectionViewportPosition(headerSection) + offset.x();
-
         modelIndex = model()->index(index.row(), headerSection, parent);
-
         if(!modelIndex.isValid()) {
             continue;
         }
@@ -1366,9 +1386,17 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
             opt.palette.setCurrentColorGroup(cg);
         }
 
+        const int width    = header()->sectionSize(headerSection);
+        const int position = header()->sectionViewportPosition(headerSection) + offset.x();
+
         const int cellHeight = indexRowSizeHint(modelIndex);
         if(cellHeight > 0) {
-            const QRect cellRect{position, y, width, cellHeight};
+            opt.rect = {position, y, width, cellHeight};
+
+            if(section == 0) {
+                const int indent = item.level * m_p->m_indent;
+                opt.rect.adjust(indent, 0, 0, 0);
+            }
 
             if(!paintedBg) {
                 // Some styles use a gradient for the selection bg which only covers each individual cell
@@ -1376,8 +1404,6 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
                 paintedBg = true;
                 drawRowBackground(painter, opt, modelIndex, y);
             }
-
-            opt.rect = cellRect;
 
             delegate(modelIndex)->paint(painter, opt, modelIndex);
         }
@@ -1395,7 +1421,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
 
     const auto bg = index.data(Qt::BackgroundRole).value<QBrush>();
 
-    const auto paintRects = m_p->rectsToPaint(option, y);
+    const auto paintRects = m_p->rectsToPaint(index, option, y);
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
             opt.rect = rect;
@@ -2862,7 +2888,8 @@ std::vector<std::pair<int, int>> ExpandedTreeView::Private::columnRanges(const Q
     return ret;
 }
 
-std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionViewItem& option, int y) const
+std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option,
+                                                           int y) const
 {
     std::vector<QRect> rects;
 
@@ -2870,13 +2897,26 @@ std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionVie
 
     const int offset = m_header->offset();
     const int count  = m_header->count();
+    const int first  = Utils::firstVisualIndex(m_header);
+
+    int level{0};
+    const int viewIdx = viewIndex(index);
+    if(viewIdx >= 0) {
+        level = m_viewItems.at(viewIdx).level;
+    }
 
     for(int section{0}; section < count; ++section) {
-        const int logical  = m_header->logicalIndex(section);
-        const int position = m_header->sectionPosition(logical) - offset;
+        const int logical = m_header->logicalIndex(section);
+        int position      = m_header->sectionPosition(logical) - offset;
 
         if(m_header->isSectionHidden(logical)) {
             continue;
+        }
+
+        int indent{0};
+        if(section == first) {
+            indent = level * m_indent;
+            position += indent;
         }
 
         if(m_self->isSpanning(logical)) {
@@ -2889,7 +2929,7 @@ std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QStyleOptionVie
             if(currRect.width() == 0) {
                 currRect.setX(position);
             }
-            currRect.setRight(position + m_header->sectionSize(logical) - 1);
+            currRect.setRight(position + m_header->sectionSize(logical) - indent);
         }
     }
 
@@ -2945,6 +2985,16 @@ void ExpandedTreeView::setHeader(QHeaderView* header)
     }
 
     p->setHeader(header);
+}
+
+bool ExpandedTreeView::isHeaderHidden() const
+{
+    return p->m_header->isHidden();
+}
+
+void ExpandedTreeView::setHeaderHidden(bool hide)
+{
+    p->m_header->setHidden(hide);
 }
 
 void ExpandedTreeView::setModel(QAbstractItemModel* model)
@@ -3035,6 +3085,23 @@ int ExpandedTreeView::uniformHeightRole() const
 void ExpandedTreeView::setUniformHeightRole(int role)
 {
     p->m_uniformHeightRole = role;
+}
+
+int ExpandedTreeView::indentation() const
+{
+    return p->m_indent;
+}
+
+void ExpandedTreeView::setIndentation(int indent)
+{
+    if(std::exchange(p->m_indent, indent) != indent) {
+        viewport()->update();
+    }
+}
+
+void ExpandedTreeView::resetIndentation()
+{
+    p->m_indent = 0;
 }
 
 bool ExpandedTreeView::selectBeforeDrag() const
@@ -3767,7 +3834,7 @@ void ExpandedTreeView::drawFocus(QPainter* painter, const QStyleOptionViewItem& 
     focusOpt.backgroundColor
         = option.palette.color(cg, selectionModel()->isSelected(index) ? QPalette::Highlight : QPalette::Window);
 
-    const auto paintRects = p->rectsToPaint(option, y);
+    const auto paintRects = p->rectsToPaint(index, option, y);
 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {

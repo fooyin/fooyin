@@ -54,6 +54,9 @@ public:
     [[nodiscard]] QHeaderView* header() const;
     void setHeader(QHeaderView* header);
 
+    [[nodiscard]] bool isHeaderHidden() const;
+    void setHeaderHidden(bool hide);
+
     void setModel(QAbstractItemModel* model) override;
 
     [[nodiscard]] bool isSpanning(int column) const;
@@ -70,6 +73,10 @@ public:
 
     [[nodiscard]] int uniformHeightRole() const;
     void setUniformHeightRole(int role);
+
+    [[nodiscard]] int indentation() const;
+    void setIndentation(int indent);
+    void resetIndentation();
 
     [[nodiscard]] bool selectBeforeDrag() const;
     void setSelectBeforeDrag(bool enabled);
