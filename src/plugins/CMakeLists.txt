@@ -6,6 +6,7 @@ if(UNIX AND NOT APPLE)
     add_subdirectory(mpris)
 endif()
 
+add_subdirectory(discord)
 add_subdirectory(fileops)
 add_subdirectory(filters)
 add_subdirectory(gme)
