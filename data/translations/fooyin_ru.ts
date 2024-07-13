@@ -3103,7 +3103,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="189"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь воспроизведения</translation>
     </message>
 </context>
 <context>
@@ -3308,12 +3308,12 @@
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="40"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location filename="../../src/core/library/sortingregistry.cpp" line="41"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер трека</translation>
     </message>
 </context>
 <context>
@@ -3416,7 +3416,7 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="51"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="64"/>
@@ -3469,7 +3469,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="156"/>
         <source>Don&apos;t ask again</source>
-        <translation>Не спрашивать</translation>
+        <translation>Не спрашивать больше</translation>
     </message>
 </context>
 <context>
@@ -3502,12 +3502,12 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="90"/>
         <source>Add to Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="91"/>
         <source>Remove from Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="93"/>
@@ -3517,7 +3517,7 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="267"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизведение</translation>
     </message>
 </context>
 <context>
@@ -3530,7 +3530,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
         <source>&amp;Quick Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрая настройка</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="59"/>
@@ -3548,12 +3548,12 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="213"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Регулятор громкости</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="240"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Иконка</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="241"/>
@@ -3811,12 +3811,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="314"/>
         <source>Disk cache usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер кэша</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="189"/>
         <source>Clear Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить</translation>
     </message>
 </context>
 <context>
@@ -3869,17 +3869,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="207"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Стерео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="208"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Моно</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="236"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки…</translation>
     </message>
 </context>
 <context>
