@@ -19,6 +19,7 @@
 
 #include "librarythreadhandler.h"
 
+#include "internalcoresettings.h"
 #include "library/libraryinfo.h"
 #include "libraryscanner.h"
 #include "trackdatabasemanager.h"
@@ -73,9 +74,11 @@ struct LibraryThreadHandler::Private
         , m_dbPool{std::move(dbPool)}
         , m_library{library}
         , m_settings{settings}
-        , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader, m_settings}
+        , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader}
         , m_trackDatabaseManager{m_dbPool, tagLoader, m_settings}
     {
+        m_scanner.setMonitorLibraries(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+
         m_scanner.moveToThread(&m_thread);
         m_trackDatabaseManager.moveToThread(&m_thread);
 
@@ -86,6 +89,9 @@ struct LibraryThreadHandler::Private
         });
 
         m_thread.start();
+
+        m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(&m_scanner,
+                                                                          &LibraryScanner::setMonitorLibraries);
     }
 
     void scanLibrary(const LibraryScanRequest& request)

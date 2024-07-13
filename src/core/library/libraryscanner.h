@@ -28,7 +28,6 @@
 namespace Fooyin {
 class LibraryManager;
 class PlaylistLoader;
-class SettingsManager;
 class TagLoader;
 
 struct ScanResult
@@ -43,7 +42,7 @@ class LibraryScanner : public Worker
 
 public:
     explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
+                            std::shared_ptr<TagLoader> tagLoader, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;
@@ -57,6 +56,7 @@ signals:
     void directoryChanged(const Fooyin::LibraryInfo& library, const QString& dir);
 
 public slots:
+    void setMonitorLibraries(bool enabled);
     void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
     void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified);
     void scanLibraryDirectory(const Fooyin::LibraryInfo& library, const QString& dir, const Fooyin::TrackList& tracks);

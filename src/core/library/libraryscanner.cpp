@@ -20,7 +20,6 @@
 #include "libraryscanner.h"
 
 #include "database/trackdatabase.h"
-#include "internalcoresettings.h"
 #include "library/libraryinfo.h"
 #include "librarywatcher.h"
 #include "playlist/playlistloader.h"
@@ -32,7 +31,6 @@
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/fileutils.h>
-#include <utils/settings/settingsmanager.h>
 #include <utils/timer.h>
 #include <utils/utils.h>
 
@@ -196,10 +194,10 @@ struct LibraryScanner::Private
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     std::shared_ptr<TagLoader> m_tagLoader;
-    SettingsManager* m_settings;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
 
+    bool m_monitor{false};
     LibraryInfo m_currentLibrary;
     TrackDatabase m_trackDatabase;
 
@@ -219,12 +217,11 @@ struct LibraryScanner::Private
     std::unordered_map<int, LibraryWatcher> m_watchers;
 
     Private(LibraryScanner* self, DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
+            std::shared_ptr<TagLoader> tagLoader)
         : m_self{self}
         , m_dbPool{std::move(dbPool)}
         , m_playlistLoader{std::move(playlistLoader)}
         , m_tagLoader{std::move(tagLoader)}
-        , m_settings{settings}
     { }
 
     void cleanupScan()
@@ -645,9 +642,9 @@ struct LibraryScanner::Private
 };
 
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                               std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
+                               std::shared_ptr<TagLoader> tagLoader, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), std::move(playlistLoader), std::move(tagLoader), settings)}
+    , p{std::make_unique<Private>(this, std::move(dbPool), std::move(playlistLoader), std::move(tagLoader))}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -673,6 +670,11 @@ void LibraryScanner::stopThread()
     }
 
     setState(Idle);
+}
+
+void LibraryScanner::setMonitorLibraries(bool enabled)
+{
+    p->m_monitor = enabled;
 }
 
 void LibraryScanner::setupWatchers(const LibraryInfoMap& libraries, bool enabled)
@@ -708,7 +710,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
     const Timer timer;
 
     if(p->m_currentLibrary.id >= 0 && QFileInfo::exists(p->m_currentLibrary.path)) {
-        if(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>() && !p->m_watchers.contains(library.id)) {
+        if(p->m_monitor && !p->m_watchers.contains(library.id)) {
             p->addWatcher(library);
         }
         p->getAndSaveAllTracks(library.path, tracks, onlyModified);
@@ -721,9 +723,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
-        p->changeLibraryStatus(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>()
-                                   ? LibraryInfo::Status::Monitoring
-                                   : LibraryInfo::Status::Idle);
+        p->changeLibraryStatus(p->m_monitor ? LibraryInfo::Status::Monitoring : LibraryInfo::Status::Idle);
         setState(Idle);
         emit finished();
     }
@@ -744,9 +744,7 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
         p->changeLibraryStatus(LibraryInfo::Status::Pending);
     }
     else {
-        p->changeLibraryStatus(p->m_settings->value<Settings::Core::Internal::MonitorLibraries>()
-                                   ? LibraryInfo::Status::Monitoring
-                                   : LibraryInfo::Status::Idle);
+        p->changeLibraryStatus(p->m_monitor ? LibraryInfo::Status::Monitoring : LibraryInfo::Status::Idle);
         setState(Idle);
         emit finished();
     }
