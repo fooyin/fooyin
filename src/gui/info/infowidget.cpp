@@ -53,31 +53,20 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
 
-    m_view->setRootIsDecorated(false);
-    m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_view->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_view->setItemsExpandable(false);
-    m_view->setIndentation(10);
-    m_view->setExpandsOnDoubleClick(false);
-    m_view->setTextElideMode(Qt::ElideRight);
-    m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_view->setSortingEnabled(false);
-    m_view->setAlternatingRowColors(true);
-    m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
     m_view->setItemDelegate(new ItemDelegate(this));
     m_view->setModel(m_model);
 
     layout->addWidget(m_view);
 
-    m_view->setHeaderHidden(!(settings->value<Settings::Gui::Internal::InfoHeader>()));
+    m_view->setHeaderHidden(!settings->value<Settings::Gui::Internal::InfoHeader>());
     m_view->setVerticalScrollBarPolicy(
         settings->value<Settings::Gui::Internal::InfoScrollBar>() ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
     m_view->setAlternatingRowColors(settings->value<Settings::Gui::Internal::InfoAltColours>());
 
     QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
-                     [this]() { resetModel(); });
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() { resetModel(); });
+                     [this]() { m_resetTimer.start(50, this); });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     [this]() { m_resetTimer.start(50, this); });
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
 
     using namespace Settings::Gui::Internal;
@@ -183,13 +172,21 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
+void InfoWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_resetTimer.timerId()) {
+        m_resetTimer.stop();
+        resetModel();
+    }
+
+    PropertiesTabWidget::timerEvent(event);
+}
+
 void InfoWidget::resetModel()
 {
     m_scrollPos = m_view->verticalScrollBar()->value();
 
     const Track currentTrack = m_playerController->currentTrack();
-
-    setUpdatesEnabled(false);
 
     if(m_displayOption == SelectionDisplay::PreferPlaying && currentTrack.isValid()) {
         m_model->resetModel({currentTrack});
@@ -207,21 +204,8 @@ void InfoWidget::resetModel()
 
 void InfoWidget::resetView()
 {
-    const int rowCount = m_model->rowCount({});
-
-    for(int row{0}; row < rowCount; ++row) {
-        const auto index = m_model->index(row, 0, {});
-        if(m_model->hasChildren(index)) {
-            m_view->setFirstColumnSpanned(row, {}, true);
-        }
-    }
-
-    m_view->expandAll();
-
     if(m_scrollPos >= 0) {
         m_view->verticalScrollBar()->setValue(std::exchange(m_scrollPos, -1));
     }
-
-    setUpdatesEnabled(true);
 }
 } // namespace Fooyin

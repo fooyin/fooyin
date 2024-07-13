@@ -19,12 +19,22 @@
 
 #include "infoview.h"
 
+#include <QHeaderView>
 #include <QPainter>
 
 namespace Fooyin {
 InfoView::InfoView(QWidget* parent)
-    : QTreeView{parent}
-{ }
+    : ExpandedTreeView{parent}
+{
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setTextElideMode(Qt::ElideRight);
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    setAlternatingRowColors(true);
+    setIndentation(5);
+    header()->setStretchLastSection(true);
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+}
 
 void InfoView::paintEvent(QPaintEvent* event)
 {
@@ -36,8 +46,6 @@ void InfoView::paintEvent(QPaintEvent* event)
         painter.drawText(textRect, Qt::AlignCenter, text);
     }
 
-    QTreeView::paintEvent(event);
+    ExpandedTreeView::paintEvent(event);
 }
-
-void InfoView::drawBranches(QPainter* /*painter*/, const QRect& /*rect*/, const QModelIndex& /*index*/) const { }
 } // namespace Fooyin

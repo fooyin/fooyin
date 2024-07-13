@@ -23,6 +23,7 @@
 
 #include <gui/propertiesdialog.h>
 
+#include <QBasicTimer>
 #include <QWidget>
 
 namespace Fooyin {
@@ -48,6 +49,7 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     void resetModel();
@@ -59,6 +61,7 @@ private:
 
     InfoView* m_view;
     InfoModel* m_model;
+    QBasicTimer m_resetTimer;
     SelectionDisplay m_displayOption;
     int m_scrollPos;
 };

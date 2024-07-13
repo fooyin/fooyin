@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <QTreeView>
+#include <utils/widgets/expandedtreeview.h>
 
 namespace Fooyin {
-class InfoView : public QTreeView
+class InfoView : public ExpandedTreeView
 {
     Q_OBJECT
 
@@ -31,6 +31,5 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-    void drawBranches(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
 };
 } // namespace Fooyin
