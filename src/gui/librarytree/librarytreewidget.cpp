@@ -681,7 +681,6 @@ struct LibraryTreeWidget::Private
         }
 
         m_updating = true;
-        m_libraryTree->setUpdatesEnabled(false);
 
         const QModelIndexList selectedRows = m_libraryTree->selectionModel()->selectedRows();
         const QModelIndexList trackParents = m_model->indexesForTracks(tracks);
@@ -748,7 +747,6 @@ struct LibraryTreeWidget::Private
         }
 
         m_libraryTree->selectionModel()->select(indexesToSelect, QItemSelectionModel::ClearAndSelect);
-        m_libraryTree->setUpdatesEnabled(true);
         m_updating = false;
     }
 

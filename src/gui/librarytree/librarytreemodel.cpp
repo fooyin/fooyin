@@ -307,7 +307,7 @@ struct LibraryTreeModel::Private
                 auto* node = m_nodes.contains(row) ? &m_nodes.at(row) : nullptr;
 
                 if(node && node->pending() && !m_addedNodes.contains(row)) {
-                    if(!parent->pending() && !m_pendingNodes.contains(parentKey) && m_addedNodes.contains(parentKey)) {
+                    if(!parent->pending() && !m_pendingNodes.contains(parentKey) && parent->childCount() > 0) {
                         // Parent is expanded/visible
                         nodesToCheck.emplace(m_self->indexOfItem(parent));
                     }

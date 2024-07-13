@@ -384,7 +384,7 @@ struct LibraryScanner::Private
         return {};
     }
 
-    void updateExistingCueTracks(const TrackList& tracks, const QDir& dir, const QString& cue)
+    void updateExistingCueTracks(const TrackList& tracks, const QString& cue)
     {
         std::unordered_map<QString, Track> existingTrackPaths;
         for(const Track& track : tracks) {
@@ -397,13 +397,13 @@ struct LibraryScanner::Private
             if(existingTrackPaths.contains(track.uniqueFilepath())) {
                 track.setId(existingTrackPaths.at(track.uniqueFilepath()).id());
             }
-            setTrackProps(track, dir);
+            setTrackProps(track);
             m_tracksToUpdate.push_back(track);
             m_cueFilesScanned.emplace(track.filepath());
         }
     }
 
-    void addNewCueTracks(const QString& cue, const QDir& dir, const QString& filename)
+    void addNewCueTracks(const QString& cue, const QString& filename)
     {
         if(m_missingCueTracks.contains(filename)) {
             TrackList refoundCueTracks = m_missingCueTracks.at(cue);
@@ -416,14 +416,14 @@ struct LibraryScanner::Private
             const TrackList cueTracks = readPlaylistTracks(cue);
             for(const Track& cueTrack : cueTracks) {
                 Track track{cueTrack};
-                setTrackProps(track, dir);
+                setTrackProps(track);
                 m_tracksToStore.push_back(track);
                 m_cueFilesScanned.emplace(track.filepath());
             }
         }
     }
 
-    void readCue(const QString& cue, const QDir& baseDir, bool onlyModified)
+    void readCue(const QString& cue, bool onlyModified)
     {
         const QFileInfo info{cue};
         const QDateTime lastModifiedTime{info.lastModified()};
@@ -436,7 +436,7 @@ struct LibraryScanner::Private
         if(m_existingCueTracks.contains(cue)) {
             const auto& tracks = m_existingCueTracks.at(cue);
             if(tracks.front().modifiedTime() < lastModified || !onlyModified) {
-                updateExistingCueTracks(tracks, baseDir, cue);
+                updateExistingCueTracks(tracks, cue);
             }
             else {
                 for(const Track& track : tracks) {
@@ -445,31 +445,31 @@ struct LibraryScanner::Private
             }
         }
         else {
-            addNewCueTracks(cue, baseDir, info.fileName());
+            addNewCueTracks(cue, info.fileName());
         }
     }
 
-    void setTrackProps(Track& track, const QDir& dir)
+    void setTrackProps(Track& track)
     {
-        setTrackProps(track, dir, track.filepath());
+        setTrackProps(track, track.filepath());
     };
 
-    void setTrackProps(Track& track, const QDir& dir, const QString& file)
+    void setTrackProps(Track& track, const QString& file)
     {
         readFileProperties(track);
         track.setFilePath(file);
 
         if(m_currentLibrary.id >= 0) {
             track.setLibraryId(m_currentLibrary.id);
-            track.setRelativePath(dir.relativeFilePath(file));
+            track.setRelativePath(QDir{m_currentLibrary.path}.relativeFilePath(file));
         }
         track.generateHash();
         track.setIsEnabled(true);
     };
 
-    void updateExistingTrack(Track& track, const QDir& dir, const QString& file)
+    void updateExistingTrack(Track& track, const QString& file)
     {
-        setTrackProps(track, dir, file);
+        setTrackProps(track, file);
         m_missingFiles.erase(track.filename());
 
         if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
@@ -486,7 +486,7 @@ struct LibraryScanner::Private
                 if(existingTrackPaths.contains(cueTrack.uniqueFilepath())) {
                     cueTrack.setId(existingTrackPaths.at(cueTrack.uniqueFilepath()).id());
                 }
-                setTrackProps(cueTrack, dir, file);
+                setTrackProps(cueTrack, file);
                 m_tracksToUpdate.push_back(cueTrack);
                 m_missingHashes.erase(cueTrack.hash());
             }
@@ -497,7 +497,7 @@ struct LibraryScanner::Private
         }
     }
 
-    void readNewTrack(const QDir& dir, const QString& file)
+    void readNewTrack(const QString& file)
     {
         Track track{file};
         if(!readTrackMetadata(track)) {
@@ -509,17 +509,17 @@ struct LibraryScanner::Private
             m_missingHashes.erase(refoundTrack.hash());
             m_missingFiles.erase(refoundTrack.filename());
 
-            setTrackProps(refoundTrack, dir, file);
+            setTrackProps(refoundTrack, file);
             m_tracksToUpdate.push_back(refoundTrack);
         }
         else {
-            setTrackProps(track, dir, file);
+            setTrackProps(track, file);
             track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
             if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                 TrackList cueTracks = readEmbeddedPlaylistTracks(track);
                 for(Track& cueTrack : cueTracks) {
-                    setTrackProps(cueTrack, dir, file);
+                    setTrackProps(cueTrack, file);
                     m_tracksToStore.push_back(cueTrack);
                 }
             }
@@ -529,7 +529,7 @@ struct LibraryScanner::Private
         }
     }
 
-    void readFile(const QString& file, const QDir& baseDir, bool onlyModified)
+    void readFile(const QString& file, bool onlyModified)
     {
         if(!m_self->mayRun()) {
             return;
@@ -561,11 +561,11 @@ struct LibraryScanner::Private
                     changedTrack.setModifiedTime(lastModified);
                 }
 
-                updateExistingTrack(changedTrack, baseDir, file);
+                updateExistingTrack(changedTrack, file);
             }
         }
         else {
-            readNewTrack(baseDir, file);
+            readNewTrack(file);
         }
     }
 
@@ -590,9 +590,7 @@ struct LibraryScanner::Private
 
         reportProgress();
 
-        const QDir baseDir{path};
-        const auto dirs = getDirectories(path, Utils::extensionsToWildcards(m_tagLoader->supportedFileExtensions()));
-
+        const auto dirs   = getDirectories(path, Utils::extensionsToWildcards(m_tagLoader->supportedFileExtensions()));
         m_tracksProcessed = 0;
         m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
             return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
@@ -604,7 +602,7 @@ struct LibraryScanner::Private
                     return false;
                 }
 
-                readCue(cue, baseDir, onlyModified);
+                readCue(cue, onlyModified);
 
                 fileScanned();
             }
@@ -614,7 +612,7 @@ struct LibraryScanner::Private
                     return false;
                 }
 
-                readFile(file, baseDir, onlyModified);
+                readFile(file, onlyModified);
 
                 fileScanned();
                 checkBatchFinished();
