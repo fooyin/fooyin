@@ -73,9 +73,9 @@ struct QueueViewer::Private
         , m_model{new QueueViewerModel(std::move(tagLoader), settings, m_self)}
         , m_context{new WidgetContext(m_self, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())},
                                       m_self)}
-        , m_remove{new QAction(tr("Remove"))}
+        , m_remove{new QAction(tr("Remove"), m_self)}
         , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
-        , m_clear{new QAction(tr("&Clear"))}
+        , m_clear{new QAction(tr("&Clear"), m_self)}
         , m_clearCmd{actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context())}
     {
         auto* layout = new QVBoxLayout(m_self);
