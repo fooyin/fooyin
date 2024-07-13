@@ -38,8 +38,9 @@ class InfoWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    explicit InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
-                        SettingsManager* settings, QWidget* parent = nullptr);
+    explicit InfoWidget(const TrackList& tracks, QWidget* parent = nullptr);
+    InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
+               SettingsManager* settings, QWidget* parent = nullptr);
     ~InfoWidget() override;
 
     [[nodiscard]] QString name() const override;

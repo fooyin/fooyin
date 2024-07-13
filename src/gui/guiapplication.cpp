@@ -356,8 +356,8 @@ struct GuiApplication::Private
                          [this]() { updateWindowTitle(); });
         QObject::connect(&selectionController, &TrackSelectionController::actionExecuted, playlistController.get(),
                          &PlaylistController::handleTrackSelectionAction);
-        QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, propertiesDialog,
-                         &PropertiesDialog::show);
+        QObject::connect(&selectionController, &TrackSelectionController::requestPropertiesDialog, self,
+                         [this]() { showPropertiesDialog(); });
         QObject::connect(fileMenu, &FileMenu::requestNewPlaylist, self, [this]() {
             if(auto* playlist = core.playlistHandler->createEmptyPlaylist()) {
                 playlistController->changeCurrentPlaylist(playlist);
@@ -726,10 +726,17 @@ struct GuiApplication::Private
         widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
     }
 
-    void createPropertiesTabs()
+    void createPropertiesTabs() const
     {
-        propertiesDialog->addTab(
-            tr("Details"), [this]() { return new InfoWidget(core.playerController, &selectionController, settings); });
+        propertiesDialog->addTab(tr("Details"), [](const TrackList& tracks) { return new InfoWidget(tracks); });
+    }
+
+    void showPropertiesDialog() const
+    {
+        const auto tracks = selectionController.selectedTracks();
+        if(!tracks.empty()) {
+            propertiesDialog->show(tracks);
+        }
     }
 
     void showEngineError(const QString& error) const

@@ -37,6 +37,30 @@
 #include <QScrollBar>
 
 namespace Fooyin {
+InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
+    : PropertiesTabWidget{parent}
+    , m_selectionController{nullptr}
+    , m_playerController{nullptr}
+    , m_settings{nullptr}
+    , m_view{new InfoView(this)}
+    , m_model{new InfoModel(this)}
+    , m_displayOption{SelectionDisplay::PreferSelection}
+    , m_scrollPos{-1}
+{
+    setObjectName(InfoWidget::name());
+
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins({});
+    layout->addWidget(m_view);
+
+    m_view->setItemDelegate(new ItemDelegate(this));
+    m_view->setModel(m_model);
+
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
+
+    m_model->resetModel(tracks);
+}
+
 InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                        SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
@@ -52,11 +76,10 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
+    layout->addWidget(m_view);
 
     m_view->setItemDelegate(new ItemDelegate(this));
     m_view->setModel(m_model);
-
-    layout->addWidget(m_view);
 
     m_view->setHeaderHidden(!settings->value<Settings::Gui::Internal::InfoHeader>());
     m_view->setVerticalScrollBarPolicy(
@@ -111,6 +134,10 @@ void InfoWidget::loadLayoutData(const QJsonObject& layout)
 
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 {
+    if(!m_settings) {
+        return;
+    }
+
     using namespace Settings::Gui::Internal;
 
     auto* menu = new QMenu(this);
@@ -184,6 +211,10 @@ void InfoWidget::timerEvent(QTimerEvent* event)
 
 void InfoWidget::resetModel()
 {
+    if(!m_playerController || !m_selectionController) {
+        return;
+    }
+
     m_scrollPos = m_view->verticalScrollBar()->value();
 
     const Track currentTrack = m_playerController->currentTrack();

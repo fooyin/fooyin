@@ -47,14 +47,9 @@ QString PropertiesTab::title() const
     return m_title;
 }
 
-PropertiesTabWidget* PropertiesTab::widget()
+WidgetBuilder PropertiesTab::builder() const
 {
-    if(!m_widget) {
-        if(m_widgetBuilder) {
-            m_widget = m_widgetBuilder();
-        }
-    }
-    return m_widget;
+    return m_widgetBuilder;
 }
 
 bool PropertiesTab::hasVisited() const
@@ -93,7 +88,7 @@ class PropertiesDialogWidget : public QDialog
     Q_OBJECT
 
 public:
-    explicit PropertiesDialogWidget(PropertiesDialog::TabList tabs);
+    explicit PropertiesDialogWidget(TrackList tracks, PropertiesDialog::TabList tabs);
 
     void saveState(SettingsManager* settings)
     {
@@ -120,10 +115,12 @@ private:
     void currentTabChanged(int index);
 
     PropertiesDialog::TabList m_tabs;
+    TrackList m_tracks;
 };
 
-PropertiesDialogWidget::PropertiesDialogWidget(PropertiesDialog::TabList tabs)
+PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialog::TabList tabs)
     : m_tabs{std::move(tabs)}
+    , m_tracks{std::move(tracks)}
 {
     auto* layout = new QGridLayout(this);
     layout->setContentsMargins(0, 0, 0, 5);
@@ -143,8 +140,8 @@ PropertiesDialogWidget::PropertiesDialogWidget(PropertiesDialog::TabList tabs)
 
     QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &PropertiesDialogWidget::currentTabChanged);
 
-    for(PropertiesTab& tab : m_tabs) {
-        tabWidget->insertTab(tab.index(), tab.widget(), tab.title());
+    for(const auto& tab : m_tabs) {
+        tabWidget->insertTab(tab.index(), tab.builder()(m_tracks), tab.title());
     }
 
     layout->addWidget(tabWidget, 0, 0);
@@ -195,7 +192,12 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     auto tabIt = std::ranges::find_if(m_tabs, [index](const PropertiesTab& tab) { return tab.index() == index; });
     if(tabIt != m_tabs.cend()) {
         tabIt->setVisited(true);
-        setWindowTitle(tr("Properties") + QStringLiteral(": ") + tabIt->title());
+        const Track firstTrack = m_tracks.front();
+        const QString title    = !firstTrack.title().isEmpty() ? firstTrack.title() : firstTrack.filename();
+        const QString subtitle = m_tracks.size() == 1
+                                   ? QStringLiteral(" (%1): %2").arg(title, tabIt->title())
+                                   : QStringLiteral(" (%1 tracks): %2").arg(m_tracks.size()).arg(tabIt->title());
+        setWindowTitle(tr("Properties") + subtitle);
     }
 }
 
@@ -233,9 +235,9 @@ void PropertiesDialog::insertTab(int index, const QString& title, const WidgetBu
     }
 }
 
-void PropertiesDialog::show()
+void PropertiesDialog::show(const TrackList& tracks)
 {
-    auto* dialog = new PropertiesDialogWidget(m_tabs);
+    auto* dialog = new PropertiesDialogWidget(tracks, m_tabs);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
     QObject::connect(dialog, &QDialog::finished, this, [this, dialog]() { dialog->saveState(m_settings); });

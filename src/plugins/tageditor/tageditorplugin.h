@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/track.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
@@ -40,7 +41,7 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    TagEditorWidget* createEditor();
+    TagEditorWidget* createEditor(const TrackList& tracks);
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;

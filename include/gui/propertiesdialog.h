@@ -21,6 +21,7 @@
 
 #include "fygui_export.h"
 
+#include <core/track.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
@@ -35,10 +36,10 @@ public:
         : FyWidget{parent}
     { }
 
-    virtual void apply(){};
+    virtual void apply() {};
 };
 
-using WidgetBuilder = std::function<PropertiesTabWidget*()>;
+using WidgetBuilder = std::function<PropertiesTabWidget*(const TrackList& tracks)>;
 
 class PropertiesTab
 {
@@ -48,7 +49,7 @@ public:
 
     [[nodiscard]] int index() const;
     [[nodiscard]] QString title() const;
-    PropertiesTabWidget* widget();
+    [[nodiscard]] WidgetBuilder builder() const;
     [[nodiscard]] bool hasVisited() const;
 
     void updateIndex(int index);
@@ -79,7 +80,7 @@ public:
     void addTab(const PropertiesTab& tab);
     void insertTab(int index, const QString& title, const WidgetBuilder& widgetBuilder);
 
-    void show();
+    void show(const TrackList& tracks);
 
 private:
     SettingsManager* m_settings;
