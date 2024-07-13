@@ -1069,11 +1069,13 @@ void PlaylistWidgetPrivate::doubleClicked(const QModelIndex& index) const
     }
 }
 
-void PlaylistWidgetPrivate::middleClicked(const QModelIndex& index) const
+void PlaylistWidgetPrivate::middleClicked(const QModelIndex& /*index*/) const
 {
-    if(index.isValid()) {
-        queueSelectedTracks(m_middleClickAction == TrackAction::SendToQueue);
+    if(m_middleClickAction == TrackAction::None) {
+        return;
     }
+
+    queueSelectedTracks(m_middleClickAction == TrackAction::SendToQueue);
 }
 
 void PlaylistWidgetPrivate::followCurrentTrack() const
