@@ -46,7 +46,7 @@ enum class TrackAction
 };
 
 namespace PlaylistAction {
-enum ActionOption
+enum ActionOption : uint8_t
 {
     None          = 1 << 0,
     Switch        = 1 << 1,
@@ -72,6 +72,7 @@ public:
     [[nodiscard]] int selectedTrackCount() const;
     void changeSelectedTracks(WidgetContext* context, int index, const TrackList& tracks);
     void changeSelectedTracks(WidgetContext* context, const TrackList& tracks);
+    void changeSelectedTracks(const TrackList& tracks);
     void changePlaybackOnSend(WidgetContext* context, bool enabled);
 
     void addTrackContextMenu(QMenu* menu) const;

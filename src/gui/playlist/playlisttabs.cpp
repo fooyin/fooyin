@@ -173,7 +173,7 @@ struct PlaylistTabs::Private
         }
 
         const int count = m_tabs->tabBar()->count();
-        const UId id  = playlist->id();
+        const UId id    = playlist->id();
 
         for(int i{0}; i < count; ++i) {
             if(m_tabs->tabBar()->tabData(i).value<UId>() == id) {
@@ -220,7 +220,7 @@ struct PlaylistTabs::Private
         }
 
         const int count = m_tabs->tabBar()->count();
-        const UId id  = playlist->id();
+        const UId id    = playlist->id();
 
         for(int i{0}; i < count; ++i) {
             const auto tabId = m_tabs->tabBar()->tabData(i).value<UId>();
@@ -419,7 +419,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         menu->addSeparator();
 
-        const Id id = tabBar->tabData(index).value<Id>();
+        const auto id = tabBar->tabData(index).value<UId>();
 
         auto* moveLeft = new QAction(tr("Move Left"), menu);
         moveLeft->setEnabled(index > 0);
@@ -438,6 +438,21 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         if(auto* savePlaylist = p->m_actionManager->command(Constants::Actions::SavePlaylist)) {
             menu->addAction(savePlaylist->action());
+        }
+
+        menu->addSeparator();
+
+        if(const auto* playlist = p->m_playlistHandler->playlistById(id)) {
+            if(playlist->trackCount() > 0) {
+                p->m_selectionController->changeSelectedTracks(playlist->tracks());
+
+                auto* selectionMenu = new QMenu(tr("%1 contents").arg(playlist->name()), menu);
+                p->m_selectionController->addTrackContextMenu(selectionMenu);
+                menu->addMenu(selectionMenu);
+
+                QObject::connect(menu, &QObject::destroyed, this,
+                                 [this]() { p->m_selectionController->changeSelectedTracks({}); });
+            }
         }
     }
 
