@@ -165,7 +165,7 @@ bool AlsaOutput::init(const AudioFormat& format)
 
 void AlsaOutput::uninit()
 {
-    reset();
+    resetAlsa();
     m_initialised = false;
 }
 
