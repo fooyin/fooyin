@@ -24,10 +24,10 @@
 #include <gui/widgetcontainer.h>
 
 #include <QBasicTimer>
+#include <QIcon>
 #include <QPointer>
 
 class QHBoxLayout;
-class QIcon;
 class QVBoxLayout;
 
 namespace Fooyin {
