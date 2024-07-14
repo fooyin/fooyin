@@ -1506,12 +1506,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="102"/>
         <source>Raise</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить объем</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="103"/>
         <source>Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить отступы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
