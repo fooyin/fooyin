@@ -1481,8 +1481,7 @@ QVariant PlaylistModel::headerData(PlaylistItem* item, int column, int role) con
             if(m_currentPreset.header.simple || !m_currentPreset.header.showCover) {
                 return {};
             }
-            return m_coverProvider->trackCoverThumbnail(header.tracks().front(), CoverProvider::Large,
-                                                        Track::Cover::Front);
+            return m_coverProvider->trackCoverThumbnail(header.tracks().front(), header.size(), Track::Cover::Front);
         }
         default:
             break;

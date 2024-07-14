@@ -68,7 +68,8 @@ public:
         auto* leftScript  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
         auto* rightScript = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
-        m_rowHeight->setMinimum(1);
+        m_rowHeight->setMinimum(20);
+        m_rowHeight->setMaximum(150);
 
         groupLayout->addWidget(m_overrideHeight, 0, 0);
         groupLayout->addWidget(m_rowHeight, 0, 1);
@@ -251,7 +252,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     auto* headerSide     = new QLabel(tr("Side") + QStringLiteral(":"), this);
     auto* headerInfo     = new QLabel(tr("Info") + QStringLiteral(":"), this);
 
-    m_headerRowHeight->setMinimum(1);
+    m_headerRowHeight->setMinimum(50);
+    m_headerRowHeight->setMaximum(300);
 
     int row{0};
     headerLayout->addWidget(m_simpleHeader, row++, 0, 1, 2);
@@ -294,7 +296,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     auto* trackLeft  = new QLabel(tr("Left-aligned") + QStringLiteral(":"), this);
     auto* TrackRight = new QLabel(tr("Right-aligned") + QStringLiteral(":"), this);
 
-    m_trackRowHeight->setMinimum(1);
+    m_trackRowHeight->setMinimum(20);
+    m_trackRowHeight->setMaximum(150);
 
     trackLayout->addWidget(m_overrideTrackHeight, 0, 0);
     trackLayout->addWidget(m_trackRowHeight, 0, 1);
@@ -322,10 +325,8 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
         m_headerInfo->setEnabled(!checked);
     });
 
-    QObject::connect(m_overrideHeaderHeight, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_headerRowHeight->setEnabled(checked); });
-    QObject::connect(m_overrideTrackHeight, &QCheckBox::toggled, this,
-                     [this](bool checked) { m_trackRowHeight->setEnabled(checked); });
+    QObject::connect(m_overrideHeaderHeight, &QCheckBox::toggled, m_headerRowHeight, &QSpinBox::setEnabled);
+    QObject::connect(m_overrideTrackHeight, &QCheckBox::toggled, m_trackRowHeight, &QSpinBox::setEnabled);
 }
 
 void PlaylistPresetsPageWidget::load()
