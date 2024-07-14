@@ -506,7 +506,7 @@
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="34"/>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкладка</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="71"/>
@@ -718,7 +718,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
@@ -741,13 +741,13 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="87"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить группу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="97"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="292"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить группы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="149"/>
@@ -768,17 +768,17 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="283"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить новую группу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="311"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Назад</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="328"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Завершить</translation>
     </message>
 </context>
 <context>
@@ -805,7 +805,7 @@
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="289"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="388"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Столбцы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="290"/>
@@ -850,12 +850,12 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="439"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Еще…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="454"/>
         <source>Manage Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление группами</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="606"/>
@@ -873,17 +873,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="162"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="164"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="166"/>
         <source>Sort Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Поле для сортировки</translation>
     </message>
 </context>
 <context>
@@ -891,12 +891,12 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="108"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Столбцы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Плагины</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="109"/>
@@ -967,7 +967,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="88"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="90"/>
@@ -1206,7 +1206,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="282"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Без некоторых плагинов функциональность будет ограничена.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="283"/>
@@ -1316,7 +1316,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="579"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Библиотека</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="584"/>
@@ -1344,7 +1344,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="600"/>
         <source>Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель перемотки</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="608"/>
@@ -1374,12 +1374,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="645"/>
         <source>Status Bar</source>
-        <translation>Строка статуса</translation>
+        <translation>Панель статуса</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="650"/>
         <source>Search Bar</source>
-        <translation>Строка поиска</translation>
+        <translation>Панель поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="664"/>
@@ -1409,7 +1409,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="730"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="734"/>
@@ -1419,18 +1419,18 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="758"/>
         <source>All Supported Media Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Все поддерживаемые медиафайлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="759"/>
         <source>Audio Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Аудио файлы (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="760"/>
         <location filename="../../src/gui/guiapplication.cpp" line="807"/>
         <source>Playlists (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Плейлисты (%1)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="771"/>
@@ -1642,7 +1642,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="106"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="109"/>
@@ -1692,7 +1692,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="133"/>
         <source>Added</source>
-        <translation type="unfinished"></translation>
+        <translation>Время добавления</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="141"/>
@@ -1774,7 +1774,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="113"/>
         <source>Monitor libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Отслеживание изменений в библиотеках</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="125"/>
@@ -1797,12 +1797,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="43"/>
         <source>&amp;Refresh Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить библиотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="48"/>
         <source>Re&amp;scan Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>Пересканировать библиотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="52"/>
@@ -1865,7 +1865,7 @@
     <message>
         <location filename="../../src/gui/settings/library/librarygeneralpage.cpp" line="71"/>
         <source>Rescan</source>
-        <translation type="unfinished"></translation>
+        <translation>Пересканировать</translation>
     </message>
 </context>
 <context>
@@ -1883,7 +1883,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Группировка</translation>
     </message>
 </context>
 <context>
@@ -1891,7 +1891,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="106"/>
         <source>Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Группировка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
@@ -1901,7 +1901,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="107"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Библиотека</translation>
     </message>
 </context>
 <context>
@@ -1919,7 +1919,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreegroupregistry.cpp" line="42"/>
         <source>Folder Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>Дерево папок</translation>
     </message>
 </context>
 <context>
@@ -1927,7 +1927,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="457"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Библиотека</translation>
     </message>
 </context>
 <context>
@@ -1945,7 +1945,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="286"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Библиотека</translation>
     </message>
 </context>
 <context>
@@ -2127,7 +2127,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="810"/>
         <source>Library Tree</source>
-        <translation type="unfinished"></translation>
+        <translation>Библиотека</translation>
     </message>
 </context>
 <context>
@@ -2259,7 +2259,7 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="72"/>
         <source>When opening files, always send to playlist, replacing all existing tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>При открытии файлов содержимое плейлиста будет заменено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="74"/>
@@ -2269,7 +2269,7 @@
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="82"/>
         <source>External files</source>
-        <translation type="unfinished"></translation>
+        <translation>Произвольные файлы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playbackpage.cpp" line="85"/>
@@ -2315,7 +2315,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="66"/>
         <source>Icon</source>
-        <translation>Иконка</translation>
+        <translation>Обложка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="70"/>
@@ -2628,12 +2628,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="173"/>
         <source>Add to playback queue</source>
-        <translation>Добавить в очередь проигрывания</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="174"/>
         <source>Send to playback queue</source>
-        <translation>Отправить в очередь проигрывания</translation>
+        <translation>Отправить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="114"/>
@@ -2943,7 +2943,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="172"/>
         <source>Add to Playback Queue</source>
-        <translation>Добавить в очередь проигрывания</translation>
+        <translation>Добавить в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="173"/>
@@ -3179,7 +3179,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="73"/>
         <source>Search Bar</source>
-        <translation>Строка поиска</translation>
+        <translation>Панель поиска</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="158"/>
@@ -3347,7 +3347,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="202"/>
         <source>Status Bar</source>
-        <translation>Строка статуса</translation>
+        <translation>Панель статуса</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="220"/>
