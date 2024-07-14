@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class EditableTabBar;
+class SingleTabbedWidgetPrivate;
 
 class FYUTILS_EXPORT SingleTabbedWidget : public QWidget
 {
@@ -119,7 +120,6 @@ protected:
     bool event(QEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<SingleTabbedWidgetPrivate> p;
 };
 } // namespace Fooyin

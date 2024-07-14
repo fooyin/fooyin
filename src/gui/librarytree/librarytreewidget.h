@@ -25,6 +25,7 @@ namespace Fooyin {
 class ActionManager;
 struct CorePluginContext;
 class LibraryTreeController;
+class LibraryTreeWidgetPrivate;
 class MusicLibrary;
 class PlaylistController;
 class SettingsManager;
@@ -50,7 +51,6 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryTreeWidgetPrivate> p;
 };
 } // namespace Fooyin

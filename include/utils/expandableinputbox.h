@@ -26,12 +26,15 @@
 class QLineEdit;
 
 namespace Fooyin {
+class ExpandableInputPrivate;
+class ExpandableInputBoxPrivate;
+
 class FYUTILS_EXPORT ExpandableInput : public QWidget
 {
     Q_OBJECT
 
 public:
-    enum Attribute
+    enum Attribute : uint8_t
     {
         None         = 0,
         CustomWidget = 1 << 0,
@@ -57,8 +60,7 @@ signals:
     void textChanged(const QString& text);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ExpandableInputPrivate> p;
 };
 using ExpandableInputList = std::vector<ExpandableInput*>;
 
@@ -93,8 +95,7 @@ signals:
     void blockDeleted(const QString& text);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ExpandableInputBoxPrivate> p;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ExpandableInput::Attributes)

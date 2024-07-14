@@ -30,13 +30,14 @@
 constexpr auto MaxStarCount = 5; // TODO: Support 10/half stars
 
 namespace Fooyin {
-struct Track::Private : public QSharedData
+class TrackPrivate : public QSharedData
 {
+public:
     int libraryId{-1};
     bool enabled{true};
     int id{-1};
     QString hash;
-    Type type{0};
+    Track::Type type{0};
     QString filepath;
     QString relativePath;
     QString directory;
@@ -56,7 +57,7 @@ struct Track::Private : public QSharedData
     QString comment;
     QString date;
     int year{-1};
-    ExtraTags extraTags;
+    Track::ExtraTags extraTags;
     QStringList removedTags;
 
     QString cuePath;
@@ -86,7 +87,7 @@ Track::Track()
 { }
 
 Track::Track(const QString& filepath)
-    : p{new Private()}
+    : p{new TrackPrivate()}
 {
     setFilePath(filepath);
 }

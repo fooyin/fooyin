@@ -21,7 +21,10 @@
 
 #include <core/engine/audiooutput.h>
 
+#include <QBasicTimer>
 #include <QObject>
+
+#include <queue>
 
 namespace Fooyin {
 class AudioBuffer;
@@ -63,7 +66,45 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void resetBuffer();
+    void resetFade(int length);
+
+    [[nodiscard]] bool canWrite() const;
+
+    bool initOutput();
+
+    [[nodiscard]] bool validOutputState() const;
+    void handleStateChanged(AudioOutput::State state);
+    void updateOutputVolume(double newVolume);
+    void updateInterval();
+
+    void pause();
+    void writeNext();
+    int writeAudioSamples(int samples);
+    int renderAudio(int samples);
+
+    std::unique_ptr<AudioOutput> m_audioOutput;
+    AudioFormat m_format;
+    double m_volume;
+    int m_bufferSize;
+    bool m_bufferPrefilled;
+
+    std::queue<AudioBuffer> m_bufferQueue;
+    AudioBuffer m_tempBuffer;
+    int m_totalSamplesWritten;
+    int m_currentBufferOffset;
+
+    bool m_isRunning;
+    QString m_lastDeviceError;
+
+    QBasicTimer m_writeTimer;
+    int m_writeInterval;
+
+    QBasicTimer m_fadeTimer;
+    int m_fadeLength;
+    int m_fadeSteps;
+    int m_currentFadeStep;
+    double m_volumeChange;
+    double m_initialVolume;
 };
 } // namespace Fooyin

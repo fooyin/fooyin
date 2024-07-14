@@ -28,6 +28,7 @@
 
 namespace Fooyin {
 class PlayerController;
+class ScriptRegistryPrivate;
 
 class FYCORE_EXPORT ScriptRegistry
 {
@@ -61,7 +62,6 @@ protected:
     static ScriptResult calculateResult(FuncRet funcRet);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ScriptRegistryPrivate> p;
 };
 } // namespace Fooyin

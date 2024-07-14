@@ -24,12 +24,14 @@
 #include <QHeaderView>
 
 namespace Fooyin {
+class AutoHeaderViewPrivate;
+
 class FYUTILS_EXPORT AutoHeaderView : public QHeaderView
 {
     Q_OBJECT
 
 public:
-    enum Role
+    enum Role : uint16_t
     {
         SectionAlignment = Qt::UserRole + 100
     };
@@ -72,7 +74,6 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<AutoHeaderViewPrivate> p;
 };
 } // namespace Fooyin

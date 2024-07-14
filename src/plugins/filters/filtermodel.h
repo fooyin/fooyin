@@ -33,7 +33,7 @@ class CoverProvider;
 class SettingsManager;
 
 namespace Filters {
-struct FilterOptions;
+class FilterModelPrivate;
 
 class FilterSortModel : public QSortFilterProxyModel
 {
@@ -98,9 +98,11 @@ public:
 signals:
     void modelUpdated();
 
+protected:
+    friend class FilterModelPrivate;
+
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<FilterModelPrivate> p;
 };
 } // namespace Filters
 } // namespace Fooyin

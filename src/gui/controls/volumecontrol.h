@@ -26,6 +26,7 @@ class QWheelEvent;
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
+class VolumeControlPrivate;
 
 class VolumeControl : public FyWidget
 {
@@ -45,7 +46,6 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<VolumeControlPrivate> p;
 };
 } // namespace Fooyin

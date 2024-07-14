@@ -24,8 +24,13 @@
 
 namespace Fooyin {
 class ActionManager;
+class Command;
+class PlayerController;
 class PlaylistInteractor;
+class QueueViewerModel;
+class QueueViewerView;
 class SettingsManager;
+class WidgetContext;
 
 class QueueViewer : public FyWidget
 {
@@ -34,7 +39,6 @@ class QueueViewer : public FyWidget
 public:
     explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent = nullptr);
-    ~QueueViewer() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
@@ -43,7 +47,31 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void setupActions();
+    void setupConnections();
+
+    void resetModel() const;
+
+    void handleRowsChanged() const;
+    void removeSelectedTracks() const;
+    void handleTracksDropped(int row, const QByteArray& mimeData) const;
+    void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const;
+    void handleQueueChanged();
+
+    ActionManager* m_actionManager;
+    PlaylistInteractor* m_playlistInteractor;
+    PlayerController* m_playerController;
+    SettingsManager* m_settings;
+
+    QueueViewerView* m_view;
+    QueueViewerModel* m_model;
+    WidgetContext* m_context;
+    bool m_changingQueue{false};
+
+    QAction* m_remove;
+    Command* m_removeCmd;
+
+    QAction* m_clear;
+    Command* m_clearCmd;
 };
 } // namespace Fooyin

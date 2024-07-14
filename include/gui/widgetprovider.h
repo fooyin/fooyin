@@ -34,6 +34,7 @@ class EditableLayout;
 class Id;
 class FyWidget;
 class WidgetContainer;
+class WidgetProviderPrivate;
 
 /*!
  * Handles registration of FyWidgets.
@@ -101,7 +102,6 @@ public:
     void setupSplitWidgetMenu(EditableLayout* layout, QMenu* menu, WidgetContainer* container, const Id& widgetId);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<WidgetProviderPrivate> p;
 };
 } // namespace Fooyin

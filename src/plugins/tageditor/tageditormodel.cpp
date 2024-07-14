@@ -37,8 +37,29 @@ struct EditorPair
     std::function<QString(const Track&)> metadata;
 };
 
-struct TagEditorModel::Private
+class TagEditorModelPrivate
 {
+public:
+    explicit TagEditorModelPrivate(TagEditorModel* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
+    { }
+
+    bool hasCustomTagConflict(TagEditorItem* item, const QString& title) const;
+    bool isDefaultField(const QString& name) const;
+    QString findSetField(const QString& name);
+
+    void reset();
+
+    void updateFields();
+    void updateEditorValues();
+
+    void updateTrackMetadata(const QString& name, const QVariant& value);
+
+    void addCustomTrackMetadata(const QString& name, const QString& value);
+    void replaceCustomTrackMetadata(const QString& name, const QString& value);
+    void removeCustomTrackMetadata(const QString& name);
+
     TagEditorModel* m_self;
 
     SettingsManager* m_settings;
@@ -97,178 +118,173 @@ struct TagEditorModel::Private
     TagEditorItem m_root;
     TagFieldMap m_tags;
     TagFieldMap m_customTags;
+};
 
-    explicit Private(TagEditorModel* self, SettingsManager* settings)
-        : m_self{self}
-        , m_settings{settings}
-    { }
-
-    bool hasCustomTagConflict(TagEditorItem* item, const QString& title) const
-    {
-        for(const auto& [_, tag] : m_customTags) {
-            if(item != &tag) {
-                if(tag.title() == title || tag.changedTitle() == title) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    bool isDefaultField(const QString& name) const
-    {
-        return std::ranges::any_of(std::as_const(m_fields),
-                                   [name](const EditorPair& pair) { return pair.displayName == name; });
-    }
-
-    QString findSetField(const QString& name)
-    {
-        if(!m_setFields.contains(name)) {
-            return {};
-        }
-        return m_setFields.at(name);
-    }
-
-    void reset()
-    {
-        m_root = {};
-        m_tags.clear();
-        m_customTags.clear();
-    }
-
-    void updateFields()
-    {
-        for(const Track& track : m_tracks) {
-            const auto trackTags = track.extraTags();
-
-            for(const auto& [field, values] : Utils::asRange(trackTags)) {
-                if(values.empty()) {
-                    continue;
-                }
-
-                if(!m_customTags.contains(field)) {
-                    auto* item = &m_customTags.emplace(field, TagEditorItem{field, &m_root, false}).first->second;
-                    m_root.appendChild(item);
-                }
-
-                auto* fieldItem = &m_customTags.at(field);
-                fieldItem->addTrackValue(values);
-            }
-        }
-
-        updateEditorValues();
-    }
-
-    void updateEditorValues()
-    {
-        if(m_tracks.empty()) {
-            return;
-        }
-
-        for(const auto& track : m_tracks) {
-            for(const auto& [field, var] : m_fields) {
-                const auto result = var(track);
-                if(result.contains(u"\037")) {
-                    m_tags[field].addTrackValue(result.split(QStringLiteral("\037")));
-                }
-                else {
-                    m_tags[field].addTrackValue(result);
-                }
-            }
-
-            for(auto& [field, node] : m_customTags) {
-                const auto result = m_scriptRegistry.value(field, track);
-                if(!result.cond) {
-                    node.addTrack();
-                }
+bool TagEditorModelPrivate::hasCustomTagConflict(TagEditorItem* item, const QString& title) const
+{
+    for(const auto& [_, tag] : m_customTags) {
+        if(item != &tag) {
+            if(tag.title() == title || tag.changedTitle() == title) {
+                return true;
             }
         }
     }
+    return false;
+}
 
-    void updateTrackMetadata(const QString& name, const QVariant& value)
-    {
-        if(m_tracks.empty()) {
-            return;
-        }
+bool TagEditorModelPrivate::isDefaultField(const QString& name) const
+{
+    return std::ranges::any_of(std::as_const(m_fields),
+                               [name](const EditorPair& pair) { return pair.displayName == name; });
+}
 
-        const QString metadata = findSetField(name);
-        const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
-                             || metadata == QLatin1String{Constants::MetaData::Artist}
-                             || metadata == QLatin1String{Constants::MetaData::Genre});
-        const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
-                                || metadata == QLatin1String{Constants::MetaData::TrackTotal}
-                                || metadata == QLatin1String{Constants::MetaData::Disc}
-                                || metadata == QLatin1String{Constants::MetaData::DiscTotal}
-                                || metadata == QLatin1String{Constants::MetaData::Rating});
+QString TagEditorModelPrivate::findSetField(const QString& name)
+{
+    if(!m_setFields.contains(name)) {
+        return {};
+    }
+    return m_setFields.at(name);
+}
 
-        QStringList listValue;
-        int intValue{-1};
-        bool intValueIsValid{false};
+void TagEditorModelPrivate::reset()
+{
+    m_root = {};
+    m_tags.clear();
+    m_customTags.clear();
+}
 
-        if(isList) {
-            listValue = value.toString().split(u';', Qt::SkipEmptyParts);
-            std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
-        }
-        else if(isNumeric) {
-            intValue = value.toInt(&intValueIsValid);
-            if(!intValueIsValid) {
-                intValue = -1;
-            }
-        }
+void TagEditorModelPrivate::updateFields()
+{
+    for(const Track& track : m_tracks) {
+        const auto trackTags = track.extraTags();
 
-        for(Track& track : m_tracks) {
-            if(track.hasCue()) {
+        for(const auto& [field, values] : Utils::asRange(trackTags)) {
+            if(values.empty()) {
                 continue;
             }
-            if(isList) {
-                m_scriptRegistry.setValue(metadata, listValue, track);
+
+            if(!m_customTags.contains(field)) {
+                auto* item = &m_customTags.emplace(field, TagEditorItem{field, &m_root, false}).first->second;
+                m_root.appendChild(item);
             }
-            else if(isNumeric) {
-                m_scriptRegistry.setValue(metadata, intValue, track);
+
+            auto* fieldItem = &m_customTags.at(field);
+            fieldItem->addTrackValue(values);
+        }
+    }
+
+    updateEditorValues();
+}
+
+void TagEditorModelPrivate::updateEditorValues()
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    for(const auto& track : m_tracks) {
+        for(const auto& [field, var] : m_fields) {
+            const auto result = var(track);
+            if(result.contains(u"\037")) {
+                m_tags[field].addTrackValue(result.split(QStringLiteral("\037")));
             }
             else {
-                m_scriptRegistry.setValue(metadata, value.toString(), track);
+                m_tags[field].addTrackValue(result);
+            }
+        }
+
+        for(auto& [field, node] : m_customTags) {
+            const auto result = m_scriptRegistry.value(field, track);
+            if(!result.cond) {
+                node.addTrack();
             }
         }
     }
+}
 
-    void addCustomTrackMetadata(const QString& name, const QString& value)
-    {
-        if(m_tracks.empty()) {
-            return;
-        }
+void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVariant& value)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
 
-        for(Track& track : m_tracks) {
-            track.addExtraTag(name, value);
+    const QString metadata = findSetField(name);
+    const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
+                         || metadata == QLatin1String{Constants::MetaData::Artist}
+                         || metadata == QLatin1String{Constants::MetaData::Genre});
+    const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
+                            || metadata == QLatin1String{Constants::MetaData::TrackTotal}
+                            || metadata == QLatin1String{Constants::MetaData::Disc}
+                            || metadata == QLatin1String{Constants::MetaData::DiscTotal}
+                            || metadata == QLatin1String{Constants::MetaData::Rating});
+
+    QStringList listValue;
+    int intValue{-1};
+    bool intValueIsValid{false};
+
+    if(isList) {
+        listValue = value.toString().split(u';', Qt::SkipEmptyParts);
+        std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
+    }
+    else if(isNumeric) {
+        intValue = value.toInt(&intValueIsValid);
+        if(!intValueIsValid) {
+            intValue = -1;
         }
     }
 
-    void replaceCustomTrackMetadata(const QString& name, const QString& value)
-    {
-        if(m_tracks.empty()) {
-            return;
+    for(Track& track : m_tracks) {
+        if(track.hasCue()) {
+            continue;
         }
-
-        for(Track& track : m_tracks) {
-            track.replaceExtraTag(name, value);
+        if(isList) {
+            m_scriptRegistry.setValue(metadata, listValue, track);
         }
-    }
-
-    void removeCustomTrackMetadata(const QString& name)
-    {
-        if(m_tracks.empty()) {
-            return;
+        else if(isNumeric) {
+            m_scriptRegistry.setValue(metadata, intValue, track);
         }
-
-        for(Track& track : m_tracks) {
-            track.removeExtraTag(name);
+        else {
+            m_scriptRegistry.setValue(metadata, value.toString(), track);
         }
     }
-};
+}
+
+void TagEditorModelPrivate::addCustomTrackMetadata(const QString& name, const QString& value)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    for(Track& track : m_tracks) {
+        track.addExtraTag(name, value);
+    }
+}
+
+void TagEditorModelPrivate::replaceCustomTrackMetadata(const QString& name, const QString& value)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    for(Track& track : m_tracks) {
+        track.replaceExtraTag(name, value);
+    }
+}
+
+void TagEditorModelPrivate::removeCustomTrackMetadata(const QString& name)
+{
+    if(m_tracks.empty()) {
+        return;
+    }
+
+    for(Track& track : m_tracks) {
+        track.removeExtraTag(name);
+    }
+}
 
 TagEditorModel::TagEditorModel(SettingsManager* settings, QObject* parent)
     : ExtendableTableModel{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<TagEditorModelPrivate>(this, settings)}
 { }
 
 TagEditorModel::~TagEditorModel() = default;

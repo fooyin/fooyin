@@ -26,6 +26,8 @@
 #include <QObject>
 
 namespace Fooyin {
+class ApplicationPrivate;
+
 class FYCORE_EXPORT Application : public QObject
 {
     Q_OBJECT
@@ -44,7 +46,6 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ApplicationPrivate> p;
 };
 } // namespace Fooyin

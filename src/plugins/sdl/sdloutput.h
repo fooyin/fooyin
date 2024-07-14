@@ -43,7 +43,7 @@ public:
     [[nodiscard]] QString device() const override;
     int bufferSize() const override;
     OutputState currentState() override;
-    [[nodiscard]] OutputDevices getAllDevices() const override;
+    [[nodiscard]] OutputDevices getAllDevices() override;
 
     int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;

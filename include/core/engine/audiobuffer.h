@@ -28,6 +28,8 @@
 #include <span>
 
 namespace Fooyin {
+class AudioBufferPrivate;
+
 class FYCORE_EXPORT AudioBuffer
 {
 public:
@@ -69,8 +71,7 @@ public:
     void scale(double volume);
 
 private:
-    struct Private;
-    QExplicitlySharedDataPointer<Private> p;
+    QExplicitlySharedDataPointer<AudioBufferPrivate> p;
 };
 using AudioData = std::vector<AudioBuffer>;
 } // namespace Fooyin

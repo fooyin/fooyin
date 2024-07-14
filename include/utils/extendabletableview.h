@@ -26,6 +26,7 @@
 namespace Fooyin {
 class ActionManager;
 class Context;
+class ExtendableTableViewPrivate;
 
 class FYUTILS_EXPORT ExtendableTableModel : public QAbstractTableModel
 {
@@ -48,7 +49,7 @@ class FYUTILS_EXPORT ExtendableTableView : public QTableView
     Q_OBJECT
 
 public:
-    enum Tool
+    enum Tool : uint8_t
     {
         None = 0x0,
         Move = 0x1,
@@ -77,11 +78,12 @@ public:
     void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
 
 protected:
+    friend class ExtendableTableViewPrivate;
+
     void contextMenuEvent(QContextMenuEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ExtendableTableViewPrivate> p;
 };
 } // namespace Fooyin

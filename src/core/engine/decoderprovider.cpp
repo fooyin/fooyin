@@ -25,15 +25,16 @@
 #include <shared_mutex>
 
 namespace Fooyin {
-struct DecoderProvider::Private
+class DecoderProviderPrivate
 {
+public:
     std::unordered_map<QString, DecoderCreator> m_decoders;
     std::unordered_map<QString, std::vector<QString>> m_extensionToDecoderMap;
     std::shared_mutex m_decoderMutex;
 };
 
 DecoderProvider::DecoderProvider()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<DecoderProviderPrivate>()}
 { }
 
 DecoderProvider::~DecoderProvider() = default;

@@ -24,6 +24,7 @@
 #include <core/tagging/tagparserplugin.h>
 
 namespace Fooyin {
+class TagLoaderPrivate;
 class TagParser;
 class Track;
 
@@ -43,7 +44,6 @@ public:
     void addParser(const QString& name, std::unique_ptr<TagParser> parser);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<TagLoaderPrivate> p;
 };
 } // namespace Fooyin

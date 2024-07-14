@@ -28,6 +28,8 @@
 class QHeaderView;
 
 namespace Fooyin {
+class ExpandedTreeViewPrivate;
+
 class FYUTILS_EXPORT ExpandedTreeView : public QAbstractItemView
 {
     Q_OBJECT
@@ -104,6 +106,11 @@ signals:
     void middleClicked(const QModelIndex& index);
 
 protected:
+    friend class ExpandedTreeViewPrivate;
+    friend class BaseView;
+    friend class TreeView;
+    friend class IconView;
+
     bool viewportEvent(QEvent* event) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
@@ -137,11 +144,6 @@ protected:
     [[nodiscard]] QModelIndexList selectedIndexes() const override;
 
 private:
-    friend class BaseView;
-    friend class TreeView;
-    friend class IconView;
-
-    class Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ExpandedTreeViewPrivate> p;
 };
 } // namespace Fooyin

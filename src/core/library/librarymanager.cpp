@@ -50,15 +50,10 @@ void eraseLibrary(LibraryInfoMap& libraries, int id)
     }
 }
 
-struct LibraryManager::Private
+class LibraryManagerPrivate
 {
-    DbConnectionPoolPtr m_dbPool;
-    SettingsManager* m_settings;
-    LibraryDatabase m_libraryConnector;
-    TrackDatabase m_trackConnector;
-    LibraryInfoMap m_libraries;
-
-    explicit Private(DbConnectionPoolPtr dbPool, SettingsManager* settings)
+public:
+    explicit LibraryManagerPrivate(DbConnectionPoolPtr dbPool, SettingsManager* settings)
         : m_dbPool{std::move(dbPool)}
         , m_settings{settings}
     {
@@ -73,11 +68,18 @@ struct LibraryManager::Private
         const QString uniqueName{name.isEmpty() ? QStringLiteral("New Library") : name};
         return Utils::findUniqueString(uniqueName, m_libraries, [](const auto& item) { return item.second.name; });
     }
+
+    DbConnectionPoolPtr m_dbPool;
+    SettingsManager* m_settings;
+
+    LibraryDatabase m_libraryConnector;
+    TrackDatabase m_trackConnector;
+    LibraryInfoMap m_libraries;
 };
 
 LibraryManager::LibraryManager(DbConnectionPoolPtr dbPool, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(std::move(dbPool), settings)}
+    , p{std::make_unique<LibraryManagerPrivate>(std::move(dbPool), settings)}
 {
     reset();
 }

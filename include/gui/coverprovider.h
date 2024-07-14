@@ -32,6 +32,7 @@ class QString;
 class QSize;
 
 namespace Fooyin {
+class CoverProviderPrivate;
 class SettingsManager;
 class TagLoader;
 
@@ -114,7 +115,6 @@ signals:
     void coverAdded(const Fooyin::Track& track);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<CoverProviderPrivate> p;
 };
 } // namespace Fooyin

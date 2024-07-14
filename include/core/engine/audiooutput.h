@@ -51,9 +51,9 @@ class FYCORE_EXPORT AudioOutput : public QObject
     Q_OBJECT
 
 public:
-    enum class State
+    enum class State : uint8_t
     {
-        None,
+        None = 0,
         Error,
         Disconnected
     };
@@ -103,7 +103,7 @@ public:
      *  @note this may be called on multiple instances, so don't rely on a
      *  single initialised state.
      */
-    [[nodiscard]] virtual OutputDevices getAllDevices() const = 0;
+    [[nodiscard]] virtual OutputDevices getAllDevices() = 0;
 
     /*!
      * Writes the audio data contained in the @p buffer to the audio driver.

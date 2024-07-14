@@ -28,6 +28,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class PlayerControllerPrivate;
 class SettingsManager;
 
 /*!
@@ -128,7 +129,6 @@ signals:
     void trackQueueChanged(const Fooyin::QueueTracks& removed, const Fooyin::QueueTracks& added);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlayerControllerPrivate> p;
 };
 } // namespace Fooyin

@@ -33,8 +33,16 @@ struct Playlist::PrivateKey
     PrivateKey(PrivateKey const&) = default;
 };
 
-struct Playlist::Private
+class PlaylistPrivate
 {
+public:
+    explicit PlaylistPrivate(QString name);
+    PlaylistPrivate(int dbId, QString name, int index);
+
+    void createShuffleOrder();
+    int getShuffleIndex(Playlist::PlayModes mode);
+    int getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
+
     UId m_id;
     int m_dbId{-1};
     QString m_name;
@@ -50,108 +58,108 @@ struct Playlist::Private
     bool m_isTemporary{false};
     bool m_modified{false};
     bool m_tracksModified{false};
+};
 
-    explicit Private(QString name)
-        : m_id{UId::create()}
-        , m_name{std::move(name)}
-        , m_isTemporary{true}
-    { }
+PlaylistPrivate::PlaylistPrivate(QString name)
+    : m_id{UId::create()}
+    , m_name{std::move(name)}
+    , m_isTemporary{true}
+{ }
 
-    Private(int dbId, QString name, int index)
-        : m_id{UId::create()}
-        , m_dbId{dbId}
-        , m_name{std::move(name)}
-        , m_index{index}
-    { }
+PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index)
+    : m_id{UId::create()}
+    , m_dbId{dbId}
+    , m_name{std::move(name)}
+    , m_index{index}
+{ }
 
-    void createShuffleOrder()
-    {
-        m_shuffleOrder.resize(m_tracks.size());
-        std::iota(m_shuffleOrder.begin(), m_shuffleOrder.end(), 0);
-        std::ranges::shuffle(m_shuffleOrder, std::mt19937{std::random_device{}()});
+void PlaylistPrivate::createShuffleOrder()
+{
+    m_shuffleOrder.resize(m_tracks.size());
+    std::iota(m_shuffleOrder.begin(), m_shuffleOrder.end(), 0);
+    std::ranges::shuffle(m_shuffleOrder, std::mt19937{std::random_device{}()});
 
-        // Move current track to start
-        auto it = std::ranges::find(m_shuffleOrder, m_currentTrackIndex);
-        if(it != m_shuffleOrder.end()) {
-            std::rotate(m_shuffleOrder.begin(), it, it + 1);
+    // Move current track to start
+    auto it = std::ranges::find(m_shuffleOrder, m_currentTrackIndex);
+    if(it != m_shuffleOrder.end()) {
+        std::rotate(m_shuffleOrder.begin(), it, it + 1);
+    }
+}
+
+int PlaylistPrivate::getShuffleIndex(Playlist::PlayModes mode)
+{
+    if(m_shuffleOrder.empty()) {
+        createShuffleOrder();
+
+        m_shuffleIndex = (mode & Playlist::RepeatTrack) ? 0 : 1;
+    }
+
+    else if(mode & Playlist::RepeatPlaylist) {
+        if(m_shuffleIndex > static_cast<int>(m_shuffleOrder.size() - 1)) {
+            m_shuffleIndex = 0;
+        }
+        else if(m_shuffleIndex < 0) {
+            m_shuffleIndex = static_cast<int>(m_shuffleOrder.size() - 1);
         }
     }
 
-    int getShuffleIndex(PlayModes mode)
-    {
-        if(m_shuffleOrder.empty()) {
-            createShuffleOrder();
+    if(m_shuffleIndex >= 0 && m_shuffleIndex < static_cast<int>(m_shuffleOrder.size())) {
+        return m_shuffleOrder.at(m_shuffleIndex);
+    }
 
-            m_shuffleIndex = (mode & RepeatTrack) ? 0 : 1;
-        }
+    return -1;
+}
 
-        else if(mode & RepeatPlaylist) {
-            if(m_shuffleIndex > static_cast<int>(m_shuffleOrder.size() - 1)) {
-                m_shuffleIndex = 0;
-            }
-            else if(m_shuffleIndex < 0) {
-                m_shuffleIndex = static_cast<int>(m_shuffleOrder.size() - 1);
-            }
-        }
-
-        if(m_shuffleIndex >= 0 && m_shuffleIndex < static_cast<int>(m_shuffleOrder.size())) {
-            return m_shuffleOrder.at(m_shuffleIndex);
-        }
-
+int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck)
+{
+    if(m_tracks.empty()) {
         return -1;
     }
 
-    int getNextIndex(int delta, PlayModes mode, bool onlyCheck)
-    {
-        if(m_tracks.empty()) {
-            return -1;
-        }
+    int nextIndex = m_currentTrackIndex;
 
-        int nextIndex = m_currentTrackIndex;
-
-        if(m_nextTrackIndex >= 0) {
-            nextIndex        = m_nextTrackIndex;
-            m_nextTrackIndex = -1;
-        }
-        else {
-            const int count = static_cast<int>(m_tracks.size());
-
-            if(mode & ShuffleTracks) {
-                if(!(mode & RepeatTrack)) {
-                    m_shuffleIndex += delta;
-                }
-                nextIndex = getShuffleIndex(mode);
-                if(onlyCheck) {
-                    m_shuffleIndex -= delta;
-                }
-            }
-            else if(mode & RepeatPlaylist) {
-                nextIndex += delta;
-                if(nextIndex < 0) {
-                    nextIndex = count - 1;
-                }
-                else if(nextIndex >= count) {
-                    nextIndex = 0;
-                }
-            }
-            else if(mode == Default) {
-                nextIndex += delta;
-                if(nextIndex < 0 || nextIndex >= count) {
-                    nextIndex = -1;
-                }
-            }
-        }
-
-        return nextIndex;
+    if(m_nextTrackIndex >= 0) {
+        nextIndex        = m_nextTrackIndex;
+        m_nextTrackIndex = -1;
     }
-};
+    else {
+        const int count = static_cast<int>(m_tracks.size());
+
+        if(mode & Playlist::ShuffleTracks) {
+            if(!(mode & Playlist::RepeatTrack)) {
+                m_shuffleIndex += delta;
+            }
+            nextIndex = getShuffleIndex(mode);
+            if(onlyCheck) {
+                m_shuffleIndex -= delta;
+            }
+        }
+        else if(mode & Playlist::RepeatPlaylist) {
+            nextIndex += delta;
+            if(nextIndex < 0) {
+                nextIndex = count - 1;
+            }
+            else if(nextIndex >= count) {
+                nextIndex = 0;
+            }
+        }
+        else if(mode == Playlist::Default) {
+            nextIndex += delta;
+            if(nextIndex < 0 || nextIndex >= count) {
+                nextIndex = -1;
+            }
+        }
+    }
+
+    return nextIndex;
+}
 
 Playlist::Playlist(PrivateKey /*key*/, QString name)
-    : p{std::make_unique<Private>(std::move(name))}
+    : p{std::make_unique<PlaylistPrivate>(std::move(name))}
 { }
 
 Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index)
-    : p{std::make_unique<Private>(dbId, std::move(name), index)}
+    : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index)}
 { }
 
 Playlist::~Playlist() = default;

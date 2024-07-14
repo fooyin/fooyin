@@ -27,6 +27,8 @@
 #include <QObject>
 
 namespace Fooyin {
+class ScriptParserPrivate;
+
 struct ScriptError
 {
     int position;
@@ -70,7 +72,6 @@ public:
     void clearCache();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ScriptParserPrivate> p;
 };
 } // namespace Fooyin

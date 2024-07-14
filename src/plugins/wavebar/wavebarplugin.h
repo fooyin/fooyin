@@ -22,8 +22,17 @@
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 #include <gui/plugins/guiplugin.h>
+#include <utils/database/dbconnectionpool.h>
 
-namespace Fooyin::WaveBar {
+namespace Fooyin {
+class FyWidget;
+
+namespace WaveBar {
+class WaveBarSettings;
+class WaveBarSettingsPage;
+class WaveBarGuiSettingsPage;
+class WaveformBuilder;
+
 class WaveBarPlugin : public QObject,
                       public Plugin,
                       public CorePlugin,
@@ -41,7 +50,24 @@ public:
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    FyWidget* createWavebar();
+    void regenerateSelection(bool onlyMissing = false) const;
+    void removeSelection();
+    void clearCache() const;
+
+    ActionManager* m_actionManager;
+    PlayerController* m_playerController;
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    TrackSelectionController* m_trackSelection;
+    WidgetProvider* m_widgetProvider;
+    SettingsManager* m_settings;
+
+    DbConnectionPoolPtr m_dbPool;
+    std::unique_ptr<WaveformBuilder> m_waveBuilder;
+
+    std::unique_ptr<WaveBarSettings> m_waveBarSettings;
+    std::unique_ptr<WaveBarSettingsPage> m_waveBarSettingsPage;
+    std::unique_ptr<WaveBarGuiSettingsPage> m_waveBarGuiSettingsPage;
 };
-} // namespace Fooyin::WaveBar
+} // namespace WaveBar
+} // namespace Fooyin

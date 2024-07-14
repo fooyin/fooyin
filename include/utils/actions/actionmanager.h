@@ -30,9 +30,11 @@ class QAction;
 class QMainWindow;
 
 namespace Fooyin {
+class ActionManagerPrivate;
+class Command;
 class SettingsManager;
 class ActionContainer;
-class Command;
+
 using CommandList = std::vector<Command*>;
 
 class FYUTILS_EXPORT ActionManager : public QObject
@@ -68,7 +70,6 @@ signals:
     void contextChanged(const Fooyin::Context& context);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ActionManagerPrivate> p;
 };
 } // namespace Fooyin

@@ -27,6 +27,7 @@
 #include <QFont>
 
 namespace Fooyin {
+class ScriptFormatterPrivate;
 class ScriptFormatterRegistry;
 
 class FYGUI_EXPORT ScriptFormatter
@@ -38,7 +39,6 @@ public:
     RichText evaluate(const QString& input);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ScriptFormatterPrivate> p;
 };
 } // namespace Fooyin

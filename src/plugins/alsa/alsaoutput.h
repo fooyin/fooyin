@@ -21,9 +21,20 @@
 
 #include "core/engine/audiooutput.h"
 
-#include <memory>
+#include <alsa/asoundlib.h>
 
 namespace Fooyin::Alsa {
+struct PcmHandleDeleter
+{
+    void operator()(snd_pcm_t* handle) const
+    {
+        if(handle) {
+            snd_pcm_close(handle);
+        }
+    }
+};
+using PcmHandleUPtr = std::unique_ptr<snd_pcm_t, PcmHandleDeleter>;
+
 class AlsaOutput : public AudioOutput
 {
 public:
@@ -40,7 +51,7 @@ public:
     [[nodiscard]] QString device() const override;
     [[nodiscard]] int bufferSize() const override;
     OutputState currentState() override;
-    [[nodiscard]] OutputDevices getAllDevices() const override;
+    [[nodiscard]] OutputDevices getAllDevices() override;
 
     int write(const AudioBuffer& buffer) override;
     void setPaused(bool pause) override;
@@ -50,7 +61,27 @@ public:
     [[nodiscard]] QString error() const override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void resetAlsa();
+    bool initAlsa();
+
+    bool checkError(int error, const QString& message);
+    [[nodiscard]] bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams);
+    void getHardwareDevices(OutputDevices& devices);
+    bool attemptRecovery(snd_pcm_status_t* status);
+    bool recoverState(OutputState* state = nullptr);
+
+    AudioFormat m_format;
+
+    bool m_initialised;
+    bool m_pausable;
+    bool m_started;
+
+    QString m_device;
+    double m_volume;
+    QString m_error;
+
+    PcmHandleUPtr m_pcmHandle;
+    snd_pcm_uframes_t m_bufferSize;
+    snd_pcm_uframes_t m_periodSize;
 };
 } // namespace Fooyin::Alsa

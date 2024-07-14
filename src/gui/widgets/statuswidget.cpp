@@ -41,8 +41,25 @@
 constexpr int IconSize = 50;
 
 namespace Fooyin {
-struct StatusWidget::Private
+class StatusWidgetPrivate : public QObject
 {
+    Q_OBJECT
+
+public:
+    StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
+                        TrackSelectionController* selectionController, SettingsManager* settings);
+
+    void setupConnections();
+
+    void clearMessage();
+    void showMessage(const QString& message, int timeout = 0);
+
+    void updateScripts();
+    void updatePlayingText();
+    void updateSelectionText();
+
+    void stateChanged(PlayState state);
+
     StatusWidget* m_self;
     PlayerController* m_playerController;
     TrackSelectionController* m_selectionController;
@@ -62,137 +79,132 @@ struct StatusWidget::Private
 
     QTimer m_clearTimer;
     QString m_tempText;
-
-    Private(StatusWidget* self, PlayerController* playerController, TrackSelectionController* selectionController,
-            SettingsManager* settings)
-        : m_self{self}
-        , m_playerController{playerController}
-        , m_selectionController{selectionController}
-        , m_settings{settings}
-        , m_scriptRegistry{m_playerController}
-        , m_scriptParser{&m_scriptRegistry}
-        , m_iconLabel{new ClickableLabel(m_self)}
-        , m_statusText{new ElidedLabel(m_self)}
-        , m_messageText{new ElidedLabel(m_self)}
-        , m_selectionText{new ClickableLabel(m_self)}
-    {
-        auto* layout = new QHBoxLayout(m_self);
-        layout->setContentsMargins(5, 0, 5, 0);
-
-        m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
-        m_iconLabel->setScaledContents(true);
-
-        m_iconLabel->setMaximumHeight(22);
-        m_iconLabel->setMaximumWidth(22);
-
-        layout->addWidget(m_iconLabel);
-        layout->addWidget(m_messageText, 1);
-        layout->addWidget(m_statusText, 1);
-        layout->addWidget(m_selectionText);
-
-        m_messageText->hide();
-
-        m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
-        m_selectionText->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
-
-        updateScripts();
-        updatePlayingText();
-
-        QObject::connect(m_playerController, &PlayerController::playStateChanged, m_self,
-                         [this](PlayState state) { stateChanged(state); });
-        QObject::connect(m_playerController, &PlayerController::positionChanged, m_self,
-                         [this](uint64_t /*pos*/) { updatePlayingText(); });
-        QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, m_self,
-                         [this]() { updateSelectionText(); });
-
-        m_clearTimer.setSingleShot(true);
-        QObject::connect(&m_clearTimer, &QTimer::timeout, m_self, [this]() { clearMessage(); });
-    }
-
-    void clearMessage()
-    {
-        m_clearTimer.stop();
-
-        m_messageText->clear();
-        m_messageText->hide();
-        m_statusText->show();
-    }
-
-    void showMessage(const QString& message, int timeout = 0)
-    {
-        m_messageText->setText(message);
-        m_statusText->hide();
-        m_messageText->show();
-
-        if(timeout > 0) {
-            m_clearTimer.start(timeout);
-        }
-    }
-
-    void updateScripts()
-    {
-        m_playingScript   = m_settings->value<Settings::Gui::Internal::StatusPlayingScript>();
-        m_selectionScript = m_settings->value<Settings::Gui::Internal::StatusSelectionScript>();
-    }
-
-    void updatePlayingText()
-    {
-        const PlayState ps = m_playerController->playState();
-        if(ps == PlayState::Playing || ps == PlayState::Paused) {
-            m_statusText->setText(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
-        }
-    }
-
-    void updateSelectionText()
-    {
-        m_selectionText->setText(m_scriptParser.evaluate(m_selectionScript, m_selectionController->selectedTracks()));
-    }
-
-    void stateChanged(const PlayState state)
-    {
-        switch(state) {
-            case(PlayState::Stopped):
-                clearMessage();
-                m_statusText->clear();
-                break;
-            case(PlayState::Playing):
-                updatePlayingText();
-                break;
-            case(PlayState::Paused):
-                break;
-        }
-    }
 };
+
+StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
+                                         TrackSelectionController* selectionController, SettingsManager* settings)
+    : QObject{self}
+    , m_self{self}
+    , m_playerController{playerController}
+    , m_selectionController{selectionController}
+    , m_settings{settings}
+    , m_scriptRegistry{m_playerController}
+    , m_scriptParser{&m_scriptRegistry}
+    , m_iconLabel{new ClickableLabel(m_self)}
+    , m_statusText{new ElidedLabel(m_self)}
+    , m_messageText{new ElidedLabel(m_self)}
+    , m_selectionText{new ClickableLabel(m_self)}
+{
+    auto* layout = new QHBoxLayout(m_self);
+    layout->setContentsMargins(5, 0, 5, 0);
+
+    m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
+    m_iconLabel->setScaledContents(true);
+
+    m_iconLabel->setMaximumHeight(22);
+    m_iconLabel->setMaximumWidth(22);
+
+    layout->addWidget(m_iconLabel);
+    layout->addWidget(m_messageText, 1);
+    layout->addWidget(m_statusText, 1);
+    layout->addWidget(m_selectionText);
+
+    m_messageText->hide();
+    m_clearTimer.setSingleShot(true);
+
+    m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
+    m_selectionText->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
+
+    setupConnections();
+    updateScripts();
+    updatePlayingText();
+}
+
+void StatusWidgetPrivate::setupConnections()
+{
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &StatusWidgetPrivate::stateChanged);
+    QObject::connect(m_playerController, &PlayerController::positionChanged, this,
+                     &StatusWidgetPrivate::updatePlayingText);
+    QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
+                     &StatusWidgetPrivate::updateSelectionText);
+    QObject::connect(&m_clearTimer, &QTimer::timeout, this, &StatusWidgetPrivate::clearMessage);
+
+    m_settings->subscribe<Settings::Gui::IconTheme>(
+        this, [this]() { m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)); });
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(
+        this, [this](bool show) { m_iconLabel->setHidden(!show); });
+    m_settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(
+        this, [this](bool show) { m_selectionText->setHidden(!show); });
+    m_settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
+        m_playingScript = script;
+        updatePlayingText();
+    });
+    m_settings->subscribe<Settings::Gui::Internal::StatusSelectionScript>(this, [this](const QString& script) {
+        m_selectionScript = script;
+        updateSelectionText();
+    });
+}
+
+void StatusWidgetPrivate::clearMessage()
+{
+    m_clearTimer.stop();
+
+    m_messageText->clear();
+    m_messageText->hide();
+    m_statusText->show();
+}
+
+void StatusWidgetPrivate::showMessage(const QString& message, int timeout)
+{
+    m_messageText->setText(message);
+    m_statusText->hide();
+    m_messageText->show();
+
+    if(timeout > 0) {
+        m_clearTimer.start(timeout);
+    }
+}
+
+void StatusWidgetPrivate::updateScripts()
+{
+    m_playingScript   = m_settings->value<Settings::Gui::Internal::StatusPlayingScript>();
+    m_selectionScript = m_settings->value<Settings::Gui::Internal::StatusSelectionScript>();
+}
+
+void StatusWidgetPrivate::updatePlayingText()
+{
+    const PlayState ps = m_playerController->playState();
+    if(ps == PlayState::Playing || ps == PlayState::Paused) {
+        m_statusText->setText(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
+    }
+}
+
+void StatusWidgetPrivate::updateSelectionText()
+{
+    m_selectionText->setText(m_scriptParser.evaluate(m_selectionScript, m_selectionController->selectedTracks()));
+}
+
+void StatusWidgetPrivate::stateChanged(const PlayState state)
+{
+    switch(state) {
+        case(PlayState::Stopped):
+            clearMessage();
+            m_statusText->clear();
+            break;
+        case(PlayState::Playing):
+            updatePlayingText();
+            break;
+        case(PlayState::Paused):
+            break;
+    }
+}
 
 StatusWidget::StatusWidget(PlayerController* playerController, TrackSelectionController* selectionController,
                            SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, playerController, selectionController, settings)}
+    , p{std::make_unique<StatusWidgetPrivate>(this, playerController, selectionController, settings)}
 {
     setObjectName(StatusWidget::name());
-
-    QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->stateChanged(state); });
-    QObject::connect(playerController, &PlayerController::positionChanged, this,
-                     [this](uint64_t /*pos*/) { p->updatePlayingText(); });
-    QObject::connect(selectionController, &TrackSelectionController::selectionChanged, this,
-                     [this]() { p->updateSelectionText(); });
-
-    settings->subscribe<Settings::Gui::IconTheme>(
-        this, [this]() { p->m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)); });
-
-    settings->subscribe<Settings::Gui::Internal::StatusShowIcon>(
-        this, [this](bool show) { p->m_iconLabel->setHidden(!show); });
-    settings->subscribe<Settings::Gui::Internal::StatusShowSelection>(
-        this, [this](bool show) { p->m_selectionText->setHidden(!show); });
-    settings->subscribe<Settings::Gui::Internal::StatusPlayingScript>(this, [this](const QString& script) {
-        p->m_playingScript = script;
-        p->updatePlayingText();
-    });
-    settings->subscribe<Settings::Gui::Internal::StatusSelectionScript>(this, [this](const QString& script) {
-        p->m_selectionScript = script;
-        p->updateSelectionText();
-    });
 }
 
 StatusWidget::~StatusWidget() = default;
@@ -237,3 +249,4 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
 } // namespace Fooyin
 
 #include "moc_statuswidget.cpp"
+#include "statuswidget.moc"

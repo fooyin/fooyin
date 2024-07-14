@@ -33,6 +33,7 @@ namespace Fooyin {
 class PlayerController;
 class Playlist;
 class PlaylistColumnRegistry;
+class PlaylistControllerPrivate;
 class PlaylistHandler;
 struct PlaylistTrack;
 enum class PlayState;
@@ -118,7 +119,6 @@ public slots:
     void handleTrackSelectionAction(TrackAction action);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistControllerPrivate> p;
 };
 } // namespace Fooyin

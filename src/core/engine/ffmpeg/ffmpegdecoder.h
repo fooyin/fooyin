@@ -24,6 +24,7 @@
 namespace Fooyin {
 class AudioFormat;
 class AudioBuffer;
+class FFmpegDecoderPrivate;
 
 class FFmpegDecoder : public AudioDecoder
 {
@@ -49,7 +50,6 @@ public:
     static QStringList extensions();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<FFmpegDecoderPrivate> p;
 };
 } // namespace Fooyin

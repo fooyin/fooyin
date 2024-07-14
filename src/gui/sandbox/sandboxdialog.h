@@ -19,9 +19,16 @@
 
 #pragma once
 
+#include "scripthighlighter.h"
+
 #include <QDialog>
 
+class QSplitter;
+class QTextEdit;
+class QTreeView;
+
 namespace Fooyin {
+class ExpressionTreeModel;
 class SettingsManager;
 class TrackSelectionController;
 
@@ -35,7 +42,35 @@ public:
     ~SandboxDialog() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void updateResults();
+    void updateResults(const Expression& expression);
+
+    void selectionChanged();
+    void textChanged();
+
+    void showErrors() const;
+
+    void saveState() const;
+    void restoreState();
+
+    TrackSelectionController* m_trackSelection;
+    SettingsManager* m_settings;
+
+    QSplitter* m_mainSplitter;
+    QSplitter* m_documentSplitter;
+
+    QTextEdit* m_editor;
+    QTextEdit* m_results;
+    ScriptHighlighter m_highlighter;
+
+    QTreeView* m_expressionTree;
+    ExpressionTreeModel* m_model;
+
+    QTimer* m_textChangeTimer;
+
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
+
+    ParsedScript m_currentScript;
 };
 } // namespace Fooyin

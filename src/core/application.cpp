@@ -61,204 +61,220 @@ constexpr auto PlaylistSaveInterval = 30000;
 constexpr auto SettingsSaveInterval = 300000;
 #endif
 
-namespace Fooyin {
-struct Application::Private
+namespace {
+void registerTypes()
 {
-    Application* self;
+    qRegisterMetaType<Fooyin::Track>("Track");
+    qRegisterMetaType<Fooyin::TrackList>("TrackList");
+    qRegisterMetaType<Fooyin::TrackIds>("TrackIds");
+    qRegisterMetaType<Fooyin::OutputCreator>("OutputCreator");
+    qRegisterMetaType<Fooyin::LibraryInfo>("LibraryInfo");
+    qRegisterMetaType<Fooyin::LibraryInfoMap>("LibraryInfoMap");
+}
+} // namespace
 
-    SettingsManager* settingsManager;
-    CoreSettings coreSettings;
-    Translations translations;
-    Database* database;
-    std::shared_ptr<TagLoader> tagLoader;
-    std::shared_ptr<DecoderProvider> decoderProvider;
-    PlayerController* playerController;
-    EngineHandler engine;
-    LibraryManager* libraryManager;
-    std::shared_ptr<PlaylistLoader> playlistLoader;
-    UnifiedMusicLibrary* library;
-    PlaylistHandler* playlistHandler;
-    SortingRegistry* sortingRegistry;
+namespace Fooyin {
+class ApplicationPrivate
+{
+public:
+    explicit ApplicationPrivate(Application* self_);
 
-    PluginManager pluginManager;
-    CorePluginContext corePluginContext;
+    void registerPlaylistParsers();
+    void registerTagParsers();
+    void registerDecoders();
 
-    QBasicTimer playlistSaveTimer;
-    QBasicTimer settingsSaveTimer;
+    void loadPlugins();
 
-    explicit Private(Application* self_)
-        : self{self_}
-        , settingsManager{new SettingsManager(Core::settingsPath(), self)}
-        , coreSettings{settingsManager}
-        , translations{settingsManager}
-        , database{new Database(self)}
-        , tagLoader{std::make_shared<TagLoader>()}
-        , decoderProvider{std::make_shared<DecoderProvider>()}
-        , playerController{new PlayerController(settingsManager, self)}
-        , engine{decoderProvider, playerController, settingsManager}
-        , libraryManager{new LibraryManager(database->connectionPool(), settingsManager, self)}
-        , playlistLoader{std::make_shared<PlaylistLoader>()}
-        , library{new UnifiedMusicLibrary(libraryManager, database->connectionPool(), playlistLoader, tagLoader,
-                                          settingsManager, self)}
-        , playlistHandler{new PlaylistHandler(database->connectionPool(), tagLoader, playerController, settingsManager,
-                                              self)}
-        , sortingRegistry{new SortingRegistry(settingsManager, self)}
-        , pluginManager{settingsManager}
-        , corePluginContext{&pluginManager, &engine,         playerController, libraryManager,
-                            library,        playlistHandler, settingsManager,  playlistLoader,
-                            tagLoader,      decoderProvider, sortingRegistry}
-    {
-        registerTypes();
-        registerDecoders();
-        registerTagParsers();
-        registerPlaylistParsers();
-        loadPlugins();
+    void startSaveTimer();
 
-        settingsSaveTimer.start(SettingsSaveInterval, self);
-    }
+    void savePlaybackState() const;
+    void loadPlaybackState() const;
 
-    static void registerTypes()
-    {
-        qRegisterMetaType<Track>("Track");
-        qRegisterMetaType<TrackList>("TrackList");
-        qRegisterMetaType<TrackIds>("TrackIds");
-        qRegisterMetaType<OutputCreator>("OutputCreator");
-        qRegisterMetaType<LibraryInfo>("LibraryInfo");
-        qRegisterMetaType<LibraryInfoMap>("LibraryInfoMap");
-    }
+    Application* m_self;
 
-    void registerPlaylistParsers()
-    {
-        playlistLoader->addParser(std::make_unique<CueParser>(tagLoader));
-        playlistLoader->addParser(std::make_unique<M3uParser>(tagLoader));
-    }
+    SettingsManager* m_settings;
+    CoreSettings m_coreSettings;
+    Translations m_translations;
+    Database* m_database;
+    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    PlayerController* m_playerController;
+    EngineHandler m_engine;
+    LibraryManager* m_libraryManager;
+    std::shared_ptr<PlaylistLoader> m_playlistLoader;
+    UnifiedMusicLibrary* m_library;
+    PlaylistHandler* m_playlistHandler;
+    SortingRegistry* m_sortingRegistry;
 
-    void registerTagParsers()
-    {
-        tagLoader->addParser(QStringLiteral("TagLib"), std::make_unique<TagLibParser>());
-        tagLoader->addParser(QStringLiteral("FFmpeg"), std::make_unique<FFmpegParser>());
-    }
+    PluginManager m_pluginManager;
+    CorePluginContext m_corePluginContext;
 
-    void registerDecoders()
-    {
-        decoderProvider->addDecoder(QStringLiteral("FFmpeg"), FFmpegDecoder::extensions(),
-                                    []() { return std::make_unique<FFmpegDecoder>(); });
-    }
-
-    void loadPlugins()
-    {
-        const QStringList pluginPaths{Core::pluginPaths()};
-        pluginManager.findPlugins(pluginPaths);
-        pluginManager.loadPlugins();
-
-        pluginManager.initialisePlugins<CorePlugin>(
-            [this](CorePlugin* plugin) { plugin->initialise(corePluginContext); });
-
-        pluginManager.initialisePlugins<OutputPlugin>(
-            [this](OutputPlugin* plugin) { engine.addOutput(plugin->name(), plugin->creator()); });
-
-        pluginManager.initialisePlugins<TagParserPlugin>(
-            [this](TagParserPlugin* plugin) { tagLoader->addParser(plugin->parserName(), plugin->tagParser()); });
-
-        pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
-            decoderProvider->addDecoder(plugin->decoderName(), plugin->supportedExtensions(), plugin->decoderCreator());
-        });
-    }
-
-    void startSaveTimer()
-    {
-        playlistSaveTimer.start(PlaylistSaveInterval, self);
-    }
-
-    void savePlaybackState() const
-    {
-        if(settingsManager->value<Settings::Core::Internal::SavePlaybackState>()) {
-            const auto lastPos = static_cast<quint64>(playerController->currentPosition());
-
-            settingsManager->fileSet(QString::fromLatin1(LastPlaybackPosition), lastPos);
-            settingsManager->fileSet(QString::fromLatin1(LastPlaybackState),
-                                     static_cast<int>(playerController->playState()));
-        }
-        else {
-            settingsManager->fileRemove(QString::fromLatin1(LastPlaybackPosition));
-            settingsManager->fileRemove(QString::fromLatin1(LastPlaybackState));
-        }
-    }
-
-    void loadPlaybackState() const
-    {
-        if(!settingsManager->value<Settings::Core::Internal::SavePlaybackState>()) {
-            return;
-        }
-
-        const auto lastPos = settingsManager->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
-        const auto state   = settingsManager->fileValue(QString::fromLatin1(LastPlaybackState)).value<PlayState>();
-
-        switch(state) {
-            case PlayState::Paused:
-                playerController->pause();
-                break;
-            case PlayState::Playing:
-                playerController->play();
-                break;
-            case PlayState::Stopped:
-                break;
-        }
-
-        playerController->seek(lastPos);
-    }
+    QBasicTimer m_playlistSaveTimer;
+    QBasicTimer m_settingsSaveTimer;
 };
+
+ApplicationPrivate::ApplicationPrivate(Application* self_)
+    : m_self{self_}
+    , m_settings{new SettingsManager(Core::settingsPath(), m_self)}
+    , m_coreSettings{m_settings}
+    , m_translations{m_settings}
+    , m_database{new Database(m_self)}
+    , m_tagLoader{std::make_shared<TagLoader>()}
+    , m_decoderProvider{std::make_shared<DecoderProvider>()}
+    , m_playerController{new PlayerController(m_settings, m_self)}
+    , m_engine{m_decoderProvider, m_playerController, m_settings}
+    , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
+    , m_playlistLoader{std::make_shared<PlaylistLoader>()}
+    , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_tagLoader,
+                                        m_settings, m_self)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_tagLoader, m_playerController, m_settings,
+                                            m_self)}
+    , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
+    , m_pluginManager{m_settings}
+    , m_corePluginContext{&m_pluginManager, &m_engine,         m_playerController, m_libraryManager,
+                          m_library,        m_playlistHandler, m_settings,         m_playlistLoader,
+                          m_tagLoader,      m_decoderProvider, m_sortingRegistry}
+{
+    registerTypes();
+    registerDecoders();
+    registerTagParsers();
+    registerPlaylistParsers();
+    loadPlugins();
+
+    m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
+}
+
+void ApplicationPrivate::registerPlaylistParsers()
+{
+    m_playlistLoader->addParser(std::make_unique<CueParser>(m_tagLoader));
+    m_playlistLoader->addParser(std::make_unique<M3uParser>(m_tagLoader));
+}
+
+void ApplicationPrivate::registerTagParsers()
+{
+    m_tagLoader->addParser(QStringLiteral("TagLib"), std::make_unique<TagLibParser>());
+    m_tagLoader->addParser(QStringLiteral("FFmpeg"), std::make_unique<FFmpegParser>());
+}
+
+void ApplicationPrivate::registerDecoders()
+{
+    m_decoderProvider->addDecoder(QStringLiteral("FFmpeg"), FFmpegDecoder::extensions(),
+                                  []() { return std::make_unique<FFmpegDecoder>(); });
+}
+
+void ApplicationPrivate::loadPlugins()
+{
+    const QStringList pluginPaths{Core::pluginPaths()};
+    m_pluginManager.findPlugins(pluginPaths);
+    m_pluginManager.loadPlugins();
+
+    m_pluginManager.initialisePlugins<CorePlugin>(
+        [this](CorePlugin* plugin) { plugin->initialise(m_corePluginContext); });
+
+    m_pluginManager.initialisePlugins<OutputPlugin>(
+        [this](OutputPlugin* plugin) { m_engine.addOutput(plugin->name(), plugin->creator()); });
+
+    m_pluginManager.initialisePlugins<TagParserPlugin>(
+        [this](TagParserPlugin* plugin) { m_tagLoader->addParser(plugin->parserName(), plugin->tagParser()); });
+
+    m_pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
+        m_decoderProvider->addDecoder(plugin->decoderName(), plugin->supportedExtensions(), plugin->decoderCreator());
+    });
+}
+
+void ApplicationPrivate::startSaveTimer()
+{
+    m_playlistSaveTimer.start(PlaylistSaveInterval, m_self);
+}
+
+void ApplicationPrivate::savePlaybackState() const
+{
+    if(m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+        const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
+
+        m_settings->fileSet(QString::fromLatin1(LastPlaybackPosition), lastPos);
+        m_settings->fileSet(QString::fromLatin1(LastPlaybackState), static_cast<int>(m_playerController->playState()));
+    }
+    else {
+        m_settings->fileRemove(QString::fromLatin1(LastPlaybackPosition));
+        m_settings->fileRemove(QString::fromLatin1(LastPlaybackState));
+    }
+}
+
+void ApplicationPrivate::loadPlaybackState() const
+{
+    if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+        return;
+    }
+
+    const auto lastPos = m_settings->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
+    const auto state   = m_settings->fileValue(QString::fromLatin1(LastPlaybackState)).value<PlayState>();
+
+    switch(state) {
+        case PlayState::Paused:
+            m_playerController->pause();
+            break;
+        case PlayState::Playing:
+            m_playerController->play();
+            break;
+        case PlayState::Stopped:
+            break;
+    }
+
+    m_playerController->seek(lastPos);
+}
 
 Application::Application(QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<ApplicationPrivate>(this)}
 {
-    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksAdded, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksAdded, this,
                      [this]() { p->startSaveTimer(); });
-    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksChanged, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksChanged, this,
                      [this]() { p->startSaveTimer(); });
-    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistTracksRemoved, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksRemoved, this,
                      [this]() { p->startSaveTimer(); });
-    QObject::connect(p->playlistHandler, &PlaylistHandler::playlistsPopulated, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
                      [this]() { p->loadPlaybackState(); });
 
-    QObject::connect(p->playerController, &PlayerController::trackPlayed, p->library,
+    QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);
-    QObject::connect(p->library, &MusicLibrary::tracksLoaded, p->playlistHandler, &PlaylistHandler::populatePlaylists);
-    QObject::connect(p->libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->playlistHandler,
+    QObject::connect(p->m_library, &MusicLibrary::tracksLoaded, p->m_playlistHandler,
+                     &PlaylistHandler::populatePlaylists);
+    QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
-    QObject::connect(p->library, &MusicLibrary::tracksUpdated, p->playlistHandler,
-                     [this](const TrackList& tracks) { p->playlistHandler->tracksUpdated(tracks); });
-    QObject::connect(p->library, &MusicLibrary::tracksPlayed, p->playlistHandler,
-                     [this](const TrackList& tracks) { p->playlistHandler->tracksPlayed(tracks); });
-    QObject::connect(&p->engine, &EngineHandler::trackAboutToFinish, p->playlistHandler,
+    QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, p->m_playlistHandler,
+                     [this](const TrackList& tracks) { p->m_playlistHandler->tracksUpdated(tracks); });
+    QObject::connect(p->m_library, &MusicLibrary::tracksPlayed, p->m_playlistHandler,
+                     [this](const TrackList& tracks) { p->m_playlistHandler->tracksPlayed(tracks); });
+    QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
-    QObject::connect(&p->engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
+    QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
         if(status == TrackStatus::InvalidTrack) {
-            p->playerController->pause();
+            p->m_playerController->pause();
         }
     });
 
-    p->library->loadAllTracks();
-    p->engine.setup();
+    p->m_library->loadAllTracks();
+    p->m_engine.setup();
 }
 
 Application::~Application() = default;
 
 CorePluginContext Application::context() const
 {
-    return p->corePluginContext;
+    return p->m_corePluginContext;
 }
 
 void Application::timerEvent(QTimerEvent* event)
 {
-    if(event->timerId() == p->playlistSaveTimer.timerId()) {
-        p->playlistSaveTimer.stop();
-        p->playlistHandler->savePlaylists();
+    if(event->timerId() == p->m_playlistSaveTimer.timerId()) {
+        p->m_playlistSaveTimer.stop();
+        p->m_playlistHandler->savePlaylists();
     }
-    else if(event->timerId() == p->settingsSaveTimer.timerId()) {
-        if(p->settingsManager->settingsHaveChanged()) {
-            p->settingsManager->storeSettings();
+    else if(event->timerId() == p->m_settingsSaveTimer.timerId()) {
+        if(p->m_settings->settingsHaveChanged()) {
+            p->m_settings->storeSettings();
         }
     }
 
@@ -268,11 +284,11 @@ void Application::timerEvent(QTimerEvent* event)
 void Application::shutdown()
 {
     p->savePlaybackState();
-    p->playlistHandler->savePlaylists();
-    p->coreSettings.shutdown();
-    p->pluginManager.shutdown();
-    p->settingsManager->storeSettings();
-    p->library->cleanupTracks();
+    p->m_playlistHandler->savePlaylists();
+    p->m_coreSettings.shutdown();
+    p->m_pluginManager.shutdown();
+    p->m_settings->storeSettings();
+    p->m_library->cleanupTracks();
 }
 
 void Application::quit()

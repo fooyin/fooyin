@@ -22,11 +22,12 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class DirBrowserPrivate;
 class PlaylistInteractor;
-class SettingsManager;
 class Playlist;
 struct PlaylistTrack;
 enum class PlayState;
+class SettingsManager;
 
 class DirBrowser : public FyWidget
 {
@@ -61,7 +62,6 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<DirBrowserPrivate> p;
 };
 } // namespace Fooyin

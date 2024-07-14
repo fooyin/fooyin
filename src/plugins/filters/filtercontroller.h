@@ -32,6 +32,7 @@ class TagLoader;
 class TrackSelectionController;
 
 namespace Filters {
+class FilterControllerPrivate;
 class FilterColumnRegistry;
 class FilterWidget;
 
@@ -59,12 +60,12 @@ public:
 
     FilterWidget* createFilter();
 
-    bool haveUngroupedFilters() const;
-    bool filterIsUngrouped(const Id& id) const;
+    [[nodiscard]] bool haveUngroupedFilters() const;
+    [[nodiscard]] bool filterIsUngrouped(const Id& id) const;
 
-    FilterGroups filterGroups() const;
-    std::optional<FilterGroup> groupById(const Id& id) const;
-    UngroupedFilters ungroupedFilters() const;
+    [[nodiscard]] FilterGroups filterGroups() const;
+    [[nodiscard]] std::optional<FilterGroup> groupById(const Id& id) const;
+    [[nodiscard]] UngroupedFilters ungroupedFilters() const;
 
     void addFilterToGroup(FilterWidget* widget, const Id& groupId);
     bool removeFilter(FilterWidget* widget);
@@ -75,8 +76,7 @@ signals:
     void tracksPlayed(const Fooyin::TrackList& tracks);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<FilterControllerPrivate> p;
 };
 } // namespace Filters
 } // namespace Fooyin

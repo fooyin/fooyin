@@ -43,182 +43,36 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-struct QueueViewer::Private
-{
-    QueueViewer* m_self;
-    ActionManager* m_actionManager;
-    PlaylistInteractor* m_playlistInteractor;
-    PlayerController* m_playerController;
-    SettingsManager* m_settings;
-
-    QueueViewerView* m_view;
-    QueueViewerModel* m_model;
-    WidgetContext* m_context;
-    bool m_changingQueue{false};
-
-    QAction* m_remove;
-    Command* m_removeCmd;
-
-    QAction* m_clear;
-    Command* m_clearCmd;
-
-    Private(QueueViewer* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
-        : m_self{self}
-        , m_actionManager{actionManager}
-        , m_playlistInteractor{playlistInteractor}
-        , m_playerController{m_playlistInteractor->playerController()}
-        , m_settings{settings}
-        , m_view{new QueueViewerView(m_self)}
-        , m_model{new QueueViewerModel(std::move(tagLoader), settings, m_self)}
-        , m_context{new WidgetContext(m_self, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())},
-                                      m_self)}
-        , m_remove{new QAction(tr("Remove"), m_self)}
-        , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
-        , m_clear{new QAction(tr("&Clear"), m_self)}
-        , m_clearCmd{actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context())}
-    {
-        auto* layout = new QVBoxLayout(m_self);
-        layout->setContentsMargins({});
-        layout->addWidget(m_view);
-
-        m_view->setModel(m_model);
-        m_view->setItemDelegate(new QueueViewerDelegate(m_self));
-
-        setupSettings();
-        setupActions();
-        setupConnections();
-    }
-
-    void setupSettings()
-    {
-        m_view->changeIconSize(m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize());
-        m_view->header()->setHidden(!m_settings->value<Settings::Gui::Internal::QueueViewerHeader>());
-        m_view->verticalScrollBar()->setVisible(m_settings->value<Settings::Gui::Internal::QueueViewerScrollBar>());
-        m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::QueueViewerAltColours>());
-
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_view, [this]() {
-            QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
-        });
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(
-            m_view, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerHeader>(
-            m_view, [this](const bool show) { m_view->header()->setHidden(!show); });
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerScrollBar>(m_view->verticalScrollBar(),
-                                                                             &QScrollBar::setVisible);
-        m_settings->subscribe<Settings::Gui::Internal::QueueViewerAltColours>(
-            m_view, &ExpandedTreeView::setAlternatingRowColors);
-    }
-
-    void setupActions()
-    {
-        m_actionManager->addContextObject(m_context);
-
-        m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
-        QObject::connect(m_remove, &QAction::triggered, m_self, [this]() { removeSelectedTracks(); });
-        QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
-                         [this]() { m_remove->setEnabled(m_view->selectionModel()->hasSelection()); });
-        m_remove->setEnabled(m_view->selectionModel()->hasSelection());
-
-        auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
-
-        editMenu->addAction(m_clearCmd);
-        QObject::connect(m_clear, &QAction::triggered, m_self, [this]() { m_playerController->clearQueue(); });
-        m_clear->setEnabled(m_model->rowCount({}) > 0);
-
-        auto* selectAllAction = new QAction(tr("&Select All"), m_self);
-        auto* selectAllCmd
-            = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_context->context());
-        selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
-        editMenu->addAction(selectAllCmd);
-        QObject::connect(selectAllAction, &QAction::triggered, m_self, [this]() { m_view->selectAll(); });
-    }
-
-    void setupConnections()
-    {
-        QObject::connect(m_model, &QueueViewerModel::tracksDropped, m_self,
-                         [this](int row, const QByteArray& data) { handleTracksDropped(row, data); });
-        QObject::connect(m_model, &QueueViewerModel::playlistTracksDropped, m_self,
-                         [this](int row, const QByteArray& data) { handlePlaylistTracksDropped(row, data); });
-        QObject::connect(m_model, &QueueViewerModel::queueChanged, m_self, [this]() { handleQueueChanged(); });
-        QObject::connect(m_playerController, &PlayerController::trackQueueChanged, m_self, [this]() { resetModel(); });
-        QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::addTracks);
-        QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model,
-                         &QueueViewerModel::removeTracks);
-        QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_self, [this]() { handleRowsChanged(); });
-        QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, m_self, [this]() { handleRowsChanged(); });
-        QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, m_self, [this](const QSize& size) {
-            m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
-        });
-    }
-
-    void resetModel() const
-    {
-        if(!m_changingQueue) {
-            m_model->reset(m_playerController->playbackQueue().tracks());
-        }
-    }
-
-    void handleRowsChanged() const
-    {
-        m_clear->setEnabled(m_model->rowCount({}) > 0);
-    }
-
-    void removeSelectedTracks() const
-    {
-        const auto selected = m_view->selectionModel()->selectedRows();
-        if(selected.empty()) {
-            return;
-        }
-
-        std::vector<int> indexes;
-        indexes.reserve(selected.size());
-
-        for(const QModelIndex& index : selected) {
-            indexes.emplace_back(index.row());
-        }
-
-        m_playerController->dequeueTracks(indexes);
-        m_model->removeIndexes(indexes);
-    }
-
-    void handleTracksDropped(int row, const QByteArray& mimeData) const
-    {
-        const TrackList tracks = Gui::tracksFromMimeData(m_playlistInteractor->library(), mimeData);
-
-        QueueTracks queueTracks;
-        for(const Track& track : tracks) {
-            queueTracks.emplace_back(track);
-        }
-
-        m_model->insertTracks(row, queueTracks);
-    }
-
-    void handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const
-    {
-        const QueueTracks tracks = Gui::queueTracksFromMimeData(m_playlistInteractor->library(), mimeData);
-        m_model->insertTracks(row, tracks);
-    }
-
-    void handleQueueChanged()
-    {
-        const QueueTracks tracks = m_model->queueTracks();
-
-        m_changingQueue = true;
-        m_playerController->replaceTracks(tracks);
-        m_changingQueue = false;
-    }
-};
-
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
                          std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, actionManager, playlistInteractor, std::move(tagLoader), settings)}
+    , m_actionManager{actionManager}
+    , m_playlistInteractor{playlistInteractor}
+    , m_playerController{m_playlistInteractor->playerController()}
+    , m_settings{settings}
+    , m_view{new QueueViewerView(this)}
+    , m_model{new QueueViewerModel(std::move(tagLoader), settings, this)}
+    , m_context{new WidgetContext(this, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())}, this)}
+    , m_remove{new QAction(tr("Remove"), this)}
+    , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
+    , m_clear{new QAction(tr("&Clear"), this)}
+    , m_clearCmd{actionManager->registerAction(m_clear, Constants::Actions::Clear, m_context->context())}
 {
-    p->resetModel();
-}
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins({});
+    layout->addWidget(m_view);
 
-QueueViewer::~QueueViewer() = default;
+    m_view->setModel(m_model);
+    m_view->setItemDelegate(new QueueViewerDelegate(this));
+    m_view->changeIconSize(m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize());
+    m_view->header()->setHidden(!m_settings->value<Settings::Gui::Internal::QueueViewerHeader>());
+    m_view->verticalScrollBar()->setVisible(m_settings->value<Settings::Gui::Internal::QueueViewerScrollBar>());
+    m_view->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::QueueViewerAltColours>());
+
+    setupActions();
+    setupConnections();
+    resetModel();
+}
 
 QString QueueViewer::name() const
 {
@@ -235,11 +89,120 @@ void QueueViewer::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    if(p->m_view->selectionModel()->hasSelection()) {
-        menu->addAction(p->m_removeCmd->action());
+    if(m_view->selectionModel()->hasSelection()) {
+        menu->addAction(m_removeCmd->action());
     }
-    menu->addAction(p->m_clearCmd->action());
+    menu->addAction(m_clearCmd->action());
 
     menu->popup(event->globalPos());
+}
+
+void QueueViewer::setupActions()
+{
+    m_actionManager->addContextObject(m_context);
+
+    m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
+    QObject::connect(m_remove, &QAction::triggered, this, &QueueViewer::removeSelectedTracks);
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { m_remove->setEnabled(m_view->selectionModel()->hasSelection()); });
+    m_remove->setEnabled(m_view->selectionModel()->hasSelection());
+
+    auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
+
+    editMenu->addAction(m_clearCmd);
+    QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
+    m_clear->setEnabled(m_model->rowCount({}) > 0);
+
+    auto* selectAllAction = new QAction(tr("&Select All"), this);
+    auto* selectAllCmd
+        = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_context->context());
+    selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
+    editMenu->addAction(selectAllCmd);
+    QObject::connect(selectAllAction, &QAction::triggered, m_view, &QAbstractItemView::selectAll);
+}
+
+void QueueViewer::setupConnections()
+{
+    QObject::connect(m_model, &QueueViewerModel::tracksDropped, this, &QueueViewer::handleTracksDropped);
+    QObject::connect(m_model, &QueueViewerModel::playlistTracksDropped, this,
+                     &QueueViewer::handlePlaylistTracksDropped);
+    QObject::connect(m_model, &QueueViewerModel::queueChanged, this, &QueueViewer::handleQueueChanged);
+    QObject::connect(m_playerController, &PlayerController::trackQueueChanged, this, &QueueViewer::resetModel);
+    QObject::connect(m_playerController, &PlayerController::tracksQueued, m_model, &QueueViewerModel::addTracks);
+    QObject::connect(m_playerController, &PlayerController::tracksDequeued, m_model, &QueueViewerModel::removeTracks);
+    QObject::connect(m_model, &QAbstractItemModel::rowsInserted, this, &QueueViewer::handleRowsChanged);
+    QObject::connect(m_model, &QAbstractItemModel::rowsRemoved, this, &QueueViewer::handleRowsChanged);
+    QObject::connect(m_view, &QAbstractItemView::iconSizeChanged, this, [this](const QSize& size) {
+        m_settings->set<Settings::Gui::Internal::QueueViewerIconSize>(size);
+    });
+
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerShowIcon>(m_view, [this]() {
+        QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
+    });
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerIconSize>(
+        m_view, [this](const auto& size) { m_view->changeIconSize(size.toSize()); });
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerHeader>(
+        m_view, [this](const bool show) { m_view->header()->setHidden(!show); });
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerScrollBar>(m_view->verticalScrollBar(),
+                                                                         &QScrollBar::setVisible);
+    m_settings->subscribe<Settings::Gui::Internal::QueueViewerAltColours>(m_view,
+                                                                          &ExpandedTreeView::setAlternatingRowColors);
+}
+
+void QueueViewer::resetModel() const
+{
+    if(!m_changingQueue) {
+        m_model->reset(m_playerController->playbackQueue().tracks());
+    }
+}
+
+void QueueViewer::handleRowsChanged() const
+{
+    m_clear->setEnabled(m_model->rowCount({}) > 0);
+}
+
+void QueueViewer::removeSelectedTracks() const
+{
+    const auto selected = m_view->selectionModel()->selectedRows();
+    if(selected.empty()) {
+        return;
+    }
+
+    std::vector<int> indexes;
+    indexes.reserve(selected.size());
+
+    for(const QModelIndex& index : selected) {
+        indexes.emplace_back(index.row());
+    }
+
+    m_playerController->dequeueTracks(indexes);
+    m_model->removeIndexes(indexes);
+}
+
+void QueueViewer::handleTracksDropped(int row, const QByteArray& mimeData) const
+{
+    const TrackList tracks = Gui::tracksFromMimeData(m_playlistInteractor->library(), mimeData);
+
+    QueueTracks queueTracks;
+    for(const Track& track : tracks) {
+        queueTracks.emplace_back(track);
+    }
+
+    m_model->insertTracks(row, queueTracks);
+}
+
+void QueueViewer::handlePlaylistTracksDropped(int row, const QByteArray& mimeData) const
+{
+    const QueueTracks tracks = Gui::queueTracksFromMimeData(m_playlistInteractor->library(), mimeData);
+    m_model->insertTracks(row, tracks);
+}
+
+void QueueViewer::handleQueueChanged()
+{
+    const QueueTracks tracks = m_model->queueTracks();
+
+    m_changingQueue = true;
+    m_playerController->replaceTracks(tracks);
+    m_changingQueue = false;
 }
 } // namespace Fooyin

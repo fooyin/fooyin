@@ -30,6 +30,7 @@
 #include <set>
 
 namespace Fooyin {
+class LibraryManagerPrivate;
 class SettingsManager;
 
 class FYCORE_EXPORT LibraryManager : public QObject
@@ -63,7 +64,6 @@ signals:
     void libraryStatusChanged(const Fooyin::LibraryInfo& info);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryManagerPrivate> p;
 };
 } // namespace Fooyin

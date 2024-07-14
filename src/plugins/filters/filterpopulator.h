@@ -21,6 +21,8 @@
 
 #include "filteritem.h"
 
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <utils/worker.h>
 
@@ -45,8 +47,7 @@ class FilterPopulator : public Worker
     Q_OBJECT
 
 public:
-    FilterPopulator(QObject* parent = nullptr);
-    ~FilterPopulator() override;
+    explicit FilterPopulator(QObject* parent = nullptr);
 
     void run(const QStringList& columns, const TrackList& tracks);
 
@@ -54,7 +55,19 @@ signals:
     void populated(Fooyin::Filters::PendingTreeData data);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    FilterItem* getOrInsertItem(const QStringList& columns);
+    std::vector<FilterItem*> getOrInsertItems(const QList<QStringList>& columnSet);
+    void addTrackToNode(const Track& track, FilterItem* node);
+    void iterateTrack(const Track& track);
+    bool runBatch(const TrackList& tracks);
+
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
+
+    QString m_currentColumns;
+    ParsedScript m_script;
+
+    FilterItem m_root;
+    PendingTreeData m_data;
 };
 } // namespace Fooyin::Filters

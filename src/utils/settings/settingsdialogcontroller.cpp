@@ -29,8 +29,14 @@
 #include <QMainWindow>
 
 namespace Fooyin {
-struct SettingsDialogController::Private
+class SettingsDialogControllerPrivate
 {
+public:
+    explicit SettingsDialogControllerPrivate(SettingsManager* settings_, QMainWindow* mainWindow_)
+        : settings{settings_}
+        , mainWindow{mainWindow_}
+    { }
+
     SettingsManager* settings;
     QMainWindow* mainWindow;
 
@@ -38,16 +44,11 @@ struct SettingsDialogController::Private
     PageList pages;
     Id lastOpenPage;
     bool isOpen{false};
-
-    explicit Private(SettingsManager* settings_, QMainWindow* mainWindow_)
-        : settings{settings_}
-        , mainWindow{mainWindow_}
-    { }
 };
 
 SettingsDialogController::SettingsDialogController(SettingsManager* settings, QMainWindow* mainWindow)
     : QObject{settings}
-    , p{std::make_unique<Private>(settings, mainWindow)}
+    , p{std::make_unique<SettingsDialogControllerPrivate>(settings, mainWindow)}
 { }
 
 SettingsDialogController::~SettingsDialogController() = default;

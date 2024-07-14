@@ -25,6 +25,12 @@
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::Filters {
+class FilterController;
+class FiltersColumnPage;
+class FiltersGeneralPage;
+class FiltersGuiPage;
+class FiltersSettings;
+
 class FiltersPlugin : public QObject,
                       public Plugin,
                       public CorePlugin,
@@ -35,14 +41,26 @@ class FiltersPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::GuiPlugin)
 
 public:
-    FiltersPlugin();
-    ~FiltersPlugin() override;
-
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void registerLayouts() const;
+
+    ActionManager* m_actionManager;
+    SettingsManager* m_settings;
+    MusicLibrary* m_library;
+    std::shared_ptr<TagLoader> m_tagLoader;
+    PlayerController* m_playerController;
+    LayoutProvider* m_layoutProvider;
+    WidgetProvider* m_widgetProvider;
+    TrackSelectionController* m_trackSelection;
+
+    FilterController* m_filterController;
+    std::unique_ptr<FiltersSettings> m_filterSettings;
+
+    std::unique_ptr<FiltersGeneralPage> m_generalPage;
+    std::unique_ptr<FiltersGuiPage> m_guiPage;
+    std::unique_ptr<FiltersColumnPage> m_columnsPage;
 };
 } // namespace Fooyin::Filters

@@ -25,6 +25,8 @@
 #include <utils/worker.h>
 
 namespace Fooyin {
+class InfoPopulatorPrivate;
+
 struct InfoData
 {
     std::unordered_map<QString, std::vector<QString>> parents;
@@ -51,7 +53,6 @@ signals:
     void populated(Fooyin::InfoData data);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<InfoPopulatorPrivate> p;
 };
 } // namespace Fooyin

@@ -27,6 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class LibraryThreadHandlerPrivate;
 class MusicLibrary;
 class PlaylistLoader;
 struct ScanProgress;
@@ -70,7 +71,6 @@ signals:
     void gotTracks(const Fooyin::TrackList& result);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryThreadHandlerPrivate> p;
 };
 } // namespace Fooyin

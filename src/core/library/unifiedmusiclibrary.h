@@ -27,6 +27,7 @@ namespace Fooyin {
 struct LibraryInfo;
 class SettingsManager;
 class TagLoader;
+class UnifiedMusicLibraryPrivate;
 
 class UnifiedMusicLibrary : public MusicLibrary
 {
@@ -63,7 +64,6 @@ public:
     void cleanupTracks();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<UnifiedMusicLibraryPrivate> p;
 };
 } // namespace Fooyin

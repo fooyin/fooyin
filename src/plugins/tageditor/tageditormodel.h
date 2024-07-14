@@ -27,6 +27,8 @@ namespace Fooyin {
 class SettingsManager;
 
 namespace TagEditor {
+class TagEditorModelPrivate;
+
 class TagEditorModel : public ExtendableTableModel
 {
     Q_OBJECT
@@ -56,8 +58,7 @@ public:
     void removePendingRow() override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<TagEditorModelPrivate> p;
 };
 } // namespace TagEditor
 } // namespace Fooyin

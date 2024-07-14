@@ -22,6 +22,8 @@
 #include <utils/expandableinputbox.h>
 
 namespace Fooyin {
+class CustomisableInputPrivate;
+
 class CustomisableInput : public ExpandableInput
 {
     Q_OBJECT
@@ -53,7 +55,6 @@ public:
     void resetState();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<CustomisableInputPrivate> p;
 };
 } // namespace Fooyin

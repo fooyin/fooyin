@@ -40,7 +40,6 @@ class PlaylistInteractor : public QObject
 public:
     PlaylistInteractor(PlaylistHandler* handler, PlaylistController* controller, MusicLibrary* library,
                        QObject* parent = nullptr);
-    ~PlaylistInteractor() override;
 
     [[nodiscard]] PlaylistHandler* handler() const;
     [[nodiscard]] PlaylistController* playlistController() const;
@@ -58,7 +57,8 @@ public:
     void trackMimeToPlaylist(const QByteArray& data, const UId& id);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    PlaylistHandler* m_handler;
+    PlaylistController* m_controller;
+    MusicLibrary* m_library;
 };
 } // namespace Fooyin

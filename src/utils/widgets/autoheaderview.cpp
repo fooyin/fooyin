@@ -38,14 +38,31 @@ enum class SectionState
     Moving,
 };
 
-struct AutoHeaderView::Private
+class AutoHeaderViewPrivate
 {
+public:
+    explicit AutoHeaderViewPrivate(AutoHeaderView* self)
+        : m_self{self}
+    { }
+
+    void calculateSectionWidths();
+    void normaliseWidths(const SectionIndexes& sections = {});
+    void updateWidths(const SectionIndexes& sections = {}) const;
+
+    void sectionResized(int resizedSection, int newSize);
+    [[nodiscard]] int sectionHandleAt(int pos) const;
+    [[nodiscard]] int rightLogicalSection(int visual) const;
+
+    [[nodiscard]] bool shouldBlockResize(const int oldPos) const;
+    void columnsAboutToBeRemoved(int first, int last);
+    void sectionCountChanged(int oldCount, int newCount);
+
     AutoHeaderView* m_self;
 
     bool m_stretchEnabled{false};
     SectionWidths m_sectionWidths;
 
-    SectionState m_state{NoState};
+    SectionState m_state{SectionState::None};
     int m_firstPos{-1};
     int m_mouseTarget{-1};
     int m_mouseSection{-1};
@@ -56,229 +73,225 @@ struct AutoHeaderView::Private
 
     int m_pendingColumns{0};
     QByteArray m_pendingState;
-
-    explicit Private(AutoHeaderView* self)
-        : m_self{self}
-    { }
-
-    void calculateSectionWidths()
-    {
-        if(!m_stretchEnabled) {
-            return;
-        }
-
-        m_sectionWidths.clear();
-
-        const int sectionCount = m_self->count();
-        const int headerWidth  = m_self->width();
-
-        m_sectionWidths.resize(sectionCount);
-
-        for(int section{0}; section < sectionCount; ++section) {
-            const auto width         = static_cast<double>(m_self->sectionSize(section)) / headerWidth;
-            m_sectionWidths[section] = width;
-        }
-    }
-
-    void normaliseWidths(const SectionIndexes& sections = {})
-    {
-        if(!m_stretchEnabled) {
-            return;
-        }
-
-        double widthTotal{0.0};
-
-        const int sectionCount = m_self->count();
-        for(int section{0}; section < sectionCount; ++section) {
-            if(!m_self->isSectionHidden(section)) {
-                widthTotal += m_sectionWidths.at(section);
-            }
-        }
-
-        if(widthTotal == 0.0 || widthTotal == 1.0) {
-            return;
-        }
-
-        double rightWidthTotal{widthTotal};
-
-        if(!sections.empty()) {
-            rightWidthTotal = 0.0;
-
-            for(int section{0}; section < sectionCount; ++section) {
-                if(!m_self->isSectionHidden(section) && sections.contains(section)) {
-                    rightWidthTotal += m_sectionWidths.at(section);
-                }
-            }
-        }
-
-        const double multiplier = (rightWidthTotal + (1.0 - widthTotal)) / rightWidthTotal;
-
-        for(int section{0}; section < sectionCount; ++section) {
-            if(!m_self->isSectionHidden(section) && (sections.empty() || sections.contains(section))) {
-                m_sectionWidths[section] *= multiplier;
-            }
-        }
-    }
-
-    void updateWidths(const SectionIndexes& sections = {}) const
-    {
-        if(!m_stretchEnabled) {
-            return;
-        }
-
-        const int sectionCount = static_cast<int>(m_sectionWidths.size());
-        const int headerWidth  = m_self->width();
-
-        for(int section{0}; section < sectionCount; ++section) {
-            const int logical = m_self->logicalIndex(section);
-
-            if(logical < 0 || logical >= sectionCount) {
-                continue;
-            }
-
-            const bool visible           = !m_self->isSectionHidden(logical);
-            const double normalisedWidth = m_sectionWidths.at(logical);
-            const int width              = !visible ? 0 : static_cast<int>(normalisedWidth * headerWidth);
-
-            if(!sections.empty() && !sections.contains(logical)) {
-                continue;
-            }
-
-            if(width > 0) {
-                m_self->resizeSection(logical, width);
-            }
-        }
-    }
-
-    void sectionResized(int resizedSection, int newSize)
-    {
-        if(!m_stretchEnabled || m_sectionWidths.empty()) {
-            return;
-        }
-
-        // Resize section to right
-        if(m_state == SectionState::Resizing) {
-            m_sectionWidths[resizedSection] = static_cast<double>(newSize) / m_self->width();
-
-            SectionIndexes sectionToResize;
-
-            const int resizedIndex = m_self->visualIndex(resizedSection);
-            const int rightSection = rightLogicalSection(resizedIndex);
-            if(rightSection >= 0) {
-                sectionToResize.push_back(rightSection);
-            }
-
-            if(!sectionToResize.empty()) {
-                m_state = SectionState::None;
-
-                normaliseWidths(sectionToResize);
-                updateWidths(sectionToResize);
-
-                m_state = SectionState::Resizing;
-            }
-        }
-    }
-
-    [[nodiscard]] int sectionHandleAt(int pos) const
-    {
-        int visualIndex = m_self->visualIndexAt(pos);
-
-        if(visualIndex == -1) {
-            return -1;
-        }
-
-        const int logicalIndex = m_self->logicalIndex(visualIndex);
-        const int viewportPos  = m_self->sectionViewportPosition(logicalIndex);
-        const int gripMargin   = m_self->style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, m_self) * 2;
-
-        bool left  = pos < viewportPos + gripMargin;
-        bool right = (pos > viewportPos + m_self->sectionSize(logicalIndex) - gripMargin);
-
-        if(m_self->orientation() == Qt::Horizontal && m_self->isRightToLeft()) {
-            std::swap(left, right);
-        }
-
-        if(left) {
-            while(visualIndex > -1) {
-                const int leftIndex = m_self->logicalIndex(--visualIndex);
-                if(!m_self->isSectionHidden(leftIndex)) {
-                    return m_self->visualIndex(leftIndex);
-                }
-            }
-        }
-        else if(right) {
-            return visualIndex;
-        }
-
-        return -1;
-    }
-
-    [[nodiscard]] int rightLogicalSection(int visual) const
-    {
-        const int count = m_self->count();
-        for(int i{visual + 1}; i < count; ++i) {
-            const int logical = m_self->logicalIndex(i);
-            if(!m_self->isSectionHidden(logical)) {
-                return logical;
-            }
-        }
-        return -1;
-    }
-
-    [[nodiscard]] bool shouldBlockResize(const int oldPos) const
-    {
-        if(!m_stretchEnabled) {
-            return false;
-        }
-
-        const int rightSection  = rightLogicalSection(m_resizingSection);
-        const int rightSize     = m_self->sectionSize(rightSection);
-        const int rightBoundary = m_self->sectionViewportPosition(rightSection) + rightSize;
-        const int endBoundary   = (m_self->orientation() == Qt::Horizontal) ? m_self->width() : m_self->height();
-
-        const bool posPastEnd          = m_lastResizePos >= endBoundary - MinSectionWidth;
-        const bool posPastRightSection = m_resizingSection >= 0 && m_lastResizePos >= rightBoundary - MinSectionWidth;
-        const bool sectionAtMinSize    = rightSize <= MinSectionWidth;
-        const bool isResizingSmaller   = m_lastResizePos >= oldPos;
-
-        return (posPastEnd || posPastRightSection || (sectionAtMinSize && isResizingSmaller));
-    }
-
-    void columnsAboutToBeRemoved(int first, int last)
-    {
-        const auto count = static_cast<int>(m_sectionWidths.size());
-        if(first >= 0 && first < count && last >= 0 && last < count) {
-            m_sectionWidths.remove(first, last - first + 1);
-        }
-    }
-
-    void sectionCountChanged(int oldCount, int newCount)
-    {
-        if(m_pendingColumns > 0 && !m_pendingState.isEmpty() && newCount == m_pendingColumns) {
-            m_self->restoreHeaderState(m_pendingState);
-            return;
-        }
-
-        if(!m_stretchEnabled || newCount == oldCount) {
-            return;
-        }
-
-        if(newCount > oldCount) {
-            m_sectionWidths.resize(newCount);
-            const auto ratio = static_cast<double>(newCount - oldCount) / static_cast<double>(newCount);
-            for(int section{oldCount}; section < newCount; ++section) {
-                m_sectionWidths[section] = ratio;
-            }
-        }
-
-        normaliseWidths();
-        updateWidths();
-    }
 };
+
+void AutoHeaderViewPrivate::calculateSectionWidths()
+{
+    if(!m_stretchEnabled) {
+        return;
+    }
+
+    m_sectionWidths.clear();
+
+    const int sectionCount = m_self->count();
+    const int headerWidth  = m_self->width();
+
+    m_sectionWidths.resize(sectionCount);
+
+    for(int section{0}; section < sectionCount; ++section) {
+        const auto width         = static_cast<double>(m_self->sectionSize(section)) / headerWidth;
+        m_sectionWidths[section] = width;
+    }
+}
+
+void AutoHeaderViewPrivate::normaliseWidths(const SectionIndexes& sections)
+{
+    if(!m_stretchEnabled) {
+        return;
+    }
+
+    double widthTotal{0.0};
+
+    const int sectionCount = m_self->count();
+    for(int section{0}; section < sectionCount; ++section) {
+        if(!m_self->isSectionHidden(section)) {
+            widthTotal += m_sectionWidths.at(section);
+        }
+    }
+
+    if(widthTotal == 0.0 || widthTotal == 1.0) {
+        return;
+    }
+
+    double rightWidthTotal{widthTotal};
+
+    if(!sections.empty()) {
+        rightWidthTotal = 0.0;
+
+        for(int section{0}; section < sectionCount; ++section) {
+            if(!m_self->isSectionHidden(section) && sections.contains(section)) {
+                rightWidthTotal += m_sectionWidths.at(section);
+            }
+        }
+    }
+
+    const double multiplier = (rightWidthTotal + (1.0 - widthTotal)) / rightWidthTotal;
+
+    for(int section{0}; section < sectionCount; ++section) {
+        if(!m_self->isSectionHidden(section) && (sections.empty() || sections.contains(section))) {
+            m_sectionWidths[section] *= multiplier;
+        }
+    }
+}
+
+void AutoHeaderViewPrivate::updateWidths(const SectionIndexes& sections) const
+{
+    if(!m_stretchEnabled) {
+        return;
+    }
+
+    const int sectionCount = static_cast<int>(m_sectionWidths.size());
+    const int headerWidth  = m_self->width();
+
+    for(int section{0}; section < sectionCount; ++section) {
+        const int logical = m_self->logicalIndex(section);
+
+        if(logical < 0 || logical >= sectionCount) {
+            continue;
+        }
+
+        const bool visible           = !m_self->isSectionHidden(logical);
+        const double normalisedWidth = m_sectionWidths.at(logical);
+        const int width              = !visible ? 0 : static_cast<int>(normalisedWidth * headerWidth);
+
+        if(!sections.empty() && !sections.contains(logical)) {
+            continue;
+        }
+
+        if(width > 0) {
+            m_self->resizeSection(logical, width);
+        }
+    }
+}
+
+void AutoHeaderViewPrivate::sectionResized(int resizedSection, int newSize)
+{
+    if(!m_stretchEnabled || m_sectionWidths.empty()) {
+        return;
+    }
+
+    // Resize section to right
+    if(m_state == SectionState::Resizing) {
+        m_sectionWidths[resizedSection] = static_cast<double>(newSize) / m_self->width();
+
+        SectionIndexes sectionToResize;
+
+        const int resizedIndex = m_self->visualIndex(resizedSection);
+        const int rightSection = rightLogicalSection(resizedIndex);
+        if(rightSection >= 0) {
+            sectionToResize.push_back(rightSection);
+        }
+
+        if(!sectionToResize.empty()) {
+            m_state = SectionState::None;
+
+            normaliseWidths(sectionToResize);
+            updateWidths(sectionToResize);
+
+            m_state = SectionState::Resizing;
+        }
+    }
+}
+
+int AutoHeaderViewPrivate::sectionHandleAt(int pos) const
+{
+    int visualIndex = m_self->visualIndexAt(pos);
+
+    if(visualIndex == -1) {
+        return -1;
+    }
+
+    const int logicalIndex = m_self->logicalIndex(visualIndex);
+    const int viewportPos  = m_self->sectionViewportPosition(logicalIndex);
+    const int gripMargin   = m_self->style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, m_self) * 2;
+
+    bool left  = pos < viewportPos + gripMargin;
+    bool right = (pos > viewportPos + m_self->sectionSize(logicalIndex) - gripMargin);
+
+    if(m_self->orientation() == Qt::Horizontal && m_self->isRightToLeft()) {
+        std::swap(left, right);
+    }
+
+    if(left) {
+        while(visualIndex > -1) {
+            const int leftIndex = m_self->logicalIndex(--visualIndex);
+            if(!m_self->isSectionHidden(leftIndex)) {
+                return m_self->visualIndex(leftIndex);
+            }
+        }
+    }
+    else if(right) {
+        return visualIndex;
+    }
+
+    return -1;
+}
+
+int AutoHeaderViewPrivate::rightLogicalSection(int visual) const
+{
+    const int count = m_self->count();
+    for(int i{visual + 1}; i < count; ++i) {
+        const int logical = m_self->logicalIndex(i);
+        if(!m_self->isSectionHidden(logical)) {
+            return logical;
+        }
+    }
+    return -1;
+}
+
+bool AutoHeaderViewPrivate::shouldBlockResize(const int oldPos) const
+{
+    if(!m_stretchEnabled) {
+        return false;
+    }
+
+    const int rightSection  = rightLogicalSection(m_resizingSection);
+    const int rightSize     = m_self->sectionSize(rightSection);
+    const int rightBoundary = m_self->sectionViewportPosition(rightSection) + rightSize;
+    const int endBoundary   = (m_self->orientation() == Qt::Horizontal) ? m_self->width() : m_self->height();
+
+    const bool posPastEnd          = m_lastResizePos >= endBoundary - MinSectionWidth;
+    const bool posPastRightSection = m_resizingSection >= 0 && m_lastResizePos >= rightBoundary - MinSectionWidth;
+    const bool sectionAtMinSize    = rightSize <= MinSectionWidth;
+    const bool isResizingSmaller   = m_lastResizePos >= oldPos;
+
+    return (posPastEnd || posPastRightSection || (sectionAtMinSize && isResizingSmaller));
+}
+
+void AutoHeaderViewPrivate::columnsAboutToBeRemoved(int first, int last)
+{
+    const auto count = static_cast<int>(m_sectionWidths.size());
+    if(first >= 0 && first < count && last >= 0 && last < count) {
+        m_sectionWidths.remove(first, last - first + 1);
+    }
+}
+
+void AutoHeaderViewPrivate::sectionCountChanged(int oldCount, int newCount)
+{
+    if(m_pendingColumns > 0 && !m_pendingState.isEmpty() && newCount == m_pendingColumns) {
+        m_self->restoreHeaderState(m_pendingState);
+        return;
+    }
+
+    if(!m_stretchEnabled || newCount == oldCount) {
+        return;
+    }
+
+    if(newCount > oldCount) {
+        m_sectionWidths.resize(newCount);
+        const auto ratio = static_cast<double>(newCount - oldCount) / static_cast<double>(newCount);
+        for(int section{oldCount}; section < newCount; ++section) {
+            m_sectionWidths[section] = ratio;
+        }
+    }
+
+    normaliseWidths();
+    updateWidths();
+}
 
 AutoHeaderView::AutoHeaderView(Qt::Orientation orientation, QWidget* parent)
     : QHeaderView{orientation, parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<AutoHeaderViewPrivate>(this)}
 {
     setMinimumSectionSize(MinSectionWidth);
     setTextElideMode(Qt::ElideRight);

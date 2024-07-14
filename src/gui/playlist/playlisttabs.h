@@ -19,16 +19,25 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
 #include <core/track.h>
 #include <gui/widgetcontainer.h>
 
+#include <QBasicTimer>
+#include <QPointer>
+
+class QHBoxLayout;
 class QIcon;
+class QVBoxLayout;
 
 namespace Fooyin {
 class ActionManager;
 class Playlist;
 class PlaylistController;
+class PlaylistHandler;
 class SettingsManager;
+class SingleTabbedWidget;
+class TrackSelectionController;
 
 class PlaylistTabs : public WidgetContainer
 {
@@ -37,7 +46,6 @@ class PlaylistTabs : public WidgetContainer
 public:
     explicit PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetProvider,
                           PlaylistController* playlistController, SettingsManager* settings, QWidget* parent = nullptr);
-    ~PlaylistTabs() override;
 
     void setupTabs();
 
@@ -78,7 +86,39 @@ protected:
     void dropEvent(QDropEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void setupConnections();
+    void setupButtons();
+
+    void tabChanged(int index) const;
+    void tabMoved(int from, int to) const;
+
+    void playlistChanged(Playlist* oldPlaylist, Playlist* playlist) const;
+    void activatePlaylistChanged(Playlist* playlist);
+    void playlistRenamed(const Playlist* playlist) const;
+
+    void playStateChanged(PlayState state) const;
+    void updateTabIcon(int i, PlayState state) const;
+    void createEmptyPlaylist() const;
+    void clearCurrentPlaylist() const;
+
+    ActionManager* m_actionManager;
+    PlaylistController* m_playlistController;
+    PlaylistHandler* m_playlistHandler;
+    TrackSelectionController* m_selectionController;
+    SettingsManager* m_settings;
+
+    QVBoxLayout* m_layout;
+    SingleTabbedWidget* m_tabs;
+    QPointer<FyWidget> m_tabsWidget;
+    QWidget* m_buttonsWidget;
+    QHBoxLayout* m_buttonsLayout;
+
+    QBasicTimer m_hoverTimer;
+    int m_currentHoverIndex;
+
+    QIcon m_playIcon;
+    QIcon m_pauseIcon;
+
+    UId m_lastActivePlaylist;
 };
 } // namespace Fooyin

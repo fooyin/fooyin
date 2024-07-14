@@ -139,7 +139,7 @@ OutputState SdlOutput::currentState()
     return state;
 }
 
-OutputDevices SdlOutput::getAllDevices() const
+OutputDevices SdlOutput::getAllDevices()
 {
     OutputDevices devices;
     bool tempInit{false};

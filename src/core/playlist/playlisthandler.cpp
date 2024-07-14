@@ -35,8 +35,34 @@
 constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
 
 namespace Fooyin {
-struct PlaylistHandler::Private
+class PlaylistHandlerPrivate
 {
+public:
+    PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+                           PlayerController* playerController, SettingsManager* settings);
+
+    void reloadPlaylists();
+    bool noConcretePlaylists();
+
+    void startNextTrack(const Track& track, int index) const;
+    void nextTrackChange(int delta);
+    Track nextTrack(int delta);
+
+    void next();
+    void previous();
+
+    void updateIndices();
+
+    [[nodiscard]] QString findUniqueName(const QString& name) const;
+    [[nodiscard]] int indexFromName(const QString& name) const;
+    [[nodiscard]] int nextValidIndex() const;
+    [[nodiscard]] bool validId(const UId& id) const;
+    [[nodiscard]] bool validName(const QString& name) const;
+    [[nodiscard]] bool validIndex(int index) const;
+
+    void restoreActivePlaylist();
+    Playlist* addNewPlaylist(const QString& name, bool isTemporary = false);
+
     PlaylistHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
@@ -50,237 +76,237 @@ struct PlaylistHandler::Private
 
     Playlist* m_activePlaylist{nullptr};
     Playlist* m_scheduledPlaylist{nullptr};
-
-    Private(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
-            PlayerController* playerController, SettingsManager* settings)
-        : m_self{self}
-        , m_dbPool{std::move(dbPool)}
-        , m_tagLoader{std::move(tagLoader)}
-        , m_playerController{playerController}
-        , m_settings{settings}
-    {
-        const DbConnectionProvider dbProvider{m_dbPool};
-        m_playlistConnector.initialise(dbProvider);
-    }
-
-    void reloadPlaylists()
-    {
-        const std::vector<PlaylistInfo> infos = m_playlistConnector.getAllPlaylists();
-
-        for(const auto& info : infos) {
-            m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index));
-        }
-    }
-
-    bool noConcretePlaylists()
-    {
-        return m_playlists.empty()
-            || std::ranges::all_of(m_playlists, [](const auto& playlist) { return playlist->isTemporary(); });
-    }
-
-    void startNextTrack(const Track& track, int index) const
-    {
-        if(!m_activePlaylist) {
-            return;
-        }
-
-        Track nextTrk{track};
-        if(!nextTrk.metadataWasRead()) {
-            if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
-                if(parser->readMetaData(nextTrk)) {
-                    nextTrk.generateHash();
-                    m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
-                }
-            }
-        }
-
-        m_playerController->changeCurrentTrack({nextTrk, m_activePlaylist->id(), index});
-        m_playerController->play();
-    }
-
-    void nextTrackChange(int delta)
-    {
-        if(m_scheduledPlaylist) {
-            m_activePlaylist    = m_scheduledPlaylist;
-            m_scheduledPlaylist = nullptr;
-        }
-
-        if(!m_activePlaylist) {
-            m_playerController->stop();
-            return;
-        }
-
-        const Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
-
-        if(!nextTrk.isValid()) {
-            m_playerController->stop();
-            return;
-        }
-
-        startNextTrack(nextTrk, m_activePlaylist->currentTrackIndex());
-    }
-
-    Track nextTrack(int delta)
-    {
-        auto* playlist = m_scheduledPlaylist ? m_scheduledPlaylist : m_activePlaylist;
-
-        if(!playlist) {
-            m_playerController->stop();
-            return {};
-        }
-
-        Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
-
-        if(!nextTrk.metadataWasRead()) {
-            if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
-                if(parser->readMetaData(nextTrk)) {
-                    nextTrk.generateHash();
-                    const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
-                    m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
-                }
-            }
-        }
-
-        return nextTrk;
-    }
-
-    void next()
-    {
-        nextTrackChange(1);
-    }
-
-    void previous()
-    {
-        if(m_settings->value<Settings::Core::RewindPreviousTrack>() && m_playerController->currentPosition() > 5000) {
-            m_playerController->seek(0);
-        }
-        else {
-            nextTrackChange(-1);
-        }
-    }
-
-    void updateIndices()
-    {
-        for(int index{0}; auto& playlist : m_playlists) {
-            if(!playlist->isTemporary()) {
-                playlist->setIndex(index++);
-            }
-        }
-    }
-
-    [[nodiscard]] QString findUniqueName(const QString& name) const
-    {
-        return Utils::findUniqueString(name, m_playlists, [](const auto& playlist) { return playlist->name(); });
-    }
-
-    [[nodiscard]] int indexFromName(const QString& name) const
-    {
-        if(name.isEmpty()) {
-            return -1;
-        }
-
-        auto it = std::ranges::find_if(m_playlists, [name](const auto& playlist) {
-            return playlist->name().compare(name, Qt::CaseInsensitive) == 0;
-        });
-
-        if(it == m_playlists.cend()) {
-            return -1;
-        }
-
-        return static_cast<int>(std::ranges::distance(m_playlists.cbegin(), it));
-    }
-
-    [[nodiscard]] int nextValidIndex() const
-    {
-        if(m_playlists.empty()) {
-            return 0;
-        }
-
-        auto indices
-            = m_playlists | std::ranges::views::transform([](const auto& playlist) { return playlist->index(); });
-        auto maxIndex = std::ranges::max_element(indices);
-
-        const int nextValidIndex = *maxIndex + 1;
-
-        return nextValidIndex;
-    }
-
-    [[nodiscard]] bool validId(const UId& id) const
-    {
-        auto it = std::ranges::find_if(std::as_const(m_playlists),
-                                       [id](const auto& playlist) { return playlist->id() == id; });
-        return it != m_playlists.cend();
-    }
-
-    [[nodiscard]] bool validName(const QString& name) const
-    {
-        auto it = std::ranges::find_if(std::as_const(m_playlists),
-                                       [name](const auto& playlist) { return playlist->name() == name; });
-        return it != m_playlists.cend();
-    }
-
-    [[nodiscard]] bool validIndex(int index) const
-    {
-        return (index >= 0 && index < static_cast<int>(m_playlists.size()));
-    }
-
-    void restoreActivePlaylist()
-    {
-        if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
-            return;
-        }
-
-        const int lastId = m_settings->value<Settings::Core::ActivePlaylistId>();
-        if(lastId < 0) {
-            return;
-        }
-
-        auto playlist = std::ranges::find_if(std::as_const(m_playlists),
-                                             [lastId](const auto& pl) { return pl->dbId() == lastId; });
-        if(playlist == m_playlists.cend()) {
-            return;
-        }
-
-        m_activePlaylist = playlist->get();
-        emit m_self->activePlaylistChanged(m_activePlaylist);
-
-        const int lastIndex = m_settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
-        m_activePlaylist->changeCurrentIndex(lastIndex);
-        m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
-    }
-
-    Playlist* addNewPlaylist(const QString& name, bool isTemporary = false)
-    {
-        auto existingIndex = indexFromName(name);
-
-        if(existingIndex >= 0) {
-            return m_playlists.at(existingIndex).get();
-        }
-
-        if(isTemporary) {
-            const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
-            auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName)).get();
-            return playlist;
-        }
-
-        const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Playlist"));
-
-        const int index = nextValidIndex();
-        const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index);
-
-        if(dbId >= 0) {
-            auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index)).get();
-            return playlist;
-        }
-
-        return nullptr;
-    }
 };
+
+PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
+                                               std::shared_ptr<TagLoader> tagLoader, PlayerController* playerController,
+                                               SettingsManager* settings)
+    : m_self{self}
+    , m_dbPool{std::move(dbPool)}
+    , m_tagLoader{std::move(tagLoader)}
+    , m_playerController{playerController}
+    , m_settings{settings}
+{
+    const DbConnectionProvider dbProvider{m_dbPool};
+    m_playlistConnector.initialise(dbProvider);
+}
+
+void PlaylistHandlerPrivate::reloadPlaylists()
+{
+    const std::vector<PlaylistInfo> infos = m_playlistConnector.getAllPlaylists();
+
+    for(const auto& info : infos) {
+        m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index));
+    }
+}
+
+bool PlaylistHandlerPrivate::noConcretePlaylists()
+{
+    return m_playlists.empty()
+        || std::ranges::all_of(m_playlists, [](const auto& playlist) { return playlist->isTemporary(); });
+}
+
+void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
+{
+    if(!m_activePlaylist) {
+        return;
+    }
+
+    Track nextTrk{track};
+    if(!nextTrk.metadataWasRead()) {
+        if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
+            if(parser->readMetaData(nextTrk)) {
+                nextTrk.generateHash();
+                m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
+            }
+        }
+    }
+
+    m_playerController->changeCurrentTrack({nextTrk, m_activePlaylist->id(), index});
+    m_playerController->play();
+}
+
+void PlaylistHandlerPrivate::nextTrackChange(int delta)
+{
+    if(m_scheduledPlaylist) {
+        m_activePlaylist    = m_scheduledPlaylist;
+        m_scheduledPlaylist = nullptr;
+    }
+
+    if(!m_activePlaylist) {
+        m_playerController->stop();
+        return;
+    }
+
+    const Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
+
+    if(!nextTrk.isValid()) {
+        m_playerController->stop();
+        return;
+    }
+
+    startNextTrack(nextTrk, m_activePlaylist->currentTrackIndex());
+}
+
+Track PlaylistHandlerPrivate::nextTrack(int delta)
+{
+    auto* playlist = m_scheduledPlaylist ? m_scheduledPlaylist : m_activePlaylist;
+
+    if(!playlist) {
+        m_playerController->stop();
+        return {};
+    }
+
+    Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
+
+    if(!nextTrk.metadataWasRead()) {
+        if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
+            if(parser->readMetaData(nextTrk)) {
+                nextTrk.generateHash();
+                const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
+                m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
+            }
+        }
+    }
+
+    return nextTrk;
+}
+
+void PlaylistHandlerPrivate::next()
+{
+    nextTrackChange(1);
+}
+
+void PlaylistHandlerPrivate::previous()
+{
+    if(m_settings->value<Settings::Core::RewindPreviousTrack>() && m_playerController->currentPosition() > 5000) {
+        m_playerController->seek(0);
+    }
+    else {
+        nextTrackChange(-1);
+    }
+}
+
+void PlaylistHandlerPrivate::updateIndices()
+{
+    for(int index{0}; auto& playlist : m_playlists) {
+        if(!playlist->isTemporary()) {
+            playlist->setIndex(index++);
+        }
+    }
+}
+
+QString PlaylistHandlerPrivate::findUniqueName(const QString& name) const
+{
+    return Utils::findUniqueString(name, m_playlists, [](const auto& playlist) { return playlist->name(); });
+}
+
+int PlaylistHandlerPrivate::indexFromName(const QString& name) const
+{
+    if(name.isEmpty()) {
+        return -1;
+    }
+
+    auto it = std::ranges::find_if(
+        m_playlists, [name](const auto& playlist) { return playlist->name().compare(name, Qt::CaseInsensitive) == 0; });
+
+    if(it == m_playlists.cend()) {
+        return -1;
+    }
+
+    return static_cast<int>(std::ranges::distance(m_playlists.cbegin(), it));
+}
+
+int PlaylistHandlerPrivate::nextValidIndex() const
+{
+    if(m_playlists.empty()) {
+        return 0;
+    }
+
+    auto indices  = m_playlists | std::ranges::views::transform([](const auto& playlist) { return playlist->index(); });
+    auto maxIndex = std::ranges::max_element(indices);
+
+    const int nextValidIndex = *maxIndex + 1;
+
+    return nextValidIndex;
+}
+
+bool PlaylistHandlerPrivate::validId(const UId& id) const
+{
+    auto it
+        = std::ranges::find_if(std::as_const(m_playlists), [id](const auto& playlist) { return playlist->id() == id; });
+    return it != m_playlists.cend();
+}
+
+bool PlaylistHandlerPrivate::validName(const QString& name) const
+{
+    auto it = std::ranges::find_if(std::as_const(m_playlists),
+                                   [name](const auto& playlist) { return playlist->name() == name; });
+    return it != m_playlists.cend();
+}
+
+bool PlaylistHandlerPrivate::validIndex(int index) const
+{
+    return (index >= 0 && index < static_cast<int>(m_playlists.size()));
+}
+
+void PlaylistHandlerPrivate::restoreActivePlaylist()
+{
+    if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+        return;
+    }
+
+    const int lastId = m_settings->value<Settings::Core::ActivePlaylistId>();
+    if(lastId < 0) {
+        return;
+    }
+
+    auto playlist
+        = std::ranges::find_if(std::as_const(m_playlists), [lastId](const auto& pl) { return pl->dbId() == lastId; });
+    if(playlist == m_playlists.cend()) {
+        return;
+    }
+
+    m_activePlaylist = playlist->get();
+    emit m_self->activePlaylistChanged(m_activePlaylist);
+
+    const int lastIndex = m_settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
+    m_activePlaylist->changeCurrentIndex(lastIndex);
+    m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
+}
+
+Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTemporary)
+{
+    auto existingIndex = indexFromName(name);
+
+    if(existingIndex >= 0) {
+        return m_playlists.at(existingIndex).get();
+    }
+
+    if(isTemporary) {
+        const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
+        auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName)).get();
+        return playlist;
+    }
+
+    const QString playlistName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("Playlist"));
+
+    const int index = nextValidIndex();
+    const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index);
+
+    if(dbId >= 0) {
+        auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index)).get();
+        return playlist;
+    }
+
+    return nullptr;
+}
 
 PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
                                  PlayerController* playerController, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), std::move(tagLoader), playerController, settings)}
+    , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(tagLoader), playerController,
+                                                 settings)}
 {
     p->reloadPlaylists();
 

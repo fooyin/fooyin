@@ -27,6 +27,7 @@
 
 namespace Fooyin {
 class LibraryManager;
+class LibraryScannerPrivate;
 class PlaylistLoader;
 class TagLoader;
 
@@ -64,7 +65,6 @@ public slots:
     void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryScannerPrivate> p;
 };
 } // namespace Fooyin

@@ -27,6 +27,7 @@
 
 namespace Fooyin {
 class ActionManager;
+class EditableLayoutPrivate;
 class FyLayout;
 class Id;
 class LayoutProvider;
@@ -62,7 +63,6 @@ public:
     void showQuickSetup();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<EditableLayoutPrivate> p;
 };
 } // namespace Fooyin

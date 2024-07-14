@@ -29,8 +29,9 @@
 #include <QObject>
 
 namespace Fooyin {
-class SettingsManager;
 class PlayerController;
+class PlaylistHandlerPrivate;
+class SettingsManager;
 
 class FYCORE_EXPORT PlaylistHandler : public QObject
 {
@@ -136,7 +137,6 @@ public slots:
     void trackAboutToFinish();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistHandlerPrivate> p;
 };
 } // namespace Fooyin

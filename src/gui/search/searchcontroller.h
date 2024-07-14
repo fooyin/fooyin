@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class EditableLayout;
+class SearchControllerPrivate;
 
 class SearchController : public QObject
 {
@@ -42,7 +43,6 @@ public:
     void changeSearch(const Id& id, const QString& search);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<SearchControllerPrivate> p;
 };
 } // namespace Fooyin

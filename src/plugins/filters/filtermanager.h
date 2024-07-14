@@ -26,6 +26,7 @@ class EditableLayout;
 
 namespace Filters {
 class FilterController;
+class FilterManagerPrivate;
 
 class FilterManager : public QObject
 {
@@ -38,8 +39,7 @@ public:
     void setupWidgetConnections();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<FilterManagerPrivate> p;
 };
 } // namespace Filters
 } // namespace Fooyin

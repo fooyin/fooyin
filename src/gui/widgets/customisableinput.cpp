@@ -31,8 +31,15 @@
 #include <QPushButton>
 
 namespace Fooyin {
-struct CustomisableInput::Private
+class CustomisableInputPrivate
 {
+public:
+    explicit CustomisableInputPrivate(CustomisableInput* self);
+
+    void toggleOptions() const;
+    void showFontDialog();
+    void showColourDialog();
+
     CustomisableInput* m_self;
 
     QLineEdit* m_input;
@@ -41,53 +48,53 @@ struct CustomisableInput::Private
     QPushButton* m_colourButton;
     QFont m_font;
     QColor m_colour;
-    State m_state;
-
-    explicit Private(CustomisableInput* self)
-        : m_self{self}
-        , m_input{new QLineEdit(m_self)}
-        , m_optionsButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), {}, m_self)}
-        , m_fontButton{new QPushButton(m_self)}
-        , m_colourButton{new QPushButton(m_self)}
-    {
-        auto* layout = new QHBoxLayout(m_self);
-        layout->setContentsMargins(0, 0, 0, 0);
-
-        layout->addWidget(m_input);
-        layout->addWidget(m_optionsButton);
-        layout->addWidget(m_fontButton);
-        layout->addWidget(m_colourButton);
-
-        m_fontButton->hide();
-        m_colourButton->hide();
-    }
-
-    void toggleOptions() const
-    {
-        m_fontButton->setHidden(!m_fontButton->isHidden());
-        m_colourButton->setHidden(!m_colourButton->isHidden());
-    }
-
-    void showFontDialog()
-    {
-        bool ok;
-        const QFont chosenFont = QFontDialog::getFont(&ok, m_font, m_self, tr("Select Font"));
-        if(ok && chosenFont != m_font) {
-            m_self->setFont(chosenFont);
-            m_state |= FontChanged;
-        }
-    }
-
-    void showColourDialog()
-    {
-        const QColor chosenColour
-            = QColorDialog::getColor(m_colour, m_self, tr("Select Colour"), QColorDialog::ShowAlphaChannel);
-        if(chosenColour.isValid() && chosenColour != m_colour) {
-            m_self->setColour(chosenColour);
-            m_state |= ColourChanged;
-        }
-    }
+    CustomisableInput::State m_state;
 };
+
+CustomisableInputPrivate::CustomisableInputPrivate(CustomisableInput* self)
+    : m_self{self}
+    , m_input{new QLineEdit(m_self)}
+    , m_optionsButton{new QPushButton(Utils::iconFromTheme(Constants::Icons::Font), {}, m_self)}
+    , m_fontButton{new QPushButton(m_self)}
+    , m_colourButton{new QPushButton(m_self)}
+{
+    auto* layout = new QHBoxLayout(m_self);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    layout->addWidget(m_input);
+    layout->addWidget(m_optionsButton);
+    layout->addWidget(m_fontButton);
+    layout->addWidget(m_colourButton);
+
+    m_fontButton->hide();
+    m_colourButton->hide();
+}
+
+void CustomisableInputPrivate::toggleOptions() const
+{
+    m_fontButton->setHidden(!m_fontButton->isHidden());
+    m_colourButton->setHidden(!m_colourButton->isHidden());
+}
+
+void CustomisableInputPrivate::showFontDialog()
+{
+    bool ok;
+    const QFont chosenFont = QFontDialog::getFont(&ok, m_font, m_self, CustomisableInput::tr("Select Font"));
+    if(ok && chosenFont != m_font) {
+        m_self->setFont(chosenFont);
+        m_state |= CustomisableInput::FontChanged;
+    }
+}
+
+void CustomisableInputPrivate::showColourDialog()
+{
+    const QColor chosenColour = QColorDialog::getColor(m_colour, m_self, CustomisableInput::tr("Select Colour"),
+                                                       QColorDialog::ShowAlphaChannel);
+    if(chosenColour.isValid() && chosenColour != m_colour) {
+        m_self->setColour(chosenColour);
+        m_state |= CustomisableInput::ColourChanged;
+    }
+}
 
 CustomisableInput::CustomisableInput(QWidget* parent)
     : CustomisableInput{CustomWidget, parent}
@@ -95,7 +102,7 @@ CustomisableInput::CustomisableInput(QWidget* parent)
 
 CustomisableInput::CustomisableInput(Attributes attributes, QWidget* parent)
     : ExpandableInput{attributes & CustomWidget, parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<CustomisableInputPrivate>(this)}
 {
     setFont(p->m_font);
     setColour(QApplication::palette().text().color());

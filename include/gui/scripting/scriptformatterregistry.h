@@ -26,6 +26,7 @@
 
 namespace Fooyin {
 struct FormattedTextBlock;
+class ScriptFormatterRegistryPrivate;
 
 class FYGUI_EXPORT ScriptFormatterRegistry
 {
@@ -37,7 +38,6 @@ public:
     void format(RichFormatting& formatting, const QString& func, const QString& option = {}) const;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ScriptFormatterRegistryPrivate> p;
 };
 } // namespace Fooyin

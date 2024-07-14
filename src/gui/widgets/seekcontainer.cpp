@@ -27,8 +27,17 @@
 #include <QHBoxLayout>
 
 namespace Fooyin {
-struct SeekContainer::Private
+class SeekContainerPrivate
 {
+public:
+    SeekContainerPrivate(SeekContainer* self, PlayerController* playerController);
+
+    void reset();
+
+    void trackChanged(const Track& track);
+    void stateChanged(PlayState state);
+    void updateLabels(uint64_t time) const;
+
     SeekContainer* m_self;
 
     PlayerController* m_playerController;
@@ -36,77 +45,76 @@ struct SeekContainer::Private
     QHBoxLayout* m_layout;
     ClickableLabel* m_elapsed;
     ClickableLabel* m_total;
-
     uint64_t m_max{0};
     bool m_elapsedTotal{false};
-
-    Private(SeekContainer* self, PlayerController* playerController)
-        : m_self{self}
-        , m_playerController{playerController}
-        , m_layout{new QHBoxLayout(m_self)}
-        , m_elapsed{new ClickableLabel(Utils::msToString(0), m_self)}
-        , m_total{new ClickableLabel(Utils::msToString(0), m_self)}
-    {
-        m_layout->setContentsMargins({});
-
-        const QFontMetrics fm{m_self->fontMetrics()};
-        m_elapsed->setMinimumWidth(fm.horizontalAdvance(Utils::msToString(0)));
-        m_total->setMinimumWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
-
-        m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
-        m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
-
-        trackChanged(m_playerController->currentTrack());
-    }
-
-    void reset()
-    {
-        m_max = 0;
-        updateLabels(m_max);
-    }
-
-    void trackChanged(const Track& track)
-    {
-        if(track.isValid()) {
-            m_max = track.duration();
-            updateLabels(0);
-        }
-    }
-
-    void stateChanged(PlayState state)
-    {
-        switch(state) {
-            case(PlayState::Paused):
-                break;
-            case(PlayState::Stopped):
-                reset();
-                break;
-            case(PlayState::Playing): {
-                if(m_max == 0) {
-                    trackChanged(m_playerController->currentTrack());
-                }
-                break;
-            }
-        }
-    }
-
-    void updateLabels(uint64_t time) const
-    {
-        m_elapsed->setText(Utils::msToString(time));
-
-        if(m_elapsedTotal) {
-            const int remaining = static_cast<int>(m_max - time);
-            m_total->setText(QStringLiteral("-") + Utils::msToString(remaining < 0 ? 0 : remaining));
-        }
-        else {
-            m_total->setText(Utils::msToString(m_max));
-        }
-    }
 };
+
+SeekContainerPrivate::SeekContainerPrivate(SeekContainer* self, PlayerController* playerController)
+    : m_self{self}
+    , m_playerController{playerController}
+    , m_layout{new QHBoxLayout(m_self)}
+    , m_elapsed{new ClickableLabel(Utils::msToString(0), m_self)}
+    , m_total{new ClickableLabel(Utils::msToString(0), m_self)}
+{
+    m_layout->setContentsMargins({});
+
+    const QFontMetrics fm{m_self->fontMetrics()};
+    m_elapsed->setMinimumWidth(fm.horizontalAdvance(Utils::msToString(0)));
+    m_total->setMinimumWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
+
+    m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
+    m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
+
+    trackChanged(m_playerController->currentTrack());
+}
+
+void SeekContainerPrivate::reset()
+{
+    m_max = 0;
+    updateLabels(m_max);
+}
+
+void SeekContainerPrivate::trackChanged(const Track& track)
+{
+    if(track.isValid()) {
+        m_max = track.duration();
+        updateLabels(0);
+    }
+}
+
+void SeekContainerPrivate::stateChanged(PlayState state)
+{
+    switch(state) {
+        case(PlayState::Paused):
+            break;
+        case(PlayState::Stopped):
+            reset();
+            break;
+        case(PlayState::Playing): {
+            if(m_max == 0) {
+                trackChanged(m_playerController->currentTrack());
+            }
+            break;
+        }
+    }
+}
+
+void SeekContainerPrivate::updateLabels(uint64_t time) const
+{
+    m_elapsed->setText(Utils::msToString(time));
+
+    if(m_elapsedTotal) {
+        const int remaining = static_cast<int>(m_max - time);
+        m_total->setText(QStringLiteral("-") + Utils::msToString(remaining < 0 ? 0 : remaining));
+    }
+    else {
+        m_total->setText(Utils::msToString(m_max));
+    }
+}
 
 SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(this, playerController)}
+    , p{std::make_unique<SeekContainerPrivate>(this, playerController)}
 {
     QObject::connect(p->m_elapsed, &ClickableLabel::clicked, this, &SeekContainer::elapsedClicked);
     QObject::connect(p->m_total, &ClickableLabel::clicked, this, &SeekContainer::totalClicked);

@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 class PlayerController;
+class SeekContainerPrivate;
 
 class FYGUI_EXPORT SeekContainer : public QWidget
 {
@@ -47,7 +48,6 @@ signals:
     void totalClicked();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<SeekContainerPrivate> p;
 };
 } // namespace Fooyin

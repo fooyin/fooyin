@@ -34,28 +34,40 @@
 #include <utils/actions/actioncontainer.h>
 
 namespace Fooyin::Filters {
-struct FiltersPlugin::Private
+void FiltersPlugin::initialise(const CorePluginContext& context)
 {
-    ActionManager* actionManager;
-    SettingsManager* settings;
-    MusicLibrary* library;
-    std::shared_ptr<TagLoader> tagLoader;
-    PlayerController* playerController;
-    LayoutProvider* layoutProvider;
-    WidgetProvider* widgetProvider;
-    TrackSelectionController* trackSelection;
+    m_library          = context.library;
+    m_playerController = context.playerController;
+    m_settings         = context.settingsManager;
+    m_tagLoader        = context.tagLoader;
+}
 
-    FilterController* filterController;
-    std::unique_ptr<FiltersSettings> filterSettings;
+void FiltersPlugin::initialise(const GuiPluginContext& context)
+{
+    m_actionManager  = context.actionManager;
+    m_layoutProvider = context.layoutProvider;
+    m_widgetProvider = context.widgetProvider;
+    m_trackSelection = context.trackSelection;
 
-    std::unique_ptr<FiltersGeneralPage> generalPage;
-    std::unique_ptr<FiltersGuiPage> guiPage;
-    std::unique_ptr<FiltersColumnPage> columnsPage;
+    m_filterSettings = std::make_unique<FiltersSettings>(m_settings);
+    m_filterController
+        = new FilterController(m_library, m_trackSelection, context.editableLayout, m_tagLoader, m_settings, this);
 
-    void registerLayouts() const
-    {
-        layoutProvider->registerLayout(
-            R"({"Name":"Obsidian","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAALQAAA3cAAAAcAP////8BAAAAAgA=",
+    m_widgetProvider->registerWidget(
+        QStringLiteral("LibraryFilter"), [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
+
+    m_generalPage = std::make_unique<FiltersGeneralPage>(m_settings);
+    m_guiPage     = std::make_unique<FiltersGuiPage>(m_settings);
+    m_columnsPage
+        = std::make_unique<FiltersColumnPage>(m_actionManager, m_filterController->columnRegistry(), m_settings);
+
+    registerLayouts();
+}
+
+void FiltersPlugin::registerLayouts() const
+{
+    m_layoutProvider->registerLayout(
+        R"({"Name":"Obsidian","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAADAAAALQAAA3cAAAAcAP////8BAAAAAgA=",
             "Widgets":[{"StatusBar":{}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAACBwAAA9YAAAGhAP////8BAAAAAQA=",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAAAIAAAA6AA/////wEAAAACAA==","Widgets":[{"SearchBar":{
             "ID":"866eee837dee4919bd1d1e7c916e4013","Widgets":"1c827a58f07a4a939b185d9c0285f936|09356ff889694ff7941174448bd67b7a"}},
@@ -67,8 +79,8 @@ struct FiltersPlugin::Private
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAAAggAABoIAAAA+AAAAHAD/////AQAAAAEA","Widgets":[{"PlayerControls":{}},
             {"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}}]}}]})");
 
-        layoutProvider->registerLayout(
-            R"({"Name":"Ember","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
+    m_layoutProvider->registerLayout(
+        R"({"Name":"Ember","Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAAEAAAA2QAAABoAAALGAAAAFgD/////AQAAAAIA",
             "Widgets":[{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAAEAAABAAAAAQAAAAEAAAABAAD/////AQAAAAEA",
             "Widgets":[{"LibraryFilter":{"Columns":"0","Group":"Default","ID":"955f29805de446d7a9b6195a94bfd817","Index":0}},
             {"LibraryFilter":{"Columns":"1","Group":"Default","ID":"4fee1a754b3e47ff86f4c711fbf0f0eb","Index":1}},
@@ -80,44 +92,6 @@ struct FiltersPlugin::Private
             3b20c1db282d4bfe9a95c776e6723608"}}]}},{"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAADAAABdAAABGgAAAFgAP////8BAAAAAQA=",
             "Widgets":[{"SplitterVertical":{"State":"AAAA/wAAAAEAAAACAAABdAAAAU0A/////wEAAAACAA==","Widgets":[{"ArtworkPanel":{}},
             {"SelectionInfo":{}}]}},{"Playlist":{}},{"PlaylistOrganiser":{}}]}},{"StatusBar":{}}]}}]})");
-    }
-};
-
-FiltersPlugin::FiltersPlugin()
-    : p{std::make_unique<Private>()}
-{ }
-
-FiltersPlugin::~FiltersPlugin() = default;
-
-void FiltersPlugin::initialise(const CorePluginContext& context)
-{
-    p->library          = context.library;
-    p->playerController = context.playerController;
-    p->settings         = context.settingsManager;
-    p->tagLoader        = context.tagLoader;
-}
-
-void FiltersPlugin::initialise(const GuiPluginContext& context)
-{
-    p->actionManager  = context.actionManager;
-    p->layoutProvider = context.layoutProvider;
-    p->widgetProvider = context.widgetProvider;
-    p->trackSelection = context.trackSelection;
-
-    p->filterSettings = std::make_unique<FiltersSettings>(p->settings);
-    p->filterController
-        = new FilterController(p->library, p->trackSelection, context.editableLayout, p->tagLoader, p->settings, this);
-
-    p->widgetProvider->registerWidget(
-        QStringLiteral("LibraryFilter"), [this]() { return p->filterController->createFilter(); },
-        tr("Library Filter"));
-
-    p->generalPage = std::make_unique<FiltersGeneralPage>(p->settings);
-    p->guiPage     = std::make_unique<FiltersGuiPage>(p->settings);
-    p->columnsPage
-        = std::make_unique<FiltersColumnPage>(p->actionManager, p->filterController->columnRegistry(), p->settings);
-
-    p->registerLayouts();
 }
 } // namespace Fooyin::Filters
 

@@ -19,8 +19,11 @@
 
 #pragma once
 
+#include "filterfwd.h"
+
 #include <core/track.h>
 #include <gui/fywidget.h>
+#include <utils/widgets/expandedtreeview.h>
 
 namespace Fooyin {
 class AutoHeaderView;
@@ -30,6 +33,9 @@ class WidgetContext;
 
 namespace Filters {
 class FilterColumnRegistry;
+class FilterModel;
+class FilterSortModel;
+class FilterWidgetPrivate;
 
 class FilterWidget : public FyWidget
 {
@@ -89,8 +95,44 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void setupConnections();
+
+    void refreshFilteredTracks();
+    void handleSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+    void updateViewMode(ExpandedTreeView::ViewMode mode);
+    void updateCaptions(ExpandedTreeView::CaptionDisplay captions);
+    void hideHeader(bool hide);
+    void setScrollbarEnabled(bool enabled);
+
+    void addDisplayMenu(QMenu* menu);
+    void filterHeaderMenu(const QPoint& pos);
+
+    [[nodiscard]] bool hasColumn(int id) const;
+    void columnChanged(const FilterColumn& changedColumn);
+    void columnRemoved(int id);
+
+    FilterColumnRegistry* m_columnRegistry;
+    SettingsManager* m_settings;
+
+    ExpandedTreeView* m_view;
+    AutoHeaderView* m_header;
+    FilterModel* m_model;
+    FilterSortModel* m_sortProxy;
+
+    Id m_group;
+    int m_index{-1};
+    FilterColumnList m_columns;
+    bool m_multipleColumns{false};
+    TrackList m_tracks;
+    TrackList m_filteredTracks;
+
+    WidgetContext* m_widgetContext;
+
+    QString m_searchStr;
+    bool m_searching{false};
+    bool m_updating{false};
+
+    QByteArray m_headerState;
 };
 } // namespace Filters
 } // namespace Fooyin

@@ -26,8 +26,15 @@
 #include <utils/settings/settingsmanager.h>
 
 namespace Fooyin {
-struct PlayerController::Private
+class PlayerControllerPrivate
 {
+public:
+    PlayerControllerPrivate(PlayerController* self, SettingsManager* settings)
+        : m_self{self}
+        , m_settings{settings}
+        , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
+    { }
+
     PlayerController* m_self;
 
     SettingsManager* m_settings;
@@ -40,18 +47,12 @@ struct PlayerController::Private
     bool m_counted{false};
     bool m_isQueueTrack{false};
 
-    PlaybackQueue queue;
-
-    Private(PlayerController* self, SettingsManager* settings)
-        : m_self{self}
-        , m_settings{settings}
-        , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
-    { }
+    PlaybackQueue m_queue;
 };
 
 PlayerController::PlayerController(SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, settings)}
+    , p{std::make_unique<PlayerControllerPrivate>(this, settings)}
 {
     settings->subscribe<Settings::Core::PlayMode>(this, [this]() {
         const auto mode = static_cast<Playlist::PlayModes>(p->m_settings->value<Settings::Core::PlayMode>());
@@ -71,8 +72,8 @@ void PlayerController::reset()
 
 void PlayerController::play()
 {
-    if(!p->m_currentTrack.isValid() && !p->queue.empty()) {
-        changeCurrentTrack(p->queue.nextTrack());
+    if(!p->m_currentTrack.isValid() && !p->m_queue.empty()) {
+        changeCurrentTrack(p->m_queue.nextTrack());
         emit tracksDequeued({p->m_currentTrack});
     }
 
@@ -111,7 +112,7 @@ void PlayerController::previous()
 
 void PlayerController::next()
 {
-    if(p->queue.empty()) {
+    if(p->m_queue.empty()) {
         p->m_isQueueTrack = false;
         emit nextTrack();
     }
@@ -175,7 +176,7 @@ void PlayerController::updateCurrentTrackIndex(int index)
 
 PlaybackQueue PlayerController::playbackQueue() const
 {
-    return p->queue;
+    return p->m_queue;
 }
 
 void PlayerController::setPlayMode(Playlist::PlayModes mode)
@@ -281,12 +282,12 @@ void PlayerController::queueTracks(const QueueTracks& tracks)
 
     QueueTracks tracksToAdd{tracks};
 
-    const int freeTracks = p->queue.freeSpace();
+    const int freeTracks = p->m_queue.freeSpace();
     if(std::cmp_greater_equal(tracks.size(), freeTracks)) {
         tracksToAdd = {tracks.begin(), tracks.begin() + freeTracks};
     }
 
-    p->queue.addTracks(tracksToAdd);
+    p->m_queue.addTracks(tracksToAdd);
     emit tracksQueued(tracksToAdd);
 }
 
@@ -320,7 +321,7 @@ void PlayerController::dequeueTracks(const QueueTracks& tracks)
         return;
     }
 
-    const auto removedTracks = p->queue.removeTracks(tracks);
+    const auto removedTracks = p->m_queue.removeTracks(tracks);
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }
@@ -337,17 +338,17 @@ void PlayerController::dequeueTracks(const std::vector<int>& indexes)
     std::vector<int> sortedIndexes{indexes};
     std::sort(sortedIndexes.rbegin(), sortedIndexes.rend());
 
-    auto tracks      = p->queue.tracks();
+    auto tracks      = p->m_queue.tracks();
     const auto count = static_cast<int>(tracks.size());
     for(const int index : sortedIndexes) {
         if(index >= 0 && index < count) {
-            const auto track = p->queue.track(index);
+            const auto track = p->m_queue.track(index);
             dequeuedIndexes[track.playlistId].emplace_back(track.indexInPlaylist);
             tracks.erase(tracks.begin() + index);
         }
     }
 
-    p->queue.replaceTracks(tracks);
+    p->m_queue.replaceTracks(tracks);
 
     if(!dequeuedIndexes.empty()) {
         emit trackIndexesDequeued(dequeuedIndexes);
@@ -368,20 +369,20 @@ void PlayerController::replaceTracks(const QueueTracks& tracks)
 {
     QueueTracks removed;
 
-    const auto currentTracks = p->queue.tracks();
+    const auto currentTracks = p->m_queue.tracks();
     const std::set<PlaylistTrack> newTracks{tracks.cbegin(), tracks.cend()};
 
     std::ranges::copy_if(currentTracks, std::back_inserter(removed),
                          [&newTracks](const PlaylistTrack& oldTrack) { return !newTracks.contains(oldTrack); });
 
-    p->queue.replaceTracks(tracks);
+    p->m_queue.replaceTracks(tracks);
 
     emit trackQueueChanged(removed, tracks);
 }
 
 void PlayerController::clearPlaylistQueue(const UId& playlistId)
 {
-    const auto removedTracks = p->queue.removePlaylistTracks(playlistId);
+    const auto removedTracks = p->m_queue.removePlaylistTracks(playlistId);
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }
@@ -389,8 +390,8 @@ void PlayerController::clearPlaylistQueue(const UId& playlistId)
 
 void PlayerController::clearQueue()
 {
-    const auto removedTracks = p->queue.tracks();
-    p->queue.clear();
+    const auto removedTracks = p->m_queue.tracks();
+    p->m_queue.clear();
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }

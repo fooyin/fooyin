@@ -25,6 +25,7 @@
 
 namespace Fooyin {
 struct CorePluginContext;
+class GuiApplicationPrivate;
 
 class FYGUI_EXPORT GuiApplication : public QObject
 {
@@ -40,7 +41,6 @@ public:
     void openFiles(const QList<QUrl>& files);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<GuiApplicationPrivate> p;
 };
 } // namespace Fooyin

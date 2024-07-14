@@ -122,270 +122,96 @@ void updateChannelMap(spa_audio_info_raw* info, int channels)
 } // namespace
 
 namespace Fooyin::Pipewire {
-struct PipeWireOutput::Private
-{
-    PipeWireOutput* m_self;
-
-    QString m_device;
-    float m_volume{1.0};
-
-    AudioFormat m_format;
-
-    AudioBuffer m_buffer;
-    uint32_t m_bufferPos{0};
-
-    std::unique_ptr<PipewireThreadLoop> m_loop;
-    std::unique_ptr<PipewireContext> m_context;
-    std::unique_ptr<PipewireCore> m_core;
-    std::unique_ptr<PipewireStream> m_stream;
-    std::unique_ptr<PipewireRegistry> m_registry;
-
-    explicit Private(PipeWireOutput* self)
-        : m_self{self}
-    { }
-
-    void uninit()
-    {
-        if(m_stream) {
-            const ThreadLoopGuard guard{m_loop.get()};
-            m_stream.reset(nullptr);
-        }
-
-        if(m_loop) {
-            m_loop->stop();
-        }
-
-        if(m_core) {
-            m_core.reset(nullptr);
-        }
-
-        if(m_context) {
-            m_context.reset(nullptr);
-        }
-
-        if(m_loop) {
-            m_loop.reset(nullptr);
-        }
-
-        if(m_registry) {
-            m_registry.reset(nullptr);
-        }
-
-        m_buffer.clear();
-        m_bufferPos = 0;
-    }
-
-    bool initCore()
-    {
-        m_loop = std::make_unique<PipewireThreadLoop>();
-
-        if(!m_loop->loop()) {
-            return false;
-        }
-
-        m_context = std::make_unique<PipewireContext>(m_loop.get());
-
-        if(!m_context->context()) {
-            return false;
-        }
-
-        m_core = std::make_unique<PipewireCore>(m_context.get());
-
-        if(!m_core->core()) {
-            return false;
-        }
-
-        m_registry = std::make_unique<PipewireRegistry>(m_core.get());
-
-        m_core->syncCore();
-
-        if(!m_loop->start()) {
-            qWarning() << "[PW] Failed to start thread loop";
-            return false;
-        }
-
-        {
-            const ThreadLoopGuard guard{m_loop.get()};
-            while(!m_core->initialised()) {
-                if(m_loop->wait(2) != 0) {
-                    break;
-                }
-            }
-        }
-
-        return m_core->initialised();
-    }
-
-    bool initStream()
-    {
-        static const pw_stream_events streamEvents = {
-            .version       = PW_VERSION_STREAM_EVENTS,
-            .state_changed = stateChanged,
-            .process       = process,
-            .drained       = drained,
-        };
-
-        const ThreadLoopGuard guard{m_loop.get()};
-
-        const auto dev = m_device != u"default" ? m_device : QString{};
-
-        m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, dev);
-        m_stream->addListener(streamEvents, this);
-
-        const spa_audio_format spaFormat = findSpaFormat(m_format.sampleFormat());
-        if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
-            qWarning() << "[PW] Unknown audio format";
-            return false;
-        }
-
-        std::array<uint8_t, 1024> paramBuffer;
-        auto builder = SPA_POD_BUILDER_INIT(paramBuffer.data(), paramBuffer.size());
-
-        spa_audio_info_raw audioInfo = {
-            .format   = spaFormat,
-            .flags    = SPA_AUDIO_FLAG_NONE,
-            .rate     = static_cast<uint32_t>(m_format.sampleRate()),
-            .channels = static_cast<uint32_t>(m_format.channelCount()),
-        };
-
-        updateChannelMap(&audioInfo, m_format.channelCount());
-
-        std::vector<const spa_pod*> params;
-        params.emplace_back(spa_format_audio_raw_build(&builder, SPA_PARAM_EnumFormat, &audioInfo));
-
-        const auto flags = static_cast<pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_INACTIVE
-                                                        | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS);
-
-        return m_stream->connect(PW_ID_ANY, PW_DIRECTION_OUTPUT, params, flags);
-    }
-
-    static void process(void* userData)
-    {
-        auto* self = static_cast<PipeWireOutput::Private*>(userData);
-
-        if(!self->m_bufferPos) {
-            self->m_loop->signal(false);
-            return;
-        }
-
-        auto* pwBuffer = self->m_stream->dequeueBuffer();
-        if(!pwBuffer) {
-            qWarning() << "[PW] No available output buffers";
-            return;
-        }
-
-        const spa_data& data = pwBuffer->buffer->datas[0];
-
-        const auto size = std::min(data.maxsize, self->m_bufferPos);
-        auto* dst       = data.data;
-
-        std::memcpy(dst, self->m_buffer.data(), size);
-        self->m_bufferPos -= size;
-        self->m_buffer.erase(size);
-
-        data.chunk->offset = 0;
-        data.chunk->stride = self->m_format.bytesPerFrame();
-        data.chunk->size   = size;
-
-        self->m_stream->queueBuffer(pwBuffer);
-        self->m_loop->signal(false);
-    }
-
-    static void stateChanged(void* userdata, enum pw_stream_state old, enum pw_stream_state state,
-                             const char* /*error*/)
-    {
-        auto* priv = static_cast<PipeWireOutput::Private*>(userdata);
-
-        if(state == PW_STREAM_STATE_UNCONNECTED) {
-            QMetaObject::invokeMethod(priv->m_self, [priv]() { emit priv->m_self->stateChanged(State::Disconnected); });
-        }
-        else if(old == PW_STREAM_STATE_UNCONNECTED && state == PW_STREAM_STATE_CONNECTING) {
-            // TODO: Handle reconnections
-        }
-        else if(state == PW_STREAM_STATE_PAUSED || state == PW_STREAM_STATE_STREAMING) {
-            priv->m_loop->signal(false);
-        }
-    }
-
-    static void drained(void* userdata)
-    {
-        auto* self = static_cast<PipeWireOutput::Private*>(userdata);
-
-        self->m_stream->setActive(false);
-        self->m_loop->signal(false);
-    }
-};
-
-PipeWireOutput::PipeWireOutput()
-    : p{std::make_unique<Private>(this)}
-{ }
-
-PipeWireOutput::~PipeWireOutput() = default;
-
 bool PipeWireOutput::init(const AudioFormat& format)
 {
-    p->m_format = format;
-    p->m_buffer = {format, 0};
+    m_format = format;
+    m_buffer = {format, 0};
 
     pw_init(nullptr, nullptr);
 
-    return p->initCore() && p->initStream();
+    return initCore() && initStream();
 }
 
 void PipeWireOutput::uninit()
 {
-    p->uninit();
+    if(m_stream) {
+        const ThreadLoopGuard guard{m_loop.get()};
+        m_stream.reset(nullptr);
+    }
+
+    if(m_loop) {
+        m_loop->stop();
+    }
+
+    if(m_core) {
+        m_core.reset(nullptr);
+    }
+
+    if(m_context) {
+        m_context.reset(nullptr);
+    }
+
+    if(m_loop) {
+        m_loop.reset(nullptr);
+    }
+
+    if(m_registry) {
+        m_registry.reset(nullptr);
+    }
+
+    m_buffer.clear();
+    m_bufferPos = 0;
 
     pw_deinit();
 }
 
 void PipeWireOutput::reset()
 {
-    const ThreadLoopGuard guard{p->m_loop.get()};
-    p->m_stream->flush(false);
+    const ThreadLoopGuard guard{m_loop.get()};
+    m_stream->flush(false);
 }
 
 void PipeWireOutput::start()
 {
-    const ThreadLoopGuard guard{p->m_loop.get()};
-    p->m_stream->setActive(true);
+    const ThreadLoopGuard guard{m_loop.get()};
+    m_stream->setActive(true);
 }
 
 void PipeWireOutput::drain()
 {
-    const ThreadLoopGuard guard{p->m_loop.get()};
-    p->m_stream->flush(false);
+    const ThreadLoopGuard guard{m_loop.get()};
+    m_stream->flush(false);
 }
 
 bool PipeWireOutput::initialised() const
 {
-    return p->m_core && p->m_core->initialised();
+    return m_core && m_core->initialised();
 }
 
 QString PipeWireOutput::device() const
 {
-    return p->m_device;
+    return m_device;
 }
 
-OutputDevices PipeWireOutput::getAllDevices() const
+OutputDevices PipeWireOutput::getAllDevices()
 {
     OutputDevices devices;
 
     devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
 
-    if(!p->m_core || !p->m_core->initialised()) {
+    if(!m_core || !m_core->initialised()) {
         pw_init(nullptr, nullptr);
 
-        if(!p->initCore()) {
+        if(!initCore()) {
             return {};
         }
 
-        std::ranges::copy(p->m_registry->devices(), std::back_inserter(devices));
+        std::ranges::copy(m_registry->devices(), std::back_inserter(devices));
 
-        p->uninit();
+        uninit();
     }
     else {
-        std::ranges::copy(p->m_registry->devices(), std::back_inserter(devices));
+        std::ranges::copy(m_registry->devices(), std::back_inserter(devices));
     }
 
     return devices;
@@ -395,45 +221,45 @@ OutputState PipeWireOutput::currentState()
 {
     OutputState state;
 
-    state.queuedSamples = p->m_buffer.frameCount();
-    state.freeSamples   = p->m_stream->bufferSize() - state.queuedSamples;
+    state.queuedSamples = m_buffer.frameCount();
+    state.freeSamples   = m_stream->bufferSize() - state.queuedSamples;
 
     return state;
 }
 
 int PipeWireOutput::bufferSize() const
 {
-    return p->m_stream ? p->m_stream->bufferSize() : 0;
+    return m_stream ? m_stream->bufferSize() : 0;
 }
 
 int PipeWireOutput::write(const AudioBuffer& buffer)
 {
-    const ThreadLoopGuard guard{p->m_loop.get()};
+    const ThreadLoopGuard guard{m_loop.get()};
 
-    p->m_buffer.append(buffer.constData());
-    p->m_bufferPos += buffer.byteCount();
+    m_buffer.append(buffer.constData());
+    m_bufferPos += buffer.byteCount();
 
     return buffer.sampleCount();
 }
 
 void PipeWireOutput::setPaused(bool pause)
 {
-    const ThreadLoopGuard guard{p->m_loop.get()};
-    p->m_stream->setActive(!pause);
+    const ThreadLoopGuard guard{m_loop.get()};
+    m_stream->setActive(!pause);
 }
 
 void PipeWireOutput::setVolume(double volume)
 {
-    p->m_volume = static_cast<float>(volume);
+    m_volume = static_cast<float>(volume);
 
-    const ThreadLoopGuard guard{p->m_loop.get()};
-    p->m_stream->setVolume(static_cast<float>(volume));
+    const ThreadLoopGuard guard{m_loop.get()};
+    m_stream->setVolume(static_cast<float>(volume));
 }
 
 void PipeWireOutput::setDevice(const QString& device)
 {
     if(!device.isEmpty()) {
-        p->m_device = device;
+        m_device = device;
     }
 }
 
@@ -441,5 +267,145 @@ QString PipeWireOutput::error() const
 {
     // TODO
     return {};
+}
+
+bool PipeWireOutput::initCore()
+{
+    m_loop = std::make_unique<PipewireThreadLoop>();
+
+    if(!m_loop->loop()) {
+        return false;
+    }
+
+    m_context = std::make_unique<PipewireContext>(m_loop.get());
+
+    if(!m_context->context()) {
+        return false;
+    }
+
+    m_core = std::make_unique<PipewireCore>(m_context.get());
+
+    if(!m_core->core()) {
+        return false;
+    }
+
+    m_registry = std::make_unique<PipewireRegistry>(m_core.get());
+
+    m_core->syncCore();
+
+    if(!m_loop->start()) {
+        qWarning() << "[PW] Failed to start thread loop";
+        return false;
+    }
+
+    {
+        const ThreadLoopGuard guard{m_loop.get()};
+        while(!m_core->initialised()) {
+            if(m_loop->wait(2) != 0) {
+                break;
+            }
+        }
+    }
+
+    return m_core->initialised();
+}
+
+bool PipeWireOutput::initStream()
+{
+    static const pw_stream_events streamEvents = {
+        .version       = PW_VERSION_STREAM_EVENTS,
+        .state_changed = handleStateChanged,
+        .process       = process,
+        .drained       = drained,
+    };
+
+    const ThreadLoopGuard guard{m_loop.get()};
+
+    const auto dev = m_device != u"default" ? m_device : QString{};
+
+    m_stream = std::make_unique<PipewireStream>(m_core.get(), m_format, dev);
+    m_stream->addListener(streamEvents, this);
+
+    const spa_audio_format spaFormat = findSpaFormat(m_format.sampleFormat());
+    if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
+        qWarning() << "[PW] Unknown audio format";
+        return false;
+    }
+
+    std::array<uint8_t, 1024> paramBuffer;
+    auto builder = SPA_POD_BUILDER_INIT(paramBuffer.data(), paramBuffer.size());
+
+    spa_audio_info_raw audioInfo = {
+        .format   = spaFormat,
+        .flags    = SPA_AUDIO_FLAG_NONE,
+        .rate     = static_cast<uint32_t>(m_format.sampleRate()),
+        .channels = static_cast<uint32_t>(m_format.channelCount()),
+    };
+
+    updateChannelMap(&audioInfo, m_format.channelCount());
+
+    std::vector<const spa_pod*> params;
+    params.emplace_back(spa_format_audio_raw_build(&builder, SPA_PARAM_EnumFormat, &audioInfo));
+
+    const auto flags = static_cast<pw_stream_flags>(PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_INACTIVE
+                                                    | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS);
+
+    return m_stream->connect(PW_ID_ANY, PW_DIRECTION_OUTPUT, params, flags);
+}
+
+void PipeWireOutput::process(void* userData)
+{
+    auto* self = static_cast<PipeWireOutput*>(userData);
+
+    if(!self->m_bufferPos) {
+        self->m_loop->signal(false);
+        return;
+    }
+
+    auto* pwBuffer = self->m_stream->dequeueBuffer();
+    if(!pwBuffer) {
+        qWarning() << "[PW] No available output buffers";
+        return;
+    }
+
+    const spa_data& data = pwBuffer->buffer->datas[0];
+
+    const auto size = std::min(data.maxsize, self->m_bufferPos);
+    auto* dst       = data.data;
+
+    std::memcpy(dst, self->m_buffer.data(), size);
+    self->m_bufferPos -= size;
+    self->m_buffer.erase(size);
+
+    data.chunk->offset = 0;
+    data.chunk->stride = self->m_format.bytesPerFrame();
+    data.chunk->size   = size;
+
+    self->m_stream->queueBuffer(pwBuffer);
+    self->m_loop->signal(false);
+}
+
+void PipeWireOutput::handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state,
+                                        const char* /*error*/)
+{
+    auto* self = static_cast<PipeWireOutput*>(userdata);
+
+    if(state == PW_STREAM_STATE_UNCONNECTED) {
+        QMetaObject::invokeMethod(self, [self]() { emit self->stateChanged(PipeWireOutput::State::Disconnected); });
+    }
+    else if(old == PW_STREAM_STATE_UNCONNECTED && state == PW_STREAM_STATE_CONNECTING) {
+        // TODO: Handle reconnections
+    }
+    else if(state == PW_STREAM_STATE_PAUSED || state == PW_STREAM_STATE_STREAMING) {
+        self->m_loop->signal(false);
+    }
+}
+
+void PipeWireOutput::drained(void* userdata)
+{
+    auto* self = static_cast<PipeWireOutput*>(userdata);
+
+    self->m_stream->setActive(false);
+    self->m_loop->signal(false);
 }
 } // namespace Fooyin::Pipewire

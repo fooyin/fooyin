@@ -24,8 +24,8 @@
 #include <QObject>
 
 namespace Fooyin {
-struct AudioOutputBuilder;
 class DecoderProvider;
+class EngineHandlerPrivate;
 class PlayerController;
 class SettingsManager;
 
@@ -47,7 +47,6 @@ public:
     void addOutput(const QString& name, OutputCreator output) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<EngineHandlerPrivate> p;
 };
 } // namespace Fooyin

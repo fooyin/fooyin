@@ -108,8 +108,9 @@ void colourRgb(RichFormatting& formatting, const QString& option)
     }
 }
 
-struct ScriptFormatterRegistry::Private
+class ScriptFormatterRegistryPrivate
 {
+public:
     std::unordered_map<QString, FormatFunc> funcs{
         {QStringLiteral("b"), bold},          {QStringLiteral("i"), italic},
         {QStringLiteral("font"), fontFamily}, {QStringLiteral("size"), fontSize},
@@ -119,7 +120,7 @@ struct ScriptFormatterRegistry::Private
 };
 
 ScriptFormatterRegistry::ScriptFormatterRegistry()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<ScriptFormatterRegistryPrivate>()}
 { }
 
 ScriptFormatterRegistry::~ScriptFormatterRegistry() = default;

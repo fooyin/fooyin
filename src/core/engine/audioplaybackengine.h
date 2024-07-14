@@ -19,10 +19,17 @@
 
 #pragma once
 
+#include "audioclock.h"
+#include "internalcoresettings.h"
+
 #include <core/engine/audioengine.h>
 #include <core/engine/decoderprovider.h>
+#include <core/track.h>
+
+#include <QBasicTimer>
 
 namespace Fooyin {
+class AudioRenderer;
 class SettingsManager;
 
 class AudioPlaybackEngine : public AudioEngine
@@ -34,7 +41,6 @@ public:
                                  QObject* parent = nullptr);
     ~AudioPlaybackEngine() override;
 
-public slots:
     void seek(uint64_t pos) override;
 
     void changeTrack(const Fooyin::Track& track) override;
@@ -52,7 +58,55 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    void resetWorkers();
+    void stopWorkers(bool full = false);
+
+    void handleOutputState(AudioOutput::State outState);
+    void updateState(PlaybackState newState);
+    TrackStatus changeTrackStatus(TrackStatus newStatus);
+
+    void setupDuration();
+    bool updateFormat(const AudioFormat& nextFormat);
+
+    void startPlayback();
+    void playOutput();
+    void pauseOutput();
+    void stopOutput();
+
+    void readNextBuffer();
+    void updatePosition();
+    void onRendererFinished();
+
+    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    std::unique_ptr<AudioDecoder> m_decoder;
+    SettingsManager* m_settings;
+
+    AudioClock m_clock;
+
+    TrackStatus m_status;
+    PlaybackState m_state;
+    AudioOutput::State m_outputState;
+
+    uint64_t m_startPosition;
+    uint64_t m_endPosition;
+    uint64_t m_lastPosition;
+
+    uint64_t m_totalBufferTime;
+    uint64_t m_bufferLength;
+
+    uint64_t m_duration;
+    double m_volume;
+    bool m_ending;
+
+    Track m_currentTrack;
+    AudioFormat m_format;
+
+    AudioRenderer* m_renderer;
+
+    QBasicTimer m_posTimer;
+    QBasicTimer m_bufferTimer;
+    QBasicTimer m_pauseTimer;
+
+    FadingIntervals m_fadeIntervals;
 };
 } // namespace Fooyin

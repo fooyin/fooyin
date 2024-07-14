@@ -100,8 +100,24 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
     return cmp < 0;
 }
 
-struct FilterModel::Private
+class FilterModelPrivate
 {
+public:
+    explicit FilterModelPrivate(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings);
+
+    void beginReset();
+
+    void addSummary();
+    void removeSummary();
+    void updateSummary();
+    int uniqueValues(int column) const;
+
+    void batchFinished(PendingTreeData data);
+    void populateModel(PendingTreeData& data);
+
+    void coverUpdated(const Track& track);
+    void dataUpdated(const QList<int>& roles = {}) const;
+
     FilterModel* m_self;
     SettingsManager* m_settings;
 
@@ -130,169 +146,170 @@ struct FilterModel::Private
     QColor m_colour;
 
     TrackList m_tracksPendingRemoval;
+};
 
-    explicit Private(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings)
-        : m_self{self}
-        , m_settings{settings}
-        , m_coverProvider{coverProvider}
-        , m_decorationSize{m_settings->value<Settings::Filters::FilterIconSize>().toSize()}
-    {
-        m_populator.moveToThread(&m_populatorThread);
+FilterModelPrivate::FilterModelPrivate(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings)
+    : m_self{self}
+    , m_settings{settings}
+    , m_coverProvider{coverProvider}
+    , m_decorationSize{m_settings->value<Settings::Filters::FilterIconSize>().toSize()}
+{
+    m_populator.moveToThread(&m_populatorThread);
 
-        QObject::connect(m_coverProvider, &CoverProvider::coverAdded, m_self,
-                         [this](const Track& track) { coverUpdated(track); });
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, m_self,
+                     [this](const Track& track) { coverUpdated(track); });
 
-        m_settings->subscribe<Settings::Filters::FilterIconSize>(
-            m_self, [this](const auto& size) { m_decorationSize = size.toSize(); });
-    }
+    m_settings->subscribe<Settings::Filters::FilterIconSize>(
+        m_self, [this](const auto& size) { m_decorationSize = size.toSize(); });
+}
 
-    void beginReset()
-    {
-        m_self->resetRoot();
-        m_nodes.clear();
-        m_trackParents.clear();
+void FilterModelPrivate::beginReset()
+{
+    m_self->resetRoot();
+    m_nodes.clear();
+    m_trackParents.clear();
 
-        if(m_showSummary) {
-            addSummary();
-            updateSummary();
-        }
-    }
-
-    void addSummary()
-    {
-        m_summaryNode = FilterItem{{}, {}, m_self->rootItem()};
-        m_summaryNode.setIsSummary(true);
-        m_self->rootItem()->insertChild(0, &m_summaryNode);
-    }
-
-    void removeSummary()
-    {
-        const int row = m_summaryNode.row();
-        m_self->rootItem()->removeChild(row);
-        m_summaryNode = {};
-    }
-
-    void batchFinished(PendingTreeData data)
-    {
-        if(m_nodes.empty()) {
-            m_resetting = true;
-        }
-
-        if(m_resetting) {
-            m_self->beginResetModel();
-            beginReset();
-        }
-
-        if(!m_tracksPendingRemoval.empty()) {
-            m_self->removeTracks(m_tracksPendingRemoval);
-        }
-
-        populateModel(data);
-
-        if(m_resetting) {
-            m_self->endResetModel();
-        }
-        m_resetting = false;
-
-        QMetaObject::invokeMethod(m_self, &FilterModel::modelUpdated);
-    }
-
-    int uniqueValues(int column) const
-    {
-        std::set<QString> columnUniques;
-
-        const auto children = m_self->rootItem()->children();
-
-        for(FilterItem* item : children) {
-            if(!item->isSummary()) {
-                columnUniques.emplace(item->column(column));
-            }
-        }
-
-        return static_cast<int>(columnUniques.size());
-    }
-
-    void updateSummary()
-    {
-        if(!m_showSummary) {
-            return;
-        }
-
-        const int columnCount = m_self->columnCount({});
-
-        QStringList nodeColumns;
-        for(int column{0}; column < columnCount; ++column) {
-            nodeColumns.emplace_back(
-                QString{tr("All (%1 %2s)")}.arg(uniqueValues(column)).arg(m_columns.at(column).name.toLower()));
-        }
-
-        m_summaryNode.setColumns(nodeColumns);
-    }
-
-    void populateModel(PendingTreeData& data)
-    {
-        std::vector<FilterItem> newItems;
-
-        for(const auto& [key, item] : data.items) {
-            if(m_nodes.contains(key)) {
-                m_nodes.at(key).addTracks(item.tracks());
-            }
-            else {
-                newItems.push_back(item);
-            }
-        }
-
-        auto* parent   = m_self->rootItem();
-        const int row  = parent->childCount();
-        const int last = row + static_cast<int>(newItems.size()) - 1;
-
-        if(!m_resetting) {
-            m_self->beginInsertRows({}, row, last);
-        }
-
-        for(const auto& item : newItems) {
-            FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
-            parent->appendChild(child);
-        }
-
-        if(!m_resetting) {
-            m_self->endInsertRows();
-        }
-
-        m_trackParents.merge(data.trackParents);
-
+    if(m_showSummary) {
+        addSummary();
         updateSummary();
     }
+}
 
-    void coverUpdated(const Track& track)
-    {
-        if(!m_trackParents.contains(track.id())) {
-            return;
-        }
+void FilterModelPrivate::addSummary()
+{
+    m_summaryNode = FilterItem{{}, {}, m_self->rootItem()};
+    m_summaryNode.setIsSummary(true);
+    m_self->rootItem()->insertChild(0, &m_summaryNode);
+}
 
-        const auto parents = m_trackParents.at(track.id());
+void FilterModelPrivate::removeSummary()
+{
+    const int row = m_summaryNode.row();
+    m_self->rootItem()->removeChild(row);
+    m_summaryNode = {};
+}
 
-        for(const auto& parentKey : parents) {
-            if(m_nodes.contains(parentKey)) {
-                auto* parentItem = &m_nodes.at(parentKey);
+void FilterModelPrivate::updateSummary()
+{
+    if(!m_showSummary) {
+        return;
+    }
 
-                const QModelIndex nodeIndex = m_self->indexOfItem(parentItem);
-                emit m_self->dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
-            }
+    const int columnCount = m_self->columnCount({});
+
+    QStringList nodeColumns;
+    for(int column{0}; column < columnCount; ++column) {
+        nodeColumns.emplace_back(QString{FilterModel::tr("All (%1 %2s)")}
+                                     .arg(uniqueValues(column))
+                                     .arg(m_columns.at(column).name.toLower()));
+    }
+
+    m_summaryNode.setColumns(nodeColumns);
+}
+
+int FilterModelPrivate::uniqueValues(int column) const
+{
+    std::set<QString> columnUniques;
+
+    const auto children = m_self->rootItem()->children();
+
+    for(FilterItem* item : children) {
+        if(!item->isSummary()) {
+            columnUniques.emplace(item->column(column));
         }
     }
 
-    void dataUpdated(const QList<int>& roles = {}) const
-    {
-        const QModelIndex topLeft     = m_self->index(0, 0, {});
-        const QModelIndex bottomRight = m_self->index(m_self->rowCount({}) - 1, m_self->columnCount({}) - 1, {});
-        emit m_self->dataChanged(topLeft, bottomRight, roles);
+    return static_cast<int>(columnUniques.size());
+}
+
+void FilterModelPrivate::batchFinished(PendingTreeData data)
+{
+    if(m_nodes.empty()) {
+        m_resetting = true;
     }
-};
+
+    if(m_resetting) {
+        m_self->beginResetModel();
+        beginReset();
+    }
+
+    if(!m_tracksPendingRemoval.empty()) {
+        m_self->removeTracks(m_tracksPendingRemoval);
+    }
+
+    populateModel(data);
+
+    if(m_resetting) {
+        m_self->endResetModel();
+    }
+    m_resetting = false;
+
+    QMetaObject::invokeMethod(m_self, &FilterModel::modelUpdated);
+}
+
+void FilterModelPrivate::populateModel(PendingTreeData& data)
+{
+    std::vector<FilterItem> newItems;
+
+    for(const auto& [key, item] : data.items) {
+        if(m_nodes.contains(key)) {
+            m_nodes.at(key).addTracks(item.tracks());
+        }
+        else {
+            newItems.push_back(item);
+        }
+    }
+
+    auto* parent   = m_self->rootItem();
+    const int row  = parent->childCount();
+    const int last = row + static_cast<int>(newItems.size()) - 1;
+
+    if(!m_resetting) {
+        m_self->beginInsertRows({}, row, last);
+    }
+
+    for(const auto& item : newItems) {
+        FilterItem* child = &m_nodes.emplace(item.key(), item).first->second;
+        parent->appendChild(child);
+    }
+
+    if(!m_resetting) {
+        m_self->endInsertRows();
+    }
+
+    m_trackParents.merge(data.trackParents);
+
+    updateSummary();
+}
+
+void FilterModelPrivate::coverUpdated(const Track& track)
+{
+    if(!m_trackParents.contains(track.id())) {
+        return;
+    }
+
+    const auto parents = m_trackParents.at(track.id());
+
+    for(const auto& parentKey : parents) {
+        if(m_nodes.contains(parentKey)) {
+            auto* parentItem = &m_nodes.at(parentKey);
+
+            const QModelIndex nodeIndex = m_self->indexOfItem(parentItem);
+            emit m_self->dataChanged(nodeIndex, nodeIndex, {Qt::DecorationRole});
+        }
+    }
+}
+
+void FilterModelPrivate::dataUpdated(const QList<int>& roles) const
+{
+    const QModelIndex topLeft     = m_self->index(0, 0, {});
+    const QModelIndex bottomRight = m_self->index(m_self->rowCount({}) - 1, m_self->columnCount({}) - 1, {});
+    emit m_self->dataChanged(topLeft, bottomRight, roles);
+}
 
 FilterModel::FilterModel(CoverProvider* coverProvider, SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this, coverProvider, settings)}
+    , p{std::make_unique<FilterModelPrivate>(this, coverProvider, settings)}
 {
     QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });

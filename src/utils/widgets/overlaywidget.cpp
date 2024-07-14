@@ -27,27 +27,10 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-struct OverlayWidget::Private
+class OverlayWidgetPrivate
 {
-    OverlayWidget* m_self;
-
-    QVBoxLayout* m_layout;
-
-    int m_xOffset{0};
-    int m_yOffset{0};
-
-    QPushButton* m_button{nullptr};
-    QLabel* m_label{nullptr};
-
-    bool m_hovered{false};
-    bool m_selected{false};
-
-    Options m_options;
-    QColor m_colour;
-    QColor m_hoveredColour{Qt::white};
-    QColor m_selectedColour{Qt::white};
-
-    Private(OverlayWidget* self, const Options& options)
+public:
+    OverlayWidgetPrivate(OverlayWidget* self, const OverlayWidget::Options& options)
         : m_self{self}
         , m_layout{new QVBoxLayout(m_self)}
         , m_options{options}
@@ -71,6 +54,24 @@ struct OverlayWidget::Private
         m_self->parent()->installEventFilter(m_self);
         m_self->raise();
     }
+
+    OverlayWidget* m_self;
+
+    QVBoxLayout* m_layout;
+
+    int m_xOffset{0};
+    int m_yOffset{0};
+
+    QPushButton* m_button{nullptr};
+    QLabel* m_label{nullptr};
+
+    bool m_hovered{false};
+    bool m_selected{false};
+
+    OverlayWidget::Options m_options;
+    QColor m_colour;
+    QColor m_hoveredColour{Qt::white};
+    QColor m_selectedColour{Qt::white};
 };
 
 OverlayWidget::OverlayWidget(QWidget* parent)
@@ -81,7 +82,7 @@ OverlayWidget::~OverlayWidget() = default;
 
 OverlayWidget::OverlayWidget(const Options& options, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(this, options)}
+    , p{std::make_unique<OverlayWidgetPrivate>(this, options)}
 {
     setAttribute(Qt::WA_NoSystemBackground);
 

@@ -66,8 +66,20 @@ void initStyleBaseOption(QStyleOptionTabBarBase* optTabBase, QTabBar* tabBar, QS
 } // namespace
 
 namespace Fooyin {
-struct SingleTabbedWidget::Private
+class SingleTabbedWidgetPrivate
 {
+public:
+    using TabShape = SingleTabbedWidget::TabShape;
+
+    explicit SingleTabbedWidgetPrivate(SingleTabbedWidget* self);
+
+    [[nodiscard]] bool isAutoHidden() const;
+
+    void initBasicStyleOption(QStyleOptionTabWidgetFrame* option) const;
+    void initStyleOption(QStyleOptionTabWidgetFrame* option) const;
+
+    void setupLayout(bool onlyCheck = false);
+
     SingleTabbedWidget* m_self;
 
     EditableTabBar* m_tabBar;
@@ -77,124 +89,124 @@ struct SingleTabbedWidget::Private
     QWidget* m_leftCornerWidget{nullptr};
     QWidget* m_rightCornerWidget{nullptr};
     bool m_dirty{false};
-
-    explicit Private(SingleTabbedWidget* self)
-        : m_self{self}
-        , m_tabBar{new EditableTabBar(self)}
-    {
-        m_tabBar->setDrawBase(false);
-    }
-
-    [[nodiscard]] bool isAutoHidden() const
-    {
-        return (m_tabBar->autoHide() && m_tabBar->count() <= 1);
-    }
-
-    void initBasicStyleOption(QStyleOptionTabWidgetFrame* option) const
-    {
-        option->initFrom(m_self);
-
-        if(m_self->documentMode()) {
-            option->lineWidth = 0;
-        }
-        else {
-            option->lineWidth = m_self->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, nullptr, m_self);
-        }
-
-        option->shape = m_shape == TabShape::Rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth;
-
-        option->tabBarRect = m_tabBar->geometry();
-    }
-
-    void initStyleOption(QStyleOptionTabWidgetFrame* option) const
-    {
-        if(!option) {
-            return;
-        }
-
-        initBasicStyleOption(option);
-
-        const int baseHeight = m_self->style()->pixelMetric(QStyle::PM_TabBarBaseHeight, nullptr, m_self);
-        QSize tabsSize{0, m_widget ? m_widget->width() : 0};
-
-        if(m_tabBar->isVisibleTo(const_cast<SingleTabbedWidget*>(m_self))) {
-            tabsSize = m_tabBar->sizeHint();
-            if(m_self->documentMode()) {
-                tabsSize.setWidth(m_self->width());
-            }
-        }
-
-        if(m_rightCornerWidget) {
-            const QSize rightCornerSizeHint = m_rightCornerWidget->sizeHint();
-            const QSize bounds(rightCornerSizeHint.width(), tabsSize.height() - baseHeight);
-            option->rightCornerWidgetSize = rightCornerSizeHint.boundedTo(bounds);
-        }
-        else {
-            option->rightCornerWidgetSize = {0, 0};
-        }
-
-        if(m_leftCornerWidget) {
-            const QSize leftCornerSizeHint = m_leftCornerWidget->sizeHint();
-            const QSize bounds(leftCornerSizeHint.width(), tabsSize.height() - baseHeight);
-            option->leftCornerWidgetSize = leftCornerSizeHint.boundedTo(bounds);
-        }
-        else {
-            option->leftCornerWidgetSize = {0, 0};
-        }
-
-        option->tabBarSize = tabsSize;
-
-        QRect selectedTabRect = m_tabBar->tabRect(m_tabBar->currentIndex());
-        selectedTabRect.moveTopLeft(selectedTabRect.topLeft() + option->tabBarRect.topLeft());
-        option->selectedTabRect = selectedTabRect;
-    }
-
-    void setupLayout(bool onlyCheck = false)
-    {
-        if(onlyCheck && !m_dirty) {
-            return;
-        }
-
-        if(!m_self->isVisible()) {
-            QStyleOptionTabWidgetFrame basicOption;
-            initBasicStyleOption(&basicOption);
-            m_dirty = true;
-            return;
-        }
-
-        QStyleOptionTabWidgetFrame option;
-        initStyleOption(&option);
-
-        auto* style                 = m_self->style();
-        m_panelRect                 = style->subElementRect(QStyle::SE_TabWidgetTabPane, &option, m_self);
-        const QRect tabRect         = style->subElementRect(QStyle::SE_TabWidgetTabBar, &option, m_self);
-        const QRect contentsRect    = style->subElementRect(QStyle::SE_TabWidgetTabContents, &option, m_self);
-        const QRect leftCornerRect  = style->subElementRect(QStyle::SE_TabWidgetLeftCorner, &option, m_self);
-        const QRect rightCornerRect = style->subElementRect(QStyle::SE_TabWidgetRightCorner, &option, m_self);
-
-        m_tabBar->setGeometry(tabRect);
-        if(m_widget) {
-            m_widget->setGeometry(m_panelRect.x(), contentsRect.y(), m_panelRect.width(),
-                                  (m_panelRect.y() + m_panelRect.height()) - contentsRect.y());
-        }
-        if(m_leftCornerWidget) {
-            m_leftCornerWidget->setGeometry(leftCornerRect);
-        }
-        if(m_rightCornerWidget) {
-            m_rightCornerWidget->setGeometry(rightCornerRect);
-        }
-
-        if(!onlyCheck) {
-            m_self->update();
-        }
-
-        m_self->updateGeometry();
-    }
 };
+
+SingleTabbedWidgetPrivate::SingleTabbedWidgetPrivate(SingleTabbedWidget* self)
+    : m_self{self}
+    , m_tabBar{new EditableTabBar(self)}
+{
+    m_tabBar->setDrawBase(false);
+}
+
+bool SingleTabbedWidgetPrivate::isAutoHidden() const
+{
+    return (m_tabBar->autoHide() && m_tabBar->count() <= 1);
+}
+
+void SingleTabbedWidgetPrivate::initBasicStyleOption(QStyleOptionTabWidgetFrame* option) const
+{
+    option->initFrom(m_self);
+
+    if(m_self->documentMode()) {
+        option->lineWidth = 0;
+    }
+    else {
+        option->lineWidth = m_self->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, nullptr, m_self);
+    }
+
+    option->shape = m_shape == TabShape::Rounded ? QTabBar::RoundedNorth : QTabBar::TriangularNorth;
+
+    option->tabBarRect = m_tabBar->geometry();
+}
+
+void SingleTabbedWidgetPrivate::initStyleOption(QStyleOptionTabWidgetFrame* option) const
+{
+    if(!option) {
+        return;
+    }
+
+    initBasicStyleOption(option);
+
+    const int baseHeight = m_self->style()->pixelMetric(QStyle::PM_TabBarBaseHeight, nullptr, m_self);
+    QSize tabsSize{0, m_widget ? m_widget->width() : 0};
+
+    if(m_tabBar->isVisibleTo(const_cast<SingleTabbedWidget*>(m_self))) {
+        tabsSize = m_tabBar->sizeHint();
+        if(m_self->documentMode()) {
+            tabsSize.setWidth(m_self->width());
+        }
+    }
+
+    if(m_rightCornerWidget) {
+        const QSize rightCornerSizeHint = m_rightCornerWidget->sizeHint();
+        const QSize bounds(rightCornerSizeHint.width(), tabsSize.height() - baseHeight);
+        option->rightCornerWidgetSize = rightCornerSizeHint.boundedTo(bounds);
+    }
+    else {
+        option->rightCornerWidgetSize = {0, 0};
+    }
+
+    if(m_leftCornerWidget) {
+        const QSize leftCornerSizeHint = m_leftCornerWidget->sizeHint();
+        const QSize bounds(leftCornerSizeHint.width(), tabsSize.height() - baseHeight);
+        option->leftCornerWidgetSize = leftCornerSizeHint.boundedTo(bounds);
+    }
+    else {
+        option->leftCornerWidgetSize = {0, 0};
+    }
+
+    option->tabBarSize = tabsSize;
+
+    QRect selectedTabRect = m_tabBar->tabRect(m_tabBar->currentIndex());
+    selectedTabRect.moveTopLeft(selectedTabRect.topLeft() + option->tabBarRect.topLeft());
+    option->selectedTabRect = selectedTabRect;
+}
+
+void SingleTabbedWidgetPrivate::setupLayout(bool onlyCheck)
+{
+    if(onlyCheck && !m_dirty) {
+        return;
+    }
+
+    if(!m_self->isVisible()) {
+        QStyleOptionTabWidgetFrame basicOption;
+        initBasicStyleOption(&basicOption);
+        m_dirty = true;
+        return;
+    }
+
+    QStyleOptionTabWidgetFrame option;
+    initStyleOption(&option);
+
+    auto* style                 = m_self->style();
+    m_panelRect                 = style->subElementRect(QStyle::SE_TabWidgetTabPane, &option, m_self);
+    const QRect tabRect         = style->subElementRect(QStyle::SE_TabWidgetTabBar, &option, m_self);
+    const QRect contentsRect    = style->subElementRect(QStyle::SE_TabWidgetTabContents, &option, m_self);
+    const QRect leftCornerRect  = style->subElementRect(QStyle::SE_TabWidgetLeftCorner, &option, m_self);
+    const QRect rightCornerRect = style->subElementRect(QStyle::SE_TabWidgetRightCorner, &option, m_self);
+
+    m_tabBar->setGeometry(tabRect);
+    if(m_widget) {
+        m_widget->setGeometry(m_panelRect.x(), contentsRect.y(), m_panelRect.width(),
+                              (m_panelRect.y() + m_panelRect.height()) - contentsRect.y());
+    }
+    if(m_leftCornerWidget) {
+        m_leftCornerWidget->setGeometry(leftCornerRect);
+    }
+    if(m_rightCornerWidget) {
+        m_rightCornerWidget->setGeometry(rightCornerRect);
+    }
+
+    if(!onlyCheck) {
+        m_self->update();
+    }
+
+    m_self->updateGeometry();
+}
 
 SingleTabbedWidget::SingleTabbedWidget(QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<SingleTabbedWidgetPrivate>(this)}
 {
     setFocusProxy(p->m_tabBar);
 

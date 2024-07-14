@@ -26,6 +26,7 @@
 class QMainWindow;
 
 namespace Fooyin {
+class SettingsDialogControllerPrivate;
 class SettingsManager;
 class SettingsPage;
 class Id;
@@ -51,7 +52,6 @@ signals:
     void closing();
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<SettingsDialogControllerPrivate> p;
 };
 } // namespace Fooyin

@@ -32,15 +32,16 @@ constexpr auto AddIcon    = "list-add";
 constexpr auto RemoveIcon = "list-remove";
 
 namespace Fooyin {
-struct ExpandableInput::Private
+class ExpandableInputPrivate
 {
-    Attributes attributes;
-    QLineEdit* editBlock{nullptr};
-    bool readOnly{false};
-
-    explicit Private(Attributes attributes_)
+public:
+    explicit ExpandableInputPrivate(ExpandableInput::Attributes attributes_)
         : attributes{attributes_}
     { }
+
+    ExpandableInput::Attributes attributes;
+    QLineEdit* editBlock{nullptr};
+    bool readOnly{false};
 };
 
 ExpandableInput::ExpandableInput(QWidget* parent)
@@ -49,7 +50,7 @@ ExpandableInput::ExpandableInput(QWidget* parent)
 
 ExpandableInput::ExpandableInput(Attributes attributes, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(attributes)}
+    , p{std::make_unique<ExpandableInputPrivate>(attributes)}
 {
     if(!(attributes & CustomWidget)) {
         auto* layout = new QHBoxLayout(this);
@@ -116,56 +117,63 @@ void ExpandableInput::setText(const QString& text)
     }
 }
 
-struct ExpandableInputBox::Private
+class ExpandableInputBoxPrivate
 {
-    ExpandableInputBox* self;
+public:
+    ExpandableInputBoxPrivate(ExpandableInputBox* self_, const QString& title_,
+                              ExpandableInput::Attributes attributes_);
 
-    ExpandableInput::Attributes attributes;
+    void updateButtonState() const;
 
-    QHBoxLayout* widgetLayout;
-    QGridLayout* blockLayout;
-    QPushButton* addBlock;
-    QPushButton* deleteBlock;
-    ExpandableInputList blocks;
+    ExpandableInputBox* m_self;
 
-    int maxBlocks{8};
-    bool readOnly{false};
+    ExpandableInput::Attributes m_attributes;
 
-    std::function<ExpandableInput*(QWidget*)> widget{nullptr};
-    std::function<QWidget*(ExpandableInput*)> sideWidget{nullptr};
-    std::vector<QWidget*> createdSideWidgets;
+    QHBoxLayout* m_widgetLayout;
+    QGridLayout* m_blockLayout;
+    QPushButton* m_addBlock;
+    QPushButton* m_deleteBlock;
+    ExpandableInputList m_blocks;
 
-    Private(ExpandableInputBox* self_, const QString& title_, ExpandableInput::Attributes attributes_)
-        : self{self_}
-        , attributes{attributes_}
-        , widgetLayout{new QHBoxLayout()}
-        , blockLayout{new QGridLayout()}
-        , addBlock{new QPushButton(Utils::iconFromTheme(AddIcon), {}, self)}
-        , deleteBlock{new QPushButton(Utils::iconFromTheme(RemoveIcon), {}, self)}
-    {
-        auto* layout = new QGridLayout(self);
-        layout->setContentsMargins(0, 0, 0, 0);
+    int m_maxBlocks{8};
+    bool m_readOnly{false};
 
-        addBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        deleteBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        auto* titleLabel = new QLabel(title_, self);
-
-        layout->addWidget(titleLabel, 0, 0);
-        layout->addLayout(widgetLayout, 0, 1);
-        layout->addWidget(deleteBlock, 0, 2);
-        layout->addWidget(addBlock, 0, 3);
-        layout->addLayout(blockLayout, 1, 0, 1, 4);
-
-        layout->setColumnStretch(0, 1);
-    }
-
-    void updateButtonState() const
-    {
-        addBlock->setEnabled(!readOnly && static_cast<int>(blocks.size()) < maxBlocks);
-        deleteBlock->setEnabled(!readOnly && blocks.size() > 1);
-    }
+    std::function<ExpandableInput*(QWidget*)> m_widget{nullptr};
+    std::function<QWidget*(ExpandableInput*)> m_sideWidget{nullptr};
+    std::vector<QWidget*> m_createdSideWidgets;
 };
+
+ExpandableInputBoxPrivate::ExpandableInputBoxPrivate(ExpandableInputBox* self_, const QString& title_,
+                                                     ExpandableInput::Attributes attributes_)
+    : m_self{self_}
+    , m_attributes{attributes_}
+    , m_widgetLayout{new QHBoxLayout()}
+    , m_blockLayout{new QGridLayout()}
+    , m_addBlock{new QPushButton(Utils::iconFromTheme(AddIcon), {}, m_self)}
+    , m_deleteBlock{new QPushButton(Utils::iconFromTheme(RemoveIcon), {}, m_self)}
+{
+    auto* layout = new QGridLayout(m_self);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    m_addBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_deleteBlock->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    auto* titleLabel = new QLabel(title_, m_self);
+
+    layout->addWidget(titleLabel, 0, 0);
+    layout->addLayout(m_widgetLayout, 0, 1);
+    layout->addWidget(m_deleteBlock, 0, 2);
+    layout->addWidget(m_addBlock, 0, 3);
+    layout->addLayout(m_blockLayout, 1, 0, 1, 4);
+
+    layout->setColumnStretch(0, 1);
+}
+
+void ExpandableInputBoxPrivate::updateButtonState() const
+{
+    m_addBlock->setEnabled(!m_readOnly && static_cast<int>(m_blocks.size()) < m_maxBlocks);
+    m_deleteBlock->setEnabled(!m_readOnly && m_blocks.size() > 1);
+}
 
 ExpandableInputBox::ExpandableInputBox(const QString& title, QWidget* parent)
     : ExpandableInputBox{title, ExpandableInput::None, parent}
@@ -173,10 +181,10 @@ ExpandableInputBox::ExpandableInputBox(const QString& title, QWidget* parent)
 
 ExpandableInputBox::ExpandableInputBox(const QString& title, ExpandableInput::Attributes attributes, QWidget* parent)
     : QWidget{parent}
-    , p{std::make_unique<Private>(this, title, attributes)}
+    , p{std::make_unique<ExpandableInputBoxPrivate>(this, title, attributes)}
 {
-    QObject::connect(p->addBlock, &QPushButton::pressed, this, &ExpandableInputBox::addEmptyBlock);
-    QObject::connect(p->deleteBlock, &QPushButton::pressed, this, &ExpandableInputBox::deleteBlock);
+    QObject::connect(p->m_addBlock, &QPushButton::pressed, this, &ExpandableInputBox::addEmptyBlock);
+    QObject::connect(p->m_deleteBlock, &QPushButton::pressed, this, &ExpandableInputBox::deleteBlock);
 }
 
 ExpandableInputBox::~ExpandableInputBox() = default;
@@ -185,104 +193,104 @@ void ExpandableInputBox::addEmptyBlock()
 {
     ExpandableInput* block{nullptr};
 
-    if(p->attributes & ExpandableInput::CustomWidget && p->widget) {
-        block = p->widget(this);
+    if(p->m_attributes & ExpandableInput::CustomWidget && p->m_widget) {
+        block = p->m_widget(this);
     }
     else {
-        block = new ExpandableInput(p->attributes, this);
+        block = new ExpandableInput(p->m_attributes, this);
     }
-    block->setReadOnly(p->readOnly);
+    block->setReadOnly(p->m_readOnly);
 
-    const int row = static_cast<int>(p->blocks.size());
+    const int row = static_cast<int>(p->m_blocks.size());
 
-    p->blockLayout->addWidget(block, row, 0);
+    p->m_blockLayout->addWidget(block, row, 0);
 
-    if(p->sideWidget) {
-        if(auto* widget = p->sideWidget(block)) {
-            p->blockLayout->addWidget(widget, row, 1);
-            p->createdSideWidgets.push_back(widget);
+    if(p->m_sideWidget) {
+        if(auto* widget = p->m_sideWidget(block)) {
+            p->m_blockLayout->addWidget(widget, row, 1);
+            p->m_createdSideWidgets.push_back(widget);
         }
     }
 
-    p->blocks.emplace_back(block);
+    p->m_blocks.emplace_back(block);
     p->updateButtonState();
 }
 
 void ExpandableInputBox::addInput(ExpandableInput* input)
 {
-    const int row = static_cast<int>(p->blocks.size());
+    const int row = static_cast<int>(p->m_blocks.size());
 
-    input->setAttributes(p->attributes);
-    input->setReadOnly(p->readOnly);
-    p->blockLayout->addWidget(input, row, 0);
+    input->setAttributes(p->m_attributes);
+    input->setReadOnly(p->m_readOnly);
+    p->m_blockLayout->addWidget(input, row, 0);
 
-    if(p->sideWidget) {
-        if(auto* widget = p->sideWidget(input)) {
-            p->blockLayout->addWidget(widget, row, 1);
-            p->createdSideWidgets.push_back(widget);
+    if(p->m_sideWidget) {
+        if(auto* widget = p->m_sideWidget(input)) {
+            p->m_blockLayout->addWidget(widget, row, 1);
+            p->m_createdSideWidgets.push_back(widget);
         }
     }
 
-    p->blocks.emplace_back(input);
+    p->m_blocks.emplace_back(input);
     p->updateButtonState();
 }
 
 ExpandableInputList ExpandableInputBox::blocks() const
 {
-    return p->blocks;
+    return p->m_blocks;
 }
 
 int ExpandableInputBox::blockCount() const
 {
-    return static_cast<int>(p->blocks.size());
+    return static_cast<int>(p->m_blocks.size());
 }
 
 void ExpandableInputBox::setMaximum(int max)
 {
-    p->maxBlocks = max;
+    p->m_maxBlocks = max;
 }
 
 bool ExpandableInputBox::readOnly() const
 {
-    return p->readOnly;
+    return p->m_readOnly;
 }
 
 void ExpandableInputBox::setReadOnly(bool readOnly)
 {
-    p->readOnly = readOnly;
+    p->m_readOnly = readOnly;
 
     p->updateButtonState();
 }
 
 void ExpandableInputBox::addBoxWidget(QWidget* widget)
 {
-    p->widgetLayout->addWidget(widget);
+    p->m_widgetLayout->addWidget(widget);
 }
 
 void ExpandableInputBox::setInputWidget(std::function<ExpandableInput*(QWidget*)> widget)
 {
-    p->widget = std::move(widget);
+    p->m_widget = std::move(widget);
 }
 
 void ExpandableInputBox::setSideWidget(std::function<QWidget*(ExpandableInput*)> widget)
 {
-    p->sideWidget = std::move(widget);
+    p->m_sideWidget = std::move(widget);
 }
 
 void ExpandableInputBox::deleteBlock()
 {
-    if(p->blocks.empty()) {
+    if(p->m_blocks.empty()) {
         return;
     }
 
-    auto* block = p->blocks.back();
+    auto* block = p->m_blocks.back();
     emit blockDeleted(block->text());
-    std::erase(p->blocks, block);
+    std::erase(p->m_blocks, block);
     block->deleteLater();
 
-    if(p->sideWidget) {
-        auto* blockWidget = p->createdSideWidgets.back();
-        std::erase(p->createdSideWidgets, blockWidget);
+    if(p->m_sideWidget) {
+        auto* blockWidget = p->m_createdSideWidgets.back();
+        std::erase(p->m_createdSideWidgets, blockWidget);
         blockWidget->deleteLater();
     }
 
@@ -292,13 +300,13 @@ void ExpandableInputBox::deleteBlock()
 void ExpandableInputBox::clearBlocks()
 {
     QLayoutItem* child;
-    while((child = p->blockLayout->takeAt(0)) != nullptr) {
+    while((child = p->m_blockLayout->takeAt(0)) != nullptr) {
         if(QWidget* widget = child->widget()) {
             widget->deleteLater();
         }
     }
 
-    p->blocks.clear();
+    p->m_blocks.clear();
 }
 } // namespace Fooyin
 

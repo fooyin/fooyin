@@ -127,12 +127,15 @@ enum class RectRule
 
 class BaseView;
 
-class ExpandedTreeView::Private : public QObject
+class ExpandedTreeViewPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Private(ExpandedTreeView* self);
+    explicit ExpandedTreeViewPrivate(ExpandedTreeView* self)
+        : m_self{self}
+        , m_header{new QHeaderView(Qt::Horizontal, m_self)}
+    { }
 
     void setHeader(QHeaderView* header);
 
@@ -180,6 +183,9 @@ public:
     QAbstractItemModel* m_model{nullptr};
     std::unique_ptr<BaseView> m_view;
 
+    using ViewMode       = ExpandedTreeView::ViewMode;
+    using CaptionDisplay = ExpandedTreeView::CaptionDisplay;
+
     ViewMode m_viewMode{ViewMode::Tree};
     CaptionDisplay m_captionDisplay{CaptionDisplay::Bottom};
     bool m_uniformRowHeights{false};
@@ -196,16 +202,14 @@ public:
     int m_indent{0};
     int m_uniformHeightRole{-1};
     std::unordered_map<int, int> m_uniformRoleHeights;
-
     std::set<int> m_spans;
 
     mutable QBasicTimer m_delayedLayout;
-
     QPoint m_pressedPos;
     QPersistentModelIndex m_hoverIndex;
     QPoint m_dragPos;
     QRect m_dropIndicatorRect;
-    DropIndicatorPosition m_dropIndicatorPos{OnViewport};
+    ExpandedTreeView::DropIndicatorPosition m_dropIndicatorPos{ExpandedTreeView::OnViewport};
 
     QBasicTimer m_autoScrollTimer;
     int m_autoScrollCount{0};
@@ -217,7 +221,7 @@ public:
 class BaseView
 {
 public:
-    explicit BaseView(ExpandedTreeView* view, ExpandedTreeView::Private* viewP)
+    explicit BaseView(ExpandedTreeView* view, ExpandedTreeViewPrivate* viewP)
         : m_view{view}
         , m_p{viewP}
     { }
@@ -332,7 +336,7 @@ public:
     }
 
     ExpandedTreeView* m_view;
-    ExpandedTreeView::Private* m_p;
+    ExpandedTreeViewPrivate* m_p;
 
     mutable std::pair<int, int> m_leftAndRight;
     QSize m_contentsSize;
@@ -2411,12 +2415,7 @@ std::vector<ExpandedTreeViewItem> IconView::itemsOnRow(int y, int x) const
     return result;
 }
 
-ExpandedTreeView::Private::Private(ExpandedTreeView* self)
-    : m_self{self}
-    , m_header{new QHeaderView(Qt::Horizontal, m_self)}
-{ }
-
-void ExpandedTreeView::Private::setHeader(QHeaderView* header)
+void ExpandedTreeViewPrivate::setHeader(QHeaderView* header)
 {
     m_header = header;
     m_header->setParent(m_self);
@@ -2428,22 +2427,22 @@ void ExpandedTreeView::Private::setHeader(QHeaderView* header)
         }
     }
 
-    QObject::connect(m_header, &QHeaderView::sectionResized, this, &ExpandedTreeView::Private::columnResized);
+    QObject::connect(m_header, &QHeaderView::sectionResized, this, &ExpandedTreeViewPrivate::columnResized);
     QObject::connect(m_header, &QHeaderView::sectionMoved, this, [this]() { m_self->viewport()->update(); });
-    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, &ExpandedTreeView::Private::columnCountChanged);
+    QObject::connect(m_header, &QHeaderView::sectionCountChanged, this, &ExpandedTreeViewPrivate::columnCountChanged);
     QObject::connect(m_header, &QHeaderView::sectionHandleDoubleClicked, this,
-                     &ExpandedTreeView::Private::resizeColumnToContents);
+                     &ExpandedTreeViewPrivate::resizeColumnToContents);
     QObject::connect(m_header, &QHeaderView::geometriesChanged, this, [this]() { m_self->updateGeometries(); });
 
     m_self->updateGeometries();
 }
 
-int ExpandedTreeView::Private::itemCount() const
+int ExpandedTreeViewPrivate::itemCount() const
 {
     return static_cast<int>(m_viewItems.size());
 }
 
-QModelIndex ExpandedTreeView::Private::modelIndex(int i, int column) const
+QModelIndex ExpandedTreeViewPrivate::modelIndex(int i, int column) const
 {
     if(i < 0 || i >= itemCount()) {
         return {};
@@ -2458,8 +2457,8 @@ QModelIndex ExpandedTreeView::Private::modelIndex(int i, int column) const
     return index;
 }
 
-void ExpandedTreeView::Private::select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
-                                       QItemSelectionModel::SelectionFlags command) const
+void ExpandedTreeViewPrivate::select(const QModelIndex& topIndex, const QModelIndex& bottomIndex,
+                                     QItemSelectionModel::SelectionFlags command) const
 {
     QItemSelection selection;
     const int top    = viewIndex(topIndex);
@@ -2522,7 +2521,7 @@ void ExpandedTreeView::Private::select(const QModelIndex& topIndex, const QModel
     m_self->selectionModel()->select(selection, command);
 }
 
-void ExpandedTreeView::Private::resizeColumnToContents(int column) const
+void ExpandedTreeViewPrivate::resizeColumnToContents(int column) const
 {
     layoutItems();
 
@@ -2535,7 +2534,7 @@ void ExpandedTreeView::Private::resizeColumnToContents(int column) const
     m_header->resizeSection(column, std::max(contents, header));
 }
 
-void ExpandedTreeView::Private::columnCountChanged(int oldCount, int newCount) const
+void ExpandedTreeViewPrivate::columnCountChanged(int oldCount, int newCount) const
 {
     if(oldCount == 0 && newCount > 0) {
         layoutItems();
@@ -2548,13 +2547,13 @@ void ExpandedTreeView::Private::columnCountChanged(int oldCount, int newCount) c
     m_self->viewport()->update();
 }
 
-void ExpandedTreeView::Private::columnResized(int logical, int oldSize, int newSize)
+void ExpandedTreeViewPrivate::columnResized(int logical, int oldSize, int newSize)
 {
     if(m_delayedPendingLayout) {
         return;
     }
 
-    if(m_viewMode == ViewMode::Tree) {
+    if(m_viewMode == ExpandedTreeView::ViewMode::Tree) {
         if(m_spans.contains(logical)) {
             m_view->updateColumns();
         }
@@ -2567,7 +2566,7 @@ void ExpandedTreeView::Private::columnResized(int logical, int oldSize, int newS
     }
 }
 
-void ExpandedTreeView::Private::doDelayedItemsLayout(int delay) const
+void ExpandedTreeViewPrivate::doDelayedItemsLayout(int delay) const
 {
     if(!m_delayedPendingLayout) {
         m_delayedPendingLayout = true;
@@ -2575,13 +2574,13 @@ void ExpandedTreeView::Private::doDelayedItemsLayout(int delay) const
     }
 }
 
-void ExpandedTreeView::Private::interruptDelayedItemsLayout() const
+void ExpandedTreeViewPrivate::interruptDelayedItemsLayout() const
 {
     m_delayedLayout.stop();
     m_delayedPendingLayout = false;
 }
 
-void ExpandedTreeView::Private::layoutItems() const
+void ExpandedTreeViewPrivate::layoutItems() const
 {
     if(m_delayedPendingLayout) {
         interruptDelayedItemsLayout();
@@ -2589,7 +2588,7 @@ void ExpandedTreeView::Private::layoutItems() const
     }
 }
 
-ExpandedTreeViewItem ExpandedTreeView::Private::indexToListViewItem(const QModelIndex& index) const
+ExpandedTreeViewItem ExpandedTreeViewPrivate::indexToListViewItem(const QModelIndex& index) const
 {
     if(!index.isValid()) {
         return {};
@@ -2598,7 +2597,7 @@ ExpandedTreeViewItem ExpandedTreeView::Private::indexToListViewItem(const QModel
     return m_view->indexToViewItem(index);
 }
 
-int ExpandedTreeView::Private::viewIndex(const QModelIndex& index) const
+int ExpandedTreeViewPrivate::viewIndex(const QModelIndex& index) const
 {
     if(!index.isValid() || m_viewItems.empty()) {
         return -1;
@@ -2644,7 +2643,7 @@ int ExpandedTreeView::Private::viewIndex(const QModelIndex& index) const
     return -1;
 }
 
-void ExpandedTreeView::Private::insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem)
+void ExpandedTreeViewPrivate::insertViewItems(int pos, int count, const ExpandedTreeViewItem& viewItem)
 {
     m_viewItems.insert(m_viewItems.begin() + pos, count, viewItem);
 
@@ -2656,7 +2655,7 @@ void ExpandedTreeView::Private::insertViewItems(int pos, int count, const Expand
     }
 }
 
-bool ExpandedTreeView::Private::hasVisibleChildren(const QModelIndex& parent) const
+bool ExpandedTreeViewPrivate::hasVisibleChildren(const QModelIndex& parent) const
 {
     if(parent.flags() & Qt::ItemNeverHasChildren) {
         return false;
@@ -2665,12 +2664,12 @@ bool ExpandedTreeView::Private::hasVisibleChildren(const QModelIndex& parent) co
     return m_model->hasChildren(parent);
 }
 
-bool ExpandedTreeView::Private::isIndexEnabled(const QModelIndex& index) const
+bool ExpandedTreeViewPrivate::isIndexEnabled(const QModelIndex& index) const
 {
     return m_model->flags(index) & Qt::ItemIsEnabled;
 }
 
-bool ExpandedTreeView::Private::isItemDisabled(int i) const
+bool ExpandedTreeViewPrivate::isItemDisabled(int i) const
 {
     if(i < 0 || i >= itemCount()) {
         return false;
@@ -2680,7 +2679,7 @@ bool ExpandedTreeView::Private::isItemDisabled(int i) const
     return !isIndexEnabled(index);
 }
 
-bool ExpandedTreeView::Private::itemHasChildren(int i) const
+bool ExpandedTreeViewPrivate::itemHasChildren(int i) const
 {
     if(i < 0 || i >= itemCount()) {
         return false;
@@ -2689,12 +2688,12 @@ bool ExpandedTreeView::Private::itemHasChildren(int i) const
     return m_viewItems.at(i).hasChildren;
 }
 
-void ExpandedTreeView::Private::invalidateHeightCache(int item) const
+void ExpandedTreeViewPrivate::invalidateHeightCache(int item) const
 {
     m_viewItems[item].height = 0;
 }
 
-int ExpandedTreeView::Private::itemForHomeKey() const
+int ExpandedTreeViewPrivate::itemForHomeKey() const
 {
     int index{0};
     while(isItemDisabled(index) || itemHasChildren(index)) {
@@ -2703,7 +2702,7 @@ int ExpandedTreeView::Private::itemForHomeKey() const
     return index >= itemCount() ? 0 : index;
 }
 
-int ExpandedTreeView::Private::itemForEndKey() const
+int ExpandedTreeViewPrivate::itemForEndKey() const
 {
     int index = itemCount() - 1;
     while(isItemDisabled(index)) {
@@ -2712,7 +2711,7 @@ int ExpandedTreeView::Private::itemForEndKey() const
     return index == -1 ? itemCount() - 1 : index;
 }
 
-void ExpandedTreeView::Private::setHoverIndex(const QPersistentModelIndex& index)
+void ExpandedTreeViewPrivate::setHoverIndex(const QPersistentModelIndex& index)
 {
     if(m_hoverIndex == index) {
         return;
@@ -2729,12 +2728,12 @@ void ExpandedTreeView::Private::setHoverIndex(const QPersistentModelIndex& index
     m_hoverIndex = index;
 }
 
-bool ExpandedTreeView::Private::isIndexDropEnabled(const QModelIndex& index) const
+bool ExpandedTreeViewPrivate::isIndexDropEnabled(const QModelIndex& index) const
 {
     return m_model->flags(index) & Qt::ItemIsDropEnabled;
 }
 
-QModelIndexList ExpandedTreeView::Private::selectedDraggableIndexes(bool fullRow) const
+QModelIndexList ExpandedTreeViewPrivate::selectedDraggableIndexes(bool fullRow) const
 {
     QModelIndexList indexes
         = fullRow ? m_self->selectionModel()->selectedRows(m_header->logicalIndex(0)) : m_self->selectedIndexes();
@@ -2747,7 +2746,7 @@ QModelIndexList ExpandedTreeView::Private::selectedDraggableIndexes(bool fullRow
     return indexes;
 }
 
-bool ExpandedTreeView::Private::shouldAutoScroll() const
+bool ExpandedTreeViewPrivate::shouldAutoScroll() const
 {
     const QRect area       = m_self->viewport()->rect();
     const int scrollMargin = m_self->autoScrollMargin();
@@ -2756,19 +2755,19 @@ bool ExpandedTreeView::Private::shouldAutoScroll() const
         || (m_dragPos.x() - area.left() < scrollMargin) || (area.right() - m_dragPos.x() < scrollMargin);
 }
 
-void ExpandedTreeView::Private::startAutoScroll()
+void ExpandedTreeViewPrivate::startAutoScroll()
 {
     m_autoScrollTimer.start(50, m_self);
     m_autoScrollCount = 0;
 }
 
-void ExpandedTreeView::Private::stopAutoScroll()
+void ExpandedTreeViewPrivate::stopAutoScroll()
 {
     m_autoScrollTimer.stop();
     m_autoScrollCount = 0;
 }
 
-void ExpandedTreeView::Private::doAutoScroll()
+void ExpandedTreeViewPrivate::doAutoScroll()
 {
     QScrollBar* scroll = m_self->verticalScrollBar();
 
@@ -2795,11 +2794,11 @@ void ExpandedTreeView::Private::doAutoScroll()
     }
     else {
         m_dropIndicatorRect = {};
-        m_dropIndicatorPos  = OnViewport;
+        m_dropIndicatorPos  = ExpandedTreeView::OnViewport;
     }
 }
 
-bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
+bool ExpandedTreeViewPrivate::dropOn(QDropEvent* event, int& dropRow, int& dropCol, QModelIndex& dropIndex)
 {
     if(event->isAccepted()) {
         return false;
@@ -2818,23 +2817,23 @@ bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dro
     if(index.isValid()) {
         m_dropIndicatorPos = m_self->dropPosition(pos, m_view->visualRect(index, RectRule::FullRow, false), index);
         switch(m_dropIndicatorPos) {
-            case(AboveItem):
+            case(ExpandedTreeView::AboveItem):
                 row   = index.row();
                 col   = index.column();
                 index = index.parent();
                 break;
-            case(BelowItem):
+            case(ExpandedTreeView::BelowItem):
                 row   = index.row() + 1;
                 col   = index.column();
                 index = index.parent();
                 break;
-            case(OnItem):
-            case(OnViewport):
+            case(ExpandedTreeView::OnItem):
+            case(ExpandedTreeView::OnViewport):
                 break;
         }
     }
     else {
-        m_dropIndicatorPos = OnViewport;
+        m_dropIndicatorPos = ExpandedTreeView::OnViewport;
         row                = m_model->rowCount({});
     }
 
@@ -2845,8 +2844,8 @@ bool ExpandedTreeView::Private::dropOn(QDropEvent* event, int& dropRow, int& dro
     return true;
 }
 
-std::vector<std::pair<int, int>> ExpandedTreeView::Private::columnRanges(const QModelIndex& topIndex,
-                                                                         const QModelIndex& bottomIndex) const
+std::vector<std::pair<int, int>> ExpandedTreeViewPrivate::columnRanges(const QModelIndex& topIndex,
+                                                                       const QModelIndex& bottomIndex) const
 {
     const int topVisual    = m_header->visualIndex(topIndex.column());
     const int bottomVisual = m_header->visualIndex(bottomIndex.column());
@@ -2888,8 +2887,8 @@ std::vector<std::pair<int, int>> ExpandedTreeView::Private::columnRanges(const Q
     return ret;
 }
 
-std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option,
-                                                           int y) const
+std::vector<QRect> ExpandedTreeViewPrivate::rectsToPaint(const QModelIndex& index, const QStyleOptionViewItem& option,
+                                                         int y) const
 {
     std::vector<QRect> rects;
 
@@ -2940,20 +2939,20 @@ std::vector<QRect> ExpandedTreeView::Private::rectsToPaint(const QModelIndex& in
     return rects;
 }
 
-QPoint ExpandedTreeView::Private::offset() const
+QPoint ExpandedTreeViewPrivate::offset() const
 {
     return {m_self->isRightToLeft() ? -m_self->horizontalOffset() : m_self->horizontalOffset(),
             m_self->verticalOffset()};
 }
 
-bool ExpandedTreeView::Private::isIndexValid(const QModelIndex& index) const
+bool ExpandedTreeViewPrivate::isIndexValid(const QModelIndex& index) const
 {
     return (index.row() >= 0) && (index.column() >= 0) && (index.model() == m_model);
 }
 
 ExpandedTreeView::ExpandedTreeView(QWidget* parent)
     : QAbstractItemView{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<ExpandedTreeViewPrivate>(this)}
 {
     setObjectName(QStringLiteral("ExpandedTreeView"));
 

@@ -24,6 +24,8 @@
 #include <core/scripting/scriptregistry.h>
 
 namespace Fooyin {
+class PlaylistScriptRegistryPrivate;
+
 constexpr auto PlayingIcon   = "%playingicon%";
 constexpr auto FrontCover    = "%frontcover%";
 constexpr auto BackCover     = "%backcover%";
@@ -45,7 +47,6 @@ public:
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistScriptRegistryPrivate> p;
 };
 } // namespace Fooyin

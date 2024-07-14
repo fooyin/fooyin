@@ -29,6 +29,8 @@
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
+class LibraryTreeModelPrivate;
+
 class LibraryTreeSortModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -87,8 +89,10 @@ signals:
     // QSortFilterProxyModel won't forward dataChanged if indexes are invalid, so use a custom signal
     void dataUpdated(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles = {});
 
+protected:
+    friend class LibraryTreeModelPrivate;
+
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryTreeModelPrivate> p;
 };
 } // namespace Fooyin

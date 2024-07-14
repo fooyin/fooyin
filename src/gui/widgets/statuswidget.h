@@ -24,6 +24,7 @@
 namespace Fooyin {
 class SettingsManager;
 class PlayerController;
+class StatusWidgetPrivate;
 class TrackSelectionController;
 
 class StatusWidget : public FyWidget
@@ -38,17 +39,15 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    void showMessage(const QString& message);
+
 signals:
     void clicked();
-
-public slots:
-    void showMessage(const QString& message);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<StatusWidgetPrivate> p;
 };
 } // namespace Fooyin

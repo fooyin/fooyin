@@ -279,8 +279,16 @@ CoverLoader loadCoverImage(CoverLoader loader)
 } // namespace
 
 namespace Fooyin {
-struct CoverProvider::Private
+class CoverProviderPrivate
 {
+public:
+    explicit CoverProviderPrivate(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings);
+
+    QPixmap loadNoCover();
+    void processCoverResult(const CoverLoader& loader);
+    void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
+                    CoverProvider::ThumbnailSize size = CoverProvider::None);
+
     CoverProvider* m_self;
     std::shared_ptr<TagLoader> m_tagLoader;
     SettingsManager* m_settings;
@@ -291,72 +299,73 @@ struct CoverProvider::Private
     std::set<QString> m_noCoverKeys;
 
     CoverPaths m_paths;
-
-    explicit Private(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
-        : m_self{self}
-        , m_tagLoader{std::move(tagLoader)}
-        , m_settings{settings}
-        , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
-    {
-        m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
-            m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
-        m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
-    }
-
-    QPixmap loadNoCover()
-    {
-        QPixmap cachedCover;
-        if(QPixmapCache::find(m_noCoverKey, &cachedCover)) {
-            return cachedCover;
-        }
-
-        const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
-        static const QSize coverSize{MaxSize, MaxSize};
-        const QPixmap cover = icon.pixmap(coverSize, Utils::windowDpr());
-
-        m_noCoverKey = QPixmapCache::insert(cover);
-
-        return cover;
-    }
-
-    void processCoverResult(const CoverLoader& loader)
-    {
-        m_pendingCovers.erase(loader.key);
-
-        if(loader.cover.isNull()) {
-            return;
-        }
-
-        QPixmap cover = QPixmap::fromImage(loader.cover);
-        cover.setDevicePixelRatio(Utils::windowDpr());
-
-        if(!QPixmapCache::insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover)) {
-            qDebug() << "Failed to cache cover for:" << loader.track.filepath();
-        }
-
-        emit m_self->coverAdded(loader.track);
-    }
-
-    void fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
-                    ThumbnailSize size = None)
-    {
-        CoverLoader loader;
-        loader.key       = key;
-        loader.track     = track;
-        loader.type      = type;
-        loader.tagLoader = m_tagLoader;
-        loader.paths     = m_paths;
-        loader.isThumb   = thumbnail;
-        loader.size      = size;
-
-        auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader { return loadCoverImage(loader); });
-        loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });
-    }
 };
+
+CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader,
+                                           SettingsManager* settings)
+    : m_self{self}
+    , m_tagLoader{std::move(tagLoader)}
+    , m_settings{settings}
+    , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
+{
+    m_settings->subscribe<Settings::Gui::Internal::TrackCoverPaths>(
+        m_self, [this](const QVariant& var) { m_paths = var.value<CoverPaths>(); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { QPixmapCache::remove(m_noCoverKey); });
+}
+
+QPixmap CoverProviderPrivate::loadNoCover()
+{
+    QPixmap cachedCover;
+    if(QPixmapCache::find(m_noCoverKey, &cachedCover)) {
+        return cachedCover;
+    }
+
+    const QIcon icon = Fooyin::Utils::iconFromTheme(Fooyin::Constants::Icons::NoCover);
+    static const QSize coverSize{MaxSize, MaxSize};
+    const QPixmap cover = icon.pixmap(coverSize, Utils::windowDpr());
+
+    m_noCoverKey = QPixmapCache::insert(cover);
+
+    return cover;
+}
+
+void CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
+{
+    m_pendingCovers.erase(loader.key);
+
+    if(loader.cover.isNull()) {
+        return;
+    }
+
+    QPixmap cover = QPixmap::fromImage(loader.cover);
+    cover.setDevicePixelRatio(Utils::windowDpr());
+
+    if(!QPixmapCache::insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover)) {
+        qDebug() << "Failed to cache cover for:" << loader.track.filepath();
+    }
+
+    emit m_self->coverAdded(loader.track);
+}
+
+void CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Track::Cover type, bool thumbnail,
+                                      CoverProvider::ThumbnailSize size)
+{
+    CoverLoader loader;
+    loader.key       = key;
+    loader.track     = track;
+    loader.type      = type;
+    loader.tagLoader = m_tagLoader;
+    loader.paths     = m_paths;
+    loader.isThumb   = thumbnail;
+    loader.size      = size;
+
+    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader { return loadCoverImage(loader); });
+    loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });
+}
 
 CoverProvider::CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, std::move(tagLoader), settings)}
+    , p{std::make_unique<CoverProviderPrivate>(this, std::move(tagLoader), settings)}
 { }
 
 CoverProvider::~CoverProvider() = default;

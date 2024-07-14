@@ -27,6 +27,8 @@
 #include <QString>
 
 namespace Fooyin {
+class LayoutProviderPrivate;
+
 class FYGUI_EXPORT LayoutProvider
 {
 public:
@@ -48,7 +50,6 @@ public:
     bool exportLayout(const FyLayout& layout, const QString& path);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LayoutProviderPrivate> p;
 };
 } // namespace Fooyin

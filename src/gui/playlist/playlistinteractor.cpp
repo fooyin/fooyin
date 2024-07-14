@@ -19,6 +19,7 @@
 
 #include "playlistinteractor.h"
 
+#include "guiutils.h"
 #include "playlistcontroller.h"
 
 #include <core/library/musiclibrary.h>
@@ -33,91 +34,68 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 
-namespace Fooyin {
-struct PlaylistInteractor::Private
+namespace {
+template <typename Func>
+void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
 {
-    PlaylistHandler* m_handler;
-    PlaylistController* m_controller;
-    MusicLibrary* m_library;
+    auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
+                                           Fooyin::Utils::getMainWindow());
+    scanDialog->setAttribute(Qt::WA_DeleteOnClose);
+    scanDialog->setModal(true);
+    scanDialog->setValue(0);
 
-    Private(PlaylistHandler* handler, PlaylistController* controller, MusicLibrary* library)
-        : m_handler{handler}
-        , m_controller{controller}
-        , m_library{library}
-    { }
+    const Fooyin::ScanRequest request = library->scanFiles(files);
 
-    template <typename Func>
-    void scanFiles(const QList<QUrl>& files, Func&& func) const
-    {
-        auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
-                                               Utils::getMainWindow());
-        scanDialog->setAttribute(Qt::WA_DeleteOnClose);
-        scanDialog->setModal(true);
-        scanDialog->setValue(0);
+    QObject::connect(library, &Fooyin::MusicLibrary::scanProgress, scanDialog,
+                     [scanDialog, request](const Fooyin::ScanProgress& progress) {
+                         if(progress.id != request.id) {
+                             return;
+                         }
 
-        const ScanRequest request = m_library->scanFiles(files);
+                         if(scanDialog->wasCanceled()) {
+                             request.cancel();
+                             scanDialog->close();
+                         }
 
-        QObject::connect(m_library, &MusicLibrary::scanProgress, scanDialog,
-                         [scanDialog, request](const ScanProgress& progress) {
-                             if(progress.id != request.id) {
-                                 return;
-                             }
+                         scanDialog->setValue(progress.percentage());
+                     });
 
-                             if(scanDialog->wasCanceled()) {
-                                 request.cancel();
-                                 scanDialog->close();
-                             }
+    QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,
+                     [request, func](int id, const Fooyin::TrackList& scannedTracks) {
+                         if(id == request.id) {
+                             func(scannedTracks);
+                         }
+                     });
+}
+} // namespace
 
-                             scanDialog->setValue(progress.percentage());
-                         });
-
-        QObject::connect(m_library, &MusicLibrary::tracksScanned, scanDialog,
-                         [request, func](int id, const TrackList& scannedTracks) {
-                             if(id == request.id) {
-                                 func(scannedTracks);
-                             }
-                         });
-    }
-
-    TrackList tracksFromMimeData(QByteArray data) const
-    {
-        Fooyin::TrackIds ids;
-        QDataStream stream(&data, QIODevice::ReadOnly);
-
-        stream >> ids;
-
-        Fooyin::TrackList tracks = m_library->tracksForIds(ids);
-
-        return tracks;
-    }
-};
-
+namespace Fooyin {
 PlaylistInteractor::PlaylistInteractor(PlaylistHandler* handler, PlaylistController* controller, MusicLibrary* library,
                                        QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(handler, controller, library)}
+    , m_handler{handler}
+    , m_controller{controller}
+    , m_library{library}
 { }
-
-PlaylistInteractor::~PlaylistInteractor() = default;
 
 PlaylistHandler* PlaylistInteractor::handler() const
 {
-    return p->m_handler;
+    return m_handler;
 }
 
 PlaylistController* PlaylistInteractor::playlistController() const
 {
-    return p->m_controller;
+    return m_controller;
 }
 
 MusicLibrary* PlaylistInteractor::library() const
 {
-    return p->m_library;
+    return m_library;
 }
 
 PlayerController* PlaylistInteractor::playerController() const
 {
-    return p->m_controller->playerController();
+    return m_controller->playerController();
 }
 
 void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id) const
@@ -127,18 +105,18 @@ void PlaylistInteractor::filesToPlaylist(const QList<QUrl>& urls, const UId& id)
     }
 
     if(id.isValid()) {
-        p->scanFiles(urls, [this, id](const TrackList& scannedTracks) {
-            if(auto* playlist = p->m_handler->playlistById(id)) {
-                p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
-                p->m_controller->changeCurrentPlaylist(playlist);
+        scanFiles(m_library, urls, [this, id](const TrackList& scannedTracks) {
+            if(auto* playlist = m_handler->playlistById(id)) {
+                m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+                m_controller->changeCurrentPlaylist(playlist);
             }
         });
     }
     else {
-        p->scanFiles(urls, [this](const TrackList& scannedTracks) {
+        scanFiles(m_library, urls, [this](const TrackList& scannedTracks) {
             const QString playlistName = Track::findCommonField(scannedTracks);
-            if(auto* playlist = p->m_handler->createNewPlaylist(playlistName, scannedTracks)) {
-                p->m_controller->changeCurrentPlaylist(playlist);
+            if(auto* playlist = m_handler->createNewPlaylist(playlistName, scannedTracks)) {
+                m_controller->changeCurrentPlaylist(playlist);
             }
         });
     }
@@ -150,9 +128,9 @@ void PlaylistInteractor::filesToCurrentPlaylist(const QList<QUrl>& urls) const
         return;
     }
 
-    p->scanFiles(urls, [this](const TrackList& scannedTracks) {
-        if(auto* playlist = p->m_controller->currentPlaylist()) {
-            p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+    scanFiles(m_library, urls, [this](const TrackList& scannedTracks) {
+        if(auto* playlist = m_controller->currentPlaylist()) {
+            m_handler->appendToPlaylist(playlist->id(), scannedTracks);
         }
     });
 }
@@ -163,12 +141,12 @@ void PlaylistInteractor::filesToCurrentPlaylistReplace(const QList<QUrl>& urls, 
         return;
     }
 
-    p->scanFiles(urls, [this, play](const TrackList& scannedTracks) {
-        if(auto* playlist = p->m_controller->currentPlaylist()) {
-            p->m_handler->replacePlaylistTracks(playlist->id(), scannedTracks);
+    scanFiles(m_library, urls, [this, play](const TrackList& scannedTracks) {
+        if(auto* playlist = m_controller->currentPlaylist()) {
+            m_handler->replacePlaylistTracks(playlist->id(), scannedTracks);
             playlist->changeCurrentIndex(0);
             if(play) {
-                p->m_handler->startPlayback(playlist);
+                m_handler->startPlayback(playlist);
             }
         }
     });
@@ -181,25 +159,25 @@ void PlaylistInteractor::filesToNewPlaylist(const QString& playlistName, const Q
     }
 
     auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
-        Playlist* playlist = p->m_handler->playlistByName(playlistName);
+        Playlist* playlist = m_handler->playlistByName(playlistName);
         if(playlist) {
             const int indexToPlay = playlist->trackCount();
-            p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+            m_handler->appendToPlaylist(playlist->id(), scannedTracks);
             playlist->changeCurrentIndex(indexToPlay);
         }
         else {
-            playlist = p->m_handler->createPlaylist(playlistName, scannedTracks);
+            playlist = m_handler->createPlaylist(playlistName, scannedTracks);
         }
 
         if(playlist) {
-            p->m_controller->changeCurrentPlaylist(playlist);
+            m_controller->changeCurrentPlaylist(playlist);
             if(play) {
-                p->m_handler->startPlayback(playlist);
+                m_handler->startPlayback(playlist);
             }
         }
     };
 
-    p->scanFiles(urls, handleScanResult);
+    scanFiles(m_library, urls, handleScanResult);
 }
 
 void PlaylistInteractor::filesToNewPlaylistReplace(const QString& playlistName, const QList<QUrl>& urls,
@@ -210,20 +188,20 @@ void PlaylistInteractor::filesToNewPlaylistReplace(const QString& playlistName, 
     }
 
     auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
-        if(auto* playlist = p->m_handler->createPlaylist(playlistName, scannedTracks)) {
-            p->m_controller->changeCurrentPlaylist(playlist);
+        if(auto* playlist = m_handler->createPlaylist(playlistName, scannedTracks)) {
+            m_controller->changeCurrentPlaylist(playlist);
             if(play) {
-                p->m_handler->startPlayback(playlist);
+                m_handler->startPlayback(playlist);
             }
         }
     };
 
-    p->scanFiles(urls, handleScanResult);
+    scanFiles(m_library, urls, handleScanResult);
 }
 
 void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
 {
-    if(!p->m_handler->activePlaylist()) {
+    if(!m_handler->activePlaylist()) {
         return;
     }
 
@@ -231,9 +209,9 @@ void PlaylistInteractor::filesToActivePlaylist(const QList<QUrl>& urls) const
         return;
     }
 
-    p->scanFiles(urls, [this](const TrackList& scannedTracks) {
-        if(auto* playlist = p->m_handler->activePlaylist()) {
-            p->m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+    scanFiles(m_library, urls, [this](const TrackList& scannedTracks) {
+        if(auto* playlist = m_handler->activePlaylist()) {
+            m_handler->appendToPlaylist(playlist->id(), scannedTracks);
         }
     });
 }
@@ -244,23 +222,23 @@ void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::funct
         return;
     }
 
-    p->scanFiles(urls, func);
+    scanFiles(m_library, urls, func);
 }
 
 void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const UId& id)
 {
-    const TrackList tracks = p->tracksFromMimeData(data);
+    const TrackList tracks = Gui::tracksFromMimeData(m_library, data);
     if(tracks.empty()) {
         return;
     }
 
     if(id.isValid()) {
-        p->m_handler->appendToPlaylist(id, tracks);
+        m_handler->appendToPlaylist(id, tracks);
     }
     else {
         const QString playlistName = Track::findCommonField(tracks);
-        if(auto* playlist = p->m_handler->createPlaylist(playlistName, tracks)) {
-            p->m_controller->changeCurrentPlaylist(playlist);
+        if(auto* playlist = m_handler->createPlaylist(playlistName, tracks)) {
+            m_controller->changeCurrentPlaylist(playlist);
         }
     }
 }

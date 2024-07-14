@@ -27,6 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class PlaylistPrivate;
 /*!
  * Represents a list of tracks for playback.
  * Playlists are saved to the database and restored
@@ -37,7 +38,7 @@ class FYCORE_EXPORT Playlist final
     struct PrivateKey;
 
 public:
-    enum PlayMode : uint32_t
+    enum PlayMode : uint16_t
     {
         Default        = 0,
         RepeatPlaylist = 1 << 0,
@@ -45,7 +46,7 @@ public:
         RepeatTrack    = 1 << 2,
         ShuffleAlbums  = 1 << 3, // Not implemented
         ShuffleTracks  = 1 << 4,
-        Random         = 1 << 5, // Not implemented
+        Random         = 1 << 5 // Not implemented
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
@@ -109,6 +110,7 @@ public:
 
 private:
     friend class PlaylistHandler;
+    friend class PlaylistHandlerPrivate;
 
     static std::unique_ptr<Playlist> create(const QString& name);
     static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index);
@@ -127,8 +129,7 @@ private:
     /** Removes all tracks, including all shuffle order history */
     void clear();
 
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistPrivate> p;
 };
 using PlaylistList = std::vector<Playlist*>;
 } // namespace Fooyin

@@ -52,8 +52,30 @@ struct LibraryScanRequest
     bool onlyModified{true};
 };
 
-struct LibraryThreadHandler::Private
+class LibraryThreadHandlerPrivate
 {
+public:
+    LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
+                                std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
+                                SettingsManager* settings);
+
+    void scanLibrary(const LibraryScanRequest& request);
+    void scanTracks(const LibraryScanRequest& request);
+    void scanFiles(const LibraryScanRequest& request);
+    void scanDirectory(const LibraryScanRequest& request);
+
+    ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified);
+    ScanRequest addTracksScanRequest(const TrackList& tracks);
+    ScanRequest addFilesScanRequest(const QList<QUrl>& files);
+    ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir);
+
+    [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const;
+    void execNextRequest();
+
+    void updateProgress(int current, int total);
+    void finishScanRequest();
+    void cancelScanRequest(int id);
+
     LibraryThreadHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
@@ -66,247 +88,248 @@ struct LibraryThreadHandler::Private
 
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_currentRequestId{-1};
+};
 
-    Private(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
-            std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
-            SettingsManager* settings)
-        : m_self{self}
-        , m_dbPool{std::move(dbPool)}
-        , m_library{library}
-        , m_settings{settings}
-        , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader}
-        , m_trackDatabaseManager{m_dbPool, tagLoader, m_settings}
-    {
-        m_scanner.setMonitorLibraries(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool,
+                                                         MusicLibrary* library,
+                                                         std::shared_ptr<PlaylistLoader> playlistLoader,
+                                                         std::shared_ptr<TagLoader> tagLoader,
+                                                         SettingsManager* settings)
+    : m_self{self}
+    , m_dbPool{std::move(dbPool)}
+    , m_library{library}
+    , m_settings{settings}
+    , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader}
+    , m_trackDatabaseManager{m_dbPool, tagLoader, m_settings}
+{
+    m_scanner.setMonitorLibraries(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
 
-        m_scanner.moveToThread(&m_thread);
-        m_trackDatabaseManager.moveToThread(&m_thread);
+    m_scanner.moveToThread(&m_thread);
+    m_trackDatabaseManager.moveToThread(&m_thread);
 
-        QObject::connect(m_library, &MusicLibrary::tracksScanned, m_self, [this]() {
-            if(!m_scanRequests.empty()) {
-                execNextRequest();
-            }
-        });
-
-        m_thread.start();
-
-        m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(&m_scanner,
-                                                                          &LibraryScanner::setMonitorLibraries);
-    }
-
-    void scanLibrary(const LibraryScanRequest& request)
-    {
-        QMetaObject::invokeMethod(&m_scanner, [this, request]() {
-            m_scanner.scanLibrary(request.library, m_library->tracks(), request.onlyModified);
-        });
-    }
-
-    void scanTracks(const LibraryScanRequest& request)
-    {
-        QMetaObject::invokeMethod(&m_scanner,
-                                  [this, request]() { m_scanner.scanTracks(m_library->tracks(), request.tracks); });
-    }
-
-    void scanFiles(const LibraryScanRequest& request)
-    {
-        QMetaObject::invokeMethod(&m_scanner,
-                                  [this, request]() { m_scanner.scanFiles(m_library->tracks(), request.files); });
-    }
-
-    void scanDirectory(const LibraryScanRequest& request)
-    {
-        QMetaObject::invokeMethod(&m_scanner, [this, request]() {
-            m_scanner.scanLibraryDirectory(request.library, request.dir, m_library->tracks());
-        });
-    }
-
-    ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified)
-    {
-        const int id = nextRequestId();
-
-        ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
-                                cancelScanRequest(id);
-                            }};
-
-        LibraryScanRequest libraryRequest;
-        libraryRequest.id           = id;
-        libraryRequest.type         = ScanRequest::Library;
-        libraryRequest.library      = libraryInfo;
-        libraryRequest.onlyModified = onlyModified;
-
-        m_scanRequests.emplace_back(libraryRequest);
-
-        if(m_scanRequests.size() == 1) {
-            execNextRequest();
-        }
-
-        return request;
-    }
-
-    ScanRequest addTracksScanRequest(const TrackList& tracks)
-    {
-        const int id = nextRequestId();
-
-        ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
-                                cancelScanRequest(id);
-                            }};
-
-        LibraryScanRequest libraryRequest;
-        libraryRequest.id     = id;
-        libraryRequest.type   = ScanRequest::Tracks;
-        libraryRequest.tracks = tracks;
-
-        m_scanRequests.emplace_front(libraryRequest);
-
-        // Track scans take precedence over library scans
-        const auto currRequest = currentRequest();
-        if(currRequest && currRequest->type == ScanRequest::Library) {
-            m_scanner.pauseThread();
-            execNextRequest();
-        }
-        else if(m_scanRequests.size() == 1) {
-            execNextRequest();
-        }
-
-        return request;
-    }
-
-    ScanRequest addFilesScanRequest(const QList<QUrl>& files)
-    {
-        const int id = nextRequestId();
-
-        ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
-                                cancelScanRequest(id);
-                            }};
-
-        LibraryScanRequest libraryRequest;
-        libraryRequest.id    = id;
-        libraryRequest.type  = ScanRequest::Files;
-        libraryRequest.files = files;
-
-        m_scanRequests.emplace_front(libraryRequest);
-
-        // File scans take precedence over library and track scans
-        const auto currRequest = currentRequest();
-        if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
-            m_scanner.pauseThread();
-            execNextRequest();
-        }
-        else if(m_scanRequests.size() == 1) {
-            execNextRequest();
-        }
-
-        return request;
-    }
-
-    ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir)
-    {
-        const int id = nextRequestId();
-
-        ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
-                                cancelScanRequest(id);
-                            }};
-
-        LibraryScanRequest libraryRequest;
-        libraryRequest.id      = id;
-        libraryRequest.type    = ScanRequest::Library;
-        libraryRequest.library = libraryInfo;
-        libraryRequest.dir     = dir;
-
-        m_scanRequests.emplace_back(libraryRequest);
-
-        if(m_scanRequests.size() == 1) {
-            execNextRequest();
-        }
-
-        return request;
-    }
-
-    [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const
-    {
-        const auto requestIt = std::ranges::find_if(
-            m_scanRequests, [this](const auto& request) { return request.id == m_currentRequestId; });
-        if(requestIt != m_scanRequests.cend()) {
-            return *requestIt;
-        }
-        return {};
-    }
-
-    void execNextRequest()
-    {
-        if(m_scanRequests.empty()) {
-            return;
-        }
-
-        const auto& request = m_scanRequests.front();
-        m_currentRequestId  = request.id;
-
-        switch(request.type) {
-            case(ScanRequest::Files):
-                scanFiles(request);
-                break;
-            case(ScanRequest::Tracks):
-                scanTracks(request);
-                break;
-            case(ScanRequest::Library):
-                if(request.dir.isEmpty()) {
-                    scanLibrary(request);
-                }
-                else {
-                    scanDirectory(request);
-                }
-                break;
-        }
-    }
-
-    void updateProgress(int current, int total)
-    {
-        ScanProgress progress;
-        progress.id      = m_currentRequestId;
-        progress.total   = total;
-        progress.current = current;
+    QObject::connect(m_library, &MusicLibrary::tracksScanned, m_self, [this]() {
         if(!m_scanRequests.empty()) {
-            progress.type = m_scanRequests.front().type;
+            execNextRequest();
         }
+    });
 
-        emit m_self->progressChanged(progress);
-    }
+    m_thread.start();
 
-    void finishScanRequest()
-    {
-        if(const auto request = currentRequest()) {
-            std::erase_if(m_scanRequests,
-                          [this](const auto& pendingRequest) { return pendingRequest.id == m_currentRequestId; });
+    m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(&m_scanner, &LibraryScanner::setMonitorLibraries);
+}
 
-            if(request->type == ScanRequest::Tracks) {
-                // Next request (if any) will be started after tracksScanned is emitted from MusicLibrary
-                return;
-            }
-        }
+void LibraryThreadHandlerPrivate::scanLibrary(const LibraryScanRequest& request)
+{
+    QMetaObject::invokeMethod(&m_scanner, [this, request]() {
+        m_scanner.scanLibrary(request.library, m_library->tracks(), request.onlyModified);
+    });
+}
 
-        m_currentRequestId = -1;
+void LibraryThreadHandlerPrivate::scanTracks(const LibraryScanRequest& request)
+{
+    QMetaObject::invokeMethod(&m_scanner,
+                              [this, request]() { m_scanner.scanTracks(m_library->tracks(), request.tracks); });
+}
+
+void LibraryThreadHandlerPrivate::scanFiles(const LibraryScanRequest& request)
+{
+    QMetaObject::invokeMethod(&m_scanner,
+                              [this, request]() { m_scanner.scanFiles(m_library->tracks(), request.files); });
+}
+
+void LibraryThreadHandlerPrivate::scanDirectory(const LibraryScanRequest& request)
+{
+    QMetaObject::invokeMethod(&m_scanner, [this, request]() {
+        m_scanner.scanLibraryDirectory(request.library, request.dir, m_library->tracks());
+    });
+}
+
+ScanRequest LibraryThreadHandlerPrivate::addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified)
+{
+    const int id = nextRequestId();
+
+    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
+                            cancelScanRequest(id);
+                        }};
+
+    LibraryScanRequest libraryRequest;
+    libraryRequest.id           = id;
+    libraryRequest.type         = ScanRequest::Library;
+    libraryRequest.library      = libraryInfo;
+    libraryRequest.onlyModified = onlyModified;
+
+    m_scanRequests.emplace_back(libraryRequest);
+
+    if(m_scanRequests.size() == 1) {
         execNextRequest();
     }
 
-    void cancelScanRequest(int id)
-    {
-        if(m_currentRequestId == id) {
-            // Will be removed in finishScanRequest
-            m_scanner.stopThread();
-        }
-        else {
-            std::erase_if(m_scanRequests, [id](const auto& request) { return request.id == id; });
+    return request;
+}
+
+ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& tracks)
+{
+    const int id = nextRequestId();
+
+    ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
+                            cancelScanRequest(id);
+                        }};
+
+    LibraryScanRequest libraryRequest;
+    libraryRequest.id     = id;
+    libraryRequest.type   = ScanRequest::Tracks;
+    libraryRequest.tracks = tracks;
+
+    m_scanRequests.emplace_front(libraryRequest);
+
+    // Track scans take precedence over library scans
+    const auto currRequest = currentRequest();
+    if(currRequest && currRequest->type == ScanRequest::Library) {
+        m_scanner.pauseThread();
+        execNextRequest();
+    }
+    else if(m_scanRequests.size() == 1) {
+        execNextRequest();
+    }
+
+    return request;
+}
+
+ScanRequest LibraryThreadHandlerPrivate::addFilesScanRequest(const QList<QUrl>& files)
+{
+    const int id = nextRequestId();
+
+    ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
+                            cancelScanRequest(id);
+                        }};
+
+    LibraryScanRequest libraryRequest;
+    libraryRequest.id    = id;
+    libraryRequest.type  = ScanRequest::Files;
+    libraryRequest.files = files;
+
+    m_scanRequests.emplace_front(libraryRequest);
+
+    // File scans take precedence over library and track scans
+    const auto currRequest = currentRequest();
+    if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
+        m_scanner.pauseThread();
+        execNextRequest();
+    }
+    else if(m_scanRequests.size() == 1) {
+        execNextRequest();
+    }
+
+    return request;
+}
+
+ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir)
+{
+    const int id = nextRequestId();
+
+    ScanRequest request{.type = ScanRequest::Library, .id = id, .cancel = [this, id]() {
+                            cancelScanRequest(id);
+                        }};
+
+    LibraryScanRequest libraryRequest;
+    libraryRequest.id      = id;
+    libraryRequest.type    = ScanRequest::Library;
+    libraryRequest.library = libraryInfo;
+    libraryRequest.dir     = dir;
+
+    m_scanRequests.emplace_back(libraryRequest);
+
+    if(m_scanRequests.size() == 1) {
+        execNextRequest();
+    }
+
+    return request;
+}
+
+std::optional<LibraryScanRequest> LibraryThreadHandlerPrivate::currentRequest() const
+{
+    const auto requestIt = std::ranges::find_if(
+        m_scanRequests, [this](const auto& request) { return request.id == m_currentRequestId; });
+    if(requestIt != m_scanRequests.cend()) {
+        return *requestIt;
+    }
+    return {};
+}
+
+void LibraryThreadHandlerPrivate::execNextRequest()
+{
+    if(m_scanRequests.empty()) {
+        return;
+    }
+
+    const auto& request = m_scanRequests.front();
+    m_currentRequestId  = request.id;
+
+    switch(request.type) {
+        case(ScanRequest::Files):
+            scanFiles(request);
+            break;
+        case(ScanRequest::Tracks):
+            scanTracks(request);
+            break;
+        case(ScanRequest::Library):
+            if(request.dir.isEmpty()) {
+                scanLibrary(request);
+            }
+            else {
+                scanDirectory(request);
+            }
+            break;
+    }
+}
+
+void LibraryThreadHandlerPrivate::updateProgress(int current, int total)
+{
+    ScanProgress progress;
+    progress.id      = m_currentRequestId;
+    progress.total   = total;
+    progress.current = current;
+    if(!m_scanRequests.empty()) {
+        progress.type = m_scanRequests.front().type;
+    }
+
+    emit m_self->progressChanged(progress);
+}
+
+void LibraryThreadHandlerPrivate::finishScanRequest()
+{
+    if(const auto request = currentRequest()) {
+        std::erase_if(m_scanRequests,
+                      [this](const auto& pendingRequest) { return pendingRequest.id == m_currentRequestId; });
+
+        if(request->type == ScanRequest::Tracks) {
+            // Next request (if any) will be started after tracksScanned is emitted from MusicLibrary
+            return;
         }
     }
-};
+
+    m_currentRequestId = -1;
+    execNextRequest();
+}
+
+void LibraryThreadHandlerPrivate::cancelScanRequest(int id)
+{
+    if(m_currentRequestId == id) {
+        // Will be removed in finishScanRequest
+        m_scanner.stopThread();
+    }
+    else {
+        std::erase_if(m_scanRequests, [id](const auto& request) { return request.id == id; });
+    }
+}
 
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                            std::shared_ptr<PlaylistLoader> playlistLoader,
                                            std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, std::move(dbPool), library, std::move(playlistLoader), std::move(tagLoader),
-                                  settings)}
+    , p{std::make_unique<LibraryThreadHandlerPrivate>(this, std::move(dbPool), library, std::move(playlistLoader),
+                                                      std::move(tagLoader), settings)}
 {
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);

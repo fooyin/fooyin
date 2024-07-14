@@ -23,15 +23,16 @@
 #include <shared_mutex>
 
 namespace Fooyin {
-struct TagLoader::Private
+class TagLoaderPrivate
 {
+public:
     std::unordered_map<QString, std::unique_ptr<TagParser>> m_parsers;
     std::unordered_map<QString, std::vector<TagParser*>> m_extensionToParserMap;
     std::shared_mutex m_parserMutex;
 };
 
 TagLoader::TagLoader()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<TagLoaderPrivate>()}
 { }
 
 TagLoader::~TagLoader() = default;

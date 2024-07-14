@@ -25,6 +25,7 @@
 #include <core/engine/decoderplugin.h>
 
 namespace Fooyin {
+class DecoderProviderPrivate;
 class Track;
 
 class FYCORE_EXPORT DecoderProvider final
@@ -39,7 +40,6 @@ public:
     void addDecoder(const QString& name, const QStringList& supportedExtensions, const DecoderCreator& creator);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<DecoderProviderPrivate> p;
 };
 } // namespace Fooyin

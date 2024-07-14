@@ -26,6 +26,8 @@
 
 namespace Fooyin {
 class Track;
+class TrackPrivate;
+
 using TrackList = std::vector<Track>;
 using TrackIds  = std::vector<int>;
 
@@ -45,7 +47,7 @@ public:
         }
     };
 
-    enum class Type : int
+    enum class Type : uint8_t
     {
         Unknown   = 0,
         MPEG      = 1,
@@ -62,7 +64,7 @@ public:
         DTS       = 12
     };
 
-    enum class Cover : int
+    enum class Cover : uint8_t
     {
         Front = 0,
         Back,
@@ -211,8 +213,7 @@ public:
     static QStringList supportedMimeTypes();
 
 private:
-    struct Private;
-    QSharedDataPointer<Private> p;
+    QSharedDataPointer<TrackPrivate> p;
 };
 FYCORE_EXPORT size_t qHash(const Track& track);
 } // namespace Fooyin

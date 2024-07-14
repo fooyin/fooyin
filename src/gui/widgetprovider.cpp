@@ -42,11 +42,9 @@ struct FactoryWidget
 } // namespace
 
 namespace Fooyin {
-struct WidgetProvider::Private
+class WidgetProviderPrivate
 {
-    QUndoStack* m_layoutCommands{nullptr};
-    std::map<QString, FactoryWidget> m_widgets;
-
+public:
     bool canCreateWidget(const QString& key)
     {
         if(!m_widgets.contains(key)) {
@@ -101,10 +99,13 @@ struct WidgetProvider::Private
             }
         }
     }
+
+    QUndoStack* m_layoutCommands{nullptr};
+    std::map<QString, FactoryWidget> m_widgets;
 };
 
 WidgetProvider::WidgetProvider()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<WidgetProviderPrivate>()}
 { }
 
 WidgetProvider::~WidgetProvider() = default;

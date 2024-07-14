@@ -22,20 +22,17 @@
 #include <QDebug>
 
 namespace Fooyin {
-struct AudioBuffer::Private : QSharedData
+class AudioBufferPrivate : public QSharedData
 {
-    std::vector<std::byte> m_buffer;
-    AudioFormat m_format;
-    uint64_t m_startTime;
-
-    Private(std::span<const std::byte> data, AudioFormat format, uint64_t startTime)
+public:
+    AudioBufferPrivate(std::span<const std::byte> data, AudioFormat format, uint64_t startTime)
         : m_format{format}
         , m_startTime{startTime}
     {
         m_buffer.assign(data.begin(), data.end());
     }
 
-    Private(const uint8_t* data, size_t size, AudioFormat format, uint64_t startTime)
+    AudioBufferPrivate(const uint8_t* data, size_t size, AudioFormat format, uint64_t startTime)
         : m_format{format}
         , m_startTime{startTime}
     {
@@ -70,12 +67,16 @@ struct AudioBuffer::Private : QSharedData
             std::memcpy(m_buffer.data() + i, &sample, bps);
         }
     }
+
+    std::vector<std::byte> m_buffer;
+    AudioFormat m_format;
+    uint64_t m_startTime;
 };
 
 AudioBuffer::AudioBuffer() = default;
 
 AudioBuffer::AudioBuffer(std::span<const std::byte> data, AudioFormat format, uint64_t startTime)
-    : p{new Private(data, format, startTime)}
+    : p{new AudioBufferPrivate(data, format, startTime)}
 { }
 
 AudioBuffer::AudioBuffer(AudioFormat format, uint64_t startTime)
@@ -83,7 +84,7 @@ AudioBuffer::AudioBuffer(AudioFormat format, uint64_t startTime)
 { }
 
 AudioBuffer::AudioBuffer(const uint8_t* data, size_t size, AudioFormat format, uint64_t startTime)
-    : p{new Private(data, size, format, startTime)}
+    : p{new AudioBufferPrivate(data, size, format, startTime)}
 { }
 
 AudioBuffer::~AudioBuffer() = default;
@@ -151,7 +152,7 @@ bool AudioBuffer::isValid() const
 void AudioBuffer::detach()
 {
     if(isValid()) {
-        p = new Private(*p);
+        p = new AudioBufferPrivate(*p);
     }
 }
 

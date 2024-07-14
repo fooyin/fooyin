@@ -48,8 +48,29 @@ QFuture<Fooyin::TrackList> resortTracks(const Fooyin::TrackList& tracks)
 } // namespace
 
 namespace Fooyin {
-struct UnifiedMusicLibrary::Private
+class UnifiedMusicLibraryPrivate
 {
+public:
+    UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
+                               std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
+                               SettingsManager* settings);
+
+    void loadTracks(const TrackList& trackToLoad);
+    QFuture<void> addTracks(const TrackList& newTracks);
+    void updateLibraryTracks(const TrackList& updatedTracks);
+    QFuture<void> updateTracks(const TrackList& tracksToUpdate);
+    QFuture<void> updatePlayedTracks(const TrackList& tracksToUpdate);
+
+    void handleScanResult(const ScanResult& result);
+    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks);
+
+    void removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved);
+    void libraryStatusChanged(const LibraryInfo& library) const;
+
+    void changeSort(const QString& sort);
+
+    void handleTracksLoaded();
+
     UnifiedMusicLibrary* m_self;
 
     LibraryManager* m_libraryManager;
@@ -59,177 +80,177 @@ struct UnifiedMusicLibrary::Private
     LibraryThreadHandler m_threadHandler;
 
     TrackList m_tracks;
+};
 
-    Private(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
-            std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
-            SettingsManager* settings)
-        : m_self{self}
-        , m_libraryManager{libraryManager}
-        , m_dbPool{std::move(dbPool)}
-        , m_settings{settings}
-        , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(tagLoader), m_settings}
-    {
-        m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self,
-                                                                 [this](const QString& sort) { changeSort(sort); });
-        m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
-            m_self, [this](bool enabled) { m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), enabled); });
+UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager,
+                                                       DbConnectionPoolPtr dbPool,
+                                                       std::shared_ptr<PlaylistLoader> playlistLoader,
+                                                       std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
+    : m_self{self}
+    , m_libraryManager{libraryManager}
+    , m_dbPool{std::move(dbPool)}
+    , m_settings{settings}
+    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(tagLoader), m_settings}
+{
+    m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
+    m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
+        m_self, [this](bool enabled) { m_threadHandler.setupWatchers(m_libraryManager->allLibraries(), enabled); });
+}
+
+void UnifiedMusicLibraryPrivate::loadTracks(const TrackList& trackToLoad)
+{
+    if(trackToLoad.empty()) {
+        emit m_self->tracksLoaded({});
+        return;
     }
 
-    void loadTracks(const TrackList& trackToLoad)
-    {
-        if(trackToLoad.empty()) {
-            emit m_self->tracksLoaded({});
-            return;
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
+
+    sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+        m_tracks = sortedTracks;
+        emit m_self->tracksLoaded(m_tracks);
+    });
+}
+
+QFuture<void> UnifiedMusicLibraryPrivate::addTracks(const TrackList& newTracks)
+{
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), newTracks);
+
+    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+        std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
+
+        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+            m_tracks = sortedLibraryTracks;
+
+            emit m_self->tracksAdded(sortedTracks);
+        });
+    });
+}
+
+void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTracks)
+{
+    for(const auto& track : updatedTracks) {
+        auto trackIt
+            = std::ranges::find_if(m_tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
+        if(trackIt != m_tracks.end()) {
+            *trackIt = track;
+            trackIt->clearWasModified();
         }
-
-        auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), trackToLoad);
-
-        sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-            m_tracks = sortedTracks;
-            emit m_self->tracksLoaded(m_tracks);
-        });
     }
+}
 
-    QFuture<void> addTracks(const TrackList& newTracks)
-    {
-        auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), newTracks);
+QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksToUpdate)
+{
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
 
-        return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-            std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
+    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+        updateLibraryTracks(sortedTracks);
 
-            resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
-
-                emit m_self->tracksAdded(sortedTracks);
-            });
+        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+            m_tracks = sortedLibraryTracks;
+            emit m_self->tracksUpdated(sortedTracks);
         });
-    }
+    });
+}
 
-    void updateLibraryTracks(const TrackList& updatedTracks)
-    {
-        for(const auto& track : updatedTracks) {
-            auto trackIt = std::ranges::find_if(
-                m_tracks, [&track](const Track& oldTrack) { return oldTrack.id() == track.id(); });
-            if(trackIt != m_tracks.end()) {
-                *trackIt = track;
-                trackIt->clearWasModified();
+QFuture<void> UnifiedMusicLibraryPrivate::updatePlayedTracks(const TrackList& tracksToUpdate)
+{
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+
+    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+        updateLibraryTracks(sortedTracks);
+
+        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+            m_tracks = sortedLibraryTracks;
+            emit m_self->tracksPlayed(sortedTracks);
+        });
+    });
+}
+
+void UnifiedMusicLibraryPrivate::handleScanResult(const ScanResult& result)
+{
+    if(!result.addedTracks.empty()) {
+        addTracks(result.addedTracks).then(m_self, [this, result]() {
+            if(!result.updatedTracks.empty()) {
+                updateTracks(result.updatedTracks);
             }
-        }
-    }
-
-    QFuture<void> updateTracks(const TrackList& tracksToUpdate)
-    {
-        auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
-
-        return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-            updateLibraryTracks(sortedTracks);
-
-            resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
-                emit m_self->tracksUpdated(sortedTracks);
-            });
         });
     }
+    else if(!result.updatedTracks.empty()) {
+        updateTracks(result.updatedTracks);
+    }
+}
 
-    QFuture<void> updatePlayedTracks(const TrackList& tracksToUpdate)
-    {
-        auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
-
-        return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-            updateLibraryTracks(sortedTracks);
-
-            resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-                m_tracks = sortedLibraryTracks;
-                emit m_self->tracksPlayed(sortedTracks);
+void UnifiedMusicLibraryPrivate::scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks)
+{
+    addTracks(newTracks).then([this, id, newTracks, existingTracks]() {
+        TrackList scannedTracks{newTracks};
+        scannedTracks.insert(scannedTracks.end(), existingTracks.cbegin(), existingTracks.cend());
+        recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), scannedTracks)
+            .then(m_self, [this, id](const TrackList& sortedScannedTracks) {
+                emit m_self->tracksScanned(id, sortedScannedTracks);
             });
-        });
+    });
+}
+
+void UnifiedMusicLibraryPrivate::removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved)
+{
+    if(library.id < 0) {
+        return;
     }
 
-    void handleScanResult(const ScanResult& result)
-    {
-        if(!result.addedTracks.empty()) {
-            addTracks(result.addedTracks).then(m_self, [this, result]() {
-                if(!result.updatedTracks.empty()) {
-                    updateTracks(result.updatedTracks);
-                }
-            });
-        }
-        else if(!result.updatedTracks.empty()) {
-            updateTracks(result.updatedTracks);
-        }
-    }
+    TrackList newTracks;
+    TrackList removedTracks;
+    TrackList updatedTracks;
 
-    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks)
-    {
-        addTracks(newTracks).then([this, id, newTracks, existingTracks]() {
-            TrackList scannedTracks{newTracks};
-            scannedTracks.insert(scannedTracks.end(), existingTracks.cbegin(), existingTracks.cend());
-            recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), scannedTracks)
-                .then(m_self, [this, id](const TrackList& sortedScannedTracks) {
-                    emit m_self->tracksScanned(id, sortedScannedTracks);
-                });
-        });
-    }
-
-    void removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved)
-    {
-        if(library.id < 0) {
-            return;
-        }
-
-        TrackList newTracks;
-        TrackList removedTracks;
-        TrackList updatedTracks;
-
-        for(auto& track : m_tracks) {
-            if(track.libraryId() == library.id) {
-                if(tracksRemoved.contains(track.id())) {
-                    removedTracks.push_back(track);
-                    continue;
-                }
-                track.setLibraryId(-1);
-                updatedTracks.push_back(track);
-                newTracks.push_back(track);
+    for(auto& track : m_tracks) {
+        if(track.libraryId() == library.id) {
+            if(tracksRemoved.contains(track.id())) {
+                removedTracks.push_back(track);
+                continue;
             }
+            track.setLibraryId(-1);
+            updatedTracks.push_back(track);
             newTracks.push_back(track);
         }
-
-        m_tracks = newTracks;
-
-        emit m_self->tracksDeleted(removedTracks);
-        emit m_self->tracksUpdated(updatedTracks);
+        newTracks.push_back(track);
     }
 
-    void libraryStatusChanged(const LibraryInfo& library) const
-    {
-        m_libraryManager->updateLibraryStatus(library);
-    }
+    m_tracks = newTracks;
 
-    void changeSort(const QString& sort)
-    {
-        recalSortTracks(sort, m_tracks).then(m_self, [this](const TrackList& sortedTracks) {
-            m_tracks = sortedTracks;
-            emit m_self->tracksSorted(m_tracks);
-        });
-    }
+    emit m_self->tracksDeleted(removedTracks);
+    emit m_self->tracksUpdated(updatedTracks);
+}
 
-    void handleTracksLoaded()
-    {
-        m_threadHandler.setupWatchers(m_libraryManager->allLibraries(),
-                                      m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-        if(m_settings->value<Settings::Core::AutoRefresh>()) {
-            m_self->refreshAll();
-        }
+void UnifiedMusicLibraryPrivate::libraryStatusChanged(const LibraryInfo& library) const
+{
+    m_libraryManager->updateLibraryStatus(library);
+}
+
+void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
+{
+    recalSortTracks(sort, m_tracks).then(m_self, [this](const TrackList& sortedTracks) {
+        m_tracks = sortedTracks;
+        emit m_self->tracksSorted(m_tracks);
+    });
+}
+
+void UnifiedMusicLibraryPrivate::handleTracksLoaded()
+{
+    m_threadHandler.setupWatchers(m_libraryManager->allLibraries(),
+                                  m_settings->value<Settings::Core::Internal::MonitorLibraries>());
+    if(m_settings->value<Settings::Core::AutoRefresh>()) {
+        m_self->refreshAll();
     }
-};
+}
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                          std::shared_ptr<PlaylistLoader> playlistLoader,
                                          std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
                                          QObject* parent)
     : MusicLibrary{parent}
-    , p{std::make_unique<Private>(this, libraryManager, std::move(dbPool), std::move(playlistLoader),
-                                  std::move(tagLoader), settings)}
+    , p{std::make_unique<UnifiedMusicLibraryPrivate>(this, libraryManager, std::move(dbPool), std::move(playlistLoader),
+                                                     std::move(tagLoader), settings)}
 {
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, this,

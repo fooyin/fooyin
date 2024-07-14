@@ -31,6 +31,7 @@ namespace Fooyin {
 class ActionManager;
 class SettingsManager;
 class PlaylistController;
+class TrackSelectionControllerPrivate;
 class WidgetContext;
 
 enum class TrackAction
@@ -91,8 +92,7 @@ public slots:
     void tracksRemoved(const Fooyin::TrackList& tracks);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<TrackSelectionControllerPrivate> p;
 };
 } // namespace Fooyin
 

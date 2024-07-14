@@ -24,12 +24,14 @@
 #include <QAction>
 
 namespace Fooyin {
+class ProxyActionPrivate;
+
 class FYUTILS_EXPORT ProxyAction : public QAction
 {
     Q_OBJECT
 
 public:
-    enum Attribute
+    enum Attribute : uint8_t
     {
         Hide       = 1 << 0,
         UpdateText = 1 << 1,
@@ -58,8 +60,7 @@ signals:
     void currentActionChanged(QAction* action);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<ProxyActionPrivate> p;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ProxyAction::Attributes)

@@ -256,7 +256,7 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this,
                      &PlaylistWidgetPrivate::onColumnChanged);
 
-    m_settings->subscribe<LibTreeMiddleClick>(
+    m_settings->subscribe<PlaylistMiddleClick>(
         m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
     m_settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
     m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);

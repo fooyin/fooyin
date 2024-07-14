@@ -34,139 +34,148 @@
 #include <set>
 
 namespace Fooyin {
-struct ActionManager::Private
+class ActionManagerPrivate
 {
+public:
+    explicit ActionManagerPrivate(ActionManager* self, SettingsManager* settingsManager)
+        : m_self{self}
+        , m_settingsManager{settingsManager}
+    { }
+
+    ActionCommand* overridableAction(const Id& id);
+    void loadSetting(const Id& id, Command* command) const;
+
+    void updateContainer();
+    void scheduleContainerUpdate(MenuContainer* actionContainer);
+
+    void updateContextObject(const WidgetContextList& context);
+    void updateFocusWidget(QWidget* widget);
+    void setContext(const Context& updatedContext);
+
     ActionManager* m_self;
 
     SettingsManager* m_settingsManager;
     QMainWindow* m_mainWindow{nullptr};
 
+    std::unordered_map<Id, std::unique_ptr<ActionCommand>, Id::IdHash> m_idCmdMap;
+    std::unordered_map<Id, std::unique_ptr<MenuContainer>, Id::IdHash> m_idContainerMap;
+    std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
+    std::set<MenuContainer*> m_scheduledContainerUpdates;
+
     Context m_currentContext;
     bool m_contextOverride{false};
     WidgetContext* m_widgetOverride{nullptr};
-
-    std::unordered_map<Id, std::unique_ptr<ActionCommand>, Id::IdHash> m_idCmdMap;
-    std::unordered_map<Id, std::unique_ptr<MenuContainer>, Id::IdHash> m_idContainerMap;
-    std::set<MenuContainer*> m_scheduledContainerUpdates;
-
     WidgetContextList m_activeContext;
-    std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
-
-    explicit Private(ActionManager* self, SettingsManager* settingsManager)
-        : m_self{self}
-        , m_settingsManager{settingsManager}
-    { }
-
-    ActionCommand* overridableAction(const Id& id)
-    {
-        if(m_idCmdMap.contains(id)) {
-            return m_idCmdMap.at(id).get();
-        }
-
-        auto* command = m_idCmdMap.emplace(id, std::make_unique<ActionCommand>(id)).first->second.get();
-        loadSetting(id, command);
-        QAction* action = command->action();
-        m_mainWindow->addAction(action);
-        action->setObjectName(id.name());
-        action->setShortcutContext(Qt::ApplicationShortcut);
-        command->setCurrentContext(m_currentContext);
-
-        return command;
-    }
-
-    void loadSetting(const Id& id, Command* command) const
-    {
-        const QString key = QStringLiteral("KeyboardShortcuts/") + id.name();
-
-        if(m_settingsManager->fileContains(key)) {
-            const QVariant var = m_settingsManager->fileValue(key);
-            if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
-                ShortcutList shortcuts;
-                std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
-                                       [](const QKeySequence& k) { return k.toString(); });
-                command->setShortcut(shortcuts);
-            }
-            else {
-                command->setShortcut({QKeySequence::fromString(var.toString())});
-            }
-        }
-    }
-
-    void updateContainer()
-    {
-        for(MenuContainer* container : m_scheduledContainerUpdates) {
-            container->update();
-        }
-        m_scheduledContainerUpdates.clear();
-    }
-
-    void scheduleContainerUpdate(MenuContainer* actionContainer)
-    {
-        const bool needsSchedule = m_scheduledContainerUpdates.empty();
-        m_scheduledContainerUpdates.emplace(actionContainer);
-        if(needsSchedule) {
-            QMetaObject::invokeMethod(
-                m_self, [this]() { updateContainer(); }, Qt::QueuedConnection);
-        }
-    }
-
-    void updateContextObject(const WidgetContextList& context)
-    {
-        m_activeContext = context;
-
-        Context uniqueContexts;
-        for(WidgetContext* ctx : m_activeContext) {
-            for(const Id& id : ctx->context()) {
-                uniqueContexts.append(id);
-            }
-        }
-
-        uniqueContexts.append(Constants::Context::Global);
-
-        setContext(uniqueContexts);
-        emit m_self->contextChanged(uniqueContexts);
-    }
-
-    void updateFocusWidget(QWidget* widget)
-    {
-        if(qobject_cast<QMenuBar*>(widget) || qobject_cast<QMenu*>(widget)) {
-            return;
-        }
-
-        if(m_contextOverride) {
-            return;
-        }
-
-        WidgetContextList newContext;
-
-        if(QWidget* focusedWidget = QApplication::focusWidget()) {
-            while(focusedWidget) {
-                if(auto* widgetContext = m_self->contextObject(focusedWidget)) {
-                    if(widgetContext->isEnabled()) {
-                        newContext.push_back(widgetContext);
-                    }
-                }
-                focusedWidget = focusedWidget->parentWidget();
-            }
-        }
-
-        if(!newContext.empty() || QApplication::focusWidget() == m_mainWindow->focusWidget()) {
-            updateContextObject(newContext);
-        }
-    }
-
-    void setContext(const Context& updatedContext)
-    {
-        m_currentContext = updatedContext;
-        for(const auto& [id, command] : m_idCmdMap) {
-            command->setCurrentContext(m_currentContext);
-        }
-    }
 };
+
+ActionCommand* ActionManagerPrivate::overridableAction(const Id& id)
+{
+    if(m_idCmdMap.contains(id)) {
+        return m_idCmdMap.at(id).get();
+    }
+
+    auto* command = m_idCmdMap.emplace(id, std::make_unique<ActionCommand>(id)).first->second.get();
+    loadSetting(id, command);
+    QAction* action = command->action();
+    m_mainWindow->addAction(action);
+    action->setObjectName(id.name());
+    action->setShortcutContext(Qt::ApplicationShortcut);
+    command->setCurrentContext(m_currentContext);
+
+    return command;
+}
+
+void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
+{
+    const QString key = QStringLiteral("KeyboardShortcuts/") + id.name();
+
+    if(m_settingsManager->fileContains(key)) {
+        const QVariant var = m_settingsManager->fileValue(key);
+        if(QMetaType::Type(var.typeId()) == QMetaType::QStringList) {
+            ShortcutList shortcuts;
+            std::ranges::transform(var.toStringList(), std::back_inserter(shortcuts),
+                                   [](const QKeySequence& k) { return k.toString(); });
+            command->setShortcut(shortcuts);
+        }
+        else {
+            command->setShortcut({QKeySequence::fromString(var.toString())});
+        }
+    }
+}
+
+void ActionManagerPrivate::updateContainer()
+{
+    for(MenuContainer* container : m_scheduledContainerUpdates) {
+        container->update();
+    }
+    m_scheduledContainerUpdates.clear();
+}
+
+void ActionManagerPrivate::scheduleContainerUpdate(MenuContainer* actionContainer)
+{
+    const bool needsSchedule = m_scheduledContainerUpdates.empty();
+    m_scheduledContainerUpdates.emplace(actionContainer);
+    if(needsSchedule) {
+        QMetaObject::invokeMethod(m_self, [this]() { updateContainer(); }, Qt::QueuedConnection);
+    }
+}
+
+void ActionManagerPrivate::updateContextObject(const WidgetContextList& context)
+{
+    m_activeContext = context;
+
+    Context uniqueContexts;
+    for(WidgetContext* ctx : m_activeContext) {
+        for(const Id& id : ctx->context()) {
+            uniqueContexts.append(id);
+        }
+    }
+
+    uniqueContexts.append(Constants::Context::Global);
+
+    setContext(uniqueContexts);
+    emit m_self->contextChanged(uniqueContexts);
+}
+
+void ActionManagerPrivate::updateFocusWidget(QWidget* widget)
+{
+    if(qobject_cast<QMenuBar*>(widget) || qobject_cast<QMenu*>(widget)) {
+        return;
+    }
+
+    if(m_contextOverride) {
+        return;
+    }
+
+    WidgetContextList newContext;
+
+    if(QWidget* focusedWidget = QApplication::focusWidget()) {
+        while(focusedWidget) {
+            if(auto* widgetContext = m_self->contextObject(focusedWidget)) {
+                if(widgetContext->isEnabled()) {
+                    newContext.push_back(widgetContext);
+                }
+            }
+            focusedWidget = focusedWidget->parentWidget();
+        }
+    }
+
+    if(!newContext.empty() || QApplication::focusWidget() == m_mainWindow->focusWidget()) {
+        updateContextObject(newContext);
+    }
+}
+
+void ActionManagerPrivate::setContext(const Context& updatedContext)
+{
+    m_currentContext = updatedContext;
+    for(const auto& [id, command] : m_idCmdMap) {
+        command->setCurrentContext(m_currentContext);
+    }
+}
 
 ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, settingsManager)}
+    , p{std::make_unique<ActionManagerPrivate>(this, settingsManager)}
 {
     QObject::connect(qApp, &QApplication::focusChanged, this,
                      [this](QWidget* /*old*/, QWidget* now) { p->updateFocusWidget(now); });

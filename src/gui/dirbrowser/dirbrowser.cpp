@@ -144,8 +144,36 @@ private:
 } // namespace
 
 namespace Fooyin {
-struct DirBrowser::Private
+class DirBrowserPrivate
 {
+public:
+    DirBrowserPrivate(DirBrowser* self, const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
+                      SettingsManager* settings);
+
+    void checkIconProvider();
+
+    void handleModelUpdated() const;
+
+    [[nodiscard]] QueueTracks loadQueueTracks(const TrackList& tracks) const;
+
+    void handleAction(TrackAction action, bool onlySelection);
+    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile);
+    void handleDoubleClick(const QModelIndex& index);
+    void handleMiddleClick();
+
+    void changeRoot(const QString& root);
+    void updateIndent(bool show) const;
+
+    void setControlsEnabled(bool enabled);
+    void setLocationEnabled(bool enabled);
+
+    void changeMode(DirBrowser::Mode newMode);
+
+    void startPlayback(const TrackList& tracks, int row);
+
+    void updateControlState() const;
+    void goUp();
+
     DirBrowser* m_self;
 
     QStringList m_supportedExtensions;
@@ -161,7 +189,7 @@ struct DirBrowser::Private
     QPointer<ToolButton> m_forwardDir;
     QPointer<ToolButton> m_upDir;
 
-    Mode m_mode{Mode::List};
+    DirBrowser::Mode m_mode{DirBrowser::Mode::List};
     DirTree* m_dirTree;
     QFileSystemModel* m_model;
     DirProxyModel* m_proxyModel;
@@ -171,384 +199,382 @@ struct DirBrowser::Private
 
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
+};
 
-    Private(DirBrowser* self, const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
-            SettingsManager* settings)
-        : m_self{self}
-        , m_supportedExtensions{Utils::extensionsToWildcards(supportedExtensions)}
-        , m_playlistInteractor{playlistInteractor}
-        , m_playlistHandler{m_playlistInteractor->handler()}
-        , m_settings{settings}
-        , m_controlLayout{new QHBoxLayout()}
-        , m_dirTree{new DirTree(m_self)}
-        , m_model{new QFileSystemModel(m_self)}
-        , m_proxyModel{new DirProxyModel(m_self)}
-        , m_doubleClickAction{static_cast<TrackAction>(
-              m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
-        , m_middleClickAction{
-              static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
-    {
-        auto* layout = new QVBoxLayout(m_self);
-        layout->setContentsMargins(0, 0, 0, 0);
+DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& supportedExtensions,
+                                     PlaylistInteractor* playlistInteractor, SettingsManager* settings)
+    : m_self{self}
+    , m_supportedExtensions{Utils::extensionsToWildcards(supportedExtensions)}
+    , m_playlistInteractor{playlistInteractor}
+    , m_playlistHandler{m_playlistInteractor->handler()}
+    , m_settings{settings}
+    , m_controlLayout{new QHBoxLayout()}
+    , m_dirTree{new DirTree(m_self)}
+    , m_model{new QFileSystemModel(m_self)}
+    , m_proxyModel{new DirProxyModel(m_self)}
+    , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
+    , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
+{
+    auto* layout = new QVBoxLayout(m_self);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-        layout->addLayout(m_controlLayout);
-        layout->addWidget(m_dirTree);
+    layout->addLayout(m_controlLayout);
+    layout->addWidget(m_dirTree);
 
-        checkIconProvider();
+    checkIconProvider();
 
-        m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        m_model->setNameFilters(m_supportedExtensions);
-        m_model->setNameFilterDisables(false);
-        m_model->setReadOnly(true);
+    m_model->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    m_model->setNameFilters(m_supportedExtensions);
+    m_model->setNameFilterDisables(false);
+    m_model->setReadOnly(true);
 
-        m_proxyModel->setSourceModel(m_model);
-        m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
+    m_proxyModel->setSourceModel(m_model);
+    m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
 
-        m_dirTree->setItemDelegate(new DirDelegate(m_self));
-        m_dirTree->setModel(m_proxyModel);
+    m_dirTree->setItemDelegate(new DirDelegate(m_self));
+    m_dirTree->setModel(m_proxyModel);
 
-        QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
-        if(rootPath.isEmpty()) {
-            rootPath = QDir::homePath();
-        }
-        m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
-        updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+    QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
+    if(rootPath.isEmpty()) {
+        rootPath = QDir::homePath();
+    }
+    m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
+    updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+}
+
+void DirBrowserPrivate::checkIconProvider()
+{
+    auto* modelProvider = m_model->iconProvider();
+    if(!modelProvider || modelProvider->icon(QFileIconProvider::Folder).isNull()
+       || modelProvider->icon(QFileIconProvider::File).isNull()) {
+        m_iconProvider = std::make_unique<QFileIconProvider>();
+        m_model->setIconProvider(m_iconProvider.get());
+    }
+}
+
+void DirBrowserPrivate::handleModelUpdated() const
+{
+    if(m_mode == DirBrowser::Mode::List) {
+        const QModelIndex root = m_model->setRootPath(m_model->rootPath());
+        m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
+        m_proxyModel->reset(root);
     }
 
-    void checkIconProvider()
-    {
-        auto* modelProvider = m_model->iconProvider();
-        if(!modelProvider || modelProvider->icon(QFileIconProvider::Folder).isNull()
-           || modelProvider->icon(QFileIconProvider::File).isNull()) {
-            m_iconProvider = std::make_unique<QFileIconProvider>();
-            m_model->setIconProvider(m_iconProvider.get());
-        }
+    updateControlState();
+    m_dirTree->setUpdatesEnabled(true);
+}
+
+QueueTracks DirBrowserPrivate::loadQueueTracks(const TrackList& tracks) const
+{
+    QueueTracks queueTracks;
+
+    UId playlistId;
+    if(m_playlist) {
+        playlistId = m_playlist->id();
     }
 
-    void handleModelUpdated() const
-    {
-        if(m_mode == Mode::List) {
-            const QModelIndex root = m_model->setRootPath(m_model->rootPath());
-            m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
-            m_proxyModel->reset(root);
-        }
-
-        updateControlState();
-        m_dirTree->setUpdatesEnabled(true);
+    for(const Track& track : tracks) {
+        queueTracks.emplace_back(track, playlistId);
     }
 
-    [[nodiscard]] QueueTracks loadQueueTracks(const TrackList& tracks) const
-    {
-        QueueTracks queueTracks;
+    return queueTracks;
+}
 
-        UId playlistId;
-        if(m_playlist) {
-            playlistId = m_playlist->id();
-        }
+void DirBrowserPrivate::handleAction(TrackAction action, bool onlySelection)
+{
+    QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
 
-        for(const Track& track : tracks) {
-            queueTracks.emplace_back(track, playlistId);
-        }
-
-        return queueTracks;
+    if(selected.empty()) {
+        return;
     }
 
-    void handleAction(TrackAction action, bool onlySelection)
-    {
-        QModelIndexList selected = m_dirTree->selectionModel()->selectedRows();
+    QString firstPath;
 
-        if(selected.empty()) {
-            return;
-        }
-
-        QString firstPath;
-
-        if(selected.size() == 1) {
-            const QModelIndex index = selected.front();
-            if(index.isValid()) {
-                const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
-                if(!onlySelection && filePath.isFile()) {
-                    // Add all files in same directory
-                    selected  = {m_proxyModel->mapToSource(selected.front()).parent()};
-                    firstPath = filePath.absoluteFilePath();
-                }
+    if(selected.size() == 1) {
+        const QModelIndex index = selected.front();
+        if(index.isValid()) {
+            const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
+            if(!onlySelection && filePath.isFile()) {
+                // Add all files in same directory
+                selected  = {m_proxyModel->mapToSource(selected.front()).parent()};
+                firstPath = filePath.absoluteFilePath();
             }
         }
+    }
 
-        QList<QUrl> files;
+    QList<QUrl> files;
 
-        for(const QModelIndex& index : std::as_const(selected)) {
-            if(index.isValid()) {
-                const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
-                if(filePath.isDir()) {
-                    if(!onlySelection) {
-                        files.append(Utils::File::getUrlsInDir(filePath.absoluteFilePath(), m_supportedExtensions));
-                    }
-                    else {
-                        files.append(
-                            Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(), m_supportedExtensions));
-                    }
+    for(const QModelIndex& index : std::as_const(selected)) {
+        if(index.isValid()) {
+            const QFileInfo filePath{index.data(QFileSystemModel::FilePathRole).toString()};
+            if(filePath.isDir()) {
+                if(!onlySelection) {
+                    files.append(Utils::File::getUrlsInDir(filePath.absoluteFilePath(), m_supportedExtensions));
                 }
                 else {
-                    files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
+                    files.append(
+                        Utils::File::getUrlsInDirRecursive(filePath.absoluteFilePath(), m_supportedExtensions));
                 }
-            }
-        }
-
-        if(files.empty()) {
-            return;
-        }
-
-        if(firstPath.isEmpty()) {
-            firstPath = files.front().path();
-        }
-
-        QDir parentDir{firstPath};
-        parentDir.cdUp();
-        const QString playlistName = parentDir.dirName();
-
-        const bool startPlayback = m_settings->value<Settings::Gui::Internal::DirBrowserSendPlayback>();
-
-        switch(action) {
-            case(TrackAction::Play):
-                handlePlayAction(files, firstPath);
-                break;
-            case(TrackAction::AddCurrentPlaylist):
-                m_playlistInteractor->filesToCurrentPlaylist(files);
-                break;
-            case(TrackAction::SendCurrentPlaylist):
-                m_playlistInteractor->filesToCurrentPlaylistReplace(files, startPlayback);
-                break;
-            case(TrackAction::SendNewPlaylist):
-                m_playlistInteractor->filesToNewPlaylist(playlistName, files, startPlayback);
-                break;
-            case(TrackAction::AddActivePlaylist):
-                m_playlistInteractor->filesToActivePlaylist(files);
-                break;
-            case(TrackAction::AddToQueue):
-                m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                    m_playlistInteractor->playerController()->queueTracks(loadQueueTracks(tracks));
-                });
-                break;
-            case(TrackAction::SendToQueue):
-                m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
-                    m_playlistInteractor->playerController()->replaceTracks(loadQueueTracks(tracks));
-                });
-                break;
-            case(TrackAction::None):
-                break;
-        }
-    }
-
-    void handlePlayAction(const QList<QUrl>& files, const QString& startingFile)
-    {
-        int playIndex{0};
-
-        if(!startingFile.isEmpty()) {
-            auto rowIt = std::ranges::find_if(
-                std::as_const(files), [&startingFile](const QUrl& file) { return file.path() == startingFile; });
-            if(rowIt != files.cend()) {
-                playIndex = static_cast<int>(std::distance(files.cbegin(), rowIt));
-            }
-        }
-
-        TrackList tracks;
-        std::ranges::transform(files, std::back_inserter(tracks),
-                               [](const QUrl& file) { return Track{file.toLocalFile()}; });
-
-        startPlayback(tracks, playIndex);
-    }
-
-    void handleDoubleClick(const QModelIndex& index)
-    {
-        if(!index.isValid()) {
-            return;
-        }
-
-        const QString path = index.data(QFileSystemModel::FilePathRole).toString();
-
-        if(path.isEmpty() && m_mode == Mode::List) {
-            goUp();
-            return;
-        }
-
-        const QFileInfo filePath{path};
-        if(filePath.isDir()) {
-            if(m_mode == Mode::List) {
-                changeRoot(filePath.absoluteFilePath());
             }
             else {
-                if(m_dirTree->isExpanded(index)) {
-                    m_dirTree->collapse(index);
-                }
-                else {
-                    m_dirTree->expand(index);
-                }
+                files.append(QUrl::fromLocalFile(filePath.absoluteFilePath()));
             }
-            return;
-        }
-
-        handleAction(m_doubleClickAction, m_doubleClickAction != TrackAction::Play);
-    }
-
-    void handleMiddleClick()
-    {
-        handleAction(m_middleClickAction, true);
-    }
-
-    void changeRoot(const QString& root)
-    {
-        if(root.isEmpty() || !QFileInfo::exists(root)) {
-            return;
-        }
-
-        if(QDir{root} == QDir{m_model->rootPath()}) {
-            return;
-        }
-
-        auto* changeDir = new DirChange(m_self, m_dirTree, m_model->rootPath(), root);
-        m_dirHistory.push(changeDir);
-    }
-
-    void updateIndent(bool show) const
-    {
-        if(show || m_mode == Mode::Tree) {
-            m_dirTree->resetIndentation();
-        }
-        else {
-            m_dirTree->setIndentation(0);
         }
     }
 
-    void setControlsEnabled(bool enabled)
-    {
-        if(enabled && !m_upDir && !m_backDir && !m_forwardDir) {
-            m_upDir      = new ToolButton(m_self);
-            m_backDir    = new ToolButton(m_self);
-            m_forwardDir = new ToolButton(m_self);
+    if(files.empty()) {
+        return;
+    }
 
-            m_upDir->setDefaultAction(new QAction(Utils::iconFromTheme(Constants::Icons::Up), tr("Go up"), m_upDir));
-            m_backDir->setDefaultAction(
-                new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), tr("Go back"), m_backDir));
-            m_forwardDir->setDefaultAction(
-                new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), tr("Go forwards"), m_forwardDir));
+    if(firstPath.isEmpty()) {
+        firstPath = files.front().path();
+    }
 
-            QObject::connect(m_upDir, &QPushButton::pressed, m_self, [this]() { goUp(); });
-            QObject::connect(m_backDir, &QPushButton::pressed, m_self, [this]() {
-                if(m_dirHistory.canUndo()) {
-                    m_dirHistory.undo();
-                }
+    QDir parentDir{firstPath};
+    parentDir.cdUp();
+    const QString playlistName = parentDir.dirName();
+
+    const bool startPlayback = m_settings->value<Settings::Gui::Internal::DirBrowserSendPlayback>();
+
+    switch(action) {
+        case(TrackAction::Play):
+            handlePlayAction(files, firstPath);
+            break;
+        case(TrackAction::AddCurrentPlaylist):
+            m_playlistInteractor->filesToCurrentPlaylist(files);
+            break;
+        case(TrackAction::SendCurrentPlaylist):
+            m_playlistInteractor->filesToCurrentPlaylistReplace(files, startPlayback);
+            break;
+        case(TrackAction::SendNewPlaylist):
+            m_playlistInteractor->filesToNewPlaylist(playlistName, files, startPlayback);
+            break;
+        case(TrackAction::AddActivePlaylist):
+            m_playlistInteractor->filesToActivePlaylist(files);
+            break;
+        case(TrackAction::AddToQueue):
+            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
+                m_playlistInteractor->playerController()->queueTracks(loadQueueTracks(tracks));
             });
-            QObject::connect(m_forwardDir, &QPushButton::pressed, m_self, [this]() {
-                if(m_dirHistory.canRedo()) {
-                    m_dirHistory.redo();
-                }
+            break;
+        case(TrackAction::SendToQueue):
+            m_playlistInteractor->filesToTracks(files, [this](const TrackList& tracks) {
+                m_playlistInteractor->playerController()->replaceTracks(loadQueueTracks(tracks));
             });
+            break;
+        case(TrackAction::None):
+            break;
+    }
+}
 
-            m_controlLayout->insertWidget(0, m_upDir);
-            m_controlLayout->insertWidget(0, m_forwardDir);
-            m_controlLayout->insertWidget(0, m_backDir);
+void DirBrowserPrivate::handlePlayAction(const QList<QUrl>& files, const QString& startingFile)
+{
+    int playIndex{0};
+
+    if(!startingFile.isEmpty()) {
+        auto rowIt = std::ranges::find_if(std::as_const(files),
+                                          [&startingFile](const QUrl& file) { return file.path() == startingFile; });
+        if(rowIt != files.cend()) {
+            playIndex = static_cast<int>(std::distance(files.cbegin(), rowIt));
+        }
+    }
+
+    TrackList tracks;
+    std::ranges::transform(files, std::back_inserter(tracks),
+                           [](const QUrl& file) { return Track{file.toLocalFile()}; });
+
+    startPlayback(tracks, playIndex);
+}
+
+void DirBrowserPrivate::handleDoubleClick(const QModelIndex& index)
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    const QString path = index.data(QFileSystemModel::FilePathRole).toString();
+
+    if(path.isEmpty() && m_mode == DirBrowser::Mode::List) {
+        goUp();
+        return;
+    }
+
+    const QFileInfo filePath{path};
+    if(filePath.isDir()) {
+        if(m_mode == DirBrowser::Mode::List) {
+            changeRoot(filePath.absoluteFilePath());
         }
         else {
-            if(m_backDir) {
-                m_backDir->deleteLater();
+            if(m_dirTree->isExpanded(index)) {
+                m_dirTree->collapse(index);
             }
-            if(m_forwardDir) {
-                m_forwardDir->deleteLater();
-            }
-            if(m_upDir) {
-                m_upDir->deleteLater();
+            else {
+                m_dirTree->expand(index);
             }
         }
+        return;
     }
 
-    void setLocationEnabled(bool enabled)
-    {
-        if(enabled && !m_dirEdit) {
-            m_dirEdit = new QLineEdit(m_self);
-            QObject::connect(m_dirEdit, &QLineEdit::textEdited, m_self,
-                             [this](const QString& dir) { changeRoot(dir); });
-            m_controlLayout->addWidget(m_dirEdit, 1);
-            m_dirEdit->setText(m_model->rootPath());
-        }
-        else {
-            if(m_dirEdit) {
-                m_dirEdit->deleteLater();
+    handleAction(m_doubleClickAction, m_doubleClickAction != TrackAction::Play);
+}
+
+void DirBrowserPrivate::handleMiddleClick()
+{
+    handleAction(m_middleClickAction, true);
+}
+
+void DirBrowserPrivate::changeRoot(const QString& root)
+{
+    if(root.isEmpty() || !QFileInfo::exists(root)) {
+        return;
+    }
+
+    if(QDir{root} == QDir{m_model->rootPath()}) {
+        return;
+    }
+
+    auto* changeDir = new DirChange(m_self, m_dirTree, m_model->rootPath(), root);
+    m_dirHistory.push(changeDir);
+}
+
+void DirBrowserPrivate::updateIndent(bool show) const
+{
+    if(show || m_mode == DirBrowser::Mode::Tree) {
+        m_dirTree->resetIndentation();
+    }
+    else {
+        m_dirTree->setIndentation(0);
+    }
+}
+
+void DirBrowserPrivate::setControlsEnabled(bool enabled)
+{
+    if(enabled && !m_upDir && !m_backDir && !m_forwardDir) {
+        m_upDir      = new ToolButton(m_self);
+        m_backDir    = new ToolButton(m_self);
+        m_forwardDir = new ToolButton(m_self);
+
+        m_upDir->setDefaultAction(
+            new QAction(Utils::iconFromTheme(Constants::Icons::Up), DirBrowser::tr("Go up"), m_upDir));
+        m_backDir->setDefaultAction(
+            new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), DirBrowser::tr("Go back"), m_backDir));
+        m_forwardDir->setDefaultAction(
+            new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), DirBrowser::tr("Go forwards"), m_forwardDir));
+
+        QObject::connect(m_upDir, &QPushButton::pressed, m_self, [this]() { goUp(); });
+        QObject::connect(m_backDir, &QPushButton::pressed, m_self, [this]() {
+            if(m_dirHistory.canUndo()) {
+                m_dirHistory.undo();
             }
-        }
+        });
+        QObject::connect(m_forwardDir, &QPushButton::pressed, m_self, [this]() {
+            if(m_dirHistory.canRedo()) {
+                m_dirHistory.redo();
+            }
+        });
+
+        m_controlLayout->insertWidget(0, m_upDir);
+        m_controlLayout->insertWidget(0, m_forwardDir);
+        m_controlLayout->insertWidget(0, m_backDir);
     }
-
-    void changeMode(Mode newMode)
-    {
-        m_mode = newMode;
-
-        const QString rootPath = m_model->rootPath();
-
-        m_proxyModel->setFlat(m_mode == Mode::List);
-
-        const QModelIndex root = m_model->setRootPath(rootPath);
-        m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
-
-        updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
-    }
-
-    void startPlayback(const TrackList& tracks, int row)
-    {
-        if(!m_playlist) {
-            m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(DirPlaylist));
-        }
-
-        if(!m_playlist) {
-            return;
-        }
-
-        m_playlistHandler->replacePlaylistTracks(m_playlist->id(), tracks);
-
-        m_playlist->changeCurrentIndex(row);
-        m_playlistHandler->startPlayback(m_playlist);
-    }
-
-    void updateControlState() const
-    {
-        if(m_upDir) {
-            m_upDir->setEnabled(m_proxyModel->canGoUp());
-        }
+    else {
         if(m_backDir) {
-            m_backDir->setEnabled(m_dirHistory.canUndo());
+            m_backDir->deleteLater();
         }
         if(m_forwardDir) {
-            m_forwardDir->setEnabled(m_dirHistory.canRedo());
+            m_forwardDir->deleteLater();
+        }
+        if(m_upDir) {
+            m_upDir->deleteLater();
         }
     }
+}
 
-    void goUp()
-    {
-        QDir root{m_model->rootPath()};
-
-        if(!root.cdUp()) {
-            return;
+void DirBrowserPrivate::setLocationEnabled(bool enabled)
+{
+    if(enabled && !m_dirEdit) {
+        m_dirEdit = new QLineEdit(m_self);
+        QObject::connect(m_dirEdit, &QLineEdit::textEdited, m_self, [this](const QString& dir) { changeRoot(dir); });
+        m_controlLayout->addWidget(m_dirEdit, 1);
+        m_dirEdit->setText(m_model->rootPath());
+    }
+    else {
+        if(m_dirEdit) {
+            m_dirEdit->deleteLater();
         }
+    }
+}
 
-        const QString newPath = root.absolutePath();
+void DirBrowserPrivate::changeMode(DirBrowser::Mode newMode)
+{
+    m_mode = newMode;
 
-        if(m_dirHistory.canUndo()) {
-            if(const auto* prevDir = static_cast<const DirChange*>(m_dirHistory.command(m_dirHistory.index() - 1))) {
-                if(prevDir->undoPath() == newPath) {
-                    m_dirHistory.undo();
-                    return;
-                }
+    const QString rootPath = m_model->rootPath();
+
+    m_proxyModel->setFlat(m_mode == DirBrowser::Mode::List);
+
+    const QModelIndex root = m_model->setRootPath(rootPath);
+    m_dirTree->setRootIndex(m_proxyModel->mapFromSource(root));
+
+    updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+}
+
+void DirBrowserPrivate::startPlayback(const TrackList& tracks, int row)
+{
+    if(!m_playlist) {
+        m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(DirPlaylist));
+    }
+
+    if(!m_playlist) {
+        return;
+    }
+
+    m_playlistHandler->replacePlaylistTracks(m_playlist->id(), tracks);
+
+    m_playlist->changeCurrentIndex(row);
+    m_playlistHandler->startPlayback(m_playlist);
+}
+
+void DirBrowserPrivate::updateControlState() const
+{
+    if(m_upDir) {
+        m_upDir->setEnabled(m_proxyModel->canGoUp());
+    }
+    if(m_backDir) {
+        m_backDir->setEnabled(m_dirHistory.canUndo());
+    }
+    if(m_forwardDir) {
+        m_forwardDir->setEnabled(m_dirHistory.canRedo());
+    }
+}
+
+void DirBrowserPrivate::goUp()
+{
+    QDir root{m_model->rootPath()};
+
+    if(!root.cdUp()) {
+        return;
+    }
+
+    const QString newPath = root.absolutePath();
+
+    if(m_dirHistory.canUndo()) {
+        if(const auto* prevDir = static_cast<const DirChange*>(m_dirHistory.command(m_dirHistory.index() - 1))) {
+            if(prevDir->undoPath() == newPath) {
+                m_dirHistory.undo();
+                return;
             }
         }
-
-        auto* changeDir = new DirChange(m_self, m_dirTree, m_model->rootPath(), newPath);
-        m_dirHistory.push(changeDir);
     }
-};
+
+    auto* changeDir = new DirChange(m_self, m_dirTree, m_model->rootPath(), newPath);
+    m_dirHistory.push(changeDir);
+}
 
 DirBrowser::DirBrowser(const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
                        SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<Private>(this, supportedExtensions, playlistInteractor, settings)}
+    , p{std::make_unique<DirBrowserPrivate>(this, supportedExtensions, playlistInteractor, settings)}
 {
     QObject::connect(p->m_dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });

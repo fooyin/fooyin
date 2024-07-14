@@ -50,7 +50,7 @@ public:
     int wait(int secs);
 
 private:
-    friend ThreadLoopGuard;
+    friend class ThreadLoopGuard;
 
     void lock() const;
     void unlock() const;

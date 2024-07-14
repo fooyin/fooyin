@@ -32,8 +32,25 @@
 #include <set>
 
 namespace Fooyin {
-struct SearchController::Private
+class SearchControllerPrivate
 {
+public:
+    explicit SearchControllerPrivate(SearchController* self, EditableLayout* editableLayout);
+
+    void clearOverlays();
+
+    void updateDialog(const Id& sourceId) const;
+
+    bool isConnected(const Id& sourceId, const Id& widgetId);
+    bool isConnectedToOther(const Id& sourceId, const Id& widgetId);
+
+    void addOrRemoveConnection(const Id& sourceId, FyWidget* widget, OverlayWidget* overlay);
+    void setupWidgetOverlay(const Id& sourceId, FyWidget* widget);
+    void createControlDialog(const Id& sourceId);
+
+    void setupWidgetConnections(const Id& sourceId);
+    void removeWidget(const Id& widgetId);
+
     SearchController* m_self;
     EditableLayout* m_editableLayout;
 
@@ -50,163 +67,162 @@ struct SearchController::Private
 
     std::unordered_map<Id, FyWidget*, Id::IdHash> m_searchableWidgets;
     std::unordered_map<Id, std::set<Id>, Id::IdHash> m_connections;
-
-    explicit Private(SearchController* self, EditableLayout* editableLayout)
-        : m_self{self}
-        , m_editableLayout{editableLayout}
-    {
-        m_connectedColour.setAlpha(80);
-        m_disconnectedColour.setAlpha(80);
-        m_unavailableColour.setAlpha(80);
-    }
-
-    void clearOverlays()
-    {
-        for(auto& [id, widget] : m_overlays) {
-            widget->deleteLater();
-        }
-        m_overlays.clear();
-    }
-
-    void updateDialog(const Id& sourceId) const
-    {
-        m_clearAll->setEnabled(m_connections.contains(sourceId) && !m_connections.at(sourceId).empty());
-    }
-
-    bool isConnected(const Id& sourceId, const Id& widgetId)
-    {
-        return m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
-    }
-
-    bool isConnectedToOther(const Id& sourceId, const Id& widgetId)
-    {
-        return std::ranges::any_of(m_connections, [sourceId, widgetId](const auto& connection) {
-            return (connection.first != sourceId && connection.second.contains(widgetId));
-        });
-    }
-
-    void addOrRemoveConnection(const Id& sourceId, FyWidget* widget, OverlayWidget* overlay)
-    {
-        const Id id = widget->id();
-
-        if(isConnected(sourceId, id)) {
-            m_connections[sourceId].erase(id);
-            overlay->button()->setText(tr("Connect"));
-            overlay->setColour(m_disconnectedColour);
-        }
-        else {
-            m_connections[sourceId].emplace(id);
-            overlay->button()->setText(tr("Disconnect"));
-            overlay->setColour(m_connectedColour);
-        }
-
-        updateDialog(sourceId);
-    }
-
-    void setupWidgetOverlay(const Id& sourceId, FyWidget* widget)
-    {
-        const Id widgetId = widget->id();
-
-        const bool connectedToOther = isConnectedToOther(sourceId, widgetId);
-        const auto overlayFlags
-            = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
-
-        auto* overlay = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
-
-        if(connectedToOther) {
-            overlay->setText(tr("Unavailable"));
-            overlay->setColour(m_unavailableColour);
-        }
-        else {
-            const bool connected = m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
-            overlay->setButtonText(tr(connected ? "Disconnect" : "Connect"));
-            overlay->setColour(connected ? m_connectedColour : m_disconnectedColour);
-            QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
-                             [this, sourceId, widget, overlay]() { addOrRemoveConnection(sourceId, widget, overlay); });
-        }
-        overlay->resize(widget->size());
-
-        overlay->show();
-    }
-
-    void createControlDialog(const Id& sourceId)
-    {
-        m_controlDialog = new OverlayWidget(OverlayWidget::Static, m_editableLayout);
-
-        auto* effect = new QGraphicsDropShadowEffect();
-        effect->setBlurRadius(30);
-        effect->setColor(Qt::black);
-        effect->setOffset(1, 1);
-
-        m_controlDialog->setGraphicsEffect(effect);
-
-        m_clearAll = new QPushButton(tr("Clear All"), m_controlDialog);
-        m_controlDialog->addWidget(m_clearAll);
-        QObject::connect(m_clearAll, &QPushButton::clicked, m_self, [this, sourceId]() {
-            for(const auto& [id, widget] : m_searchableWidgets) {
-                if(isConnected(sourceId, id) && m_overlays.contains(id)) {
-                    addOrRemoveConnection(sourceId, widget, m_overlays.at(id));
-                }
-            }
-        });
-
-        m_finishEditing = new QPushButton(tr("Finish"), m_controlDialog);
-        m_controlDialog->addWidget(m_finishEditing);
-        QObject::connect(m_finishEditing, &QPushButton::clicked, m_self, [this]() {
-            m_filter->stop();
-            m_filter->deleteLater();
-            m_controlDialog->deleteLater();
-            clearOverlays();
-        });
-        QObject::connect(m_filter, &WidgetFilter::filterFinished, m_self, [this]() {
-            if(m_finishEditing) {
-                QMetaObject::invokeMethod(m_finishEditing, "clicked", Q_ARG(bool, false));
-            }
-        });
-
-        updateDialog(sourceId);
-
-        m_controlDialog->move(m_editableLayout->width() - 160, m_editableLayout->height() - 140);
-        m_controlDialog->resize(120, 80);
-    }
-
-    void setupWidgetConnections(const Id& sourceId)
-    {
-        clearOverlays();
-
-        const auto widgets = m_editableLayout->findWidgetsByFeatures(FyWidget::Search);
-
-        if(widgets.empty()) {
-            return;
-        }
-
-        m_filter = new WidgetFilter(m_editableLayout, m_self);
-        m_filter->start();
-
-        createControlDialog(sourceId);
-
-        for(FyWidget* widget : widgets) {
-            const Id widgetId = widget->id();
-            if(!m_searchableWidgets.contains(widgetId)) {
-                QObject::connect(widget, &QObject::destroyed, m_self, [this, widgetId]() { removeWidget(widgetId); });
-            }
-            m_searchableWidgets.emplace(widget->id(), widget);
-            setupWidgetOverlay(sourceId, widget);
-        }
-
-        m_controlDialog->show();
-    }
-
-    void removeWidget(const Id& widgetId)
-    {
-        m_searchableWidgets.erase(widgetId);
-        m_connections.erase(widgetId);
-    }
 };
+
+SearchControllerPrivate::SearchControllerPrivate(SearchController* self, EditableLayout* editableLayout)
+    : m_self{self}
+    , m_editableLayout{editableLayout}
+{
+    m_connectedColour.setAlpha(80);
+    m_disconnectedColour.setAlpha(80);
+    m_unavailableColour.setAlpha(80);
+}
+
+void SearchControllerPrivate::clearOverlays()
+{
+    for(auto& [id, widget] : m_overlays) {
+        widget->deleteLater();
+    }
+    m_overlays.clear();
+}
+
+void SearchControllerPrivate::updateDialog(const Id& sourceId) const
+{
+    m_clearAll->setEnabled(m_connections.contains(sourceId) && !m_connections.at(sourceId).empty());
+}
+
+bool SearchControllerPrivate::isConnected(const Id& sourceId, const Id& widgetId)
+{
+    return m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
+}
+
+bool SearchControllerPrivate::isConnectedToOther(const Id& sourceId, const Id& widgetId)
+{
+    return std::ranges::any_of(m_connections, [sourceId, widgetId](const auto& connection) {
+        return (connection.first != sourceId && connection.second.contains(widgetId));
+    });
+}
+
+void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget* widget, OverlayWidget* overlay)
+{
+    const Id id = widget->id();
+
+    if(isConnected(sourceId, id)) {
+        m_connections[sourceId].erase(id);
+        overlay->button()->setText(SearchController::tr("Connect"));
+        overlay->setColour(m_disconnectedColour);
+    }
+    else {
+        m_connections[sourceId].emplace(id);
+        overlay->button()->setText(SearchController::tr("Disconnect"));
+        overlay->setColour(m_connectedColour);
+    }
+
+    updateDialog(sourceId);
+}
+
+void SearchControllerPrivate::setupWidgetOverlay(const Id& sourceId, FyWidget* widget)
+{
+    const Id widgetId = widget->id();
+
+    const bool connectedToOther = isConnectedToOther(sourceId, widgetId);
+    const auto overlayFlags = OverlayWidget::Resize | (connectedToOther ? OverlayWidget::Label : OverlayWidget::Button);
+
+    auto* overlay = m_overlays.emplace(widgetId, new OverlayWidget(overlayFlags, widget)).first->second;
+
+    if(connectedToOther) {
+        overlay->setText(SearchController::tr("Unavailable"));
+        overlay->setColour(m_unavailableColour);
+    }
+    else {
+        const bool connected = m_connections.contains(sourceId) && m_connections.at(sourceId).contains(widgetId);
+        overlay->setButtonText(connected ? SearchController::tr("Disconnect") : SearchController::tr("Connect"));
+        overlay->setColour(connected ? m_connectedColour : m_disconnectedColour);
+        QObject::connect(overlay->button(), &QPushButton::clicked, m_self,
+                         [this, sourceId, widget, overlay]() { addOrRemoveConnection(sourceId, widget, overlay); });
+    }
+    overlay->resize(widget->size());
+
+    overlay->show();
+}
+
+void SearchControllerPrivate::createControlDialog(const Id& sourceId)
+{
+    m_controlDialog = new OverlayWidget(OverlayWidget::Static, m_editableLayout);
+
+    auto* effect = new QGraphicsDropShadowEffect();
+    effect->setBlurRadius(30);
+    effect->setColor(Qt::black);
+    effect->setOffset(1, 1);
+
+    m_controlDialog->setGraphicsEffect(effect);
+
+    m_clearAll = new QPushButton(SearchController::tr("Clear All"), m_controlDialog);
+    m_controlDialog->addWidget(m_clearAll);
+    QObject::connect(m_clearAll, &QPushButton::clicked, m_self, [this, sourceId]() {
+        for(const auto& [id, widget] : m_searchableWidgets) {
+            if(isConnected(sourceId, id) && m_overlays.contains(id)) {
+                addOrRemoveConnection(sourceId, widget, m_overlays.at(id));
+            }
+        }
+    });
+
+    m_finishEditing = new QPushButton(SearchController::tr("Finish"), m_controlDialog);
+    m_controlDialog->addWidget(m_finishEditing);
+    QObject::connect(m_finishEditing, &QPushButton::clicked, m_self, [this]() {
+        m_filter->stop();
+        m_filter->deleteLater();
+        m_controlDialog->deleteLater();
+        clearOverlays();
+    });
+    QObject::connect(m_filter, &WidgetFilter::filterFinished, m_self, [this]() {
+        if(m_finishEditing) {
+            QMetaObject::invokeMethod(m_finishEditing, "clicked", Q_ARG(bool, false));
+        }
+    });
+
+    updateDialog(sourceId);
+
+    m_controlDialog->move(m_editableLayout->width() - 160, m_editableLayout->height() - 140);
+    m_controlDialog->resize(120, 80);
+}
+
+void SearchControllerPrivate::setupWidgetConnections(const Id& sourceId)
+{
+    clearOverlays();
+
+    const auto widgets = m_editableLayout->findWidgetsByFeatures(FyWidget::Search);
+
+    if(widgets.empty()) {
+        return;
+    }
+
+    m_filter = new WidgetFilter(m_editableLayout, m_self);
+    m_filter->start();
+
+    createControlDialog(sourceId);
+
+    for(FyWidget* widget : widgets) {
+        const Id widgetId = widget->id();
+        if(!m_searchableWidgets.contains(widgetId)) {
+            QObject::connect(widget, &QObject::destroyed, m_self, [this, widgetId]() { removeWidget(widgetId); });
+        }
+        m_searchableWidgets.emplace(widget->id(), widget);
+        setupWidgetOverlay(sourceId, widget);
+    }
+
+    m_controlDialog->show();
+}
+
+void SearchControllerPrivate::removeWidget(const Id& widgetId)
+{
+    m_searchableWidgets.erase(widgetId);
+    m_connections.erase(widgetId);
+}
 
 SearchController::SearchController(EditableLayout* editableLayout, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<Private>(this, editableLayout)}
+    , p{std::make_unique<SearchControllerPrivate>(this, editableLayout)}
 { }
 
 SearchController::~SearchController() = default;

@@ -25,6 +25,8 @@
 #include <utils/worker.h>
 
 namespace Fooyin {
+class LibraryTreePopulatorPrivate;
+
 using ItemKeyMap     = std::unordered_map<Md5Hash, LibraryTreeItem>;
 using NodeKeyMap     = std::unordered_map<Md5Hash, std::vector<Md5Hash>>;
 using TrackIdNodeMap = std::unordered_map<int, std::vector<Md5Hash>>;
@@ -57,7 +59,6 @@ signals:
     void populated(Fooyin::PendingTreeData data);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<LibraryTreePopulatorPrivate> p;
 };
 } // namespace Fooyin

@@ -112,8 +112,25 @@ bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& 
     return cmp < 0;
 }
 
-struct LibraryTreeModel::Private
+class LibraryTreeModelPrivate
 {
+public:
+    explicit LibraryTreeModelPrivate(LibraryTreeModel* self);
+
+    void updateSummary();
+
+    void removeTracks(const TrackList& tracks);
+    void mergeTrackParents(const TrackIdNodeMap& parents);
+
+    void batchFinished(PendingTreeData data);
+
+    void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds);
+    QByteArray saveTracks(const QModelIndexList& indexes);
+
+    void updatePendingNodes(const PendingTreeData& data);
+    void populateModel(PendingTreeData& data);
+    void beginReset();
+
     LibraryTreeModel* m_self;
 
     QString m_grouping;
@@ -141,239 +158,239 @@ struct LibraryTreeModel::Private
     QColor m_playingColour;
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
+};
 
-    explicit Private(LibraryTreeModel* self)
-        : m_self{self}
-        , m_playingColour{QApplication::palette().highlight().color()}
-        , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
-        , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
-    {
-        m_playingColour.setAlpha(90);
+LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self)
+    : m_self{self}
+    , m_playingColour{QApplication::palette().highlight().color()}
+    , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
+    , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
+{
+    m_playingColour.setAlpha(90);
 
-        m_populator.moveToThread(&m_populatorThread);
-    }
+    m_populator.moveToThread(&m_populatorThread);
+}
 
-    void updateSummary()
-    {
-        m_summaryNode.setTitle(QStringLiteral("All Music (%1)").arg(m_self->rootItem()->childCount() - 1));
-    }
+void LibraryTreeModelPrivate::updateSummary()
+{
+    m_summaryNode.setTitle(QStringLiteral("All Music (%1)").arg(m_self->rootItem()->childCount() - 1));
+}
 
-    void removeTracks(const TrackList& tracks)
-    {
-        std::set<LibraryTreeItem*, cmpItems> items;
-        std::set<LibraryTreeItem*> pendingItems;
+void LibraryTreeModelPrivate::removeTracks(const TrackList& tracks)
+{
+    std::set<LibraryTreeItem*, cmpItems> items;
+    std::set<LibraryTreeItem*> pendingItems;
 
-        for(const Track& track : tracks) {
-            const int id = track.id();
-            if(!m_trackParents.contains(id)) {
-                continue;
-            }
+    for(const Track& track : tracks) {
+        const int id = track.id();
+        if(!m_trackParents.contains(id)) {
+            continue;
+        }
 
-            const auto trackNodes = m_trackParents[id];
-            for(const auto& node : trackNodes) {
-                if(m_nodes.contains(node)) {
-                    LibraryTreeItem* item = &m_nodes[node];
-                    item->removeTrack(track);
-                    if(item->pending()) {
-                        pendingItems.emplace(item);
-                    }
-                    else {
-                        items.emplace(item);
-                    }
+        const auto trackNodes = m_trackParents[id];
+        for(const auto& node : trackNodes) {
+            if(m_nodes.contains(node)) {
+                LibraryTreeItem* item = &m_nodes[node];
+                item->removeTrack(track);
+                if(item->pending()) {
+                    pendingItems.emplace(item);
+                }
+                else {
+                    items.emplace(item);
                 }
             }
-            m_trackParents.erase(id);
         }
-
-        for(const LibraryTreeItem* item : pendingItems) {
-            if(item->trackCount() == 0) {
-                m_pendingNodes.erase(item->key());
-                m_nodes.erase(item->key());
-            }
-        }
-
-        for(LibraryTreeItem* item : items) {
-            if(item->trackCount() == 0) {
-                LibraryTreeItem* parent = item->parent();
-                const int row           = item->row();
-                m_self->beginRemoveRows(m_self->indexOfItem(parent), row, row);
-                parent->removeChild(row);
-                parent->resetChildren();
-                m_self->endRemoveRows();
-                m_nodes.erase(item->key());
-            }
-        }
-
-        updateSummary();
+        m_trackParents.erase(id);
     }
 
-    void mergeTrackParents(const TrackIdNodeMap& parents)
-    {
-        for(const auto& pair : parents) {
-            const auto& [id, children] = pair;
+    for(const LibraryTreeItem* item : pendingItems) {
+        if(item->trackCount() == 0) {
+            m_pendingNodes.erase(item->key());
+            m_nodes.erase(item->key());
+        }
+    }
 
-            auto trackIt = m_trackParents.find(id);
-            if(trackIt != m_trackParents.end()) {
-                for(const auto& key : children) {
-                    if(m_nodes.contains(key)) {
-                        trackIt->second.emplace_back(key);
-                    }
+    for(LibraryTreeItem* item : items) {
+        if(item->trackCount() == 0) {
+            LibraryTreeItem* parent = item->parent();
+            const int row           = item->row();
+            m_self->beginRemoveRows(m_self->indexOfItem(parent), row, row);
+            parent->removeChild(row);
+            parent->resetChildren();
+            m_self->endRemoveRows();
+            m_nodes.erase(item->key());
+        }
+    }
+
+    updateSummary();
+}
+
+void LibraryTreeModelPrivate::mergeTrackParents(const TrackIdNodeMap& parents)
+{
+    for(const auto& pair : parents) {
+        const auto& [id, children] = pair;
+
+        auto trackIt = m_trackParents.find(id);
+        if(trackIt != m_trackParents.end()) {
+            for(const auto& key : children) {
+                if(m_nodes.contains(key)) {
+                    trackIt->second.emplace_back(key);
                 }
             }
-            else {
-                m_trackParents.emplace(pair);
+        }
+        else {
+            m_trackParents.emplace(pair);
+        }
+    }
+}
+
+void LibraryTreeModelPrivate::batchFinished(PendingTreeData data)
+{
+    if(m_resetting) {
+        m_self->beginResetModel();
+        beginReset();
+    }
+
+    if(!m_tracksPendingRemoval.empty()) {
+        removeTracks(m_tracksPendingRemoval);
+    }
+
+    populateModel(data);
+
+    if(m_resetting) {
+        m_self->endResetModel();
+    }
+    m_resetting = false;
+
+    while(m_self->canFetchMore({})) {
+        m_self->fetchMore({});
+    }
+
+    if(m_addingTracks) {
+        m_addingTracks = false;
+    }
+    else {
+        QMetaObject::invokeMethod(m_self, &LibraryTreeModel::modelUpdated);
+    }
+}
+
+void LibraryTreeModelPrivate::traverseTree(const QModelIndex& index, TrackIds& trackIds)
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    const auto childCount = index.model()->rowCount(index);
+    if(childCount == 0) {
+        const auto tracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
+        std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
+                               [](const Fooyin::Track& track) { return track.id(); });
+    }
+    else {
+        for(int i{0}; i < childCount; ++i) {
+            traverseTree(m_self->index(i, 0, index), trackIds);
+        }
+    }
+}
+
+QByteArray LibraryTreeModelPrivate::saveTracks(const QModelIndexList& indexes)
+{
+    QByteArray result;
+    QDataStream stream(&result, QIODevice::WriteOnly);
+
+    TrackIds trackIds;
+
+    for(const QModelIndex& index : indexes) {
+        traverseTree(index, trackIds);
+    }
+
+    stream << trackIds;
+
+    return result;
+}
+
+void LibraryTreeModelPrivate::updatePendingNodes(const PendingTreeData& data)
+{
+    std::set<QModelIndex> nodesToCheck;
+
+    for(const auto& [parentKey, rows] : data.nodes) {
+        auto* parent = parentKey.isEmpty()         ? m_self->rootItem()
+                     : m_nodes.contains(parentKey) ? &m_nodes.at(parentKey)
+                                                   : nullptr;
+        if(!parent) {
+            continue;
+        }
+
+        for(const auto& row : rows) {
+            auto* node = m_nodes.contains(row) ? &m_nodes.at(row) : nullptr;
+
+            if(node && node->pending() && !m_addedNodes.contains(row)) {
+                if(!parent->pending() && !m_pendingNodes.contains(parentKey) && parent->childCount() > 0) {
+                    // Parent is expanded/visible
+                    nodesToCheck.emplace(m_self->indexOfItem(parent));
+                }
+                m_pendingNodes[parentKey].push_back(row);
+                m_addedNodes.insert(row);
             }
         }
     }
 
-    void batchFinished(PendingTreeData data)
-    {
-        if(m_resetting) {
-            m_self->beginResetModel();
-            beginReset();
+    for(const QModelIndex& index : nodesToCheck) {
+        if(m_self->canFetchMore(index)) {
+            m_self->fetchMore(index);
         }
+    }
+}
 
-        if(!m_tracksPendingRemoval.empty()) {
-            removeTracks(m_tracksPendingRemoval);
-        }
-
-        populateModel(data);
-
-        if(m_resetting) {
-            m_self->endResetModel();
-        }
-        m_resetting = false;
-
-        while(m_self->canFetchMore({})) {
-            m_self->fetchMore({});
-        }
-
-        if(m_addingTracks) {
-            m_addingTracks = false;
+void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
+{
+    for(const auto& [key, item] : data.items) {
+        if(m_nodes.contains(key)) {
+            m_nodes[key].addTracks(item.tracks());
         }
         else {
-            QMetaObject::invokeMethod(m_self, &LibraryTreeModel::modelUpdated);
+            m_nodes[key] = item;
         }
     }
+    mergeTrackParents(data.trackParents);
 
-    void traverseTree(const QModelIndex& index, Fooyin::TrackIds& trackIds)
-    {
-        if(!index.isValid()) {
-            return;
-        }
+    const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
+    emit m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
 
-        const auto childCount = index.model()->rowCount(index);
-        if(childCount == 0) {
-            const auto tracks = index.data(Fooyin::LibraryTreeItem::Tracks).value<Fooyin::TrackList>();
-            std::ranges::transform(std::as_const(tracks), std::back_inserter(trackIds),
-                                   [](const Fooyin::Track& track) { return track.id(); });
-        }
-        else {
-            for(int i{0}; i < childCount; ++i) {
-                traverseTree(m_self->index(i, 0, index), trackIds);
-            }
-        }
-    }
-
-    QByteArray saveTracks(const QModelIndexList& indexes)
-    {
-        QByteArray result;
-        QDataStream stream(&result, QIODevice::WriteOnly);
-
-        TrackIds trackIds;
-
-        for(const QModelIndex& index : indexes) {
-            traverseTree(index, trackIds);
-        }
-
-        stream << trackIds;
-
-        return result;
-    }
-
-    void updatePendingNodes(const PendingTreeData& data)
-    {
-        std::set<QModelIndex> nodesToCheck;
-
+    if(m_resetting) {
         for(const auto& [parentKey, rows] : data.nodes) {
-            auto* parent = parentKey.isEmpty()         ? m_self->rootItem()
-                         : m_nodes.contains(parentKey) ? &m_nodes.at(parentKey)
-                                                       : nullptr;
-            if(!parent) {
-                continue;
-            }
+            auto* parent = parentKey.isEmpty() ? m_self->rootItem() : &m_nodes.at(parentKey);
 
             for(const auto& row : rows) {
-                auto* node = m_nodes.contains(row) ? &m_nodes.at(row) : nullptr;
-
-                if(node && node->pending() && !m_addedNodes.contains(row)) {
-                    if(!parent->pending() && !m_pendingNodes.contains(parentKey) && parent->childCount() > 0) {
-                        // Parent is expanded/visible
-                        nodesToCheck.emplace(m_self->indexOfItem(parent));
-                    }
-                    m_pendingNodes[parentKey].push_back(row);
-                    m_addedNodes.insert(row);
-                }
+                LibraryTreeItem* child = &m_nodes.at(row);
+                parent->appendChild(child);
+                child->setPending(false);
             }
         }
-
-        for(const QModelIndex& index : nodesToCheck) {
-            if(m_self->canFetchMore(index)) {
-                m_self->fetchMore(index);
-            }
-        }
+        m_self->rootItem()->resetChildren();
+    }
+    else {
+        updatePendingNodes(data);
     }
 
-    void populateModel(PendingTreeData& data)
-    {
-        for(const auto& [key, item] : data.items) {
-            if(m_nodes.contains(key)) {
-                m_nodes[key].addTracks(item.tracks());
-            }
-            else {
-                m_nodes[key] = item;
-            }
-        }
-        mergeTrackParents(data.trackParents);
+    updateSummary();
+}
 
-        const QModelIndex allIndex = m_self->indexOfItem(&m_summaryNode);
-        emit m_self->dataChanged(allIndex, allIndex, {Qt::DisplayRole});
+void LibraryTreeModelPrivate::beginReset()
+{
+    m_self->resetRoot();
+    m_nodes.clear();
+    m_pendingNodes.clear();
+    m_addedNodes.clear();
 
-        if(m_resetting) {
-            for(const auto& [parentKey, rows] : data.nodes) {
-                auto* parent = parentKey.isEmpty() ? m_self->rootItem() : &m_nodes.at(parentKey);
-
-                for(const auto& row : rows) {
-                    LibraryTreeItem* child = &m_nodes.at(row);
-                    parent->appendChild(child);
-                    child->setPending(false);
-                }
-            }
-            m_self->rootItem()->resetChildren();
-        }
-        else {
-            updatePendingNodes(data);
-        }
-
-        updateSummary();
-    }
-
-    void beginReset()
-    {
-        m_self->resetRoot();
-        m_nodes.clear();
-        m_pendingNodes.clear();
-        m_addedNodes.clear();
-
-        m_summaryNode = LibraryTreeItem{QStringLiteral("All Music"), m_self->rootItem(), -1};
-        m_self->rootItem()->appendChild(&m_summaryNode);
-        updateSummary();
-    }
-};
+    m_summaryNode = LibraryTreeItem{QStringLiteral("All Music"), m_self->rootItem(), -1};
+    m_self->rootItem()->appendChild(&m_summaryNode);
+    updateSummary();
+}
 
 LibraryTreeModel::LibraryTreeModel(QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<Private>(this)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this)}
 {
     QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });

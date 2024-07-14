@@ -37,42 +37,46 @@ bool checkFile(const QFileInfo& file)
 } // namespace
 
 namespace Fooyin {
-struct LayoutProvider::Private
+class LayoutProviderPrivate
 {
+public:
+    [[nodiscard]] bool layoutExists(const QString& name) const;
+    FyLayout addLayout(const FyLayout& layout, bool import = false);
+
     LayoutList m_layouts;
     FyLayout m_currentLayout;
     QFile m_layoutFile{Gui::activeLayoutPath()};
-
-    [[nodiscard]] bool layoutExists(const QString& name) const
-    {
-        return std::ranges::any_of(m_layouts, [name](const FyLayout& layout) { return layout.name() == name; });
-    }
-
-    FyLayout addLayout(const FyLayout& layout, bool import = false)
-    {
-        if(!layout.isValid()) {
-            qInfo() << "Attempted to load an invalid layout";
-            return {};
-        }
-
-        const auto existingLayout = std::ranges::find_if(
-            std::as_const(m_layouts), [layout](const FyLayout& existing) { return existing.name() == layout.name(); });
-
-        if(existingLayout != m_layouts.cend()) {
-            if(import) {
-                return *existingLayout;
-            }
-            qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
-            return {};
-        }
-
-        m_layouts.push_back(layout);
-        return layout;
-    }
 };
 
+bool LayoutProviderPrivate::layoutExists(const QString& name) const
+{
+    return std::ranges::any_of(m_layouts, [name](const FyLayout& layout) { return layout.name() == name; });
+}
+
+FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import)
+{
+    if(!layout.isValid()) {
+        qInfo() << "Attempted to load an invalid layout";
+        return {};
+    }
+
+    const auto existingLayout = std::ranges::find_if(
+        std::as_const(m_layouts), [layout](const FyLayout& existing) { return existing.name() == layout.name(); });
+
+    if(existingLayout != m_layouts.cend()) {
+        if(import) {
+            return *existingLayout;
+        }
+        qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
+        return {};
+    }
+
+    m_layouts.push_back(layout);
+    return layout;
+}
+
 LayoutProvider::LayoutProvider()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<LayoutProviderPrivate>()}
 {
     loadCurrentLayout();
 }

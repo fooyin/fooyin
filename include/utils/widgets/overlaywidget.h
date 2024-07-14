@@ -27,20 +27,21 @@ class QLabel;
 class QPushButton;
 
 namespace Fooyin {
+class OverlayWidgetPrivate;
 
 class FYUTILS_EXPORT OverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    enum Option
+    enum Option : uint8_t
     {
-        None       = 0x0,
-        Label      = 0x1,
-        Button     = 0x2,
-        Resize     = 0x4,
-        Static     = 0x8,
-        Selectable = 0x10,
+        None       = 0,
+        Label      = 1 << 0,
+        Button     = 1 << 1,
+        Resize     = 1 << 2,
+        Static     = 1 << 3,
+        Selectable = 1 << 4
     };
     Q_DECLARE_FLAGS(Options, Option)
 
@@ -83,8 +84,7 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<OverlayWidgetPrivate> p;
 };
 } // namespace Fooyin
 

@@ -63,7 +63,7 @@ TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
     auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::updateTrackMetadata);
     QObject::connect(tagEditor, &TagEditorWidget::trackStatsChanged, m_library,
-                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
+                     [this](const TrackList& changedTracks) { m_library->updateTrackStats(changedTracks); });
     return tagEditor;
 }
 } // namespace Fooyin::TagEditor

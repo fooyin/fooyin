@@ -19,90 +19,91 @@
 
 #include "playlistscriptregistry.h"
 
-namespace Fooyin {
-struct PlaylistScriptRegistry::Private
+namespace {
+QString frontCover()
 {
-    PlaylistTrackIndexes m_playlistQueue;
+    return QString::fromLatin1(Fooyin::FrontCover);
+}
 
+QString backCover()
+{
+    return QString::fromLatin1(Fooyin::BackCover);
+}
+
+QString artistPicture()
+{
+    return QString::fromLatin1(Fooyin::ArtistPicture);
+}
+} // namespace
+
+namespace Fooyin {
+class PlaylistScriptRegistryPrivate
+{
+public:
+    QString depth() const;
+
+    QString queueIndex() const;
+    QString queueIndexes() const;
+    QString playingQueue() const;
+
+    PlaylistTrackIndexes m_playlistQueue;
     UId m_playlistId;
     int m_trackIndex{0};
     int m_trackDepth{0};
 
-    using QueueVar = std::function<QString()>;
-    std::unordered_map<QString, QueueVar> m_vars;
-
-    Private()
-    {
-        addVars();
-    }
-
-    void addVars()
-    {
-        m_vars.emplace(QStringLiteral("depth"), [this]() { return depth(); });
-        m_vars.emplace(QStringLiteral("queueindex"), [this]() { return queueIndex(); });
-        m_vars.emplace(QStringLiteral("queueindexes"), [this]() { return queueIndexes(); });
-        m_vars.emplace(QStringLiteral("playingicon"), [this]() { return playingQueue(); });
-        m_vars.emplace(QStringLiteral("frontcover"), []() { return frontCover(); });
-        m_vars.emplace(QStringLiteral("backcover"), []() { return backCover(); });
-        m_vars.emplace(QStringLiteral("artistpicture"), []() { return artistPicture(); });
-    }
-
-    QString depth() const
-    {
-        return QString::number(m_trackDepth);
-    }
-
-    QString queueIndex() const
-    {
-        if(!m_playlistQueue.contains(m_trackIndex)) {
-            return {};
-        }
-
-        return QString::number(*m_playlistQueue.at(m_trackIndex).begin());
-    }
-
-    QString queueIndexes() const
-    {
-        if(!m_playlistQueue.contains(m_trackIndex)) {
-            return {};
-        }
-
-        const auto& indexes = m_playlistQueue.at(m_trackIndex);
-
-        QStringList str;
-        str.reserve(static_cast<qsizetype>(indexes.size()));
-
-        for(const int index : indexes) {
-            str.append(QString::number(index + 1));
-        }
-
-        return str.join(QStringLiteral(", "));
-    }
-
-    QString playingQueue() const
-    {
-        const QString indexes = queueIndexes();
-        return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
-    }
-
-    static QString frontCover()
-    {
-        return QString::fromLatin1(FrontCover);
-    }
-
-    static QString backCover()
-    {
-        return QString::fromLatin1(BackCover);
-    }
-
-    static QString artistPicture()
-    {
-        return QString::fromLatin1(ArtistPicture);
-    }
+    using PlaylistVar  = std::function<QString()>;
+    using PlaylistVars = std::unordered_map<QString, PlaylistVar>;
+    // clang-format off
+    PlaylistVars m_vars{{QStringLiteral("depth"), [this]() { return depth(); }},
+                        {QStringLiteral("queueindex"), [this]() { return queueIndex(); }},
+                        {QStringLiteral("queueindexes"), [this]() { return queueIndexes(); }},
+                        {QStringLiteral("playingicon"), [this]() { return playingQueue(); }},
+                        {QStringLiteral("frontcover"), frontCover},
+                        {QStringLiteral("backcover"), backCover},
+                        {QStringLiteral("artistpicture"), artistPicture}};
+    // clang-format on
 };
 
+QString PlaylistScriptRegistryPrivate::depth() const
+{
+    return QString::number(m_trackDepth);
+}
+
+QString PlaylistScriptRegistryPrivate::queueIndex() const
+{
+    if(!m_playlistQueue.contains(m_trackIndex)) {
+        return {};
+    }
+
+    return QString::number(*m_playlistQueue.at(m_trackIndex).begin());
+}
+
+QString PlaylistScriptRegistryPrivate::queueIndexes() const
+{
+    if(!m_playlistQueue.contains(m_trackIndex)) {
+        return {};
+    }
+
+    const auto& indexes = m_playlistQueue.at(m_trackIndex);
+
+    QStringList str;
+    str.reserve(static_cast<qsizetype>(indexes.size()));
+
+    for(const int index : indexes) {
+        str.append(QString::number(index + 1));
+    }
+
+    return str.join(QStringLiteral(", "));
+}
+
+QString PlaylistScriptRegistryPrivate::playingQueue() const
+{
+    const QString indexes = queueIndexes();
+    return indexes.isEmpty() ? QString{} : QStringLiteral("[%1]").arg(indexes);
+}
+
 PlaylistScriptRegistry::PlaylistScriptRegistry()
-    : p{std::make_unique<Private>()}
+    : p{std::make_unique<PlaylistScriptRegistryPrivate>()}
 { }
 
 PlaylistScriptRegistry::~PlaylistScriptRegistry() = default;

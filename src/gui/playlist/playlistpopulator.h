@@ -30,6 +30,7 @@
 
 namespace Fooyin {
 class PlayerController;
+class PlaylistPopulatorPrivate;
 struct PlaylistPreset;
 
 using ItemList        = std::vector<PlaylistItem>;
@@ -88,7 +89,6 @@ signals:
     void headersUpdated(Fooyin::ItemKeyMap headers);
 
 private:
-    struct Private;
-    std::unique_ptr<Private> p;
+    std::unique_ptr<PlaylistPopulatorPrivate> p;
 };
 } // namespace Fooyin
