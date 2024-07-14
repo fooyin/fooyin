@@ -36,9 +36,11 @@
 using namespace std::chrono_literals;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-constexpr auto BufferInterval = 5ms;
+constexpr auto BufferInterval   = 5ms;
+constexpr auto PositionInterval = 50ms;
 #else
-constexpr auto BufferInterval = 5;
+constexpr auto BufferInterval   = 5;
+constexpr auto PositionInterval = 50;
 #endif
 
 constexpr auto MaxDecodeLength = 200;
@@ -393,7 +395,7 @@ void AudioPlaybackEngine::playOutput()
 
     m_renderer->pause(false, fadeInterval);
     changeTrackStatus(TrackStatus::BufferedTrack);
-    m_posTimer.start(50ms, Qt::PreciseTimer, this);
+    m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
 }
 
 void AudioPlaybackEngine::pauseOutput()
