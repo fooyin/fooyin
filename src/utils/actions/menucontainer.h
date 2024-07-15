@@ -24,81 +24,12 @@
 namespace Fooyin {
 class ActionManager;
 
-class MenuContainer : public ActionContainer
+class MenuBarContainer : public ActionContainer
 {
     Q_OBJECT
 
 public:
-    struct Group
-    {
-        explicit Group(const Id& id_)
-            : id{id_}
-        { }
-        Id id;
-        std::vector<QObject*> items;
-    };
-    using GroupList = std::vector<Group>;
-
-    explicit MenuContainer(const Id& id, ActionManager* manager);
-
-    [[nodiscard]] Id id() const override;
-    [[nodiscard]] QMenu* menu() const override;
-    [[nodiscard]] QMenuBar* menuBar() const override;
-
-    [[nodiscard]] QAction* insertLocation(const Id& group) const override;
-
-    void appendGroup(const Id& group) override;
-    void insertGroup(const Id& beforeGroup, const Id& group) override;
-
-    void addAction(QAction* action, const Id& group = {}) override;
-    void addAction(Command* action, const Id& group = {}) override;
-
-    void addMenu(ActionContainer* menu, const Id& group = {}) override;
-    void addMenu(ActionContainer* beforeContainer, ActionContainer* menu) override;
-
-    Command* addSeparator(const Context& context, const Id& group = {}) override;
-    Command* addSeparator(const Id& group = {}) override;
-
-    [[nodiscard]] virtual QAction* containerAction() const = 0;
-    virtual QAction* actionForItem(QObject* item) const;
-
-    virtual void insertAction(QAction* beforeAction, QAction* action)          = 0;
-    virtual void insertAction(QAction* beforeAction, Command* action)          = 0;
-    virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
-
-    [[nodiscard]] DisabledBehavior disabledBehavior() const override;
-    void setDisabledBehavior(DisabledBehavior behavior) override;
-
-    bool isEmpty() override;
-    bool isHidden() override;
-    void clear() override;
-
-    virtual bool update() = 0;
-
-signals:
-    void requestUpdate(Fooyin::MenuContainer* container);
-
-protected:
-    virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;
-
-    GroupList m_groups;
-
-private:
-    void itemDestroyed(QObject* sender);
-    [[nodiscard]] GroupList::const_iterator findGroup(const Id& groupId) const;
-    [[nodiscard]] QAction* determineInsertionLocation(GroupList::const_iterator group) const;
-
-    ActionManager* m_manager;
-    Id m_id;
-    DisabledBehavior m_disabledBehavior{Disable};
-};
-
-class MenuBarActionContainer : public MenuContainer
-{
-    Q_OBJECT
-
-public:
-    explicit MenuBarActionContainer(const Id& id, ActionManager* manager);
+    explicit MenuBarContainer(const Id& id, ActionManager* manager);
 
     [[nodiscard]] QMenu* menu() const override;
     void setMenuBar(QMenuBar* menuBar);
@@ -123,13 +54,13 @@ private:
     QMenuBar* m_menuBar;
 };
 
-class MenuActionContainer : public MenuContainer
+class MenuContainer : public ActionContainer
 {
     Q_OBJECT
 
 public:
-    explicit MenuActionContainer(const Id& id, ActionManager* manager);
-    ~MenuActionContainer() override;
+    explicit MenuContainer(const Id& id, ActionManager* manager);
+    ~MenuContainer() override;
 
     [[nodiscard]] QMenu* menu() const override;
 

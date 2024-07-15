@@ -19,7 +19,6 @@
 
 #include <utils/actions/actionmanager.h>
 
-#include "actions/actioncommand.h"
 #include "menucontainer.h"
 
 #include <utils/actions/command.h>
@@ -42,11 +41,11 @@ public:
         , m_settingsManager{settingsManager}
     { }
 
-    ActionCommand* overridableAction(const Id& id);
+    Command* overridableAction(const Id& id);
     void loadSetting(const Id& id, Command* command) const;
 
     void updateContainer();
-    void scheduleContainerUpdate(MenuContainer* actionContainer);
+    void scheduleContainerUpdate(ActionContainer* actionContainer);
 
     void updateContextObject(const WidgetContextList& context);
     void updateFocusWidget(QWidget* widget);
@@ -57,10 +56,10 @@ public:
     SettingsManager* m_settingsManager;
     QMainWindow* m_mainWindow{nullptr};
 
-    std::unordered_map<Id, std::unique_ptr<ActionCommand>, Id::IdHash> m_idCmdMap;
-    std::unordered_map<Id, std::unique_ptr<MenuContainer>, Id::IdHash> m_idContainerMap;
+    std::unordered_map<Id, std::unique_ptr<Command>, Id::IdHash> m_idCmdMap;
+    std::unordered_map<Id, std::unique_ptr<ActionContainer>, Id::IdHash> m_idContainerMap;
     std::unordered_map<QWidget*, WidgetContext*> m_contextWidgets;
-    std::set<MenuContainer*> m_scheduledContainerUpdates;
+    std::set<ActionContainer*> m_scheduledContainerUpdates;
 
     Context m_currentContext;
     bool m_contextOverride{false};
@@ -68,13 +67,13 @@ public:
     WidgetContextList m_activeContext;
 };
 
-ActionCommand* ActionManagerPrivate::overridableAction(const Id& id)
+Command* ActionManagerPrivate::overridableAction(const Id& id)
 {
     if(m_idCmdMap.contains(id)) {
         return m_idCmdMap.at(id).get();
     }
 
-    auto* command = m_idCmdMap.emplace(id, std::make_unique<ActionCommand>(id)).first->second.get();
+    auto* command = m_idCmdMap.emplace(id, std::make_unique<Command>(id)).first->second.get();
     loadSetting(id, command);
     QAction* action = command->action();
     m_mainWindow->addAction(action);
@@ -105,13 +104,13 @@ void ActionManagerPrivate::loadSetting(const Id& id, Command* command) const
 
 void ActionManagerPrivate::updateContainer()
 {
-    for(MenuContainer* container : m_scheduledContainerUpdates) {
+    for(auto* container : m_scheduledContainerUpdates) {
         container->update();
     }
     m_scheduledContainerUpdates.clear();
 }
 
-void ActionManagerPrivate::scheduleContainerUpdate(MenuContainer* actionContainer)
+void ActionManagerPrivate::scheduleContainerUpdate(ActionContainer* actionContainer)
 {
     const bool needsSchedule = m_scheduledContainerUpdates.empty();
     m_scheduledContainerUpdates.emplace(actionContainer);
@@ -309,10 +308,10 @@ ActionContainer* ActionManager::createMenu(const Id& id)
         return p->m_idContainerMap.at(id).get();
     }
 
-    auto* menu = p->m_idContainerMap.emplace(id, std::make_unique<MenuActionContainer>(id, this)).first->second.get();
+    auto* menu = p->m_idContainerMap.emplace(id, std::make_unique<MenuContainer>(id, this)).first->second.get();
 
-    QObject::connect(menu, &MenuContainer::requestUpdate, this,
-                     [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
+    QObject::connect(menu, &ActionContainer::requestUpdate, this,
+                     [this](auto* container) { p->scheduleContainerUpdate(container); });
 
     menu->appendGroup(Actions::Groups::One);
     menu->appendGroup(Actions::Groups::Two);
@@ -331,22 +330,22 @@ ActionContainer* ActionManager::createMenuBar(const Id& id)
         auto* menuBar = new QMenuBar(p->m_mainWindow);
         menuBar->setObjectName(id.name());
 
-        auto container = std::make_unique<MenuBarActionContainer>(id, this);
+        auto container = std::make_unique<MenuBarContainer>(id, this);
         container->setMenuBar(menuBar);
         p->m_idContainerMap.emplace(id, std::move(container));
     }
 
     auto* menuBar = p->m_idContainerMap.at(id).get();
 
-    QObject::connect(menuBar, &MenuContainer::requestUpdate, this,
-                     [this](MenuContainer* container) { p->scheduleContainerUpdate(container); });
+    QObject::connect(menuBar, &ActionContainer::requestUpdate, this,
+                     [this](auto* container) { p->scheduleContainerUpdate(container); });
 
     return menuBar;
 }
 
 Command* ActionManager::registerAction(QAction* action, const Id& id, const Context& context)
 {
-    ActionCommand* command = p->overridableAction(id);
+    Command* command = p->overridableAction(id);
     if(command) {
         command->addOverrideAction(action, context, !p->m_contextOverride);
         emit commandsChanged();

@@ -31,6 +31,8 @@ class QMenu;
 class QMenuBar;
 
 namespace Fooyin {
+class ActionContainerPrivate;
+class ActionManager;
 class Command;
 
 namespace Actions::Groups {
@@ -44,36 +46,67 @@ class FYUTILS_EXPORT ActionContainer : public QObject
     Q_OBJECT
 
 public:
-    enum DisabledBehavior
+    enum DisabledBehavior : uint8_t
     {
         Show = 0,
         Disable,
         Hide,
     };
 
-    [[nodiscard]] virtual Id id() const             = 0;
-    [[nodiscard]] virtual QMenu* menu() const       = 0;
-    [[nodiscard]] virtual QMenuBar* menuBar() const = 0;
+    struct Group
+    {
+        explicit Group(const Id& id_)
+            : id{id_}
+        { }
+        Id id;
+        std::vector<QObject*> items;
+    };
+    using GroupList = std::vector<Group>;
 
-    [[nodiscard]] virtual QAction* insertLocation(const Id& group) const = 0;
+    ActionContainer(const Id& id, ActionManager* manager);
+    ~ActionContainer();
 
-    virtual void appendGroup(const Id& group)                        = 0;
-    virtual void insertGroup(const Id& beforeGroup, const Id& group) = 0;
+    [[nodiscard]] Id id() const;
+    [[nodiscard]] virtual QMenu* menu() const;
+    [[nodiscard]] virtual QMenuBar* menuBar() const;
 
-    virtual void addAction(QAction* action, const Id& group = {}) = 0;
-    virtual void addAction(Command* action, const Id& group = {}) = 0;
+    [[nodiscard]] QAction* insertLocation(const Id& group) const;
 
-    virtual void addMenu(ActionContainer* menu, const Id& group = {})             = 0;
-    virtual void addMenu(ActionContainer* beforeContainer, ActionContainer* menu) = 0;
+    void appendGroup(const Id& group);
+    void insertGroup(const Id& beforeGroup, const Id& group);
 
-    virtual Command* addSeparator(const Context& context, const Id& group = {}) = 0;
-    virtual Command* addSeparator(const Id& group = {})                         = 0;
+    void addAction(QAction* action, const Id& group = {});
+    void addAction(Command* action, const Id& group = {});
 
-    [[nodiscard]] virtual DisabledBehavior disabledBehavior() const = 0;
-    virtual void setDisabledBehavior(DisabledBehavior behavior)     = 0;
+    void addMenu(ActionContainer* menu, const Id& group = {});
+    void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);
 
-    virtual bool isEmpty()  = 0;
-    virtual bool isHidden() = 0;
-    virtual void clear()    = 0;
+    Command* addSeparator(const Context& context, const Id& group = {});
+    Command* addSeparator(const Id& group = {});
+
+    [[nodiscard]] virtual QAction* containerAction() const = 0;
+    virtual QAction* actionForItem(QObject* item) const;
+
+    virtual void insertAction(QAction* beforeAction, QAction* action)          = 0;
+    virtual void insertAction(QAction* beforeAction, Command* action)          = 0;
+    virtual void insertMenu(QAction* beforeAction, ActionContainer* container) = 0;
+
+    [[nodiscard]] virtual DisabledBehavior disabledBehavior() const;
+    void setDisabledBehavior(DisabledBehavior behavior);
+
+    virtual bool isEmpty();
+    virtual bool isHidden();
+    virtual void clear();
+    virtual bool update() = 0;
+
+signals:
+    void requestUpdate(Fooyin::ActionContainer* container);
+
+protected:
+    [[nodiscard]] GroupList& actionGroups() const;
+    virtual bool canBeAddedToContainer(ActionContainer* container) const = 0;
+
+private:
+    std::unique_ptr<ActionContainerPrivate> p;
 };
 } // namespace Fooyin

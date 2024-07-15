@@ -29,6 +29,7 @@
 class QAction;
 
 namespace Fooyin {
+class CommandPrivate;
 class Id;
 
 using ShortcutList = QList<QKeySequence>;
@@ -38,34 +39,43 @@ class FYUTILS_EXPORT Command : public QObject
     Q_OBJECT
 
 public:
-    [[nodiscard]] virtual Id id() const = 0;
+    explicit Command(const Id& id);
+    ~Command() override;
 
-    [[nodiscard]] virtual QAction* action() const                            = 0;
-    [[nodiscard]] virtual QAction* actionForContext(const Id& context) const = 0;
+    [[nodiscard]] Id id() const;
 
-    [[nodiscard]] virtual Context context() const = 0;
+    [[nodiscard]] QAction* action() const;
+    [[nodiscard]] QAction* actionForContext(const Id& context) const;
 
-    virtual void setAttribute(ProxyAction::Attribute attribute)                     = 0;
-    virtual void removeAttribute(ProxyAction::Attribute attribute)                  = 0;
-    [[nodiscard]] virtual bool hasAttribute(ProxyAction::Attribute attribute) const = 0;
+    [[nodiscard]] Context context() const;
 
-    [[nodiscard]] virtual bool isActive() const = 0;
+    void setAttribute(ProxyAction::Attribute attribute);
+    void removeAttribute(ProxyAction::Attribute attribute);
+    [[nodiscard]] bool hasAttribute(ProxyAction::Attribute attribute) const;
 
-    virtual void setShortcut(const ShortcutList& keys)                         = 0;
-    [[nodiscard]] virtual QString stringWithShortcut(const QString& str) const = 0;
-    virtual void actionWithShortcutToolTip(QAction* action) const              = 0;
+    [[nodiscard]] bool isActive() const;
 
-    virtual void setDefaultShortcut(const QKeySequence& key)    = 0;
-    virtual void setDefaultShortcut(const ShortcutList& keys)   = 0;
-    [[nodiscard]] virtual ShortcutList defaultShortcuts() const = 0;
-    [[nodiscard]] virtual ShortcutList shortcuts() const        = 0;
-    [[nodiscard]] virtual QKeySequence shortcut() const         = 0;
+    void setShortcut(const ShortcutList& keys);
+    [[nodiscard]] QString stringWithShortcut(const QString& str) const;
+    void actionWithShortcutToolTip(QAction* action) const;
 
-    virtual void setDescription(const QString& text)  = 0;
-    [[nodiscard]] virtual QString description() const = 0;
+    void setDefaultShortcut(const QKeySequence& key);
+    void setDefaultShortcut(const ShortcutList& keys);
+    [[nodiscard]] ShortcutList defaultShortcuts() const;
+    [[nodiscard]] ShortcutList shortcuts() const;
+    [[nodiscard]] QKeySequence shortcut() const;
+
+    void setDescription(const QString& text);
+    [[nodiscard]] QString description() const;
+
+    void setCurrentContext(const Context& newContext);
+    void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
 
 signals:
     void shortcutChanged();
     void activeStateChanged();
+
+private:
+    std::unique_ptr<CommandPrivate> p;
 };
 } // namespace Fooyin

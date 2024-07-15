@@ -76,9 +76,9 @@ set(SOURCES
     tooltipfilter.cpp
     utils.cpp
     worker.cpp
-    actions/actioncommand.cpp
-    actions/actioncommand.h
+    actions/actioncontainer.cpp
     actions/actionmanager.cpp
+    actions/command.cpp
     actions/menucontainer.cpp
     actions/menucontainer.h
     actions/proxyaction.cpp
