@@ -22,6 +22,7 @@
 #include <utils/stareditor.h>
 #include <utils/starrating.h>
 
+#include <QApplication>
 #include <QPainter>
 
 namespace Fooyin {
@@ -30,9 +31,8 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     if(index.data().canConvert<StarRating>()) {
         const auto starRating = index.data().value<StarRating>();
 
-        if(option.state & QStyle::State_Selected) {
-            painter->fillRect(option.rect, option.palette.highlight());
-        }
+        QStyle* style = option.widget ? option.widget->style() : QApplication::style();
+        style->drawControl(QStyle::CE_ItemViewItem, &option, painter, option.widget);
 
         starRating.paint(painter, option.rect, option.palette, StarRating::EditMode::ReadOnly);
     }
