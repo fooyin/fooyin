@@ -47,9 +47,14 @@ QString PropertiesTab::title() const
     return m_title;
 }
 
-WidgetBuilder PropertiesTab::builder() const
+QWidget* PropertiesTab::widget(const TrackList& tracks) const
 {
-    return m_widgetBuilder;
+    if(!m_widget) {
+        if(m_widgetBuilder) {
+            m_widget = m_widgetBuilder(tracks);
+        }
+    }
+    return m_widget;
 }
 
 bool PropertiesTab::hasVisited() const
@@ -137,11 +142,10 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     auto* tabWidget = new QTabWidget(this);
-
     QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &PropertiesDialogWidget::currentTabChanged);
 
     for(const auto& tab : m_tabs) {
-        tabWidget->insertTab(tab.index(), tab.builder()(m_tracks), tab.title());
+        tabWidget->insertTab(tab.index(), tab.widget(m_tracks), tab.title());
     }
 
     layout->addWidget(tabWidget, 0, 0);

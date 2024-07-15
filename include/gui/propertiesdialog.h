@@ -49,7 +49,7 @@ public:
 
     [[nodiscard]] int index() const;
     [[nodiscard]] QString title() const;
-    [[nodiscard]] WidgetBuilder builder() const;
+    [[nodiscard]] QWidget* widget(const TrackList& tracks) const;
     [[nodiscard]] bool hasVisited() const;
 
     void updateIndex(int index);
@@ -62,7 +62,7 @@ private:
     int m_index;
     QString m_title;
     WidgetBuilder m_widgetBuilder;
-    PropertiesTabWidget* m_widget{nullptr};
+    mutable PropertiesTabWidget* m_widget{nullptr};
     bool m_visited{false};
 };
 
