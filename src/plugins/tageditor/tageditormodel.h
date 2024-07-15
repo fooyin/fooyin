@@ -40,6 +40,8 @@ public:
     [[nodiscard]] TrackList tracks() const;
     void reset(const TrackList& tracks);
 
+    void autoNumberTracks();
+
     bool haveChanges();
     bool haveOnlyStatChanges();
     void applyChanges();

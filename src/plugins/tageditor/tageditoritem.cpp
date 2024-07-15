@@ -19,12 +19,9 @@
 
 #include "tageditoritem.h"
 
-#include <utils/helpers.h>
-
 #include <QCollator>
 
-constexpr auto MaxValueCount = 40;
-constexpr auto CharLimit     = 2000;
+constexpr auto CharLimit = 2000;
 
 namespace {
 bool withinCharLimit(const QStringList& strings)
@@ -32,6 +29,14 @@ bool withinCharLimit(const QStringList& strings)
     const int currentLength = std::accumulate(strings.cbegin(), strings.cend(), 0,
                                               [](int sum, const QString& str) { return sum + str.length(); });
     return currentLength <= CharLimit;
+}
+
+void sortList(QStringList& list)
+{
+    QCollator collator;
+    collator.setNumericMode(true);
+
+    std::ranges::sort(list, collator);
 }
 } // namespace
 
@@ -48,6 +53,7 @@ TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefaul
     , m_valueChanged{false}
     , m_trackCount{0}
     , m_multipleValues{false}
+    , m_splitTrackValues{false}
 { }
 
 QString TagEditorItem::title() const
@@ -65,24 +71,41 @@ bool TagEditorItem::titleChanged() const
     return m_titleChanged;
 }
 
+QString TagEditorItem::displayValue() const
+{
+    if(m_value.isEmpty()) {
+        QStringList nonEmptyValues{m_values};
+        nonEmptyValues.removeAll(QString{});
+        sortList(nonEmptyValues);
+        m_value = nonEmptyValues.join(u"; ");
+    }
+
+    if(m_trackCount > 1 && m_multipleValues && m_values.size() > 1) {
+        return QStringLiteral("<<multiple values>> ") + value();
+    }
+
+    return m_value;
+}
+
 QString TagEditorItem::value() const
 {
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QString{});
-
-        QCollator collator;
-        collator.setNumericMode(true);
-
-        std::ranges::sort(nonEmptyValues, collator);
-        m_value = nonEmptyValues.join(QStringLiteral("; "));
-
-        if(m_trackCount > 1 && m_multipleValues) {
-            m_value.prepend(QStringLiteral("<<multiple values>> "));
-        }
+        sortList(nonEmptyValues);
+        m_value = nonEmptyValues.join(u"; ");
     }
 
     return m_value;
+}
+
+QString TagEditorItem::changedDisplayValue() const
+{
+    if(m_trackCount > 1 && m_multipleValues && m_changedValues.size() > 1) {
+        return QStringLiteral("<<multiple values>> ") + changedValue();
+    }
+
+    return changedValue();
 }
 
 QString TagEditorItem::changedValue() const
@@ -90,16 +113,8 @@ QString TagEditorItem::changedValue() const
     if(m_changedValue.isEmpty()) {
         QStringList nonEmptyValues{m_changedValues};
         nonEmptyValues.removeAll(QString{});
-
-        QCollator collator;
-        collator.setNumericMode(true);
-
-        std::ranges::sort(nonEmptyValues, collator);
-        m_changedValue = nonEmptyValues.join(QStringLiteral("; "));
-
-        if(m_trackCount > 1 && m_multipleValues) {
-            m_changedValue.prepend(QStringLiteral("<<multiple values>> "));
-        }
+        sortList(nonEmptyValues);
+        m_changedValue = nonEmptyValues.join(u"; ");
     }
 
     return m_changedValue;
@@ -120,6 +135,11 @@ int TagEditorItem::trackCount() const
     return m_trackCount;
 }
 
+bool TagEditorItem::splitTrackValues() const
+{
+    return m_splitTrackValues;
+}
+
 void TagEditorItem::addTrack()
 {
     m_trackCount++;
@@ -128,12 +148,11 @@ void TagEditorItem::addTrack()
 void TagEditorItem::addTrackValue(const QString& value)
 {
     if(!value.isEmpty() && !m_values.contains(value)) {
-        if(m_values.size() < MaxValueCount) {
-            if(m_trackCount == 0 || withinCharLimit(m_values)) {
-                m_values.append(value);
-                m_values.sort();
-            }
+        if(m_trackCount == 0 || withinCharLimit(m_values)) {
+            m_values.append(value);
+            sortList(m_values);
         }
+
         m_multipleValues = m_trackCount >= 1;
     }
 
@@ -151,17 +170,25 @@ void TagEditorItem::addTrackValue(const QStringList& values)
             continue;
         }
 
-        if(m_values.size() < MaxValueCount) {
-            if(m_trackCount == 0 || withinCharLimit(m_values)) {
-                m_values.append(trackValue);
-                m_values.sort();
-            }
+        if(m_trackCount == 0 || withinCharLimit(m_values)) {
+            m_values.append(trackValue);
+            sortList(m_values);
         }
 
         m_multipleValues = m_trackCount >= 1;
     }
 
     m_trackCount++;
+}
+
+bool TagEditorItem::setValue(int value)
+{
+    return setValue(QString::number(value));
+}
+
+bool TagEditorItem::setValue(const QString& value)
+{
+    return setValue(QStringList{value});
 }
 
 bool TagEditorItem::setValue(const QStringList& values)
@@ -183,6 +210,10 @@ bool TagEditorItem::setValue(const QStringList& values)
     m_changedValue.clear();
     m_valueChanged = true;
 
+    if(status() != TagEditorItem::Added) {
+        setStatus(TagEditorItem::Changed);
+    }
+
     return true;
 }
 
@@ -203,7 +234,21 @@ bool TagEditorItem::setTitle(const QString& title)
     m_changedTitle = title;
     m_titleChanged = true;
 
+    if(status() != TagEditorItem::Added) {
+        setStatus(TagEditorItem::Changed);
+    }
+
     return true;
+}
+
+void TagEditorItem::setMultipleValues(bool multiple)
+{
+    m_multipleValues = multiple;
+}
+
+void TagEditorItem::setSplitTrackValues(bool enabled)
+{
+    m_splitTrackValues = enabled;
 }
 
 void TagEditorItem::sortCustomTags()
@@ -239,8 +284,9 @@ void TagEditorItem::applyChanges()
 
 void TagEditorItem::reset()
 {
-    m_titleChanged = false;
-    m_valueChanged = false;
+    m_titleChanged     = false;
+    m_valueChanged     = false;
+    m_splitTrackValues = false;
     m_changedTitle.clear();
     m_changedValue.clear();
     m_changedValues.clear();

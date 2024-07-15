@@ -36,6 +36,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QTableView>
+#include <QToolButton>
 
 namespace Fooyin::TagEditor {
 class TagEditorDelegate : public MultiLineEditDelegate
@@ -104,6 +105,8 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
     , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
+    , m_toolsButton{new QToolButton(this)}
+    , m_toolsMenu{new QMenu(this)}
 {
     setObjectName(TagEditorWidget::name());
     setWindowFlags(Qt::Dialog);
@@ -115,8 +118,13 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
-
     m_actionManager->addContextObject(m_context);
+    setupToolsMenu();
+
+    m_toolsButton->setText(tr("Tools"));
+    m_toolsButton->setMenu(m_toolsMenu);
+    m_toolsButton->setPopupMode(QToolButton::InstantPopup);
+    m_view->addCustomTool(m_toolsButton);
 
     QObject::connect(m_model, &QAbstractItemModel::rowsInserted, m_view, &QTableView::resizeRowsToContents);
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() {
@@ -193,6 +201,13 @@ void TagEditorWidget::apply()
         }
         applyChanges();
     }
+}
+
+void TagEditorWidget::setupToolsMenu()
+{
+    auto* autoTrackNum = new QAction(tr("Auto &track number"), this);
+    QObject::connect(autoTrackNum, &QAction::triggered, m_model, &TagEditorModel::autoNumberTracks);
+    m_toolsMenu->addAction(autoTrackNum);
 }
 
 void TagEditorWidget::saveState() const

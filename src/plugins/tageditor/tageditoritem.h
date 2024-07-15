@@ -38,17 +38,29 @@ public:
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString changedTitle() const;
     [[nodiscard]] bool titleChanged() const;
+
+    [[nodiscard]] QString displayValue() const;
     [[nodiscard]] QString value() const;
+
+    [[nodiscard]] QString changedDisplayValue() const;
     [[nodiscard]] QString changedValue() const;
+
     [[nodiscard]] bool valueChanged() const;
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
+    [[nodiscard]] bool splitTrackValues() const;
 
     void addTrack();
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
+
+    bool setValue(int value);
+    bool setValue(const QString& value);
     bool setValue(const QStringList& values);
+
     bool setTitle(const QString& title);
+    void setMultipleValues(bool multiple);
+    void setSplitTrackValues(bool enabled);
 
     void sortCustomTags();
     void applyChanges();
@@ -66,5 +78,6 @@ private:
     bool m_valueChanged;
     int m_trackCount;
     bool m_multipleValues;
+    bool m_splitTrackValues;
 };
 } // namespace Fooyin::TagEditor

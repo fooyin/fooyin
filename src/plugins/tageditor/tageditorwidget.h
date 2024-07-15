@@ -26,6 +26,8 @@
 
 #include <QWidget>
 
+class QToolButton;
+
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
@@ -71,6 +73,7 @@ signals:
     void trackStatsChanged(const Fooyin::TrackList& tracks);
 
 private:
+    void setupToolsMenu();
     void saveState() const;
     void restoreState() const;
 
@@ -81,6 +84,8 @@ private:
 
     TagEditorView* m_view;
     TagEditorModel* m_model;
+    QToolButton* m_toolsButton;
+    QMenu* m_toolsMenu;
 };
 } // namespace TagEditor
 } // namespace Fooyin

@@ -28,6 +28,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
 
+#include <set>
+
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
@@ -54,7 +56,7 @@ public:
     void updateFields();
     void updateEditorValues();
 
-    void updateTrackMetadata(const QString& name, const QVariant& value);
+    void updateTrackMetadata(const QString& name, const QVariant& value, bool split = false);
 
     void addCustomTrackMetadata(const QString& name, const QString& value);
     void replaceCustomTrackMetadata(const QString& name, const QString& value);
@@ -202,17 +204,18 @@ void TagEditorModelPrivate::updateEditorValues()
     }
 }
 
-void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVariant& value)
+void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVariant& value, bool split)
 {
     if(m_tracks.empty()) {
         return;
     }
 
     const QString metadata = findSetField(name);
-    const bool isList      = (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
+    const bool isList      = split
+                     || (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
                          || metadata == QLatin1String{Constants::MetaData::Artist}
                          || metadata == QLatin1String{Constants::MetaData::Genre});
-    const bool isNumeric   = (metadata == QLatin1String{Constants::MetaData::Track}
+    const bool isNumeric = (metadata == QLatin1String{Constants::MetaData::Track}
                             || metadata == QLatin1String{Constants::MetaData::TrackTotal}
                             || metadata == QLatin1String{Constants::MetaData::Disc}
                             || metadata == QLatin1String{Constants::MetaData::DiscTotal}
@@ -233,11 +236,20 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
         }
     }
 
-    for(Track& track : m_tracks) {
+    for(int i{0}; Track & track : m_tracks) {
         if(track.hasCue()) {
             continue;
         }
-        if(isList) {
+
+        if(split && std::cmp_less(i, listValue.size())) {
+            if(isNumeric) {
+                m_scriptRegistry.setValue(metadata, listValue.at(i).toInt(), track);
+            }
+            else {
+                m_scriptRegistry.setValue(metadata, listValue.at(i), track);
+            }
+        }
+        else if(isList) {
             m_scriptRegistry.setValue(metadata, listValue, track);
         }
         else if(isNumeric) {
@@ -246,6 +258,8 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
         else {
             m_scriptRegistry.setValue(metadata, value.toString(), track);
         }
+
+        ++i;
     }
 }
 
@@ -309,6 +323,25 @@ void TagEditorModel::reset(const TrackList& tracks)
     p->m_root.sortCustomTags();
 
     endResetModel();
+}
+
+void TagEditorModel::autoNumberTracks()
+{
+    const auto total = static_cast<int>(p->m_tracks.size());
+    QStringList trackNums;
+    for(int i{1}; i <= total; ++i) {
+        trackNums.append(QString::number(i));
+    }
+
+    auto& trackTag = p->m_tags.at(QLatin1String("Track Number"));
+    auto& totalTag = p->m_tags.at(QLatin1String("Total Tracks"));
+
+    if(trackTag.setValue(trackNums)) {
+        trackTag.setMultipleValues(total > 1);
+        trackTag.setSplitTrackValues(true);
+    }
+
+    totalTag.setValue(total);
 }
 
 bool TagEditorModel::haveChanges()
@@ -376,8 +409,9 @@ void TagEditorModel::applyChanges()
                         }
                     }
                     else {
-                        p->updateTrackMetadata(node.title(), node.changedValue());
+                        p->updateTrackMetadata(node.title(), node.changedValue(), node.splitTrackValues());
                         node.applyChanges();
+                        node.setSplitTrackValues(false);
                     }
 
                     emit dataChanged({}, {}, {Qt::FontRole});
@@ -469,7 +503,11 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                                         : QVariant::fromValue(StarRating{item->value().toInt(), 5});
         }
 
-        return item->valueChanged() ? item->changedValue() : item->value();
+        if(role == Qt::EditRole) {
+            return item->valueChanged() ? item->changedValue() : item->value();
+        }
+
+        return item->valueChanged() ? item->changedDisplayValue() : item->displayValue();
     }
 
     return {};
@@ -518,7 +556,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             }
 
             if(!setValue.isEmpty()) {
-                values.append(setValue);
+                values.append(setValue.split(QStringLiteral("; "), Qt::SkipEmptyParts));
             }
 
             if(!item->setValue(values)) {
@@ -528,10 +566,6 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
         }
         default:
             break;
-    }
-
-    if(item->status() != TagEditorItem::Added) {
-        item->setStatus(TagEditorItem::Changed);
     }
 
     emit dataChanged(index, index);
