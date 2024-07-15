@@ -102,10 +102,15 @@ void StarEditor::keyPressEvent(QKeyEvent* event)
 
 int StarEditor::starAtPosition(int x) const
 {
-    const int star = (x / (m_rating.sizeHint().width() / m_rating.maxStarCount())) + 1;
+    const int starWidth = m_rating.sizeHint().width() / m_rating.maxStarCount();
+    const int star      = (x / starWidth) + 1;
 
     if(star <= 0 || star > m_rating.maxStarCount()) {
         return -1;
+    }
+
+    if(star == 1 && x < (starWidth / 2)) {
+        return 0;
     }
 
     return star;
