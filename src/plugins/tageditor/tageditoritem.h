@@ -55,8 +55,8 @@ public:
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
 
-    bool setValue(int value);
-    bool setValue(const QString& value);
+    bool setValue(int newValue);
+    bool setValue(const QString& newValue);
 
     bool setTitle(const QString& title);
     void setMultipleValues(bool multiple);

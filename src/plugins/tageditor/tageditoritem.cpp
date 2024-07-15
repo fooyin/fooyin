@@ -185,18 +185,19 @@ void TagEditorItem::addTrackValue(const QStringList& values)
     }
 }
 
-bool TagEditorItem::setValue(int value)
+bool TagEditorItem::setValue(int newValue)
 {
-    return setValue(QString::number(value));
+    return setValue(QString::number(newValue));
 }
 
-bool TagEditorItem::setValue(const QString& value)
+bool TagEditorItem::setValue(const QString& newValue)
 {
-    QStringList values = value.split(QStringLiteral(";"), Qt::SkipEmptyParts);
+    QStringList values = newValue.split(QStringLiteral(";"), Qt::SkipEmptyParts);
     std::ranges::transform(values, values.begin(), [](const auto& val) { return val.trimmed(); });
 
-    if(m_value == value) {
-        if(m_values == values && status() == None) {
+    if(value() == newValue) {
+        if(status() == None
+           && (m_values == values || (m_values.size() == 1 && m_values.front().isEmpty() && values.empty()))) {
             return false;
         }
         if(status() == Changed) {
