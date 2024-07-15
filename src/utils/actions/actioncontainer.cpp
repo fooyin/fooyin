@@ -45,6 +45,7 @@ public:
     void itemDestroyed(QObject* sender);
 
     [[nodiscard]] GroupIterator findGroup(const Id& groupId) const;
+    [[nodiscard]] ActionContainer* findContainer(const Id& id) const;
     [[nodiscard]] QAction* determineInsertionLocation(GroupIterator group) const;
 
     ActionContainer* m_self;
@@ -67,6 +68,11 @@ void ActionContainerPrivate::itemDestroyed(QObject* sender)
 GroupIterator ActionContainerPrivate::findGroup(const Id& groupId) const
 {
     return std::ranges::find_if(std::as_const(m_groups), [&](const auto& group) { return (group.id == groupId); });
+}
+
+ActionContainer* ActionContainerPrivate::findContainer(const Id& id) const
+{
+    return m_manager->actionContainer(id);
 }
 
 QAction* ActionContainerPrivate::determineInsertionLocation(GroupIterator group) const
@@ -239,6 +245,13 @@ void ActionContainer::addMenu(ActionContainer* menu, const Id& group)
 
     QAction* beforeAction = p->determineInsertionLocation(groupIt);
     insertMenu(beforeAction, menu);
+}
+
+void ActionContainer::addMenu(const Id& beforeContainer, ActionContainer* menu)
+{
+    if(auto* container = p->findContainer(beforeContainer)) {
+        addMenu(container, menu);
+    }
 }
 
 void ActionContainer::addMenu(ActionContainer* beforeContainer, ActionContainer* menu)

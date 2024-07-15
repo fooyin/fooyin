@@ -64,7 +64,7 @@ public:
     using GroupList = std::vector<Group>;
 
     ActionContainer(const Id& id, ActionManager* manager);
-    ~ActionContainer();
+    ~ActionContainer() override;
 
     [[nodiscard]] Id id() const;
     [[nodiscard]] virtual QMenu* menu() const;
@@ -79,6 +79,7 @@ public:
     void addAction(Command* action, const Id& group = {});
 
     void addMenu(ActionContainer* menu, const Id& group = {});
+    void addMenu(const Id& beforeContainer, ActionContainer* menu);
     void addMenu(ActionContainer* beforeContainer, ActionContainer* menu);
 
     Command* addSeparator(const Context& context, const Id& group = {});
