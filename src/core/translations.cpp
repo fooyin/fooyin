@@ -39,7 +39,22 @@ Translations::Translations(SettingsManager* settings)
 void Translations::initialiseTranslations()
 {
     const QString customLanguage = m_settings->value<Settings::Core::Language>();
-    const QLocale locale = customLanguage.isEmpty() ? QLocale{QLocale::system().name()} : QLocale{customLanguage};
+    QLocale locale;
+
+    if(!customLanguage.isEmpty()) {
+        locale = QLocale{customLanguage};
+        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
+            qWarning() << "Custom locale (" << customLanguage << ") not found, using 'C' locale";
+        }
+        QLocale::setDefault(locale);
+    }
+    else {
+        locale = QLocale{QLocale::system().name()};
+    }
+
+    if(locale.language() == QLocale::C) {
+        return;
+    }
 
     if(locale.language() == QLocale::English
        && (locale.territory() == QLocale::UnitedKingdom || locale.territory() == QLocale::AnyCountry)) {
