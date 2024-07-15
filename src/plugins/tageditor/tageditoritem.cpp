@@ -140,6 +140,11 @@ bool TagEditorItem::splitTrackValues() const
     return m_splitTrackValues;
 }
 
+bool TagEditorItem::multipleValues() const
+{
+    return m_multipleValues;
+}
+
 void TagEditorItem::addTrack()
 {
     m_trackCount++;
@@ -147,7 +152,7 @@ void TagEditorItem::addTrack()
 
 void TagEditorItem::addTrackValue(const QString& value)
 {
-    if(!value.isEmpty() && !m_values.contains(value)) {
+    if(!m_values.contains(value)) {
         if(m_trackCount == 0 || withinCharLimit(m_values)) {
             m_values.append(value);
             sortList(m_values);

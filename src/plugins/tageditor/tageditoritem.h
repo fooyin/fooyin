@@ -49,6 +49,7 @@ public:
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] bool splitTrackValues() const;
+    [[nodiscard]] bool multipleValues() const;
 
     void addTrack();
     void addTrackValue(const QString& value);

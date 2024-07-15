@@ -499,8 +499,11 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(index.row() == 13) {
-            return item->valueChanged() ? QVariant::fromValue(StarRating{item->changedValue().toInt(), 5})
-                                        : QVariant::fromValue(StarRating{item->value().toInt(), 5});
+            if(!item->valueChanged() && item->multipleValues()) {
+                return QStringLiteral("<<multiple values>>");
+            }
+            return QVariant::fromValue(
+                StarRating{item->valueChanged() ? item->changedValue().toInt() : item->value().toInt(), 5});
         }
 
         if(role == Qt::EditRole) {

@@ -28,16 +28,15 @@
 namespace Fooyin {
 void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+    QStyleOptionViewItem opt{option};
+    initStyleOption(&opt, index);
+
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+
     if(index.data().canConvert<StarRating>()) {
         const auto starRating = index.data().value<StarRating>();
-
-        QStyle* style = option.widget ? option.widget->style() : QApplication::style();
-        style->drawControl(QStyle::CE_ItemViewItem, &option, painter, option.widget);
-
-        starRating.paint(painter, option.rect, option.palette, StarRating::EditMode::ReadOnly);
-    }
-    else {
-        QStyledItemDelegate::paint(painter, option, index);
+        starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly);
     }
 }
 
@@ -51,15 +50,12 @@ QSize StarDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     return QStyledItemDelegate::sizeHint(option, index);
 }
 
-QWidget* StarDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget* StarDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/,
+                                    const QModelIndex& /*index*/) const
 {
-    if(index.data().canConvert<StarRating>()) {
-        auto* editor = new StarEditor(parent);
-        QObject::connect(editor, &StarEditor::editingFinished, this, &StarDelegate::finishEditing);
-        return editor;
-    }
-
-    return QStyledItemDelegate::createEditor(parent, option, index);
+    auto* editor = new StarEditor(parent);
+    QObject::connect(editor, &StarEditor::editingFinished, this, &StarDelegate::finishEditing);
+    return editor;
 }
 
 void StarDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
@@ -76,13 +72,8 @@ void StarDelegate::setEditorData(QWidget* editor, const QModelIndex& index) cons
 
 void StarDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-    if(index.data().canConvert<StarRating>()) {
-        auto* starEditor = qobject_cast<StarEditor*>(editor);
-        model->setData(index, QVariant::fromValue(starEditor->rating()));
-    }
-    else {
-        QStyledItemDelegate::setModelData(editor, model, index);
-    }
+    auto* starEditor = qobject_cast<StarEditor*>(editor);
+    model->setData(index, QVariant::fromValue(starEditor->rating()));
 }
 
 void StarDelegate::finishEditing()
