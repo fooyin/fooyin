@@ -80,7 +80,7 @@ QString TagEditorItem::displayValue() const
         m_value = nonEmptyValues.join(u"; ");
     }
 
-    if(m_trackCount > 1 && m_multipleValues && m_values.size() > 1) {
+    if(m_trackCount > 1 && m_multipleValues) {
         return QStringLiteral("<<multiple values>> ") + value();
     }
 
@@ -101,7 +101,7 @@ QString TagEditorItem::value() const
 
 QString TagEditorItem::changedDisplayValue() const
 {
-    if(m_trackCount > 1 && m_multipleValues && m_changedValues.size() > 1) {
+    if(m_trackCount > 1 && m_multipleValues) {
         return QStringLiteral("<<multiple values>> ") + changedValue();
     }
 
@@ -152,20 +152,21 @@ void TagEditorItem::addTrack()
 
 void TagEditorItem::addTrackValue(const QString& value)
 {
+    m_trackCount++;
+
     if(!m_values.contains(value)) {
         if(m_trackCount == 0 || withinCharLimit(m_values)) {
             m_values.append(value);
             sortList(m_values);
         }
-
-        m_multipleValues = m_trackCount >= 1;
+        m_multipleValues = m_trackCount > 1;
     }
-
-    m_trackCount++;
 }
 
 void TagEditorItem::addTrackValue(const QStringList& values)
 {
+    m_trackCount++;
+
     if(values.empty()) {
         return;
     }
@@ -180,10 +181,8 @@ void TagEditorItem::addTrackValue(const QStringList& values)
             sortList(m_values);
         }
 
-        m_multipleValues = m_trackCount >= 1;
+        m_multipleValues = m_trackCount > 1;
     }
-
-    m_trackCount++;
 }
 
 bool TagEditorItem::setValue(int value)
@@ -193,13 +192,11 @@ bool TagEditorItem::setValue(int value)
 
 bool TagEditorItem::setValue(const QString& value)
 {
-    return setValue(QStringList{value});
-}
+    const auto values = value.split(QStringLiteral(";"), Qt::SkipEmptyParts);
+    std::ranges::transform(m_changedValues, m_changedValues.begin(), [](const auto& val) { return val.trimmed(); });
 
-bool TagEditorItem::setValue(const QStringList& values)
-{
-    if(m_values == values) {
-        if(status() == None) {
+    if(m_value == value) {
+        if(m_values == values && status() == None) {
             return false;
         }
         if(status() == Changed) {
@@ -211,9 +208,10 @@ bool TagEditorItem::setValue(const QStringList& values)
         }
     }
 
-    m_changedValues = values;
     m_changedValue.clear();
-    m_valueChanged = true;
+    m_changedValues  = values;
+    m_valueChanged   = true;
+    m_multipleValues = false;
 
     if(status() != TagEditorItem::Added) {
         setStatus(TagEditorItem::Changed);

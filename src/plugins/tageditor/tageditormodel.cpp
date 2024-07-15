@@ -197,9 +197,7 @@ void TagEditorModelPrivate::updateEditorValues()
 
         for(auto& [field, node] : m_customTags) {
             const auto result = m_scriptRegistry.value(field, track);
-            if(!result.cond) {
-                node.addTrack();
-            }
+            node.addTrackValue(result.value);
         }
     }
 }
@@ -336,7 +334,7 @@ void TagEditorModel::autoNumberTracks()
     auto& trackTag = p->m_tags.at(QLatin1String("Track Number"));
     auto& totalTag = p->m_tags.at(QLatin1String("Total Tracks"));
 
-    if(trackTag.setValue(trackNums)) {
+    if(trackTag.setValue(trackNums.join(u"; "))) {
         trackTag.setMultipleValues(total > 1);
         trackTag.setSplitTrackValues(true);
     }
@@ -550,7 +548,6 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             break;
         }
         case(1): {
-            QStringList values;
             QString setValue = value.toString();
 
             if(index.row() == 13) {
@@ -558,11 +555,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
                 setValue          = rating.starCount() == 0 ? QString{} : QString::number(rating.starCount());
             }
 
-            if(!setValue.isEmpty()) {
-                values.append(setValue.split(QStringLiteral("; "), Qt::SkipEmptyParts));
-            }
-
-            if(!item->setValue(values)) {
+            if(!item->setValue(setValue)) {
                 return false;
             }
             break;

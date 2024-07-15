@@ -57,7 +57,6 @@ public:
 
     bool setValue(int value);
     bool setValue(const QString& value);
-    bool setValue(const QStringList& values);
 
     bool setTitle(const QString& title);
     void setMultipleValues(bool multiple);
