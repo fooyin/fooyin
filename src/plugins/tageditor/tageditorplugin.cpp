@@ -57,8 +57,8 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
 
 TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
 {
-    const bool canWrite
-        = std::ranges::all_of(tracks, [this](const Track& track) { return m_tagLoader->canWriteTrack(track); });
+    const bool canWrite = std::ranges::all_of(
+        tracks, [this](const Track& track) { return !track.hasCue() && m_tagLoader->canWriteTrack(track); });
 
     auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::updateTrackMetadata);
