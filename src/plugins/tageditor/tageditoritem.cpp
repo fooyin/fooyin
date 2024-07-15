@@ -192,8 +192,8 @@ bool TagEditorItem::setValue(int value)
 
 bool TagEditorItem::setValue(const QString& value)
 {
-    const auto values = value.split(QStringLiteral(";"), Qt::SkipEmptyParts);
-    std::ranges::transform(m_changedValues, m_changedValues.begin(), [](const auto& val) { return val.trimmed(); });
+    QStringList values = value.split(QStringLiteral(";"), Qt::SkipEmptyParts);
+    std::ranges::transform(values, values.begin(), [](const auto& val) { return val.trimmed(); });
 
     if(m_value == value) {
         if(m_values == values && status() == None) {
