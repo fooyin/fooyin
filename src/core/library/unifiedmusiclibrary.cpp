@@ -370,7 +370,6 @@ TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
 void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
 {
     p->m_threadHandler.saveUpdatedTracks(tracks);
-    p->m_threadHandler.saveUpdatedTrackStats(tracks);
 }
 
 void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)

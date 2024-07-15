@@ -63,7 +63,8 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
     for(const Track& track : tracks) {
         Track updatedTrack{track};
         if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
-            if(parser->writeMetaData(updatedTrack, options) && m_trackDatabase.updateTrack(updatedTrack)) {
+            if(parser->writeMetaData(updatedTrack, options) && m_trackDatabase.updateTrack(updatedTrack)
+               && m_trackDatabase.updateTrackStats(updatedTrack)) {
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
                 tracksUpdated.emplace_back(updatedTrack);
