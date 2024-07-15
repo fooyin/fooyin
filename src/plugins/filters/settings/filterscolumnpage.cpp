@@ -71,7 +71,7 @@ FiltersColumnPageWidget::FiltersColumnPageWidget(ActionManager* actionManager, F
 
     auto updateButtonState = [this]() {
         const auto selection = m_columnList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_columnList->removeAction()) {
+        if(auto* remove = m_columnList->removeRowAction()) {
             remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
                 return index.data(Qt::UserRole).value<FilterColumn>().isDefault;
             }));

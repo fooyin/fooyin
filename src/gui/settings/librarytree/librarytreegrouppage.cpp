@@ -70,7 +70,7 @@ LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionMana
 
     auto updateButtonState = [this]() {
         const auto selection = m_groupList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_groupList->removeAction()) {
+        if(auto* remove = m_groupList->removeRowAction()) {
             remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
                 return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
             }));

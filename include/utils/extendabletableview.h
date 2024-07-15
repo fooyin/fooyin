@@ -67,8 +67,8 @@ public:
     void setExtendableModel(ExtendableTableModel* model);
     void setExtendableColumn(int column);
 
-    [[nodiscard]] QAction* addAction() const;
-    [[nodiscard]] QAction* removeAction() const;
+    [[nodiscard]] QAction* addRowAction() const;
+    [[nodiscard]] QAction* removeRowAction() const;
     [[nodiscard]] QAction* moveUpAction() const;
     [[nodiscard]] QAction* moveDownAction() const;
 

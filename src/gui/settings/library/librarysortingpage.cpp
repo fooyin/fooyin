@@ -87,7 +87,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
 
     auto updateButtonState = [this]() {
         const auto selection = m_sortList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_sortList->removeAction()) {
+        if(auto* remove = m_sortList->removeRowAction()) {
             remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
                 return index.data(Qt::UserRole).value<SortScript>().isDefault;
             }));

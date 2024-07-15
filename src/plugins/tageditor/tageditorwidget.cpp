@@ -126,7 +126,7 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
     });
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
-        m_view->removeAction()->setEnabled(!selected.empty());
+        m_view->removeRowAction()->setEnabled(!selected.empty());
     });
 
     m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);

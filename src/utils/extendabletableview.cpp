@@ -306,7 +306,12 @@ void ExtendableTableView::setExtendableColumn(int column)
     p->m_column = column;
 }
 
-QAction* ExtendableTableView::removeAction() const
+QAction* ExtendableTableView::addRowAction() const
+{
+    return p->m_add;
+}
+
+QAction* ExtendableTableView::removeRowAction() const
 {
     return p->m_remove;
 }
