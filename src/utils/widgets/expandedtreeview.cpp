@@ -2928,7 +2928,7 @@ std::vector<QRect> ExpandedTreeViewPrivate::rectsToPaint(const QModelIndex& inde
             if(currRect.width() == 0) {
                 currRect.setX(position);
             }
-            currRect.setRight(position + m_header->sectionSize(logical) - indent);
+            currRect.setWidth(position + m_header->sectionSize(logical) - currRect.x());
         }
     }
 
