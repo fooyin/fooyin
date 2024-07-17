@@ -25,6 +25,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
 #include <QByteArray>
 #include <QCheckBox>
 #include <QComboBox>
