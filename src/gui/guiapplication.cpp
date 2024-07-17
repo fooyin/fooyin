@@ -133,6 +133,7 @@ public:
 
     void setupScanMenu();
     void setupRatingMenu();
+    void setupUtilitesMenu() const;
 
     void restoreIconTheme() const;
     void registerLayouts();
@@ -256,6 +257,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     registerActions();
     setupScanMenu();
     setupRatingMenu();
+    setupUtilitesMenu();
     restoreIconTheme();
     registerLayouts();
     registerWidgets();
@@ -556,6 +558,14 @@ void GuiApplicationPrivate::setupRatingMenu()
 
     QObject::connect(&selectionController, &TrackSelectionController::selectionChanged, mainWindow.get(),
                      [this, ratingMenu]() { ratingMenu->setEnabled(selectionController.selectedTrackCount() == 1); });
+}
+
+void GuiApplicationPrivate::setupUtilitesMenu() const
+{
+    auto* selectionMenu = actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
+    auto* utilitiesMenu = actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
+    utilitiesMenu->menu()->setTitle(GuiApplication::tr("Utilities"));
+    selectionMenu->addMenu(utilitiesMenu);
 }
 
 void GuiApplicationPrivate::restoreIconTheme() const
