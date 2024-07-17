@@ -86,7 +86,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->setSubMenus(QStringLiteral("WaveBar"), {tr("Controls")});
 
     auto* selectionMenu = m_actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
-    auto* utilitiesMenu = m_actionManager->createMenu("Fooyin.Menu.Utilities");
+    auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
     utilitiesMenu->menu()->setTitle(tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
 
