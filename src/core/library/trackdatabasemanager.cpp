@@ -52,7 +52,7 @@ void TrackDatabaseManager::getAllTracks()
     emit gotTracks(tracks);
 }
 
-void TrackDatabaseManager::updateTracks(const TrackList& tracks)
+void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
 {
     TrackList tracksUpdated;
 
@@ -62,13 +62,20 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks)
 
     for(const Track& track : tracks) {
         Track updatedTrack{track};
-        if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
-            if(parser->writeMetaData(updatedTrack, options) && m_trackDatabase.updateTrack(updatedTrack)
-               && m_trackDatabase.updateTrackStats(updatedTrack)) {
+
+        if(write) {
+            if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
+                if(!parser->writeMetaData(updatedTrack, options)) {
+                    qWarning() << "Failed to write metadata to file:" << updatedTrack.filepath();
+                    continue;
+                }
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
-                tracksUpdated.emplace_back(updatedTrack);
             }
+        }
+
+        if(m_trackDatabase.updateTrack(updatedTrack) && m_trackDatabase.updateTrackStats(updatedTrack)) {
+            tracksUpdated.emplace_back(updatedTrack);
         }
     }
 
@@ -99,6 +106,9 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
             updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
             tracksUpdated.emplace_back(updatedTrack);
+        }
+        else {
+            qWarning() << "Failed to update track playback statistics:" << updatedTrack.filepath();
         }
     }
 

@@ -83,6 +83,8 @@ public:
     [[nodiscard]] virtual bool hasLibrary() const = 0;
     /** Returns the library info with the id @p id if it exists */
     [[nodiscard]] virtual std::optional<LibraryInfo> libraryInfo(int id) const = 0;
+    /** Returns the library info of the library which contains the path @p path */
+    [[nodiscard]] virtual std::optional<LibraryInfo> libraryForPath(const QString& path) const = 0;
 
     /** Loads all tracks from the database */
     virtual void loadAllTracks() = 0;
@@ -115,18 +117,19 @@ public:
 
     /** Returns all tracks for all libraries */
     [[nodiscard]] virtual TrackList tracks() const = 0;
-
     /** Returns the track with an id of @p id, or an invalid track if not found.  */
     [[nodiscard]] virtual Track trackForId(int id) const = 0;
     /** Returns a TrackList containing each track (if) found with an id from @p ids  */
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 
-    /** Updates the metdata in the database for @p tracks and writes metdata to files  */
+    /** Updates the metdata in the database for @p tracks.  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
+    /** Updates the metdata in the database for @p tracks and writes metdata to files.  */
+    virtual void writeTrackMetadata(const TrackList& tracks) = 0;
 
-    /** Updates the statistics (playcount, rating etc) in the database for @p tracks  */
+    /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
     virtual void updateTrackStats(const TrackList& tracks) = 0;
-    /** Updates the statistics (playcount, rating etc) in the database for @p track  */
+    /** Updates the statistics (playcount, rating etc) in the database for @p track.  */
     virtual void updateTrackStats(const Track& track) = 0;
 
 signals:

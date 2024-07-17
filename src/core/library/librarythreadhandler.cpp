@@ -410,7 +410,13 @@ void LibraryThreadHandler::libraryRemoved(int id)
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
-                              [this, tracks]() { p->m_trackDatabaseManager.updateTracks(tracks); });
+                              [this, tracks]() { p->m_trackDatabaseManager.updateTracks(tracks, false); });
+}
+
+void LibraryThreadHandler::writeUpdatedTracks(const TrackList& tracks)
+{
+    QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
+                              [this, tracks]() { p->m_trackDatabaseManager.updateTracks(tracks, true); });
 }
 
 void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& track)

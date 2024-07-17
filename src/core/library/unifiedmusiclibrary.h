@@ -39,24 +39,30 @@ public:
                         SettingsManager* settings, QObject* parent = nullptr);
     ~UnifiedMusicLibrary() override;
 
+    [[nodiscard]] bool hasLibrary() const override;
+    [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const override;
+    [[nodiscard]] std::optional<LibraryInfo> libraryForPath(const QString& path) const override;
+
     void loadAllTracks() override;
+
+    [[nodiscard]] bool isEmpty() const override;
 
     void refreshAll() override;
     void rescanAll() override;
+
     ScanRequest refresh(const LibraryInfo& library) override;
     ScanRequest rescan(const LibraryInfo& library) override;
+
     ScanRequest scanTracks(const TrackList& tracks) override;
     ScanRequest scanFiles(const QList<QUrl>& files) override;
-
-    [[nodiscard]] bool hasLibrary() const override;
-    [[nodiscard]] std::optional<LibraryInfo> libraryInfo(int id) const override;
-    [[nodiscard]] bool isEmpty() const override;
 
     [[nodiscard]] TrackList tracks() const override;
     [[nodiscard]] Track trackForId(int id) const override;
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
 
     void updateTrackMetadata(const TrackList& tracks) override;
+    void writeTrackMetadata(const TrackList& tracks) override;
+
     void updateTrackStats(const TrackList& tracks) override;
     void updateTrackStats(const Track& track) override;
 

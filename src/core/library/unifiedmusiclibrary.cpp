@@ -27,6 +27,7 @@
 #include <core/coresettings.h>
 #include <core/library/tracksort.h>
 #include <utils/async.h>
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QDateTime>
@@ -282,9 +283,35 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
 
 UnifiedMusicLibrary::~UnifiedMusicLibrary() = default;
 
+bool UnifiedMusicLibrary::hasLibrary() const
+{
+    return p->m_libraryManager->hasLibrary();
+}
+
+std::optional<LibraryInfo> UnifiedMusicLibrary::libraryInfo(int id) const
+{
+    return p->m_libraryManager->libraryInfo(id);
+}
+
+std::optional<LibraryInfo> UnifiedMusicLibrary::libraryForPath(const QString& path) const
+{
+    const LibraryInfoMap& libraries = p->m_libraryManager->allLibraries();
+    for(const auto& library : libraries | std::views::values) {
+        if(Utils::File::isSubdir(path, library.path)) {
+            return library;
+        }
+    }
+    return {};
+}
+
 void UnifiedMusicLibrary::loadAllTracks()
 {
     p->m_threadHandler.getAllTracks();
+}
+
+bool UnifiedMusicLibrary::isEmpty() const
+{
+    return p->m_tracks.empty();
 }
 
 void UnifiedMusicLibrary::refreshAll()
@@ -323,21 +350,6 @@ ScanRequest UnifiedMusicLibrary::scanFiles(const QList<QUrl>& files)
     return p->m_threadHandler.scanFiles(files);
 }
 
-bool UnifiedMusicLibrary::hasLibrary() const
-{
-    return p->m_libraryManager->hasLibrary();
-}
-
-std::optional<LibraryInfo> UnifiedMusicLibrary::libraryInfo(int id) const
-{
-    return p->m_libraryManager->libraryInfo(id);
-}
-
-bool UnifiedMusicLibrary::isEmpty() const
-{
-    return p->m_tracks.empty();
-}
-
 TrackList UnifiedMusicLibrary::tracks() const
 {
     return p->m_tracks;
@@ -370,6 +382,11 @@ TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
 void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
 {
     p->m_threadHandler.saveUpdatedTracks(tracks);
+}
+
+void UnifiedMusicLibrary::writeTrackMetadata(const TrackList& tracks)
+{
+    p->m_threadHandler.writeUpdatedTracks(tracks);
 }
 
 void UnifiedMusicLibrary::updateTrackStats(const TrackList& tracks)

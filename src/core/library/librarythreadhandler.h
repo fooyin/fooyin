@@ -56,6 +56,7 @@ public:
     ScanRequest scanFiles(const QList<QUrl>& files);
 
     void saveUpdatedTracks(const TrackList& tracks);
+    void writeUpdatedTracks(const TrackList& tracks);
     void saveUpdatedTrackStats(const TrackList& track);
     void cleanupTracks();
 

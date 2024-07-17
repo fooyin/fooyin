@@ -529,7 +529,7 @@ void GuiApplicationPrivate::setupRatingMenu()
             if(track.ratingStars() != rating) {
                 track.setRatingStars(rating);
                 if(settings->value<Settings::Core::SaveRatingToMetadata>()) {
-                    core.library->updateTrackMetadata({track});
+                    core.library->writeTrackMetadata({track});
                 }
                 else {
                     core.library->updateTrackStats(track);
