@@ -140,7 +140,7 @@ void FileOpsDialogPrivate::setup()
     m_resultsTable->header()->setStretchLastSection(true);
 
     const auto firstHint = m_resultsTable->header()->sectionSizeHint(0);
-    m_resultsTable->header()->setSectionResizeMode(QHeaderView::Fixed);
+    m_resultsTable->header()->setSectionResizeMode(0, QHeaderView::Fixed);
     m_resultsTable->header()->resizeSection(0, static_cast<int>(firstHint * 1.6));
     m_resultsTable->header()->resizeSection(1, 200);
     m_resultsTable->header()->resizeSection(2, 300);
