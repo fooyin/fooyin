@@ -7,6 +7,7 @@ endif()
 
 set(SOURCES
     mprisplugin.cpp
+    mprisplugin.h
 )
 
 qt_add_dbus_adaptor(SOURCES org.mpris.MediaPlayer2.xml mprisplugin.h Fooyin::Mpris::MprisPlugin mprisroot MprisRoot)
