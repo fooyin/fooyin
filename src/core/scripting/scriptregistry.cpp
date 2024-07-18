@@ -82,7 +82,7 @@ QString trackInfo(const Fooyin::Track& track, const QStringList& args)
     const QString& tag = args.front();
 
     if(tag == u"codec") {
-        return track.typeString();
+        return track.codec();
     }
     if(tag == u"samplerate") {
         return QString::number(track.sampleRate());
@@ -324,7 +324,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     };
     m_metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
     m_metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
-    m_metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::typeString;
+    m_metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::codec;
     m_metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
     m_metadata[QString::fromLatin1(MetaData::BitDepth)]        = &Track::bitDepth;
     m_metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;

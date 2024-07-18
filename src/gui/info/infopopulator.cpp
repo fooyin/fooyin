@@ -173,7 +173,7 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
                       [](uint64_t bitrate) -> QString { return QString::number(bitrate) + QStringLiteral(" kbps"); });
     checkAddEntryNode(QStringLiteral("SampleRate"), InfoPopulator::tr("Sample Rate"), ItemParent::General,
                       QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);
-    checkAddEntryNode(QStringLiteral("Codec"), InfoPopulator::tr("Codec"), ItemParent::General, track.typeString(),
+    checkAddEntryNode(QStringLiteral("Codec"), InfoPopulator::tr("Codec"), ItemParent::General, track.codec(),
                       InfoItem::Percentage);
 }
 

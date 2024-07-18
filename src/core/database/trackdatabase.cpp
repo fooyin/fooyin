@@ -56,8 +56,8 @@ QString fetchTrackColumns()
                                                   "SampleRate,"
                                                   "Channels,"
                                                   "BitDepth,"
+                                                  "Codec,"
                                                   "ExtraTags,"
-                                                  "Type,"
                                                   "ModifiedDate, "
                                                   "LibraryID,"
                                                   "TrackHash,"
@@ -94,8 +94,8 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":sampleRate"), track.sampleRate()},
             {QStringLiteral(":channels"), track.channels()},
             {QStringLiteral(":bitDepth"), track.bitDepth()},
+            {QStringLiteral(":codec"), track.codec()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
-            {QStringLiteral(":type"), static_cast<int>(track.type())},
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
             {QStringLiteral(":libraryID"), track.libraryId()}};
@@ -129,8 +129,8 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setSampleRate(q.value(21).toInt());
     track.setChannels(q.value(22).toInt());
     track.setBitDepth(q.value(23).toInt());
-    track.storeExtraTags(q.value(24).toByteArray());
-    track.setType(static_cast<Fooyin::Track::Type>(q.value(25).toInt()));
+    track.setCodec(q.value(24).toString());
+    track.storeExtraTags(q.value(25).toByteArray());
     track.setModifiedTime(q.value(26).toULongLong());
     track.setLibraryId(q.value(27).toInt());
     track.setHash(q.value(28).toString());
@@ -294,8 +294,8 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "SampleRate = :sampleRate,"
                                           "Channels = :channels,"
                                           "BitDepth = :bitDepth,"
+                                          "Codec = :codec,"
                                           "ExtraTags = :extraTags,"
-                                          "Type = :type,"
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
                                           "LibraryID = :libraryID"
@@ -456,8 +456,8 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.SampleRate,"
                                           "Tracks.Channels,"
                                           "Tracks.BitDepth,"
+                                          "Tracks.Codec,"
                                           "Tracks.ExtraTags,"
-                                          "Tracks.Type,"
                                           "Tracks.ModifiedDate,"
                                           "Tracks.LibraryID,"
                                           "Tracks.TrackHash,"
@@ -517,8 +517,8 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "SampleRate,"
                                           "Channels,"
                                           "BitDepth,"
+                                          "Codec,"
                                           "ExtraTags,"
-                                          "Type,"
                                           "ModifiedDate,"
                                           "TrackHash,"
                                           "LibraryID"
@@ -546,8 +546,8 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":sampleRate,"
                                           ":channels,"
                                           ":bitDepth,"
+                                          ":codec,"
                                           ":extraTags, "
-                                          ":type,"
                                           ":modifiedDate,"
                                           ":trackHash,"
                                           ":libraryID"

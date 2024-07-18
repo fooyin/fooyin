@@ -47,23 +47,6 @@ public:
         }
     };
 
-    enum class Type : uint8_t
-    {
-        Unknown   = 0,
-        MPEG      = 1,
-        AIFF      = 2,
-        WAV       = 3,
-        MPC       = 4,
-        APE       = 5,
-        WavPack   = 6,
-        MP4       = 7,
-        FLAC      = 8,
-        OggOpus   = 9,
-        OggVorbis = 10,
-        ASF       = 11,
-        DTS       = 12
-    };
-
     enum class Cover : uint8_t
     {
         Front = 0,
@@ -96,8 +79,6 @@ public:
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;
     [[nodiscard]] QString albumHash() const;
-    [[nodiscard]] Type type() const;
-    [[nodiscard]] QString typeString() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString uniqueFilepath() const;
     [[nodiscard]] QString relativePath() const;
@@ -145,6 +126,7 @@ public:
     [[nodiscard]] int sampleRate() const;
     [[nodiscard]] int channels() const;
     [[nodiscard]] int bitDepth() const;
+    [[nodiscard]] QString codec() const;
 
     [[nodiscard]] int playCount() const;
 
@@ -160,7 +142,7 @@ public:
     void setIsEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
-    void setType(Type type);
+    void setCodec(const QString& codec);
     void setFilePath(const QString& path);
     void setRelativePath(const QString& path);
     void setTitle(const QString& title);

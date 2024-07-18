@@ -37,7 +37,7 @@ public:
     bool enabled{true};
     int id{-1};
     QString hash;
-    Track::Type type{0};
+    QString codec;
     QString filepath;
     QString relativePath;
     QString directory;
@@ -146,7 +146,7 @@ bool Track::isInDatabase() const
 bool Track::metadataWasRead() const
 {
     // Assume read if basic properties are valid
-    return p->type != Type::Unknown && p->filesize > 0 && p->modifiedTime > 0;
+    return p->filesize > 0 && p->modifiedTime > 0;
 }
 
 bool Track::metadataWasModified() const
@@ -191,44 +191,6 @@ QString Track::albumHash() const
     }
 
     return hash.join(QStringLiteral("|"));
-}
-
-Track::Type Track::type() const
-{
-    return p->type;
-}
-
-QString Track::typeString() const
-{
-    switch(p->type) {
-        case(Type::MPEG):
-            return QStringLiteral("MP3");
-        case(Type::AIFF):
-            return QStringLiteral("AIFF");
-        case(Type::WAV):
-            return QStringLiteral("PCM");
-        case(Type::MPC):
-            return QStringLiteral("MPC");
-        case(Type::APE):
-            return QStringLiteral("APE");
-        case(Type::WavPack):
-            return QStringLiteral("WavPack");
-        case(Type::MP4):
-            return QStringLiteral("MP4");
-        case(Type::FLAC):
-            return QStringLiteral("FLAC");
-        case(Type::OggOpus):
-            return QStringLiteral("Opus");
-        case(Type::OggVorbis):
-            return QStringLiteral("Vorbis");
-        case(Type::ASF):
-            return QStringLiteral("ASF");
-        case(Type::DTS):
-            return QStringLiteral("DTS");
-        case(Type::Unknown):
-        default:
-            return QStringLiteral("Unknown");
-    }
 }
 
 QString Track::filepath() const
@@ -495,6 +457,11 @@ int Track::bitDepth() const
     return p->bitDepth;
 }
 
+QString Track::codec() const
+{
+    return p->codec;
+}
+
 int Track::playCount() const
 {
     return p->playcount;
@@ -550,9 +517,9 @@ void Track::setHash(const QString& hash)
     p->hash = hash;
 }
 
-void Track::setType(Type type)
+void Track::setCodec(const QString& codec)
 {
-    p->type = type;
+    p->codec = codec;
 }
 
 void Track::setFilePath(const QString& path)

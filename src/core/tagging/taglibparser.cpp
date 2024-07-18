@@ -272,43 +272,40 @@ TagLib::StringList convertStringList(const QStringList& strList)
     return list;
 }
 
-Fooyin::Track::Type typeForMime(const QString& mimeType)
+QString codecForMime(const QString& mimeType)
 {
     if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
-        return Fooyin::Track::Type::MPEG;
+        return QStringLiteral("MP3");
     }
     if(mimeType == u"audio/x-aiff" || mimeType == u"audio/x-aifc") {
-        return Fooyin::Track::Type::AIFF;
+        return QStringLiteral("AIFF");
     }
     if(mimeType == u"audio/vnd.wave" || mimeType == u"audio/wav" || mimeType == u"audio/x-wav") {
-        return Fooyin::Track::Type::WAV;
+        return QStringLiteral("WAV");
     }
     if(mimeType == u"audio/x-musepack") {
-        return Fooyin::Track::Type::MPC;
+        return QStringLiteral("MPC");
     }
     if(mimeType == u"audio/x-ape") {
-        return Fooyin::Track::Type::APE;
+        return QStringLiteral("Monkey's Audio");
     }
     if(mimeType == u"audio/x-wavpack") {
-        return Fooyin::Track::Type::WavPack;
-    }
-    if(mimeType == u"audio/mp4" || mimeType == u"audio/vnd.audible.aax") {
-        return Fooyin::Track::Type::MP4;
+        return QStringLiteral("WavPack");
     }
     if(mimeType == u"audio/flac") {
-        return Fooyin::Track::Type::FLAC;
+        return QStringLiteral("FLAC");
     }
     if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
-        return Fooyin::Track::Type::OggVorbis;
+        return QStringLiteral("Vorbis");
     }
     if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
-        return Fooyin::Track::Type::OggOpus;
+        return QStringLiteral("Opus");
     }
     if(mimeType == u"audio/x-ms-wma") {
-        return Fooyin::Track::Type::ASF;
+        return QStringLiteral("WMA");
     }
 
-    return Fooyin::Track::Type::Unknown;
+    return QStringLiteral("Unknown");
 }
 
 void readAudioProperties(const TagLib::File& file, Fooyin::Track& track)
@@ -1449,6 +1446,18 @@ bool TagLibParser::readMetaData(Track& track) const
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file, true);
+            const auto codec = file.audioProperties()->codec();
+            switch(codec) {
+                case(TagLib::MP4::Properties::AAC):
+                    track.setCodec(QStringLiteral("AAC"));
+                    break;
+                case(TagLib::MP4::Properties::ALAC):
+                    track.setCodec(QStringLiteral("ALAC"));
+                    break;
+                case(TagLib::MP4::Properties::Unknown):
+                    break;
+            }
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
@@ -1507,7 +1516,9 @@ bool TagLibParser::readMetaData(Track& track) const
         qDebug() << "Unsupported mime type: " << mimeType;
     }
 
-    track.setType(typeForMime(mimeType));
+    if(track.codec().isEmpty()) {
+        track.setCodec(codecForMime(mimeType));
+    }
 
     return true;
 }

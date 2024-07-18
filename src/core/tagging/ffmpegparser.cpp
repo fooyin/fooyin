@@ -43,27 +43,25 @@ struct FormatContextDeleter
 };
 using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
 
-Fooyin::Track::Type getCodec(AVCodecID codec)
+QString getCodec(AVCodecID codec)
 {
-    using Type = Fooyin::Track::Type;
-
     switch(codec) {
         case(AV_CODEC_ID_MP3):
-            return Type::MPEG;
+            return QStringLiteral("MP3");
         case(AV_CODEC_ID_WAVPACK):
-            return Type::WavPack;
+            return QStringLiteral("WavPack");
         case(AV_CODEC_ID_FLAC):
-            return Type::FLAC;
+            return QStringLiteral("FLAC");
         case(AV_CODEC_ID_OPUS):
-            return Type::OggOpus;
+            return QStringLiteral("Opus");
         case(AV_CODEC_ID_VORBIS):
-            return Type::OggVorbis;
+            return QStringLiteral("Vorbis");
         case(AV_CODEC_ID_WMAV2):
-            return Type::ASF;
+            return QStringLiteral("WMA");
         case(AV_CODEC_ID_DTS):
-            return Type::DTS;
+            return QStringLiteral("DTS");
         default:
-            return Type::Unknown;
+            return QStringLiteral("Unknown");
     }
 }
 
@@ -232,7 +230,7 @@ bool FFmpegParser::readMetaData(Track& track) const
 
     const auto* codec = stream.avStream()->codecpar;
 
-    track.setType(getCodec(codec->codec_id));
+    track.setCodec(getCodec(codec->codec_id));
     const int sampleRate = codec->sample_rate;
     if(sampleRate > 0) {
         track.setSampleRate(sampleRate);

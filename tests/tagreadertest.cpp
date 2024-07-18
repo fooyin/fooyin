@@ -41,7 +41,7 @@ TEST_F(TagReaderTest, AiffRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::AIFF);
+    EXPECT_EQ(track.codec(), QStringLiteral("AIFF"));
     EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -70,7 +70,7 @@ TEST_F(TagReaderTest, FlacRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::FLAC);
+    EXPECT_EQ(track.codec(), QStringLiteral("FLAC"));
     EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -99,7 +99,7 @@ TEST_F(TagReaderTest, M4aRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::MP4);
+    EXPECT_EQ(track.codec(), QStringLiteral("AAC"));
     EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -127,7 +127,7 @@ TEST_F(TagReaderTest, Mp3Read)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::MPEG);
+    EXPECT_EQ(track.codec(), QStringLiteral("MP3"));
     EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -156,7 +156,7 @@ TEST_F(TagReaderTest, OggRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::OggVorbis);
+    EXPECT_EQ(track.codec(), QStringLiteral("Vorbis"));
     EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -185,7 +185,7 @@ TEST_F(TagReaderTest, OpusRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::OggOpus);
+    EXPECT_EQ(track.codec(), QStringLiteral("Opus"));
     EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
@@ -214,7 +214,7 @@ TEST_F(TagReaderTest, WavRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_tagParser->readMetaData(track));
 
-    EXPECT_EQ(track.type(), Track::Type::WAV);
+    EXPECT_EQ(track.codec(), QStringLiteral("WAV"));
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
