@@ -257,13 +257,12 @@ void FilterModelPrivate::populateModel(PendingTreeData& data)
 
     for(const auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
-            m_nodes.at(key).addTracks(item.tracks());
+            auto& node = m_nodes.at(key);
+            node.addTracks(item.tracks());
+            node.sortTracks();
         }
         else {
             newItems.push_back(item);
-        }
-        if(!m_resetting) {
-            m_nodes.at(key).sortTracks();
         }
     }
 
