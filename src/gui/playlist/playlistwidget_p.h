@@ -24,6 +24,7 @@
 #include "presetregistry.h"
 
 #include <core/library/sortingregistry.h>
+#include <core/library/tracksort.h>
 #include <core/player/playbackqueue.h>
 #include <gui/trackselectioncontroller.h>
 
@@ -116,7 +117,7 @@ public:
     void followCurrentTrack() const;
 
     void cropSelection() const;
-    void sortTracks(const QString& script) const;
+    void sortTracks(const QString& script);
     void sortColumn(int column, Qt::SortOrder order);
     void resetSort(bool force = false);
 
@@ -135,6 +136,7 @@ public:
     MusicLibrary* m_library;
     SettingsManager* m_settings;
     SettingsDialogController* m_settingsDialog;
+    TrackSorter m_sorter;
 
     PlaylistColumnRegistry* m_columnRegistry;
     PresetRegistry* m_presetRegistry;

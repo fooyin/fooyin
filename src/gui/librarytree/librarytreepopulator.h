@@ -25,6 +25,7 @@
 #include <utils/worker.h>
 
 namespace Fooyin {
+class LibraryManager;
 class LibraryTreePopulatorPrivate;
 
 using ItemKeyMap     = std::unordered_map<Md5Hash, LibraryTreeItem>;
@@ -50,7 +51,7 @@ class LibraryTreePopulator : public Worker
     Q_OBJECT
 
 public:
-    explicit LibraryTreePopulator(QObject* parent = nullptr);
+    explicit LibraryTreePopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
 
     void run(const QString& grouping, const TrackList& tracks);

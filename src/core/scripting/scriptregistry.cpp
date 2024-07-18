@@ -24,6 +24,7 @@
 #include "functions/stringfuncs.h"
 #include "functions/timefuncs.h"
 #include "functions/tracklistfuncs.h"
+#include "library/librarymanager.h"
 
 #include <core/constants.h>
 #include <core/player/playercontroller.h>
@@ -33,12 +34,13 @@
 #include <QDateTime>
 
 namespace {
-using NativeFunc      = std::function<QString(const QStringList&)>;
-using NativeVoidFunc  = std::function<QString()>;
-using NativeTrackFunc = std::function<QString(const Fooyin::Track&, const QStringList&)>;
-using NativeBoolFunc  = std::function<Fooyin::ScriptResult(const QStringList&)>;
-using NativeCondFunc  = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
-using Func            = std::variant<NativeFunc, NativeVoidFunc, NativeTrackFunc, NativeBoolFunc, NativeCondFunc>;
+using NativeFunc          = std::function<QString(const QStringList&)>;
+using NativeVoidFunc      = std::function<QString()>;
+using NativeTrackFunc     = std::function<QString(const Fooyin::Track&, const QStringList&)>;
+using NativeTrackVoidFunc = std::function<QString(const Fooyin::Track&)>;
+using NativeBoolFunc      = std::function<Fooyin::ScriptResult(const QStringList&)>;
+using NativeCondFunc      = std::function<Fooyin::ScriptResult(const Fooyin::ScriptValueList&)>;
+using Func                = std::variant<NativeFunc, NativeVoidFunc, NativeTrackFunc, NativeBoolFunc, NativeCondFunc>;
 
 using TrackFunc     = std::function<Fooyin::ScriptRegistry::FuncRet(const Fooyin::Track&)>;
 using TrackSetFunc  = std::function<void(Fooyin::Track&, const Fooyin::ScriptRegistry::FuncRet&)>;
@@ -141,13 +143,15 @@ namespace Fooyin {
 class ScriptRegistryPrivate
 {
 public:
-    explicit ScriptRegistryPrivate(PlayerController* playerController);
+    explicit ScriptRegistryPrivate(LibraryManager* libraryManager, PlayerController* playerController);
 
     void addPlaybackVars();
+    void addLibraryVars();
     void addDefaultFunctions();
     void addDefaultListFuncs();
     void addDefaultMetadata();
 
+    LibraryManager* m_libraryManager{nullptr};
     PlayerController* m_playerController{nullptr};
 
     std::unordered_map<QString, TrackFunc> m_metadata;
@@ -155,15 +159,18 @@ public:
     std::unordered_map<QString, TrackListFunc> m_listProperties;
     std::unordered_map<QString, Func> m_funcs;
     std::unordered_map<QString, NativeVoidFunc> m_playbackVars;
+    std::unordered_map<QString, NativeTrackVoidFunc> m_libraryVars;
 };
 
-ScriptRegistryPrivate::ScriptRegistryPrivate(PlayerController* playerController)
-    : m_playerController{playerController}
+ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, PlayerController* playerController)
+    : m_libraryManager{libraryManager}
+    , m_playerController{playerController}
 {
     addDefaultFunctions();
     addDefaultListFuncs();
     addDefaultMetadata();
     addPlaybackVars();
+    addLibraryVars();
 
     m_funcs.emplace(QStringLiteral("info"), trackInfo);
     m_funcs.emplace(QStringLiteral("meta"), trackMeta);
@@ -187,6 +194,26 @@ void ScriptRegistryPrivate::addPlaybackVars()
     m_playbackVars[QStringLiteral("playback_time_remaining_s")] = [this]() {
         return QString::number((m_playerController->currentTrack().duration() - m_playerController->currentPosition())
                                / 1000);
+    };
+}
+
+void ScriptRegistryPrivate::addLibraryVars()
+{
+    if(!m_libraryManager) {
+        return;
+    }
+
+    m_libraryVars[QStringLiteral("libraryname")] = [this](const Track& track) {
+        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
+            return library->name;
+        }
+        return QString{};
+    };
+    m_libraryVars[QStringLiteral("librarypath")] = [this](const Track& track) {
+        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
+            return library->path;
+        }
+        return QString{};
     };
 }
 
@@ -327,24 +354,42 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_setMetadata[QString::fromLatin1(MetaData::Year)]        = generateSetFunc(&Track::setYear);
 }
 
+ScriptRegistry::ScriptRegistry()
+    : ScriptRegistry{nullptr, nullptr}
+{ }
+
+ScriptRegistry::ScriptRegistry(LibraryManager* libraryManager)
+    : ScriptRegistry{libraryManager, nullptr}
+{ }
+
 ScriptRegistry::ScriptRegistry(PlayerController* playerController)
-    : p{std::make_unique<ScriptRegistryPrivate>(playerController)}
+    : ScriptRegistry{nullptr, playerController}
+{ }
+
+ScriptRegistry::ScriptRegistry(LibraryManager* libraryManager, PlayerController* playerController)
+    : p{std::make_unique<ScriptRegistryPrivate>(libraryManager, playerController)}
 { }
 
 ScriptRegistry::~ScriptRegistry() = default;
 
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    return p->m_metadata.contains(var) || p->m_playbackVars.contains(var) || track.hasExtraTag(var.toUpper());
+    return p->m_metadata.contains(var) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
+        || track.hasExtraTag(var.toUpper());
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
 {
-    if(!isListVariable(var)) {
-        return !tracks.empty() && isVariable(var, tracks.front());
+    if(isListVariable(var)) {
+        return true;
     }
 
-    return true;
+    if(tracks.empty()) {
+        return false;
+    }
+
+    return isVariable(var, tracks.front()) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
+        || tracks.front().hasExtraTag(var.toUpper());
 }
 
 bool ScriptRegistry::isFunction(const QString& func) const
@@ -363,6 +408,9 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
     }
     if(p->m_playbackVars.contains(var)) {
         return calculateResult(p->m_playbackVars.at(var)());
+    }
+    if(p->m_libraryVars.contains(var)) {
+        return calculateResult(p->m_libraryVars.at(var)(track));
     }
 
     return calculateResult(track.extraTag(var.toUpper()));

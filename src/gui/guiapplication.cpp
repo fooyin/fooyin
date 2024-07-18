@@ -335,7 +335,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(fileMenu, &FileMenu::requestSavePlaylist, self, [this]() { savePlaylist(); });
     QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(viewMenu, &ViewMenu::openScriptSandbox, self, [this]() {
-        auto* sandboxDialog = new SandboxDialog(&selectionController, settings, mainWindow.get());
+        auto* sandboxDialog = new SandboxDialog(core.libraryManager, &selectionController, settings, mainWindow.get());
         sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
         sandboxDialog->show();
     });

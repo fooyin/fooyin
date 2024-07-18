@@ -115,7 +115,7 @@ bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& 
 class LibraryTreeModelPrivate
 {
 public:
-    explicit LibraryTreeModelPrivate(LibraryTreeModel* self);
+    explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager);
 
     void updateSummary();
 
@@ -160,8 +160,9 @@ public:
     QPixmap m_pausedIcon;
 };
 
-LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self)
+LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager)
     : m_self{self}
+    , m_populator{libraryManager}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
     , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
@@ -346,10 +347,13 @@ void LibraryTreeModelPrivate::populateModel(PendingTreeData& data)
 {
     for(const auto& [key, item] : data.items) {
         if(m_nodes.contains(key)) {
-            m_nodes[key].addTracks(item.tracks());
+            m_nodes.at(key).addTracks(item.tracks());
         }
         else {
             m_nodes[key] = item;
+        }
+        if(!m_resetting) {
+            m_nodes.at(key).sortTracks();
         }
     }
     mergeTrackParents(data.trackParents);
@@ -388,9 +392,9 @@ void LibraryTreeModelPrivate::beginReset()
     updateSummary();
 }
 
-LibraryTreeModel::LibraryTreeModel(QObject* parent)
+LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<LibraryTreeModelPrivate>(this)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager)}
 {
     QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });

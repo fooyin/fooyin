@@ -75,14 +75,14 @@ Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 } // namespace
 
 namespace Fooyin::Filters {
-FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, CoverProvider* coverProvider,
-                           SettingsManager* settings, QWidget* parent)
+FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager* libraryManager,
+                           CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_columnRegistry{columnRegistry}
     , m_settings{settings}
     , m_view{new ExpandedTreeView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
-    , m_model{new FilterModel(coverProvider, m_settings, this)}
+    , m_model{new FilterModel(libraryManager, coverProvider, m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
     , m_widgetContext{new WidgetContext(this, Context{Id{"Fooyin.Context.FilterWidget."}.append(id())}, this)}
 {

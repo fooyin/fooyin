@@ -39,7 +39,8 @@
 using namespace std::chrono_literals;
 
 namespace Fooyin {
-SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, SettingsManager* settings, QWidget* parent)
+SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection,
+                             SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
     , m_trackSelection{trackSelection}
     , m_settings{settings}
@@ -51,6 +52,7 @@ SandboxDialog::SandboxDialog(TrackSelectionController* trackSelection, SettingsM
     , m_expressionTree{new QTreeView(this)}
     , m_model{new ExpressionTreeModel(this)}
     , m_textChangeTimer{new QTimer(this)}
+    , m_registry{libraryManager}
     , m_parser{&m_registry}
 {
     setWindowTitle(tr("Script Sandbox"));

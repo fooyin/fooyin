@@ -156,6 +156,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_library{playlistInteractor->library()}
     , m_settings{core.settingsManager}
     , m_settingsDialog{m_settings->settingsDialog()}
+    , m_sorter{core.libraryManager}
     , m_columnRegistry{m_playlistController->columnRegistry()}
     , m_presetRegistry{m_playlistController->presetRegistry()}
     , m_sortRegistry{core.sortingRegistry}
@@ -1164,7 +1165,7 @@ void PlaylistWidgetPrivate::cropSelection() const
     m_model->updateHeader(m_playlistController->currentPlaylist());
 }
 
-void PlaylistWidgetPrivate::sortTracks(const QString& script) const
+void PlaylistWidgetPrivate::sortTracks(const QString& script)
 {
     if(!m_playlistController->currentPlaylist()) {
         return;
@@ -1190,13 +1191,13 @@ void PlaylistWidgetPrivate::sortTracks(const QString& script) const
 
         std::ranges::sort(indexesToSort);
 
-        Utils::asyncExec([currentTracks, script, indexesToSort]() {
-            return Sorting::calcSortTracks(script, currentTracks, indexesToSort);
+        Utils::asyncExec([this, currentTracks, script, indexesToSort]() {
+            return m_sorter.calcSortTracks(script, currentTracks, indexesToSort);
         }).then(m_self, handleSortedTracks);
     }
     else {
-        Utils::asyncExec([currentTracks, script]() {
-            return Sorting::calcSortTracks(script, currentTracks);
+        Utils::asyncExec([this, currentTracks, script]() {
+            return m_sorter.calcSortTracks(script, currentTracks);
         }).then(m_self, handleSortedTracks);
     }
 }
@@ -1214,8 +1215,8 @@ void PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
     const auto currentTracks = currentPlaylist->tracks();
     const QString sortField  = m_columns.at(column).field;
 
-    Utils::asyncExec([sortField, currentTracks, order]() {
-        return Sorting::calcSortTracks(sortField, currentTracks, order);
+    Utils::asyncExec([this, sortField, currentTracks, order]() {
+        return m_sorter.calcSortTracks(sortField, currentTracks, order);
     }).then(m_self, [this, currentPlaylist](const TrackList& sortedTracks) {
         m_playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
         m_sortingColumn = false;

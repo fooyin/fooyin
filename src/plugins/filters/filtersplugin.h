@@ -47,14 +47,8 @@ public:
 private:
     void registerLayouts() const;
 
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
-    MusicLibrary* m_library;
-    std::shared_ptr<TagLoader> m_tagLoader;
-    PlayerController* m_playerController;
+    std::unique_ptr<CorePluginContext> m_core;
     LayoutProvider* m_layoutProvider;
-    WidgetProvider* m_widgetProvider;
-    TrackSelectionController* m_trackSelection;
 
     FilterController* m_filterController;
     std::unique_ptr<FiltersSettings> m_filterSettings;

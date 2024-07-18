@@ -47,7 +47,7 @@ class FilterPopulator : public Worker
     Q_OBJECT
 
 public:
-    explicit FilterPopulator(QObject* parent = nullptr);
+    explicit FilterPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
 
     void run(const QStringList& columns, const TrackList& tracks);
 

@@ -28,74 +28,84 @@
 class QString;
 
 namespace Fooyin {
+class LibraryManager;
 struct ParsedScript;
+class TrackSorterPrivate;
 
-namespace Sorting {
-/*!
- * Calculates the sort fields @p tracks using the @p sort script
- * @param sort the sort script as a string
- * @param tracks the tracks to calculate
- * @returns a new TrackList with the calculated sortFields
- */
-TrackList FYCORE_EXPORT calcSortFields(const QString& sort, const TrackList& tracks);
+class FYCORE_EXPORT TrackSorter
+{
+public:
+    TrackSorter();
+    explicit TrackSorter(LibraryManager* libraryManager);
+    ~TrackSorter();
 
-/*!
- * Calculates the sort fields of @p tracks using the parsed @p sort script
- * @param sortScript the parsed sort script
- * @param tracks the tracks to calculate
- * @returns a new TrackList with the calculated sortFields
- */
-TrackList FYCORE_EXPORT calcSortFields(const ParsedScript& sortScript, const TrackList& tracks);
+    /*!
+     * Calculates the sort fields @p tracks using the @p sort script
+     * @param sort the sort script as a string
+     * @param tracks the tracks to calculate
+     * @returns a new TrackList with the calculated sortFields
+     */
+    TrackList calcSortFields(const QString& sort, const TrackList& tracks);
 
-/*!
- * Sorts @p tracks using their current sort fields
- * @param tracks the tracks to sort
- * @param order the order in which to sort the tracks
- * @returns a new sorted TrackList
- */
-TrackList FYCORE_EXPORT sortTracks(const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
+    /*!
+     * Calculates the sort fields of @p tracks using the parsed @p sort script
+     * @param sortScript the parsed sort script
+     * @param tracks the tracks to calculate
+     * @returns a new TrackList with the calculated sortFields
+     */
+    [[nodiscard]] TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks) const;
 
-/*!
- * Calculates the sort fields and then sorts @p tracks
- * @param sort the sort script as a string
- * @param tracks the tracks to sort
- * @param order the order in which to sort the tracks
- * @returns a new sorted TrackList
- */
-TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks,
-                                       Qt::SortOrder order = Qt::AscendingOrder);
+    /*!
+     * Sorts @p tracks using their current sort fields
+     * @param tracks the tracks to sort
+     * @param order the order in which to sort the tracks
+     * @returns a new sorted TrackList
+     */
+    static TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
-/*!
- * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
- * @param sort the sort script as a string
- * @param tracks the tracks to sort
- * @param indexes the indexes to sort
- * @param order the order in which to sort the tracks
- * @returns a new sorted TrackList
- */
-TrackList FYCORE_EXPORT calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
-                                       Qt::SortOrder order = Qt::AscendingOrder);
+    /*!
+     * Calculates the sort fields and then sorts @p tracks
+     * @param sort the sort script as a string
+     * @param tracks the tracks to sort
+     * @param order the order in which to sort the tracks
+     * @returns a new sorted TrackList
+     */
+    TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order = Qt::AscendingOrder);
 
-/*!
- * Calculates the sort fields and then sorts @p tracks
- * @param sortScript the parsed sort script
- * @param tracks the tracks to sort
- * @param order the order in which to sort the tracks
- * @returns a new sorted TrackList
- */
-TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                       Qt::SortOrder order = Qt::AscendingOrder);
+    /*!
+     * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
+     * @param sort the sort script as a string
+     * @param tracks the tracks to sort
+     * @param indexes the indexes to sort
+     * @param order the order in which to sort the tracks
+     * @returns a new sorted TrackList
+     */
+    TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
+                             Qt::SortOrder order = Qt::AscendingOrder);
 
-/*!
- * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
- * Tracks not under an index in @p indexes retain their position.
- * @param sortScript the parsed sort script
- * @param tracks the tracks to sort
- * @param indexes the indexes to sort
- * @param order the order in which to sort the tracks
- * @returns a new sorted TrackList
- */
-TrackList FYCORE_EXPORT calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                       const std::vector<int>& indexes, Qt::SortOrder order = Qt::AscendingOrder);
-} // namespace Sorting
+    /*!
+     * Calculates the sort fields and then sorts @p tracks
+     * @param sortScript the parsed sort script
+     * @param tracks the tracks to sort
+     * @param order the order in which to sort the tracks
+     * @returns a new sorted TrackList
+     */
+    TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+                             Qt::SortOrder order = Qt::AscendingOrder) const;
+
+    /*!
+     * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
+     * Tracks not under an index in @p indexes retain their position.
+     * @param sortScript the parsed sort script
+     * @param tracks the tracks to sort
+     * @param indexes the indexes to sort
+     * @param order the order in which to sort the tracks
+     * @returns a new sorted TrackList
+     */
+    TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
+                             Qt::SortOrder order = Qt::AscendingOrder) const;
+
+private:
+    std::unique_ptr<TrackSorterPrivate> p;
+};
 } // namespace Fooyin

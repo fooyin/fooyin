@@ -39,7 +39,6 @@ constexpr auto Lyrics          = "lyrics";
 constexpr auto Comment         = "comment";
 constexpr auto Date            = "date";
 constexpr auto Year            = "year";
-constexpr auto Cover           = "cover";
 constexpr auto FileSize        = "filesize";
 constexpr auto Bitrate         = "bitrate";
 constexpr auto SampleRate      = "samplerate";

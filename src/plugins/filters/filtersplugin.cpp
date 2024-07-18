@@ -36,30 +36,24 @@
 namespace Fooyin::Filters {
 void FiltersPlugin::initialise(const CorePluginContext& context)
 {
-    m_library          = context.library;
-    m_playerController = context.playerController;
-    m_settings         = context.settingsManager;
-    m_tagLoader        = context.tagLoader;
+    m_core = std::make_unique<CorePluginContext>(context);
 }
 
 void FiltersPlugin::initialise(const GuiPluginContext& context)
 {
-    m_actionManager  = context.actionManager;
     m_layoutProvider = context.layoutProvider;
-    m_widgetProvider = context.widgetProvider;
-    m_trackSelection = context.trackSelection;
 
-    m_filterSettings = std::make_unique<FiltersSettings>(m_settings);
+    m_filterSettings = std::make_unique<FiltersSettings>(m_core->settingsManager);
     m_filterController
-        = new FilterController(m_library, m_trackSelection, context.editableLayout, m_tagLoader, m_settings, this);
+        = new FilterController(*m_core, context.trackSelection, context.editableLayout, m_core->settingsManager, this);
 
-    m_widgetProvider->registerWidget(
+    context.widgetProvider->registerWidget(
         QStringLiteral("LibraryFilter"), [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
 
-    m_generalPage = std::make_unique<FiltersGeneralPage>(m_settings);
-    m_guiPage     = std::make_unique<FiltersGuiPage>(m_settings);
-    m_columnsPage
-        = std::make_unique<FiltersColumnPage>(m_actionManager, m_filterController->columnRegistry(), m_settings);
+    m_generalPage = std::make_unique<FiltersGeneralPage>(m_core->settingsManager);
+    m_guiPage     = std::make_unique<FiltersGuiPage>(m_core->settingsManager);
+    m_columnsPage = std::make_unique<FiltersColumnPage>(context.actionManager, m_filterController->columnRegistry(),
+                                                        m_core->settingsManager);
 
     registerLayouts();
 }

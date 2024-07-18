@@ -30,6 +30,7 @@
 
 namespace Fooyin {
 class CoverProvider;
+class LibraryManager;
 class SettingsManager;
 
 namespace Filters {
@@ -54,7 +55,8 @@ class FilterModel : public TreeModel<FilterItem>
     Q_OBJECT
 
 public:
-    explicit FilterModel(CoverProvider* coverProvider, SettingsManager* settings, QObject* parent = nullptr);
+    explicit FilterModel(LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
+                         QObject* parent = nullptr);
     ~FilterModel() override;
 
     [[nodiscard]] bool showSummary() const;

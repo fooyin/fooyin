@@ -27,6 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class LibraryManager;
 class PlayerController;
 class ScriptRegistryPrivate;
 
@@ -35,7 +36,10 @@ class FYCORE_EXPORT ScriptRegistry
 public:
     using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
 
-    explicit ScriptRegistry(PlayerController* playerController = nullptr);
+    ScriptRegistry();
+    explicit ScriptRegistry(LibraryManager* libraryManager);
+    explicit ScriptRegistry(PlayerController* playerController);
+    ScriptRegistry(LibraryManager* libraryManager, PlayerController* playerController);
     virtual ~ScriptRegistry();
 
     [[nodiscard]] virtual bool isVariable(const QString& var, const Track& track) const;

@@ -29,8 +29,9 @@ namespace Fooyin {
 class LibraryTreePopulatorPrivate
 {
 public:
-    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self)
+    explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager)
         : m_self{self}
+        , m_registry{libraryManager}
         , m_parser{&m_registry}
         , m_data{}
     { }
@@ -135,9 +136,9 @@ bool LibraryTreePopulatorPrivate::runBatch(int size)
     return runBatch(std::min(remaining, BatchSize));
 }
 
-LibraryTreePopulator::LibraryTreePopulator(QObject* parent)
+LibraryTreePopulator::LibraryTreePopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<LibraryTreePopulatorPrivate>(this)}
+    , p{std::make_unique<LibraryTreePopulatorPrivate>(this, libraryManager)}
 { }
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;

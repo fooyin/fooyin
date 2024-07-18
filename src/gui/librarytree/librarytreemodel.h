@@ -29,6 +29,7 @@
 #include <QSortFilterProxyModel>
 
 namespace Fooyin {
+class LibraryManager;
 class LibraryTreeModelPrivate;
 
 class LibraryTreeSortModel : public QSortFilterProxyModel
@@ -50,7 +51,7 @@ class LibraryTreeModel : public TreeModel<LibraryTreeItem>
     Q_OBJECT
 
 public:
-    explicit LibraryTreeModel(QObject* parent = nullptr);
+    explicit LibraryTreeModel(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
     void setFont(const QString& font);

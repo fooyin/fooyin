@@ -92,7 +92,6 @@ void FilterItem::addTrack(const Track& track)
 void FilterItem::addTracks(const TrackList& tracks)
 {
     std::ranges::copy(tracks, std::back_inserter(m_tracks));
-    sortTracks();
 }
 
 void FilterItem::removeTrack(const Track& track)
@@ -113,6 +112,6 @@ void FilterItem::replaceTrack(const Track& track)
 
 void FilterItem::sortTracks()
 {
-    m_tracks = Sorting::sortTracks(m_tracks);
+    m_tracks = TrackSorter::sortTracks(m_tracks);
 }
 } // namespace Fooyin::Filters

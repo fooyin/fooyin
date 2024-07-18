@@ -36,18 +36,6 @@
 
 using namespace std::chrono_literals;
 
-namespace {
-QFuture<Fooyin::TrackList> recalSortTracks(const QString& sort, const Fooyin::TrackList& tracks)
-{
-    return Fooyin::Utils::asyncExec([sort, tracks]() { return Fooyin::Sorting::calcSortTracks(sort, tracks); });
-}
-
-QFuture<Fooyin::TrackList> resortTracks(const Fooyin::TrackList& tracks)
-{
-    return Fooyin::Utils::asyncExec([tracks]() { return Fooyin::Sorting::sortTracks(tracks); });
-}
-} // namespace
-
 namespace Fooyin {
 class UnifiedMusicLibraryPrivate
 {
@@ -69,6 +57,8 @@ public:
     void libraryStatusChanged(const LibraryInfo& library) const;
 
     void changeSort(const QString& sort);
+    QFuture<TrackList> recalSortTracks(const QString& sort, const TrackList& tracks);
+    QFuture<TrackList> resortTracks(const TrackList& tracks);
 
     void handleTracksLoaded();
 
@@ -79,6 +69,7 @@ public:
     SettingsManager* m_settings;
 
     LibraryThreadHandler m_threadHandler;
+    TrackSorter m_sorter;
 
     TrackList m_tracks;
 };
@@ -92,6 +83,7 @@ UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self
     , m_dbPool{std::move(dbPool)}
     , m_settings{settings}
     , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(tagLoader), m_settings}
+    , m_sorter{m_libraryManager}
 {
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
     m_settings->subscribe<Settings::Core::Internal::MonitorLibraries>(
@@ -234,6 +226,16 @@ void UnifiedMusicLibraryPrivate::changeSort(const QString& sort)
         m_tracks = sortedTracks;
         emit m_self->tracksSorted(m_tracks);
     });
+}
+
+QFuture<TrackList> UnifiedMusicLibraryPrivate::recalSortTracks(const QString& sort, const TrackList& tracks)
+{
+    return Utils::asyncExec([this, sort, tracks]() { return m_sorter.calcSortTracks(sort, tracks); });
+}
+
+QFuture<TrackList> UnifiedMusicLibraryPrivate::resortTracks(const TrackList& tracks)
+{
+    return Utils::asyncExec([tracks]() { return TrackSorter::sortTracks(tracks); });
 }
 
 void UnifiedMusicLibraryPrivate::handleTracksLoaded()

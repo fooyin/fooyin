@@ -246,7 +246,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_settings{core.settingsManager}
     , m_layout{new QVBoxLayout(m_self)}
     , m_libraryTree{new LibraryTreeView(m_self)}
-    , m_model{new LibraryTreeModel(m_self)}
+    , m_model{new LibraryTreeModel(core.libraryManager, m_self)}
     , m_sortProxy{new LibraryTreeSortModel(m_self)}
     , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                         m_self)}

@@ -22,8 +22,9 @@
 #include <utils/crypto.h>
 
 namespace Fooyin::Filters {
-FilterPopulator::FilterPopulator(QObject* parent)
+FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
+    , m_registry{libraryManager}
     , m_parser{&m_registry}
 { }
 

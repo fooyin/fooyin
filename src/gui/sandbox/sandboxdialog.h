@@ -37,8 +37,8 @@ class SandboxDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SandboxDialog(TrackSelectionController* trackSelection, SettingsManager* settings,
-                           QWidget* parent = nullptr);
+    explicit SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection,
+                           SettingsManager* settings, QWidget* parent = nullptr);
     ~SandboxDialog() override;
 
 private:

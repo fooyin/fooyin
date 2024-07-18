@@ -28,6 +28,7 @@
 namespace Fooyin {
 class AutoHeaderView;
 class CoverProvider;
+class LibraryManager;
 class SettingsManager;
 class WidgetContext;
 
@@ -42,8 +43,8 @@ class FilterWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit FilterWidget(FilterColumnRegistry* columnRegistry, CoverProvider* coverProvider, SettingsManager* settings,
-                          QWidget* parent = nullptr);
+    explicit FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager* libraryManager,
+                          CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent = nullptr);
     ~FilterWidget() override;
 
     [[nodiscard]] Id group() const;

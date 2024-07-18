@@ -19,6 +19,7 @@
 
 #include "filtercontroller.h"
 
+#include "core/library/tracksort.h"
 #include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
@@ -26,6 +27,7 @@
 
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
+#include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
 #include <gui/trackselectioncontroller.h>
@@ -62,9 +64,9 @@ namespace Fooyin::Filters {
 class FilterControllerPrivate
 {
 public:
-    explicit FilterControllerPrivate(FilterController* self, MusicLibrary* library,
+    explicit FilterControllerPrivate(FilterController* self, const CorePluginContext& core,
                                      TrackSelectionController* trackSelection, EditableLayout* editableLayout,
-                                     std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings);
+                                     SettingsManager* settings);
 
     void handleAction(const TrackAction& action) const;
     Id findContainingGroup(FilterWidget* widget);
@@ -95,6 +97,7 @@ public:
     FilterController* m_self;
 
     MusicLibrary* m_library;
+    LibraryManager* m_libraryManager;
     TrackSelectionController* m_trackSelection;
     EditableLayout* m_editableLayout;
     CoverProvider m_coverProvider;
@@ -102,6 +105,7 @@ public:
 
     FilterManager* m_manager;
     FilterColumnRegistry* m_columnRegistry;
+    TrackSorter m_sorter;
 
     Id m_defaultId{"Default"};
     FilterGroups m_groups;
@@ -111,18 +115,19 @@ public:
     TrackAction m_middleClickAction;
 };
 
-FilterControllerPrivate::FilterControllerPrivate(FilterController* self, MusicLibrary* library,
+FilterControllerPrivate::FilterControllerPrivate(FilterController* self, const CorePluginContext& core,
                                                  TrackSelectionController* trackSelection,
-                                                 EditableLayout* editableLayout, std::shared_ptr<TagLoader> tagLoader,
-                                                 SettingsManager* settings)
+                                                 EditableLayout* editableLayout, SettingsManager* settings)
     : m_self{self}
-    , m_library{library}
+    , m_library{core.library}
+    , m_libraryManager{core.libraryManager}
     , m_trackSelection{trackSelection}
     , m_editableLayout{editableLayout}
-    , m_coverProvider{std::move(tagLoader), settings}
+    , m_coverProvider{core.tagLoader, settings}
     , m_settings{settings}
     , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}
+    , m_sorter{core.libraryManager}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Filters::FilterMiddleClick>())}
 {
@@ -496,12 +501,10 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
     }).then(m_self, [filter](const TrackList& filteredTracks) { filter->reset(filteredTracks); });
 }
 
-FilterController::FilterController(MusicLibrary* library, TrackSelectionController* trackSelection,
-                                   EditableLayout* editableLayout, std::shared_ptr<TagLoader> tagLoader,
-                                   SettingsManager* settings, QObject* parent)
+FilterController::FilterController(const CorePluginContext& core, TrackSelectionController* trackSelection,
+                                   EditableLayout* editableLayout, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<FilterControllerPrivate>(this, library, trackSelection, editableLayout, std::move(tagLoader),
-                                                  settings)}
+    , p{std::make_unique<FilterControllerPrivate>(this, core, trackSelection, editableLayout, settings)}
 {
     QObject::connect(p->m_library, &MusicLibrary::tracksAdded, this,
                      [this](const TrackList& tracks) { p->handleTracksAddedUpdated(tracks); });
@@ -525,7 +528,7 @@ FilterColumnRegistry* FilterController::columnRegistry() const
 
 FilterWidget* FilterController::createFilter()
 {
-    auto* widget = new FilterWidget(p->m_columnRegistry, &p->m_coverProvider, p->m_settings);
+    auto* widget = new FilterWidget(p->m_columnRegistry, p->m_libraryManager, &p->m_coverProvider, p->m_settings);
 
     auto& group = p->m_groups[p->m_defaultId];
     group.id    = p->m_defaultId;

@@ -27,37 +27,55 @@
 
 #include <QCollator>
 
-namespace {
-Fooyin::ParsedScript parseScript(const QString& sort)
+namespace Fooyin {
+class TrackSorterPrivate
 {
-    static Fooyin::ScriptParser parser;
-    static std::mutex parserGuard;
-    const std::scoped_lock lock{parserGuard};
+public:
+    explicit TrackSorterPrivate(LibraryManager* libraryManager)
+        : m_registry{libraryManager}
+        , m_parser{&m_registry}
+    { }
 
-    return parser.parse(sort);
+    ParsedScript parseScript(const QString& sort);
+
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
+    std::mutex m_parserGuard;
+};
+
+ParsedScript TrackSorterPrivate::parseScript(const QString& sort)
+{
+    const std::scoped_lock lock{m_parserGuard};
+    return m_parser.parse(sort);
 }
-} // namespace
 
-namespace Fooyin::Sorting {
-TrackList calcSortFields(const QString& sort, const TrackList& tracks)
+TrackSorter::TrackSorter()
+    : TrackSorter{nullptr}
+{ }
+
+TrackSorter::TrackSorter(LibraryManager* libraryManager)
+    : p{std::make_unique<TrackSorterPrivate>(libraryManager)}
+{ }
+
+TrackSorter::~TrackSorter() = default;
+
+TrackList TrackSorter::calcSortFields(const QString& sort, const TrackList& tracks)
 {
-    return calcSortFields(parseScript(sort), tracks);
+    return calcSortFields(p->parseScript(sort), tracks);
 }
 
-TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
+TrackList TrackSorter::calcSortFields(const ParsedScript& sortScript, const TrackList& tracks) const
 {
-    static ScriptParser parser;
-    static std::mutex parserGuard;
-    const std::scoped_lock lock{parserGuard};
+    const std::scoped_lock lock{p->m_parserGuard};
 
     TrackList calcTracks{tracks};
     for(Track& track : calcTracks) {
-        track.setSort(parser.evaluate(sortScript, track));
+        track.setSort(p->m_parser.evaluate(sortScript, track));
     }
     return calcTracks;
 }
 
-TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order)
+TrackList TrackSorter::sortTracks(const TrackList& tracks, Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};
 
@@ -78,25 +96,25 @@ TrackList sortTracks(const TrackList& tracks, Qt::SortOrder order)
     return sortedTracks;
 }
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), tracks, order);
+    return calcSortTracks(p->parseScript(sort), tracks, order);
 }
 
-TrackList calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
-                         Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
+                                      Qt::SortOrder order)
 {
-    return calcSortTracks(parseScript(sort), tracks, indexes, order);
+    return calcSortTracks(p->parseScript(sort), tracks, indexes, order);
 }
 
-TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order) const
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
     return sortTracks(calcTracks, order);
 }
 
-TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
-                         Qt::SortOrder order)
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+                                      const std::vector<int>& indexes, Qt::SortOrder order) const
 {
     TrackList sortedTracks{tracks};
     TrackList tracksToSort;
@@ -118,4 +136,4 @@ TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks
 
     return sortedTracks;
 }
-} // namespace Fooyin::Sorting
+} // namespace Fooyin

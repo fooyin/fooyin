@@ -101,12 +101,11 @@ void LibraryTreeItem::replaceTrack(const Track& track)
     if(m_tracks.empty()) {
         return;
     }
-    std::ranges::replace_if(
-        m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
+    std::ranges::replace_if(m_tracks, [track](const Track& child) { return child.id() == track.id(); }, track);
 }
 
 void LibraryTreeItem::sortTracks()
 {
-    m_tracks = Sorting::sortTracks(m_tracks);
+    m_tracks = TrackSorter::sortTracks(m_tracks);
 }
 } // namespace Fooyin

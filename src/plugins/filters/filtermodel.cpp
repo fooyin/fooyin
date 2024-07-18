@@ -19,6 +19,7 @@
 
 #include "filtermodel.h"
 
+#include "core/library/tracksort.h"
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filterpopulator.h"
@@ -103,7 +104,8 @@ bool FilterSortModel::lessThan(const QModelIndex& left, const QModelIndex& right
 class FilterModelPrivate
 {
 public:
-    explicit FilterModelPrivate(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings);
+    explicit FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, CoverProvider* coverProvider,
+                                SettingsManager* settings);
 
     void beginReset();
 
@@ -148,9 +150,11 @@ public:
     TrackList m_tracksPendingRemoval;
 };
 
-FilterModelPrivate::FilterModelPrivate(FilterModel* self, CoverProvider* coverProvider, SettingsManager* settings)
+FilterModelPrivate::FilterModelPrivate(FilterModel* self, LibraryManager* libraryManager, CoverProvider* coverProvider,
+                                       SettingsManager* settings)
     : m_self{self}
     , m_settings{settings}
+    , m_populator{libraryManager}
     , m_coverProvider{coverProvider}
     , m_decorationSize{m_settings->value<Settings::Filters::FilterIconSize>().toSize()}
 {
@@ -258,6 +262,9 @@ void FilterModelPrivate::populateModel(PendingTreeData& data)
         else {
             newItems.push_back(item);
         }
+        if(!m_resetting) {
+            m_nodes.at(key).sortTracks();
+        }
     }
 
     auto* parent   = m_self->rootItem();
@@ -307,9 +314,10 @@ void FilterModelPrivate::dataUpdated(const QList<int>& roles) const
     emit m_self->dataChanged(topLeft, bottomRight, roles);
 }
 
-FilterModel::FilterModel(CoverProvider* coverProvider, SettingsManager* settings, QObject* parent)
+FilterModel::FilterModel(LibraryManager* libraryManager, CoverProvider* coverProvider, SettingsManager* settings,
+                         QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<FilterModelPrivate>(this, coverProvider, settings)}
+    , p{std::make_unique<FilterModelPrivate>(this, libraryManager, coverProvider, settings)}
 {
     QObject::connect(&p->m_populator, &FilterPopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
