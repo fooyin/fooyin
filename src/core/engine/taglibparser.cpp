@@ -671,7 +671,7 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
 }
 
 void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
-                    const Fooyin::TagParser::WriteOptions& options)
+                    const Fooyin::AudioInput::WriteOptions& options)
 {
     id3Tags->removeFrames("TRCK");
 
@@ -802,7 +802,8 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
+void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track,
+                  const Fooyin::AudioInput::WriteOptions& options)
 {
     const QString trackNumber = getTrackNumber(track);
     if(trackNumber.isEmpty()) {
@@ -1001,7 +1002,8 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
     return freeFormName;
 }
 
-void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
+void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track,
+                  const Fooyin::AudioInput::WriteOptions& options)
 {
     const int trackNumber = track.trackNumber();
     const int trackTotal  = track.trackTotal();
@@ -1151,7 +1153,7 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
 }
 
 void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
-                      const Fooyin::TagParser::WriteOptions& options)
+                      const Fooyin::AudioInput::WriteOptions& options)
 {
     if(track.trackNumber() < 0) {
         xiphTags->removeFields(Fooyin::Tag::TrackNumber);
@@ -1308,7 +1310,8 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, const Fooyin::TagParser::WriteOptions& options)
+void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track,
+                  const Fooyin::AudioInput::WriteOptions& options)
 {
     asfTags->setAttribute("WM/TrackNumber", TagLib::String::number(track.trackNumber()));
     asfTags->setAttribute("WM/PartOfSet", TagLib::String::number(track.discNumber()));
@@ -1337,16 +1340,6 @@ QStringList TagLibParser::supportedExtensions() const
                                         QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
                                         QStringLiteral("webm"), QStringLiteral("mp4")};
     return extensions;
-}
-
-bool TagLibParser::canReadCover() const
-{
-    return true;
-}
-
-bool TagLibParser::canWriteMetaData() const
-{
-    return true;
 }
 
 bool TagLibParser::readMetaData(Track& track) const
@@ -1624,7 +1617,7 @@ QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover) const
     return {};
 }
 
-bool TagLibParser::writeMetaData(const Track& track, const WriteOptions& options) const
+bool TagLibParser::writeMetaData(const Track& track, const AudioInput::WriteOptions& options) const
 {
     const QString filepath = track.filepath();
 

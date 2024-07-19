@@ -24,7 +24,7 @@
 #include <QObject>
 
 namespace Fooyin {
-class DecoderProvider;
+class AudioLoader;
 class EngineHandlerPrivate;
 class PlayerController;
 class SettingsManager;
@@ -36,7 +36,7 @@ class EngineHandler : public EngineController
     Q_OBJECT
 
 public:
-    explicit EngineHandler(std::shared_ptr<DecoderProvider> decoderProvider, PlayerController* playerController,
+    explicit EngineHandler(std::shared_ptr<AudioLoader> decoderProvider, PlayerController* playerController,
                            SettingsManager* settings, QObject* parent = nullptr);
     ~EngineHandler() override;
 

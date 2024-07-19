@@ -22,7 +22,6 @@
 #include "fycore_export.h"
 
 #include <core/playlist/playlistparser.h>
-#include <core/tagging/tagparser.h>
 #include <core/track.h>
 
 struct CueSheet;

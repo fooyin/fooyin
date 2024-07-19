@@ -34,7 +34,7 @@ namespace Fooyin {
 class EngineHandlerPrivate
 {
 public:
-    EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<DecoderProvider> decoderProvider,
+    EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<AudioLoader> decoderProvider,
                          PlayerController* playerController, SettingsManager* settings);
 
     void handleStateChange(PlaybackState state);
@@ -62,7 +62,7 @@ public:
     CurrentOutput m_currentOutput;
 };
 
-EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<DecoderProvider> decoderProvider,
+EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<AudioLoader> decoderProvider,
                                            PlayerController* playerController, SettingsManager* settings)
     : m_self{self}
     , m_playerController{playerController}
@@ -196,7 +196,7 @@ void EngineHandlerPrivate::updateVolume(double volume)
     QMetaObject::invokeMethod(m_engine, [this, volume]() { m_engine->setVolume(volume); }, Qt::QueuedConnection);
 }
 
-EngineHandler::EngineHandler(std::shared_ptr<DecoderProvider> decoderProvider, PlayerController* playerController,
+EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> decoderProvider, PlayerController* playerController,
                              SettingsManager* settings, QObject* parent)
     : EngineController{parent}
     , p{std::make_unique<EngineHandlerPrivate>(this, std::move(decoderProvider), playerController, settings)}

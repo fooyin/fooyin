@@ -26,6 +26,7 @@
 #include <QObject>
 
 namespace Fooyin {
+class AudioLoader;
 class LibraryThreadHandlerPrivate;
 class MusicLibrary;
 class PlaylistLoader;
@@ -33,7 +34,6 @@ struct ScanProgress;
 struct ScanResult;
 struct ScanRequest;
 class SettingsManager;
-class TagLoader;
 
 class LibraryThreadHandler : public QObject
 {
@@ -41,8 +41,9 @@ class LibraryThreadHandler : public QObject
 
 public:
     explicit LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
-                                  std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
-                                  SettingsManager* settings, QObject* parent = nullptr);
+                                  std::shared_ptr<PlaylistLoader> playlistLoader,
+                                  std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                                  QObject* parent = nullptr);
     ~LibraryThreadHandler() override;
 
     void getAllTracks();

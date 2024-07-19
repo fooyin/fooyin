@@ -22,7 +22,7 @@
 #include "corepaths.h"
 #include "database/database.h"
 #include "engine/enginehandler.h"
-#include "engine/ffmpeg/ffmpegdecoder.h"
+#include "engine/ffmpeg/ffmpeginput.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/sortingregistry.h"
@@ -31,16 +31,13 @@
 #include "playlist/parsers/m3uparser.h"
 #include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
-#include "tagging/ffmpegparser.h"
-#include "tagging/taglibparser.h"
 #include "translations.h"
 
-#include <core/engine/decoderprovider.h>
+#include <core/engine/audioloader.h>
 #include <core/engine/outputplugin.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
-#include <core/tagging/tagloader.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
@@ -80,7 +77,6 @@ public:
     explicit ApplicationPrivate(Application* self_);
 
     void registerPlaylistParsers();
-    void registerTagParsers();
     void registerDecoders();
 
     void loadPlugins();
@@ -96,8 +92,7 @@ public:
     CoreSettings m_coreSettings;
     Translations m_translations;
     Database* m_database;
-    std::shared_ptr<TagLoader> m_tagLoader;
-    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
     EngineHandler m_engine;
     LibraryManager* m_libraryManager;
@@ -119,25 +114,22 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_coreSettings{m_settings}
     , m_translations{m_settings}
     , m_database{new Database(m_self)}
-    , m_tagLoader{std::make_shared<TagLoader>()}
-    , m_decoderProvider{std::make_shared<DecoderProvider>()}
+    , m_audioLoader{std::make_shared<AudioLoader>()}
     , m_playerController{new PlayerController(m_settings, m_self)}
-    , m_engine{m_decoderProvider, m_playerController, m_settings}
+    , m_engine{m_audioLoader, m_playerController, m_settings}
     , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
-    , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_tagLoader,
-                                        m_settings, m_self)}
-    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_tagLoader, m_playerController, m_settings,
-                                            m_self)}
+    , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader,
+                                        m_audioLoader, m_settings, m_self)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController,
+                                            m_settings, m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_pluginManager{m_settings}
-    , m_corePluginContext{&m_pluginManager, &m_engine,         m_playerController, m_libraryManager,
-                          m_library,        m_playlistHandler, m_settings,         m_playlistLoader,
-                          m_tagLoader,      m_decoderProvider, m_sortingRegistry}
+    , m_corePluginContext{&m_pluginManager,  &m_engine,  m_playerController, m_libraryManager, m_library,
+                          m_playlistHandler, m_settings, m_playlistLoader,   m_audioLoader,  m_sortingRegistry}
 {
     registerTypes();
     registerDecoders();
-    registerTagParsers();
     registerPlaylistParsers();
     loadPlugins();
 
@@ -146,20 +138,13 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
 
 void ApplicationPrivate::registerPlaylistParsers()
 {
-    m_playlistLoader->addParser(std::make_unique<CueParser>(m_tagLoader));
-    m_playlistLoader->addParser(std::make_unique<M3uParser>(m_tagLoader));
-}
-
-void ApplicationPrivate::registerTagParsers()
-{
-    m_tagLoader->addParser(QStringLiteral("TagLib"), std::make_unique<TagLibParser>());
-    m_tagLoader->addParser(QStringLiteral("FFmpeg"), std::make_unique<FFmpegParser>());
+    m_playlistLoader->addParser(std::make_unique<CueParser>(m_audioLoader));
+    m_playlistLoader->addParser(std::make_unique<M3uParser>(m_audioLoader));
 }
 
 void ApplicationPrivate::registerDecoders()
 {
-    m_decoderProvider->addDecoder(QStringLiteral("FFmpeg"), FFmpegDecoder::extensions(),
-                                  []() { return std::make_unique<FFmpegDecoder>(); });
+    m_audioLoader->addDecoder(QStringLiteral("FFmpeg"), []() { return std::make_unique<FFmpegInput>(); });
 }
 
 void ApplicationPrivate::loadPlugins()
@@ -174,12 +159,8 @@ void ApplicationPrivate::loadPlugins()
     m_pluginManager.initialisePlugins<OutputPlugin>(
         [this](OutputPlugin* plugin) { m_engine.addOutput(plugin->name(), plugin->creator()); });
 
-    m_pluginManager.initialisePlugins<TagParserPlugin>(
-        [this](TagParserPlugin* plugin) { m_tagLoader->addParser(plugin->parserName(), plugin->tagParser()); });
-
-    m_pluginManager.initialisePlugins<DecoderPlugin>([this](DecoderPlugin* plugin) {
-        m_decoderProvider->addDecoder(plugin->decoderName(), plugin->supportedExtensions(), plugin->decoderCreator());
-    });
+    m_pluginManager.initialisePlugins<InputPlugin>(
+        [this](InputPlugin* plugin) { m_audioLoader->addDecoder(plugin->name(), plugin->decoderCreator()); });
 }
 
 void ApplicationPrivate::startSaveTimer()

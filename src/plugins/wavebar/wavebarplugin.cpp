@@ -65,7 +65,7 @@ WaveBarPlugin::~WaveBarPlugin()
 void WaveBarPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
-    m_decoderProvider  = context.decoderProvider;
+    m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
 }
 
@@ -106,7 +106,7 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
 FyWidget* WaveBarPlugin::createWavebar()
 {
     if(!m_waveBuilder) {
-        m_waveBuilder = std::make_unique<WaveformBuilder>(m_decoderProvider, m_dbPool, m_settings);
+        m_waveBuilder = std::make_unique<WaveformBuilder>(m_audioLoader, m_dbPool, m_settings);
     }
 
     auto* wavebar = new WaveBarWidget(m_waveBuilder.get(), m_playerController, m_settings);
@@ -144,7 +144,7 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
     dialog->setWindowModality(Qt::WindowModal);
     dialog->setValue(0);
 
-    auto* builder = new WaveformBuilder(m_decoderProvider, m_dbPool, m_settings, dialog);
+    auto* builder = new WaveformBuilder(m_audioLoader, m_dbPool, m_settings, dialog);
 
     QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog, [dialog, builder]() {
         if(dialog->wasCanceled()) {

@@ -4,12 +4,13 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/track.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioconverter.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/audiodecoder.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioengine.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioformat.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioinput.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiooutput.h
-    ${CMAKE_SOURCE_DIR}/include/core/engine/decoderprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/inputplugin.h
+    ${CMAKE_SOURCE_DIR}/include/core/engine/audioloader.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
@@ -29,7 +30,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptregistry.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptscanner.h
     ${CMAKE_SOURCE_DIR}/include/core/scripting/scriptvalue.h
-    ${CMAKE_SOURCE_DIR}/include/core/tagging/tagloader.h
     application.cpp
     application.h
     corepaths.cpp
@@ -55,6 +55,7 @@ set(SOURCES
     engine/audioclock.cpp
     engine/audioclock.h
     engine/audioconverter.cpp
+    engine/audioinput.cpp
     engine/audioformat.cpp
     engine/audioplaybackengine.cpp
     engine/audioplaybackengine.h
@@ -62,11 +63,14 @@ set(SOURCES
     engine/audiorenderer.h
     engine/enginehandler.cpp
     engine/enginehandler.h
-    engine/decoderprovider.cpp
+    engine/audioloader.cpp
+    engine/tagdefs.h
+    engine/taglibparser.cpp
+    engine/taglibparser.h
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegcodec.h
-    engine/ffmpeg/ffmpegdecoder.cpp
-    engine/ffmpeg/ffmpegdecoder.h
+        engine/ffmpeg/ffmpeginput.cpp
+        engine/ffmpeg/ffmpeginput.h
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegframe.h
     engine/ffmpeg/ffmpegstream.cpp
@@ -120,13 +124,6 @@ set(SOURCES
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp
-    tagging/ffmpegparser.cpp
-    tagging/ffmpegparser.h
-    tagging/tagdefs.h
-    tagging/tagparser.cpp
-    tagging/taglibparser.cpp
-    tagging/taglibparser.h
-    tagging/tagloader.cpp
 )
 
 create_fooyin_library(

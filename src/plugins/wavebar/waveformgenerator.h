@@ -21,14 +21,14 @@
 
 #include "wavebardatabase.h"
 
-#include <core/engine/audiodecoder.h>
+#include <core/engine/audioinput.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
 namespace Fooyin {
-class DecoderProvider;
+class AudioLoader;
 
 namespace WaveBar {
 class WaveformGenerator : public Worker
@@ -36,7 +36,7 @@ class WaveformGenerator : public Worker
     Q_OBJECT
 
 public:
-    explicit WaveformGenerator(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
+    explicit WaveformGenerator(std::shared_ptr<AudioLoader> audioLoader, DbConnectionPoolPtr dbPool,
                                QObject* parent = nullptr);
 
 signals:
@@ -52,8 +52,8 @@ private:
     QString setup(const Track& track, int samplesPerChannel);
     void processBuffer(const AudioBuffer& buffer);
 
-    std::shared_ptr<DecoderProvider> m_decoderProvider;
-    std::unique_ptr<AudioDecoder> m_decoder;
+    std::shared_ptr<AudioLoader> m_audioLoader;
+    AudioInput* m_decoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
     WaveBarDatabase m_waveDb;

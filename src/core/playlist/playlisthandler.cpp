@@ -38,8 +38,9 @@ namespace Fooyin {
 class PlaylistHandlerPrivate
 {
 public:
-    PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
-                           PlayerController* playerController, SettingsManager* settings);
+    PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
+                           std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
+                           SettingsManager* settings);
 
     void reloadPlaylists();
     bool noConcretePlaylists();
@@ -66,7 +67,7 @@ public:
     PlaylistHandler* m_self;
 
     DbConnectionPoolPtr m_dbPool;
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     PlayerController* m_playerController;
     SettingsManager* m_settings;
     PlaylistDatabase m_playlistConnector;
@@ -79,11 +80,11 @@ public:
 };
 
 PlaylistHandlerPrivate::PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
-                                               std::shared_ptr<TagLoader> tagLoader, PlayerController* playerController,
-                                               SettingsManager* settings)
+                                               std::shared_ptr<AudioLoader> audioLoader,
+                                               PlayerController* playerController, SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
-    , m_tagLoader{std::move(tagLoader)}
+    , m_audioLoader{std::move(audioLoader)}
     , m_playerController{playerController}
     , m_settings{settings}
 {
@@ -114,11 +115,9 @@ void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
 
     Track nextTrk{track};
     if(!nextTrk.metadataWasRead()) {
-        if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
-            if(parser->readMetaData(nextTrk)) {
-                nextTrk.generateHash();
-                m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
-            }
+        if(m_audioLoader->readTrackMetadata(nextTrk)) {
+            nextTrk.generateHash();
+            m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
         }
     }
 
@@ -160,12 +159,10 @@ Track PlaylistHandlerPrivate::nextTrack(int delta)
     Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
 
     if(!nextTrk.metadataWasRead()) {
-        if(auto* parser = m_tagLoader->parserForTrack(nextTrk)) {
-            if(parser->readMetaData(nextTrk)) {
-                nextTrk.generateHash();
-                const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
-                m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
-            }
+        if(m_audioLoader->readTrackMetadata(nextTrk)) {
+            nextTrk.generateHash();
+            const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());
+            m_activePlaylist->updateTrackAtIndex(nextIndex, nextTrk);
         }
     }
 
@@ -302,10 +299,10 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     return nullptr;
 }
 
-PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                  PlayerController* playerController, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(tagLoader), playerController,
+    , p{std::make_unique<PlaylistHandlerPrivate>(this, std::move(dbPool), std::move(audioLoader), playerController,
                                                  settings)}
 {
     p->reloadPlaylists();

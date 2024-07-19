@@ -80,7 +80,7 @@ Widgets::Widgets(const CorePluginContext& core, const GuiPluginContext& gui, Pla
     , m_window{Utils::getMainWindow()}
     , m_provider{m_gui.widgetProvider}
     , m_settings{m_core.settingsManager}
-    , m_coverProvider{new CoverProvider(m_core.tagLoader, m_settings, this)}
+    , m_coverProvider{new CoverProvider(m_core.audioLoader, m_settings, this)}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
@@ -134,7 +134,8 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("PlaybackQueue"),
         [this]() {
-            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core.tagLoader, m_settings, m_window);
+            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core.audioLoader, m_settings,
+                                   m_window);
         },
         tr("Playback Queue"));
     m_provider->setLimit(QStringLiteral("PlaybackQueue"), 1);
@@ -181,7 +182,7 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("ArtworkPanel"),
         [this]() {
-            return new CoverWidget(m_core.playerController, m_gui.trackSelection, m_core.tagLoader, m_settings,
+            return new CoverWidget(m_core.playerController, m_gui.trackSelection, m_core.audioLoader, m_settings,
                                    m_window);
         },
         tr("Artwork Panel"));
@@ -218,7 +219,7 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("DirectoryBrowser"),
         [this]() {
-            auto* browser = new DirBrowser(m_core.tagLoader->supportedFileExtensions(), m_playlistInteractor,
+            auto* browser = new DirBrowser(m_core.audioLoader->supportedFileExtensions(), m_playlistInteractor,
                                            m_settings, m_window);
             QObject::connect(m_core.playerController, &PlayerController::playStateChanged, browser,
                              &DirBrowser::playstateChanged);

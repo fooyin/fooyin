@@ -124,10 +124,11 @@ IndexRangeList determineIndexGroups(const QModelIndexList& indexes)
 } // namespace
 
 namespace Fooyin {
-QueueViewerModel::QueueViewerModel(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
+QueueViewerModel::QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                                   QObject* parent)
     : TreeModel{parent}
     , m_settings{settings}
-    , m_coverProvider{std::move(tagLoader), settings}
+    , m_coverProvider{std::move(audioLoader), settings}
     , m_showIcon{m_settings->value<Settings::Gui::Internal::QueueViewerShowIcon>()}
     , m_iconSize{m_settings->value<Settings::Gui::Internal::QueueViewerIconSize>().toSize()}
 {

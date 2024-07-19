@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include <core/tagging/tagloader.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
 class ActionManager;
 class Command;
+class AudioLoader;
 class PlayerController;
 class PlaylistInteractor;
 class QueueViewerModel;
@@ -38,7 +38,8 @@ class QueueViewer : public FyWidget
 
 public:
     explicit QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                         std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent = nullptr);
+                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                         QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

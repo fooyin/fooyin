@@ -31,9 +31,9 @@ class QTimer;
 
 namespace Fooyin {
 class CoverProvider;
+class AudioLoader;
 class PlayerController;
 class SettingsManager;
-class TagLoader;
 class TrackSelectionController;
 
 class CoverWidget : public FyWidget
@@ -42,7 +42,8 @@ class CoverWidget : public FyWidget
 
 public:
     explicit CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
-                         std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent = nullptr);
+                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                         QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

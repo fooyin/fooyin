@@ -23,7 +23,7 @@
 #include "internalcoresettings.h"
 
 #include <core/engine/audioengine.h>
-#include <core/engine/decoderprovider.h>
+#include <core/engine/audioloader.h>
 #include <core/track.h>
 
 #include <QBasicTimer>
@@ -37,7 +37,7 @@ class AudioPlaybackEngine : public AudioEngine
     Q_OBJECT
 
 public:
-    explicit AudioPlaybackEngine(std::shared_ptr<DecoderProvider> decoderProvider, SettingsManager* settings,
+    explicit AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
                                  QObject* parent = nullptr);
     ~AudioPlaybackEngine() override;
 
@@ -77,8 +77,8 @@ private:
     void updatePosition();
     void onRendererFinished();
 
-    std::shared_ptr<DecoderProvider> m_decoderProvider;
-    std::unique_ptr<AudioDecoder> m_decoder;
+    std::shared_ptr<AudioLoader> m_decoderProvider;
+    AudioInput* m_decoder;
     SettingsManager* m_settings;
 
     AudioClock m_clock;

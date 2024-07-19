@@ -21,29 +21,32 @@
 
 #include "fycore_export.h"
 
-#include <core/tagging/tagparserplugin.h>
+#include <core/engine/audioinput.h>
+#include <core/engine/inputplugin.h>
 
 namespace Fooyin {
-class TagLoaderPrivate;
-class TagParser;
+class AudioLoaderPrivate;
 class Track;
 
-class FYCORE_EXPORT TagLoader final
+class FYCORE_EXPORT AudioLoader final
 {
 public:
-    TagLoader();
-    ~TagLoader();
+    AudioLoader();
+    ~AudioLoader();
 
     [[nodiscard]] QStringList supportedFileExtensions() const;
-    [[nodiscard]] bool canReadTrack(const Track& track) const;
-    [[nodiscard]] bool canReadTrackCover(const Track& track) const;
-    [[nodiscard]] bool canWriteTrack(const Track& track) const;
+    [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
-    [[nodiscard]] TagParser* parserForTrack(const Track& track) const;
+    [[nodiscard]] AudioInput* decoderForTrack(const Track& track) const;
+    [[nodiscard]] bool readTrackMetadata(Track& track) const;
+    [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
+    [[nodiscard]] bool writeTrackMetadata(const Track& track, const AudioInput::WriteOptions& options) const;
 
-    void addParser(const QString& name, std::unique_ptr<TagParser> parser);
+    void addDecoder(const QString& name, const InputCreator& creator);
+
+    void destroyThreadInstance();
 
 private:
-    std::unique_ptr<TagLoaderPrivate> p;
+    std::unique_ptr<AudioLoaderPrivate> p;
 };
 } // namespace Fooyin

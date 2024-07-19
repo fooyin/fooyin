@@ -17,24 +17,16 @@
  *
  */
 
-#pragma once
-
-#include <core/tagging/tagparser.h>
-
-#include <QtPlugin>
+#include <core/engine/audioinput.h>
 
 namespace Fooyin {
-/*!
- * An abstract interface for tag/metadata reader plugins.
- */
-class TagParserPlugin
+QByteArray AudioInput::readCover(const Track& /*track*/, Track::Cover /*cover*/)
 {
-public:
-    virtual ~TagParserPlugin() = default;
+    return {};
+}
 
-    [[nodiscard]] virtual QString parserName() const                = 0;
-    [[nodiscard]] virtual std::unique_ptr<TagParser> tagParser() const = 0;
-};
+bool AudioInput::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/)
+{
+    return false;
+}
 } // namespace Fooyin
-
-Q_DECLARE_INTERFACE(Fooyin::TagParserPlugin, "org.fooyin.fooyin.plugin.tagging.parser")

@@ -21,8 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/audioloader.h>
 #include <core/playlist/playlist.h>
-#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -38,7 +38,7 @@ class FYCORE_EXPORT PlaylistHandler : public QObject
     Q_OBJECT
 
 public:
-    explicit PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+    explicit PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                              PlayerController* playerController, SettingsManager* settings, QObject* parent = nullptr);
     ~PlaylistHandler() override;
 

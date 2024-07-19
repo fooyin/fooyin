@@ -31,7 +31,7 @@
 
 namespace Fooyin {
 class AudioBuffer;
-class DecoderProvider;
+class AudioLoader;
 class SettingsManager;
 
 namespace WaveBar {
@@ -40,7 +40,7 @@ class WaveformBuilder : public QObject
     Q_OBJECT
 
 public:
-    explicit WaveformBuilder(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
+    explicit WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, DbConnectionPoolPtr dbPool,
                              SettingsManager* settings, QObject* parent = nullptr);
     ~WaveformBuilder() override;
 

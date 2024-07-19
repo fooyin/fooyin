@@ -46,10 +46,11 @@ constexpr auto PositionInterval = 50;
 constexpr auto MaxDecodeLength = 200;
 
 namespace Fooyin {
-AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<DecoderProvider> decoderProvider, SettingsManager* settings,
+AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
                                          QObject* parent)
     : AudioEngine{parent}
     , m_decoderProvider{std::move(decoderProvider)}
+    , m_decoder{nullptr}
     , m_settings{settings}
     , m_status{TrackStatus::NoTrack}
     , m_state{PlaybackState::Stopped}
@@ -108,7 +109,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     const Track prevTrack = std::exchange(m_currentTrack, track);
 
     if(!m_decoder || !m_decoder->supportedExtensions().contains(track.extension())) {
-        m_decoder = m_decoderProvider->createDecoderForTrack(track);
+        m_decoder = m_decoderProvider->decoderForTrack(track);
         if(!m_decoder) {
             return;
         }

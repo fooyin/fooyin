@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include <core/tagging/tagloader.h>
+#include <core/engine/audioloader.h>
 #include <core/track.h>
 
 #include <QDir>
@@ -38,7 +38,7 @@ public:
         Relative
     };
 
-    explicit PlaylistParser(std::shared_ptr<TagLoader> tagLoader);
+    explicit PlaylistParser(std::shared_ptr<AudioLoader> audioLoader);
     virtual ~PlaylistParser() = default;
 
     [[nodiscard]] virtual QString name() const                    = 0;
@@ -56,6 +56,6 @@ protected:
     Track readMetadata(const Track& track);
 
 private:
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
 };
 } // namespace Fooyin

@@ -19,14 +19,13 @@
 
 #include "waveformbuilder.h"
 
-#include <core/engine/audiodecoder.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <utility>
 
 namespace Fooyin::WaveBar {
-WaveformBuilder::WaveformBuilder(std::shared_ptr<DecoderProvider> decoderProvider, DbConnectionPoolPtr dbPool,
+WaveformBuilder::WaveformBuilder(std::shared_ptr<AudioLoader> decoderProvider, DbConnectionPoolPtr dbPool,
                                  SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}

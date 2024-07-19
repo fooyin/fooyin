@@ -25,6 +25,7 @@
 #include <utils/worker.h>
 
 namespace Fooyin {
+class AudioLoader;
 class LibraryManager;
 class LibraryScannerPrivate;
 class PlaylistLoader;
@@ -42,7 +43,7 @@ class LibraryScanner : public Worker
 
 public:
     explicit LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                            std::shared_ptr<TagLoader> tagLoader, QObject* parent = nullptr);
+                            std::shared_ptr<AudioLoader> audioLoader, QObject* parent = nullptr);
     ~LibraryScanner() override;
 
     void initialiseThread() override;

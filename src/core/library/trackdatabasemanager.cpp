@@ -22,7 +22,7 @@
 #include "database/trackdatabase.h"
 
 #include <core/coresettings.h>
-#include <core/tagging/tagloader.h>
+#include <core/engine/audioloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/settings/settingsmanager.h>
@@ -30,11 +30,11 @@
 #include <QFileInfo>
 
 namespace Fooyin {
-TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<TagLoader> tagLoader,
+TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
                                            SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , m_dbPool{std::move(dbPool)}
-    , m_tagLoader{std::move(tagLoader)}
+    , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
 { }
 
@@ -56,7 +56,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
 {
     TrackList tracksUpdated;
 
-    TagParser::WriteOptions options;
+    AudioInput::WriteOptions options;
     options.writeRating    = m_settings->value<Settings::Core::SaveRatingToMetadata>();
     options.writePlaycount = m_settings->value<Settings::Core::SavePlaycountToMetadata>();
 
@@ -64,13 +64,13 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
         Track updatedTrack{track};
 
         if(write) {
-            if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
-                if(!parser->writeMetaData(updatedTrack, options)) {
-                    qWarning() << "Failed to write metadata to file:" << updatedTrack.filepath();
-                    continue;
-                }
+            if(m_audioLoader->writeTrackMetadata(updatedTrack, options)) {
                 const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+            }
+            else {
+                qWarning() << "Failed to write metadata to file:" << updatedTrack.filepath();
+                continue;
             }
         }
 
@@ -88,7 +88,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
 {
     TrackList tracksUpdated;
 
-    TagParser::WriteOptions options;
+    AudioInput::WriteOptions options;
     options.writeRating    = m_settings->value<Settings::Core::SaveRatingToMetadata>();
     options.writePlaycount = m_settings->value<Settings::Core::SavePlaycountToMetadata>();
 
@@ -98,9 +98,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
         Track updatedTrack{track};
         bool success{true};
         if(writeToFile) {
-            if(auto* parser = m_tagLoader->parserForTrack(updatedTrack)) {
-                success = parser->writeMetaData(updatedTrack, options);
-            }
+            success = m_audioLoader->writeTrackMetadata(updatedTrack, options);
         }
         if(success && m_trackDatabase.updateTrackStats(updatedTrack)) {
             const QDateTime modifiedTime = QFileInfo{updatedTrack.filepath()}.lastModified();

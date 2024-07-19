@@ -21,18 +21,16 @@
 
 #include "fycore_export.h"
 
-#include <core/tagging/tagparser.h>
+#include <core/engine/audioinput.h>
 
 namespace Fooyin {
-class FYCORE_EXPORT TagLibParser : public TagParser
+class FYCORE_EXPORT TagLibParser
 {
 public:
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] QStringList supportedExtensions() const;
 
-    [[nodiscard]] bool readMetaData(Track& track) const override;
-    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) const override;
-    [[nodiscard]] bool writeMetaData(const Track& track, const WriteOptions& options) const override;
+    [[nodiscard]] bool readMetaData(Track& track) const;
+    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) const;
+    [[nodiscard]] bool writeMetaData(const Track& track, const AudioInput::WriteOptions& options) const;
 };
 } // namespace Fooyin

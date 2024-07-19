@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/engine/audiodecoder.h>
+#include <core/engine/audioinput.h>
 
 #include <QtPlugin>
 
@@ -27,15 +27,14 @@ namespace Fooyin {
 /*!
  * An abstract interface for audio decoder plugins.
  */
-class DecoderPlugin
+class InputPlugin
 {
 public:
-    virtual ~DecoderPlugin() = default;
+    virtual ~InputPlugin() = default;
 
-    [[nodiscard]] virtual QString decoderName() const             = 0;
-    [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
-    [[nodiscard]] virtual DecoderCreator decoderCreator() const   = 0;
+    [[nodiscard]] virtual QString name() const                  = 0;
+    [[nodiscard]] virtual InputCreator decoderCreator() const = 0;
 };
 } // namespace Fooyin
 
-Q_DECLARE_INTERFACE(Fooyin::DecoderPlugin, "org.fooyin.fooyin.plugin.engine.decoder")
+Q_DECLARE_INTERFACE(Fooyin::InputPlugin, "org.fooyin.fooyin.plugin.engine.input")

@@ -21,11 +21,11 @@
 
 #include "fycore_export.h"
 
+#include <core/engine/audiobuffer.h>
 #include <core/track.h>
 
 namespace Fooyin {
-
-class FYCORE_EXPORT TagParser
+class FYCORE_EXPORT AudioInput
 {
 public:
     struct WriteOptions
@@ -34,14 +34,36 @@ public:
         bool writePlaycount{false};
     };
 
-    virtual ~TagParser() = default;
+    enum class Error : uint32_t
+    {
+        NoError,
+        ResourceError,
+        FormatError,
+        AccessDeniedError,
+        NotSupportedError
+    };
+
+    virtual ~AudioInput() = default;
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
     [[nodiscard]] virtual bool canReadCover() const               = 0;
     [[nodiscard]] virtual bool canWriteMetaData() const           = 0;
+    [[nodiscard]] virtual bool isSeekable() const                 = 0;
 
-    [[nodiscard]] virtual bool readMetaData(Track& track) const = 0;
-    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) const;
-    [[nodiscard]] virtual bool writeMetaData(const Track& track, const WriteOptions& options) const;
+    virtual bool init(const QString& source) = 0;
+    virtual void start()                     = 0;
+    virtual void stop()                      = 0;
+
+    virtual void seek(uint64_t pos) = 0;
+
+    virtual AudioBuffer readBuffer(size_t bytes) = 0;
+
+    [[nodiscard]] virtual bool readMetaData(Track& track) = 0;
+    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover);
+    [[nodiscard]] virtual bool writeMetaData(const Track& track, const WriteOptions& options);
+
+    [[nodiscard]] virtual AudioFormat format() const = 0;
+    [[nodiscard]] virtual Error error() const        = 0;
 };
+using InputCreator = std::function<std::unique_ptr<AudioInput>()>;
 } // namespace Fooyin

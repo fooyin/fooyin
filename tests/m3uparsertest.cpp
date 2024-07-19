@@ -30,12 +30,12 @@ class M3uParserTest : public ::testing::Test
 {
 public:
     M3uParserTest()
-        : m_tagLoader{std::make_shared<TagLoader>()}
-        , m_parser{std::make_unique<M3uParser>(m_tagLoader)}
+        : m_audioLoader{std::make_shared<AudioLoader>()}
+        , m_parser{std::make_unique<M3uParser>(m_audioLoader)}
     { }
 
 protected:
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     std::unique_ptr<PlaylistParser> m_parser;
 };
 

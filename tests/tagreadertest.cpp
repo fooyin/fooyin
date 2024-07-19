@@ -19,8 +19,7 @@
 
 #include "testutils.h"
 
-#include "core/tagging/taglibparser.h"
-
+#include <core/engine/taglibparser.h>
 #include <core/track.h>
 
 #include <gtest/gtest.h>
@@ -30,7 +29,7 @@ namespace Fooyin::Testing {
 class TagReaderTest : public ::testing::Test
 {
 protected:
-    std::unique_ptr<TagParser> m_tagParser{std::make_unique<TagLibParser>()};
+    TagLibParser m_tagParser;
 };
 
 TEST_F(TagReaderTest, AiffRead)
@@ -39,7 +38,7 @@ TEST_F(TagReaderTest, AiffRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("AIFF"));
     EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
@@ -68,7 +67,7 @@ TEST_F(TagReaderTest, FlacRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("FLAC"));
     EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
@@ -97,7 +96,7 @@ TEST_F(TagReaderTest, M4aRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("AAC"));
     EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
@@ -125,7 +124,7 @@ TEST_F(TagReaderTest, Mp3Read)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("MP3"));
     EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
@@ -154,7 +153,7 @@ TEST_F(TagReaderTest, OggRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("Vorbis"));
     EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
@@ -183,7 +182,7 @@ TEST_F(TagReaderTest, OpusRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("Opus"));
     EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
@@ -212,7 +211,7 @@ TEST_F(TagReaderTest, WavRead)
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_tagParser->readMetaData(track));
+    ASSERT_TRUE(m_tagParser.readMetaData(track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("WAV"));
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));

@@ -529,7 +529,7 @@ void Track::setFilePath(const QString& path)
     if(!path.isEmpty()) {
         const QFileInfo fileInfo{path};
         p->filename  = fileInfo.completeBaseName();
-        p->extension = fileInfo.suffix();
+        p->extension = fileInfo.suffix().toLower();
         p->directory = fileInfo.dir().dirName();
     }
 }

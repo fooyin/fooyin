@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,41 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
-#include <core/tagging/tagparser.h>
+#include <core/engine/audioinput.h>
 
 namespace Fooyin {
-class FYCORE_EXPORT FFmpegParser : public TagParser
+class AudioFormat;
+class AudioBuffer;
+class FFmpegInputPrivate;
+
+class FFmpegInput : public AudioInput
 {
 public:
+    FFmpegInput();
+    ~FFmpegInput() override;
+
     [[nodiscard]] QStringList supportedExtensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    [[nodiscard]] bool readMetaData(Track& track) const override;
-    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) const override;
-    [[nodiscard]] bool writeMetaData(const Track& track, const WriteOptions& options) const override;
+    bool init(const QString& source) override;
+
+    void start() override;
+    void stop() override;
+
+    [[nodiscard]] bool isSeekable() const override;
+    void seek(uint64_t pos) override;
+
+    AudioBuffer readBuffer(size_t bytes) override;
+
+    [[nodiscard]] bool readMetaData(Track& track) override;
+    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
+    [[nodiscard]] bool writeMetaData(const Track& track, const WriteOptions& options) override;
+
+    [[nodiscard]] AudioFormat format() const override;
+    [[nodiscard]] Error error() const override;
+
+private:
+    std::unique_ptr<FFmpegInputPrivate> p;
 };
 } // namespace Fooyin

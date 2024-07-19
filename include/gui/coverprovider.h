@@ -33,8 +33,8 @@ class QSize;
 
 namespace Fooyin {
 class CoverProviderPrivate;
+class AudioLoader;
 class SettingsManager;
-class TagLoader;
 
 /*!
  * Provides access to track album artwork.
@@ -57,7 +57,8 @@ public:
         Huge        = 1024
     };
 
-    explicit CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent = nullptr);
+    explicit CoverProvider(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
+                           QObject* parent = nullptr);
     ~CoverProvider() override;
 
     /*!

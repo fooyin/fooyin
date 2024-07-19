@@ -123,7 +123,7 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, const C
     , m_libraryManager{core.libraryManager}
     , m_trackSelection{trackSelection}
     , m_editableLayout{editableLayout}
-    , m_coverProvider{core.tagLoader, settings}
+    , m_coverProvider{core.audioLoader, settings}
     , m_settings{settings}
     , m_manager{new FilterManager(m_self, m_editableLayout, m_self)}
     , m_columnRegistry{new FilterColumnRegistry(settings, m_self)}

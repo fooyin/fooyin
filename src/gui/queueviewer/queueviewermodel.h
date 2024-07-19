@@ -23,7 +23,6 @@
 
 #include <core/player/playbackqueue.h>
 #include <core/scripting/scriptparser.h>
-#include <core/tagging/tagloader.h>
 #include <gui/coverprovider.h>
 #include <utils/treemodel.h>
 
@@ -35,7 +34,7 @@ class QueueViewerModel : public TreeModel<QueueViewerItem>
     Q_OBJECT
 
 public:
-    explicit QueueViewerModel(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
+    explicit QueueViewerModel(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                               QObject* parent = nullptr);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

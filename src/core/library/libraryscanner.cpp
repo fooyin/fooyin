@@ -26,7 +26,6 @@
 #include <core/library/libraryinfo.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistparser.h>
-#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
@@ -191,11 +190,11 @@ class LibraryScannerPrivate
 {
 public:
     LibraryScannerPrivate(LibraryScanner* self, DbConnectionPoolPtr dbPool,
-                          std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader)
+                          std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader)
         : m_self{self}
         , m_dbPool{std::move(dbPool)}
         , m_playlistLoader{std::move(playlistLoader)}
-        , m_tagLoader{std::move(tagLoader)}
+        , m_audioLoader{std::move(audioLoader)}
     { }
 
     void cleanupScan();
@@ -235,7 +234,7 @@ public:
 
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
 
     std::unique_ptr<DbConnectionHandler> m_dbHandler;
 
@@ -359,12 +358,9 @@ void LibraryScannerPrivate::readFileProperties(Track& track)
 
 bool LibraryScannerPrivate::readTrackMetadata(Track& track) const
 {
-    if(auto* tagParser = m_tagLoader->parserForTrack(track)) {
-        if(tagParser->readMetaData(track)) {
-            track.generateHash();
-            return true;
-        }
-        qDebug() << "Failed to read metadata for" << track.filepath();
+    if(m_audioLoader->readTrackMetadata(track)) {
+        track.generateHash();
+        return true;
     }
 
     qDebug() << "Unsupported file:" << track.filepath();
@@ -622,7 +618,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
 
     reportProgress();
 
-    const auto dirs   = getDirectories(path, Utils::extensionsToWildcards(m_tagLoader->supportedFileExtensions()));
+    const auto dirs   = getDirectories(path, Utils::extensionsToWildcards(m_audioLoader->supportedFileExtensions()));
     m_tracksProcessed = 0;
     m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
         return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
@@ -676,10 +672,10 @@ void LibraryScannerPrivate::changeLibraryStatus(LibraryInfo::Status status)
 }
 
 LibraryScanner::LibraryScanner(DbConnectionPoolPtr dbPool, std::shared_ptr<PlaylistLoader> playlistLoader,
-                               std::shared_ptr<TagLoader> tagLoader, QObject* parent)
+                               std::shared_ptr<AudioLoader> audioLoader, QObject* parent)
     : Worker{parent}
     , p{std::make_unique<LibraryScannerPrivate>(this, std::move(dbPool), std::move(playlistLoader),
-                                                std::move(tagLoader))}
+                                                std::move(audioLoader))}
 { }
 
 LibraryScanner::~LibraryScanner() = default;
@@ -815,16 +811,14 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
 
         Track updatedTrack{track.filepath()};
 
-        if(auto* parser = p->m_tagLoader->parserForTrack(updatedTrack)) {
-            if(parser->readMetaData(updatedTrack)) {
-                updatedTrack.setId(track.id());
-                updatedTrack.setLibraryId(track.libraryId());
-                updatedTrack.setAddedTime(track.addedTime());
-                p->readFileProperties(updatedTrack);
-                updatedTrack.generateHash();
+        if(p->m_audioLoader->readTrackMetadata(updatedTrack)) {
+            updatedTrack.setId(track.id());
+            updatedTrack.setLibraryId(track.libraryId());
+            updatedTrack.setAddedTime(track.addedTime());
+            p->readFileProperties(updatedTrack);
+            updatedTrack.generateHash();
 
-                tracksToUpdate.push_back(updatedTrack);
-            }
+            tracksToUpdate.push_back(updatedTrack);
         }
 
         p->fileScanned();
@@ -863,7 +857,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     };
 
     const LibraryDirectories dirs
-        = getDirectories(urls, Utils::extensionsToWildcards(p->m_tagLoader->supportedFileExtensions()));
+        = getDirectories(urls, Utils::extensionsToWildcards(p->m_audioLoader->supportedFileExtensions()));
 
     p->m_totalTracks = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
         return sum + dir.files.size() + dir.playlists.size();

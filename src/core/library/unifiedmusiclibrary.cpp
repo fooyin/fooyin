@@ -41,8 +41,8 @@ class UnifiedMusicLibraryPrivate
 {
 public:
     UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
-                               std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
-                               SettingsManager* settings);
+                               std::shared_ptr<PlaylistLoader> playlistLoader,
+                               std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
 
     void loadTracks(const TrackList& trackToLoad);
     QFuture<void> addTracks(const TrackList& newTracks);
@@ -77,12 +77,13 @@ public:
 UnifiedMusicLibraryPrivate::UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager,
                                                        DbConnectionPoolPtr dbPool,
                                                        std::shared_ptr<PlaylistLoader> playlistLoader,
-                                                       std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings)
+                                                       std::shared_ptr<AudioLoader> audioLoader,
+                                                       SettingsManager* settings)
     : m_self{self}
     , m_libraryManager{libraryManager}
     , m_dbPool{std::move(dbPool)}
     , m_settings{settings}
-    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(tagLoader), m_settings}
+    , m_threadHandler{m_dbPool, m_self, std::move(playlistLoader), std::move(audioLoader), m_settings}
     , m_sorter{m_libraryManager}
 {
     m_settings->subscribe<Settings::Core::LibrarySortScript>(m_self, [this](const QString& sort) { changeSort(sort); });
@@ -249,11 +250,11 @@ void UnifiedMusicLibraryPrivate::handleTracksLoaded()
 
 UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
                                          std::shared_ptr<PlaylistLoader> playlistLoader,
-                                         std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
+                                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                                          QObject* parent)
     : MusicLibrary{parent}
     , p{std::make_unique<UnifiedMusicLibraryPrivate>(this, libraryManager, std::move(dbPool), std::move(playlistLoader),
-                                                     std::move(tagLoader), settings)}
+                                                     std::move(audioLoader), settings)}
 {
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAdded, this, &MusicLibrary::rescan);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, this,

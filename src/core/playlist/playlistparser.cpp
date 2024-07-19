@@ -24,8 +24,8 @@
 #include <QUrl>
 
 namespace Fooyin {
-PlaylistParser::PlaylistParser(std::shared_ptr<TagLoader> tagLoader)
-    : m_tagLoader{std::move(tagLoader)}
+PlaylistParser::PlaylistParser(std::shared_ptr<AudioLoader> audioLoader)
+    : m_audioLoader{std::move(audioLoader)}
 { }
 
 void Fooyin::PlaylistParser::savePlaylist(QIODevice* /*device*/, const QString& /*extension*/,
@@ -72,22 +72,20 @@ void PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
 
 Track PlaylistParser::readMetadata(const Track& track)
 {
-    if(auto* parser = m_tagLoader->parserForTrack(track)) {
-        Track readTrack{track};
-        if(parser->readMetaData(readTrack)) {
-            const QFileInfo fileInfo{track.filepath()};
-            readTrack.setFileSize(fileInfo.size());
+    Track readTrack{track};
 
-            readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-            const QDateTime modifiedTime = fileInfo.lastModified();
-            readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+    if(m_audioLoader->readTrackMetadata(readTrack)) {
+        const QFileInfo fileInfo{track.filepath()};
+        readTrack.setFileSize(fileInfo.size());
 
-            readTrack.generateHash();
-            return readTrack;
-        }
+        readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+        const QDateTime modifiedTime = fileInfo.lastModified();
+        readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+
+        readTrack.generateHash();
     }
 
-    return track;
+    return readTrack;
 }
 
 } // namespace Fooyin

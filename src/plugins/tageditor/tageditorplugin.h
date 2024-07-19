@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <core/track.h>
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
+#include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::TagEditor {
@@ -39,13 +39,14 @@ class TagEditorPlugin : public QObject,
 public:
     void initialise(const CorePluginContext& context) override;
     void initialise(const GuiPluginContext& context) override;
+    void shutdown() override;
 
 private:
     TagEditorWidget* createEditor(const TrackList& tracks);
 
     ActionManager* m_actionManager;
     MusicLibrary* m_library;
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     TrackSelectionController* m_trackSelection;
     PropertiesDialog* m_propertiesDialog;
     WidgetProvider* m_widgetProvider;

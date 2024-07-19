@@ -608,7 +608,8 @@ void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
 
 void GuiApplicationPrivate::addFiles() const
 {
-    const QString audioExtensions = Utils::extensionsToWildcards(core.tagLoader->supportedFileExtensions()).join(u" ");
+    const QString audioExtensions
+        = Utils::extensionsToWildcards(core.audioLoader->supportedFileExtensions()).join(u" ");
     const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(u" ");
     const QString allExtensions      = QStringLiteral("%1 %2").arg(audioExtensions, playlistExtensions);
 

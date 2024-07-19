@@ -55,8 +55,8 @@ class LibraryThreadHandlerPrivate
 {
 public:
     LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool, MusicLibrary* library,
-                                std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<TagLoader> tagLoader,
-                                SettingsManager* settings);
+                                std::shared_ptr<PlaylistLoader> playlistLoader,
+                                std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
 
     void scanLibrary(const LibraryScanRequest& request);
     void scanTracks(const LibraryScanRequest& request);
@@ -92,14 +92,14 @@ public:
 LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool,
                                                          MusicLibrary* library,
                                                          std::shared_ptr<PlaylistLoader> playlistLoader,
-                                                         std::shared_ptr<TagLoader> tagLoader,
+                                                         std::shared_ptr<AudioLoader> audioLoader,
                                                          SettingsManager* settings)
     : m_self{self}
     , m_dbPool{std::move(dbPool)}
     , m_library{library}
     , m_settings{settings}
-    , m_scanner{m_dbPool, std::move(playlistLoader), tagLoader}
-    , m_trackDatabaseManager{m_dbPool, tagLoader, m_settings}
+    , m_scanner{m_dbPool, std::move(playlistLoader), audioLoader}
+    , m_trackDatabaseManager{m_dbPool, audioLoader, m_settings}
 {
     m_scanner.setMonitorLibraries(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
 
@@ -328,11 +328,11 @@ void LibraryThreadHandlerPrivate::cancelScanRequest(int id)
 
 LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibrary* library,
                                            std::shared_ptr<PlaylistLoader> playlistLoader,
-                                           std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings,
+                                           std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                                            QObject* parent)
     : QObject{parent}
     , p{std::make_unique<LibraryThreadHandlerPrivate>(this, std::move(dbPool), library, std::move(playlistLoader),
-                                                      std::move(tagLoader), settings)}
+                                                      std::move(audioLoader), settings)}
 {
     QObject::connect(&p->m_trackDatabaseManager, &TrackDatabaseManager::gotTracks, this,
                      &LibraryThreadHandler::gotTracks);

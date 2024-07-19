@@ -44,14 +44,14 @@
 
 namespace Fooyin {
 QueueViewer::QueueViewer(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                         std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QWidget* parent)
+                         std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
     , m_playerController{m_playlistInteractor->playerController()}
     , m_settings{settings}
     , m_view{new QueueViewerView(this)}
-    , m_model{new QueueViewerModel(std::move(tagLoader), settings, this)}
+    , m_model{new QueueViewerModel(std::move(audioLoader), settings, this)}
     , m_context{new WidgetContext(this, Context{Id{"Context.QueueViewer."}.append(Utils::generateUniqueHash())}, this)}
     , m_remove{new QAction(tr("Remove"), this)}
     , m_removeCmd{actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}

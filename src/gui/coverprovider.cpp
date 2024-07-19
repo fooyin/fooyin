@@ -21,8 +21,8 @@
 
 #include "internalguisettings.h"
 
+#include <core/engine/audioloader.h>
 #include <core/scripting/scriptparser.h>
-#include <core/tagging/tagloader.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
 #include <gui/guipaths.h>
@@ -209,7 +209,7 @@ struct CoverLoader
     QString key;
     Fooyin::Track track;
     Fooyin::Track::Cover type;
-    std::shared_ptr<Fooyin::TagLoader> tagLoader;
+    std::shared_ptr<Fooyin::AudioLoader> audioLoader;
     Fooyin::CoverPaths paths;
     bool isThumb{false};
     CoverProvider::ThumbnailSize size{CoverProvider::None};
@@ -233,12 +233,7 @@ QImage loadImageFromDirectory(CoverLoader& loader)
 
 QImage loadImageFromEmbedded(const CoverLoader& loader, const QString& cachePath)
 {
-    auto* tagParser = loader.tagLoader->parserForTrack(loader.track);
-    if(!tagParser) {
-        return {};
-    }
-
-    const QByteArray coverData = tagParser->readCover(loader.track, loader.type);
+    const QByteArray coverData = loader.audioLoader->readTrackCover(loader.track, loader.type);
     if(coverData.isEmpty()) {
         return {};
     }
@@ -282,7 +277,8 @@ namespace Fooyin {
 class CoverProviderPrivate
 {
 public:
-    explicit CoverProviderPrivate(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings);
+    explicit CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
+                                  SettingsManager* settings);
 
     QPixmap loadNoCover();
     void processCoverResult(const CoverLoader& loader);
@@ -290,7 +286,7 @@ public:
                     CoverProvider::ThumbnailSize size = CoverProvider::None);
 
     CoverProvider* m_self;
-    std::shared_ptr<TagLoader> m_tagLoader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     SettingsManager* m_settings;
 
     bool m_usePlacerholder{true};
@@ -301,10 +297,10 @@ public:
     CoverPaths m_paths;
 };
 
-CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<TagLoader> tagLoader,
+CoverProviderPrivate::CoverProviderPrivate(CoverProvider* self, std::shared_ptr<AudioLoader> audioLoader,
                                            SettingsManager* settings)
     : m_self{self}
-    , m_tagLoader{std::move(tagLoader)}
+    , m_audioLoader{std::move(audioLoader)}
     , m_settings{settings}
     , m_paths{m_settings->value<Settings::Gui::Internal::TrackCoverPaths>().value<CoverPaths>()}
 {
@@ -351,21 +347,26 @@ void CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Tr
                                       CoverProvider::ThumbnailSize size)
 {
     CoverLoader loader;
-    loader.key       = key;
-    loader.track     = track;
-    loader.type      = type;
-    loader.tagLoader = m_tagLoader;
-    loader.paths     = m_paths;
-    loader.isThumb   = thumbnail;
-    loader.size      = size;
+    loader.key           = key;
+    loader.track         = track;
+    loader.type          = type;
+    loader.audioLoader = m_audioLoader;
+    loader.paths         = m_paths;
+    loader.isThumb       = thumbnail;
+    loader.size          = size;
 
-    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader { return loadCoverImage(loader); });
+    auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
+        auto result = loadCoverImage(loader);
+        // Make sure we destroy instance before thread quits
+        loader.audioLoader->destroyThreadInstance();
+        return result;
+    });
     loaderResult.then(m_self, [this, key, track](const CoverLoader& result) { processCoverResult(result); });
 }
 
-CoverProvider::CoverProvider(std::shared_ptr<TagLoader> tagLoader, SettingsManager* settings, QObject* parent)
+CoverProvider::CoverProvider(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings, QObject* parent)
     : QObject{parent}
-    , p{std::make_unique<CoverProviderPrivate>(this, std::move(tagLoader), settings)}
+    , p{std::make_unique<CoverProviderPrivate>(this, std::move(audioLoader), settings)}
 { }
 
 CoverProvider::~CoverProvider() = default;

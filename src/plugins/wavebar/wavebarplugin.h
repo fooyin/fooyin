@@ -57,7 +57,7 @@ private:
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
-    std::shared_ptr<DecoderProvider> m_decoderProvider;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
