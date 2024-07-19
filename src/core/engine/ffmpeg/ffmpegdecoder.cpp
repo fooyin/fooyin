@@ -299,7 +299,7 @@ int FFmpegDecoderPrivate::sendAVPacket(const PacketPtr& packet) const
 int FFmpegDecoderPrivate::receiveAVFrames()
 {
     if(hasError() || !m_isDecoding) {
-        return 0;
+        return -1;
     }
 
     const Frame frame{m_timeBase};
@@ -316,7 +316,8 @@ int FFmpegDecoderPrivate::receiveAVFrames()
     }
 
     if(result < 0) {
-        Utils::printError(QStringLiteral("Error receiving decoded frame"));
+        Utils::printError(result);
+        m_error = AudioDecoder::Error::ResourceError;
         return result;
     }
 
@@ -467,7 +468,7 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
         return {};
     }
 
-    if(!p->m_buffer.isValid()) {
+    while(!p->m_buffer.isValid() && !p->m_eof && !p->hasError()) {
         p->readNext();
     }
 
