@@ -19,8 +19,7 @@
 
 #pragma once
 
-#include "library/libraryinfo.h"
-
+#include <core/library/libraryinfo.h>
 #include <utils/database/dbmodule.h>
 
 namespace Fooyin {

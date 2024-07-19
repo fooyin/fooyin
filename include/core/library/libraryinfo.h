@@ -37,7 +37,7 @@ public:
         Pending,
         Initialised,
         Scanning,
-        Monitoring,
+        Monitoring
     };
     Q_ENUM(Status)
 

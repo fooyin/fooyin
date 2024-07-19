@@ -20,7 +20,6 @@
 #include "librarythreadhandler.h"
 
 #include "internalcoresettings.h"
-#include "library/libraryinfo.h"
 #include "libraryscanner.h"
 #include "trackdatabasemanager.h"
 
@@ -289,8 +288,12 @@ void LibraryThreadHandlerPrivate::updateProgress(int current, int total)
     progress.id      = m_currentRequestId;
     progress.total   = total;
     progress.current = current;
+
     if(!m_scanRequests.empty()) {
-        progress.type = m_scanRequests.front().type;
+        const auto& request = m_scanRequests.front();
+
+        progress.type = request.type;
+        progress.info = request.library;
     }
 
     emit m_self->progressChanged(progress);

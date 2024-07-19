@@ -11,6 +11,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/decoderprovider.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/enginecontroller.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
+    ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
     ${CMAKE_SOURCE_DIR}/include/core/library/trackfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
@@ -72,7 +73,6 @@ set(SOURCES
     engine/ffmpeg/ffmpegstream.h
     engine/ffmpeg/ffmpegutils.cpp
     engine/ffmpeg/ffmpegutils.h
-    library/libraryinfo.h
     library/librarymanager.cpp
     library/librarymanager.h
     library/libraryscanner.cpp

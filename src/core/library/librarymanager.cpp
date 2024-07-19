@@ -21,7 +21,6 @@
 
 #include "database/librarydatabase.h"
 #include "database/trackdatabase.h"
-#include "libraryinfo.h"
 
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionprovider.h>

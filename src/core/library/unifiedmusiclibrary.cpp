@@ -20,11 +20,11 @@
 #include "unifiedmusiclibrary.h"
 
 #include "internalcoresettings.h"
-#include "library/libraryinfo.h"
 #include "library/librarymanager.h"
 #include "librarythreadhandler.h"
 
 #include <core/coresettings.h>
+#include <core/library/libraryinfo.h>
 #include <core/library/tracksort.h>
 #include <utils/async.h>
 #include <utils/fileutils.h>

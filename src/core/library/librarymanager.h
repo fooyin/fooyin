@@ -21,8 +21,7 @@
 
 #include "fycore_export.h"
 
-#include "libraryinfo.h"
-
+#include <core/library/libraryinfo.h>
 #include <utils/database/dbconnectionpool.h>
 
 #include <QObject>

@@ -21,13 +21,12 @@
 
 #include "fycore_export.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/track.h>
 
 #include <QObject>
 
 namespace Fooyin {
-struct LibraryInfo;
-
 /*!
  * There are three types of scan request:
  * - Files: Scans a list of files; emits tracksScanned when finished.
@@ -52,6 +51,7 @@ struct ScanRequest
 struct ScanProgress
 {
     ScanRequest::Type type;
+    LibraryInfo info;
     int id{-1};
     int total{0};
     int current{0};

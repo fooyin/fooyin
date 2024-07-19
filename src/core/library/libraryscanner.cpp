@@ -20,10 +20,10 @@
 #include "libraryscanner.h"
 
 #include "database/trackdatabase.h"
-#include "library/libraryinfo.h"
 #include "librarywatcher.h"
 #include "playlist/playlistloader.h"
 
+#include <core/library/libraryinfo.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistparser.h>
 #include <core/tagging/tagloader.h>
