@@ -30,6 +30,6 @@ class ShortcutsPage : public SettingsPage
     Q_OBJECT
 
 public:
-    ShortcutsPage(ActionManager* actionManager, SettingsManager* settings);
+    ShortcutsPage(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

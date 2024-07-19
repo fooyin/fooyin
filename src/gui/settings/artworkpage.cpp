@@ -150,8 +150,8 @@ void ArtworkPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PixmapCacheSize>();
 }
 
-ArtworkPage::ArtworkPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+ArtworkPage::ArtworkPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Artwork);
     setName(tr("Artwork"));

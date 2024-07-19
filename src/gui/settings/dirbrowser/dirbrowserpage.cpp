@@ -210,8 +210,8 @@ void DirBrowserPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::DirBrowserLocation>();
 }
 
-DirBrowserPage::DirBrowserPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+DirBrowserPage::DirBrowserPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::DirBrowser);
     setName(tr("General"));

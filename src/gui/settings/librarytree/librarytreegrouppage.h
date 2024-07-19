@@ -32,6 +32,6 @@ class LibraryTreeGroupPage : public SettingsPage
 
 public:
     LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                         SettingsManager* settings);
+                         SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

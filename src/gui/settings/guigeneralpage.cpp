@@ -343,8 +343,8 @@ void GuiGeneralPageWidget::exportLayout()
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
-                               SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                               SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::InterfaceGeneral);
     setName(tr("General"));

@@ -31,7 +31,7 @@ class TabStackWidget : public WidgetContainer
     Q_OBJECT
 
 public:
-    explicit TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
+    TabStackWidget(WidgetProvider* widgetProvider, SettingsManager* settings, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

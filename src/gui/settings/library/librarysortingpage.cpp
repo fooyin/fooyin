@@ -118,8 +118,8 @@ void LibrarySortingPageWidget::reset()
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry,
-                                       SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                                       SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibrarySorting);
     setName(tr("Sorting"));

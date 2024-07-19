@@ -110,8 +110,8 @@ void StatusWidgetPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::StatusSelectionScript>();
 }
 
-StatusWidgetPage::StatusWidgetPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+StatusWidgetPage::StatusWidgetPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::StatusWidget);
     setName(tr("General"));

@@ -29,6 +29,6 @@ class ArtworkPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit ArtworkPage(SettingsManager* settings);
+    explicit ArtworkPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

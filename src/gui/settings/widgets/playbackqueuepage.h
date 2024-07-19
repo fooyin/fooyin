@@ -29,6 +29,6 @@ class PlaybackQueuePage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit PlaybackQueuePage(SettingsManager* settings);
+    explicit PlaybackQueuePage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

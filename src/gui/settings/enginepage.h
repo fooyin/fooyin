@@ -30,6 +30,6 @@ class EnginePage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit EnginePage(SettingsManager* settings, EngineController* engineHandler);
+    explicit EnginePage(EngineController* engine, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

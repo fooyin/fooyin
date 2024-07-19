@@ -40,7 +40,7 @@ class EnginePageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit EnginePageWidget(SettingsManager* settings, EngineController* engine);
+    explicit EnginePageWidget(EngineController* engine, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -50,8 +50,8 @@ public:
     void setupDevices(const QString& output);
 
 private:
-    SettingsManager* m_settings;
     EngineController* m_engine;
+    SettingsManager* m_settings;
 
     ExpandingComboBox* m_outputBox;
     ExpandingComboBox* m_deviceBox;
@@ -66,9 +66,9 @@ private:
     // QSpinBox* m_fadingSeekOut;
 };
 
-EnginePageWidget::EnginePageWidget(SettingsManager* settings, EngineController* engine)
-    : m_settings{settings}
-    , m_engine{engine}
+EnginePageWidget::EnginePageWidget(EngineController* engine, SettingsManager* settings)
+    : m_engine{engine}
+    , m_settings{settings}
     , m_outputBox{new ExpandingComboBox(this)}
     , m_deviceBox{new ExpandingComboBox(this)}
     , m_gaplessPlayback{new QCheckBox(tr("Gapless playback"), this)}
@@ -252,13 +252,13 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->resizeToFitCurrent();
 }
 
-EnginePage::EnginePage(SettingsManager* settings, EngineController* engine)
-    : SettingsPage{settings->settingsDialog()}
+EnginePage::EnginePage(EngineController* engine, SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Engine);
     setName(tr("Engine"));
     setCategory({tr("Engine")});
-    setWidgetCreator([settings, engine] { return new EnginePageWidget(settings, engine); });
+    setWidgetCreator([engine, settings] { return new EnginePageWidget(engine, settings); });
 }
 } // namespace Fooyin
 

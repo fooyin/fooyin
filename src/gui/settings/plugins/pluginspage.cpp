@@ -170,8 +170,8 @@ void PluginPageWidget::installPlugin()
     }
 }
 
-PluginPage::PluginPage(SettingsManager* settings, PluginManager* pluginManager)
-    : SettingsPage{settings->settingsDialog()}
+PluginPage::PluginPage(PluginManager* pluginManager, SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Plugins);
     setName(tr("General"));

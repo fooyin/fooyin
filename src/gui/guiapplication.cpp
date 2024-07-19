@@ -18,19 +18,7 @@
  */
 
 #include "guiapplication.h"
-
-#include "controls/playercontrol.h"
-#include "controls/playlistcontrol.h"
-#include "controls/seekbar.h"
-#include "controls/volumecontrol.h"
-#include "core/application.h"
-#include "core/corepaths.h"
-#include "core/internalcoresettings.h"
-#include "dirbrowser/dirbrowser.h"
-#include "info/infowidget.h"
 #include "internalguisettings.h"
-#include "librarytree/librarytreecontroller.h"
-#include "librarytree/librarytreewidget.h"
 #include "mainwindow.h"
 #include "menubar/editmenu.h"
 #include "menubar/filemenu.h"
@@ -39,44 +27,18 @@
 #include "menubar/mainmenubar.h"
 #include "menubar/playbackmenu.h"
 #include "menubar/viewmenu.h"
-#include "playlist/organiser/playlistorganiser.h"
-#include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
-#include "playlist/playlisttabs.h"
-#include "playlist/playlistwidget.h"
-#include "queueviewer/queueviewer.h"
 #include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
-#include "search/searchwidget.h"
-#include "settings/artworkpage.h"
-#include "settings/dirbrowser/dirbrowserpage.h"
-#include "settings/enginepage.h"
-#include "settings/generalpage.h"
-#include "settings/guigeneralpage.h"
-#include "settings/library/librarygeneralpage.h"
-#include "settings/library/librarysortingpage.h"
-#include "settings/librarytree/librarytreegrouppage.h"
-#include "settings/librarytree/librarytreepage.h"
-#include "settings/playbackpage.h"
-#include "settings/playlist/playlistcolumnpage.h"
-#include "settings/playlist/playlistgeneralpage.h"
-#include "settings/playlist/playlistpresetspage.h"
-#include "settings/plugins/pluginspage.h"
-#include "settings/shortcuts/shortcutspage.h"
-#include "settings/widgets/playbackqueuepage.h"
-#include "settings/widgets/statuswidgetpage.h"
 #include "systemtrayicon.h"
-#include "widgets/coverwidget.h"
-#include "widgets/dummy.h"
-#include "widgets/lyricswidget.h"
-#include "widgets/spacer.h"
-#include "widgets/splitterwidget.h"
-#include "widgets/statuswidget.h"
-#include "widgets/tabstackwidget.h"
+#include "widgets.h"
 
+#include <core/application.h>
+#include <core/corepaths.h>
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
+#include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
 #include <core/playlist/playlisthandler.h>
@@ -137,13 +99,9 @@ public:
 
     void restoreIconTheme() const;
     void registerLayouts();
-    void registerWidgets();
-
-    void createPropertiesTabs() const;
 
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
-    void showScanProgress(const ScanProgress& progress) const;
     void showTrackNotFoundMessage(const Track& track) const;
 
     void addFiles() const;
@@ -171,7 +129,6 @@ public:
     PlaylistInteractor playlistInteractor;
     TrackSelectionController selectionController;
     SearchController* searchController;
-    LibraryTreeController* libraryTreeController;
 
     FileMenu* fileMenu;
     EditMenu* editMenu;
@@ -182,30 +139,11 @@ public:
 
     PropertiesDialog* propertiesDialog;
     WindowController* windowController;
-    StatusWidget* statusWidget{nullptr};
-
-    GeneralPage generalPage;
-    GuiGeneralPage guiGeneralPage;
-    ArtworkPage artworkPage;
-    LibraryGeneralPage libraryGeneralPage;
-    LibrarySortingPage librarySortingPage;
-    ShortcutsPage shortcutsPage;
-    PlaylistGeneralPage playlistGeneralPage;
-    PlaylistPresetsPage playlistPresetsPage;
-    PlaylistColumnPage playlistColumnPage;
-    PlaybackPage playbackPage;
-    EnginePage enginePage;
-    DirBrowserPage dirBrowserPage;
-    LibraryTreePage libraryTreePage;
-    LibraryTreeGroupPage libraryTreeGroupPage;
-    PlaybackQueuePage playbackQueuePage;
-    StatusWidgetPage statusWidgetPage;
-    PluginPage pluginPage;
 
     GuiPluginContext guiPluginContext;
 
+    Widgets* widgets;
     ScriptParser scriptParser;
-    CoverProvider coverProvider;
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginContext core_)
@@ -223,7 +161,6 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     , playlistInteractor{core.playlistHandler, playlistController.get(), core.library}
     , selectionController{actionManager, settings, playlistController.get()}
     , searchController{new SearchController(editableLayout.get(), self)}
-    , libraryTreeController{new LibraryTreeController(settings, self)}
     , fileMenu{new FileMenu(actionManager, settings, self)}
     , editMenu{new EditMenu(actionManager, settings, self)}
     , viewMenu{new ViewMenu(actionManager, settings, self)}
@@ -232,26 +169,9 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     , helpMenu{new HelpMenu(actionManager, self)}
     , propertiesDialog{new PropertiesDialog(settings, self)}
     , windowController{new WindowController(mainWindow.get())}
-    , generalPage{settings}
-    , guiGeneralPage{&layoutProvider, editableLayout.get(), settings}
-    , artworkPage{settings}
-    , libraryGeneralPage{actionManager, core.libraryManager, core.library, settings}
-    , librarySortingPage{actionManager, core.sortingRegistry, settings}
-    , shortcutsPage{actionManager, settings}
-    , playlistGeneralPage{settings}
-    , playlistPresetsPage{playlistController->presetRegistry(), settings}
-    , playlistColumnPage{actionManager, playlistController->columnRegistry(), settings}
-    , playbackPage{settings}
-    , enginePage{settings, core.engine}
-    , dirBrowserPage{settings}
-    , libraryTreePage{settings}
-    , libraryTreeGroupPage{actionManager, libraryTreeController->groupRegistry(), settings}
-    , playbackQueuePage{settings}
-    , statusWidgetPage{settings}
-    , pluginPage{settings, core.pluginManager}
     , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,
                        propertiesDialog, &widgetProvider, editableLayout.get(), windowController}
-    , coverProvider{core.tagLoader, settings}
+    , widgets{new Widgets(core, guiPluginContext, &playlistInteractor, self)}
 {
     setupConnections();
     registerActions();
@@ -260,8 +180,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     setupUtilitesMenu();
     restoreIconTheme();
     registerLayouts();
-    registerWidgets();
-    createPropertiesTabs();
+
+    widgets->registerWidgets();
+    widgets->registerPages();
+    widgets->registerPropertiesTabs();
 
     actionManager->addContextObject(mainContext);
 
@@ -621,164 +543,6 @@ void GuiApplicationPrivate::registerLayouts()
             {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
 }
 
-void GuiApplicationPrivate::registerWidgets()
-{
-    widgetProvider.registerWidget(
-        QStringLiteral("Dummy"), [this]() { return new Dummy(settings, mainWindow.get()); },
-        GuiApplication::tr("Dummy"));
-    widgetProvider.setIsHidden(QStringLiteral("Dummy"), true);
-
-    widgetProvider.registerWidget(
-        QStringLiteral("SplitterVertical"),
-        [this]() { return new VerticalSplitterWidget(&widgetProvider, settings, mainWindow.get()); },
-        GuiApplication::tr("Splitter (Top/Bottom)"));
-    widgetProvider.setSubMenus(QStringLiteral("SplitterVertical"), {GuiApplication::tr("Splitters")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("SplitterHorizontal"),
-        [this]() { return new HorizontalSplitterWidget(&widgetProvider, settings, mainWindow.get()); },
-        GuiApplication::tr("Splitter (Left/Right)"));
-    widgetProvider.setSubMenus(QStringLiteral("SplitterHorizontal"), {GuiApplication::tr("Splitters")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlaylistSwitcher"),
-        [this]() { return new PlaylistBox(playlistController.get(), mainWindow.get()); },
-        GuiApplication::tr("Playlist Switcher"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlaylistTabs"),
-        [this]() {
-            auto* playlistTabs = new PlaylistTabs(actionManager, &widgetProvider, playlistController.get(), settings,
-                                                  mainWindow.get());
-            QObject::connect(playlistTabs, &PlaylistTabs::filesDropped, &playlistInteractor,
-                             &PlaylistInteractor::filesToPlaylist);
-            QObject::connect(playlistTabs, &PlaylistTabs::tracksDropped, &playlistInteractor,
-                             &PlaylistInteractor::trackMimeToPlaylist);
-            return playlistTabs;
-        },
-        GuiApplication::tr("Playlist Tabs"));
-    widgetProvider.setSubMenus(QStringLiteral("PlaylistTabs"), {GuiApplication::tr("Splitters")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlaylistOrganiser"),
-        [this]() { return new PlaylistOrganiser(actionManager, &playlistInteractor, settings, mainWindow.get()); },
-        GuiApplication::tr("Playlist Organiser"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlaybackQueue"),
-        [this]() {
-            return new QueueViewer(actionManager, &playlistInteractor, core.tagLoader, core.settingsManager,
-                                   mainWindow.get());
-        },
-        GuiApplication::tr("Playback Queue"));
-    widgetProvider.setLimit(QStringLiteral("PlaybackQueue"), 1);
-
-    widgetProvider.registerWidget(
-        QStringLiteral("TabStack"),
-        [this]() { return new TabStackWidget(&widgetProvider, settings, mainWindow.get()); },
-        GuiApplication::tr("Tab Stack"));
-    widgetProvider.setSubMenus(QStringLiteral("TabStack"), {GuiApplication::tr("Splitters")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("LibraryTree"),
-        [this]() {
-            return new LibraryTreeWidget(actionManager, playlistController.get(), libraryTreeController, core,
-                                         mainWindow.get());
-        },
-        GuiApplication::tr("Library Tree"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlayerControls"),
-        [this]() { return new PlayerControl(actionManager, core.playerController, settings, mainWindow.get()); },
-        GuiApplication::tr("Player Controls"));
-    widgetProvider.setSubMenus(QStringLiteral("PlayerControls"), {GuiApplication::tr("Controls")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("PlaylistControls"),
-        [this]() { return new PlaylistControl(core.playerController, settings, mainWindow.get()); },
-        GuiApplication::tr("Playlist Controls"));
-    widgetProvider.setSubMenus(QStringLiteral("PlaylistControls"), {GuiApplication::tr("Controls")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("VolumeControls"),
-        [this]() { return new VolumeControl(actionManager, settings, mainWindow.get()); },
-        GuiApplication::tr("Volume Controls"));
-    widgetProvider.setSubMenus(QStringLiteral("VolumeControls"), {GuiApplication::tr("Controls")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("SeekBar"), [this]() { return new SeekBar(core.playerController, mainWindow.get()); },
-        GuiApplication::tr("Seekbar"));
-    widgetProvider.setSubMenus(QStringLiteral("SeekBar"), {GuiApplication::tr("Controls")});
-
-    widgetProvider.registerWidget(
-        QStringLiteral("SelectionInfo"),
-        [this]() { return new InfoWidget(core.playerController, &selectionController, settings, mainWindow.get()); },
-        GuiApplication::tr("Selection Info"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("ArtworkPanel"),
-        [this]() {
-            return new CoverWidget(core.playerController, &selectionController, core.tagLoader, settings,
-                                   mainWindow.get());
-        },
-        GuiApplication::tr("Artwork Panel"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(core.playerController, mainWindow.get()); },
-        GuiApplication::tr("Lyrics"));
-    widgetProvider.setLimit(QStringLiteral("Lyrics"), 1);
-
-    widgetProvider.registerWidget(
-        QStringLiteral("Playlist"),
-        [this]() {
-            return new PlaylistWidget(actionManager, &playlistInteractor, &coverProvider, core, mainWindow.get());
-        },
-        GuiApplication::tr("Playlist"));
-    widgetProvider.setLimit(QStringLiteral("Playlist"), 1);
-
-    widgetProvider.registerWidget(
-        QStringLiteral("Spacer"), [this]() { return new Spacer(mainWindow.get()); }, GuiApplication::tr("Spacer"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("StatusBar"),
-        [this]() {
-            statusWidget = new StatusWidget(core.playerController, &selectionController, settings, mainWindow.get());
-            QObject::connect(statusWidget, &QObject::destroyed, statusWidget, [this]() { statusWidget = nullptr; });
-            QObject::connect(core.library, &MusicLibrary::scanProgress, statusWidget,
-                             [this](const ScanProgress& progress) { showScanProgress(progress); });
-            return statusWidget;
-        },
-        GuiApplication::tr("Status Bar"));
-    widgetProvider.setLimit(QStringLiteral("StatusBar"), 1);
-
-    widgetProvider.registerWidget(
-        QStringLiteral("SearchBar"),
-        [this]() { return new SearchWidget(searchController, settings, mainWindow.get()); },
-        GuiApplication::tr("Search Bar"));
-
-    widgetProvider.registerWidget(
-        QStringLiteral("DirectoryBrowser"),
-        [this]() {
-            auto* browser = new DirBrowser(core.tagLoader->supportedFileExtensions(), &playlistInteractor, settings,
-                                           mainWindow.get());
-            QObject::connect(core.playerController, &PlayerController::playStateChanged, browser,
-                             &DirBrowser::playstateChanged);
-            QObject::connect(core.playerController, &PlayerController::playlistTrackChanged, browser,
-                             &DirBrowser::playlistTrackChanged);
-            QObject::connect(core.playlistHandler, &PlaylistHandler::activePlaylistChanged, browser,
-                             &DirBrowser::activePlaylistChanged);
-            return browser;
-        },
-        GuiApplication::tr("Directory Browser"));
-    widgetProvider.setLimit(QStringLiteral("DirectoryBrowser"), 1);
-}
-
-void GuiApplicationPrivate::createPropertiesTabs() const
-{
-    propertiesDialog->addTab(GuiApplication::tr("Details"),
-                             [](const TrackList& tracks) { return new InfoWidget(tracks); });
-}
-
 void GuiApplicationPrivate::showPropertiesDialog() const
 {
     const auto tracks = selectionController.selectedTracks();
@@ -801,30 +565,6 @@ void GuiApplicationPrivate::showEngineError(const QString& error) const
     message.addButton(QMessageBox::Ok);
 
     message.exec();
-}
-
-void GuiApplicationPrivate::showScanProgress(const ScanProgress& progress) const
-{
-    if(!statusWidget || progress.id < 0 || progress.total == 0) {
-        return;
-    }
-
-    QString scanType;
-    switch(progress.type) {
-        case(ScanRequest::Files):
-            scanType = GuiApplication::tr("files");
-            break;
-        case(ScanRequest::Tracks):
-            scanType = GuiApplication::tr("tracks");
-            break;
-        case(ScanRequest::Library):
-            scanType = GuiApplication::tr("library");
-            break;
-    }
-
-    const QString scanText
-        = GuiApplication::tr("Scanning %1").arg(scanType) + QStringLiteral(": %1%").arg(progress.percentage());
-    statusWidget->showMessage(scanText);
 }
 
 void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const

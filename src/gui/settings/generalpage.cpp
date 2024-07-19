@@ -214,8 +214,8 @@ void GeneralPageWidget::loadLanguage()
     }
 }
 
-GeneralPage::GeneralPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+GeneralPage::GeneralPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::GeneralCore);
     setName(tr("General"));

@@ -30,6 +30,6 @@ class PlaylistPresetsPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings);
+    explicit PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

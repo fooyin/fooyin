@@ -31,6 +31,7 @@ class GuiGeneralPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout, SettingsManager* settings);
+    explicit GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout, SettingsManager* settings,
+                            QObject* parent = nullptr);
 };
 } // namespace Fooyin

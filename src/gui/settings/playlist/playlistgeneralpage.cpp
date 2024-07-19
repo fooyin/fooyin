@@ -237,8 +237,8 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();
 }
 
-PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistGeneral);
     setName(tr("General"));

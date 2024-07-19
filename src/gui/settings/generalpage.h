@@ -29,6 +29,6 @@ class GeneralPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit GeneralPage(SettingsManager* settings);
+    explicit GeneralPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

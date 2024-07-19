@@ -101,8 +101,8 @@ void LibraryTreeGroupPageWidget::reset()
 }
 
 LibraryTreeGroupPage::LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
-                                           SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                                           SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibraryTreeGroups);
     setName(tr("Grouping"));

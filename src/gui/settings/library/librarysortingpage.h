@@ -31,6 +31,7 @@ class LibrarySortingPage : public SettingsPage
     Q_OBJECT
 
 public:
-    LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry, SettingsManager* settings);
+    LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry, SettingsManager* settings,
+                       QObject* parent = nullptr);
 };
 } // namespace Fooyin

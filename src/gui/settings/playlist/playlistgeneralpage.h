@@ -29,6 +29,6 @@ class PlaylistGeneralPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit PlaylistGeneralPage(SettingsManager* settings);
+    explicit PlaylistGeneralPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

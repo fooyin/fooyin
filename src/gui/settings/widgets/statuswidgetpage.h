@@ -29,6 +29,6 @@ class StatusWidgetPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit StatusWidgetPage(SettingsManager* settings);
+    explicit StatusWidgetPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

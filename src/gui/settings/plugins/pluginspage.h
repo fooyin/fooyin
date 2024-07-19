@@ -30,6 +30,6 @@ class PluginPage : public SettingsPage
     Q_OBJECT
 
 public:
-    PluginPage(SettingsManager* settings, PluginManager* pluginManager);
+    PluginPage(PluginManager* pluginManager, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

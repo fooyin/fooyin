@@ -248,8 +248,8 @@ void ShortcutsPageWidget::resetCurrentShortcut()
     updateCurrentShortcuts(command->defaultShortcuts());
 }
 
-ShortcutsPage::ShortcutsPage(ActionManager* actionManager, SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+ShortcutsPage::ShortcutsPage(ActionManager* actionManager, SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Shortcuts);
     setName(tr("Shortcuts"));

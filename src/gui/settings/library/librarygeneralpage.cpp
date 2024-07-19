@@ -191,8 +191,8 @@ void LibraryGeneralPageWidget::addLibrary() const
 }
 
 LibraryGeneralPage::LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager,
-                                       MusicLibrary* library, SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                                       MusicLibrary* library, SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibraryGeneral);
     setName(tr("General"));

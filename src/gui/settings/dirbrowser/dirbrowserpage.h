@@ -29,6 +29,6 @@ class DirBrowserPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit DirBrowserPage(SettingsManager* settings);
+    explicit DirBrowserPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

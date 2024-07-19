@@ -29,6 +29,6 @@ class LibraryTreePage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit LibraryTreePage(SettingsManager* settings);
+    explicit LibraryTreePage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

@@ -31,6 +31,7 @@ class PlaylistColumnPage : public SettingsPage
     Q_OBJECT
 
 public:
-    PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry, SettingsManager* settings);
+    PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry, SettingsManager* settings,
+                       QObject* parent = nullptr);
 };
 } // namespace Fooyin

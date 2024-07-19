@@ -42,6 +42,8 @@ set(SOURCES
     trackselectioncontroller.cpp
     widgetfilter.cpp
     widgetprovider.cpp
+    widgets.cpp
+    widgets.h
     windowcontroller.cpp
     controls/playercontrol.cpp
     controls/playercontrol.h

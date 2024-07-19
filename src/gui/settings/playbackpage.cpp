@@ -138,8 +138,8 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::OpenFilesPlaylist>();
 }
 
-PlaybackPage::PlaybackPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+PlaybackPage::PlaybackPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Playback);
     setName(tr("General"));

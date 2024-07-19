@@ -278,8 +278,8 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
 }
 
-LibraryTreePage::LibraryTreePage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+LibraryTreePage::LibraryTreePage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::LibraryTreeGeneral);
     setName(tr("General"));

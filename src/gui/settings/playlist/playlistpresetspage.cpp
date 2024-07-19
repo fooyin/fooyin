@@ -522,8 +522,8 @@ void PlaylistPresetsPageWidget::clearBlocks()
     m_subHeaders->clearBlocks();
 }
 
-PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));

@@ -100,8 +100,8 @@ void PlaylistColumnPageWidget::reset()
 }
 
 PlaylistColumnPage::PlaylistColumnPage(ActionManager* actionManager, PlaylistColumnRegistry* columnRegistry,
-                                       SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                                       SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistColumns);
     setName(tr("Columns"));

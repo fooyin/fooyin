@@ -160,8 +160,8 @@ void PlaybackQueuePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::QueueViewerAltColours>();
 }
 
-PlaybackQueuePage::PlaybackQueuePage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+PlaybackQueuePage::PlaybackQueuePage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaybackQueue);
     setName(tr("General"));

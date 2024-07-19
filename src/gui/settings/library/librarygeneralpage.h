@@ -33,6 +33,6 @@ class LibraryGeneralPage : public SettingsPage
 
 public:
     LibraryGeneralPage(ActionManager* actionManager, LibraryManager* libraryManager, MusicLibrary* library,
-                       SettingsManager* settings);
+                       SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin
