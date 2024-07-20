@@ -97,6 +97,7 @@ QString codecForFormat(int format)
 namespace Fooyin::Snd {
 SndFileInput::SndFileInput()
     : m_sndFile{nullptr}
+    , m_currentFrame{0}
 { }
 
 QStringList SndFileInput::supportedExtensions() const
@@ -161,26 +162,33 @@ void SndFileInput::stop()
         sf_close(m_sndFile);
         m_sndFile = nullptr;
     }
+    m_currentFrame = 0;
 }
 
 void SndFileInput::seek(uint64_t pos)
 {
-    sf_seek(m_sndFile, m_format.framesForDuration(pos), SEEK_SET);
+    const auto frames = sf_seek(m_sndFile, static_cast<sf_count_t>(m_format.framesForDuration(pos)), SEEK_SET);
+    if(frames >= 0) {
+        m_currentFrame = frames;
+    }
 }
 
 AudioBuffer SndFileInput::readBuffer(size_t bytes)
 {
-    AudioBuffer buffer{m_format, 0};
+    AudioBuffer buffer{m_format, m_format.durationForFrames(static_cast<int>(m_currentFrame))};
     buffer.resize(bytes);
 
-    const auto frames = m_format.framesForBytes(static_cast<int>(bytes));
+    const auto frames = static_cast<sf_count_t>(m_format.framesForBytes(static_cast<int>(bytes)));
 
-    const auto framesRead = sf_readf_float(m_sndFile, std::bit_cast<float*>(buffer.data()), frames);
-    if(framesRead == 0) {
+    const auto readFrames = sf_readf_float(m_sndFile, std::bit_cast<float*>(buffer.data()), frames);
+    m_currentFrame += readFrames;
+
+    if(readFrames == 0) {
         return {};
     }
-    if(framesRead < frames) {
-        buffer.resize(m_format.bytesForFrames(static_cast<int>(framesRead)));
+    if(readFrames < frames) {
+        const auto bufferSize = m_format.bytesForFrames(static_cast<int>(readFrames));
+        buffer.resize(static_cast<size_t>(bufferSize));
     }
 
     return buffer;

@@ -54,5 +54,6 @@ private:
     AudioFormat m_format;
     SF_VIRTUAL_IO m_vio;
     SNDFILE* m_sndFile;
+    sf_count_t m_currentFrame;
 };
 } // namespace Fooyin::Snd
