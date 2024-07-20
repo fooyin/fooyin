@@ -33,7 +33,7 @@ public:
     virtual ~InputPlugin() = default;
 
     [[nodiscard]] virtual QString name() const                  = 0;
-    [[nodiscard]] virtual InputCreator decoderCreator() const = 0;
+    [[nodiscard]] virtual InputCreator inputCreator() const = 0;
 };
 } // namespace Fooyin
 

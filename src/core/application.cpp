@@ -119,14 +119,14 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_engine{m_audioLoader, m_playerController, m_settings}
     , m_libraryManager{new LibraryManager(m_database->connectionPool(), m_settings, m_self)}
     , m_playlistLoader{std::make_shared<PlaylistLoader>()}
-    , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader,
-                                        m_audioLoader, m_settings, m_self)}
-    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController,
-                                            m_settings, m_self)}
+    , m_library{new UnifiedMusicLibrary(m_libraryManager, m_database->connectionPool(), m_playlistLoader, m_audioLoader,
+                                        m_settings, m_self)}
+    , m_playlistHandler{new PlaylistHandler(m_database->connectionPool(), m_audioLoader, m_playerController, m_settings,
+                                            m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_pluginManager{m_settings}
     , m_corePluginContext{&m_pluginManager,  &m_engine,  m_playerController, m_libraryManager, m_library,
-                          m_playlistHandler, m_settings, m_playlistLoader,   m_audioLoader,  m_sortingRegistry}
+                          m_playlistHandler, m_settings, m_playlistLoader,   m_audioLoader,    m_sortingRegistry}
 {
     registerTypes();
     registerDecoders();
@@ -160,7 +160,7 @@ void ApplicationPrivate::loadPlugins()
         [this](OutputPlugin* plugin) { m_engine.addOutput(plugin->name(), plugin->creator()); });
 
     m_pluginManager.initialisePlugins<InputPlugin>(
-        [this](InputPlugin* plugin) { m_audioLoader->addDecoder(plugin->name(), plugin->decoderCreator()); });
+        [this](InputPlugin* plugin) { m_audioLoader->addDecoder(plugin->name(), plugin->inputCreator()); });
 }
 
 void ApplicationPrivate::startSaveTimer()

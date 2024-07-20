@@ -144,6 +144,11 @@ bool AudioLoader::writeTrackMetadata(const Track& track, const AudioInput::Write
 
 void AudioLoader::addDecoder(const QString& name, const InputCreator& creator)
 {
+    if(!creator) {
+        qDebug() << QStringLiteral("Decoder (%1) cannot be created").arg(name);
+        return;
+    }
+
     const std::unique_lock lock{p->m_decoderMutex};
 
     if(p->m_decoders.contains(name)) {
