@@ -106,7 +106,7 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
-    changeTrackStatus(TrackStatus::NoTrack);
+    changeTrackStatus(TrackStatus::Loading);
 
     const Track prevTrack = std::exchange(m_currentTrack, track);
 
