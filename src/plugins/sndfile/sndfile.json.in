@@ -2,7 +2,7 @@
     "Name" : "SndFile",
     "Version" : "${FOOYIN_VERSION}",
     "Vendor" : "Fooyin",
-    "Copyright" : "Copyright © 2023, Luke Taylor <LukeT1@proton.me>",
+    "Copyright" : "Copyright © 2024, Luke Taylor <LukeT1@proton.me>",
     "License" : "Fooyin is free software: you can redistribute it and/or modify
                  it under the terms of the GNU General Public License as published by
                  the Free Software Foundation, either version 3 of the License, or
