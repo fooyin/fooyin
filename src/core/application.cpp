@@ -231,7 +231,7 @@ Application::Application(QObject* parent)
     QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
     QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
-        if(status == TrackStatus::InvalidTrack) {
+        if(status == TrackStatus::Invalid) {
             p->m_playerController->pause();
         }
     });

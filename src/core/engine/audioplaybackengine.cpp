@@ -106,11 +106,14 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
+    changeTrackStatus(TrackStatus::NoTrack);
+
     const Track prevTrack = std::exchange(m_currentTrack, track);
 
     if(!m_decoder || !m_decoder->supportedExtensions().contains(track.extension())) {
         m_decoder = m_decoderProvider->decoderForTrack(track);
         if(!m_decoder) {
+            changeTrackStatus(TrackStatus::Unreadable);
             return;
         }
     }
@@ -121,7 +124,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         m_ending = false;
         m_clock.sync(0);
         setupDuration();
-        changeTrackStatus(TrackStatus::BufferedTrack);
+        changeTrackStatus(TrackStatus::Buffered);
         if(m_state == PlaybackState::Playing) {
             play();
         }
@@ -137,14 +140,14 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     m_clock.sync();
 
     if(!track.isValid()) {
-        changeTrackStatus(TrackStatus::InvalidTrack);
+        changeTrackStatus(TrackStatus::Invalid);
         return;
     }
 
-    changeTrackStatus(TrackStatus::LoadingTrack);
+    changeTrackStatus(TrackStatus::Loading);
 
     if(!m_decoder->init(track.filepath())) {
-        changeTrackStatus(TrackStatus::InvalidTrack);
+        changeTrackStatus(TrackStatus::Invalid);
         return;
     }
 
@@ -154,7 +157,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         return;
     }
 
-    changeTrackStatus(TrackStatus::LoadedTrack);
+    changeTrackStatus(TrackStatus::Loaded);
 
     setupDuration();
 
@@ -169,11 +172,11 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
 void AudioPlaybackEngine::play()
 {
-    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::InvalidTrack) {
+    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::Invalid || m_status == TrackStatus::Unreadable) {
         return;
     }
 
-    if(m_status == TrackStatus::EndOfTrack && m_state == PlaybackState::Stopped) {
+    if(m_status == TrackStatus::End && m_state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
     }
@@ -183,11 +186,11 @@ void AudioPlaybackEngine::play()
 
 void AudioPlaybackEngine::pause()
 {
-    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::InvalidTrack) {
+    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::Invalid) {
         return;
     }
 
-    if(m_status == TrackStatus::EndOfTrack && m_state == PlaybackState::Stopped) {
+    if(m_status == TrackStatus::End && m_state == PlaybackState::Stopped) {
         seek(0);
         emit positionChanged(0);
     }
@@ -395,7 +398,7 @@ void AudioPlaybackEngine::playOutput()
     const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
 
     m_renderer->pause(false, fadeInterval);
-    changeTrackStatus(TrackStatus::BufferedTrack);
+    changeTrackStatus(TrackStatus::Buffered);
     m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
 }
 
@@ -471,7 +474,7 @@ void AudioPlaybackEngine::updatePosition()
     if(m_currentTrack.hasCue() && m_lastPosition >= m_endPosition) {
         m_clock.setPaused(true);
         m_clock.sync(m_duration);
-        changeTrackStatus(TrackStatus::EndOfTrack);
+        changeTrackStatus(TrackStatus::End);
     }
 }
 
@@ -484,7 +487,7 @@ void AudioPlaybackEngine::onRendererFinished()
     m_clock.setPaused(true);
     m_clock.sync(m_duration);
 
-    changeTrackStatus(TrackStatus::EndOfTrack);
+    changeTrackStatus(TrackStatus::End);
 }
 } // namespace Fooyin
 

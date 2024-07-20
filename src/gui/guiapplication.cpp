@@ -102,7 +102,9 @@ public:
 
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
+    void showMessage(const QString& title, const Track& track) const;
     void showTrackNotFoundMessage(const Track& track) const;
+    void showTrackUnreableMessage(const Track& track) const;
 
     void addFiles() const;
     void addFolders() const;
@@ -270,11 +272,14 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(core.engine, &EngineController::engineError, self,
                      [this](const QString& error) { showEngineError(error); });
     QObject::connect(core.engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
-        if(status == TrackStatus::InvalidTrack) {
-            const Track track = core.playerController->currentTrack();
+        const Track track = core.playerController->currentTrack();
+        if(status == TrackStatus::Invalid) {
             if(track.isValid() && !QFileInfo::exists(track.filepath())) {
                 showTrackNotFoundMessage(track);
             }
+        }
+        else if(status == TrackStatus::Unreadable) {
+            showTrackUnreableMessage(track);
         }
     });
 }
@@ -567,17 +572,19 @@ void GuiApplicationPrivate::showEngineError(const QString& error) const
     message.exec();
 }
 
-void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
+void GuiApplicationPrivate::showMessage(const QString& title, const Track& track) const
 {
     if(settings->value<Settings::Core::SkipUnavailable>()) {
         core.playerController->next();
-        core.playerController->play();
+        if(core.playerController->playState() == PlayState::Playing) {
+            core.playerController->play();
+        }
         return;
     }
 
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(GuiApplication::tr("Track Not Found"));
+    message.setText(title);
     message.setInformativeText(track.filepath());
 
     message.addButton(QMessageBox::Ok);
@@ -602,8 +609,20 @@ void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
     }
     else {
         core.playerController->next();
-        core.playerController->play();
+        if(core.playerController->playState() == PlayState::Playing) {
+            core.playerController->play();
+        }
     }
+}
+
+void GuiApplicationPrivate::showTrackNotFoundMessage(const Track& track) const
+{
+    showMessage(GuiApplication::tr("Track Not Found"), track);
+}
+
+void GuiApplicationPrivate::showTrackUnreableMessage(const Track& track) const
+{
+    showMessage(GuiApplication::tr("No Decoder Available"), track);
 }
 
 void GuiApplicationPrivate::addFiles() const

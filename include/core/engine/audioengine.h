@@ -37,11 +37,12 @@ enum class PlaybackState
 enum class TrackStatus
 {
     NoTrack,
-    LoadingTrack,
-    LoadedTrack,
-    BufferedTrack,
-    EndOfTrack,
-    InvalidTrack
+    Loading,
+    Loaded,
+    Buffered,
+    End,
+    Invalid,
+    Unreadable
 };
 
 class FYCORE_EXPORT AudioEngine : public QObject

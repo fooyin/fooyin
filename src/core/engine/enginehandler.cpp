@@ -107,16 +107,17 @@ void EngineHandlerPrivate::handleStateChange(PlaybackState state)
 void EngineHandlerPrivate::handleTrackStatus(TrackStatus status) const
 {
     switch(status) {
-        case(TrackStatus::EndOfTrack):
+        case(TrackStatus::End):
             m_playerController->next();
             break;
         case(TrackStatus::NoTrack):
             m_playerController->stop();
             break;
-        case(TrackStatus::InvalidTrack):
-        case(TrackStatus::LoadingTrack):
-        case(TrackStatus::LoadedTrack):
-        case(TrackStatus::BufferedTrack):
+        case(TrackStatus::Invalid):
+        case(TrackStatus::Loading):
+        case(TrackStatus::Loaded):
+        case(TrackStatus::Buffered):
+        case(TrackStatus::Unreadable):
             break;
     }
 
