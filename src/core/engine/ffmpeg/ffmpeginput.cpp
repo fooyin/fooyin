@@ -44,6 +44,10 @@ namespace {
 QString getCodec(AVCodecID codec)
 {
     switch(codec) {
+        case(AV_CODEC_ID_AAC):
+            return QStringLiteral("AAC");
+        case(AV_CODEC_ID_ALAC):
+            return QStringLiteral("ALAC");
         case(AV_CODEC_ID_MP3):
             return QStringLiteral("MP3");
         case(AV_CODEC_ID_WAVPACK):
