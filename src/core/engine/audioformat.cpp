@@ -123,7 +123,7 @@ uint64_t AudioFormat::durationForFrames(int frameCount) const
         return 0;
     }
 
-    return frameCount * 1000 / sampleRate();
+    return static_cast<uint64_t>(frameCount) * 1000 / sampleRate();
 }
 
 int AudioFormat::bytesPerFrame() const
