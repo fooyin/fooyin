@@ -791,7 +791,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="409"/>
         <source>Filter</source>
-        <translation>Filtros</translation>
+        <translation>Filtro</translation>
     </message>
 </context>
 <context>
