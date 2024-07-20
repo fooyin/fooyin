@@ -1,0 +1,266 @@
+/*
+ * Fooyin
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ *
+ * Fooyin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fooyin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "sndfileinput.h"
+
+#include <QFileInfo>
+
+namespace {
+sf_count_t sndFileLen(void* data)
+{
+    auto* file = static_cast<QIODevice*>(data);
+    if(file->isOpen()) {
+        return file->size();
+    }
+    return -1;
+}
+
+sf_count_t sndSeek(sf_count_t offset, int whence, void* data)
+{
+    auto* file = static_cast<QIODevice*>(data);
+    if(!file->isOpen() || file->isSequential()) {
+        return -1;
+    }
+
+    qint64 start{0};
+    switch(whence) {
+        case(SEEK_END):
+            start = file->size();
+            break;
+        case(SEEK_CUR):
+            start = file->pos();
+            break;
+        case(SEEK_SET):
+        default:
+            start = 0;
+    }
+
+    if(file->seek(start + offset)) {
+        return start + offset;
+    }
+
+    return -1;
+}
+
+sf_count_t sndRead(void* ptr, sf_count_t count, void* data)
+{
+    auto* file = static_cast<QIODevice*>(data);
+    if(file->isOpen()) {
+        return file->read(static_cast<char*>(ptr), count);
+    }
+    return -1;
+}
+
+sf_count_t sndTell(void* data)
+{
+    auto* file = static_cast<QIODevice*>(data);
+    if(file->isOpen()) {
+        return file->pos();
+    }
+    return -1;
+}
+
+QString codecForFormat(int format)
+{
+    if(format == SF_FORMAT_FLAC) {
+        return QStringLiteral("FLAC");
+    }
+    if(format == SF_FORMAT_VORBIS) {
+        return QStringLiteral("Vorbis");
+    }
+    if(format == SF_FORMAT_OPUS) {
+        return QStringLiteral("Opus");
+    }
+    if(format >= SF_FORMAT_ALAC_16 && format <= SF_FORMAT_ALAC_32) {
+        return QStringLiteral("ALAC");
+    }
+    return QStringLiteral("PCM");
+}
+} // namespace
+
+namespace Fooyin::Snd {
+SndFileInput::SndFileInput()
+    : m_sndFile{nullptr}
+{ }
+
+QStringList SndFileInput::supportedExtensions() const
+{
+    static const QStringList extensions{QStringLiteral("aif"), QStringLiteral("aiff"),  QStringLiteral("au"),
+                                        QStringLiteral("snd"), QStringLiteral("sph"),   QStringLiteral("voc"),
+                                        QStringLiteral("wav"), QStringLiteral("wavex"), QStringLiteral("w64"),
+                                        QStringLiteral("wve")};
+
+    return extensions;
+}
+
+bool SndFileInput::canReadCover() const
+{
+    return false;
+}
+
+bool SndFileInput::canWriteMetaData() const
+{
+    return false;
+}
+
+bool SndFileInput::isSeekable() const
+{
+    return true;
+}
+
+bool SndFileInput::init(const QString& source)
+{
+    SF_INFO info;
+    info.format = 0;
+
+    m_file = std::make_unique<QFile>(source);
+    if(!m_file->open(QIODevice::ReadOnly)) {
+        qWarning() << "[SND] Unable to open" << source;
+        return false;
+    }
+
+    m_vio.get_filelen = sndFileLen;
+    m_vio.seek        = sndSeek;
+    m_vio.read        = sndRead;
+    m_vio.tell        = sndTell;
+
+    m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file.get());
+    if(!m_sndFile) {
+        qWarning() << "[SND] Unable to open" << source;
+        return false;
+    }
+
+    m_format.setChannelCount(info.channels);
+    m_format.setSampleRate(info.samplerate);
+    m_format.setSampleFormat(SampleFormat::F32);
+
+    return true;
+}
+
+void SndFileInput::start() { }
+
+void SndFileInput::stop()
+{
+    if(m_sndFile) {
+        sf_close(m_sndFile);
+        m_sndFile = nullptr;
+    }
+}
+
+void SndFileInput::seek(uint64_t pos)
+{
+    sf_seek(m_sndFile, m_format.framesForDuration(pos), SEEK_SET);
+}
+
+AudioBuffer SndFileInput::readBuffer(size_t bytes)
+{
+    AudioBuffer buffer{m_format, 0};
+    buffer.resize(bytes);
+
+    const auto frames = m_format.framesForBytes(static_cast<int>(bytes));
+
+    const auto framesRead = sf_readf_float(m_sndFile, std::bit_cast<float*>(buffer.data()), frames);
+    if(framesRead == 0) {
+        return {};
+    }
+    if(framesRead < frames) {
+        buffer.resize(m_format.bytesForFrames(static_cast<int>(framesRead)));
+    }
+
+    return buffer;
+}
+
+bool SndFileInput::readMetaData(Track& track)
+{
+    SF_INFO info;
+    info.format = 0;
+
+    SNDFILE* sndfile{nullptr};
+    sndfile = sf_open(track.filepath().toUtf8().constData(), SFM_READ, &info);
+    if(!sndfile) {
+        return false;
+    }
+
+    track.setFileSize(QFileInfo{track.filepath()}.size());
+    track.setDuration(static_cast<int>(static_cast<double>(info.frames) / info.samplerate * 1000));
+    track.setSampleRate(info.samplerate);
+    track.setChannels(info.channels);
+    track.setBitrate(static_cast<int>(track.fileSize() * 8 / track.duration()));
+    track.setCodec(codecForFormat(info.format & SF_FORMAT_SUBMASK));
+
+    switch(info.format & SF_FORMAT_SUBMASK) {
+        case(SF_FORMAT_PCM_U8):
+        case(SF_FORMAT_PCM_S8):
+            track.setBitDepth(8);
+            break;
+        case(SF_FORMAT_PCM_16):
+            track.setBitDepth(16);
+            break;
+        case(SF_FORMAT_PCM_24):
+            track.setBitDepth(24);
+            break;
+        case(SF_FORMAT_PCM_32):
+        case(SF_FORMAT_FLOAT):
+            track.setBitDepth(32);
+            break;
+        default:
+            break;
+    }
+
+    if(const char* title = sf_get_string(sndfile, SF_STR_TITLE)) {
+        track.setTitle(QString::fromUtf8(title));
+    }
+    if(const char* date = sf_get_string(sndfile, SF_STR_DATE)) {
+        track.setDate(QString::fromUtf8(date));
+    }
+    if(const char* album = sf_get_string(sndfile, SF_STR_ALBUM)) {
+        track.setAlbum(QString::fromUtf8(album));
+    }
+    if(const char* trackNum = sf_get_string(sndfile, SF_STR_TRACKNUMBER)) {
+        track.setTrackNumber(QString::fromUtf8(trackNum).toInt());
+    }
+    if(const char* artist = sf_get_string(sndfile, SF_STR_ARTIST)) {
+        track.setArtists({QString::fromUtf8(artist)});
+    }
+    if(const char* comment = sf_get_string(sndfile, SF_STR_COMMENT)) {
+        track.setComment(QString::fromUtf8(comment));
+    }
+    if(const char* genre = sf_get_string(sndfile, SF_STR_GENRE)) {
+        track.setGenres({QString::fromUtf8(genre)});
+    }
+    if(const char* copyright = sf_get_string(sndfile, SF_STR_COPYRIGHT)) {
+        track.addExtraTag(QStringLiteral("COPYRIGHT"), QString::fromUtf8(copyright));
+    }
+    if(const char* license = sf_get_string(sndfile, SF_STR_LICENSE)) {
+        track.addExtraTag(QStringLiteral("LICENSE"), QString::fromUtf8(license));
+    }
+
+    return true;
+}
+
+AudioFormat SndFileInput::format() const
+{
+    return m_format;
+}
+
+AudioInput::Error SndFileInput::error() const
+{
+    return {};
+}
+} // namespace Fooyin::Snd
