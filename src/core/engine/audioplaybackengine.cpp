@@ -181,6 +181,14 @@ void AudioPlaybackEngine::play()
         emit positionChanged(0);
     }
 
+    if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
+        // Current track was previously stopped, so init again
+        if(!m_decoder->init(m_currentTrack.filepath())) {
+            changeTrackStatus(TrackStatus::Invalid);
+            return;
+        }
+    }
+
     playOutput();
 }
 

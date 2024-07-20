@@ -270,6 +270,12 @@ public:
 
 void FFmpegInputPrivate::reset()
 {
+    m_eof        = false;
+    m_isDecoding = false;
+    m_draining   = false;
+    m_bufferPos  = 0;
+    m_buffer.clear();
+
     m_context.reset();
     m_stream = {};
     m_codec  = {};
@@ -619,12 +625,7 @@ void FFmpegInput::start()
 
 void FFmpegInput::stop()
 {
-    p->seek(0);
-    p->m_eof        = false;
-    p->m_isDecoding = false;
-    p->m_draining   = false;
-    p->m_bufferPos  = 0;
-    p->m_buffer.clear();
+    p->reset();
 }
 
 AudioFormat FFmpegInput::format() const
