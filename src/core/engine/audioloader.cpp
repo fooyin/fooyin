@@ -26,7 +26,6 @@
 #include <QThreadStorage>
 
 #include <mutex>
-#include <set>
 #include <shared_mutex>
 
 namespace Fooyin {
@@ -35,24 +34,11 @@ using LoaderInstances = std::unordered_map<QString, std::unique_ptr<AudioInput>>
 class AudioLoaderPrivate
 {
 public:
-    AudioLoaderPrivate();
-
     std::unordered_map<QString, InputCreator> m_decoders;
     std::unordered_map<QString, std::vector<QString>> m_extensionToDecoderMap;
     QThreadStorage<LoaderInstances*> m_instances;
-    std::unique_ptr<TagLibParser> m_tagParser;
-    std::set<QString> m_tagParserExtensions;
     std::shared_mutex m_decoderMutex;
 };
-
-AudioLoaderPrivate::AudioLoaderPrivate()
-    : m_tagParser{std::make_unique<TagLibParser>()}
-{
-    const auto extensions = m_tagParser->supportedExtensions();
-    for(const QString& ext : extensions) {
-        m_tagParserExtensions.emplace(ext);
-    }
-}
 
 AudioLoader::AudioLoader()
     : p{std::make_unique<AudioLoaderPrivate>()}
@@ -79,7 +65,7 @@ bool AudioLoader::canWriteMetadata(const Track& track) const
         return decoder->canWriteMetaData();
     }
 
-    return p->m_tagParserExtensions.contains(track.extension());
+    return Tagging::supportedExtensions().contains(track.extension());
 }
 
 AudioInput* AudioLoader::decoderForTrack(const Track& track) const
@@ -114,8 +100,8 @@ bool AudioLoader::readTrackMetadata(Track& track) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(p->m_tagParserExtensions.contains(track.extension())) {
-        return p->m_tagParser->readMetaData(track);
+    if(Tagging::supportedExtensions().contains(track.extension())) {
+        return Tagging::readMetaData(track);
     }
     if(auto* decoder = decoderForTrack(track)) {
         return decoder->readMetaData(track);
@@ -128,8 +114,8 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(p->m_tagParserExtensions.contains(track.extension())) {
-        return p->m_tagParser->readCover(track, cover);
+    if(Tagging::supportedExtensions().contains(track.extension())) {
+        return Tagging::readCover(track, cover);
     }
     if(auto* decoder = decoderForTrack(track)) {
         if(decoder->canReadCover()) {
@@ -144,8 +130,8 @@ bool AudioLoader::writeTrackMetadata(const Track& track, const AudioInput::Write
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(p->m_tagParserExtensions.contains(track.extension())) {
-        return p->m_tagParser->writeMetaData(track, options);
+    if(Tagging::supportedExtensions().contains(track.extension())) {
+        return Tagging::writeMetaData(track, options);
     }
     if(auto* decoder = decoderForTrack(track)) {
         if(decoder->canWriteMetaData()) {

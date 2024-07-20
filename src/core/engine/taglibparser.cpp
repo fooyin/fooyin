@@ -1331,18 +1331,18 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track,
 }
 } // namespace
 
-namespace Fooyin {
-QStringList TagLibParser::supportedExtensions() const
+namespace Fooyin::Tagging {
+std::set<QString> supportedExtensions()
 {
-    static const QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
-                                        QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
-                                        QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
-                                        QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
-                                        QStringLiteral("webm"), QStringLiteral("mp4")};
+    static const std::set<QString> extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
+                                              QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
+                                              QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
+                                              QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
+                                              QStringLiteral("webm"), QStringLiteral("mp4")};
     return extensions;
 }
 
-bool TagLibParser::readMetaData(Track& track) const
+bool readMetaData(Track& track)
 {
     const QString filepath = track.filepath();
 
@@ -1516,7 +1516,7 @@ bool TagLibParser::readMetaData(Track& track) const
     return true;
 }
 
-QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover) const
+QByteArray readCover(const Track& track, Track::Cover cover)
 {
     const auto filepath = track.filepath();
     const QFileInfo fileInfo{filepath};
@@ -1617,7 +1617,7 @@ QByteArray TagLibParser::readCover(const Track& track, Track::Cover cover) const
     return {};
 }
 
-bool TagLibParser::writeMetaData(const Track& track, const AudioInput::WriteOptions& options) const
+bool writeMetaData(const Track& track, const AudioInput::WriteOptions& options)
 {
     const QString filepath = track.filepath();
 
@@ -1760,4 +1760,4 @@ bool TagLibParser::writeMetaData(const Track& track, const AudioInput::WriteOpti
 
     return true;
 }
-} // namespace Fooyin
+} // namespace Fooyin::Tagging
