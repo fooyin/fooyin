@@ -137,10 +137,11 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
     emit generatingWaveform();
 
+    const int bps               = m_format.bytesPerFrame();
     const uint64_t durationSecs = m_data.duration / 1000;
-    const int samples           = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
-    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
-    const int bufferSize        = samplesPerBuffer * m_format.bytesPerFrame();
+    const int samples           = static_cast<int>(durationSecs * m_format.sampleRate()) / bps * bps;
+    const int samplesPerBuffer  = static_cast<int>(static_cast<double>(samples) / samplesPerChannel) / bps * bps;
+    const int bufferSize        = samplesPerBuffer * bps;
 
     const auto endTime = track.offset() + track.duration();
 
@@ -205,13 +206,14 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
 
     emit generatingWaveform();
 
+    const int bps               = m_format.bytesPerFrame();
     const uint64_t durationSecs = m_data.duration / 1000;
-    const int samples           = static_cast<int>(std::floor(durationSecs * m_format.sampleRate()));
-    const int samplesPerBuffer  = static_cast<int>(std::ceil(static_cast<double>(samples) / samplesPerChannel));
-    const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 30));
+    const int samples           = static_cast<int>(durationSecs * m_format.sampleRate()) / bps * bps;
+    const int samplesPerBuffer  = static_cast<int>(static_cast<double>(samples) / samplesPerChannel) / bps * bps;
+    const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 5));
     const int updateThreshold   = samplesPerChannel / numOfUpdates;
 
-    const int bufferSize = samplesPerBuffer * m_format.bytesPerFrame();
+    const int bufferSize = samplesPerBuffer * bps;
     const auto endTime   = track.offset() + track.duration();
     int processedCount{0};
 
