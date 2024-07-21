@@ -856,6 +856,8 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
     };
 
+    p->reportProgress();
+
     const LibraryDirectories dirs
         = getDirectories(urls, Utils::extensionsToWildcards(p->m_audioLoader->supportedFileExtensions()));
 
