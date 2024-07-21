@@ -179,14 +179,10 @@ set(SOURCES
     search/searchwidget.h
     settings/artworkpage.cpp
     settings/artworkpage.h
-    settings/enginepage.cpp
-    settings/enginepage.h
     settings/generalpage.cpp
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
-    settings/playbackpage.cpp
-    settings/playbackpage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp
@@ -203,6 +199,10 @@ set(SOURCES
     settings/librarytree/librarytreepage.h
     settings/librarytree/librarytreegrouppage.cpp
     settings/librarytree/librarytreegrouppage.h
+    settings/playback/outputpage.cpp
+    settings/playback/outputpage.h
+    settings/playback/playbackpage.cpp
+    settings/playback/playbackpage.h
     settings/playlist/playlistcolumnmodel.cpp
     settings/playlist/playlistcolumnmodel.h
     settings/playlist/playlistcolumnpage.cpp

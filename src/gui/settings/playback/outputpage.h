@@ -25,11 +25,11 @@ namespace Fooyin {
 class SettingsManager;
 class EngineController;
 
-class EnginePage : public SettingsPage
+class OutputPage : public SettingsPage
 {
     Q_OBJECT
 
 public:
-    explicit EnginePage(EngineController* engine, SettingsManager* settings, QObject* parent = nullptr);
+    explicit OutputPage(EngineController* engine, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

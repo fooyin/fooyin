@@ -37,14 +37,14 @@
 #include "search/searchwidget.h"
 #include "settings/artworkpage.h"
 #include "settings/dirbrowser/dirbrowserpage.h"
-#include "settings/enginepage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreegrouppage.h"
 #include "settings/librarytree/librarytreepage.h"
-#include "settings/playbackpage.h"
+#include "settings/playback/outputpage.h"
+#include "settings/playback/playbackpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistpresetspage.h"
@@ -134,8 +134,7 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("PlaybackQueue"),
         [this]() {
-            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core.audioLoader, m_settings,
-                                   m_window);
+            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core.audioLoader, m_settings, m_window);
         },
         tr("Playback Queue"));
     m_provider->setLimit(QStringLiteral("PlaybackQueue"), 1);
@@ -245,7 +244,7 @@ void Widgets::registerPages()
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
     new PlaylistColumnPage(m_gui.actionManager, m_playlistController->columnRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
-    new EnginePage(m_core.engine, m_settings, this);
+    new OutputPage(m_core.engine, m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui.actionManager, m_libraryTreeController->groupRegistry(), m_settings, this);

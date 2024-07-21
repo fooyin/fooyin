@@ -17,7 +17,7 @@
  *
  */
 
-#include "enginepage.h"
+#include "outputpage.h"
 
 #include <core/coresettings.h>
 #include <core/engine/enginehandler.h>
@@ -35,12 +35,12 @@
 #include <QSpinBox>
 
 namespace Fooyin {
-class EnginePageWidget : public SettingsPageWidget
+class OutputPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
 
 public:
-    explicit EnginePageWidget(EngineController* engine, SettingsManager* settings);
+    explicit OutputPageWidget(EngineController* engine, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -66,7 +66,7 @@ private:
     // QSpinBox* m_fadingSeekOut;
 };
 
-EnginePageWidget::EnginePageWidget(EngineController* engine, SettingsManager* settings)
+OutputPageWidget::OutputPageWidget(EngineController* engine, SettingsManager* settings)
     : m_engine{engine}
     , m_settings{settings}
     , m_outputBox{new ExpandingComboBox(this)}
@@ -152,12 +152,12 @@ EnginePageWidget::EnginePageWidget(EngineController* engine, SettingsManager* se
         }
     };
 
-    QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &EnginePageWidget::setupDevices);
+    QObject::connect(m_outputBox, &QComboBox::currentTextChanged, this, &OutputPageWidget::setupDevices);
     QObject::connect(m_fadingStopIn, &QSpinBox::valueChanged, this, matchBufferInterval);
     QObject::connect(m_fadingStopOut, &QSpinBox::valueChanged, this, matchBufferInterval);
 }
 
-void EnginePageWidget::load()
+void OutputPageWidget::load()
 {
     setupOutputs();
     setupDevices(m_outputBox->currentText());
@@ -172,7 +172,7 @@ void EnginePageWidget::load()
     // m_fadingSeekOut->setValue(fadingValues.outSeek);
 }
 
-void EnginePageWidget::apply()
+void OutputPageWidget::apply()
 {
     const QString output = m_outputBox->currentText() + QStringLiteral("|") + m_deviceBox->currentData().toString();
     m_settings->set<Settings::Core::AudioOutput>(output);
@@ -189,7 +189,7 @@ void EnginePageWidget::apply()
     m_settings->set<Settings::Core::Internal::FadingIntervals>(QVariant::fromValue(fadingValues));
 }
 
-void EnginePageWidget::reset()
+void OutputPageWidget::reset()
 {
     m_settings->reset<Settings::Core::AudioOutput>();
     m_settings->reset<Settings::Core::GaplessPlayback>();
@@ -198,7 +198,7 @@ void EnginePageWidget::reset()
     m_settings->reset<Settings::Core::Internal::FadingIntervals>();
 }
 
-void EnginePageWidget::setupOutputs()
+void OutputPageWidget::setupOutputs()
 {
     const QStringList currentOutput = m_settings->value<Settings::Core::AudioOutput>().split(QStringLiteral("|"));
 
@@ -219,7 +219,7 @@ void EnginePageWidget::setupOutputs()
     }
 }
 
-void EnginePageWidget::setupDevices(const QString& output)
+void OutputPageWidget::setupDevices(const QString& output)
 {
     if(output.isEmpty()) {
         return;
@@ -252,15 +252,15 @@ void EnginePageWidget::setupDevices(const QString& output)
     m_deviceBox->resizeToFitCurrent();
 }
 
-EnginePage::EnginePage(EngineController* engine, SettingsManager* settings, QObject* parent)
+OutputPage::OutputPage(EngineController* engine, SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::Engine);
-    setName(tr("Engine"));
-    setCategory({tr("Engine")});
-    setWidgetCreator([engine, settings] { return new EnginePageWidget(engine, settings); });
+    setName(tr("General"));
+    setCategory({tr("Playback"), tr("Output")});
+    setWidgetCreator([engine, settings] { return new OutputPageWidget(engine, settings); });
 }
 } // namespace Fooyin
 
-#include "enginepage.moc"
-#include "moc_enginepage.cpp"
+#include "moc_outputpage.cpp"
+#include "outputpage.moc"
