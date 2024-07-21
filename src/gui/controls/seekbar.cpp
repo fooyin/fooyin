@@ -19,12 +19,9 @@
 
 #include "seekbar.h"
 
-#include "internalguisettings.h"
-
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/widgets/seekcontainer.h>
-#include <utils/clickablelabel.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/tooltip.h>
@@ -260,7 +257,7 @@ void TrackSlider::updateToolTip()
         m_toolTip->show();
     }
 
-    const auto seekPos = valueFromPosition(static_cast<int>(m_seekPos.x()));
+    const auto seekPos = valueFromPosition(m_seekPos.x());
 
     const uint64_t seekDelta = std::max(m_currentPos, seekPos) - std::min(m_currentPos, seekPos);
 
