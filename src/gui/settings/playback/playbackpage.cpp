@@ -88,7 +88,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
     auto* playedLabel = new QLabel(tr("Played threshold") + QStringLiteral(":"), this);
 
-    const auto playedToolTip = tr("The percentage of a track that must be listened to before it is counted as 'played'");
+    const auto playedToolTip
+        = tr("The percentage of a track that must be listened to before it is counted as 'played'");
     playedLabel->setToolTip(playedToolTip);
     m_playedSlider->setToolTip(playedToolTip);
     m_playedPercent->setToolTip(playedToolTip);
@@ -100,7 +101,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     m_playedPercent->setSingleStep(25);
     m_playedPercent->setSuffix(QStringLiteral(" %"));
 
-    QObject::connect(m_playedSlider, &QSlider::sliderMoved, this,
+    QObject::connect(m_playedSlider, &QSlider::valueChanged, this,
                      [this](int value) { m_playedPercent->setValue(value); });
     QObject::connect(m_playedPercent, &QSpinBox::valueChanged, this,
                      [this](int value) { m_playedSlider->setValue(value); });
