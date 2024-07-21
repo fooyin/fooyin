@@ -35,15 +35,40 @@ public:
         , m_playMode{static_cast<Playlist::PlayModes>(m_settings->value<Settings::Core::PlayMode>())}
     { }
 
-    PlayerController* m_self;
+    void changeTrack(const PlaylistTrack& track)
+    {
+        m_currentTrack    = track;
+        m_totalDuration   = m_currentTrack.track.duration();
+        m_position        = 0;
+        m_timeListened    = 0;
+        m_counted         = false;
+        m_playedThreshold = static_cast<uint64_t>(static_cast<double>(m_totalDuration)
+                                                  * m_settings->value<Settings::Core::PlayedThreshold>());
+    }
 
+    void updatePosition(uint64_t pos)
+    {
+        if(!m_seeking && pos > m_position) {
+            m_timeListened += (pos - m_position);
+        }
+        m_seeking = false;
+
+        m_position = pos;
+    }
+
+    PlayerController* m_self;
     SettingsManager* m_settings;
+
+    PlayState m_playStatus{PlayState::Stopped};
+    Playlist::PlayModes m_playMode;
 
     PlaylistTrack m_currentTrack;
     uint64_t m_totalDuration{0};
-    PlayState m_playStatus{PlayState::Stopped};
-    Playlist::PlayModes m_playMode;
     uint64_t m_position{0};
+    uint64_t m_timeListened{0};
+    uint64_t m_playedThreshold{0};
+
+    bool m_seeking{false};
     bool m_counted{false};
     bool m_isQueueTrack{false};
 
@@ -133,14 +158,15 @@ void PlayerController::stop()
 
 void PlayerController::setCurrentPosition(uint64_t ms)
 {
-    p->m_position = ms;
-    // TODO: Only increment playCount based on total time listened excluding seeking.
-    if(!p->m_counted && ms >= p->m_totalDuration / 2) {
+    p->updatePosition(ms);
+
+    if(!p->m_counted && p->m_timeListened >= p->m_playedThreshold) {
         p->m_counted = true;
         if(p->m_currentTrack.isValid()) {
             emit trackPlayed(p->m_currentTrack.track);
         }
     }
+
     emit positionChanged(ms);
 }
 
@@ -151,10 +177,7 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
 {
-    p->m_currentTrack  = track;
-    p->m_totalDuration = p->m_currentTrack.track.duration();
-    p->m_position      = 0;
-    p->m_counted       = false;
+    p->changeTrack(track);
 
     emit currentTrackChanged(p->m_currentTrack.track);
     emit playlistTrackChanged(p->m_currentTrack);
@@ -196,6 +219,7 @@ void PlayerController::seek(uint64_t ms)
     }
 
     if(std::exchange(p->m_position, ms) != ms) {
+        p->m_seeking = true;
         emit positionMoved(ms);
     }
 }

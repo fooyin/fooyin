@@ -31,6 +31,8 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QSlider>
+#include <QSpinBox>
 
 namespace Fooyin {
 class PlaybackPageWidget : public SettingsPageWidget
@@ -53,6 +55,8 @@ private:
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_skipUnavailable;
+    QSlider* m_playedSlider;
+    QSpinBox* m_playedPercent;
 
     QCheckBox* m_alwaysSend;
     QLineEdit* m_externalPlaylist;
@@ -65,6 +69,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
+    , m_playedSlider{new QSlider(Qt::Horizontal, this)}
+    , m_playedPercent{new QSpinBox(this)}
     , m_alwaysSend{new QCheckBox(tr("Always send to playlist"), this)}
     , m_externalPlaylist{new QLineEdit(this)}
 {
@@ -80,12 +86,38 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
+    auto* playedLabel = new QLabel(tr("Played threshold") + QStringLiteral(":"), this);
+
+    const auto playedToolTip = tr("The percentage of a track that must be listened to before it is counted as 'played'");
+    playedLabel->setToolTip(playedToolTip);
+    m_playedSlider->setToolTip(playedToolTip);
+    m_playedPercent->setToolTip(playedToolTip);
+
+    m_playedSlider->setRange(0, 100);
+    m_playedSlider->setSingleStep(25);
+
+    m_playedPercent->setRange(0, 100);
+    m_playedPercent->setSingleStep(25);
+    m_playedPercent->setSuffix(QStringLiteral(" %"));
+
+    QObject::connect(m_playedSlider, &QSlider::sliderMoved, this,
+                     [this](int value) { m_playedPercent->setValue(value); });
+    QObject::connect(m_playedPercent, &QSpinBox::valueChanged, this,
+                     [this](int value) { m_playedSlider->setValue(value); });
+
+    auto* playedLayout = new QGridLayout();
+    playedLayout->addWidget(playedLabel, 0, 0);
+    playedLayout->addWidget(m_playedSlider, 0, 1);
+    playedLayout->addWidget(m_playedPercent, 0, 2);
+    playedLayout->setColumnStretch(1, 1);
+
     int row{0};
     generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_cursorFollowsPlayback, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
+    generalGroupLayout->addLayout(playedLayout, row++, 0, 1, 2);
 
     auto* externalGroup       = new QGroupBox(tr("External files"), this);
     auto* externalGroupLayout = new QGridLayout(externalGroup);
@@ -109,6 +141,11 @@ void PlaybackPageWidget::load()
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
     m_skipUnavailable->setChecked(m_settings->value<Settings::Core::SkipUnavailable>());
 
+    const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
+    const auto playedPercent     = static_cast<int>(playedThreshold * 100);
+    m_playedSlider->setValue(playedPercent);
+    m_playedPercent->setValue(playedPercent);
+
     m_alwaysSend->setChecked(m_settings->value<Settings::Core::OpenFilesSendTo>());
     m_externalPlaylist->setText(m_settings->value<Settings::Core::OpenFilesPlaylist>());
 }
@@ -120,6 +157,10 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->set<Settings::Core::SkipUnavailable>(m_skipUnavailable->isChecked());
+
+    const int playedPercent    = m_playedPercent->value();
+    const auto playedThreshold = static_cast<double>(playedPercent) / 100;
+    m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
 
     m_settings->set<Settings::Core::OpenFilesSendTo>(m_alwaysSend->isChecked());
     m_settings->set<Settings::Core::OpenFilesPlaylist>(m_externalPlaylist->text());
@@ -133,6 +174,7 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Core::SkipUnavailable>();
+    m_settings->reset<Settings::Core::PlayedThreshold>();
 
     m_settings->reset<Settings::Core::OpenFilesSendTo>();
     m_settings->reset<Settings::Core::OpenFilesPlaylist>();

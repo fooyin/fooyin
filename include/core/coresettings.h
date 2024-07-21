@@ -47,7 +47,9 @@ enum CoreSettings : uint32_t
     OpenFilesPlaylist       = 16 | Type::String,
     OpenFilesSendTo         = 17 | Type::Bool,
     SaveRatingToMetadata    = 18 | Type::Bool,
-    SavePlaycountToMetadata = 19 | Type::Bool
+    SavePlaycountToMetadata = 19 | Type::Bool,
+    PlayedThreshold         = 20 | Type::Double
+
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Fooyin::Settings::Core
