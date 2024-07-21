@@ -610,7 +610,12 @@ void PlaylistWidgetPrivate::selectionChanged() const
 
 void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
 {
-    resetSort(true);
+    if(m_sortingColumn) {
+        m_sortingColumn = false;
+    }
+    else {
+        resetSort(true);
+    }
 
     if(!m_playlistController->currentPlaylist()) {
         return;
@@ -1175,7 +1180,9 @@ void PlaylistWidgetPrivate::sortTracks(const QString& script)
     const auto currentTracks = currentPlaylist->tracks();
 
     auto handleSortedTracks = [this, currentPlaylist](const TrackList& sortedTracks) {
-        m_playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
+        auto* sortCmd = new ResetTracks(m_playerController, m_model, currentPlaylist->id(), currentPlaylist->tracks(),
+                                        sortedTracks);
+        m_playlistController->addToHistory(sortCmd);
     };
 
     if(m_playlistView->selectionModel()->hasSelection()) {
@@ -1218,8 +1225,9 @@ void PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
     Utils::asyncExec([this, sortField, currentTracks, order]() {
         return m_sorter.calcSortTracks(sortField, currentTracks, order);
     }).then(m_self, [this, currentPlaylist](const TrackList& sortedTracks) {
-        m_playlistController->playlistHandler()->replacePlaylistTracks(currentPlaylist->id(), sortedTracks);
-        m_sortingColumn = false;
+        auto* sortCmd = new ResetTracks(m_playerController, m_model, currentPlaylist->id(), currentPlaylist->tracks(),
+                                        sortedTracks);
+        m_playlistController->addToHistory(sortCmd);
     });
 }
 
