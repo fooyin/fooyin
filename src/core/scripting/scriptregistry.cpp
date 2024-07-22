@@ -311,10 +311,13 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Year)]     = &Track::year;
     m_metadata[QString::fromLatin1(MetaData::FileSize)] = &Track::fileSize;
     m_metadata[QString::fromLatin1(MetaData::Bitrate)]  = [](const Track& track) {
-        return QStringLiteral("%1 kbps").arg(track.bitrate());
+        return track.bitrate() > 0 ? QStringLiteral("%1 kbps").arg(track.bitrate()) : QString{};
     };
     m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
-        return QStringLiteral("%1 Hz").arg(track.sampleRate());
+        return track.sampleRate() > 0 ? QStringLiteral("%1 Hz").arg(track.sampleRate()) : QString{};
+    };
+    m_metadata[QString::fromLatin1(MetaData::BitDepth)] = [](const Track& track) {
+        return track.bitDepth() > 0 ? track.bitDepth() : -1;
     };
     m_metadata[QString::fromLatin1(MetaData::FirstPlayed)] = [](const Track& track) {
         return formatDateTime(track.firstPlayed());
@@ -326,7 +329,6 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
     m_metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::codec;
     m_metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
-    m_metadata[QString::fromLatin1(MetaData::BitDepth)]        = &Track::bitDepth;
     m_metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
     m_metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;
     m_metadata[QString::fromLatin1(MetaData::FilePath)]        = &Track::filepath;
