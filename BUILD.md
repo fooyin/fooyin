@@ -56,7 +56,7 @@ sudo dnf install \
 ## Building
 
 1. Using a terminal, switch to the directory where fooyin will be checked out
-2. Clone the fooyin repository: `git clone https://github.com/ludouzi/fooyin.git`
+2. Clone the fooyin repository: `git clone --recurse-submodules https://github.com/ludouzi/fooyin.git`
 3. Switch into the directory: `cd fooyin`
 4. Run CMake to generate a build environment:
 
