@@ -25,7 +25,6 @@
 #include <player/s98player.hpp>
 #include <player/vgmplayer.hpp>
 #include <utils/FileLoader.h>
-#include <utils/MemoryLoader.h>
 
 // TODO: Make configurable
 // Note: Some of these will change the duration of the track,
@@ -68,6 +67,8 @@ namespace Fooyin::Gme {
 class LibvgmInput : public AudioInput
 {
 public:
+    LibvgmInput();
+
     [[nodiscard]] QStringList supportedExtensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
@@ -91,6 +92,13 @@ private:
     DataLoaderPtr m_loader;
     std::unique_ptr<PlayerA> m_mainPlayer;
 };
+
+LibvgmInput::LibvgmInput()
+{
+    m_format.setSampleFormat(SampleFormat::S16);
+    m_format.setSampleRate(SampleRate);
+    m_format.setChannelCount(Channels);
+}
 
 QStringList LibvgmInput::supportedExtensions() const
 {
@@ -142,10 +150,6 @@ bool LibvgmInput::init(const QString& source)
             m_mainPlayer->SetLoopCount(vgmPlayer->GetModifiedLoopCount(LoopCount));
         }
     }
-
-    m_format.setSampleFormat(SampleFormat::S16);
-    m_format.setSampleRate(SampleRate);
-    m_format.setChannelCount(Channels);
 
     return true;
 }
