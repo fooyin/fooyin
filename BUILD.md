@@ -12,13 +12,16 @@ The following libraries are required:
 * [Qt6](https://www.qt.io) (6.2+)
 * [TagLib](https://taglib.org) (1.11.1+)
 * [FFmpeg](https://ffmpeg.org) (4.4+)
-* [ALSA](https://alsa-project.org)
 * [ICU](https://icu.unicode.org/)
 
-The following libraries are optional, but will add extra audio outputs:
+At least one of the following is required for audio output:
 
-* [SDL2](https://www.libsdl.org)
+* [ALSA](https://alsa-project.org)
 * [PipeWire](https://pipewire.org)
+* [SDL2](https://www.libsdl.org)
+
+The following libraries are optional:
+* [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
 
 Platform-specific requirements are listed below.
 
@@ -27,7 +30,7 @@ Platform-specific requirements are listed below.
 ```
 sudo apt update
 sudo apt install \
-    g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev \
+    g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev zlib1g-dev\
     libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev\
     qt6-base-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
     libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev
@@ -56,7 +59,12 @@ sudo dnf install \
 ## Building
 
 1. Using a terminal, switch to the directory where fooyin will be checked out
-2. Clone the fooyin repository: `git clone --recurse-submodules https://github.com/ludouzi/fooyin.git`
+2. Clone the fooyin repository (including submodules):
+
+```
+git clone --recurse-submodules https://github.com/ludouzi/fooyin.git
+```
+
 3. Switch into the directory: `cd fooyin`
 4. Run CMake to generate a build environment:
 
@@ -80,6 +88,8 @@ The following options can be passed to CMake to customise the build:
 * `-DBUILD_SHARED_LIBS` - Build fooyin's libraries as shared (ON by default)
 * `-DBUILD_TESTING` - Build tests (OFF by default)
 * `-DBUILD_PLUGINS` - Build the plugins included with fooyin (ON by default)
+* `-DBUILD_ALSA` - Build the ALSA plugin (ON by default)
+* `-DBUILD_LIBVGM` - Build the libvgm plugin (ON by default)
 * `-DBUILD_TRANSLATIONS` - Build translation files (ON by default)
 * `-DBUILD_CCACHE` - Build using CCache if found (ON by default)
 * `-DBUILD_PCH` - Build with precompiled header support (OFF by default)
