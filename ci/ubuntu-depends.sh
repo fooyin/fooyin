@@ -18,6 +18,7 @@ $SUDO apt-get install -y \
         libxkbcommon-dev \
         dpkg-dev \
         dh-make \
+        zlib1g-dev \
         libasound2-dev \
         libpipewire-0.3-dev \
         libtag1-dev \
