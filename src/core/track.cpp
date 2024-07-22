@@ -224,6 +224,11 @@ QString Track::path() const
     return QFileInfo{p->filepath}.absolutePath();
 }
 
+QString Track::directory() const
+{
+    return p->directory;
+}
+
 QString Track::extension() const
 {
     return p->extension;
@@ -528,7 +533,6 @@ void Track::setFilePath(const QString& path)
 
     if(!path.isEmpty()) {
         const QFileInfo info{path};
-        p->filesize  = info.size();
         p->filename  = info.completeBaseName();
         p->extension = info.suffix().toLower();
         p->directory = info.dir().dirName();
@@ -861,6 +865,7 @@ QString Track::findCommonField(const TrackList& tracks)
         const QString primaryGenre  = tracks.front().genre();
         const QString primaryArtist = tracks.front().primaryAlbumArtist();
         const QString primaryAlbum  = tracks.front().album();
+        const QString primaryDir    = tracks.front().directory();
 
         const bool sameGenre  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryGenre](const Track& track) {
             return track.genre() == primaryGenre;
@@ -871,6 +876,8 @@ QString Track::findCommonField(const TrackList& tracks)
         const bool sameAlbum  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryAlbum](const Track& track) {
             return track.album() == primaryAlbum;
         });
+        const bool sameDir    = std::all_of(tracks.cbegin(), tracks.cend(),
+                                            [&primaryDir](const Track& track) { return track.directory() == primaryDir; });
 
         if(sameArtist && sameAlbum) {
             name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
@@ -883,6 +890,9 @@ QString Track::findCommonField(const TrackList& tracks)
         }
         else if(sameGenre) {
             name = primaryGenre;
+        }
+        else if(sameDir) {
+            name = primaryDir;
         }
     }
 
