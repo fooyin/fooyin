@@ -28,6 +28,10 @@
 #include <QFileInfo>
 
 namespace Fooyin {
+FySettings::FySettings(QObject* parent)
+    : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
+{ }
+
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {

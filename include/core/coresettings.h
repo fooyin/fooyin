@@ -24,8 +24,16 @@
 #include <utils/settings/settingsentry.h>
 
 #include <QObject>
+#include <QSettings>
 
-namespace Fooyin::Settings::Core {
+namespace Fooyin {
+class FYCORE_EXPORT FySettings : public QSettings
+{
+public:
+    FySettings(QObject* parent = nullptr);
+};
+
+namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 enum CoreSettings : uint32_t
 {
@@ -52,4 +60,5 @@ enum CoreSettings : uint32_t
 
 };
 Q_ENUM_NS(CoreSettings)
-} // namespace Fooyin::Settings::Core
+} // namespace Settings::Core
+} // namespace Fooyin
