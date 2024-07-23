@@ -582,7 +582,7 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     avcodec_flush_buffers(m_codec.context());
 
     m_bufferPos = 0;
-    m_buffer.clear();
+    m_buffer    = {};
     m_eof       = false;
     m_skipBytes = 0;
 }
