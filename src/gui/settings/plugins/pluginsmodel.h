@@ -29,6 +29,11 @@ class PluginManager;
 class PluginItem : public TreeItem<PluginItem>
 {
 public:
+    enum Role
+    {
+        Plugin = Qt::UserRole
+    };
+
     explicit PluginItem(PluginInfo* info = nullptr, PluginItem* parent = nullptr);
 
     [[nodiscard]] PluginInfo* info() const;

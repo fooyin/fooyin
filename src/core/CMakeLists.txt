@@ -69,8 +69,8 @@ set(SOURCES
     engine/taglibparser.h
     engine/ffmpeg/ffmpegcodec.cpp
     engine/ffmpeg/ffmpegcodec.h
-        engine/ffmpeg/ffmpeginput.cpp
-        engine/ffmpeg/ffmpeginput.h
+    engine/ffmpeg/ffmpeginput.cpp
+    engine/ffmpeg/ffmpeginput.h
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegframe.h
     engine/ffmpeg/ffmpegstream.cpp
@@ -107,6 +107,7 @@ set(SOURCES
     playlist/parsers/cueparser.h
     playlist/parsers/m3uparser.cpp
     playlist/parsers/m3uparser.h
+    plugins/plugin.cpp
     plugins/plugininfo.cpp
     plugins/plugininfo.h
     plugins/pluginmanager.cpp

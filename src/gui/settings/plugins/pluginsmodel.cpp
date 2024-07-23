@@ -19,8 +19,8 @@
 
 #include "pluginsmodel.h"
 
-#include "core/plugins/pluginmanager.h"
-
+#include <core/plugins/plugin.h>
+#include <core/plugins/pluginmanager.h>
 #include <utils/enum.h>
 
 namespace Fooyin {
@@ -134,37 +134,42 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
         }
     }
 
-    const auto* item = static_cast<PluginItem*>(index.internalPointer());
-
-    if(role == Qt::DisplayRole) {
-        switch(column) {
-            case(0):
-                return item->info()->name();
-            case(1):
-                return item->info()->version();
-            case(2):
-                return item->info()->category();
-            case(3):
-                return item->info()->vendor();
-            case(4):
-                break;
-            case(5):
-                return Utils::Enum::toString(item->info()->status());
-            default:
-                break;
-        }
-    }
+    const auto* item = itemForIndex(index);
+    const auto info  = item->info();
 
     if(role == Qt::CheckStateRole && column == 4) {
-        if((item->info()->isDisabled() && !m_enabledPlugins.contains(item->info()->name()))
-           || m_disabledPlugins.contains(item->info()->name())) {
+        if((info->isDisabled() && !m_enabledPlugins.contains(info->name()))
+           || m_disabledPlugins.contains(info->name())) {
             return Qt::Unchecked;
         }
         return Qt::Checked;
     }
 
     if(role == Qt::ToolTipRole) {
-        return item->info()->isLoaded() ? item->info()->description() : item->info()->error();
+        return info->isLoaded() ? info->description() : info->error();
+    }
+
+    if(role == PluginItem::Plugin) {
+        return QVariant::fromValue(info->plugin());
+    }
+
+    if(role == Qt::DisplayRole) {
+        switch(column) {
+            case(0):
+                return info->name();
+            case(1):
+                return info->version();
+            case(2):
+                return info->category();
+            case(3):
+                return info->vendor();
+            case(4):
+                break;
+            case(5):
+                return Utils::Enum::toString(info->status());
+            default:
+                break;
+        }
     }
 
     return {};

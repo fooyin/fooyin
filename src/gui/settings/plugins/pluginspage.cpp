@@ -19,12 +19,13 @@
 
 #include "pluginspage.h"
 
-#include "core/application.h"
-#include "core/internalcoresettings.h"
-#include "core/plugins/pluginmanager.h"
 #include "pluginsdelegate.h"
 #include "pluginsmodel.h"
 
+#include <core/application.h>
+#include <core/internalcoresettings.h>
+#include <core/plugins/plugin.h>
+#include <core/plugins/pluginmanager.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -70,6 +71,11 @@ public:
     void reset() override;
 
 private:
+    [[nodiscard]] Plugin* currentPlugin() const;
+    void selectionChanged();
+
+    void aboutPlugin();
+    void configurePlugin();
     void installPlugin();
 
     PluginManager* m_pluginManager;
@@ -78,6 +84,8 @@ private:
     QTableView* m_pluginList;
     PluginsModel* m_model;
 
+    QPushButton* m_configurePlugin;
+    QPushButton* m_aboutPlugin;
     QPushButton* m_installPlugin;
 };
 
@@ -86,27 +94,39 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     , m_settings{settings}
     , m_pluginList{new QTableView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
+    , m_configurePlugin{new QPushButton(tr("Configure"), this)}
+    , m_aboutPlugin{new QPushButton(tr("About"), this)}
     , m_installPlugin{new QPushButton(tr("Install…"), this)}
 {
     auto* proxyModel = new CheckSortProxyModel(this);
     proxyModel->setSourceModel(m_model);
+
+    m_configurePlugin->setDisabled(true);
+    m_aboutPlugin->setDisabled(true);
 
     m_pluginList->setModel(proxyModel);
     m_pluginList->setItemDelegateForColumn(4, new PluginsDelegate(this));
 
     m_pluginList->verticalHeader()->hide();
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_pluginList->setSelectionMode(QAbstractItemView::SingleSelection);
     m_pluginList->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
     m_pluginList->setSortingEnabled(true);
 
     auto* mainLayout = new QGridLayout(this);
 
-    mainLayout->addWidget(m_pluginList, 0, 0, 1, 2);
-    mainLayout->addWidget(m_installPlugin, 1, 1);
+    mainLayout->addWidget(m_pluginList, 0, 0, 1, 4);
+    mainLayout->addWidget(m_configurePlugin, 1, 0);
+    mainLayout->addWidget(m_aboutPlugin, 1, 1);
+    mainLayout->addWidget(m_installPlugin, 1, 3);
 
-    mainLayout->setColumnStretch(0, 1);
+    mainLayout->setColumnStretch(2, 1);
     mainLayout->setRowStretch(0, 1);
 
+    QObject::connect(m_pluginList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &PluginPageWidget::selectionChanged);
+    QObject::connect(m_configurePlugin, &QPushButton::pressed, this, &PluginPageWidget::configurePlugin);
+    QObject::connect(m_aboutPlugin, &QPushButton::pressed, this, &PluginPageWidget::aboutPlugin);
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
 
     m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
@@ -151,6 +171,42 @@ void PluginPageWidget::apply()
 }
 
 void PluginPageWidget::reset() { }
+
+Plugin* PluginPageWidget::currentPlugin() const
+{
+    const auto indexes = m_pluginList->selectionModel()->selectedRows();
+    if(indexes.empty()) {
+        return nullptr;
+    }
+
+    return indexes.front().data(PluginItem::Plugin).value<Plugin*>();
+}
+
+void PluginPageWidget::selectionChanged()
+{
+    if(const auto* plugin = currentPlugin()) {
+        m_configurePlugin->setEnabled(plugin->hasSettings());
+        m_aboutPlugin->setEnabled(plugin->hasAbout());
+        return;
+    }
+
+    m_configurePlugin->setDisabled(true);
+    m_aboutPlugin->setDisabled(true);
+}
+
+void PluginPageWidget::aboutPlugin()
+{
+    if(auto* plugin = currentPlugin()) {
+        plugin->showAbout(this);
+    }
+}
+
+void PluginPageWidget::configurePlugin()
+{
+    if(auto* plugin = currentPlugin()) {
+        plugin->showSettings(this);
+    }
+}
 
 void PluginPageWidget::installPlugin()
 {

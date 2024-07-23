@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <QtPlugin>
 
 namespace Fooyin {
@@ -32,7 +34,7 @@ namespace Fooyin {
  *     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "metadata.json")
  * @endcode
  */
-class Plugin
+class FYCORE_EXPORT Plugin
 {
 public:
     virtual ~Plugin() = default;
@@ -42,7 +44,13 @@ public:
      * Reimplement to handle any needed cleanup, including saving settings.
      * @note The base class implementation of this function does nothing.
      */
-    virtual void shutdown(){};
+    virtual void shutdown();
+
+    [[nodiscard]] virtual bool hasAbout() const;
+    [[nodiscard]] virtual bool hasSettings() const;
+
+    virtual void showAbout(QWidget* parent);
+    virtual void showSettings(QWidget* parent);
 };
 } // namespace Fooyin
 

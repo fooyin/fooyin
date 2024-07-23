@@ -78,9 +78,8 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
 
 AudioPlaybackEngine::~AudioPlaybackEngine()
 {
-    AudioPlaybackEngine::stop();
-
     stopWorkers();
+    AudioPlaybackEngine::stop();
 }
 
 void AudioPlaybackEngine::seek(uint64_t pos)
@@ -301,7 +300,7 @@ void AudioPlaybackEngine::stopWorkers(bool full)
         m_renderer->closeOutput();
         m_outputState = AudioOutput::State::Disconnected;
     }
-    if(m_decoder) {
+    if(m_decoder && m_state != PlaybackState::Stopped) {
         m_decoder->stop();
     }
     m_totalBufferTime = 0;
