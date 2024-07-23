@@ -125,7 +125,7 @@ bool SndFileInput::isSeekable() const
     return true;
 }
 
-bool SndFileInput::init(const QString& source)
+bool SndFileInput::init(const QString& source, DecoderOptions /*options*/)
 {
     SF_INFO info;
     info.format = 0;

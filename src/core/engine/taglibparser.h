@@ -31,5 +31,5 @@ namespace Fooyin::Tagging {
 [[nodiscard]] FYCORE_EXPORT bool readMetaData(Track& track);
 [[nodiscard]] FYCORE_EXPORT QByteArray readCover(const Track& track, Track::Cover cover);
 
-[[nodiscard]] FYCORE_EXPORT bool writeMetaData(const Track& track, const AudioInput::WriteOptions& options);
+[[nodiscard]] FYCORE_EXPORT bool writeMetaData(const Track& track, AudioInput::WriteOptions options);
 } // namespace Fooyin::Tagging

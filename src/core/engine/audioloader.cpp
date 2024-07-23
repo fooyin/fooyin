@@ -126,7 +126,7 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
     return {};
 }
 
-bool AudioLoader::writeTrackMetadata(const Track& track, const AudioInput::WriteOptions& options) const
+bool AudioLoader::writeTrackMetadata(const Track& track, AudioInput::WriteOptions options) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 

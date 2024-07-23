@@ -50,7 +50,7 @@ public:
     [[nodiscard]] bool canWriteMetaData() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    bool init(const QString& source) override;
+    bool init(const QString& source, DecoderOptions options) override;
     void start() override;
     void stop() override;
 

@@ -670,8 +670,7 @@ QByteArray readId3Cover(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track::Cover 
     return {picture.data(), static_cast<qsizetype>(picture.size())};
 }
 
-void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
-                    const Fooyin::AudioInput::WriteOptions& options)
+void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track, Fooyin::AudioInput::WriteOptions options)
 {
     id3Tags->removeFrames("TRCK");
 
@@ -691,7 +690,7 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
         id3Tags->addFrame(discFrame.release());
     }
 
-    if(options.writeRating) {
+    if(options & Fooyin::AudioInput::Rating) {
         id3Tags->removeFrames("FMPS_Rating");
 
         const auto rating = QString::number(track.rating());
@@ -714,7 +713,7 @@ void writeID3v2Tags(TagLib::ID3v2::Tag* id3Tags, const Fooyin::Track& track,
         frame->setRating(ratingToPopm(track.rating()));
     }
 
-    if(options.writePlaycount) {
+    if(options & Fooyin::AudioInput::Playcount) {
         id3Tags->removeFrames("FMPS_Playcount");
 
         const auto count = QString::number(track.playCount());
@@ -802,8 +801,7 @@ QByteArray readApeCover(const TagLib::APE::Tag* apeTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track,
-                  const Fooyin::AudioInput::WriteOptions& options)
+void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track, Fooyin::AudioInput::WriteOptions options)
 {
     const QString trackNumber = getTrackNumber(track);
     if(trackNumber.isEmpty()) {
@@ -821,7 +819,7 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track,
         apeTags->addValue("DISC", convertString(discNumber), true);
     }
 
-    if(options.writeRating) {
+    if(options & Fooyin::AudioInput::Rating) {
         if(track.rating() <= 0) {
             apeTags->removeItem("FMPS_RATING");
         }
@@ -830,7 +828,7 @@ void writeApeTags(TagLib::APE::Tag* apeTags, const Fooyin::Track& track,
         }
     }
 
-    if(options.writePlaycount) {
+    if(options & Fooyin::AudioInput::Playcount) {
         if(track.playCount() <= 0) {
             apeTags->removeItem("FMPS_PLAYCOUNT");
         }
@@ -1002,8 +1000,7 @@ TagLib::String prefixMp4FreeFormName(const QString& name, const TagLib::MP4::Ite
     return freeFormName;
 }
 
-void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track,
-                  const Fooyin::AudioInput::WriteOptions& options)
+void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin::AudioInput::WriteOptions options)
 {
     const int trackNumber = track.trackNumber();
     const int trackTotal  = track.trackTotal();
@@ -1027,11 +1024,11 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track,
 
     mp4Tags->setItem(Fooyin::Mp4::PerformerAlt, {convertString(track.performer())});
 
-    if(options.writeRating) {
+    if(options & Fooyin::AudioInput::Rating) {
         mp4Tags->setItem(Fooyin::Mp4::RatingAlt, {convertString(QString::number(track.rating()))});
     }
 
-    if(options.writePlaycount) {
+    if(options & Fooyin::AudioInput::Playcount) {
         if(track.playCount() <= 0) {
             mp4Tags->removeItem(Fooyin::Mp4::PlayCount);
         }
@@ -1153,7 +1150,7 @@ QByteArray readFlacCover(const TagLib::List<TagLib::FLAC::Picture*>& pictures, F
 }
 
 void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& track,
-                      const Fooyin::AudioInput::WriteOptions& options)
+                      Fooyin::AudioInput::WriteOptions options)
 {
     if(track.trackNumber() < 0) {
         xiphTags->removeFields(Fooyin::Tag::TrackNumber);
@@ -1183,7 +1180,7 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         xiphTags->addField(Fooyin::Tag::DiscTotal, TagLib::String::number(track.discTotal()), true);
     }
 
-    if(options.writeRating) {
+    if(options & Fooyin::AudioInput::Rating) {
         if(track.rating() <= 0) {
             xiphTags->removeFields("FMPS_RATING");
         }
@@ -1192,7 +1189,7 @@ void writeXiphComment(TagLib::Ogg::XiphComment* xiphTags, const Fooyin::Track& t
         }
     }
 
-    if(options.writePlaycount) {
+    if(options & Fooyin::AudioInput::Playcount) {
         if(track.playCount() <= 0) {
             xiphTags->removeFields("FMPS_PLAYCOUNT");
         }
@@ -1310,17 +1307,16 @@ QByteArray readAsfCover(const TagLib::ASF::Tag* asfTags, Fooyin::Track::Cover co
     return {};
 }
 
-void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track,
-                  const Fooyin::AudioInput::WriteOptions& options)
+void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin::AudioInput::WriteOptions options)
 {
     asfTags->setAttribute("WM/TrackNumber", TagLib::String::number(track.trackNumber()));
     asfTags->setAttribute("WM/PartOfSet", TagLib::String::number(track.discNumber()));
 
-    if(options.writeRating) {
+    if(options & Fooyin::AudioInput::Rating) {
         asfTags->addAttribute("FMPS/Rating", convertString(QString::number(track.rating())));
     }
 
-    if(options.writePlaycount) {
+    if(options & Fooyin::AudioInput::Playcount) {
         if(track.playCount() <= 0) {
             asfTags->removeItem("FMPS/Playcount");
         }
@@ -1617,7 +1613,7 @@ QByteArray readCover(const Track& track, Track::Cover cover)
     return {};
 }
 
-bool writeMetaData(const Track& track, const AudioInput::WriteOptions& options)
+bool writeMetaData(const Track& track, AudioInput::WriteOptions options)
 {
     const QString filepath = track.filepath();
 

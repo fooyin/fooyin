@@ -145,7 +145,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     changeTrackStatus(TrackStatus::Loading);
 
-    if(!m_decoder->init(track.filepath())) {
+    if(!m_decoder->init(track.filepath(), {})) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
     }
@@ -182,7 +182,7 @@ void AudioPlaybackEngine::play()
 
     if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
         // Current track was previously stopped, so init again
-        if(!m_decoder->init(m_currentTrack.filepath())) {
+        if(!m_decoder->init(m_currentTrack.filepath(), {})) {
             changeTrackStatus(TrackStatus::Invalid);
             return;
         }
@@ -488,12 +488,6 @@ void AudioPlaybackEngine::updatePosition()
 void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 {
     m_totalBufferTime -= buffer.duration();
-
-    const auto bufferPos = buffer.startTime();
-    if(bufferPos < m_lastPosition && m_lastPosition - bufferPos > PositionUpdateThreshold) {
-        // Handle looping
-        m_clock.sync(bufferPos);
-    }
 }
 
 void AudioPlaybackEngine::onRendererFinished()

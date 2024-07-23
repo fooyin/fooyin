@@ -63,7 +63,7 @@ QString getCodec(AVCodecID codec)
         case(AV_CODEC_ID_DTS):
             return QStringLiteral("DTS");
         default:
-            return QStringLiteral("Unknown");
+            return {};
     }
 }
 
@@ -613,7 +613,7 @@ bool FFmpegInput::canWriteMetaData() const
     return false;
 }
 
-bool FFmpegInput::init(const QString& source)
+bool FFmpegInput::init(const QString& source, DecoderOptions /*options*/)
 {
     return p->setup(source);
 }
@@ -753,7 +753,7 @@ QByteArray FFmpegInput::readCover(const Track& track, Track::Cover cover)
     return coverData;
 }
 
-bool FFmpegInput::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/)
+bool FFmpegInput::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
 }

@@ -24,17 +24,31 @@
 #include <core/engine/audiobuffer.h>
 #include <core/track.h>
 
-namespace Fooyin {
-class AudioInputPrivate;
+#include <QObject>
 
+namespace Fooyin {
 class FYCORE_EXPORT AudioInput
 {
+    Q_GADGET
+
 public:
-    struct WriteOptions
+    enum DecoderFlag : uint8_t
     {
-        bool writeRating{false};
-        bool writePlaycount{false};
+        None              = 0,
+        NoSeeking         = 1 << 0,
+        NoLooping         = 1 << 1,
+        NoInfiniteLooping = 1 << 2,
     };
+    Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
+    Q_FLAG(DecoderOptions)
+
+    enum WriteFlag : uint8_t
+    {
+        Metadata  = 0,
+        Rating    = 1 << 0,
+        Playcount = 1 << 1,
+    };
+    Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
 
     enum class Error : uint8_t
     {
@@ -45,17 +59,16 @@ public:
         NotSupportedError
     };
 
-    AudioInput();
-    virtual ~AudioInput();
+    virtual ~AudioInput() = default;
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
     [[nodiscard]] virtual bool canReadCover() const               = 0;
     [[nodiscard]] virtual bool canWriteMetaData() const           = 0;
     [[nodiscard]] virtual bool isSeekable() const                 = 0;
 
-    virtual bool init(const QString& source) = 0;
-    virtual void start()                     = 0;
-    virtual void stop()                      = 0;
+    virtual bool init(const QString& source, DecoderOptions options) = 0;
+    virtual void start()                                             = 0;
+    virtual void stop()                                              = 0;
 
     virtual void seek(uint64_t pos) = 0;
 
@@ -63,16 +76,13 @@ public:
 
     [[nodiscard]] virtual bool readMetaData(Track& track) = 0;
     [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover);
-    [[nodiscard]] virtual bool writeMetaData(const Track& track, const WriteOptions& options);
+    [[nodiscard]] virtual bool writeMetaData(const Track& track, WriteOptions options);
 
     [[nodiscard]] virtual AudioFormat format() const = 0;
     [[nodiscard]] virtual Error error() const        = 0;
-
-    [[nodiscard]] int maxLoops() const;
-    void setMaxLoops(int count);
-
-private:
-    std::unique_ptr<AudioInputPrivate> p;
 };
 using InputCreator = std::function<std::unique_ptr<AudioInput>()>;
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioInput::DecoderOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioInput::WriteOptions)

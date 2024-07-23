@@ -36,7 +36,7 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    bool init(const QString& source) override;
+    bool init(const QString& source, DecoderOptions options) override;
 
     void start() override;
     void stop() override;
@@ -48,7 +48,7 @@ public:
 
     [[nodiscard]] bool readMetaData(Track& track) override;
     [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
-    [[nodiscard]] bool writeMetaData(const Track& track, const WriteOptions& options) override;
+    [[nodiscard]] bool writeMetaData(const Track& track, WriteOptions options) override;
 
     [[nodiscard]] AudioFormat format() const override;
     [[nodiscard]] Error error() const override;

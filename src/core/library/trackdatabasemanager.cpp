@@ -57,8 +57,12 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
     TrackList tracksUpdated;
 
     AudioInput::WriteOptions options;
-    options.writeRating    = m_settings->value<Settings::Core::SaveRatingToMetadata>();
-    options.writePlaycount = m_settings->value<Settings::Core::SavePlaycountToMetadata>();
+    if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+        options |= AudioInput::Rating;
+    }
+    if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+        options |= AudioInput::Playcount;
+    }
 
     for(const Track& track : tracks) {
         Track updatedTrack{track};
@@ -89,10 +93,14 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
     TrackList tracksUpdated;
 
     AudioInput::WriteOptions options;
-    options.writeRating    = m_settings->value<Settings::Core::SaveRatingToMetadata>();
-    options.writePlaycount = m_settings->value<Settings::Core::SavePlaycountToMetadata>();
+    if(m_settings->value<Settings::Core::SaveRatingToMetadata>()) {
+        options |= AudioInput::Rating;
+    }
+    if(m_settings->value<Settings::Core::SavePlaycountToMetadata>()) {
+        options |= AudioInput::Playcount;
+    }
 
-    const bool writeToFile = options.writeRating || options.writePlaycount;
+    const bool writeToFile = options & AudioInput::Rating || options & AudioInput::Playcount;
 
     for(const Track& track : tracks) {
         Track updatedTrack{track};

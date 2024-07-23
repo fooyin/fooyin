@@ -40,7 +40,7 @@ public:
     [[nodiscard]] AudioInput* decoderForTrack(const Track& track) const;
     [[nodiscard]] bool readTrackMetadata(Track& track) const;
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
-    [[nodiscard]] bool writeTrackMetadata(const Track& track, const AudioInput::WriteOptions& options) const;
+    [[nodiscard]] bool writeTrackMetadata(const Track& track, AudioInput::WriteOptions options) const;
 
     void addDecoder(const QString& name, const InputCreator& creator);
 
