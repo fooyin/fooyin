@@ -40,7 +40,7 @@ constexpr auto Channels   = 2;
 constexpr auto FadeLen    = 4;
 constexpr auto BufferLen  = 2048;
 
-constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_LOOP_INCL | PLAYTIME_WITH_FADE);
+constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_LOOP_INCL | PLAYTIME_WITH_FADE | PLAYTIME_WITH_SLNC);
 
 namespace {
 int extractTrackNumber(const QString& filename)
