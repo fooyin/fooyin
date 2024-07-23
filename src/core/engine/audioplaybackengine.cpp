@@ -44,7 +44,7 @@ constexpr auto PositionInterval = 50;
 #endif
 
 constexpr auto MaxDecodeLength         = 200;
-constexpr auto PositionUpdateThreshold = 200;
+constexpr auto PositionUpdateThreshold = 400;
 
 namespace Fooyin {
 AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
@@ -59,6 +59,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_startPosition{0}
     , m_endPosition{0}
     , m_lastPosition{0}
+    , m_seeking{false}
     , m_totalBufferTime{0}
     , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
     , m_duration{0}
@@ -87,6 +88,8 @@ void AudioPlaybackEngine::seek(uint64_t pos)
     if(!m_decoder || !m_decoder->isSeekable()) {
         return;
     }
+
+    m_seeking = true;
 
     resetWorkers();
 
@@ -488,6 +491,11 @@ void AudioPlaybackEngine::updatePosition()
 void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 {
     m_totalBufferTime -= buffer.duration();
+
+    if(m_seeking) {
+        m_seeking = false;
+        return;
+    }
 
     const auto bufferPos = buffer.startTime();
     if(bufferPos < m_lastPosition && m_lastPosition - bufferPos > PositionUpdateThreshold) {

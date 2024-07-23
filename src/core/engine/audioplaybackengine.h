@@ -91,6 +91,7 @@ private:
     uint64_t m_startPosition;
     uint64_t m_endPosition;
     uint64_t m_lastPosition;
+    bool m_seeking;
 
     uint64_t m_totalBufferTime;
     uint64_t m_bufferLength;
