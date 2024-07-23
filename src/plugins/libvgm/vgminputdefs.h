@@ -17,38 +17,9 @@
  *
  */
 
-#include <core/engine/audioinput.h>
+#pragma once
 
-namespace Fooyin {
-class AudioInputPrivate
-{
-public:
-    int maxLoops{-1};
-};
-
-AudioInput::AudioInput()
-    : p{std::make_unique<AudioInputPrivate>()}
-{ }
-
-AudioInput::~AudioInput() = default;
-
-QByteArray AudioInput::readCover(const Track& /*track*/, Track::Cover /*cover*/)
-{
-    return {};
-}
-
-bool AudioInput::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/)
-{
-    return false;
-}
-
-int AudioInput::maxLoops() const
-{
-    return p->maxLoops;
-}
-
-void AudioInput::setMaxLoops(int count)
-{
-    p->maxLoops = count;
-}
-} // namespace Fooyin
+namespace Fooyin::VgmInput {
+constexpr auto DefaultLoopCount = 2;
+constexpr auto LoopCountSetting = "VgmInput/LoopCount";
+} // namespace Fooyin::VgmInput

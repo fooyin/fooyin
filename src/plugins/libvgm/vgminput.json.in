@@ -1,5 +1,5 @@
 {
-    "Name" : "Libvgm",
+    "Name" : "VGM Input",
     "Version" : "${FOOYIN_VERSION}",
     "Vendor" : "Fooyin",
     "Copyright" : "Copyright © 2024, Luke Taylor <LukeT1@proton.me>",

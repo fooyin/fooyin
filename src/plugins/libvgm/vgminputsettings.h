@@ -17,38 +17,27 @@
  *
  */
 
-#include <core/engine/audioinput.h>
+#pragma once
 
-namespace Fooyin {
-class AudioInputPrivate
+#include <core/coresettings.h>
+
+#include <QDialog>
+
+class QSpinBox;
+
+namespace Fooyin::VgmInput {
+class VgmInputSettings : public QDialog
 {
+    Q_OBJECT
+
 public:
-    int maxLoops{-1};
+    explicit VgmInputSettings(QWidget* parent = nullptr);
+
+    void accept() override;
+    void apply();
+
+private:
+    FySettings m_settings;
+    QSpinBox* m_loopCount;
 };
-
-AudioInput::AudioInput()
-    : p{std::make_unique<AudioInputPrivate>()}
-{ }
-
-AudioInput::~AudioInput() = default;
-
-QByteArray AudioInput::readCover(const Track& /*track*/, Track::Cover /*cover*/)
-{
-    return {};
-}
-
-bool AudioInput::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/)
-{
-    return false;
-}
-
-int AudioInput::maxLoops() const
-{
-    return p->maxLoops;
-}
-
-void AudioInput::setMaxLoops(int count)
-{
-    p->maxLoops = count;
-}
-} // namespace Fooyin
+} // namespace Fooyin::VgmInput

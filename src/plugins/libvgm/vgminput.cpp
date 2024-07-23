@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
  *
  */
 
-#include "libvgmplugin.h"
+#include "vgminput.h"
+
+#include "vgminputdefs.h"
 
 #include <player/droplayer.hpp>
 #include <player/gymplayer.hpp>
@@ -34,94 +36,58 @@ constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;
 constexpr auto Channels   = 2;
 constexpr auto FadeLen    = 4;
-constexpr auto LoopCount  = 2;
 constexpr auto BufferLen  = 2048;
 
-namespace {
-struct DataLoaderDeleter
-{
-    void operator()(DATA_LOADER* loader) const noexcept
-    {
-        if(loader) {
-            DataLoader_Deinit(loader);
-        }
-    }
-};
-using DataLoaderPtr = std::unique_ptr<DATA_LOADER, DataLoaderDeleter>;
+constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_WITH_FADE | PLAYTIME_WITH_SLNC);
 
-void configurePlayer(PlayerA* player)
-{
-    player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
-
-    PlayerA::Config config = player->GetConfiguration();
-    config.masterVol       = 0x10000;
-    config.loopCount       = LoopCount;
-    config.fadeSmpls       = SampleRate * FadeLen;
-    config.endSilenceSmpls = SampleRate / 2;
-    config.pbSpeed         = 1.0;
-    player->SetConfiguration(config);
-}
-} // namespace
-
-namespace Fooyin::Gme {
-class LibvgmInput : public AudioInput
-{
-public:
-    LibvgmInput();
-
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
-    [[nodiscard]] bool isSeekable() const override;
-
-    bool init(const QString& source) override;
-    void start() override;
-    void stop() override;
-
-    void seek(uint64_t pos) override;
-
-    AudioBuffer readBuffer(size_t bytes) override;
-
-    [[nodiscard]] bool readMetaData(Track& track) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
-
-private:
-    AudioFormat m_format;
-    DataLoaderPtr m_loader;
-    std::unique_ptr<PlayerA> m_mainPlayer;
-};
-
-LibvgmInput::LibvgmInput()
+namespace Fooyin::VgmInput {
+VgmInput::VgmInput()
 {
     m_format.setSampleFormat(SampleFormat::S16);
     m_format.setSampleRate(SampleRate);
     m_format.setChannelCount(Channels);
 }
 
-QStringList LibvgmInput::supportedExtensions() const
+void VgmInput::configurePlayer(PlayerA* player) const
+{
+    player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
+
+    int loopCount = maxLoops();
+    if(loopCount < 0) {
+        loopCount = m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt();
+    }
+
+    PlayerA::Config config = player->GetConfiguration();
+    config.masterVol       = 0x10000;
+    config.loopCount       = loopCount;
+    config.fadeSmpls       = SampleRate * FadeLen;
+    config.endSilenceSmpls = SampleRate / 2;
+    config.pbSpeed         = 1.0;
+    player->SetConfiguration(config);
+}
+
+QStringList VgmInput::supportedExtensions() const
 {
     return {QStringLiteral("dro"), QStringLiteral("gym"), QStringLiteral("s98"), QStringLiteral("vgm"),
             QStringLiteral("vgz")};
 }
 
-bool LibvgmInput::canReadCover() const
+bool VgmInput::canReadCover() const
 {
     return false;
 }
 
-bool LibvgmInput::canWriteMetaData() const
+bool VgmInput::canWriteMetaData() const
 {
     return false;
 }
 
-bool LibvgmInput::isSeekable() const
+bool VgmInput::isSeekable() const
 {
     return true;
 }
 
-bool LibvgmInput::init(const QString& source)
+bool VgmInput::init(const QString& source)
 {
     m_mainPlayer = std::make_unique<PlayerA>();
     m_mainPlayer->RegisterPlayerEngine(new VGMPlayer());
@@ -147,19 +113,19 @@ bool LibvgmInput::init(const QString& source)
     PlayerBase* player = m_mainPlayer->GetPlayer();
     if(player->GetPlayerType() == FCC_VGM) {
         if(auto* vgmPlayer = dynamic_cast<VGMPlayer*>(player)) {
-            m_mainPlayer->SetLoopCount(vgmPlayer->GetModifiedLoopCount(LoopCount));
+            m_mainPlayer->SetLoopCount(vgmPlayer->GetModifiedLoopCount(m_mainPlayer->GetLoopCount()));
         }
     }
 
     return true;
 }
 
-void LibvgmInput::start()
+void VgmInput::start()
 {
     m_mainPlayer->Start();
 }
 
-void LibvgmInput::stop()
+void VgmInput::stop()
 {
     if(m_mainPlayer) {
         m_mainPlayer->Stop();
@@ -171,18 +137,25 @@ void LibvgmInput::stop()
     }
 }
 
-void LibvgmInput::seek(uint64_t pos)
+void VgmInput::seek(uint64_t pos)
 {
     m_mainPlayer->Seek(PLAYPOS_SAMPLE, m_format.framesForDuration(pos));
 }
 
-AudioBuffer LibvgmInput::readBuffer(size_t bytes)
+AudioBuffer VgmInput::readBuffer(size_t bytes)
 {
-    if(m_mainPlayer->GetState() & PLAYSTATE_END) {
+    const auto state = m_mainPlayer->GetState();
+
+    if(state & PLAYSTATE_FIN) {
         return {};
     }
 
-    const auto startTime = static_cast<uint64_t>(m_mainPlayer->GetCurTime(PLAYTIME_TIME_PBK) * 1000);
+    auto durFlags = DurationFlags;
+    if(state & PLAYSTATE_FADE) {
+        durFlags |= PLAYTIME_LOOP_INCL;
+    }
+
+    const auto startTime = static_cast<uint64_t>(m_mainPlayer->GetCurTime(durFlags) * 1000);
 
     AudioBuffer buffer{m_format, startTime};
     buffer.resize(bytes);
@@ -199,7 +172,7 @@ AudioBuffer LibvgmInput::readBuffer(size_t bytes)
     return buffer;
 }
 
-bool LibvgmInput::readMetaData(Track& track)
+bool VgmInput::readMetaData(Track& track)
 {
     PlayerA mainPlayer;
     mainPlayer.RegisterPlayerEngine(new VGMPlayer());
@@ -224,8 +197,7 @@ bool LibvgmInput::readMetaData(Track& track)
 
     PlayerBase* player = mainPlayer.GetPlayer();
 
-    const auto durFlags = (PLAYTIME_TIME_FILE | PLAYTIME_LOOP_INCL | PLAYTIME_WITH_FADE);
-    track.setDuration(static_cast<uint64_t>(mainPlayer.GetTotalTime(durFlags) * 1000));
+    track.setDuration(static_cast<uint64_t>(mainPlayer.GetTotalTime(DurationFlags) * 1000));
     track.setSampleRate(static_cast<int>(player->GetSampleRate()));
     track.setBitDepth(Bps);
     track.setChannels(Channels);
@@ -260,27 +232,13 @@ bool LibvgmInput::readMetaData(Track& track)
     return true;
 }
 
-AudioFormat LibvgmInput::format() const
+AudioFormat VgmInput::format() const
 {
     return m_format;
 }
 
-AudioInput::Error LibvgmInput::error() const
+AudioInput::Error VgmInput::error() const
 {
     return {};
 }
-
-QString LibvgmPlugin::name() const
-{
-    return QStringLiteral("Libvgm");
-}
-
-InputCreator LibvgmPlugin::inputCreator() const
-{
-    return []() {
-        return std::make_unique<LibvgmInput>();
-    };
-}
-} // namespace Fooyin::Gme
-
-#include "moc_libvgmplugin.cpp"
+} // namespace Fooyin::VgmInput

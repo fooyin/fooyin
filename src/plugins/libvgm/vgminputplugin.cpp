@@ -17,22 +17,35 @@
  *
  */
 
-#pragma once
+#include "vgminputplugin.h"
 
-#include <core/engine/inputplugin.h>
-#include <core/plugins/plugin.h>
+#include "vgminput.h"
+#include "vgminputsettings.h"
 
-namespace Fooyin::Gme {
-class LibvgmPlugin : public QObject,
-                  public Plugin,
-                  public InputPlugin
+namespace Fooyin::VgmInput {
+QString VgmInputPlugin::name() const
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "libvgminput.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
+    return QStringLiteral("VGM Input");
+}
 
-public:
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] InputCreator inputCreator() const override;
-};
-} // namespace Fooyin::Gme
+InputCreator VgmInputPlugin::inputCreator() const
+{
+    return []() {
+        return std::make_unique<VgmInput>();
+    };
+}
+
+bool VgmInputPlugin::hasSettings() const
+{
+    return true;
+}
+
+void VgmInputPlugin::showSettings(QWidget* parent)
+{
+    auto* dialog = new VgmInputSettings(parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+}
+} // namespace Fooyin::VgmInput
+
+#include "moc_vgminputplugin.cpp"
