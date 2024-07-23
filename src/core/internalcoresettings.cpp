@@ -70,6 +70,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SaveRatingToMetadata>(false, QStringLiteral("Library/SaveRatingToFile"));
     m_settings->createSetting<SavePlaycountToMetadata>(false, QStringLiteral("Library/SavePlaycountToFile"));
     m_settings->createSetting<PlayedThreshold>(0.5, QStringLiteral("Playback/PlayedThreshold"));
+    m_settings->createSetting<ExternalSortScript>(QStringLiteral("%filepath%"),
+                                                  QStringLiteral("Library/ExternalSortScript"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

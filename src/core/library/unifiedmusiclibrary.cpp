@@ -41,8 +41,8 @@ class UnifiedMusicLibraryPrivate
 {
 public:
     UnifiedMusicLibraryPrivate(UnifiedMusicLibrary* self, LibraryManager* libraryManager, DbConnectionPoolPtr dbPool,
-                               std::shared_ptr<PlaylistLoader> playlistLoader,
-                               std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings);
+                               std::shared_ptr<PlaylistLoader> playlistLoader, std::shared_ptr<AudioLoader> audioLoader,
+                               SettingsManager* settings);
 
     void loadTracks(const TrackList& trackToLoad);
     QFuture<void> addTracks(const TrackList& newTracks);
@@ -180,7 +180,7 @@ void UnifiedMusicLibraryPrivate::scannedTracks(int id, const TrackList& newTrack
     addTracks(newTracks).then([this, id, newTracks, existingTracks]() {
         TrackList scannedTracks{newTracks};
         scannedTracks.insert(scannedTracks.end(), existingTracks.cbegin(), existingTracks.cend());
-        recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), scannedTracks)
+        recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), scannedTracks)
             .then(m_self, [this, id](const TrackList& sortedScannedTracks) {
                 emit m_self->tracksScanned(id, sortedScannedTracks);
             });

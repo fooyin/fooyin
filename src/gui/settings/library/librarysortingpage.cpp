@@ -30,7 +30,7 @@
 #include <QAction>
 #include <QHeaderView>
 #include <QLabel>
-#include <QPlainTextEdit>
+#include <QLineEdit>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -54,7 +54,8 @@ private:
     ExtendableTableView* m_sortList;
     SortingModel* m_model;
 
-    QPlainTextEdit* m_sortScript;
+    QLineEdit* m_sortScript;
+    QLineEdit* m_externalSortScript;
 };
 
 LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortingRegistry,
@@ -63,7 +64,8 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(m_sortRegistry, this)}
-    , m_sortScript{new QPlainTextEdit(this)}
+    , m_sortScript{new QLineEdit(this)}
+    , m_externalSortScript{new QLineEdit(this)}
 {
     m_sortList->setExtendableModel(m_model);
     m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
@@ -77,12 +79,15 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_sortList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    auto* sortScriptLabel = new QLabel(tr("Sort tracks in library by") + QStringLiteral(":"), this);
+    auto* sortScriptLabel         = new QLabel(tr("Sort tracks in library by") + QStringLiteral(":"), this);
+    auto* sortExternalScriptLabel = new QLabel(tr("Sort incoming tracks by") + QStringLiteral(":"), this);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_sortList, 0, 0, 1, 2);
     mainLayout->addWidget(sortScriptLabel, 1, 0);
     mainLayout->addWidget(m_sortScript, 2, 0, 1, 2);
+    mainLayout->addWidget(sortExternalScriptLabel, 3, 0);
+    mainLayout->addWidget(m_externalSortScript, 4, 0, 1, 2);
     mainLayout->setRowStretch(0, 1);
 
     auto updateButtonState = [this]() {
@@ -102,19 +107,22 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
 void LibrarySortingPageWidget::load()
 {
     m_model->populate();
-    m_sortScript->setPlainText(m_settings->value<Settings::Core::LibrarySortScript>());
+    m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
+    m_externalSortScript->setText(m_settings->value<Settings::Core::ExternalSortScript>());
 }
 
 void LibrarySortingPageWidget::apply()
 {
     m_model->processQueue();
-    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->toPlainText());
+    m_settings->set<Settings::Core::LibrarySortScript>(m_sortScript->text());
+    m_settings->set<Settings::Core::ExternalSortScript>(m_externalSortScript->text());
 }
 
 void LibrarySortingPageWidget::reset()
 {
     m_sortRegistry->reset();
     m_settings->reset<Settings::Core::LibrarySortScript>();
+    m_settings->reset<Settings::Core::ExternalSortScript>();
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry,

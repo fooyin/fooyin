@@ -56,7 +56,8 @@ enum CoreSettings : uint32_t
     OpenFilesSendTo         = 17 | Type::Bool,
     SaveRatingToMetadata    = 18 | Type::Bool,
     SavePlaycountToMetadata = 19 | Type::Bool,
-    PlayedThreshold         = 20 | Type::Double
+    PlayedThreshold         = 20 | Type::Double,
+    ExternalSortScript      = 21 | Type::String
 
 };
 Q_ENUM_NS(CoreSettings)
