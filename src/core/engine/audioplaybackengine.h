@@ -75,6 +75,7 @@ private:
 
     void readNextBuffer();
     void updatePosition();
+    void onBufferProcessed(const AudioBuffer& buffer);
     void onRendererFinished();
 
     std::shared_ptr<AudioLoader> m_decoderProvider;

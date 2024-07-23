@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,38 +17,35 @@
  *
  */
 
-#include <core/engine/audioinput.h>
+#include "vgminputplugin.h"
 
-namespace Fooyin {
-class AudioInputPrivate
+#include "vgminput.h"
+#include "vgminputsettings.h"
+
+namespace Fooyin::VgmInput {
+QString VgmInputPlugin::name() const
 {
-public:
-    int maxLoops{-1};
-};
-
-AudioInput::AudioInput()
-    : p{std::make_unique<AudioInputPrivate>()}
-{ }
-
-AudioInput::~AudioInput() = default;
-
-QByteArray AudioInput::readCover(const Track& /*track*/, Track::Cover /*cover*/)
-{
-    return {};
+    return QStringLiteral("VGM Input");
 }
 
-bool AudioInput::writeMetaData(const Track& /*track*/, const WriteOptions& /*options*/)
+InputCreator VgmInputPlugin::inputCreator() const
 {
-    return false;
+    return []() {
+        return std::make_unique<VgmInput>();
+    };
 }
 
-int AudioInput::maxLoops() const
+bool VgmInputPlugin::hasSettings() const
 {
-    return p->maxLoops;
+    return true;
 }
 
-void AudioInput::setMaxLoops(int count)
+void VgmInputPlugin::showSettings(QWidget* parent)
 {
-    p->maxLoops = count;
+    auto* dialog = new VgmInputSettings(parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
 }
-} // namespace Fooyin
+} // namespace Fooyin::VgmInput
+
+#include "moc_vgminputplugin.cpp"

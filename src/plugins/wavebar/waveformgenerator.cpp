@@ -270,6 +270,7 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
         if(!m_decoder) {
             return {};
         }
+        m_decoder->setMaxLoops(1);
     }
 
     if(!m_decoder->init(track.filepath())) {

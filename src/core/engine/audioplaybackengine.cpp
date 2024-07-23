@@ -43,7 +43,8 @@ constexpr auto BufferInterval   = 5;
 constexpr auto PositionInterval = 50;
 #endif
 
-constexpr auto MaxDecodeLength = 200;
+constexpr auto MaxDecodeLength         = 200;
+constexpr auto PositionUpdateThreshold = 400;
 
 namespace Fooyin {
 AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
@@ -66,8 +67,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_renderer{new AudioRenderer(this)}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
-    QObject::connect(m_renderer, &AudioRenderer::bufferProcessed, this,
-                     [this](const AudioBuffer& buffer) { m_totalBufferTime -= buffer.duration(); });
+    QObject::connect(m_renderer, &AudioRenderer::bufferProcessed, this, &AudioPlaybackEngine::onBufferProcessed);
     QObject::connect(m_renderer, &AudioRenderer::finished, this, &AudioPlaybackEngine::onRendererFinished);
     QObject::connect(m_renderer, &AudioRenderer::outputStateChanged, this, &AudioPlaybackEngine::handleOutputState);
 
@@ -482,6 +482,17 @@ void AudioPlaybackEngine::updatePosition()
         m_clock.setPaused(true);
         m_clock.sync(m_duration);
         changeTrackStatus(TrackStatus::End);
+    }
+}
+
+void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
+{
+    m_totalBufferTime -= buffer.duration();
+
+    const auto bufferPos = buffer.startTime();
+    if(bufferPos < m_lastPosition && m_lastPosition - bufferPos > PositionUpdateThreshold) {
+        // Handle looping
+        m_clock.sync(bufferPos);
     }
 }
 

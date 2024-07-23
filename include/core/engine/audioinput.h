@@ -25,6 +25,8 @@
 #include <core/track.h>
 
 namespace Fooyin {
+class AudioInputPrivate;
+
 class FYCORE_EXPORT AudioInput
 {
 public:
@@ -34,16 +36,17 @@ public:
         bool writePlaycount{false};
     };
 
-    enum class Error : uint32_t
+    enum class Error : uint8_t
     {
-        NoError,
+        NoError = 0,
         ResourceError,
         FormatError,
         AccessDeniedError,
         NotSupportedError
     };
 
-    virtual ~AudioInput() = default;
+    AudioInput();
+    virtual ~AudioInput();
 
     [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
     [[nodiscard]] virtual bool canReadCover() const               = 0;
@@ -64,6 +67,12 @@ public:
 
     [[nodiscard]] virtual AudioFormat format() const = 0;
     [[nodiscard]] virtual Error error() const        = 0;
+
+    [[nodiscard]] int maxLoops() const;
+    void setMaxLoops(int count);
+
+private:
+    std::unique_ptr<AudioInputPrivate> p;
 };
 using InputCreator = std::function<std::unique_ptr<AudioInput>()>;
 } // namespace Fooyin

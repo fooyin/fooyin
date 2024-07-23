@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,23 @@
 
 #pragma once
 
-#include <core/engine/audioinput.h>
+#include <core/engine/inputplugin.h>
+#include <core/plugins/plugin.h>
 
-#include <QtPlugin>
-
-namespace Fooyin {
-/*!
- * An abstract interface for audio decoder plugins.
- */
-class InputPlugin
+namespace Fooyin::VgmInput {
+class VgmInputPlugin : public QObject,
+                       public Plugin,
+                       public InputPlugin
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "vgminput.json")
+    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
+
 public:
-    virtual ~InputPlugin() = default;
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] InputCreator inputCreator() const override;
 
-    [[nodiscard]] virtual QString name() const              = 0;
-    [[nodiscard]] virtual InputCreator inputCreator() const = 0;
+    [[nodiscard]] bool hasSettings() const override;
+    void showSettings(QWidget* parent) override;
 };
-} // namespace Fooyin
-
-Q_DECLARE_INTERFACE(Fooyin::InputPlugin, "org.fooyin.fooyin.plugin.engine.input")
+} // namespace Fooyin::VgmInput
