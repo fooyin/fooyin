@@ -23,6 +23,7 @@
 
 #include <QDialog>
 
+class QCheckBox;
 class QSpinBox;
 
 namespace Fooyin::VgmInput {
@@ -39,5 +40,6 @@ public:
 private:
     FySettings m_settings;
     QSpinBox* m_loopCount;
+    QCheckBox* m_guessTrack;
 };
 } // namespace Fooyin::VgmInput

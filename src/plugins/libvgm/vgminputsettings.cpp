@@ -21,6 +21,7 @@
 
 #include "vgminputdefs.h"
 
+#include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -32,6 +33,7 @@ namespace Fooyin::VgmInput {
 VgmInputSettings::VgmInputSettings(QWidget* parent)
     : QDialog{parent}
     , m_loopCount{new QSpinBox(this)}
+    , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
 {
     setWindowTitle(tr("VGM Input Settings"));
     setModal(true);
@@ -62,10 +64,12 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 
     row = 0;
     layout->addWidget(lengthGroup, row++, 0, 1, 3);
+    layout->addWidget(m_guessTrack, row++, 0, 1, 3);
     layout->addWidget(buttons, row++, 0, 1, 3, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
     m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
+    m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
 }
 
 void VgmInputSettings::accept()
@@ -77,5 +81,6 @@ void VgmInputSettings::accept()
 void VgmInputSettings::apply()
 {
     m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
+    m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
 }
 } // namespace Fooyin::VgmInput

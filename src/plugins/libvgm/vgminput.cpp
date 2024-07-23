@@ -21,6 +21,8 @@
 
 #include "vgminputdefs.h"
 
+#include <QRegularExpression>
+
 #include <player/droplayer.hpp>
 #include <player/gymplayer.hpp>
 #include <player/playera.hpp>
@@ -39,6 +41,15 @@ constexpr auto FadeLen    = 4;
 constexpr auto BufferLen  = 2048;
 
 constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_WITH_FADE | PLAYTIME_WITH_SLNC);
+
+namespace {
+int extractTrackNumber(const QString& filename)
+{
+    static const QRegularExpression regex(QStringLiteral(R"(^(\d+))"));
+    const QRegularExpressionMatch match = regex.match(filename);
+    return match.hasMatch() ? match.captured(1).toInt() : -1;
+}
+} // namespace
 
 namespace Fooyin::VgmInput {
 VgmInput::VgmInput()
@@ -225,6 +236,10 @@ bool VgmInput::readMetaData(Track& track)
         else {
             track.addExtraTag(QString::fromLocal8Bit(tag[0]).toUpper(), QString::fromLocal8Bit(tag[1]));
         }
+    }
+
+    if(m_settings.value(QLatin1String{GuessTrackSetting}).toBool()) {
+        track.setTrackNumber(extractTrackNumber(track.filename()));
     }
 
     track.setCodec(QStringLiteral("VGM"));

@@ -22,4 +22,7 @@
 namespace Fooyin::VgmInput {
 constexpr auto DefaultLoopCount = 2;
 constexpr auto LoopCountSetting = "VgmInput/LoopCount";
+
+constexpr auto DefaultGuessTrack = true;
+constexpr auto GuessTrackSetting = "VgmInput/GuessTrack";
 } // namespace Fooyin::VgmInput
