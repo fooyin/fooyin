@@ -244,12 +244,13 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<ApplicationPrivate>(this)}
 {
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this,
-                     [this]() { p->startSaveTimer(); });
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this,
-                     [this]() { p->startSaveTimer(); });
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this,
-                     [this]() { p->startSaveTimer(); });
+    auto startPlaylistTimer = [this]() {
+        p->startSaveTimer();
+    };
+
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this, startPlaylistTimer);
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
                      [this]() { p->loadPlaybackState(); });
 
@@ -260,9 +261,9 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
     QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, p->m_playlistHandler,
-                     [this](const TrackList& tracks) { p->m_playlistHandler->handleTracksChanged(tracks); });
+                     &PlaylistHandler::handleTracksChanged);
     QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, p->m_playlistHandler,
-                     [this](const TrackList& tracks) { p->m_playlistHandler->handleTracksUpdated(tracks); });
+                     &PlaylistHandler::handleTracksUpdated);
     QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
     QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
