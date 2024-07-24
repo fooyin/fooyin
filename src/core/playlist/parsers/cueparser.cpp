@@ -90,6 +90,22 @@ std::optional<uint64_t> msfToMs(const QString& index)
     return ((minutes * 60 + seconds) * 1000) + frames * 1000 / 75;
 }
 
+QString findMatchingFile(const QString& filepath)
+{
+    const QFileInfo info{filepath};
+    const QDir dir         = info.absoluteDir();
+    const QString fileName = info.fileName();
+
+    const auto files = dir.entryList(QDir::Files);
+
+    for(const QString& file : files) {
+        if(file.compare(fileName, Qt::CaseInsensitive) == 0) {
+            return dir.absoluteFilePath(file);
+        }
+    }
+    return filepath;
+}
+
 void readRemLine(CueSheet& sheet, const QStringList& lineParts)
 {
     if(lineParts.size() < 2) {
@@ -284,6 +300,9 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             }
             else {
                 trackPath = QDir::cleanPath(dir.absoluteFilePath(value));
+            }
+            if(!QFile::exists(trackPath)) {
+                trackPath = findMatchingFile(trackPath);
             }
         }
 
