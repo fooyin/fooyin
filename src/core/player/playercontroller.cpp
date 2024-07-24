@@ -37,13 +37,16 @@ public:
 
     void changeTrack(const PlaylistTrack& track)
     {
-        m_currentTrack    = track;
-        m_totalDuration   = m_currentTrack.track.duration();
-        m_position        = 0;
-        m_timeListened    = 0;
-        m_counted         = false;
-        m_playedThreshold = static_cast<uint64_t>(static_cast<double>(m_totalDuration)
-                                                  * m_settings->value<Settings::Core::PlayedThreshold>());
+        m_currentTrack  = track;
+        m_totalDuration = m_currentTrack.track.duration();
+        m_position      = 0;
+        m_timeListened  = 0;
+        m_counted       = false;
+
+        if(m_totalDuration > 200) {
+            m_playedThreshold = static_cast<uint64_t>(static_cast<double>(m_totalDuration - 200)
+                                                      * m_settings->value<Settings::Core::PlayedThreshold>());
+        }
     }
 
     void updatePosition(uint64_t pos)
