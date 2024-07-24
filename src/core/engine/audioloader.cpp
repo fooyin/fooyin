@@ -61,11 +61,12 @@ QStringList AudioLoader::supportedFileExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
+    bool writableDecoder{false};
     if(auto* decoder = decoderForTrack(track)) {
-        return decoder->canWriteMetaData();
+        writableDecoder = decoder->canWriteMetaData();
     }
 
-    return Tagging::supportedExtensions().contains(track.extension());
+    return writableDecoder || Tagging::supportedExtensions().contains(track.extension());
 }
 
 AudioInput* AudioLoader::decoderForTrack(const Track& track) const
