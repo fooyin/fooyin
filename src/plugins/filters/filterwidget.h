@@ -74,8 +74,8 @@ public:
     void searchEvent(const QString& search) override;
 
     void tracksAdded(const TrackList& tracks);
+    void tracksChanged(const TrackList& tracks);
     void tracksUpdated(const TrackList& tracks);
-    void tracksPlayed(const TrackList& tracks);
     void tracksRemoved(const TrackList& tracks);
 
 signals:

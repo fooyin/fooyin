@@ -47,8 +47,8 @@ public:
     void loadTracks(const TrackList& trackToLoad);
     QFuture<void> addTracks(const TrackList& newTracks);
     void updateLibraryTracks(const TrackList& updatedTracks);
+    QFuture<void> updateTracksMetadata(const TrackList& tracksToUpdate);
     QFuture<void> updateTracks(const TrackList& tracksToUpdate);
-    QFuture<void> updatePlayedTracks(const TrackList& tracksToUpdate);
 
     void handleScanResult(const ScanResult& result);
     void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks);
@@ -133,6 +133,20 @@ void UnifiedMusicLibraryPrivate::updateLibraryTracks(const TrackList& updatedTra
     }
 }
 
+QFuture<void> UnifiedMusicLibraryPrivate::updateTracksMetadata(const TrackList& tracksToUpdate)
+{
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
+
+    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
+        updateLibraryTracks(sortedTracks);
+
+        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
+            m_tracks = sortedLibraryTracks;
+            emit m_self->tracksMetadataChanged(sortedTracks);
+        });
+    });
+}
+
 QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksToUpdate)
 {
     auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
@@ -147,31 +161,17 @@ QFuture<void> UnifiedMusicLibraryPrivate::updateTracks(const TrackList& tracksTo
     });
 }
 
-QFuture<void> UnifiedMusicLibraryPrivate::updatePlayedTracks(const TrackList& tracksToUpdate)
-{
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToUpdate);
-
-    return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
-        updateLibraryTracks(sortedTracks);
-
-        resortTracks(m_tracks).then(m_self, [this, sortedTracks](const TrackList& sortedLibraryTracks) {
-            m_tracks = sortedLibraryTracks;
-            emit m_self->tracksPlayed(sortedTracks);
-        });
-    });
-}
-
 void UnifiedMusicLibraryPrivate::handleScanResult(const ScanResult& result)
 {
     if(!result.addedTracks.empty()) {
         addTracks(result.addedTracks).then(m_self, [this, result]() {
             if(!result.updatedTracks.empty()) {
-                updateTracks(result.updatedTracks);
+                updateTracksMetadata(result.updatedTracks);
             }
         });
     }
     else if(!result.updatedTracks.empty()) {
-        updateTracks(result.updatedTracks);
+        updateTracksMetadata(result.updatedTracks);
     }
 }
 
@@ -213,7 +213,7 @@ void UnifiedMusicLibraryPrivate::removeLibrary(const LibraryInfo& library, const
     m_tracks = newTracks;
 
     emit m_self->tracksDeleted(removedTracks);
-    emit m_self->tracksUpdated(updatedTracks);
+    emit m_self->tracksMetadataChanged(updatedTracks);
 }
 
 void UnifiedMusicLibraryPrivate::libraryStatusChanged(const LibraryInfo& library) const
@@ -276,7 +276,7 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
                          p->scannedTracks(id, newTracks, existingTracks);
                      });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
-                     [this](const TrackList& tracks) { p->updateTracks(tracks); });
+                     [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
                      [this](const TrackList& tracks) { p->loadTracks(tracks); });
 
@@ -382,6 +382,16 @@ TrackList UnifiedMusicLibrary::tracksForIds(const TrackIds& ids) const
     return tracks;
 }
 
+void UnifiedMusicLibrary::updateTrack(const Track& track)
+{
+    updateTracks({track});
+}
+
+void UnifiedMusicLibrary::updateTracks(const TrackList& tracks)
+{
+    p->updateTracks(tracks);
+}
+
 void UnifiedMusicLibrary::updateTrackMetadata(const TrackList& tracks)
 {
     p->m_threadHandler.saveUpdatedTracks(tracks);
@@ -421,7 +431,7 @@ void UnifiedMusicLibrary::trackWasPlayed(const Track& track)
     }
 
     p->m_threadHandler.saveUpdatedTrackStats(tracksToUpdate);
-    p->updatePlayedTracks(tracksToUpdate);
+    p->updateTracks(tracksToUpdate);
 }
 
 void UnifiedMusicLibrary::cleanupTracks()

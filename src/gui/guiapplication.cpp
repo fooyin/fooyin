@@ -232,9 +232,9 @@ void GuiApplicationPrivate::setupLayoutMenu()
 
 void GuiApplicationPrivate::setupConnections()
 {
-    QObject::connect(core.library, &MusicLibrary::tracksUpdated, self,
+    QObject::connect(core.library, &MusicLibrary::tracksMetadataChanged, self,
                      [](const TrackList& tracks) { removeExpiredCovers(tracks); });
-    QObject::connect(core.library, &MusicLibrary::tracksUpdated, &selectionController,
+    QObject::connect(core.library, &MusicLibrary::tracksMetadataChanged, &selectionController,
                      &TrackSelectionController::tracksUpdated);
     QObject::connect(core.library, &MusicLibrary::tracksDeleted, &selectionController,
                      &TrackSelectionController::tracksRemoved);

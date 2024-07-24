@@ -88,6 +88,7 @@ public:
 
     void setColumns(const std::vector<RichScript>& columns);
     void setLeftRight(const RichScript& left, const RichScript& right);
+    void setTrack(const Track& track);
 
     void setRowHeight(int height);
     void setDepth(int depth);

@@ -73,8 +73,8 @@ public:
 
 signals:
     void tracksRemoved(const Fooyin::TrackList& tracks);
+    void tracksChanged(const Fooyin::TrackList& tracks);
     void tracksUpdated(const Fooyin::TrackList& tracks);
-    void tracksPlayed(const Fooyin::TrackList& tracks);
 
 private:
     std::unique_ptr<FilterControllerPrivate> p;

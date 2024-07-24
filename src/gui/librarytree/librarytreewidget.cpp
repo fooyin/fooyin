@@ -322,9 +322,9 @@ void LibraryTreeWidgetPrivate::setupConnections()
                      [this](const TrackList& tracks) { handleTracksAdded(tracks); });
     QObject::connect(m_library, &MusicLibrary::tracksScanned, m_model,
                      [this](int /*id*/, const TrackList& tracks) { handleTracksAdded(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksUpdated, m_self,
+    QObject::connect(m_library, &MusicLibrary::tracksMetadataChanged, m_self,
                      [this](const TrackList& tracks) { handleTracksUpdated(tracks); });
-    QObject::connect(m_library, &MusicLibrary::tracksPlayed, m_self,
+    QObject::connect(m_library, &MusicLibrary::tracksUpdated, m_self,
                      [this](const TrackList& tracks) { m_model->refreshTracks(tracks); });
     QObject::connect(m_library, &MusicLibrary::tracksDeleted, m_model, &LibraryTreeModel::removeTracks);
     QObject::connect(m_library, &MusicLibrary::tracksSorted, m_self, [this]() { reset(); });

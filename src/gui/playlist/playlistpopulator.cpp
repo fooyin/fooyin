@@ -412,6 +412,7 @@ void PlaylistPopulator::updateTracks(const UId& playlistId, const PlaylistPreset
     for(const auto& [track, item] : tracks) {
         PlaylistTrackItem& trackData = std::get<0>(item.data());
 
+        trackData.setTrack(track);
         p->m_registry->setTrackProperties(item.index(), trackData.depth());
 
         if(!columns.empty()) {

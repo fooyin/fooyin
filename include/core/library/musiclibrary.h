@@ -122,6 +122,11 @@ public:
     /** Returns a TrackList containing each track (if) found with an id from @p ids  */
     [[nodiscard]] virtual TrackList tracksForIds(const TrackIds& ids) const = 0;
 
+    /** Updates the track @p track in the library.  */
+    virtual void updateTrack(const Track& track) = 0;
+    /** Updates the tracks @p tracks in the library.  */
+    virtual void updateTracks(const TrackList& tracks) = 0;
+
     /** Updates the metdata in the database for @p tracks.  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
     /** Updates the metdata in the database for @p tracks and writes metdata to files.  */
@@ -138,8 +143,8 @@ signals:
 
     void tracksLoaded(const Fooyin::TrackList& tracks);
     void tracksAdded(const Fooyin::TrackList& tracks);
+    void tracksMetadataChanged(const Fooyin::TrackList& tracks);
     void tracksUpdated(const Fooyin::TrackList& tracks);
-    void tracksPlayed(const Fooyin::TrackList& tracks);
     void tracksDeleted(const Fooyin::TrackList& tracks);
     void tracksSorted(const Fooyin::TrackList& tracks);
 };

@@ -20,6 +20,7 @@
 #include "trackdatabasemanager.h"
 
 #include "database/trackdatabase.h"
+#include "internalcoresettings.h"
 
 #include <core/coresettings.h>
 #include <core/engine/audioloader.h>
@@ -48,7 +49,12 @@ void TrackDatabaseManager::initialiseThread()
 
 void TrackDatabaseManager::getAllTracks()
 {
-    const TrackList tracks = m_trackDatabase.getAllTracks();
+    TrackList tracks = m_trackDatabase.getAllTracks();
+
+    if(m_settings->value<Settings::Core::Internal::MarkUnavailableStartup>()) {
+        std::ranges::for_each(tracks, [](auto& track) { track.setIsEnabled(QFileInfo::exists(track.filepath())); });
+    }
+
     emit gotTracks(tracks);
 }
 

@@ -59,7 +59,7 @@ public:
     void handleQueueChanged(const QueueTracks& removed, const QueueTracks& added);
 
     void handlePlaylistUpdated(Playlist* playlist, const std::vector<int>& indexes);
-    void handleTracksPlayed(Playlist* playlist, const std::vector<int>& indexes) const;
+    void handleTracksUpdated(Playlist* playlist, const std::vector<int>& indexes) const;
     void handlePlaylistRemoved(Playlist* playlist);
 
     void saveStates() const;
@@ -241,7 +241,7 @@ void PlaylistControllerPrivate::handlePlaylistUpdated(Playlist* playlist, const 
     }
 }
 
-void PlaylistControllerPrivate::handleTracksPlayed(Playlist* playlist, const std::vector<int>& indexes) const
+void PlaylistControllerPrivate::handleTracksUpdated(Playlist* playlist, const std::vector<int>& indexes) const
 {
     if(m_changingTracks) {
         return;
@@ -346,12 +346,12 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
     QObject::connect(handler, &PlaylistHandler::playlistAdded, this,
                      [this](Playlist* playlist) { p->handlePlaylistAdded(playlist); });
     QObject::connect(
-        handler, &PlaylistHandler::playlistTracksChanged, this,
+        handler, &PlaylistHandler::tracksChanged, this,
         [this](Playlist* playlist, const std::vector<int>& indexes) { p->handlePlaylistUpdated(playlist, indexes); });
     QObject::connect(
-        handler, &PlaylistHandler::playlistTracksPlayed, this,
-        [this](Playlist* playlist, const std::vector<int>& indexes) { p->handleTracksPlayed(playlist, indexes); });
-    QObject::connect(handler, &PlaylistHandler::playlistTracksAdded, this,
+        handler, &PlaylistHandler::tracksUpdated, this,
+        [this](Playlist* playlist, const std::vector<int>& indexes) { p->handleTracksUpdated(playlist, indexes); });
+    QObject::connect(handler, &PlaylistHandler::tracksAdded, this,
                      [this](Playlist* playlist, const TrackList& tracks, int index) {
                          p->handlePlaylistTracksAdded(playlist, tracks, index);
                      });

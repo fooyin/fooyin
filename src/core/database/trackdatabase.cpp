@@ -141,7 +141,6 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setRating(q.value(33).toFloat());
 
     track.generateHash();
-    track.setIsEnabled(QFileInfo::exists(track.filepath()));
 
     return track;
 }

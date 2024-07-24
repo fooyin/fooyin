@@ -121,19 +121,20 @@ public:
 signals:
     void playlistsPopulated();
     void playlistAdded(Fooyin::Playlist* playlist);
-    void playlistTracksAdded(Fooyin::Playlist* playlist, const Fooyin::TrackList& tracks, int index);
-    void playlistTracksChanged(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
-    void playlistTracksPlayed(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
-    void playlistTracksRemoved(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
     void playlistRemoved(Fooyin::Playlist* playlist);
     void playlistRenamed(Fooyin::Playlist* playlist);
     void activePlaylistChanged(Fooyin::Playlist* playlist);
 
+    void tracksAdded(Fooyin::Playlist* playlist, const Fooyin::TrackList& tracks, int index);
+    void tracksChanged(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
+    void tracksUpdated(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
+    void tracksRemoved(Fooyin::Playlist* playlist, const std::vector<int>& indexes);
+
 public slots:
     void populatePlaylists(const Fooyin::TrackList& tracks);
-    void tracksUpdated(const Fooyin::TrackList& tracks);
-    void tracksPlayed(const Fooyin::TrackList& tracks);
-    void tracksRemoved(const Fooyin::TrackList& tracks);
+    void handleTracksChanged(const Fooyin::TrackList& tracks);
+    void handleTracksUpdated(const Fooyin::TrackList& tracks);
+    void handleTracksRemoved(const Fooyin::TrackList& tracks);
     void trackAboutToFinish();
 
 private:

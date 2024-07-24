@@ -38,9 +38,8 @@ namespace Fooyin {
 class PlaylistHandlerPrivate
 {
 public:
-    PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool,
-                           std::shared_ptr<AudioLoader> audioLoader, PlayerController* playerController,
-                           SettingsManager* settings);
+    PlaylistHandlerPrivate(PlaylistHandler* self, DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
+                           PlayerController* playerController, SettingsManager* settings);
 
     void reloadPlaylists();
     bool noConcretePlaylists();
@@ -428,7 +427,7 @@ Playlist* PlaylistHandler::createPlaylist(const QString& name, const TrackList& 
             playlist->changeCurrentIndex(0);
             std::vector<int> changedIndexes(tracks.size());
             std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
-            emit playlistTracksChanged(playlist, changedIndexes);
+            emit tracksChanged(playlist, changedIndexes);
         }
     }
 
@@ -492,7 +491,7 @@ void PlaylistHandler::appendToPlaylist(const UId& id, const TrackList& tracks)
     if(auto* playlist = playlistById(id)) {
         const int index = playlist->trackCount();
         playlist->appendTracks(tracks);
-        emit playlistTracksAdded(playlist, tracks, index);
+        emit tracksAdded(playlist, tracks, index);
     }
 }
 
@@ -506,7 +505,7 @@ void PlaylistHandler::replacePlaylistTracks(const UId& id, const TrackList& trac
         std::vector<int> changedIndexes(size);
         std::iota(changedIndexes.begin(), changedIndexes.end(), 0);
 
-        emit playlistTracksChanged(playlist, changedIndexes);
+        emit tracksChanged(playlist, changedIndexes);
     }
 }
 
@@ -540,7 +539,7 @@ void PlaylistHandler::removePlaylistTracks(const UId& id, const std::vector<int>
 {
     if(auto* playlist = playlistById(id)) {
         const auto removedIndexes = playlist->removeTracks(indexes);
-        emit playlistTracksRemoved(playlist, removedIndexes);
+        emit tracksRemoved(playlist, removedIndexes);
     }
 }
 
@@ -760,7 +759,7 @@ void PlaylistHandler::populatePlaylists(const TrackList& tracks)
     emit playlistsPopulated();
 }
 
-void PlaylistHandler::tracksUpdated(const TrackList& tracks)
+void PlaylistHandler::handleTracksChanged(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
@@ -768,12 +767,12 @@ void PlaylistHandler::tracksUpdated(const TrackList& tracks)
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
-            emit playlistTracksChanged(playlist.get(), updatedIndexes);
+            emit tracksChanged(playlist.get(), updatedIndexes);
         }
     }
 }
 
-void PlaylistHandler::tracksPlayed(const TrackList& tracks)
+void PlaylistHandler::handleTracksUpdated(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
@@ -781,12 +780,12 @@ void PlaylistHandler::tracksPlayed(const TrackList& tracks)
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
-            emit playlistTracksPlayed(playlist.get(), updatedIndexes);
+            emit tracksUpdated(playlist.get(), updatedIndexes);
         }
     }
 }
 
-void PlaylistHandler::tracksRemoved(const TrackList& tracks)
+void PlaylistHandler::handleTracksRemoved(const TrackList& tracks)
 {
     for(auto& playlist : p->m_playlists) {
         TrackList playlistTracks  = playlist->tracks();
@@ -794,7 +793,7 @@ void PlaylistHandler::tracksRemoved(const TrackList& tracks)
 
         if(!updatedIndexes.empty()) {
             playlist->replaceTracks(playlistTracks);
-            emit playlistTracksChanged(playlist.get(), updatedIndexes);
+            emit tracksChanged(playlist.get(), updatedIndexes);
         }
     }
 }

@@ -260,6 +260,11 @@ void PlaylistTrackItem::setLeftRight(const RichScript& left, const RichScript& r
     m_right = right;
 }
 
+void PlaylistTrackItem::setTrack(const Track& track)
+{
+    m_track = track;
+}
+
 void PlaylistTrackItem::setRowHeight(int height)
 {
     m_rowHeight = height;

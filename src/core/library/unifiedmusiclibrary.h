@@ -59,6 +59,9 @@ public:
     [[nodiscard]] Track trackForId(int id) const override;
     [[nodiscard]] TrackList tracksForIds(const TrackIds& ids) const override;
 
+    void updateTrack(const Track& track) override;
+    void updateTracks(const TrackList& tracks) override;
+
     void updateTrackMetadata(const TrackList& tracks) override;
     void writeTrackMetadata(const TrackList& tracks) override;
 

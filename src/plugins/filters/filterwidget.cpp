@@ -384,7 +384,7 @@ void FilterWidget::tracksAdded(const TrackList& tracks)
     m_model->addTracks(tracks);
 }
 
-void FilterWidget::tracksUpdated(const TrackList& tracks)
+void FilterWidget::tracksChanged(const TrackList& tracks)
 {
     if(tracks.empty()) {
         emit finishedUpdating();
@@ -429,7 +429,7 @@ void FilterWidget::tracksUpdated(const TrackList& tracks)
         Qt::SingleShotConnection);
 }
 
-void FilterWidget::tracksPlayed(const TrackList& tracks)
+void FilterWidget::tracksUpdated(const TrackList& tracks)
 {
     m_model->refreshTracks(tracks);
 }

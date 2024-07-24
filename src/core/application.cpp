@@ -79,6 +79,8 @@ public:
     void registerPlaylistParsers();
     void registerDecoders();
 
+    void setupConnections();
+    void markTrack(const Track& track) const;
     void loadPlugins();
 
     void startSaveTimer();
@@ -131,6 +133,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     registerTypes();
     registerDecoders();
     registerPlaylistParsers();
+    setupConnections();
     loadPlugins();
 
     m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
@@ -145,6 +148,38 @@ void ApplicationPrivate::registerPlaylistParsers()
 void ApplicationPrivate::registerDecoders()
 {
     m_audioLoader->addDecoder(QStringLiteral("FFmpeg"), []() { return std::make_unique<FFmpegInput>(); });
+}
+
+void ApplicationPrivate::setupConnections()
+{
+    QObject::connect(&m_engine, &EngineController::trackStatusChanged, m_self, [this](TrackStatus status) {
+        if(status == TrackStatus::Invalid) {
+            const Track track = m_playerController->currentTrack();
+            markTrack(track);
+        }
+    });
+
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
+                     [this](const Track& track) { markTrack(track); });
+}
+
+void ApplicationPrivate::markTrack(const Track& track) const
+{
+    if(!track.isValid()) {
+        return;
+    }
+
+    Track markedTrack{track};
+
+    if(!track.isEnabled() && QFileInfo::exists(track.filepath())) {
+        markedTrack.setIsEnabled(true);
+    }
+    else if(track.isEnabled() && m_settings->value<Settings::Core::Internal::MarkUnavailable>()
+            && !QFileInfo::exists(track.filepath())) {
+        markedTrack.setIsEnabled(false);
+    }
+
+    m_library->updateTrack(markedTrack);
 }
 
 void ApplicationPrivate::loadPlugins()
@@ -209,11 +244,11 @@ Application::Application(QObject* parent)
     : QObject{parent}
     , p{std::make_unique<ApplicationPrivate>(this)}
 {
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksAdded, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this,
                      [this]() { p->startSaveTimer(); });
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksChanged, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this,
                      [this]() { p->startSaveTimer(); });
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistTracksRemoved, this,
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this,
                      [this]() { p->startSaveTimer(); });
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
                      [this]() { p->loadPlaybackState(); });
@@ -224,10 +259,10 @@ Application::Application(QObject* parent)
                      &PlaylistHandler::populatePlaylists);
     QObject::connect(p->m_libraryManager, &LibraryManager::libraryAboutToBeRemoved, p->m_playlistHandler,
                      &PlaylistHandler::savePlaylists);
+    QObject::connect(p->m_library, &MusicLibrary::tracksMetadataChanged, p->m_playlistHandler,
+                     [this](const TrackList& tracks) { p->m_playlistHandler->handleTracksChanged(tracks); });
     QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, p->m_playlistHandler,
-                     [this](const TrackList& tracks) { p->m_playlistHandler->tracksUpdated(tracks); });
-    QObject::connect(p->m_library, &MusicLibrary::tracksPlayed, p->m_playlistHandler,
-                     [this](const TrackList& tracks) { p->m_playlistHandler->tracksPlayed(tracks); });
+                     [this](const TrackList& tracks) { p->m_playlistHandler->handleTracksUpdated(tracks); });
     QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
     QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
