@@ -65,7 +65,9 @@ bool hasMatchingExtension(const QString& file, const QStringList& extensions)
     }
 
     return std::ranges::any_of(extensions, [&file](const QString& wildcard) {
-        const QRegularExpression re{QRegularExpression::wildcardToRegularExpression(wildcard)};
+        QRegularExpression re{QRegularExpression::wildcardToRegularExpression(wildcard)};
+        re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
         const QRegularExpressionMatch match = re.match(file);
         return match.hasMatch();
     });
