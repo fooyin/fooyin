@@ -208,11 +208,6 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
 
     while(!in.atEnd()) {
         processCueLine(sheet, in.readLine().trimmed(), track, trackPath, dir, tracks);
-
-        if(sheet.type == u"BINARY") {
-            qInfo() << "[CUE] Unsupported file type:" << sheet.type;
-            return {};
-        }
     }
 
     finaliseLastTrack(sheet, track, trackPath, tracks);
@@ -238,11 +233,6 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
 
     while(!in.atEnd()) {
         processCueLine(sheet, in.readLine().trimmed(), track, trackPath, {}, tracks);
-
-        if(sheet.type == u"BINARY") {
-            qInfo() << "[CUE] Unsupported file type:" << sheet.type;
-            return {};
-        }
     }
 
     finaliseLastTrack(sheet, track, filepath, tracks);
