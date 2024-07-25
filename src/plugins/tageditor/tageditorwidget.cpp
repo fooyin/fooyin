@@ -132,12 +132,17 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
         m_view->resizeRowsToContents();
         restoreState();
     });
-    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
-        const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
-        m_view->removeRowAction()->setEnabled(!selected.empty());
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, readOnly]() {
+        if(!readOnly) {
+            const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
+            m_view->removeRowAction()->setEnabled(!selected.empty());
+        }
     });
 
     m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
+    m_view->addRowAction()->setDisabled(readOnly);
+    m_view->removeRowAction()->setDisabled(readOnly);
+    m_toolsButton->setDisabled(readOnly);
 
     m_model->reset(tracks);
 }
