@@ -30,8 +30,6 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
-constexpr auto BufferSize = 8192;
-
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
 {
@@ -39,8 +37,13 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
                                                     PW_KEY_MEDIA_ROLE, "Music", PW_KEY_APP_ID, "fooyin",
                                                     PW_KEY_APP_ICON_NAME, "fooyin", PW_KEY_APP_NAME, "fooyin", nullptr);
 
+    const int sampleRate = format.sampleRate();
+
+    const auto exp = static_cast<int>(std::round(std::log2((2048.0 / 48000.0) * sampleRate)));
+    m_bufferSize   = std::clamp(static_cast<int>(std::pow(2.0, exp)), 64, 8192);
+
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
-    // pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", frames, format.sampleRate());
+    pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", m_bufferSize, format.sampleRate());
 
     if(!device.isEmpty()) {
         pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
@@ -65,7 +68,7 @@ pw_stream_state PipewireStream::state()
 
 int PipewireStream::bufferSize() const
 {
-    return BufferSize;
+    return m_bufferSize;
 }
 
 void PipewireStream::setActive(bool active)
