@@ -321,12 +321,14 @@ void AudioPlaybackEngine::handleOutputState(AudioOutput::State outState)
     }
 }
 
-void AudioPlaybackEngine::updateState(PlaybackState newState)
+PlaybackState AudioPlaybackEngine::updateState(PlaybackState newState)
 {
-    if(std::exchange(m_state, newState) != m_state) {
+    const PlaybackState prevState = std::exchange(m_state, newState);
+    if(prevState != m_state) {
         emit stateChanged(newState);
     }
     m_clock.setPaused(newState != PlaybackState::Playing);
+    return prevState;
 }
 
 TrackStatus AudioPlaybackEngine::changeTrackStatus(TrackStatus newStatus)
@@ -399,10 +401,10 @@ void AudioPlaybackEngine::playOutput()
         m_decoder->seek(m_currentTrack.offset());
     }
 
-    updateState(PlaybackState::Playing);
+    const PlaybackState prevState = updateState(PlaybackState::Playing);
 
     const bool canFade = m_settings->value<Settings::Core::Internal::EngineFading>()
-                      && (m_state == PlaybackState::Paused || m_renderer->isFading());
+                      && (prevState == PlaybackState::Paused || m_renderer->isFading());
     const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
 
     m_renderer->pause(false, fadeInterval);

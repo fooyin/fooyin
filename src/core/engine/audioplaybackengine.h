@@ -62,7 +62,7 @@ private:
     void stopWorkers(bool full = false);
 
     void handleOutputState(AudioOutput::State outState);
-    void updateState(PlaybackState newState);
+    PlaybackState updateState(PlaybackState newState);
     TrackStatus changeTrackStatus(TrackStatus newStatus);
 
     void setupDuration();
