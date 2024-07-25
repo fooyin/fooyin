@@ -155,7 +155,7 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& tr
         const QFileInfo file{url.toLocalFile()};
         const auto dir = file.absolutePath();
 
-        if(processedDirs.contains(dir)) {
+        if(processedDirs.contains(dir) && !file.isDir()) {
             auto& libDir = processedDirs.at(dir);
             if(hasMatchingExtension(file.fileName(), trackExtensions)) {
                 const QString path = file.absoluteFilePath();
