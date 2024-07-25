@@ -32,6 +32,7 @@
 #include "playlist/playlistloader.h"
 #include "plugins/pluginmanager.h"
 #include "translations.h"
+#include "version.h"
 
 #include <core/engine/audioloader.h>
 #include <core/engine/outputplugin.h>
@@ -300,6 +301,8 @@ void Application::timerEvent(QTimerEvent* event)
 
 void Application::shutdown()
 {
+    p->m_settings->fileSet(QStringLiteral("Version"), QString::fromLatin1(VERSION));
+
     p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();
     p->m_pluginManager.unloadPlugins();

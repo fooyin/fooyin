@@ -80,8 +80,6 @@ class CoreSettings
 public:
     explicit CoreSettings(SettingsManager* settingsManager);
 
-    void shutdown();
-
 private:
     SettingsManager* m_settings;
 };

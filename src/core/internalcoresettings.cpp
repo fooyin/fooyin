@@ -78,9 +78,4 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }
-
-void CoreSettings::shutdown()
-{
-    m_settings->fileSet(QStringLiteral("Version"), QString::fromLatin1(VERSION));
-}
 } // namespace Fooyin
