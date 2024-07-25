@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +25,32 @@ class QAction;
 
 namespace Fooyin {
 class ActionManager;
+class Command;
+class FyLayout;
+class LayoutProvider;
 class SettingsManager;
 
-class ViewMenu : public QObject
+class LayoutMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvider, SettingsManager* settings,
+               QObject* parent = nullptr);
+
+    void setup();
 
 signals:
-    void openQuickSetup();
-    void openScriptSandbox();
-    void showNowPlaying();
+    void changeLayout(const Fooyin::FyLayout& layout);
+    void importLayout();
+    void exportLayout();
 
 private:
     ActionManager* m_actionManager;
+    LayoutProvider* m_layoutProvider;
     SettingsManager* m_settings;
+
+    QAction* m_layoutEditing;
+    Command* m_layoutEditingCmd;
 };
 } // namespace Fooyin

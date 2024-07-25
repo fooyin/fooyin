@@ -130,12 +130,16 @@ void MainWindow::toggleVisibility()
 
 void MainWindow::setTitle(const QString& title)
 {
-    setWindowTitle(title);
+    QString windowTitle{title};
+    if(m_settings->value<Settings::Gui::LayoutEditing>()) {
+        windowTitle.append(tr(" - Layout Editing Mode"));
+    }
+    setWindowTitle(windowTitle);
 }
 
 void MainWindow::resetTitle()
 {
-    setWindowTitle(QStringLiteral("fooyin"));
+    setTitle(QStringLiteral("fooyin"));
 }
 
 void MainWindow::showEvent(QShowEvent* event)

@@ -54,6 +54,10 @@ MainMenuBar::MainMenuBar(ActionManager* actionManager, QObject* parent)
     m_menubar->addMenu(viewMenu, Constants::Groups::View);
     viewMenu->menu()->setTitle(ActionManager::tr("&View"));
 
+    ActionContainer* layoutMenu = m_actionManager->createMenu(Constants::Menus::Layout);
+    m_menubar->addMenu(layoutMenu, Constants::Groups::Layout);
+    layoutMenu->menu()->setTitle(ActionManager::tr("La&yout"));
+
     ActionContainer* playbackMenu = m_actionManager->createMenu(Constants::Menus::Playback);
     m_menubar->addMenu(playbackMenu, Constants::Groups::Playback);
     playbackMenu->menu()->setTitle(ActionManager::tr("&Playback"));

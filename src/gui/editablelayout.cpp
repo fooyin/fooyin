@@ -19,6 +19,7 @@
 
 #include <gui/editablelayout.h>
 
+#include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "layoutcommands.h"
 #include "quicksetup/quicksetupdialog.h"
@@ -714,6 +715,13 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
     topWidget->finalise();
     return true;
+}
+
+void EditableLayout::exportLayout(QWidget* parent)
+{
+    auto* exportDialog = new ExportLayoutDialog(this, p->m_layoutProvider, parent);
+    exportDialog->setAttribute(Qt::WA_DeleteOnClose);
+    exportDialog->show();
 }
 
 QJsonObject EditableLayout::saveWidget(FyWidget* widget)

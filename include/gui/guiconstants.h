@@ -67,7 +67,7 @@ namespace Menus {
 constexpr auto File          = "Fooyin.Menu.File";
 constexpr auto Edit          = "Fooyin.Menu.Edit";
 constexpr auto View          = "Fooyin.Menu.View";
-constexpr auto ViewLayout    = "Fooyin.Menu.View.Layout";
+constexpr auto Layout        = "Fooyin.Menu.Layout";
 constexpr auto Playback      = "Fooyin.Menu.Playback";
 constexpr auto PlaybackOrder = "Fooyin.Menu.Playback.Order";
 constexpr auto Library       = "Fooyin.Menu.Library";
@@ -91,6 +91,7 @@ namespace Groups {
 constexpr auto File     = "Fooyin.Group.File";
 constexpr auto Edit     = "Fooyin.Group.Edit";
 constexpr auto View     = "Fooyin.Group.View";
+constexpr auto Layout   = "Fooyin.Group.View";
 constexpr auto Playback = "Fooyin.Group.Playback";
 constexpr auto Library  = "Fooyin.Group.Library";
 constexpr auto Help     = "Fooyin.Group.Help";

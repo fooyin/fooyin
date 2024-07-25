@@ -101,6 +101,8 @@ set(SOURCES
     menubar/filemenu.h
     menubar/helpmenu.cpp
     menubar/helpmenu.h
+    menubar/layoutmenu.cpp
+    menubar/layoutmenu.h
     menubar/librarymenu.cpp
     menubar/librarymenu.h
     menubar/mainmenubar.cpp

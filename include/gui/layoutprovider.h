@@ -29,11 +29,13 @@
 namespace Fooyin {
 class LayoutProviderPrivate;
 
-class FYGUI_EXPORT LayoutProvider
+class FYGUI_EXPORT LayoutProvider : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit LayoutProvider();
-    ~LayoutProvider();
+    explicit LayoutProvider(QObject* parent = nullptr);
+    ~LayoutProvider() override;
 
     [[nodiscard]] FyLayout currentLayout() const;
     [[nodiscard]] LayoutList layouts() const;
@@ -47,7 +49,12 @@ public:
     void changeLayout(const FyLayout& layout);
 
     FyLayout importLayout(const QString& path);
+    void importLayout(QWidget* parent);
     bool exportLayout(const FyLayout& layout, const QString& path);
+
+signals:
+    void layoutAdded(const Fooyin::FyLayout& layout);
+    void requestChangeLayout(const Fooyin::FyLayout& layout);
 
 private:
     std::unique_ptr<LayoutProviderPrivate> p;

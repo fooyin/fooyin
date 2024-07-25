@@ -24,8 +24,8 @@
 class QMenuBar;
 
 namespace Fooyin {
-class ActionManager;
 class ActionContainer;
+class ActionManager;
 
 class MainMenuBar : public QObject
 {

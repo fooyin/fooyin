@@ -23,6 +23,7 @@
 #include "menubar/editmenu.h"
 #include "menubar/filemenu.h"
 #include "menubar/helpmenu.h"
+#include "menubar/layoutmenu.h"
 #include "menubar/librarymenu.h"
 #include "menubar/mainmenubar.h"
 #include "menubar/playbackmenu.h"
@@ -82,7 +83,6 @@ public:
     explicit GuiApplicationPrivate(GuiApplication* self_, CorePluginContext core_);
 
     void setupConnections();
-    void setupLayoutMenu();
     void initialisePlugins();
 
     void showPluginsNotFoundMessage();
@@ -135,6 +135,7 @@ public:
     FileMenu* fileMenu;
     EditMenu* editMenu;
     ViewMenu* viewMenu;
+    LayoutMenu* layoutMenu;
     PlaybackMenu* playbackMenu;
     LibraryMenu* libraryMenu;
     HelpMenu* helpMenu;
@@ -155,7 +156,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     , actionManager{new ActionManager(settings, self)}
     , guiSettings{settings}
     , editableLayout{std::make_unique<EditableLayout>(actionManager, &widgetProvider, &layoutProvider, settings)}
-    , menubar{std::make_unique<MainMenuBar>(actionManager)}
+    , menubar{std::make_unique<MainMenuBar>(actionManager, settings)}
     , mainWindow{std::make_unique<MainWindow>(actionManager, menubar.get(), settings)}
     , mainContext{new WidgetContext(mainWindow.get(), Context{"Fooyin.MainWindow"}, self)}
     , playlistController{std::make_unique<PlaylistController>(core.playlistHandler, core.playerController,
@@ -166,6 +167,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     , fileMenu{new FileMenu(actionManager, settings, self)}
     , editMenu{new EditMenu(actionManager, settings, self)}
     , viewMenu{new ViewMenu(actionManager, settings, self)}
+    , layoutMenu{new LayoutMenu(actionManager, &layoutProvider, settings, self)}
     , playbackMenu{new PlaybackMenu(actionManager, core.playerController, settings, self)}
     , libraryMenu{new LibraryMenu(actionManager, core.library, settings, self)}
     , helpMenu{new HelpMenu(actionManager, self)}
@@ -191,7 +193,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
 
     initialisePlugins();
     layoutProvider.findLayouts();
-    setupLayoutMenu();
+    layoutMenu->setup();
     editableLayout->initialise();
     mainWindow->setCentralWidget(editableLayout.get());
 
@@ -211,23 +213,6 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     }
 
     initialiseTray();
-}
-
-void GuiApplicationPrivate::setupLayoutMenu()
-{
-    auto* viewActionMenu = actionManager->actionContainer(Constants::Menus::View);
-
-    auto* layoutMenu = actionManager->createMenu(Constants::Menus::ViewLayout);
-    layoutMenu->menu()->setTitle(GuiApplication::tr("&Layout"));
-    viewActionMenu->addMenu(layoutMenu, Actions::Groups::One);
-
-    const auto layouts = layoutProvider.layouts();
-    for(const auto& layout : layouts) {
-        auto* layoutAction = new QAction(layout.name(), mainWindow.get());
-        QObject::connect(layoutAction, &QAction::triggered, mainWindow.get(),
-                         [this, layout]() { editableLayout->changeLayout(layout); });
-        layoutMenu->addAction(layoutAction);
-    }
 }
 
 void GuiApplicationPrivate::setupConnections()
@@ -269,6 +254,16 @@ void GuiApplicationPrivate::setupConnections()
             playlistController->changeCurrentPlaylist(activePlaylist);
         }
     });
+    QObject::connect(layoutMenu, &LayoutMenu::changeLayout, editableLayout.get(), &EditableLayout::changeLayout);
+    QObject::connect(layoutMenu, &LayoutMenu::importLayout, self,
+                     [this]() { layoutProvider.importLayout(mainWindow.get()); });
+    QObject::connect(layoutMenu, &LayoutMenu::exportLayout, self,
+                     [this]() { editableLayout->exportLayout(editableLayout.get()); });
+
+    QObject::connect(&layoutProvider, &LayoutProvider::layoutAdded, layoutMenu, &LayoutMenu::setup);
+    QObject::connect(&layoutProvider, &LayoutProvider::requestChangeLayout, editableLayout.get(),
+                     &EditableLayout::changeLayout);
+
     QObject::connect(core.engine, &EngineController::engineError, self,
                      [this](const QString& error) { showEngineError(error); });
     QObject::connect(core.engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
@@ -282,6 +277,8 @@ void GuiApplicationPrivate::setupConnections()
             showTrackUnreableMessage(track);
         }
     });
+
+    settings->subscribe<Settings::Gui::LayoutEditing>(self, [this]() { updateWindowTitle(); });
 }
 
 void GuiApplicationPrivate::initialisePlugins()

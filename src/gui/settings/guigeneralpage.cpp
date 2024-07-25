@@ -307,39 +307,12 @@ void GuiGeneralPageWidget::showQuickSetup()
 
 void GuiGeneralPageWidget::importLayout()
 {
-    const QString layoutFile
-        = QFileDialog::getOpenFileName(this, tr("Open Layout"), {}, tr("%1 Layout").arg(u"fooyin") + u" (*.fyl)");
-
-    if(layoutFile.isEmpty()) {
-        return;
-    }
-
-    const auto layout = m_layoutProvider->importLayout(layoutFile);
-    if(!layout.isValid()) {
-        Utils::showMessageBox(tr("Invalid Layout"), tr("Layout could not be imported."));
-        return;
-    }
-
-    QMessageBox message;
-    message.setIcon(QMessageBox::Warning);
-    message.setText(tr("Replace existing layout?"));
-    message.setInformativeText(tr("Unless exported, the current layout will be lost."));
-
-    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    message.setDefaultButton(QMessageBox::No);
-
-    const int buttonClicked = message.exec();
-
-    if(buttonClicked == QMessageBox::Yes) {
-        m_editableLayout->changeLayout(layout);
-    }
+    m_layoutProvider->importLayout(this);
 }
 
 void GuiGeneralPageWidget::exportLayout()
 {
-    auto* exportDialog = new ExportLayoutDialog(m_editableLayout, m_layoutProvider, this);
-    QObject::connect(exportDialog, &QDialog::finished, exportDialog, &QObject::deleteLater);
-    exportDialog->show();
+    m_editableLayout->exportLayout(this);
 }
 
 GuiGeneralPage::GuiGeneralPage(LayoutProvider* layoutProvider, EditableLayout* editableLayout,

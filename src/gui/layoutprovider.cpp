@@ -21,11 +21,13 @@
 
 #include <gui/guipaths.h>
 #include <utils/fileutils.h>
+#include <utils/utils.h>
 
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QMessageBox>
 #include <QString>
 
 namespace {
@@ -75,8 +77,9 @@ FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import)
     return layout;
 }
 
-LayoutProvider::LayoutProvider()
-    : p{std::make_unique<LayoutProviderPrivate>()}
+LayoutProvider::LayoutProvider(QObject* parent)
+    : QObject{parent}
+    , p{std::make_unique<LayoutProviderPrivate>()}
 {
     loadCurrentLayout();
 }
@@ -217,6 +220,36 @@ FyLayout LayoutProvider::importLayout(const QString& path)
     return p->addLayout(FyLayout{json}, true);
 }
 
+void LayoutProvider::importLayout(QWidget* parent)
+{
+    const QString layoutFile
+        = QFileDialog::getOpenFileName(parent, tr("Open Layout"), {}, tr("%1 Layout").arg(u"fooyin") + u" (*.fyl)");
+
+    if(layoutFile.isEmpty()) {
+        return;
+    }
+
+    const auto layout = importLayout(layoutFile);
+    if(!layout.isValid()) {
+        Utils::showMessageBox(tr("Invalid Layout"), tr("Layout could not be imported."));
+        return;
+    }
+
+    QMessageBox message;
+    message.setIcon(QMessageBox::Warning);
+    message.setText(tr("Replace existing layout?"));
+    message.setInformativeText(tr("Unless exported, the current layout will be lost."));
+
+    message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message.setDefaultButton(QMessageBox::No);
+
+    const int buttonClicked = message.exec();
+
+    if(buttonClicked == QMessageBox::Yes) {
+        emit requestChangeLayout(layout);
+    }
+}
+
 bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
 {
     QString filepath{path};
@@ -241,6 +274,7 @@ bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
     const QFileInfo fileInfo{filepath};
     if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name())) {
         p->m_layouts.push_back(layout);
+        emit layoutAdded(layout);
     }
 
     return true;
