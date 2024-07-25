@@ -21,9 +21,11 @@
 
 #include <core/plugins/plugininfo.h>
 
+#include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPlainTextEdit>
+#include <QPushButton>
 
 namespace Fooyin {
 PluginAboutDialog::PluginAboutDialog(PluginInfo* plugin, QWidget* parent)
@@ -54,6 +56,11 @@ PluginAboutDialog::PluginAboutDialog(PluginInfo* plugin, QWidget* parent)
     url->setOpenExternalLinks(true);
     license->setReadOnly(true);
 
+    auto* buttonBox          = new QDialogButtonBox(QDialogButtonBox::Close);
+    QPushButton* closeButton = buttonBox->button(QDialogButtonBox::Close);
+    buttonBox->addButton(closeButton, QDialogButtonBox::AcceptRole);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+
     int row{0};
     layout->addWidget(nameLabel, row, 0);
     layout->addWidget(name, row++, 1);
@@ -71,6 +78,7 @@ PluginAboutDialog::PluginAboutDialog(PluginInfo* plugin, QWidget* parent)
     layout->addWidget(copyright, row++, 1);
     layout->addWidget(licenseLabel, row, 0);
     layout->addWidget(license, row++, 1);
+    layout->addWidget(buttonBox, row++, 0, 1, 2);
 }
 } // namespace Fooyin
 
