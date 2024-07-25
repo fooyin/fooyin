@@ -190,8 +190,6 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
                 return info->version();
             case(2):
                 return info->author();
-            case(3):
-                return info->author();
             case(4):
                 return Utils::Enum::toString(info->status());
             default:
