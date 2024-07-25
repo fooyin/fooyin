@@ -20,38 +20,32 @@
 #include "plugininfo.h"
 
 #include <core/plugins/plugin.h>
+#include <utils/stringutils.h>
 
 #include <QPluginLoader>
-#include <utility>
 
 namespace Fooyin {
-PluginInfo::PluginInfo(QString name, const QString& filename, const QJsonObject& allMetadata)
-    : m_name{std::move(name)}
-    , m_filename{filename}
-    , m_metadata{allMetadata.value(QStringLiteral("MetaData")).toObject()}
-    , m_version{m_metadata.value(QStringLiteral("Version")).toString()}
-    , m_vendor{m_metadata.value(QStringLiteral("Vendor")).toString()}
-    , m_copyright{m_metadata.value(QStringLiteral("Copyright")).toString()}
-    , m_license{m_metadata.value(QStringLiteral("License")).toString()}
-    , m_category{m_metadata.value(QStringLiteral("Category")).toString()}
-    , m_description{m_metadata.value(QStringLiteral("Description")).toString()}
-    , m_url{m_metadata.value(QStringLiteral("Url")).toString()}
-    , m_isRequired{false}
-    , m_isLoaded{false}
-    , m_isDisabled{false}
+PluginInfo::PluginInfo(QString filepath, const QJsonObject& allMetadata)
+    : m_filepath{std::move(filepath)}
+    , m_metadata{allMetadata.value(u"MetaData").toObject()}
+    , m_name{m_metadata.value(u"Name").toString()}
+    , m_version{m_metadata.value(u"Version").toString()}
+    , m_author{m_metadata.value(u"Author").toString()}
+    , m_copyright{m_metadata.value(u"Copyright").toString()}
+    , m_license{Utils::readMultiLineString(m_metadata.value(u"License"))}
+    , m_category{m_metadata.value(u"Category").toString().split(u'.', Qt::SkipEmptyParts)}
+    , m_description{m_metadata.value(u"Description").toString()}
+    , m_url{m_metadata.value(u"Url").toString()}
     , m_status{Status::Read}
+    , m_isDisabled{false}
     , m_root{nullptr}
     , m_plugin{nullptr}
 {
-    m_loader.setFileName(filename);
+    m_loader.setFileName(m_filepath);
 }
 
 void PluginInfo::load()
 {
-    if(m_loader.fileName().isEmpty()) {
-        return;
-    }
-
     if(!m_loader.load()) {
         m_error  = QStringLiteral("Plugin (%1) couldn't be loaded: %2").arg(m_name, m_error);
         m_status = Status::Invalid;
@@ -67,8 +61,7 @@ void PluginInfo::load()
         return;
     }
 
-    m_status   = Status::Loaded;
-    m_isLoaded = true;
+    m_status = Status::Loaded;
 }
 
 void PluginInfo::unload()
@@ -76,16 +69,17 @@ void PluginInfo::unload()
     if(!m_plugin) {
         return;
     }
+
     m_plugin->shutdown();
-    const bool deleted = m_loader.unload();
-    if(!deleted) {
-        delete m_plugin;
+    if(m_loader.unload()) {
+        m_root   = nullptr;
+        m_plugin = nullptr;
     }
 }
 
 void PluginInfo::initialise()
 {
-    if(isLoaded()) {
+    if(m_status == Status::Loaded) {
         m_status = Status::Initialised;
     }
 }
@@ -100,14 +94,9 @@ QObject* PluginInfo::root() const
     return m_root;
 }
 
-QString PluginInfo::name() const
+QString PluginInfo::filepath() const
 {
-    return m_name;
-}
-
-QString PluginInfo::filename() const
-{
-    return m_filename;
+    return m_filepath;
 }
 
 QJsonObject PluginInfo::metadata() const
@@ -115,9 +104,54 @@ QJsonObject PluginInfo::metadata() const
     return m_metadata;
 }
 
+QString PluginInfo::name() const
+{
+    return m_name;
+}
+
+QString PluginInfo::version() const
+{
+    return m_version;
+}
+
+QString PluginInfo::author() const
+{
+    return m_author;
+}
+
+QString PluginInfo::identifier() const
+{
+    return QString{m_author + u"." + m_name}.simplified().replace(QLatin1String(" "), QString{}).toLower();
+}
+
+QStringList PluginInfo::category() const
+{
+    return m_category;
+}
+
+QString PluginInfo::copyright() const
+{
+    return m_copyright;
+}
+
+QString PluginInfo::license() const
+{
+    return m_license;
+}
+
+QString PluginInfo::description() const
+{
+    return m_description;
+}
+
+QString PluginInfo::url() const
+{
+    return m_url;
+}
+
 bool PluginInfo::isLoaded() const
 {
-    return m_isLoaded;
+    return m_status == Status::Loaded;
 }
 
 bool PluginInfo::isDisabled() const
@@ -143,50 +177,6 @@ bool PluginInfo::hasError() const
 void PluginInfo::setDisabled(bool disabled)
 {
     m_isDisabled = disabled;
-}
-
-void PluginInfo::setStatus(Status status)
-{
-    m_status = status;
-}
-
-void PluginInfo::setError(const QString& error)
-{
-    m_error = error;
-}
-
-QString PluginInfo::version() const
-{
-    return m_version;
-}
-
-QString PluginInfo::vendor() const
-{
-    return m_vendor;
-}
-
-QString PluginInfo::identifier() const
-{
-    return QString{m_vendor + u"." + m_name}.simplified().replace(QLatin1String(" "), QString{}).toLower();
-}
-
-QString PluginInfo::category() const
-{
-    return m_category;
-}
-
-QString PluginInfo::copyright() const
-{
-    return m_copyright;
-}
-
-QString PluginInfo::description() const
-{
-    return m_description;
-}
-
-QString PluginInfo::url() const
-{
-    return m_url;
+    m_status     = Status::Disabled;
 }
 } // namespace Fooyin

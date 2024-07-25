@@ -53,11 +53,8 @@ public:
         }
     }
 
-    bool installPlugin(const QString& filepath);
-    void loadPlugin(PluginInfo* plugin);
+    static bool installPlugin(const QString& filepath);
     void unloadPlugins();
-
-    void shutdown();
 
 private:
     SettingsManager* m_settings;

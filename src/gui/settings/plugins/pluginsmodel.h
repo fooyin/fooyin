@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <utils/tablemodel.h>
 #include <utils/treeitem.h>
+#include <utils/treemodel.h>
 
 namespace Fooyin {
 class PluginInfo;
@@ -34,22 +34,26 @@ public:
         Plugin = Qt::UserRole
     };
 
-    explicit PluginItem(PluginInfo* info = nullptr, PluginItem* parent = nullptr);
+    PluginItem() = default;
+    explicit PluginItem(QString name, PluginItem* parent);
+    PluginItem(PluginInfo* info, PluginItem* parent);
 
+    [[nodiscard]] QString name() const;
     [[nodiscard]] PluginInfo* info() const;
 
 private:
+    QString m_name;
     PluginInfo* m_info;
 };
 
-class PluginsModel : public TableModel<PluginItem>
+class PluginsModel : public TreeModel<PluginItem>
 {
     Q_OBJECT
 
 public:
     explicit PluginsModel(PluginManager* pluginManager, QObject* parent = nullptr);
 
-    void setupModelData();
+    void reset();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;

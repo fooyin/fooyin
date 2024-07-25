@@ -17,15 +17,31 @@
  *
  */
 
-#include <core/plugins/plugin.h>
+#include <utils/stringutils.h>
 
-namespace Fooyin {
-void Plugin::shutdown() { }
+#include <QJsonArray>
+#include <QJsonValue>
 
-bool Plugin::hasSettings() const
+namespace Fooyin::Utils {
+QString readMultiLineString(const QJsonValue& value)
 {
-    return false;
-}
+    if(value.isString()) {
+        return value.toString();
+    }
 
-void Plugin::showSettings(QWidget* /*parent*/) { }
-} // namespace Fooyin
+    if(!value.isArray()) {
+        return {};
+    }
+
+    const QJsonArray array = value.toArray();
+
+    QStringList lines;
+    for(const auto& val : array) {
+        if(!val.isString()) {
+            return {};
+        }
+        lines.append(val.toString());
+    }
+    return lines.join(u'\n');
+}
+} // namespace Fooyin::Utils

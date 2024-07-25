@@ -22,6 +22,7 @@
 #include "corepaths.h"
 #include "internalcoresettings.h"
 
+#include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QDir>
@@ -37,10 +38,10 @@ const PluginInfoMap& PluginManager::allPluginInfo() const
     return m_plugins;
 }
 
-PluginInfo* PluginManager::pluginInfo(const QString& name) const
+PluginInfo* PluginManager::pluginInfo(const QString& identifier) const
 {
-    if(m_plugins.contains(name)) {
-        return m_plugins.at(name).get();
+    if(m_plugins.contains(identifier)) {
+        return m_plugins.at(identifier).get();
     }
     return nullptr;
 }
@@ -50,40 +51,26 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
     for(const QString& pluginDir : pluginDirs) {
         const QDir dir{pluginDir};
         if(!dir.exists()) {
-            return;
+            continue;
         }
 
-        const QFileInfoList fileList{dir.entryInfoList()};
         const QStringList disabledPlugins = m_settings->value<Settings::Core::Internal::DisabledPlugins>();
 
-        for(const auto& file : fileList) {
-            auto pluginFilename = file.absoluteFilePath();
-
-            if(!QLibrary::isLibrary(pluginFilename)) {
+        const auto files = Utils::File::getFilesInDirRecursive(dir, {});
+        for(const auto& filepath : files) {
+            if(!QLibrary::isLibrary(filepath)) {
                 continue;
             }
 
-            auto pluginLoader = std::make_unique<QPluginLoader>(pluginFilename);
-            auto metaData     = pluginLoader->metaData();
+            const QPluginLoader pluginLoader{filepath};
+            auto metaData = pluginLoader.metaData();
 
-            const QString error = pluginLoader->errorString();
-
-            auto pluginMetadata = metaData.value(QStringLiteral("MetaData"));
-            QString name        = pluginMetadata.toObject().value(QStringLiteral("Name")).toString();
-
-            if(name.isEmpty()) {
-                name = file.fileName();
-            }
-
-            auto* plugin = m_plugins.emplace(name, std::make_unique<PluginInfo>(name, pluginFilename, metaData))
-                               .first->second.get();
-            if(!error.isEmpty()) {
-                plugin->setError(error);
-            }
+            auto plugin = std::make_unique<PluginInfo>(filepath, metaData);
             if(disabledPlugins.contains(plugin->identifier())) {
                 plugin->setDisabled(true);
-                plugin->setStatus(PluginInfo::Status::Disabled);
             }
+
+            m_plugins.emplace(plugin->identifier(), std::move(plugin));
         }
     }
 }
@@ -91,9 +78,8 @@ void PluginManager::findPlugins(const QStringList& pluginDirs)
 void PluginManager::loadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
-        loadPlugin(plugin.get());
-        if(!plugin->isLoaded()) {
-            continue;
+        if(!plugin->isDisabled()) {
+            plugin->load();
         }
     }
 }
@@ -107,14 +93,6 @@ bool PluginManager::installPlugin(const QString& filepath)
     return pluginFile.copy(newPlugin);
 }
 
-void PluginManager::loadPlugin(PluginInfo* plugin)
-{
-    if(plugin->isDisabled()) {
-        return;
-    }
-    plugin->load();
-}
-
 void PluginManager::unloadPlugins()
 {
     for(const auto& [name, plugin] : m_plugins) {
@@ -122,10 +100,4 @@ void PluginManager::unloadPlugins()
     }
     m_plugins.clear();
 }
-
-void PluginManager::shutdown()
-{
-    unloadPlugins();
-}
-
 } // namespace Fooyin

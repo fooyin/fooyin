@@ -302,8 +302,7 @@ void Application::shutdown()
 {
     p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();
-    p->m_coreSettings.shutdown();
-    p->m_pluginManager.shutdown();
+    p->m_pluginManager.unloadPlugins();
     p->m_settings->storeSettings();
     p->m_library->cleanupTracks();
 }

@@ -17,15 +17,18 @@
  *
  */
 
-#include <core/plugins/plugin.h>
+#pragma once
+
+#include <QDialog>
 
 namespace Fooyin {
-void Plugin::shutdown() { }
+class PluginInfo;
 
-bool Plugin::hasSettings() const
+class PluginAboutDialog : public QDialog
 {
-    return false;
-}
+    Q_OBJECT
 
-void Plugin::showSettings(QWidget* /*parent*/) { }
+public:
+    PluginAboutDialog(PluginInfo* plugin, QWidget* parent = nullptr);
+};
 } // namespace Fooyin

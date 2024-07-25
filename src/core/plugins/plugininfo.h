@@ -44,7 +44,7 @@ public:
     };
     Q_ENUM(Status)
 
-    PluginInfo(QString name, const QString& filename, const QJsonObject& metadata);
+    PluginInfo(QString filepath, const QJsonObject& metadata);
 
     void load();
     void unload();
@@ -53,16 +53,19 @@ public:
     [[nodiscard]] Plugin* plugin() const;
     [[nodiscard]] QObject* root() const;
 
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QString filename() const;
+    [[nodiscard]] QString filepath() const;
     [[nodiscard]] QJsonObject metadata() const;
+
+    [[nodiscard]] QString name() const;
     [[nodiscard]] QString version() const;
-    [[nodiscard]] QString vendor() const;
+    [[nodiscard]] QString author() const;
     [[nodiscard]] QString identifier() const;
-    [[nodiscard]] QString category() const;
+    [[nodiscard]] QStringList category() const;
     [[nodiscard]] QString copyright() const;
+    [[nodiscard]] QString license() const;
     [[nodiscard]] QString description() const;
     [[nodiscard]] QString url() const;
+
     [[nodiscard]] bool isLoaded() const;
     [[nodiscard]] bool isDisabled() const;
     [[nodiscard]] Status status() const;
@@ -72,26 +75,21 @@ public:
     void setDisabled(bool disabled);
 
 private:
-    friend PluginManager;
-
-    void setStatus(Status status);
-    void setError(const QString& error);
+    QString m_filepath;
+    QJsonObject m_metadata;
 
     QString m_name;
-    QString m_filename;
-    QJsonObject m_metadata;
     QString m_version;
-    QString m_vendor;
+    QString m_author;
     QString m_copyright;
     QString m_license;
-    QString m_category;
+    QStringList m_category;
     QString m_description;
     QString m_url;
-    bool m_isRequired;
-    bool m_isLoaded;
-    bool m_isDisabled;
+
     Status m_status;
     QString m_error;
+    bool m_isDisabled;
 
     QObject* m_root;
     Plugin* m_plugin;

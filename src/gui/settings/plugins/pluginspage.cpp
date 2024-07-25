@@ -21,6 +21,7 @@
 
 #include "pluginsdelegate.h"
 #include "pluginsmodel.h"
+#include "settings/plugins/pluginaboutdialog.h"
 
 #include <core/application.h>
 #include <core/internalcoresettings.h>
@@ -37,7 +38,7 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
-#include <QTableView>
+#include <QTreeView>
 
 namespace Fooyin {
 class CheckSortProxyModel : public QSortFilterProxyModel
@@ -71,7 +72,8 @@ public:
     void reset() override;
 
 private:
-    [[nodiscard]] Plugin* currentPlugin() const;
+    [[nodiscard]] PluginInfo* currentPlugin() const;
+
     void selectionChanged();
 
     void aboutPlugin();
@@ -81,7 +83,7 @@ private:
     PluginManager* m_pluginManager;
     SettingsManager* m_settings;
 
-    QTableView* m_pluginList;
+    QTreeView* m_pluginList;
     PluginsModel* m_model;
 
     QPushButton* m_configurePlugin;
@@ -92,7 +94,7 @@ private:
 PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager* settings)
     : m_pluginManager{pluginManager}
     , m_settings{settings}
-    , m_pluginList{new QTableView(this)}
+    , m_pluginList{new QTreeView(this)}
     , m_model{new PluginsModel(m_pluginManager)}
     , m_configurePlugin{new QPushButton(tr("Configure"), this)}
     , m_aboutPlugin{new QPushButton(tr("About"), this)}
@@ -105,38 +107,38 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     m_aboutPlugin->setDisabled(true);
 
     m_pluginList->setModel(proxyModel);
-    m_pluginList->setItemDelegateForColumn(4, new PluginsDelegate(this));
+    m_pluginList->setItemDelegateForColumn(3, new PluginsDelegate(this));
 
-    m_pluginList->verticalHeader()->hide();
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_pluginList->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_pluginList->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+    m_pluginList->header()->setSortIndicator(0, Qt::AscendingOrder);
+    m_pluginList->header()->setStretchLastSection(false);
+    m_pluginList->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    m_pluginList->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     m_pluginList->setSortingEnabled(true);
 
     auto* mainLayout = new QGridLayout(this);
 
     mainLayout->addWidget(m_pluginList, 0, 0, 1, 4);
-    mainLayout->addWidget(m_configurePlugin, 1, 0);
-    mainLayout->addWidget(m_aboutPlugin, 1, 1);
+    mainLayout->addWidget(m_aboutPlugin, 1, 0);
+    mainLayout->addWidget(m_configurePlugin, 1, 1);
     mainLayout->addWidget(m_installPlugin, 1, 3);
 
     mainLayout->setColumnStretch(2, 1);
     mainLayout->setRowStretch(0, 1);
 
+    QObject::connect(m_model, &QAbstractItemModel::modelReset, m_pluginList, &QTreeView::expandAll);
     QObject::connect(m_pluginList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &PluginPageWidget::selectionChanged);
     QObject::connect(m_configurePlugin, &QPushButton::pressed, this, &PluginPageWidget::configurePlugin);
     QObject::connect(m_aboutPlugin, &QPushButton::pressed, this, &PluginPageWidget::aboutPlugin);
     QObject::connect(m_installPlugin, &QPushButton::pressed, this, &PluginPageWidget::installPlugin);
-
-    m_pluginList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    const int sections = m_pluginList->horizontalHeader()->count();
-    for(int i{1}; i < sections; ++i) {
-        m_pluginList->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-    }
 }
 
-void PluginPageWidget::load() { }
+void PluginPageWidget::load()
+{
+    m_model->reset();
+}
 
 void PluginPageWidget::apply()
 {
@@ -147,17 +149,17 @@ void PluginPageWidget::apply()
         return;
     }
 
-    for(const auto& pluginName : enabledPlugins) {
-        if(auto* plugin = m_pluginManager->pluginInfo(pluginName)) {
+    for(const auto& pluginIdentifier : enabledPlugins) {
+        if(auto* plugin = m_pluginManager->pluginInfo(pluginIdentifier)) {
             plugin->setDisabled(false);
         }
     }
 
     QStringList disabledIdentifiers;
     const auto& plugins = m_pluginManager->allPluginInfo();
-    for(const auto& [name, plugin] : plugins) {
-        if(plugin->isDisabled() || disabledPlugins.contains(name)) {
-            disabledIdentifiers.emplace_back(plugin->identifier());
+    for(const auto& [identifier, plugin] : plugins) {
+        if(plugin->isDisabled() || disabledPlugins.contains(identifier)) {
+            disabledIdentifiers.emplace_back(identifier);
         }
     }
 
@@ -172,21 +174,21 @@ void PluginPageWidget::apply()
 
 void PluginPageWidget::reset() { }
 
-Plugin* PluginPageWidget::currentPlugin() const
+PluginInfo* PluginPageWidget::currentPlugin() const
 {
     const auto indexes = m_pluginList->selectionModel()->selectedRows();
     if(indexes.empty()) {
         return nullptr;
     }
 
-    return indexes.front().data(PluginItem::Plugin).value<Plugin*>();
+    return indexes.front().data(PluginItem::Plugin).value<PluginInfo*>();
 }
 
 void PluginPageWidget::selectionChanged()
 {
     if(const auto* plugin = currentPlugin()) {
-        m_configurePlugin->setEnabled(plugin->hasSettings());
-        m_aboutPlugin->setEnabled(plugin->hasAbout());
+        m_configurePlugin->setEnabled(plugin->plugin()->hasSettings());
+        m_aboutPlugin->setEnabled(true);
         return;
     }
 
@@ -197,14 +199,16 @@ void PluginPageWidget::selectionChanged()
 void PluginPageWidget::aboutPlugin()
 {
     if(auto* plugin = currentPlugin()) {
-        plugin->showAbout(this);
+        auto* aboutDialog = new PluginAboutDialog(plugin, this);
+        aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
+        aboutDialog->show();
     }
 }
 
 void PluginPageWidget::configurePlugin()
 {
     if(auto* plugin = currentPlugin()) {
-        plugin->showSettings(this);
+        plugin->plugin()->showSettings(this);
     }
 }
 
@@ -217,7 +221,7 @@ void PluginPageWidget::installPlugin()
         return;
     }
 
-    if(m_pluginManager->installPlugin(filepath)) {
+    if(PluginManager::installPlugin(filepath)) {
         QMessageBox msg{QMessageBox::Question, tr("Plugin Installed"),
                         tr("Restart for changes to take effect. Restart now?"), QMessageBox::Yes | QMessageBox::No};
         if(msg.exec() == QMessageBox::Yes) {

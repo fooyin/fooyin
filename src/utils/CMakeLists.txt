@@ -18,6 +18,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/stardelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/starrating.h
+    ${CMAKE_SOURCE_DIR}/include/utils/stringutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/tablemodel.h
     ${CMAKE_SOURCE_DIR}/include/utils/threadqueue.h
     ${CMAKE_SOURCE_DIR}/include/utils/timer.h
@@ -72,6 +73,7 @@ set(SOURCES
     stareditor.cpp
     stardelegate.cpp
     starrating.cpp
+    stringutils.cpp
     timer.cpp
     tooltipfilter.cpp
     utils.cpp

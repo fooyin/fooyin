@@ -17,15 +17,14 @@
  *
  */
 
-#include <core/plugins/plugin.h>
+#pragma once
 
-namespace Fooyin {
-void Plugin::shutdown() { }
+#include "fyutils_export.h"
 
-bool Plugin::hasSettings() const
-{
-    return false;
+#include <QString>
+
+class QJsonValue;
+
+namespace Fooyin::Utils {
+FYUTILS_EXPORT QString readMultiLineString(const QJsonValue& value);
 }
-
-void Plugin::showSettings(QWidget* /*parent*/) { }
-} // namespace Fooyin

@@ -29,24 +29,46 @@ PluginItem::PluginItem(PluginInfo* info, PluginItem* parent)
     , m_info{info}
 { }
 
+PluginItem::PluginItem(QString name, PluginItem* parent)
+    : TreeItem{parent}
+    , m_name{std::move(name)}
+    , m_info{nullptr}
+{ }
+
+QString PluginItem::name() const
+{
+    return m_info ? m_info->name() : m_name;
+}
+
 PluginInfo* PluginItem::info() const
 {
     return m_info;
 }
 
 PluginsModel::PluginsModel(PluginManager* pluginManager, QObject* parent)
-    : TableModel{parent}
+    : TreeModel{parent}
     , m_pluginManager{pluginManager}
-{
-    setupModelData();
-}
+{ }
 
-void PluginsModel::setupModelData()
+void PluginsModel::reset()
 {
+    beginResetModel();
+    resetRoot();
+
     const auto& plugins = m_pluginManager->allPluginInfo();
 
     for(const auto& [name, info] : plugins) {
         PluginItem* parent = rootItem();
+
+        const auto categories = info->category();
+
+        for(const QString& category : categories) {
+            if(!m_nodes.contains(category)) {
+                m_nodes.emplace(category, PluginItem{category, parent});
+                parent->appendChild(&m_nodes.at(category));
+            }
+            parent = &m_nodes.at(category);
+        }
 
         if(!m_nodes.contains(name)) {
             m_nodes.emplace(name, PluginItem{info.get(), parent});
@@ -54,6 +76,8 @@ void PluginsModel::setupModelData()
         PluginItem* child = &m_nodes.at(name);
         parent->appendChild(child);
     }
+
+    endResetModel();
 }
 
 Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
@@ -64,7 +88,7 @@ Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
         return flags;
     }
 
-    if(index.column() == 4) {
+    if(index.column() == 3) {
         flags |= Qt::ItemIsUserCheckable;
         flags |= Qt::ItemIsEditable;
     }
@@ -72,14 +96,14 @@ Qt::ItemFlags PluginsModel::flags(const QModelIndex& index) const
     return flags;
 }
 
-int PluginsModel::rowCount(const QModelIndex& /*parent*/) const
+int PluginsModel::rowCount(const QModelIndex& parent) const
 {
-    return rootItem()->childCount();
+    return itemForIndex(parent)->childCount();
 }
 
 int PluginsModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return 6;
+    return 5;
 }
 
 QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -98,12 +122,10 @@ QVariant PluginsModel::headerData(int section, Qt::Orientation orientation, int 
         case(1):
             return tr("Version");
         case(2):
-            return tr("Category");
-        case(3):
             return tr("Author");
-        case(4):
+        case(3):
             return tr("Load");
-        case(5):
+        case(4):
             return tr("Status");
         default:
             break;
@@ -135,11 +157,18 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     const auto* item = itemForIndex(index);
-    const auto info  = item->info();
+    const auto* info = item->info();
 
-    if(role == Qt::CheckStateRole && column == 4) {
-        if((info->isDisabled() && !m_enabledPlugins.contains(info->name()))
-           || m_disabledPlugins.contains(info->name())) {
+    if(!info) {
+        if(role == Qt::DisplayRole && column == 0) {
+            return item->name();
+        }
+        return {};
+    }
+
+    if(role == Qt::CheckStateRole && column == 3) {
+        if((info->isDisabled() && !m_enabledPlugins.contains(info->identifier()))
+           || m_disabledPlugins.contains(info->identifier())) {
             return Qt::Unchecked;
         }
         return Qt::Checked;
@@ -150,7 +179,7 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
     }
 
     if(role == PluginItem::Plugin) {
-        return QVariant::fromValue(info->plugin());
+        return QVariant::fromValue(info);
     }
 
     if(role == Qt::DisplayRole) {
@@ -160,12 +189,10 @@ QVariant PluginsModel::data(const QModelIndex& index, int role) const
             case(1):
                 return info->version();
             case(2):
-                return info->category();
+                return info->author();
             case(3):
-                return info->vendor();
+                return info->author();
             case(4):
-                break;
-            case(5):
                 return Utils::Enum::toString(info->status());
             default:
                 break;
@@ -183,22 +210,21 @@ bool PluginsModel::setData(const QModelIndex& index, const QVariant& value, int 
 
     const auto* item   = static_cast<PluginItem*>(index.internalPointer());
     const bool checked = value.value<Qt::CheckState>() == Qt::Checked;
-    const QString name = item->info()->name();
 
     if(item->info()->isDisabled()) {
         if(checked) {
-            m_enabledPlugins.append(name);
+            m_enabledPlugins.append(item->info()->identifier());
         }
         else {
-            m_enabledPlugins.removeOne(name);
+            m_enabledPlugins.removeOne(item->info()->identifier());
         }
     }
     else {
         if(checked) {
-            m_disabledPlugins.removeOne(name);
+            m_disabledPlugins.removeOne(item->info()->identifier());
         }
         else {
-            m_disabledPlugins.append(name);
+            m_disabledPlugins.append(item->info()->identifier());
         }
     }
 

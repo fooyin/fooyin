@@ -46,10 +46,7 @@ public:
      */
     virtual void shutdown();
 
-    [[nodiscard]] virtual bool hasAbout() const;
     [[nodiscard]] virtual bool hasSettings() const;
-
-    virtual void showAbout(QWidget* parent);
     virtual void showSettings(QWidget* parent);
 };
 } // namespace Fooyin
