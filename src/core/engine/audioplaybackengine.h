@@ -98,6 +98,7 @@ private:
     uint64_t m_duration;
     double m_volume;
     bool m_ending;
+    bool m_decoding;
 
     Track m_currentTrack;
     AudioFormat m_format;

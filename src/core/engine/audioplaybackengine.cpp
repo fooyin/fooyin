@@ -43,8 +43,7 @@ constexpr auto BufferInterval   = 5;
 constexpr auto PositionInterval = 50;
 #endif
 
-constexpr auto MaxDecodeLength         = 200;
-constexpr auto PositionUpdateThreshold = 400;
+constexpr auto MaxDecodeLength = 200;
 
 namespace Fooyin {
 AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
@@ -64,6 +63,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_duration{0}
     , m_volume{1.0}
     , m_ending{false}
+    , m_decoding{false}
     , m_renderer{new AudioRenderer(this)}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
@@ -295,6 +295,7 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     m_posTimer.stop();
     m_clock.setPaused(true);
     m_clock.sync();
+    m_decoding = false;
     m_renderer->stop();
     if(full) {
         m_renderer->closeOutput();
@@ -368,7 +369,8 @@ bool AudioPlaybackEngine::updateFormat(const AudioFormat& nextFormat)
 
 void AudioPlaybackEngine::startPlayback()
 {
-    if(m_decoder) {
+    if(m_decoder && !m_decoding) {
+        m_decoding = true;
         m_decoder->start();
     }
     m_bufferTimer.start(BufferInterval, this);
@@ -391,9 +393,8 @@ void AudioPlaybackEngine::playOutput()
         }
     }
 
-    const auto prevState = m_state;
-
     startPlayback();
+
     if(m_state == PlaybackState::Stopped && m_currentTrack.offset() > 0) {
         m_decoder->seek(m_currentTrack.offset());
     }
@@ -401,7 +402,7 @@ void AudioPlaybackEngine::playOutput()
     updateState(PlaybackState::Playing);
 
     const bool canFade = m_settings->value<Settings::Core::Internal::EngineFading>()
-                      && (prevState == PlaybackState::Paused || m_renderer->isFading());
+                      && (m_state == PlaybackState::Paused || m_renderer->isFading());
     const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
 
     m_renderer->pause(false, fadeInterval);
