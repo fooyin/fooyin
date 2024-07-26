@@ -60,6 +60,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     playbackMenu->addAction(actionManager->registerAction(m_stop, Constants::Actions::Stop));
 
     auto* playPauseCmd = actionManager->registerAction(m_playPause, Constants::Actions::PlayPause);
+    playPauseCmd->setDescription(tr("Play/Pause"));
     playPauseCmd->setAttribute(ProxyAction::UpdateText);
     playPauseCmd->setAttribute(ProxyAction::UpdateIcon);
     playbackMenu->addAction(playPauseCmd);
