@@ -246,7 +246,7 @@ bool VgmInput::readMetaData(Track& track)
 
     mainPlayer.SetLoopCount(loopCount);
 
-    const DataLoaderPtr loader{FileLoader_Init(track.filepath().toUtf8().constData()), DataLoaderDeleter()};
+    const DataLoaderPtr loader{FileLoader_Init(track.filepath().toUtf8().constData())};
     if(!loader) {
         return false;
     }
@@ -300,8 +300,6 @@ bool VgmInput::readMetaData(Track& track)
     if(m_settings.value(QLatin1String{GuessTrackSetting}).toBool()) {
         track.setTrackNumber(extractTrackNumber(track.filename()));
     }
-
-    track.setCodec(QStringLiteral("VGM"));
 
     return true;
 }
