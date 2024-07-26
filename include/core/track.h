@@ -164,6 +164,7 @@ public:
     void setRatingStars(int rating);
 
     [[nodiscard]] QString metaValue(const QString& name) const;
+    [[nodiscard]] QString techInfo(const QString& name) const;
 
     void setCuePath(const QString& path);
 

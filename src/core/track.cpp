@@ -719,6 +719,32 @@ QString Track::metaValue(const QString& name) const
     return extraTag(name).join(u"\037");
 }
 
+QString Track::techInfo(const QString& name) const
+{
+    auto validNum = [](auto num) -> QString {
+        if(num > 0) {
+            return QString::number(num);
+        }
+        return {};
+    };
+
+    // clang-format off
+    static const std::unordered_map<QString, std::function<QString(const Track& track)>> infoMap{
+        {QLatin1String(Constants::MetaData::Codec),      [](const Track& track) { return track.codec(); }},
+        {QLatin1String(Constants::MetaData::SampleRate), [validNum](const Track& track) { return validNum(track.sampleRate()); }},
+        {QLatin1String(Constants::MetaData::Channels),   [validNum](const Track& track) { return validNum(track.channels()); }},
+        {QLatin1String(Constants::MetaData::BitDepth),   [validNum](const Track& track) { return validNum(track.bitDepth()); }},
+        {QLatin1String(Constants::MetaData::Duration),   [validNum](const Track& track) { return validNum(track.duration()); }}
+    };
+    // clang-format on
+
+    if(infoMap.contains(name)) {
+        return infoMap.at(name)(*this);
+    }
+
+    return extraTag(name).join(u"\037");
+}
+
 void Track::setCuePath(const QString& path)
 {
     p->cuePath = path;

@@ -73,33 +73,6 @@ auto generateSetFunc(FuncType func)
     };
 }
 
-QString trackInfo(const Fooyin::Track& track, const QStringList& args)
-{
-    if(args.empty()) {
-        return {};
-    }
-
-    const QString& tag = args.front();
-
-    if(tag == u"codec") {
-        return track.codec();
-    }
-    if(tag == u"samplerate") {
-        return QString::number(track.sampleRate());
-    }
-    if(tag == u"bitrate") {
-        return QString::number(track.bitrate());
-    }
-    if(tag == u"channels") {
-        return QString::number(track.channels());
-    }
-    if(tag == u"bitdepth") {
-        return QString::number(track.bitDepth());
-    }
-
-    return {};
-}
-
 QString trackMeta(const Fooyin::Track& track, const QStringList& args)
 {
     if(args.empty()) {
@@ -108,6 +81,16 @@ QString trackMeta(const Fooyin::Track& track, const QStringList& args)
 
     const QString& tag = args.front();
     return track.metaValue(tag);
+}
+
+QString trackInfo(const Fooyin::Track& track, const QStringList& args)
+{
+    if(args.empty()) {
+        return {};
+    }
+
+    const QString& tag = args.front();
+    return track.techInfo(tag);
 }
 
 QString trackTitle(const Fooyin::Track& track)
