@@ -49,6 +49,7 @@ public:
         Playcount = 1 << 1,
     };
     Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
+    Q_FLAG(WriteOptions)
 
     enum class Error : uint8_t
     {

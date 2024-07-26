@@ -30,7 +30,7 @@ namespace Fooyin {
 class FYCORE_EXPORT FySettings : public QSettings
 {
 public:
-    FySettings(QObject* parent = nullptr);
+    explicit FySettings(QObject* parent = nullptr);
 };
 
 namespace Settings::Core {

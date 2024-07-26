@@ -325,9 +325,11 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::LastPlayed)] = [](const Track& track) {
         return formatDateTime(track.lastPlayed());
     };
-    m_metadata[QString::fromLatin1(MetaData::PlayCount)]       = &Track::playCount;
-    m_metadata[QString::fromLatin1(MetaData::Rating)]          = &Track::ratingStars;
-    m_metadata[QString::fromLatin1(MetaData::Codec)]           = &Track::codec;
+    m_metadata[QString::fromLatin1(MetaData::PlayCount)] = &Track::playCount;
+    m_metadata[QString::fromLatin1(MetaData::Rating)]    = &Track::ratingStars;
+    m_metadata[QString::fromLatin1(MetaData::Codec)]     = [](const Track& track) {
+        return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
+    };
     m_metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
     m_metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
     m_metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;
