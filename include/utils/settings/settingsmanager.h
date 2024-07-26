@@ -40,7 +40,7 @@ concept IsEnumType = std::is_enum_v<decltype(key)> && std::is_same_v<std::underl
 
 template <auto key>
     requires IsEnumType<key>
-constexpr int findType()
+consteval int findType()
 {
     // Use last 4 bits to determine type
     const auto type = (key & 0xF0'00'00'00);
