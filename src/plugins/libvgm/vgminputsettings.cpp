@@ -23,9 +23,12 @@
 
 #include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QDir>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
 
@@ -34,6 +37,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     : QDialog{parent}
     , m_loopCount{new QSpinBox(this)}
     , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
+    , m_romLocation{new QLineEdit(this)}
 {
     setWindowTitle(tr("VGM Input Settings"));
     setModal(true);
@@ -57,19 +61,46 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     lengthLayout->addWidget(loopLabel, row, 0);
     lengthLayout->addWidget(m_loopCount, row, 1);
     lengthLayout->addWidget(loopHintLabel, row++, 2);
+    lengthLayout->setColumnStretch(3, 1);
     lengthLayout->setRowStretch(row++, 1);
+
+    auto* generalGroup  = new QGroupBox(tr("General"), this);
+    auto* generalLayout = new QGridLayout(generalGroup);
+
+    auto* romPathLabel = new QLabel(tr("ROM location") + QStringLiteral(":"), this);
+    auto* romHintLabel = new QLabel(QStringLiteral("🛈 ")
+                                        + tr("Certain files %1 require their system's ROM to play %2. "
+                                             "Provide a directory where these can be found here.")
+                                              .arg(QStringLiteral("(OPL-4 VGM)"), QStringLiteral("(yrw801.rom)")),
+                                    this);
+    romHintLabel->setWordWrap(true);
+
+    auto* browseButton = new QPushButton(tr("&Browse…"), this);
+    QObject::connect(browseButton, &QPushButton::pressed, this, &VgmInputSettings::getRomPath);
+
+    m_romLocation->setMinimumWidth(200);
+
+    row = 0;
+    generalLayout->addWidget(m_guessTrack, row++, 0, 1, 3);
+    generalLayout->addWidget(romPathLabel, row, 0);
+    generalLayout->addWidget(m_romLocation, row, 1);
+    generalLayout->addWidget(browseButton, row++, 2);
+    generalLayout->addWidget(romHintLabel, row++, 0, 1, 3);
+    generalLayout->setColumnStretch(1, 1);
+    generalLayout->setRowStretch(row++, 1);
 
     auto* layout = new QGridLayout(this);
     layout->setSizeConstraint(QLayout::SetFixedSize);
 
     row = 0;
-    layout->addWidget(lengthGroup, row++, 0, 1, 3);
-    layout->addWidget(m_guessTrack, row++, 0, 1, 3);
-    layout->addWidget(buttons, row++, 0, 1, 3, Qt::AlignBottom);
+    layout->addWidget(lengthGroup, row++, 0, 1, 4);
+    layout->addWidget(generalGroup, row++, 0, 1, 4);
+    layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
     m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
     m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
+    m_romLocation->setText(m_settings.value(QLatin1String{RomPathSetting}).toString());
 }
 
 void VgmInputSettings::accept()
@@ -82,5 +113,16 @@ void VgmInputSettings::apply()
 {
     m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
     m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
+    m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
+}
+
+void VgmInputSettings::getRomPath()
+{
+    const QString romPath = QFileDialog::getExistingDirectory(this, tr("Select ROM path"), QDir::homePath());
+    if(romPath.isEmpty()) {
+        return;
+    }
+
+    m_romLocation->setText(romPath);
 }
 } // namespace Fooyin::VgmInput

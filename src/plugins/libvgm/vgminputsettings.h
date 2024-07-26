@@ -24,6 +24,7 @@
 #include <QDialog>
 
 class QCheckBox;
+class QLineEdit;
 class QSpinBox;
 
 namespace Fooyin::VgmInput {
@@ -38,8 +39,11 @@ public:
     void apply();
 
 private:
+    void getRomPath();
+
     FySettings m_settings;
     QSpinBox* m_loopCount;
     QCheckBox* m_guessTrack;
+    QLineEdit* m_romLocation;
 };
 } // namespace Fooyin::VgmInput

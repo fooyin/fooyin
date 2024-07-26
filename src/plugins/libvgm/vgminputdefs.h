@@ -20,6 +20,8 @@
 #pragma once
 
 namespace Fooyin::VgmInput {
+constexpr auto RomPathSetting = "VgmInput/RomPath";
+
 constexpr auto DefaultLoopCount = 2;
 constexpr auto LoopCountSetting = "VgmInput/LoopCount";
 

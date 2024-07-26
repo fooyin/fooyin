@@ -30,6 +30,8 @@
 #include <player/vgmplayer.hpp>
 #include <utils/FileLoader.h>
 
+#include <QDir>
+
 // TODO: Make configurable
 // Note: Some of these will change the duration of the track,
 // so we'll need a way to update the saved duration so seekbars
@@ -48,6 +50,46 @@ int extractTrackNumber(const QString& filename)
     static const QRegularExpression regex(QStringLiteral(R"(^(\d+))"));
     const QRegularExpressionMatch match = regex.match(filename);
     return match.hasMatch() ? match.captured(1).toInt() : -1;
+}
+
+QString findRomFile(const char* name)
+{
+    const Fooyin::FySettings settings;
+    const auto path = settings.value(QLatin1String{Fooyin::VgmInput::RomPathSetting}).toString();
+
+    const QDir dir{path};
+    if(!dir.exists()) {
+        qWarning() << "[VGMInput] ROM directory does not exist:" << path;
+        return {};
+    }
+
+    const auto files = dir.entryInfoList({QString::fromLatin1(name)}, QDir::Files);
+    if(files.isEmpty()) {
+        qWarning() << "[VGMInput] Could not find ROM" << name << "in directory" << path;
+        return {};
+    }
+
+    return files.front().absoluteFilePath();
+}
+
+DATA_LOADER* requestFileCallback(void* /*userParam*/, PlayerBase* /*player*/, const char* fileName)
+{
+    using namespace Fooyin::VgmInput;
+
+    DataLoaderPtr loader;
+
+    if(const QString romFile = findRomFile(fileName); !romFile.isEmpty()) {
+        loader = {FileLoader_Init(romFile.toUtf8().constData()), DataLoaderDeleter()};
+    }
+    else {
+        loader = {FileLoader_Init(fileName), DataLoaderDeleter()};
+    }
+
+    if(DataLoader_Load(loader.get()) == 0) {
+        return loader.release();
+    }
+
+    return nullptr;
 }
 } // namespace
 
@@ -99,6 +141,7 @@ bool VgmInput::init(const QString& source, DecoderOptions options)
     m_mainPlayer->RegisterPlayerEngine(new S98Player());
     m_mainPlayer->RegisterPlayerEngine(new DROPlayer());
     m_mainPlayer->RegisterPlayerEngine(new GYMPlayer());
+    m_mainPlayer->SetFileReqCallback(requestFileCallback, nullptr);
     configurePlayer(m_mainPlayer.get());
 
     int loopCount = m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt();
