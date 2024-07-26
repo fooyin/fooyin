@@ -57,6 +57,11 @@ QString findRomFile(const char* name)
     const Fooyin::FySettings settings;
     const auto path = settings.value(QLatin1String{Fooyin::VgmInput::RomPathSetting}).toString();
 
+    if(path.isEmpty()) {
+        qWarning() << "[VGMInput] ROM" << name << "required for playback but ROM directory has not been configured";
+        return {};
+    }
+
     const QDir dir{path};
     if(!dir.exists()) {
         qWarning() << "[VGMInput] ROM directory does not exist:" << path;
