@@ -19,6 +19,8 @@
 
 #include "pipewirestream.h"
 
+#include "pipewireutils.h"
+
 #include <core/engine/audiobuffer.h>
 
 #include <pipewire/keys.h>
@@ -52,7 +54,7 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
     m_stream.reset(pw_stream_new(core->core(), "Playback", props));
 
     if(!m_stream) {
-        qWarning() << "[PW] Failed to create stream";
+        qCWarning(PIPEWIRE) << "Failed to create stream";
     }
 }
 
@@ -79,7 +81,7 @@ void PipewireStream::setActive(bool active)
 void PipewireStream::setVolume(float volume)
 {
     if(pw_stream_set_control(m_stream.get(), SPA_PROP_volume, 1, &volume, 0) < 0) {
-        qDebug() << "[PW] Failed to set volume";
+        qCWarning(PIPEWIRE) << "Failed to set volume";
     }
 }
 
@@ -102,7 +104,7 @@ bool PipewireStream::connect(uint32_t id, const spa_direction& direction, std::v
                              const pw_stream_flags& flags)
 {
     if(pw_stream_connect(m_stream.get(), direction, id, flags, params.data(), params.size()) < 0) {
-        qWarning() << "[PW] Failed to connect to stream";
+        qCWarning(PIPEWIRE) << "Failed to connect to stream";
         return false;
     }
 

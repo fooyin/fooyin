@@ -154,7 +154,7 @@ bool MenuContainer::update()
             if(auto* container = qobject_cast<ActionContainer*>(item)) {
                 actions.removeAll(container->menu()->menuAction());
                 if(container == this) {
-                    qWarning() << "Container contains itself as a subcontainer";
+                    qCWarning(ACTIONS) << "Container contains itself as a subcontainer";
                     return false;
                 }
                 return container->update();

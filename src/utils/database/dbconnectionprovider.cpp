@@ -20,6 +20,9 @@
 #include <utils/database/dbconnectionprovider.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(DB_CONPROV, "DB")
 
 namespace Fooyin {
 DbConnectionProvider::DbConnectionProvider()
@@ -33,19 +36,19 @@ DbConnectionProvider::DbConnectionProvider(DbConnectionPoolPtr pool)
 QSqlDatabase DbConnectionProvider::db() const
 {
     if(!m_connectionPool) {
-        qCritical() << "[DB] No connection pool";
+        qCWarning(DB_CONPROV) << "No connection pool";
         return {};
     }
 
     const DbConnection* connection = m_connectionPool->threadConnection();
 
     if(!connection) {
-        qCritical() << "[DB] Thread connection not found";
+        qCWarning(DB_CONPROV) << "Thread connection not found";
         return {};
     }
 
     if(!connection->isOpen() && !connection->db().open()) {
-        qCritical() << "[DB] Thread connection could not be opened";
+        qCWarning(DB_CONPROV) << "Thread connection could not be opened";
         return {};
     }
 

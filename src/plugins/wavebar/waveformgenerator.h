@@ -27,6 +27,10 @@
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(WAVEBAR)
+
 namespace Fooyin {
 class AudioLoader;
 

@@ -36,10 +36,13 @@
 #include <QBuffer>
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QLoggingCategory>
 #include <QRegularExpression>
 
 #include <ranges>
 #include <stack>
+
+Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner")
 
 constexpr auto BatchSize = 250;
 
@@ -365,7 +368,7 @@ bool LibraryScannerPrivate::readTrackMetadata(Track& track) const
         return true;
     }
 
-    qDebug() << "Unsupported file:" << track.filepath();
+    qCInfo(LIB_SCANNER) << "Unsupported file:" << track.filepath();
     return false;
 }
 
@@ -377,8 +380,7 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& file) const
 
     QFile playlistFile{file};
     if(!playlistFile.open(QIODevice::ReadOnly)) {
-        qWarning() << QStringLiteral("Could not open playlistFile file %1 for reading: %2")
-                          .arg(playlistFile.fileName(), playlistFile.errorString());
+        qCWarning(LIB_SCANNER) << "Could not open file" << file << "for reading:" << playlistFile.errorString();
         return {};
     }
 
@@ -399,7 +401,7 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track) 
     QByteArray bytes{cues.front().toUtf8()};
     QBuffer buffer(&bytes);
     if(!buffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << QStringLiteral("Can't open buffer for reading: %1").arg(buffer.errorString());
+        qCWarning(LIB_SCANNER) << "Can't open buffer for reading:" << buffer.errorString();
         return {};
     }
 
@@ -750,7 +752,7 @@ void LibraryScanner::scanLibrary(const LibraryInfo& library, const TrackList& tr
         p->cleanupScan();
     }
 
-    qDebug() << "[Library] Scan of" << library.name << "took" << timer.elapsedFormatted();
+    qCInfo(LIB_SCANNER) << "Scan of" << library.name << "took" << timer.elapsedFormatted();
 
     if(state() == Paused) {
         p->changeLibraryStatus(LibraryInfo::Status::Pending);

@@ -23,7 +23,10 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QLoggingCategory>
 #include <QStandardPaths>
+
+Q_LOGGING_CATEGORY(UTILS_PATHS, "Paths")
 
 namespace {
 QString operator/(const QString& first, const QString& second)
@@ -38,7 +41,7 @@ QString createPath(const QString& path, const QString& appendPath)
 {
     if(!QFileInfo::exists(path)) {
         if(!QDir().mkpath(path)) {
-            qDebug() << "Cannot create path: " << path;
+            qCWarning(UTILS_PATHS) << "Cannot create path:" << path;
         }
     }
 
@@ -46,7 +49,7 @@ QString createPath(const QString& path, const QString& appendPath)
 
     if(!QFileInfo::exists(fullPath)) {
         if(!QDir().mkpath(fullPath)) {
-            qDebug() << "Cannot create path: " << fullPath;
+            qCWarning(UTILS_PATHS) << "Cannot create path:" << fullPath;
         }
     }
 

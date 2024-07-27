@@ -54,10 +54,13 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFileInfo>
+#include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmap>
 
 #include <set>
+
+Q_LOGGING_CATEGORY(TAGLIB, "TagLib")
 
 namespace {
 constexpr std::array mp4ToTag{
@@ -1344,7 +1347,7 @@ bool readMetaData(Track& track)
 
     TagLib::FileStream stream(filepath.toUtf8().constData(), true);
     if(!stream.isOpen()) {
-        qWarning() << "Unable to open file readonly: " << filepath;
+        qCWarning(TAGLIB) << "Unable to open file readonly:" << filepath;
         return false;
     }
 
@@ -1502,7 +1505,7 @@ bool readMetaData(Track& track)
         }
     }
     else {
-        qDebug() << "Unsupported mime type: " << mimeType;
+        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
     }
 
     if(track.codec().isEmpty()) {
@@ -1523,7 +1526,7 @@ QByteArray readCover(const Track& track, Track::Cover cover)
 
     TagLib::FileStream stream(filepath.toUtf8().constData(), true);
     if(!stream.isOpen()) {
-        qWarning() << "Unable to open file readonly: " << filepath;
+        qCWarning(TAGLIB) << "Unable to open file readonly:" << filepath;
         return {};
     }
 

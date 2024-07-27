@@ -22,8 +22,11 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QIODevice>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QMouseEvent>
+
+Q_LOGGING_CATEGORY(AUTO_HEADER, "AutoHeaderView")
 
 constexpr auto MinSectionWidth = 20;
 
@@ -53,7 +56,7 @@ public:
     [[nodiscard]] int sectionHandleAt(int pos) const;
     [[nodiscard]] int rightLogicalSection(int visual) const;
 
-    [[nodiscard]] bool shouldBlockResize(const int oldPos) const;
+    [[nodiscard]] bool shouldBlockResize(int oldPos) const;
     void columnsAboutToBeRemoved(int first, int last);
     void sectionCountChanged(int oldCount, int newCount);
 
@@ -617,11 +620,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
             = std::min({count(), static_cast<int>(logicalIndexes.size()), static_cast<int>(pixelWidths.size()),
                         static_cast<int>(p->m_sectionWidths.size())});
 
-        if(parentWidget()) {
-            qDebug() << QStringLiteral("[%1] Restoring state for %2 section(s)")
-                            .arg(parentWidget()->objectName())
-                            .arg(sectionCount);
-        }
+        qCDebug(AUTO_HEADER) << "Restoring state for" << sectionCount << "section(s)";
 
         for(int section{0}; section < sectionCount; ++section) {
             setSectionHidden(section, pixelWidths[section] < MinSectionWidth);
@@ -633,9 +632,7 @@ void AutoHeaderView::restoreHeaderState(const QByteArray& state)
         }
     }
     else {
-        if(parentWidget()) {
-            qDebug() << QStringLiteral("[%1] Header state empty").arg(parentWidget()->objectName());
-        }
+        qCDebug(AUTO_HEADER) << "Header state empty";
     }
 
     setSortIndicator(sortSection, sortOrder);

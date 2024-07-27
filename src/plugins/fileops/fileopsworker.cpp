@@ -26,7 +26,10 @@
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QLoggingCategory>
 #include <QRegularExpression>
+
+Q_LOGGING_CATEGORY(FILEOPS, "FileOps")
 
 namespace {
 QString replaceSeparators(const QString& input)
@@ -103,13 +106,13 @@ void FileOpsWorker::run()
         switch(item.op) {
             case(Operation::Create): {
                 if(!QDir{}.mkpath(item.destination)) {
-                    qWarning() << "[FileOps] Failed to create directory" << item.destination;
+                    qCWarning(FILEOPS) << "Failed to create directory" << item.destination;
                 }
                 break;
             }
             case(Operation::Remove): {
                 if(!QDir{}.rmdir(item.source)) {
-                    qWarning() << "[FileOps] Failed to remove directory" << item.destination;
+                    qCWarning(FILEOPS) << "Failed to remove directory" << item.destination;
                 }
                 break;
             }
@@ -302,12 +305,12 @@ void FileOpsWorker::renameFile(const FileOpsItem& item)
     QFile file{item.source};
 
     if(!file.exists()) {
-        qWarning() << "[FileOps] File doesn't exist:" << item.source;
+        qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
         return;
     }
 
     if(!file.rename(item.destination)) {
-        qWarning() << "[FileOps] Failed to move file from" << item.source << "to" << item.destination;
+        qCWarning(FILEOPS) << "Failed to move file from" << item.source << "to" << item.destination;
         return;
     }
 
@@ -353,12 +356,12 @@ void FileOpsWorker::copyFile(const FileOpsItem& item)
     QFile file{item.source};
 
     if(!file.exists()) {
-        qWarning() << "[FileOps] File doesn't exist:" << item.source;
+        qCWarning(FILEOPS) << "File doesn't exist:" << item.source;
         return;
     }
 
     if(!file.copy(item.destination)) {
-        qWarning() << "[FileOps] Failed to copy file from" << item.source << "to" << item.destination;
+        qCWarning(FILEOPS) << "Failed to copy file from" << item.source << "to" << item.destination;
     }
 }
 

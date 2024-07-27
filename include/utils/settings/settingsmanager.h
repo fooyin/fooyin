@@ -23,10 +23,13 @@
 
 #include <utils/settings/settingsentry.h>
 
+#include <QLoggingCategory>
 #include <QMetaEnum>
 
 #include <mutex>
 #include <shared_mutex>
+
+Q_DECLARE_LOGGING_CATEGORY(SETTINGS)
 
 class QMainWindow;
 class QSettings;
@@ -432,7 +435,8 @@ private:
         const std::unique_lock lock(m_lock);
 
         if(m_settings.contains(mapKey) || settingExists(settingKey)) {
-            qWarning() << "Setting has already been registered: " << keyString;
+            QLoggingCategory log{"Settings"};
+            qCWarning(log) << "Setting has already been registered:" << keyString;
             return;
         }
 

@@ -25,6 +25,7 @@
 #include <utils/utils.h>
 
 #include <QKeySequence>
+#include <QLoggingCategory>
 #include <QPointer>
 
 namespace Fooyin {
@@ -246,7 +247,8 @@ void Command::addOverrideAction(QAction* action, const Context& context, bool ch
         for(const Id& contextId : context) {
             if(p->m_contextActionMap.contains(contextId)) {
                 if(auto contextAction = p->m_contextActionMap.at(contextId)) {
-                    qWarning() << "Context " << contextId.name() << " already added for " << contextAction;
+                    QLoggingCategory log{"Actions"};
+                    qCWarning(log) << "Context" << contextId.name() << "already added for" << contextAction;
                 }
             }
             p->m_contextActionMap.emplace(contextId, action);

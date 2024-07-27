@@ -20,7 +20,10 @@
 #include <utils/database/dbconnection.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QSqlError>
+
+Q_LOGGING_CATEGORY(DB_CON, "DB")
 
 namespace {
 void createDatabase(const Fooyin::DbConnection::DbParams& params, const QString& connectionName)
@@ -66,7 +69,7 @@ bool DbConnection::open()
     auto db = this->db();
 
     if(!db.open()) {
-        qWarning() << "[DB] Failed to open connection:" << m_name << db.lastError();
+        qCWarning(DB_CON) << "Failed to open connection:" << m_name << db.lastError();
         return false;
     }
 
@@ -78,7 +81,7 @@ void DbConnection::close()
     auto db = this->db();
     if(db.isOpen()) {
         if(db.rollback()) {
-            qWarning() << "[DB] Rolled back open transaction before closing connection:" << m_name;
+            qCWarning(DB_CON) << "Rolled back open transaction before closing connection:" << m_name;
         }
         db.close();
     }

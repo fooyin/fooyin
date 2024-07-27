@@ -20,17 +20,20 @@
 #include <utils/database/dbtransaction.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(DB_TR, "DB")
 
 namespace {
 bool beginTransaction(QSqlDatabase& database)
 {
     if(!database.isOpen()) {
-        qWarning() << "[DB] Failed to begin transaction on" << database.connectionName() << ": No open connection";
+        qCWarning(DB_TR) << "Failed to begin transaction on" << database.connectionName() << ": No open connection";
         return false;
     }
 
     if(!database.transaction()) {
-        qWarning() << "[DB] Failed to begin transaction on" << database.connectionName();
+        qCWarning(DB_TR) << "Failed to begin transaction on" << database.connectionName();
         return false;
     }
 
@@ -66,12 +69,12 @@ DbTransaction::operator bool() const
 bool DbTransaction::commit()
 {
     if(!m_database.isOpen()) {
-        qWarning() << "[DB] Failed to commit transaction on" << m_database.connectionName() << ": No open connection";
+        qCWarning(DB_TR) << "Failed to commit transaction on" << m_database.connectionName() << ": No open connection";
         return false;
     }
 
     if(!m_database.commit()) {
-        qWarning() << "[DB] Failed to commit transaction on" << m_database.connectionName();
+        qCWarning(DB_TR) << "Failed to commit transaction on" << m_database.connectionName();
         return false;
     }
 
@@ -82,12 +85,13 @@ bool DbTransaction::commit()
 bool DbTransaction::rollback()
 {
     if(!m_database.isOpen()) {
-        qWarning() << "[DB] Failed to rollback transaction on" << m_database.connectionName() << ": No open connection";
+        qCWarning(DB_TR) << "Failed to rollback transaction on" << m_database.connectionName()
+                         << ": No open connection";
         return false;
     }
 
     if(!m_database.rollback()) {
-        qWarning() << "[DB] Failed to rollback transaction on" << m_database.connectionName();
+        qCWarning(DB_TR) << "Failed to rollback transaction on" << m_database.connectionName();
         return false;
     }
 

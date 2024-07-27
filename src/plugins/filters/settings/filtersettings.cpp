@@ -24,6 +24,8 @@
 #include <QApplication>
 #include <QPalette>
 
+Q_LOGGING_CATEGORY(FILTERS, "Filters")
+
 namespace Fooyin::Filters {
 FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}

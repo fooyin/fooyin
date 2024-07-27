@@ -19,6 +19,7 @@
 
 #include "settingsdatabase.h"
 
+#include <QLoggingCategory>
 #include <QSqlQuery>
 
 namespace Fooyin {
@@ -37,7 +38,8 @@ QString SettingsDatabase::value(const QString& name, QString defaultValue) const
     if(query.exec() && query.next()) {
         const QVariant value = query.value(0);
         if(!value.isValid()) {
-            qWarning() << "Invalid value:" << value;
+            QLoggingCategory log{"Settings"};
+            qCWarning(log) << "Invalid value:" << value;
         }
         else {
             return value.toString();

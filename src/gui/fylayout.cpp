@@ -22,7 +22,10 @@
 #include <utils/utils.h>
 
 #include <QJsonDocument>
+#include <QLoggingCategory>
 #include <QMainWindow>
+
+Q_LOGGING_CATEGORY(LAYOUT, "FyLayout")
 
 namespace {
 struct ReadResult
@@ -111,7 +114,7 @@ void FyLayout::loadWindowSize() const
 
     const auto sizeVal = m_json.value(u"WindowSize");
     if(!sizeVal.isObject()) {
-        qInfo() << "Invalid WindowSize value";
+        qCWarning(LAYOUT) << "Invalid WindowSize value";
         return;
     }
 

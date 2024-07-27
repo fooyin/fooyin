@@ -31,6 +31,10 @@
 #include <player/vgmplayer.hpp>
 #include <utils/FileLoader.h>
 
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(VGM_INPUT, "VGMInput")
+
 // TODO: Make configurable
 // Note: Some of these will change the duration of the track,
 // so we'll need a way to update the saved duration so seekbars
@@ -57,19 +61,19 @@ QString findRomFile(const char* name)
     const auto path = settings.value(QLatin1String{Fooyin::VgmInput::RomPathSetting}).toString();
 
     if(path.isEmpty()) {
-        qWarning() << "[VGMInput] ROM" << name << "required for playback but ROM directory has not been configured";
+        qCWarning(VGM_INPUT) << "ROM" << name << "required for playback but ROM directory has not been configured";
         return {};
     }
 
     const QDir dir{path};
     if(!dir.exists()) {
-        qWarning() << "[VGMInput] ROM directory does not exist:" << path;
+        qCWarning(VGM_INPUT) << "ROM directory does not exist:" << path;
         return {};
     }
 
     const auto files = dir.entryInfoList({QString::fromLatin1(name)}, QDir::Files);
     if(files.isEmpty()) {
-        qWarning() << "[VGMInput] Could not find ROM" << name << "in directory" << path;
+        qCWarning(VGM_INPUT) << "Could not find ROM" << name << "in directory" << path;
         return {};
     }
 

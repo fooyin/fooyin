@@ -23,6 +23,10 @@
 
 #include <utils/treestatusitem.h>
 
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(LIBTREE_MOD, "LibraryTreeGroupModel")
+
 namespace Fooyin {
 LibraryTreeGroupItem::LibraryTreeGroupItem()
     : LibraryTreeGroupItem{{}, nullptr}
@@ -89,7 +93,7 @@ void LibraryTreeGroupModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QStringLiteral("Group %1 could not be added").arg(group.name);
+                    qCWarning(LIBTREE_MOD) << "Group could not be added:" << group.name;
                 }
                 break;
             }
@@ -101,7 +105,7 @@ void LibraryTreeGroupModel::processQueue()
                     groupsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QStringLiteral("Group %1 could not be removed").arg(group.name);
+                    qCWarning(LIBTREE_MOD) << "Group could not be removed:" << group.name;
                 }
                 break;
             }
@@ -115,7 +119,7 @@ void LibraryTreeGroupModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << QStringLiteral("Group %1 could not be changed").arg(group.name);
+                    qCWarning(LIBTREE_MOD) << "Group could not be changed:" << group.name;
                 }
                 break;
             }

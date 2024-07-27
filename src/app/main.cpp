@@ -27,6 +27,7 @@
 #include <kdsingleapplication.h>
 
 #include <QApplication>
+#include <QLoggingCategory>
 
 int main(int argc, char** argv)
 {
@@ -46,7 +47,8 @@ int main(int argc, char** argv)
         }
 
         if(commandLine.empty()) {
-            qInfo() << "fooyin already running";
+            QLoggingCategory log{"Main"};
+            qCInfo(log) << "fooyin already running";
             instance.sendMessage({});
         }
         else {

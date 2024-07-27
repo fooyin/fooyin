@@ -24,8 +24,11 @@
 #include <QBuffer>
 #include <QDir>
 #include <QFile>
+#include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QTextStream>
+
+Q_LOGGING_CATEGORY(M3U, "M3U")
 
 namespace {
 enum class Type
@@ -118,7 +121,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
         if(line.startsWith(u'#')) {
             if(type == Type::Extended && line.startsWith(u"#EXT")) {
                 if(!processMetadata(line, metadata)) {
-                    qWarning() << "Failed to process metadata:" << line;
+                    qCWarning(M3U) << "Failed to process metadata:" << line;
                 }
             }
         }

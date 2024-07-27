@@ -24,6 +24,7 @@
 #include "pipewireregistry.h"
 #include "pipewirestream.h"
 #include "pipewirethreadloop.h"
+#include "pipewireutils.h"
 
 #include <pipewire/pipewire.h>
 #include <spa/param/audio/format-utils.h>
@@ -294,7 +295,7 @@ bool PipeWireOutput::initCore()
     m_core->syncCore();
 
     if(!m_loop->start()) {
-        qWarning() << "[PW] Failed to start thread loop";
+        qCWarning(PIPEWIRE) << "Failed to start thread loop";
         return false;
     }
 
@@ -328,7 +329,7 @@ bool PipeWireOutput::initStream()
 
     const spa_audio_format spaFormat = findSpaFormat(m_format.sampleFormat());
     if(spaFormat == SPA_AUDIO_FORMAT_UNKNOWN) {
-        qWarning() << "[PW] Unknown audio format";
+        qCWarning(PIPEWIRE) << "Unknown audio format";
         return false;
     }
 
@@ -364,7 +365,7 @@ void PipeWireOutput::process(void* userData)
 
     auto* pwBuffer = self->m_stream->dequeueBuffer();
     if(!pwBuffer) {
-        qWarning() << "[PW] No available output buffers";
+        qCWarning(PIPEWIRE) << "No available output buffers";
         return;
     }
 

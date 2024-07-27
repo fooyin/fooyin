@@ -28,7 +28,10 @@
 #include <core/player/playercontroller.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QLoggingCategory>
 #include <QThread>
+
+Q_LOGGING_CATEGORY(ENG_HANDLER, "EngineHandler")
 
 namespace Fooyin {
 class EngineHandlerPrivate
@@ -172,12 +175,12 @@ void EngineHandlerPrivate::changeOutput(const QString& output)
     const QString& device  = newOutput.at(1);
 
     if(m_outputs.empty()) {
-        qWarning() << "No Outputs have been registered";
+        qCWarning(ENG_HANDLER) << "No Outputs have been registered";
         return;
     }
 
     if(!m_outputs.contains(newName)) {
-        qWarning() << QStringLiteral("Output (%1) hasn't been registered").arg(newName);
+        qCWarning(ENG_HANDLER) << "Output hasn't been registered:" << newName;
         loadDefault();
         return;
     }
@@ -244,7 +247,7 @@ OutputNames EngineHandler::getAllOutputs() const
 OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 {
     if(!p->m_outputs.contains(output)) {
-        qDebug() << "Output not found: " << output;
+        qCWarning(ENG_HANDLER) << "Output" << output << "not found";
         return {};
     }
 
@@ -258,7 +261,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
 void EngineHandler::addOutput(const QString& name, OutputCreator output)
 {
     if(p->m_outputs.contains(name)) {
-        qDebug() << QStringLiteral("Output (%1) already registered").arg(name);
+        qCWarning(ENG_HANDLER) << "Output" << name << "already registered";
         return;
     }
     p->m_outputs.emplace(name, std::move(output));

@@ -27,8 +27,11 @@
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QLoggingCategory>
 #include <QMessageBox>
 #include <QString>
+
+Q_LOGGING_CATEGORY(LAYOUT_PROV, "LayoutProvider")
 
 namespace {
 bool checkFile(const QFileInfo& file)
@@ -58,7 +61,7 @@ bool LayoutProviderPrivate::layoutExists(const QString& name) const
 FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import)
 {
     if(!layout.isValid()) {
-        qInfo() << "Attempted to load an invalid layout";
+        qCWarning(LAYOUT_PROV) << "Attempted to load an invalid layout";
         return {};
     }
 
@@ -69,7 +72,7 @@ FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import)
         if(import) {
             return *existingLayout;
         }
-        qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
+        qCWarning(LAYOUT_PROV) << "A layout with the same name (" << layout.name() << ") already exists";
         return {};
     }
 
@@ -119,11 +122,11 @@ void LayoutProvider::findLayouts()
         const QFileInfo fileInfo{file};
 
         if(!checkFile(fileInfo)) {
-            qInfo() << "Layout file is not valid.";
+            qCInfo(LAYOUT_PROV) << "Layout file is not valid.";
             return;
         }
         if(!newLayout.open(QIODevice::ReadOnly)) {
-            qInfo() << "Couldn't open layout file.";
+            qCInfo(LAYOUT_PROV) << "Couldn't open layout file.";
             return;
         }
 
@@ -143,7 +146,7 @@ void LayoutProvider::loadCurrentLayout()
     }
 
     if(!p->m_layoutFile.open(QIODevice::ReadOnly)) {
-        qCritical() << "Couldn't open layout file.";
+        qCWarning(LAYOUT_PROV) << "Couldn't open layout file.";
         return;
     }
 
@@ -152,12 +155,12 @@ void LayoutProvider::loadCurrentLayout()
 
     const FyLayout layout{json};
     if(!layout.isValid()) {
-        qInfo() << "Attempted to load an invalid layout";
+        qCWarning(LAYOUT_PROV) << "Attempted to load an invalid layout";
         return;
     }
 
     if(p->layoutExists(layout.name())) {
-        qInfo() << "A layout with the same name (" << layout.name() << ") already exists";
+        qCWarning(LAYOUT_PROV) << "A layout with the same name (" << layout.name() << ") already exists";
         return;
     }
 
@@ -167,7 +170,7 @@ void LayoutProvider::loadCurrentLayout()
 void LayoutProvider::saveCurrentLayout()
 {
     if(!p->m_layoutFile.open(QIODevice::WriteOnly)) {
-        qCritical() << "Couldn't open layout file";
+        qCWarning(LAYOUT_PROV) << "Couldn't open layout file";
         return;
     }
 
@@ -201,7 +204,7 @@ FyLayout LayoutProvider::importLayout(const QString& path)
     const QFileInfo fileInfo{file};
 
     if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open layout for reading: " << path;
+        qCWarning(LAYOUT_PROV) << "Could not open layout for reading: " << path;
         return {};
     }
 

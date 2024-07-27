@@ -29,6 +29,8 @@
 #include <cfenv>
 #include <utility>
 
+Q_LOGGING_CATEGORY(WAVEBAR, "WaveBar")
+
 namespace {
 float convertSampleToFloat(const int16_t inSample)
 {
@@ -167,7 +169,7 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     m_decoder->stop();
 
     if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
-        qWarning() << "[WaveBar] Unable to store waveform for track:" << m_track.filepath();
+        qCWarning(WAVEBAR) << "Unable to store waveform for track:" << m_track.filepath();
     }
 
     if(!closing()) {
@@ -244,7 +246,7 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
     m_decoder->stop();
 
     if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
-        qWarning() << "[WaveBar] Unable to store waveform for track:" << m_track.filepath();
+        qCWarning(WAVEBAR) << "Unable to store waveform for track:" << m_track.filepath();
     }
 
     if(!closing()) {

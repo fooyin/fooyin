@@ -25,6 +25,8 @@
 
 #include <ranges>
 
+Q_LOGGING_CATEGORY(SETTINGS, "Settings")
+
 namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
     : QObject{parent}
@@ -175,7 +177,7 @@ void SettingsManager::createSetting(const QString& key, const QVariant& value)
     const std::unique_lock lock(m_lock);
 
     if(m_settings.contains(key)) {
-        qWarning() << "Setting has already been registered: " << key;
+        qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
 
@@ -188,7 +190,7 @@ void SettingsManager::createTempSetting(const QString& key, const QVariant& valu
     const std::unique_lock lock(m_lock);
 
     if(m_settings.contains(key)) {
-        qWarning() << "Setting has already been registered: " << key;
+        qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
 

@@ -19,7 +19,10 @@
 
 #include <utils/database/dbquery.h>
 
+#include <QLoggingCategory>
 #include <QSqlError>
+
+Q_LOGGING_CATEGORY(DB_QRY, "DB")
 
 namespace {
 bool prepareQuery(QSqlQuery& query, const QString& statement)
@@ -52,7 +55,7 @@ DbQuery::DbQuery(const QSqlDatabase& database, const QString& statement)
             m_status = Status::Ignored;
         }
         else {
-            qWarning() << "[DB] Failed to prepare" << statement << ":" << lastError();
+            qCWarning(DB_QRY) << "Failed to prepare" << statement << ":" << lastError();
             m_status = Status::Error;
         }
     }
@@ -85,7 +88,7 @@ bool DbQuery::exec()
         return true;
     }
 
-    qWarning() << "[DB] Failed to execute" << m_query.lastQuery() << ":" << lastError();
+    qCWarning(DB_QRY) << "Failed to execute" << m_query.lastQuery() << ":" << lastError();
     m_status = Status::Error;
     return false;
 }

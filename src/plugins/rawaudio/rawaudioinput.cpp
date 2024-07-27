@@ -20,6 +20,9 @@
 #include "rawaudioinput.h"
 
 #include <QFileInfo>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(RAW_AUD, "RawAudio")
 
 namespace Fooyin::RawAudio {
 RawAudioInput::RawAudioInput()
@@ -56,12 +59,12 @@ bool RawAudioInput::init(const QString& source, DecoderOptions /*options*/)
 {
     m_file = std::make_unique<QFile>(source);
     if(!m_file->open(QIODevice::ReadOnly)) {
-        qWarning() << "[raw] Unable to open" << source;
+        qCWarning(RAW_AUD) << "Unable to open" << source;
         return false;
     }
 
     if(!isValidData(m_file.get())) {
-        qWarning() << "[raw] Invalid file:" << source;
+        qCWarning(RAW_AUD) << "Invalid file" << source;
         return false;
     }
 
@@ -111,12 +114,12 @@ bool RawAudioInput::readMetaData(Track& track)
 {
     QFile file{track.filepath()};
     if(!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "[raw] Unable to open file" << track.filepath();
+        qCWarning(RAW_AUD) << "Unable to open file" << track.filepath();
         return false;
     }
 
     if(!isValidData(&file)) {
-        qWarning() << "[raw] Invalid file:" << track.filepath();
+        qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
         return false;
     }
 

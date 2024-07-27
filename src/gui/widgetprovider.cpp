@@ -25,8 +25,11 @@
 #include <gui/widgetcontainer.h>
 
 #include <QAction>
+#include <QLoggingCategory>
 #include <QMenu>
 #include <QUndoStack>
+
+Q_LOGGING_CATEGORY(WIDGET_PROV, "WidgetProvider")
 
 namespace {
 struct FactoryWidget
@@ -119,7 +122,7 @@ bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*(
                                     const QString& displayName)
 {
     if(p->m_widgets.contains(key)) {
-        qDebug() << "Subclass already registered";
+        qCWarning(WIDGET_PROV) << "Subclass already registered";
         return false;
     }
 
@@ -135,7 +138,7 @@ bool WidgetProvider::registerWidget(const QString& key, std::function<FyWidget*(
 void WidgetProvider::setSubMenus(const QString& key, const QStringList& subMenus)
 {
     if(!p->m_widgets.contains(key)) {
-        qDebug() << "Subclass not registered";
+        qCWarning(WIDGET_PROV) << "Subclass not registered";
         return;
     }
 
@@ -145,7 +148,7 @@ void WidgetProvider::setSubMenus(const QString& key, const QStringList& subMenus
 void WidgetProvider::setLimit(const QString& key, int limit)
 {
     if(!p->m_widgets.contains(key)) {
-        qDebug() << "Subclass not registered";
+        qCWarning(WIDGET_PROV) << "Subclass not registered";
         return;
     }
 
@@ -155,7 +158,7 @@ void WidgetProvider::setLimit(const QString& key, int limit)
 void WidgetProvider::setIsHidden(const QString& key, bool hidden)
 {
     if(!p->m_widgets.contains(key)) {
-        qDebug() << "Subclass not registered";
+        qCWarning(WIDGET_PROV) << "Subclass not registered";
         return;
     }
 

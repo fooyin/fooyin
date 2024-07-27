@@ -19,6 +19,7 @@
 
 #include "settingsmodel.h"
 
+#include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
@@ -81,7 +82,7 @@ void SettingsModel::setPages(const PageList& pages)
 
     for(const auto& page : pages) {
         if(m_pageIds.contains(page->id())) {
-            qWarning() << "Duplicate settings page: " << page->id().name();
+            qCWarning(SETTINGS) << "Duplicate settings page:" << page->id().name();
             continue;
         }
 

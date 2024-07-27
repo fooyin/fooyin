@@ -22,7 +22,10 @@
 #include <SDL2/SDL.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QTimerEvent>
+
+Q_LOGGING_CATEGORY(SDL, "SDL")
 
 using namespace std::chrono_literals;
 
@@ -81,7 +84,7 @@ bool SdlOutput::init(const AudioFormat& format)
     }
 
     if(m_audioDeviceId == 0) {
-        qDebug() << "[SDL] Error opening audio device: " << SDL_GetError();
+        qCWarning(SDL) << "Error opening audio device:" << SDL_GetError();
         return false;
     }
 

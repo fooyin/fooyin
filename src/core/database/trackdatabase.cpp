@@ -26,6 +26,9 @@
 #include <utils/fileutils.h>
 
 #include <QFileInfo>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(TRK_DB, "TrackDatabase")
 
 using BindingsMap = std::map<QString, QVariant>;
 
@@ -266,7 +269,7 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
 bool TrackDatabase::updateTrack(const Track& track)
 {
     if(track.id() < 0) {
-        qDebug() << QStringLiteral("Cannot update track %1 (Invalid ID)").arg(track.filepath());
+        qCWarning(TRK_DB) << "Cannot update track" << track.filepath() << "(Invalid ID)";
         return false;
     }
 
@@ -571,7 +574,7 @@ bool TrackDatabase::insertTrack(Track& track) const
 bool TrackDatabase::insertOrUpdateStats(const Track& track) const
 {
     if(track.hash().isEmpty()) {
-        qDebug() << "Cannot insert/update track stats (Hash empty)";
+        qCWarning(TRK_DB) << "Cannot insert/update track stats (Hash empty)";
         return false;
     }
 

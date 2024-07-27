@@ -29,8 +29,12 @@
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QLoggingCategory>
+
 #include <ranges>
 #include <utility>
+
+Q_LOGGING_CATEGORY(PL_HANDLER, "PlaylistHandler")
 
 constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
 
@@ -611,14 +615,14 @@ void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)
 
     auto* playlist = playlistById(id);
     if(!playlist) {
-        qDebug() << QStringLiteral("Playlist could not be renamed to %1").arg(name);
+        qCDebug(PL_HANDLER) << "Playlist could not be renamed to" << name;
         return;
     }
 
     const QString newName = p->findUniqueName(name.isEmpty() ? QStringLiteral("Playlist") : name);
 
     if(!playlist->isTemporary() && !p->m_playlistConnector.renamePlaylist(playlist->dbId(), newName)) {
-        qDebug() << QStringLiteral("Playlist could not be renamed to %1").arg(name);
+        qCDebug(PL_HANDLER) << "Playlist could not be renamed to" << name;
         return;
     }
 

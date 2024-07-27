@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QMetaEnum>
 #include <QString>
 
@@ -34,7 +35,8 @@ std::optional<E> fromString(const QString& text)
     bool ok;
     auto result = static_cast<E>(QMetaEnum::fromType<E>().keyToValue(text.toUtf8().constData(), &ok));
     if(!ok) {
-        qDebug() << "Failed to convert enum " << text;
+        QLoggingCategory log{"Utils"};
+        qCWarning(log) << "Failed to convert enum" << text;
         return {};
     }
     return result;

@@ -20,6 +20,7 @@
 #include "pipewireregistry.h"
 
 #include "pipewirecore.h"
+#include "pipewireutils.h"
 
 #include <pipewire/keys.h>
 #include <pipewire/node.h>
@@ -42,7 +43,7 @@ PipewireRegistry::PipewireRegistry(PipewireCore* core)
     : m_registry{pw_core_get_registry(core->core(), PW_VERSION_REGISTRY, 0)}
 {
     if(!m_registry) {
-        qWarning() << "[PW] Failed to create registry";
+        qCWarning(PIPEWIRE) << "Failed to create registry";
     }
 
     static constexpr pw_registry_events registryEvents = {

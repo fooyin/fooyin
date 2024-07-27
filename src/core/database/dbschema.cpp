@@ -18,13 +18,15 @@
  */
 
 #include "dbschema.h"
-
 #include "trackdatabase.h"
 
 #include <utils/database/dbquery.h>
 #include <utils/database/dbtransaction.h>
 
 #include <QFile>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(DB_SCHEMA, "DB")
 
 constexpr auto InitialVersion = 0;
 
@@ -46,7 +48,7 @@ int readSchemaVersion(const Fooyin::SettingsDatabase& settings, const QString& k
     const int schemaVersion = settingsValue.toInt(&isInt);
 
     if(!isInt || schemaVersion < InitialVersion) {
-        qCritical() << "[DB] Invalid schema version" << settingsValue;
+        qCCritical(DB_SCHEMA) << "Invalid DB schema version" << settingsValue;
         return -1;
     }
 
@@ -118,8 +120,8 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
     }
 
     if(targetVersion < currentVer && targetVersion < minCompatVersion()) {
-        qWarning() << "[DB] Current schema" << currentVer << "is not backwards compatable with version"
-                   << targetVersion;
+        qCWarning(DB_SCHEMA) << "Current DB schema" << currentVer << "is not backwards compatable with version"
+                             << targetVersion;
         return UpgradeResult::Incompatible;
     }
 
@@ -128,7 +130,7 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
     }
 
     if(currentVer < targetVersion) {
-        qInfo() << "[DB] Upgrading schema from version" << currentVer << "to version" << targetVersion;
+        qCInfo(DB_SCHEMA) << "Upgrading DB schema from version" << currentVer << "to version" << targetVersion;
     }
 
     // Update views before migrations in case we've dropped columns
@@ -139,23 +141,25 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
         ++nextVersion;
 
         if(!m_revisions.contains(nextVersion)) {
-            qCritical() << "[DB] Migration from version" << currentVer << "to version" << nextVersion << "is missing";
+            qCCritical(DB_SCHEMA) << "Migration from DB version" << currentVer << "to version" << nextVersion
+                                  << "is missing";
             return UpgradeResult::Error;
         }
 
         if(nextVersion < currentVer) {
-            qInfo() << "[DB] Reapplying schema migration to version" << nextVersion;
+            qCInfo(DB_SCHEMA) << "Reapplying DB schema migration to version" << nextVersion;
         }
 
         auto migrationResult = applyRevision(currentVer, nextVersion);
 
         if(migrationResult == UpgradeResult::Error) {
-            qCritical() << "[DB] Failed to parse database schema migrations from" << schemaFilename;
+            qCCritical(DB_SCHEMA) << "Failed to parse DB schema migrations from" << schemaFilename;
             return UpgradeResult::Error;
         }
 
         if(migrationResult == UpgradeResult::Failed) {
-            qCritical() << "[DB] Failed to upgrade schema from version" << currentVer << "to version" << nextVersion;
+            qCCritical(DB_SCHEMA) << "Failed to upgrade DB schema from version" << currentVer << "to version"
+                                  << nextVersion;
             return UpgradeResult::Failed;
         }
 
@@ -170,8 +174,8 @@ DbSchema::UpgradeResult DbSchema::upgradeDatabase(int targetVersion, const QStri
     }
 
     if(targetVersion < currentVer) {
-        qInfo() << "[DB] Current schema is newer at version" << currentVer << "and backwards compatible with version"
-                << targetVersion;
+        qCInfo(DB_SCHEMA) << "Current DB schema is newer at version" << currentVer
+                          << "and backwards compatible with version" << targetVersion;
         return UpgradeResult::BackwardsCompatible;
     }
 
@@ -182,7 +186,7 @@ bool DbSchema::readSchema(const QString& schemaFilename)
 {
     QFile file{schemaFilename};
     if(!file.open(QFile::ReadOnly | QFile::Text)) {
-        qCritical() << "[DB] Failed to open schema file" << schemaFilename;
+        qCCritical(DB_SCHEMA) << "Failed to open DB schema file" << schemaFilename;
         return false;
     }
 
@@ -203,12 +207,12 @@ bool DbSchema::readSchema(const QString& schemaFilename)
             }
         }
         else {
-            m_xmlReader.raiseError(QStringLiteral("[DB] Incorrect schema file"));
+            m_xmlReader.raiseError(QStringLiteral("Incorrect DB schema file"));
         }
     }
 
     if(m_xmlReader.hasError()) {
-        qCritical() << "[DB] Failed to parse schema file" << schemaFilename << ":" << m_xmlReader.errorString();
+        qCCritical(DB_SCHEMA) << "Failed to parse DB schema file" << schemaFilename << ":" << m_xmlReader.errorString();
         return false;
     }
 
@@ -219,9 +223,9 @@ DbSchema::Revision DbSchema::readRevision()
 {
     Revision revision;
 
-    revision.version          = m_xmlReader.attributes().value(QStringLiteral("version")).toInt();
-    revision.minCompatVersion = m_xmlReader.attributes().value(QStringLiteral("minCompatVersion")).toInt();
-    revision.foreignKeys      = m_xmlReader.attributes().value(QStringLiteral("foreignKeys")).toInt();
+    revision.version          = m_xmlReader.attributes().value(u"version").toInt();
+    revision.minCompatVersion = m_xmlReader.attributes().value(u"minCompatVersion").toInt();
+    revision.foreignKeys      = m_xmlReader.attributes().value(u"foreignKeys").toInt();
 
     while(m_xmlReader.readNextStartElement()) {
         if(m_xmlReader.name() == u"description") {
@@ -256,7 +260,7 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
         }
     }
 
-    qInfo() << "[DB] Upgrading schema to version" << revisionToApply << ":" << revision.description;
+    qCInfo(DB_SCHEMA) << "Upgrading DB schema to version" << revisionToApply << ":" << revision.description;
 
     DbTransaction transaction{db()};
 
@@ -276,7 +280,7 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
         result = queryStatus == DbQuery::Status::Prepared && query.exec();
 
         if(!result && queryStatus == DbQuery::Status::Ignored) {
-            qInfo() << "[DB] Ignoring statement" << statement << "while re-applying a schema migration";
+            qCInfo(DB_SCHEMA) << "Ignoring statement" << statement << "while re-applying a DB schema migration";
             result = true;
         }
     }
@@ -293,10 +297,10 @@ DbSchema::UpgradeResult DbSchema::applyRevision(int currentRevision, int revisio
         m_settingsDb.set(QString::fromLatin1(VersionKey), revisionToApply);
         m_settingsDb.set(QString::fromLatin1(LastVersionKey), revisionToApply);
         m_settingsDb.set(QString::fromLatin1(MinCompatVersionKey), revision.minCompatVersion);
-        qInfo() << "[DB] Upgraded schema to version" << revisionToApply;
+        qCInfo(DB_SCHEMA) << "Upgraded DB schema to version" << revisionToApply;
     }
     else {
-        qInfo() << "[DB] Reapplied schema migration to version" << revisionToApply;
+        qCInfo(DB_SCHEMA) << "Reapplied DB schema migration to version" << revisionToApply;
     }
 
     transaction.commit();

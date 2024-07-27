@@ -38,10 +38,13 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QImageReader>
+#include <QLoggingCategory>
 #include <QMimeDatabase>
 #include <QPixmapCache>
 
 #include <set>
+
+Q_LOGGING_CATEGORY(COV_PROV, "CoverProvider")
 
 constexpr auto MaxSize = 1024;
 
@@ -150,12 +153,12 @@ QImage readImage(const QString& path, int requestedSize, const QString& hintType
     QImageReader reader{path, formatHint};
 
     if(!reader.canRead()) {
-        qDebug() << "Failed to use format hint " << formatHint << " when trying to load " << hintType << " cover";
+        qCDebug(COV_PROV) << "Failed to use format hint" << formatHint << "when trying to load" << hintType << "cover";
 
         reader.setFormat({});
         reader.setFileName(path);
         if(!reader.canRead()) {
-            qDebug() << "Failed to load " << hintType << " cover";
+            qCDebug(COV_PROV) << "Failed to load" << hintType << "cover";
             return {};
         }
     }
@@ -185,12 +188,12 @@ QImage readImage(QByteArray data)
     QImageReader reader{&buffer, formatHint};
 
     if(!reader.canRead()) {
-        qDebug() << "Failed to use format hint " << formatHint << " when trying to load embedded cover";
+        qCDebug(COV_PROV) << "Failed to use format hint" << formatHint << "when trying to load embedded cover";
 
         reader.setFormat({});
         reader.setDevice(&buffer);
         if(!reader.canRead()) {
-            qDebug() << "Failed to load embedded cover";
+            qCDebug(COV_PROV) << "Failed to load embedded cover";
             return {};
         }
     }
@@ -337,7 +340,7 @@ void CoverProviderPrivate::processCoverResult(const CoverLoader& loader)
     cover.setDevicePixelRatio(Utils::windowDpr());
 
     if(!QPixmapCache::insert(loader.isThumb ? generateThumbCoverKey(loader.key, loader.size) : loader.key, cover)) {
-        qDebug() << "Failed to cache cover for:" << loader.track.filepath();
+        qCDebug(COV_PROV) << "Failed to cache cover for:" << loader.track.filepath();
     }
 
     emit m_self->coverAdded(loader.track);
@@ -347,13 +350,13 @@ void CoverProviderPrivate::fetchCover(const QString& key, const Track& track, Tr
                                       CoverProvider::ThumbnailSize size)
 {
     CoverLoader loader;
-    loader.key           = key;
-    loader.track         = track;
-    loader.type          = type;
+    loader.key         = key;
+    loader.track       = track;
+    loader.type        = type;
     loader.audioLoader = m_audioLoader;
-    loader.paths         = m_paths;
-    loader.isThumb       = thumbnail;
-    loader.size          = size;
+    loader.paths       = m_paths;
+    loader.isThumb     = thumbnail;
+    loader.size        = size;
 
     auto loaderResult = Utils::asyncExec([loader]() -> CoverLoader {
         auto result = loadCoverImage(loader);

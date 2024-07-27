@@ -21,6 +21,8 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 
+Q_LOGGING_CATEGORY(ACTIONS, "Actions")
+
 namespace {
 bool canAddAction(Fooyin::Command* action)
 {
@@ -193,7 +195,7 @@ void ActionContainer::addAction(QAction* action, const Id& group)
     auto& groups       = actionGroups();
     const auto groupIt = p->findGroup(groupId);
     if(groupIt == groups.cend()) {
-        qDebug() << "Can't find group" << group.name() << "in container" << id().name();
+        qCWarning(ACTIONS) << "Can't find group" << group.name() << "in container" << id().name();
         return;
     }
 
@@ -215,7 +217,7 @@ void ActionContainer::addAction(Command* action, const Id& group)
     auto& groups       = actionGroups();
     const auto groupIt = p->findGroup(groupId);
     if(groupIt == groups.cend()) {
-        qDebug() << "Can't find group" << group.name() << "in container" << id().name();
+        qCWarning(ACTIONS) << "Can't find group" << group.name() << "in container" << id().name();
         return;
     }
     groups.at(groupIt - groups.cbegin()).items.push_back(action);

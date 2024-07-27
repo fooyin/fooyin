@@ -19,6 +19,8 @@
 
 #include "pipewirecore.h"
 
+#include "pipewireutils.h"
+
 #include <QDebug>
 
 #ifdef __GNUC__
@@ -38,7 +40,7 @@ PipewireCore::PipewireCore(PipewireContext* context)
     , m_core{pw_context_connect(m_context->context(), nullptr, 0)}
 {
     if(!m_core) {
-        qWarning() << "[PW] Failed to create core";
+        qCWarning(PIPEWIRE) << "Failed to create core";
         return;
     }
 

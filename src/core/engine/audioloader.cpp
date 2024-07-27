@@ -23,10 +23,13 @@
 
 #include <core/track.h>
 
+#include <QLoggingCategory>
 #include <QThreadStorage>
 
 #include <mutex>
 #include <shared_mutex>
+
+Q_LOGGING_CATEGORY(AUD_LDR, "AudioLoader")
 
 namespace Fooyin {
 using LoaderInstances = std::unordered_map<QString, std::unique_ptr<AudioInput>>;
@@ -146,14 +149,14 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioInput::WriteOption
 void AudioLoader::addDecoder(const QString& name, const InputCreator& creator)
 {
     if(!creator) {
-        qDebug() << QStringLiteral("Decoder (%1) cannot be created").arg(name);
+        qCWarning(AUD_LDR) << "Decoder" << name << "cannot be created";
         return;
     }
 
     const std::unique_lock lock{p->m_decoderMutex};
 
     if(p->m_decoders.contains(name)) {
-        qDebug() << QStringLiteral("Decoder (%1) already registered").arg(name);
+        qCWarning(AUD_LDR) << "Decoder" << name << "already registered";
         return;
     }
 

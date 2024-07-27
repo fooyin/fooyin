@@ -19,6 +19,8 @@
 
 #include "pipewirethreadloop.h"
 
+#include "pipewireutils.h"
+
 #include <QDebug>
 
 namespace Fooyin::Pipewire {
@@ -42,7 +44,7 @@ PipewireThreadLoop::PipewireThreadLoop()
     : m_loop{pw_thread_loop_new("fooyin/pipewire", nullptr)}
 {
     if(!m_loop) {
-        qWarning() << "[PW] Could not create thread loop";
+        qCWarning(PIPEWIRE) << "Could not create thread loop";
     }
 }
 

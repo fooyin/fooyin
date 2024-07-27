@@ -33,6 +33,9 @@
 
 #include <QApplication>
 #include <QDBusObjectPath>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(MPRIS, "MPRIS")
 
 constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2";
 constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";
@@ -67,7 +70,7 @@ void MprisPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
     m_playlistHandler  = context.playlistHandler;
-    m_audioLoader    = context.audioLoader;
+    m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
 
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, [this]() {
@@ -111,17 +114,17 @@ void MprisPlugin::initialise(const GuiPluginContext& context)
     new MprisPlayer(this);
 
     if(!QDBusConnection::sessionBus().isConnected()) {
-        qWarning() << "Cannot connect to the dbus session bus";
+        qCWarning(MPRIS) << "Cannot connect to the dbus session bus";
         return;
     }
 
     if(!QDBusConnection::sessionBus().registerService(QString::fromLatin1(ServiceName))) {
-        qWarning() << "Cannot register with the session dbus";
+        qCWarning(MPRIS) << "Cannot register with the session dbus";
         return;
     }
 
     if(!QDBusConnection::sessionBus().registerObject(QString::fromLatin1(MprisObjectPath), this)) {
-        qWarning() << "Cannot register object to the dbus";
+        qCWarning(MPRIS) << "Cannot register object to the dbus";
         return;
     }
 

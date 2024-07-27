@@ -20,6 +20,9 @@
 #include <core/engine/audiobuffer.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(AUD_BUFF, "AudioBuffer")
 
 namespace Fooyin {
 class AudioBufferPrivate : public QSharedData
@@ -259,7 +262,7 @@ void AudioBuffer::scale(double volume)
             break;
         case(SampleFormat::Unknown):
         default:
-            qDebug() << "Unable to scale samples of unsupported format";
+            qCWarning(AUD_BUFF) << "Unable to scale samples of unsupported format";
     }
 }
 } // namespace Fooyin

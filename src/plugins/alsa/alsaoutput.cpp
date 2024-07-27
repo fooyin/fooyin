@@ -22,6 +22,9 @@
 #include <alsa/asoundlib.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(ALSA, "ALSA")
 
 constexpr auto DefaultBufferSize = 8192;
 constexpr auto DefaultPeriodSize = 1024;
@@ -29,7 +32,7 @@ constexpr auto DefaultPeriodSize = 1024;
 namespace {
 void printError(const QString& message)
 {
-    qWarning() << QStringLiteral("[ALSA] %1").arg(message);
+    qCWarning(ALSA) << message;
 }
 
 snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
@@ -417,7 +420,7 @@ bool AlsaOutput::checkError(int error, const QString& message)
 {
     if(error < 0) {
         m_error = message;
-        qWarning() << QStringLiteral("%1 - %2").arg(QLatin1String(snd_strerror(error)), message);
+        printError(QLatin1String(snd_strerror(error)) + message);
         emit stateChanged(State::Error);
         return true;
     }

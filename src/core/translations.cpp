@@ -26,7 +26,10 @@
 
 #include <QCoreApplication>
 #include <QLibraryInfo>
+#include <QLoggingCategory>
 #include <QTranslator>
+
+Q_LOGGING_CATEGORY(TRANSLATIONS, "Translations")
 
 namespace Fooyin {
 Translations::Translations(SettingsManager* settings)
@@ -44,7 +47,7 @@ void Translations::initialiseTranslations()
     if(!customLanguage.isEmpty()) {
         locale = QLocale{customLanguage};
         if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
-            qWarning() << "Custom locale (" << customLanguage << ") not found, using 'C' locale";
+            qCWarning(TRANSLATIONS) << "Custom locale (" << customLanguage << ") not found, using 'C' locale";
         }
         QLocale::setDefault(locale);
     }
@@ -58,7 +61,7 @@ void Translations::initialiseTranslations()
 
     if(locale.language() == QLocale::English
        && (locale.territory() == QLocale::UnitedKingdom || locale.territory() == QLocale::AnyCountry)) {
-        qDebug() << "Skipping loading of translations for locale" << locale.name();
+        qCDebug(TRANSLATIONS) << "Skipping loading of translations for locale" << locale.name();
         return;
     }
 
@@ -78,14 +81,14 @@ bool Translations::installTranslations(const QLocale& locale, const QString& tra
     auto* translator = new QTranslator(this);
     if(!translator->load(locale, translation, QStringLiteral("_"), path)) {
         if(warn) {
-            qWarning() << "Failed to load" << translation << "translations for locale" << locale.name() << "from"
-                       << path;
+            qCWarning(TRANSLATIONS) << "Failed to load" << translation << "translations for locale" << locale.name()
+                                    << "from" << path;
         }
         delete translator;
         return false;
     }
 
-    qDebug() << "Loaded" << translation << "translations for locale" << locale.name() << "from" << path;
+    qCDebug(TRANSLATIONS) << "Loaded" << translation << "translations for locale" << locale.name() << "from" << path;
 
     return QCoreApplication::installTranslator(translator);
 }

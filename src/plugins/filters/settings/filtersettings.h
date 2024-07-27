@@ -21,7 +21,10 @@
 
 #include <utils/settings/settingsentry.h>
 
+#include <QLoggingCategory>
 #include <QObject>
+
+Q_DECLARE_LOGGING_CATEGORY(FILTERS)
 
 namespace Fooyin {
 class SettingsManager;

@@ -17,33 +17,8 @@
  *
  */
 
-#include "pipewirecontext.h"
+#pragma once
 
-#include "pipewireutils.h"
+#include <QLoggingCategory>
 
-#include <QDebug>
-
-namespace Fooyin::Pipewire {
-PipewireContext::PipewireContext(PipewireThreadLoop* loop)
-    : m_loop{loop}
-    , m_context{pw_context_new(m_loop->loop(), nullptr, 0)}
-{
-    if(!m_context) {
-        qCWarning(PIPEWIRE) << "Failed to create context";
-    }
-}
-
-pw_context* PipewireContext::context() const
-{
-    if(!m_context) {
-        return nullptr;
-    }
-
-    return m_context.get();
-}
-
-PipewireThreadLoop* PipewireContext::threadLoop() const
-{
-    return m_loop;
-}
-} // namespace Fooyin::Pipewire
+inline Q_LOGGING_CATEGORY(PIPEWIRE, "PipeWire")

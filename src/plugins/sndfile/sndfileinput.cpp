@@ -20,6 +20,9 @@
 #include "sndfileinput.h"
 
 #include <QFileInfo>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(SND_FILE, "SndFile")
 
 namespace {
 sf_count_t sndFileLen(void* data)
@@ -132,7 +135,7 @@ bool SndFileInput::init(const QString& source, DecoderOptions /*options*/)
 
     m_file = std::make_unique<QFile>(source);
     if(!m_file->open(QIODevice::ReadOnly)) {
-        qWarning() << "[SND] Unable to open" << source;
+        qCWarning(SND_FILE) << "Unable to open" << source;
         return false;
     }
 
@@ -143,7 +146,7 @@ bool SndFileInput::init(const QString& source, DecoderOptions /*options*/)
 
     m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file.get());
     if(!m_sndFile) {
-        qWarning() << "[SND] Unable to open" << source;
+        qCWarning(SND_FILE) << "Unable to open" << source;
         return false;
     }
 

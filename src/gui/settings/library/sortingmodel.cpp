@@ -21,6 +21,10 @@
 
 #include "core/library/sortingregistry.h"
 
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(SORT_MOD, "SortingModel")
+
 namespace Fooyin {
 SortingItem::SortingItem()
     : SortingItem{{}, nullptr}
@@ -87,7 +91,7 @@ void SortingModel::processQueue()
                     emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
                 }
                 else {
-                    qWarning() << QStringLiteral("Sorting %1 could not be added").arg(sortScript.name);
+                    qCWarning(SORT_MOD) << "Sorting could not be added:" << sortScript.name;
                 }
                 break;
             }
@@ -99,7 +103,7 @@ void SortingModel::processQueue()
                     sortScriptsToRemove.push_back(node);
                 }
                 else {
-                    qWarning() << QStringLiteral("Sorting %1 could not be removed").arg(sortScript.name);
+                    qCWarning(SORT_MOD) << "Sorting could not be removed:" << sortScript.name;
                 }
                 break;
             }
@@ -113,7 +117,7 @@ void SortingModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << QStringLiteral("Sorting %1 could not be changed").arg(sortScript.name);
+                    qCWarning(SORT_MOD) << "Sorting could not be changed:" << sortScript.name;
                 }
                 break;
             }

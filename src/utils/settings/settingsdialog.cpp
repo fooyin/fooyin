@@ -23,6 +23,7 @@
 #include "settingsmodel.h"
 #include "simpletreeview.h"
 
+#include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
 
 #include <QDialogButtonBox>
@@ -32,7 +33,7 @@
 #include <QTreeView>
 
 namespace Fooyin {
-SettingsDialog::SettingsDialog(PageList  pages, QWidget* parent)
+SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     : QDialog{parent}
     , m_model{new SettingsModel(this)}
     , m_categoryTree{new SimpleTreeView(this)}
@@ -85,13 +86,13 @@ void SettingsDialog::openSettings()
 void SettingsDialog::openPage(const Id& id)
 {
     if(!id.isValid()) {
-        qWarning() << "Invalid page id: " << id.name();
+        qCWarning(SETTINGS) << "Invalid page id:" << id.name();
         return;
     }
 
     auto* category = m_model->categoryForPage(id);
     if(!category) {
-        qWarning() << "Page not found: " << id.name();
+        qCWarning(SETTINGS) << "Page not found:" << id.name();
         return;
     }
 

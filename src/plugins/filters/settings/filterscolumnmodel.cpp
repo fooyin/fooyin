@@ -20,6 +20,7 @@
 #include "filterscolumnmodel.h"
 
 #include "filtercolumnregistry.h"
+#include "filtersettings.h"
 
 #include <QFont>
 
@@ -89,7 +90,7 @@ void FiltersColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be added").arg(column.name);
+                    qCWarning(FILTERS) << "Column could not be added:" << column.name;
                 }
                 break;
             }
@@ -101,7 +102,7 @@ void FiltersColumnModel::processQueue()
                     columnsToRemove.push_back(index);
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be removed").arg(column.name);
+                    qCWarning(FILTERS) << "Column could not be removed:" << column.name;
                 }
                 break;
             }
@@ -115,7 +116,7 @@ void FiltersColumnModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be changed").arg(column.name);
+                    qCWarning(FILTERS) << "Column ould not be changed:" << column.name;
                 }
                 break;
             }

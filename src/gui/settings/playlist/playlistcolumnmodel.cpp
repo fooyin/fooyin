@@ -24,6 +24,10 @@
 
 #include <utils/treestatusitem.h>
 
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(PL_COLMOD, "PlaylistColumnModel")
+
 namespace Fooyin {
 ColumnItem::ColumnItem()
     : ColumnItem{{}, nullptr}
@@ -90,7 +94,7 @@ void PlaylistColumnModel::processQueue()
                     emit dataChanged({}, {});
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be added").arg(column.name);
+                    qCWarning(PL_COLMOD) << "Column could not be added:" << column.name;
                 }
                 break;
             }
@@ -102,7 +106,7 @@ void PlaylistColumnModel::processQueue()
                     columnsToRemove.push_back(index);
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be removed").arg(column.name);
+                    qCWarning(PL_COLMOD) << "Column could not be removed:" << column.name;
                 }
                 break;
             }
@@ -116,7 +120,7 @@ void PlaylistColumnModel::processQueue()
                     }
                 }
                 else {
-                    qWarning() << QStringLiteral("Column %1 could not be changed").arg(column.name);
+                    qCWarning(PL_COLMOD) << "Column could not be changed:" << column.name;
                 }
                 break;
             }

@@ -178,7 +178,7 @@ void WaveBarPlugin::removeSelection()
         waveDb.initialiseDatabase();
 
         if(!waveDb.removeFromCache(keys)) {
-            qDebug() << "[WaveBar] Unable to remove waveform data";
+            qCWarning(WAVEBAR) << "Unable to remove waveform data";
         }
     });
 }
@@ -190,7 +190,7 @@ void WaveBarPlugin::clearCache() const
     waveDb.initialise(DbConnectionProvider{m_dbPool});
 
     if(!waveDb.clearCache()) {
-        qDebug() << "[WaveBar] Unable to clear cache";
+        qCWarning(WAVEBAR) << "Unable to clear waveform cache";
     }
 }
 } // namespace Fooyin::WaveBar

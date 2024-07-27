@@ -29,6 +29,9 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QFileInfo>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(TRK_DBMAN, "TrackDatabaseManager")
 
 namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,
@@ -79,7 +82,7 @@ void TrackDatabaseManager::updateTracks(const TrackList& tracks, bool write)
                 updatedTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
             }
             else {
-                qWarning() << "Failed to write metadata to file:" << updatedTrack.filepath();
+                qCWarning(TRK_DBMAN) << "Failed to write metadata to file:" << updatedTrack.filepath();
                 continue;
             }
         }
@@ -120,7 +123,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
             tracksUpdated.emplace_back(updatedTrack);
         }
         else {
-            qWarning() << "Failed to update track playback statistics:" << updatedTrack.filepath();
+            qCWarning(TRK_DBMAN) << "Failed to update track playback statistics:" << updatedTrack.filepath();
         }
     }
 

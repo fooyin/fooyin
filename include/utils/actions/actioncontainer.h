@@ -24,11 +24,14 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/id.h>
 
+#include <QLoggingCategory>
 #include <QObject>
 
 class QAction;
 class QMenu;
 class QMenuBar;
+
+Q_DECLARE_LOGGING_CATEGORY(ACTIONS)
 
 namespace Fooyin {
 class ActionContainerPrivate;

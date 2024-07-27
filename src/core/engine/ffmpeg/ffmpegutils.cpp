@@ -27,6 +27,9 @@ extern "C"
 }
 
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(FFMPEG, "FFmpeg")
 
 namespace {
 Fooyin::SampleFormat sampleFormat(AVSampleFormat format, int bps)
@@ -56,12 +59,12 @@ void printError(int error)
 {
     char errStr[1024];
     av_strerror(error, errStr, 1024);
-    qWarning() << "[FFmpeg] " << errStr;
+    qCWarning(FFMPEG) << errStr;
 }
 
 void printError(const QString& error)
 {
-    qWarning() << "[FFmpeg] " << error;
+    qCWarning(FFMPEG) << error;
 }
 
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec)

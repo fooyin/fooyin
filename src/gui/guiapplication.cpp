@@ -69,10 +69,13 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QLoggingCategory>
 #include <QMessageBox>
 #include <QPixmapCache>
 #include <QProgressDialog>
 #include <QPushButton>
+
+Q_LOGGING_CATEGORY(GUI_APP, "GUI")
 
 constexpr auto LastFilePath = "Interface/LastFilePath";
 
@@ -732,8 +735,8 @@ void GuiApplicationPrivate::savePlaylist() const
     if(auto* parser = core.playlistLoader->parserForExtension(extension)) {
         QFile playlistFile{file.toLocalFile()};
         if(!playlistFile.open(QIODevice::WriteOnly)) {
-            qWarning() << QStringLiteral("Could not open playlist file %1 for writing: %2")
-                              .arg(playlistFile.fileName(), playlistFile.errorString());
+            qCWarning(GUI_APP) << "Could not open playlist file" << file
+                               << "for writing:" << playlistFile.errorString();
             return;
         }
 

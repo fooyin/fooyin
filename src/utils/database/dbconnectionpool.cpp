@@ -19,7 +19,10 @@
 
 #include <utils/database/dbconnectionpool.h>
 
+#include <QLoggingCategory>
 #include <QSqlQuery>
+
+Q_LOGGING_CATEGORY(DB_POOL, "DB")
 
 namespace {
 bool updatePragmas(Fooyin::DbConnection* connection)
@@ -59,7 +62,7 @@ bool DbConnectionPool::hasThreadConnection() const
 bool DbConnectionPool::createThreadConnection()
 {
     if(m_threadConnections.hasLocalData()) {
-        qCritical() << "[DB] Thread connection already exists:" << m_threadConnections.localData()->name();
+        qCWarning(DB_POOL) << "Thread connection already exists:" << m_threadConnections.localData()->name();
         return false;
     }
 
@@ -68,12 +71,12 @@ bool DbConnectionPool::createThreadConnection()
     auto connection           = std::make_unique<DbConnection>(m_prototype, connectionName);
 
     if(!connection->open()) {
-        qCritical() << "[DB] Failed to open thread connection:" << connectionName;
+        qCWarning(DB_POOL) << "Failed to open thread connection:" << connectionName;
         return false;
     }
 
     if(!updatePragmas(connection.get())) {
-        qCritical() << "[DB] Failed to set pragmas:" << connectionName;
+        qCWarning(DB_POOL) << "Failed to set pragmas:" << connectionName;
         return false;
     }
 
@@ -85,7 +88,7 @@ bool DbConnectionPool::createThreadConnection()
 void DbConnectionPool::destroyThreadConnection()
 {
     if(!m_threadConnections.hasLocalData()) {
-        qCritical() << "[DB] Thread connection not found";
+        qCWarning(DB_POOL) << "Thread connection not found";
     }
 
     m_threadConnections.setLocalData(nullptr);
