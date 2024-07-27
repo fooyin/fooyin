@@ -201,6 +201,7 @@ void PluginPageWidget::aboutPlugin()
     if(auto* plugin = currentPlugin()) {
         auto* aboutDialog = new PluginAboutDialog(plugin, this);
         aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
+        aboutDialog->setModal(true);
         aboutDialog->show();
     }
 }
