@@ -21,6 +21,7 @@
 
 #include "vgminputdefs.h"
 
+#include <QDir>
 #include <QRegularExpression>
 
 #include <player/droplayer.hpp>
@@ -29,8 +30,6 @@
 #include <player/s98player.hpp>
 #include <player/vgmplayer.hpp>
 #include <utils/FileLoader.h>
-
-#include <QDir>
 
 // TODO: Make configurable
 // Note: Some of these will change the duration of the track,
