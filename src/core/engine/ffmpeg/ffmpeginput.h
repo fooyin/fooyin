@@ -26,18 +26,15 @@ class AudioFormat;
 class AudioBuffer;
 class FFmpegInputPrivate;
 
-class FFmpegInput : public AudioInput
+class FFmpegDecoder : public AudioDecoder
 {
 public:
-    FFmpegInput();
-    ~FFmpegInput() override;
+    FFmpegDecoder();
+    ~FFmpegDecoder() override;
 
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] QStringList extensions() const override;
 
-    bool init(const QString& source, DecoderOptions options) override;
-
+    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
     void start() override;
     void stop() override;
 
@@ -46,14 +43,19 @@ public:
 
     AudioBuffer readBuffer(size_t bytes) override;
 
+private:
+    std::unique_ptr<FFmpegInputPrivate> p;
+};
+
+class FFmpegReader : public AudioReader
+{
+public:
+    [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
+
     [[nodiscard]] bool readMetaData(Track& track) override;
     [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
     [[nodiscard]] bool writeMetaData(const Track& track, WriteOptions options) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
-
-private:
-    std::unique_ptr<FFmpegInputPrivate> p;
 };
 } // namespace Fooyin

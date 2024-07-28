@@ -26,28 +26,20 @@
 #include <sndfile.h>
 
 namespace Fooyin::Snd {
-class SndFileInput : public AudioInput
+class SndFileDecoder : public AudioDecoder
 {
 public:
-    SndFileInput();
+    SndFileDecoder();
 
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    bool init(const QString& source, DecoderOptions options) override;
-    void start() override;
+    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
     void stop() override;
 
     void seek(uint64_t pos) override;
 
     AudioBuffer readBuffer(size_t bytes) override;
-
-    bool readMetaData(Track& track) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
 
 private:
     std::unique_ptr<QFile> m_file;
@@ -55,5 +47,15 @@ private:
     SF_VIRTUAL_IO m_vio;
     SNDFILE* m_sndFile;
     sf_count_t m_currentFrame;
+};
+
+class SndFileReader : public AudioReader
+{
+public:
+    [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
+
+    bool readMetaData(Track& track) override;
 };
 } // namespace Fooyin::Snd

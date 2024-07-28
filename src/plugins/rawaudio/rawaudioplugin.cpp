@@ -29,9 +29,11 @@ QString RawAudioPlugin::name() const
 
 InputCreator RawAudioPlugin::inputCreator() const
 {
-    return []() {
-        return std::make_unique<RawAudioInput>();
-    };
+    return {.decoder = []() { return std::make_unique<RawAudioDecoder>(); },
+            .reader =
+                []() {
+                    return std::make_unique<RawAudioReader>();
+                }};
 }
 } // namespace Fooyin::RawAudio
 

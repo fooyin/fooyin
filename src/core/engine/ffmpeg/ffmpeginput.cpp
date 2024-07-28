@@ -41,6 +41,16 @@ constexpr AVRational TimeBaseMs = {1, 1000};
 using namespace std::chrono_literals;
 
 namespace {
+QStringList fileExtensions()
+{
+    static const QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
+                                        QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
+                                        QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
+                                        QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
+                                        QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
+    return extensions;
+}
+
 QString getCodec(AVCodecID codec)
 {
     switch(codec) {
@@ -222,114 +232,26 @@ struct PacketDeleter
     }
 };
 using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
-} // namespace
 
-namespace Fooyin {
-class FFmpegInputPrivate
-{
-public:
-    explicit FFmpegInputPrivate(FFmpegInput* self)
-        : m_self{self}
-    { }
-
-    void reset();
-    bool setup(const QString& source);
-    [[nodiscard]] bool hasError() const;
-
-    bool createAVFormatContext(const QString& source);
-    bool findStream();
-    QByteArray findCover(Track::Cover type);
-    bool createCodec(AVStream* avStream);
-
-    void decodeAudio(const PacketPtr& packet);
-    [[nodiscard]] int sendAVPacket(const PacketPtr& packet) const;
-    int receiveAVFrames();
-
-    void readNext();
-    void seek(uint64_t pos);
-
-    FFmpegInput* m_self;
-
-    FormatContextPtr m_context;
-    Stream m_stream;
-    Codec m_codec;
-    AudioFormat m_audioFormat;
-
-    AudioInput::Error m_error{AudioInput::Error::NoError};
-    AVRational m_timeBase{0, 0};
-    bool m_isSeekable{false};
-    bool m_draining{false};
-    bool m_eof{false};
-    bool m_isDecoding{false};
-
-    AudioBuffer m_buffer;
-    int m_bufferPos{0};
-    int64_t m_seekPos{0};
-    int m_skipBytes{0};
-};
-
-void FFmpegInputPrivate::reset()
-{
-    m_eof        = false;
-    m_isDecoding = false;
-    m_draining   = false;
-    m_bufferPos  = 0;
-    m_buffer.clear();
-
-    m_context.reset();
-    m_stream = {};
-    m_codec  = {};
-    m_buffer = {};
-
-    m_error = AudioInput::Error::NoError;
-}
-
-bool FFmpegInputPrivate::setup(const QString& source)
-{
-    reset();
-
-    if(!createAVFormatContext(source)) {
-        return false;
-    }
-
-    m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
-
-    if(!findStream()) {
-        return false;
-    }
-
-    m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar);
-
-    return createCodec(m_stream.avStream());
-}
-
-bool FFmpegInputPrivate::hasError() const
-{
-    return m_error != AudioInput::Error::NoError;
-}
-
-bool FFmpegInputPrivate::createAVFormatContext(const QString& source)
+FormatContextPtr createAVFormatContext(const QString& source)
 {
     AVFormatContext* avContext{nullptr};
 
     const int ret = avformat_open_input(&avContext, source.toUtf8().constData(), nullptr, nullptr);
     if(ret < 0) {
         if(ret == AVERROR(EACCES)) {
-            Utils::printError(QStringLiteral("Access denied: ") + source);
-            m_error = AudioInput::Error::AccessDeniedError;
+            Fooyin::Utils::printError(QStringLiteral("Access denied: ") + source);
         }
         else if(ret == AVERROR(EINVAL)) {
-            Utils::printError(QStringLiteral("Invalid format: ") + source);
-            m_error = AudioInput::Error::FormatError;
+            Fooyin::Utils::printError(QStringLiteral("Invalid format: ") + source);
         }
-        return false;
+        return nullptr;
     }
 
     if(avformat_find_stream_info(avContext, nullptr) < 0) {
-        Utils::printError(QStringLiteral("Could not find stream info"));
+        Fooyin::Utils::printError(QStringLiteral("Could not find stream info"));
         avformat_close_input(&avContext);
-        m_error = AudioInput::Error::ResourceError;
-        return false;
+        return nullptr;
     }
 
     // Needed for seeking of APE files
@@ -337,37 +259,33 @@ bool FFmpegInputPrivate::createAVFormatContext(const QString& source)
 
     // av_dump_format(avContext, 0, source.toUtf8().constData(), 0);
 
-    m_context.reset(avContext);
-
-    return true;
+    return FormatContextPtr{avContext};
 }
 
-bool FFmpegInputPrivate::findStream()
+Fooyin::Stream findStream(AVFormatContext* context)
 {
-    const auto count = static_cast<int>(m_context->nb_streams);
+    const auto count = static_cast<int>(context->nb_streams);
 
     for(int i{0}; i < count; ++i) {
-        AVStream* avStream = m_context->streams[i];
+        AVStream* avStream = context->streams[i];
         const auto type    = avStream->codecpar->codec_type;
 
         if(type == AVMEDIA_TYPE_AUDIO) {
-            m_timeBase = avStream->time_base;
-            m_stream   = Fooyin::Stream{avStream};
-            return true;
+            return Fooyin::Stream{avStream};
         }
     }
 
-    m_error = AudioInput::Error::ResourceError;
-
-    return false;
+    return {};
 }
 
-QByteArray FFmpegInputPrivate::findCover(Track::Cover type)
+QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
 {
-    const auto count = static_cast<int>(m_context->nb_streams);
+    using Cover = Fooyin::Track::Cover;
+
+    const auto count = static_cast<int>(context->nb_streams);
 
     for(int i{0}; i < count; ++i) {
-        AVStream* avStream = m_context->streams[i];
+        AVStream* avStream = context->streams[i];
 
         if(avStream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
             AVDictionaryEntry* tag{nullptr};
@@ -379,9 +297,9 @@ QByteArray FFmpegInputPrivate::findCover(Track::Cover type)
                 }
             }
 
-            if((type == Track::Cover::Front && (coverType.isEmpty() || coverType.contains(u"front")))
-               || (type == Track::Cover::Back && coverType.contains(u"back"))
-               || (type == Track::Cover::Artist && coverType.contains(u"artist"))) {
+            if((type == Cover::Front && (coverType.isEmpty() || coverType.contains(u"front")))
+               || (type == Cover::Back && coverType.contains(u"back"))
+               || (type == Cover::Artist && coverType.contains(u"artist"))) {
                 const AVPacket pkt = avStream->attached_pic;
                 return {reinterpret_cast<const char*>(pkt.data), pkt.size};
             }
@@ -389,6 +307,84 @@ QByteArray FFmpegInputPrivate::findCover(Track::Cover type)
     }
 
     return {};
+}
+} // namespace
+
+namespace Fooyin {
+class FFmpegInputPrivate
+{
+public:
+    explicit FFmpegInputPrivate(FFmpegDecoder* self)
+        : m_self{self}
+    { }
+
+    void reset();
+    bool setup(const QString& source);
+
+    bool createCodec(AVStream* avStream);
+
+    void decodeAudio(const PacketPtr& packet);
+    [[nodiscard]] int sendAVPacket(const PacketPtr& packet) const;
+    int receiveAVFrames();
+
+    void readNext();
+    void seek(uint64_t pos);
+
+    FFmpegDecoder* m_self;
+
+    FormatContextPtr m_context;
+    Stream m_stream;
+    Codec m_codec;
+    AudioFormat m_audioFormat;
+
+    AVRational m_timeBase{0, 0};
+    bool m_isSeekable{false};
+    bool m_draining{false};
+    bool m_error{false};
+    bool m_eof{false};
+    bool m_isDecoding{false};
+
+    AudioBuffer m_buffer;
+    int m_bufferPos{0};
+    int64_t m_seekPos{0};
+    int m_skipBytes{0};
+};
+
+void FFmpegInputPrivate::reset()
+{
+    m_error      = false;
+    m_eof        = false;
+    m_isDecoding = false;
+    m_draining   = false;
+    m_bufferPos  = 0;
+    m_buffer.clear();
+
+    m_context.reset();
+    m_stream = {};
+    m_codec  = {};
+    m_buffer = {};
+}
+
+bool FFmpegInputPrivate::setup(const QString& source)
+{
+    reset();
+
+    m_context = createAVFormatContext(source);
+    if(!m_context) {
+        return false;
+    }
+
+    m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
+
+    m_stream = findStream(m_context.get());
+    if(!m_stream.isValid()) {
+        return false;
+    }
+
+    m_timeBase    = m_stream.avStream()->time_base;
+    m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar);
+
+    return createCodec(m_stream.avStream());
 }
 
 bool FFmpegInputPrivate::createCodec(AVStream* avStream)
@@ -400,14 +396,14 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
     const AVCodec* avCodec = avcodec_find_decoder(avStream->codecpar->codec_id);
     if(!avCodec) {
         Utils::printError(QStringLiteral("Could not find a decoder for stream"));
-        m_error = AudioInput::Error::ResourceError;
+        m_error = true;
         return false;
     }
 
     CodecContextPtr avCodecContext{avcodec_alloc_context3(avCodec)};
     if(!avCodecContext) {
         Utils::printError(QStringLiteral("Could not allocate context"));
-        m_error = AudioInput::Error::ResourceError;
+        m_error = true;
         return false;
     }
 
@@ -417,7 +413,7 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
 
     if(avcodec_parameters_to_context(avCodecContext.get(), avStream->codecpar) < 0) {
         Utils::printError(QStringLiteral("Could not obtain codec parameters"));
-        m_error = AudioInput::Error::ResourceError;
+        m_error = true;
         return {};
     }
 
@@ -425,7 +421,7 @@ bool FFmpegInputPrivate::createCodec(AVStream* avStream)
 
     if(avcodec_open2(avCodecContext.get(), avCodec, nullptr) < 0) {
         Utils::printError(QStringLiteral("Could not initialise codec context"));
-        m_error = AudioInput::Error::ResourceError;
+        m_error = true;
         return {};
     }
 
@@ -458,7 +454,7 @@ void FFmpegInputPrivate::decodeAudio(const PacketPtr& packet)
 
 int FFmpegInputPrivate::sendAVPacket(const PacketPtr& packet) const
 {
-    if(hasError() || !m_isDecoding) {
+    if(m_error || !m_isDecoding) {
         return -1;
     }
 
@@ -471,7 +467,7 @@ int FFmpegInputPrivate::sendAVPacket(const PacketPtr& packet) const
 
 int FFmpegInputPrivate::receiveAVFrames()
 {
-    if(hasError() || !m_isDecoding) {
+    if(m_error || !m_isDecoding) {
         return -1;
     }
 
@@ -490,7 +486,7 @@ int FFmpegInputPrivate::receiveAVFrames()
 
     if(result < 0) {
         Utils::printError(result);
-        m_error = AudioInput::Error::ResourceError;
+        m_error = true;
         return result;
     }
 
@@ -565,7 +561,7 @@ void FFmpegInputPrivate::readNext()
 
 void FFmpegInputPrivate::seek(uint64_t pos)
 {
-    if(!m_context || !m_isSeekable || hasError()) {
+    if(!m_context || !m_isSeekable || m_error) {
         return;
     }
 
@@ -587,69 +583,53 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     m_skipBytes = 0;
 }
 
-FFmpegInput::FFmpegInput()
+FFmpegDecoder::FFmpegDecoder()
     : p{std::make_unique<FFmpegInputPrivate>(this)}
 { }
 
-FFmpegInput::~FFmpegInput() = default;
+FFmpegDecoder::~FFmpegDecoder() = default;
 
-QStringList FFmpegInput::supportedExtensions() const
+QStringList FFmpegDecoder::extensions() const
 {
-    static const QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
-                                        QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
-                                        QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
-                                        QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
-                                        QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
-    return extensions;
+    return fileExtensions();
 }
 
-bool FFmpegInput::canReadCover() const
+std::optional<AudioFormat> FFmpegDecoder::init(const Track& track, DecoderOptions /*options*/)
 {
-    return true;
+    if(p->setup(track.filepath())) {
+        return p->m_audioFormat;
+    }
+    p->m_error = true;
+    return {};
 }
 
-bool FFmpegInput::canWriteMetaData() const
-{
-    return false;
-}
-
-bool FFmpegInput::init(const QString& source, DecoderOptions /*options*/)
-{
-    return p->setup(source);
-}
-
-void FFmpegInput::start()
+void FFmpegDecoder::start()
 {
     p->m_isDecoding = true;
 }
 
-void FFmpegInput::stop()
+void FFmpegDecoder::stop()
 {
     p->reset();
 }
 
-AudioFormat FFmpegInput::format() const
-{
-    return p->m_audioFormat;
-}
-
-bool FFmpegInput::isSeekable() const
+bool FFmpegDecoder::isSeekable() const
 {
     return p->m_isSeekable;
 }
 
-void FFmpegInput::seek(uint64_t pos)
+void FFmpegDecoder::seek(uint64_t pos)
 {
     p->seek(pos);
 }
 
-AudioBuffer FFmpegInput::readBuffer(size_t bytes)
+AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 {
-    if(!p->m_isDecoding || p->hasError()) {
+    if(!p->m_isDecoding || p->m_error) {
         return {};
     }
 
-    while(!p->m_buffer.isValid() && !p->m_eof && !p->hasError()) {
+    while(!p->m_buffer.isValid() && !p->m_eof && !p->m_error) {
         p->readNext();
     }
 
@@ -681,32 +661,47 @@ AudioBuffer FFmpegInput::readBuffer(size_t bytes)
     return buffer;
 }
 
-bool FFmpegInput::readMetaData(Track& track)
+QStringList FFmpegReader::extensions() const
 {
-    const QString source = track.filepath();
+    return fileExtensions();
+}
 
-    const bool uninitialised = !p->m_context;
-    if(uninitialised) {
-        if(!p->createAVFormatContext(source) || !p->findStream()) {
-            return false;
-        }
+bool FFmpegReader::canReadCover() const
+{
+    return true;
+}
+
+bool FFmpegReader::canWriteMetaData() const
+{
+    return false;
+}
+
+bool FFmpegReader::readMetaData(Track& track)
+{
+    const FormatContextPtr context = createAVFormatContext(track.filepath());
+    if(!context) {
+        return false;
     }
 
-    const auto* codec = p->m_stream.avStream()->codecpar;
-    const auto format = Utils::audioFormatFromCodec(p->m_stream.avStream()->codecpar);
+    const Stream stream = findStream(context.get());
+    if(!stream.isValid()) {
+        return false;
+    }
+
+    const auto* avStream = stream.avStream();
+    const auto* codec    = stream.avStream()->codecpar;
+    const auto format    = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
 
     track.setCodec(getCodec(codec->codec_id));
     track.setSampleRate(format.sampleRate());
     track.setChannels(format.channelCount());
     track.setBitDepth(format.bytesPerSample() * 8);
 
-    const auto* stream = p->m_stream.avStream();
-
     if(track.duration() == 0) {
-        AVRational timeBase = stream->time_base;
-        auto duration       = stream->duration;
+        AVRational timeBase = avStream->time_base;
+        auto duration       = avStream->duration;
         if(duration <= 0 || std::cmp_equal(duration, AV_NOPTS_VALUE)) {
-            duration = p->m_context->duration;
+            duration = context->duration;
             timeBase = TimeBaseAv;
         }
         const uint64_t durationMs = av_rescale_q(duration, timeBase, TimeBaseMs);
@@ -715,51 +710,34 @@ bool FFmpegInput::readMetaData(Track& track)
 
     auto bitrate = static_cast<int>(codec->bit_rate / 1000);
     if(bitrate <= 0) {
-        bitrate = static_cast<int>(p->m_context->bit_rate / 1000);
+        bitrate = static_cast<int>(context->bit_rate / 1000);
     }
     if(bitrate > 0) {
         track.setBitrate(bitrate);
     }
 
     AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(p->m_context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+    while((tag = av_dict_get(context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
         parseTag(track, tag);
-    }
-
-    if(uninitialised) {
-        p->reset();
     }
 
     return true;
 }
 
-QByteArray FFmpegInput::readCover(const Track& track, Track::Cover cover)
+QByteArray FFmpegReader::readCover(const Track& track, Track::Cover cover)
 {
-    const QString source = track.filepath();
-
-    const bool uninitialised = !p->m_context;
-    if(uninitialised) {
-        if(!p->createAVFormatContext(source)) {
-            return {};
-        }
+    const FormatContextPtr context = createAVFormatContext(track.filepath());
+    if(!context) {
+        return {};
     }
 
-    auto coverData = p->findCover(cover);
-
-    if(uninitialised) {
-        p->reset();
-    }
+    auto coverData = findCover(context.get(), cover);
 
     return coverData;
 }
 
-bool FFmpegInput::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
+bool FFmpegReader::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
-}
-
-AudioInput::Error FFmpegInput::error() const
-{
-    return p->m_error;
 }
 } // namespace Fooyin

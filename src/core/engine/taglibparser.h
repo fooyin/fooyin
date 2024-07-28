@@ -23,13 +23,16 @@
 
 #include <core/engine/audioinput.h>
 
-#include <set>
+namespace Fooyin {
+class FYCORE_EXPORT TagLibReader : public AudioReader
+{
+public:
+    [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
 
-namespace Fooyin::Tagging {
-[[nodiscard]] FYCORE_EXPORT std::set<QString> supportedExtensions();
-
-[[nodiscard]] FYCORE_EXPORT bool readMetaData(Track& track);
-[[nodiscard]] FYCORE_EXPORT QByteArray readCover(const Track& track, Track::Cover cover);
-
-[[nodiscard]] FYCORE_EXPORT bool writeMetaData(const Track& track, AudioInput::WriteOptions options);
-} // namespace Fooyin::Tagging
+    [[nodiscard]] bool readMetaData(Track& track) override;
+    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
+    [[nodiscard]] bool writeMetaData(const Track& track, WriteOptions options) override;
+};
+} // namespace Fooyin

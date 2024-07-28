@@ -38,19 +38,15 @@ struct DataLoaderDeleter
 };
 using DataLoaderPtr = std::unique_ptr<DATA_LOADER, DataLoaderDeleter>;
 
-class VgmInput : public AudioInput
+class VgmDecoder : public AudioDecoder
 {
 public:
-    VgmInput();
+    VgmDecoder();
 
-    void configurePlayer(PlayerA* player) const;
-
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    bool init(const QString& source, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
     void start() override;
     void stop() override;
 
@@ -58,15 +54,20 @@ public:
 
     AudioBuffer readBuffer(size_t bytes) override;
 
-    [[nodiscard]] bool readMetaData(Track& track) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
-
 private:
     FySettings m_settings;
     AudioFormat m_format;
     DataLoaderPtr m_loader;
     std::unique_ptr<PlayerA> m_mainPlayer;
+};
+
+class VgmReader : public AudioReader
+{
+public:
+    [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
+
+    bool readMetaData(Track& track) override;
 };
 } // namespace Fooyin::VgmInput

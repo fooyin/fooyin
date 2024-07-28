@@ -79,7 +79,7 @@ private:
     void onRendererFinished();
 
     std::shared_ptr<AudioLoader> m_decoderProvider;
-    AudioInput* m_decoder;
+    AudioDecoder* m_decoder;
     SettingsManager* m_settings;
 
     AudioClock m_clock;

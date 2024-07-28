@@ -24,6 +24,12 @@
 #include <QtPlugin>
 
 namespace Fooyin {
+struct InputCreator
+{
+    DecoderCreator decoder;
+    ReaderCreator reader;
+};
+
 /*!
  * An abstract interface for audio decoder plugins.
  */

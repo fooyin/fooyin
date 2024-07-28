@@ -48,6 +48,25 @@ constexpr auto BufferLen  = 2048;
 constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_LOOP_INCL | PLAYTIME_WITH_FADE | PLAYTIME_WITH_SLNC);
 
 namespace {
+QStringList fileExtensions()
+{
+    static const QStringList extensions = {QStringLiteral("dro"), QStringLiteral("gym"), QStringLiteral("s98"),
+                                           QStringLiteral("vgm"), QStringLiteral("vgz")};
+    return extensions;
+}
+
+void configurePlayer(PlayerA* player)
+{
+    player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
+
+    PlayerA::Config config = player->GetConfiguration();
+    config.masterVol       = 0x10000;
+    config.fadeSmpls       = SampleRate * FadeLen;
+    config.endSilenceSmpls = SampleRate / 2;
+    config.pbSpeed         = 1.0;
+    player->SetConfiguration(config);
+}
+
 int extractTrackNumber(const QString& filename)
 {
     static const QRegularExpression regex(QStringLiteral(R"(^(\d+))"));
@@ -102,47 +121,24 @@ DATA_LOADER* requestFileCallback(void* /*userParam*/, PlayerBase* /*player*/, co
 } // namespace
 
 namespace Fooyin::VgmInput {
-VgmInput::VgmInput()
+VgmDecoder::VgmDecoder()
 {
     m_format.setSampleFormat(SampleFormat::S16);
     m_format.setSampleRate(SampleRate);
     m_format.setChannelCount(Channels);
 }
 
-void VgmInput::configurePlayer(PlayerA* player) const
+QStringList VgmDecoder::extensions() const
 {
-    player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
-
-    PlayerA::Config config = player->GetConfiguration();
-    config.masterVol       = 0x10000;
-    config.fadeSmpls       = SampleRate * FadeLen;
-    config.endSilenceSmpls = SampleRate / 2;
-    config.pbSpeed         = 1.0;
-    player->SetConfiguration(config);
+    return fileExtensions();
 }
 
-QStringList VgmInput::supportedExtensions() const
-{
-    return {QStringLiteral("dro"), QStringLiteral("gym"), QStringLiteral("s98"), QStringLiteral("vgm"),
-            QStringLiteral("vgz")};
-}
-
-bool VgmInput::canReadCover() const
-{
-    return false;
-}
-
-bool VgmInput::canWriteMetaData() const
-{
-    return false;
-}
-
-bool VgmInput::isSeekable() const
+bool VgmDecoder::isSeekable() const
 {
     return true;
 }
 
-bool VgmInput::init(const QString& source, DecoderOptions options)
+std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions options)
 {
     m_mainPlayer = std::make_unique<PlayerA>();
     m_mainPlayer->RegisterPlayerEngine(new VGMPlayer());
@@ -162,18 +158,18 @@ bool VgmInput::init(const QString& source, DecoderOptions options)
 
     m_mainPlayer->SetLoopCount(loopCount);
 
-    m_loader = {FileLoader_Init(source.toUtf8().constData()), DataLoaderDeleter()};
+    m_loader = {FileLoader_Init(track.filepath().toUtf8().constData()), DataLoaderDeleter()};
     if(!m_loader) {
-        return false;
+        return {};
     }
 
     DataLoader_SetPreloadBytes(m_loader.get(), 0x100);
     if(DataLoader_Load(m_loader.get())) {
-        return false;
+        return {};
     }
 
     if(m_mainPlayer->LoadFile(m_loader.get())) {
-        return false;
+        return {};
     }
 
     PlayerBase* player = m_mainPlayer->GetPlayer();
@@ -183,15 +179,15 @@ bool VgmInput::init(const QString& source, DecoderOptions options)
         }
     }
 
-    return true;
+    return m_format;
 }
 
-void VgmInput::start()
+void VgmDecoder::start()
 {
     m_mainPlayer->Start();
 }
 
-void VgmInput::stop()
+void VgmDecoder::stop()
 {
     if(m_mainPlayer) {
         m_mainPlayer->Stop();
@@ -203,12 +199,12 @@ void VgmInput::stop()
     }
 }
 
-void VgmInput::seek(uint64_t pos)
+void VgmDecoder::seek(uint64_t pos)
 {
     m_mainPlayer->Seek(PLAYPOS_SAMPLE, m_format.framesForDuration(pos));
 }
 
-AudioBuffer VgmInput::readBuffer(size_t bytes)
+AudioBuffer VgmDecoder::readBuffer(size_t bytes)
 {
     const auto state = m_mainPlayer->GetState();
 
@@ -233,7 +229,22 @@ AudioBuffer VgmInput::readBuffer(size_t bytes)
     return buffer;
 }
 
-bool VgmInput::readMetaData(Track& track)
+QStringList VgmReader::extensions() const
+{
+    return fileExtensions();
+}
+
+bool VgmReader::canReadCover() const
+{
+    return false;
+}
+
+bool VgmReader::canWriteMetaData() const
+{
+    return false;
+}
+
+bool VgmReader::readMetaData(Track& track)
 {
     PlayerA mainPlayer;
     mainPlayer.RegisterPlayerEngine(new VGMPlayer());
@@ -242,7 +253,9 @@ bool VgmInput::readMetaData(Track& track)
     mainPlayer.RegisterPlayerEngine(new GYMPlayer());
     configurePlayer(&mainPlayer);
 
-    int loopCount = m_settings.value(QLatin1String{LoopCountSetting}).toInt();
+    const FySettings settings;
+
+    int loopCount = settings.value(QLatin1String{LoopCountSetting}).toInt();
     if(loopCount == 0) {
         loopCount = DefaultLoopCount;
     }
@@ -300,20 +313,10 @@ bool VgmInput::readMetaData(Track& track)
         }
     }
 
-    if(m_settings.value(QLatin1String{GuessTrackSetting}).toBool()) {
+    if(settings.value(QLatin1String{GuessTrackSetting}).toBool()) {
         track.setTrackNumber(extractTrackNumber(track.filename()));
     }
 
     return true;
-}
-
-AudioFormat VgmInput::format() const
-{
-    return m_format;
-}
-
-AudioInput::Error VgmInput::error() const
-{
-    return {};
 }
 } // namespace Fooyin::VgmInput

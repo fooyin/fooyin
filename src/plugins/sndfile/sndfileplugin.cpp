@@ -29,8 +29,10 @@ QString SndFilePlugin::name() const
 
 InputCreator SndFilePlugin::inputCreator() const
 {
-    return []() {
-        return std::make_unique<SndFileInput>();
-    };
+    return {.decoder = []() { return std::make_unique<SndFileDecoder>(); },
+            .reader =
+                []() {
+                    return std::make_unique<SndFileReader>();
+                }};
 }
 } // namespace Fooyin::Snd

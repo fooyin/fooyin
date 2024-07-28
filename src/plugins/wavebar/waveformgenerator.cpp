@@ -267,19 +267,20 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
         return {};
     }
 
-    if(!m_decoder || !m_decoder->supportedExtensions().contains(track.extension())) {
+    if(!m_decoder || !m_decoder->extensions().contains(track.extension())) {
         m_decoder = m_audioLoader->decoderForTrack(track);
         if(!m_decoder) {
             return {};
         }
     }
 
-    if(!m_decoder->init(track.filepath(), AudioInput::NoSeeking | AudioInput::NoInfiniteLooping)) {
+    const auto format = m_decoder->init(track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
+    if(!format) {
         return {};
     }
 
     m_track  = track;
-    m_format = m_decoder->format();
+    m_format = format.value();
     m_requiredFormat.setChannelCount(m_format.channelCount());
     m_requiredFormat.setSampleRate(m_format.sampleRate());
 

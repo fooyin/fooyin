@@ -19,8 +19,6 @@
 
 #include <core/engine/audioloader.h>
 
-#include "taglibparser.h"
-
 #include <core/track.h>
 
 #include <QLoggingCategory>
@@ -32,15 +30,23 @@
 Q_LOGGING_CATEGORY(AUD_LDR, "AudioLoader")
 
 namespace Fooyin {
-using LoaderInstances = std::unordered_map<QString, std::unique_ptr<AudioInput>>;
+using DecoderInstances = std::unordered_map<QString, std::unique_ptr<AudioDecoder>>;
+using ReaderInstances  = std::unordered_map<QString, std::unique_ptr<AudioReader>>;
 
 class AudioLoaderPrivate
 {
 public:
-    std::unordered_map<QString, InputCreator> m_decoders;
+    std::unordered_map<QString, DecoderCreator> m_decoders;
+    std::unordered_map<QString, ReaderCreator> m_readers;
+
     std::unordered_map<QString, std::vector<QString>> m_extensionToDecoderMap;
-    QThreadStorage<LoaderInstances*> m_instances;
+    std::unordered_map<QString, std::vector<QString>> m_extensionToReaderMap;
+
+    QThreadStorage<DecoderInstances*> m_decoderInstances;
+    QThreadStorage<ReaderInstances*> m_readerInstances;
+
     std::shared_mutex m_decoderMutex;
+    std::shared_mutex m_readerMutex;
 };
 
 AudioLoader::AudioLoader()
@@ -64,15 +70,13 @@ QStringList AudioLoader::supportedFileExtensions() const
 
 bool AudioLoader::canWriteMetadata(const Track& track) const
 {
-    bool writableDecoder{false};
-    if(auto* decoder = decoderForTrack(track)) {
-        writableDecoder = decoder->canWriteMetaData();
+    if(auto* decoder = readerForTrack(track)) {
+        return decoder->canWriteMetaData();
     }
-
-    return writableDecoder || Tagging::supportedExtensions().contains(track.extension());
+    return false;
 }
 
-AudioInput* AudioLoader::decoderForTrack(const Track& track) const
+AudioDecoder* AudioLoader::decoderForTrack(const Track& track) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
@@ -86,28 +90,53 @@ AudioInput* AudioLoader::decoderForTrack(const Track& track) const
         return nullptr;
     }
 
-    if(p->m_instances.hasLocalData()) {
-        auto& decoders = p->m_instances.localData();
+    if(p->m_decoderInstances.hasLocalData()) {
+        auto& decoders = p->m_decoderInstances.localData();
         if(decoders->contains(decoderName)) {
             return decoders->at(decoderName).get();
         }
         return decoders->emplace(decoderName, p->m_decoders.at(decoderName)()).first->second.get();
     }
 
-    p->m_instances.setLocalData(new LoaderInstances());
+    p->m_decoderInstances.setLocalData(new DecoderInstances());
 
     auto decoder = p->m_decoders.at(decoderName)();
-    return p->m_instances.localData()->emplace(decoderName, std::move(decoder)).first->second.get();
+    return p->m_decoderInstances.localData()->emplace(decoderName, std::move(decoder)).first->second.get();
+}
+
+AudioReader* AudioLoader::readerForTrack(const Track& track) const
+{
+    const std::shared_lock lock{p->m_readerMutex};
+
+    const auto extensions = track.extension();
+    if(!p->m_extensionToReaderMap.contains(extensions)) {
+        return nullptr;
+    }
+
+    const QString readerName = p->m_extensionToReaderMap.at(extensions).front();
+    if(!p->m_readers.contains(readerName)) {
+        return nullptr;
+    }
+
+    if(p->m_readerInstances.hasLocalData()) {
+        auto& readers = p->m_readerInstances.localData();
+        if(readers->contains(readerName)) {
+            return readers->at(readerName).get();
+        }
+        return readers->emplace(readerName, p->m_readers.at(readerName)()).first->second.get();
+    }
+
+    p->m_readerInstances.setLocalData(new ReaderInstances());
+
+    auto reader = p->m_readers.at(readerName)();
+    return p->m_readerInstances.localData()->emplace(readerName, std::move(reader)).first->second.get();
 }
 
 bool AudioLoader::readTrackMetadata(Track& track) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(Tagging::supportedExtensions().contains(track.extension())) {
-        return Tagging::readMetaData(track);
-    }
-    if(auto* decoder = decoderForTrack(track)) {
+    if(auto* decoder = readerForTrack(track)) {
         return decoder->readMetaData(track);
     }
 
@@ -118,10 +147,7 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(Tagging::supportedExtensions().contains(track.extension())) {
-        return Tagging::readCover(track, cover);
-    }
-    if(auto* decoder = decoderForTrack(track)) {
+    if(auto* decoder = readerForTrack(track)) {
         if(decoder->canReadCover()) {
             return decoder->readCover(track, cover);
         }
@@ -130,14 +156,11 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
     return {};
 }
 
-bool AudioLoader::writeTrackMetadata(const Track& track, AudioInput::WriteOptions options) const
+bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptions options) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
-    if(Tagging::supportedExtensions().contains(track.extension())) {
-        return Tagging::writeMetaData(track, options);
-    }
-    if(auto* decoder = decoderForTrack(track)) {
+    if(auto* decoder = readerForTrack(track)) {
         if(decoder->canWriteMetaData()) {
             return decoder->writeMetaData(track, options);
         }
@@ -146,7 +169,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioInput::WriteOption
     return false;
 }
 
-void AudioLoader::addDecoder(const QString& name, const InputCreator& creator)
+void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
 {
     if(!creator) {
         qCWarning(AUD_LDR) << "Decoder" << name << "cannot be created";
@@ -161,7 +184,7 @@ void AudioLoader::addDecoder(const QString& name, const InputCreator& creator)
     }
 
     auto decoder    = creator();
-    const auto exts = decoder->supportedExtensions();
+    const auto exts = decoder->extensions();
 
     // TODO: Add order/priority to handle multiple decoders supporting same extensions
     for(const auto& extension : exts) {
@@ -171,9 +194,36 @@ void AudioLoader::addDecoder(const QString& name, const InputCreator& creator)
     p->m_decoders.emplace(name, creator);
 }
 
+void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
+{
+    if(!creator) {
+        qCWarning(AUD_LDR) << "Reader" << name << "cannot be created";
+        return;
+    }
+
+    const std::unique_lock lock{p->m_readerMutex};
+
+    if(p->m_readers.contains(name)) {
+        qCWarning(AUD_LDR) << "Reader" << name << "already registered";
+        return;
+    }
+
+    auto reader     = creator();
+    const auto exts = reader->extensions();
+
+    // TODO: Add order/priority to handle multiple readers supporting same extensions
+    for(const auto& extension : exts) {
+        p->m_extensionToReaderMap[extension].emplace_back(name);
+    }
+
+    p->m_readers.emplace(name, creator);
+}
+
 void AudioLoader::destroyThreadInstance()
 {
-    const std::shared_lock lock{p->m_decoderMutex};
-    p->m_instances.setLocalData(nullptr);
+    const std::scoped_lock lock{p->m_decoderMutex, p->m_readerMutex};
+
+    p->m_decoderInstances.setLocalData(nullptr);
+    p->m_readerInstances.setLocalData(nullptr);
 }
 } // namespace Fooyin

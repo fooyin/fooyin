@@ -24,34 +24,34 @@
 #include <QFile>
 
 namespace Fooyin::RawAudio {
-class RawAudioInput : public AudioInput
+class RawAudioDecoder : public AudioDecoder
 {
 public:
-    RawAudioInput();
+    RawAudioDecoder();
 
-    [[nodiscard]] QStringList supportedExtensions() const override;
-    [[nodiscard]] bool canReadCover() const override;
-    [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    bool init(const QString& source, DecoderOptions options) override;
-    void start() override;
+    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
     void stop() override;
 
     void seek(uint64_t pos) override;
 
     AudioBuffer readBuffer(size_t bytes) override;
 
-    bool readMetaData(Track& track) override;
-
-    [[nodiscard]] AudioFormat format() const override;
-    [[nodiscard]] Error error() const override;
-
 private:
-    [[nodiscard]] bool isValidData(QFile* file) const;
-
     std::unique_ptr<QFile> m_file;
     AudioFormat m_format;
     uint64_t m_currentFrame;
+};
+
+class RawAudioReader : public AudioReader
+{
+public:
+    [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] bool canReadCover() const override;
+    [[nodiscard]] bool canWriteMetaData() const override;
+
+    bool readMetaData(Track& track) override;
 };
 } // namespace Fooyin::RawAudio

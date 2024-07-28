@@ -23,6 +23,7 @@
 #include "database/database.h"
 #include "engine/enginehandler.h"
 #include "engine/ffmpeg/ffmpeginput.h"
+#include "engine/taglibparser.h"
 #include "internalcoresettings.h"
 #include "library/librarymanager.h"
 #include "library/sortingregistry.h"
@@ -78,7 +79,7 @@ public:
     explicit ApplicationPrivate(Application* self_);
 
     void registerPlaylistParsers();
-    void registerDecoders();
+    void registerInputs();
 
     void setupConnections();
     void markTrack(const Track& track) const;
@@ -132,7 +133,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
                           m_playlistHandler, m_settings, m_playlistLoader,   m_audioLoader,    m_sortingRegistry}
 {
     registerTypes();
-    registerDecoders();
+    registerInputs();
     registerPlaylistParsers();
     setupConnections();
     loadPlugins();
@@ -146,9 +147,15 @@ void ApplicationPrivate::registerPlaylistParsers()
     m_playlistLoader->addParser(std::make_unique<M3uParser>(m_audioLoader));
 }
 
-void ApplicationPrivate::registerDecoders()
+void ApplicationPrivate::registerInputs()
 {
-    m_audioLoader->addDecoder(QStringLiteral("FFmpeg"), []() { return std::make_unique<FFmpegInput>(); });
+    m_audioLoader->addReader(QStringLiteral("TagLib"), {[]() {
+                                 return std::make_unique<TagLibReader>();
+                             }});
+    m_audioLoader->addDecoder(QStringLiteral("FFmpeg"), []() { return std::make_unique<FFmpegDecoder>(); });
+    m_audioLoader->addReader(QStringLiteral("FFmpeg"), {[]() {
+                                 return std::make_unique<FFmpegReader>();
+                             }});
 }
 
 void ApplicationPrivate::setupConnections()
@@ -195,8 +202,15 @@ void ApplicationPrivate::loadPlugins()
     m_pluginManager.initialisePlugins<OutputPlugin>(
         [this](OutputPlugin* plugin) { m_engine.addOutput(plugin->name(), plugin->creator()); });
 
-    m_pluginManager.initialisePlugins<InputPlugin>(
-        [this](InputPlugin* plugin) { m_audioLoader->addDecoder(plugin->name(), plugin->inputCreator()); });
+    m_pluginManager.initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
+        const auto creator = plugin->inputCreator();
+        if(creator.decoder) {
+            m_audioLoader->addDecoder(plugin->name(), creator.decoder);
+        }
+        if(creator.reader) {
+            m_audioLoader->addReader(plugin->name(), creator.reader);
+        }
+    });
 }
 
 void ApplicationPrivate::startSaveTimer()

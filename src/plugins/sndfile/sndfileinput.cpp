@@ -25,6 +25,15 @@
 Q_LOGGING_CATEGORY(SND_FILE, "SndFile")
 
 namespace {
+QStringList fileExtensions()
+{
+    static const QStringList extensions
+        = {QStringLiteral("aif"), QStringLiteral("aiff"), QStringLiteral("au"),  QStringLiteral("snd"),
+           QStringLiteral("sph"), QStringLiteral("voc"),  QStringLiteral("wav"), QStringLiteral("wavex"),
+           QStringLiteral("w64"), QStringLiteral("wve")};
+    return extensions;
+}
+
 sf_count_t sndFileLen(void* data)
 {
     auto* file = static_cast<QIODevice*>(data);
@@ -98,45 +107,30 @@ QString codecForFormat(int format)
 } // namespace
 
 namespace Fooyin::Snd {
-SndFileInput::SndFileInput()
+SndFileDecoder::SndFileDecoder()
     : m_sndFile{nullptr}
     , m_currentFrame{0}
 { }
 
-QStringList SndFileInput::supportedExtensions() const
+QStringList SndFileDecoder::extensions() const
 {
-    static const QStringList extensions{QStringLiteral("aif"), QStringLiteral("aiff"),  QStringLiteral("au"),
-                                        QStringLiteral("snd"), QStringLiteral("sph"),   QStringLiteral("voc"),
-                                        QStringLiteral("wav"), QStringLiteral("wavex"), QStringLiteral("w64"),
-                                        QStringLiteral("wve")};
-
-    return extensions;
+    return fileExtensions();
 }
 
-bool SndFileInput::canReadCover() const
-{
-    return false;
-}
-
-bool SndFileInput::canWriteMetaData() const
-{
-    return false;
-}
-
-bool SndFileInput::isSeekable() const
+bool SndFileDecoder::isSeekable() const
 {
     return true;
 }
 
-bool SndFileInput::init(const QString& source, DecoderOptions /*options*/)
+std::optional<AudioFormat> SndFileDecoder::init(const Track& track, DecoderOptions /*options*/)
 {
     SF_INFO info;
     info.format = 0;
 
-    m_file = std::make_unique<QFile>(source);
+    m_file = std::make_unique<QFile>(track.filepath());
     if(!m_file->open(QIODevice::ReadOnly)) {
-        qCWarning(SND_FILE) << "Unable to open" << source;
-        return false;
+        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
+        return {};
     }
 
     m_vio.get_filelen = sndFileLen;
@@ -146,20 +140,18 @@ bool SndFileInput::init(const QString& source, DecoderOptions /*options*/)
 
     m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file.get());
     if(!m_sndFile) {
-        qCWarning(SND_FILE) << "Unable to open" << source;
-        return false;
+        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
+        return {};
     }
 
     m_format.setChannelCount(info.channels);
     m_format.setSampleRate(info.samplerate);
     m_format.setSampleFormat(SampleFormat::F32);
 
-    return true;
+    return m_format;
 }
 
-void SndFileInput::start() { }
-
-void SndFileInput::stop()
+void SndFileDecoder::stop()
 {
     if(m_sndFile) {
         sf_close(m_sndFile);
@@ -168,7 +160,7 @@ void SndFileInput::stop()
     m_currentFrame = 0;
 }
 
-void SndFileInput::seek(uint64_t pos)
+void SndFileDecoder::seek(uint64_t pos)
 {
     const auto frames = sf_seek(m_sndFile, static_cast<sf_count_t>(m_format.framesForDuration(pos)), SEEK_SET);
     if(frames >= 0) {
@@ -176,7 +168,7 @@ void SndFileInput::seek(uint64_t pos)
     }
 }
 
-AudioBuffer SndFileInput::readBuffer(size_t bytes)
+AudioBuffer SndFileDecoder::readBuffer(size_t bytes)
 {
     AudioBuffer buffer{m_format, m_format.durationForFrames(static_cast<int>(m_currentFrame))};
     buffer.resize(bytes);
@@ -197,7 +189,22 @@ AudioBuffer SndFileInput::readBuffer(size_t bytes)
     return buffer;
 }
 
-bool SndFileInput::readMetaData(Track& track)
+QStringList SndFileReader::extensions() const
+{
+    return fileExtensions();
+}
+
+bool SndFileReader::canReadCover() const
+{
+    return false;
+}
+
+bool SndFileReader::canWriteMetaData() const
+{
+    return false;
+}
+
+bool SndFileReader::readMetaData(Track& track)
 {
     SF_INFO info;
     info.format = 0;
@@ -263,15 +270,5 @@ bool SndFileInput::readMetaData(Track& track)
     }
 
     return true;
-}
-
-AudioFormat SndFileInput::format() const
-{
-    return m_format;
-}
-
-AudioInput::Error SndFileInput::error() const
-{
-    return {};
 }
 } // namespace Fooyin::Snd

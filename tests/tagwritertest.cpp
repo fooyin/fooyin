@@ -28,7 +28,10 @@
 
 namespace Fooyin::Testing {
 class TagWriterTest : public ::testing::Test
-{ };
+{
+protected:
+    TagLibReader m_parser;
+};
 
 TEST_F(TagWriterTest, AiffWrite)
 {
@@ -37,7 +40,7 @@ TEST_F(TagWriterTest, AiffWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -56,12 +59,12 @@ TEST_F(TagWriterTest, AiffWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -93,7 +96,7 @@ TEST_F(TagWriterTest, FlacWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -112,12 +115,12 @@ TEST_F(TagWriterTest, FlacWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -149,7 +152,7 @@ TEST_F(TagWriterTest, M4aWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -168,12 +171,12 @@ TEST_F(TagWriterTest, M4aWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -205,7 +208,7 @@ TEST_F(TagWriterTest, Mp3Write)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -224,12 +227,12 @@ TEST_F(TagWriterTest, Mp3Write)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -261,7 +264,7 @@ TEST_F(TagWriterTest, OggWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -280,12 +283,12 @@ TEST_F(TagWriterTest, OggWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -317,7 +320,7 @@ TEST_F(TagWriterTest, OpusWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -336,12 +339,12 @@ TEST_F(TagWriterTest, OpusWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -373,7 +376,7 @@ TEST_F(TagWriterTest, WavWrite)
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -392,12 +395,12 @@ TEST_F(TagWriterTest, WavWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(Tagging::writeMetaData(track, {}));
+        ASSERT_TRUE(m_parser.writeMetaData(track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(Tagging::readMetaData(track));
+        ASSERT_TRUE(m_parser.readMetaData(track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));

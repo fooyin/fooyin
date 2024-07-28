@@ -30,9 +30,11 @@ QString VgmInputPlugin::name() const
 
 InputCreator VgmInputPlugin::inputCreator() const
 {
-    return []() {
-        return std::make_unique<VgmInput>();
-    };
+    return {.decoder = []() { return std::make_unique<VgmDecoder>(); },
+            .reader =
+                []() {
+                    return std::make_unique<VgmReader>();
+                }};
 }
 
 bool VgmInputPlugin::hasSettings() const

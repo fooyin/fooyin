@@ -20,12 +20,24 @@
 #include <core/engine/audioinput.h>
 
 namespace Fooyin {
-QByteArray AudioInput::readCover(const Track& /*track*/, Track::Cover /*cover*/)
+void AudioDecoder::start() { }
+
+int AudioReader::subsongCount() const
+{
+    return 1;
+}
+
+bool AudioReader::init(const QString& /*file*/)
+{
+    return true;
+}
+
+QByteArray AudioReader::readCover(const Track& /*track*/, Track::Cover /*cover*/)
 {
     return {};
 }
 
-bool AudioInput::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
+bool AudioReader::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
 }

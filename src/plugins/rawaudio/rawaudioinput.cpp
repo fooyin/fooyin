@@ -24,58 +24,72 @@
 
 Q_LOGGING_CATEGORY(RAW_AUD, "RawAudio")
 
-namespace Fooyin::RawAudio {
-RawAudioInput::RawAudioInput()
-    : m_currentFrame{0}
-{
-    // Assume 16bit PCM
-    m_format.setSampleFormat(SampleFormat::S16);
-    m_format.setChannelCount(2);
-    m_format.setSampleRate(44100);
-}
+const constexpr auto Format = Fooyin::SampleFormat::S16;
+constexpr auto SampleRate   = 44100;
+constexpr auto Channels     = 2;
 
-QStringList RawAudioInput::supportedExtensions() const
+namespace {
+QStringList fileExtensions()
 {
-    static const QStringList extensions{QStringLiteral("bin")};
+    static const QStringList extensions = {QStringLiteral("bin")};
     return extensions;
 }
 
-bool RawAudioInput::canReadCover() const
+bool isValidData(QFile* file)
 {
-    return false;
+    if(file->size() % 4 != 0) {
+        return false;
+    }
+
+    static constexpr int preload = 1024;
+    const QByteArray buffer      = file->read(preload);
+    if(buffer.size() != preload) {
+        return false;
+    }
+
+    return true;
+}
+} // namespace
+
+namespace Fooyin::RawAudio {
+RawAudioDecoder::RawAudioDecoder()
+    : m_currentFrame{0}
+{
+    // Assume 16bit PCM
+    m_format.setSampleFormat(Format);
+    m_format.setSampleRate(SampleRate);
+    m_format.setChannelCount(Channels);
 }
 
-bool RawAudioInput::canWriteMetaData() const
+QStringList RawAudioDecoder::extensions() const
 {
-    return false;
+    return fileExtensions();
 }
 
-bool RawAudioInput::isSeekable() const
+bool RawAudioDecoder::isSeekable() const
 {
     return m_file && !m_file->isSequential();
 }
 
-bool RawAudioInput::init(const QString& source, DecoderOptions /*options*/)
+std::optional<AudioFormat> RawAudioDecoder::init(const Track& track, DecoderOptions /*options*/)
 {
-    m_file = std::make_unique<QFile>(source);
+    m_file = std::make_unique<QFile>(track.filepath());
     if(!m_file->open(QIODevice::ReadOnly)) {
-        qCWarning(RAW_AUD) << "Unable to open" << source;
-        return false;
+        qCWarning(RAW_AUD) << "Unable to open" << track.filepath();
+        return {};
     }
 
     if(!isValidData(m_file.get())) {
-        qCWarning(RAW_AUD) << "Invalid file" << source;
-        return false;
+        qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
+        return {};
     }
 
     m_file->seek(0);
 
-    return true;
+    return m_format;
 }
 
-void RawAudioInput::start() { }
-
-void RawAudioInput::stop()
+void RawAudioDecoder::stop()
 {
     if(m_file) {
         if(m_file->isOpen()) {
@@ -85,14 +99,14 @@ void RawAudioInput::stop()
     m_currentFrame = 0;
 }
 
-void RawAudioInput::seek(uint64_t pos)
+void RawAudioDecoder::seek(uint64_t pos)
 {
     if(m_file && m_file->isOpen() && m_file->seek(static_cast<qint64>(m_format.bytesForDuration(pos)))) {
         m_currentFrame = m_format.framesForDuration(pos);
     }
 }
 
-AudioBuffer RawAudioInput::readBuffer(size_t bytes)
+AudioBuffer RawAudioDecoder::readBuffer(size_t bytes)
 {
     AudioBuffer buffer{m_format, m_format.durationForFrames(static_cast<int>(m_currentFrame))};
     buffer.resize(bytes);
@@ -110,7 +124,22 @@ AudioBuffer RawAudioInput::readBuffer(size_t bytes)
     return buffer;
 }
 
-bool RawAudioInput::readMetaData(Track& track)
+QStringList RawAudioReader::extensions() const
+{
+    return fileExtensions();
+}
+
+bool RawAudioReader::canReadCover() const
+{
+    return false;
+}
+
+bool RawAudioReader::canWriteMetaData() const
+{
+    return false;
+}
+
+bool RawAudioReader::readMetaData(Track& track)
 {
     QFile file{track.filepath()};
     if(!file.open(QIODevice::ReadOnly)) {
@@ -124,40 +153,12 @@ bool RawAudioInput::readMetaData(Track& track)
     }
 
     track.setFileSize(file.size());
-    track.setDuration(track.fileSize() / m_format.bytesPerFrame() / m_format.sampleRate() * 1000);
-    track.setSampleRate(m_format.sampleRate());
-    track.setChannels(m_format.channelCount());
+    track.setDuration(track.fileSize() / 4 / SampleRate * 1000);
+    track.setSampleRate(SampleRate);
+    track.setChannels(Channels);
     track.setBitrate(static_cast<int>(track.fileSize() * 8 / track.duration()));
-    track.setBitDepth(m_format.bytesPerSample() * 8);
+    track.setBitDepth(16);
     track.setCodec(QStringLiteral("PCM"));
-
-    return true;
-}
-
-AudioFormat RawAudioInput::format() const
-{
-    return m_format;
-}
-
-AudioInput::Error RawAudioInput::error() const
-{
-    return {};
-}
-
-// TODO: Add further checks
-bool RawAudioInput::isValidData(QFile* file) const
-{
-    const int bps = m_format.bytesPerFrame();
-
-    if(file->size() % bps != 0) {
-        return false;
-    }
-
-    static constexpr int preload = 1024;
-    const QByteArray buffer      = file->read(preload);
-    if(buffer.size() != preload) {
-        return false;
-    }
 
     return true;
 }

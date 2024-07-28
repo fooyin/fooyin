@@ -109,7 +109,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     const Track prevTrack = std::exchange(m_currentTrack, track);
 
-    if(!m_decoder || !m_decoder->supportedExtensions().contains(track.extension())) {
+    if(!m_decoder || !m_decoder->extensions().contains(track.extension())) {
         m_decoder = m_decoderProvider->decoderForTrack(track);
         if(!m_decoder) {
             changeTrackStatus(TrackStatus::Unreadable);
@@ -145,12 +145,13 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     changeTrackStatus(TrackStatus::Loading);
 
-    if(!m_decoder->init(track.filepath(), {})) {
+    const auto format = m_decoder->init(track, {});
+    if(!format) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
     }
 
-    if(!updateFormat(m_decoder->format())) {
+    if(!updateFormat(format.value())) {
         updateState(PlaybackState::Error);
         changeTrackStatus(TrackStatus::NoTrack);
         return;
@@ -182,7 +183,7 @@ void AudioPlaybackEngine::play()
 
     if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
         // Current track was previously stopped, so init again
-        if(!m_decoder->init(m_currentTrack.filepath(), {})) {
+        if(!m_decoder->init(m_currentTrack, {})) {
             changeTrackStatus(TrackStatus::Invalid);
             return;
         }

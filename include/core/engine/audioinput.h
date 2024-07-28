@@ -27,7 +27,7 @@
 #include <QObject>
 
 namespace Fooyin {
-class FYCORE_EXPORT AudioInput
+class FYCORE_EXPORT AudioDecoder
 {
     Q_GADGET
 
@@ -42,6 +42,26 @@ public:
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)
 
+    virtual ~AudioDecoder() = default;
+
+    [[nodiscard]] virtual QStringList extensions() const = 0;
+    [[nodiscard]] virtual bool isSeekable() const        = 0;
+
+    virtual std::optional<AudioFormat> init(const Track& track, DecoderOptions options) = 0;
+    virtual void start();
+    virtual void stop() = 0;
+
+    virtual void seek(uint64_t pos) = 0;
+
+    virtual AudioBuffer readBuffer(size_t bytes) = 0;
+};
+using DecoderCreator = std::function<std::unique_ptr<AudioDecoder>()>;
+
+class FYCORE_EXPORT AudioReader
+{
+    Q_GADGET
+
+public:
     enum WriteFlag : uint8_t
     {
         Metadata  = 0,
@@ -51,39 +71,21 @@ public:
     Q_DECLARE_FLAGS(WriteOptions, WriteFlag)
     Q_FLAG(WriteOptions)
 
-    enum class Error : uint8_t
-    {
-        NoError = 0,
-        ResourceError,
-        FormatError,
-        AccessDeniedError,
-        NotSupportedError
-    };
+    virtual ~AudioReader() = default;
 
-    virtual ~AudioInput() = default;
+    [[nodiscard]] virtual QStringList extensions() const = 0;
+    [[nodiscard]] virtual bool canReadCover() const      = 0;
+    [[nodiscard]] virtual bool canWriteMetaData() const  = 0;
+    [[nodiscard]] virtual int subsongCount() const;
 
-    [[nodiscard]] virtual QStringList supportedExtensions() const = 0;
-    [[nodiscard]] virtual bool canReadCover() const               = 0;
-    [[nodiscard]] virtual bool canWriteMetaData() const           = 0;
-    [[nodiscard]] virtual bool isSeekable() const                 = 0;
-
-    virtual bool init(const QString& source, DecoderOptions options) = 0;
-    virtual void start()                                             = 0;
-    virtual void stop()                                              = 0;
-
-    virtual void seek(uint64_t pos) = 0;
-
-    virtual AudioBuffer readBuffer(size_t bytes) = 0;
+    virtual bool init(const QString& file);
 
     [[nodiscard]] virtual bool readMetaData(Track& track) = 0;
     [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover);
     [[nodiscard]] virtual bool writeMetaData(const Track& track, WriteOptions options);
-
-    [[nodiscard]] virtual AudioFormat format() const = 0;
-    [[nodiscard]] virtual Error error() const        = 0;
 };
-using InputCreator = std::function<std::unique_ptr<AudioInput>()>;
+using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 } // namespace Fooyin
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioInput::DecoderOptions)
-Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioInput::WriteOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioDecoder::DecoderOptions)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioReader::WriteOptions)
