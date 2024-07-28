@@ -100,6 +100,7 @@ public:
     void setupRatingMenu();
     void setupUtilitesMenu() const;
 
+    void mute() const;
     void restoreIconTheme() const;
     void registerLayouts();
 
@@ -362,22 +363,22 @@ void GuiApplicationPrivate::registerActions()
     auto* muteAction
         = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeMute), GuiApplication::tr("Mute"), mainWindow.get());
     actionManager->registerAction(muteAction, Constants::Actions::Mute);
-    QObject::connect(muteAction, &QAction::triggered, mainWindow.get(), [this]() {
-        const double volume = settings->value<Settings::Core::OutputVolume>();
-        if(volume > 0.0) {
-            settings->set<Settings::Core::Internal::MuteVolume>(volume);
-            settings->set<Settings::Core::OutputVolume>(0.0);
-        }
-        else {
-            settings->set<Settings::Core::OutputVolume>(settings->value<Settings::Core::Internal::MuteVolume>());
-        }
-    });
+    QObject::connect(muteAction, &QAction::triggered, mainWindow.get(), [this]() { mute(); });
 
     QObject::connect(playlistController.get(), &PlaylistController::currentPlaylistChanged, mainWindow.get(), [this]() {
         if(auto* savePlaylistCommand = actionManager->command(Constants::Actions::SavePlaylist)) {
             if(const auto* playlist = playlistController->currentPlaylist()) {
                 savePlaylistCommand->action()->setEnabled(playlist->trackCount() > 0);
             }
+        }
+    });
+
+    auto* removePlaylist = new QAction(GuiApplication::tr("Remove Playlist"), mainWindow.get());
+    auto* removeCmd      = actionManager->registerAction(removePlaylist, Constants::Actions::RemovePlaylist);
+    removeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_W});
+    QObject::connect(removePlaylist, &QAction::triggered, mainWindow.get(), [this]() {
+        if(auto* currentPlaylist = playlistController->currentPlaylist()) {
+            core.playlistHandler->removePlaylist(currentPlaylist->id());
         }
     });
 }
@@ -493,6 +494,18 @@ void GuiApplicationPrivate::setupUtilitesMenu() const
     auto* utilitiesMenu = actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
     utilitiesMenu->menu()->setTitle(GuiApplication::tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
+}
+
+void GuiApplicationPrivate::mute() const
+{
+    const double volume = settings->value<Settings::Core::OutputVolume>();
+    if(volume > 0.0) {
+        settings->set<Settings::Core::Internal::MuteVolume>(volume);
+        settings->set<Settings::Core::OutputVolume>(0.0);
+    }
+    else {
+        settings->set<Settings::Core::OutputVolume>(settings->value<Settings::Core::Internal::MuteVolume>());
+    }
 }
 
 void GuiApplicationPrivate::restoreIconTheme() const
