@@ -134,6 +134,7 @@ constexpr auto RepeatTrack     = "Playback.Order.RepeatTrack";
 constexpr auto RepeatPlaylist  = "Playback.Order.RepeatPlaylist";
 constexpr auto ShuffleTracks   = "Playback.Order.ShuffleTracks";
 constexpr auto ScriptSandbox   = "View.ScriptSandbox";
+constexpr auto Log             = "View.Log";
 constexpr auto Cut             = "Edit.Cut";
 constexpr auto Copy            = "Edit.Copy";
 constexpr auto Paste           = "Edit.Paste";

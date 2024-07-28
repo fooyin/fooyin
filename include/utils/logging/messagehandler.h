@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,30 @@
 
 #pragma once
 
-#include <QObject>
+#include "fyutils_export.h"
 
-class QAction;
+#include <QObject>
+#include <QWidget>
 
 namespace Fooyin {
-class ActionManager;
-class SettingsManager;
+class LogWidget;
 
-class ViewMenu : public QObject
+class FYUTILS_EXPORT MessageHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit MessageHandler(QObject* parent = nullptr);
+
+    static void install(LogWidget* widget);
+    static void handler(QtMsgType type, const QMessageLogContext&, const QString& msg);
 
 signals:
-    void openQuickSetup();
-    void openLog();
-    void openScriptSandbox();
-    void showNowPlaying();
+    void showMessage(QString msg, QtMsgType type);
 
 private:
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
+    static MessageHandler* instance();
 };
 } // namespace Fooyin
+
+Q_DECLARE_METATYPE(QtMsgType);

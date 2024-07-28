@@ -42,6 +42,10 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     viewMenu->addSeparator();
 
+    auto* showLog = new QAction(tr("&Log"), this);
+    viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
+    QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
+
     auto* showSandbox = new QAction(tr("&Script Sandbox"), this);
     viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
     QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);

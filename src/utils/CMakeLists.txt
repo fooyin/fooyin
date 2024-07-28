@@ -40,6 +40,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/database/dbmodule.h
     ${CMAKE_SOURCE_DIR}/include/utils/database/dbquery.h
     ${CMAKE_SOURCE_DIR}/include/utils/database/dbtransaction.h
+    ${CMAKE_SOURCE_DIR}/include/utils/logging/messagehandler.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsdialogcontroller.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
@@ -91,6 +92,11 @@ set(SOURCES
     database/dbconnectionprovider.cpp
     database/dbquery.cpp
     database/dbtransaction.cpp
+    logging/logwidget.cpp
+    logging/logwidget.h
+    logging/logmodel.cpp
+    logging/logmodel.h
+    logging/messagehandler.cpp
     settings/settingscategory.h
     settings/settingsdialog.cpp
     settings/settingsdialog.h

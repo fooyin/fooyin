@@ -35,6 +35,7 @@
 #include "systemtrayicon.h"
 #include "widgets.h"
 
+#include <utils/logging/logwidget.h>
 #include <core/application.h>
 #include <core/corepaths.h>
 #include <core/coresettings.h>
@@ -149,6 +150,7 @@ public:
 
     GuiPluginContext guiPluginContext;
 
+    std::unique_ptr<LogWidget> logWidget;
     Widgets* widgets;
     ScriptParser scriptParser;
 };
@@ -179,6 +181,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     , windowController{new WindowController(mainWindow.get())}
     , guiPluginContext{actionManager,    &layoutProvider, &selectionController, searchController,
                        propertiesDialog, &widgetProvider, editableLayout.get(), windowController}
+    , logWidget{std::make_unique<LogWidget>()}
     , widgets{new Widgets(core, guiPluginContext, &playlistInteractor, self)}
 {
     setupConnections();
@@ -247,6 +250,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(fileMenu, &FileMenu::requestLoadPlaylist, self, [this]() { loadPlaylist(); });
     QObject::connect(fileMenu, &FileMenu::requestSavePlaylist, self, [this]() { savePlaylist(); });
     QObject::connect(viewMenu, &ViewMenu::openQuickSetup, editableLayout.get(), &EditableLayout::showQuickSetup);
+    QObject::connect(viewMenu, &ViewMenu::openLog, logWidget.get(), &LogWidget::show);
     QObject::connect(viewMenu, &ViewMenu::openScriptSandbox, self, [this]() {
         auto* sandboxDialog = new SandboxDialog(core.libraryManager, &selectionController, settings, mainWindow.get());
         sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);

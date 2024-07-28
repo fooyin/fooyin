@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,29 @@
 
 #pragma once
 
-#include <QObject>
+#include "fyutils_export.h"
 
-class QAction;
+#include <QWidget>
+
+class QTreeView;
 
 namespace Fooyin {
-class ActionManager;
-class SettingsManager;
+class LogModel;
 
-class ViewMenu : public QObject
+class FYUTILS_EXPORT LogWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit LogWidget(QWidget* parent = nullptr);
 
-signals:
-    void openQuickSetup();
-    void openLog();
-    void openScriptSandbox();
-    void showNowPlaying();
+    void addEntry(const QString& message, QtMsgType type);
 
 private:
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
+    void saveLog();
+
+    QTreeView* m_view;
+    LogModel* m_model;
+    bool m_scrollIsAtBottom;
 };
 } // namespace Fooyin
