@@ -223,9 +223,9 @@ DbSchema::Revision DbSchema::readRevision()
 {
     Revision revision;
 
-    revision.version          = m_xmlReader.attributes().value(u"version").toInt();
-    revision.minCompatVersion = m_xmlReader.attributes().value(u"minCompatVersion").toInt();
-    revision.foreignKeys      = m_xmlReader.attributes().value(u"foreignKeys").toInt();
+    revision.version          = m_xmlReader.attributes().value(QLatin1String{"version"}).toInt();
+    revision.minCompatVersion = m_xmlReader.attributes().value(QLatin1String{"minCompatVersion"}).toInt();
+    revision.foreignKeys      = m_xmlReader.attributes().value(QLatin1String{"foreignKeys"}).toInt();
 
     while(m_xmlReader.readNextStartElement()) {
         if(m_xmlReader.name() == u"description") {
