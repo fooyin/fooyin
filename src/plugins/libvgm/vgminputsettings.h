@@ -36,7 +36,6 @@ public:
     explicit VgmInputSettings(QWidget* parent = nullptr);
 
     void accept() override;
-    void apply();
 
 private:
     void getRomPath();

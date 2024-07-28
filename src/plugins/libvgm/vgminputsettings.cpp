@@ -42,12 +42,9 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     setWindowTitle(tr("VGM Input Settings"));
     setModal(true);
 
-    auto* buttons
-        = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel, this);
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, &VgmInputSettings::accept);
     QObject::connect(buttons, &QDialogButtonBox::rejected, this, &VgmInputSettings::reject);
-    QObject::connect(buttons->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
-                     &VgmInputSettings::apply);
 
     auto* lengthGroup  = new QGroupBox(tr("Length"), this);
     auto* lengthLayout = new QGridLayout(lengthGroup);
@@ -105,15 +102,11 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 
 void VgmInputSettings::accept()
 {
-    apply();
-    done(Accepted);
-}
-
-void VgmInputSettings::apply()
-{
     m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
     m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
     m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
+
+    done(Accepted);
 }
 
 void VgmInputSettings::getRomPath()
