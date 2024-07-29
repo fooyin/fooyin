@@ -16,4 +16,5 @@ $SUDO pacman -S --noconfirm --needed \
        kdsingleapplication \
        taglib \
        ffmpeg \
-       pipewire
+       pipewire \
+       libopenmpt

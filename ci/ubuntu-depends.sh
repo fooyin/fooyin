@@ -30,4 +30,5 @@ $SUDO apt-get install -y \
         libavcodec-dev \
         libavformat-dev \
         libavutil-dev \
-        libswresample-dev
+        libswresample-dev \
+        libopenmpt-dev
