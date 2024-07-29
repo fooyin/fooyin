@@ -88,6 +88,7 @@ private:
 
     std::unique_ptr<AudioOutput> m_audioOutput;
     AudioFormat m_format;
+    AudioFormat m_outputFormat;
     double m_volume;
     int m_bufferSize;
     bool m_bufferPrefilled;
@@ -97,6 +98,7 @@ private:
     AudioBuffer m_tempBuffer;
     int m_totalSamplesWritten;
     int m_currentBufferOffset;
+    bool m_currentBufferResampled;
 
     bool m_isRunning;
     QString m_lastDeviceError;

@@ -42,6 +42,7 @@ AudioRenderer::AudioRenderer(QObject* parent)
     , m_bufferPrefilled{false}
     , m_totalSamplesWritten{0}
     , m_currentBufferOffset{0}
+    , m_currentBufferResampled{false}
     , m_isRunning{false}
     , m_writeInterval{100}
     , m_fadeLength{0}
@@ -152,19 +153,15 @@ void AudioRenderer::pause(bool paused, int fadeLength)
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
-    AudioBuffer buff{buffer};
-    if(m_resampler) {
-        buff = m_resampler->resample(buff);
-    }
-    m_bufferQueue.emplace(buff);
+    m_bufferQueue.emplace(buffer);
 }
 
 bool AudioRenderer::resetResampler()
 {
-    const AudioFormat outputFormat = m_audioOutput->format();
+    m_outputFormat = m_audioOutput->format();
 
-    if(outputFormat.isValid() && outputFormat != m_format) {
-        m_resampler = std::make_unique<FFmpegResampler>(m_format, outputFormat,
+    if(m_outputFormat.isValid() && m_outputFormat != m_format) {
+        m_resampler = std::make_unique<FFmpegResampler>(m_format, m_outputFormat,
                                                         m_format.durationForFrames(m_totalSamplesWritten));
         if(!m_resampler->canResample()) {
             m_resampler.reset();
@@ -199,10 +196,6 @@ void AudioRenderer::updateOutput(const OutputCreator& output, const QString& dev
 
     m_bufferPrefilled = false;
     QObject::connect(m_audioOutput.get(), &AudioOutput::stateChanged, this, &AudioRenderer::handleStateChanged);
-
-    if(wasInitialised) {
-        initOutput();
-    }
 }
 
 void AudioRenderer::updateDevice(const QString& device)
@@ -216,7 +209,6 @@ void AudioRenderer::updateDevice(const QString& device)
     if(m_audioOutput && m_audioOutput->initialised()) {
         m_audioOutput->uninit();
         m_audioOutput->setDevice(device);
-        initOutput();
     }
     else {
         m_audioOutput->setDevice(device);
@@ -263,10 +255,11 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
 
 void AudioRenderer::resetBuffer()
 {
-    m_bufferPrefilled     = false;
-    m_totalSamplesWritten = 0;
-    m_currentBufferOffset = 0;
-    m_bufferQueue         = {};
+    m_bufferPrefilled        = false;
+    m_totalSamplesWritten    = 0;
+    m_currentBufferOffset    = 0;
+    m_currentBufferResampled = false;
+    m_bufferQueue            = {};
     m_tempBuffer.reset();
 }
 
@@ -296,8 +289,6 @@ bool AudioRenderer::initOutput()
     if(!resetResampler()) {
         return false;
     }
-
-    m_format = m_audioOutput->format();
 
     m_audioOutput->setVolume(m_volume);
     m_bufferSize = m_audioOutput->bufferSize();
@@ -332,8 +323,9 @@ void AudioRenderer::updateOutputVolume(double newVolume)
 
 void AudioRenderer::updateInterval()
 {
-    const auto interval = static_cast<int>(static_cast<double>(m_bufferSize) / m_format.sampleRate() * 1000 * 0.25);
-    m_writeInterval     = interval;
+    const auto interval
+        = static_cast<int>(static_cast<double>(m_bufferSize) / m_outputFormat.sampleRate() * 1000 * 0.25);
+    m_writeInterval = interval;
 }
 
 void AudioRenderer::pause()
@@ -375,14 +367,19 @@ int AudioRenderer::writeAudioSamples(int samples)
 
     int samplesBuffered{0};
 
-    const int sstride = m_format.bytesPerFrame();
-
     while(m_isRunning && !m_bufferQueue.empty() && samplesBuffered < samples) {
-        const AudioBuffer& buffer = m_bufferQueue.front();
+        AudioBuffer& buffer = m_bufferQueue.front();
+
+        if(m_resampler && !m_currentBufferResampled) {
+            buffer = m_resampler->resample(buffer);
+
+            m_currentBufferResampled = true;
+        }
 
         if(!buffer.isValid()) {
             // End of file
-            m_currentBufferOffset = 0;
+            m_currentBufferOffset    = 0;
+            m_currentBufferResampled = false;
             m_bufferQueue.pop();
             emit finished();
             return samplesBuffered;
@@ -391,12 +388,14 @@ int AudioRenderer::writeAudioSamples(int samples)
         const int bytesLeft = buffer.byteCount() - m_currentBufferOffset;
 
         if(bytesLeft <= 0) {
-            m_currentBufferOffset = 0;
+            m_currentBufferOffset    = 0;
+            m_currentBufferResampled = false;
             emit bufferProcessed(buffer);
             m_bufferQueue.pop();
             continue;
         }
 
+        const int sstride     = m_outputFormat.bytesPerFrame();
         const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);
         const int bytes       = sampleCount * sstride;
         const auto fdata      = buffer.constData().subspan(m_currentBufferOffset, static_cast<size_t>(bytes));
