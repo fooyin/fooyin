@@ -272,7 +272,7 @@ void AlsaOutput::setPaused(bool pause)
         return;
     }
 
-    if(!recoverState()) {
+    if(!pause && !recoverState()) {
         return;
     }
 
@@ -601,7 +601,7 @@ bool AlsaOutput::attemptRecovery(snd_pcm_status_t* status)
     snd_pcm_state_t pcmst{SND_PCM_STATE_DISCONNECTED};
 
     // Give ALSA a number of chances to recover
-    for(int n = 0; n < 5; ++n) {
+    for(int n{0}; n < 5; ++n) {
         if(!m_pcmHandle) {
             return false;
         }
@@ -628,11 +628,10 @@ bool AlsaOutput::attemptRecovery(snd_pcm_status_t* status)
         }
 
         if(pcmst == SND_PCM_STATE_PREPARED) {
-            if(!m_started) {
-                return true;
+            if(m_started) {
+                snd_pcm_start(m_pcmHandle.get());
             }
-            snd_pcm_start(m_pcmHandle.get());
-            continue;
+            return true;
         }
 
         switch(pcmst) {
