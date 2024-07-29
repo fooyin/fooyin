@@ -53,6 +53,22 @@ SDL_AudioFormat findFormat(Fooyin::SampleFormat format)
             return AUDIO_S16;
     }
 }
+
+Fooyin::SampleFormat findSampleFormat(SDL_AudioFormat format)
+{
+    switch(format) {
+        case(AUDIO_U8):
+            return Fooyin::SampleFormat::U8;
+        case(AUDIO_S16SYS):
+            return Fooyin::SampleFormat::S16;
+        case(AUDIO_S32SYS):
+            return Fooyin::SampleFormat::S32;
+        case(AUDIO_F32SYS):
+            return Fooyin::SampleFormat::F32;
+        default:
+            return Fooyin::SampleFormat::Unknown;
+    }
+}
 } // namespace
 
 namespace Fooyin::Sdl {
@@ -87,6 +103,10 @@ bool SdlOutput::init(const AudioFormat& format)
         qCWarning(SDL) << "Error opening audio device:" << SDL_GetError();
         return false;
     }
+
+    m_format.setSampleRate(m_obtainedSpec.freq);
+    m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
+    m_format.setChannelCount(m_obtainedSpec.channels);
 
     m_initialised = true;
     return true;
@@ -202,6 +222,11 @@ QString SdlOutput::error() const
 {
     // TODO
     return {};
+}
+
+AudioFormat SdlOutput::format() const
+{
+    return m_format;
 }
 
 void SdlOutput::timerEvent(QTimerEvent* event)

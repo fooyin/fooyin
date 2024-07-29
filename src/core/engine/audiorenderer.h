@@ -21,6 +21,8 @@
 
 #include <core/engine/audiooutput.h>
 
+#include "ffmpeg/ffmpegresampler.h"
+
 #include <QBasicTimer>
 #include <QObject>
 
@@ -50,6 +52,7 @@ public:
 
     void queueBuffer(const AudioBuffer& buffer);
 
+    void handleTrackChanged();
     void updateOutput(const OutputCreator& output, const QString& device);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
@@ -88,6 +91,7 @@ private:
     double m_volume;
     int m_bufferSize;
     bool m_bufferPrefilled;
+    std::unique_ptr<FFmpegResampler> m_resampler;
 
     std::queue<AudioBuffer> m_bufferQueue;
     AudioBuffer m_tempBuffer;

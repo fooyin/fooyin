@@ -148,4 +148,9 @@ int AudioFormat::bytesPerSample() const
             return 0;
     }
 }
+
+int AudioFormat::bitsPerSample() const
+{
+    return bytesPerSample() * 8;
+}
 } // namespace Fooyin

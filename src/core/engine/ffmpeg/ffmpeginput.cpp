@@ -695,7 +695,7 @@ bool FFmpegReader::readMetaData(Track& track)
     track.setCodec(getCodec(codec->codec_id));
     track.setSampleRate(format.sampleRate());
     track.setChannels(format.channelCount());
-    track.setBitDepth(format.bytesPerSample() * 8);
+    track.setBitDepth(format.bitsPerSample());
 
     if(track.duration() == 0) {
         AVRational timeBase = avStream->time_base;

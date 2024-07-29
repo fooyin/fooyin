@@ -59,6 +59,7 @@ public:
     void setDevice(const QString& device) override;
 
     [[nodiscard]] QString error() const override;
+    [[nodiscard]] AudioFormat format() const override;
 
 private:
     void resetAlsa();
@@ -66,6 +67,7 @@ private:
 
     bool checkError(int error, const QString& message);
     [[nodiscard]] bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams);
+    bool setAlsaFormat(snd_pcm_hw_params_t* hwParams);
     void getHardwareDevices(OutputDevices& devices);
     bool attemptRecovery(snd_pcm_status_t* status);
     bool recoverState(OutputState* state = nullptr);

@@ -73,6 +73,8 @@ set(SOURCES
     engine/ffmpeg/ffmpeginput.h
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegframe.h
+    engine/ffmpeg/ffmpegresampler.cpp
+    engine/ffmpeg/ffmpegresampler.h
     engine/ffmpeg/ffmpegstream.cpp
     engine/ffmpeg/ffmpegstream.h
     engine/ffmpeg/ffmpegutils.cpp

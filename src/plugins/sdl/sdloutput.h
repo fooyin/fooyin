@@ -41,7 +41,7 @@ public:
 
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
-    int bufferSize() const override;
+    [[nodiscard]] int bufferSize() const override;
     OutputState currentState() override;
     [[nodiscard]] OutputDevices getAllDevices() override;
 
@@ -51,6 +51,7 @@ public:
     void setDevice(const QString& device) override;
 
     [[nodiscard]] QString error() const override;
+    [[nodiscard]] AudioFormat format() const override;
 
 protected:
     void timerEvent(QTimerEvent* event) override;

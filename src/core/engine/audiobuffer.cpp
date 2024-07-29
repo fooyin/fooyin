@@ -221,6 +221,13 @@ std::byte* AudioBuffer::data()
     return {};
 }
 
+void AudioBuffer::setStartTime(uint64_t startTime)
+{
+    if(isValid()) {
+        p->m_startTime = startTime;
+    }
+}
+
 void AudioBuffer::fillSilence()
 {
     if(isValid()) {

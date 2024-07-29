@@ -40,7 +40,6 @@ struct OutputDevice
     QString name;
     QString desc;
 };
-
 using OutputDevices = std::vector<OutputDevice>;
 
 /*!
@@ -112,7 +111,8 @@ public:
      * @returns the number of samples written.
      */
     virtual int write(const AudioBuffer& buffer) = 0;
-    virtual void setPaused(bool pause)           = 0;
+
+    virtual void setPaused(bool pause) = 0;
 
     /*!
      * Set's the volume of the audio driver.
@@ -126,8 +126,14 @@ public:
      */
     virtual void setDevice(const QString& device) = 0;
 
+    /** Returns the output format following the call to @fn init. */
+    [[nodiscard]] virtual AudioFormat format() const = 0;
+
     /** Returns the last error message, if any. */
-    [[nodiscard]] virtual QString error() const = 0;
+    [[nodiscard]] virtual QString error() const
+    {
+        return {};
+    };
 
 signals:
     void stateChanged(State state);

@@ -151,7 +151,20 @@ void AudioRenderer::pause(bool paused, int fadeLength)
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
-    m_bufferQueue.emplace(buffer);
+    AudioBuffer buff{buffer};
+    if(m_resampler) {
+        buff = m_resampler->resample(buff);
+    }
+    m_bufferQueue.emplace(buff);
+}
+
+void AudioRenderer::handleTrackChanged()
+{
+    m_totalSamplesWritten = 0;
+    if(m_resampler) {
+        m_resampler = std::make_unique<FFmpegResampler>(m_format, m_audioOutput->format(),
+                                                        m_format.durationForFrames(m_totalSamplesWritten));
+    }
 }
 
 void AudioRenderer::updateOutput(const OutputCreator& output, const QString& device)
@@ -267,6 +280,21 @@ bool AudioRenderer::initOutput()
 {
     if(!m_audioOutput->init(m_format)) {
         return false;
+    }
+
+    const AudioFormat outputFormat = m_audioOutput->format();
+
+    if(outputFormat.isValid() && outputFormat != m_format) {
+        m_resampler = std::make_unique<FFmpegResampler>(m_format, outputFormat,
+                                                        m_format.durationForFrames(m_totalSamplesWritten));
+        if(!m_resampler->canResample()) {
+            m_resampler.reset();
+            return false;
+        }
+        m_format = m_audioOutput->format();
+    }
+    else {
+        m_resampler.reset();
     }
 
     m_audioOutput->setVolume(m_volume);

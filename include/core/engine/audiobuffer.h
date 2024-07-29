@@ -66,6 +66,8 @@ public:
     [[nodiscard]] const std::byte* data() const;
     std::byte* data();
 
+    void setStartTime(uint64_t startTime);
+
     void fillSilence();
     void fillRemainingWithSilence();
     void scale(double volume);

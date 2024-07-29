@@ -130,6 +130,7 @@ find_package(
     COMPONENTS AVCODEC
                AVFORMAT
                AVUTIL
+               SWRESAMPLE
 )
 
 include(3rdparty/3rdparty.cmake)

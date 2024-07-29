@@ -270,6 +270,11 @@ QString PipeWireOutput::error() const
     return {};
 }
 
+AudioFormat PipeWireOutput::format() const
+{
+    return m_format;
+}
+
 bool PipeWireOutput::initCore()
 {
     m_loop = std::make_unique<PipewireThreadLoop>();

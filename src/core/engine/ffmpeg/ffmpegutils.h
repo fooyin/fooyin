@@ -35,5 +35,8 @@ class AVCodecParameters;
 namespace Fooyin::Utils {
 void printError(int error);
 void printError(const QString& error);
+
+SampleFormat sampleFormat(AVSampleFormat format, int bps);
+AVSampleFormat sampleFormat(SampleFormat format);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
 } // namespace Fooyin::Utils

@@ -19,6 +19,7 @@ dnf -y --allowerasing install \
      libavcodec-free-devel \
      libavformat-free-devel \
      libavutil-free-devel \
+     libswresample-free-devel \
      taglib-devel \
      kdsingleapplication-qt6-devel \
      pipewire-devel

@@ -151,6 +151,8 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         return;
     }
 
+    m_renderer->handleTrackChanged();
+
     if(!updateFormat(format.value())) {
         updateState(PlaybackState::Error);
         changeTrackStatus(TrackStatus::NoTrack);

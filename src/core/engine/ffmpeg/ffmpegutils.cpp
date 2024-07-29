@@ -31,29 +31,6 @@ extern "C"
 
 Q_LOGGING_CATEGORY(FFMPEG, "FFmpeg")
 
-namespace {
-Fooyin::SampleFormat sampleFormat(AVSampleFormat format, int bps)
-{
-    switch(format) {
-        case(AV_SAMPLE_FMT_NONE):
-        case(AV_SAMPLE_FMT_U8):
-        case(AV_SAMPLE_FMT_U8P):
-            return Fooyin::SampleFormat::U8;
-        case(AV_SAMPLE_FMT_S16):
-        case(AV_SAMPLE_FMT_S16P):
-            return Fooyin::SampleFormat::S16;
-        case(AV_SAMPLE_FMT_S32):
-        case(AV_SAMPLE_FMT_S32P):
-            return bps == 24 ? Fooyin::SampleFormat::S24 : Fooyin::SampleFormat::S32;
-        case(AV_SAMPLE_FMT_FLT):
-        case(AV_SAMPLE_FMT_FLTP):
-            return Fooyin::SampleFormat::F32;
-        default:
-            return Fooyin::SampleFormat::Unknown;
-    }
-}
-} // namespace
-
 namespace Fooyin::Utils {
 void printError(int error)
 {
@@ -82,4 +59,44 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
 
     return format;
 }
+
+SampleFormat sampleFormat(AVSampleFormat format, int bps)
+{
+    switch(format) {
+        case(AV_SAMPLE_FMT_NONE):
+        case(AV_SAMPLE_FMT_U8):
+        case(AV_SAMPLE_FMT_U8P):
+            return SampleFormat::U8;
+        case(AV_SAMPLE_FMT_S16):
+        case(AV_SAMPLE_FMT_S16P):
+            return SampleFormat::S16;
+        case(AV_SAMPLE_FMT_S32):
+        case(AV_SAMPLE_FMT_S32P):
+            return bps == 24 ? SampleFormat::S24 : SampleFormat::S32;
+        case(AV_SAMPLE_FMT_FLT):
+        case(AV_SAMPLE_FMT_FLTP):
+            return SampleFormat::F32;
+        default:
+            return SampleFormat::Unknown;
+    }
+}
+
+AVSampleFormat sampleFormat(SampleFormat format)
+{
+    switch(format) {
+        case(SampleFormat::U8):
+            return AV_SAMPLE_FMT_U8;
+        case(SampleFormat::S16):
+            return AV_SAMPLE_FMT_S16;
+        case(SampleFormat::S24):
+        case(SampleFormat::S32):
+            return AV_SAMPLE_FMT_S32;
+        case(SampleFormat::F32):
+            return AV_SAMPLE_FMT_FLT;
+        case(SampleFormat::Unknown):
+        default:
+            return AV_SAMPLE_FMT_NONE;
+    }
+}
+
 } // namespace Fooyin::Utils

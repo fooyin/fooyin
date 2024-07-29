@@ -53,6 +53,23 @@ snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
     }
 }
 
+Fooyin::SampleFormat findSampleFormat(snd_pcm_format_t format)
+{
+    switch(format) {
+        case(SND_PCM_FORMAT_U8):
+            return Fooyin::SampleFormat::U8;
+        case(SND_PCM_FORMAT_S16):
+            return Fooyin::SampleFormat::S16;
+        case(SND_PCM_FORMAT_S32):
+            return Fooyin::SampleFormat::S32;
+        case(SND_PCM_FORMAT_FLOAT):
+            return Fooyin::SampleFormat::F32;
+        case(SND_PCM_FORMAT_UNKNOWN):
+        default:
+            return Fooyin::SampleFormat::Unknown;
+    }
+}
+
 struct DeviceHint
 {
     void** hints{nullptr};
@@ -285,6 +302,11 @@ QString AlsaOutput::error() const
     return m_error;
 }
 
+AudioFormat AlsaOutput::format() const
+{
+    return m_format;
+}
+
 void AlsaOutput::resetAlsa()
 {
     if(m_pcmHandle) {
@@ -322,26 +344,26 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
-    const snd_pcm_format_t alsaFormat = findAlsaFormat(m_format.sampleFormat());
-    if(checkError(alsaFormat, QStringLiteral("Format not supported"))) {
+    if(!setAlsaFormat(hwParams)) {
         return false;
     }
 
-    // TODO: Handle resampling
-    if(!formatSupported(alsaFormat, hwParams)) {
+    err = snd_pcm_hw_params_set_rate_resample(handle, hwParams, 1);
+    if(checkError(err, QStringLiteral("Failed to setup resampling"))) {
         return false;
     }
 
-    err = snd_pcm_hw_params_set_format(handle, hwParams, alsaFormat);
-    if(checkError(err, QStringLiteral("Failed to set audio format"))) {
-        return false;
-    }
+    auto sampleRate = static_cast<uint32_t>(m_format.sampleRate());
 
-    const auto sampleRate = static_cast<uint32_t>(m_format.sampleRate());
-
-    err = snd_pcm_hw_params_set_rate(handle, hwParams, sampleRate, 0);
+    err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, nullptr);
     if(checkError(err, QStringLiteral("Failed to set sample rate"))) {
         return false;
+    }
+
+    if(std::cmp_not_equal(sampleRate, m_format.sampleRate())) {
+        qCInfo(ALSA) << "Sample rate not supported:" << m_format.sampleRate() << "Hz";
+        qCInfo(ALSA) << "Using sample rate:" << sampleRate << "Hz";
+        m_format.setSampleRate(static_cast<int>(sampleRate));
     }
 
     uint32_t channelCount = m_format.channelCount();
@@ -349,6 +371,11 @@ bool AlsaOutput::initAlsa()
     err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
     if(checkError(err, QStringLiteral("Failed to set channel count"))) {
         return false;
+    }
+
+    if(std::cmp_not_equal(channelCount, m_format.channelCount())) {
+        qCInfo(ALSA) << "Using channels:" << channelCount;
+        m_format.setChannelCount(static_cast<int>(channelCount));
     }
 
     snd_pcm_uframes_t maxBufferSize;
@@ -454,6 +481,52 @@ bool AlsaOutput::formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_pa
     return isSupported;
 }
 
+bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
+{
+    auto alsaFormat = findAlsaFormat(m_format.sampleFormat());
+    const int err   = snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, alsaFormat);
+
+    if(err < 0) {
+        qCInfo(ALSA) << "Format not supported:" << m_format.bitsPerSample() << "bps";
+        qCDebug(ALSA) << "Trying all supported formats";
+
+        static constexpr std::array<std::pair<snd_pcm_format_t, int>, 4> formats{
+            {{SND_PCM_FORMAT_S16, 16}, {SND_PCM_FORMAT_S32, 32}, {SND_PCM_FORMAT_FLOAT, 32}, {SND_PCM_FORMAT_U8, 8}}};
+
+        snd_pcm_format_t compatFormat{SND_PCM_FORMAT_UNKNOWN};
+
+        // Try formats with a equal/higher bps first
+        for(const auto& [format, bps] : formats) {
+            if(format != alsaFormat && bps >= m_format.bitsPerSample()) {
+                if(snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, format) >= 0) {
+                    qCInfo(ALSA) << "Found compatible format:" << bps << "bps";
+                    compatFormat = format;
+                    break;
+                }
+            }
+        }
+
+        for(const auto& [format, bps] : formats) {
+            if(format != alsaFormat && bps < m_format.bitsPerSample()) {
+                if(snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, format) >= 0) {
+                    qCInfo(ALSA) << "Found compatible format:" << bps << "bps";
+                    compatFormat = format;
+                    break;
+                }
+            }
+        }
+
+        if(compatFormat == SND_PCM_FORMAT_UNKNOWN) {
+            checkError(-1, QStringLiteral("Fallback format could not be found"));
+            return false;
+        }
+
+        m_format.setSampleFormat(findSampleFormat(compatFormat));
+    }
+
+    return true;
+}
+
 void AlsaOutput::getHardwareDevices(OutputDevices& devices)
 {
     snd_pcm_stream_name(SND_PCM_STREAM_PLAYBACK);
@@ -508,7 +581,7 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
                 continue;
             }
 
-            Fooyin::OutputDevice device;
+            OutputDevice device;
             device.name = QStringLiteral("hw:%1,%2").arg(card).arg(dev);
             device.desc = QStringLiteral("%1 - %2 %3")
                               .arg(device.name, QLatin1String(snd_ctl_card_info_get_name(cardinfo)),

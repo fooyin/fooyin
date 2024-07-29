@@ -65,6 +65,7 @@ public:
 
     [[nodiscard]] int bytesPerFrame() const;
     [[nodiscard]] int bytesPerSample() const;
+    [[nodiscard]] int bitsPerSample() const;
 
 private:
     SampleFormat m_sampleFormat;

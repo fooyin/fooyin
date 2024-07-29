@@ -52,6 +52,7 @@ public:
     void setDevice(const QString& device) override;
 
     [[nodiscard]] QString error() const override;
+    [[nodiscard]] AudioFormat format() const override;
 
 private:
     bool initCore();
