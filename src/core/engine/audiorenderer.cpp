@@ -86,7 +86,8 @@ void AudioRenderer::start()
 
 void AudioRenderer::stop()
 {
-    m_isRunning = false;
+    m_totalSamplesWritten = 0;
+    m_isRunning           = false;
     m_writeTimer.stop();
 
     resetFade(0);
@@ -158,13 +159,23 @@ void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
     m_bufferQueue.emplace(buff);
 }
 
-void AudioRenderer::handleTrackChanged()
+bool AudioRenderer::resetResampler()
 {
-    m_totalSamplesWritten = 0;
-    if(m_resampler) {
-        m_resampler = std::make_unique<FFmpegResampler>(m_format, m_audioOutput->format(),
+    const AudioFormat outputFormat = m_audioOutput->format();
+
+    if(outputFormat.isValid() && outputFormat != m_format) {
+        m_resampler = std::make_unique<FFmpegResampler>(m_format, outputFormat,
                                                         m_format.durationForFrames(m_totalSamplesWritten));
+        if(!m_resampler->canResample()) {
+            m_resampler.reset();
+            return false;
+        }
     }
+    else {
+        m_resampler.reset();
+    }
+
+    return true;
 }
 
 void AudioRenderer::updateOutput(const OutputCreator& output, const QString& device)
@@ -190,7 +201,7 @@ void AudioRenderer::updateOutput(const OutputCreator& output, const QString& dev
     QObject::connect(m_audioOutput.get(), &AudioOutput::stateChanged, this, &AudioRenderer::handleStateChanged);
 
     if(wasInitialised) {
-        m_audioOutput->init(m_format);
+        initOutput();
     }
 }
 
@@ -205,7 +216,7 @@ void AudioRenderer::updateDevice(const QString& device)
     if(m_audioOutput && m_audioOutput->initialised()) {
         m_audioOutput->uninit();
         m_audioOutput->setDevice(device);
-        m_audioOutput->init(m_format);
+        initOutput();
     }
     else {
         m_audioOutput->setDevice(device);
@@ -282,20 +293,11 @@ bool AudioRenderer::initOutput()
         return false;
     }
 
-    const AudioFormat outputFormat = m_audioOutput->format();
+    if(!resetResampler()) {
+        return false;
+    }
 
-    if(outputFormat.isValid() && outputFormat != m_format) {
-        m_resampler = std::make_unique<FFmpegResampler>(m_format, outputFormat,
-                                                        m_format.durationForFrames(m_totalSamplesWritten));
-        if(!m_resampler->canResample()) {
-            m_resampler.reset();
-            return false;
-        }
-        m_format = m_audioOutput->format();
-    }
-    else {
-        m_resampler.reset();
-    }
+    m_format = m_audioOutput->format();
 
     m_audioOutput->setVolume(m_volume);
     m_bufferSize = m_audioOutput->bufferSize();

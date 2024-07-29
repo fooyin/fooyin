@@ -52,7 +52,7 @@ public:
 
     void queueBuffer(const AudioBuffer& buffer);
 
-    void handleTrackChanged();
+    bool resetResampler();
     void updateOutput(const OutputCreator& output, const QString& device);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
