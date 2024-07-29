@@ -755,7 +755,7 @@ void Track::addExtraTag(const QString& tag, const QString& value)
     if(tag.isEmpty() || value.isEmpty()) {
         return;
     }
-    p->extraTags[tag].push_back(value);
+    p->extraTags[tag.toUpper()].push_back(value);
 }
 
 void Track::removeExtraTag(const QString& tag)

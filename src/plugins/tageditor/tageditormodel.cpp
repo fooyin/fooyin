@@ -169,9 +169,6 @@ void TagEditorModelPrivate::updateFields()
                 auto* item = &m_customTags.emplace(field, TagEditorItem{field, &m_root, false}).first->second;
                 m_root.appendChild(item);
             }
-
-            auto* fieldItem = &m_customTags.at(field);
-            fieldItem->addTrackValue(values);
         }
     }
 
