@@ -1351,7 +1351,7 @@ bool TagLibReader::canWriteMetaData() const
     return true;
 }
 
-bool TagLibReader::readMetaData(Track& track)
+bool TagLibReader::readTrack(Track& track)
 {
     const QString filepath = track.filepath();
 
@@ -1626,7 +1626,7 @@ QByteArray TagLibReader::readCover(const Track& track, Track::Cover cover)
     return {};
 }
 
-bool TagLibReader::writeMetaData(const Track& track, AudioReader::WriteOptions options)
+bool TagLibReader::writeTrack(const Track& track, AudioReader::WriteOptions options)
 {
     const QString filepath = track.filepath();
 

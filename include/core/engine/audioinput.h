@@ -80,9 +80,9 @@ public:
 
     virtual bool init(const QString& file);
 
-    [[nodiscard]] virtual bool readMetaData(Track& track) = 0;
+    [[nodiscard]] virtual bool readTrack(Track& track) = 0;
     [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover);
-    [[nodiscard]] virtual bool writeMetaData(const Track& track, WriteOptions options);
+    [[nodiscard]] virtual bool writeTrack(const Track& track, WriteOptions options);
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 } // namespace Fooyin

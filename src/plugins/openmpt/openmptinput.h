@@ -21,41 +21,44 @@
 
 #include <core/engine/audioinput.h>
 
-#include <QFile>
+#include <libopenmpt/libopenmpt.hpp>
 
-#include <sndfile.h>
-
-namespace Fooyin::Snd {
-class SndFileDecoder : public AudioDecoder
+namespace Fooyin::OpenMpt {
+class OpenMptInput : public AudioDecoder
 {
 public:
-    SndFileDecoder();
+    OpenMptInput();
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const Track& source, DecoderOptions options) override;
+
     void stop() override;
-
     void seek(uint64_t pos) override;
-
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:
-    std::unique_ptr<QFile> m_file;
+    std::unique_ptr<openmpt::module> m_module;
     AudioFormat m_format;
-    SF_VIRTUAL_IO m_vio;
-    SNDFILE* m_sndFile;
-    sf_count_t m_currentFrame;
+    bool m_eof;
 };
 
-class SndFileReader : public AudioReader
+class OpenMptReader : public AudioReader
 {
 public:
+    OpenMptReader();
+
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
+    [[nodiscard]] int subsongCount() const override;
 
+    bool init(const QString& source) override;
     bool readTrack(Track& track) override;
+
+private:
+    std::unique_ptr<openmpt::module> m_module;
+    int m_subsongCount;
 };
-} // namespace Fooyin::Snd
+} // namespace Fooyin::OpenMpt

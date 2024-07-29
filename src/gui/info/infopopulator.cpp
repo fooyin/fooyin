@@ -139,6 +139,10 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
     if(total == 1) {
         checkAddEntryNode(QStringLiteral("FilePath"), InfoPopulator::tr("File Path"), ItemParent::Location,
                           track.filepath());
+        if(track.subsong() >= 0) {
+            checkAddEntryNode(QStringLiteral("SubsongIndex"), InfoPopulator::tr("Subsong Index"), ItemParent::Location,
+                              track.subsong());
+        }
     }
 
     checkAddEntryNode(QStringLiteral("FileSize"),

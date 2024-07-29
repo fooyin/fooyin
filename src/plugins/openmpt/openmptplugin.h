@@ -17,28 +17,23 @@
  *
  */
 
+#pragma once
+
 #include <core/engine/audioinput.h>
+#include <core/engine/inputplugin.h>
+#include <core/plugins/plugin.h>
 
-namespace Fooyin {
-void AudioDecoder::start() { }
-
-int AudioReader::subsongCount() const
+namespace Fooyin::OpenMpt {
+class RawAudioPlugin : public QObject,
+                       public Plugin,
+                       public InputPlugin
 {
-    return 1;
-}
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "openmpt.json")
+    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
-bool AudioReader::init(const QString& /*file*/)
-{
-    return true;
-}
-
-QByteArray AudioReader::readCover(const Track& /*track*/, Track::Cover /*cover*/)
-{
-    return {};
-}
-
-bool AudioReader::writeTrack(const Track& /*track*/, WriteOptions /*options*/)
-{
-    return false;
-}
-} // namespace Fooyin
+public:
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] InputCreator inputCreator() const override;
+};
+} // namespace Fooyin::OpenMpt

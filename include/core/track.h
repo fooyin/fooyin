@@ -58,6 +58,7 @@ public:
 
     Track();
     explicit Track(const QString& filepath);
+    Track(const QString& filepath, int subsong);
     ~Track();
 
     Track(const Track& other);
@@ -120,6 +121,7 @@ public:
     [[nodiscard]] QStringList removedTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
+    [[nodiscard]] int subsong() const;
     [[nodiscard]] uint64_t offset() const;
     [[nodiscard]] uint64_t duration() const;
     [[nodiscard]] uint64_t fileSize() const;
@@ -174,6 +176,7 @@ public:
     void clearExtraTags();
     void storeExtraTags(const QByteArray& tags);
 
+    void setSubsong(int index);
     void setOffset(uint64_t offset);
     void setDuration(uint64_t duration);
     void setFileSize(uint64_t fileSize);

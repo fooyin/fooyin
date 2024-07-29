@@ -68,6 +68,6 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    bool readMetaData(Track& track) override;
+    bool readTrack(Track& track) override;
 };
 } // namespace Fooyin::VgmInput

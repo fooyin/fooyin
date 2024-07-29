@@ -21,6 +21,7 @@
 
 #include <core/track.h>
 
+#include <QFileInfo>
 #include <QLoggingCategory>
 #include <QThreadStorage>
 
@@ -104,11 +105,13 @@ AudioDecoder* AudioLoader::decoderForTrack(const Track& track) const
     return p->m_decoderInstances.localData()->emplace(decoderName, std::move(decoder)).first->second.get();
 }
 
-AudioReader* AudioLoader::readerForTrack(const Track& track) const
+AudioReader* AudioLoader::readerForFile(const QString& file) const
 {
+    const QFileInfo info{file};
+
     const std::shared_lock lock{p->m_readerMutex};
 
-    const auto extensions = track.extension();
+    const auto extensions = info.suffix().toLower();
     if(!p->m_extensionToReaderMap.contains(extensions)) {
         return nullptr;
     }
@@ -132,12 +135,17 @@ AudioReader* AudioLoader::readerForTrack(const Track& track) const
     return p->m_readerInstances.localData()->emplace(readerName, std::move(reader)).first->second.get();
 }
 
+AudioReader* AudioLoader::readerForTrack(const Track& track) const
+{
+    return readerForFile(track.filepath());
+}
+
 bool AudioLoader::readTrackMetadata(Track& track) const
 {
     const std::shared_lock lock{p->m_decoderMutex};
 
     if(auto* decoder = readerForTrack(track)) {
-        return decoder->readMetaData(track);
+        return decoder->readTrack(track);
     }
 
     return false;
@@ -162,7 +170,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
 
     if(auto* decoder = readerForTrack(track)) {
         if(decoder->canWriteMetaData()) {
-            return decoder->writeMetaData(track, options);
+            return decoder->writeTrack(track, options);
         }
     }
 

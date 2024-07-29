@@ -62,6 +62,7 @@ public:
 
     QString cuePath;
 
+    int subsong{-1};
     uint64_t offset{0};
     uint64_t duration{0};
     uint64_t filesize{0};
@@ -90,6 +91,12 @@ Track::Track(const QString& filepath)
     : p{new TrackPrivate()}
 {
     setFilePath(filepath);
+}
+
+Track::Track(const QString& filepath, int subsong)
+    : Track{filepath}
+{
+    setSubsong(subsong);
 }
 
 Track::~Track()                             = default;
@@ -425,6 +432,11 @@ QByteArray Track::serialiseExtrasTags() const
     stream << p->extraTags;
 
     return out;
+}
+
+int Track::subsong() const
+{
+    return p->subsong;
 }
 
 uint64_t Track::offset() const
@@ -796,6 +808,11 @@ void Track::storeExtraTags(const QByteArray& tags)
     stream.setVersion(QDataStream::Qt_6_0);
 
     stream >> p->extraTags;
+}
+
+void Track::setSubsong(int index)
+{
+    p->subsong = index;
 }
 
 void Track::setOffset(uint64_t offset)

@@ -323,6 +323,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::FileNameWithExt)] = &Track::filenameExt;
     m_metadata[QString::fromLatin1(MetaData::Directory)]       = &Track::directory;
     m_metadata[QString::fromLatin1(MetaData::Path)]            = &Track::path;
+    m_metadata[QString::fromLatin1(MetaData::Subsong)]         = &Track::subsong;
 
     m_setMetadata[QString::fromLatin1(MetaData::Title)]       = generateSetFunc(&Track::setTitle);
     m_setMetadata[QString::fromLatin1(MetaData::Artist)]      = generateSetFunc(&Track::setArtists);

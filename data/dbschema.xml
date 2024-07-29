@@ -210,4 +210,15 @@
             CREATE UNIQUE INDEX IF NOT EXISTS UniqueTrack ON Tracks(FilePath, Offset);
         </sql>
     </revision>
+    <revision version="8">
+        <description>
+            Adds subsong index column.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN Subsong INTEGER DEFAULT -1;
+
+            DROP INDEX IF EXISTS UniqueTrack;
+            CREATE UNIQUE INDEX IF NOT EXISTS UniqueTrack ON Tracks(FilePath, Offset, Subsong);
+        </sql>
+    </revision>
 </schema>

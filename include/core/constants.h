@@ -58,5 +58,6 @@ constexpr auto Extension       = "extension";
 constexpr auto FileNameWithExt = "filename_ext";
 constexpr auto Directory       = "directory";
 constexpr auto Path            = "path";
+constexpr auto Subsong         = "subsong";
 } // namespace MetaData
 } // namespace Fooyin::Constants

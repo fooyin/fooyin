@@ -22,4 +22,5 @@ dnf -y --allowerasing install \
      libswresample-free-devel \
      taglib-devel \
      kdsingleapplication-qt6-devel \
-     pipewire-devel
+     pipewire-devel \
+     libopenmpt-devel

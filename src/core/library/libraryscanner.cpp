@@ -209,16 +209,17 @@ public:
     void reportProgress() const;
     void fileScanned();
 
-    Track matchMissingTrack(Track& track);
+    Track matchMissingTrack(const Track& track);
 
     void storeTracks(TrackList& tracks);
 
     void checkBatchFinished();
     void readFileProperties(Track& track);
 
-    [[nodiscard]] bool readTrackMetadata(Track& track) const;
-    TrackList readPlaylistTracks(const QString& file) const;
-    TrackList readEmbeddedPlaylistTracks(const Track& track) const;
+    [[nodiscard]] bool readTrack(Track& track) const;
+    [[nodiscard]] TrackList readTracks(const QString& file) const;
+    [[nodiscard]] TrackList readPlaylistTracks(const QString& file) const;
+    [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track) const;
 
     void updateExistingCueTracks(const TrackList& tracks, const QString& cue);
     void addNewCueTracks(const QString& cue, const QString& filename);
@@ -305,7 +306,7 @@ void LibraryScannerPrivate::fileScanned()
     reportProgress();
 }
 
-Track LibraryScannerPrivate::matchMissingTrack(Track& track)
+Track LibraryScannerPrivate::matchMissingTrack(const Track& track)
 {
     const QString filename = track.filename();
     const QString hash     = track.hash();
@@ -361,15 +362,40 @@ void LibraryScannerPrivate::readFileProperties(Track& track)
     }
 }
 
-bool LibraryScannerPrivate::readTrackMetadata(Track& track) const
+bool LibraryScannerPrivate::readTrack(Track& track) const
 {
-    if(m_audioLoader->readTrackMetadata(track)) {
-        track.generateHash();
-        return true;
+    auto* tagReader = m_audioLoader->readerForTrack(track);
+    if(!tagReader || !tagReader->init(track.filepath())) {
+        qCInfo(LIB_SCANNER) << "Unsupported file:" << track.filepath();
+        return {};
     }
 
-    qCInfo(LIB_SCANNER) << "Unsupported file:" << track.filepath();
-    return false;
+    return tagReader->readTrack(track);
+}
+
+TrackList LibraryScannerPrivate::readTracks(const QString& file) const
+{
+    auto* tagReader = m_audioLoader->readerForFile(file);
+    if(!tagReader || !tagReader->init(file)) {
+        qCInfo(LIB_SCANNER) << "Unsupported file:" << file;
+        return {};
+    }
+
+    TrackList tracks;
+    const int subsongCount = tagReader->subsongCount();
+    const QFileInfo info{file};
+
+    for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
+        Track subTrack{file, subIndex};
+        subTrack.setFileSize(info.size());
+
+        if(tagReader->readTrack(subTrack)) {
+            subTrack.generateHash();
+            tracks.push_back(subTrack);
+        }
+    }
+
+    return tracks;
 }
 
 TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& file) const
@@ -531,32 +557,34 @@ void LibraryScannerPrivate::updateExistingTrack(Track& track, const QString& fil
 
 void LibraryScannerPrivate::readNewTrack(const QString& file)
 {
-    Track track{file};
-    if(!readTrackMetadata(track)) {
+    TrackList tracks = readTracks(file);
+    if(tracks.empty()) {
         return;
     }
 
-    Track refoundTrack = matchMissingTrack(track);
-    if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
-        m_missingHashes.erase(refoundTrack.hash());
-        m_missingFiles.erase(refoundTrack.filename());
+    for(Track& track : tracks) {
+        Track refoundTrack = matchMissingTrack(track);
+        if(refoundTrack.isInLibrary() || refoundTrack.isInDatabase()) {
+            m_missingHashes.erase(refoundTrack.hash());
+            m_missingFiles.erase(refoundTrack.filename());
 
-        setTrackProps(refoundTrack, file);
-        m_tracksToUpdate.push_back(refoundTrack);
-    }
-    else {
-        setTrackProps(track, file);
-        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-
-        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-            TrackList cueTracks = readEmbeddedPlaylistTracks(track);
-            for(Track& cueTrack : cueTracks) {
-                setTrackProps(cueTrack, file);
-                m_tracksToStore.push_back(cueTrack);
-            }
+            setTrackProps(refoundTrack, file);
+            m_tracksToUpdate.push_back(refoundTrack);
         }
         else {
-            m_tracksToStore.push_back(track);
+            setTrackProps(track, file);
+            track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+
+            if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                TrackList cueTracks = readEmbeddedPlaylistTracks(track);
+                for(Track& cueTrack : cueTracks) {
+                    setTrackProps(cueTrack, file);
+                    m_tracksToStore.push_back(cueTrack);
+                }
+            }
+            else {
+                m_tracksToStore.push_back(track);
+            }
         }
     }
 }
@@ -585,7 +613,7 @@ void LibraryScannerPrivate::readFile(const QString& file, bool onlyModified)
         if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != m_currentLibrary.id
            || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
             Track changedTrack{libraryTrack};
-            if(!readTrackMetadata(changedTrack)) {
+            if(!readTrack(changedTrack)) {
                 return;
             }
 
@@ -912,19 +940,21 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                     }
                 }
                 else {
-                    Track track{file};
-                    if(!p->readTrackMetadata(track)) {
+                    TrackList tracks = p->readTracks(file);
+                    if(tracks.empty()) {
                         continue;
                     }
-                    p->readFileProperties(track);
-                    track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+                    for(Track& track : tracks) {
+                        p->readFileProperties(track);
+                        track.setAddedTime(QDateTime::currentMSecsSinceEpoch());
 
-                    if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
-                        const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
-                        std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
-                    }
-                    else {
-                        tracksToStore.push_back(track);
+                        if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
+                            const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
+                            std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
+                        }
+                        else {
+                            tracksToStore.push_back(track);
+                        }
                     }
                 }
             }

@@ -17,28 +17,24 @@
  *
  */
 
-#include <core/engine/audioinput.h>
+#include "openmptplugin.h"
 
-namespace Fooyin {
-void AudioDecoder::start() { }
+#include "openmptinput.h"
 
-int AudioReader::subsongCount() const
+namespace Fooyin::OpenMpt {
+QString RawAudioPlugin::name() const
 {
-    return 1;
+    return QStringLiteral("OpenMpt");
 }
 
-bool AudioReader::init(const QString& /*file*/)
+InputCreator RawAudioPlugin::inputCreator() const
 {
-    return true;
+    return {.decoder = []() { return std::make_unique<OpenMptInput>(); },
+            .reader =
+                []() {
+                    return std::make_unique<OpenMptReader>();
+                }};
 }
+} // namespace Fooyin::OpenMpt
 
-QByteArray AudioReader::readCover(const Track& /*track*/, Track::Cover /*cover*/)
-{
-    return {};
-}
-
-bool AudioReader::writeTrack(const Track& /*track*/, WriteOptions /*options*/)
-{
-    return false;
-}
-} // namespace Fooyin
+#include "moc_openmptplugin.cpp"

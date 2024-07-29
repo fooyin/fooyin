@@ -204,7 +204,7 @@ bool SndFileReader::canWriteMetaData() const
     return false;
 }
 
-bool SndFileReader::readMetaData(Track& track)
+bool SndFileReader::readTrack(Track& track)
 {
     SF_INFO info;
     info.format = 0;
