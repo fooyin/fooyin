@@ -111,7 +111,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
 
     const std::shared_lock lock{p->m_readerMutex};
 
-    const auto extensions = info.suffix();
+    const auto extensions = info.suffix().toLower();
     if(!p->m_extensionToReaderMap.contains(extensions)) {
         return nullptr;
     }
