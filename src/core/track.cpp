@@ -62,7 +62,7 @@ public:
 
     QString cuePath;
 
-    int subsong{0};
+    int subsong{-1};
     uint64_t offset{0};
     uint64_t duration{0};
     uint64_t filesize{0};
