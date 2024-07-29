@@ -28,7 +28,7 @@ Q_LOGGING_CATEGORY(OPENMPT, "OpenMPT")
 constexpr auto SampleRate          = 44100;
 constexpr auto Channels            = 2;
 constexpr auto BufferLen           = 1024UL;
-constexpr auto RepeatCount         = 5;
+constexpr auto RepeatCount         = 0;
 constexpr auto VolumeRamping       = -1;
 constexpr auto StereoSeperation    = 100;
 constexpr auto InterpolationFilter = 0;
