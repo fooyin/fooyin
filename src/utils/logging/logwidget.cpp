@@ -57,6 +57,7 @@ LogWidget::LogWidget(QWidget* parent)
     layout->addWidget(buttonBox, 1, 0);
 
     m_view->setModel(m_model);
+    m_view->setRootIsDecorated(false);
     m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_view->header()->setStretchLastSection(true);
