@@ -80,7 +80,7 @@ AudioBuffer FFmpegResampler::resample(const AudioBuffer& buffer)
     const int outSamples = swr_convert(m_context.get(), &out, outCount, &in, buffer.frameCount());
     outBuffer.resize(outFormat.bytesForFrames(outSamples));
 
-    const uint64_t startTime = outFormat.durationForFrames(static_cast<int>(m_samplesConverted + m_startTime));
+    const uint64_t startTime = outFormat.durationForFrames(static_cast<int>(m_samplesConverted)) + m_startTime;
     outBuffer.setStartTime(startTime);
 
     m_samplesConverted += outSamples;
