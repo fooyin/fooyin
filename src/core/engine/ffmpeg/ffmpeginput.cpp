@@ -676,7 +676,7 @@ bool FFmpegReader::canWriteMetaData() const
     return false;
 }
 
-bool FFmpegReader::readMetaData(Track& track)
+bool FFmpegReader::readTrack(Track& track)
 {
     const FormatContextPtr context = createAVFormatContext(track.filepath());
     if(!context) {
@@ -736,7 +736,7 @@ QByteArray FFmpegReader::readCover(const Track& track, Track::Cover cover)
     return coverData;
 }
 
-bool FFmpegReader::writeMetaData(const Track& /*track*/, WriteOptions /*options*/)
+bool FFmpegReader::writeTrack(const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
 }

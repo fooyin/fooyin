@@ -139,7 +139,7 @@ bool RawAudioReader::canWriteMetaData() const
     return false;
 }
 
-bool RawAudioReader::readMetaData(Track& track)
+bool RawAudioReader::readTrack(Track& track)
 {
     QFile file{track.filepath()};
     if(!file.open(QIODevice::ReadOnly)) {

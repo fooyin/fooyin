@@ -244,7 +244,7 @@ bool VgmReader::canWriteMetaData() const
     return false;
 }
 
-bool VgmReader::readMetaData(Track& track)
+bool VgmReader::readTrack(Track& track)
 {
     PlayerA mainPlayer;
     mainPlayer.RegisterPlayerEngine(new VGMPlayer());

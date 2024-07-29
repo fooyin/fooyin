@@ -51,6 +51,7 @@ QString fetchTrackColumns()
                                                   "Performer,"
                                                   "Genres,"
                                                   "Comment,"
+                                                  "Subsong,"
                                                   "CuePath,"
                                                   "Offset,"
                                                   "Duration,"
@@ -89,6 +90,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":performer"), track.performer()},
             {QStringLiteral(":genres"), track.genre()},
             {QStringLiteral(":comment"), track.comment()},
+            {QStringLiteral(":subsong"), track.subsong()},
             {QStringLiteral(":cuePath"), track.cuePath()},
             {QStringLiteral(":offset"), static_cast<quint64>(track.offset())},
             {QStringLiteral(":duration"), static_cast<quint64>(track.duration())},
@@ -124,24 +126,25 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setPerformer(q.value(13).toString());
     track.setGenres(q.value(14).toString().split(u'\037'));
     track.setComment(q.value(15).toString());
-    track.setCuePath(q.value(16).toString());
-    track.setOffset(q.value(17).toULongLong());
-    track.setDuration(q.value(18).toULongLong());
-    track.setFileSize(q.value(19).toInt());
-    track.setBitrate(q.value(20).toInt());
-    track.setSampleRate(q.value(21).toInt());
-    track.setChannels(q.value(22).toInt());
-    track.setBitDepth(q.value(23).toInt());
-    track.setCodec(q.value(24).toString());
-    track.storeExtraTags(q.value(25).toByteArray());
-    track.setModifiedTime(q.value(26).toULongLong());
-    track.setLibraryId(q.value(27).toInt());
-    track.setHash(q.value(28).toString());
-    track.setAddedTime(q.value(29).toULongLong());
-    track.setFirstPlayed(q.value(30).toULongLong());
-    track.setLastPlayed(q.value(31).toULongLong());
-    track.setPlayCount(q.value(32).toInt());
-    track.setRating(q.value(33).toFloat());
+    track.setSubsong(q.value(16).toInt());
+    track.setCuePath(q.value(17).toString());
+    track.setOffset(q.value(18).toULongLong());
+    track.setDuration(q.value(19).toULongLong());
+    track.setFileSize(q.value(20).toInt());
+    track.setBitrate(q.value(21).toInt());
+    track.setSampleRate(q.value(22).toInt());
+    track.setChannels(q.value(23).toInt());
+    track.setBitDepth(q.value(24).toInt());
+    track.setCodec(q.value(25).toString());
+    track.storeExtraTags(q.value(26).toByteArray());
+    track.setModifiedTime(q.value(27).toULongLong());
+    track.setLibraryId(q.value(28).toInt());
+    track.setHash(q.value(29).toString());
+    track.setAddedTime(q.value(30).toULongLong());
+    track.setFirstPlayed(q.value(31).toULongLong());
+    track.setLastPlayed(q.value(32).toULongLong());
+    track.setPlayCount(q.value(33).toInt());
+    track.setRating(q.value(34).toFloat());
 
     track.generateHash();
 
@@ -288,6 +291,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "Performer = :performer,"
                                           "Genres = :genres,"
                                           "Comment = :comment,"
+                                          "Subsong = :subsong,"
                                           "CuePath = :cuePath,"
                                           "Offset = :offset,"
                                           "Duration = :duration,"
@@ -450,6 +454,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.Performer,"
                                           "Tracks.Genres,"
                                           "Tracks.Comment,"
+                                          "Tracks.Subsong,"
                                           "Tracks.CuePath,"
                                           "Tracks.Offset,"
                                           "Tracks.Duration,"
@@ -511,6 +516,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "Performer,"
                                           "Genres,"
                                           "Comment,"
+                                          "Subsong,"
                                           "CuePath,"
                                           "Offset,"
                                           "Duration,"
@@ -540,6 +546,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":performer,"
                                           ":genres,"
                                           ":comment,"
+                                          ":subsong,"
                                           ":cuePath,"
                                           ":offset,"
                                           ":duration,"

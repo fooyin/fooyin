@@ -38,6 +38,7 @@ public:
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
     [[nodiscard]] AudioDecoder* decoderForTrack(const Track& track) const;
+    [[nodiscard]] AudioReader* readerForFile(const QString& file) const;
     [[nodiscard]] AudioReader* readerForTrack(const Track& track) const;
 
     [[nodiscard]] bool readTrackMetadata(Track& track) const;

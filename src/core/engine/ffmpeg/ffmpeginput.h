@@ -54,8 +54,8 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    [[nodiscard]] bool readMetaData(Track& track) override;
+    [[nodiscard]] bool readTrack(Track& track) override;
     [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
-    [[nodiscard]] bool writeMetaData(const Track& track, WriteOptions options) override;
+    [[nodiscard]] bool writeTrack(const Track& track, WriteOptions options) override;
 };
 } // namespace Fooyin
