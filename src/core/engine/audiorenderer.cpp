@@ -370,12 +370,6 @@ int AudioRenderer::writeAudioSamples(int samples)
     while(m_isRunning && !m_bufferQueue.empty() && samplesBuffered < samples) {
         AudioBuffer& buffer = m_bufferQueue.front();
 
-        if(m_resampler && !m_currentBufferResampled) {
-            buffer = m_resampler->resample(buffer);
-
-            m_currentBufferResampled = true;
-        }
-
         if(!buffer.isValid()) {
             // End of file
             m_currentBufferOffset    = 0;
@@ -383,6 +377,12 @@ int AudioRenderer::writeAudioSamples(int samples)
             m_bufferQueue.pop();
             emit finished();
             return samplesBuffered;
+        }
+
+        if(m_resampler && !m_currentBufferResampled) {
+            buffer = m_resampler->resample(buffer);
+
+            m_currentBufferResampled = true;
         }
 
         const int bytesLeft = buffer.byteCount() - m_currentBufferOffset;
