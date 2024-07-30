@@ -145,6 +145,7 @@ bool AudioLoader::readTrackMetadata(Track& track) const
     const std::shared_lock lock{p->m_decoderMutex};
 
     if(auto* decoder = readerForTrack(track)) {
+        decoder->init(track.filepath());
         return decoder->readTrack(track);
     }
 
