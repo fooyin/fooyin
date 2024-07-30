@@ -84,9 +84,9 @@ uint64_t getDuration(const gme_info_t* info)
 
 QStringList supportedExtensions()
 {
-    static const QStringList extensions = {QStringLiteral("ay"),   QStringLiteral("gbs"), QStringLiteral("gym"),
-                                           QStringLiteral("hes"),  QStringLiteral("kss"), QStringLiteral("nsf"),
-                                           QStringLiteral("nsfe"), QStringLiteral("sap"), QStringLiteral("spc")};
+    static const QStringList extensions
+        = {QStringLiteral("ay"),  QStringLiteral("gbs"),  QStringLiteral("hes"), QStringLiteral("kss"),
+           QStringLiteral("nsf"), QStringLiteral("nsfe"), QStringLiteral("sap"), QStringLiteral("spc")};
     return extensions;
 }
 } // namespace
