@@ -45,6 +45,8 @@ public:
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
+    [[nodiscard]] bool trackHasChanged() const override;
+    [[nodiscard]] Track changedTrack() const override;
 
     std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
     void start() override;
@@ -59,6 +61,7 @@ private:
     AudioFormat m_format;
     DataLoaderPtr m_loader;
     std::unique_ptr<PlayerA> m_mainPlayer;
+    Track m_changedTrack;
 };
 
 class VgmReader : public AudioReader

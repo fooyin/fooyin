@@ -138,6 +138,16 @@ bool VgmDecoder::isSeekable() const
     return true;
 }
 
+bool VgmDecoder::trackHasChanged() const
+{
+    return m_changedTrack.isValid();
+}
+
+Track VgmDecoder::changedTrack() const
+{
+    return m_changedTrack;
+}
+
 std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions options)
 {
     m_mainPlayer = std::make_unique<PlayerA>();
@@ -179,6 +189,12 @@ std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions o
         }
     }
 
+    const auto duration = static_cast<uint64_t>(m_mainPlayer->GetTotalTime(DurationFlags) * 1000);
+    if(track.duration() != duration) {
+        m_changedTrack = track;
+        m_changedTrack.setDuration(duration);
+    }
+
     return m_format;
 }
 
@@ -197,6 +213,7 @@ void VgmDecoder::stop()
     if(m_loader) {
         m_loader.reset();
     }
+    m_changedTrack = {};
 }
 
 void VgmDecoder::seek(uint64_t pos)
