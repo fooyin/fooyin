@@ -21,6 +21,7 @@
 
 #include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
+#include <core/track.h>
 #include <gui/plugins/guiplugin.h>
 #include <utils/database/dbconnectionpool.h>
 
@@ -52,6 +53,8 @@ public:
 private:
     FyWidget* createWavebar();
     void regenerateSelection(bool onlyMissing = false) const;
+    void removeTrack(const Track& track);
+    void removeTracks(const TrackList& tracks);
     void removeSelection();
     void clearCache() const;
 

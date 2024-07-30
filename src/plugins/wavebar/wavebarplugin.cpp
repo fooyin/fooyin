@@ -57,9 +57,7 @@ WaveBarPlugin::WaveBarPlugin()
 
 WaveBarPlugin::~WaveBarPlugin()
 {
-    if(m_waveBuilder) {
-        m_waveBuilder.reset();
-    }
+    m_waveBuilder.reset();
 }
 
 void WaveBarPlugin::initialise(const CorePluginContext& context)
@@ -142,33 +140,34 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
         = new QProgressDialog(QStringLiteral("Generating waveform data…"), QStringLiteral("Abort"), 0, total, nullptr);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
+    dialog->setMinimumDuration(500);
     dialog->setValue(0);
 
+    // Deleted on close of dialog
     auto* builder = new WaveformBuilder(m_audioLoader, m_dbPool, m_settings, dialog);
 
-    QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog, [dialog, builder]() {
-        if(dialog->wasCanceled()) {
-            delete builder;
-        }
-
-        dialog->setValue(dialog->value() + 1);
-    });
+    QObject::connect(builder, &WaveformBuilder::waveformGenerated, dialog,
+                     [dialog]() { dialog->setValue(dialog->value() + 1); });
 
     for(const Track& track : selectedTracks) {
         builder->generate(track, !onlyMissing);
     }
 }
 
-void WaveBarPlugin::removeSelection()
+void WaveBarPlugin::removeTrack(const Track& track)
 {
-    auto selectedTracks = m_trackSelection->selectedTracks();
-    if(selectedTracks.empty()) {
+    removeTracks({track});
+}
+
+void WaveBarPlugin::removeTracks(const TrackList& tracks)
+{
+    if(tracks.empty()) {
         return;
     }
 
-    Utils::asyncExec([this, selectedTracks]() {
+    Utils::asyncExec([this, tracks]() {
         QStringList keys;
-        for(const Track& track : selectedTracks) {
+        for(const Track& track : tracks) {
             keys.emplace_back(WaveBarDatabase::cacheKey(track));
         }
 
@@ -181,6 +180,11 @@ void WaveBarPlugin::removeSelection()
             qCWarning(WAVEBAR) << "Unable to remove waveform data";
         }
     });
+}
+
+void WaveBarPlugin::removeSelection()
+{
+    removeTracks(m_trackSelection->selectedTracks());
 }
 
 void WaveBarPlugin::clearCache() const
