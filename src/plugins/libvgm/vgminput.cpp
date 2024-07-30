@@ -35,10 +35,6 @@
 
 Q_LOGGING_CATEGORY(VGM_INPUT, "VGMInput")
 
-// TODO: Make configurable
-// Note: Some of these will change the duration of the track,
-// so we'll need a way to update the saved duration so seekbars
-// function normally
 constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;
 constexpr auto Channels   = 2;
@@ -65,6 +61,18 @@ void configurePlayer(PlayerA* player)
     config.endSilenceSmpls = SampleRate / 2;
     config.pbSpeed         = 1.0;
     player->SetConfiguration(config);
+}
+
+void setLoopCount(PlayerA* player, int count)
+{
+    player->SetLoopCount(count);
+
+    PlayerBase* playerBase = player->GetPlayer();
+    if(playerBase->GetPlayerType() == FCC_VGM) {
+        if(auto* vgmPlayer = dynamic_cast<VGMPlayer*>(playerBase)) {
+            player->SetLoopCount(vgmPlayer->GetModifiedLoopCount(count));
+        }
+    }
 }
 
 int extractTrackNumber(const QString& filename)
@@ -166,8 +174,6 @@ std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions o
         loopCount = DefaultLoopCount;
     }
 
-    m_mainPlayer->SetLoopCount(loopCount);
-
     m_loader = {FileLoader_Init(track.filepath().toUtf8().constData()), DataLoaderDeleter()};
     if(!m_loader) {
         return {};
@@ -182,17 +188,17 @@ std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions o
         return {};
     }
 
-    PlayerBase* player = m_mainPlayer->GetPlayer();
-    if(player->GetPlayerType() == FCC_VGM) {
-        if(auto* vgmPlayer = dynamic_cast<VGMPlayer*>(player)) {
-            m_mainPlayer->SetLoopCount(vgmPlayer->GetModifiedLoopCount(loopCount));
-        }
-    }
+    const int currLoopCount{loopCount};
+    setLoopCount(m_mainPlayer.get(), currLoopCount == 0 ? DefaultLoopCount : currLoopCount);
 
     const auto duration = static_cast<uint64_t>(m_mainPlayer->GetTotalTime(DurationFlags) * 1000);
     if(track.duration() != duration) {
         m_changedTrack = track;
         m_changedTrack.setDuration(duration);
+    }
+
+    if(currLoopCount == 0) {
+        setLoopCount(m_mainPlayer.get(), currLoopCount);
     }
 
     return m_format;
@@ -270,15 +276,6 @@ bool VgmReader::readTrack(Track& track)
     mainPlayer.RegisterPlayerEngine(new GYMPlayer());
     configurePlayer(&mainPlayer);
 
-    const FySettings settings;
-
-    int loopCount = settings.value(QLatin1String{LoopCountSetting}).toInt();
-    if(loopCount == 0) {
-        loopCount = DefaultLoopCount;
-    }
-
-    mainPlayer.SetLoopCount(loopCount);
-
     const DataLoaderPtr loader{FileLoader_Init(track.filepath().toUtf8().constData())};
     if(!loader) {
         return false;
@@ -293,13 +290,16 @@ bool VgmReader::readTrack(Track& track)
         return false;
     }
 
-    PlayerBase* player = mainPlayer.GetPlayer();
-    if(player->GetPlayerType() == FCC_VGM) {
-        if(auto* vgmPlayer = dynamic_cast<VGMPlayer*>(player)) {
-            mainPlayer.SetLoopCount(vgmPlayer->GetModifiedLoopCount(loopCount));
-        }
+    const FySettings settings;
+
+    int loopCount = settings.value(QLatin1String{LoopCountSetting}).toInt();
+    if(loopCount == 0) {
+        loopCount = DefaultLoopCount;
     }
 
+    setLoopCount(&mainPlayer, loopCount);
+
+    PlayerBase* player = mainPlayer.GetPlayer();
     track.setDuration(static_cast<uint64_t>(mainPlayer.GetTotalTime(DurationFlags) * 1000));
     track.setSampleRate(static_cast<int>(player->GetSampleRate()));
     track.setBitDepth(Bps);
