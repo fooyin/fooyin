@@ -60,7 +60,6 @@ namespace Fooyin::OpenMpt {
 OpenMptInput::OpenMptInput()
     : m_eof{false}
 {
-    // Assume 16bit PCM
     m_format.setSampleFormat(SampleFormat::F32);
     m_format.setChannelCount(Channels);
     m_format.setSampleRate(SampleRate);
@@ -99,7 +98,6 @@ std::optional<AudioFormat> OpenMptInput::init(const Track& track, DecoderOptions
         }
         m_module->set_repeat_count(repeat);
         setupModule(m_module.get());
-
         m_module->select_subsong(track.subsong());
     }
     catch(...) {
