@@ -153,4 +153,23 @@ int AudioFormat::bitsPerSample() const
 {
     return bytesPerSample() * 8;
 }
+
+QString AudioFormat::prettyFormat() const
+{
+    switch(m_sampleFormat) {
+        case(SampleFormat::U8):
+            return QStringLiteral("8 bit (unsigned)");
+        case(SampleFormat::S16):
+            return QStringLiteral("16 bit (signed)");
+        case(SampleFormat::S24):
+            return QStringLiteral("24 bit (signed)");
+        case(SampleFormat::S32):
+            return QStringLiteral("32 bit (signed)");
+        case(SampleFormat::F32):
+            return QStringLiteral("32 bit (float)");
+        case(SampleFormat::Unknown):
+        default:
+            return QStringLiteral("Unknown format");
+    }
+}
 } // namespace Fooyin

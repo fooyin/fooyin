@@ -21,6 +21,8 @@
 
 #include "fycore_export.h"
 
+#include <QString>
+
 #include <cstdint>
 
 namespace Fooyin {
@@ -66,6 +68,8 @@ public:
     [[nodiscard]] int bytesPerFrame() const;
     [[nodiscard]] int bytesPerSample() const;
     [[nodiscard]] int bitsPerSample() const;
+
+    [[nodiscard]] QString prettyFormat() const;
 
 private:
     SampleFormat m_sampleFormat;

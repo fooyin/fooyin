@@ -487,7 +487,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
     const int err   = snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, alsaFormat);
 
     if(err < 0) {
-        qCInfo(ALSA) << "Format not supported:" << m_format.bitsPerSample() << "bps";
+        qCInfo(ALSA) << "Format not supported:" << m_format.prettyFormat();
         qCDebug(ALSA) << "Trying all supported formats";
 
         static constexpr std::array<std::pair<snd_pcm_format_t, int>, 4> formats{
@@ -499,7 +499,6 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         for(const auto& [format, bps] : formats) {
             if(format != alsaFormat && bps >= m_format.bitsPerSample()) {
                 if(snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, format) >= 0) {
-                    qCInfo(ALSA) << "Found compatible format:" << bps << "bps";
                     compatFormat = format;
                     break;
                 }
@@ -509,7 +508,6 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         for(const auto& [format, bps] : formats) {
             if(format != alsaFormat && bps < m_format.bitsPerSample()) {
                 if(snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, format) >= 0) {
-                    qCInfo(ALSA) << "Found compatible format:" << bps << "bps";
                     compatFormat = format;
                     break;
                 }
@@ -522,6 +520,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         }
 
         m_format.setSampleFormat(findSampleFormat(compatFormat));
+        qCInfo(ALSA) << "Found compatible format:" << m_format.prettyFormat();
     }
 
     return true;
