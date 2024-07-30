@@ -63,8 +63,17 @@ WaveBarPlugin::~WaveBarPlugin()
 void WaveBarPlugin::initialise(const CorePluginContext& context)
 {
     m_playerController = context.playerController;
+    m_engine           = context.engine;
     m_audioLoader      = context.audioLoader;
     m_settings         = context.settingsManager;
+
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this,
+                     [this](const Track& track) { m_playingTrack = track; });
+    QObject::connect(m_engine, &EngineController::trackChanged, this, [this](const Track& track) {
+        if(m_playingTrack.id() == track.id()) {
+            removeTrack(m_playingTrack);
+        }
+    });
 }
 
 void WaveBarPlugin::initialise(const GuiPluginContext& context)

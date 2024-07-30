@@ -60,11 +60,13 @@ private:
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;
+    EngineController* m_engine;
     std::shared_ptr<AudioLoader> m_audioLoader;
     TrackSelectionController* m_trackSelection;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
 
+    Track m_playingTrack;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<WaveformBuilder> m_waveBuilder;
 
