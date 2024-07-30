@@ -283,7 +283,9 @@ Application::Application(QObject* parent)
                      &PlaylistHandler::trackAboutToFinish);
     QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
         p->m_library->updateTrackMetadata({track});
-        p->m_playerController->changeCurrentTrack(track);
+        auto currentTrack  = p->m_playerController->currentPlaylistTrack();
+        currentTrack.track = track;
+        p->m_playerController->changeCurrentTrack(currentTrack);
     });
     QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
         if(status == TrackStatus::Invalid) {

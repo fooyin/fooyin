@@ -1206,14 +1206,16 @@ void PlaylistModel::tracksChanged()
 
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
-    m_currentPlayingTrack = track;
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    if(std::exchange(m_currentPlayingTrack, track) != track) {
+        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    }
 }
 
 void PlaylistModel::playStateChanged(PlayState state)
 {
-    m_currentPlayState = state;
-    emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    if(std::exchange(m_currentPlayState, state) != state) {
+        emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    }
 }
 
 void PlaylistModel::populateModel(PendingData& data)

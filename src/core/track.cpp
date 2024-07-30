@@ -105,7 +105,7 @@ Track& Track::operator=(const Track& other) = default;
 
 bool Track::operator==(const Track& other) const
 {
-    return uniqueFilepath() == other.uniqueFilepath() && hash() == other.hash();
+    return uniqueFilepath() == other.uniqueFilepath() && duration() == other.duration() && hash() == other.hash();
 }
 
 bool Track::operator!=(const Track& other) const
