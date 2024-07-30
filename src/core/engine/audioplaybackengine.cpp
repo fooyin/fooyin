@@ -306,17 +306,22 @@ void AudioPlaybackEngine::stopWorkers(bool full)
 {
     m_bufferTimer.stop();
     m_posTimer.stop();
+
     m_clock.setPaused(true);
     m_clock.sync();
+
     m_decoding = false;
+
     m_renderer->stop();
+
     if(full) {
         m_renderer->closeOutput();
         m_outputState = AudioOutput::State::Disconnected;
     }
-    if(m_decoder && m_state != PlaybackState::Stopped) {
+    if(m_decoder && (full || m_state != PlaybackState::Stopped)) {
         m_decoder->stop();
     }
+
     m_totalBufferTime = 0;
 }
 
