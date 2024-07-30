@@ -281,6 +281,10 @@ Application::Application(QObject* parent)
                      &PlaylistHandler::handleTracksUpdated);
     QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
                      &PlaylistHandler::trackAboutToFinish);
+    QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
+        p->m_library->updateTrackMetadata({track});
+        p->m_playerController->changeCurrentTrack(track);
+    });
     QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
         if(status == TrackStatus::Invalid) {
             p->m_playerController->pause();

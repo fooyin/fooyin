@@ -72,6 +72,7 @@ signals:
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
     void positionChanged(uint64_t ms);
+    void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
 };
 } // namespace Fooyin

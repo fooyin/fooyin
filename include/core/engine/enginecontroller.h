@@ -57,6 +57,7 @@ signals:
     void deviceChanged(const QString& device);
     void engineError(const QString& error);
     void trackStatusChanged(TrackStatus status);
+    void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
 };
 } // namespace Fooyin

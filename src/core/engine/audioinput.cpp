@@ -20,6 +20,16 @@
 #include <core/engine/audioinput.h>
 
 namespace Fooyin {
+bool AudioDecoder::trackHasChanged() const
+{
+    return false;
+}
+
+Track AudioDecoder::changedTrack() const
+{
+    return {};
+}
+
 void AudioDecoder::start() { }
 
 int AudioReader::subsongCount() const

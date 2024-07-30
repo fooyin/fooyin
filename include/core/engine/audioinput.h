@@ -46,6 +46,8 @@ public:
 
     [[nodiscard]] virtual QStringList extensions() const = 0;
     [[nodiscard]] virtual bool isSeekable() const        = 0;
+    [[nodiscard]] virtual bool trackHasChanged() const;
+    [[nodiscard]] virtual Track changedTrack() const;
 
     virtual std::optional<AudioFormat> init(const Track& track, DecoderOptions options) = 0;
     virtual void start();

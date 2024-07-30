@@ -99,6 +99,7 @@ private:
     double m_volume;
     bool m_ending;
     bool m_decoding;
+    bool m_updatingTrack;
 
     Track m_currentTrack;
     AudioFormat m_format;

@@ -64,6 +64,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_volume{1.0}
     , m_ending{false}
     , m_decoding{false}
+    , m_updatingTrack{false}
     , m_renderer{new AudioRenderer(this)}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
@@ -105,6 +106,11 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
+    if(m_updatingTrack) {
+        m_updatingTrack = false;
+        return;
+    }
+
     changeTrackStatus(TrackStatus::Loading);
 
     const Track prevTrack = std::exchange(m_currentTrack, track);
@@ -118,7 +124,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     if(m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset()) {
-        // Multi-file track
+        // Multi-track file
         emit positionChanged(0);
         m_ending = false;
         m_clock.sync(0);
@@ -149,6 +155,12 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     if(!format) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
+    }
+
+    if(m_decoder->trackHasChanged()) {
+        m_updatingTrack = true;
+        m_currentTrack  = m_decoder->changedTrack();
+        emit trackChanged(m_currentTrack);
     }
 
     if(!updateFormat(format.value())) {
