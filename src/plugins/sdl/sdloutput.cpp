@@ -104,9 +104,20 @@ bool SdlOutput::init(const AudioFormat& format)
         return false;
     }
 
-    m_format.setSampleRate(m_obtainedSpec.freq);
-    m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
-    m_format.setChannelCount(m_obtainedSpec.channels);
+    if(m_obtainedSpec.format != m_desiredSpec.format) {
+        qCInfo(SDL) << "Format not supported:" << m_format.prettyFormat();
+        m_format.setSampleFormat(findSampleFormat(m_obtainedSpec.format));
+        qCInfo(SDL) << "Using compatible format:" << m_format.prettyFormat();
+    }
+    if(m_obtainedSpec.freq != m_desiredSpec.freq) {
+        qCInfo(SDL) << "Sample rate not supported:" << m_desiredSpec.freq << "Hz";
+        qCInfo(SDL) << "Using sample rate:" << m_obtainedSpec.freq << "Hz";
+        m_format.setSampleRate(m_obtainedSpec.freq);
+    }
+    if(m_obtainedSpec.channels != m_desiredSpec.channels) {
+        qCInfo(SDL) << "Using channels:" << m_obtainedSpec.channels;
+        m_format.setChannelCount(m_obtainedSpec.channels);
+    }
 
     m_initialised = true;
     return true;
