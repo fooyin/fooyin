@@ -42,6 +42,7 @@ private:
 
     FySettings m_settings;
     QSpinBox* m_loopCount;
+    QSpinBox* m_fadeLength;
     QCheckBox* m_guessTrack;
     QLineEdit* m_romLocation;
 };

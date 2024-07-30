@@ -38,7 +38,6 @@ Q_LOGGING_CATEGORY(VGM_INPUT, "VGMInput")
 constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;
 constexpr auto Channels   = 2;
-constexpr auto FadeLen    = 4;
 constexpr auto BufferLen  = 2048;
 
 constexpr auto DurationFlags = (PLAYTIME_TIME_FILE | PLAYTIME_LOOP_INCL | PLAYTIME_WITH_FADE | PLAYTIME_WITH_SLNC);
@@ -53,11 +52,17 @@ QStringList fileExtensions()
 
 void configurePlayer(PlayerA* player)
 {
+    using namespace Fooyin::VgmInput;
+
+    const Fooyin::FySettings setting;
+
     player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
+
+    const auto fadeLength = setting.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt();
 
     PlayerA::Config config = player->GetConfiguration();
     config.masterVol       = 0x10000;
-    config.fadeSmpls       = SampleRate * FadeLen;
+    config.fadeSmpls       = SampleRate * (fadeLength / 1000);
     config.endSilenceSmpls = SampleRate / 2;
     config.pbSpeed         = 1.0;
     player->SetConfiguration(config);

@@ -36,6 +36,7 @@ namespace Fooyin::VgmInput {
 VgmInputSettings::VgmInputSettings(QWidget* parent)
     : QDialog{parent}
     , m_loopCount{new QSpinBox(this)}
+    , m_fadeLength{new QSpinBox(this)}
     , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
     , m_romLocation{new QLineEdit(this)}
 {
@@ -52,12 +53,22 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     auto* loopLabel     = new QLabel(tr("Loop count") + QStringLiteral(":"), this);
     auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
 
+    m_loopCount->setRange(0, 16);
+    m_loopCount->setSingleStep(1);
     m_loopCount->setSuffix(tr(" times"));
+
+    auto* fadeLabel = new QLabel(tr("Fade length") + QStringLiteral(":"), this);
+
+    m_fadeLength->setRange(0, 10000);
+    m_fadeLength->setSingleStep(500);
+    m_fadeLength->setSuffix(tr(" ms"));
 
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);
     lengthLayout->addWidget(m_loopCount, row, 1);
     lengthLayout->addWidget(loopHintLabel, row++, 2);
+    lengthLayout->addWidget(fadeLabel, row, 0);
+    lengthLayout->addWidget(m_fadeLength, row++, 1);
     lengthLayout->setColumnStretch(3, 1);
     lengthLayout->setRowStretch(row++, 1);
 
@@ -96,6 +107,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     layout->setColumnStretch(2, 1);
 
     m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
+    m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt());
     m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
     m_romLocation->setText(m_settings.value(QLatin1String{RomPathSetting}).toString());
 }
@@ -103,6 +115,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 void VgmInputSettings::accept()
 {
     m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
+    m_settings.setValue(QLatin1String{FadeLengthSetting}, m_fadeLength->value());
     m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
     m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
 

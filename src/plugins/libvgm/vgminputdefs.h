@@ -24,6 +24,8 @@ constexpr auto RomPathSetting = "VgmInput/RomPath";
 
 constexpr auto DefaultLoopCount = 2;
 constexpr auto LoopCountSetting = "VgmInput/LoopCount";
+constexpr auto DefaultFadeLength = 4000;
+constexpr auto FadeLengthSetting = "VgmInput/FadeLength";
 
 constexpr auto DefaultGuessTrack = true;
 constexpr auto GuessTrackSetting = "VgmInput/GuessTrack";
