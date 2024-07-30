@@ -37,6 +37,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     : QDialog{parent}
     , m_loopCount{new QSpinBox(this)}
     , m_fadeLength{new QSpinBox(this)}
+    , m_silenceLength{new QSpinBox(this)}
     , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
     , m_romLocation{new QLineEdit(this)}
 {
@@ -63,12 +64,20 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     m_fadeLength->setSingleStep(500);
     m_fadeLength->setSuffix(tr(" ms"));
 
+    auto* silenceLabel = new QLabel(tr("End silence length") + QStringLiteral(":"), this);
+
+    m_silenceLength->setRange(0, 10000);
+    m_silenceLength->setSingleStep(500);
+    m_silenceLength->setSuffix(tr(" ms"));
+
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);
     lengthLayout->addWidget(m_loopCount, row, 1);
     lengthLayout->addWidget(loopHintLabel, row++, 2);
     lengthLayout->addWidget(fadeLabel, row, 0);
     lengthLayout->addWidget(m_fadeLength, row++, 1);
+    lengthLayout->addWidget(silenceLabel, row, 0);
+    lengthLayout->addWidget(m_silenceLength, row++, 1);
     lengthLayout->setColumnStretch(3, 1);
     lengthLayout->setRowStretch(row++, 1);
 
@@ -108,6 +117,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 
     m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
     m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt());
+    m_silenceLength->setValue(m_settings.value(QLatin1String{SilenceLengthSetting}, DefaultSilenceLength).toInt());
     m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
     m_romLocation->setText(m_settings.value(QLatin1String{RomPathSetting}).toString());
 }
@@ -116,6 +126,7 @@ void VgmInputSettings::accept()
 {
     m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
     m_settings.setValue(QLatin1String{FadeLengthSetting}, m_fadeLength->value());
+    m_settings.setValue(QLatin1String{SilenceLengthSetting}, m_silenceLength->value());
     m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
     m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
 

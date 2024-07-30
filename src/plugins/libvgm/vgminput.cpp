@@ -58,12 +58,13 @@ void configurePlayer(PlayerA* player)
 
     player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
 
-    const auto fadeLength = setting.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt();
+    const auto fadeLength    = setting.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt();
+    const auto silenceLength = setting.value(QLatin1String{SilenceLengthSetting}, DefaultSilenceLength).toInt();
 
     PlayerA::Config config = player->GetConfiguration();
     config.masterVol       = 0x10000;
     config.fadeSmpls       = SampleRate * (fadeLength / 1000);
-    config.endSilenceSmpls = SampleRate / 2;
+    config.endSilenceSmpls = SampleRate * (silenceLength / 1000);
     config.pbSpeed         = 1.0;
     player->SetConfiguration(config);
 }
