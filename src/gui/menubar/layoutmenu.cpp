@@ -24,6 +24,7 @@
 #include <gui/layoutprovider.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -37,14 +38,14 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_actionManager{actionManager}
     , m_layoutProvider{layoutProvider}
     , m_settings{settings}
+    , m_layoutMenu{nullptr}
     , m_layoutEditing{nullptr}
 { }
 
 void LayoutMenu::setup()
 {
-    auto* layoutMenu = m_actionManager->actionContainer(Constants::Menus::Layout);
-
-    layoutMenu->clear();
+    m_layoutMenu = m_actionManager->actionContainer(Constants::Menus::Layout);
+    m_layoutMenu->clear();
 
     if(!m_layoutEditing) {
         m_layoutEditing    = new QAction(tr("&Editing Mode"), this);
@@ -58,25 +59,42 @@ void LayoutMenu::setup()
             this, [this](bool enabled) { m_layoutEditing->setChecked(enabled); });
     }
 
-    layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
+    m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
 
-    auto* importLayout = new QAction(tr("&Import Layout"), layoutMenu->menu());
+    auto* importLayout = new QAction(tr("&Import Layout…"), m_layoutMenu->menu());
     QObject::connect(importLayout, &QAction::triggered, this, &LayoutMenu::importLayout);
-    auto* exportLayout = new QAction(tr("E&xport Layout"), layoutMenu->menu());
+    auto* exportLayout = new QAction(tr("E&xport Layout…"), m_layoutMenu->menu());
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
-    layoutMenu->addAction(importLayout);
-    layoutMenu->addAction(exportLayout);
+    m_layoutMenu->addAction(importLayout);
+    m_layoutMenu->addAction(exportLayout);
 
-    layoutMenu->addSeparator();
+    m_layoutMenu->addSeparator();
 
     const auto layouts = m_layoutProvider->layouts();
-
     for(const auto& layout : layouts) {
-        auto* layoutAction = new QAction(layout.name(), layoutMenu->menu());
-        QObject::connect(layoutAction, &QAction::triggered, this, [this, layout]() { emit changeLayout(layout); });
-        layoutMenu->addAction(layoutAction);
+        addLayout(layout.name());
     }
+
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this,
+                     [this](const FyLayout& layout) { addLayout(layout.name()); });
+}
+
+void LayoutMenu::addLayout(const QString& name)
+{
+    if(!m_layoutMenu) {
+        return;
+    }
+
+    auto* layoutAction = new QAction(name, m_layoutMenu->menu());
+    auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{QStringLiteral("Layout.Switch.%1").arg(name)});
+    QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
+        const auto layout = m_layoutProvider->layoutByName(name);
+        if(layout.isValid()) {
+            emit changeLayout(layout);
+        }
+    });
+    m_layoutMenu->addAction(layoutCmd->action());
 }
 } // namespace Fooyin
 

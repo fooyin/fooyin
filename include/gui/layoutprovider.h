@@ -39,6 +39,7 @@ public:
 
     [[nodiscard]] FyLayout currentLayout() const;
     [[nodiscard]] LayoutList layouts() const;
+    [[nodiscard]] FyLayout layoutByName(const QString& name) const;
 
     void findLayouts();
     void loadCurrentLayout();
@@ -54,6 +55,7 @@ public:
 
 signals:
     void layoutAdded(const Fooyin::FyLayout& layout);
+    void layoutChanged(const Fooyin::FyLayout& layout);
     void requestChangeLayout(const Fooyin::FyLayout& layout);
 
 private:

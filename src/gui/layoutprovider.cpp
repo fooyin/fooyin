@@ -46,6 +46,7 @@ class LayoutProviderPrivate
 {
 public:
     [[nodiscard]] bool layoutExists(const QString& name) const;
+    [[nodiscard]] LayoutList::iterator layout(const QString& name);
     FyLayout addLayout(const FyLayout& layout, bool import = false);
 
     LayoutList m_layouts;
@@ -56,6 +57,11 @@ public:
 bool LayoutProviderPrivate::layoutExists(const QString& name) const
 {
     return std::ranges::any_of(m_layouts, [name](const FyLayout& layout) { return layout.name() == name; });
+}
+
+LayoutList::iterator LayoutProviderPrivate::layout(const QString& name)
+{
+    return std::ranges::find_if(m_layouts, [name](const FyLayout& layout) { return layout.name() == name; });
 }
 
 FyLayout LayoutProviderPrivate::addLayout(const FyLayout& layout, bool import)
@@ -97,6 +103,15 @@ FyLayout LayoutProvider::currentLayout() const
 LayoutList LayoutProvider::layouts() const
 {
     return p->m_layouts;
+}
+
+FyLayout LayoutProvider::layoutByName(const QString& name) const
+{
+    auto layout = p->layout(name);
+    if(layout != p->m_layouts.cend()) {
+        return *layout;
+    }
+    return {};
 }
 
 void LayoutProvider::findLayouts()
@@ -275,9 +290,16 @@ bool LayoutProvider::exportLayout(const FyLayout& layout, const QString& path)
     }
 
     const QFileInfo fileInfo{filepath};
-    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath()) && !p->layoutExists(layout.name())) {
-        p->m_layouts.push_back(layout);
-        emit layoutAdded(layout);
+    if(Utils::File::isSamePath(fileInfo.absolutePath(), Gui::layoutsPath())) {
+        auto currLayout = p->layout(layout.name());
+        if(currLayout != p->m_layouts.end()) {
+            *currLayout = layout;
+            emit layoutChanged(layout);
+        }
+        else {
+            p->m_layouts.push_back(layout);
+            emit layoutAdded(layout);
+        }
     }
 
     return true;

@@ -24,6 +24,7 @@
 class QAction;
 
 namespace Fooyin {
+class ActionContainer;
 class ActionManager;
 class Command;
 class FyLayout;
@@ -46,10 +47,13 @@ signals:
     void exportLayout();
 
 private:
+    void addLayout(const QString& name);
+
     ActionManager* m_actionManager;
     LayoutProvider* m_layoutProvider;
     SettingsManager* m_settings;
 
+    ActionContainer* m_layoutMenu;
     QAction* m_layoutEditing;
     Command* m_layoutEditingCmd;
 };
