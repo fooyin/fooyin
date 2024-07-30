@@ -42,6 +42,7 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                                            Fooyin::Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
+    scanDialog->setMinimumDuration(1000);
     scanDialog->setValue(0);
 
     const Fooyin::ScanRequest request = library->scanFiles(files);
