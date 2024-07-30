@@ -126,7 +126,7 @@ QString Track::generateHash()
     }
 
     p->hash = Utils::generateHash(p->artists.join(QStringLiteral(",")), p->album, QString::number(p->discNumber),
-                                  QString::number(p->trackNumber), title);
+                                  QString::number(p->trackNumber), title, QString::number(p->subsong));
     return p->hash;
 }
 
