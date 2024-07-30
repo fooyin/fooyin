@@ -38,6 +38,7 @@ public:
         NoSeeking         = 1 << 0,
         NoLooping         = 1 << 1,
         NoInfiniteLooping = 1 << 2,
+        UpdateTracks      = 1 << 3,
     };
     Q_DECLARE_FLAGS(DecoderOptions, DecoderFlag)
     Q_FLAG(DecoderOptions)

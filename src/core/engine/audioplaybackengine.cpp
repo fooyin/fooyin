@@ -151,7 +151,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     changeTrackStatus(TrackStatus::Loading);
 
-    const auto format = m_decoder->init(track, {});
+    const auto format = m_decoder->init(track, AudioDecoder::UpdateTracks);
     if(!format) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
@@ -195,7 +195,7 @@ void AudioPlaybackEngine::play()
 
     if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
         // Current track was previously stopped, so init again
-        if(!m_decoder->init(m_currentTrack, {})) {
+        if(!m_decoder->init(m_currentTrack, AudioDecoder::UpdateTracks)) {
             changeTrackStatus(TrackStatus::Invalid);
             return;
         }

@@ -189,17 +189,18 @@ std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions o
     }
 
     const int currLoopCount{loopCount};
-    setLoopCount(m_mainPlayer.get(), currLoopCount == 0 ? DefaultLoopCount : currLoopCount);
 
-    const auto duration = static_cast<uint64_t>(m_mainPlayer->GetTotalTime(DurationFlags) * 1000);
-    if(track.duration() != duration) {
-        m_changedTrack = track;
-        m_changedTrack.setDuration(duration);
+    if(options & UpdateTracks) {
+        setLoopCount(m_mainPlayer.get(), currLoopCount == 0 ? DefaultLoopCount : currLoopCount);
+
+        const auto duration = static_cast<uint64_t>(m_mainPlayer->GetTotalTime(DurationFlags) * 1000);
+        if(track.duration() != duration) {
+            m_changedTrack = track;
+            m_changedTrack.setDuration(duration);
+        }
     }
 
-    if(currLoopCount == 0) {
-        setLoopCount(m_mainPlayer.get(), currLoopCount);
-    }
+    setLoopCount(m_mainPlayer.get(), currLoopCount);
 
     return m_format;
 }
