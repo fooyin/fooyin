@@ -229,12 +229,8 @@ bool OpenMptReader::readTrack(Track& track)
         const std::vector<std::string> keys = m_module->get_metadata_keys();
 
         for(const auto& key : keys) {
-            const QString tag   = QString::fromLocal8Bit(key);
-            const QString value = QString::fromLocal8Bit(m_module->get_metadata(key));
-
-            if(tag == u"type") {
-                continue;
-            }
+            const QString tag   = QString::fromUtf8(key);
+            const QString value = QString::fromUtf8(m_module->get_metadata(key));
 
             if(tag == u"title" && track.title().isEmpty()) {
                 track.setTitle(value);
@@ -257,12 +253,24 @@ bool OpenMptReader::readTrack(Track& track)
             else if(tag == u"comments") {
                 track.setComment(value);
             }
-            else if(tag == u"long_type") {
-                track.setCodec(value);
-            }
             else {
                 track.addExtraTag(tag, value);
             }
+        }
+
+        const std::vector<std::string> inst = m_module->get_instrument_names();
+        for(int i{0}; const auto& name : inst) {
+            if(!name.empty()) {
+                track.addExtraTag(QStringLiteral("INST%1").arg(i, 2, 10, QLatin1Char('0')), QString::fromUtf8(name));
+            }
+            ++i;
+        }
+        const std::vector<std::string> smpls = m_module->get_sample_names();
+        for(int i{0}; const auto& name : smpls) {
+            if(!name.empty()) {
+                track.addExtraTag(QStringLiteral("SMPL%1").arg(i, 2, 10, QLatin1Char('0')), QString::fromUtf8(name));
+            }
+            ++i;
         }
     }
     catch(...) {
