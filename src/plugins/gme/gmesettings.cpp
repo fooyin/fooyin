@@ -33,6 +33,8 @@
 #include <QPushButton>
 #include <QSpinBox>
 
+#include <gme/gme.h>
+
 namespace Fooyin::Gme {
 GmeSettings::GmeSettings(QWidget* parent)
     : QDialog{parent}
@@ -91,6 +93,11 @@ GmeSettings::GmeSettings(QWidget* parent)
     m_maxLength->setValue(m_settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt());
     m_loopCount->setValue(m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt());
     m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt());
+
+#if defined(GME_VERSION) && GME_VERSION < 0x000604
+    fadeLabel->setVisible(false);
+    m_fadeLength->setVisible(false);
+#endif
 }
 
 void GmeSettings::accept()

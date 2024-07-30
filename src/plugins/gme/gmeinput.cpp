@@ -57,29 +57,34 @@ QString findM3u(const QString& filepath)
     return files.front().absoluteFilePath();
 }
 
-uint64_t getDuration(const gme_info_t* info)
+uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOptions options = {})
 {
     if(info->length > 0) {
         return info->length;
     }
 
+    using Fooyin::AudioDecoder;
     using namespace Fooyin::Gme;
 
     const Fooyin::FySettings settings;
     const int maxLength = settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt();
-    const int loopCount = settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    int loopCount       = settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+
+    if(options & AudioDecoder::NoLooping) {
+        loopCount = 1;
+    }
 
     if(info->loop_length <= 0 || loopCount <= 0) {
         return static_cast<uint64_t>(maxLength * 60.0 * 1000);
     }
 
-    uint64_t songlength{0};
+    uint64_t songLength{0};
     if(info->intro_length > 0) {
-        songlength = static_cast<int>(info->intro_length);
+        songLength = static_cast<int>(info->intro_length);
     }
-    songlength += static_cast<int>(info->loop_length * loopCount);
+    songLength += static_cast<int>(info->loop_length * loopCount);
 
-    return songlength;
+    return songLength;
 }
 
 QStringList supportedExtensions()
@@ -95,6 +100,7 @@ namespace Fooyin::Gme {
 GmeDecoder::GmeDecoder()
     : m_subsong{0}
     , m_duration{0}
+    , m_loopLength{0}
 {
     m_format.setSampleFormat(SampleFormat::S16);
     m_format.setSampleRate(SampleRate);
@@ -123,6 +129,8 @@ Track GmeDecoder::changedTrack() const
 
 std::optional<AudioFormat> GmeDecoder::init(const Track& track, DecoderOptions options)
 {
+    m_options = options;
+
     Music_Emu* emu{nullptr};
     gme_open_file(track.filepath().toUtf8().constData(), &emu, SampleRate);
     if(!emu) {
@@ -136,7 +144,7 @@ std::optional<AudioFormat> GmeDecoder::init(const Track& track, DecoderOptions o
     if(!gme_track_info(m_emu.get(), &gmeInfo, m_subsong) && gmeInfo) {
         const GmeInfoPtr info{gmeInfo};
 
-        const auto duration = getDuration(gmeInfo);
+        const auto duration = getDuration(gmeInfo, options);
 
         if(options & UpdateTracks) {
             if(track.duration() != duration) {
@@ -145,7 +153,8 @@ std::optional<AudioFormat> GmeDecoder::init(const Track& track, DecoderOptions o
             }
         }
 
-        m_duration = static_cast<int>(duration);
+        m_loopLength = info->loop_length;
+        m_duration   = static_cast<int>(duration);
     }
 
     gme_enable_accuracy(m_emu.get(), 1);
@@ -177,12 +186,18 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
         return {};
     }
 
-    const int fadeLength = m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt();
+    const int loopCount = m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && loopCount == 0) {
+        gme_set_fade(m_emu.get(), -1);
+    }
+    else {
 #if defined(GME_VERSION) && GME_VERSION >= 0x000604
-    gme_set_fade_msecs(m_emu.get(), m_duration - fadeLength, fadeLength);
+        const int fadeLength = m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt();
+        gme_set_fade_msecs(m_emu.get(), m_duration - fadeLength, fadeLength);
 #else
-    gme_set_fade(m_emu.get(), m_duration - fadeLength, fadeLength);
+        gme_set_fade(m_emu.get(), m_duration - 8000);
 #endif
+    }
 
     const auto startTime = static_cast<uint64_t>(gme_tell(m_emu.get()));
 

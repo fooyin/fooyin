@@ -55,11 +55,13 @@ public:
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:
+    DecoderOptions m_options;
     FySettings m_settings;
     AudioFormat m_format;
     MusicEmuPtr m_emu;
     int m_subsong;
     int m_duration;
+    int m_loopLength;
     Track m_changedTrack;
 };
 
