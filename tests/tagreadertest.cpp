@@ -34,11 +34,12 @@ protected:
 
 TEST_F(TagReaderTest, AiffRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.aiff")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.aiff");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("AIFF"));
     EXPECT_EQ(track.title(), QStringLiteral("AIFF Test"));
@@ -63,11 +64,12 @@ TEST_F(TagReaderTest, AiffRead)
 
 TEST_F(TagReaderTest, FlacRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.flac")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.flax");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("FLAC"));
     EXPECT_EQ(track.title(), QStringLiteral("FLAC Test"));
@@ -92,11 +94,12 @@ TEST_F(TagReaderTest, FlacRead)
 
 TEST_F(TagReaderTest, M4aRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.m4a")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.m4a");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("AAC"));
     EXPECT_EQ(track.title(), QStringLiteral("M4A Test"));
@@ -120,11 +123,12 @@ TEST_F(TagReaderTest, M4aRead)
 
 TEST_F(TagReaderTest, Mp3Read)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.mp3")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.mp3");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("MP3"));
     EXPECT_EQ(track.title(), QStringLiteral("MP3 Test"));
@@ -149,11 +153,12 @@ TEST_F(TagReaderTest, Mp3Read)
 
 TEST_F(TagReaderTest, OggRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.ogg")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.ogg");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("Vorbis"));
     EXPECT_EQ(track.title(), QStringLiteral("OGG Test"));
@@ -178,11 +183,12 @@ TEST_F(TagReaderTest, OggRead)
 
 TEST_F(TagReaderTest, OpusRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.opus")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.opus");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("Opus"));
     EXPECT_EQ(track.title(), QStringLiteral("OPUS Test"));
@@ -207,11 +213,12 @@ TEST_F(TagReaderTest, OpusRead)
 
 TEST_F(TagReaderTest, WavRead)
 {
-    const TempResource file{QStringLiteral(":/audio/audiotest.wav")};
+    const QString filepath = QStringLiteral(":/audio/audiotest.wav");
+    TempResource file{filepath};
     file.checkValid();
 
     Track track{file.fileName()};
-    ASSERT_TRUE(m_parser.readTrack(track));
+    ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
     EXPECT_EQ(track.codec(), QStringLiteral("WAV"));
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));

@@ -30,6 +30,7 @@
 #include <player/s98player.hpp>
 #include <player/vgmplayer.hpp>
 #include <utils/FileLoader.h>
+#include <utils/MemoryLoader.h>
 
 #include <QLoggingCategory>
 
@@ -120,10 +121,10 @@ DATA_LOADER* requestFileCallback(void* /*userParam*/, PlayerBase* /*player*/, co
     DataLoaderPtr loader;
 
     if(const QString romFile = findRomFile(fileName); !romFile.isEmpty()) {
-        loader = {FileLoader_Init(romFile.toUtf8().constData()), DataLoaderDeleter()};
+        loader.reset(FileLoader_Init(romFile.toUtf8().constData()));
     }
     else {
-        loader = {FileLoader_Init(fileName), DataLoaderDeleter()};
+        loader.reset(FileLoader_Init(fileName));
     }
 
     if(DataLoader_Load(loader.get()) == 0) {
@@ -162,7 +163,7 @@ Track VgmDecoder::changedTrack() const
     return m_changedTrack;
 }
 
-std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions options)
+std::optional<AudioFormat> VgmDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     m_mainPlayer = std::make_unique<PlayerA>();
     m_mainPlayer->RegisterPlayerEngine(new VGMPlayer());
@@ -180,7 +181,12 @@ std::optional<AudioFormat> VgmDecoder::init(const Track& track, DecoderOptions o
         loopCount = DefaultLoopCount;
     }
 
-    m_loader = {FileLoader_Init(track.filepath().toUtf8().constData()), DataLoaderDeleter()};
+    const QByteArray data = source.device->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
+    m_loader.reset(MemoryLoader_Init(std::bit_cast<const uint8_t*>(data.data()), static_cast<uint32_t>(data.size())));
     if(!m_loader) {
         return {};
     }
@@ -274,7 +280,7 @@ bool VgmReader::canWriteMetaData() const
     return false;
 }
 
-bool VgmReader::readTrack(Track& track)
+bool VgmReader::readTrack(const AudioSource& source, Track& track)
 {
     PlayerA mainPlayer;
     mainPlayer.RegisterPlayerEngine(new VGMPlayer());
@@ -283,7 +289,12 @@ bool VgmReader::readTrack(Track& track)
     mainPlayer.RegisterPlayerEngine(new GYMPlayer());
     configurePlayer(&mainPlayer);
 
-    const DataLoaderPtr loader{FileLoader_Init(track.filepath().toUtf8().constData())};
+    const QByteArray data = source.device->readAll();
+    if(data.isEmpty()) {
+        return false;
+    }
+
+    const DataLoaderPtr loader{MemoryLoader_Init(std::bit_cast<uint8_t*>(data.constData()), data.size())};
     if(!loader) {
         return false;
     }

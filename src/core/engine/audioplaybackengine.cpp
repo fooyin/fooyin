@@ -29,6 +29,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
+#include <QFile>
 #include <QThread>
 #include <QTimer>
 #include <QTimerEvent>
@@ -115,12 +116,10 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     const Track prevTrack = std::exchange(m_currentTrack, track);
 
-    if(!m_decoder || !m_decoder->extensions().contains(track.extension())) {
-        m_decoder = m_decoderProvider->decoderForTrack(track);
-        if(!m_decoder) {
-            changeTrackStatus(TrackStatus::Unreadable);
-            return;
-        }
+    m_decoder = m_decoderProvider->decoderForTrack(track);
+    if(!m_decoder) {
+        changeTrackStatus(TrackStatus::Unreadable);
+        return;
     }
 
     if(m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset()) {
@@ -151,7 +150,14 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     changeTrackStatus(TrackStatus::Loading);
 
-    const auto format = m_decoder->init(track, AudioDecoder::UpdateTracks);
+    AudioSource source;
+    source.filepath = track.filepath();
+    if(!track.isInArchive()) {
+        m_file = std::make_unique<QFile>(track.filepath());
+        m_file->open(QIODevice::ReadOnly);
+        source.device = m_file.get();
+    }
+    const auto format = m_decoder->init(source, track, AudioDecoder::UpdateTracks);
     if(!format) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
@@ -195,7 +201,11 @@ void AudioPlaybackEngine::play()
 
     if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
         // Current track was previously stopped, so init again
-        if(!m_decoder->init(m_currentTrack, AudioDecoder::UpdateTracks)) {
+        AudioSource source;
+        source.filepath = m_currentTrack.filepath();
+        source.device   = m_file.get();
+
+        if(!m_decoder->init(source, m_currentTrack, AudioDecoder::UpdateTracks)) {
             changeTrackStatus(TrackStatus::Invalid);
             return;
         }

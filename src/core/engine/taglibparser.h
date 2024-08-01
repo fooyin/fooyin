@@ -31,8 +31,8 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    [[nodiscard]] bool readTrack(Track& track) override;
-    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
-    [[nodiscard]] bool writeTrack(const Track& track, WriteOptions options) override;
+    [[nodiscard]] bool readTrack(const AudioSource& source, Track& track) override;
+    [[nodiscard]] QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover) override;
+    [[nodiscard]] bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options) override;
 };
 } // namespace Fooyin

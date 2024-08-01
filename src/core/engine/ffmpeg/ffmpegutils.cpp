@@ -27,7 +27,6 @@ extern "C"
 }
 
 #include <QDebug>
-#include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(FFMPEG, "FFmpeg")
 

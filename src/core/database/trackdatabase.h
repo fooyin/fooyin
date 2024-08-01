@@ -34,6 +34,7 @@ public:
     bool reloadTracks(TrackList& tracks) const;
     [[nodiscard]] TrackList getAllTracks() const;
     [[nodiscard]] TrackList tracksByHash(const QString& hash) const;
+    int idForTrack(Track& track) const;
 
     bool updateTrack(const Track& track);
     bool updateTrackStats(const Track& track);

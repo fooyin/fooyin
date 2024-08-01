@@ -127,18 +127,16 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track)
 
 void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
 {
-    const QFileInfo file{track.filepath()};
-
     checkAddEntryNode(QStringLiteral("FileName"),
                       total > 1 ? InfoPopulator::tr("File Names") : InfoPopulator::tr("File Name"),
-                      ItemParent::Location, file.fileName());
+                      ItemParent::Location, track.filename());
     checkAddEntryNode(QStringLiteral("FolderName"),
                       total > 1 ? InfoPopulator::tr("Folder Names") : InfoPopulator::tr("Folder Name"),
-                      ItemParent::Location, file.absolutePath());
+                      ItemParent::Location, track.path());
 
     if(total == 1) {
         checkAddEntryNode(QStringLiteral("FilePath"), InfoPopulator::tr("File Path"), ItemParent::Location,
-                          track.filepath());
+                          track.prettyFilepath());
         if(track.subsong() >= 0) {
             checkAddEntryNode(QStringLiteral("SubsongIndex"), InfoPopulator::tr("Subsong Index"), ItemParent::Location,
                               track.subsong());

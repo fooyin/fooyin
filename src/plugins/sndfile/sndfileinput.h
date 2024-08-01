@@ -34,7 +34,7 @@ public:
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void stop() override;
 
     void seek(uint64_t pos) override;
@@ -42,7 +42,7 @@ public:
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:
-    std::unique_ptr<QFile> m_file;
+    QIODevice* m_file;
     AudioFormat m_format;
     SF_VIRTUAL_IO m_vio;
     SNDFILE* m_sndFile;
@@ -56,6 +56,6 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    bool readTrack(Track& track) override;
+    bool readTrack(const AudioSource& source, Track& track) override;
 };
 } // namespace Fooyin::Snd

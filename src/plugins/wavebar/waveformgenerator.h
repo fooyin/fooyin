@@ -27,6 +27,7 @@
 #include <utils/database/dbconnectionpool.h>
 #include <utils/worker.h>
 
+#include <QFile>
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(WAVEBAR)
@@ -57,6 +58,7 @@ private:
     void processBuffer(const AudioBuffer& buffer);
 
     std::shared_ptr<AudioLoader> m_audioLoader;
+    std::unique_ptr<QIODevice> m_file;
     AudioDecoder* m_decoder;
     DbConnectionPoolPtr m_dbPool;
     std::unique_ptr<DbConnectionHandler> m_dbHandler;

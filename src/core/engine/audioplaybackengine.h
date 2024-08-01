@@ -27,6 +27,7 @@
 #include <core/track.h>
 
 #include <QBasicTimer>
+#include <QFile>
 
 namespace Fooyin {
 class AudioRenderer;
@@ -79,6 +80,7 @@ private:
     void onRendererFinished();
 
     std::shared_ptr<AudioLoader> m_decoderProvider;
+    ArchiveReader* m_reader;
     AudioDecoder* m_decoder;
     SettingsManager* m_settings;
 
@@ -102,6 +104,7 @@ private:
     bool m_updatingTrack;
 
     Track m_currentTrack;
+    std::unique_ptr<QFile> m_file;
     AudioFormat m_format;
 
     AudioRenderer* m_renderer;

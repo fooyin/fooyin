@@ -127,12 +127,17 @@ Track GmeDecoder::changedTrack() const
     return m_changedTrack;
 }
 
-std::optional<AudioFormat> GmeDecoder::init(const Track& track, DecoderOptions options)
+std::optional<AudioFormat> GmeDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
     m_options = options;
 
+    const QByteArray data = source.device->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
     Music_Emu* emu{nullptr};
-    gme_open_file(track.filepath().toUtf8().constData(), &emu, SampleRate);
+    gme_open_data(data.constData(), data.size(), &emu, SampleRate);
     if(!emu) {
         return {};
     }
@@ -238,24 +243,34 @@ int GmeReader::subsongCount() const
     return m_subsongCount;
 }
 
-bool GmeReader::init(const QString& source)
+bool GmeReader::init(const AudioSource& source)
 {
+    const QByteArray data = source.device->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
     Music_Emu* emu{nullptr};
-    gme_open_file(source.toUtf8().constData(), &emu, gme_info_only);
+    gme_open_data(data.constData(), data.size(), &emu, gme_info_only);
     if(!emu) {
         return false;
     }
-    m_emu = {emu, MusicEmuDeleter()};
+    m_emu.reset(emu);
 
     m_subsongCount = gme_track_count(m_emu.get());
 
     return true;
 }
 
-bool GmeReader::readTrack(Track& track)
+bool GmeReader::readTrack(const AudioSource& source, Track& track)
 {
+    const QByteArray data = source.device->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
     Music_Emu* gme{nullptr};
-    gme_open_file(track.filepath().toUtf8().constData(), &gme, gme_info_only);
+    gme_open_data(data.constData(), data.size(), &gme, gme_info_only);
     if(!gme) {
         return false;
     }
@@ -271,11 +286,23 @@ bool GmeReader::readTrack(Track& track)
 
     GmeInfoPtr info{gmeInfo};
 
-    const QString m3u = findM3u(track.filepath());
-    if(!m3u.isEmpty()) {
-        err = gme_load_m3u(emu.get(), m3u.toUtf8().constData());
-        if(err) {
-            qCWarning(GME) << err;
+    if(source.findArchiveFile) {
+        auto m3uEntry = source.findArchiveFile(track.archiveDirectory() + track.filename() + QStringLiteral(".m3u"));
+        if(m3uEntry) {
+            const auto m3uData = m3uEntry->readAll();
+            err                = gme_load_m3u_data(emu.get(), m3uData.constData(), m3uData.size());
+            if(err) {
+                qCWarning(GME) << err;
+            }
+        }
+    }
+    else {
+        const QString m3u = findM3u(track.filepath());
+        if(!m3u.isEmpty()) {
+            err = gme_load_m3u(emu.get(), m3u.toUtf8().constData());
+            if(err) {
+                qCWarning(GME) << err;
+            }
         }
     }
 

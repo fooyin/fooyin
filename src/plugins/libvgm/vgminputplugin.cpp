@@ -23,18 +23,21 @@
 #include "vgminputsettings.h"
 
 namespace Fooyin::VgmInput {
-QString VgmInputPlugin::name() const
+QString VgmInputPlugin::inputName() const
 {
     return QStringLiteral("VGM Input");
 }
 
 InputCreator VgmInputPlugin::inputCreator() const
 {
-    return {.decoder = []() { return std::make_unique<VgmDecoder>(); },
-            .reader =
-                []() {
-                    return std::make_unique<VgmReader>();
-                }};
+    InputCreator creator;
+    creator.decoder = []() {
+        return std::make_unique<VgmDecoder>();
+    };
+    creator.reader = []() {
+        return std::make_unique<VgmReader>();
+    };
+    return creator;
 }
 
 bool VgmInputPlugin::hasSettings() const

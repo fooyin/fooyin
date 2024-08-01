@@ -46,7 +46,7 @@ public:
     [[nodiscard]] bool trackHasChanged() const override;
     [[nodiscard]] Track changedTrack() const override;
 
-    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;
     void stop() override;
 
@@ -75,8 +75,8 @@ public:
     [[nodiscard]] bool canWriteMetaData() const override;
     [[nodiscard]] int subsongCount() const override;
 
-    bool init(const QString& source) override;
-    bool readTrack(Track& track) override;
+    bool init(const AudioSource& source) override;
+    bool readTrack(const AudioSource& source, Track& track) override;
 
 private:
     MusicEmuPtr m_emu;

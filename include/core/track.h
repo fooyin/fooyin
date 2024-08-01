@@ -77,12 +77,22 @@ public:
     [[nodiscard]] bool metadataWasModified() const;
     [[nodiscard]] int libraryId() const;
 
+    static bool isInArchive(const QString& filepath);
+    static QString archivePath(const QString& filepath);
+    static QString archiveFilePath(const QString& filepath);
+    static QString archiveDirectory(const QString& filepath);
+
+    [[nodiscard]] bool isInArchive() const;
+    [[nodiscard]] QString archivePath() const;
+    [[nodiscard]] QString archiveFilePath() const;
+    [[nodiscard]] QString archiveDirectory() const;
+
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;
     [[nodiscard]] QString albumHash() const;
     [[nodiscard]] QString filepath() const;
     [[nodiscard]] QString uniqueFilepath() const;
-    [[nodiscard]] QString relativePath() const;
+    [[nodiscard]] QString prettyFilepath() const;
     [[nodiscard]] QString filename() const;
     [[nodiscard]] QString path() const;
     [[nodiscard]] QString directory() const;
@@ -147,7 +157,6 @@ public:
     void setHash(const QString& hash);
     void setCodec(const QString& codec);
     void setFilePath(const QString& path);
-    void setRelativePath(const QString& path);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
     void setAlbum(const QString& title);

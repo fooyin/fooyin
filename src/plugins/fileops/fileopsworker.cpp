@@ -335,15 +335,11 @@ void FileOpsWorker::renameFile(const FileOpsItem& item)
 
             if(const auto library = m_library->libraryForPath(item.destination)) {
                 if(track.libraryId() != library->id) {
-                    const QDir libraryDir{library->path};
-
                     track.setLibraryId(library->id);
-                    track.setRelativePath(libraryDir.relativeFilePath(item.destination));
                 }
             }
             else {
                 track.setLibraryId(-1);
-                track.setRelativePath({});
             }
 
             m_tracksToUpdate.push_back(track);

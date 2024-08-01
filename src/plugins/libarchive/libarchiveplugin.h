@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,28 +19,21 @@
 
 #pragma once
 
-#include <core/engine/audioformat.h>
+#include <core/engine/audioinput.h>
+#include <core/engine/inputplugin.h>
+#include <core/plugins/plugin.h>
 
-extern "C"
+namespace Fooyin::LibArchive {
+class LibArchivePlugin : public QObject,
+                      public Plugin,
+                      public InputPlugin
 {
-#include <libavcodec/avcodec.h>
-}
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "libarchive.json")
+    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
-#include <QLoggingCategory>
-
-class QString;
-class AVCodecParameters;
-
-#define OLD_CHANNEL_LAYOUT (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(59, 24, 100))
-#define OLD_FRAME (LIBAVUTIL_VERSION_MAJOR < 58)
-
-Q_DECLARE_LOGGING_CATEGORY(FFMPEG)
-
-namespace Fooyin::Utils {
-void printError(int error);
-void printError(const QString& error);
-
-SampleFormat sampleFormat(AVSampleFormat format, int bps);
-AVSampleFormat sampleFormat(SampleFormat format);
-AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-} // namespace Fooyin::Utils
+public:
+    [[nodiscard]] QString inputName() const override;
+    [[nodiscard]] InputCreator inputCreator() const override;
+};
+} // namespace Fooyin::Archive

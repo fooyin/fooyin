@@ -161,7 +161,7 @@ Track PlaylistHandlerPrivate::nextTrack(int delta)
 
     Track nextTrk = m_activePlaylist->nextTrack(delta, m_playerController->playMode());
 
-    if(!nextTrk.metadataWasRead()) {
+    if(nextTrk.isValid() && !nextTrk.metadataWasRead()) {
         if(m_audioLoader->readTrackMetadata(nextTrk)) {
             nextTrk.generateHash();
             const int nextIndex = m_activePlaylist->nextIndex(delta, m_playerController->playMode());

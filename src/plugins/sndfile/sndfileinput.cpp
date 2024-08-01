@@ -122,23 +122,20 @@ bool SndFileDecoder::isSeekable() const
     return true;
 }
 
-std::optional<AudioFormat> SndFileDecoder::init(const Track& track, DecoderOptions /*options*/)
+std::optional<AudioFormat> SndFileDecoder::init(const AudioSource& source, const Track& track,
+                                                DecoderOptions /*options*/)
 {
     SF_INFO info;
     info.format = 0;
 
-    m_file = std::make_unique<QFile>(track.filepath());
-    if(!m_file->open(QIODevice::ReadOnly)) {
-        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
-        return {};
-    }
+    m_file = source.device;
 
     m_vio.get_filelen = sndFileLen;
     m_vio.seek        = sndSeek;
     m_vio.read        = sndRead;
     m_vio.tell        = sndTell;
 
-    m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file.get());
+    m_sndFile = sf_open_virtual(&m_vio, SFM_READ, &info, m_file);
     if(!m_sndFile) {
         qCWarning(SND_FILE) << "Unable to open" << track.filepath();
         return {};
@@ -204,15 +201,22 @@ bool SndFileReader::canWriteMetaData() const
     return false;
 }
 
-bool SndFileReader::readTrack(Track& track)
+bool SndFileReader::readTrack(const AudioSource& source, Track& track)
 {
     SF_INFO info;
     info.format = 0;
 
-    SNDFILE* sndfile{nullptr};
-    sndfile = sf_open(track.filepath().toUtf8().constData(), SFM_READ, &info);
-    if(!sndfile) {
-        return false;
+    SF_VIRTUAL_IO vio;
+
+    vio.get_filelen = sndFileLen;
+    vio.seek        = sndSeek;
+    vio.read        = sndRead;
+    vio.tell        = sndTell;
+
+    SNDFILE* sndFile = sf_open_virtual(&vio, SFM_READ, &info, source.device);
+    if(!sndFile) {
+        qCWarning(SND_FILE) << "Unable to open" << track.filepath();
+        return {};
     }
 
     track.setFileSize(QFileInfo{track.filepath()}.size());
@@ -241,31 +245,31 @@ bool SndFileReader::readTrack(Track& track)
             break;
     }
 
-    if(const char* title = sf_get_string(sndfile, SF_STR_TITLE)) {
+    if(const char* title = sf_get_string(sndFile, SF_STR_TITLE)) {
         track.setTitle(QString::fromUtf8(title));
     }
-    if(const char* date = sf_get_string(sndfile, SF_STR_DATE)) {
+    if(const char* date = sf_get_string(sndFile, SF_STR_DATE)) {
         track.setDate(QString::fromUtf8(date));
     }
-    if(const char* album = sf_get_string(sndfile, SF_STR_ALBUM)) {
+    if(const char* album = sf_get_string(sndFile, SF_STR_ALBUM)) {
         track.setAlbum(QString::fromUtf8(album));
     }
-    if(const char* trackNum = sf_get_string(sndfile, SF_STR_TRACKNUMBER)) {
+    if(const char* trackNum = sf_get_string(sndFile, SF_STR_TRACKNUMBER)) {
         track.setTrackNumber(QString::fromUtf8(trackNum).toInt());
     }
-    if(const char* artist = sf_get_string(sndfile, SF_STR_ARTIST)) {
+    if(const char* artist = sf_get_string(sndFile, SF_STR_ARTIST)) {
         track.setArtists({QString::fromUtf8(artist)});
     }
-    if(const char* comment = sf_get_string(sndfile, SF_STR_COMMENT)) {
+    if(const char* comment = sf_get_string(sndFile, SF_STR_COMMENT)) {
         track.setComment(QString::fromUtf8(comment));
     }
-    if(const char* genre = sf_get_string(sndfile, SF_STR_GENRE)) {
+    if(const char* genre = sf_get_string(sndFile, SF_STR_GENRE)) {
         track.setGenres({QString::fromUtf8(genre)});
     }
-    if(const char* copyright = sf_get_string(sndfile, SF_STR_COPYRIGHT)) {
+    if(const char* copyright = sf_get_string(sndFile, SF_STR_COPYRIGHT)) {
         track.addExtraTag(QStringLiteral("COPYRIGHT"), QString::fromUtf8(copyright));
     }
-    if(const char* license = sf_get_string(sndfile, SF_STR_LICENSE)) {
+    if(const char* license = sf_get_string(sndFile, SF_STR_LICENSE)) {
         track.addExtraTag(QStringLiteral("LICENSE"), QString::fromUtf8(license));
     }
 

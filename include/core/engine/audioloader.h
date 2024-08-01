@@ -37,9 +37,12 @@ public:
     [[nodiscard]] QStringList supportedFileExtensions() const;
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
+    [[nodiscard]] bool isArchive(const QString& file) const;
+    [[nodiscard]] AudioDecoder* decoderForFile(const QString& file) const;
     [[nodiscard]] AudioDecoder* decoderForTrack(const Track& track) const;
     [[nodiscard]] AudioReader* readerForFile(const QString& file) const;
     [[nodiscard]] AudioReader* readerForTrack(const Track& track) const;
+    [[nodiscard]] ArchiveReader* archiveReaderForFile(const QString& file) const;
 
     [[nodiscard]] bool readTrackMetadata(Track& track) const;
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
@@ -47,6 +50,7 @@ public:
 
     void addDecoder(const QString& name, const DecoderCreator& creator);
     void addReader(const QString& name, const ReaderCreator& creator);
+    void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator);
 
     void destroyThreadInstance();
 

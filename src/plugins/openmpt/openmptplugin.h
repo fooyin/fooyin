@@ -33,7 +33,7 @@ class RawAudioPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
 public:
-    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
 };
 } // namespace Fooyin::OpenMpt

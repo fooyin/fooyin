@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <QFile>
 #include <QStringList>
 #include <QUrl>
 

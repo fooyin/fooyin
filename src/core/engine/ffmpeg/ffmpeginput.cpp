@@ -28,6 +28,8 @@
 #include <utils/worker.h>
 
 #include <QDebug>
+#include <QFile>
+#include <QIODevice>
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic ignored "-Wold-style-cast"
@@ -210,6 +212,25 @@ void interleave(uint8_t** in, Fooyin::AudioBuffer& buffer)
     }
 }
 
+struct AVIOContextDeleter
+{
+    void operator()(AVIOContext* context) const
+    {
+        if(context) {
+            if(context->buffer) {
+                av_freep(static_cast<void*>(&context->buffer));
+            }
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 80, 100)
+            avio_context_free(&context);
+#else
+            av_free(context);
+#endif
+        }
+    }
+};
+
+using AVIOContextPtr = std::unique_ptr<AVIOContext, AVIOContextDeleter>;
+
 struct FormatContextDeleter
 {
     void operator()(AVFormatContext* context) const
@@ -233,33 +254,94 @@ struct PacketDeleter
 };
 using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 
-FormatContextPtr createAVFormatContext(const QString& source)
+int ffRead(void* data, uint8_t* buffer, int size)
 {
-    AVFormatContext* avContext{nullptr};
+    auto* device        = static_cast<QIODevice*>(data);
+    const auto sizeRead = device->read(std::bit_cast<char*>(buffer), size);
+    if(sizeRead == 0) {
+        return AVERROR_EOF;
+    }
+    return static_cast<int>(sizeRead);
+}
 
-    const int ret = avformat_open_input(&avContext, source.toUtf8().constData(), nullptr, nullptr);
+int ffWrite(void* /*data*/, const uint8_t* /*buffer*/, int /*size*/)
+{
+    return -1;
+}
+
+int64_t ffSeek(void* data, int64_t offset, int whence)
+{
+    auto* device = static_cast<QIODevice*>(data);
+    int64_t seekPos{0};
+
+    switch(whence) {
+        case(AVSEEK_SIZE):
+            return device->size();
+        case(SEEK_SET):
+            seekPos = offset;
+            break;
+        case(SEEK_CUR):
+            seekPos = device->pos() + offset;
+            break;
+        case(SEEK_END):
+            seekPos = device->size() - offset;
+            break;
+        default:
+            return -1;
+    }
+
+    if(seekPos < 0 || seekPos > device->size()) {
+        return -1;
+    }
+
+    return device->seek(seekPos);
+}
+
+struct FormatContext
+{
+    FormatContextPtr formatContext;
+    AVIOContextPtr ioContext;
+};
+
+FormatContext createAVFormatContext(QIODevice* source)
+{
+    AVIOContextPtr ioContext{avio_alloc_context(nullptr, 0, 0, source, ffRead, ffWrite, ffSeek)};
+    if(!ioContext) {
+        qCWarning(FFMPEG) << "Failed to allocate AVIO context";
+        return {};
+    }
+
+    AVFormatContext* avContext = avformat_alloc_context();
+    if(!avContext) {
+        qCWarning(FFMPEG) << "Unable to allocate AVFormat context";
+        return {};
+    }
+    FormatContextPtr context{avContext};
+
+    context->pb = ioContext.get();
+
+    const int ret = avformat_open_input(&avContext, "", nullptr, nullptr);
     if(ret < 0) {
         if(ret == AVERROR(EACCES)) {
-            Fooyin::Utils::printError(QStringLiteral("Access denied: ") + source);
+            qCWarning(FFMPEG) << "Access denied";
         }
         else if(ret == AVERROR(EINVAL)) {
-            Fooyin::Utils::printError(QStringLiteral("Invalid format: ") + source);
+            qCWarning(FFMPEG) << "Invalid format";
         }
-        return nullptr;
+        return {};
     }
 
     if(avformat_find_stream_info(avContext, nullptr) < 0) {
-        Fooyin::Utils::printError(QStringLiteral("Could not find stream info"));
-        avformat_close_input(&avContext);
-        return nullptr;
+        qCWarning(FFMPEG) << "Could not find stream info";
+        return {};
     }
 
     // Needed for seeking of APE files
-    avContext->flags |= AVFMT_FLAG_GENPTS;
+    context->flags |= AVFMT_FLAG_GENPTS;
 
     // av_dump_format(avContext, 0, source.toUtf8().constData(), 0);
 
-    return FormatContextPtr{avContext};
+    return {std::move(context), std::move(ioContext)};
 }
 
 Fooyin::Stream findStream(AVFormatContext* context)
@@ -319,7 +401,7 @@ public:
     { }
 
     void reset();
-    bool setup(const QString& source);
+    bool setup(QIODevice* source);
 
     bool createCodec(AVStream* avStream);
 
@@ -332,6 +414,7 @@ public:
 
     FFmpegDecoder* m_self;
 
+    AVIOContextPtr m_ioContext;
     FormatContextPtr m_context;
     Stream m_stream;
     Codec m_codec;
@@ -360,16 +443,20 @@ void FFmpegInputPrivate::reset()
     m_buffer.clear();
 
     m_context.reset();
+    m_ioContext.reset();
     m_stream = {};
     m_codec  = {};
     m_buffer = {};
 }
 
-bool FFmpegInputPrivate::setup(const QString& source)
+bool FFmpegInputPrivate::setup(QIODevice* source)
 {
     reset();
 
-    m_context = createAVFormatContext(source);
+    FormatContext context = createAVFormatContext(source);
+    m_context             = std::move(context.formatContext);
+    m_ioContext           = std::move(context.ioContext);
+
     if(!m_context) {
         return false;
     }
@@ -594,9 +681,10 @@ QStringList FFmpegDecoder::extensions() const
     return fileExtensions();
 }
 
-std::optional<AudioFormat> FFmpegDecoder::init(const Track& track, DecoderOptions /*options*/)
+std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& /*track*/,
+                                               DecoderOptions /*options*/)
 {
-    if(p->setup(track.filepath())) {
+    if(p->setup(source.device)) {
         return p->m_audioFormat;
     }
     p->m_error = true;
@@ -676,14 +764,14 @@ bool FFmpegReader::canWriteMetaData() const
     return false;
 }
 
-bool FFmpegReader::readTrack(Track& track)
+bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
 {
-    const FormatContextPtr context = createAVFormatContext(track.filepath());
-    if(!context) {
+    const FormatContext context = createAVFormatContext(source.device);
+    if(!context.formatContext) {
         return false;
     }
 
-    const Stream stream = findStream(context.get());
+    const Stream stream = findStream(context.formatContext.get());
     if(!stream.isValid()) {
         return false;
     }
@@ -701,7 +789,7 @@ bool FFmpegReader::readTrack(Track& track)
         AVRational timeBase = avStream->time_base;
         auto duration       = avStream->duration;
         if(duration <= 0 || std::cmp_equal(duration, AV_NOPTS_VALUE)) {
-            duration = context->duration;
+            duration = context.formatContext->duration;
             timeBase = TimeBaseAv;
         }
         const uint64_t durationMs = av_rescale_q(duration, timeBase, TimeBaseMs);
@@ -710,33 +798,33 @@ bool FFmpegReader::readTrack(Track& track)
 
     auto bitrate = static_cast<int>(codec->bit_rate / 1000);
     if(bitrate <= 0) {
-        bitrate = static_cast<int>(context->bit_rate / 1000);
+        bitrate = static_cast<int>(context.formatContext->bit_rate / 1000);
     }
     if(bitrate > 0) {
         track.setBitrate(bitrate);
     }
 
     AVDictionaryEntry* tag{nullptr};
-    while((tag = av_dict_get(context->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+    while((tag = av_dict_get(context.formatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
         parseTag(track, tag);
     }
 
     return true;
 }
 
-QByteArray FFmpegReader::readCover(const Track& track, Track::Cover cover)
+QByteArray FFmpegReader::readCover(const AudioSource& source, const Track& /*track*/, Track::Cover cover)
 {
-    const FormatContextPtr context = createAVFormatContext(track.filepath());
-    if(!context) {
+    const FormatContext context = createAVFormatContext(source.device);
+    if(!context.formatContext) {
         return {};
     }
 
-    auto coverData = findCover(context.get(), cover);
+    auto coverData = findCover(context.formatContext.get(), cover);
 
     return coverData;
 }
 
-bool FFmpegReader::writeTrack(const Track& /*track*/, WriteOptions /*options*/)
+bool FFmpegReader::writeTrack(const AudioSource& /*source*/, const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
 }

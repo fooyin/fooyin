@@ -24,9 +24,17 @@
 #include <core/engine/audiobuffer.h>
 #include <core/track.h>
 
+#include <QIODevice>
 #include <QObject>
 
 namespace Fooyin {
+struct AudioSource
+{
+    QString filepath;
+    QIODevice* device{nullptr};
+    std::function<std::unique_ptr<QIODevice>(const QString& file)> findArchiveFile;
+};
+
 class FYCORE_EXPORT AudioDecoder
 {
     Q_GADGET
@@ -50,7 +58,7 @@ public:
     [[nodiscard]] virtual bool trackHasChanged() const;
     [[nodiscard]] virtual Track changedTrack() const;
 
-    virtual std::optional<AudioFormat> init(const Track& track, DecoderOptions options) = 0;
+    virtual std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) = 0;
     virtual void start();
     virtual void stop() = 0;
 
@@ -81,13 +89,29 @@ public:
     [[nodiscard]] virtual bool canWriteMetaData() const  = 0;
     [[nodiscard]] virtual int subsongCount() const;
 
-    virtual bool init(const QString& file);
+    virtual bool init(const AudioSource& source);
 
-    [[nodiscard]] virtual bool readTrack(Track& track) = 0;
-    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover);
-    [[nodiscard]] virtual bool writeTrack(const Track& track, WriteOptions options);
+    [[nodiscard]] virtual bool readTrack(const AudioSource& source, Track& track) = 0;
+    [[nodiscard]] virtual QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover);
+    [[nodiscard]] virtual bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options);
 };
 using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
+
+class FYCORE_EXPORT ArchiveReader
+{
+public:
+    virtual ~ArchiveReader() = default;
+
+    [[nodiscard]] virtual QStringList extensions() const = 0;
+
+    virtual bool init(const QString& file)                                            = 0;
+    [[nodiscard]] virtual QString type() const                                        = 0;
+    [[nodiscard]] virtual QStringList entryList() const                               = 0;
+    [[nodiscard]] virtual std::unique_ptr<QIODevice> entry(const QString& file) const = 0;
+
+    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
+};
+using ArchiveReaderCreator = std::function<std::unique_ptr<ArchiveReader>()>;
 } // namespace Fooyin
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioDecoder::DecoderOptions)

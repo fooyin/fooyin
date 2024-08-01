@@ -17,31 +17,22 @@
  *
  */
 
-#pragma once
+#include "libarchiveplugin.h"
 
-#include <core/engine/audioinput.h>
+#include "libarchiveinput.h"
 
-#include <QtPlugin>
-
-namespace Fooyin {
-struct InputCreator
+namespace Fooyin::LibArchive {
+QString LibArchivePlugin::inputName() const
 {
-    DecoderCreator decoder;
-    ReaderCreator reader;
-    ArchiveReaderCreator archiveReader;
-};
+    return QStringLiteral("LibArchive");
+}
 
-/*!
- * An abstract interface for audio decoder plugins.
- */
-class InputPlugin
+InputCreator LibArchivePlugin::inputCreator() const
 {
-public:
-    virtual ~InputPlugin() = default;
-
-    [[nodiscard]] virtual QString inputName() const         = 0;
-    [[nodiscard]] virtual InputCreator inputCreator() const = 0;
-};
-} // namespace Fooyin
-
-Q_DECLARE_INTERFACE(Fooyin::InputPlugin, "org.fooyin.fooyin.plugin.engine.input")
+    InputCreator input;
+    input.archiveReader = []() {
+        return std::make_unique<LibArchiveReader>();
+    };
+    return input;
+}
+} // namespace Fooyin::Archive

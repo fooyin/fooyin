@@ -1,6 +1,7 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/constants.h
     ${CMAKE_SOURCE_DIR}/include/core/coresettings.h
+    ${CMAKE_SOURCE_DIR}/include/core/fysource.h
     ${CMAKE_SOURCE_DIR}/include/core/track.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audiobuffer.h
     ${CMAKE_SOURCE_DIR}/include/core/engine/audioconverter.h
@@ -34,6 +35,7 @@ set(SOURCES
     application.h
     corepaths.cpp
     corepaths.h
+    fysource.cpp
     internalcoresettings.cpp
     internalcoresettings.h
     track.cpp
@@ -51,6 +53,8 @@ set(SOURCES
     database/settingsdatabase.h
     database/trackdatabase.cpp
     database/trackdatabase.h
+    engine/archiveinput.cpp
+    engine/archiveinput.h
     engine/audiobuffer.cpp
     engine/audioclock.cpp
     engine/audioclock.h
