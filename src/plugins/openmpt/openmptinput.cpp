@@ -258,20 +258,20 @@ bool OpenMptReader::readTrack(Track& track)
             }
         }
 
-        const std::vector<std::string> inst = m_module->get_instrument_names();
-        for(int i{0}; const auto& name : inst) {
-            if(!name.empty()) {
-                track.addExtraTag(QStringLiteral("INST%1").arg(i, 2, 10, QLatin1Char('0')), QString::fromUtf8(name));
+        auto getModuleNames = [&track](const QString& field, const std::vector<std::string>& names) {
+            for(auto it = names.cbegin(); it != names.cend(); ++it) {
+                if(!it->empty()) {
+                    const int index = static_cast<int>(std::distance(names.cbegin(), it));
+                    track.addExtraTag(field + QStringLiteral("%1").arg(index, 2, 10, QLatin1Char('0')),
+                                      QString::fromUtf8(*it));
+                }
             }
-            ++i;
-        }
-        const std::vector<std::string> smpls = m_module->get_sample_names();
-        for(int i{0}; const auto& name : smpls) {
-            if(!name.empty()) {
-                track.addExtraTag(QStringLiteral("SMPL%1").arg(i, 2, 10, QLatin1Char('0')), QString::fromUtf8(name));
-            }
-            ++i;
-        }
+        };
+
+        getModuleNames(QStringLiteral("CHAN"), m_module->get_channel_names());
+        getModuleNames(QStringLiteral("PATT"), m_module->get_pattern_names());
+        getModuleNames(QStringLiteral("INST"), m_module->get_instrument_names());
+        getModuleNames(QStringLiteral("SMPL"), m_module->get_sample_names());
     }
     catch(...) {
         qCWarning(OPENMPT) << "Failed to open" << track.filepath();
