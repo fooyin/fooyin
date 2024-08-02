@@ -1,4 +1,4 @@
-find_package(GME QUIET)
+find_package(LIBGME QUIET)
 
 if(NOT LIBGME_FOUND)
     message(STATUS "LIBGME not found; skipping gme plugin.")

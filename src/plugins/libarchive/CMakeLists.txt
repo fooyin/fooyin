@@ -1,4 +1,4 @@
-find_package(LibArchive REQUIRED)
+find_package(LibArchive QUIET)
 
 if(NOT LibArchive_FOUND)
     message(STATUS "libarchive not found; skipping libarchive plugin.")
