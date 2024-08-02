@@ -31,4 +31,6 @@ $SUDO apt-get install -y \
         libavformat-dev \
         libavutil-dev \
         libswresample-dev \
-        libopenmpt-dev
+        libopenmpt-dev \
+        libgme-dev \
+        libarchive-dev
