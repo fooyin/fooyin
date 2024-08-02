@@ -264,11 +264,6 @@ int ffRead(void* data, uint8_t* buffer, int size)
     return static_cast<int>(sizeRead);
 }
 
-int ffWrite(void* /*data*/, const uint8_t* /*buffer*/, int /*size*/)
-{
-    return -1;
-}
-
 int64_t ffSeek(void* data, int64_t offset, int whence)
 {
     auto* device = static_cast<QIODevice*>(data);
@@ -305,7 +300,7 @@ struct FormatContext
 
 FormatContext createAVFormatContext(QIODevice* source)
 {
-    AVIOContextPtr ioContext{avio_alloc_context(nullptr, 0, 0, source, ffRead, ffWrite, ffSeek)};
+    AVIOContextPtr ioContext{avio_alloc_context(nullptr, 0, 0, source, ffRead, nullptr, ffSeek)};
     if(!ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};
