@@ -10,7 +10,7 @@ This document outlines the upcoming features for fooyin.
 | MPRIS support                                 | ✅ 0.4.0  |
 | CUE support                                   | ✅ 0.5.0  |
 | Renaming/Copying/Moving files on disk         | ✅ 0.5.4  |
-| Archive support (Adding to library, playback) | 🔄 0.5.4 |
+| Archive support (Adding to library, playback) | ✅ 0.5.4 |
 | Scrobbling                                    | 🔄 0.5.5 |
 | ReplayGain support                            | 🔄 0.6.0 |
 | Query-based language for searching/filtering  | ❓ TBD    |
