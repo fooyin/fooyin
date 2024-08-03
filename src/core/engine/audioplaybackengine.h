@@ -104,6 +104,7 @@ private:
     bool m_updatingTrack;
 
     Track m_currentTrack;
+    AudioSource m_source;
     std::unique_ptr<QFile> m_file;
     AudioFormat m_format;
 

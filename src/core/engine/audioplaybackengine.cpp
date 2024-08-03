@@ -150,14 +150,13 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     changeTrackStatus(TrackStatus::Loading);
 
-    AudioSource source;
-    source.filepath = track.filepath();
+    m_source.filepath = track.filepath();
     if(!track.isInArchive()) {
         m_file = std::make_unique<QFile>(track.filepath());
         m_file->open(QIODevice::ReadOnly);
-        source.device = m_file.get();
+        m_source.device = m_file.get();
     }
-    const auto format = m_decoder->init(source, track, AudioDecoder::UpdateTracks);
+    const auto format = m_decoder->init(m_source, track, AudioDecoder::UpdateTracks);
     if(!format) {
         changeTrackStatus(TrackStatus::Invalid);
         return;
@@ -201,11 +200,13 @@ void AudioPlaybackEngine::play()
 
     if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
         // Current track was previously stopped, so init again
-        AudioSource source;
-        source.filepath = m_currentTrack.filepath();
-        source.device   = m_file.get();
+        if(!m_currentTrack.isInArchive()) {
+            m_file = std::make_unique<QFile>(m_currentTrack.filepath());
+            m_file->open(QIODevice::ReadOnly);
+            m_source.device = m_file.get();
+        }
 
-        if(!m_decoder->init(source, m_currentTrack, AudioDecoder::UpdateTracks)) {
+        if(!m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks)) {
             changeTrackStatus(TrackStatus::Invalid);
             return;
         }

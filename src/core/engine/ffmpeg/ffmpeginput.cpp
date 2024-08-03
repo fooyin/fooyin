@@ -300,8 +300,10 @@ struct FormatContext
 
 FormatContext createAVFormatContext(QIODevice* source)
 {
-    AVIOContextPtr ioContext{avio_alloc_context(nullptr, 0, 0, source, ffRead, nullptr, ffSeek)};
-    if(!ioContext) {
+    FormatContext fc;
+
+    fc.ioContext.reset(avio_alloc_context(nullptr, 0, 0, source, ffRead, nullptr, ffSeek));
+    if(!fc.ioContext) {
         qCWarning(FFMPEG) << "Failed to allocate AVIO context";
         return {};
     }
@@ -311,11 +313,12 @@ FormatContext createAVFormatContext(QIODevice* source)
         qCWarning(FFMPEG) << "Unable to allocate AVFormat context";
         return {};
     }
-    FormatContextPtr context{avContext};
+    fc.formatContext.reset(avContext);
+    auto* context = fc.formatContext.get();
 
-    context->pb = ioContext.get();
+    fc.formatContext->pb = fc.ioContext.get();
 
-    const int ret = avformat_open_input(&avContext, "", nullptr, nullptr);
+    const int ret = avformat_open_input(&context, "", nullptr, nullptr);
     if(ret < 0) {
         if(ret == AVERROR(EACCES)) {
             qCWarning(FFMPEG) << "Access denied";
@@ -332,11 +335,11 @@ FormatContext createAVFormatContext(QIODevice* source)
     }
 
     // Needed for seeking of APE files
-    context->flags |= AVFMT_FLAG_GENPTS;
+    fc.formatContext->flags |= AVFMT_FLAG_GENPTS;
 
     // av_dump_format(avContext, 0, source.toUtf8().constData(), 0);
 
-    return {std::move(context), std::move(ioContext)};
+    return fc;
 }
 
 Fooyin::Stream findStream(AVFormatContext* context)
