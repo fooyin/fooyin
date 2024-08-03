@@ -286,8 +286,9 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
 
     GmeInfoPtr info{gmeInfo};
 
-    if(source.findArchiveFile) {
-        auto m3uEntry = source.findArchiveFile(track.archiveDirectory() + track.filename() + QStringLiteral(".m3u"));
+    if(track.isInArchive()) {
+        auto m3uEntry
+            = source.archiveReader->entry(track.archiveDirectory() + track.filename() + QStringLiteral(".m3u"));
         if(m3uEntry) {
             const auto m3uData = m3uEntry->readAll();
             err                = gme_load_m3u_data(emu.get(), m3uData.constData(), m3uData.size());

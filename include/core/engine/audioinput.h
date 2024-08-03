@@ -28,11 +28,13 @@
 #include <QObject>
 
 namespace Fooyin {
+class ArchiveReader;
+
 struct AudioSource
 {
     QString filepath;
     QIODevice* device{nullptr};
-    std::function<std::unique_ptr<QIODevice>(const QString& file)> findArchiveFile;
+    ArchiveReader* archiveReader{nullptr};
 };
 
 class FYCORE_EXPORT AudioDecoder

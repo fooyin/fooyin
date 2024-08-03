@@ -435,11 +435,9 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
         }
 
         AudioSource source;
-        source.filepath        = filepath;
-        source.device          = fileDev.get();
-        source.findArchiveFile = [archiveReader](const QString& file) {
-            return archiveReader->entry(file);
-        };
+        source.filepath      = filepath;
+        source.device        = fileDev.get();
+        source.archiveReader = archiveReader;
 
         if(!fileReader->init(source)) {
             qCInfo(LIB_SCANNER) << "Unsupported file:" << filepath;

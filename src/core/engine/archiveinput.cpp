@@ -75,11 +75,9 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
     }
 
     AudioSource aSource;
-    aSource.filepath        = filepath;
-    aSource.device          = m_device.get();
-    aSource.findArchiveFile = [reader](const QString& file) {
-        return reader->entry(file);
-    };
+    aSource.filepath      = filepath;
+    aSource.device        = m_device.get();
+    aSource.archiveReader = reader;
 
     return m_decoder->init(aSource, track, options);
 }
@@ -170,11 +168,9 @@ bool GeneralArchiveReader::init(const AudioSource& source)
     }
 
     AudioSource aSource;
-    aSource.filepath        = filepath;
-    aSource.device          = m_device.get();
-    aSource.findArchiveFile = [this](const QString& file) {
-        return m_archiveReader->entry(file);
-    };
+    aSource.filepath      = filepath;
+    aSource.device        = m_device.get();
+    aSource.archiveReader = m_archiveReader;
 
     return m_reader->init(aSource);
 }
@@ -192,10 +188,7 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
         const QDateTime modifiedTime = QFileInfo{track.archivePath()}.lastModified();
         track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
     }
-    trackSource.findArchiveFile = [this](const QString& file) {
-        return m_archiveReader->entry(file);
-    };
-
+    trackSource.archiveReader = m_archiveReader;
     return m_reader ? m_reader->readTrack(trackSource, track) : false;
 }
 
@@ -207,12 +200,10 @@ QByteArray GeneralArchiveReader::readCover(const AudioSource& /*source*/, const 
     }
     if(coverData.isEmpty() && m_reader) {
         AudioSource coverSource;
-        coverSource.filepath        = track.filepath();
-        coverSource.device          = m_device.get();
-        coverSource.findArchiveFile = [this](const QString& file) {
-            return m_archiveReader->entry(file);
-        };
-        coverData = m_reader->readCover(coverSource, track, cover);
+        coverSource.filepath      = track.filepath();
+        coverSource.device        = m_device.get();
+        coverSource.archiveReader = m_archiveReader;
+        coverData                 = m_reader->readCover(coverSource, track, cover);
     }
     return coverData;
 }
@@ -224,12 +215,9 @@ bool GeneralArchiveReader::writeTrack(const AudioSource& /*source*/, const Track
     }
 
     AudioSource trackSource;
-    trackSource.filepath        = track.filepath();
-    trackSource.device          = m_device.get();
-    trackSource.findArchiveFile = [this](const QString& file) {
-        return m_archiveReader->entry(file);
-    };
-
+    trackSource.filepath      = track.filepath();
+    trackSource.device        = m_device.get();
+    trackSource.archiveReader = m_archiveReader;
     return m_reader->writeTrack(trackSource, track, options);
 }
 } // namespace Fooyin
