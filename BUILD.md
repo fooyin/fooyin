@@ -22,6 +22,10 @@ At least one of the following is required for audio output:
 
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
+* [libvgm](https://github.com/ValleyBell/libvgm) - will use 3rd party dep if not present on system
+* [libopenmpt](https://lib.openmpt.org/libopenmpt/)
+* [libgme](https://github.com/libgme/game-music-emu)
+* [libarchive](https://www.libarchive.org/) 
 
 Platform-specific requirements are listed below.
 
@@ -31,9 +35,10 @@ Platform-specific requirements are listed below.
 sudo apt update
 sudo apt install \
     g++ git cmake pkg-config ninja-build libglu1-mesa-dev libxkbcommon-dev zlib1g-dev \
-    libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev libopenmpt-dev \
+    libasound2-dev libtag1-dev libicu-dev libpipewire-0.3-dev \
     qt6-base-dev libqt6svg6-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-    libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libswresample-dev
+    libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libswresample-dev \
+    libopenmpt-dev libgme-dev libarchive-dev
 ```
 
 ### Arch Linux
@@ -42,7 +47,8 @@ sudo apt install \
 sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg \
-    qt6-base qt6-svg qt6-tools kdsingleapplication taglib libopenmpt
+    qt6-base qt6-svg qt6-tools kdsingleapplication taglib 
+    libopenmpt libgme libarchive
 ```
 
 ### Fedora
@@ -51,9 +57,10 @@ sudo pacman -S --needed \
 sudo dnf update
 sudo dnf install \
     cmake ninja-build glib2-devel libxkbcommon-x11-devel libxkbcommon-devel \
-    alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel libopenmpt-devel \
+    alsa-lib-devel qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel \
     libavcodec-free-devel libavformat-free-devel libavutil-free-devel libswresample-free-devel \
-    taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel
+    taglib-devel kdsingleapplication-qt6-devel libicu-devel pipewire-devel \
+    libopenmpt-devel game-music-emu-devel libarchive-devel
 ```
 
 ## Building
