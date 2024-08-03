@@ -39,9 +39,13 @@ TEST_F(TagWriterTest, AiffWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -60,12 +64,13 @@ TEST_F(TagWriterTest, AiffWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
+        source.device->seek(0);
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));
@@ -96,6 +101,10 @@ TEST_F(TagWriterTest, FlacWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
         ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
@@ -117,7 +126,7 @@ TEST_F(TagWriterTest, FlacWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
@@ -153,9 +162,13 @@ TEST_F(TagWriterTest, M4aWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -174,7 +187,7 @@ TEST_F(TagWriterTest, M4aWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
@@ -210,9 +223,13 @@ TEST_F(TagWriterTest, Mp3Write)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -231,7 +248,7 @@ TEST_F(TagWriterTest, Mp3Write)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
@@ -267,9 +284,13 @@ TEST_F(TagWriterTest, OggWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -288,7 +309,7 @@ TEST_F(TagWriterTest, OggWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
@@ -324,9 +345,13 @@ TEST_F(TagWriterTest, OpusWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -345,7 +370,7 @@ TEST_F(TagWriterTest, OpusWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
@@ -381,9 +406,13 @@ TEST_F(TagWriterTest, WavWrite)
     TempResource file{filepath};
     file.checkValid();
 
+    AudioSource source;
+    source.filepath = file.fileName();
+    source.device   = &file;
+
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         track.setId(0);
         track.setTitle(QStringLiteral("TestTitle"));
@@ -402,12 +431,12 @@ TEST_F(TagWriterTest, WavWrite)
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
 
-        ASSERT_TRUE(m_parser.writeTrack({filepath, &file, nullptr}, track, {}));
+        ASSERT_TRUE(m_parser.writeTrack(source, track, {}));
     }
 
     {
         Track track{file.fileName()};
-        ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
+        ASSERT_TRUE(m_parser.readTrack(source, track));
 
         EXPECT_EQ(track.title(), QStringLiteral("TestTitle"));
         EXPECT_EQ(track.album(), QStringLiteral("TestAlbum"));

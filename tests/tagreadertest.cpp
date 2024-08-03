@@ -64,7 +64,7 @@ TEST_F(TagReaderTest, AiffRead)
 
 TEST_F(TagReaderTest, FlacRead)
 {
-    const QString filepath = QStringLiteral(":/audio/audiotest.flax");
+    const QString filepath = QStringLiteral(":/audio/audiotest.flac");
     TempResource file{filepath};
     file.checkValid();
 
