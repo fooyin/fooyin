@@ -1601,6 +1601,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
     }
     else {
         qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        return false;
     }
 
     if(track.codec().isEmpty()) {
