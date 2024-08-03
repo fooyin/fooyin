@@ -31,7 +31,8 @@ Q_LOGGING_CATEGORY(LIBARCH, "LibArchive")
 namespace {
 QStringList fileExtensions()
 {
-    static const QStringList extensions = {QStringLiteral("zip"), QStringLiteral("rar"), QStringLiteral("gz")};
+    static const QStringList extensions = {QStringLiteral("zip"), QStringLiteral("rar"), QStringLiteral("tar"),
+                                           QStringLiteral("gz"), QStringLiteral("7z")};
     return extensions;
 }
 
