@@ -744,13 +744,13 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
         }
     }
 
-    reportProgress();
-
     const auto dirs   = getDirectories(path, Utils::extensionsToWildcards(m_audioLoader->supportedFileExtensions()));
     m_tracksProcessed = 0;
     m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
         return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
     });
+
+    reportProgress();
 
     for(const auto& [_, files, cues] : dirs) {
         for(const auto& cue : cues) {
@@ -991,14 +991,14 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
     };
 
-    p->reportProgress();
-
     const LibraryDirectories dirs
         = getDirectories(urls, Utils::extensionsToWildcards(p->m_audioLoader->supportedFileExtensions()));
 
     p->m_totalTracks = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
         return sum + dir.files.size() + dir.playlists.size();
     });
+
+    p->reportProgress();
     std::set<QString> filesScanned;
 
     for(const auto& [_, files, playlists] : dirs) {
