@@ -22,18 +22,21 @@
 #include "rawaudioinput.h"
 
 namespace Fooyin::RawAudio {
-QString RawAudioPlugin::name() const
+QString RawAudioPlugin::inputName() const
 {
     return QStringLiteral("RawAudio");
 }
 
 InputCreator RawAudioPlugin::inputCreator() const
 {
-    return {.decoder = []() { return std::make_unique<RawAudioDecoder>(); },
-            .reader =
-                []() {
-                    return std::make_unique<RawAudioReader>();
-                }};
+    InputCreator creator;
+    creator.decoder = []() {
+        return std::make_unique<RawAudioDecoder>();
+    };
+    creator.reader = []() {
+        return std::make_unique<RawAudioReader>();
+    };
+    return creator;
 }
 } // namespace Fooyin::RawAudio
 

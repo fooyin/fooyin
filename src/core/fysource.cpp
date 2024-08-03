@@ -17,31 +17,6 @@
  *
  */
 
-#pragma once
+#include <core/fysource.h>
 
-#include <core/engine/audioinput.h>
-
-#include <QtPlugin>
-
-namespace Fooyin {
-struct InputCreator
-{
-    DecoderCreator decoder;
-    ReaderCreator reader;
-    ArchiveReaderCreator archiveReader;
-};
-
-/*!
- * An abstract interface for audio decoder plugins.
- */
-class InputPlugin
-{
-public:
-    virtual ~InputPlugin() = default;
-
-    [[nodiscard]] virtual QString inputName() const         = 0;
-    [[nodiscard]] virtual InputCreator inputCreator() const = 0;
-};
-} // namespace Fooyin
-
-Q_DECLARE_INTERFACE(Fooyin::InputPlugin, "org.fooyin.fooyin.plugin.engine.input")
+namespace Fooyin { }

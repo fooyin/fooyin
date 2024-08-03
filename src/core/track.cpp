@@ -39,7 +39,6 @@ public:
     QString hash;
     QString codec;
     QString filepath;
-    QString relativePath;
     QString directory;
     QString filename;
     QString extension;
@@ -166,6 +165,71 @@ int Track::libraryId() const
     return p->libraryId;
 }
 
+bool Track::isInArchive(const QString& filepath)
+{
+    const QUrl url{filepath};
+    return url.scheme() == u"unpack";
+}
+
+QString Track::archivePath(const QString& filepath)
+{
+    const QUrl url{filepath};
+    QString path = url.path(QUrl::FullyDecoded);
+
+    const auto delimiterPos = path.indexOf(u'!');
+    if(delimiterPos != -1) {
+        path = path.left(delimiterPos);
+        if(path.startsWith(u"///")) {
+            path = path.mid(2);
+        }
+        return path;
+    }
+    return {};
+}
+
+QString Track::archiveFilePath(const QString& filepath)
+{
+    const QUrl url{filepath};
+    QString path = url.path(QUrl::FullyDecoded);
+
+    const auto delimiterPos = path.indexOf(u'!');
+    if(delimiterPos != -1) {
+        path = path.mid(delimiterPos + 1);
+        return path;
+    }
+    return {};
+}
+
+QString Track::archiveDirectory(const QString& filepath)
+{
+    const QString fullPath = archiveFilePath(filepath);
+    const auto filePos     = fullPath.lastIndexOf(u'/');
+    if(filePos != -1) {
+        return fullPath.left(filePos);
+    }
+    return {};
+}
+
+bool Track::isInArchive() const
+{
+    return Track::isInArchive(p->filepath);
+}
+
+QString Track::archivePath() const
+{
+    return Track::archivePath(p->filepath);
+}
+
+QString Track::archiveFilePath() const
+{
+    return Track::archiveFilePath(p->filepath);
+}
+
+QString Track::archiveDirectory() const
+{
+    return Track::archiveDirectory(p->filepath);
+}
+
 int Track::id() const
 {
     return p->id;
@@ -216,9 +280,13 @@ QString Track::uniqueFilepath() const
     return path;
 }
 
-QString Track::relativePath() const
+QString Track::prettyFilepath() const
 {
-    return p->relativePath;
+    if(isInArchive()) {
+        return archivePath() + u"/" + archiveFilePath(p->filepath);
+    }
+
+    return p->filepath;
 }
 
 QString Track::filename() const
@@ -228,6 +296,10 @@ QString Track::filename() const
 
 QString Track::path() const
 {
+    if(isInArchive()) {
+        return QFileInfo{prettyFilepath()}.dir().path();
+    }
+
     return QFileInfo{p->filepath}.absolutePath();
 }
 
@@ -541,19 +613,28 @@ void Track::setCodec(const QString& codec)
 
 void Track::setFilePath(const QString& path)
 {
+    if(path.isEmpty()) {
+        return;
+    }
+
     p->filepath = path;
 
-    if(!path.isEmpty()) {
-        const QFileInfo info{path};
+    if(isInArchive()) {
+        const auto delimiterPos = path.indexOf(u'!');
+        if(delimiterPos != -1) {
+            const auto file = path.mid(delimiterPos + 1);
+            const QFileInfo info{file};
+            p->filename  = info.completeBaseName();
+            p->extension = info.suffix().toLower();
+            p->directory = info.dir().dirName();
+        }
+    }
+    else {
+        const QFileInfo info{p->filepath};
         p->filename  = info.completeBaseName();
         p->extension = info.suffix().toLower();
         p->directory = info.dir().dirName();
     }
-}
-
-void Track::setRelativePath(const QString& path)
-{
-    p->relativePath = path;
 }
 
 void Track::setTitle(const QString& title)

@@ -24,15 +24,15 @@
 #include <libopenmpt/libopenmpt.hpp>
 
 namespace Fooyin::OpenMpt {
-class OpenMptInput : public AudioDecoder
+class OpenMptDecoder : public AudioDecoder
 {
 public:
-    OpenMptInput();
+    OpenMptDecoder();
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
 
-    std::optional<AudioFormat> init(const Track& source, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
 
     void stop() override;
     void seek(uint64_t pos) override;
@@ -54,8 +54,8 @@ public:
     [[nodiscard]] bool canWriteMetaData() const override;
     [[nodiscard]] int subsongCount() const override;
 
-    bool init(const QString& source) override;
-    bool readTrack(Track& track) override;
+    bool init(const AudioSource& source) override;
+    bool readTrack(const AudioSource& source, Track& track) override;
 
 private:
     std::unique_ptr<openmpt::module> m_module;

@@ -48,7 +48,7 @@ public:
     [[nodiscard]] bool trackHasChanged() const override;
     [[nodiscard]] Track changedTrack() const override;
 
-    std::optional<AudioFormat> init(const Track& track, DecoderOptions options) override;
+    std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;
     void stop() override;
 
@@ -71,6 +71,6 @@ public:
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
 
-    bool readTrack(Track& track) override;
+    bool readTrack(const AudioSource& source, Track& track) override;
 };
 } // namespace Fooyin::VgmInput

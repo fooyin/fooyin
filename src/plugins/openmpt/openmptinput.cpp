@@ -57,7 +57,7 @@ void setupModule(openmpt::module* module)
 } // namespace
 
 namespace Fooyin::OpenMpt {
-OpenMptInput::OpenMptInput()
+OpenMptDecoder::OpenMptDecoder()
     : m_eof{false}
 {
     m_format.setSampleFormat(SampleFormat::F32);
@@ -65,26 +65,20 @@ OpenMptInput::OpenMptInput()
     m_format.setSampleRate(SampleRate);
 }
 
-QStringList OpenMptInput::extensions() const
+QStringList OpenMptDecoder::extensions() const
 {
     return fileExtensions();
 }
 
-bool OpenMptInput::isSeekable() const
+bool OpenMptDecoder::isSeekable() const
 {
     return true;
 }
 
-std::optional<AudioFormat> OpenMptInput::init(const Track& track, DecoderOptions options)
+std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
-    QFile file{track.filepath()};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(OPENMPT) << "Unable to open" << track.filepath();
-        return {};
-    }
-
-    std::vector<char> data(static_cast<std::size_t>(file.size()));
-    file.read(data.data(), file.size());
+    std::vector<char> data(static_cast<std::size_t>(source.device->size()));
+    source.device->read(data.data(), source.device->size());
 
     try {
         std::map<std::string, std::string> ctls;
@@ -108,7 +102,7 @@ std::optional<AudioFormat> OpenMptInput::init(const Track& track, DecoderOptions
     return m_format;
 }
 
-void OpenMptInput::stop()
+void OpenMptDecoder::stop()
 {
     if(m_module) {
         m_module.reset();
@@ -116,12 +110,12 @@ void OpenMptInput::stop()
     m_eof = false;
 }
 
-void OpenMptInput::seek(uint64_t pos)
+void OpenMptDecoder::seek(uint64_t pos)
 {
     m_module->set_position_seconds(static_cast<double>(pos) / 1000);
 }
 
-AudioBuffer OpenMptInput::readBuffer(size_t bytes)
+AudioBuffer OpenMptDecoder::readBuffer(size_t bytes)
 {
     if(m_eof) {
         return {};
@@ -176,16 +170,10 @@ int OpenMptReader::subsongCount() const
     return m_subsongCount;
 }
 
-bool OpenMptReader::init(const QString& source)
+bool OpenMptReader::init(const AudioSource& source)
 {
-    QFile file{source};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(OPENMPT) << "Unable to open" << source;
-        return false;
-    }
-
-    std::vector<char> data(static_cast<std::size_t>(file.size()));
-    file.read(data.data(), file.size());
+    std::vector<char> data(static_cast<size_t>(source.device->size()));
+    source.device->read(data.data(), source.device->size());
 
     try {
         const std::map<std::string, std::string> ctls;
@@ -195,23 +183,17 @@ bool OpenMptReader::init(const QString& source)
         m_subsongCount = m_module->get_num_subsongs();
     }
     catch(...) {
-        qCWarning(OPENMPT) << "Failed to open" << source;
+        qCWarning(OPENMPT) << "Failed to open" << source.filepath;
         return {};
     }
 
     return true;
 }
 
-bool OpenMptReader::readTrack(Track& track)
+bool OpenMptReader::readTrack(const AudioSource& source, Track& track)
 {
-    QFile file{track.filepath()};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(OPENMPT) << "Unable to open" << track.filepath();
-        return false;
-    }
-
-    std::vector<char> data(static_cast<std::size_t>(file.size()));
-    file.read(data.data(), file.size());
+    std::vector<char> data(static_cast<std::size_t>(source.device->size()));
+    source.device->read(data.data(), source.device->size());
 
     try {
         const std::map<std::string, std::string> ctls;
@@ -221,9 +203,9 @@ bool OpenMptReader::readTrack(Track& track)
 
         track.setDuration(static_cast<uint64_t>(m_module->get_duration_seconds() * 1000));
 
-        const auto names = m_module->get_subsong_names();
-        if(std::cmp_less(subsong, names.size())) {
-            track.setTitle(QString::fromLocal8Bit(names.at(subsong)));
+        const auto subsongNames = m_module->get_subsong_names();
+        if(std::cmp_less(subsong, subsongNames.size())) {
+            track.setTitle(QString::fromUtf8(subsongNames.at(subsong)));
         }
 
         const std::vector<std::string> keys = m_module->get_metadata_keys();

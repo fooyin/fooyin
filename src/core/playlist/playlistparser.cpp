@@ -73,14 +73,17 @@ void PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
 Track PlaylistParser::readMetadata(const Track& track)
 {
     Track readTrack{track};
+    const QFileInfo fileInfo{track.filepath()};
+    readTrack.setFileSize(fileInfo.size());
 
     if(m_audioLoader->readTrackMetadata(readTrack)) {
-        const QFileInfo fileInfo{track.filepath()};
-        readTrack.setFileSize(fileInfo.size());
-
-        readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
-        const QDateTime modifiedTime = fileInfo.lastModified();
-        readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+        if(readTrack.addedTime() == 0) {
+            readTrack.setAddedTime(QDateTime::currentMSecsSinceEpoch());
+        }
+        if(readTrack.modifiedTime() == 0) {
+            const QDateTime modifiedTime = fileInfo.lastModified();
+            readTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
+        }
 
         readTrack.generateHash();
     }

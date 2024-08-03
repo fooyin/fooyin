@@ -35,7 +35,6 @@
 #include "systemtrayicon.h"
 #include "widgets.h"
 
-#include <utils/logging/logwidget.h>
 #include <core/application.h>
 #include <core/corepaths.h>
 #include <core/coresettings.h>
@@ -62,6 +61,7 @@
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/logging/logwidget.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -277,8 +277,15 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(core.engine, &EngineController::trackStatusChanged, self, [this](TrackStatus status) {
         const Track track = core.playerController->currentTrack();
         if(status == TrackStatus::Invalid) {
-            if(track.isValid() && !QFileInfo::exists(track.filepath())) {
-                showTrackNotFoundMessage(track);
+            if(track.isValid()) {
+                if(track.isInArchive()) {
+                    if(!QFileInfo::exists(track.archivePath())) {
+                        showTrackNotFoundMessage(track);
+                    }
+                }
+                else if(!QFileInfo::exists(track.filepath())) {
+                    showTrackNotFoundMessage(track);
+                }
             }
         }
         else if(status == TrackStatus::Unreadable) {

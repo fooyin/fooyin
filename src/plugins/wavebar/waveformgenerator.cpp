@@ -25,6 +25,7 @@
 #include <utils/paths.h>
 
 #include <QDebug>
+#include <QFile>
 
 #include <cfenv>
 #include <utility>
@@ -267,14 +268,23 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
         return {};
     }
 
-    if(!m_decoder || !m_decoder->extensions().contains(track.extension())) {
-        m_decoder = m_audioLoader->decoderForTrack(track);
-        if(!m_decoder) {
-            return {};
-        }
+    m_decoder = m_audioLoader->decoderForTrack(track);
+    if(!m_decoder) {
+        return {};
     }
 
-    const auto format = m_decoder->init(track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
+    AudioSource source;
+    source.filepath = track.filepath();
+    if(!track.isInArchive()) {
+        m_file = std::make_unique<QFile>(track.filepath());
+        if(!m_file->open(QIODevice::ReadOnly)) {
+            qCWarning(WAVEBAR) << "Failed to open" << track.filepath();
+            return {};
+        }
+        source.device = m_file.get();
+    }
+
+    const auto format = m_decoder->init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoInfiniteLooping);
     if(!format) {
         return {};
     }

@@ -21,6 +21,7 @@
 
 #include "corepaths.h"
 #include "database/database.h"
+#include "engine/archiveinput.h"
 #include "engine/enginehandler.h"
 #include "engine/ffmpeg/ffmpeginput.h"
 #include "engine/taglibparser.h"
@@ -149,6 +150,10 @@ void ApplicationPrivate::registerPlaylistParsers()
 
 void ApplicationPrivate::registerInputs()
 {
+    m_audioLoader->addDecoder(QStringLiteral("Archive"),
+                              [this]() { return std::make_unique<ArchiveDecoder>(m_audioLoader); });
+    m_audioLoader->addReader(QStringLiteral("Archive"),
+                             [this]() { return std::make_unique<GeneralArchiveReader>(m_audioLoader); });
     m_audioLoader->addReader(QStringLiteral("TagLib"), {[]() {
                                  return std::make_unique<TagLibReader>();
                              }});
@@ -205,10 +210,13 @@ void ApplicationPrivate::loadPlugins()
     m_pluginManager.initialisePlugins<InputPlugin>([this](InputPlugin* plugin) {
         const auto creator = plugin->inputCreator();
         if(creator.decoder) {
-            m_audioLoader->addDecoder(plugin->name(), creator.decoder);
+            m_audioLoader->addDecoder(plugin->inputName(), creator.decoder);
         }
         if(creator.reader) {
-            m_audioLoader->addReader(plugin->name(), creator.reader);
+            m_audioLoader->addReader(plugin->inputName(), creator.reader);
+        }
+        if(creator.archiveReader) {
+            m_audioLoader->addArchiveReader(plugin->inputName(), creator.archiveReader);
         }
     });
 }

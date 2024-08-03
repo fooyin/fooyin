@@ -36,8 +36,8 @@
 namespace Fooyin::TagEditor {
 void TagEditorPlugin::initialise(const CorePluginContext& context)
 {
-    m_settings      = context.settingsManager;
-    m_library       = context.library;
+    m_settings    = context.settingsManager;
+    m_library     = context.library;
     m_audioLoader = context.audioLoader;
 }
 
@@ -62,8 +62,9 @@ void TagEditorPlugin::shutdown()
 
 TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
 {
-    const bool canWrite = std::ranges::all_of(
-        tracks, [this](const Track& track) { return !track.hasCue() && m_audioLoader->canWriteMetadata(track); });
+    const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
+        return !track.hasCue() && !track.isInArchive() && m_audioLoader->canWriteMetadata(track);
+    });
 
     auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::writeTrackMetadata);

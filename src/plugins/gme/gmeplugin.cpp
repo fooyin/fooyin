@@ -23,18 +23,21 @@
 #include "gmesettings.h"
 
 namespace Fooyin::Gme {
-QString GmePlugin::name() const
+QString GmePlugin::inputName() const
 {
     return QStringLiteral("Game Music Emulator");
 }
 
 InputCreator GmePlugin::inputCreator() const
 {
-    return {.decoder = []() { return std::make_unique<GmeDecoder>(); },
-            .reader =
-                []() {
-                    return std::make_unique<GmeReader>();
-                }};
+    InputCreator creator;
+    creator.decoder = []() {
+        return std::make_unique<GmeDecoder>();
+    };
+    creator.reader = []() {
+        return std::make_unique<GmeReader>();
+    };
+    return creator;
 }
 
 bool GmePlugin::hasSettings() const

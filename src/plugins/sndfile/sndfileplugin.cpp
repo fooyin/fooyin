@@ -22,17 +22,20 @@
 #include "sndfileinput.h"
 
 namespace Fooyin::Snd {
-QString SndFilePlugin::name() const
+QString SndFilePlugin::inputName() const
 {
     return QStringLiteral("Sndfile");
 }
 
 InputCreator SndFilePlugin::inputCreator() const
 {
-    return {.decoder = []() { return std::make_unique<SndFileDecoder>(); },
-            .reader =
-                []() {
-                    return std::make_unique<SndFileReader>();
-                }};
+    InputCreator creator;
+    creator.decoder = []() {
+        return std::make_unique<SndFileDecoder>();
+    };
+    creator.reader = []() {
+        return std::make_unique<SndFileReader>();
+    };
+    return creator;
 }
 } // namespace Fooyin::Snd

@@ -19,6 +19,8 @@
 
 #include <core/engine/audioinput.h>
 
+#include <QUrl>
+
 namespace Fooyin {
 bool AudioDecoder::trackHasChanged() const
 {
@@ -37,17 +39,17 @@ int AudioReader::subsongCount() const
     return 1;
 }
 
-bool AudioReader::init(const QString& /*file*/)
+bool AudioReader::init(const AudioSource& /*source*/)
 {
     return true;
 }
 
-QByteArray AudioReader::readCover(const Track& /*track*/, Track::Cover /*cover*/)
+QByteArray AudioReader::readCover(const AudioSource& /*source*/, const Track& /*track*/, Track::Cover /*cover*/)
 {
     return {};
 }
 
-bool AudioReader::writeTrack(const Track& /*track*/, WriteOptions /*options*/)
+bool AudioReader::writeTrack(const AudioSource& /*source*/, const Track& /*track*/, WriteOptions /*options*/)
 {
     return false;
 }

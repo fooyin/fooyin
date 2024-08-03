@@ -35,7 +35,7 @@ QStringList fileExtensions()
     return extensions;
 }
 
-bool isValidData(QFile* file)
+bool isValidData(QIODevice* file)
 {
     if(file->size() % 4 != 0) {
         return false;
@@ -71,15 +71,12 @@ bool RawAudioDecoder::isSeekable() const
     return m_file && !m_file->isSequential();
 }
 
-std::optional<AudioFormat> RawAudioDecoder::init(const Track& track, DecoderOptions /*options*/)
+std::optional<AudioFormat> RawAudioDecoder::init(const AudioSource& source, const Track& track,
+                                                 DecoderOptions /*options*/)
 {
-    m_file = std::make_unique<QFile>(track.filepath());
-    if(!m_file->open(QIODevice::ReadOnly)) {
-        qCWarning(RAW_AUD) << "Unable to open" << track.filepath();
-        return {};
-    }
+    m_file = source.device;
 
-    if(!isValidData(m_file.get())) {
+    if(!isValidData(m_file)) {
         qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
         return {};
     }
@@ -139,20 +136,13 @@ bool RawAudioReader::canWriteMetaData() const
     return false;
 }
 
-bool RawAudioReader::readTrack(Track& track)
+bool RawAudioReader::readTrack(const AudioSource& source, Track& track)
 {
-    QFile file{track.filepath()};
-    if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(RAW_AUD) << "Unable to open file" << track.filepath();
-        return false;
-    }
-
-    if(!isValidData(&file)) {
+    if(!isValidData(source.device)) {
         qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
         return false;
     }
 
-    track.setFileSize(file.size());
     track.setDuration(track.fileSize() / 4 / SampleRate * 1000);
     track.setSampleRate(SampleRate);
     track.setChannels(Channels);

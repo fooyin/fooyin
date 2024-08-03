@@ -32,7 +32,7 @@ class VgmInputPlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
 public:
-    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
 
     [[nodiscard]] bool hasSettings() const override;

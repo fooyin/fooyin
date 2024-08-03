@@ -37,7 +37,6 @@ QString fetchTrackColumns()
 {
     static const QString columns = QStringLiteral("TrackID,"
                                                   "FilePath,"
-                                                  "RelativePath,"
                                                   "Title,"
                                                   "TrackNumber,"
                                                   "TrackTotal,"
@@ -76,7 +75,7 @@ QString fetchTrackColumns()
 
 BindingsMap trackBindings(const Fooyin::Track& track)
 {
-    return {{QStringLiteral(":filePath"), Fooyin::Utils::File::cleanPath(track.filepath())},
+    return {{QStringLiteral(":filePath"), track.filepath()},
             {QStringLiteral(":title"), track.title()},
             {QStringLiteral(":trackNumber"), track.trackNumber()},
             {QStringLiteral(":trackTotal"), track.trackTotal()},
@@ -112,39 +111,38 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
 
     track.setId(q.value(0).toInt());
     track.setFilePath(q.value(1).toString());
-    track.setRelativePath(q.value(2).toString());
-    track.setTitle(q.value(3).toString());
-    track.setTrackNumber(q.value(4).toInt());
-    track.setTrackTotal(q.value(5).toInt());
-    track.setArtists(q.value(6).toString().split(u'\037'));
-    track.setAlbumArtists(q.value(7).toString().split(u'\037'));
-    track.setAlbum(q.value(8).toString());
-    track.setDiscNumber(q.value(9).toInt());
-    track.setDiscTotal(q.value(10).toInt());
-    track.setDate(q.value(11).toString());
-    track.setComposer(q.value(12).toString());
-    track.setPerformer(q.value(13).toString());
-    track.setGenres(q.value(14).toString().split(u'\037'));
-    track.setComment(q.value(15).toString());
-    track.setSubsong(q.value(16).toInt());
-    track.setCuePath(q.value(17).toString());
-    track.setOffset(q.value(18).toULongLong());
-    track.setDuration(q.value(19).toULongLong());
-    track.setFileSize(q.value(20).toInt());
-    track.setBitrate(q.value(21).toInt());
-    track.setSampleRate(q.value(22).toInt());
-    track.setChannels(q.value(23).toInt());
-    track.setBitDepth(q.value(24).toInt());
-    track.setCodec(q.value(25).toString());
-    track.storeExtraTags(q.value(26).toByteArray());
-    track.setModifiedTime(q.value(27).toULongLong());
-    track.setLibraryId(q.value(28).toInt());
-    track.setHash(q.value(29).toString());
-    track.setAddedTime(q.value(30).toULongLong());
-    track.setFirstPlayed(q.value(31).toULongLong());
-    track.setLastPlayed(q.value(32).toULongLong());
-    track.setPlayCount(q.value(33).toInt());
-    track.setRating(q.value(34).toFloat());
+    track.setTitle(q.value(2).toString());
+    track.setTrackNumber(q.value(3).toInt());
+    track.setTrackTotal(q.value(4).toInt());
+    track.setArtists(q.value(5).toString().split(u'\037'));
+    track.setAlbumArtists(q.value(6).toString().split(u'\037'));
+    track.setAlbum(q.value(7).toString());
+    track.setDiscNumber(q.value(8).toInt());
+    track.setDiscTotal(q.value(9).toInt());
+    track.setDate(q.value(10).toString());
+    track.setComposer(q.value(11).toString());
+    track.setPerformer(q.value(12).toString());
+    track.setGenres(q.value(13).toString().split(u'\037'));
+    track.setComment(q.value(14).toString());
+    track.setSubsong(q.value(15).toInt());
+    track.setCuePath(q.value(16).toString());
+    track.setOffset(q.value(17).toULongLong());
+    track.setDuration(q.value(18).toULongLong());
+    track.setFileSize(q.value(19).toInt());
+    track.setBitrate(q.value(20).toInt());
+    track.setSampleRate(q.value(21).toInt());
+    track.setChannels(q.value(22).toInt());
+    track.setBitDepth(q.value(23).toInt());
+    track.setCodec(q.value(24).toString());
+    track.storeExtraTags(q.value(25).toByteArray());
+    track.setModifiedTime(q.value(26).toULongLong());
+    track.setLibraryId(q.value(27).toInt());
+    track.setHash(q.value(28).toString());
+    track.setAddedTime(q.value(29).toULongLong());
+    track.setFirstPlayed(q.value(30).toULongLong());
+    track.setLastPlayed(q.value(31).toULongLong());
+    track.setPlayCount(q.value(32).toInt());
+    track.setRating(q.value(33).toFloat());
 
     track.generateHash();
 
@@ -267,6 +265,25 @@ TrackList TrackDatabase::tracksByHash(const QString& hash) const
     }
 
     return tracks;
+}
+
+int TrackDatabase::idForTrack(Track& track) const
+{
+    const QString statement = QStringLiteral("SELECT TrackID FROM Tracks WHERE FilePath = :path;");
+
+    DbQuery query{db(), statement};
+
+    query.bindValue(QStringLiteral(":path"), track.filepath());
+
+    if(!query.exec()) {
+        return -1;
+    }
+
+    if(query.next()) {
+        return query.value(0).toInt();
+    }
+
+    return -1;
 }
 
 bool TrackDatabase::updateTrack(const Track& track)
@@ -440,7 +457,6 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "SELECT "
                                           "Tracks.TrackID,"
                                           "Tracks.FilePath,"
-                                          "SUBSTR(Tracks.FilePath, LENGTH(Libraries.Path) + 2) AS RelativePath,"
                                           "Tracks.Title,"
                                           "Tracks.TrackNumber,"
                                           "Tracks.TrackTotal,"
@@ -474,7 +490,6 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "TrackStats.PlayCount,"
                                           "TrackStats.Rating"
                                           " FROM Tracks "
-                                          "LEFT JOIN Libraries ON Tracks.LibraryID = Libraries.LibraryID "
                                           "LEFT JOIN TrackStats ON Tracks.TrackHash = TrackStats.TrackHash;");
 
     DbQuery query{db, statement};

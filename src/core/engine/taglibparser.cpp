@@ -21,7 +21,6 @@
 
 #include "tagdefs.h"
 
-#include <core/constants.h>
 #include <core/track.h>
 #include <utils/helpers.h>
 
@@ -32,7 +31,6 @@
 #include <taglib/asfpicture.h>
 #include <taglib/asftag.h>
 #include <taglib/attachedpictureframe.h>
-#include <taglib/fileref.h>
 #include <taglib/flacfile.h>
 #include <taglib/id3v2framefactory.h>
 #include <taglib/id3v2tag.h>
@@ -62,7 +60,189 @@
 
 Q_LOGGING_CATEGORY(TAGLIB, "TagLib")
 
+constexpr auto BufferSize = 1024;
+
 namespace {
+class IODeviceStream : public TagLib::IOStream
+{
+public:
+    IODeviceStream(QIODevice* input, const QString& filename)
+        : m_input{input}
+        , m_fileName{filename.toLocal8Bit()}
+    {
+        m_input->seek(0);
+    }
+
+    [[nodiscard]] TagLib::FileName name() const override
+    {
+        return m_fileName.constData();
+    }
+
+#if TAGLIB_MAJOR_VERSION >= 2
+    TagLib::ByteVector readBlock(size_t length) override
+#else
+    TagLib::ByteVector readBlock(unsigned long length) override
+#endif
+    {
+        std::vector<char> data(length);
+        const auto lenRead = m_input->read(data.data(), static_cast<qint64>(length));
+        if(lenRead < 0) {
+            m_input->close();
+            return {};
+        }
+        return TagLib::ByteVector{data.data(), static_cast<unsigned int>(lenRead)};
+    }
+
+    void writeBlock(const TagLib::ByteVector& data) override
+    {
+        m_input->write(data.data(), data.size());
+    }
+
+#if TAGLIB_MAJOR_VERSION >= 2
+    void insert(const TagLib::ByteVector& data, TagLib::offset_t start, size_t replace) override
+#else
+    void insert(const TagLib::ByteVector& data, unsigned long start, unsigned long replace) override
+#endif
+    {
+        if(data.size() == replace) {
+            seek(start, Beginning);
+            writeBlock(data);
+            return;
+        }
+
+        if(data.size() < replace) {
+            seek(start, Beginning);
+            writeBlock(data);
+            removeBlock(start + data.size(), replace - data.size());
+            return;
+        }
+
+        const qint64 bufferLength{BufferSize};
+        const qint64 fileSize = m_input->size();
+        QByteArray buffer(bufferLength, 0);
+        qint64 readPosition = static_cast<qint64>(start) + static_cast<qint64>(replace);
+        qint64 writePosition{start};
+
+        seek(writePosition, Beginning);
+        writeBlock(data);
+        writePosition += data.size();
+
+        while(readPosition < fileSize) {
+            seek(readPosition, Beginning);
+            const qint64 bytesRead = m_input->read(buffer.data(), BufferSize);
+
+            if(bytesRead <= 0) {
+                // End of file or read error
+                break;
+            }
+
+            seek(writePosition, Beginning);
+            m_input->write(buffer.left(bytesRead));
+
+            readPosition += bytesRead;
+            writePosition += bytesRead;
+        }
+    }
+
+#if TAGLIB_MAJOR_VERSION >= 2
+    void removeBlock(TagLib::offset_t start, size_t length) override
+#else
+    void removeBlock(unsigned long start, unsigned long length) override
+#endif
+    {
+        if(length == 0 || start >= m_input->size()) {
+            return;
+        }
+
+        const qint64 fileSize = m_input->size();
+        if(start + length > static_cast<size_t>(fileSize)) {
+            length = static_cast<size_t>(fileSize) - start;
+        }
+
+        QByteArray buffer(BufferSize, 0);
+
+        qint64 readPosition  = static_cast<qint64>(start) + static_cast<qint64>(length);
+        qint64 writePosition = start;
+        qint64 bytesRead     = 0;
+
+        while(readPosition < fileSize) {
+            m_input->seek(readPosition);
+            bytesRead = m_input->peek(buffer.data(), BufferSize);
+
+            if(bytesRead <= 0) {
+                // End of file or error
+                break;
+            }
+
+            m_input->seek(writePosition);
+            m_input->write(buffer.left(bytesRead));
+
+            writePosition += bytesRead;
+            readPosition += bytesRead;
+        }
+
+        truncate(writePosition);
+    }
+
+    [[nodiscard]] bool readOnly() const override
+    {
+        return !m_input->isWritable();
+    }
+
+    [[nodiscard]] bool isOpen() const override
+    {
+        return m_input->isOpen();
+    }
+
+    void seek(long offset, Position p) override
+    {
+        const auto seekPos = static_cast<qint64>(offset);
+        switch(p) {
+            case(Beginning):
+                m_input->seek(seekPos);
+                break;
+            case(Current):
+                m_input->seek(m_input->pos() + seekPos);
+                break;
+            case(End):
+                m_input->seek(m_input->size() + seekPos);
+                break;
+        }
+    }
+
+    void clear() override
+    {
+        m_input->seek(0);
+        TagLib::IOStream::clear();
+    }
+
+    [[nodiscard]] long tell() const override
+    {
+        return m_input->pos();
+    }
+
+    long length() override
+    {
+        return m_input->size();
+    }
+
+    void truncate(long length) override
+    {
+        if(length < 0 || length >= m_input->size()) {
+            return;
+        }
+
+        m_input->seek(0);
+        const QByteArray data = m_input->peek(length);
+        m_input->write(data);
+        m_input->seek(length);
+    }
+
+private:
+    QIODevice* m_input;
+    QByteArray m_fileName;
+};
+
 constexpr std::array mp4ToTag{
     std::pair(Fooyin::Mp4::Title, Fooyin::Tag::Title),
     std::pair(Fooyin::Mp4::Artist, Fooyin::Tag::Artist),
@@ -1351,18 +1531,16 @@ bool TagLibReader::canWriteMetaData() const
     return true;
 }
 
-bool TagLibReader::readTrack(Track& track)
+bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 {
-    const QString filepath = track.filepath();
-
-    TagLib::FileStream stream(filepath.toUtf8().constData(), true);
+    IODeviceStream stream{source.device, track.filename()};
     if(!stream.isOpen()) {
-        qCWarning(TAGLIB) << "Unable to open file readonly:" << filepath;
+        qCWarning(TAGLIB) << "Unable to open file readonly:" << source.filepath;
         return false;
     }
 
     const QMimeDatabase mimeDb;
-    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
+    QString mimeType = mimeDb.mimeTypeForFile(source.filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
     const auto readProperties = [&track](const TagLib::File& file, bool skipExtra = false) {
@@ -1372,7 +1550,7 @@ bool TagLibReader::readTrack(Track& track)
 
     if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
 #if(TAGLIB_MAJOR_VERSION >= 2)
@@ -1484,7 +1662,7 @@ bool TagLibReader::readTrack(Track& track)
             }
         }
     }
-    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
         const TagLib::Ogg::Vorbis::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
@@ -1516,6 +1694,7 @@ bool TagLibReader::readTrack(Track& track)
     }
     else {
         qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        return false;
     }
 
     if(track.codec().isEmpty()) {
@@ -1525,28 +1704,21 @@ bool TagLibReader::readTrack(Track& track)
     return true;
 }
 
-QByteArray TagLibReader::readCover(const Track& track, Track::Cover cover)
+QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track, Track::Cover cover)
 {
-    const auto filepath = track.filepath();
-    const QFileInfo fileInfo{filepath};
-
-    if(fileInfo.size() <= 0) {
-        return {};
-    }
-
-    TagLib::FileStream stream(filepath.toUtf8().constData(), true);
+    IODeviceStream stream{source.device, track.filename()};
     if(!stream.isOpen()) {
-        qCWarning(TAGLIB) << "Unable to open file readonly:" << filepath;
+        qCWarning(TAGLIB) << "Unable to open file readonly:" << track.filepath();
         return {};
     }
 
     const QMimeDatabase mimeDb;
-    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
+    QString mimeType = mimeDb.mimeTypeForFile(source.filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
 #if(TAGLIB_MAJOR_VERSION >= 2)
@@ -1604,7 +1776,7 @@ QByteArray TagLibReader::readCover(const Track& track, Track::Cover cover)
             return readFlacCover(file.pictureList(), cover);
         }
     }
-    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
         const TagLib::Ogg::Vorbis::File file(&stream, true);
         if(file.isValid() && file.tag()) {
             return readFlacCover(file.tag()->pictureList(), cover);
@@ -1622,16 +1794,17 @@ QByteArray TagLibReader::readCover(const Track& track, Track::Cover cover)
             return readAsfCover(file.tag(), cover);
         }
     }
+    else {
+        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        return {};
+    }
 
     return {};
 }
 
-bool TagLibReader::writeTrack(const Track& track, AudioReader::WriteOptions options)
+bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, AudioReader::WriteOptions options)
 {
-    const QString filepath = track.filepath();
-
-    TagLib::FileStream stream(filepath.toUtf8().constData(), false);
-
+    IODeviceStream stream{source.device, track.filepath()};
     if(!stream.isOpen() || stream.readOnly()) {
         return false;
     }
@@ -1643,12 +1816,12 @@ bool TagLibReader::writeTrack(const Track& track, AudioReader::WriteOptions opti
     };
 
     const QMimeDatabase mimeDb;
-    QString mimeType = mimeDb.mimeTypeForFile(filepath).name();
+    QString mimeType = mimeDb.mimeTypeForFile(source.filepath).name();
     const auto style = TagLib::AudioProperties::Average;
 
     if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
         // Workaround for opus files with ogg suffix returning incorrect type
-        mimeType = mimeDb.mimeTypeForFile(filepath, QMimeDatabase::MatchContent).name();
+        mimeType = mimeDb.mimeTypeForData(source.device).name();
     }
     if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
 #if(TAGLIB_MAJOR_VERSION >= 2)
@@ -1738,7 +1911,7 @@ bool TagLibReader::writeTrack(const Track& track, AudioReader::WriteOptions opti
             file.save();
         }
     }
-    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
         TagLib::Ogg::Vorbis::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file);
@@ -1765,6 +1938,10 @@ bool TagLibReader::writeTrack(const Track& track, AudioReader::WriteOptions opti
             }
             file.save();
         }
+    }
+    else {
+        qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
+        return false;
     }
 
     return true;

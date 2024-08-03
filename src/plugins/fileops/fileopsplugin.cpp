@@ -56,6 +56,13 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
         dialog->show();
     };
 
+    QObject::connect(
+        context.trackSelection, &TrackSelectionController::selectionChanged, this, [context, fileOpsMenu]() {
+            const auto tracks = context.trackSelection->selectedTracks();
+            const bool canOp  = std::ranges::all_of(tracks, [](const Track& track) { return !track.isInArchive(); });
+            fileOpsMenu->menu()->setEnabled(canOp);
+        });
+
     QObject::connect(copyAction, &QAction::triggered, this, [openDialog]() { openDialog(Operation::Copy); });
     QObject::connect(moveAction, &QAction::triggered, this, [openDialog]() { openDialog(Operation::Move); });
     QObject::connect(renameAction, &QAction::triggered, this, [openDialog]() { openDialog(Operation::Rename); });

@@ -39,7 +39,10 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libasound2,
         libtag1v5,
         ffmpeg (>= 7:4.4),
-        pipewire"
+        pipewire,
+        libgme0,
+        libopenmpt0,
+        libarchive13"
 )
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")

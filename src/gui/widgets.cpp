@@ -261,7 +261,7 @@ void Widgets::registerPropertiesTabs()
 
 void Widgets::showScanProgress(const ScanProgress& progress) const
 {
-    if(!m_statusWidget || progress.id < 0 || progress.total == 0) {
+    if(!m_statusWidget || progress.id < 0) {
         return;
     }
 

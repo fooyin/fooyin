@@ -8,7 +8,7 @@ set(LIBGME_FOUND OFF) # We need to check the library every time to handle header
 pkg_check_modules(LIBGME QUIET libgme)
 
 if(NOT LIBGME_FOUND)
-    find_path(LIBGME_INCLUDE_DIR gme/gme.h)
+    find_path(LIBGME_INCLUDE_DIR gme)
     find_library(LIBGME_LIBRARY NAMES gme)
 
     include(FindPackageHandleStandardArgs)

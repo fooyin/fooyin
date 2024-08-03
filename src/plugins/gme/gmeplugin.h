@@ -32,10 +32,10 @@ class GmePlugin : public QObject,
     Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
 
 public:
-    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
 
-    bool hasSettings() const override;
+    [[nodiscard]] bool hasSettings() const override;
     void showSettings(QWidget* parent) override;
 };
 } // namespace Fooyin::Gme

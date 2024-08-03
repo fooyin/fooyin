@@ -32,6 +32,7 @@
 #include <utils/utils.h>
 
 #include <QDateTime>
+#include <QDir>
 
 namespace {
 using NativeFunc          = std::function<QString(const QStringList&)>;
@@ -198,6 +199,12 @@ void ScriptRegistryPrivate::addLibraryVars()
         }
         return QString{};
     };
+    m_libraryVars[QStringLiteral("relativepath")] = [this](const Track& track) {
+        if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
+            return QDir{library->path}.relativeFilePath(track.prettyFilepath());
+        }
+        return QString{};
+    };
 }
 
 void ScriptRegistryPrivate::addDefaultFunctions()
@@ -317,7 +324,6 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
     m_metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;
     m_metadata[QString::fromLatin1(MetaData::FilePath)]        = &Track::filepath;
-    m_metadata[QString::fromLatin1(MetaData::RelativePath)]    = &Track::relativePath;
     m_metadata[QString::fromLatin1(MetaData::FileName)]        = &Track::filename;
     m_metadata[QString::fromLatin1(MetaData::Extension)]       = &Track::extension;
     m_metadata[QString::fromLatin1(MetaData::FileNameWithExt)] = &Track::filenameExt;

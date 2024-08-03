@@ -22,18 +22,21 @@
 #include "openmptinput.h"
 
 namespace Fooyin::OpenMpt {
-QString RawAudioPlugin::name() const
+QString RawAudioPlugin::inputName() const
 {
     return QStringLiteral("OpenMpt");
 }
 
 InputCreator RawAudioPlugin::inputCreator() const
 {
-    return {.decoder = []() { return std::make_unique<OpenMptInput>(); },
-            .reader =
-                []() {
-                    return std::make_unique<OpenMptReader>();
-                }};
+    InputCreator creator;
+    creator.decoder = []() {
+        return std::make_unique<OpenMptDecoder>();
+    };
+    creator.reader = []() {
+        return std::make_unique<OpenMptReader>();
+    };
+    return creator;
 }
 } // namespace Fooyin::OpenMpt
 
