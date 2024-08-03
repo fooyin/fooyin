@@ -118,7 +118,7 @@ public:
         }
 
         const qint64 bufferLength{BufferSize};
-        qint64 fileSize = m_input->size();
+        const qint64 fileSize = m_input->size();
         QByteArray buffer(bufferLength, 0);
         qint64 readPosition = static_cast<qint64>(start) + static_cast<qint64>(replace);
         qint64 writePosition{start};
@@ -1776,7 +1776,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readFlacCover(file.pictureList(), cover);
         }
     }
-    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+    else if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
         const TagLib::Ogg::Vorbis::File file(&stream, true);
         if(file.isValid() && file.tag()) {
             return readFlacCover(file.tag()->pictureList(), cover);
