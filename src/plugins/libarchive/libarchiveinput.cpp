@@ -205,17 +205,20 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file) const
     return nullptr;
 }
 
-QByteArray LibArchiveReader::readCover(const Track& /*track*/, Track::Cover /*cover*/)
+QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*/)
 {
     QByteArray coverData;
 
     for(const QString& file : std::as_const(m_entries)) {
         if(isImageFile(file)) {
-            auto device = entry(file);
-            if(device) {
-                // Use first valid image
-                coverData = device->readAll();
-                break;
+            const QFileInfo info{file};
+            if(info.path() == track.archiveDirectory()) {
+                auto device = entry(file);
+                if(device) {
+                    // Use first valid image
+                    coverData = device->readAll();
+                    break;
+                }
             }
         }
     }

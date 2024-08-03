@@ -205,7 +205,7 @@ QString Track::archiveDirectory(const QString& filepath)
     const QString fullPath = archiveFilePath(filepath);
     const auto filePos     = fullPath.lastIndexOf(u'/');
     if(filePos != -1) {
-        return fullPath.left(filePos + 1);
+        return fullPath.left(filePos);
     }
     return {};
 }
