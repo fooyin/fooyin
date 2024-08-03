@@ -212,7 +212,11 @@ QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*
     for(const QString& file : std::as_const(m_entries)) {
         if(isImageFile(file)) {
             const QFileInfo info{file};
-            if(info.path() == track.archiveDirectory()) {
+            QString imagePath = info.path();
+            if(imagePath == u".") {
+                imagePath.clear();
+            }
+            if(imagePath == track.archiveDirectory()) {
                 auto device = entry(file);
                 if(device) {
                     // Use first valid image
