@@ -137,6 +137,7 @@ QStringList LibArchiveReader::extensions() const
 bool LibArchiveReader::init(const QString& file)
 {
     m_file = file;
+    m_entries.clear();
 
     const ArchivePtr archive{archive_read_new()};
 
