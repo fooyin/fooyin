@@ -730,9 +730,17 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
             }
         }
 
-        if(!QFileInfo::exists(track.filepath())) {
-            m_missingFiles.emplace(track.filename(), track);
-            m_missingHashes.emplace(track.hash(), track);
+        if(!track.isInArchive()) {
+            if(!QFileInfo::exists(track.filepath())) {
+                m_missingFiles.emplace(track.filename(), track);
+                m_missingHashes.emplace(track.hash(), track);
+            }
+        }
+        else {
+            if(!QFileInfo::exists(track.archivePath())) {
+                m_missingFiles.emplace(track.filename(), track);
+                m_missingHashes.emplace(track.hash(), track);
+            }
         }
     }
 
