@@ -179,8 +179,13 @@ void TrackSelectionControllerPrivate::setupMenu()
     QObject::connect(m_openFolder, &QAction::triggered, m_tracksMenu, [this]() {
         if(hasTracks()) {
             const auto selection = m_self->selectedTracks();
-            const QString dir    = QFileInfo{selection.front().filepath()}.absolutePath();
-            Utils::File::openDirectory(dir);
+            const Track& track   = selection.front();
+            if(track.isInArchive()) {
+                Utils::File::openDirectory(QFileInfo{track.archivePath()}.absolutePath());
+            }
+            else {
+                Utils::File::openDirectory(track.path());
+            }
         }
     });
     m_tracksMenu->addAction(m_actionManager->registerAction(m_openFolder, "TrackSelection.OpenFolder"));
@@ -397,9 +402,10 @@ void TrackSelectionControllerPrivate::updateActionState()
 
     auto allTracksInSameFolder = [this]() {
         const auto selection    = m_self->selectedTracks();
-        const QString firstPath = QFileInfo{selection.front().filepath()}.absolutePath();
+        const Track& firstTrack = selection.front();
+        const QString firstPath = firstTrack.isInArchive() ? firstTrack.archivePath() : firstTrack.path();
         return std::ranges::all_of(selection | std::ranges::views::transform([](const Track& track) {
-                                       return QFileInfo{track.filepath()}.absolutePath();
+                                       return track.isInArchive() ? track.archivePath() : track.path();
                                    }),
                                    [&firstPath](const QString& folderPath) { return folderPath == firstPath; });
     };
