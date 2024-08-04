@@ -78,7 +78,6 @@ private:
 
     [[nodiscard]] bool validOutputState() const;
     void handleStateChanged(AudioOutput::State state);
-    void updateOutputVolume(double newVolume);
     void updateInterval();
 
     void pause();
@@ -111,6 +110,6 @@ private:
     int m_fadeSteps;
     int m_currentFadeStep;
     double m_volumeChange;
-    double m_initialVolume;
+    double m_fadeVolume;
 };
 } // namespace Fooyin

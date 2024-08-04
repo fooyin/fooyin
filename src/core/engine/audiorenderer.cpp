@@ -49,7 +49,7 @@ AudioRenderer::AudioRenderer(QObject* parent)
     , m_fadeSteps{0}
     , m_currentFadeStep{0}
     , m_volumeChange{0.0}
-    , m_initialVolume{0.0}
+    , m_fadeVolume{-1}
 {
     setObjectName(QStringLiteral("Renderer"));
 }
@@ -127,11 +127,7 @@ void AudioRenderer::pause(bool paused, int fadeLength)
     resetFade(fadeLength);
 
     if(paused) {
-        if(fadeLength == 0) {
-            pause();
-            return;
-        }
-
+        m_fadeVolume   = m_volume;
         m_volumeChange = -(m_volume / m_fadeSteps);
     }
     else {
@@ -141,10 +137,8 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         start();
 
         if(fadeLength > 0) {
-            m_volumeChange = std::abs(m_initialVolume - m_volume) / m_fadeSteps;
-        }
-        else {
-            updateOutputVolume(m_initialVolume);
+            m_fadeVolume   = 0;
+            m_volumeChange = std::abs(m_fadeVolume - m_volume) / m_fadeSteps;
         }
     }
 
@@ -217,8 +211,11 @@ void AudioRenderer::updateDevice(const QString& device)
 
 void AudioRenderer::updateVolume(double volume)
 {
-    m_initialVolume = volume;
-    updateOutputVolume(volume);
+    m_volume = volume;
+
+    if(validOutputState()) {
+        m_audioOutput->setVolume(m_volume);
+    }
 }
 
 QString AudioRenderer::deviceError() const
@@ -237,7 +234,7 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
     }
 
     if(m_currentFadeStep <= m_fadeSteps) {
-        updateOutputVolume(std::clamp(m_volume + m_volumeChange, 0.0, 1.0));
+        m_fadeVolume = std::clamp(m_fadeVolume + m_volumeChange, 0.0, 1.0);
         m_currentFadeStep++;
         return;
     }
@@ -247,7 +244,7 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
         pause();
     }
     else {
-        updateOutputVolume(m_initialVolume);
+        m_fadeVolume = -1;
     }
 
     m_fadeTimer.stop();
@@ -272,7 +269,7 @@ void AudioRenderer::resetFade(int length)
     m_volumeChange    = 0;
     m_currentFadeStep = 0;
     m_fadeLength      = length;
-    m_fadeSteps       = static_cast<int>(static_cast<double>(m_fadeLength) / FadeInterval);
+    m_fadeSteps       = static_cast<int>(static_cast<double>(m_fadeLength) / FadeInterval * 2);
 }
 
 bool AudioRenderer::canWrite() const
@@ -312,15 +309,6 @@ void AudioRenderer::handleStateChanged(AudioOutput::State state)
     }
 }
 
-void AudioRenderer::updateOutputVolume(double newVolume)
-{
-    m_volume = newVolume;
-
-    if(validOutputState()) {
-        m_audioOutput->setVolume(m_volume);
-    }
-}
-
 void AudioRenderer::updateInterval()
 {
     const auto interval
@@ -333,7 +321,7 @@ void AudioRenderer::pause()
     m_isRunning = false;
     m_writeTimer.stop();
 
-    updateOutputVolume(0.0);
+    m_fadeVolume = -1;
 
     if(validOutputState()) {
         m_audioOutput->drain();
@@ -409,6 +397,10 @@ int AudioRenderer::writeAudioSamples(int samples)
 
         samplesBuffered += sampleCount;
         m_currentBufferOffset += bytes;
+    }
+
+    if(m_fadeVolume >= 0) {
+        m_tempBuffer.scale(m_fadeVolume);
     }
 
     m_tempBuffer.fillRemainingWithSilence();
