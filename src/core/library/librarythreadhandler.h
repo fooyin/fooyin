@@ -68,6 +68,7 @@ signals:
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);
+    void tracksStatsUpdated(const Fooyin::TrackList& tracks);
 
     void gotTracks(const Fooyin::TrackList& result);
 

@@ -277,6 +277,8 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
                      });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
+                     [this](const TrackList& tracks) { p->updateTracks(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::gotTracks, this,
                      [this](const TrackList& tracks) { p->loadTracks(tracks); });
 

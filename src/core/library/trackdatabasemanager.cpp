@@ -128,7 +128,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
     }
 
     if(!tracksUpdated.empty()) {
-        emit updatedTracks(tracksUpdated);
+        emit updatedTracksStats(tracksUpdated);
     }
 }
 
