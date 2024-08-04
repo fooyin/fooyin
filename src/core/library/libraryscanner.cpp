@@ -396,6 +396,7 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath) const
         Track subTrack{filepath, subIndex};
         subTrack.setFileSize(file.size());
 
+        source.device->seek(0);
         if(tagReader->readTrack(source, subTrack)) {
             subTrack.generateHash();
             tracks.push_back(subTrack);
