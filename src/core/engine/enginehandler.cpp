@@ -55,7 +55,7 @@ public:
     AudioEngine* m_engine;
     PlaybackState m_engineState{PlaybackState::Stopped};
 
-    std::unordered_map<QString, OutputCreator> m_outputs;
+    std::map<QString, OutputCreator> m_outputs;
 
     struct CurrentOutput
     {
