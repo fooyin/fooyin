@@ -6,32 +6,32 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="34"/>
         <source>Copy</source>
-        <translation type="unfinished">Копировать</translation>
+        <translation>Копировать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="36"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="38"/>
         <source>Rename</source>
-        <translation type="unfinished">Переименовать</translation>
+        <translation>Переименовать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="40"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="42"/>
         <source>Remove</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="44"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестно</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Расположение</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -549,7 +549,7 @@
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="71"/>
         <source>Edit %1 Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить %1 Name</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="72"/>
@@ -585,7 +585,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="44"/>
         <source>Export Layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Экспорт конфигурации интерфейса</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
@@ -600,7 +600,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="56"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Выбрать…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
@@ -615,12 +615,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="112"/>
         <source>Failed to export layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ошибка экспорта конфигурации интерфейса</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
         <source>Save Layout</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сохранить конфигурацию интерфейса</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
