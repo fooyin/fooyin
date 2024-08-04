@@ -376,13 +376,22 @@ void GuiApplicationPrivate::registerActions()
     actionManager->registerAction(muteAction, Constants::Actions::Mute);
     QObject::connect(muteAction, &QAction::triggered, mainWindow.get(), [this]() { mute(); });
 
-    QObject::connect(playlistController.get(), &PlaylistController::currentPlaylistChanged, mainWindow.get(), [this]() {
+    auto setSavePlaylistState = [this]() {
         if(auto* savePlaylistCommand = actionManager->command(Constants::Actions::SavePlaylist)) {
             if(const auto* playlist = playlistController->currentPlaylist()) {
                 savePlaylistCommand->action()->setEnabled(playlist->trackCount() > 0);
             }
         }
-    });
+    };
+
+    QObject::connect(playlistController.get(), &PlaylistController::currentPlaylistChanged, mainWindow.get(),
+                     setSavePlaylistState);
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::tracksChanged, mainWindow.get(),
+                     setSavePlaylistState);
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::tracksAdded, mainWindow.get(),
+                     setSavePlaylistState);
+    QObject::connect(playlistController->playlistHandler(), &PlaylistHandler::tracksRemoved, mainWindow.get(),
+                     setSavePlaylistState);
 
     auto* removePlaylist = new QAction(GuiApplication::tr("Remove Playlist"), mainWindow.get());
     auto* removeCmd      = actionManager->registerAction(removePlaylist, Constants::Actions::RemovePlaylist);
