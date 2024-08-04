@@ -129,7 +129,7 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
             QString path;
 
             if(dir.exists()) {
-                if(QDir::isAbsolutePath(line)) {
+                if(QDir::isAbsolutePath(line) || line.left(9) == u"unpack://") {
                     path = line;
                 }
                 else {
@@ -137,8 +137,8 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 }
             }
 
-            if(QFile::exists(path) || !skipNotFound) {
-                Track track = PlaylistParser::readMetadata(Track{path});
+            Track track = PlaylistParser::readMetadata(Track{path});
+            if(track.isValid() || !skipNotFound) {
                 if(track.title().isEmpty() && !metadata.title.isEmpty()) {
                     track.setTitle(metadata.title);
                 }
