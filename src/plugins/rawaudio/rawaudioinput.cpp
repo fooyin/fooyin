@@ -88,11 +88,6 @@ std::optional<AudioFormat> RawAudioDecoder::init(const AudioSource& source, cons
 
 void RawAudioDecoder::stop()
 {
-    if(m_file) {
-        if(m_file->isOpen()) {
-            m_file->close();
-        }
-    }
     m_currentFrame = 0;
 }
 
