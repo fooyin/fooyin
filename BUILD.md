@@ -47,7 +47,7 @@ sudo apt install \
 sudo pacman -Syu
 sudo pacman -S --needed \
     gcc git cmake pkgconf ninja alsa-lib pipewire icu ffmpeg \
-    qt6-base qt6-svg qt6-tools kdsingleapplication taglib 
+    qt6-base qt6-svg qt6-tools kdsingleapplication taglib \
     libopenmpt libgme libarchive
 ```
 
