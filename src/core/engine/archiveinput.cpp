@@ -63,7 +63,7 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
 
     reader->init(archivePath);
 
-    const QString filepath = Track::archiveFilePath(track.filepath());
+    const QString filepath = track.pathInArchive();
     m_device               = reader->entry(filepath);
     if(!m_device) {
         return {};
@@ -148,7 +148,9 @@ int GeneralArchiveReader::subsongCount() const
 
 bool GeneralArchiveReader::init(const AudioSource& source)
 {
-    const QString archivePath = Track::archivePath(source.filepath);
+    Track track{source.filepath};
+
+    const QString archivePath = track.archivePath();
     m_archiveReader           = m_audioLoader->archiveReaderForFile(archivePath);
     if(!m_archiveReader) {
         return {};
@@ -156,7 +158,7 @@ bool GeneralArchiveReader::init(const AudioSource& source)
 
     m_archiveReader->init(archivePath);
 
-    const QString filepath = Track::archiveFilePath(source.filepath);
+    const QString filepath = track.pathInArchive();
     m_device               = m_archiveReader->entry(filepath);
     if(!m_device) {
         return {};
@@ -189,7 +191,7 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
         track.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
     }
     trackSource.archiveReader = m_archiveReader;
-    return m_reader ? m_reader->readTrack(trackSource, track) : false;
+    return m_reader && m_reader->readTrack(trackSource, track);
 }
 
 QByteArray GeneralArchiveReader::readCover(const AudioSource& /*source*/, const Track& track, Track::Cover cover)

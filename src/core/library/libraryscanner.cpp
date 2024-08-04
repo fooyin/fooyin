@@ -45,7 +45,7 @@
 Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner")
 
 constexpr auto BatchSize   = 250;
-constexpr auto ArchivePath = R"(unpack://%1://%2!)";
+constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
 namespace {
 struct LibraryDirectory
@@ -418,7 +418,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
 
     TrackList tracks;
     const QString type        = archiveReader->type();
-    const QString archivePath = QLatin1String{ArchivePath}.arg(type, filepath);
+    const QString archivePath = QLatin1String{ArchivePath}.arg(type).arg(filepath.size()).arg(filepath);
     const QFileInfo archiveInfo{filepath};
     const QDateTime modifiedTime = archiveInfo.lastModified();
 

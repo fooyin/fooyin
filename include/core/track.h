@@ -77,15 +77,10 @@ public:
     [[nodiscard]] bool metadataWasModified() const;
     [[nodiscard]] int libraryId() const;
 
-    static bool isInArchive(const QString& filepath);
-    static QString archivePath(const QString& filepath);
-    static QString archiveFilePath(const QString& filepath);
-    static QString archiveDirectory(const QString& filepath);
-
     [[nodiscard]] bool isInArchive() const;
     [[nodiscard]] QString archivePath() const;
-    [[nodiscard]] QString archiveFilePath() const;
-    [[nodiscard]] QString archiveDirectory() const;
+    [[nodiscard]] QString pathInArchive() const;
+    [[nodiscard]] QString relativeArchivePath() const;
 
     [[nodiscard]] int id() const;
     [[nodiscard]] QString hash() const;

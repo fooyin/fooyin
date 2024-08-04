@@ -80,6 +80,35 @@ public:
     QString sort;
 
     bool metadataWasModified{false};
+
+    // Archive related
+    bool isInArchive{false};
+    QString archivePath;
+    QString filepathWithinArchive;
+
+    void splitArchiveUrl()
+    {
+        QString path = filepath.mid(filepath.indexOf(u"://") + 3);
+        path         = path.mid(path.indexOf(u'|') + 1);
+
+        const auto lengthEndIndex   = path.indexOf(u'|');
+        const int archivePathLength = path.left(lengthEndIndex).toInt();
+        path                        = path.mid(lengthEndIndex + 1);
+
+        const QString filePrefix = QStringLiteral("file://");
+        path                     = path.sliced(filePrefix.length());
+
+        archivePath           = path.left(archivePathLength);
+        filepathWithinArchive = path.mid(archivePathLength + 1);
+
+        const QFileInfo info{filepathWithinArchive};
+        filename  = info.completeBaseName();
+        extension = info.suffix().toLower();
+        directory = info.dir().dirName();
+        if(directory == u".") {
+            directory = QFileInfo{archivePath}.fileName();
+        }
+    }
 };
 
 Track::Track()
@@ -165,69 +194,24 @@ int Track::libraryId() const
     return p->libraryId;
 }
 
-bool Track::isInArchive(const QString& filepath)
-{
-    const QUrl url{filepath};
-    return url.scheme() == u"unpack";
-}
-
-QString Track::archivePath(const QString& filepath)
-{
-    const QUrl url{filepath};
-    QString path = url.path(QUrl::FullyDecoded);
-
-    const auto delimiterPos = path.indexOf(u'!');
-    if(delimiterPos != -1) {
-        path = path.left(delimiterPos);
-        if(path.startsWith(u"///")) {
-            path = path.mid(2);
-        }
-        return path;
-    }
-    return {};
-}
-
-QString Track::archiveFilePath(const QString& filepath)
-{
-    const QUrl url{filepath};
-    QString path = url.path(QUrl::FullyDecoded);
-
-    const auto delimiterPos = path.indexOf(u'!');
-    if(delimiterPos != -1) {
-        path = path.mid(delimiterPos + 1);
-        return path;
-    }
-    return {};
-}
-
-QString Track::archiveDirectory(const QString& filepath)
-{
-    const QString fullPath = archiveFilePath(filepath);
-    const auto filePos     = fullPath.lastIndexOf(u'/');
-    if(filePos != -1) {
-        return fullPath.left(filePos);
-    }
-    return {};
-}
-
 bool Track::isInArchive() const
 {
-    return Track::isInArchive(p->filepath);
+    return p->isInArchive;
 }
 
 QString Track::archivePath() const
 {
-    return Track::archivePath(p->filepath);
+    return p->archivePath;
 }
 
-QString Track::archiveFilePath() const
+QString Track::pathInArchive() const
 {
-    return Track::archiveFilePath(p->filepath);
+    return p->filepathWithinArchive;
 }
 
-QString Track::archiveDirectory() const
+QString Track::relativeArchivePath() const
 {
-    return Track::archiveDirectory(p->filepath);
+    return QFileInfo{p->filepathWithinArchive}.path();
 }
 
 int Track::id() const
@@ -283,7 +267,7 @@ QString Track::uniqueFilepath() const
 QString Track::prettyFilepath() const
 {
     if(isInArchive()) {
-        return archivePath() + u"/" + archiveFilePath(p->filepath);
+        return archivePath() + u"/" + pathInArchive();
     }
 
     return p->filepath;
@@ -619,17 +603,12 @@ void Track::setFilePath(const QString& path)
 
     p->filepath = path;
 
-    if(isInArchive()) {
-        const auto delimiterPos = path.indexOf(u'!');
-        if(delimiterPos != -1) {
-            const auto file = path.mid(delimiterPos + 1);
-            const QFileInfo info{file};
-            p->filename  = info.completeBaseName();
-            p->extension = info.suffix().toLower();
-            p->directory = info.dir().dirName();
-        }
+    if(path.first(9) == u"unpack://") {
+        p->isInArchive = true;
+        p->splitArchiveUrl();
     }
     else {
+        p->isInArchive = false;
         const QFileInfo info{p->filepath};
         p->filename  = info.completeBaseName();
         p->extension = info.suffix().toLower();

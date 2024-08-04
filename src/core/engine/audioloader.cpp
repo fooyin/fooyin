@@ -175,7 +175,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
 
     QString readerName;
 
-    if(Track::isInArchive(file)) {
+    if(file.first(9) == u"unpack://") {
         readerName = QStringLiteral("Archive");
     }
     else {
