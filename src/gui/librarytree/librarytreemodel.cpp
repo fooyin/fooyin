@@ -724,6 +724,7 @@ void LibraryTreeModel::reset(const TrackList& tracks)
         beginResetModel();
         p->beginReset();
         endResetModel();
+        emit modelLoaded();
         return;
     }
 
