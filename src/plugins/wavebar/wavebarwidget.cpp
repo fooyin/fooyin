@@ -56,19 +56,18 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     m_container->insertWidget(1, m_seekbar);
     m_container->setLabelsEnabled(false);
 
-    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, this, &WaveBarWidget::seek);
-    QObject::connect(m_seekbar, &WaveSeekBar::seekForward, this, &WaveBarWidget::seekForward);
-    QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, this, &WaveBarWidget::seekBackward);
-
     QObject::connect(m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
     QObject::connect(m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &WaveBarWidget::changeTrack);
     QObject::connect(playerController, &PlayerController::positionChanged, this, &WaveBarWidget::changePosition);
-    QObject::connect(this, &WaveBarWidget::seek, playerController, &PlayerController::seek);
-    QObject::connect(this, &WaveBarWidget::seekForward, playerController,
+    QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, playerController, [this](uint64_t pos) {
+        m_playerController->play();
+        m_playerController->seek(pos);
+    });
+    QObject::connect(m_seekbar, &WaveSeekBar::seekForward, playerController,
                      [this]() { m_playerController->seekForward(SeekDelta); });
-    QObject::connect(this, &WaveBarWidget::seekBackward, playerController,
+    QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, playerController,
                      [this]() { m_playerController->seekBackward(SeekDelta); });
 
     QObject::connect(m_container, &SeekContainer::totalClicked, this, [this]() {
@@ -151,8 +150,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showLabels, &QAction::triggered, this, [this](bool checked) {
         m_container->setLabelsEnabled(checked);
         // Width won't be updated immediately, so use a queued connection
-        QMetaObject::invokeMethod(
-            m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
     });
 
     auto* showElapsed = new QAction(tr("Show Elapsed Total"), this);

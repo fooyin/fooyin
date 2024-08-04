@@ -47,11 +47,6 @@ public:
     void changeTrack(const Track& track);
     void changePosition(uint64_t pos);
 
-signals:
-    void seek(uint64_t pos);
-    void seekForward();
-    void seekBackward();
-
 protected:
     void showEvent(QShowEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
