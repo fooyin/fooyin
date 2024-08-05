@@ -156,6 +156,7 @@ void PlayerController::stop()
     if(std::exchange(p->m_playStatus, PlayState::Stopped) != p->m_playStatus) {
         reset();
         emit playStateChanged(p->m_playStatus);
+        emit positionChanged(0);
     }
 }
 
