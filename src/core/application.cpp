@@ -45,8 +45,11 @@
 
 #include <QBasicTimer>
 #include <QCoreApplication>
+#include <QLoggingCategory>
 #include <QProcess>
 #include <QTimerEvent>
+
+Q_LOGGING_CATEGORY(APP, "App")
 
 using namespace std::chrono_literals;
 
@@ -256,15 +259,18 @@ void ApplicationPrivate::loadPlaybackState() const
     };
 
     switch(state) {
-        case PlayState::Paused:
+        case(PlayState::Paused):
+            qCDebug(APP) << "Restoring paused state…";
             m_playerController->pause();
             seek();
             break;
-        case PlayState::Playing:
+        case(PlayState::Playing):
+            qCDebug(APP) << "Restoring playing state…";
             m_playerController->play();
             seek();
             break;
-        case PlayState::Stopped:
+        case(PlayState::Stopped):
+            qCDebug(APP) << "Restoring stopped state…";
             m_playerController->stop();
             break;
     }
