@@ -264,22 +264,13 @@ bool GmeReader::init(const AudioSource& source)
 
 bool GmeReader::readTrack(const AudioSource& source, Track& track)
 {
-    gme_info_t* gmeInfo{nullptr};
-    const auto* err = gme_track_info(m_emu.get(), &gmeInfo, track.subsong());
-    if(err) {
-        qCWarning(GME) << err;
-        return false;
-    }
-
-    GmeInfoPtr info{gmeInfo};
-
     if(track.isInArchive()) {
-        const QString archivePath = track.archivePath();
-        auto m3uEntry             = source.archiveReader->entry(archivePath.mid(archivePath.lastIndexOf(u"/")) + u"/"
-                                                                + track.filename() + QStringLiteral(".m3u"));
+        const QFileInfo fileInfo{track.pathInArchive()};
+        const QString m3uPath = fileInfo.dir().relativeFilePath(fileInfo.completeBaseName() + QStringLiteral(".m3u"));
+        auto m3uEntry         = source.archiveReader->entry(m3uPath);
         if(m3uEntry) {
             const auto m3uData = m3uEntry->readAll();
-            err                = gme_load_m3u_data(m_emu.get(), m3uData.constData(), m3uData.size());
+            const auto* err    = gme_load_m3u_data(m_emu.get(), m3uData.constData(), m3uData.size());
             if(err) {
                 qCInfo(GME) << err;
             }
@@ -288,12 +279,20 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
     else {
         const QString m3u = findM3u(track.filepath());
         if(!m3u.isEmpty()) {
-            err = gme_load_m3u(m_emu.get(), m3u.toUtf8().constData());
+            const auto* err = gme_load_m3u(m_emu.get(), m3u.toUtf8().constData());
             if(err) {
                 qCInfo(GME) << err;
             }
         }
     }
+
+    gme_info_t* gmeInfo{nullptr};
+    const auto* err = gme_track_info(m_emu.get(), &gmeInfo, track.subsong());
+    if(err) {
+        qCWarning(GME) << err;
+        return false;
+    }
+    GmeInfoPtr info{gmeInfo};
 
     track.setDuration(getDuration(info.get()));
     track.setSampleRate(SampleRate);
