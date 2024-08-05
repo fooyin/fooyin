@@ -192,16 +192,18 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file) const
 
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
+            qCDebug(LIBARCH) << "Unable to read encrypted file" << m_file;
             return nullptr;
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
-            const QString filepath = QString::fromUtf8(archive_entry_pathname(entry));
-            if(filepath == file) {
+            if(file == QLatin1String{archive_entry_pathname(entry)}) {
                 return std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
             }
         }
     }
+
+    qCDebug(LIBARCH) << "Unable to find" << file << "in" << m_file;
     return nullptr;
 }
 
