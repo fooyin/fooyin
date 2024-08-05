@@ -80,6 +80,7 @@ public:
 
 private:
     MusicEmuPtr m_emu;
+    QByteArray m_trackData;
     int m_subsongCount;
 };
 } // namespace Fooyin::Gme

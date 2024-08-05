@@ -61,7 +61,7 @@ public:
 
     QString cuePath;
 
-    int subsong{-1};
+    int subsong{0};
     uint64_t offset{0};
     uint64_t duration{0};
     uint64_t filesize{0};
@@ -872,7 +872,9 @@ void Track::storeExtraTags(const QByteArray& tags)
 
 void Track::setSubsong(int index)
 {
-    p->subsong = index;
+    if(index >= 0) {
+        p->subsong = index;
+    }
 }
 
 void Track::setOffset(uint64_t offset)

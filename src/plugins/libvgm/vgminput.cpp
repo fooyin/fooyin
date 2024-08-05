@@ -289,7 +289,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
     mainPlayer.RegisterPlayerEngine(new GYMPlayer());
     configurePlayer(&mainPlayer);
 
-    const QByteArray data = source.device->readAll();
+    const QByteArray data = source.device->peek(source.device->size());
     if(data.isEmpty()) {
         return false;
     }

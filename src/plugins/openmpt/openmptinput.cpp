@@ -173,7 +173,7 @@ int OpenMptReader::subsongCount() const
 bool OpenMptReader::init(const AudioSource& source)
 {
     std::vector<char> data(static_cast<size_t>(source.device->size()));
-    source.device->read(data.data(), source.device->size());
+    source.device->peek(data.data(), source.device->size());
 
     try {
         const std::map<std::string, std::string> ctls;
@@ -190,11 +190,8 @@ bool OpenMptReader::init(const AudioSource& source)
     return true;
 }
 
-bool OpenMptReader::readTrack(const AudioSource& source, Track& track)
+bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
 {
-    std::vector<char> data(static_cast<std::size_t>(source.device->size()));
-    source.device->read(data.data(), source.device->size());
-
     try {
         const std::map<std::string, std::string> ctls;
 
