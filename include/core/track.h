@@ -75,6 +75,7 @@ public:
     [[nodiscard]] bool isInDatabase() const;
     [[nodiscard]] bool metadataWasRead() const;
     [[nodiscard]] bool metadataWasModified() const;
+    [[nodiscard]] bool exists() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] bool isInArchive() const;

@@ -187,11 +187,10 @@ void ApplicationPrivate::markTrack(const Track& track) const
 
     Track markedTrack{track};
 
-    if(!track.isEnabled() && QFileInfo::exists(track.filepath())) {
+    if(!track.isEnabled() && track.exists()) {
         markedTrack.setIsEnabled(true);
     }
-    else if(track.isEnabled() && m_settings->value<Settings::Core::Internal::MarkUnavailable>()
-            && !QFileInfo::exists(track.filepath())) {
+    else if(track.isEnabled() && m_settings->value<Settings::Core::Internal::MarkUnavailable>() && !track.exists()) {
         markedTrack.setIsEnabled(false);
     }
 

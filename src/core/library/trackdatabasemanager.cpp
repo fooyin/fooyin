@@ -55,7 +55,7 @@ void TrackDatabaseManager::getAllTracks()
     TrackList tracks = m_trackDatabase.getAllTracks();
 
     if(m_settings->value<Settings::Core::Internal::MarkUnavailableStartup>()) {
-        std::ranges::for_each(tracks, [](auto& track) { track.setIsEnabled(QFileInfo::exists(track.filepath())); });
+        std::ranges::for_each(tracks, [](auto& track) { track.setIsEnabled(track.exists()); });
     }
 
     emit gotTracks(tracks);

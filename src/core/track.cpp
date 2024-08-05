@@ -189,6 +189,14 @@ bool Track::metadataWasModified() const
     return p->metadataWasModified;
 }
 
+bool Track::exists() const
+{
+    if(isInArchive()) {
+        return QFileInfo::exists(archivePath());
+    }
+    return QFileInfo::exists(filepath());
+}
+
 int Track::libraryId() const
 {
     return p->libraryId;
