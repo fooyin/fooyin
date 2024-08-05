@@ -588,7 +588,7 @@ void PlaylistWidgetPrivate::selectionChanged() const
 
     if(m_settings->value<Settings::Gui::PlaybackFollowsCursor>()) {
         if(m_playlistController->currentPlaylist()->currentTrackIndex() != firstIndex) {
-            if(m_playlistController->playState() != PlayState::Playing) {
+            if(m_playlistController->playState() != Player::PlayState::Playing) {
                 m_playlistController->currentPlaylist()->changeCurrentIndex(firstIndex);
             }
             else {
@@ -1086,7 +1086,7 @@ void PlaylistWidgetPrivate::middleClicked(const QModelIndex& /*index*/) const
 
 void PlaylistWidgetPrivate::followCurrentTrack() const
 {
-    if(m_playlistController->playState() != PlayState::Playing) {
+    if(m_playlistController->playState() != Player::PlayState::Playing) {
         return;
     }
 

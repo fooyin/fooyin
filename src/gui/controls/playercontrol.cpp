@@ -111,16 +111,16 @@ void PlayerControl::updateIcons() const
     stateChanged(m_playerController->playState());
 }
 
-void PlayerControl::stateChanged(PlayState state) const
+void PlayerControl::stateChanged(Player::PlayState state) const
 {
     switch(state) {
-        case(PlayState::Stopped):
+        case(Player::PlayState::Stopped):
             m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
             break;
-        case(PlayState::Playing):
+        case(Player::PlayState::Playing):
             m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Pause));
             break;
-        case(PlayState::Paused):
+        case(Player::PlayState::Paused):
             m_playPause->setIcon(Utils::iconFromTheme(Constants::Icons::Play));
             break;
     }

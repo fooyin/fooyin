@@ -19,16 +19,22 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/track.h>
 #include <utils/id.h>
 
 namespace Fooyin {
-enum class PlayState
+namespace Player {
+Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
+enum class PlayState : uint8_t
 {
     Playing = 0,
     Paused,
     Stopped,
 };
+Q_ENUM_NS(PlayState)
+} // namespace Player
 
 struct PlaylistTrack
 {

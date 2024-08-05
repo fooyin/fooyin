@@ -35,7 +35,7 @@ public:
     void reset();
 
     void trackChanged(const Track& track);
-    void stateChanged(PlayState state);
+    void stateChanged(Player::PlayState state);
     void updateLabels(uint64_t time) const;
 
     SeekContainer* m_self;
@@ -82,15 +82,15 @@ void SeekContainerPrivate::trackChanged(const Track& track)
     }
 }
 
-void SeekContainerPrivate::stateChanged(PlayState state)
+void SeekContainerPrivate::stateChanged(Player::PlayState state)
 {
     switch(state) {
-        case(PlayState::Paused):
+        case(Player::PlayState::Paused):
             break;
-        case(PlayState::Stopped):
+        case(Player::PlayState::Stopped):
             reset();
             break;
-        case(PlayState::Playing): {
+        case(Player::PlayState::Playing): {
             if(m_max == 0) {
                 trackChanged(m_playerController->currentTrack());
             }
@@ -120,7 +120,7 @@ SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent
     QObject::connect(p->m_total, &ClickableLabel::clicked, this, &SeekContainer::totalClicked);
 
     QObject::connect(p->m_playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->stateChanged(state); });
+                     [this](Player::PlayState state) { p->stateChanged(state); });
     QObject::connect(p->m_playerController, &PlayerController::currentTrackChanged, this,
                      [this](const Track& track) { p->trackChanged(track); });
     QObject::connect(p->m_playerController, &PlayerController::positionChanged, this,

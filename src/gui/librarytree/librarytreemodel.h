@@ -57,7 +57,7 @@ public:
     void setFont(const QString& font);
     void setColour(const QColor& colour);
     void setRowHeight(int height);
-    void setPlayState(PlayState state);
+    void setPlayState(Player::PlayState state);
     void setPlayingPath(const QString& parentNode, const QString& path);
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;

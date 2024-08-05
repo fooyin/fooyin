@@ -523,7 +523,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
     , m_currentPlaylist{nullptr}
-    , m_currentPlayState{PlayState::Stopped}
+    , m_currentPlayState{Player::PlayState::Stopped}
     , m_tempCurrentPlayingIndex{-1}
 {
     m_playingColour.setAlpha(90);
@@ -1211,7 +1211,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     }
 }
 
-void PlaylistModel::playStateChanged(PlayState state)
+void PlaylistModel::playStateChanged(Player::PlayState state)
 {
     if(std::exchange(m_currentPlayState, state) != state) {
         emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
@@ -1438,11 +1438,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
 
                 if(isPlaying) {
                     switch(m_currentPlayState) {
-                        case(PlayState::Playing):
+                        case(Player::PlayState::Playing):
                             return m_playingIcon;
-                        case(PlayState::Paused):
+                        case(Player::PlayState::Paused):
                             return m_pausedIcon;
-                        case(PlayState::Stopped):
+                        case(Player::PlayState::Stopped):
                             return {};
                     }
                 }
@@ -2236,7 +2236,7 @@ void PlaylistModel::coverUpdated(const Track& track)
 
 bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
 {
-    return m_currentPlayState != PlayState::Stopped && m_currentPlaylist
+    return m_currentPlayState != Player::PlayState::Stopped && m_currentPlaylist
         && m_currentPlayingTrack.playlistId == m_currentPlaylist->id() && m_currentPlayingTrack.track.id() == track.id()
         && m_currentPlayingTrack.indexInPlaylist == index;
 }

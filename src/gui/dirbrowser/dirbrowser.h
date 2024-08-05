@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/player/playerdefs.h>
 #include <gui/fywidget.h>
 
 namespace Fooyin {
@@ -26,7 +27,6 @@ class DirBrowserPrivate;
 class PlaylistInteractor;
 class Playlist;
 struct PlaylistTrack;
-enum class PlayState;
 class SettingsManager;
 
 class DirBrowser : public FyWidget
@@ -53,7 +53,7 @@ signals:
     void rootChanged();
 
 public slots:
-    void playstateChanged(PlayState state);
+    void playstateChanged(Player::PlayState state);
     void activePlaylistChanged(Fooyin::Playlist* playlist);
     void playlistTrackChanged(const Fooyin::PlaylistTrack& track);
 

@@ -557,19 +557,19 @@ void PlaylistTabs::activatePlaylistChanged(Playlist* playlist)
             updateTabIcon(i, m_playlistController->playState());
         }
         else if(!m_lastActivePlaylist.isNull() && tabId == m_lastActivePlaylist) {
-            updateTabIcon(i, PlayState::Stopped);
+            updateTabIcon(i, Player::PlayState::Stopped);
         }
     }
 
     m_lastActivePlaylist = id;
 }
 
-void PlaylistTabs::updateTabIcon(int i, PlayState state) const
+void PlaylistTabs::updateTabIcon(int i, Player::PlayState state) const
 {
-    if(state == PlayState::Playing) {
+    if(state == Player::PlayState::Playing) {
         m_tabs->tabBar()->setTabIcon(i, m_playIcon);
     }
-    else if(state == PlayState::Paused) {
+    else if(state == Player::PlayState::Paused) {
         m_tabs->tabBar()->setTabIcon(i, m_pauseIcon);
     }
     else {
@@ -595,7 +595,7 @@ void PlaylistTabs::clearCurrentPlaylist() const
     m_playlistHandler->clearPlaylistTracks(id);
 }
 
-void PlaylistTabs::playStateChanged(PlayState state) const
+void PlaylistTabs::playStateChanged(Player::PlayState state) const
 {
     if(!m_lastActivePlaylist.isValid()) {
         return;

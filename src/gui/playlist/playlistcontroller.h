@@ -36,7 +36,6 @@ class PlaylistColumnRegistry;
 class PlaylistControllerPrivate;
 class PlaylistHandler;
 struct PlaylistTrack;
-enum class PlayState;
 class PresetRegistry;
 class SettingsManager;
 enum class TrackAction;
@@ -67,7 +66,7 @@ public:
     [[nodiscard]] bool playlistsHaveLoaded() const;
     [[nodiscard]] PlaylistList playlists() const;
     [[nodiscard]] PlaylistTrack currentTrack() const;
-    [[nodiscard]] PlayState playState() const;
+    [[nodiscard]] Player::PlayState playState() const;
 
     void aboutToChangeTracks();
     void changedTracks();
@@ -109,7 +108,7 @@ signals:
     void currentPlaylistTracksRemoved(const std::vector<int>& indexes);
     void currentPlaylistQueueChanged(const std::vector<int>& tracks);
 
-    void playStateChanged(PlayState state);
+    void playStateChanged(Player::PlayState state);
     void clipboardChanged();
     void playlistHistoryChanged();
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);

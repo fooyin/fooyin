@@ -330,7 +330,7 @@ void LibraryTreeWidgetPrivate::setupConnections()
     QObject::connect(m_library, &MusicLibrary::tracksSorted, m_self, [this]() { reset(); });
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, m_self,
-                     [this](PlayState state) { m_model->setPlayState(state); });
+                     [this](Player::PlayState state) { m_model->setPlayState(state); });
     QObject::connect(m_playerController, &PlayerController::playlistTrackChanged, m_self,
                      [this](const auto& track) { playlistTrackChanged(track); });
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, m_self,

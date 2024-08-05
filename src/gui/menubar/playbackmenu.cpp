@@ -53,7 +53,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     auto* playbackMenu = m_actionManager->actionContainer(Constants::Menus::Playback);
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { updatePlayPause(state); });
+                     [this](Player::PlayState state) { updatePlayPause(state); });
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this,
                      [this](Playlist::PlayModes mode) { updatePlayMode(mode); });
 
@@ -124,9 +124,9 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     updatePlayMode(m_playerController->playMode());
 }
 
-void PlaybackMenu::updatePlayPause(PlayState state) const
+void PlaybackMenu::updatePlayPause(Player::PlayState state) const
 {
-    if(state == PlayState::Playing) {
+    if(state == Player::PlayState::Playing) {
         m_playPause->setText(tr("Pause"));
         m_playPause->setIcon(m_pauseIcon);
     }

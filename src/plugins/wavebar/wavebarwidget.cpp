@@ -62,7 +62,7 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &WaveBarWidget::changeTrack);
     QObject::connect(playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { m_seekbar->setPlaying(state != PlayState::Stopped); });
+                     [this](Player::PlayState state) { m_seekbar->setPlaying(state != Player::PlayState::Stopped); });
     QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, playerController, [this](uint64_t pos) {
         m_playerController->play();
         m_playerController->seek(pos);

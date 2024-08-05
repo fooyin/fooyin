@@ -62,7 +62,7 @@ public:
     PlayerController* m_self;
     SettingsManager* m_settings;
 
-    PlayState m_playStatus{PlayState::Stopped};
+    Player::PlayState m_playStatus{Player::PlayState::Stopped};
     Playlist::PlayModes m_playMode;
 
     PlaylistTrack m_currentTrack;
@@ -94,7 +94,7 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
-    p->m_playStatus = PlayState::Stopped;
+    p->m_playStatus = Player::PlayState::Stopped;
     p->m_position   = 0;
 }
 
@@ -105,8 +105,8 @@ void PlayerController::play()
         emit tracksDequeued({p->m_currentTrack});
     }
 
-    if(p->m_currentTrack.isValid() && p->m_playStatus != PlayState::Playing) {
-        p->m_playStatus = PlayState::Playing;
+    if(p->m_currentTrack.isValid() && p->m_playStatus != Player::PlayState::Playing) {
+        p->m_playStatus = Player::PlayState::Playing;
         emit playStateChanged(p->m_playStatus);
     }
 }
@@ -114,11 +114,11 @@ void PlayerController::play()
 void PlayerController::playPause()
 {
     switch(p->m_playStatus) {
-        case(PlayState::Playing):
+        case(Player::PlayState::Playing):
             pause();
             break;
-        case(PlayState::Paused):
-        case(PlayState::Stopped):
+        case(Player::PlayState::Paused):
+        case(Player::PlayState::Stopped):
             play();
             break;
         default:
@@ -128,7 +128,7 @@ void PlayerController::playPause()
 
 void PlayerController::pause()
 {
-    if(std::exchange(p->m_playStatus, PlayState::Paused) != p->m_playStatus) {
+    if(std::exchange(p->m_playStatus, Player::PlayState::Paused) != p->m_playStatus) {
         emit playStateChanged(p->m_playStatus);
     }
 }
@@ -153,7 +153,7 @@ void PlayerController::next()
 
 void PlayerController::stop()
 {
-    if(std::exchange(p->m_playStatus, PlayState::Stopped) != p->m_playStatus) {
+    if(std::exchange(p->m_playStatus, Player::PlayState::Stopped) != p->m_playStatus) {
         reset();
         emit playStateChanged(p->m_playStatus);
         emit positionChanged(0);
@@ -243,7 +243,7 @@ void PlayerController::seekBackward(uint64_t delta)
     }
 }
 
-PlayState PlayerController::playState() const
+Player::PlayState PlayerController::playState() const
 {
     return p->m_playStatus;
 }

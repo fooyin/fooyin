@@ -149,7 +149,7 @@ public:
 
     TrackList m_tracksPendingRemoval;
 
-    PlayState m_playingState;
+    Player::PlayState m_playingState;
     QString m_parentNode;
     QString m_playingPath;
     int m_rowHeight{0};
@@ -440,7 +440,7 @@ void LibraryTreeModel::setRowHeight(int height)
     emit dataUpdated({}, {});
 }
 
-void LibraryTreeModel::setPlayState(PlayState state)
+void LibraryTreeModel::setPlayState(Player::PlayState state)
 {
     p->m_playingState = state;
     emit dataUpdated({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
@@ -485,7 +485,7 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
 
     const auto* item = itemForIndex(index);
 
-    if(p->m_playingState != PlayState::Stopped) {
+    if(p->m_playingState != Player::PlayState::Stopped) {
         const bool isPlayingTrack = item->childCount() == 0 && item->trackCount() == 1
                                  && item->tracks().front().uniqueFilepath() == p->m_playingPath
                                  && item->parent()->title() == p->m_parentNode;
@@ -495,11 +495,11 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             }
             if(role == Qt::DecorationRole) {
                 switch(p->m_playingState) {
-                    case(PlayState::Playing):
+                    case(Player::PlayState::Playing):
                         return p->m_playingIcon;
-                    case(PlayState::Paused):
+                    case(Player::PlayState::Paused):
                         return p->m_pausedIcon;
-                    case(PlayState::Stopped):
+                    case(Player::PlayState::Stopped):
                         break;
                 }
             }

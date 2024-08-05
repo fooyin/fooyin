@@ -43,7 +43,7 @@ public:
     ~PlayerController() override;
 
     /** Returns the current state (playing, paused or stopped). */
-    [[nodiscard]] PlayState playState() const;
+    [[nodiscard]] Player::PlayState playState() const;
 
     /** Returns the current playlist mode (shuffle and repeat flags). */
     [[nodiscard]] Playlist::PlayModes playMode() const;
@@ -110,7 +110,7 @@ public:
     void clearQueue();
 
 signals:
-    void playStateChanged(PlayState state);
+    void playStateChanged(Player::PlayState state);
     void playModeChanged(Fooyin::Playlist::PlayModes mode);
 
     void nextTrack();

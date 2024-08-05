@@ -58,7 +58,7 @@ public:
     void updatePlayingText();
     void updateSelectionText();
 
-    void stateChanged(PlayState state);
+    void stateChanged(Player::PlayState state);
 
     StatusWidget* m_self;
     PlayerController* m_playerController;
@@ -173,8 +173,8 @@ void StatusWidgetPrivate::updateScripts()
 
 void StatusWidgetPrivate::updatePlayingText()
 {
-    const PlayState ps = m_playerController->playState();
-    if(ps == PlayState::Playing || ps == PlayState::Paused) {
+    const auto ps = m_playerController->playState();
+    if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
         m_statusText->setText(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
     }
 }
@@ -184,17 +184,17 @@ void StatusWidgetPrivate::updateSelectionText()
     m_selectionText->setText(m_scriptParser.evaluate(m_selectionScript, m_selectionController->selectedTracks()));
 }
 
-void StatusWidgetPrivate::stateChanged(const PlayState state)
+void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
 {
     switch(state) {
-        case(PlayState::Stopped):
+        case(Player::PlayState::Stopped):
             clearMessage();
             m_statusText->clear();
             break;
-        case(PlayState::Playing):
+        case(Player::PlayState::Playing):
             updatePlayingText();
             break;
-        case(PlayState::Paused):
+        case(Player::PlayState::Paused):
             break;
     }
 }

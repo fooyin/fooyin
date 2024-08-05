@@ -47,7 +47,7 @@ private:
     void reset();
     void trackChanged(const Track& track);
     void setCurrentPosition(uint64_t pos) const;
-    void stateChanged(PlayState state);
+    void stateChanged(Player::PlayState state);
 
     PlayerController* m_playerController;
     SeekContainer* m_container;

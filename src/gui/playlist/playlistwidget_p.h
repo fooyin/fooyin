@@ -111,7 +111,7 @@ public:
     void updateSpans();
     void customHeaderMenuRequested(const QPoint& pos);
 
-    void changeState(PlayState state) const;
+    void changeState(Player::PlayState state) const;
     void doubleClicked(const QModelIndex& index) const;
     void middleClicked(const QModelIndex& index) const;
     void followCurrentTrack() const;

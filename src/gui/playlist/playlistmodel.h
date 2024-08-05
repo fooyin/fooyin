@@ -146,7 +146,7 @@ signals:
 
 public slots:
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
-    void playStateChanged(PlayState state);
+    void playStateChanged(Player::PlayState state);
 
 private:
     void populateModel(PendingData& data);
@@ -264,7 +264,7 @@ private:
     int m_pixmapPaddingTop;
 
     Playlist* m_currentPlaylist;
-    PlayState m_currentPlayState;
+    Player::PlayState m_currentPlayState;
     PlaylistTrack m_currentPlayingTrack;
     QPersistentModelIndex m_currentPlayingIndex;
     int m_tempCurrentPlayingIndex;

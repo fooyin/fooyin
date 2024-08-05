@@ -650,7 +650,7 @@ void DirBrowser::updateDir(const QString& dir)
     }
 }
 
-void DirBrowser::playstateChanged(PlayState state)
+void DirBrowser::playstateChanged(Player::PlayState state)
 {
     p->m_proxyModel->setPlayState(state);
 }

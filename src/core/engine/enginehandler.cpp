@@ -43,7 +43,7 @@ public:
     void handleStateChange(PlaybackState state);
     void handleTrackChange(const Track& track);
     void handleTrackStatus(TrackStatus status) const;
-    void playStateChanged(PlayState state);
+    void playStateChanged(Player::PlayState state);
 
     void changeOutput(const QString& output);
     void updateVolume(double volume);
@@ -113,8 +113,8 @@ void EngineHandlerPrivate::handleStateChange(PlaybackState state)
 void EngineHandlerPrivate::handleTrackChange(const Track& track)
 {
     QMetaObject::invokeMethod(m_engine, [this, track]() { m_engine->changeTrack(track); }, Qt::QueuedConnection);
-    if(m_playerController->playState() == PlayState::Playing) {
-        playStateChanged(PlayState::Playing);
+    if(m_playerController->playState() == Player::PlayState::Playing) {
+        playStateChanged(Player::PlayState::Playing);
     }
 }
 
@@ -138,7 +138,7 @@ void EngineHandlerPrivate::handleTrackStatus(TrackStatus status) const
     emit m_self->trackStatusChanged(status);
 }
 
-void EngineHandlerPrivate::playStateChanged(PlayState state)
+void EngineHandlerPrivate::playStateChanged(Player::PlayState state)
 {
     if(m_engineState == PlaybackState::Error) {
         return;
@@ -148,13 +148,13 @@ void EngineHandlerPrivate::playStateChanged(PlayState state)
         m_engine,
         [this, state]() {
             switch(state) {
-                case(PlayState::Playing):
+                case(Player::PlayState::Playing):
                     m_engine->play();
                     break;
-                case(PlayState::Paused):
+                case(Player::PlayState::Paused):
                     m_engine->pause();
                     break;
-                case(PlayState::Stopped):
+                case(Player::PlayState::Stopped):
                     m_engine->stop();
                     break;
             }
@@ -217,7 +217,7 @@ EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> decoderProvider, Playe
     , p{std::make_unique<EngineHandlerPrivate>(this, std::move(decoderProvider), playerController, settings)}
 {
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](PlayState state) { p->playStateChanged(state); });
+                     [this](Player::PlayState state) { p->playStateChanged(state); });
 
     QObject::connect(this, &EngineHandler::outputChanged, this, [this](const QString& output, const QString& device) {
         if(p->m_outputs.contains(output)) {

@@ -344,7 +344,7 @@ void GuiApplicationPrivate::initialiseTray()
 
 void GuiApplicationPrivate::updateWindowTitle()
 {
-    if(core.playerController->playState() == PlayState::Stopped) {
+    if(core.playerController->playState() == Player::PlayState::Stopped) {
         mainWindow->resetTitle();
         return;
     }
@@ -609,7 +609,7 @@ void GuiApplicationPrivate::showMessage(const QString& title, const Track& track
 {
     if(settings->value<Settings::Core::SkipUnavailable>()) {
         core.playerController->next();
-        if(core.playerController->playState() == PlayState::Playing) {
+        if(core.playerController->playState() == Player::PlayState::Playing) {
             core.playerController->play();
         }
         return;
@@ -642,7 +642,7 @@ void GuiApplicationPrivate::showMessage(const QString& title, const Track& track
     }
     else {
         core.playerController->next();
-        if(core.playerController->playState() == PlayState::Playing) {
+        if(core.playerController->playState() == Player::PlayState::Playing) {
             core.playerController->play();
         }
     }

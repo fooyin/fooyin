@@ -31,7 +31,7 @@ namespace Fooyin {
 DirProxyModel::DirProxyModel(QObject* parent)
     : QSortFilterProxyModel{parent}
     , m_flat{true}
-    , m_playingState{PlayState::Stopped}
+    , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
@@ -142,17 +142,18 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         sourcePath = QSortFilterProxyModel::data(proxyIndex, QFileSystemModel::FilePathRole).toString();
     }
 
-    if(m_playingState != PlayState::Stopped && !m_playingTrackPath.isEmpty() && sourcePath == m_playingTrackPath) {
+    if(m_playingState != Player::PlayState::Stopped && !m_playingTrackPath.isEmpty()
+       && sourcePath == m_playingTrackPath) {
         if(role == Qt::BackgroundRole) {
             return m_playingColour;
         }
         if(role == Qt::DecorationRole) {
             switch(m_playingState) {
-                case(PlayState::Playing):
+                case(Player::PlayState::Playing):
                     return m_playingIcon;
-                case(PlayState::Paused):
+                case(Player::PlayState::Paused):
                     return m_pausedIcon;
-                case(PlayState::Stopped):
+                case(Player::PlayState::Stopped):
                     break;
             }
         }
@@ -288,7 +289,7 @@ void DirProxyModel::setIconsEnabled(bool enabled)
     emit dataChanged({}, {}, {Qt::DecorationRole});
 }
 
-void DirProxyModel::setPlayState(PlayState state)
+void DirProxyModel::setPlayState(Player::PlayState state)
 {
     m_playingState = state;
 

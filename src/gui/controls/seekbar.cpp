@@ -378,16 +378,16 @@ void SeekBar::setCurrentPosition(uint64_t pos) const
     m_slider->updateCurrentValue(pos);
 }
 
-void SeekBar::stateChanged(PlayState state)
+void SeekBar::stateChanged(Player::PlayState state)
 {
     switch(state) {
-        case(PlayState::Paused):
+        case(Player::PlayState::Paused):
             break;
-        case(PlayState::Stopped):
+        case(Player::PlayState::Stopped):
             reset();
             m_slider->setEnabled(false);
             break;
-        case(PlayState::Playing): {
+        case(Player::PlayState::Playing): {
             if(m_max == 0) {
                 trackChanged(m_playerController->currentTrack());
             }

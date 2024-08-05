@@ -42,7 +42,7 @@ public:
 private:
     void updateButtonStyle() const;
     void updateIcons() const;
-    void stateChanged(PlayState state) const;
+    void stateChanged(Player::PlayState state) const;
 
     ActionManager* m_actionManager;
     PlayerController* m_playerController;

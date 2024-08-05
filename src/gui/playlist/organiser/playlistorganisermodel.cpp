@@ -390,10 +390,10 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
         case(Qt::DecorationRole):
             if(currentIsActive) {
                 const auto state = m_playerController->playState();
-                if(state == PlayState::Playing) {
+                if(state == Player::PlayState::Playing) {
                     return m_playIcon;
                 }
-                if(state == PlayState::Paused) {
+                if(state == Player::PlayState::Paused) {
                     return m_pauseIcon;
                 }
             }

@@ -96,8 +96,8 @@ private:
     void activatePlaylistChanged(Playlist* playlist);
     void playlistRenamed(const Playlist* playlist) const;
 
-    void playStateChanged(PlayState state) const;
-    void updateTabIcon(int i, PlayState state) const;
+    void playStateChanged(Player::PlayState state) const;
+    void updateTabIcon(int i, Player::PlayState state) const;
     void createEmptyPlaylist() const;
     void clearCurrentPlaylist() const;
 

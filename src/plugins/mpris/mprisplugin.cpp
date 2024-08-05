@@ -19,6 +19,9 @@
 
 #include "mprisplugin.h"
 
+#include "mprisplayer.h"
+#include "mprisroot.h"
+
 #include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -26,10 +29,8 @@
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/crypto.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
-
-#include "mprisplayer.h"
-#include "mprisroot.h"
 
 #include <QApplication>
 #include <QDBusObjectPath>
@@ -232,16 +233,7 @@ void MprisPlugin::setVolume(double volume)
 
 QString MprisPlugin::playbackStatus() const
 {
-    switch(m_playerController->playState()) {
-        case(PlayState::Playing):
-            return QStringLiteral("Playing");
-        case(PlayState::Paused):
-            return QStringLiteral("Paused");
-        case(PlayState::Stopped):
-            return QStringLiteral("Stopped");
-        default:
-            return {};
-    }
+    return Utils::Enum::toString(m_playerController->playState());
 }
 
 QString MprisPlugin::loopStatus() const

@@ -40,7 +40,7 @@ public:
                  QObject* parent = nullptr);
 
 private:
-    void updatePlayPause(PlayState state) const;
+    void updatePlayPause(Player::PlayState state) const;
     void updatePlayMode(Playlist::PlayModes mode) const;
     void setPlayMode(Playlist::PlayMode mode) const;
 

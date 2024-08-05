@@ -41,6 +41,7 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
+#include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QBasicTimer>
@@ -234,7 +235,8 @@ void ApplicationPrivate::savePlaybackState() const
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
         m_settings->fileSet(QString::fromLatin1(LastPlaybackPosition), lastPos);
-        m_settings->fileSet(QString::fromLatin1(LastPlaybackState), static_cast<int>(m_playerController->playState()));
+        m_settings->fileSet(QString::fromLatin1(LastPlaybackState),
+                            Utils::Enum::toString(m_playerController->playState()));
     }
     else {
         m_settings->fileRemove(QString::fromLatin1(LastPlaybackPosition));
@@ -249,7 +251,6 @@ void ApplicationPrivate::loadPlaybackState() const
     }
 
     const auto lastPos = m_settings->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
-    const auto state   = m_settings->fileValue(QString::fromLatin1(LastPlaybackState)).value<PlayState>();
 
     auto seek = [this, lastPos]() {
         if(lastPos > 0) {
@@ -257,21 +258,24 @@ void ApplicationPrivate::loadPlaybackState() const
         }
     };
 
-    switch(state) {
-        case(PlayState::Paused):
-            qCDebug(APP) << "Restoring paused state…";
-            m_playerController->pause();
-            seek();
-            break;
-        case(PlayState::Playing):
-            qCDebug(APP) << "Restoring playing state…";
-            m_playerController->play();
-            seek();
-            break;
-        case(PlayState::Stopped):
-            qCDebug(APP) << "Restoring stopped state…";
-            m_playerController->stop();
-            break;
+    if(const auto state = Utils::Enum::fromString<Player::PlayState>(
+           m_settings->fileValue(QString::fromLatin1(LastPlaybackState)).toString())) {
+        switch(state.value()) {
+            case(Player::PlayState::Paused):
+                qCDebug(APP) << "Restoring paused state…";
+                m_playerController->pause();
+                seek();
+                break;
+            case(Player::PlayState::Playing):
+                qCDebug(APP) << "Restoring playing state…";
+                m_playerController->play();
+                seek();
+                break;
+            case(Player::PlayState::Stopped):
+                qCDebug(APP) << "Restoring stopped state…";
+                m_playerController->stop();
+                break;
+        }
     }
 }
 

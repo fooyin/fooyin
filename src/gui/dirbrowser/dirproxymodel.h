@@ -64,7 +64,7 @@ public:
 
     void setFlat(bool isFlat);
     void setIconsEnabled(bool enabled);
-    void setPlayState(PlayState state);
+    void setPlayState(Player::PlayState state);
     void setPlayingPath(const QString& path);
 
 private:
@@ -81,7 +81,7 @@ private:
     QPersistentModelIndex m_sourceRoot;
     std::vector<std::unique_ptr<DirNode>> m_nodes;
 
-    PlayState m_playingState;
+    Player::PlayState m_playingState;
     QString m_playingTrackPath;
 
     bool m_showIcons;

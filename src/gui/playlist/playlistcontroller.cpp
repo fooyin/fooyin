@@ -421,7 +421,7 @@ PlaylistTrack PlaylistController::currentTrack() const
     return p->m_playerController->currentPlaylistTrack();
 }
 
-PlayState PlaylistController::playState() const
+Player::PlayState PlaylistController::playState() const
 {
     return p->m_playerController->playState();
 }
