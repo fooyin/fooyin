@@ -41,6 +41,7 @@ public:
 
     void processData(const WaveformData<float>& waveData);
 
+    void setPlaying(bool playing);
     void setPosition(uint64_t pos);
     [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
@@ -70,6 +71,7 @@ private:
 
     SettingsManager* m_settings;
 
+    bool m_playing;
     WaveformData<float> m_data;
     double m_scale;
     uint64_t m_position;

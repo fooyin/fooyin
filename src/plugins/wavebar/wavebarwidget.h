@@ -45,7 +45,6 @@ public:
     void loadLayoutData(const QJsonObject& layout) override;
 
     void changeTrack(const Track& track);
-    void changePosition(uint64_t pos);
 
 protected:
     void showEvent(QShowEvent* event) override;
