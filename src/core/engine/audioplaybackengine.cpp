@@ -181,10 +181,6 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     if(track.offset() > 0) {
         m_decoder->seek(track.offset());
     }
-
-    if(m_state == PlaybackState::Playing) {
-        playOutput();
-    }
 }
 
 void AudioPlaybackEngine::play()
