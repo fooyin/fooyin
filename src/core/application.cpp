@@ -249,18 +249,25 @@ void ApplicationPrivate::loadPlaybackState() const
     const auto lastPos = m_settings->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
     const auto state   = m_settings->fileValue(QString::fromLatin1(LastPlaybackState)).value<PlayState>();
 
+    auto seek = [this, lastPos]() {
+        if(lastPos > 0) {
+            m_playerController->seek(lastPos);
+        }
+    };
+
     switch(state) {
         case PlayState::Paused:
             m_playerController->pause();
+            seek();
             break;
         case PlayState::Playing:
             m_playerController->play();
+            seek();
             break;
         case PlayState::Stopped:
+            m_playerController->stop();
             break;
     }
-
-    m_playerController->seek(lastPos);
 }
 
 Application::Application(QObject* parent)
@@ -274,8 +281,9 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
-    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this,
-                     [this]() { p->loadPlaybackState(); });
+    QObject::connect(
+        p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, [this]() { p->loadPlaybackState(); },
+        Qt::QueuedConnection);
 
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);
