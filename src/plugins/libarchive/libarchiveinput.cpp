@@ -136,7 +136,9 @@ QStringList LibArchiveReader::extensions() const
 
 bool LibArchiveReader::init(const QString& file)
 {
-    m_file = file;
+    if(std::exchange(m_file, file) == file) {
+        return true;
+    }
     m_entries.clear();
 
     const ArchivePtr archive{archive_read_new()};
@@ -153,6 +155,7 @@ bool LibArchiveReader::init(const QString& file)
 
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
+            qCDebug(LIBARCH) << "Unable to read encrypted file" << m_file;
             return false;
         }
 
