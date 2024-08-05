@@ -71,6 +71,18 @@ bool processMetadata(const QString& line, Metadata& metadata)
 
     return true;
 }
+
+int endingSubsong(QString* filepath)
+{
+    static const QRegularExpression regex{QStringLiteral(R"(#(\d+)$)")};
+    const QRegularExpressionMatch match = regex.match(*filepath);
+    if(match.hasMatch()) {
+        const int subsong = match.captured(1).toInt();
+        filepath->remove(match.capturedStart(), match.capturedLength());
+        return subsong;
+    }
+    return -1;
+}
 } // namespace
 
 namespace Fooyin {
@@ -137,16 +149,22 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 }
             }
 
-            Track track = PlaylistParser::readMetadata(Track{path});
-            if(track.isValid() || !skipNotFound) {
-                if(track.title().isEmpty() && !metadata.title.isEmpty()) {
-                    track.setTitle(metadata.title);
+            const int subsong = endingSubsong(&path);
+            Track track{path};
+
+            if(subsong > 0) {
+                track.setSubsong(subsong);
+            }
+
+            Track readTrack = PlaylistParser::readMetadata(track);
+            if(readTrack.isValid() || !skipNotFound) {
+                if(readTrack.title().isEmpty() && !metadata.title.isEmpty()) {
+                    readTrack.setTitle(metadata.title);
                 }
-                if(track.artists().empty() && !metadata.artist.isEmpty()) {
-                    track.setArtists({metadata.artist});
+                if(readTrack.artists().empty() && !metadata.artist.isEmpty()) {
+                    readTrack.setArtists({metadata.artist});
                 }
-                tracks.push_back(track);
-                track = {};
+                tracks.push_back(readTrack);
             }
         }
     }
@@ -174,7 +192,11 @@ void M3uParser::savePlaylist(QIODevice* device, const QString& extension, const 
                           .arg(track.duration() / 1000)
                           .arg(track.artist(), track.title());
         }
-        stream << PlaylistParser::determineTrackPath(QUrl::fromLocalFile(track.filepath()), dir, type) << "\n";
+        QString path = track.filepath();
+        if(track.subsong() > 0) {
+            path += QStringLiteral("#%1").arg(track.subsong());
+        }
+        stream << PlaylistParser::determineTrackPath(QUrl::fromLocalFile(path), dir, type) << "\n";
     }
 }
 } // namespace Fooyin
