@@ -36,11 +36,7 @@ QString num(const QStringList& vec)
     bool isInt{false};
     const int number = vec.at(0).toInt(&isInt);
 
-    if(!isInt) {
-        return {};
-    }
-
-    if(count == 1) {
+    if(!isInt || count == 1) {
         return vec.at(0);
     }
 
