@@ -464,7 +464,7 @@ QString codecForMime(const QString& mimeType)
         return QStringLiteral("AIFF");
     }
     if(mimeType == u"audio/vnd.wave" || mimeType == u"audio/wav" || mimeType == u"audio/x-wav") {
-        return QStringLiteral("WAV");
+        return QStringLiteral("PCM");
     }
     if(mimeType == u"audio/x-musepack") {
         return QStringLiteral("MPC");
@@ -478,7 +478,7 @@ QString codecForMime(const QString& mimeType)
     if(mimeType == u"audio/flac") {
         return QStringLiteral("FLAC");
     }
-    if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg") {
+    if(mimeType == u"audio/ogg" || mimeType == u"audio/x-vorbis+ogg" || mimeType == u"application/ogg") {
         return QStringLiteral("Vorbis");
     }
     if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
