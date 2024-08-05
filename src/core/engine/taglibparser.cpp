@@ -104,6 +104,10 @@ public:
     void insert(const TagLib::ByteVector& data, unsigned long start, unsigned long replace) override
 #endif
     {
+        if(!isOpen() || readOnly()) {
+            return;
+        }
+
         if(data.size() == replace) {
             seek(start, Beginning);
             writeBlock(data);
@@ -117,30 +121,34 @@ public:
             return;
         }
 
-        const qint64 bufferLength{BufferSize};
-        const qint64 fileSize = m_input->size();
-        QByteArray buffer(bufferLength, 0);
-        qint64 readPosition = static_cast<qint64>(start) + static_cast<qint64>(replace);
-        qint64 writePosition{start};
+        size_t bufferLength = BufferSize;
+        while(data.size() - replace > bufferLength) {
+            bufferLength += BufferSize;
+        }
 
-        seek(writePosition, Beginning);
-        writeBlock(data);
-        writePosition += data.size();
+        auto readPosition  = static_cast<qint64>(start) + static_cast<qint64>(replace);
+        auto writePosition = static_cast<qint64>(start);
 
-        while(readPosition < fileSize) {
+        TagLib::ByteVector buffer{data};
+        TagLib::ByteVector aboutToOverwrite(static_cast<unsigned int>(bufferLength));
+
+        qint64 bytesRead{-1};
+        while(bytesRead != 0) {
             seek(readPosition, Beginning);
-            const qint64 bytesRead = m_input->read(buffer.data(), BufferSize);
+            bytesRead = m_input->read(aboutToOverwrite.data(), aboutToOverwrite.size());
+            aboutToOverwrite.resize(bytesRead);
+            readPosition += static_cast<qint64>(bufferLength);
 
-            if(bytesRead <= 0) {
-                // End of file or read error
-                break;
+            if(std::cmp_less(bytesRead, bufferLength)) {
+                clear();
             }
 
             seek(writePosition, Beginning);
-            m_input->write(buffer.left(bytesRead));
+            writeBlock(buffer);
 
-            readPosition += bytesRead;
-            writePosition += bytesRead;
+            writePosition += static_cast<qint64>(buffer.size());
+
+            buffer = aboutToOverwrite;
         }
     }
 
@@ -150,7 +158,7 @@ public:
     void removeBlock(unsigned long start, unsigned long length) override
 #endif
     {
-        if(length == 0 || start >= m_input->size()) {
+        if(!isOpen() || readOnly()) {
             return;
         }
 
@@ -161,17 +169,17 @@ public:
 
         QByteArray buffer(BufferSize, 0);
 
-        qint64 readPosition  = static_cast<qint64>(start) + static_cast<qint64>(length);
-        qint64 writePosition = start;
-        qint64 bytesRead     = 0;
+        auto readPosition  = static_cast<qint64>(start) + static_cast<qint64>(length);
+        auto writePosition = static_cast<qint64>(start);
 
-        while(readPosition < fileSize) {
+        qint64 bytesRead{std::numeric_limits<qint64>::max()};
+        while(bytesRead != 0) {
             m_input->seek(readPosition);
             bytesRead = m_input->peek(buffer.data(), BufferSize);
 
             if(bytesRead <= 0) {
-                // End of file or error
-                break;
+                clear();
+                buffer.resize(bytesRead);
             }
 
             m_input->seek(writePosition);
@@ -228,14 +236,12 @@ public:
 
     void truncate(long length) override
     {
-        if(length < 0 || length >= m_input->size()) {
-            return;
-        }
+        const auto currPos = tell();
 
-        m_input->seek(0);
+        seek(0, Beginning);
         const QByteArray data = m_input->peek(length);
         m_input->write(data);
-        m_input->seek(length);
+        seek(currPos, Beginning);
     }
 
 private:
