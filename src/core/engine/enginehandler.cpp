@@ -263,7 +263,10 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     }
 
     if(auto out = p->m_outputs.at(output)()) {
-        return out->getAllDevices(p->m_engineState != PlaybackState::Stopped && p->m_currentOutput.name == output);
+        const bool isCurrent = p->m_engineState != PlaybackState::Stopped
+                            && (p->m_currentOutput.name == output
+                                || p->m_currentOutput.device.compare(output, Qt::CaseInsensitive) == 0);
+        return out->getAllDevices(isCurrent);
     }
 
     return {};
