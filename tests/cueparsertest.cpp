@@ -55,8 +55,8 @@ TEST_F(CueParserTest, SingleCue)
         EXPECT_EQ(u"Loveless", tracks.at(0).album());
         EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
 
-        EXPECT_EQ(1, tracks.at(1).discNumber());
-        EXPECT_EQ(2, tracks.at(1).trackNumber());
+        EXPECT_EQ(tracks.at(1).discNumber(), QStringLiteral("1"));
+        EXPECT_EQ(tracks.at(1).trackNumber(), QStringLiteral("2"));
     }
 }
 } // namespace Fooyin::Testing

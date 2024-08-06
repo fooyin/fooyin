@@ -221,4 +221,60 @@
             CREATE UNIQUE INDEX IF NOT EXISTS UniqueTrack ON Tracks(FilePath, Offset, Subsong);
         </sql>
     </revision>
+    <revision version="9" foreignKeys="1">
+        <description>
+            Store all metadata values as strings. Add properties field.
+        </description>
+        <sql>
+            CREATE TABLE NewTracks (
+                TrackID INTEGER PRIMARY KEY AUTOINCREMENT,
+                FilePath TEXT NOT NULL,
+                Subsong INTEGER DEFAULT 0,
+                Title TEXT,
+                TrackNumber TEXT,
+                TrackTotal TEXT,
+                Artists TEXT,
+                AlbumArtist TEXT,
+                Album TEXT,
+                DiscNumber TEXT,
+                DiscTotal TEXT,
+                Date TEXT,
+                Composer TEXT,
+                Performer TEXT,
+                Genres TEXT,
+                Comment TEXT,
+                CuePath TEXT,
+                Offset INTEGER DEFAULT 0,
+                Duration INTEGER DEFAULT 0,
+                FileSize INTEGER DEFAULT 0,
+                BitRate INTEGER DEFAULT 0,
+                SampleRate INTEGER DEFAULT 0,
+                Channels INTEGER DEFAULT 0,
+                BitDepth INTEGER DEFAULT 0,
+                Codec TEXT,
+                ExtraTags BLOB,
+                ExtraProperties BLOB,
+                ModifiedDate INTEGER,
+                LibraryID INTEGER DEFAULT -1,
+                TrackHash TEXT
+            );
+
+            INSERT INTO NewTracks (
+                TrackID, Subsong, FilePath, Title, TrackNumber, TrackTotal, Artists, AlbumArtist, Album, DiscNumber, DiscTotal, Date,
+                Composer, Performer, Genres, Comment, CuePath, Offset, Duration, FileSize, BitRate, SampleRate, Channels,
+                BitDepth, Codec, ExtraTags, ModifiedDate, LibraryID, TrackHash
+            )
+            SELECT
+                TrackID, Subsong, FilePath, Title, TrackNumber, TrackTotal, Artists, AlbumArtist, Album, DiscNumber, DiscTotal, Date,
+                Composer, Performer, Genres, Comment, CuePath, Offset, Duration, FileSize, BitRate, SampleRate, Channels,
+                BitDepth, Codec, ExtraTags, ModifiedDate, LibraryID, TrackHash
+            FROM Tracks;
+
+            DROP TABLE Tracks;
+            ALTER TABLE NewTracks RENAME TO Tracks;
+
+            DROP INDEX IF EXISTS UniqueTrack;
+            CREATE UNIQUE INDEX IF NOT EXISTS UniqueTrack ON Tracks(FilePath, Offset, Subsong);
+        </sql>
+    </revision>
 </schema>

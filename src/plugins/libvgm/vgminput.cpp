@@ -82,11 +82,11 @@ void setLoopCount(PlayerA* player, int count)
     }
 }
 
-int extractTrackNumber(const QString& filename)
+QString extractTrackNumber(const QString& filename)
 {
     static const QRegularExpression regex(QStringLiteral(R"(^(\d+))"));
     const QRegularExpressionMatch match = regex.match(filename);
-    return match.hasMatch() ? match.captured(1).toInt() : -1;
+    return match.hasMatch() ? match.captured(1) : QString{};
 }
 
 QString findRomFile(const char* name)

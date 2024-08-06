@@ -46,10 +46,10 @@ public:
     QStringList artists;
     QString album;
     QStringList albumArtists;
-    int trackNumber{-1};
-    int trackTotal{-1};
-    int discNumber{-1};
-    int discTotal{-1};
+    QString trackNumber;
+    QString trackTotal;
+    QString discNumber;
+    QString discTotal;
     QStringList genres;
     QString composer;
     QString performer;
@@ -153,8 +153,8 @@ QString Track::generateHash()
         title = p->directory + p->filename;
     }
 
-    p->hash = Utils::generateHash(p->artists.join(QStringLiteral(",")), p->album, QString::number(p->discNumber),
-                                  QString::number(p->trackNumber), title, QString::number(p->subsong));
+    p->hash = Utils::generateHash(p->artists.join(QStringLiteral(",")), p->album, p->discNumber, p->trackNumber, title,
+                                  QString::number(p->subsong));
     return p->hash;
 }
 
@@ -385,22 +385,22 @@ QString Track::primaryAlbumArtist() const
     return performer();
 }
 
-int Track::trackNumber() const
+QString Track::trackNumber() const
 {
     return p->trackNumber;
 }
 
-int Track::trackTotal() const
+QString Track::trackTotal() const
 {
     return p->trackTotal;
 }
 
-int Track::discNumber() const
+QString Track::discNumber() const
 {
     return p->discNumber;
 }
 
-int Track::discTotal() const
+QString Track::discTotal() const
 {
     return p->discTotal;
 }
@@ -666,7 +666,7 @@ void Track::setAlbumArtists(const QStringList& artists)
     }
 }
 
-void Track::setTrackNumber(int number)
+void Track::setTrackNumber(const QString& number)
 {
     p->trackNumber = number;
 
@@ -675,12 +675,12 @@ void Track::setTrackNumber(int number)
     }
 }
 
-void Track::setTrackTotal(int total)
+void Track::setTrackTotal(const QString& total)
 {
     p->trackTotal = total;
 }
 
-void Track::setDiscNumber(int number)
+void Track::setDiscNumber(const QString& number)
 {
     p->discNumber = number;
 
@@ -689,7 +689,7 @@ void Track::setDiscNumber(int number)
     }
 }
 
-void Track::setDiscTotal(int total)
+void Track::setDiscTotal(const QString& total)
 {
     p->discTotal = total;
 }
@@ -773,14 +773,14 @@ QString Track::metaValue(const QString& name) const
 
     // clang-format off
     static const std::unordered_map<QString, std::function<QString(const Track& track)>> metaMap{
-        {QLatin1String(Constants::MetaData::Title),       [](const Track& track) { return track.p->title; }},
-        {QLatin1String(Constants::MetaData::Artist),      [](const Track& track) { return track.p->artists.join(QStringLiteral("\037")); }},
-        {QLatin1String(Constants::MetaData::Album),       [](const Track& track) { return track.p->album; }},
-        {QLatin1String(Constants::MetaData::AlbumArtist), [](const Track& track) { return track.p->albumArtists.join(QStringLiteral("\037")); }},
-        {QLatin1String(Constants::MetaData::Track),       [validNum](const Track& track) { return validNum(track.trackNumber()); }},
-        {QLatin1String(Constants::MetaData::TrackTotal),  [validNum](const Track& track) { return validNum(track.trackTotal()); }},
-        {QLatin1String(Constants::MetaData::Disc),        [validNum](const Track& track) { return validNum(track.discNumber()); }},
-        {QLatin1String(Constants::MetaData::DiscTotal),   [validNum](const Track& track) { return validNum(track.discTotal()); }},
+        {QLatin1String(Constants::MetaData::Title),       [](const Track& track) { return track.title(); }},
+        {QLatin1String(Constants::MetaData::Artist),      [](const Track& track) { return track.artist(); }},
+        {QLatin1String(Constants::MetaData::Album),       [](const Track& track) { return track.album(); }},
+        {QLatin1String(Constants::MetaData::AlbumArtist), [](const Track& track) { return track.albumArtist(); }},
+        {QLatin1String(Constants::MetaData::Track),       [](const Track& track) { return track.trackNumber(); }},
+        {QLatin1String(Constants::MetaData::TrackTotal),  [](const Track& track) { return track.trackTotal(); }},
+        {QLatin1String(Constants::MetaData::Disc),        [](const Track& track) { return track.discNumber(); }},
+        {QLatin1String(Constants::MetaData::DiscTotal),   [](const Track& track) { return track.discTotal(); }},
         {QLatin1String(Constants::MetaData::Genre),       [](const Track& track) { return track.genre(); }},
         {QLatin1String(Constants::MetaData::Composer),    [](const Track& track) { return track.composer(); }},
         {QLatin1String(Constants::MetaData::Performer),   [](const Track& track) { return track.performer(); }},

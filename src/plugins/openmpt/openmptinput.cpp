@@ -220,14 +220,17 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
             else if(tag == u"artist") {
                 track.setArtists({value});
             }
-            else if(tag == u"year") {
+            else if(tag == u"date") {
                 track.setDate(value);
+            }
+            else if(tag == u"year") {
+                track.setYear(value.toInt());
             }
             else if(tag == u"genre") {
                 track.setGenres({value});
             }
             else if(tag == u"track number") {
-                track.setTrackNumber(value.toInt());
+                track.setTrackNumber(value);
             }
             else if(tag == u"comments") {
                 track.setComment(value);

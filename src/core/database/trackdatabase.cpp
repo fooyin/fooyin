@@ -37,6 +37,7 @@ QString fetchTrackColumns()
 {
     static const QString columns = QStringLiteral("TrackID,"
                                                   "FilePath,"
+                                                  "Subsong,"
                                                   "Title,"
                                                   "TrackNumber,"
                                                   "TrackTotal,"
@@ -50,7 +51,6 @@ QString fetchTrackColumns()
                                                   "Performer,"
                                                   "Genres,"
                                                   "Comment,"
-                                                  "Subsong,"
                                                   "CuePath,"
                                                   "Offset,"
                                                   "Duration,"
@@ -61,6 +61,7 @@ QString fetchTrackColumns()
                                                   "BitDepth,"
                                                   "Codec,"
                                                   "ExtraTags,"
+                                                  "ExtraProperties,"
                                                   "ModifiedDate, "
                                                   "LibraryID,"
                                                   "TrackHash,"
@@ -76,6 +77,7 @@ QString fetchTrackColumns()
 BindingsMap trackBindings(const Fooyin::Track& track)
 {
     return {{QStringLiteral(":filePath"), track.filepath()},
+            {QStringLiteral(":subsong"), track.subsong()},
             {QStringLiteral(":title"), track.title()},
             {QStringLiteral(":trackNumber"), track.trackNumber()},
             {QStringLiteral(":trackTotal"), track.trackTotal()},
@@ -89,7 +91,6 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":performer"), track.performer()},
             {QStringLiteral(":genres"), track.genre()},
             {QStringLiteral(":comment"), track.comment()},
-            {QStringLiteral(":subsong"), track.subsong()},
             {QStringLiteral(":cuePath"), track.cuePath()},
             {QStringLiteral(":offset"), static_cast<quint64>(track.offset())},
             {QStringLiteral(":duration"), static_cast<quint64>(track.duration())},
@@ -111,20 +112,20 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
 
     track.setId(q.value(0).toInt());
     track.setFilePath(q.value(1).toString());
-    track.setTitle(q.value(2).toString());
-    track.setTrackNumber(q.value(3).toInt());
-    track.setTrackTotal(q.value(4).toInt());
-    track.setArtists(q.value(5).toString().split(u'\037'));
-    track.setAlbumArtists(q.value(6).toString().split(u'\037'));
-    track.setAlbum(q.value(7).toString());
-    track.setDiscNumber(q.value(8).toInt());
-    track.setDiscTotal(q.value(9).toInt());
-    track.setDate(q.value(10).toString());
-    track.setComposer(q.value(11).toString());
-    track.setPerformer(q.value(12).toString());
-    track.setGenres(q.value(13).toString().split(u'\037'));
-    track.setComment(q.value(14).toString());
-    track.setSubsong(q.value(15).toInt());
+    track.setSubsong(q.value(2).toInt());
+    track.setTitle(q.value(3).toString());
+    track.setTrackNumber(q.value(4).toString());
+    track.setTrackTotal(q.value(5).toString());
+    track.setArtists(q.value(6).toString().split(u'\037'));
+    track.setAlbumArtists(q.value(7).toString().split(u'\037'));
+    track.setAlbum(q.value(8).toString());
+    track.setDiscNumber(q.value(9).toString());
+    track.setDiscTotal(q.value(10).toString());
+    track.setDate(q.value(11).toString());
+    track.setComposer(q.value(12).toString());
+    track.setPerformer(q.value(13).toString());
+    track.setGenres(q.value(14).toString().split(u'\037'));
+    track.setComment(q.value(15).toString());
     track.setCuePath(q.value(16).toString());
     track.setOffset(q.value(17).toULongLong());
     track.setDuration(q.value(18).toULongLong());
@@ -135,14 +136,15 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setBitDepth(q.value(23).toInt());
     track.setCodec(q.value(24).toString());
     track.storeExtraTags(q.value(25).toByteArray());
-    track.setModifiedTime(q.value(26).toULongLong());
-    track.setLibraryId(q.value(27).toInt());
-    track.setHash(q.value(28).toString());
-    track.setAddedTime(q.value(29).toULongLong());
-    track.setFirstPlayed(q.value(30).toULongLong());
-    track.setLastPlayed(q.value(31).toULongLong());
-    track.setPlayCount(q.value(32).toInt());
-    track.setRating(q.value(33).toFloat());
+    // TODO: Extra properties
+    track.setModifiedTime(q.value(27).toULongLong());
+    track.setLibraryId(q.value(28).toInt());
+    track.setHash(q.value(29).toString());
+    track.setAddedTime(q.value(30).toULongLong());
+    track.setFirstPlayed(q.value(31).toULongLong());
+    track.setLastPlayed(q.value(32).toULongLong());
+    track.setPlayCount(q.value(33).toInt());
+    track.setRating(q.value(34).toFloat());
 
     track.generateHash();
 
@@ -295,6 +297,7 @@ bool TrackDatabase::updateTrack(const Track& track)
 
     const auto statement = QStringLiteral("UPDATE TRACKS SET "
                                           "FilePath = :filePath,"
+                                          "Subsong = :subsong,"
                                           "Title = :title, "
                                           "TrackNumber = :trackNumber,"
                                           "TrackTotal = :trackTotal,"
@@ -308,7 +311,6 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "Performer = :performer,"
                                           "Genres = :genres,"
                                           "Comment = :comment,"
-                                          "Subsong = :subsong,"
                                           "CuePath = :cuePath,"
                                           "Offset = :offset,"
                                           "Duration = :duration,"
@@ -457,6 +459,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "SELECT "
                                           "Tracks.TrackID,"
                                           "Tracks.FilePath,"
+                                          "Tracks.Subsong,"
                                           "Tracks.Title,"
                                           "Tracks.TrackNumber,"
                                           "Tracks.TrackTotal,"
@@ -470,7 +473,6 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.Performer,"
                                           "Tracks.Genres,"
                                           "Tracks.Comment,"
-                                          "Tracks.Subsong,"
                                           "Tracks.CuePath,"
                                           "Tracks.Offset,"
                                           "Tracks.Duration,"
@@ -481,6 +483,7 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.BitDepth,"
                                           "Tracks.Codec,"
                                           "Tracks.ExtraTags,"
+                                          "Tracks.ExtraProperties,"
                                           "Tracks.ModifiedDate,"
                                           "Tracks.LibraryID,"
                                           "Tracks.TrackHash,"
@@ -518,6 +521,7 @@ bool TrackDatabase::insertTrack(Track& track) const
 {
     const auto statement = QStringLiteral("INSERT INTO Tracks ("
                                           "FilePath,"
+                                          "Subsong,"
                                           "Title,"
                                           "TrackNumber,"
                                           "TrackTotal,"
@@ -531,7 +535,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "Performer,"
                                           "Genres,"
                                           "Comment,"
-                                          "Subsong,"
                                           "CuePath,"
                                           "Offset,"
                                           "Duration,"
@@ -548,6 +551,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ") "
                                           "VALUES ("
                                           ":filePath,"
+                                          ":subsong,"
                                           ":title, "
                                           ":trackNumber,"
                                           ":trackTotal,"
@@ -561,7 +565,6 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":performer,"
                                           ":genres,"
                                           ":comment,"
-                                          ":subsong,"
                                           ":cuePath,"
                                           ":offset,"
                                           ":duration,"

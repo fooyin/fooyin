@@ -21,39 +21,53 @@
 
 namespace Fooyin {
 namespace Tag {
-constexpr auto Title       = "TITLE";
-constexpr auto Artist      = "ARTIST";
-constexpr auto Album       = "ALBUM";
-constexpr auto AlbumArtist = "ALBUMARTIST";
-constexpr auto Genre       = "GENRE";
-constexpr auto Composer    = "COMPOSER";
-constexpr auto Performer   = "PERFORMER";
-constexpr auto Comment     = "COMMENT";
-constexpr auto Date        = "DATE";
-constexpr auto Rating      = "RATING";
-constexpr auto RatingAlt   = "FMPS_RATING";
-constexpr auto TrackNumber = "TRACKNUMBER";
-constexpr auto TrackTotal  = "TRACKTOTAL";
-constexpr auto DiscNumber  = "DISCNUMBER";
-constexpr auto DiscTotal   = "DISCTOTAL";
+constexpr auto Title         = "TITLE";
+constexpr auto Artist        = "ARTIST";
+constexpr auto ArtistAlt     = "ARTISTS";
+constexpr auto Album         = "ALBUM";
+constexpr auto AlbumArtist   = "ALBUMARTIST";
+constexpr auto Genre         = "GENRE";
+constexpr auto Composer      = "COMPOSER";
+constexpr auto Performer     = "PERFORMER";
+constexpr auto Comment       = "COMMENT";
+constexpr auto Date          = "DATE";
+constexpr auto Year          = "YEAR";
+constexpr auto Rating        = "RATING";
+constexpr auto RatingAlt     = "FMPS_RATING";
+constexpr auto PlayCount     = "FMPS_PLAYCOUNT";
+constexpr auto Track         = "TRACKNUMBER";
+constexpr auto TrackAlt      = "TRACK";
+constexpr auto TrackTotal    = "TRACKTOTAL";
+constexpr auto TrackTotalAlt = "TOTALTRACKS";
+constexpr auto Disc          = "DISCNUMBER";
+constexpr auto DiscAlt       = "DISC";
+constexpr auto DiscTotal     = "DISCTOTAL";
+constexpr auto DiscTotalAlt  = "TOTALDISCS";
 } // namespace Tag
 
 namespace Mp4 {
-constexpr auto Title        = "\251nam";
-constexpr auto Artist       = "\251ART";
-constexpr auto Album        = "\251alb";
-constexpr auto AlbumArtist  = "aART";
-constexpr auto Genre        = "\251gen";
-constexpr auto Composer     = "\251wrt";
-constexpr auto Performer    = "perf";
-constexpr auto PerformerAlt = "----:com.apple.iTunes:PERFORMER";
-constexpr auto Comment      = "\251cmt";
-constexpr auto Date         = "\251day";
-constexpr auto Rating       = "rate";
-constexpr auto RatingAlt    = "----:com.apple.iTunes:FMPS_Rating";
-constexpr auto PlayCount    = "----:com.apple.iTunes:FMPS_Playcount";
-constexpr auto TrackNumber  = "trkn";
-constexpr auto DiscNumber   = "disk";
-constexpr auto Cover        = "covr";
+constexpr auto Title         = "\251nam";
+constexpr auto Artist        = "\251ART";
+constexpr auto Album         = "\251alb";
+constexpr auto AlbumArtist   = "aART";
+constexpr auto Genre         = "\251gen";
+constexpr auto Composer      = "\251wrt";
+constexpr auto Performer     = "perf";
+constexpr auto PerformerAlt  = "----:com.apple.iTunes:PERFORMER";
+constexpr auto Comment       = "\251cmt";
+constexpr auto Date          = "\251day";
+constexpr auto Rating        = "rate";
+constexpr auto RatingAlt     = "----:com.apple.iTunes:FMPS_Rating";
+constexpr auto RatingAlt2    = "----:com.apple.iTunes:RATING";
+constexpr auto PlayCount     = "----:com.apple.iTunes:FMPS_Playcount";
+constexpr auto Track         = "trkn";
+constexpr auto TrackAlt      = "----:com.apple.iTunes:track";
+constexpr auto TrackTotal    = "----:com.apple.iTunes:TRACKTOTAL";
+constexpr auto TrackTotalAlt = "----:com.apple.iTunes:TOTALTRACKS";
+constexpr auto Disc          = "disk";
+constexpr auto DiscAlt       = "----:com.apple.iTunes:disc";
+constexpr auto DiscTotal     = "----:com.apple.iTunes:DISCTOTAL";
+constexpr auto DiscTotalAlt  = "----:com.apple.iTunes:TOTALDISCS";
+constexpr auto Cover         = "covr";
 } // namespace Mp4
 } // namespace Fooyin

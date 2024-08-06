@@ -119,9 +119,9 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track)
     checkAddEntryNode(QStringLiteral("AlbumArtist"), InfoPopulator::tr("Album Artist"), ItemParent::Metadata,
                       track.albumArtist());
 
-    if(const int trackNumber = track.trackNumber(); trackNumber >= 0) {
+    if(!track.trackNumber().isEmpty()) {
         checkAddEntryNode(QStringLiteral("TrackNumber"), InfoPopulator::tr("Track Number"), ItemParent::Metadata,
-                          trackNumber);
+                          track.trackNumber());
     }
 }
 

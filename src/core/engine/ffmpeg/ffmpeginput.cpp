@@ -81,25 +81,25 @@ QString getCodec(AVCodecID codec)
 
 void readTrackTotalPair(const QString& trackNumbers, Fooyin::Track& track)
 {
-    const qsizetype splitIdx = trackNumbers.indexOf(QStringLiteral("/"));
+    const qsizetype splitIdx = trackNumbers.indexOf(u'/');
     if(splitIdx >= 0) {
-        track.setTrackNumber(trackNumbers.first(splitIdx).toInt());
-        track.setTrackTotal(trackNumbers.sliced(splitIdx + 1).toInt());
+        track.setTrackNumber(trackNumbers.first(splitIdx));
+        track.setTrackTotal(trackNumbers.sliced(splitIdx + 1));
     }
     else if(trackNumbers.size() > 0) {
-        track.setTrackNumber(trackNumbers.toInt());
+        track.setTrackNumber(trackNumbers);
     }
 }
 
 void readDiscTotalPair(const QString& discNumbers, Fooyin::Track& track)
 {
-    const qsizetype splitIdx = discNumbers.indexOf(QStringLiteral("/"));
+    const qsizetype splitIdx = discNumbers.indexOf(u'/');
     if(splitIdx >= 0) {
-        track.setDiscNumber(discNumbers.first(splitIdx).toInt());
-        track.setDiscTotal(discNumbers.sliced(splitIdx + 1).toInt());
+        track.setDiscNumber(discNumbers.first(splitIdx));
+        track.setDiscTotal(discNumbers.sliced(splitIdx + 1));
     }
     else if(discNumbers.size() > 0) {
-        track.setDiscNumber(discNumbers.toInt());
+        track.setDiscNumber(discNumbers);
     }
 }
 
@@ -129,13 +129,13 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         readTrackTotalPair(convertString(tag->value), track);
     }
     else if(strcasecmp(tag->key, "tracktotal") == 0 || strcasecmp(tag->key, "totaltracks") == 0) {
-        track.setTrackTotal(convertString(tag->value).toInt());
+        track.setTrackTotal(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "disc") == 0 || strcasecmp(tag->key, "discnumber") == 0) {
         readDiscTotalPair(convertString(tag->value), track);
     }
     else if(strcasecmp(tag->key, "disctotal") == 0 || strcasecmp(tag->key, "totaldiscs") == 0) {
-        track.setDiscTotal(convertString(tag->value).toInt());
+        track.setDiscTotal(convertString(tag->value));
     }
     else if(strcasecmp(tag->key, "date") == 0 || strcasecmp(tag->key, "TDRC") == 0
             || strcasecmp(tag->key, "TDRL") == 0) {

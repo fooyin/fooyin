@@ -40,7 +40,7 @@ struct CueSheet
     QString genre;
     QString date;
     QString comment;
-    int disc{-1};
+    QString disc;
     uint64_t lastModified{0};
 
     Fooyin::Track currentFile;
@@ -119,9 +119,7 @@ void readRemLine(CueSheet& sheet, const QStringList& lineParts)
         sheet.date = value;
     }
     else if(field.compare(u"DISCNUMBER", Qt::CaseInsensitive) == 0) {
-        if(const int disc = value.toInt(); disc > 0) {
-            sheet.disc = disc;
-        }
+        sheet.disc = value;
     }
     else if(field.compare(u"GENRE", Qt::CaseInsensitive) == 0) {
         sheet.genre = value;
@@ -335,9 +333,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
             sheet.hasValidIndex = false;
             sheet.addedTrack    = false;
 
-            if(const int trackNum = parts.at(1).toInt(); trackNum > 0) {
-                track.setTrackNumber(trackNum);
-            }
+            track.setTrackNumber(parts.at(1));
         }
     }
     else if(field.compare(u"INDEX", Qt::CaseInsensitive) == 0) {

@@ -255,7 +255,7 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
         track.setAlbum(QString::fromUtf8(album));
     }
     if(const char* trackNum = sf_get_string(sndFile, SF_STR_TRACKNUMBER)) {
-        track.setTrackNumber(QString::fromUtf8(trackNum).toInt());
+        track.setTrackNumber(QString::fromUtf8(trackNum));
     }
     if(const char* artist = sf_get_string(sndFile, SF_STR_ARTIST)) {
         track.setArtists({QString::fromUtf8(artist)});
