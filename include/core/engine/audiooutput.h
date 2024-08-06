@@ -102,7 +102,7 @@ public:
      *  @note this may be called on multiple instances, so don't rely on a
      *  single initialised state.
      */
-    [[nodiscard]] virtual OutputDevices getAllDevices() = 0;
+    [[nodiscard]] virtual OutputDevices getAllDevices(bool isCurrentOutput) = 0;
 
     /*!
      * Writes the audio data contained in the @p buffer to the audio driver.

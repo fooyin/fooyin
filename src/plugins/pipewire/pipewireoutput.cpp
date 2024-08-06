@@ -135,34 +135,7 @@ bool PipeWireOutput::init(const AudioFormat& format)
 
 void PipeWireOutput::uninit()
 {
-    if(m_stream) {
-        const ThreadLoopGuard guard{m_loop.get()};
-        m_stream.reset(nullptr);
-    }
-
-    if(m_loop) {
-        m_loop->stop();
-    }
-
-    if(m_core) {
-        m_core.reset(nullptr);
-    }
-
-    if(m_context) {
-        m_context.reset(nullptr);
-    }
-
-    if(m_loop) {
-        m_loop.reset(nullptr);
-    }
-
-    if(m_registry) {
-        m_registry.reset(nullptr);
-    }
-
-    m_buffer.clear();
-    m_bufferPos = 0;
-
+    uninitCore();
     pw_deinit();
 }
 
@@ -194,25 +167,26 @@ QString PipeWireOutput::device() const
     return m_device;
 }
 
-OutputDevices PipeWireOutput::getAllDevices()
+OutputDevices PipeWireOutput::getAllDevices(bool isCurrentOutput)
 {
     OutputDevices devices;
 
     devices.emplace_back(QStringLiteral("default"), QStringLiteral("Default"));
 
-    if(!m_core || !m_core->initialised()) {
+    if(!isCurrentOutput) {
         pw_init(nullptr, nullptr);
-
-        if(!initCore()) {
-            return {};
-        }
-
-        std::ranges::copy(m_registry->devices(), std::back_inserter(devices));
-
-        uninit();
     }
-    else {
-        std::ranges::copy(m_registry->devices(), std::back_inserter(devices));
+
+    if(!initCore()) {
+        return {};
+    }
+
+    std::ranges::copy(m_registry->devices(), std::back_inserter(devices));
+
+    uninitCore();
+
+    if(!isCurrentOutput) {
+        pw_deinit();
     }
 
     return devices;
@@ -357,6 +331,37 @@ bool PipeWireOutput::initStream()
                                                     | PW_STREAM_FLAG_MAP_BUFFERS | PW_STREAM_FLAG_RT_PROCESS);
 
     return m_stream->connect(PW_ID_ANY, PW_DIRECTION_OUTPUT, params, flags);
+}
+
+void PipeWireOutput::uninitCore()
+{
+    if(m_stream) {
+        const ThreadLoopGuard guard{m_loop.get()};
+        m_stream.reset(nullptr);
+    }
+
+    if(m_loop) {
+        m_loop->stop();
+    }
+
+    if(m_core) {
+        m_core.reset(nullptr);
+    }
+
+    if(m_context) {
+        m_context.reset(nullptr);
+    }
+
+    if(m_loop) {
+        m_loop.reset(nullptr);
+    }
+
+    if(m_registry) {
+        m_registry.reset(nullptr);
+    }
+
+    m_buffer.clear();
+    m_bufferPos = 0;
 }
 
 void PipeWireOutput::process(void* userData)

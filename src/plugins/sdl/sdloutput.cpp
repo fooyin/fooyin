@@ -173,13 +173,11 @@ OutputState SdlOutput::currentState()
     return state;
 }
 
-OutputDevices SdlOutput::getAllDevices()
+OutputDevices SdlOutput::getAllDevices(bool isCurrentOutput)
 {
     OutputDevices devices;
-    bool tempInit{false};
 
-    if(!SDL_WasInit(SDL_INIT_AUDIO)) {
-        tempInit = true;
+    if(!isCurrentOutput) {
         SDL_Init(SDL_INIT_AUDIO);
     }
 
@@ -193,7 +191,7 @@ OutputDevices SdlOutput::getAllDevices()
         }
     }
 
-    if(tempInit) {
+    if(!isCurrentOutput) {
         SDL_Quit();
     }
 

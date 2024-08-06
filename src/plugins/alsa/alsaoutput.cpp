@@ -233,7 +233,7 @@ OutputState AlsaOutput::currentState()
     return state;
 }
 
-OutputDevices AlsaOutput::getAllDevices()
+OutputDevices AlsaOutput::getAllDevices(bool /*isCurrentOutput*/)
 {
     OutputDevices devices;
 

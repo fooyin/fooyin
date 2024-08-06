@@ -41,7 +41,7 @@ public:
 
     [[nodiscard]] bool initialised() const override;
     [[nodiscard]] QString device() const override;
-    [[nodiscard]] OutputDevices getAllDevices() override;
+    [[nodiscard]] OutputDevices getAllDevices(bool isCurrentOutput) override;
 
     OutputState currentState() override;
     [[nodiscard]] int bufferSize() const override;
@@ -57,6 +57,7 @@ public:
 private:
     bool initCore();
     bool initStream();
+    void uninitCore();
     static void process(void* userData);
     static void handleStateChanged(void* userdata, pw_stream_state old, pw_stream_state state, const char* /*error*/);
     static void drained(void* userdata);

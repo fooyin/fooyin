@@ -263,7 +263,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     }
 
     if(auto out = p->m_outputs.at(output)()) {
-        return out->getAllDevices();
+        return out->getAllDevices(p->m_currentOutput.name == output);
     }
 
     return {};
