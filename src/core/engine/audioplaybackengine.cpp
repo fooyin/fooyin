@@ -153,7 +153,10 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     m_source.filepath = track.filepath();
     if(!track.isInArchive()) {
         m_file = std::make_unique<QFile>(track.filepath());
-        m_file->open(QIODevice::ReadOnly);
+        if(!m_file->open(QIODevice::ReadOnly)) {
+            changeTrackStatus(TrackStatus::Invalid);
+            return;
+        }
         m_source.device = m_file.get();
     }
     const auto format = m_decoder->init(m_source, track, AudioDecoder::UpdateTracks);
