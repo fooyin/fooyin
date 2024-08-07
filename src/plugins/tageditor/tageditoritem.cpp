@@ -30,14 +30,6 @@ bool withinCharLimit(const QStringList& strings)
                                               [](int sum, const QString& str) { return sum + str.length(); });
     return currentLength <= CharLimit;
 }
-
-void sortList(QStringList& list)
-{
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    std::ranges::sort(list, collator);
-}
 } // namespace
 
 namespace Fooyin::TagEditor {
@@ -76,7 +68,6 @@ QString TagEditorItem::displayValue() const
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QString{});
-        sortList(nonEmptyValues);
         m_value = nonEmptyValues.join(u"; ");
     }
 
@@ -92,7 +83,6 @@ QString TagEditorItem::value() const
     if(m_value.isEmpty()) {
         QStringList nonEmptyValues{m_values};
         nonEmptyValues.removeAll(QString{});
-        sortList(nonEmptyValues);
         m_value = nonEmptyValues.join(u"; ");
     }
 
@@ -113,7 +103,6 @@ QString TagEditorItem::changedValue() const
     if(m_changedValue.isEmpty()) {
         QStringList nonEmptyValues{m_changedValues};
         nonEmptyValues.removeAll(QString{});
-        sortList(nonEmptyValues);
         m_changedValue = nonEmptyValues.join(u"; ");
     }
 
@@ -157,7 +146,6 @@ void TagEditorItem::addTrackValue(const QString& value)
     if(!m_values.contains(value)) {
         if(m_trackCount == 0 || withinCharLimit(m_values)) {
             m_values.append(value);
-            sortList(m_values);
         }
         m_multipleValues = m_trackCount > 1;
     }
@@ -178,7 +166,6 @@ void TagEditorItem::addTrackValue(const QStringList& values)
 
         if(m_trackCount == 0 || withinCharLimit(m_values)) {
             m_values.append(trackValue);
-            sortList(m_values);
         }
 
         m_multipleValues = m_trackCount > 1;
