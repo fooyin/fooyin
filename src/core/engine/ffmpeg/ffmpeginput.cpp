@@ -556,6 +556,10 @@ int FFmpegInputPrivate::receiveAVFrames()
         return -1;
     }
 
+    if(!m_codec.isValid()) {
+        return -1;
+    }
+
     const Frame frame{m_timeBase};
     const int result = avcodec_receive_frame(m_codec.context(), frame.avFrame());
 
