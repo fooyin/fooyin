@@ -139,6 +139,11 @@ bool RawAudioReader::readTrack(const AudioSource& source, Track& track)
     }
 
     track.setDuration(track.fileSize() / 4 / SampleRate * 1000);
+
+    if(track.duration() == 0) {
+        return false;
+    }
+
     track.setSampleRate(SampleRate);
     track.setChannels(Channels);
     track.setBitrate(static_cast<int>(track.fileSize() * 8 / track.duration()));
