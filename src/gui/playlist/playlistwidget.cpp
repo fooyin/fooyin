@@ -41,6 +41,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/async.h>
+#include <utils/modelutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
@@ -565,9 +566,10 @@ void PlaylistWidgetPrivate::selectionChanged() const
     std::set<int> trackIndexes;
     int firstIndex{-1};
 
-    const QModelIndexList indexes = filterSelectedIndexes(m_playlistView);
+    QModelIndexList indexes = filterSelectedIndexes(m_playlistView);
+    std::ranges::sort(indexes, Utils::sortModelIndexes);
 
-    for(const QModelIndex& index : indexes) {
+    for(const QModelIndex& index : std::as_const(indexes)) {
         const auto type = index.data(PlaylistItem::Type).toInt();
         if(type == PlaylistItem::Track) {
             tracks.push_back(index.data(PlaylistItem::Role::ItemData).value<Track>());

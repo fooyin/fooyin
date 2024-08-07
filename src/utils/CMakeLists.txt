@@ -64,6 +64,8 @@ set(SOURCES
     extendabletableview.cpp
     fileutils.cpp
     id.cpp
+    modelutils.cpp
+    modelutils.h
     multilinedelegate.cpp
     paths.cpp
     scrollarea.cpp

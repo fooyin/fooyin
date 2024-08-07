@@ -36,6 +36,7 @@
 #include <gui/guisettings.h>
 #include <utils/crypto.h>
 #include <utils/datastream.h>
+#include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -95,39 +96,6 @@ struct cmpItemsReverse
 };
 
 using ItemPtrSet = std::set<Fooyin::PlaylistItem*, cmpItemsReverse>;
-
-bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
-{
-    QModelIndex item1{index1};
-    QModelIndex item2{index2};
-
-    QModelIndexList item1Parents;
-    QModelIndexList item2Parents;
-    const QModelIndex root;
-
-    while(item1.parent() != item2.parent()) {
-        if(item1.parent() != root) {
-            item1Parents.push_back(item1);
-            item1 = item1.parent();
-        }
-        if(item2.parent() != root) {
-            item2Parents.push_back(item2);
-            item2 = item2.parent();
-        }
-    }
-    if(item1.row() == item2.row()) {
-        return item1Parents.size() < item2Parents.size();
-    }
-    return item1.row() < item2.row();
-}
-
-struct cmpIndexes
-{
-    bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
-    {
-        return cmpTrackIndices(index1, index2);
-    }
-};
 
 int determineDropIndex(const QAbstractItemModel* model, const QModelIndex& parent, int row)
 {
@@ -268,7 +236,7 @@ Fooyin::TrackIndexRangeList determineTrackIndexGroups(const QModelIndexList& ind
     Fooyin::TrackIndexRangeList indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
+    std::ranges::sort(sortedIndexes, Fooyin::Utils::sortModelIndexes);
 
     const auto getIndex = [](const QModelIndex& index) {
         return index.data(PlaylistItem::Index).toInt();
@@ -322,7 +290,7 @@ IndexGroupsList determineIndexGroups(const QModelIndexList& indexes)
     IndexGroupsList indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
+    std::ranges::sort(sortedIndexes, Fooyin::Utils::sortModelIndexes);
 
     QModelIndexList group;
 
@@ -1822,7 +1790,7 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
 {
     if(mimeData) {
         QModelIndexList sortedIndexes{indexes};
-        std::ranges::sort(sortedIndexes, cmpTrackIndices);
+        std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
         mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
                           saveIndexes(sortedIndexes, m_currentPlaylist));
         mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
@@ -2246,7 +2214,7 @@ ParentChildRangesList PlaylistModel::determineRowGroups(const QModelIndexList& i
     ParentChildRangesList indexGroups;
 
     QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
+    std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
 
     auto startOfSequence = sortedIndexes.cbegin();
     while(startOfSequence != sortedIndexes.cend()) {
