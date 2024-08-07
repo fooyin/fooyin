@@ -55,6 +55,7 @@ InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
 
     m_view->setItemDelegate(new ItemDelegate(this));
     m_view->setModel(m_model);
+    m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
 
