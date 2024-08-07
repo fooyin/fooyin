@@ -668,6 +668,10 @@ void Track::setAlbumArtists(const QStringList& artists)
 
 void Track::setTrackNumber(const QString& number)
 {
+    if(number == u"-1") {
+        return;
+    }
+
     p->trackNumber = number;
 
     if(!p->hash.isEmpty()) {
@@ -677,11 +681,19 @@ void Track::setTrackNumber(const QString& number)
 
 void Track::setTrackTotal(const QString& total)
 {
+    if(total == u"-1") {
+        return;
+    }
+
     p->trackTotal = total;
 }
 
 void Track::setDiscNumber(const QString& number)
 {
+    if(number == u"-1") {
+        return;
+    }
+
     p->discNumber = number;
 
     if(!p->hash.isEmpty()) {
@@ -691,6 +703,10 @@ void Track::setDiscNumber(const QString& number)
 
 void Track::setDiscTotal(const QString& total)
 {
+    if(total == u"-1") {
+        return;
+    }
+
     p->discTotal = total;
 }
 
