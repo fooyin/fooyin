@@ -58,7 +58,7 @@ public:
         node->addTrackValue(std::forward<Value>(value));
     }
 
-    void addTrackMetadata(const Track& track);
+    void addTrackMetadata(const Track& track, bool extended);
     void addTrackLocation(int total, const Track& track);
     void addTrackGeneral(int total, const Track& track);
 
@@ -106,7 +106,7 @@ void InfoPopulatorPrivate::checkAddEntryNode(const QString& key, const QString& 
     getOrAddNode(key, name, parent, InfoItem::Entry);
 }
 
-void InfoPopulatorPrivate::addTrackMetadata(const Track& track)
+void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended)
 {
     if(const auto artists = track.artists(); !artists.empty()) {
         checkAddEntryNode(QStringLiteral("Artist"), InfoPopulator::tr("Artist"), ItemParent::Metadata, artists);
@@ -122,6 +122,14 @@ void InfoPopulatorPrivate::addTrackMetadata(const Track& track)
     if(!track.trackNumber().isEmpty()) {
         checkAddEntryNode(QStringLiteral("TrackNumber"), InfoPopulator::tr("Track Number"), ItemParent::Metadata,
                           track.trackNumber());
+    }
+
+    if(extended) {
+        const auto extras = track.extraTags();
+        for(const auto& [tag, values] : Utils::asRange(extras)) {
+            const auto extraTag = QStringLiteral("<%1>").arg(tag);
+            checkAddEntryNode(extraTag, extraTag, ItemParent::Metadata, values);
+        }
     }
 }
 
@@ -191,7 +199,7 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         }
 
         if(options & InfoItem::Metadata) {
-            addTrackMetadata(track);
+            addTrackMetadata(track, options & InfoItem::ExtendedMetadata);
         }
         if(options & InfoItem::Location) {
             addTrackLocation(total, track);

@@ -19,8 +19,6 @@
 
 #include "infodelegate.h"
 
-#include "infomodel.h"
-
 #include <QApplication>
 #include <QPainter>
 
@@ -64,15 +62,29 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
-    const auto type = index.data(InfoItem::Type).value<InfoItem::ItemType>();
-    switch(type) {
-        case(InfoItem::ItemType::Header):
-            paintHeader(painter, opt, index);
-            break;
-        case(InfoItem::ItemType::Entry):
-            paintEntry(painter, opt, index);
-            break;
+    if(index.flags() & Qt::ItemNeverHasChildren) {
+        paintEntry(painter, opt, index);
     }
+    else {
+        paintHeader(painter, opt, index);
+    }
+}
+
+QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if(index.column() == 1) {
+        return sizeHint(option, index.siblingAtColumn(0));
+    }
+
+    QStyleOptionViewItem opt{option};
+    initStyleOption(&opt, index);
+
+    const QWidget* widget = opt.widget;
+    const QStyle* style   = widget ? widget->style() : QApplication::style();
+
+    const QSize size = index.data(Qt::SizeHintRole).toSize();
+
+    return style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, size, widget);
 }
 } // namespace Fooyin
 

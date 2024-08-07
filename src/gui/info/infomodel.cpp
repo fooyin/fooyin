@@ -43,6 +43,21 @@ InfoModel::InfoModel(QObject* parent)
     });
 }
 
+Qt::ItemFlags InfoModel::flags(const QModelIndex& index) const
+{
+    if(!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+
+    auto flags = TreeModel::flags(index);
+
+    if(index.data(InfoItem::Type).toInt() == InfoItem::Entry) {
+        flags |= Qt::ItemNeverHasChildren;
+    }
+
+    return flags;
+}
+
 InfoModel::~InfoModel() = default;
 
 QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int role) const

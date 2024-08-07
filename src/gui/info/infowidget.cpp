@@ -121,14 +121,19 @@ QString InfoWidget::layoutName() const
 
 void InfoWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("Options")] = static_cast<int>(m_model->options());
+    layout[u"Options"] = static_cast<int>(m_model->options());
+    layout[u"State"]   = QString::fromUtf8(m_view->header()->saveState().toBase64());
 }
 
 void InfoWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("Options"))) {
-        const auto options = static_cast<InfoItem::Options>(layout.value(QStringLiteral("Options")).toInt());
+    if(layout.contains(u"Options")) {
+        const auto options = static_cast<InfoItem::Options>(layout.value(u"Options").toInt());
         m_model->setOptions(options);
+    }
+    if(layout.contains(u"State")) {
+        const auto state = QByteArray::fromBase64(layout[u"State"].toString().toUtf8());
+        m_view->header()->restoreState(state);
     }
 }
 
@@ -143,20 +148,20 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showHeaders = new QAction(QStringLiteral("Show Header"), this);
+    auto* showHeaders = new QAction(tr("Show Header"), this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!m_view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<InfoHeader>(checked); });
 
-    auto* showScrollBar = new QAction(QStringLiteral("Show Scrollbar"), menu);
+    auto* showScrollBar = new QAction(tr("Show Scrollbar"), menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
-    auto* altColours = new QAction(QStringLiteral("Alternating Row Colours"), this);
+    auto* altColours = new QAction(tr("Alternating Row Colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(m_view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
@@ -164,7 +169,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 
     const auto options = m_model->options();
 
-    auto* showMetadata = new QAction(QStringLiteral("Metadata"), this);
+    auto* showMetadata = new QAction(tr("Metadata"), this);
     showMetadata->setCheckable(true);
     showMetadata->setChecked(options & InfoItem::Metadata);
     QAction::connect(showMetadata, &QAction::triggered, this, [this](bool checked) {
@@ -172,7 +177,15 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showLocation = new QAction(QStringLiteral("Location"), this);
+    auto* showExtendedMetadata = new QAction(tr("Extended Metadata"), this);
+    showExtendedMetadata->setCheckable(true);
+    showExtendedMetadata->setChecked(options & InfoItem::ExtendedMetadata);
+    QAction::connect(showExtendedMetadata, &QAction::triggered, this, [this](bool checked) {
+        m_model->setOption(InfoItem::ExtendedMetadata, checked);
+        resetModel();
+    });
+
+    auto* showLocation = new QAction(tr("Location"), this);
     showLocation->setCheckable(true);
     showLocation->setChecked(options & InfoItem::Location);
     QAction::connect(showLocation, &QAction::triggered, this, [this](bool checked) {
@@ -180,7 +193,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showGeneral = new QAction(QStringLiteral("General"), this);
+    auto* showGeneral = new QAction(tr("General"), this);
     showGeneral->setCheckable(true);
     showGeneral->setChecked(options & InfoItem::General);
     QAction::connect(showGeneral, &QAction::triggered, this, [this](bool checked) {
@@ -193,6 +206,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(altColours);
     menu->addSeparator();
     menu->addAction(showMetadata);
+    menu->addAction(showExtendedMetadata);
     menu->addAction(showLocation);
     menu->addAction(showGeneral);
 

@@ -50,11 +50,12 @@ public:
 
     enum Option
     {
-        None     = 0,
-        Metadata = 1 << 0,
-        Location = 1 << 1,
-        General  = 1 << 2,
-        Default  = (Metadata | Location | General)
+        None             = 0,
+        Metadata         = 1 << 0,
+        Location         = 1 << 1,
+        General          = 1 << 2,
+        ExtendedMetadata = 1 << 3,
+        Default          = (Metadata | Location | General)
     };
     Q_DECLARE_FLAGS(Options, Option)
 

@@ -19,6 +19,8 @@
 
 #include "infoview.h"
 
+#include "infoitem.h"
+
 #include <QHeaderView>
 #include <QPainter>
 
@@ -32,8 +34,8 @@ InfoView::InfoView(QWidget* parent)
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     setAlternatingRowColors(true);
     setIndentation(5);
+    setUniformHeightRole(InfoItem::Role::Type);
     header()->setStretchLastSection(true);
-    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 void InfoView::paintEvent(QPaintEvent* event)
