@@ -149,6 +149,9 @@ void PipeWireOutput::start()
 {
     const ThreadLoopGuard guard{m_loop.get()};
     m_stream->setActive(true);
+    // Setting volume only works consistently when stream is active,
+    // so do that here. Fixes issues with silent playback.
+    setVolume(m_volume);
 }
 
 void PipeWireOutput::drain()
