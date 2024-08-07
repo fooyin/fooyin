@@ -61,7 +61,9 @@ std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, c
         return {};
     }
 
-    reader->init(archivePath);
+    if(!reader->init(archivePath)) {
+        return {};
+    }
 
     const QString filepath = track.pathInArchive();
     m_device               = reader->entry(filepath);
@@ -156,7 +158,9 @@ bool GeneralArchiveReader::init(const AudioSource& source)
         return {};
     }
 
-    m_archiveReader->init(archivePath);
+    if(!m_archiveReader->init(archivePath)) {
+        return {};
+    }
 
     const QString filepath = track.pathInArchive();
     m_device               = m_archiveReader->entry(filepath);
@@ -197,7 +201,7 @@ bool GeneralArchiveReader::readTrack(const AudioSource& source, Track& track)
 QByteArray GeneralArchiveReader::readCover(const AudioSource& /*source*/, const Track& track, Track::Cover cover)
 {
     QByteArray coverData;
-    if(m_archiveReader) {
+    if(m_archiveReader && m_archiveReader->init(track.archivePath())) {
         coverData = m_archiveReader->readCover(track, cover);
     }
     if(coverData.isEmpty() && m_reader) {

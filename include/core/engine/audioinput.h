@@ -102,16 +102,17 @@ using ReaderCreator = std::function<std::unique_ptr<AudioReader>()>;
 class FYCORE_EXPORT ArchiveReader
 {
 public:
+    using ReadEntryCallback = std::function<void(const QString&, QIODevice*)>;
+
     virtual ~ArchiveReader() = default;
 
     [[nodiscard]] virtual QStringList extensions() const = 0;
+    [[nodiscard]] virtual QString type() const           = 0;
 
-    virtual bool init(const QString& file)                                            = 0;
-    [[nodiscard]] virtual QString type() const                                        = 0;
-    [[nodiscard]] virtual QStringList entryList() const                               = 0;
-    [[nodiscard]] virtual std::unique_ptr<QIODevice> entry(const QString& file) const = 0;
-
-    [[nodiscard]] virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
+    virtual bool init(const QString& file)                               = 0;
+    virtual std::unique_ptr<QIODevice> entry(const QString& file)        = 0;
+    virtual bool readTracks(ReadEntryCallback readEntry)                 = 0;
+    virtual QByteArray readCover(const Track& track, Track::Cover cover) = 0;
 };
 using ArchiveReaderCreator = std::function<std::unique_ptr<ArchiveReader>()>;
 } // namespace Fooyin

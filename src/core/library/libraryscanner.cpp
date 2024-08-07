@@ -423,43 +423,44 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     const QFileInfo archiveInfo{filepath};
     const QDateTime modifiedTime = archiveInfo.lastModified();
 
-    const QStringList entries = archiveReader->entryList();
-    for(const QString& entry : entries) {
+    auto readEntry = [&](const QString& entry, QIODevice* device) {
+        device->open(QIODevice::ReadOnly);
+
         auto* fileReader = m_audioLoader->readerForFile(entry);
         if(!fileReader) {
-            continue;
-        }
-
-        auto fileDev = archiveReader->entry(entry);
-        if(!fileDev) {
-            continue;
+            return;
         }
 
         AudioSource source;
         source.filepath      = filepath;
-        source.device        = fileDev.get();
+        source.device        = device;
         source.archiveReader = archiveReader;
 
         if(!fileReader->init(source)) {
             qCInfo(LIB_SCANNER) << "Unsupported file:" << filepath;
-            return {};
+            return;
         }
 
         const int subsongCount = fileReader->subsongCount();
         for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
             Track subTrack{archivePath + entry, subIndex};
-            subTrack.setFileSize(fileDev->size());
+            subTrack.setFileSize(device->size());
             subTrack.setModifiedTime(modifiedTime.isValid() ? modifiedTime.toMSecsSinceEpoch() : 0);
             source.filepath = subTrack.filepath();
 
-            fileDev->seek(0);
+            device->seek(0);
             if(fileReader->readTrack(source, subTrack)) {
                 subTrack.generateHash();
                 tracks.push_back(subTrack);
             }
         }
+    };
+
+    if(archiveReader->readTracks(readEntry)) {
+        return tracks;
     }
-    return tracks;
+
+    return {};
 }
 
 TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path) const

@@ -54,6 +54,8 @@ public:
     bool seek(qint64 pos) override;
     [[nodiscard]] qint64 size() const override;
 
+    archive* releaseArchive();
+
 protected:
     qint64 readData(char* data, qint64 maxlen) override;
     qint64 writeData(const char* data, qint64 len) override;
@@ -68,18 +70,16 @@ class FYCORE_EXPORT LibArchiveReader : public ArchiveReader
 {
 public:
     [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] QString type() const override;
 
     bool init(const QString& file) override;
-    [[nodiscard]] QString type() const override;
-    [[nodiscard]] QStringList entryList() const override;
-    [[nodiscard]] std::unique_ptr<QIODevice> entry(const QString& file) const override;
-
-    [[nodiscard]] QByteArray readCover(const Track& track, Track::Cover cover) override;
+    std::unique_ptr<QIODevice> entry(const QString& file) override;
+    bool readTracks(ReadEntryCallback readEntry) override;
+    QByteArray readCover(const Track& track, Track::Cover cover) override;
 
 private:
     QString m_file;
     std::unique_ptr<LibArchiveIODevice> m_device;
     QString m_type;
-    QStringList m_entries;
 };
-} // namespace Fooyin::Archive
+} // namespace Fooyin::LibArchive
