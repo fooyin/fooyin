@@ -41,11 +41,10 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
 
     const int sampleRate = format.sampleRate();
 
-    const auto exp = static_cast<int>(std::round(std::log2((2048.0 / 48000.0) * sampleRate)));
-    m_bufferSize   = std::clamp(static_cast<int>(std::pow(2.0, exp)), 64, 8192);
+    m_bufferSize = std::clamp<int>(std::ceil(static_cast<double>(2048 * sampleRate) / 48000.0), 64, 8192);
 
-    pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
-    pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", m_bufferSize, format.sampleRate());
+    pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", sampleRate);
+    pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", m_bufferSize, sampleRate);
 
     if(!device.isEmpty()) {
         pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
