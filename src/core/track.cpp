@@ -668,7 +668,18 @@ void Track::setAlbumArtists(const QStringList& artists)
 
 void Track::setTrackNumber(const QString& number)
 {
-    p->trackNumber = number;
+    if(number.contains(u'/')) {
+        const auto& parts = number.split(u'/', Qt::SkipEmptyParts);
+        if(!parts.empty()) {
+            p->trackNumber = parts.at(0);
+            if(parts.size() > 1) {
+                p->trackTotal = parts.at(1);
+            }
+        }
+    }
+    else {
+        p->trackNumber = number;
+    }
 
     if(!p->hash.isEmpty()) {
         generateHash();
@@ -682,7 +693,18 @@ void Track::setTrackTotal(const QString& total)
 
 void Track::setDiscNumber(const QString& number)
 {
-    p->discNumber = number;
+    if(number.contains(u'/')) {
+        const auto& parts = number.split(u'/', Qt::SkipEmptyParts);
+        if(!parts.empty()) {
+            p->discNumber = parts.at(0);
+            if(parts.size() > 1) {
+                p->discTotal = parts.at(1);
+            }
+        }
+    }
+    else {
+        p->discNumber = number;
+    }
 
     if(!p->hash.isEmpty()) {
         generateHash();
