@@ -23,16 +23,21 @@
 #include "tageditoritem.h"
 #include "tageditormodel.h"
 
+#include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
 
+#include <QApplication>
 #include <QCheckBox>
+#include <QClipboard>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
 #include <QTableView>
@@ -58,11 +63,19 @@ public:
 
 TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     : ExtendableTableView{actionManager, parent}
+    , m_actionManager{actionManager}
     , m_editTrigger{EditTrigger::AllEditTriggers}
+    , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
+    , m_copyAction{new QAction(tr("Copy"), this)}
+    , m_pasteAction{new QAction(tr("Paste"), this)}
+    , m_pasteFields{new QAction(tr("Paste Fields"), this)}
 {
+    actionManager->addContextObject(m_context);
+
     setItemDelegateForColumn(1, new TagEditorDelegate(this));
     setItemDelegateForRow(13, new StarDelegate(this));
     setTextElideMode(Qt::ElideRight);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
     horizontalHeader()->setStretchLastSection(true);
     horizontalHeader()->setSectionsClickable(false);
     verticalHeader()->setVisible(false);
@@ -72,6 +85,32 @@ void TagEditorView::setTagEditTriggers(EditTrigger triggers)
 {
     m_editTrigger = triggers;
     setEditTriggers(triggers);
+}
+
+void TagEditorView::setupActions()
+{
+    m_copyAction->setShortcut(QKeySequence::Copy);
+    if(auto* command = m_actionManager->command(Constants::Actions::Copy)) {
+        m_copyAction->setShortcuts(command->defaultShortcuts());
+    }
+    QObject::connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { m_copyAction->setEnabled(selectionModel()->hasSelection()); });
+    QObject::connect(m_copyAction, &QAction::triggered, this, &TagEditorView::copySelection);
+    m_copyAction->setEnabled(selectionModel()->hasSelection());
+
+    m_pasteAction->setShortcut(QKeySequence::Paste);
+    if(auto* command = m_actionManager->command(Constants::Actions::Paste)) {
+        m_pasteAction->setShortcuts(command->defaultShortcuts());
+    }
+    QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
+                     [this]() { m_pasteAction->setEnabled(!QApplication::clipboard()->text().isEmpty()); });
+    QObject::connect(m_pasteAction, &QAction::triggered, this, [this]() { pasteSelection(false); });
+    m_pasteAction->setEnabled(!QApplication::clipboard()->text().isEmpty());
+
+    QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
+                     [this]() { m_pasteFields->setEnabled(!QApplication::clipboard()->text().isEmpty()); });
+    QObject::connect(m_pasteFields, &QAction::triggered, this, [this]() { pasteSelection(true); });
+    m_pasteFields->setEnabled(!QApplication::clipboard()->text().isEmpty());
 }
 
 int TagEditorView::sizeHintForRow(int row) const
@@ -84,6 +123,14 @@ int TagEditorView::sizeHintForRow(int row) const
     return model()->index(row, 0, {}).data(Qt::SizeHintRole).toSize().height();
 }
 
+void TagEditorView::setupContextActions(QMenu* menu, const QPoint& /*pos*/)
+{
+    menu->addAction(m_copyAction);
+    menu->addAction(m_pasteAction);
+    menu->addSeparator();
+    menu->addAction(m_pasteFields);
+}
+
 void TagEditorView::mousePressEvent(QMouseEvent* event)
 {
     if(event->button() == Qt::RightButton) {
@@ -94,15 +141,83 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
         setEditTriggers(m_editTrigger);
     }
 
-    QTableView::mousePressEvent(event);
+    ExtendableTableView::mousePressEvent(event);
+}
+
+void TagEditorView::keyPressEvent(QKeyEvent* event)
+{
+    if((event == QKeySequence::Copy)) {
+        copySelection();
+        return;
+    }
+    if((event == QKeySequence::Paste)) {
+        pasteSelection(false);
+        return;
+    }
+
+    ExtendableTableView::keyPressEvent(event);
+}
+
+void TagEditorView::copySelection()
+{
+    const auto selected = selectionModel()->selectedRows();
+    if(selected.empty()) {
+        return;
+    }
+
+    QStringList fields;
+    for(const auto& index : selected) {
+        const QString value = index.siblingAtColumn(1).data().toString();
+        if(value.isEmpty()) {
+            continue;
+        }
+        const QString field = index.siblingAtColumn(0).data().toString();
+        fields.emplace_back(field + u" : " + value);
+    }
+
+    QApplication::clipboard()->setText(fields.join(u"\n"));
+}
+
+void TagEditorView::pasteSelection(bool match)
+{
+    const auto selected = selectionModel()->selectedRows();
+    if(!match && selected.empty()) {
+        return;
+    }
+
+    std::map<QString, QString> values;
+
+    const QString text      = QApplication::clipboard()->text();
+    const QStringList pairs = text.split(QStringLiteral("\n"), Qt::SkipEmptyParts);
+
+    for(int i{0}; const QString& pair : pairs) {
+        if(pair.contains(u" : ")) {
+            const auto& parts = pair.split(QStringLiteral(" : "), Qt::SkipEmptyParts);
+            if(parts.size() != 2) {
+                continue;
+            }
+
+            if(!match && std::cmp_less(i, selected.size())) {
+                values.emplace(selected.at(i++).data().toString(), parts.at(1));
+            }
+            else {
+                values.emplace(parts.at(0), parts.at(1));
+            }
+        }
+        else if(!match && std::cmp_less(i, selected.size())) {
+            values.emplace(selected.at(i++).data().toString(), pair);
+        }
+    }
+
+    if(auto* tagModel = qobject_cast<TagEditorModel*>(model())) {
+        tagModel->updateValues(values);
+    }
 }
 
 TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,
                                  SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
-    , m_actionManager{actionManager}
     , m_settings{settings}
-    , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
     , m_view{new TagEditorView(actionManager, this)}
     , m_model{new TagEditorModel(settings, this)}
     , m_toolsButton{new QToolButton(this)}
@@ -118,7 +233,6 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
     layout->addWidget(m_view);
 
     m_view->setExtendableModel(m_model);
-    m_actionManager->addContextObject(m_context);
     setupToolsMenu();
 
     m_toolsButton->setText(tr("Tools"));
@@ -145,6 +259,7 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
     m_toolsButton->setDisabled(readOnly);
 
     m_model->reset(tracks);
+    m_view->setupActions();
 }
 
 TagEditorWidget::~TagEditorWidget()

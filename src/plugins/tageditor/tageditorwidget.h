@@ -44,14 +44,26 @@ public:
     explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
 
     void setTagEditTriggers(EditTrigger triggers);
+    void setupActions();
 
     [[nodiscard]] int sizeHintForRow(int row) const override;
 
 protected:
+    void setupContextActions(QMenu* menu, const QPoint& pos) override;
     void mousePressEvent(QMouseEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    void copySelection();
+    void pasteSelection(bool match);
+
+    ActionManager* m_actionManager;
+
     EditTrigger m_editTrigger;
+    WidgetContext* m_context;
+    QAction* m_copyAction;
+    QAction* m_pasteAction;
+    QAction* m_pasteFields;
 };
 
 class TagEditorWidget : public PropertiesTabWidget
@@ -77,11 +89,7 @@ private:
     void saveState() const;
     void restoreState() const;
 
-    ActionManager* m_actionManager;
     SettingsManager* m_settings;
-
-    WidgetContext* m_context;
-
     TagEditorView* m_view;
     TagEditorModel* m_model;
     QToolButton* m_toolsButton;

@@ -28,8 +28,6 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
 
-#include <set>
-
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
@@ -333,6 +331,26 @@ void TagEditorModel::autoNumberTracks()
     }
 
     totalTag.setValue(total);
+}
+
+void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues)
+{
+    for(const auto& [tag, value] : fieldValues) {
+        if(p->m_tags.contains(tag)) {
+            auto& item = p->m_tags.at(tag);
+            if(item.value() != value) {
+                item.setValue(value);
+            }
+        }
+        else if(p->m_customTags.contains(tag)) {
+            auto& item = p->m_customTags.at(tag);
+            if(item.value() != value) {
+                item.setValue(value);
+            }
+        }
+    }
+
+    emit dataChanged({}, {}, {Qt::DisplayRole});
 }
 
 bool TagEditorModel::haveChanges()

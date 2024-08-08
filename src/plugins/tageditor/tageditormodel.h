@@ -41,6 +41,7 @@ public:
     void reset(const TrackList& tracks);
 
     void autoNumberTracks();
+    void updateValues(const std::map<QString, QString>& fieldValues);
 
     bool haveChanges();
     bool haveOnlyStatChanges();
