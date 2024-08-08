@@ -107,6 +107,7 @@ void TagEditorView::setupActions()
     QObject::connect(m_pasteAction, &QAction::triggered, this, [this]() { pasteSelection(false); });
     m_pasteAction->setEnabled(!QApplication::clipboard()->text().isEmpty());
 
+    m_pasteFields->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_V);
     QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
                      [this]() { m_pasteFields->setEnabled(!QApplication::clipboard()->text().isEmpty()); });
     QObject::connect(m_pasteFields, &QAction::triggered, this, [this]() { pasteSelection(true); });
@@ -146,12 +147,18 @@ void TagEditorView::mousePressEvent(QMouseEvent* event)
 
 void TagEditorView::keyPressEvent(QKeyEvent* event)
 {
+    const QKeyCombination pasteSeq{Qt::CTRL | Qt::SHIFT | Qt::Key_V};
+
     if((event == QKeySequence::Copy)) {
-        copySelection();
+        m_copyAction->trigger();
         return;
     }
     if((event == QKeySequence::Paste)) {
-        pasteSelection(false);
+        m_pasteAction->trigger();
+        return;
+    }
+    if((event->keyCombination() == pasteSeq)) {
+        m_pasteFields->trigger();
         return;
     }
 
@@ -167,15 +174,12 @@ void TagEditorView::copySelection()
 
     QStringList fields;
     for(const auto& index : selected) {
-        const QString value = index.siblingAtColumn(1).data().toString();
-        if(value.isEmpty()) {
-            continue;
-        }
-        const QString field = index.siblingAtColumn(0).data().toString();
+        const QString value = index.siblingAtColumn(1).data(TagEditorItem::Title).toString();
+        const QString field = index.siblingAtColumn(0).data(TagEditorItem::Title).toString();
         fields.emplace_back(field + u" : " + value);
     }
 
-    QApplication::clipboard()->setText(fields.join(u"\n"));
+    QApplication::clipboard()->setText(fields.join(u"\n\r"));
 }
 
 void TagEditorView::pasteSelection(bool match)
@@ -188,20 +192,23 @@ void TagEditorView::pasteSelection(bool match)
     std::map<QString, QString> values;
 
     const QString text      = QApplication::clipboard()->text();
-    const QStringList pairs = text.split(QStringLiteral("\n"), Qt::SkipEmptyParts);
+    const QStringList pairs = text.split(QStringLiteral("\n\r"), Qt::SkipEmptyParts);
+    const QLatin1String delimiter{" : "};
 
     for(int i{0}; const QString& pair : pairs) {
-        if(pair.contains(u" : ")) {
-            const auto& parts = pair.split(QStringLiteral(" : "), Qt::SkipEmptyParts);
-            if(parts.size() != 2) {
+        if(pair.contains(delimiter)) {
+            const auto delIndex = pair.indexOf(delimiter);
+            if(delIndex < 0) {
                 continue;
             }
+            const QString tag   = pair.left(delIndex);
+            const QString value = pair.sliced(delIndex + delimiter.length());
 
             if(!match && std::cmp_less(i, selected.size())) {
-                values.emplace(selected.at(i++).data().toString(), parts.at(1));
+                values.emplace(selected.at(i++).data().toString(), value);
             }
             else {
-                values.emplace(parts.at(0), parts.at(1));
+                values.emplace(tag, value);
             }
         }
         else if(!match && std::cmp_less(i, selected.size())) {
@@ -210,7 +217,7 @@ void TagEditorView::pasteSelection(bool match)
     }
 
     if(auto* tagModel = qobject_cast<TagEditorModel*>(model())) {
-        tagModel->updateValues(values);
+        tagModel->updateValues(values, match);
     }
 }
 

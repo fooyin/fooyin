@@ -28,6 +28,8 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/starrating.h>
 
+constexpr auto MultipleValuesPrefix = "<<multiple values>>";
+
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
@@ -333,20 +335,42 @@ void TagEditorModel::autoNumberTracks()
     totalTag.setValue(total);
 }
 
-void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues)
+void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues, bool match)
 {
-    for(const auto& [tag, value] : fieldValues) {
-        if(p->m_tags.contains(tag)) {
-            auto& item = p->m_tags.at(tag);
-            if(item.value() != value) {
+    auto splitValues = [this](const QString& value) {
+        QStringList values = value.split(QStringLiteral("; "));
+        values.resize(static_cast<qsizetype>(p->m_tracks.size()));
+        return values.join(u"; ").remove(QLatin1String{MultipleValuesPrefix});
+    };
+
+    auto updateItem = [&](TagEditorItem& item, const QString& value) {
+        if(item.value() != value) {
+            if(value.contains(QLatin1String{MultipleValuesPrefix})) {
+                const QString splitValue = splitValues(value);
+                item.setValue(splitValue);
+                item.setMultipleValues(p->m_tracks.size() > 1);
+                item.setSplitTrackValues(true);
+            }
+            else {
                 item.setValue(value);
             }
         }
+    };
+
+    for(const auto& [tag, value] : fieldValues) {
+        if(p->m_tags.contains(tag)) {
+            updateItem(p->m_tags.at(tag), value);
+        }
         else if(p->m_customTags.contains(tag)) {
-            auto& item = p->m_customTags.at(tag);
-            if(item.value() != value) {
-                item.setValue(value);
-            }
+            updateItem(p->m_customTags.at(tag), value);
+        }
+        else if(match) {
+            const int row = rowCount({});
+            beginInsertRows({}, row, row);
+            auto* item = &p->m_customTags.emplace(tag, TagEditorItem{tag, &p->m_root, false}).first->second;
+            updateItem(*item, value);
+            p->m_root.appendChild(item);
+            endInsertRows();
         }
     }
 
@@ -493,13 +517,13 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         return item->isDefault();
     }
 
-    if(role == Qt::DisplayRole || role == Qt::EditRole) {
+    if(role == Qt::DisplayRole || role == Qt::EditRole || role == TagEditorItem::Title) {
         if(index.column() == 0) {
             const QString title = item->titleChanged() ? item->changedTitle() : item->title();
             if(role == Qt::EditRole) {
                 return title;
             }
-            if(!item->isDefault()) {
+            if(!item->isDefault() && role != TagEditorItem::Title) {
                 const QString name = QStringLiteral("<") + title + QStringLiteral(">");
                 return name;
             }
@@ -509,7 +533,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
 
         if(index.row() == 13) {
             if(!item->valueChanged() && item->multipleValues()) {
-                return QStringLiteral("<<multiple values>>");
+                return QString::fromLatin1(MultipleValuesPrefix);
             }
             return QVariant::fromValue(
                 StarRating{item->valueChanged() ? item->changedValue().toInt() : item->value().toInt(), 5});

@@ -30,6 +30,7 @@ public:
     enum Role
     {
         IsDefault = Qt::UserRole,
+        Title
     };
 
     TagEditorItem();
