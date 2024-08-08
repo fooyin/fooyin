@@ -54,17 +54,12 @@ QString formatPercentage(const std::map<QString, int>& values)
     return formattedList.join(u"; ");
 }
 
-QString sortJoinSet(const std::set<QString>& values)
+QString joinValues(const QStringList& values)
 {
     QStringList list;
     for(const QString& value : values) {
         list.append(value);
     }
-
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    std::ranges::sort(list, collator);
 
     return list.join(u"; ");
 }
@@ -103,7 +98,7 @@ QVariant InfoItem::value() const
     switch(m_valueType) {
         case(ValueType::Concat): {
             if(m_value.isEmpty()) {
-                m_value = sortJoinSet(m_values);
+                m_value = joinValues(m_values);
             }
             return m_value;
         }
@@ -181,11 +176,15 @@ void InfoItem::addTrackValue(const QString& value)
         return;
     }
 
+    if(m_values.contains(value)) {
+        return;
+    }
+
     if(m_values.size() > 40) {
         return;
     }
 
-    m_values.emplace(value);
+    m_values.append(value);
 }
 
 void InfoItem::addTrackValue(const QStringList& values)

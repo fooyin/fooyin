@@ -81,7 +81,7 @@ private:
     QString m_name;
     std::vector<uint64_t> m_numValues;
     mutable uint64_t m_numValue;
-    std::set<QString> m_values;
+    QStringList m_values;
     std::map<QString, int> m_percentValues;
     mutable QString m_value;
 
