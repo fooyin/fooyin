@@ -213,7 +213,7 @@ void ExtendableTableViewPrivate::handleNewRow()
             [this](const QModelIndex& parent, int first) {
                 const QModelIndex index = m_model->index(first, m_column, parent);
                 if(index.isValid()) {
-                    m_self->scrollTo(index);
+                    m_self->scrollTo(index, QAbstractItemView::EnsureVisible);
                     m_self->edit(index);
                 }
             },
@@ -331,8 +331,6 @@ Context ExtendableTableView::context() const
     return p->m_context->context();
 }
 
-void ExtendableTableView::setupContextActions(QMenu* /*menu*/, const QPoint& /*pos*/) { }
-
 void ExtendableTableView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     if(!index.isValid() || index.row() < model()->rowCount() - 1) {
@@ -349,6 +347,8 @@ void ExtendableTableView::scrollTo(const QModelIndex& index, ScrollHint hint)
         verticalScrollBar()->setValue(verticalScrollBar()->maximum());
     }
 }
+
+void ExtendableTableView::setupContextActions(QMenu* /*menu*/, const QPoint& /*pos*/) { }
 
 void ExtendableTableView::contextMenuEvent(QContextMenuEvent* event)
 {

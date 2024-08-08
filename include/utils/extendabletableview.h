@@ -73,13 +73,13 @@ public:
     [[nodiscard]] QAction* moveDownAction() const;
 
     [[nodiscard]] Context context() const;
-    virtual void setupContextActions(QMenu* menu, const QPoint& pos);
 
-    void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible) override;
+    void scrollTo(const QModelIndex& index, ScrollHint hint) override;
 
 protected:
     friend class ExtendableTableViewPrivate;
 
+    virtual void setupContextActions(QMenu* menu, const QPoint& pos);
     void contextMenuEvent(QContextMenuEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 

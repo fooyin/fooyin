@@ -47,6 +47,7 @@ class LibraryTableView : public ExtendableTableView
 public:
     using ExtendableTableView::ExtendableTableView;
 
+protected:
     void setupContextActions(QMenu* menu, const QPoint& pos) override;
 
 signals:
