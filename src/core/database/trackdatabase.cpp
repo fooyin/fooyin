@@ -166,11 +166,29 @@ bool TrackDatabase::storeTracks(TrackList& tracks)
     }
 
     for(auto& track : tracks) {
+        if(track.id() < 0) {
+            insertTrack(track);
+        }
+    }
+
+    return transaction.commit();
+}
+
+bool TrackDatabase::updateTracks(TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return true;
+    }
+
+    DbTransaction transaction{db()};
+
+    if(!transaction) {
+        return false;
+    }
+
+    for(auto& track : tracks) {
         if(track.id() >= 0) {
             updateTrack(track);
-        }
-        else {
-            insertTrack(track);
         }
     }
 

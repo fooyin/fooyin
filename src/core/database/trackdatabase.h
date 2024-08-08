@@ -28,7 +28,8 @@ namespace Fooyin {
 class TrackDatabase : public DbModule
 {
 public:
-    bool storeTracks(TrackList& tracksToStore);
+    bool storeTracks(TrackList& tracks);
+    bool updateTracks(TrackList& tracks);
 
     bool reloadTrack(Track& track) const;
     bool reloadTracks(TrackList& tracks) const;

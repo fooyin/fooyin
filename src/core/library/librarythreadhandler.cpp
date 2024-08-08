@@ -62,11 +62,13 @@ public:
     void scanTracks(const LibraryScanRequest& request);
     void scanFiles(const LibraryScanRequest& request);
     void scanDirectory(const LibraryScanRequest& request);
+    void scanPlaylist(const LibraryScanRequest& request);
 
     ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified);
     ScanRequest addTracksScanRequest(const TrackList& tracks);
     ScanRequest addFilesScanRequest(const QList<QUrl>& files);
     ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir);
+    ScanRequest addPlaylistRequest(const QList<QUrl>& files);
 
     [[nodiscard]] std::optional<LibraryScanRequest> currentRequest() const;
     void execNextRequest();
@@ -143,6 +145,12 @@ void LibraryThreadHandlerPrivate::scanDirectory(const LibraryScanRequest& reques
     });
 }
 
+void LibraryThreadHandlerPrivate::scanPlaylist(const LibraryScanRequest& request)
+{
+    QMetaObject::invokeMethod(&m_scanner,
+                              [this, request]() { m_scanner.scanPlaylist(m_library->tracks(), request.files); });
+}
+
 ScanRequest LibraryThreadHandlerPrivate::addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified)
 {
     const int id = nextRequestId();
@@ -198,7 +206,7 @@ ScanRequest LibraryThreadHandlerPrivate::addFilesScanRequest(const QList<QUrl>& 
 {
     const int id = nextRequestId();
 
-    ScanRequest request{.type = ScanRequest::Tracks, .id = id, .cancel = [this, id]() {
+    ScanRequest request{.type = ScanRequest::Files, .id = id, .cancel = [this, id]() {
                             cancelScanRequest(id);
                         }};
 
@@ -245,6 +253,34 @@ ScanRequest LibraryThreadHandlerPrivate::addDirectoryScanRequest(const LibraryIn
     return request;
 }
 
+ScanRequest LibraryThreadHandlerPrivate::addPlaylistRequest(const QList<QUrl>& files)
+{
+    const int id = nextRequestId();
+
+    ScanRequest request{.type = ScanRequest::Playlist, .id = id, .cancel = [this, id]() {
+                            cancelScanRequest(id);
+                        }};
+
+    LibraryScanRequest libraryRequest;
+    libraryRequest.id    = id;
+    libraryRequest.type  = ScanRequest::Playlist;
+    libraryRequest.files = files;
+
+    m_scanRequests.emplace_front(libraryRequest);
+
+    // Playlist scans take precedence over library and track scans
+    const auto currRequest = currentRequest();
+    if(currRequest && (currRequest->type == ScanRequest::Library || currRequest->type == ScanRequest::Tracks)) {
+        m_scanner.pauseThread();
+        execNextRequest();
+    }
+    else if(m_scanRequests.size() == 1) {
+        execNextRequest();
+    }
+
+    return request;
+}
+
 std::optional<LibraryScanRequest> LibraryThreadHandlerPrivate::currentRequest() const
 {
     const auto requestIt = std::ranges::find_if(
@@ -278,6 +314,9 @@ void LibraryThreadHandlerPrivate::execNextRequest()
             else {
                 scanDirectory(request);
             }
+            break;
+        case(ScanRequest::Playlist):
+            scanPlaylist(request);
             break;
     }
 }
@@ -344,9 +383,9 @@ LibraryThreadHandler::LibraryThreadHandler(DbConnectionPoolPtr dbPool, MusicLibr
     QObject::connect(&p->m_scanner, &LibraryScanner::progressChanged, this,
                      [this](int current, int total) { p->updateProgress(current, total); });
     QObject::connect(&p->m_scanner, &LibraryScanner::scannedTracks, this,
-                     [this](const TrackList& newTracks, const TrackList& existingTracks) {
-                         emit scannedTracks(p->m_currentRequestId, newTracks, existingTracks);
-                     });
+                     [this](const TrackList& tracks) { emit scannedTracks(p->m_currentRequestId, tracks); });
+    QObject::connect(&p->m_scanner, &LibraryScanner::playlistLoaded, this,
+                     [this](const TrackList& tracks) { emit playlistLoaded(p->m_currentRequestId, tracks); });
     QObject::connect(&p->m_scanner, &LibraryScanner::statusChanged, this, &LibraryThreadHandler::statusChanged);
     QObject::connect(&p->m_scanner, &LibraryScanner::scanUpdate, this, &LibraryThreadHandler::scanUpdate);
     QObject::connect(
@@ -395,6 +434,11 @@ ScanRequest LibraryThreadHandler::scanTracks(const TrackList& tracks)
 ScanRequest LibraryThreadHandler::scanFiles(const QList<QUrl>& files)
 {
     return p->addFilesScanRequest(files);
+}
+
+ScanRequest LibraryThreadHandler::loadPlaylist(const QList<QUrl>& files)
+{
+    return p->addPlaylistRequest(files);
 }
 
 void LibraryThreadHandler::libraryRemoved(int id)

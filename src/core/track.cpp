@@ -80,6 +80,7 @@ public:
     QString sort;
 
     bool metadataWasModified{false};
+    bool isNewTrack{true};
 
     // Archive related
     bool isInArchive{false};
@@ -195,6 +196,11 @@ bool Track::exists() const
         return QFileInfo::exists(archivePath());
     }
     return QFileInfo::exists(filepath());
+}
+
+bool Track::isNewTrack() const
+{
+    return p->isNewTrack;
 }
 
 int Track::libraryId() const
@@ -978,7 +984,8 @@ void Track::setLastPlayed(uint64_t time)
 
 void Track::setSort(const QString& sort)
 {
-    p->sort = sort;
+    p->sort       = sort;
+    p->isNewTrack = false;
 }
 
 void Track::clearWasModified()

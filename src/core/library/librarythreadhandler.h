@@ -54,6 +54,7 @@ public:
     ScanRequest scanLibrary(const LibraryInfo& library);
     ScanRequest scanTracks(const TrackList& tracks);
     ScanRequest scanFiles(const QList<QUrl>& files);
+    ScanRequest loadPlaylist(const QList<QUrl>& files);
 
     void saveUpdatedTracks(const TrackList& tracks);
     void writeUpdatedTracks(const TrackList& tracks);
@@ -64,7 +65,8 @@ public:
 
 signals:
     void progressChanged(const Fooyin::ScanProgress& progress);
-    void scannedTracks(int id, const Fooyin::TrackList& newTracks, const Fooyin::TrackList& existingTracks);
+    void scannedTracks(int id, const Fooyin::TrackList& tracks);
+    void playlistLoaded(int id, const Fooyin::TrackList& tracks);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
     void tracksUpdated(const Fooyin::TrackList& tracks);

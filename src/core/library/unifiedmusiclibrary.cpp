@@ -51,7 +51,8 @@ public:
     QFuture<void> updateTracks(const TrackList& tracksToUpdate);
 
     void handleScanResult(const ScanResult& result);
-    void scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks);
+    void scannedTracks(int id, const TrackList& tracks);
+    void playlistLoaded(int id, const TrackList& tracks);
 
     void removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved);
     void libraryStatusChanged(const LibraryInfo& library) const;
@@ -108,7 +109,10 @@ void UnifiedMusicLibraryPrivate::loadTracks(const TrackList& trackToLoad)
 
 QFuture<void> UnifiedMusicLibraryPrivate::addTracks(const TrackList& newTracks)
 {
-    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), newTracks);
+    TrackList tracksToAdd;
+    std::ranges::copy_if(newTracks, std::back_inserter(tracksToAdd),
+                         [](const Track& track) { return track.isNewTrack(); });
+    auto sortTracks = recalSortTracks(m_settings->value<Settings::Core::LibrarySortScript>(), tracksToAdd);
 
     return sortTracks.then(m_self, [this](const TrackList& sortedTracks) {
         std::ranges::copy(sortedTracks, std::back_inserter(m_tracks));
@@ -175,16 +179,19 @@ void UnifiedMusicLibraryPrivate::handleScanResult(const ScanResult& result)
     }
 }
 
-void UnifiedMusicLibraryPrivate::scannedTracks(int id, const TrackList& newTracks, const TrackList& existingTracks)
+void UnifiedMusicLibraryPrivate::scannedTracks(int id, const TrackList& tracks)
 {
-    addTracks(newTracks).then([this, id, newTracks, existingTracks]() {
-        TrackList scannedTracks{newTracks};
-        scannedTracks.insert(scannedTracks.end(), existingTracks.cbegin(), existingTracks.cend());
-        recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), scannedTracks)
+    addTracks(tracks).then([this, id, tracks]() {
+        recalSortTracks(m_settings->value<Settings::Core::ExternalSortScript>(), tracks)
             .then(m_self, [this, id](const TrackList& sortedScannedTracks) {
                 emit m_self->tracksScanned(id, sortedScannedTracks);
             });
     });
+}
+
+void UnifiedMusicLibraryPrivate::playlistLoaded(int id, const TrackList& tracks)
+{
+    addTracks(tracks).then(m_self, [this, id, tracks]() { emit m_self->tracksScanned(id, tracks); });
 }
 
 void UnifiedMusicLibraryPrivate::removeLibrary(const LibraryInfo& library, const std::set<int>& tracksRemoved)
@@ -272,9 +279,9 @@ UnifiedMusicLibrary::UnifiedMusicLibrary(LibraryManager* libraryManager, DbConne
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scanUpdate, this,
                      [this](const ScanResult& result) { p->handleScanResult(result); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::scannedTracks, this,
-                     [this](int id, const TrackList& newTracks, const TrackList& existingTracks) {
-                         p->scannedTracks(id, newTracks, existingTracks);
-                     });
+                     [this](int id, const TrackList& tracks) { p->scannedTracks(id, tracks); });
+    QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::playlistLoaded, this,
+                     [this](int id, const TrackList& tracks) { p->playlistLoaded(id, tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksUpdated, this,
                      [this](const TrackList& tracks) { p->updateTracksMetadata(tracks); });
     QObject::connect(&p->m_threadHandler, &LibraryThreadHandler::tracksStatsUpdated, this,
@@ -353,6 +360,11 @@ ScanRequest UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
 ScanRequest UnifiedMusicLibrary::scanFiles(const QList<QUrl>& files)
 {
     return p->m_threadHandler.scanFiles(files);
+}
+
+ScanRequest UnifiedMusicLibrary::loadPlaylist(const QList<QUrl>& files)
+{
+    return p->m_threadHandler.loadPlaylist(files);
 }
 
 TrackList UnifiedMusicLibrary::tracks() const

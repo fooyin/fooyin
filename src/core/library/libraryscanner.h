@@ -53,7 +53,8 @@ signals:
     void progressChanged(int current, int total);
     void statusChanged(const Fooyin::LibraryInfo& library);
     void scanUpdate(const Fooyin::ScanResult& result);
-    void scannedTracks(const Fooyin::TrackList& newTracks, const Fooyin::TrackList& existingTracks);
+    void scannedTracks(const Fooyin::TrackList& tracks);
+    void playlistLoaded(const Fooyin::TrackList& tracks);
     void directoryChanged(const Fooyin::LibraryInfo& library, const QString& dir);
 
 public slots:
@@ -63,6 +64,7 @@ public slots:
     void scanLibraryDirectory(const Fooyin::LibraryInfo& library, const QString& dir, const Fooyin::TrackList& tracks);
     void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks);
     void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
+    void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
 
 private:
     std::unique_ptr<LibraryScannerPrivate> p;

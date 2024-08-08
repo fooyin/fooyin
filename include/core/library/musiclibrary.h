@@ -28,10 +28,11 @@
 
 namespace Fooyin {
 /*!
- * There are three types of scan request:
+ * There are four types of scan request:
  * - Files: Scans a list of files; emits tracksScanned when finished.
  * - Tracks: Scans a TrackList; emits tracksUpdated when finished.
  * - Library: Scans an entire library; emits tracksAdded, tracksUpdated, tracksDeleted.
+ * - Playlist: Loads a playlist; emits tracksScanned when finished.
  * In-progress requests can be cancelled early using cancel().
  */
 struct ScanRequest
@@ -41,6 +42,7 @@ struct ScanRequest
         Files = 0,
         Tracks,
         Library,
+        Playlist,
     };
 
     Type type;
@@ -105,15 +107,18 @@ public:
     /*!
      * Scans the @p tracks for metadata and adds to library.
      * @returns a ScanRequest representing a queued scan operation.
-     * @note tracks will be considered unmanaged (not associated with an added library)
      */
     virtual ScanRequest scanTracks(const TrackList& tracks) = 0;
     /*!
      * Scans the @p files for tracks and adds to library.
      * @returns a ScanRequest representing a queued scan operation.
-     * @note tracks will be considered unmanaged (not associated with an added library)
      */
     virtual ScanRequest scanFiles(const QList<QUrl>& files) = 0;
+    /*!
+     * Loads the playlists and adds tracks to library.
+     * @returns a ScanRequest representing a queued scan operation.
+     */
+    virtual ScanRequest loadPlaylist(const QList<QUrl>& files) = 0;
 
     /** Returns all tracks for all libraries */
     [[nodiscard]] virtual TrackList tracks() const = 0;

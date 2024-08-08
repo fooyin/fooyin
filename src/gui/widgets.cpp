@@ -276,6 +276,9 @@ void Widgets::showScanProgress(const ScanProgress& progress) const
         case(ScanRequest::Library):
             scanText = tr("Scanning %1").arg(progress.info.name);
             break;
+        case(ScanRequest::Playlist):
+            scanText = tr("Loading playlist");
+            break;
     }
 
     scanText += QStringLiteral(": %1%").arg(progress.percentage());

@@ -212,8 +212,6 @@ public:
 
     Track matchMissingTrack(const Track& track);
 
-    void storeTracks(TrackList& tracks);
-
     void checkBatchFinished();
     void readFileProperties(Track& track);
 
@@ -326,23 +324,14 @@ Track LibraryScannerPrivate::matchMissingTrack(const Track& track)
     return {};
 }
 
-void LibraryScannerPrivate::storeTracks(TrackList& tracks)
-{
-    if(!m_self->mayRun()) {
-        return;
-    }
-
-    m_trackDatabase.storeTracks(tracks);
-}
-
 void LibraryScannerPrivate::checkBatchFinished()
 {
     if(m_tracksToStore.size() >= BatchSize || m_tracksToUpdate.size() > BatchSize) {
         if(m_tracksToStore.size() >= BatchSize) {
-            storeTracks(m_tracksToStore);
+            m_trackDatabase.storeTracks(m_tracksToStore);
         }
         if(m_tracksToUpdate.size() >= BatchSize) {
-            storeTracks(m_tracksToUpdate);
+            m_trackDatabase.updateTracks(m_tracksToUpdate);
         }
         emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
         m_tracksToStore.clear();
@@ -783,8 +772,8 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
         }
     }
 
-    storeTracks(m_tracksToStore);
-    storeTracks(m_tracksToUpdate);
+    m_trackDatabase.storeTracks(m_tracksToStore);
+    m_trackDatabase.updateTracks(m_tracksToUpdate);
 
     if(!m_tracksToStore.empty() || !m_tracksToUpdate.empty()) {
         emit m_self->scanUpdate({m_tracksToStore, m_tracksToUpdate});
@@ -954,7 +943,7 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
     }
 
     if(!tracksToUpdate.empty()) {
-        p->storeTracks(tracksToUpdate);
+        p->m_trackDatabase.updateTracks(tracksToUpdate);
         p->m_trackDatabase.updateTrackStats(tracksToUpdate);
 
         emit scanUpdate({{}, tracksToUpdate});
@@ -968,7 +957,6 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     setState(Running);
 
     TrackList tracksScanned;
-    TrackList tracksToStore;
 
     std::unordered_map<QString, TrackList> trackMap;
 
@@ -1025,7 +1013,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 if(!trackMap.contains(trackKey)) {
                     Track track{playlistTrack};
                     track.generateHash();
-                    tracksToStore.push_back(track);
+                    tracksScanned.push_back(track);
                 }
 
                 filesScanned.emplace(playlistTrack.filepath());
@@ -1059,10 +1047,10 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
                         if(track.hasExtraTag(QStringLiteral("CUESHEET"))) {
                             const TrackList cueTracks = p->readEmbeddedPlaylistTracks(track);
-                            std::ranges::copy(cueTracks, std::back_inserter(tracksToStore));
+                            std::ranges::copy(cueTracks, std::back_inserter(tracksScanned));
                         }
                         else {
-                            tracksToStore.push_back(track);
+                            tracksScanned.push_back(track);
                         }
                     }
                 }
@@ -1072,12 +1060,73 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
     }
 
-    if(!tracksToStore.empty()) {
-        p->storeTracks(tracksToStore);
+    if(!tracksScanned.empty()) {
+        p->m_trackDatabase.storeTracks(tracksScanned);
+        emit scannedTracks(tracksScanned);
     }
 
-    if(!tracksToStore.empty() || !tracksScanned.empty()) {
-        emit scannedTracks(tracksToStore, tracksScanned);
+    handleFinished();
+}
+
+void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls)
+{
+    setState(Running);
+
+    TrackList tracksScanned;
+
+    std::unordered_map<QString, TrackList> trackMap;
+
+    for(const Track& track : libraryTracks) {
+        trackMap[track.filepath()].push_back(track);
+        if(track.isInArchive()) {
+            p->m_existingArchives[track.archivePath()].push_back(track);
+        }
+    }
+
+    p->m_tracksProcessed = 0;
+
+    const auto handleFinished = [this]() {
+        if(state() != Paused) {
+            setState(Idle);
+            p->m_tracksProcessed = p->m_totalTracks;
+            p->reportProgress();
+            p->cleanupScan();
+            emit finished();
+        }
+    };
+
+    p->reportProgress();
+
+    if(!mayRun()) {
+        handleFinished();
+        return;
+    }
+
+    for(const auto& url : urls) {
+        const TrackList playlistTracks = p->readPlaylistTracks(url.toLocalFile());
+        for(const Track& playlistTrack : playlistTracks) {
+            const auto trackKey = playlistTrack.filepath();
+
+            if(trackMap.contains(trackKey)) {
+                const auto existingTracks = trackMap.at(trackKey);
+                for(const Track& track : existingTracks) {
+                    if(track.uniqueFilepath() == playlistTrack.uniqueFilepath()) {
+                        tracksScanned.push_back(track);
+                        break;
+                    }
+                }
+            }
+            else {
+                Track track{playlistTrack};
+                track.generateHash();
+                tracksScanned.push_back(track);
+            }
+        }
+    }
+
+    if(!tracksScanned.empty()) {
+        p->m_trackDatabase.storeTracks(tracksScanned);
+        emit playlistLoaded(tracksScanned);
     }
 
     handleFinished();

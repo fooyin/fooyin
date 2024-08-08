@@ -68,6 +68,40 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
                          }
                      });
 }
+
+template <typename Func>
+void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
+{
+    auto* scanDialog = new QProgressDialog(QStringLiteral("Loading playlist..."), QStringLiteral("Abort"), 0, 100,
+                                           Fooyin::Utils::getMainWindow());
+    scanDialog->setAttribute(Qt::WA_DeleteOnClose);
+    scanDialog->setModal(true);
+    scanDialog->setMinimumDuration(500);
+    scanDialog->setValue(0);
+
+    const Fooyin::ScanRequest request = library->loadPlaylist(files);
+
+    QObject::connect(library, &Fooyin::MusicLibrary::scanProgress, scanDialog,
+                     [scanDialog, request](const Fooyin::ScanProgress& progress) {
+                         if(progress.id != request.id) {
+                             return;
+                         }
+
+                         if(scanDialog->wasCanceled()) {
+                             request.cancel();
+                             scanDialog->close();
+                         }
+
+                         scanDialog->setValue(progress.percentage());
+                     });
+
+    QObject::connect(library, &Fooyin::MusicLibrary::tracksScanned, scanDialog,
+                     [request, func](int id, const Fooyin::TrackList& scannedTracks) {
+                         if(id == request.id) {
+                             func(scannedTracks);
+                         }
+                     });
+}
 } // namespace
 
 namespace Fooyin {
@@ -224,6 +258,34 @@ void PlaylistInteractor::filesToTracks(const QList<QUrl>& urls, const std::funct
     }
 
     scanFiles(m_library, urls, func);
+}
+
+void PlaylistInteractor::loadPlaylist(const QString& playlistName, const QList<QUrl>& urls, bool play) const
+{
+    if(urls.empty()) {
+        return;
+    }
+
+    auto handleScanResult = [this, playlistName, play](const TrackList& scannedTracks) {
+        Playlist* playlist = m_handler->playlistByName(playlistName);
+        if(playlist) {
+            const int indexToPlay = playlist->trackCount();
+            m_handler->appendToPlaylist(playlist->id(), scannedTracks);
+            playlist->changeCurrentIndex(indexToPlay);
+        }
+        else {
+            playlist = m_handler->createPlaylist(playlistName, scannedTracks);
+        }
+
+        if(playlist) {
+            m_controller->changeCurrentPlaylist(playlist);
+            if(play) {
+                m_handler->startPlayback(playlist);
+            }
+        }
+    };
+
+    loadPlaylistTracks(m_library, urls, handleScanResult);
 }
 
 void PlaylistInteractor::trackMimeToPlaylist(const QByteArray& data, const UId& id)

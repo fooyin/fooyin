@@ -76,6 +76,7 @@ public:
     [[nodiscard]] bool metadataWasRead() const;
     [[nodiscard]] bool metadataWasModified() const;
     [[nodiscard]] bool exists() const;
+    [[nodiscard]] bool isNewTrack() const;
     [[nodiscard]] int libraryId() const;
 
     [[nodiscard]] bool isInArchive() const;

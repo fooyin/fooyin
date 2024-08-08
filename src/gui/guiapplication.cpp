@@ -662,14 +662,12 @@ void GuiApplicationPrivate::addFiles() const
 {
     const QString audioExtensions
         = Utils::extensionsToWildcards(core.audioLoader->supportedFileExtensions()).join(u" ");
-    const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(u" ");
-    const QString allExtensions      = QStringLiteral("%1 %2").arg(audioExtensions, playlistExtensions);
+    const QString allExtensions = QStringLiteral("%1 %2").arg(audioExtensions, QStringLiteral("*.cue"));
 
-    const QString allFilter      = GuiApplication::tr("All Supported Media Files (%1)").arg(allExtensions);
-    const QString filesFilter    = GuiApplication::tr("Audio Files (%1)").arg(audioExtensions);
-    const QString playlistFilter = GuiApplication::tr("Playlists (%1)").arg(playlistExtensions);
+    const QString allFilter   = GuiApplication::tr("All Supported Media Files (%1)").arg(allExtensions);
+    const QString filesFilter = GuiApplication::tr("Audio Files (%1)").arg(audioExtensions);
 
-    const QStringList filters{allFilter, filesFilter, playlistFilter};
+    const QStringList filters{allFilter, filesFilter};
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
     if(const auto lastPath = settings->fileValue(QString::fromLatin1(LastFilePath)).toString(); !lastPath.isEmpty()) {
@@ -732,7 +730,7 @@ void GuiApplicationPrivate::loadPlaylist() const
 
     const QFileInfo info{files.front().toLocalFile()};
 
-    playlistInteractor.filesToNewPlaylist(info.completeBaseName(), files);
+    playlistInteractor.loadPlaylist(info.completeBaseName(), files);
 }
 
 void GuiApplicationPrivate::savePlaylist() const

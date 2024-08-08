@@ -54,6 +54,7 @@ public:
 
     ScanRequest scanTracks(const TrackList& tracks) override;
     ScanRequest scanFiles(const QList<QUrl>& files) override;
+    ScanRequest loadPlaylist(const QList<QUrl>& files) override;
 
     [[nodiscard]] TrackList tracks() const override;
     [[nodiscard]] Track trackForId(int id) const override;
