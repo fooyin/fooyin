@@ -65,7 +65,6 @@ PlaylistColumnPageWidget::PlaylistColumnPageWidget(ActionManager* actionManager,
     m_columnList->verticalHeader()->hide();
     m_columnList->horizontalHeader()->setStretchLastSection(true);
     m_columnList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_columnList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     auto updateButtonState = [this]() {
         const auto selection = m_columnList->selectionModel()->selectedIndexes();

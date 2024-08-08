@@ -66,7 +66,6 @@ LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionMana
     m_groupList->verticalHeader()->hide();
     m_groupList->horizontalHeader()->setStretchLastSection(true);
     m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_groupList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     auto updateButtonState = [this]() {
         const auto selection = m_groupList->selectionModel()->selectedIndexes();

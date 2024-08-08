@@ -129,7 +129,6 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_libraryView->setExtendableColumn(1);
     m_libraryView->verticalHeader()->hide();
     m_libraryView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_libraryView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes"));

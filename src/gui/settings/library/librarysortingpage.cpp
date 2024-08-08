@@ -77,7 +77,6 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     m_sortList->verticalHeader()->hide();
     m_sortList->horizontalHeader()->setStretchLastSection(true);
     m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_sortList->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     auto* sortScriptLabel         = new QLabel(tr("Sort tracks in library by") + QStringLiteral(":"), this);
     auto* sortExternalScriptLabel = new QLabel(tr("Sort incoming tracks by") + QStringLiteral(":"), this);
