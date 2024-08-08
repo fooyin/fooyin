@@ -94,24 +94,27 @@ void TagEditorView::setupActions()
         m_copyAction->setShortcuts(command->defaultShortcuts());
     }
     QObject::connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     [this]() { m_copyAction->setEnabled(selectionModel()->hasSelection()); });
+                     [this]() { m_copyAction->setVisible(selectionModel()->hasSelection()); });
     QObject::connect(m_copyAction, &QAction::triggered, this, &TagEditorView::copySelection);
-    m_copyAction->setEnabled(selectionModel()->hasSelection());
+    m_copyAction->setVisible(selectionModel()->hasSelection());
 
     m_pasteAction->setShortcut(QKeySequence::Paste);
     if(auto* command = m_actionManager->command(Constants::Actions::Paste)) {
         m_pasteAction->setShortcuts(command->defaultShortcuts());
     }
+    QObject::connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     [this]() { m_pasteAction->setVisible(selectionModel()->hasSelection()); });
     QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
                      [this]() { m_pasteAction->setEnabled(!QApplication::clipboard()->text().isEmpty()); });
     QObject::connect(m_pasteAction, &QAction::triggered, this, [this]() { pasteSelection(false); });
+    m_pasteAction->setVisible(selectionModel()->hasSelection());
     m_pasteAction->setEnabled(!QApplication::clipboard()->text().isEmpty());
 
     m_pasteFields->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_V);
     QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
-                     [this]() { m_pasteFields->setEnabled(!QApplication::clipboard()->text().isEmpty()); });
+                     [this]() { m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(u" : ")); });
     QObject::connect(m_pasteFields, &QAction::triggered, this, [this]() { pasteSelection(true); });
-    m_pasteFields->setEnabled(!QApplication::clipboard()->text().isEmpty());
+    m_pasteFields->setEnabled(false);
 }
 
 int TagEditorView::sizeHintForRow(int row) const
@@ -193,7 +196,7 @@ void TagEditorView::pasteSelection(bool match)
 
     const QString text      = QApplication::clipboard()->text();
     const QStringList pairs = text.split(QStringLiteral("\n\r"), Qt::SkipEmptyParts);
-    const QLatin1String delimiter{" : "};
+    const QString delimiter = QStringLiteral(" : ");
 
     for(int i{0}; const QString& pair : pairs) {
         if(pair.contains(delimiter)) {
