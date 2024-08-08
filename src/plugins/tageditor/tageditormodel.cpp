@@ -58,8 +58,8 @@ public:
 
     void updateTrackMetadata(const QString& name, const QVariant& value, bool split = false);
 
-    void addCustomTrackMetadata(const QString& name, const QString& value);
-    void replaceCustomTrackMetadata(const QString& name, const QString& value);
+    void addCustomTrackMetadata(const QString& name, const QString& value, bool split = false);
+    void replaceCustomTrackMetadata(const QString& name, const QString& value, bool split = false);
     void removeCustomTrackMetadata(const QString& name);
 
     TagEditorModel* m_self;
@@ -254,25 +254,41 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
     }
 }
 
-void TagEditorModelPrivate::addCustomTrackMetadata(const QString& name, const QString& value)
+void TagEditorModelPrivate::addCustomTrackMetadata(const QString& name, const QString& value, bool split)
 {
     if(m_tracks.empty()) {
         return;
     }
 
-    for(Track& track : m_tracks) {
-        track.addExtraTag(name, value);
+    QStringList listValue = value.split(u';', Qt::SkipEmptyParts);
+    std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
+
+    for(int i{0}; Track & track : m_tracks) {
+        QString newValue{value};
+        if(split && std::cmp_less(i, listValue.size())) {
+            newValue = listValue.at(i);
+        }
+        track.addExtraTag(name, newValue);
+        ++i;
     }
 }
 
-void TagEditorModelPrivate::replaceCustomTrackMetadata(const QString& name, const QString& value)
+void TagEditorModelPrivate::replaceCustomTrackMetadata(const QString& name, const QString& value, bool split)
 {
     if(m_tracks.empty()) {
         return;
     }
 
-    for(Track& track : m_tracks) {
-        track.replaceExtraTag(name, value);
+    QStringList listValue = value.split(u';', Qt::SkipEmptyParts);
+    std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
+
+    for(int i{0}; Track & track : m_tracks) {
+        QString newValue{value};
+        if(split && std::cmp_less(i, listValue.size())) {
+            newValue = listValue.at(i);
+        }
+        track.replaceExtraTag(name, newValue);
+        ++i;
     }
 }
 
@@ -340,7 +356,7 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
     auto splitValues = [this](const QString& value) {
         QStringList values = value.split(QStringLiteral("; "));
         values.resize(static_cast<qsizetype>(p->m_tracks.size()));
-        return values.join(u"; ").remove(QLatin1String{MultipleValuesPrefix});
+        return values.join(u"; ").remove(QLatin1String{MultipleValuesPrefix}).trimmed();
     };
 
     auto updateItem = [&](TagEditorItem& item, const QString& value) {
@@ -370,6 +386,7 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
 
             auto* item = &p->m_customTags.emplace(tag, TagEditorItem{{}, &p->m_root, false}).first->second;
             item->setTitle(tag);
+            item->addTrack(static_cast<int>(p->m_tracks.size()));
             updateItem(*item, value);
             item->setStatus(TagEditorItem::Added);
             p->m_root.appendChild(item);
@@ -407,10 +424,10 @@ void TagEditorModel::applyChanges()
             switch(status) {
                 case(TagEditorItem::Added): {
                     if(custom) {
-                        p->addCustomTrackMetadata(node.changedTitle(), node.changedValue());
+                        p->addCustomTrackMetadata(node.changedTitle(), node.changedValue(), node.splitTrackValues());
                     }
                     else {
-                        p->updateTrackMetadata(node.changedTitle(), node.changedValue());
+                        p->updateTrackMetadata(node.changedTitle(), node.changedValue(), node.splitTrackValues());
                     }
 
                     node.applyChanges();
@@ -441,7 +458,8 @@ void TagEditorModel::applyChanges()
                             tagItem.key() = node.changedTitle();
                             p->m_customTags.insert(std::move(tagItem));
 
-                            p->replaceCustomTrackMetadata(node.changedTitle(), node.changedValue());
+                            p->replaceCustomTrackMetadata(node.changedTitle(), node.changedValue(),
+                                                          node.splitTrackValues());
                             node.applyChanges();
                         }
                     }

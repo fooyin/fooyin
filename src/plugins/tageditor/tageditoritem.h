@@ -52,7 +52,7 @@ public:
     [[nodiscard]] bool splitTrackValues() const;
     [[nodiscard]] bool multipleValues() const;
 
-    void addTrack();
+    void addTrack(int count = 1);
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
 

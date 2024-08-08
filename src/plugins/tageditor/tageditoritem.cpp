@@ -134,9 +134,9 @@ bool TagEditorItem::multipleValues() const
     return m_multipleValues;
 }
 
-void TagEditorItem::addTrack()
+void TagEditorItem::addTrack(int count)
 {
-    m_trackCount++;
+    m_trackCount += count;
 }
 
 void TagEditorItem::addTrackValue(const QString& value)
