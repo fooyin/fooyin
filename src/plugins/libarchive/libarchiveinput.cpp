@@ -167,7 +167,7 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file)
 
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
-            qCDebug(LIBARCH) << "Unable to read encrypted file" << m_file;
+            qCInfo(LIBARCH) << "Unable to read encrypted file" << m_file;
             return nullptr;
         }
 
@@ -199,7 +199,7 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
 
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
-            qCDebug(LIBARCH) << "Unable to read encrypted file" << m_file;
+            qCInfo(LIBARCH) << "Unable to read encrypted file" << m_file;
             return false;
         }
 
@@ -233,7 +233,7 @@ QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*
 
     while(archive_read_next_header(archive.get(), &entry) == ARCHIVE_OK) {
         if(archive_read_has_encrypted_entries(archive.get()) == 1) {
-            qCDebug(LIBARCH) << "Unable to read encrypted file" << m_file;
+            qCInfo(LIBARCH) << "Unable to read encrypted file" << m_file;
             return {};
         }
 

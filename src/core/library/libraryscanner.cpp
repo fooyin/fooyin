@@ -42,7 +42,7 @@
 #include <ranges>
 #include <stack>
 
-Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner")
+Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner", QtInfoMsg)
 
 constexpr auto BatchSize   = 250;
 constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
@@ -156,6 +156,10 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& tr
     static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
     for(const QUrl& url : urls) {
+        if(!url.isLocalFile()) {
+            continue;
+        }
+
         const QFileInfo file{url.toLocalFile()};
         const auto dir = file.absolutePath();
 
@@ -417,6 +421,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
 
         auto* fileReader = m_audioLoader->readerForFile(entry);
         if(!fileReader) {
+            qCInfo(LIB_SCANNER) << "Unsupported file:" << entry;
             return;
         }
 
@@ -426,7 +431,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
         source.archiveReader = archiveReader;
 
         if(!fileReader->init(source)) {
-            qCInfo(LIB_SCANNER) << "Unsupported file:" << filepath;
+            qCInfo(LIB_SCANNER) << "Unsupported file:" << entry;
             return;
         }
 
@@ -446,6 +451,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     };
 
     if(archiveReader->readTracks(readEntry)) {
+        qCDebug(LIB_SCANNER) << "Indexed" << tracks.size() << "tracks in" << filepath;
         return tracks;
     }
 
