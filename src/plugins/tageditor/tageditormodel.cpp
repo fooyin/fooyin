@@ -367,9 +367,13 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
         else if(match) {
             const int row = rowCount({});
             beginInsertRows({}, row, row);
-            auto* item = &p->m_customTags.emplace(tag, TagEditorItem{tag, &p->m_root, false}).first->second;
+
+            auto* item = &p->m_customTags.emplace(tag, TagEditorItem{{}, &p->m_root, false}).first->second;
+            item->setTitle(tag);
             updateItem(*item, value);
+            item->setStatus(TagEditorItem::Added);
             p->m_root.appendChild(item);
+
             endInsertRows();
         }
     }
