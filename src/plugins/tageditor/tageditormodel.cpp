@@ -194,7 +194,7 @@ void TagEditorModelPrivate::updateEditorValues()
 
         for(auto& [field, node] : m_customTags) {
             const auto result = m_scriptRegistry.value(field, track);
-            node.addTrackValue(result.value);
+            node.addTrackValue(result.value.split(u'\037'));
         }
     }
 }
