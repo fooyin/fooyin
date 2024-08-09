@@ -54,7 +54,7 @@ void TrackDatabaseManager::getAllTracks()
 {
     TrackList tracks = m_trackDatabase.getAllTracks();
 
-    if(m_settings->value<Settings::Core::Internal::MarkUnavailableStartup>()) {
+    if(m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool()) {
         std::ranges::for_each(tracks, [](auto& track) { track.setIsEnabled(track.exists()); });
     }
 

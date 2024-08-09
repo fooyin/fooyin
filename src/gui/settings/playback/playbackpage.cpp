@@ -136,11 +136,12 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
 
 void PlaybackPageWidget::load()
 {
-    m_restorePlayback->setChecked(m_settings->value<Settings::Core::Internal::SavePlaybackState>());
+    m_restorePlayback->setChecked(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool());
     m_cursorFollowsPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     m_playbackFollowsCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
     m_rewindPrevious->setChecked(m_settings->value<Settings::Core::RewindPreviousTrack>());
-    m_skipUnavailable->setChecked(m_settings->value<Settings::Core::SkipUnavailable>());
+    m_skipUnavailable->setChecked(
+        m_settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable, false).toBool());
 
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
@@ -153,11 +154,11 @@ void PlaybackPageWidget::load()
 
 void PlaybackPageWidget::apply()
 {
-    m_settings->set<Settings::Core::Internal::SavePlaybackState>(m_restorePlayback->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::SavePlaybackState, m_restorePlayback->isChecked());
     m_settings->set<Settings::Gui::CursorFollowsPlayback>(m_cursorFollowsPlayback->isChecked());
     m_settings->set<Settings::Gui::PlaybackFollowsCursor>(m_playbackFollowsCursor->isChecked());
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
-    m_settings->set<Settings::Core::SkipUnavailable>(m_skipUnavailable->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
 
     const int playedPercent    = m_playedPercent->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
@@ -169,12 +170,12 @@ void PlaybackPageWidget::apply()
 
 void PlaybackPageWidget::reset()
 {
-    m_settings->reset<Settings::Core::Internal::SavePlaybackState>();
+    m_settings->fileRemove(Settings::Core::Internal::SavePlaybackState);
     m_settings->reset<Settings::Gui::CursorFollowsPlayback>();
     m_settings->reset<Settings::Gui::PlaybackFollowsCursor>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
-    m_settings->reset<Settings::Core::SkipUnavailable>();
+    m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
     m_settings->reset<Settings::Core::PlayedThreshold>();
 
     m_settings->reset<Settings::Core::OpenFilesSendTo>();

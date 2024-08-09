@@ -49,15 +49,12 @@ enum CoreSettings : uint32_t
     GaplessPlayback         = 10 | Type::Bool,
     Language                = 11 | Type::String,
     BufferLength            = 12 | Type::Int,
-    PlaylistSavePathType    = 13 | Type::Int,
-    PlaylistSaveMetadata    = 14 | Type::Bool,
-    SkipUnavailable         = 15 | Type::Bool,
-    OpenFilesPlaylist       = 16 | Type::String,
-    OpenFilesSendTo         = 17 | Type::Bool,
-    SaveRatingToMetadata    = 18 | Type::Bool,
-    SavePlaycountToMetadata = 19 | Type::Bool,
-    PlayedThreshold         = 20 | Type::Double,
-    ExternalSortScript      = 21 | Type::String
+    OpenFilesPlaylist       = 13 | Type::String,
+    OpenFilesSendTo         = 14 | Type::Bool,
+    SaveRatingToMetadata    = 15 | Type::Bool,
+    SavePlaycountToMetadata = 16 | Type::Bool,
+    PlayedThreshold         = 17 | Type::Double,
+    ExternalSortScript      = 18 | Type::String,
 
 };
 Q_ENUM_NS(CoreSettings)

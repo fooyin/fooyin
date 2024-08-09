@@ -607,7 +607,7 @@ void GuiApplicationPrivate::showEngineError(const QString& error) const
 
 void GuiApplicationPrivate::showMessage(const QString& title, const Track& track) const
 {
-    if(settings->value<Settings::Core::SkipUnavailable>()) {
+    if(settings->fileValue(Settings::Core::Internal::PlaylistSkipUnavailable).toBool()) {
         core.playerController->next();
         if(core.playerController->playState() == Player::PlayState::Playing) {
             core.playerController->play();
@@ -634,7 +634,7 @@ void GuiApplicationPrivate::showMessage(const QString& title, const Track& track
     message.exec();
 
     if(alwaysSkip->isChecked()) {
-        settings->set<Settings::Core::SkipUnavailable>(true);
+        settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, true);
     }
 
     if(message.clickedButton() == stopButton) {
@@ -774,9 +774,9 @@ void GuiApplicationPrivate::savePlaylist() const
 
         const QFileInfo info{playlistFile};
         const QDir playlistDir{info.absolutePath()};
-        const auto pathType
-            = static_cast<PlaylistParser::PathType>(settings->value<Settings::Core::PlaylistSavePathType>());
-        const bool writeMetadata = settings->value<Settings::Core::PlaylistSaveMetadata>();
+        const auto pathType = static_cast<PlaylistParser::PathType>(
+            settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
+        const bool writeMetadata = settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
 
         parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
     }

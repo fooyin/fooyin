@@ -61,20 +61,23 @@ struct FadingIntervals
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
+constexpr auto PlaylistSkipUnavailable = "Playlist/SkipUnavailable";
+constexpr auto PlaylistSaveMetadata    = "Playlist/SaveMetadata";
+constexpr auto PlaylistSavePathType    = "Playlist/SavePathType";
 constexpr auto AutoExportPlaylists     = "Playlist/AutoExport";
 constexpr auto AutoExportPlaylistsType = "Playlist/AutoExportType";
 constexpr auto AutoExportPlaylistsPath = "Playlist/AutoExportPath";
+constexpr auto MarkUnavailable         = "Library/MarkUnavailable";
+constexpr auto MarkUnavailableStartup  = "Library/MarkUnavailableOnStartup";
+constexpr auto SavePlaybackState       = "Player/SavePlaybackState";
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries       = 0 | Settings::Bool,
-    MuteVolume             = 1 | Settings::Double,
-    DisabledPlugins        = 2 | Settings::StringList,
-    SavePlaybackState      = 3 | Settings::Bool,
-    EngineFading           = 4 | Type::Bool,
-    FadingIntervals        = 5 | Type::Variant,
-    MarkUnavailable        = 6 | Type::Bool,
-    MarkUnavailableStartup = 7 | Type::Bool,
+    MonitorLibraries = 0 | Settings::Bool,
+    MuteVolume       = 1 | Settings::Double,
+    DisabledPlugins  = 2 | Settings::StringList,
+    EngineFading     = 3 | Type::Bool,
+    FadingIntervals  = 4 | Type::Variant,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

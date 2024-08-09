@@ -217,8 +217,8 @@ void PlaylistGeneralPageWidget::load()
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
 
-    m_exportPathType->setCurrentIndex(m_settings->value<Settings::Core::PlaylistSavePathType>());
-    m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
+    m_exportPathType->setCurrentIndex(m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
+    m_exportMetadata->setChecked(m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool());
 
     m_autoExportType->clear();
     const auto extensions = m_playlistLoader->supportedSaveExtensions();
@@ -250,8 +250,8 @@ void PlaylistGeneralPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::PlaylistMiddleClick>(m_middleClick->currentData().toInt());
 
-    m_settings->set<Settings::Core::PlaylistSavePathType>(m_exportPathType->currentIndex());
-    m_settings->set<Settings::Core::PlaylistSaveMetadata>(m_exportMetadata->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::PlaylistSavePathType, m_exportPathType->currentIndex());
+    m_settings->fileSet(Settings::Core::Internal::PlaylistSaveMetadata, m_exportMetadata->isChecked());
 
     m_settings->fileSet(Settings::Core::Internal::AutoExportPlaylists, m_autoExporting->isChecked());
     m_settings->fileSet(Settings::Core::Internal::AutoExportPlaylistsType, m_autoExportType->currentText());
@@ -275,8 +275,8 @@ void PlaylistGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Gui::Internal::PlaylistMiddleClick>();
 
-    m_settings->reset<Settings::Core::PlaylistSavePathType>();
-    m_settings->reset<Settings::Core::PlaylistSaveMetadata>();
+    m_settings->fileRemove(Settings::Core::Internal::PlaylistSavePathType);
+    m_settings->fileRemove(Settings::Core::Internal::PlaylistSaveMetadata);
 
     m_settings->fileRemove(Settings::Core::Internal::AutoExportPlaylists);
     m_settings->fileRemove(Settings::Core::Internal::AutoExportPlaylistsType);

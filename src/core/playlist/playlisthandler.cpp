@@ -220,7 +220,8 @@ void PlaylistHandlerPrivate::savePlaylists()
         m_settings->set<Settings::Core::ActivePlaylistId>(m_activePlaylist->dbId());
     }
 
-    if(!m_activePlaylist->isTemporary() && m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+    if(!m_activePlaylist->isTemporary()
+       && m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         m_settings->fileSet(ActiveIndex, m_activePlaylist->currentTrackIndex());
     }
     else {
@@ -284,7 +285,7 @@ bool PlaylistHandlerPrivate::validIndex(int index) const
 
 void PlaylistHandlerPrivate::restoreActivePlaylist()
 {
-    if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+    if(!m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         return;
     }
 

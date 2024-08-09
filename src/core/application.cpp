@@ -193,7 +193,8 @@ void ApplicationPrivate::markTrack(const Track& track) const
     if(!track.isEnabled() && track.exists()) {
         markedTrack.setIsEnabled(true);
     }
-    else if(track.isEnabled() && m_settings->value<Settings::Core::Internal::MarkUnavailable>() && !track.exists()) {
+    else if(track.isEnabled() && m_settings->fileValue(Settings::Core::Internal::MarkUnavailable).toBool()
+            && !track.exists()) {
         markedTrack.setIsEnabled(false);
     }
 
@@ -242,13 +243,10 @@ void ApplicationPrivate::exportAllPlaylists()
         return;
     }
 
-    QString path = m_settings->fileValue(AutoExportPlaylistsPath).toString();
-    if(path.isEmpty()) {
-        path = Core::playlistsPath();
-    }
+    const QString path = m_settings->fileValue(AutoExportPlaylistsPath, Core::playlistsPath()).toString();
     const QDir playlistPath{path};
     const auto type          = PlaylistParser::PathType::Auto;
-    const bool writeMetadata = m_settings->value<Settings::Core::PlaylistSaveMetadata>();
+    const bool writeMetadata = m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool();
 
     auto saveOrDeletePlaylist = [&](Playlist* playlist, bool forceRemove = false) {
         const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
@@ -288,7 +286,7 @@ void ApplicationPrivate::exportAllPlaylists()
 
 void ApplicationPrivate::savePlaybackState() const
 {
-    if(m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+    if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
         m_settings->fileSet(LastPlaybackPosition, lastPos);
@@ -302,7 +300,7 @@ void ApplicationPrivate::savePlaybackState() const
 
 void ApplicationPrivate::loadPlaybackState() const
 {
-    if(!m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+    if(!m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
         return;
     }
 

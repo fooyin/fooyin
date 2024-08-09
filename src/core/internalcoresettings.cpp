@@ -53,9 +53,6 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<GaplessPlayback>(true, QStringLiteral("Engine/GaplessPlayback"));
     m_settings->createSetting<Language>(QString{}, QStringLiteral("Language"));
     m_settings->createSetting<BufferLength>(4000, QStringLiteral("Engine/BufferLength"));
-    m_settings->createSetting<PlaylistSavePathType>(0, QStringLiteral("Playlist/SavePathType"));
-    m_settings->createSetting<PlaylistSaveMetadata>(false, QStringLiteral("Playlist/SaveMetadata"));
-    m_settings->createSetting<SkipUnavailable>(false, QStringLiteral("Playlist/SkipUnavailable"));
     m_settings->createSetting<OpenFilesPlaylist>(QStringLiteral("Default"),
                                                  QStringLiteral("Playlist/OpenFilesPlaylist"));
     m_settings->createSetting<OpenFilesSendTo>(false, QStringLiteral("Playlist/OpenFilesSendToPlaylist"));
@@ -68,13 +65,9 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
     m_settings->createSetting<Internal::DisabledPlugins>(QStringList{}, QStringLiteral("Plugins/Disabled"));
-    m_settings->createSetting<Internal::SavePlaybackState>(false, QStringLiteral("Player/SavePlaybackState"));
     m_settings->createSetting<Internal::EngineFading>(false, QStringLiteral("Engine/Fading"));
     m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
                                                          QStringLiteral("Engine/FadingIntervals"));
-    m_settings->createSetting<Internal::MarkUnavailable>(false, QStringLiteral("Library/MarkUnavailable"));
-    m_settings->createSetting<Internal::MarkUnavailableStartup>(false,
-                                                                QStringLiteral("Library/MarkUnavailableOnStartup"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 }

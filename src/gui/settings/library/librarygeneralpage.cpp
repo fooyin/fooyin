@@ -158,8 +158,9 @@ void LibraryGeneralPageWidget::load()
 
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
     m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
-    m_markUnavailable->setChecked(m_settings->value<Settings::Core::Internal::MarkUnavailable>());
-    m_markUnavailableStart->setChecked(m_settings->value<Settings::Core::Internal::MarkUnavailableStartup>());
+    m_markUnavailable->setChecked(m_settings->fileValue(Settings::Core::Internal::MarkUnavailable, false).toBool());
+    m_markUnavailableStart->setChecked(
+        m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool());
     m_saveRatings->setChecked(m_settings->value<Settings::Core::SaveRatingToMetadata>());
     m_savePlaycounts->setChecked(m_settings->value<Settings::Core::SavePlaycountToMetadata>());
 }
@@ -170,8 +171,8 @@ void LibraryGeneralPageWidget::apply()
 
     m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
-    m_settings->set<Settings::Core::Internal::MarkUnavailable>(m_markUnavailable->isChecked());
-    m_settings->set<Settings::Core::Internal::MarkUnavailableStartup>(m_markUnavailableStart->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::MarkUnavailable, m_markUnavailable->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::MarkUnavailableStartup, m_markUnavailableStart->isChecked());
     m_settings->set<Settings::Core::SaveRatingToMetadata>(m_saveRatings->isChecked());
     m_settings->set<Settings::Core::SavePlaycountToMetadata>(m_savePlaycounts->isChecked());
 }
@@ -180,8 +181,8 @@ void LibraryGeneralPageWidget::reset()
 {
     m_settings->reset<Settings::Core::AutoRefresh>();
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
-    m_settings->reset<Settings::Core::Internal::MarkUnavailable>();
-    m_settings->reset<Settings::Core::Internal::MarkUnavailableStartup>();
+    m_settings->fileRemove(Settings::Core::Internal::MarkUnavailable);
+    m_settings->fileRemove(Settings::Core::Internal::MarkUnavailableStartup);
     m_settings->reset<Settings::Core::SaveRatingToMetadata>();
     m_settings->reset<Settings::Core::SavePlaycountToMetadata>();
 }
