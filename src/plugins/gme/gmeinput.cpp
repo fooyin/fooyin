@@ -67,8 +67,8 @@ uint64_t getDuration(const gme_info_t* info, Fooyin::AudioDecoder::DecoderOption
     using namespace Fooyin::Gme;
 
     const Fooyin::FySettings settings;
-    const int maxLength = settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt();
-    int loopCount       = settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    const int maxLength = settings.value(MaxLength, DefaultMaxLength).toInt();
+    int loopCount       = settings.value(LoopCount, DefaultLoopCount).toInt();
 
     if(options & AudioDecoder::NoLooping) {
         loopCount = 1;
@@ -191,7 +191,7 @@ AudioBuffer GmeDecoder::readBuffer(size_t /*bytes*/)
         return {};
     }
 
-    const int loopCount = m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt();
+    const int loopCount = m_settings.value(LoopCount, DefaultLoopCount).toInt();
     if(m_loopLength > 0 && !(m_options & NoInfiniteLooping) && loopCount == 0) {
         gme_set_fade(m_emu.get(), -1);
     }

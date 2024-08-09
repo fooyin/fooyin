@@ -90,9 +90,9 @@ GmeSettings::GmeSettings(QWidget* parent)
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
-    m_maxLength->setValue(m_settings.value(QLatin1String{MaxLength}, DefaultMaxLength).toInt());
-    m_loopCount->setValue(m_settings.value(QLatin1String{LoopCount}, DefaultLoopCount).toInt());
-    m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLength}, DefaultFadeLength).toInt());
+    m_maxLength->setValue(m_settings.value(MaxLength, DefaultMaxLength).toInt());
+    m_loopCount->setValue(m_settings.value(LoopCount, DefaultLoopCount).toInt());
+    m_fadeLength->setValue(m_settings.value(FadeLength, DefaultFadeLength).toInt());
 
 #if defined(GME_VERSION) && GME_VERSION < 0x000604
     fadeLabel->setVisible(false);
@@ -102,9 +102,9 @@ GmeSettings::GmeSettings(QWidget* parent)
 
 void GmeSettings::accept()
 {
-    m_settings.setValue(QLatin1String{MaxLength}, m_maxLength->value());
-    m_settings.setValue(QLatin1String{LoopCount}, m_loopCount->value());
-    m_settings.setValue(QLatin1String{FadeLength}, m_fadeLength->value());
+    m_settings.setValue(MaxLength, m_maxLength->value());
+    m_settings.setValue(LoopCount, m_loopCount->value());
+    m_settings.setValue(FadeLength, m_fadeLength->value());
 
     done(Accepted);
 }

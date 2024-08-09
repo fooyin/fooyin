@@ -59,8 +59,8 @@ void configurePlayer(PlayerA* player)
 
     player->SetOutputSettings(SampleRate, Channels, Bps, BufferLen);
 
-    const auto fadeLength    = setting.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt();
-    const auto silenceLength = setting.value(QLatin1String{SilenceLengthSetting}, DefaultSilenceLength).toInt();
+    const auto fadeLength    = setting.value(FadeLengthSetting, DefaultFadeLength).toInt();
+    const auto silenceLength = setting.value(SilenceLengthSetting, DefaultSilenceLength).toInt();
 
     PlayerA::Config config = player->GetConfiguration();
     config.masterVol       = 0x10000;
@@ -92,7 +92,7 @@ QString extractTrackNumber(const QString& filename)
 QString findRomFile(const char* name)
 {
     const Fooyin::FySettings settings;
-    const auto path = settings.value(QLatin1String{Fooyin::VgmInput::RomPathSetting}).toString();
+    const auto path = settings.value(Fooyin::VgmInput::RomPathSetting).toString();
 
     if(path.isEmpty()) {
         qCWarning(VGM_INPUT) << "ROM" << name << "required for playback but ROM directory has not been configured";
@@ -173,7 +173,7 @@ std::optional<AudioFormat> VgmDecoder::init(const AudioSource& source, const Tra
     m_mainPlayer->SetFileReqCallback(requestFileCallback, nullptr);
     configurePlayer(m_mainPlayer.get());
 
-    int loopCount = m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt();
+    int loopCount = m_settings.value(LoopCountSetting, DefaultLoopCount).toInt();
     if(options & NoLooping) {
         loopCount = 1;
     }
@@ -310,7 +310,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
 
     const FySettings settings;
 
-    int loopCount = settings.value(QLatin1String{LoopCountSetting}).toInt();
+    int loopCount = settings.value(LoopCountSetting).toInt();
     if(loopCount == 0) {
         loopCount = DefaultLoopCount;
     }
@@ -348,7 +348,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
         }
     }
 
-    if(settings.value(QLatin1String{GuessTrackSetting}).toBool()) {
+    if(settings.value(GuessTrackSetting).toBool()) {
         track.setTrackNumber(extractTrackNumber(track.filename()));
     }
 
