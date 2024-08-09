@@ -25,7 +25,7 @@
 namespace Fooyin::Gme {
 QString GmePlugin::inputName() const
 {
-    return QStringLiteral("Game Music Emulator");
+    return QStringLiteral("Game Music Emu");
 }
 
 InputCreator GmePlugin::inputCreator() const

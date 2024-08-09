@@ -23,9 +23,9 @@ At least one of the following is required for audio output:
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
 * [libvgm](https://github.com/ValleyBell/libvgm) - will use 3rd party dep if not present on system
-* [libopenmpt](https://lib.openmpt.org/libopenmpt/)
-* [libgme](https://github.com/libgme/game-music-emu)
-* [libarchive](https://www.libarchive.org/) 
+* [OpenMPT](https://lib.openmpt.org/libopenmpt/) - for the OpenMPT audio input plugin
+* [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
+* [libarchive](https://www.libarchive.org/) - for the archive support plugin
 
 Platform-specific requirements are listed below.
 
@@ -69,7 +69,7 @@ sudo dnf install \
 2. Clone the fooyin repository (including submodules):
 
 ```
-git clone --recurse-submodules https://github.com/ludouzi/fooyin.git
+git clone --recurse-submodules https://github.com/fooyin/fooyin.git
 ```
 
 3. Switch into the directory: `cd fooyin`
