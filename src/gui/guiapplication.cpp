@@ -743,14 +743,15 @@ void GuiApplicationPrivate::savePlaylist() const
     const QString playlistFilter
         = Utils::extensionsToFilterList(core.playlistLoader->supportedSaveExtensions(), QStringLiteral("files"));
 
-    QUrl dir = QUrl::fromLocalFile(QDir::homePath());
+    QDir dir{QDir::homePath()};
     if(const auto lastPath = settings->fileValue(QString::fromLatin1(LastFilePath)).toString(); !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
     QString selectedFilter;
-    const auto file = QFileDialog::getSaveFileUrl(mainWindow.get(), GuiApplication::tr("Save Playlist"), dir,
-                                                  playlistFilter, &selectedFilter);
+    const auto file
+        = QFileDialog::getSaveFileName(mainWindow.get(), GuiApplication::tr("Save Playlist"),
+                                       dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter);
 
     if(file.isEmpty()) {
         return;
@@ -764,7 +765,7 @@ void GuiApplicationPrivate::savePlaylist() const
     }
 
     if(auto* parser = core.playlistLoader->parserForExtension(extension)) {
-        QFile playlistFile{file.toLocalFile()};
+        QFile playlistFile{file};
         if(!playlistFile.open(QIODevice::WriteOnly)) {
             qCWarning(GUI_APP) << "Could not open playlist file" << file
                                << "for writing:" << playlistFile.errorString();
