@@ -331,7 +331,8 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     m_clock.setPaused(true);
     m_clock.sync();
 
-    m_decoding = false;
+    m_pendingSeek = {};
+    m_decoding    = false;
 
     m_renderer->stop();
 
