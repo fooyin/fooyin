@@ -347,10 +347,6 @@ void Application::shutdown()
 {
     p->m_settings->fileSet("Version", QString::fromLatin1(VERSION));
 
-    if(p->m_settings->value(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
-        p->exportAllPlaylists();
-    }
-
     p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();
     p->m_pluginManager.unloadPlugins();
