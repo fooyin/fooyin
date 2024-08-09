@@ -115,20 +115,20 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     layout->addWidget(buttons, row++, 0, 1, 4, Qt::AlignBottom);
     layout->setColumnStretch(2, 1);
 
-    m_loopCount->setValue(m_settings.value(LoopCountSetting, DefaultLoopCount).toInt());
-    m_fadeLength->setValue(m_settings.value(FadeLengthSetting, DefaultFadeLength).toInt());
-    m_silenceLength->setValue(m_settings.value(SilenceLengthSetting, DefaultSilenceLength).toInt());
-    m_guessTrack->setChecked(m_settings.value(GuessTrackSetting, DefaultGuessTrack).toBool());
-    m_romLocation->setText(m_settings.value(RomPathSetting).toString());
+    m_loopCount->setValue(m_settings.value(QLatin1String{LoopCountSetting}, DefaultLoopCount).toInt());
+    m_fadeLength->setValue(m_settings.value(QLatin1String{FadeLengthSetting}, DefaultFadeLength).toInt());
+    m_silenceLength->setValue(m_settings.value(QLatin1String{SilenceLengthSetting}, DefaultSilenceLength).toInt());
+    m_guessTrack->setChecked(m_settings.value(QLatin1String{GuessTrackSetting}, DefaultGuessTrack).toBool());
+    m_romLocation->setText(m_settings.value(QLatin1String{RomPathSetting}).toString());
 }
 
 void VgmInputSettings::accept()
 {
-    m_settings.setValue(LoopCountSetting, m_loopCount->value());
-    m_settings.setValue(FadeLengthSetting, m_fadeLength->value());
-    m_settings.setValue(SilenceLengthSetting, m_silenceLength->value());
-    m_settings.setValue(GuessTrackSetting, m_guessTrack->isChecked());
-    m_settings.setValue(RomPathSetting, m_romLocation->text());
+    m_settings.setValue(QLatin1String{LoopCountSetting}, m_loopCount->value());
+    m_settings.setValue(QLatin1String{FadeLengthSetting}, m_fadeLength->value());
+    m_settings.setValue(QLatin1String{SilenceLengthSetting}, m_silenceLength->value());
+    m_settings.setValue(QLatin1String{GuessTrackSetting}, m_guessTrack->isChecked());
+    m_settings.setValue(QLatin1String{RomPathSetting}, m_romLocation->text());
 
     done(Accepted);
 }
