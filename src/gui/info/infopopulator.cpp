@@ -108,16 +108,13 @@ void InfoPopulatorPrivate::checkAddEntryNode(const QString& key, const QString& 
 
 void InfoPopulatorPrivate::addTrackMetadata(const Track& track, bool extended)
 {
-    if(const auto artists = track.artists(); !artists.empty()) {
-        checkAddEntryNode(QStringLiteral("Artist"), InfoPopulator::tr("Artist"), ItemParent::Metadata, artists);
-    }
-
+    checkAddEntryNode(QStringLiteral("Artist"), InfoPopulator::tr("Artist"), ItemParent::Metadata, track.artists());
     checkAddEntryNode(QStringLiteral("Title"), InfoPopulator::tr("Title"), ItemParent::Metadata, track.title());
     checkAddEntryNode(QStringLiteral("Album"), InfoPopulator::tr("Album"), ItemParent::Metadata, track.album());
     checkAddEntryNode(QStringLiteral("Date"), InfoPopulator::tr("Date"), ItemParent::Metadata, track.date());
     checkAddEntryNode(QStringLiteral("Genre"), InfoPopulator::tr("Genre"), ItemParent::Metadata, track.genres());
     checkAddEntryNode(QStringLiteral("AlbumArtist"), InfoPopulator::tr("Album Artist"), ItemParent::Metadata,
-                      track.albumArtist());
+                      track.albumArtists());
 
     if(!track.trackNumber().isEmpty()) {
         checkAddEntryNode(QStringLiteral("TrackNumber"), InfoPopulator::tr("Track Number"), ItemParent::Metadata,
