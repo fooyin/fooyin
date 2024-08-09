@@ -251,24 +251,26 @@ void AudioPlaybackEngine::setVolume(double volume)
 
 void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QString& device)
 {
-    const bool playing = m_state == PlaybackState::Playing;
+    const bool outputActive = m_state != PlaybackState::Stopped;
 
-    if(playing) {
+    if(outputActive) {
         m_clock.setPaused(true);
         m_renderer->pause(true);
     }
 
     m_renderer->updateOutput(output, device);
 
-    if(playing) {
+    if(outputActive) {
         if(!m_renderer->init(m_format)) {
             changeTrackStatus(TrackStatus::NoTrack);
             return;
         }
 
-        m_clock.setPaused(false);
-        m_renderer->start();
-        m_renderer->pause(false);
+        if(m_state == PlaybackState::Playing) {
+            m_clock.setPaused(false);
+            m_renderer->start();
+            m_renderer->pause(false);
+        }
     }
 }
 
@@ -278,24 +280,26 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
         return;
     }
 
-    const bool playing = m_state == PlaybackState::Playing;
+    const bool outputActive = m_state != PlaybackState::Stopped;
 
-    if(playing) {
+    if(outputActive) {
         m_clock.setPaused(true);
         m_renderer->pause(true);
     }
 
     m_renderer->updateDevice(device);
 
-    if(playing) {
+    if(outputActive) {
         if(!m_renderer->init(m_format)) {
             changeTrackStatus(TrackStatus::NoTrack);
             return;
         }
 
-        m_clock.setPaused(false);
-        startPlayback();
-        m_renderer->pause(false);
+        if(m_state == PlaybackState::Playing) {
+            m_clock.setPaused(false);
+            m_renderer->start();
+            m_renderer->pause(false);
+        }
     }
 }
 

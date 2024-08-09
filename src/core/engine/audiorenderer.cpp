@@ -138,6 +138,7 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         }
         start();
 
+        m_fadeVolume = std::max(m_fadeVolume, 0.0);
         if(fadeLength > 0) {
             m_volumeChange = std::abs(m_fadeVolume - m_volume) / m_fadeSteps;
         }
@@ -177,9 +178,7 @@ void AudioRenderer::updateOutput(const OutputCreator& output, const QString& dev
         return;
     }
 
-    const bool wasInitialised = m_audioOutput && m_audioOutput->initialised();
-
-    if(wasInitialised) {
+    if(m_audioOutput && m_audioOutput->initialised()) {
         m_audioOutput->uninit();
         QObject::disconnect(m_audioOutput.get(), nullptr, this, nullptr);
     }
@@ -201,13 +200,11 @@ void AudioRenderer::updateDevice(const QString& device)
 
     m_bufferPrefilled = false;
 
-    if(m_audioOutput && m_audioOutput->initialised()) {
+    if(m_audioOutput->initialised()) {
         m_audioOutput->uninit();
-        m_audioOutput->setDevice(device);
     }
-    else {
-        m_audioOutput->setDevice(device);
-    }
+
+    m_audioOutput->setDevice(device);
 }
 
 void AudioRenderer::updateVolume(double volume)
