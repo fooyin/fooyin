@@ -50,7 +50,8 @@ public:
     void setMaxStarCount(int maxStarCount);
     void setAlwaysDisplay(bool display);
 
-    void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode) const;
+    void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
+               Qt::Alignment alignment = Qt::AlignLeft) const;
     [[nodiscard]] QSize sizeHint() const;
 
 private:

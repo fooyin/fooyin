@@ -70,7 +70,8 @@ void StarRating::setAlwaysDisplay(bool display)
     m_alwaysDisplay = display;
 }
 
-void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode) const
+void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
+                       Qt::Alignment alignment) const
 {
     painter->save();
 
@@ -84,7 +85,17 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
     dotPen.setCapStyle(Qt::RoundCap);
 
     const int yOffset = (rect.height() - StarScaleFactor) / 2;
-    painter->translate(rect.x(), rect.y() + yOffset);
+
+    int xOffset{0};
+    const int totalWidth = m_maxCount * StarScaleFactor;
+    if(alignment & Qt::AlignHCenter) {
+        xOffset = (rect.width() - totalWidth) / 2;
+    }
+    else if(alignment & Qt::AlignRight) {
+        xOffset = rect.width() - totalWidth;
+    }
+
+    painter->translate(rect.x() + xOffset, rect.y() + yOffset);
     painter->scale(StarScaleFactor, StarScaleFactor);
 
     for(int i{0}; i < m_maxCount; ++i) {
