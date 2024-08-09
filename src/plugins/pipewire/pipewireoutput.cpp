@@ -340,6 +340,7 @@ void PipeWireOutput::uninitCore()
 {
     if(m_stream) {
         const ThreadLoopGuard guard{m_loop.get()};
+        m_stream->flush(false);
         m_stream.reset(nullptr);
     }
 
