@@ -241,9 +241,9 @@ void FileOpsDialogPrivate::changeOperation(Operation operation)
 
 void FileOpsDialogPrivate::updateButtonState() const
 {
-    m_loadButton->setEnabled(!m_presetBox->currentText().isEmpty());
+    m_loadButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
     m_saveButton->setEnabled(!m_presetBox->currentText().isEmpty());
-    m_deleteButton->setEnabled(!m_presetBox->currentText().isEmpty());
+    m_deleteButton->setEnabled(m_presetBox->findText(m_presetBox->currentText()) >= 0);
 }
 
 FileOpPreset FileOpsDialogPrivate::currentPreset() const
@@ -278,6 +278,7 @@ void FileOpsDialogPrivate::savePreset()
         m_presets.push_back(preset);
         m_presetBox->addItem(preset.name);
         m_presetBox->setCurrentIndex(m_presetBox->count() - 1);
+        updateButtonState();
     }
 }
 
