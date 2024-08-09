@@ -33,6 +33,11 @@ QString settingsPath()
     return QDir::cleanPath(Utils::configPath().append(QStringLiteral("/fooyin.conf")));
 }
 
+QString playlistsPath()
+{
+    return QDir::cleanPath(Utils::sharePath().append(QStringLiteral("/playlists")));
+}
+
 QStringList pluginPaths()
 {
     QStringList paths;
@@ -72,5 +77,5 @@ QString translationsPath()
     }
 
     return {};
-} // namespace
+}
 } // namespace Fooyin::Core
