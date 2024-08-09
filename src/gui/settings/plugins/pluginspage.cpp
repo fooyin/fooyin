@@ -26,6 +26,7 @@
 #include <core/application.h>
 #include <core/internalcoresettings.h>
 #include <core/plugins/plugin.h>
+#include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
@@ -187,9 +188,11 @@ PluginInfo* PluginPageWidget::currentPlugin() const
 void PluginPageWidget::selectionChanged()
 {
     if(const auto* plugin = currentPlugin()) {
-        m_configurePlugin->setEnabled(plugin->plugin()->hasSettings());
-        m_aboutPlugin->setEnabled(true);
-        return;
+        if(plugin->plugin()) {
+            m_configurePlugin->setEnabled(plugin->plugin()->hasSettings());
+            m_aboutPlugin->setEnabled(true);
+            return;
+        }
     }
 
     m_configurePlugin->setDisabled(true);
