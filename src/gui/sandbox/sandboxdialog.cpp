@@ -38,6 +38,8 @@
 
 using namespace std::chrono_literals;
 
+constexpr auto DialogState = "Interface/ScriptSandboxState";
+
 namespace Fooyin {
 SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection,
                              SettingsManager* settings, QWidget* parent)
@@ -169,12 +171,12 @@ void SandboxDialog::saveState() const
 
     byteArray = qCompress(byteArray, 9);
 
-    m_settings->fileSet(QStringLiteral("Interface/ScriptSandboxState"), byteArray);
+    m_settings->fileSet(DialogState, byteArray);
 }
 
 void SandboxDialog::restoreState()
 {
-    QByteArray byteArray = m_settings->fileValue(QStringLiteral("Interface/ScriptSandboxState")).toByteArray();
+    QByteArray byteArray = m_settings->fileValue(DialogState).toByteArray();
 
     static auto defaultScript = QStringLiteral("%track%. %title%");
 

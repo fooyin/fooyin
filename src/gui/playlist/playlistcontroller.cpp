@@ -33,6 +33,8 @@
 #include <QMenu>
 #include <QUndoStack>
 
+constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
+
 namespace Fooyin {
 class PlaylistControllerPrivate : public QObject
 {
@@ -330,12 +332,12 @@ void PlaylistControllerPrivate::saveStates() const
 
     out = qCompress(out, 9);
 
-    m_settings->fileSet(QStringLiteral("PlaylistWidget/PlaylistStates"), out);
+    m_settings->fileSet(PlaylistStates, out);
 }
 
 void PlaylistControllerPrivate::restoreStates()
 {
-    QByteArray in = m_settings->fileValue(QStringLiteral("PlaylistWidget/PlaylistStates")).toByteArray();
+    QByteArray in = m_settings->fileValue(PlaylistStates).toByteArray();
 
     if(in.isEmpty()) {
         return;

@@ -28,6 +28,9 @@
 #include <QIODevice>
 #include <QMainWindow>
 
+constexpr auto DialogSize   = "Interface/SettingsDialogSize";
+constexpr auto LastOpenPage = "Interface/SettingsDialogLastPage";
+
 namespace Fooyin {
 class SettingsDialogControllerPrivate
 {
@@ -100,21 +103,21 @@ void SettingsDialogController::addPage(SettingsPage* page)
 
 void SettingsDialogController::saveState()
 {
-    p->settings->fileSet(QStringLiteral("Interface/SettingsDialogSize"), p->size);
-    p->settings->fileSet(QStringLiteral("Interface/SettingsDialogLastPage"), p->lastOpenPage.name());
+    p->settings->fileSet(DialogSize, p->size);
+    p->settings->fileSet(LastOpenPage, p->lastOpenPage.name());
 }
 
 void SettingsDialogController::restoreState()
 {
-    if(p->settings->fileContains(QStringLiteral("Interface/SettingsDialogSize"))) {
-        const QSize size = p->settings->fileValue(QStringLiteral("Interface/SettingsDialogSize")).toSize();
+    if(p->settings->fileContains(DialogSize)) {
+        const QSize size = p->settings->fileValue(DialogSize).toSize();
         if(size.isValid()) {
             p->size = size;
         }
     }
 
-    if(p->settings->fileContains(QStringLiteral("Interface/SettingsDialogLastPage"))) {
-        const Id lastPage{p->settings->fileValue(QStringLiteral("Interface/SettingsDialogLastPage")).toString()};
+    if(p->settings->fileContains(LastOpenPage)) {
+        const Id lastPage{p->settings->fileValue(LastOpenPage).toString()};
         if(lastPage.isValid()) {
             p->lastOpenPage = lastPage;
         }

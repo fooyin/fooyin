@@ -417,7 +417,10 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     const QDateTime modifiedTime = archiveInfo.lastModified();
 
     auto readEntry = [&](const QString& entry, QIODevice* device) {
-        device->open(QIODevice::ReadOnly);
+        if(!device->open(QIODevice::ReadOnly)) {
+            qCInfo(LIB_SCANNER) << "Failed to open file:" << entry;
+            return;
+        }
 
         auto* fileReader = m_audioLoader->readerForFile(entry);
         if(!fileReader) {

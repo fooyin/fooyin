@@ -30,6 +30,8 @@
 
 #include <ranges>
 
+constexpr auto DialogSize = "Interface/PropertiesDialogSize";
+
 namespace Fooyin {
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
     : m_index{index}
@@ -97,13 +99,13 @@ public:
 
     void saveState(SettingsManager* settings)
     {
-        settings->fileSet(QStringLiteral("Interface/PropertiesDialogSize"), size());
+        settings->fileSet(DialogSize, size());
     }
 
     void restoreState(SettingsManager* settings)
     {
-        if(settings->fileContains(QStringLiteral("Interface/PropertiesDialogSize"))) {
-            const QSize size = settings->fileValue(QStringLiteral("Interface/PropertiesDialogSize")).toSize();
+        if(settings->fileContains(DialogSize)) {
+            const QSize size = settings->fileValue(DialogSize).toSize();
             if(size.isValid()) {
                 resize(size);
             }

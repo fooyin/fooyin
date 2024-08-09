@@ -54,8 +54,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     setMenuBar(m_mainMenu->menuBar());
     m_settings->createSettingsDialog(this);
 
-    if(auto prevState = m_settings->fileValue(QString::fromLatin1(MainWindowPrevState)).toString();
-       !prevState.isEmpty()) {
+    if(auto prevState = m_settings->fileValue(MainWindowPrevState).toString(); !prevState.isEmpty()) {
         if(auto state = Utils::Enum::fromString<WindowState>(prevState)) {
             m_prevState = state.value();
         }
@@ -186,7 +185,7 @@ void MainWindow::restoreState(WindowState state)
 {
     switch(state) {
         case(Normal):
-            restoreGeometry(m_settings->fileValue(QString::fromLatin1(MainWindowGeometry)).toByteArray());
+            restoreGeometry(m_settings->fileValue(MainWindowGeometry).toByteArray());
             show();
             break;
         case(Maximised):
@@ -223,8 +222,8 @@ void MainWindow::exit()
     if(!m_hasQuit) {
         m_hasQuit = true;
 
-        m_settings->fileSet(QString::fromLatin1(MainWindowGeometry), saveGeometry());
-        m_settings->fileSet(QString::fromLatin1(MainWindowPrevState), Utils::Enum::toString(currentState()));
+        m_settings->fileSet(MainWindowGeometry, saveGeometry());
+        m_settings->fileSet(MainWindowPrevState, Utils::Enum::toString(currentState()));
 
         Application::quit();
     }

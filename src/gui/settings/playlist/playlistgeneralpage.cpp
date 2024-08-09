@@ -178,7 +178,7 @@ void PlaylistGeneralPageWidget::load()
         m_middleClick->setCurrentIndex(middleActions.at(middleAction));
     }
 
-    m_exportPathType->setCurrentIndex(static_cast<int>(m_settings->value<Settings::Core::PlaylistSavePathType>()));
+    m_exportPathType->setCurrentIndex(m_settings->value<Settings::Core::PlaylistSavePathType>());
     m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
 
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());

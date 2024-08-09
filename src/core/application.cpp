@@ -234,13 +234,12 @@ void ApplicationPrivate::savePlaybackState() const
     if(m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
-        m_settings->fileSet(QString::fromLatin1(LastPlaybackPosition), lastPos);
-        m_settings->fileSet(QString::fromLatin1(LastPlaybackState),
-                            Utils::Enum::toString(m_playerController->playState()));
+        m_settings->fileSet(LastPlaybackPosition, lastPos);
+        m_settings->fileSet(LastPlaybackState, Utils::Enum::toString(m_playerController->playState()));
     }
     else {
-        m_settings->fileRemove(QString::fromLatin1(LastPlaybackPosition));
-        m_settings->fileRemove(QString::fromLatin1(LastPlaybackState));
+        m_settings->fileRemove(LastPlaybackPosition);
+        m_settings->fileRemove(LastPlaybackState);
     }
 }
 
@@ -250,7 +249,7 @@ void ApplicationPrivate::loadPlaybackState() const
         return;
     }
 
-    const auto lastPos = m_settings->fileValue(QString::fromLatin1(LastPlaybackPosition)).value<uint64_t>();
+    const auto lastPos = m_settings->fileValue(LastPlaybackPosition).value<uint64_t>();
 
     auto seek = [this, lastPos]() {
         if(lastPos > 0) {
@@ -258,8 +257,8 @@ void ApplicationPrivate::loadPlaybackState() const
         }
     };
 
-    if(const auto state = Utils::Enum::fromString<Player::PlayState>(
-           m_settings->fileValue(QString::fromLatin1(LastPlaybackState)).toString())) {
+    if(const auto state
+       = Utils::Enum::fromString<Player::PlayState>(m_settings->fileValue(LastPlaybackState).toString())) {
         switch(state.value()) {
             case(Player::PlayState::Paused):
                 qCDebug(APP) << "Restoring paused state…";
@@ -346,7 +345,11 @@ void Application::timerEvent(QTimerEvent* event)
 
 void Application::shutdown()
 {
-    p->m_settings->fileSet(QStringLiteral("Version"), QString::fromLatin1(VERSION));
+    p->m_settings->fileSet("Version", QString::fromLatin1(VERSION));
+
+    if(p->m_settings->value(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+        p->exportAllPlaylists();
+    }
 
     p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();

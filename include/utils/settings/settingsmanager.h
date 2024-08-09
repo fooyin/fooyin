@@ -126,46 +126,46 @@ public:
      * Returns the current value of the setting at @p key if it exists, or an empty variant if not.
      * @note the setting must have been created using @fn createSetting(QString,QVariant).
      */
-    QVariant value(const QString& key) const;
+    QVariant value(QAnyStringView key) const;
     /*!
      * Sets the value of the setting at @p key.
      * @returns whether the setting was successfully changed.
      * @note the setting must have been created using @fn createSetting(QString,QVariant).
      */
-    bool set(const QString& key, const QVariant& value);
+    bool set(QAnyStringView key, const QVariant& value);
     /*!
      * Resets the value of the setting at @p key to default.
      * @returns whether the setting was successfully reset.
      * @note the setting must have been created using @fn createSetting(QString,QVariant).
      */
-    bool reset(const QString& key);
+    bool reset(QAnyStringView key);
     /*!
      * Returns true if a setting at @p key exists.
      * @note the setting must have been created using @fn createSetting(QString,QVariant).
      */
-    bool contains(const QString& key) const;
+    bool contains(QAnyStringView key) const;
 
     /*!
      * Returns the value of the setting at @p key from file if it exists, or an empty variant if not.
      * @note if using with a registered setting, the returned value may be different from the actual current value.
      */
-    QVariant fileValue(const QString& key) const;
+    QVariant fileValue(QAnyStringView key) const;
     /*!
      * Sets the value of the setting at @p key in the settings file.
      * @note this method is recommended to be used only for unregistered settings, as the value in the settings file
      * will be overwritten in @fn storeSettings.
      */
-    bool fileSet(const QString& key, const QVariant& value);
+    bool fileSet(QAnyStringView key, const QVariant& value);
     /*!
      * Returns true if a setting at @p key exists in the settings file.
      */
-    bool fileContains(const QString& key) const;
+    bool fileContains(QAnyStringView key) const;
     /*!
      * Removes the setting at @p key from the settings file.
      * @note this method is recommended to be used only for unregistered settings, as the value may be re-added in
      * @fn storeSettings.
      */
-    void fileRemove(const QString& key);
+    void fileRemove(QAnyStringView key);
 
     /*!
      * Creates a setting at @p key, with the default value @p value.
@@ -326,12 +326,13 @@ public:
      * @note this is for string key-based settings.
      */
     template <typename Obj, typename Func>
-    void subscribe(const QString& key, const Obj* obj, Func&& func)
+    void subscribe(QAnyStringView key, const Obj* obj, Func&& func)
     {
         const std::shared_lock lock(m_lock);
 
-        if(m_settings.contains(key)) {
-            QObject::connect(m_settings.at(key), &SettingsEntry::settingChangedVariant, obj, std::forward<Func>(func));
+        auto settingIt = settingEntry(key);
+        if(settingIt != m_settings.cend()) {
+            QObject::connect(settingIt->second, &SettingsEntry::settingChangedVariant, obj, std::forward<Func>(func));
         }
     }
 
@@ -393,12 +394,13 @@ public:
      * @note this is for string key-based settings.
      */
     template <typename Obj>
-    void unsubscribe(const QString& key, const Obj* obj)
+    void unsubscribe(QAnyStringView key, const Obj* obj)
     {
         const std::shared_lock lock(m_lock);
 
-        if(m_settings.contains(key)) {
-            QObject::disconnect(m_settings.at(key), nullptr, obj, nullptr);
+        auto settingIt = settingEntry(key);
+        if(settingIt != m_settings.cend()) {
+            QObject::disconnect(settingIt->second, nullptr, obj, nullptr);
         }
     }
 
@@ -463,12 +465,15 @@ private:
         return QString::fromUtf8(mapKey.toUtf8());
     }
 
-    bool settingExists(const QString& key) const;
+    using SettingsMap = std::map<QString, SettingsEntry*>;
+
+    SettingsMap::const_iterator settingEntry(QAnyStringView key) const;
+    bool settingExists(QAnyStringView key) const;
     void checkLoadSetting(SettingsEntry* setting) const;
     void saveSettings(bool onlyChanged);
 
     QSettings* m_settingsFile;
-    std::map<QString, SettingsEntry*> m_settings;
+    SettingsMap m_settings;
     mutable std::shared_mutex m_lock;
 
     SettingsDialogController* m_settingsDialog;

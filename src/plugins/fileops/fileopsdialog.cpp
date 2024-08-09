@@ -328,7 +328,7 @@ void FileOpsDialogPrivate::saveCurrentPreset() const
 
     byteArray = qCompress(byteArray, 9);
 
-    m_settings->fileSet(QString::fromLatin1(CurrentPreset), byteArray);
+    m_settings->fileSet(CurrentPreset, byteArray);
 }
 
 void FileOpsDialogPrivate::savePresets() const
@@ -345,12 +345,12 @@ void FileOpsDialogPrivate::savePresets() const
 
     byteArray = qCompress(byteArray, 9);
 
-    m_settings->fileSet(QString::fromLatin1(SavedPresets), byteArray);
+    m_settings->fileSet(SavedPresets, byteArray);
 }
 
 void FileOpsDialogPrivate::loadCurrentPreset() const
 {
-    auto byteArray = m_settings->fileValue(QString::fromLatin1(CurrentPreset)).toByteArray();
+    auto byteArray = m_settings->fileValue(CurrentPreset).toByteArray();
 
     if(!byteArray.isEmpty()) {
         byteArray = qUncompress(byteArray);
@@ -372,7 +372,7 @@ void FileOpsDialogPrivate::loadCurrentPreset() const
 
 void FileOpsDialogPrivate::loadPresets()
 {
-    auto byteArray = m_settings->fileValue(QString::fromLatin1(SavedPresets)).toByteArray();
+    auto byteArray = m_settings->fileValue(SavedPresets).toByteArray();
 
     if(!byteArray.isEmpty()) {
         byteArray = qUncompress(byteArray);

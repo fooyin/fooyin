@@ -670,7 +670,7 @@ void GuiApplicationPrivate::addFiles() const
     const QStringList filters{allFilter, filesFilter};
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = settings->fileValue(QString::fromLatin1(LastFilePath)).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
@@ -681,7 +681,7 @@ void GuiApplicationPrivate::addFiles() const
         return;
     }
 
-    settings->fileSet(QString::fromLatin1(LastFilePath), files.front());
+    settings->fileSet(LastFilePath, files.front());
 
     playlistInteractor.filesToCurrentPlaylist(files);
 }
@@ -715,7 +715,7 @@ void GuiApplicationPrivate::loadPlaylist() const
     const QString playlistFilter     = GuiApplication::tr("Playlists (%1)").arg(playlistExtensions);
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = settings->fileValue(QString::fromLatin1(LastFilePath)).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
@@ -726,7 +726,7 @@ void GuiApplicationPrivate::loadPlaylist() const
         return;
     }
 
-    settings->fileSet(QString::fromLatin1(LastFilePath), files.front());
+    settings->fileSet(LastFilePath, files.front());
 
     const QFileInfo info{files.front().toLocalFile()};
 
@@ -744,7 +744,7 @@ void GuiApplicationPrivate::savePlaylist() const
         = Utils::extensionsToFilterList(core.playlistLoader->supportedSaveExtensions(), QStringLiteral("files"));
 
     QDir dir{QDir::homePath()};
-    if(const auto lastPath = settings->fileValue(QString::fromLatin1(LastFilePath)).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
@@ -757,7 +757,7 @@ void GuiApplicationPrivate::savePlaylist() const
         return;
     }
 
-    settings->fileSet(QString::fromLatin1(LastFilePath), file);
+    settings->fileSet(LastFilePath, file);
 
     const QString extension = Utils::extensionFromFilter(selectedFilter);
     if(extension.isEmpty()) {

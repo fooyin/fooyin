@@ -82,30 +82,26 @@ void SettingsManager::resetAllSettings()
     }
 }
 
-QVariant SettingsManager::value(const QString& key) const
+QVariant SettingsManager::value(QAnyStringView key) const
 {
     const std::shared_lock lock(m_lock);
 
-    if(!m_settings.contains(key)) {
-        return {};
+    auto settingIt = settingEntry(key);
+    if(settingIt == m_settings.cend()) {
+        return false;
     }
-
-    if(auto* setting = m_settings.at(key)) {
-        return setting->value();
-    }
-
-    return {};
+    return settingIt->second->value();
 }
 
-bool SettingsManager::set(const QString& key, const QVariant& value)
+bool SettingsManager::set(QAnyStringView key, const QVariant& value)
 {
     std::unique_lock lock(m_lock);
 
-    if(!m_settings.contains(key)) {
+    auto settingIt = settingEntry(key);
+    if(settingIt == m_settings.cend()) {
         return false;
     }
-
-    auto* setting = m_settings.at(key);
+    const auto& [_, setting] = *settingIt;
 
     const bool success = setting && setting->setValue(value);
 
@@ -118,17 +114,17 @@ bool SettingsManager::set(const QString& key, const QVariant& value)
     return success;
 }
 
-bool SettingsManager::reset(const QString& key)
+bool SettingsManager::reset(QAnyStringView key)
 {
     std::unique_lock lock(m_lock);
 
-    if(!m_settings.contains(key)) {
+    auto settingIt = settingEntry(key);
+    if(settingIt == m_settings.cend()) {
         return false;
     }
+    const auto& [_, setting] = *settingIt;
 
-    auto* setting = m_settings.at(key);
-
-    const bool success = setting && setting->reset();
+    const bool success = setting->reset();
 
     lock.unlock();
 
@@ -140,19 +136,19 @@ bool SettingsManager::reset(const QString& key)
     return success;
 }
 
-bool SettingsManager::contains(const QString& key) const
+bool SettingsManager::contains(QAnyStringView key) const
 {
     const std::shared_lock lock(m_lock);
 
-    return m_settings.contains(key);
+    return std::ranges::any_of(m_settings, [key](const auto& setting) { return setting.second->key() == key; });
 }
 
-QVariant SettingsManager::fileValue(const QString& key) const
+QVariant SettingsManager::fileValue(QAnyStringView key) const
 {
     return m_settingsFile->value(key);
 }
 
-bool SettingsManager::fileSet(const QString& key, const QVariant& value)
+bool SettingsManager::fileSet(QAnyStringView key, const QVariant& value)
 {
     if(fileValue(key) == value) {
         return false;
@@ -162,12 +158,12 @@ bool SettingsManager::fileSet(const QString& key, const QVariant& value)
     return true;
 }
 
-bool SettingsManager::fileContains(const QString& key) const
+bool SettingsManager::fileContains(QAnyStringView key) const
 {
     return m_settingsFile->contains(key);
 }
 
-void SettingsManager::fileRemove(const QString& key)
+void SettingsManager::fileRemove(QAnyStringView key)
 {
     m_settingsFile->remove(key);
 }
@@ -176,7 +172,7 @@ void SettingsManager::createSetting(const QString& key, const QVariant& value)
 {
     const std::unique_lock lock(m_lock);
 
-    if(m_settings.contains(key)) {
+    if(settingExists(key)) {
         qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
@@ -189,7 +185,7 @@ void SettingsManager::createTempSetting(const QString& key, const QVariant& valu
 {
     const std::unique_lock lock(m_lock);
 
-    if(m_settings.contains(key)) {
+    if(settingExists(key)) {
         qCWarning(SETTINGS) << "Setting has already been registered:" << key;
         return;
     }
@@ -198,7 +194,13 @@ void SettingsManager::createTempSetting(const QString& key, const QVariant& valu
     setting->setIsTemporary(true);
 }
 
-bool SettingsManager::settingExists(const QString& key) const
+SettingsManager::SettingsMap::const_iterator SettingsManager::settingEntry(QAnyStringView key) const
+{
+    return std::ranges::find_if(m_settings,
+                                [&key](const auto& setting) { return setting.second && setting.second->key() == key; });
+}
+
+bool SettingsManager::settingExists(QAnyStringView key) const
 {
     return std::ranges::any_of(m_settings,
                                [&key](const auto& setting) { return setting.second && setting.second->key() == key; });

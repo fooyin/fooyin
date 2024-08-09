@@ -43,6 +43,9 @@
 #include <QTableView>
 #include <QToolButton>
 
+constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
+constexpr auto State        = "TagEditor/State";
+
 namespace Fooyin::TagEditor {
 class TagEditorDelegate : public MultiLineEditDelegate
 {
@@ -307,7 +310,7 @@ void TagEditorWidget::apply()
         }
     };
 
-    if(m_settings->fileValue(QStringLiteral("TagEditor/DontAskAgain")).toBool()) {
+    if(m_settings->fileValue(DontAskAgain).toBool()) {
         applyChanges();
         return;
     }
@@ -327,7 +330,7 @@ void TagEditorWidget::apply()
 
     if(buttonClicked == QMessageBox::Yes) {
         if(dontAskAgain->isChecked()) {
-            m_settings->fileSet(QStringLiteral("TagEditor/DontAskAgain"), true);
+            m_settings->fileSet(DontAskAgain, true);
         }
         applyChanges();
     }
@@ -343,12 +346,12 @@ void TagEditorWidget::setupToolsMenu()
 void TagEditorWidget::saveState() const
 {
     const QByteArray state = m_view->horizontalHeader()->saveState();
-    m_settings->fileSet(QStringLiteral("TagEditor/State"), state);
+    m_settings->fileSet(State, state);
 }
 
 void TagEditorWidget::restoreState() const
 {
-    const QByteArray state = m_settings->fileValue(QStringLiteral("TagEditor/State")).toByteArray();
+    const QByteArray state = m_settings->fileValue(State).toByteArray();
 
     if(state.isEmpty()) {
         return;

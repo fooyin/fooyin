@@ -200,16 +200,14 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
                      &PlaylistOrganiserModel::playlistRemoved);
     QObject::connect(m_playlistInteractor->handler(), &PlaylistHandler::playlistRenamed, m_model,
                      &PlaylistOrganiserModel::playlistRenamed);
-    QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistChanged, this,
-                     [this]() {
-                         QMetaObject::invokeMethod(
-                             m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection);
-                     });
+    QObject::connect(
+        m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistChanged, this,
+        [this]() { QMetaObject::invokeMethod(m_model, [this]() { selectCurrentPlaylist(); }, Qt::QueuedConnection); });
     QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::playlistsLoaded, this,
                      [this]() { selectCurrentPlaylist(); });
 
-    if(m_model->restoreModel(m_settings->fileValue(QString::fromLatin1(OrganiserModel)).toByteArray())) {
-        const auto state = m_settings->fileValue(QString::fromLatin1(OrganiserState)).toByteArray();
+    if(m_model->restoreModel(m_settings->fileValue(OrganiserModel).toByteArray())) {
+        const auto state = m_settings->fileValue(OrganiserState).toByteArray();
         restoreExpandedState(m_organiserTree, m_model, state);
         m_model->populateMissing();
     }
@@ -222,8 +220,8 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
 
 PlaylistOrganiser::~PlaylistOrganiser()
 {
-    m_settings->fileSet(QString::fromLatin1(OrganiserModel), m_model->saveModel());
-    m_settings->fileSet(QString::fromLatin1(OrganiserState), saveExpandedState(m_organiserTree, m_model));
+    m_settings->fileSet(OrganiserModel, m_model->saveModel());
+    m_settings->fileSet(OrganiserState, saveExpandedState(m_organiserTree, m_model));
 }
 
 QString PlaylistOrganiser::name() const
@@ -276,7 +274,7 @@ void PlaylistOrganiser::selectionChanged()
         return;
     }
 
-    auto* playlist         = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
+    auto* playlist       = firstIndex.data(PlaylistOrganiserItem::PlaylistData).value<Playlist*>();
     const UId playlistId = playlist->id();
 
     if(std::exchange(m_currentPlaylistId, playlistId) != playlistId) {
