@@ -114,7 +114,7 @@ void TagEditorView::setupActions()
     QObject::connect(QApplication::clipboard(), &QClipboard::changed, this,
                      [this]() { m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(u" : ")); });
     QObject::connect(m_pasteFields, &QAction::triggered, this, [this]() { pasteSelection(true); });
-    m_pasteFields->setEnabled(false);
+    m_pasteFields->setEnabled(QApplication::clipboard()->text().contains(u" : "));
 }
 
 int TagEditorView::sizeHintForRow(int row) const
