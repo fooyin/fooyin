@@ -149,7 +149,7 @@ public:
      * Returns the value of the setting at @p key from file if it exists, or an empty variant if not.
      * @note if using with a registered setting, the returned value may be different from the actual current value.
      */
-    QVariant fileValue(QAnyStringView key) const;
+    QVariant fileValue(QAnyStringView key, const QVariant& defaultValue = {}) const;
     /*!
      * Sets the value of the setting at @p key in the settings file.
      * @note this method is recommended to be used only for unregistered settings, as the value in the settings file

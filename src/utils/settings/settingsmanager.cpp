@@ -143,14 +143,14 @@ bool SettingsManager::contains(QAnyStringView key) const
     return std::ranges::any_of(m_settings, [key](const auto& setting) { return setting.second->key() == key; });
 }
 
-QVariant SettingsManager::fileValue(QAnyStringView key) const
+QVariant SettingsManager::fileValue(QAnyStringView key, const QVariant& defaultValue) const
 {
-    return m_settingsFile->value(key);
+    return m_settingsFile->value(key, defaultValue);
 }
 
 bool SettingsManager::fileSet(QAnyStringView key, const QVariant& value)
 {
-    if(fileValue(key) == value) {
+    if(fileValue(key, {}) == value) {
         return false;
     }
 
