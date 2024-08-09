@@ -127,8 +127,10 @@ void AudioRenderer::pause(bool paused, int fadeLength)
     resetFade(fadeLength);
 
     if(paused) {
-        m_fadeVolume   = m_volume;
-        m_volumeChange = -(m_volume / m_fadeSteps);
+        if(m_fadeVolume <= 0) {
+            m_fadeVolume = m_volume;
+        }
+        m_volumeChange = -(m_fadeVolume / m_fadeSteps);
     }
     else {
         if(validOutputState()) {
@@ -137,7 +139,6 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         start();
 
         if(fadeLength > 0) {
-            m_fadeVolume   = 0;
             m_volumeChange = std::abs(m_fadeVolume - m_volume) / m_fadeSteps;
         }
     }

@@ -90,8 +90,15 @@ void AudioPlaybackEngine::seek(uint64_t pos)
         return;
     }
 
-    resetWorkers();
+    if(m_state == PlaybackState::Fading || m_pendingSeek) {
+        m_pendingSeek = pos + m_startPosition;
+        m_clock.setPaused(true);
+        m_clock.sync(pos);
+        updatePosition();
+        return;
+    }
 
+    resetWorkers();
     m_decoder->seek(pos + m_startPosition);
     m_clock.sync(pos);
 
@@ -355,7 +362,7 @@ PlaybackState AudioPlaybackEngine::updateState(PlaybackState newState)
     if(prevState != m_state) {
         emit stateChanged(newState);
     }
-    m_clock.setPaused(newState != PlaybackState::Playing);
+    m_clock.setPaused(newState != PlaybackState::Playing && newState != PlaybackState::Fading);
     return prevState;
 }
 
@@ -413,6 +420,12 @@ void AudioPlaybackEngine::playOutput()
         return;
     }
 
+    if(m_pendingSeek) {
+        resetWorkers();
+        m_decoder->seek(m_pendingSeek.value());
+        m_pendingSeek = {};
+    }
+
     if(m_outputState == AudioOutput::State::Disconnected) {
         if(m_renderer->init(m_format)) {
             m_outputState = AudioOutput::State::None;
@@ -431,8 +444,9 @@ void AudioPlaybackEngine::playOutput()
 
     const PlaybackState prevState = updateState(PlaybackState::Playing);
 
-    const bool canFade = m_settings->value<Settings::Core::Internal::EngineFading>()
-                      && (prevState == PlaybackState::Paused || m_renderer->isFading());
+    const bool canFade
+        = m_settings->value<Settings::Core::Internal::EngineFading>()
+       && (prevState == PlaybackState::Paused || prevState == PlaybackState::Fading || m_renderer->isFading());
     const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
 
     m_renderer->pause(false, fadeInterval);
@@ -453,6 +467,10 @@ void AudioPlaybackEngine::pauseOutput()
     const int fadeInterval
         = m_settings->value<Settings::Core::Internal::EngineFading>() ? m_fadeIntervals.outPauseStop : 0;
     m_renderer->pause(true, fadeInterval);
+
+    if(fadeInterval > 0) {
+        updateState(PlaybackState::Fading);
+    }
 }
 
 void AudioPlaybackEngine::stopOutput()

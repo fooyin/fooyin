@@ -30,6 +30,7 @@ enum class PlaybackState
 {
     Stopped,
     Playing,
+    Fading,
     Paused,
     Error
 };

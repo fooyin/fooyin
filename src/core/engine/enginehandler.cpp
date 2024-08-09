@@ -106,6 +106,7 @@ void EngineHandlerPrivate::handleStateChange(PlaybackState state)
             m_playerController->pause();
             break;
         case(PlaybackState::Playing):
+        case(PlaybackState::Fading):
             break;
     }
 }

@@ -115,5 +115,6 @@ private:
     QBasicTimer m_pauseTimer;
 
     FadingIntervals m_fadeIntervals;
+    std::optional<uint64_t> m_pendingSeek;
 };
 } // namespace Fooyin
