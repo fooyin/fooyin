@@ -22,6 +22,7 @@
 #include <utils/settings/settingspage.h>
 
 namespace Fooyin {
+class PlaylistLoader;
 class SettingsManager;
 
 class PlaylistGeneralPage : public SettingsPage
@@ -29,6 +30,6 @@ class PlaylistGeneralPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit PlaylistGeneralPage(SettingsManager* settings, QObject* parent = nullptr);
+    explicit PlaylistGeneralPage(PlaylistLoader* playlistLoader, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

@@ -56,6 +56,7 @@ public:
     void previous();
 
     void updateIndices();
+    void savePlaylists();
 
     [[nodiscard]] QString findUniqueName(const QString& name) const;
     [[nodiscard]] int indexFromName(const QString& name) const;
@@ -196,6 +197,37 @@ void PlaylistHandlerPrivate::updateIndices()
     }
 }
 
+void PlaylistHandlerPrivate::savePlaylists()
+{
+    PlaylistList playlistsToSave;
+
+    for(const auto& playlist : m_playlists) {
+        if(playlist->modified() || playlist->tracksModified()) {
+            playlistsToSave.emplace_back(playlist.get());
+        }
+    }
+
+    m_playlistConnector.saveModifiedPlaylists(playlistsToSave);
+
+    if(!m_activePlaylist) {
+        return;
+    }
+
+    if(m_activePlaylist->isTemporary()) {
+        m_settings->reset<Settings::Core::ActivePlaylistId>();
+    }
+    else {
+        m_settings->set<Settings::Core::ActivePlaylistId>(m_activePlaylist->dbId());
+    }
+
+    if(!m_activePlaylist->isTemporary() && m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
+        m_settings->fileSet(ActiveIndex, m_activePlaylist->currentTrackIndex());
+    }
+    else {
+        m_settings->fileRemove(ActiveIndex);
+    }
+}
+
 QString PlaylistHandlerPrivate::findUniqueName(const QString& name) const
 {
     return Utils::findUniqueString(name, m_playlists, [](const auto& playlist) { return playlist->name(); });
@@ -270,7 +302,7 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     m_activePlaylist = playlist->get();
     emit m_self->activePlaylistChanged(m_activePlaylist);
 
-    const int lastIndex = m_settings->fileValue(QString::fromLatin1(ActiveIndex)).toInt();
+    const int lastIndex = m_settings->fileValue(ActiveIndex).toInt();
     m_activePlaylist->changeCurrentIndex(lastIndex);
     m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
 }
@@ -380,6 +412,19 @@ PlaylistList PlaylistHandler::playlists() const
     PlaylistList playlists;
 
     for(const auto& playlist : p->m_playlists) {
+        if(!playlist->isTemporary()) {
+            playlists.emplace_back(playlist.get());
+        }
+    }
+
+    return playlists;
+}
+
+PlaylistList PlaylistHandler::removedPlaylists() const
+{
+    PlaylistList playlists;
+
+    for(const auto& playlist : p->m_removedPlaylists) {
         if(!playlist->isTemporary()) {
             playlists.emplace_back(playlist.get());
         }
@@ -679,34 +724,7 @@ int PlaylistHandler::playlistCount() const
 void PlaylistHandler::savePlaylists()
 {
     p->updateIndices();
-
-    PlaylistList playlistsToSave;
-
-    for(const auto& playlist : p->m_playlists) {
-        if(playlist->modified() || playlist->tracksModified()) {
-            playlistsToSave.emplace_back(playlist.get());
-        }
-    }
-
-    p->m_playlistConnector.saveModifiedPlaylists(playlistsToSave);
-
-    if(!p->m_activePlaylist) {
-        return;
-    }
-
-    if(p->m_activePlaylist->isTemporary()) {
-        p->m_settings->reset<Settings::Core::ActivePlaylistId>();
-    }
-    else {
-        p->m_settings->set<Settings::Core::ActivePlaylistId>(p->m_activePlaylist->dbId());
-    }
-
-    if(!p->m_activePlaylist->isTemporary() && p->m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
-        p->m_settings->fileSet(QString::fromLatin1(ActiveIndex), p->m_activePlaylist->currentTrackIndex());
-    }
-    else {
-        p->m_settings->fileRemove(QString::fromLatin1(ActiveIndex));
-    }
+    p->savePlaylists();
 }
 
 void PlaylistHandler::savePlaylist(const UId& id)

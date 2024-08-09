@@ -21,17 +21,23 @@
 
 #include "internalguisettings.h"
 
+#include <core/corepaths.h>
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
+#include <core/playlist/playlistloader.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QSpinBox>
 
 namespace Fooyin {
@@ -40,13 +46,16 @@ class PlaylistGeneralPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistGeneralPageWidget(SettingsManager* settings);
+    explicit PlaylistGeneralPageWidget(PlaylistLoader* playlistLoader, SettingsManager* settings);
 
     void load() override;
     void apply() override;
     void reset() override;
 
 private:
+    void browseExportPath();
+
+    PlaylistLoader* m_playlistLoader;
     SettingsManager* m_settings;
 
     QComboBox* m_middleClick;
@@ -64,12 +73,16 @@ private:
     QSpinBox* m_imagePadding;
     QSpinBox* m_imagePaddingTop;
 
+    QGroupBox* m_autoExporting;
     QComboBox* m_exportPathType;
     QCheckBox* m_exportMetadata;
+    QComboBox* m_autoExportType;
+    QLineEdit* m_autoExportPath;
 };
 
-PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
-    : m_settings{settings}
+PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(PlaylistLoader* playlistLoader, SettingsManager* settings)
+    : m_playlistLoader{playlistLoader}
+    , m_settings{settings}
     , m_middleClick{new QComboBox(this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_header{new QCheckBox(tr("Show header"), this)}
@@ -81,8 +94,11 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     , m_tabsMiddleClose{new QCheckBox(tr("Delete playlists on middle click"), this)}
     , m_imagePadding{new QSpinBox(this)}
     , m_imagePaddingTop{new QSpinBox(this)}
+    , m_autoExporting{new QGroupBox(tr("Auto-export"), this)}
     , m_exportPathType{new QComboBox(this)}
     , m_exportMetadata{new QCheckBox(tr("Write metadata"), this)}
+    , m_autoExportType{new QComboBox(this)}
+    , m_autoExportPath{new QLineEdit(this)}
 {
     auto* clickBehaviour       = new QGroupBox(tr("Click Behaviour"), this);
     auto* clickBehaviourLayout = new QGridLayout(clickBehaviour);
@@ -106,10 +122,30 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
 
     auto* pathTypeLabel = new QLabel(tr("Path type") + u":", this);
 
-    savingLayout->addWidget(pathTypeLabel, 0, 0);
-    savingLayout->addWidget(m_exportPathType, 0, 1);
-    savingLayout->addWidget(m_exportMetadata, 1, 0, 1, 2);
+    int row{0};
+    savingLayout->addWidget(pathTypeLabel, row, 0);
+    savingLayout->addWidget(m_exportPathType, row++, 1);
+    savingLayout->addWidget(m_exportMetadata, row++, 0, 1, 2);
     savingLayout->setColumnStretch(2, 1);
+
+    auto* autoTypeLabel = new QLabel(tr("Format") + u":", this);
+    auto* autoPathLabel = new QLabel(tr("Location") + u":", this);
+
+    m_autoExporting->setToolTip(tr("Export and synchronise playlists in the specified format and location"));
+
+    auto* browseAction = new QAction(Utils::iconFromTheme(Constants::Icons::Options), {}, this);
+    QObject::connect(browseAction, &QAction::triggered, this, &PlaylistGeneralPageWidget::browseExportPath);
+    m_autoExportPath->addAction(browseAction, QLineEdit::TrailingPosition);
+
+    auto* autoExportLayout = new QGridLayout(m_autoExporting);
+    m_autoExporting->setCheckable(true);
+
+    row = 0;
+    autoExportLayout->addWidget(autoTypeLabel, row, 0);
+    autoExportLayout->addWidget(m_autoExportType, row++, 1);
+    autoExportLayout->addWidget(autoPathLabel, row, 0);
+    autoExportLayout->addWidget(m_autoExportPath, row++, 1, 1, 2);
+    autoExportLayout->setColumnStretch(2, 1);
 
     auto* padding       = new QGroupBox(tr("Image Padding"), this);
     auto* paddingLayout = new QGridLayout(padding);
@@ -117,16 +153,17 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     auto* paddingLabel    = new QLabel(tr("Left/Right") + QStringLiteral(":"), this);
     auto* paddingTopLabel = new QLabel(tr("Top") + QStringLiteral(":"), this);
 
-    paddingLayout->addWidget(paddingLabel, 0, 0);
-    paddingLayout->addWidget(m_imagePadding, 0, 1);
-    paddingLayout->addWidget(paddingTopLabel, 1, 0);
-    paddingLayout->addWidget(m_imagePaddingTop, 1, 1);
+    row = 0;
+    paddingLayout->addWidget(paddingLabel, row, 0);
+    paddingLayout->addWidget(m_imagePadding, row++, 1);
+    paddingLayout->addWidget(paddingTopLabel, row, 0);
+    paddingLayout->addWidget(m_imagePaddingTop, row++, 1);
     paddingLayout->setColumnStretch(2, 1);
 
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
 
-    int row{0};
+    row = 0;
     appearanceLayout->addWidget(m_scrollBars, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_header, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_altColours, row++, 0, 1, 2);
@@ -149,6 +186,7 @@ PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(SettingsManager* settings)
     row = 0;
     mainLayout->addWidget(clickBehaviour, row++, 0);
     mainLayout->addWidget(saving, row++, 0);
+    mainLayout->addWidget(m_autoExporting, row++, 0);
     mainLayout->addWidget(appearance, row++, 0);
     mainLayout->addWidget(tabsGroup, row++, 0);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -181,6 +219,18 @@ void PlaylistGeneralPageWidget::load()
     m_exportPathType->setCurrentIndex(m_settings->value<Settings::Core::PlaylistSavePathType>());
     m_exportMetadata->setChecked(m_settings->value<Settings::Core::PlaylistSaveMetadata>());
 
+    m_autoExportType->clear();
+    const auto extensions = m_playlistLoader->supportedSaveExtensions();
+    for(const QString& ext : extensions) {
+        m_autoExportType->addItem(ext);
+    }
+
+    m_autoExporting->setChecked(m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists, false).toBool());
+    m_autoExportType->setCurrentText(
+        m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylistsType, QStringLiteral("m3u8")).toString());
+    m_autoExportPath->setText(
+        m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylistsPath, Core::playlistsPath()).toString());
+
     m_scrollBars->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistScrollBar>());
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistHeader>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
@@ -201,6 +251,10 @@ void PlaylistGeneralPageWidget::apply()
 
     m_settings->set<Settings::Core::PlaylistSavePathType>(m_exportPathType->currentIndex());
     m_settings->set<Settings::Core::PlaylistSaveMetadata>(m_exportMetadata->isChecked());
+
+    m_settings->fileSet(Settings::Core::Internal::AutoExportPlaylists, m_autoExporting->isChecked());
+    m_settings->fileSet(Settings::Core::Internal::AutoExportPlaylistsType, m_autoExportType->currentText());
+    m_settings->fileSet(Settings::Core::Internal::AutoExportPlaylistsPath, m_autoExportPath->text());
 
     m_settings->set<Settings::Gui::Internal::PlaylistScrollBar>(m_scrollBars->isChecked());
     m_settings->set<Settings::Gui::Internal::PlaylistHeader>(m_header->isChecked());
@@ -223,6 +277,10 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::PlaylistSavePathType>();
     m_settings->reset<Settings::Core::PlaylistSaveMetadata>();
 
+    m_settings->fileRemove(Settings::Core::Internal::AutoExportPlaylists);
+    m_settings->fileRemove(Settings::Core::Internal::AutoExportPlaylistsType);
+    m_settings->fileRemove(Settings::Core::Internal::AutoExportPlaylistsPath);
+
     m_settings->reset<Settings::Gui::Internal::PlaylistScrollBar>();
     m_settings->reset<Settings::Gui::Internal::PlaylistHeader>();
     m_settings->reset<Settings::Gui::Internal::PlaylistAltColours>();
@@ -237,13 +295,22 @@ void PlaylistGeneralPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::PlaylistImagePaddingTop>();
 }
 
-PlaylistGeneralPage::PlaylistGeneralPage(SettingsManager* settings, QObject* parent)
+void PlaylistGeneralPageWidget::browseExportPath()
+{
+    const QString path = !m_autoExportPath->text().isEmpty() ? m_autoExportPath->text() : Core::playlistsPath();
+    const QString dir  = QFileDialog::getExistingDirectory(this, tr("Select Directory"), path);
+    if(!dir.isEmpty()) {
+        m_autoExportPath->setText(dir);
+    }
+}
+
+PlaylistGeneralPage::PlaylistGeneralPage(PlaylistLoader* playlistLoader, SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistGeneral);
     setName(tr("General"));
     setCategory({tr("Playlist")});
-    setWidgetCreator([settings] { return new PlaylistGeneralPageWidget(settings); });
+    setWidgetCreator([playlistLoader, settings] { return new PlaylistGeneralPageWidget(playlistLoader, settings); });
 }
 } // namespace Fooyin
 

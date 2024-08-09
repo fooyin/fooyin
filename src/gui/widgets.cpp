@@ -240,7 +240,7 @@ void Widgets::registerPages()
     new LibraryGeneralPage(m_gui.actionManager, m_core.libraryManager, m_core.library, m_settings, this);
     new LibrarySortingPage(m_gui.actionManager, m_core.sortingRegistry, m_settings, this);
     new ShortcutsPage(m_gui.actionManager, m_settings, this);
-    new PlaylistGeneralPage(m_settings, this);
+    new PlaylistGeneralPage(m_core.playlistLoader.get(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
     new PlaylistColumnPage(m_gui.actionManager, m_playlistController->columnRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);

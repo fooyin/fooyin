@@ -36,6 +36,7 @@
 #include "translations.h"
 #include "version.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audioloader.h>
 #include <core/engine/outputplugin.h>
 #include <core/player/playercontroller.h>
@@ -91,6 +92,7 @@ public:
     void loadPlugins();
 
     void startSaveTimer();
+    void exportAllPlaylists();
 
     void savePlaybackState() const;
     void loadPlaybackState() const;
@@ -229,6 +231,61 @@ void ApplicationPrivate::startSaveTimer()
     m_playlistSaveTimer.start(PlaylistSaveInterval, m_self);
 }
 
+void ApplicationPrivate::exportAllPlaylists()
+{
+    using namespace Settings::Core::Internal;
+
+    const auto ext = m_settings->fileValue(AutoExportPlaylistsType).toString();
+
+    auto* parser = m_playlistLoader->parserForExtension(ext);
+    if(!parser) {
+        return;
+    }
+
+    QString path = m_settings->fileValue(AutoExportPlaylistsPath).toString();
+    if(path.isEmpty()) {
+        path = Core::playlistsPath();
+    }
+    const QDir playlistPath{path};
+    const auto type          = PlaylistParser::PathType::Auto;
+    const bool writeMetadata = m_settings->value<Settings::Core::PlaylistSaveMetadata>();
+
+    auto saveOrDeletePlaylist = [&](Playlist* playlist, bool forceRemove = false) {
+        const QString playlistFilepath = playlistPath.absoluteFilePath(playlist->name() + u'.' + ext);
+        playlistPath.mkpath(path);
+
+        QFile playlistFile{playlistFilepath};
+        if(forceRemove || playlist->trackCount() == 0) {
+            if(playlistFile.exists() && !playlistFile.remove()) {
+                qCInfo(APP) << "Could not remove empty playlist:" << playlistFile.errorString();
+            }
+            return;
+        }
+
+        if(!playlistFile.open(QIODevice::WriteOnly)) {
+            qCWarning(APP) << "Could not open playlist file" << playlistPath
+                           << "for writing:" << playlistFile.errorString();
+            return;
+        }
+
+        const QFileInfo info{playlistFile};
+        const QDir playlistDir{info.absolutePath()};
+        parser->savePlaylist(&playlistFile, ext, playlist->tracks(), playlistDir, type, writeMetadata);
+    };
+
+    auto playlists        = m_playlistHandler->playlists();
+    auto removedPlaylists = m_playlistHandler->removedPlaylists();
+
+    for(const auto& playlist : playlists) {
+        if(playlist->tracksModified()) {
+            saveOrDeletePlaylist(playlist);
+        }
+    }
+    for(const auto& playlist : removedPlaylists) {
+        saveOrDeletePlaylist(playlist, true);
+    }
+}
+
 void ApplicationPrivate::savePlaybackState() const
 {
     if(m_settings->value<Settings::Core::Internal::SavePlaybackState>()) {
@@ -286,8 +343,11 @@ Application::Application(QObject* parent)
         p->startSaveTimer();
     };
 
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistAdded, this, startPlaylistTimer);
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::playlistRemoved, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksAdded, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
+    QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksUpdated, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
     QObject::connect(
         p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, [this]() { p->loadPlaybackState(); },
@@ -332,6 +392,9 @@ void Application::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == p->m_playlistSaveTimer.timerId()) {
         p->m_playlistSaveTimer.stop();
+        if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+            p->exportAllPlaylists();
+        }
         p->m_playlistHandler->savePlaylists();
     }
     else if(event->timerId() == p->m_settingsSaveTimer.timerId()) {
@@ -346,6 +409,10 @@ void Application::timerEvent(QTimerEvent* event)
 void Application::shutdown()
 {
     p->m_settings->fileSet("Version", QString::fromLatin1(VERSION));
+
+    if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
+        p->exportAllPlaylists();
+    }
 
     p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();

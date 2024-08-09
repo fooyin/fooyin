@@ -61,6 +61,10 @@ struct FadingIntervals
 namespace Settings::Core::Internal {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
+constexpr auto AutoExportPlaylists     = "Playlist/AutoExport";
+constexpr auto AutoExportPlaylistsType = "Playlist/AutoExportType";
+constexpr auto AutoExportPlaylistsPath = "Playlist/AutoExportPath";
+
 enum CoreInternalSettings : uint32_t
 {
     MonitorLibraries       = 0 | Settings::Bool,

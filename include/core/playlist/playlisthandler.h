@@ -52,6 +52,7 @@ public:
     [[nodiscard]] Playlist* playlistByName(const QString& name) const;
 
     [[nodiscard]] PlaylistList playlists() const;
+    [[nodiscard]] PlaylistList removedPlaylists() const;
 
     /** Creates and returns an empty playlist with a default name. */
     Playlist* createEmptyPlaylist();
