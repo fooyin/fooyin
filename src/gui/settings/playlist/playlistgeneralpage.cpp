@@ -31,6 +31,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
