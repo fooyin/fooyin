@@ -669,6 +669,7 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     m_bufferPos = 0;
     m_buffer    = {};
     m_eof       = false;
+    m_draining  = false;
     m_skipBytes = 0;
 }
 
