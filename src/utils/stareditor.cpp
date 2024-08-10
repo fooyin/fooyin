@@ -45,24 +45,30 @@ void StarEditor::setRating(const StarRating& rating)
 
 float StarEditor::ratingAtPosition(int x) const
 {
-    const float maxStars  = static_cast<float>(m_rating.maxStarCount());
-    const float starWidth = static_cast<float>(m_rating.sizeHint().width()) / maxStars;
-    const float starIndex = static_cast<float>(x) / starWidth;
-    return std::clamp(starIndex, 0.0F, maxStars) / maxStars;
+    const QRect rect{0, 0, m_rating.sizeHint().width(), m_rating.sizeHint().height()};
+    return ratingAtPosition({x, 0}, rect, m_rating);
 }
 
 float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating)
 {
-    const float maxStars  = static_cast<float>(rating.maxStarCount());
-    const float starWidth = static_cast<float>(rating.sizeHint().width()) / maxStars;
-    const float x         = pos.x() - (rect.x() + (rect.width() - rating.sizeHint().width()) / 2);
+    const auto ratingWidth = static_cast<float>(rating.sizeHint().width());
+    const auto maxStars    = static_cast<float>(rating.maxStarCount());
+    const auto starWidth   = ratingWidth / maxStars;
 
-    if(x < starWidth / 2) {
-        return 0.0F;
+    const auto rectWidth = static_cast<float>(rect.width());
+    const float offset   = (rectWidth - ratingWidth) / 2.0F;
+
+    const float x = static_cast<float>(pos.x()) - (static_cast<float>(rect.x()) + offset);
+    if(x < 0) {
+        return 0;
     }
 
-    const float starIndex = x / starWidth;
-    return std::clamp(starIndex, 0.0F, maxStars) / maxStars;
+    const float starIndex        = x / starWidth;
+    const float clampedStarIndex = std::clamp(starIndex, 0.0F, maxStars);
+
+    const float halfStarRating = std::round(clampedStarIndex * 2) / 2;
+
+    return halfStarRating / maxStars;
 }
 
 QSize StarEditor::sizeHint() const
