@@ -157,7 +157,12 @@ void PipeWireOutput::start()
 void PipeWireOutput::drain()
 {
     const ThreadLoopGuard guard{m_loop.get()};
-    m_stream->flush(false);
+
+    if(m_bufferPos > 0) {
+        m_loop->wait(2);
+    }
+    m_stream->flush(true);
+    m_loop->wait(2);
 }
 
 bool PipeWireOutput::initialised() const
@@ -419,8 +424,6 @@ void PipeWireOutput::handleStateChanged(void* userdata, pw_stream_state old, pw_
 void PipeWireOutput::drained(void* userdata)
 {
     auto* self = static_cast<PipeWireOutput*>(userdata);
-
-    self->m_stream->setActive(false);
     self->m_loop->signal(false);
 }
 } // namespace Fooyin::Pipewire
