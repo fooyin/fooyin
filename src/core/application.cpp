@@ -188,17 +188,19 @@ void ApplicationPrivate::markTrack(const Track& track) const
         return;
     }
 
-    Track markedTrack{track};
+    auto updateTrack = [this, &track](bool enable) {
+        Track markedTrack{track};
+        markedTrack.setIsEnabled(enable);
+        m_library->updateTrack(markedTrack);
+    };
 
     if(!track.isEnabled() && track.exists()) {
-        markedTrack.setIsEnabled(true);
+        updateTrack(true);
     }
     else if(track.isEnabled() && m_settings->fileValue(Settings::Core::Internal::MarkUnavailable).toBool()
             && !track.exists()) {
-        markedTrack.setIsEnabled(false);
+        updateTrack(false);
     }
-
-    m_library->updateTrack(markedTrack);
 }
 
 void ApplicationPrivate::loadPlugins()
