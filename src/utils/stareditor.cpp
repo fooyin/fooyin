@@ -26,6 +26,7 @@
 namespace Fooyin {
 StarEditor::StarEditor(QWidget* parent)
     : QWidget{parent}
+    , m_originalRating{0}
 {
     setMouseTracking(true);
     setAutoFillBackground(true);
@@ -38,7 +39,30 @@ StarRating StarEditor::rating() const
 
 void StarEditor::setRating(const StarRating& rating)
 {
-    m_rating = rating;
+    m_rating         = rating;
+    m_originalRating = rating.rating();
+}
+
+float StarEditor::ratingAtPosition(int x) const
+{
+    const float maxStars  = static_cast<float>(m_rating.maxStarCount());
+    const float starWidth = static_cast<float>(m_rating.sizeHint().width()) / maxStars;
+    const float starIndex = static_cast<float>(x) / starWidth;
+    return std::clamp(starIndex, 0.0F, maxStars) / maxStars;
+}
+
+float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating)
+{
+    const float maxStars  = static_cast<float>(rating.maxStarCount());
+    const float starWidth = static_cast<float>(rating.sizeHint().width()) / maxStars;
+    const float x         = pos.x() - (rect.x() + (rect.width() - rating.sizeHint().width()) / 2);
+
+    if(x < starWidth / 2) {
+        return 0.0F;
+    }
+
+    const float starIndex = x / starWidth;
+    return std::clamp(starIndex, 0.0F, maxStars) / maxStars;
 }
 
 QSize StarEditor::sizeHint() const
@@ -60,14 +84,26 @@ void StarEditor::contextMenuEvent(QContextMenuEvent* event)
 
 void StarEditor::mouseMoveEvent(QMouseEvent* event)
 {
-    const int star = starAtPosition(event->position().toPoint().x());
+    const auto star = ratingAtPosition(event->position().toPoint().x());
 
-    if(star != m_rating.starCount() && star != -1) {
-        m_rating.setStarCount(star);
+    if(star != m_rating.rating() && star != -1) {
+        m_rating.setRating(star);
         update();
     }
 
     QWidget::mouseMoveEvent(event);
+}
+
+void StarEditor::mousePressEvent(QMouseEvent* event)
+{
+    if(event->button() == Qt::RightButton) {
+        m_rating.setRating(m_originalRating);
+        update();
+        event->accept();
+        return;
+    }
+
+    QWidget::mousePressEvent(event);
 }
 
 void StarEditor::mouseReleaseEvent(QMouseEvent* /*event*/)
@@ -77,42 +113,26 @@ void StarEditor::mouseReleaseEvent(QMouseEvent* /*event*/)
 
 void StarEditor::keyPressEvent(QKeyEvent* event)
 {
-    const int count = m_rating.starCount();
-    const auto key  = event->key();
+    const float rating = m_rating.rating();
+    const int key      = event->key();
 
     if(key == Qt::Key_Return || key == Qt::Key_Enter || key == Qt::Key_Escape) {
         emit editingFinished();
     }
     else if(event->key() == Qt::Key_Left) {
-        if(count > 0) {
-            m_rating.setStarCount(count - 1);
+        if(rating > 0) {
+            m_rating.setRating(rating - 1);
             update();
         }
     }
     else if(event->key() == Qt::Key_Right) {
-        if(count < m_rating.maxStarCount()) {
-            m_rating.setStarCount(count + 1);
+        if(rating < static_cast<float>(m_rating.maxStarCount())) {
+            m_rating.setRating(0);
             update();
         }
     }
     else {
         QWidget::keyPressEvent(event);
     }
-}
-
-int StarEditor::starAtPosition(int x) const
-{
-    const int starWidth = m_rating.sizeHint().width() / m_rating.maxStarCount();
-    const int star      = (x / starWidth) + 1;
-
-    if(star <= 0 || star > m_rating.maxStarCount()) {
-        return -1;
-    }
-
-    if(star == 1 && x < (starWidth / 2)) {
-        return 0;
-    }
-
-    return star;
 }
 } // namespace Fooyin

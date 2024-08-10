@@ -27,7 +27,7 @@
 #include <QFileInfo>
 #include <QIODevice>
 
-constexpr auto MaxStarCount = 5; // TODO: Support 10/half stars
+constexpr auto MaxStarCount = 10;
 
 namespace Fooyin {
 class TrackPrivate : public QSharedData
@@ -816,7 +816,8 @@ QString Track::metaValue(const QString& name) const
         {QLatin1String(Constants::MetaData::Date),        [](const Track& track) { return track.date(); }},
         {QLatin1String(Constants::MetaData::Year),        [validNum](const Track& track) { return validNum(track.year()); }},
         {QLatin1String(Constants::MetaData::PlayCount),   [validNum](const Track& track) { return validNum(track.playCount()); }},
-        {QLatin1String(Constants::MetaData::Rating),      [validNum](const Track& track) { return validNum(track.ratingStars()); }}
+        {QLatin1String(Constants::MetaData::Rating),      [validNum](const Track& track) { return validNum(track.rating()); }},
+        {QLatin1String(Constants::MetaData::RatingStars), [validNum](const Track& track) { return validNum(track.ratingStars()); }}
     };
     // clang-format on
 

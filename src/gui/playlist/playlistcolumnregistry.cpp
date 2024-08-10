@@ -21,6 +21,8 @@
 
 #include "playlistscriptregistry.h"
 
+#include <core/constants.h>
+
 namespace Fooyin {
 PlaylistColumnRegistry::PlaylistColumnRegistry(SettingsManager* settings, QObject* parent)
     : ItemRegistry{QStringLiteral("PlaylistWidget/PlaylistColumns"), settings, parent}
@@ -53,6 +55,7 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
     addDefaultItem(
         {.id = 6, .name = tr("Playcount"), .field = QStringLiteral("$ifgreater(%playcount%,0,%playcount%)")});
+    addDefaultItem({.id = 21, .name = tr("Rating"), .field = QString::fromLatin1(RatingEditor)});
     addDefaultItem({.id = 19, .name = tr("First Played"), .field = QStringLiteral("%firstplayed%")});
     addDefaultItem({.id = 20, .name = tr("Last Played"), .field = QStringLiteral("%lastplayed%")});
     addDefaultItem({.id = 13, .name = tr("Front Cover"), .field = QString::fromLatin1(FrontCover), .isPixmap = true});

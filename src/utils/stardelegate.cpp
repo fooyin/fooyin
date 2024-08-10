@@ -26,18 +26,44 @@
 #include <QPainter>
 
 namespace Fooyin {
+QModelIndex StarDelegate::hoveredIndex() const
+{
+    return m_hoverIndex;
+}
+
+void StarDelegate::setHoverIndex(const QModelIndex& index)
+{
+    m_hoverIndex = index;
+}
+
+void StarDelegate::setHoverIndex(const QModelIndex& index, const QPoint& pos, const QModelIndexList& selected)
+{
+    m_hoverIndex = index;
+    m_hoverPos   = pos;
+    m_selected   = selected;
+}
+
 void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
 
-    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
-    if(index.data().canConvert<StarRating>()) {
-        const auto starRating = index.data().value<StarRating>();
-        starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly);
+    if(!index.data().canConvert<StarRating>()) {
+        QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+        return;
     }
+
+    auto starRating = index.data().value<StarRating>();
+
+    const bool hover = m_hoverIndex.isValid()
+                    && (m_hoverIndex == index || (m_selected.contains(m_hoverIndex) && m_selected.contains(index)));
+
+    if(hover) {
+        starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, option.rect, starRating));
+    }
+
+    starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly, opt.displayAlignment);
 }
 
 QSize StarDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

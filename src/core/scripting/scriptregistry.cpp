@@ -61,6 +61,11 @@ auto generateSetFunc(FuncType func)
                 (track.*func)(*value);
             }
         }
+        else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(float)>) {
+            if(const auto* value = std::get_if<float>(&arg)) {
+                (track.*func)(*value);
+            }
+        }
         else if constexpr(std::is_same_v<FuncType, void (Fooyin::Track::*)(const QString&)>) {
             if(const auto* value = std::get_if<QString>(&arg)) {
                 (track.*func)(*value);
@@ -315,9 +320,11 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::LastPlayed)] = [](const Track& track) {
         return formatDateTime(track.lastPlayed());
     };
-    m_metadata[QString::fromLatin1(MetaData::PlayCount)] = &Track::playCount;
-    m_metadata[QString::fromLatin1(MetaData::Rating)]    = &Track::ratingStars;
-    m_metadata[QString::fromLatin1(MetaData::Codec)]     = [](const Track& track) {
+    m_metadata[QString::fromLatin1(MetaData::PlayCount)]    = &Track::playCount;
+    m_metadata[QString::fromLatin1(MetaData::Rating)]       = &Track::rating;
+    m_metadata[QString::fromLatin1(MetaData::RatingStars)]  = &Track::ratingStars;
+    m_metadata[QString::fromLatin1(MetaData::RatingEditor)] = &Track::ratingStars;
+    m_metadata[QString::fromLatin1(MetaData::Codec)]        = [](const Track& track) {
         return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
     };
     m_metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
@@ -331,22 +338,24 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Path)]            = &Track::path;
     m_metadata[QString::fromLatin1(MetaData::Subsong)]         = &Track::subsong;
 
-    m_setMetadata[QString::fromLatin1(MetaData::Title)]       = generateSetFunc(&Track::setTitle);
-    m_setMetadata[QString::fromLatin1(MetaData::Artist)]      = generateSetFunc(&Track::setArtists);
-    m_setMetadata[QString::fromLatin1(MetaData::Album)]       = generateSetFunc(&Track::setAlbum);
-    m_setMetadata[QString::fromLatin1(MetaData::AlbumArtist)] = generateSetFunc(&Track::setAlbumArtists);
-    m_setMetadata[QString::fromLatin1(MetaData::Track)]       = generateSetFunc(&Track::setTrackNumber);
-    m_setMetadata[QString::fromLatin1(MetaData::TrackTotal)]  = generateSetFunc(&Track::setTrackTotal);
-    m_setMetadata[QString::fromLatin1(MetaData::Disc)]        = generateSetFunc(&Track::setDiscNumber);
-    m_setMetadata[QString::fromLatin1(MetaData::DiscTotal)]   = generateSetFunc(&Track::setDiscTotal);
-    m_setMetadata[QString::fromLatin1(MetaData::Genre)]       = generateSetFunc(&Track::setGenres);
-    m_setMetadata[QString::fromLatin1(MetaData::Composer)]    = generateSetFunc(&Track::setComposer);
-    m_setMetadata[QString::fromLatin1(MetaData::Performer)]   = generateSetFunc(&Track::setPerformer);
-    m_setMetadata[QString::fromLatin1(MetaData::Duration)]    = generateSetFunc(&Track::setDuration);
-    m_setMetadata[QString::fromLatin1(MetaData::Comment)]     = generateSetFunc(&Track::setComment);
-    m_setMetadata[QString::fromLatin1(MetaData::Rating)]      = generateSetFunc(&Track::setRatingStars);
-    m_setMetadata[QString::fromLatin1(MetaData::Date)]        = generateSetFunc(&Track::setDate);
-    m_setMetadata[QString::fromLatin1(MetaData::Year)]        = generateSetFunc(&Track::setYear);
+    m_setMetadata[QString::fromLatin1(MetaData::Title)]        = generateSetFunc(&Track::setTitle);
+    m_setMetadata[QString::fromLatin1(MetaData::Artist)]       = generateSetFunc(&Track::setArtists);
+    m_setMetadata[QString::fromLatin1(MetaData::Album)]        = generateSetFunc(&Track::setAlbum);
+    m_setMetadata[QString::fromLatin1(MetaData::AlbumArtist)]  = generateSetFunc(&Track::setAlbumArtists);
+    m_setMetadata[QString::fromLatin1(MetaData::Track)]        = generateSetFunc(&Track::setTrackNumber);
+    m_setMetadata[QString::fromLatin1(MetaData::TrackTotal)]   = generateSetFunc(&Track::setTrackTotal);
+    m_setMetadata[QString::fromLatin1(MetaData::Disc)]         = generateSetFunc(&Track::setDiscNumber);
+    m_setMetadata[QString::fromLatin1(MetaData::DiscTotal)]    = generateSetFunc(&Track::setDiscTotal);
+    m_setMetadata[QString::fromLatin1(MetaData::Genre)]        = generateSetFunc(&Track::setGenres);
+    m_setMetadata[QString::fromLatin1(MetaData::Composer)]     = generateSetFunc(&Track::setComposer);
+    m_setMetadata[QString::fromLatin1(MetaData::Performer)]    = generateSetFunc(&Track::setPerformer);
+    m_setMetadata[QString::fromLatin1(MetaData::Duration)]     = generateSetFunc(&Track::setDuration);
+    m_setMetadata[QString::fromLatin1(MetaData::Comment)]      = generateSetFunc(&Track::setComment);
+    m_setMetadata[QString::fromLatin1(MetaData::Rating)]       = generateSetFunc(&Track::setRating);
+    m_setMetadata[QString::fromLatin1(MetaData::RatingStars)]  = generateSetFunc(&Track::setRatingStars);
+    m_setMetadata[QString::fromLatin1(MetaData::RatingEditor)] = generateSetFunc(&Track::setRatingStars);
+    m_setMetadata[QString::fromLatin1(MetaData::Date)]         = generateSetFunc(&Track::setDate);
+    m_setMetadata[QString::fromLatin1(MetaData::Year)]         = generateSetFunc(&Track::setYear);
 }
 
 ScriptRegistry::ScriptRegistry()
@@ -500,6 +509,10 @@ ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
     else if(auto* uintVal = std::get_if<uint64_t>(&funcRet)) {
         result.value = QString::number(*uintVal);
         result.cond  = true;
+    }
+    else if(auto* floatVal = std::get_if<float>(&funcRet)) {
+        result.value = QString::number(*floatVal);
+        result.cond  = (*floatVal) >= 0;
     }
     else if(auto* strVal = std::get_if<QString>(&funcRet)) {
         result.value = *strVal;

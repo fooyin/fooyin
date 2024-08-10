@@ -36,6 +36,9 @@ public:
     [[nodiscard]] StarRating rating() const;
     void setRating(const StarRating& rating);
 
+    [[nodiscard]] float ratingAtPosition(int x) const;
+    [[nodiscard]] static float ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating);
+
     [[nodiscard]] QSize sizeHint() const override;
 
 signals:
@@ -45,12 +48,12 @@ protected:
     void paintEvent(QPaintEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    [[nodiscard]] int starAtPosition(int x) const;
-
     StarRating m_rating;
+    float m_originalRating;
 };
 } // namespace Fooyin

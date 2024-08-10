@@ -210,20 +210,20 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
                      || (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
                          || metadata == QLatin1String{Constants::MetaData::Artist}
                          || metadata == QLatin1String{Constants::MetaData::Genre});
-    const bool isNumeric = (metadata == QLatin1String{Constants::MetaData::Rating});
+    const bool isFloat = (metadata == QLatin1String{Constants::MetaData::Rating});
 
     QStringList listValue;
-    int intValue{-1};
-    bool intValueIsValid{false};
+    float floatValue{-1};
 
     if(isList) {
         listValue = value.toString().split(u';', Qt::SkipEmptyParts);
         std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
     }
-    else if(isNumeric) {
-        intValue = value.toInt(&intValueIsValid);
-        if(!intValueIsValid) {
-            intValue = -1;
+    else if(isFloat) {
+        bool validFloat{false};
+        floatValue = value.toFloat(&validFloat);
+        if(!validFloat) {
+            floatValue = -1;
         }
     }
 
@@ -233,8 +233,8 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
         }
 
         if(split && std::cmp_less(i, listValue.size())) {
-            if(isNumeric) {
-                m_scriptRegistry.setValue(metadata, listValue.at(i).toInt(), track);
+            if(isFloat) {
+                m_scriptRegistry.setValue(metadata, listValue.at(i).toFloat(), track);
             }
             else {
                 m_scriptRegistry.setValue(metadata, listValue.at(i), track);
@@ -243,8 +243,8 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
         else if(isList) {
             m_scriptRegistry.setValue(metadata, listValue, track);
         }
-        else if(isNumeric) {
-            m_scriptRegistry.setValue(metadata, intValue, track);
+        else if(isFloat) {
+            m_scriptRegistry.setValue(metadata, floatValue, track);
         }
         else {
             m_scriptRegistry.setValue(metadata, value.toString(), track);
@@ -558,7 +558,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                 return QString::fromLatin1(MultipleValuesPrefix);
             }
             return QVariant::fromValue(
-                StarRating{item->valueChanged() ? item->changedValue().toInt() : item->value().toInt(), 5});
+                StarRating{item->valueChanged() ? item->changedValue().toFloat() : item->value().toFloat(), 5});
         }
 
         if(role == Qt::EditRole) {
@@ -609,7 +609,7 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
 
             if(index.row() == 13) {
                 const auto rating = value.value<StarRating>();
-                setValue          = rating.starCount() == 0 ? QString{} : QString::number(rating.starCount());
+                setValue          = rating.rating() == 0 ? QString{} : QString::number(rating.rating());
             }
 
             if(!item->setValue(setValue)) {

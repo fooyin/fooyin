@@ -38,6 +38,7 @@
 #include <utils/datastream.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/starrating.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
 
@@ -1331,6 +1332,10 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         }
         return {};
     };
+
+    if(role == Qt::DisplayRole && m_columns.at(column).field == QLatin1String{RatingEditor}) {
+        return QVariant::fromValue(StarRating{track.track().rating(), 5, true});
+    }
 
     switch(role) {
         case(Qt::ToolTipRole): {

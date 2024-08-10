@@ -22,6 +22,7 @@
 #include "fyutils_export.h"
 
 #include <QMetaType>
+#include <QPixmap>
 #include <QPolygonF>
 #include <QSize>
 
@@ -40,14 +41,16 @@ public:
     };
 
     StarRating();
-    StarRating(int starCount, int maxStarCount);
-    StarRating(int starCount, int maxStarCount, bool alwaysDisplay);
+    StarRating(float rating, int maxStarCount);
+    StarRating(float rating, int maxStarCount, bool alwaysDisplay);
 
-    [[nodiscard]] int starCount() const;
+    [[nodiscard]] float rating() const;
     [[nodiscard]] int maxStarCount() const;
+    [[nodiscard]] int starScale() const;
 
-    void setStarCount(int starCount);
+    void setRating(float rating);
     void setMaxStarCount(int maxStarCount);
+    void setStarScale(int scale);
     void setAlwaysDisplay(bool display);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
@@ -56,8 +59,9 @@ public:
 
 private:
     QPolygonF m_starPolygon;
-    int m_count;
+    float m_rating;
     int m_maxCount;
+    int m_scale;
     bool m_alwaysDisplay;
 };
 } // namespace Fooyin

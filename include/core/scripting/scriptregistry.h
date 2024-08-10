@@ -34,7 +34,7 @@ class ScriptRegistryPrivate;
 class FYCORE_EXPORT ScriptRegistry
 {
 public:
-    using FuncRet = std::variant<int, uint64_t, QString, QStringList>;
+    using FuncRet = std::variant<int, uint64_t, float, QString, QStringList>;
 
     ScriptRegistry();
     explicit ScriptRegistry(LibraryManager* libraryManager);

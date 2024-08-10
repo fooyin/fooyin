@@ -43,6 +43,7 @@
 #include <utils/async.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
+#include <utils/stardelegate.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -217,6 +218,8 @@ void PlaylistWidgetPrivate::setupConnections()
                      &PlaylistWidgetPrivate::selectionChanged);
     QObject::connect(m_playlistView, &QAbstractItemView::doubleClicked, this, &PlaylistWidgetPrivate::doubleClicked);
     QObject::connect(m_playlistView, &ExpandedTreeView::middleClicked, this, &PlaylistWidgetPrivate::middleClicked);
+    QObject::connect(m_playlistView, &PlaylistView::tracksRated, m_library,
+                     [this](const TrackList& tracks) { m_library->updateTrackStats(tracks); });
 
     QObject::connect(m_model, &QAbstractItemModel::modelAboutToBeReset, m_playlistView,
                      &QAbstractItemView::clearSelection);
@@ -1030,6 +1033,9 @@ void PlaylistWidgetPrivate::updateSpans()
         }
         else {
             m_playlistView->setSpan(i, false);
+        }
+        if(column.field == QLatin1String{RatingEditor}) {
+            m_playlistView->setItemDelegateForColumn(i, new StarDelegate(this));
         }
         ++i;
     }

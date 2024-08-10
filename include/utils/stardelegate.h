@@ -31,6 +31,10 @@ class FYUTILS_EXPORT StarDelegate : public QStyledItemDelegate
 public:
     using QStyledItemDelegate::QStyledItemDelegate;
 
+    [[nodiscard]] QModelIndex hoveredIndex() const;
+    void setHoverIndex(const QModelIndex& index);
+    void setHoverIndex(const QModelIndex& index, const QPoint& pos, const QModelIndexList& selected);
+
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
@@ -40,5 +44,9 @@ public:
 
 private:
     void finishEditing();
+
+    QPersistentModelIndex m_hoverIndex;
+    QPoint m_hoverPos;
+    QModelIndexList m_selected;
 };
 } // namespace Fooyin

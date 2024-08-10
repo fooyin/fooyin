@@ -21,21 +21,41 @@
 
 #include <QPainter>
 #include <QPalette>
+#include <QPixmapCache>
 
-constexpr int StarScaleFactor = 20;
+namespace {
+void drawHalfPolygon(QPainter* painter, const QPolygonF& polygon, bool drawLeftHalf)
+{
+    QRectF clipRect;
+    if(drawLeftHalf) {
+        clipRect = QRectF{polygon.boundingRect().topLeft(),
+                          QPointF{polygon.boundingRect().center().x(), polygon.boundingRect().bottom()}};
+    }
+    else {
+        clipRect = QRectF{QPointF{polygon.boundingRect().center().x(), polygon.boundingRect().top()},
+                          polygon.boundingRect().bottomRight()};
+    }
+
+    const QPolygonF clippedPolygon = polygon.intersected(QPolygonF(clipRect));
+
+    painter->setPen(Qt::NoPen);
+    painter->drawPolygon(clippedPolygon, Qt::WindingFill);
+}
+} // namespace
 
 namespace Fooyin {
 StarRating::StarRating()
     : StarRating{0, 5, false}
 { }
 
-StarRating::StarRating(int starCount, int maxStarCount)
-    : StarRating{starCount, maxStarCount, false}
+StarRating::StarRating(float rating, int maxStarCount)
+    : StarRating{rating, maxStarCount, false}
 { }
 
-StarRating::StarRating(int starCount, int maxStarCount, bool alwaysDisplay)
-    : m_count{starCount}
+StarRating::StarRating(float rating, int maxStarCount, bool alwaysDisplay)
+    : m_rating{rating}
     , m_maxCount{maxStarCount}
+    , m_scale{20}
     , m_alwaysDisplay{alwaysDisplay}
 {
     double angle{-0.314};
@@ -45,9 +65,9 @@ StarRating::StarRating(int starCount, int maxStarCount, bool alwaysDisplay)
     }
 }
 
-int StarRating::starCount() const
+float StarRating::rating() const
 {
-    return m_count;
+    return m_rating;
 }
 
 int StarRating::maxStarCount() const
@@ -55,14 +75,24 @@ int StarRating::maxStarCount() const
     return m_maxCount;
 }
 
-void StarRating::setStarCount(int starCount)
+int StarRating::starScale() const
 {
-    m_count = starCount;
+    return m_scale;
+}
+
+void StarRating::setRating(float rating)
+{
+    m_rating = rating;
 }
 
 void StarRating::setMaxStarCount(int maxStarCount)
 {
     m_maxCount = maxStarCount;
+}
+
+void StarRating::setStarScale(int scale)
+{
+    m_scale = scale;
 }
 
 void StarRating::setAlwaysDisplay(bool display)
@@ -73,49 +103,74 @@ void StarRating::setAlwaysDisplay(bool display)
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment) const
 {
-    painter->save();
+    const QString cacheKey = QStringLiteral("StarRating:%1|%2|%3|%4|%5")
+                                 .arg(m_rating)
+                                 .arg(m_scale)
+                                 .arg(m_maxCount)
+                                 .arg(mode == EditMode::Editable ? 1 : 0)
+                                 .arg(rect.width());
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
+    QPixmap pixmap;
+    if(!QPixmapCache::find(cacheKey, &pixmap)) {
+        pixmap = QPixmap{rect.size()};
+        pixmap.fill(Qt::transparent);
 
-    const QBrush brush{mode == EditMode::Editable ? palette.highlight() : palette.windowText()};
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(brush);
+        QPainter pixmapPainter(&pixmap);
+        pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
 
-    QPen dotPen{brush, 0.2};
-    dotPen.setCapStyle(Qt::RoundCap);
+        const QBrush brush{mode == EditMode::Editable ? palette.highlight() : palette.windowText()};
+        pixmapPainter.setPen(Qt::NoPen);
+        pixmapPainter.setBrush(brush);
 
-    const int yOffset = (rect.height() - StarScaleFactor) / 2;
+        QPen dotPen{brush, 0.2};
+        dotPen.setCapStyle(Qt::RoundCap);
 
-    int xOffset{0};
-    const int totalWidth = m_maxCount * StarScaleFactor;
-    if(alignment & Qt::AlignHCenter) {
-        xOffset = (rect.width() - totalWidth) / 2;
-    }
-    else if(alignment & Qt::AlignRight) {
-        xOffset = rect.width() - totalWidth;
-    }
+        const int yOffset = (rect.height() - m_scale) / 2;
 
-    painter->translate(rect.x() + xOffset, rect.y() + yOffset);
-    painter->scale(StarScaleFactor, StarScaleFactor);
-
-    for(int i{0}; i < m_maxCount; ++i) {
-        if(i < m_count) {
-            painter->setPen(Qt::NoPen);
-            painter->drawPolygon(m_starPolygon, Qt::WindingFill);
+        int xOffset{0};
+        const int totalWidth = m_maxCount * m_scale;
+        if(alignment & Qt::AlignHCenter) {
+            xOffset = (rect.width() - totalWidth) / 2;
         }
-        else if(m_alwaysDisplay || mode == EditMode::Editable) {
-            painter->setPen(dotPen);
-            painter->drawPoint(QPointF{0.5, 0.5});
+        else if(alignment & Qt::AlignRight) {
+            xOffset = rect.width() - totalWidth;
         }
 
-        painter->translate(1.0, 0.0);
+        pixmapPainter.translate(xOffset, yOffset);
+        pixmapPainter.scale(m_scale, m_scale);
+
+        const int fullStars     = std::floor(m_rating * static_cast<float>(m_maxCount));
+        const float partialStar = (m_rating * static_cast<float>(m_maxCount)) - static_cast<float>(fullStars);
+
+        for(int i{0}; i < m_maxCount; ++i) {
+            if(i < fullStars) {
+                // Draw full star
+                pixmapPainter.setPen(Qt::NoPen);
+                pixmapPainter.drawPolygon(m_starPolygon, Qt::WindingFill);
+            }
+            else if(i == fullStars && partialStar >= 0.5) {
+                // Draw half star
+                drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
+            }
+            else if(m_alwaysDisplay || mode == EditMode::Editable) {
+                // Draw dot
+                pixmapPainter.setPen(dotPen);
+                pixmapPainter.drawPoint(QPointF{0.5, 0.5});
+            }
+
+            pixmapPainter.translate(1.0, 0.0);
+        }
+
+        pixmapPainter.end();
+
+        QPixmapCache::insert(cacheKey, pixmap);
     }
 
-    painter->restore();
+    painter->drawPixmap(rect, pixmap);
 }
 
 QSize StarRating::sizeHint() const
 {
-    return StarScaleFactor * QSize{m_maxCount, 1};
+    return m_scale * QSize{m_maxCount, 1};
 }
 } // namespace Fooyin

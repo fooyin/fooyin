@@ -696,16 +696,20 @@ QRect TreeView::visualRect(const QModelIndex& index, RectRule rule, bool include
     }
 
     const int column = index.column();
-    int x            = header()->sectionViewportPosition(column);
-    int width        = header()->sectionSize(column);
+    int x{0};
+    const int y = coordinateForItem(viewIndex).y();
+    int width   = header()->sectionSize(column);
+    int height{0};
 
     if(rule == RectRule::FullRow) {
-        x     = 0;
-        width = header()->length();
+        x      = 0;
+        width  = header()->length();
+        height = indexRowSizeHint(index);
     }
-
-    const int y = coordinateForItem(viewIndex).y();
-    int height  = indexSizeHint(index);
+    else {
+        x      = header()->sectionViewportPosition(column);
+        height = indexSizeHint(index);
+    }
 
     if(includePadding) {
         height += itemPadding(viewIndex);
@@ -1518,17 +1522,25 @@ int TreeView::indexSizeHint(const QModelIndex& index, bool span) const
         return 0;
     }
 
-    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
-        return m_uniformRowHeight;
-    }
-
-    QStyleOptionViewItem opt;
-    m_view->initViewItemOption(&opt);
-
     int height{0};
     if(span && m_view->isSpanning(index.column())) {
         height = header()->sectionSize(index.column());
     }
+
+    if(m_p->m_uniformRowHeights && m_uniformRowHeight > 0) {
+        return std::max(m_uniformRowHeight, height);
+    }
+
+    int uniformData{-1};
+    if(m_p->m_uniformHeightRole >= 0) {
+        uniformData = index.data(m_p->m_uniformHeightRole).toInt();
+        if(m_p->m_uniformRoleHeights.contains(uniformData)) {
+            return std::max(m_p->m_uniformRoleHeights.at(uniformData), height);
+        }
+    }
+
+    QStyleOptionViewItem opt;
+    m_view->initViewItemOption(&opt);
 
     const int column = index.column();
     if(header()->isSectionHidden(column)) {

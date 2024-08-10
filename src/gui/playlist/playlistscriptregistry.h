@@ -30,6 +30,7 @@ constexpr auto PlayingIcon   = "%playingicon%";
 constexpr auto FrontCover    = "%frontcover%";
 constexpr auto BackCover     = "%backcover%";
 constexpr auto ArtistPicture = "%artistpicture%";
+constexpr auto RatingEditor  = "%rating_editor%";
 
 class PlaylistScriptRegistry : public ScriptRegistry
 {
