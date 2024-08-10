@@ -59,9 +59,13 @@ void PlaylistView::playlistAboutToBeReset()
             m_starDelegate = starDelegate;
             m_ratingColumn = column;
             setMouseTracking(true);
-            break;
+            return;
         }
     }
+
+    m_starDelegate = nullptr;
+    m_ratingColumn = -1;
+    setMouseTracking(false);
 }
 
 void PlaylistView::playlistReset()
