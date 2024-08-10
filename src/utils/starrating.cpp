@@ -45,18 +45,13 @@ void drawHalfPolygon(QPainter* painter, const QPolygonF& polygon, bool drawLeftH
 
 namespace Fooyin {
 StarRating::StarRating()
-    : StarRating{0, 5, false}
+    : StarRating{0, 5}
 { }
 
 StarRating::StarRating(float rating, int maxStarCount)
-    : StarRating{rating, maxStarCount, false}
-{ }
-
-StarRating::StarRating(float rating, int maxStarCount, bool alwaysDisplay)
     : m_rating{rating}
     , m_maxCount{maxStarCount}
     , m_scale{20}
-    , m_alwaysDisplay{alwaysDisplay}
 {
     double angle{-0.314};
     for(int i{0}; i < 5; ++i) {
@@ -95,11 +90,6 @@ void StarRating::setStarScale(int scale)
     m_scale = scale;
 }
 
-void StarRating::setAlwaysDisplay(bool display)
-{
-    m_alwaysDisplay = display;
-}
-
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment) const
 {
@@ -119,11 +109,11 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
         pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
 
         const QBrush brush{mode == EditMode::Editable ? palette.highlight() : palette.windowText()};
-        pixmapPainter.setPen(Qt::NoPen);
-        pixmapPainter.setBrush(brush);
 
-        QPen dotPen{brush, 0.2};
-        dotPen.setCapStyle(Qt::RoundCap);
+        QBrush fadedBrush{brush};
+        QColor fadedColour{brush.color()};
+        fadedColour.setAlphaF(0.2F);
+        fadedBrush.setColor(fadedColour);
 
         const int yOffset = (rect.height() - m_scale) / 2;
 
@@ -146,16 +136,19 @@ void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& pal
             if(i < fullStars) {
                 // Draw full star
                 pixmapPainter.setPen(Qt::NoPen);
+                pixmapPainter.setBrush(brush);
                 pixmapPainter.drawPolygon(m_starPolygon, Qt::WindingFill);
             }
-            else if(i == fullStars && partialStar >= 0.5) {
-                // Draw half star
-                drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
+            else {
+                pixmapPainter.setPen(Qt::NoPen);
+                pixmapPainter.setBrush(fadedBrush);
+                pixmapPainter.drawPolygon(m_starPolygon, Qt::WindingFill);
             }
-            else if(m_alwaysDisplay || mode == EditMode::Editable) {
-                // Draw dot
-                pixmapPainter.setPen(dotPen);
-                pixmapPainter.drawPoint(QPointF{0.5, 0.5});
+
+            if(i == fullStars && partialStar >= 0.5) {
+                // Draw half star
+                pixmapPainter.setBrush(brush);
+                drawHalfPolygon(&pixmapPainter, m_starPolygon, true);
             }
 
             pixmapPainter.translate(1.0, 0.0);

@@ -42,7 +42,6 @@ public:
 
     StarRating();
     StarRating(float rating, int maxStarCount);
-    StarRating(float rating, int maxStarCount, bool alwaysDisplay);
 
     [[nodiscard]] float rating() const;
     [[nodiscard]] int maxStarCount() const;
@@ -51,7 +50,6 @@ public:
     void setRating(float rating);
     void setMaxStarCount(int maxStarCount);
     void setStarScale(int scale);
-    void setAlwaysDisplay(bool display);
 
     void paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                Qt::Alignment alignment = Qt::AlignLeft) const;
@@ -62,7 +60,6 @@ private:
     float m_rating;
     int m_maxCount;
     int m_scale;
-    bool m_alwaysDisplay;
 };
 } // namespace Fooyin
 
