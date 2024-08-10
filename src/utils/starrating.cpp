@@ -93,12 +93,13 @@ void StarRating::setStarScale(int scale)
 void StarRating::paint(QPainter* painter, const QRect& rect, const QPalette& palette, EditMode mode,
                        Qt::Alignment alignment) const
 {
-    const QString cacheKey = QStringLiteral("StarRating:%1|%2|%3|%4|%5")
+    const QString cacheKey = QStringLiteral("StarRating:%1|%2|%3|%4|%5|%6")
                                  .arg(m_rating)
                                  .arg(m_scale)
                                  .arg(m_maxCount)
                                  .arg(mode == EditMode::Editable ? 1 : 0)
-                                 .arg(rect.width());
+                                 .arg(rect.width())
+                                 .arg(alignment);
 
     QPixmap pixmap;
     if(!QPixmapCache::find(cacheKey, &pixmap)) {
