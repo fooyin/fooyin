@@ -476,8 +476,9 @@ void GuiApplicationPrivate::setupRatingMenu()
         if(selectionController.selectedTrackCount() == 1) {
             const auto tracks = selectionController.selectedTracks();
             Track track       = tracks.front();
-            if(track.ratingStars() != rating) {
-                track.setRatingStars(rating);
+            const int stars   = rating * 2;
+            if(track.ratingStars() != stars) {
+                track.setRatingStars(stars);
                 if(settings->value<Settings::Core::SaveRatingToMetadata>()) {
                     core.library->writeTrackMetadata({track});
                 }

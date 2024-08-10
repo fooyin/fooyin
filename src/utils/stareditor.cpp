@@ -63,10 +63,10 @@ float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const S
         return 0;
     }
 
-    const float starIndex        = x / starWidth;
-    const float clampedStarIndex = std::clamp(starIndex, 0.0F, maxStars);
+    float starIndex = x / starWidth;
+    starIndex       = std::clamp(starIndex, 0.0F, maxStars);
 
-    const float halfStarRating = std::round(clampedStarIndex * 2) / 2;
+    const float halfStarRating = std::round(starIndex * 2) / 2;
 
     return halfStarRating / maxStars;
 }
