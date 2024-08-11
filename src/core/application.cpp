@@ -182,8 +182,13 @@ void ApplicationPrivate::setupConnections()
                      [this](const Track& track) { markTrack(track); });
 
     m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
-        QObject::connect(&m_engine, &EngineController::finished, &Application::quit);
-        m_playerController->stop();
+        if(m_playerController->playState() == Player::PlayState::Playing) {
+            QObject::connect(&m_engine, &EngineController::finished, &Application::quit);
+            m_playerController->stop();
+        }
+        else {
+            Application::quit();
+        }
     });
 }
 
