@@ -130,7 +130,7 @@ WaveBarSettingsPageWidget::WaveBarSettingsPageWidget(SettingsManager* settings)
     m_maxScale->setSingleStep(0.25);
     m_maxScale->setPrefix(QStringLiteral("x"));
 
-    auto* modeGroup  = new QGroupBox(tr("Mode"), this);
+    auto* modeGroup  = new QGroupBox(tr("Display"), this);
     auto* modeLayout = new QVBoxLayout(modeGroup);
 
     m_silence->setToolTip(tr("Draw a line in place of silence"));

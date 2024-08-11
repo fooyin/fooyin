@@ -160,7 +160,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
         rescaleWaveform();
     });
 
-    auto* modeMenu = new QMenu(tr("Mode"), menu);
+    auto* modeMenu = new QMenu(tr("Display"), menu);
 
     auto* minMaxMode  = new QAction(tr("Min/Max"), modeMenu);
     auto* rmsMode     = new QAction(tr("RMS"), modeMenu);
