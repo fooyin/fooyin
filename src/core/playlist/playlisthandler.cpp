@@ -285,10 +285,6 @@ bool PlaylistHandlerPrivate::validIndex(int index) const
 
 void PlaylistHandlerPrivate::restoreActivePlaylist()
 {
-    if(!m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
-        return;
-    }
-
     const int lastId = m_settings->value<Settings::Core::ActivePlaylistId>();
     if(lastId < 0) {
         return;
