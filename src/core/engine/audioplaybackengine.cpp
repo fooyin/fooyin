@@ -473,7 +473,7 @@ void AudioPlaybackEngine::pauseOutput()
         = m_settings->value<Settings::Core::Internal::EngineFading>() ? m_fadeIntervals.outPauseStop : 0;
     m_renderer->pause(true, fadeInterval);
 
-    if(fadeInterval > 0) {
+    if(fadeInterval > 0 && m_state != PlaybackState::Stopped) {
         updateState(PlaybackState::Fading);
     }
 }
