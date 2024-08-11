@@ -144,9 +144,11 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     const uint64_t durationSecs = m_data.duration / 1000;
     const int samples           = static_cast<int>(durationSecs * m_format.sampleRate()) / bps * bps;
     const int samplesPerBuffer  = static_cast<int>(static_cast<double>(samples) / samplesPerChannel) / bps * bps;
-    const int bufferSize        = samplesPerBuffer * bps;
 
-    const auto endTime = track.offset() + track.duration();
+    int processedBytes{0};
+    bool ending{false};
+    const int bufferSize = samplesPerBuffer * bps;
+    const int endBytes   = m_format.bytesForDuration(track.duration());
 
     m_decoder->start();
     m_decoder->seek(track.offset());
@@ -157,12 +159,24 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
             return;
         }
 
-        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid() || (track.hasCue() && buffer.endTime() > endTime)) {
+        int bytesToRead{bufferSize};
+        const int bytesToEnd = endBytes - processedBytes;
+        if(bytesToEnd < bufferSize) {
+            bytesToRead = bytesToEnd;
+            ending      = true;
+        }
+        else if(ending || bytesToRead >= endBytes) {
             m_data.complete = true;
             break;
         }
 
+        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bytesToRead));
+        if(!buffer.isValid()) {
+            m_data.complete = true;
+            break;
+        }
+
+        processedBytes += buffer.byteCount();
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
     }
@@ -216,9 +230,11 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
     const int numOfUpdates      = std::max<int>(1, std::floor(static_cast<double>(durationSecs) / 5));
     const int updateThreshold   = samplesPerChannel / numOfUpdates;
 
-    const int bufferSize = samplesPerBuffer * bps;
-    const auto endTime   = track.offset() + track.duration();
     int processedCount{0};
+    int processedBytes{0};
+    bool ending{false};
+    const int bufferSize = samplesPerBuffer * bps;
+    const int endBytes   = m_format.bytesForDuration(track.duration());
 
     m_decoder->start();
     m_decoder->seek(track.offset());
@@ -229,12 +245,24 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
             return;
         }
 
-        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bufferSize));
-        if(!buffer.isValid() || (track.hasCue() && buffer.endTime() > endTime)) {
+        int bytesToRead{bufferSize};
+        const int bytesToEnd = endBytes - processedBytes;
+        if(bytesToEnd < bufferSize) {
+            bytesToRead = bytesToEnd;
+            ending      = true;
+        }
+        else if(ending || bytesToRead >= endBytes) {
             m_data.complete = true;
             break;
         }
 
+        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bytesToRead));
+        if(!buffer.isValid()) {
+            m_data.complete = true;
+            break;
+        }
+
+        processedBytes += buffer.byteCount();
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
 
