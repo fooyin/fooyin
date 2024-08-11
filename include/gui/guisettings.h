@@ -46,7 +46,8 @@ enum GuiSettings : uint32_t
     CursorFollowsPlayback = 6 | Type::Bool,
     PlaybackFollowsCursor = 7 | Type::Bool,
     ToolButtonStyle       = 8 | Type::Int,
-    MainWindowPixelRatio  = 9 | Type::Double
+    MainWindowPixelRatio  = 9 | Type::Double,
+    StarRatingSize       = 10 | Type::Int,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

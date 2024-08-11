@@ -262,6 +262,7 @@ private:
     std::vector<int> m_pixmapColumns;
     int m_pixmapPadding;
     int m_pixmapPaddingTop;
+    int m_starRatingSize;
 
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;

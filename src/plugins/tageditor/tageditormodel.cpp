@@ -23,6 +23,7 @@
 
 #include <core/constants.h>
 #include <core/scripting/scriptregistry.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
@@ -558,7 +559,8 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
                 return QString::fromLatin1(MultipleValuesPrefix);
             }
             return QVariant::fromValue(
-                StarRating{item->valueChanged() ? item->changedValue().toFloat() : item->value().toFloat(), 5});
+                StarRating{item->valueChanged() ? item->changedValue().toFloat() : item->value().toFloat(), 5,
+                           p->m_settings->value<Settings::Gui::StarRatingSize>()});
         }
 
         if(role == Qt::EditRole) {

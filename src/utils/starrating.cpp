@@ -49,9 +49,13 @@ StarRating::StarRating()
 { }
 
 StarRating::StarRating(float rating, int maxStarCount)
+    : StarRating{rating, maxStarCount, 17}
+{ }
+
+StarRating::StarRating(float rating, int maxStarCount, int scale)
     : m_rating{rating}
     , m_maxCount{maxStarCount}
-    , m_scale{20}
+    , m_scale{scale}
 {
     double angle{-0.314};
     for(int i{0}; i < 5; ++i) {

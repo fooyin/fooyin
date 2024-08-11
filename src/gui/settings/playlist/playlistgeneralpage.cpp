@@ -26,7 +26,6 @@
 #include <core/internalcoresettings.h>
 #include <core/playlist/playlistloader.h>
 #include <gui/guiconstants.h>
-#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>

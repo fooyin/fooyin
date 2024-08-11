@@ -491,6 +491,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_playlistLoaded{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
     , m_pixmapPaddingTop{settings->value<Settings::Gui::Internal::PlaylistImagePaddingTop>()}
+    , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{Player::PlayState::Stopped}
     , m_tempCurrentPlayingIndex{-1}
@@ -522,6 +523,10 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePaddingTop>(this, [this](int padding) {
         m_pixmapPaddingTop = padding;
         emit dataChanged({}, {}, {PlaylistItem::ImagePaddingTop});
+    });
+    m_settings->subscribe<Settings::Gui::StarRatingSize>(this, [this](int size) {
+        m_starRatingSize = size;
+        emit dataChanged({}, {}, {Qt::DisplayRole});
     });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
@@ -1334,7 +1339,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     };
 
     if(role == Qt::DisplayRole && m_columns.at(column).field == QLatin1String{RatingEditor}) {
-        return QVariant::fromValue(StarRating{track.track().rating(), 5});
+        return QVariant::fromValue(StarRating{track.track().rating(), 5, m_starRatingSize});
     }
 
     switch(role) {

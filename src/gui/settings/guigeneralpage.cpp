@@ -87,6 +87,8 @@ private:
 
     QRadioButton* m_preferPlaying;
     QRadioButton* m_preferSelection;
+
+    QSpinBox* m_starRatingSize;
 };
 
 GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, EditableLayout* editableLayout,
@@ -108,6 +110,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_titleScript{new QLineEdit(this)}
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
+    , m_starRatingSize{new QSpinBox(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
     auto* setupBoxLayout  = new QHBoxLayout(setupBox);
@@ -170,13 +173,29 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     selectionGroupLayout->addWidget(m_preferPlaying);
     selectionGroupLayout->addWidget(m_preferSelection);
 
+    auto* ratingGroupBox    = new QGroupBox(tr("Rating"), this);
+    auto* ratingGroupLayout = new QGridLayout(ratingGroupBox);
+
+    auto* starRatingLabel = new QLabel(tr("Star size"), this);
+
+    m_starRatingSize->setMinimum(5);
+    m_starRatingSize->setMaximum(30);
+    m_starRatingSize->setSuffix(QStringLiteral("px"));
+
+    ratingGroupLayout->addWidget(starRatingLabel, 0, 0);
+    ratingGroupLayout->addWidget(m_starRatingSize, 0, 1);
+    ratingGroupLayout->setColumnStretch(2, 1);
+
     auto* mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(setupBox, 0, 0, 1, 2);
-    mainLayout->addWidget(iconThemeBox, 1, 0, 1, 2);
-    mainLayout->addWidget(layoutGroup, 2, 0, 1, 2);
-    mainLayout->addWidget(toolButtonGroup, 3, 0, 1, 2);
-    mainLayout->addWidget(playbackScriptsGroup, 4, 0, 1, 2);
-    mainLayout->addWidget(selectionGroupBox, 5, 0, 1, 2);
+
+    int row{0};
+    mainLayout->addWidget(setupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
+    mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(playbackScriptsGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(ratingGroupBox, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
@@ -232,6 +251,8 @@ void GuiGeneralPageWidget::load()
     else {
         m_preferSelection->setChecked(true);
     }
+
+    m_starRatingSize->setValue(m_settings->value<Settings::Gui::StarRatingSize>());
 }
 
 void GuiGeneralPageWidget::apply()
@@ -283,8 +304,9 @@ void GuiGeneralPageWidget::apply()
 
     const SelectionDisplay option
         = m_preferPlaying->isChecked() ? SelectionDisplay::PreferPlaying : SelectionDisplay::PreferSelection;
-
     m_settings->set<Settings::Gui::Internal::InfoDisplayPrefer>(static_cast<int>(option));
+
+    m_settings->set<Settings::Gui::StarRatingSize>(m_starRatingSize->value());
 }
 
 void GuiGeneralPageWidget::reset()
@@ -295,6 +317,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<Internal::WindowTitleTrackScript>();
     m_settings->reset<Internal::InfoDisplayPrefer>();
+    m_settings->reset<Settings::Gui::StarRatingSize>();
 }
 
 void GuiGeneralPageWidget::showQuickSetup()

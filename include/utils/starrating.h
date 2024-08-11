@@ -42,6 +42,7 @@ public:
 
     StarRating();
     StarRating(float rating, int maxStarCount);
+    StarRating(float rating, int maxStarCount, int scale);
 
     [[nodiscard]] float rating() const;
     [[nodiscard]] int maxStarCount() const;
