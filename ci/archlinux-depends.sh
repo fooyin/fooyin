@@ -17,6 +17,7 @@ $SUDO pacman -S --noconfirm --needed \
        taglib \
        ffmpeg \
        pipewire \
+       sdl2 \
        libopenmpt \
        libgme \
        libarchive

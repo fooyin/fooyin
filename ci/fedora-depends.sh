@@ -23,6 +23,7 @@ dnf -y --allowerasing install \
      taglib-devel \
      kdsingleapplication-qt6-devel \
      pipewire-devel \
+     SDL2-devel \
      libopenmpt-devel \
      game-music-emu-devel \
      libarchive-devel

@@ -40,6 +40,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libtag1v5,
         ffmpeg (>= 7:4.4),
         pipewire,
+        libsdl2-2.0-0,
         libgme0,
         libopenmpt0,
         libarchive13"
