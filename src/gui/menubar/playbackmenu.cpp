@@ -19,6 +19,7 @@
 
 #include "playbackmenu.h"
 
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
@@ -49,6 +50,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_repeatTrack{new QAction(tr("&Repeat Track"), this)}
     , m_repeatPlaylist{new QAction(tr("Repeat &Playlist"), this)}
     , m_shuffle{new QAction(tr("&Shuffle Tracks"), this)}
+    , m_stopAfterCurrent{new QAction(tr("Stop &after current"), this)}
 {
     auto* playbackMenu = m_actionManager->actionContainer(Constants::Menus::Playback);
 
@@ -101,22 +103,31 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     auto* followPlayback = new QAction(tr("Cursor Follows Play&back"), this);
     auto* followCursor   = new QAction(tr("Playback Follows &Cursor"), this);
 
+    auto* stopCurrentCmd = actionManager->registerAction(m_stopAfterCurrent, Constants::Actions::StopAfterCurrent);
+
+    m_stopAfterCurrent->setCheckable(true);
     followPlayback->setCheckable(true);
     followCursor->setCheckable(true);
 
+    m_stopAfterCurrent->setChecked(m_settings->value<Settings::Core::StopAfterCurrent>());
     followPlayback->setChecked(m_settings->value<Settings::Gui::CursorFollowsPlayback>());
     followCursor->setChecked(m_settings->value<Settings::Gui::PlaybackFollowsCursor>());
 
+    QObject::connect(m_stopAfterCurrent, &QAction::triggered, this,
+                     [this](bool enabled) { m_settings->set<Settings::Core::StopAfterCurrent>(enabled); });
     QObject::connect(followPlayback, &QAction::triggered, this,
                      [this](bool enabled) { m_settings->set<Settings::Gui::CursorFollowsPlayback>(enabled); });
     QObject::connect(followCursor, &QAction::triggered, this,
                      [this](bool enabled) { m_settings->set<Settings::Gui::PlaybackFollowsCursor>(enabled); });
 
+    m_settings->subscribe<Settings::Core::StopAfterCurrent>(
+        this, [this](bool enabled) { m_stopAfterCurrent->setChecked(enabled); });
     m_settings->subscribe<Settings::Gui::CursorFollowsPlayback>(
         this, [followPlayback](bool enabled) { followPlayback->setChecked(enabled); });
     m_settings->subscribe<Settings::Gui::PlaybackFollowsCursor>(
         this, [followCursor](bool enabled) { followCursor->setChecked(enabled); });
 
+    playbackMenu->addAction(stopCurrentCmd->action());
     playbackMenu->addAction(followPlayback);
     playbackMenu->addAction(followCursor);
 

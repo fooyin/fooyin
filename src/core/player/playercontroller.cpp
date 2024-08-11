@@ -147,9 +147,11 @@ void PlayerController::previous()
 void PlayerController::next()
 {
     if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
-        p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
-        stop();
-        return;
+        if(p->m_totalDuration > p->m_position && p->m_totalDuration - p->m_position <= 100) {
+            p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
+            stop();
+            return;
+        }
     }
 
     if(p->m_queue.empty()) {

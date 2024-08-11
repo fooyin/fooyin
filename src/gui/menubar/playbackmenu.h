@@ -60,5 +60,7 @@ private:
     QAction* m_repeatTrack;
     QAction* m_repeatPlaylist;
     QAction* m_shuffle;
+
+    QAction* m_stopAfterCurrent;
 };
 } // namespace Fooyin

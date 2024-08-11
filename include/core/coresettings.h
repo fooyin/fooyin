@@ -56,6 +56,7 @@ enum CoreSettings : uint32_t
     PlayedThreshold         = 17 | Type::Double,
     ExternalSortScript      = 18 | Type::String,
     Shutdown                = 19 | Type::Bool,
+    StopAfterCurrent        = 20 | Type::Bool,
 
 };
 Q_ENUM_NS(CoreSettings)

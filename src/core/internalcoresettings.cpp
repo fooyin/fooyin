@@ -62,6 +62,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ExternalSortScript>(QStringLiteral("%filepath%"),
                                                   QStringLiteral("Library/ExternalSortScript"));
     m_settings->createTempSetting<Shutdown>(false);
+    m_settings->createSetting<StopAfterCurrent>(false, QStringLiteral("Playback/StopAfterCurrent"));
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());
