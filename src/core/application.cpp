@@ -182,8 +182,10 @@ void ApplicationPrivate::setupConnections()
                      [this](const Track& track) { markTrack(track); });
 
     m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
+        savePlaybackState();
+
         if(m_playerController->playState() == Player::PlayState::Playing) {
-            QObject::connect(&m_engine, &EngineController::finished, &Application::quit);
+            QObject::connect(&m_engine, &EngineController::finished, m_self, Application::quit);
             m_playerController->stop();
         }
         else {
@@ -424,7 +426,6 @@ void Application::shutdown()
         p->exportAllPlaylists();
     }
 
-    p->savePlaybackState();
     p->m_playlistHandler->savePlaylists();
     p->m_pluginManager.unloadPlugins();
     p->m_settings->storeSettings();
