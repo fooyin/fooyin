@@ -267,7 +267,7 @@ void AudioRenderer::resetFade(int length)
     m_volumeChange    = 0;
     m_currentFadeStep = 0;
     m_fadeLength      = length;
-    m_fadeSteps       = static_cast<int>(static_cast<double>(m_fadeLength) / FadeInterval * 2);
+    m_fadeSteps       = static_cast<int>(static_cast<double>(m_fadeLength) / FadeInterval);
 }
 
 bool AudioRenderer::canWrite() const
