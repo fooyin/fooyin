@@ -264,6 +264,7 @@ Track Playlist::nextTrackChange(int delta, PlayModes mode)
     const int index = p->getNextIndex(delta, mode, false);
 
     if(index < 0) {
+        changeCurrentIndex(-1);
         return {};
     }
 

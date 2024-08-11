@@ -144,7 +144,7 @@ void PlaylistHandlerPrivate::nextTrackChange(int delta)
     const Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
 
     if(!nextTrk.isValid()) {
-        m_playerController->stop();
+        m_playerController->reset();
         return;
     }
 

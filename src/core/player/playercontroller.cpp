@@ -94,8 +94,10 @@ PlayerController::~PlayerController() = default;
 
 void PlayerController::reset()
 {
-    p->m_playStatus = Player::PlayState::Stopped;
-    p->m_position   = 0;
+    stop();
+    p->m_currentTrack = {};
+    p->m_playStatus   = Player::PlayState::Stopped;
+    p->m_position     = 0;
 }
 
 void PlayerController::play()
@@ -105,9 +107,13 @@ void PlayerController::play()
         emit tracksDequeued({p->m_currentTrack});
     }
 
-    if(p->m_currentTrack.isValid() && p->m_playStatus != Player::PlayState::Playing) {
-        p->m_playStatus = Player::PlayState::Playing;
-        emit playStateChanged(p->m_playStatus);
+    if(p->m_currentTrack.isValid()) {
+        if(std::exchange(p->m_playStatus, Player::PlayState::Playing) != Player::PlayState::Playing) {
+            emit playStateChanged(p->m_playStatus);
+        }
+    }
+    else {
+        emit nextTrack();
     }
 }
 
@@ -140,6 +146,12 @@ void PlayerController::previous()
 
 void PlayerController::next()
 {
+    if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
+        p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
+        stop();
+        return;
+    }
+
     if(p->m_queue.empty()) {
         p->m_isQueueTrack = false;
         emit nextTrack();
@@ -154,7 +166,8 @@ void PlayerController::next()
 void PlayerController::stop()
 {
     if(std::exchange(p->m_playStatus, Player::PlayState::Stopped) != p->m_playStatus) {
-        reset();
+        p->m_position = 0;
+
         emit playStateChanged(p->m_playStatus);
         emit positionChanged(0);
     }
