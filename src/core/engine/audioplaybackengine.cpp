@@ -199,22 +199,24 @@ void AudioPlaybackEngine::play()
         return;
     }
 
-    if(m_status == TrackStatus::End && m_state == PlaybackState::Stopped) {
-        seek(0);
-        emit positionChanged(0);
-    }
+    if(m_state == PlaybackState::Stopped) {
+        if(m_status == TrackStatus::Buffered || m_status == TrackStatus::End) {
+            if(m_status == TrackStatus::End) {
+                seek(0);
+                emit positionChanged(0);
+            }
 
-    if(m_state == PlaybackState::Stopped && m_status == TrackStatus::Buffered) {
-        // Current track was previously stopped, so init again
-        if(!m_currentTrack.isInArchive()) {
-            m_file = std::make_unique<QFile>(m_currentTrack.filepath());
-            m_file->open(QIODevice::ReadOnly);
-            m_source.device = m_file.get();
-        }
+            // Current track was previously stopped, so init again
+            if(!m_currentTrack.isInArchive()) {
+                m_file = std::make_unique<QFile>(m_currentTrack.filepath());
+                m_file->open(QIODevice::ReadOnly);
+                m_source.device = m_file.get();
+            }
 
-        if(!m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks)) {
-            changeTrackStatus(TrackStatus::Invalid);
-            return;
+            if(!m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks)) {
+                changeTrackStatus(TrackStatus::Invalid);
+                return;
+            }
         }
     }
 
