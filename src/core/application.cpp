@@ -180,6 +180,11 @@ void ApplicationPrivate::setupConnections()
 
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
                      [this](const Track& track) { markTrack(track); });
+
+    m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
+        QObject::connect(&m_engine, &EngineController::finished, &Application::quit);
+        m_playerController->stop();
+    });
 }
 
 void ApplicationPrivate::markTrack(const Track& track) const

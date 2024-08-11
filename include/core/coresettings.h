@@ -55,6 +55,7 @@ enum CoreSettings : uint32_t
     SavePlaycountToMetadata = 16 | Type::Bool,
     PlayedThreshold         = 17 | Type::Double,
     ExternalSortScript      = 18 | Type::String,
+    Shutdown                = 19 | Type::Bool,
 
 };
 Q_ENUM_NS(CoreSettings)

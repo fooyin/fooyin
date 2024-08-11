@@ -480,18 +480,19 @@ void AudioPlaybackEngine::pauseOutput()
 
 void AudioPlaybackEngine::stopOutput()
 {
-    auto delayedStop = [this]() {
+    auto stopEngine = [this]() {
         stopWorkers(true);
+        emit finished();
     };
 
     const bool canFade
         = m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0;
     if(canFade) {
-        QObject::connect(m_renderer, &AudioRenderer::paused, this, delayedStop, Qt::SingleShotConnection);
+        QObject::connect(m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
         m_renderer->pause(true, m_fadeIntervals.outPauseStop);
     }
     else {
-        stopWorkers(true);
+        stopEngine();
     }
 
     updateState(PlaybackState::Stopped);

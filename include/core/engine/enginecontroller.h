@@ -59,5 +59,6 @@ signals:
     void trackStatusChanged(TrackStatus status);
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
+    void finished();
 };
 } // namespace Fooyin

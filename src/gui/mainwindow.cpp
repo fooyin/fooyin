@@ -23,6 +23,7 @@
 #include "menubar/mainmenubar.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
@@ -225,7 +226,7 @@ void MainWindow::exit()
         m_settings->fileSet(MainWindowGeometry, saveGeometry());
         m_settings->fileSet(MainWindowPrevState, Utils::Enum::toString(currentState()));
 
-        Application::quit();
+        m_settings->set<Settings::Core::Shutdown>(true);
     }
 }
 } // namespace Fooyin
