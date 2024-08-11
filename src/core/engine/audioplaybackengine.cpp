@@ -114,6 +114,11 @@ void AudioPlaybackEngine::seek(uint64_t pos)
 
 void AudioPlaybackEngine::changeTrack(const Track& track)
 {
+    if(!track.isValid()) {
+        changeTrackStatus(TrackStatus::Invalid);
+        return;
+    }
+
     if(m_updatingTrack) {
         m_updatingTrack = false;
         return;
@@ -209,7 +214,10 @@ void AudioPlaybackEngine::play()
             // Current track was previously stopped, so init again
             if(!m_currentTrack.isInArchive()) {
                 m_file = std::make_unique<QFile>(m_currentTrack.filepath());
-                m_file->open(QIODevice::ReadOnly);
+                if(!m_file->open(QIODevice::ReadOnly)) {
+                    changeTrackStatus(TrackStatus::Invalid);
+                    return;
+                }
                 m_source.device = m_file.get();
             }
 
