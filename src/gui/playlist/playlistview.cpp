@@ -125,6 +125,15 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     ExpandedTreeView::mousePressEvent(event);
 }
 
+void PlaylistView::leaveEvent(QEvent* event)
+{
+    if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
+        ratingHoverOut();
+    }
+
+    ExpandedTreeView::leaveEvent(event);
+}
+
 void PlaylistView::paintEvent(QPaintEvent* event)
 {
     QPainter painter{viewport()};
