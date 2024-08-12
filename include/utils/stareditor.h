@@ -38,7 +38,7 @@ public:
 
     [[nodiscard]] float ratingAtPosition(int x) const;
     [[nodiscard]] static float ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating,
-                                                Qt::Alignment align);
+                                                Qt::Alignment align = Qt::AlignLeft);
 
     [[nodiscard]] QSize sizeHint() const override;
 
