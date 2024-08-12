@@ -30,6 +30,7 @@
 #include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
+#include <utils/stareditor.h>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -43,6 +44,7 @@
 #include <QTableView>
 #include <QToolButton>
 
+constexpr auto RatingRow    = 13;
 constexpr auto DontAskAgain = "TagEditor/DontAskAgain";
 constexpr auto State        = "TagEditor/State";
 
@@ -72,13 +74,15 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     , m_copyAction{new QAction(tr("Copy"), this)}
     , m_pasteAction{new QAction(tr("Paste"), this)}
     , m_pasteFields{new QAction(tr("Paste Fields"), this)}
+    , m_starDelegate{new StarDelegate(this)}
 {
     actionManager->addContextObject(m_context);
 
     setItemDelegateForColumn(1, new TagEditorDelegate(this));
-    setItemDelegateForRow(13, new StarDelegate(this));
+    setItemDelegateForRow(RatingRow, m_starDelegate);
     setTextElideMode(Qt::ElideRight);
     setSelectionBehavior(QAbstractItemView::SelectRows);
+    setMouseTracking(true);
     horizontalHeader()->setStretchLastSection(true);
     horizontalHeader()->setSectionsClickable(false);
     verticalHeader()->setVisible(false);
@@ -138,14 +142,49 @@ void TagEditorView::setupContextActions(QMenu* menu, const QPoint& /*pos*/)
     menu->addAction(m_pasteFields);
 }
 
+void TagEditorView::mouseMoveEvent(QMouseEvent* event)
+{
+    if(m_starDelegate) {
+        const QModelIndex index = indexAt(event->pos());
+        if(index.isValid() && index.row() == RatingRow && index.column() == 1) {
+            ratingHoverIn(index, event->pos());
+        }
+        else if(m_starDelegate->hoveredIndex().isValid()) {
+            ratingHoverOut();
+        }
+    }
+
+    ExtendableTableView::mouseMoveEvent(event);
+}
+
 void TagEditorView::mousePressEvent(QMouseEvent* event)
 {
-    if(event->button() == Qt::RightButton) {
+    const QModelIndex index = indexAt(event->pos());
+
+    if(event->button() == Qt::RightButton || (index.isValid() && index.row() == RatingRow)) {
         // Don't start editing on right-click
         setEditTriggers(QAbstractItemView::NoEditTriggers);
     }
     else {
         setEditTriggers(m_editTrigger);
+    }
+
+    if(event->button() == Qt::LeftButton) {
+        if(!index.isValid() || index.column() != 1) {
+            ExtendableTableView::mousePressEvent(event);
+            return;
+        }
+
+        if(!index.data().canConvert<StarRating>()) {
+            ExtendableTableView::mousePressEvent(event);
+            return;
+        }
+
+        auto starRating   = qvariant_cast<StarRating>(index.data());
+        const auto rating = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating);
+        starRating.setRating(rating);
+
+        model()->setData(index, QVariant::fromValue(starRating));
     }
 
     ExtendableTableView::mousePressEvent(event);
@@ -163,12 +202,21 @@ void TagEditorView::keyPressEvent(QKeyEvent* event)
         m_pasteAction->trigger();
         return;
     }
-    if((event->keyCombination() == pasteSeq)) {
+    if(event->keyCombination() == pasteSeq) {
         m_pasteFields->trigger();
         return;
     }
 
     ExtendableTableView::keyPressEvent(event);
+}
+
+void TagEditorView::leaveEvent(QEvent* event)
+{
+    if(m_starDelegate && m_starDelegate->hoveredIndex().isValid()) {
+        ratingHoverOut();
+    }
+
+    ExtendableTableView::leaveEvent(event);
 }
 
 void TagEditorView::copySelection()
@@ -225,6 +273,26 @@ void TagEditorView::pasteSelection(bool match)
     if(auto* tagModel = qobject_cast<TagEditorModel*>(model())) {
         tagModel->updateValues(values, match);
     }
+}
+
+void TagEditorView::ratingHoverIn(const QModelIndex& index, const QPoint& pos)
+{
+    const QModelIndexList selected = selectedIndexes();
+    const QModelIndex prevIndex    = m_starDelegate->hoveredIndex();
+    m_starDelegate->setHoverIndex(index, pos, selected);
+    setCursor(Qt::PointingHandCursor);
+
+    update(prevIndex);
+    update(index);
+}
+
+void TagEditorView::ratingHoverOut()
+{
+    const QModelIndex prevIndex = m_starDelegate->hoveredIndex();
+    m_starDelegate->setHoverIndex({});
+    setCursor({});
+
+    update(prevIndex);
 }
 
 TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,

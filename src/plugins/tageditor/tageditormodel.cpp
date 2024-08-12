@@ -555,7 +555,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
         }
 
         if(index.row() == 13) {
-            if(!item->valueChanged() && item->multipleValues()) {
+            if(item->trackCount() > 1) {
                 return QString::fromLatin1(MultipleValuesPrefix);
             }
             return QVariant::fromValue(

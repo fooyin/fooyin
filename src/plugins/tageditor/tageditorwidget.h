@@ -31,6 +31,7 @@ class QToolButton;
 namespace Fooyin {
 class ActionManager;
 class SettingsManager;
+class StarDelegate;
 class WidgetContext;
 
 namespace TagEditor {
@@ -50,12 +51,16 @@ public:
 
 protected:
     void setupContextActions(QMenu* menu, const QPoint& pos) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 
 private:
     void copySelection();
     void pasteSelection(bool match);
+    void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
+    void ratingHoverOut();
 
     ActionManager* m_actionManager;
 
@@ -64,6 +69,8 @@ private:
     QAction* m_copyAction;
     QAction* m_pasteAction;
     QAction* m_pasteFields;
+
+    StarDelegate* m_starDelegate;
 };
 
 class TagEditorWidget : public PropertiesTabWidget
