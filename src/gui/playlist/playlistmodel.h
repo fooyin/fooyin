@@ -208,6 +208,7 @@ private:
 
     std::vector<int> pixmapColumns() const;
     void coverUpdated(const Track& track);
+    bool trackIsPlaying(const Track& track, int index) const;
 
     ParentChildRangesList determineRowGroups(const QModelIndexList& indexes);
 
@@ -266,7 +267,7 @@ private:
 
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;
-    PlaylistTrack m_currentPlayingTrack;
+    PlaylistTrack m_playingTrack;
     QPersistentModelIndex m_playingIndex;
     QPersistentModelIndex m_stopAtIndex;
     QModelIndexList m_indexesPendingRemoval;

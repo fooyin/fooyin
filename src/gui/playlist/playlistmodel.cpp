@@ -955,7 +955,7 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
 PlaylistTrack PlaylistModel::playingTrack() const
 {
-    return m_currentPlayingTrack;
+    return m_playingTrack;
 }
 
 void PlaylistModel::stopAfterTrack(const QModelIndex& index)
@@ -1159,7 +1159,7 @@ void PlaylistModel::tracksAboutToBeChanged()
         return;
     }
 
-    playingTrackChanged(m_currentPlayingTrack);
+    playingTrackChanged(m_playingTrack);
 }
 
 void PlaylistModel::tracksChanged()
@@ -1171,10 +1171,10 @@ void PlaylistModel::tracksChanged()
     }
 
     if(playingIndex >= 0) {
-        m_currentPlayingTrack.indexInPlaylist = playingIndex;
+        m_playingTrack.indexInPlaylist = playingIndex;
     }
     else {
-        playingIndex = m_currentPlayingTrack.indexInPlaylist;
+        playingIndex = m_playingTrack.indexInPlaylist;
     }
 
     emit playlistTracksChanged(playingIndex);
@@ -1184,7 +1184,7 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
     m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist);
 
-    if(std::exchange(m_currentPlayingTrack, track) != track) {
+    if(std::exchange(m_playingTrack, track) != track) {
         emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
     }
 
@@ -1332,7 +1332,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     const bool singleColumnMode = m_columns.empty();
-    const bool isPlaying        = index.siblingAtColumn(0) == m_playingIndex;
+    const bool isPlaying        = trackIsPlaying(track.track(), item->index());
 
     auto getCover = [this, &index, column](const Track::Cover type) -> QVariant {
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
@@ -2225,6 +2225,13 @@ void PlaylistModel::coverUpdated(const Track& track)
             }
         }
     }
+}
+
+bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
+{
+    return m_currentPlayState != Player::PlayState::Stopped && m_currentPlaylist
+        && m_playingTrack.playlistId == m_currentPlaylist->id() && m_playingTrack.track.id() == track.id()
+        && m_playingTrack.indexInPlaylist == index;
 }
 
 ParentChildRangesList PlaylistModel::determineRowGroups(const QModelIndexList& indexes)
