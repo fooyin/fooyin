@@ -654,6 +654,18 @@ void PlaylistWidgetPrivate::trackIndexesChanged(int playingIndex)
     m_sorting = false;
 }
 
+void PlaylistWidgetPrivate::stopAfterTrack()
+{
+    const auto index = m_playlistView->currentIndex();
+
+    for(int col{0}; const auto& column : m_columns) {
+        if(column.field == QLatin1String{PlayingIcon}) {
+            m_model->stopAfterTrack(index.siblingAtColumn(col));
+        }
+        ++col;
+    }
+}
+
 void PlaylistWidgetPrivate::playSelectedTracks() const
 {
     if(!m_playlistController->currentPlaylist()) {
@@ -1491,6 +1503,15 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
         auto* playAction = new QAction(tr("&Play"), this);
         QObject::connect(playAction, &QAction::triggered, this, [this]() { p->playSelectedTracks(); });
         menu->addAction(playAction);
+
+        if(p->m_playlistController->currentIsActive()) {
+            const auto currentIndex = p->m_playlistView->currentIndex();
+            if(currentIndex.isValid() && currentIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
+                auto* stopAfterAction = new QAction(tr("&Stop after this"), this);
+                QObject::connect(stopAfterAction, &QAction::triggered, this, [this]() { p->stopAfterTrack(); });
+                menu->addAction(stopAfterAction);
+            }
+        }
 
         menu->addSeparator();
 

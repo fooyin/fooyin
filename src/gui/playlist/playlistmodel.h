@@ -120,6 +120,7 @@ public:
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     PlaylistTrack playingTrack() const;
+    void stopAfterTrack(const QModelIndex& index);
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
     QModelIndex indexAtPlaylistIndex(int index, bool includeEnd = false);
 
@@ -208,8 +209,6 @@ private:
     std::vector<int> pixmapColumns() const;
     void coverUpdated(const Track& track);
 
-    [[nodiscard]] bool trackIsPlaying(const Track& track, int index) const;
-
     ParentChildRangesList determineRowGroups(const QModelIndexList& indexes);
 
     using MoveOperationItemGroups = std::vector<PlaylistItemList>;
@@ -240,6 +239,7 @@ private:
 
     QPixmap m_playingIcon;
     QPixmap m_pausedIcon;
+    QPixmap m_stoppedIcon;
     QPixmap m_missingIcon;
 
     QColor m_playingColour;
@@ -267,8 +267,8 @@ private:
     Playlist* m_currentPlaylist;
     Player::PlayState m_currentPlayState;
     PlaylistTrack m_currentPlayingTrack;
-    QPersistentModelIndex m_currentPlayingIndex;
-    int m_tempCurrentPlayingIndex;
+    QPersistentModelIndex m_playingIndex;
+    QPersistentModelIndex m_stopAtIndex;
     QModelIndexList m_indexesPendingRemoval;
 };
 } // namespace Fooyin

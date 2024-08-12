@@ -88,6 +88,7 @@ public:
     void selectAll() const;
     void selectionChanged() const;
     void trackIndexesChanged(int playingIndex);
+    void stopAfterTrack();
     void playSelectedTracks() const;
     void queueSelectedTracks(bool send = false) const;
     void dequeueSelectedTracks() const;

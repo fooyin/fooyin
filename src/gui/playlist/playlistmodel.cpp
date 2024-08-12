@@ -27,6 +27,7 @@
 #include "playlistpreset.h"
 #include "playlistscriptregistry.h"
 
+#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlist.h>
@@ -468,7 +469,7 @@ QStyleOptionViewItem::Position getIconPosition(const QString& text)
 {
     const auto iconPos = text.indexOf(QLatin1String(Fooyin::PlayingIcon));
 
-    if(iconPos == 0) {
+    if(iconPos <= 0) {
         return QStyleOptionViewItem::Left;
     }
 
@@ -494,7 +495,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_starRatingSize{settings->value<Settings::Gui::StarRatingSize>()}
     , m_currentPlaylist{nullptr}
     , m_currentPlayState{Player::PlayState::Stopped}
-    , m_tempCurrentPlayingIndex{-1}
 {
     m_playingColour.setAlpha(90);
     m_disabledColour.setAlpha(50);
@@ -502,6 +502,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     auto updateIcons = [this]() {
         m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
         m_pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
+        m_stoppedIcon = Utils::iconFromTheme(Constants::Icons::Stop).pixmap(20);
         m_missingIcon = Utils::iconFromTheme(Constants::Icons::Close).pixmap(15);
     };
 
@@ -957,6 +958,15 @@ PlaylistTrack PlaylistModel::playingTrack() const
     return m_currentPlayingTrack;
 }
 
+void PlaylistModel::stopAfterTrack(const QModelIndex& index)
+{
+    m_stopAtIndex = index;
+    if(index.siblingAtColumn(0) == m_playingIndex) {
+        m_settings->set<Settings::Core::StopAfterCurrent>(true);
+    }
+    emit dataChanged(index, index, {Qt::DecorationRole});
+}
+
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
 {
     if(m_trackIndexes.empty()) {
@@ -1031,10 +1041,6 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
         }
 
         startOfSequence = endOfSequence;
-    }
-
-    if(m_currentPlayingTrack.isValid()) {
-        m_tempCurrentPlayingIndex = m_currentPlayingTrack.indexInPlaylist;
     }
 
     insertTracks(groups);
@@ -1149,20 +1155,15 @@ void PlaylistModel::tracksAboutToBeChanged()
         return;
     }
 
-    if(m_currentPlayingTrack.isValid()) {
-        m_currentPlayingIndex = indexAtPlaylistIndex(m_currentPlayingTrack.indexInPlaylist);
-    }
+    playingTrackChanged(m_currentPlayingTrack);
 }
 
 void PlaylistModel::tracksChanged()
 {
     int playingIndex{-1};
 
-    if(m_tempCurrentPlayingIndex >= 0) {
-        playingIndex = m_tempCurrentPlayingIndex;
-    }
-    else if(m_currentPlayingIndex.isValid()) {
-        playingIndex = m_currentPlayingIndex.data(PlaylistItem::Index).toInt();
+    if(m_playingIndex.isValid()) {
+        playingIndex = m_playingIndex.data(PlaylistItem::Index).toInt();
     }
 
     if(playingIndex >= 0) {
@@ -1173,20 +1174,28 @@ void PlaylistModel::tracksChanged()
     }
 
     emit playlistTracksChanged(playingIndex);
-
-    m_currentPlayingIndex     = QPersistentModelIndex{};
-    m_tempCurrentPlayingIndex = -1;
 }
 
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
+    m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist);
+
     if(std::exchange(m_currentPlayingTrack, track) != track) {
         emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
+    }
+
+    if(m_stopAtIndex.isValid()
+       && m_playingIndex == m_stopAtIndex.sibling(m_stopAtIndex.row(), m_playingIndex.column())) {
+        m_settings->set<Settings::Core::StopAfterCurrent>(true);
+        m_stopAtIndex = QPersistentModelIndex{};
     }
 }
 
 void PlaylistModel::playStateChanged(Player::PlayState state)
 {
+    if(state == Player::PlayState::Stopped) {
+        m_stopAtIndex = QPersistentModelIndex{};
+    }
     if(std::exchange(m_currentPlayState, state) != state) {
         emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});
     }
@@ -1320,7 +1329,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
     const auto track = std::get<PlaylistTrackItem>(item->data());
 
     const bool singleColumnMode = m_columns.empty();
-    const bool isPlaying        = trackIsPlaying(track.track(), item->index());
+    const bool isPlaying        = index.siblingAtColumn(0) == m_playingIndex;
 
     auto getCover = [this, &index, column](const Track::Cover type) -> QVariant {
         if(std::cmp_greater_equal(column, m_columnSizes.size())) {
@@ -1421,8 +1430,11 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
                         case(Player::PlayState::Paused):
                             return m_pausedIcon;
                         case(Player::PlayState::Stopped):
-                            return {};
+                            break;
                     }
+                }
+                if(index == m_stopAtIndex) {
+                    return m_stoppedIcon;
                 }
             }
             break;
@@ -2210,13 +2222,6 @@ void PlaylistModel::coverUpdated(const Track& track)
             }
         }
     }
-}
-
-bool PlaylistModel::trackIsPlaying(const Track& track, int index) const
-{
-    return m_currentPlayState != Player::PlayState::Stopped && m_currentPlaylist
-        && m_currentPlayingTrack.playlistId == m_currentPlaylist->id() && m_currentPlayingTrack.track.id() == track.id()
-        && m_currentPlayingTrack.indexInPlaylist == index;
 }
 
 ParentChildRangesList PlaylistModel::determineRowGroups(const QModelIndexList& indexes)
