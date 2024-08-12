@@ -102,7 +102,8 @@ void PlaylistView::mousePressEvent(QMouseEvent* event)
     }
 
     const auto starRating = qvariant_cast<StarRating>(index.data());
-    const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating);
+    const auto align      = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
+    const auto rating     = StarEditor::ratingAtPosition(event->pos(), visualRect(index), starRating, align);
 
     if(selectedIndexes().contains(index)) {
         TrackList tracks;

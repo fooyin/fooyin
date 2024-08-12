@@ -24,9 +24,10 @@
 #include <QPainter>
 
 namespace Fooyin {
-StarEditor::StarEditor(QWidget* parent)
+StarEditor::StarEditor(Qt::Alignment align, QWidget* parent)
     : QWidget{parent}
     , m_originalRating{0}
+    , m_align{align}
 {
     setMouseTracking(true);
     setAutoFillBackground(true);
@@ -46,19 +47,30 @@ void StarEditor::setRating(const StarRating& rating)
 float StarEditor::ratingAtPosition(int x) const
 {
     const QRect rect{0, 0, m_rating.sizeHint().width(), m_rating.sizeHint().height()};
-    return ratingAtPosition({x, 0}, rect, m_rating);
+    return ratingAtPosition({x, 0}, rect, m_rating, m_align);
 }
 
-float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating)
+float StarEditor::ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating, Qt::Alignment align)
 {
     const auto ratingWidth = static_cast<float>(rating.sizeHint().width());
     const auto maxStars    = static_cast<float>(rating.maxStarCount());
     const auto starWidth   = ratingWidth / maxStars;
 
+    const auto rectX     = static_cast<float>(rect.x());
     const auto rectWidth = static_cast<float>(rect.width());
-    const float offset   = (rectWidth - ratingWidth) / 2.0F;
 
-    const float x = static_cast<float>(pos.x()) - (static_cast<float>(rect.x()) + offset);
+    auto x = static_cast<float>(pos.x());
+
+    if(align & Qt::AlignLeft) {
+        x -= rectX;
+    }
+    else if(align & Qt::AlignHCenter) {
+        x -= rectX + (rectWidth - ratingWidth) / 2.0F;
+    }
+    else if(align & Qt::AlignRight) {
+        x -= rectX + (rectWidth - ratingWidth);
+    }
+
     if(x < 0) {
         return 0;
     }

@@ -31,13 +31,14 @@ class FYUTILS_EXPORT StarEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit StarEditor(QWidget* parent = nullptr);
+    explicit StarEditor(Qt::Alignment align, QWidget* parent = nullptr);
 
     [[nodiscard]] StarRating rating() const;
     void setRating(const StarRating& rating);
 
     [[nodiscard]] float ratingAtPosition(int x) const;
-    [[nodiscard]] static float ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating);
+    [[nodiscard]] static float ratingAtPosition(const QPoint& pos, const QRect& rect, const StarRating& rating,
+                                                Qt::Alignment align);
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -55,5 +56,6 @@ protected:
 private:
     StarRating m_rating;
     float m_originalRating;
+    Qt::Alignment m_align;
 };
 } // namespace Fooyin

@@ -60,7 +60,7 @@ void StarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, 
                     && (m_hoverIndex == index || (m_selected.contains(m_hoverIndex) && m_selected.contains(index)));
 
     if(hover) {
-        starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, option.rect, starRating));
+        starRating.setRating(StarEditor::ratingAtPosition(m_hoverPos, option.rect, starRating, opt.displayAlignment));
     }
 
     starRating.paint(painter, opt.rect, opt.palette, StarRating::EditMode::ReadOnly, opt.displayAlignment);
@@ -77,9 +77,10 @@ QSize StarDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
 }
 
 QWidget* StarDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/,
-                                    const QModelIndex& /*index*/) const
+                                    const QModelIndex& index) const
 {
-    auto* editor = new StarEditor(parent);
+    const auto align = static_cast<Qt::Alignment>(index.data(Qt::TextAlignmentRole).toInt());
+    auto* editor     = new StarEditor(align, parent);
     QObject::connect(editor, &StarEditor::editingFinished, this, &StarDelegate::finishEditing);
     return editor;
 }
