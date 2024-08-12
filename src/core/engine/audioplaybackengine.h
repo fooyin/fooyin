@@ -79,6 +79,8 @@ private:
     void onBufferProcessed(const AudioBuffer& buffer);
     void onRendererFinished();
 
+    int calculateFadeLength(int initialValue);
+
     std::shared_ptr<AudioLoader> m_decoderProvider;
     ArchiveReader* m_reader;
     AudioDecoder* m_decoder;
@@ -102,6 +104,7 @@ private:
     bool m_ending;
     bool m_decoding;
     bool m_updatingTrack;
+    bool m_pauseNextTrack;
 
     Track m_currentTrack;
     AudioSource m_source;

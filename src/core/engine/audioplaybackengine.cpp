@@ -66,6 +66,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_ending{false}
     , m_decoding{false}
     , m_updatingTrack{false}
+    , m_pauseNextTrack{false}
     , m_renderer{new AudioRenderer(this)}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
@@ -177,6 +178,10 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         return;
     }
 
+    if(m_state == PlaybackState::Fading) {
+        m_pauseNextTrack = true;
+    }
+
     if(m_decoder->trackHasChanged()) {
         m_updatingTrack = true;
         m_currentTrack  = m_decoder->changedTrack();
@@ -228,12 +233,24 @@ void AudioPlaybackEngine::play()
         }
     }
 
+    if(m_pauseNextTrack) {
+        m_bufferTimer.stop();
+        updateState(PlaybackState::Paused);
+        m_renderer->pause(true);
+        return;
+    }
+
     playOutput();
 }
 
 void AudioPlaybackEngine::pause()
 {
     if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::Invalid) {
+        return;
+    }
+
+    if(m_pauseNextTrack) {
+        m_pauseNextTrack = false;
         return;
     }
 
@@ -462,9 +479,9 @@ void AudioPlaybackEngine::playOutput()
     const bool canFade
         = m_settings->value<Settings::Core::Internal::EngineFading>()
        && (prevState == PlaybackState::Paused || prevState == PlaybackState::Fading || m_renderer->isFading());
-    const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
+    const int fadeLength = canFade ? calculateFadeLength(m_fadeIntervals.inPauseStop) : 0;
 
-    m_renderer->pause(false, fadeInterval);
+    m_renderer->pause(false, fadeLength);
     changeTrackStatus(TrackStatus::Buffered);
     m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
 }
@@ -474,16 +491,16 @@ void AudioPlaybackEngine::pauseOutput()
     auto delayedPause = [this]() {
         m_bufferTimer.stop();
         updateState(PlaybackState::Paused);
-        m_clock.setPaused(true);
     };
 
     QObject::connect(m_renderer, &AudioRenderer::paused, this, delayedPause, Qt::SingleShotConnection);
 
-    const int fadeInterval
-        = m_settings->value<Settings::Core::Internal::EngineFading>() ? m_fadeIntervals.outPauseStop : 0;
-    m_renderer->pause(true, fadeInterval);
+    int fadeLength = m_settings->value<Settings::Core::Internal::EngineFading>() ?
+        calculateFadeLength(m_fadeIntervals.outPauseStop) : 0;
 
-    if(fadeInterval > 0 && m_state != PlaybackState::Stopped) {
+    m_renderer->pause(true, fadeLength);
+
+    if(fadeLength > 0 && m_state != PlaybackState::Stopped) {
         updateState(PlaybackState::Fading);
     }
 }
@@ -498,8 +515,15 @@ void AudioPlaybackEngine::stopOutput()
     const bool canFade
         = m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0;
     if(canFade) {
-        QObject::connect(m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
-        m_renderer->pause(true, m_fadeIntervals.outPauseStop);
+        int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
+        if(fadeLength < m_fadeIntervals.outPauseStop) {
+            m_pauseNextTrack = true;
+        }
+        else {
+            // Only connect if the signal will be emitted
+            QObject::connect(m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
+        }
+        m_renderer->pause(true, fadeLength);
     }
     else {
         stopEngine();
@@ -565,6 +589,29 @@ void AudioPlaybackEngine::onRendererFinished()
     m_clock.sync(m_duration);
 
     changeTrackStatus(TrackStatus::End);
+}
+
+int AudioPlaybackEngine::calculateFadeLength(int initialValue)
+{
+    if(initialValue <= 0) {
+        return 0;
+    }
+
+    if(m_duration == std::numeric_limits<uint64_t>::max()) {
+        return initialValue;
+    }
+
+    const auto remaining = (m_lastPosition > m_duration) ?
+        m_duration - (m_lastPosition % m_duration) : m_duration - m_lastPosition;
+    if(remaining <= 100) {
+        return 0;
+    }
+
+    if(std::cmp_less(remaining, initialValue)) {
+        return static_cast<int>(remaining);
+    }
+
+    return initialValue;
 }
 } // namespace Fooyin
 
