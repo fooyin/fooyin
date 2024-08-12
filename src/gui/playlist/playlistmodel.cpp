@@ -960,11 +960,15 @@ PlaylistTrack PlaylistModel::playingTrack() const
 
 void PlaylistModel::stopAfterTrack(const QModelIndex& index)
 {
-    m_stopAtIndex = index;
-    if(index.siblingAtColumn(0) == m_playingIndex) {
-        m_settings->set<Settings::Core::StopAfterCurrent>(true);
+    if(std::exchange(m_stopAtIndex, index) == index) {
+        m_stopAtIndex = QPersistentModelIndex{};
     }
+
     emit dataChanged(index, index, {Qt::DecorationRole});
+
+    if(index.siblingAtColumn(0) == m_playingIndex) {
+        m_settings->set<Settings::Core::StopAfterCurrent>(m_stopAtIndex.isValid());
+    }
 }
 
 TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
@@ -1187,7 +1191,6 @@ void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
     if(m_stopAtIndex.isValid()
        && m_playingIndex == m_stopAtIndex.sibling(m_stopAtIndex.row(), m_playingIndex.column())) {
         m_settings->set<Settings::Core::StopAfterCurrent>(true);
-        m_stopAtIndex = QPersistentModelIndex{};
     }
 }
 
