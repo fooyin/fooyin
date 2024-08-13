@@ -21,6 +21,7 @@
 
 #include <utils/utils.h>
 
+#include <QStringDecoder>
 #include <QUrl>
 
 namespace Fooyin {
@@ -52,7 +53,6 @@ QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, Pat
     return filepath;
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 QByteArray PlaylistParser::toUtf8(QIODevice* file)
 {
     QStringDecoder toUtf16;
@@ -68,7 +68,13 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
             return {};
         }
 
-        toUtf16 = QStringDecoder{encodingName.constData()};
+        encoding = QStringConverter::encodingForName(encodingName.constData());
+        if(encoding) {
+            toUtf16 = QStringDecoder{encoding.value()};
+        }
+        else {
+            toUtf16 = QStringDecoder{encodingName.constData()};
+        }
     }
 
     const QByteArray data = file->readAll();
@@ -82,40 +88,6 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
 
     return string.toUtf8();
 }
-#else
-QByteArray PlaylistParser::toUtf8(QIODevice* file)
-{
-    QTextStream in{file};
-
-    const QByteArray preload = file->peek(1024);
-    auto encoding            = QStringConverter::encodingForData(preload);
-    if(encoding) {
-        in.setEncoding(encoding.value());
-    }
-    else {
-        const auto encodingName = Utils::detectEncoding(preload);
-        if(encodingName.isEmpty()) {
-            return {};
-        }
-
-        encoding = QStringConverter::encodingForName(encodingName.constData());
-        if(encoding) {
-            in.setEncoding(encoding.value());
-        }
-    }
-
-    const QByteArray data = file->readAll();
-    if(data.isEmpty()) {
-        return {};
-    }
-
-    QString string = QString::fromUtf8(data);
-    string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
-    string.replace(u'\r', u'\n');
-
-    return string.toUtf8();
-}
-#endif
 
 Track PlaylistParser::readMetadata(const Track& track)
 {
