@@ -77,6 +77,10 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
         }
     }
 
+    if(!toUtf16.isValid()) {
+        toUtf16 = QStringDecoder{QStringConverter::Utf8};
+    }
+
     const QByteArray data = file->readAll();
     if(data.isEmpty()) {
         return {};
