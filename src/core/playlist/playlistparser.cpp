@@ -80,7 +80,7 @@ Track PlaylistParser::readMetadata(const Track& track)
     readTrack.setFileSize(fileInfo.size());
 
     if(!m_audioLoader->readTrackMetadata(readTrack)) {
-        return {};
+        return track;
     }
 
     if(readTrack.addedTime() == 0) {

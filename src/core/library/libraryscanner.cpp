@@ -221,7 +221,7 @@ public:
 
     [[nodiscard]] TrackList readTracks(const QString& filepath) const;
     [[nodiscard]] TrackList readArchiveTracks(const QString& filepath) const;
-    [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath) const;
+    [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath, bool addMissing = false) const;
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track) const;
 
     void updateExistingCueTracks(const TrackList& tracks, const QString& cue);
@@ -461,7 +461,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     return {};
 }
 
-TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path) const
+TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool addMissing) const
 {
     if(path.isEmpty()) {
         return {};
@@ -478,7 +478,7 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path) const
     dir.cdUp();
 
     if(auto* parser = m_playlistLoader->parserForExtension(info.suffix())) {
-        return parser->readPlaylist(&playlistFile, path, dir, true);
+        return parser->readPlaylist(&playlistFile, path, dir, !addMissing);
     }
 
     return {};
@@ -1005,7 +1005,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         }
 
         for(const auto& playlist : playlists) {
-            const TrackList playlistTracks = p->readPlaylistTracks(playlist);
+            const TrackList playlistTracks = p->readPlaylistTracks(playlist, true);
             for(const Track& playlistTrack : playlistTracks) {
                 const auto trackKey = playlistTrack.filepath();
 
@@ -1112,7 +1112,7 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
     }
 
     for(const auto& url : urls) {
-        const TrackList playlistTracks = p->readPlaylistTracks(url.toLocalFile());
+        const TrackList playlistTracks = p->readPlaylistTracks(url.toLocalFile(), true);
         for(const Track& playlistTrack : playlistTracks) {
             const auto trackKey = playlistTrack.filepath();
 
