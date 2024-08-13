@@ -281,7 +281,6 @@ QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) c
     QFile file{track.filepath()};
     if(!track.isInArchive()) {
         if(!file.open(QIODevice::ReadOnly)) {
-            qCWarning(AUD_LDR) << "Failed to open file:" << source.filepath;
             return {};
         }
         source.device = &file;
