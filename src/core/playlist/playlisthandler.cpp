@@ -299,9 +299,11 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     m_activePlaylist = playlist->get();
     emit m_self->activePlaylistChanged(m_activePlaylist);
 
-    const int lastIndex = m_settings->fileValue(ActiveIndex).toInt();
-    m_activePlaylist->changeCurrentIndex(lastIndex);
-    m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
+    if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState).toBool()) {
+        const int lastIndex = m_settings->fileValue(ActiveIndex).toInt();
+        m_activePlaylist->changeCurrentIndex(lastIndex);
+        m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
+    }
 }
 
 Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTemporary)
