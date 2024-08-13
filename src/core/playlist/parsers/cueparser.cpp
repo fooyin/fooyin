@@ -25,7 +25,10 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QLoggingCategory>
 #include <QRegularExpression>
+
+Q_LOGGING_CATEGORY(CUE, "CUE")
 
 constexpr auto CueLineRegex    = R"lit((\S+)\s+(?:"([^"]+)"|(\S+))\s*(?:"([^"]+)"|(\S+))?)lit";
 constexpr auto TrackIndexRegex = R"lit((\d{1,3}):(\d{2}):(\d{2}))lit";
@@ -218,7 +221,9 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
     QString trackPath;
 
     QTextStream in{device};
-    Fooyin::PlaylistParser::detectEncoding(in, device);
+    if(!detectEncoding(in, device)) {
+        qCInfo(CUE) << "Unable to detect encoding of" << filepath;
+    }
 
     while(!in.atEnd()) {
         processCueLine(sheet, in.readLine().trimmed(), track, trackPath, dir, tracks);
@@ -243,7 +248,9 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
     QString trackPath{filepath};
 
     QTextStream in{device};
-    Fooyin::PlaylistParser::detectEncoding(in, device);
+    if(!detectEncoding(in, device)) {
+        qCInfo(CUE) << "Unable to detect encoding of" << filepath;
+    }
 
     while(!in.atEnd()) {
         processCueLine(sheet, in.readLine().trimmed(), track, trackPath, {}, tracks);

@@ -52,7 +52,7 @@ QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, Pat
     return filepath;
 }
 
-void PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
+bool PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
 {
     const QByteArray data = file->peek(1024);
     auto encoding         = QStringConverter::encodingForData(data);
@@ -61,13 +61,16 @@ void PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
     }
     else {
         const auto encodingName = Utils::detectEncoding(data);
-        if(!encodingName.isEmpty()) {
-            encoding = QStringConverter::encodingForName(encodingName.constData());
-            if(encoding) {
-                in.setEncoding(encoding.value());
-            }
+        if(encodingName.isEmpty()) {
+            return false;
+        }
+
+        encoding = QStringConverter::encodingForName(encodingName.constData());
+        if(encoding) {
+            in.setEncoding(encoding.value());
         }
     }
+    return true;
 }
 
 Track PlaylistParser::readMetadata(const Track& track)
