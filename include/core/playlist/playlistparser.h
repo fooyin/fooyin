@@ -49,7 +49,6 @@ public:
     virtual void savePlaylist(QIODevice* device, const QString& extension, const TrackList& tracks, const QDir& dir,
                               PathType type, bool writeMetdata);
 
-    static bool detectEncoding(QTextStream& in, QIODevice* file);
     static QByteArray toUtf8(QIODevice* file);
     static QString determineTrackPath(const QUrl& url, const QDir& dir, PathType type);
 
