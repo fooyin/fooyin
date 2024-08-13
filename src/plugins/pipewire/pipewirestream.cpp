@@ -32,8 +32,6 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
-using namespace std::chrono_literals;
-
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
 {
