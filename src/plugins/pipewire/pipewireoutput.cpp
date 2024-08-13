@@ -43,6 +43,8 @@
 #pragma clang diagnostic ignored "-Wc99-extensions"
 #endif
 
+constexpr auto BufferLength = 200; // ms
+
 namespace {
 spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
 {
@@ -205,14 +207,14 @@ OutputState PipeWireOutput::currentState()
     OutputState state;
 
     state.queuedSamples = m_buffer.frameCount();
-    state.freeSamples   = m_stream->bufferSize() - state.queuedSamples;
+    state.freeSamples   = bufferSize() - state.queuedSamples;
 
     return state;
 }
 
 int PipeWireOutput::bufferSize() const
 {
-    return m_stream ? m_stream->bufferSize() : 0;
+    return m_format.framesForDuration(BufferLength);
 }
 
 int PipeWireOutput::write(const AudioBuffer& buffer)

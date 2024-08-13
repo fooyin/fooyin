@@ -39,7 +39,6 @@ public:
     ~PipewireStream();
 
     pw_stream_state state();
-    [[nodiscard]] int bufferSize() const;
 
     void setActive(bool active);
     void setVolume(float volume);
@@ -67,7 +66,6 @@ private:
 
     spa_hook m_streamListener;
     PwStreamUPtr m_stream;
-    int m_bufferSize;
 };
 } // namespace Pipewire
 } // namespace Fooyin

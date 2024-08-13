@@ -32,6 +32,8 @@
 #pragma clang diagnostic ignored "-Wgnu-statement-expression-from-macro-expansion"
 #endif
 
+using namespace std::chrono_literals;
+
 namespace Fooyin::Pipewire {
 PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, const QString& device)
 {
@@ -39,12 +41,7 @@ PipewireStream::PipewireStream(PipewireCore* core, const AudioFormat& format, co
                                                     PW_KEY_MEDIA_ROLE, "Music", PW_KEY_APP_ID, "fooyin",
                                                     PW_KEY_APP_ICON_NAME, "fooyin", PW_KEY_APP_NAME, "fooyin", nullptr);
 
-    const int sampleRate = format.sampleRate();
-
-    m_bufferSize = std::clamp<int>(std::ceil(static_cast<double>(2048 * sampleRate) / 48000.0), 64, 8192);
-
-    pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", sampleRate);
-    pw_properties_setf(props, PW_KEY_NODE_LATENCY, "%u/%u", m_bufferSize, sampleRate);
+    pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", format.sampleRate());
 
     if(!device.isEmpty()) {
         pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%s", device.toUtf8().constData());
@@ -65,11 +62,6 @@ PipewireStream::~PipewireStream()
 pw_stream_state PipewireStream::state()
 {
     return pw_stream_get_state(m_stream.get(), nullptr);
-}
-
-int PipewireStream::bufferSize() const
-{
-    return m_bufferSize;
 }
 
 void PipewireStream::setActive(bool active)
