@@ -220,13 +220,15 @@ Fooyin::TrackList CueParser::readCueTracks(QIODevice* device, const QString& fil
     Fooyin::Track track;
     QString trackPath;
 
-    QTextStream in{device};
-    if(!detectEncoding(in, device)) {
-        qCInfo(CUE) << "Unable to detect encoding of" << filepath;
+    QByteArray m3u = toUtf8(device);
+    QBuffer buffer{&m3u};
+    if(!buffer.open(QIODevice::ReadOnly)) {
+        return {};
     }
 
-    while(!in.atEnd()) {
-        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, dir, tracks);
+    while(!buffer.atEnd()) {
+        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        processCueLine(sheet, line, track, trackPath, dir, tracks);
     }
 
     finaliseLastTrack(sheet, track, trackPath, tracks);
@@ -247,13 +249,15 @@ Fooyin::TrackList CueParser::readEmbeddedCueTracks(QIODevice* device, const QStr
     Fooyin::Track track;
     QString trackPath{filepath};
 
-    QTextStream in{device};
-    if(!detectEncoding(in, device)) {
-        qCInfo(CUE) << "Unable to detect encoding of" << filepath;
+    QByteArray m3u = toUtf8(device);
+    QBuffer buffer{&m3u};
+    if(!buffer.open(QIODevice::ReadOnly)) {
+        return {};
     }
 
-    while(!in.atEnd()) {
-        processCueLine(sheet, in.readLine().trimmed(), track, trackPath, {}, tracks);
+    while(!buffer.atEnd()) {
+        const QString line = QString::fromUtf8(buffer.readLine()).trimmed();
+        processCueLine(sheet, line, track, trackPath, {}, tracks);
     }
 
     finaliseLastTrack(sheet, track, filepath, tracks);

@@ -102,22 +102,13 @@ bool M3uParser::saveIsSupported() const
     return true;
 }
 
-TrackList M3uParser::readPlaylist(QIODevice* device, const QString& filepath, const QDir& dir, bool skipNotFound)
+TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/, const QDir& dir, bool skipNotFound)
 {
     Type type{Type::Standard};
     Metadata metadata;
 
-    QTextStream in{device};
-    if(!detectEncoding(in, device)) {
-        qCInfo(M3U) << "Unable to detect encoding of" << filepath;
-    }
-
-    QString m3u = in.readAll();
-    m3u.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
-    m3u.replace(u'\r', u'\n');
-
-    QByteArray m3uBytes{m3u.toUtf8()};
-    QBuffer buffer{&m3uBytes};
+    QByteArray m3u = toUtf8(device);
+    QBuffer buffer{&m3u};
     if(!buffer.open(QIODevice::ReadOnly)) {
         return {};
     }

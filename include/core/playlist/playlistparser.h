@@ -50,6 +50,7 @@ public:
                               PathType type, bool writeMetdata);
 
     static bool detectEncoding(QTextStream& in, QIODevice* file);
+    static QByteArray toUtf8(QIODevice* file);
     static QString determineTrackPath(const QUrl& url, const QDir& dir, PathType type);
 
 protected:

@@ -73,6 +73,37 @@ bool PlaylistParser::detectEncoding(QTextStream& in, QIODevice* file)
     return true;
 }
 
+// TODO: Switch back to QTextStream once ICU is supported
+QByteArray PlaylistParser::toUtf8(QIODevice* file)
+{
+    QStringDecoder toUtf16;
+
+    const QByteArray preload = file->peek(1024);
+    auto encoding            = QStringConverter::encodingForData(preload);
+    if(encoding) {
+        toUtf16 = QStringDecoder{encoding.value()};
+    }
+    else {
+        const auto encodingName = Utils::detectEncoding(preload);
+        if(encodingName.isEmpty()) {
+            return {};
+        }
+
+        toUtf16 = QStringDecoder{encodingName.constData()};
+    }
+
+    const QByteArray data = file->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
+    QString string = toUtf16(data);
+    string.replace(QLatin1String{"\n\n"}, QLatin1String{"\n"});
+    string.replace(u'\r', u'\n');
+
+    return string.toUtf8();
+}
+
 Track PlaylistParser::readMetadata(const Track& track)
 {
     Track readTrack{track};
