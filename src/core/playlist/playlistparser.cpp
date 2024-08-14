@@ -62,15 +62,8 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
 
     QStringDecoder toUtf16;
 
-    auto checkEncoding = [](std::optional<QStringConverter::Encoding>& encoding) {
-        if(encoding == QStringConverter::Latin1) {
-            encoding = QStringConverter::Utf8;
-        }
-    };
-
     auto encoding = QStringConverter::encodingForData(data);
     if(encoding) {
-        checkEncoding(encoding);
         toUtf16 = QStringDecoder{encoding.value()};
     }
     else {
@@ -81,7 +74,6 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
 
         encoding = QStringConverter::encodingForName(encodingName.constData());
         if(encoding) {
-            checkEncoding(encoding);
             toUtf16 = QStringDecoder{encoding.value()};
         }
         else {
