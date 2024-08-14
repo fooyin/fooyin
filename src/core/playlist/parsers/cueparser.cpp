@@ -47,8 +47,11 @@ struct CueSheet
     uint64_t lastModified{0};
 
     Fooyin::Track currentFile;
+
+    bool singleTrackFile{false};
     bool hasValidIndex{false};
     bool addedTrack{false};
+
     bool skipNotFound{false};
     bool skipFile{false};
 };
@@ -318,12 +321,18 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
         if(track.isValid() && !sheet.addedTrack && sheet.hasValidIndex) {
             finaliseTrack(sheet, track);
             tracks.emplace_back(track);
+            track            = {};
             sheet.addedTrack = true;
         }
 
         if(QFile::exists(trackPath) || !sheet.skipNotFound) {
             sheet.currentFile = PlaylistParser::readMetadata(Track{trackPath});
-            track             = sheet.currentFile;
+
+            if(!track.trackNumber().isEmpty()) {
+                sheet.singleTrackFile = true;
+            }
+
+            track = sheet.currentFile;
 
             if(parts.size() > 2) {
                 sheet.type = parts.at(2);
@@ -340,9 +349,10 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
                 tracks.emplace_back(track);
             }
 
-            track               = sheet.currentFile;
-            sheet.hasValidIndex = false;
-            sheet.addedTrack    = false;
+            track                 = sheet.currentFile;
+            sheet.singleTrackFile = false;
+            sheet.hasValidIndex   = false;
+            sheet.addedTrack      = false;
 
             track.setTrackNumber(parts.at(1));
         }
@@ -350,7 +360,9 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
     else if(field.compare(u"INDEX", Qt::CaseInsensitive) == 0) {
         if(value == u"01" && parts.size() > 2) {
             if(const auto start = msfToMs(parts.at(2))) {
-                track.setOffset(start.value());
+                if(track.trackNumber() == u"01" || !sheet.singleTrackFile) {
+                    track.setOffset(start.value());
+                }
                 sheet.hasValidIndex = true;
             }
         }
