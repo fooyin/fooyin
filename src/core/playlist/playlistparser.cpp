@@ -55,21 +55,33 @@ QString PlaylistParser::determineTrackPath(const QUrl& url, const QDir& dir, Pat
 
 QByteArray PlaylistParser::toUtf8(QIODevice* file)
 {
+    const QByteArray data = file->readAll();
+    if(data.isEmpty()) {
+        return {};
+    }
+
     QStringDecoder toUtf16;
 
-    const QByteArray preload = file->peek(1024);
-    auto encoding            = QStringConverter::encodingForData(preload);
+    auto checkEncoding = [](std::optional<QStringConverter::Encoding>& encoding) {
+        if(encoding == QStringConverter::Latin1) {
+            encoding = QStringConverter::Utf8;
+        }
+    };
+
+    auto encoding = QStringConverter::encodingForData(data);
     if(encoding) {
+        checkEncoding(encoding);
         toUtf16 = QStringDecoder{encoding.value()};
     }
     else {
-        const auto encodingName = Utils::detectEncoding(preload);
+        const auto encodingName = Utils::detectEncoding(data);
         if(encodingName.isEmpty()) {
             return {};
         }
 
         encoding = QStringConverter::encodingForName(encodingName.constData());
         if(encoding) {
+            checkEncoding(encoding);
             toUtf16 = QStringDecoder{encoding.value()};
         }
         else {
@@ -79,11 +91,6 @@ QByteArray PlaylistParser::toUtf8(QIODevice* file)
 
     if(!toUtf16.isValid()) {
         toUtf16 = QStringDecoder{QStringConverter::Utf8};
-    }
-
-    const QByteArray data = file->readAll();
-    if(data.isEmpty()) {
-        return {};
     }
 
     QString string = toUtf16(data);
