@@ -184,7 +184,8 @@ void ApplicationPrivate::setupConnections()
     m_settings->subscribe<Settings::Core::Shutdown>(m_self, [this]() {
         savePlaybackState();
 
-        if(m_playerController->playState() == Player::PlayState::Playing) {
+        const auto state = m_engine.engineState();
+        if(state == PlaybackState::Playing || state == PlaybackState::Fading) {
             QObject::connect(&m_engine, &EngineController::finished, m_self, Application::quit);
             m_playerController->stop();
         }

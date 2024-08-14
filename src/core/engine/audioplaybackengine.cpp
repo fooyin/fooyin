@@ -66,6 +66,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderPro
     , m_ending{false}
     , m_decoding{false}
     , m_updatingTrack{false}
+    , m_pauseNextTrack{false}
     , m_renderer{new AudioRenderer(this)}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
@@ -200,12 +201,12 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
 void AudioPlaybackEngine::play()
 {
-    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::Invalid || m_status == TrackStatus::Unreadable) {
+    if(!trackIsValid()) {
         return;
     }
 
-    if(m_state == PlaybackState::Stopped) {
-        if(m_status == TrackStatus::Buffered || m_status == TrackStatus::End) {
+    if(m_state == PlaybackState::Stopped && !m_renderer->isFading()) {
+        if(m_status == TrackStatus::Loaded || m_status == TrackStatus::Buffered || m_status == TrackStatus::End) {
             if(m_status == TrackStatus::End) {
                 seek(0);
                 emit positionChanged(0);
@@ -233,7 +234,7 @@ void AudioPlaybackEngine::play()
 
 void AudioPlaybackEngine::pause()
 {
-    if(m_status == TrackStatus::NoTrack || m_status == TrackStatus::Invalid) {
+    if(!trackIsValid()) {
         return;
     }
 
@@ -441,6 +442,11 @@ void AudioPlaybackEngine::playOutput()
         m_pendingSeek = {};
     }
 
+    if(m_state == PlaybackState::Stopped && m_renderer->isFading()) {
+        // Resumed while fading out
+        seek(0);
+    }
+
     if(m_outputState == AudioOutput::State::Disconnected) {
         if(m_renderer->init(m_format)) {
             m_outputState = AudioOutput::State::None;
@@ -451,39 +457,46 @@ void AudioPlaybackEngine::playOutput()
         }
     }
 
+    QObject::disconnect(m_renderer, &AudioRenderer::paused, this, nullptr);
+
     startPlayback();
 
     if(m_state == PlaybackState::Stopped && m_currentTrack.offset() > 0) {
         m_decoder->seek(m_currentTrack.offset());
     }
 
-    const PlaybackState prevState = updateState(PlaybackState::Playing);
+    const bool canFade = m_settings->value<Settings::Core::Internal::EngineFading>()
+                      && (m_state == PlaybackState::Paused || m_renderer->isFading());
+    const int fadeLength = canFade ? calculateFadeLength(m_fadeIntervals.inPauseStop) : 0;
 
-    const bool canFade
-        = m_settings->value<Settings::Core::Internal::EngineFading>()
-       && (prevState == PlaybackState::Paused || prevState == PlaybackState::Fading || m_renderer->isFading());
-    const int fadeInterval = canFade ? m_fadeIntervals.inPauseStop : 0;
-
-    m_renderer->pause(false, fadeInterval);
+    m_renderer->pause(false, fadeLength);
     changeTrackStatus(TrackStatus::Buffered);
     m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
+
+    updateState(PlaybackState::Playing);
 }
 
 void AudioPlaybackEngine::pauseOutput()
 {
     auto delayedPause = [this]() {
         m_bufferTimer.stop();
-        updateState(PlaybackState::Paused);
-        m_clock.setPaused(true);
+        if(m_state != PlaybackState::Stopped) {
+            updateState(PlaybackState::Paused);
+        }
     };
 
     QObject::connect(m_renderer, &AudioRenderer::paused, this, delayedPause, Qt::SingleShotConnection);
 
-    const int fadeInterval
-        = m_settings->value<Settings::Core::Internal::EngineFading>() ? m_fadeIntervals.outPauseStop : 0;
-    m_renderer->pause(true, fadeInterval);
+    const int fadeLength = m_settings->value<Settings::Core::Internal::EngineFading>()
+                             ? calculateFadeLength(m_fadeIntervals.outPauseStop)
+                             : 0;
+    if(fadeLength < m_fadeIntervals.outPauseStop) {
+        m_pauseNextTrack = true;
+    }
 
-    if(fadeInterval > 0 && m_state != PlaybackState::Stopped) {
+    m_renderer->pause(true, fadeLength);
+
+    if(fadeLength > 0 && m_state != PlaybackState::Stopped) {
         updateState(PlaybackState::Fading);
     }
 }
@@ -495,11 +508,16 @@ void AudioPlaybackEngine::stopOutput()
         emit finished();
     };
 
-    const bool canFade
-        = m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0;
+    const bool canFade = m_state != PlaybackState::Paused && m_settings->value<Settings::Core::Internal::EngineFading>()
+                      && m_fadeIntervals.outPauseStop > 0;
     if(canFade) {
+        const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
+        if(fadeLength < m_fadeIntervals.outPauseStop) {
+            m_pauseNextTrack = true;
+        }
+
         QObject::connect(m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
-        m_renderer->pause(true, m_fadeIntervals.outPauseStop);
+        m_renderer->pause(true, fadeLength);
     }
     else {
         stopEngine();
@@ -557,6 +575,11 @@ void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 
 void AudioPlaybackEngine::onRendererFinished()
 {
+    if(m_pauseNextTrack) {
+        m_pauseNextTrack = false;
+        return;
+    }
+
     if(m_currentTrack.hasCue()) {
         return;
     }
@@ -565,6 +588,34 @@ void AudioPlaybackEngine::onRendererFinished()
     m_clock.sync(m_duration);
 
     changeTrackStatus(TrackStatus::End);
+}
+
+bool AudioPlaybackEngine::trackIsValid() const
+{
+    return m_status != TrackStatus::NoTrack && m_status != TrackStatus::Invalid && m_status != TrackStatus::Unreadable;
+}
+
+int AudioPlaybackEngine::calculateFadeLength(int initialValue) const
+{
+    if(initialValue <= 0) {
+        return 0;
+    }
+
+    if(m_duration == std::numeric_limits<uint64_t>::max()) {
+        return initialValue;
+    }
+
+    const auto remaining
+        = (m_lastPosition > m_duration) ? m_duration - (m_lastPosition % m_duration) : m_duration - m_lastPosition;
+    if(remaining <= 100) {
+        return 0;
+    }
+
+    if(std::cmp_less(remaining, initialValue)) {
+        return static_cast<int>(remaining);
+    }
+
+    return initialValue;
 }
 } // namespace Fooyin
 

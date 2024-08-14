@@ -246,6 +246,11 @@ void EngineHandler::setup()
     p->changeOutput(p->m_settings->value<Settings::Core::AudioOutput>());
 }
 
+PlaybackState EngineHandler::engineState() const
+{
+    return p->m_engineState;
+}
+
 OutputNames EngineHandler::getAllOutputs() const
 {
     OutputNames outputs;

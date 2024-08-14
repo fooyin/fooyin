@@ -93,6 +93,7 @@ void AudioRenderer::stop()
 
     resetFade(0);
     resetBuffer();
+    m_fadeVolume = -1;
 }
 
 void AudioRenderer::closeOutput()
@@ -110,6 +111,7 @@ void AudioRenderer::reset()
 
     resetFade(0);
     resetBuffer();
+    m_fadeVolume = -1;
 }
 
 bool AudioRenderer::isPaused() const
