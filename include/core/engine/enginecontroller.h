@@ -40,6 +40,8 @@ public:
         : QObject{parent}
     { }
 
+    [[nodiscard]] virtual PlaybackState engineState() const = 0;
+
     /** Returns a list of all output names. */
     [[nodiscard]] virtual OutputNames getAllOutputs() const = 0;
 

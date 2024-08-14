@@ -716,7 +716,7 @@ void FFmpegDecoder::seek(uint64_t pos)
 
 AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 {
-    if(!p->m_isDecoding || p->m_error) {
+    if(!p->m_isDecoding || p->m_error || !p->m_context) {
         return {};
     }
 
