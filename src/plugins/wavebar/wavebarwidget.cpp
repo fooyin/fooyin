@@ -28,11 +28,14 @@
 #include <gui/widgets/seekcontainer.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QVBoxLayout>
+
+using namespace std::chrono_literals;
 
 // TODO: Make setting
 constexpr auto SeekDelta = 5000;
@@ -59,7 +62,6 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     QObject::connect(m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
     QObject::connect(m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &WaveBarWidget::changeTrack);
     QObject::connect(playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
     QObject::connect(playerController, &PlayerController::playStateChanged, this,
                      [this](Player::PlayState state) { m_seekbar->setPlaying(state != Player::PlayState::Stopped); });
@@ -77,6 +79,12 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     QObject::connect(m_container, &SeekContainer::totalClicked, this, [this]() {
         rescaleWaveform(); // Switching to elapsed total may change the width
     });
+
+    auto* throttler = new SignalThrottler(this);
+    throttler->setTimeout(250ms);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, throttler, &SignalThrottler::throttle);
+    QObject::connect(throttler, &SignalThrottler::triggered, this,
+                     [this]() { changeTrack(m_playerController->currentTrack()); });
 }
 
 QString WaveBarWidget::name() const

@@ -14,6 +14,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/math.h
     ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/paths.h
+    ${CMAKE_SOURCE_DIR}/include/utils/signalthrottler.h
     ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/stardelegate.h
@@ -70,6 +71,7 @@ set(SOURCES
     paths.cpp
     scrollarea.cpp
     scrollarea.h
+    signalthrottler.cpp
     simpletreeview.cpp
     simpletreeview.h
     slider.cpp
