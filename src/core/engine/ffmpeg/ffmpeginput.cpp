@@ -428,6 +428,7 @@ public:
     AudioBuffer m_buffer;
     int m_bufferPos{0};
     int64_t m_seekPos{0};
+    uint64_t m_currentPos{0};
     int m_skipBytes{0};
 };
 
@@ -438,6 +439,8 @@ void FFmpegInputPrivate::reset()
     m_isDecoding = false;
     m_draining   = false;
     m_bufferPos  = 0;
+    m_currentPos = 0;
+    m_skipBytes  = 0;
     m_buffer.clear();
 
     m_context.reset();
@@ -579,15 +582,16 @@ int FFmpegInputPrivate::receiveAVFrames()
         return result;
     }
 
-    const auto sampleCount = m_audioFormat.bytesPerFrame() * frame.sampleCount();
+    const auto sampleCount   = m_audioFormat.bytesPerFrame() * frame.sampleCount();
+    const uint64_t startTime = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : frame.ptsMs();
 
     if(m_codec.isPlanar()) {
-        m_buffer = {m_audioFormat, frame.ptsMs()};
+        m_buffer = {m_audioFormat, startTime};
         m_buffer.resize(static_cast<size_t>(sampleCount));
         interleave(frame.avFrame()->data, m_buffer);
     }
     else {
-        m_buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, frame.ptsMs()};
+        m_buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, startTime};
     }
 
     // Handle seeking of APE files
@@ -603,6 +607,8 @@ int FFmpegInputPrivate::receiveAVFrames()
             m_buffer.resize(sampleCount - len);
         }
     }
+
+    m_currentPos += m_audioFormat.durationForBytes(m_buffer.byteCount());
 
     return result;
 }
@@ -666,11 +672,12 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     }
     avcodec_flush_buffers(m_codec.context());
 
-    m_bufferPos = 0;
-    m_buffer    = {};
-    m_eof       = false;
-    m_draining  = false;
-    m_skipBytes = 0;
+    m_bufferPos  = 0;
+    m_buffer     = {};
+    m_eof        = false;
+    m_draining   = false;
+    m_skipBytes  = 0;
+    m_currentPos = pos;
 }
 
 FFmpegDecoder::FFmpegDecoder()
