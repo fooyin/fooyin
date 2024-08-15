@@ -20,6 +20,7 @@
 #pragma once
 
 #include "audioclock.h"
+#include "audiorenderer.h"
 #include "internalcoresettings.h"
 
 #include <core/engine/audioengine.h>
@@ -30,7 +31,6 @@
 #include <QFile>
 
 namespace Fooyin {
-class AudioRenderer;
 class SettingsManager;
 
 class AudioPlaybackEngine : public AudioEngine
@@ -38,41 +38,38 @@ class AudioPlaybackEngine : public AudioEngine
     Q_OBJECT
 
 public:
-    explicit AudioPlaybackEngine(std::shared_ptr<AudioLoader> decoderProvider, SettingsManager* settings,
+    explicit AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
                                  QObject* parent = nullptr);
     ~AudioPlaybackEngine() override;
 
-    void seek(uint64_t pos) override;
-
-    void changeTrack(const Fooyin::Track& track) override;
+    void changeTrack(const Track& track) override;
 
     void play() override;
     void pause() override;
     void stop() override;
 
+    void seek(uint64_t pos) override;
     void setVolume(double volume) override;
 
-    void setAudioOutput(const Fooyin::OutputCreator& output, const QString& device) override;
+    void setAudioOutput(const OutputCreator& output, const QString& device) override;
     void setOutputDevice(const QString& device) override;
 
 protected:
     void timerEvent(QTimerEvent* event) override;
+
+    PlaybackState updateState(PlaybackState state) override;
 
 private:
     void resetWorkers();
     void stopWorkers(bool full = false);
 
     void handleOutputState(AudioOutput::State outState);
-    PlaybackState updateState(PlaybackState newState);
-    TrackStatus changeTrackStatus(TrackStatus newStatus);
 
+    void checkOpenSource();
     void setupDuration();
-    bool updateFormat(const AudioFormat& nextFormat);
-
-    void startPlayback();
-    void playOutput();
-    void pauseOutput();
-    void stopOutput();
+    void updateFormat(const AudioFormat& nextFormat, const std::function<void(bool)>& callback);
+    bool checkReadyToDecode();
+    bool waitForTrackLoaded(PlaybackState state);
 
     void readNextBuffer();
     void updatePosition();
@@ -80,17 +77,16 @@ private:
     void onRendererFinished();
 
     [[nodiscard]] bool trackIsValid() const;
+    [[nodiscard]] bool trackCanPlay() const;
+    [[nodiscard]] bool isFading() const;
     [[nodiscard]] int calculateFadeLength(int initialValue) const;
 
-    std::shared_ptr<AudioLoader> m_decoderProvider;
-    ArchiveReader* m_reader;
+    std::shared_ptr<AudioLoader> m_audioLoader;
     AudioDecoder* m_decoder;
     SettingsManager* m_settings;
 
     AudioClock m_clock;
 
-    TrackStatus m_status;
-    PlaybackState m_state;
     AudioOutput::State m_outputState;
 
     uint64_t m_startPosition;
@@ -112,7 +108,8 @@ private:
     std::unique_ptr<QFile> m_file;
     AudioFormat m_format;
 
-    AudioRenderer* m_renderer;
+    QThread* m_outputThread;
+    AudioRenderer m_renderer;
 
     QBasicTimer m_posTimer;
     QBasicTimer m_bufferTimer;

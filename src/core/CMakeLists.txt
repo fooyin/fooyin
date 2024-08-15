@@ -59,6 +59,7 @@ set(SOURCES
     engine/audioclock.cpp
     engine/audioclock.h
     engine/audioconverter.cpp
+    engine/audioengine.cpp
     engine/audioinput.cpp
     engine/audioformat.cpp
     engine/audioplaybackengine.cpp

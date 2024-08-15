@@ -26,18 +26,19 @@
 namespace Fooyin {
 class Track;
 
-enum class PlaybackState
+enum class PlaybackState : uint8_t
 {
-    Stopped,
+    Stopped = 0,
     Playing,
-    Fading,
+    FadingIn,
+    FadingOut,
     Paused,
     Error
 };
 
-enum class TrackStatus
+enum class TrackStatus : uint8_t
 {
-    NoTrack,
+    NoTrack = 0,
     Loading,
     Loaded,
     Buffered,
@@ -55,7 +56,8 @@ public:
         : QObject{parent}
     { }
 
-    virtual void seek(uint64_t pos) = 0;
+    [[nodiscard]] PlaybackState playbackState() const;
+    [[nodiscard]] TrackStatus trackStatus() const;
 
     virtual void changeTrack(const Track& track) = 0;
 
@@ -63,6 +65,7 @@ public:
     virtual void pause() = 0;
     virtual void stop()  = 0;
 
+    virtual void seek(uint64_t pos)       = 0;
     virtual void setVolume(double volume) = 0;
 
     virtual void setAudioOutput(const OutputCreator& output, const QString& device) = 0;
@@ -76,5 +79,13 @@ signals:
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
     void finished();
+
+protected:
+    virtual PlaybackState updateState(PlaybackState state);
+    virtual TrackStatus updateTrackStatus(TrackStatus status);
+
+private:
+    std::atomic<PlaybackState> m_playbackState;
+    std::atomic<TrackStatus> m_trackStatus;
 };
 } // namespace Fooyin

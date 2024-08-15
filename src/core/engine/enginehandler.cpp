@@ -23,10 +23,10 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audioengine.h>
-#include <core/track.h>
-
 #include <core/player/playercontroller.h>
+#include <core/track.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 
 #include <QLoggingCategory>
 #include <QThread>
@@ -40,10 +40,10 @@ public:
     EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<AudioLoader> decoderProvider,
                          PlayerController* playerController, SettingsManager* settings);
 
-    void handleStateChange(PlaybackState state);
+    void handleStateChange(PlaybackState state) const;
     void handleTrackChange(const Track& track);
     void handleTrackStatus(TrackStatus status) const;
-    void playStateChanged(Player::PlayState state);
+    void playStateChanged(Player::PlayState state) const;
 
     void changeOutput(const QString& output);
     void updateVolume(double volume);
@@ -54,7 +54,6 @@ public:
 
     QThread m_engineThread;
     AudioEngine* m_engine;
-    PlaybackState m_engineState{PlaybackState::Stopped};
 
     std::map<QString, OutputCreator> m_outputs;
 
@@ -91,13 +90,17 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     QObject::connect(m_engine, &AudioEngine::trackStatusChanged, m_self,
                      [this](TrackStatus status) { handleTrackStatus(status); });
 
+    auto* throttler = new SignalThrottler(m_self);
+    throttler->setTimeout(50);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, throttler, &SignalThrottler::throttle);
+    QObject::connect(throttler, &SignalThrottler::triggered, m_self,
+                     [this]() { handleTrackChange(m_playerController->currentTrack()); });
+
     updateVolume(m_settings->value<Settings::Core::OutputVolume>());
 }
 
-void EngineHandlerPrivate::handleStateChange(PlaybackState state)
+void EngineHandlerPrivate::handleStateChange(PlaybackState state) const
 {
-    m_engineState = state;
-
     switch(state) {
         case(PlaybackState::Error):
         case(PlaybackState::Stopped):
@@ -107,7 +110,8 @@ void EngineHandlerPrivate::handleStateChange(PlaybackState state)
             m_playerController->pause();
             break;
         case(PlaybackState::Playing):
-        case(PlaybackState::Fading):
+        case(PlaybackState::FadingIn):
+        case(PlaybackState::FadingOut):
             break;
     }
 }
@@ -140,28 +144,21 @@ void EngineHandlerPrivate::handleTrackStatus(TrackStatus status) const
     emit m_self->trackStatusChanged(status);
 }
 
-void EngineHandlerPrivate::playStateChanged(Player::PlayState state)
+void EngineHandlerPrivate::playStateChanged(Player::PlayState state) const
 {
-    if(m_engineState == PlaybackState::Error) {
+    if(m_engine->playbackState() == PlaybackState::Error) {
         return;
     }
 
-    QMetaObject::invokeMethod(
-        m_engine,
-        [this, state]() {
-            switch(state) {
-                case(Player::PlayState::Playing):
-                    m_engine->play();
-                    break;
-                case(Player::PlayState::Paused):
-                    m_engine->pause();
-                    break;
-                case(Player::PlayState::Stopped):
-                    m_engine->stop();
-                    break;
-            }
-        },
-        Qt::QueuedConnection);
+    if(state == Player::PlayState::Playing) {
+        QMetaObject::invokeMethod(m_engine, &AudioEngine::play);
+    }
+    else if(state == Player::PlayState::Paused) {
+        QMetaObject::invokeMethod(m_engine, &AudioEngine::pause);
+    }
+    else if(state == Player::PlayState::Stopped) {
+        QMetaObject::invokeMethod(m_engine, &AudioEngine::stop);
+    }
 }
 
 void EngineHandlerPrivate::changeOutput(const QString& output)
@@ -248,7 +245,7 @@ void EngineHandler::setup()
 
 PlaybackState EngineHandler::engineState() const
 {
-    return p->m_engineState;
+    return p->m_engine->playbackState();
 }
 
 OutputNames EngineHandler::getAllOutputs() const
@@ -270,7 +267,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     }
 
     if(auto out = p->m_outputs.at(output)()) {
-        const bool isCurrent = p->m_engineState != PlaybackState::Stopped
+        const bool isCurrent = p->m_engine->playbackState() != PlaybackState::Stopped
                             && (p->m_currentOutput.name == output
                                 || p->m_currentOutput.device.compare(output, Qt::CaseInsensitive) == 0);
         return out->getAllDevices(isCurrent);

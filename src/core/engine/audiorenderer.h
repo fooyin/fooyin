@@ -38,16 +38,14 @@ class AudioRenderer : public QObject
 
 public:
     explicit AudioRenderer(QObject* parent = nullptr);
-    ~AudioRenderer() override;
 
-    bool init(const AudioFormat& format);
+    void init(const AudioFormat& format);
     void start();
     void stop();
     void closeOutput();
+    void drainOutput();
     void reset();
 
-    [[nodiscard]] bool isPaused() const;
-    [[nodiscard]] bool isFading() const;
     void pause(bool paused, int fadeLength = 0);
 
     void queueBuffer(const AudioBuffer& buffer);
@@ -60,9 +58,11 @@ public:
     [[nodiscard]] QString deviceError() const;
 
 signals:
+    void initialised(bool success);
     void paused();
     void outputStateChanged(AudioOutput::State state);
     void bufferProcessed(const Fooyin::AudioBuffer& buffer);
+    void error(const QString& error);
     void finished();
 
 protected:
@@ -95,7 +95,7 @@ private:
 
     std::queue<AudioBuffer> m_bufferQueue;
     AudioBuffer m_tempBuffer;
-    int m_totalSamplesWritten;
+    int m_samplePos;
     int m_currentBufferOffset;
     bool m_currentBufferResampled;
 
