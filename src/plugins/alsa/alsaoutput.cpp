@@ -26,8 +26,8 @@
 
 Q_LOGGING_CATEGORY(ALSA, "ALSA")
 
-constexpr auto DefaultBufferSize = 8192;
-constexpr auto DefaultPeriodSize = 1024;
+constexpr auto BufferLength = 200;
+constexpr auto PeriodLength = 40;
 
 namespace {
 void printError(const QString& message)
@@ -161,8 +161,8 @@ AlsaOutput::AlsaOutput()
     , m_started{false}
     , m_device{QStringLiteral("default")}
     , m_volume{1.0}
-    , m_bufferSize{DefaultBufferSize}
-    , m_periodSize{DefaultPeriodSize}
+    , m_bufferSize{8192}
+    , m_periodSize{1024}
 { }
 
 AlsaOutput::~AlsaOutput()
@@ -378,22 +378,30 @@ bool AlsaOutput::initAlsa()
         m_format.setChannelCount(static_cast<int>(channelCount));
     }
 
-    snd_pcm_uframes_t maxBufferSize;
-    err = snd_pcm_hw_params_get_buffer_size_max(hwParams, &maxBufferSize);
-    if(checkError(err, QStringLiteral("Unable to get max buffer size"))) {
+    uint32_t maxBufferTime;
+    err = snd_pcm_hw_params_get_buffer_time_max(hwParams, &maxBufferTime, nullptr);
+    if(checkError(err, QStringLiteral("Unable to get max buffer time"))) {
+        return false;
+    }
+    uint32_t maxPeriodTime;
+    err = snd_pcm_hw_params_get_period_time_max(hwParams, &maxPeriodTime, nullptr);
+    if(checkError(err, QStringLiteral("Unable to get max period time"))) {
         return false;
     }
 
-    m_bufferSize = std::min(m_bufferSize, maxBufferSize);
-    err          = snd_pcm_hw_params_set_buffer_size_near(handle, hwParams, &m_bufferSize);
-    if(checkError(err, QStringLiteral("Unable to set buffer size"))) {
+    uint32_t bufferTime = std::min<uint32_t>(BufferLength * 1000, maxBufferTime);
+    err                 = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
+    if(checkError(err, QStringLiteral("Unable to set buffer time"))) {
+        return false;
+    }
+    uint32_t periodTime = std::min<uint32_t>(PeriodLength * 1000, maxPeriodTime);
+    err                 = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
+    if(checkError(err, QStringLiteral("Unable to set period time"))) {
         return false;
     }
 
-    err = snd_pcm_hw_params_set_period_size_near(handle, hwParams, &m_periodSize, nullptr);
-    if(checkError(err, QStringLiteral("Failed to set period size"))) {
-        return false;
-    }
+    m_bufferSize = m_format.framesForDuration(bufferTime / 1000);
+    m_periodSize = m_format.framesForDuration(periodTime / 1000);
 
     err = snd_pcm_hw_params(handle, hwParams);
     if(checkError(err, QStringLiteral("Failed to apply hardware parameters"))) {
