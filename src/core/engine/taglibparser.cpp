@@ -784,6 +784,22 @@ void readId3Tags(const TagLib::ID3v2::Tag* id3Tags, Fooyin::Track& track)
 
     const TagLib::ID3v2::FrameListMap& frames = id3Tags->frameListMap();
 
+    if(id3Tags->header()->majorVersion() == 3) {
+        // Handle '/' being used as a separator for artists in v2.3
+        if(frames.contains("TPE1")) {
+            const TagLib::ID3v2::FrameList& artistsFrame = frames["TPE1"];
+            if(!artistsFrame.isEmpty()) {
+                const QString artist = convertString(artistsFrame.front()->toString());
+                // Ignore common artist names
+                if(artist.contains(u"/") && (artist != u"AC/DC" || artist != u"AC / DC")) {
+                    QStringList artists = artist.split(u'/', Qt::SkipEmptyParts);
+                    std::ranges::transform(artists, artists.begin(), [](QString& entry) { return entry.trimmed(); });
+                    track.setArtists(artists);
+                }
+            }
+        }
+    }
+
     if(frames.contains("TRCK")) {
         const TagLib::ID3v2::FrameList& trackFrame = frames["TRCK"];
         if(!trackFrame.isEmpty()) {
