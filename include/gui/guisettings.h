@@ -48,6 +48,7 @@ enum GuiSettings : uint32_t
     ToolButtonStyle       = 8 | Type::Int,
     MainWindowPixelRatio  = 9 | Type::Double,
     StarRatingSize        = 10 | Type::Int,
+    Style                 = 11 | Type::String,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

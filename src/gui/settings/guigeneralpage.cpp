@@ -32,15 +32,18 @@
 
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QProxyStyle>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
+#include <QStyleFactory>
 #include <QVBoxLayout>
 
 namespace Fooyin {
@@ -67,6 +70,8 @@ private:
     LayoutProvider* m_layoutProvider;
     EditableLayout* m_editableLayout;
     SettingsManager* m_settings;
+
+    QComboBox* m_styles;
 
     QRadioButton* m_detectIconTheme;
     QRadioButton* m_lightTheme;
@@ -96,6 +101,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     : m_layoutProvider{layoutProvider}
     , m_editableLayout{editableLayout}
     , m_settings{settings}
+    , m_styles{new QComboBox(this)}
     , m_detectIconTheme{new QRadioButton(tr("Auto-detect theme"), this)}
     , m_lightTheme{new QRadioButton(tr("Light"), this)}
     , m_darkTheme{new QRadioButton(tr("Dark"), this)}
@@ -118,13 +124,21 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* importLayoutBtn = new QPushButton(tr("Import Layout"), this);
     auto* exportLayoutBtn = new QPushButton(tr("Export Layout"), this);
 
+    auto* themeBox       = new QGroupBox(tr("Theme"), this);
+    auto* themeBoxLayout = new QGridLayout(themeBox);
+
+    auto* styleLabel = new QLabel(tr("Style") + u":", this);
+
+    themeBoxLayout->addWidget(styleLabel, 0, 0);
+    themeBoxLayout->addWidget(m_styles, 0, 1);
+    themeBoxLayout->setColumnStretch(2, 1);
+
     auto* iconThemeBox       = new QGroupBox(tr("Icon Theme"), this);
     auto* iconThemeBoxLayout = new QGridLayout(iconThemeBox);
     iconThemeBoxLayout->addWidget(m_detectIconTheme, 0, 0, 1, 2);
     iconThemeBoxLayout->addWidget(m_lightTheme, 1, 0);
     iconThemeBoxLayout->addWidget(m_darkTheme, 1, 1);
     iconThemeBoxLayout->addWidget(m_systemTheme, 2, 0, 1, 2);
-
     iconThemeBoxLayout->setColumnStretch(2, 1);
 
     setupBoxLayout->addWidget(quickSetup);
@@ -190,6 +204,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     int row{0};
     mainLayout->addWidget(setupBox, row++, 0, 1, 2);
+    mainLayout->addWidget(themeBox, row++, 0, 1, 2);
     mainLayout->addWidget(iconThemeBox, row++, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
@@ -212,7 +227,17 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
 void GuiGeneralPageWidget::load()
 {
-    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
+    m_styles->clear();
+
+    const QStringList keys = QStyleFactory::keys();
+    for(const QString& key : keys) {
+        m_styles->addItem(key);
+    }
+
+    const auto style = m_settings->value<Style>();
+    if(!style.isEmpty()) {
+        m_styles->setCurrentText(style);
+    }
 
     const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<IconTheme>());
     switch(iconTheme) {
@@ -229,6 +254,8 @@ void GuiGeneralPageWidget::load()
             m_darkTheme->setChecked(true);
             break;
     }
+
+    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
 
     m_overrideMargin->setChecked(m_settings->value<EditableLayoutMargin>() >= 0);
     m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
@@ -257,6 +284,8 @@ void GuiGeneralPageWidget::load()
 
 void GuiGeneralPageWidget::apply()
 {
+    m_settings->set<Style>(m_styles->currentText());
+
     IconThemeOption iconThemeOption;
 
     if(m_detectIconTheme->isChecked()) {
@@ -311,6 +340,7 @@ void GuiGeneralPageWidget::apply()
 
 void GuiGeneralPageWidget::reset()
 {
+    m_settings->reset<Style>();
     m_settings->reset<IconTheme>();
     m_settings->reset<SplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();

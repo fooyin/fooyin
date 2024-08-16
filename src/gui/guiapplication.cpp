@@ -67,6 +67,7 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QApplication>
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -75,6 +76,7 @@
 #include <QPixmapCache>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QStyleFactory>
 
 Q_LOGGING_CATEGORY(GUI_APP, "GUI")
 
@@ -102,7 +104,7 @@ public:
     void setupUtilitesMenu() const;
 
     void mute() const;
-    void restoreIconTheme() const;
+    void restoreTheme() const;
     void registerLayouts();
 
     void showPropertiesDialog() const;
@@ -189,7 +191,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, CorePluginCo
     setupScanMenu();
     setupRatingMenu();
     setupUtilitesMenu();
-    restoreIconTheme();
+    restoreTheme();
     registerLayouts();
 
     widgets->registerWidgets();
@@ -294,6 +296,8 @@ void GuiApplicationPrivate::setupConnections()
     });
 
     settings->subscribe<Settings::Gui::LayoutEditing>(self, [this]() { updateWindowTitle(); });
+    settings->subscribe<Settings::Gui::Style>(
+        self, [](const QString& style) { qApp->setStyle(QStyleFactory::create(style)); });
 }
 
 void GuiApplicationPrivate::initialisePlugins()
@@ -529,9 +533,12 @@ void GuiApplicationPrivate::mute() const
     }
 }
 
-void GuiApplicationPrivate::restoreIconTheme() const
+void GuiApplicationPrivate::restoreTheme() const
 {
-    using namespace Settings::Gui::Internal;
+    const auto style = settings->value<Settings::Gui::Style>();
+    if(!style.isEmpty()) {
+        qApp->setStyle(QStyleFactory::create(style));
+    }
 
     const auto iconTheme = static_cast<IconThemeOption>(settings->value<Settings::Gui::IconTheme>());
     switch(iconTheme) {
@@ -550,7 +557,7 @@ void GuiApplicationPrivate::restoreIconTheme() const
             break;
     }
 
-    QIcon::setFallbackThemeName(settings->value<SystemIconTheme>());
+    QIcon::setFallbackThemeName(settings->value<Settings::Gui::Internal::SystemIconTheme>());
 }
 
 void GuiApplicationPrivate::registerLayouts()

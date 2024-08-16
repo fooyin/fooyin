@@ -59,6 +59,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<PlaybackFollowsCursor>(false, QStringLiteral("Playlist/PlaybackFollowsCursor"));
     m_settings->createSetting<ToolButtonStyle>(0, QStringLiteral("Interface/ToolButtonStyle"));
     m_settings->createSetting<StarRatingSize>(17, QStringLiteral("Interface/StarRatingSize"));
+    m_settings->createSetting<Style>(QString{}, QStringLiteral("Interface/Style"));
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
