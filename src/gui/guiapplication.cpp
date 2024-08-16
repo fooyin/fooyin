@@ -76,6 +76,7 @@
 #include <QPixmapCache>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QStyle>
 #include <QStyleFactory>
 
 Q_LOGGING_CATEGORY(GUI_APP, "GUI")
@@ -535,9 +536,12 @@ void GuiApplicationPrivate::mute() const
 
 void GuiApplicationPrivate::restoreTheme() const
 {
-    const auto style = settings->value<Settings::Gui::Style>();
-    if(!style.isEmpty()) {
-        qApp->setStyle(QStyleFactory::create(style));
+    const auto currStyle = settings->value<Settings::Gui::Style>();
+    if(auto* style = QStyleFactory::create(currStyle)) {
+        QApplication::setStyle(style);
+    }
+    else if(auto* systemStyle = QStyleFactory::create(settings->value<Settings::Gui::Internal::SystemStyle>())) {
+        QApplication::setStyle(systemStyle);
     }
 
     const auto iconTheme = static_cast<IconThemeOption>(settings->value<Settings::Gui::IconTheme>());

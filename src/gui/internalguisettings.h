@@ -128,7 +128,8 @@ enum GuiInternalSettings : uint32_t
     QueueViewerLeftScript   = 60 | Type::String,
     QueueViewerRightScript  = 61 | Type::String,
     PlaylistMiddleClick     = 62 | Type::Int,
-    InfoDisplayPrefer       = 63 | Type::Int
+    InfoDisplayPrefer       = 63 | Type::Int,
+    SystemStyle             = 64 | Type::String,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

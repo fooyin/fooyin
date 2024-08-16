@@ -30,6 +30,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
+#include <QApplication>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
@@ -229,6 +230,7 @@ void GuiGeneralPageWidget::load()
 {
     m_styles->clear();
 
+    m_styles->addItem(QStringLiteral("System default"));
     const QStringList keys = QStyleFactory::keys();
     for(const QString& key : keys) {
         m_styles->addItem(key);
@@ -237,6 +239,9 @@ void GuiGeneralPageWidget::load()
     const auto style = m_settings->value<Style>();
     if(!style.isEmpty()) {
         m_styles->setCurrentText(style);
+    }
+    else {
+        m_styles->setCurrentIndex(0);
     }
 
     const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<IconTheme>());

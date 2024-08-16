@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QIcon>
 #include <QPalette>
+#include <QStyle>
 
 constexpr int PixmapCacheSize = 32;
 
@@ -144,5 +145,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                 QStringLiteral("PlaybackQueue/RightScript"));
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, QStringLiteral("PlaylistWidget/MiddleClickBehaviour"));
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, QStringLiteral("SelectionInfo/PreferDisplay"));
+    m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
 }
 } // namespace Fooyin
