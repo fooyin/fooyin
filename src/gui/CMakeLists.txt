@@ -185,6 +185,8 @@ set(SOURCES
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/shellintegrationpage.cpp
+    settings/shellintegrationpage.h
     settings/dirbrowser/dirbrowserpage.cpp
     settings/dirbrowser/dirbrowserpage.h
     settings/library/librarygeneralpage.cpp

@@ -20,9 +20,11 @@
 #include "libraryscanner.h"
 
 #include "database/trackdatabase.h"
+#include "internalcoresettings.h"
 #include "librarywatcher.h"
 #include "playlist/playlistloader.h"
 
+#include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/playlist/playlist.h>
 #include <core/playlist/playlistparser.h>
@@ -35,12 +37,12 @@
 
 #include <QBuffer>
 #include <QDir>
+#include <QDirIterator>
 #include <QFileSystemWatcher>
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
 #include <ranges>
-#include <stack>
 
 Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner", QtInfoMsg)
 
@@ -48,112 +50,35 @@ constexpr auto BatchSize   = 250;
 constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";
 
 namespace {
-struct LibraryDirectory
+void sortFiles(QFileInfoList& files)
 {
-    QString directory;
-    QStringList files;
-    QStringList playlists;
-};
-using LibraryDirectories = std::vector<LibraryDirectory>;
+    std::sort(files.begin(), files.end(), [](const QFileInfo& a, const QFileInfo& b) {
+        return a.filePath() < b.filePath();
+        ;
+    });
 
-bool fileIsValid(const QString& file)
-{
-    const QFileInfo fileInfo{file};
-    return fileInfo.size() > 0;
-}
-
-bool hasMatchingExtension(const QString& file, const QStringList& extensions)
-{
-    if(file.isEmpty()) {
+    std::stable_sort(files.begin(), files.end(), [](const QFileInfo& a, const QFileInfo& b) {
+        const bool aIsCue = a.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
+        const bool bIsCue = b.suffix().compare(u"cue", Qt::CaseInsensitive) == 0;
+        if(aIsCue && !bIsCue) {
+            return true;
+        }
+        if(!aIsCue && bIsCue) {
+            return false;
+        }
         return false;
-    }
-
-    return std::ranges::any_of(extensions, [&file](const QString& wildcard) {
-        QRegularExpression re{QRegularExpression::wildcardToRegularExpression(wildcard)};
-        re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-
-        const QRegularExpressionMatch match = re.match(file);
-        return match.hasMatch();
     });
 }
 
-std::optional<QString> findMatchingCue(const QFileInfo& file)
+QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExtensions,
+                       const QStringList& excludeExtensions)
 {
-    static const QStringList cueExtensions{QStringLiteral("*.cue")};
+    QFileInfoList files;
 
-    const QDir dir           = file.absoluteDir();
-    const QFileInfoList cues = dir.entryInfoList(cueExtensions, QDir::Files);
-
-    for(const auto& cue : cues) {
-        if(cue.completeBaseName() == file.completeBaseName() || cue.fileName().contains(file.fileName())) {
-            return cue.absoluteFilePath();
-        }
+    QStringList nameFilters{restrictExtensions};
+    for(const auto& ext : excludeExtensions) {
+        nameFilters.removeAll(ext);
     }
-
-    return {};
-}
-
-LibraryDirectories getDirectories(const QString& baseDirectory, const QStringList& trackExtensions)
-{
-    LibraryDirectories dirs;
-
-    std::stack<QDir> stack;
-    stack.emplace(baseDirectory);
-
-    static const QStringList playlistExtensions{Fooyin::Playlist::supportedPlaylistExtensions()};
-    static const QStringList cueExtensions{QStringLiteral("*.cue")};
-
-    while(!stack.empty()) {
-        QDir dir = stack.top();
-        stack.pop();
-
-        const QFileInfo info{dir.absolutePath()};
-        QStringList files;
-        QStringList playlists;
-
-        if(info.isDir()) {
-            QFileInfoList subDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-            for(const auto& subDir : subDirs | std::views::reverse) {
-                stack.emplace(subDir.absoluteFilePath());
-            }
-            const QFileInfoList foundFiles = dir.entryInfoList(trackExtensions, QDir::Files);
-            for(const auto& file : foundFiles) {
-                const QString path = file.absoluteFilePath();
-                if(fileIsValid(path)) {
-                    files.append(path);
-                }
-            }
-            const QFileInfoList foundCues = dir.entryInfoList(cueExtensions, QDir::Files);
-            for(const auto& file : foundCues) {
-                playlists.append(file.absoluteFilePath());
-            }
-
-            dirs.emplace_back(dir.absolutePath(), files, playlists);
-        }
-        else {
-            dir.cdUp();
-            if(hasMatchingExtension(info.fileName(), trackExtensions)) {
-                files.append(info.absoluteFilePath());
-                if(const auto cue = findMatchingCue(info)) {
-                    playlists.append(cue.value());
-                }
-            }
-            else if(hasMatchingExtension(info.fileName(), playlistExtensions)) {
-                playlists.append(info.absoluteFilePath());
-            }
-
-            dirs.emplace_back(dir.absolutePath(), files, playlists);
-        }
-    }
-
-    return dirs;
-}
-
-LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& trackExtensions)
-{
-    std::unordered_map<QString, LibraryDirectory> processedDirs;
-
-    static const QStringList cueExtensions{QStringLiteral("*.cue")};
 
     for(const QUrl& url : urls) {
         if(!url.isLocalFile()) {
@@ -161,37 +86,34 @@ LibraryDirectories getDirectories(const QList<QUrl>& urls, const QStringList& tr
         }
 
         const QFileInfo file{url.toLocalFile()};
-        const auto dir = file.absolutePath();
 
-        if(processedDirs.contains(dir) && !file.isDir()) {
-            auto& libDir = processedDirs.at(dir);
-            if(hasMatchingExtension(file.fileName(), trackExtensions)) {
-                const QString path = file.absoluteFilePath();
-                if(fileIsValid(path)) {
-                    libDir.files.append(file.absoluteFilePath());
+        if(file.isDir()) {
+            QDirIterator dirIt{file.absoluteFilePath(), Fooyin::Utils::extensionsToWildcards(nameFilters), QDir::Files,
+                               QDirIterator::Subdirectories};
+            while(dirIt.hasNext()) {
+                dirIt.next();
+                const QFileInfo info = dirIt.fileInfo();
+                if(info.size() > 0) {
+                    files.append(info);
                 }
-            }
-            else if(!libDir.playlists.contains(file.absoluteFilePath())
-                    && hasMatchingExtension(file.fileName(), cueExtensions)) {
-                libDir.playlists.append(file.absoluteFilePath());
             }
         }
         else {
-            const auto libDirs = getDirectories(file.absoluteFilePath(), trackExtensions);
-            for(const auto& libDir : libDirs) {
-                processedDirs.emplace(libDir.directory, libDir);
+            if(nameFilters.contains(file.suffix())) {
+                files.emplace_back(file.absoluteFilePath());
             }
         }
     }
 
-    LibraryDirectories dirs;
-    dirs.reserve(processedDirs.size());
+    sortFiles(files);
 
-    for(const auto& [_, dir] : processedDirs) {
-        dirs.emplace_back(dir);
-    }
+    return files;
+}
 
-    return dirs;
+QFileInfoList getFiles(const QString& baseDirectory, const QStringList& restrictExtensions,
+                       const QStringList& excludeExtensions)
+{
+    return getFiles({QUrl::fromLocalFile(baseDirectory)}, restrictExtensions, excludeExtensions);
 }
 } // namespace
 
@@ -207,6 +129,7 @@ public:
         , m_audioLoader{std::move(audioLoader)}
     { }
 
+    void finishScan();
     void cleanupScan();
 
     void addWatcher(const Fooyin::LibraryInfo& library);
@@ -221,6 +144,7 @@ public:
 
     [[nodiscard]] TrackList readTracks(const QString& filepath) const;
     [[nodiscard]] TrackList readArchiveTracks(const QString& filepath) const;
+    [[nodiscard]] TrackList readPlaylist(const QString& filepath) const;
     [[nodiscard]] TrackList readPlaylistTracks(const QString& filepath, bool addMissing = false) const;
     [[nodiscard]] TrackList readEmbeddedPlaylistTracks(const Track& track) const;
 
@@ -235,12 +159,14 @@ public:
     void readNewTrack(const QString& file);
 
     void readFile(const QString& file, bool onlyModified);
+    void populateExistingTracks(const TrackList& tracks, bool includeMissing = true);
     bool getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified);
 
     void changeLibraryStatus(LibraryInfo::Status status);
 
     LibraryScanner* m_self;
 
+    FySettings m_settings;
     DbConnectionPoolPtr m_dbPool;
     std::shared_ptr<PlaylistLoader> m_playlistLoader;
     std::shared_ptr<AudioLoader> m_audioLoader;
@@ -254,7 +180,7 @@ public:
     TrackList m_tracksToStore;
     TrackList m_tracksToUpdate;
 
-    std::unordered_map<QString, Track> m_trackPaths;
+    std::unordered_map<QString, TrackList> m_trackPaths;
     std::unordered_map<QString, TrackList> m_existingArchives;
     std::unordered_map<QString, Track> m_missingFiles;
     std::unordered_map<QString, Track> m_missingHashes;
@@ -262,17 +188,28 @@ public:
     std::unordered_map<QString, TrackList> m_missingCueTracks;
     std::set<QString> m_cueFilesScanned;
 
-    int m_tracksProcessed{0};
-    int m_totalTracks{0};
+    int m_filesScanned{0};
+    int m_totalFiles{0};
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
 };
 
+void LibraryScannerPrivate::finishScan()
+{
+    if(m_self->state() != LibraryScanner::Paused) {
+        m_self->setState(LibraryScanner::Idle);
+        m_filesScanned = m_totalFiles;
+        reportProgress();
+        cleanupScan();
+        emit m_self->finished();
+    }
+}
+
 void LibraryScannerPrivate::cleanupScan()
 {
     m_audioLoader->destroyThreadInstance();
-    m_tracksProcessed = 0;
-    m_totalTracks     = 0;
+    m_filesScanned = 0;
+    m_totalFiles   = 0;
     m_tracksToStore.clear();
     m_tracksToUpdate.clear();
     m_trackPaths.clear();
@@ -303,12 +240,12 @@ void LibraryScannerPrivate::addWatcher(const LibraryInfo& library)
 
 void LibraryScannerPrivate::reportProgress() const
 {
-    emit m_self->progressChanged(m_tracksProcessed, m_totalTracks);
+    emit m_self->progressChanged(m_filesScanned, m_totalFiles);
 }
 
 void LibraryScannerPrivate::fileScanned()
 {
-    ++m_tracksProcessed;
+    ++m_filesScanned;
     reportProgress();
 }
 
@@ -459,6 +396,33 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     }
 
     return {};
+}
+
+TrackList LibraryScannerPrivate::readPlaylist(const QString& filepath) const
+{
+    TrackList tracks;
+
+    const TrackList playlistTracks = readPlaylistTracks(filepath, true);
+    for(const Track& playlistTrack : playlistTracks) {
+        const auto trackKey = playlistTrack.filepath();
+
+        if(m_trackPaths.contains(trackKey)) {
+            const auto existingTracks = m_trackPaths.at(trackKey);
+            for(const Track& track : existingTracks) {
+                if(track.uniqueFilepath() == playlistTrack.uniqueFilepath()) {
+                    tracks.push_back(track);
+                    break;
+                }
+            }
+        }
+        else {
+            Track track{playlistTrack};
+            track.generateHash();
+            tracks.push_back(track);
+        }
+    }
+
+    return tracks;
 }
 
 TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool addMissing) const
@@ -680,7 +644,7 @@ void LibraryScannerPrivate::readFile(const QString& file, bool onlyModified)
     }
 
     if(m_trackPaths.contains(file)) {
-        const Track& libraryTrack = m_trackPaths.at(file);
+        const Track& libraryTrack = m_trackPaths.at(file).front();
 
         if(!libraryTrack.isEnabled() || libraryTrack.libraryId() != m_currentLibrary.id
            || libraryTrack.modifiedTime() < lastModified || !onlyModified) {
@@ -712,65 +676,75 @@ void LibraryScannerPrivate::readFile(const QString& file, bool onlyModified)
     }
 }
 
-bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
+void LibraryScannerPrivate::populateExistingTracks(const TrackList& tracks, bool includeMissing)
 {
     for(const Track& track : tracks) {
-        m_trackPaths.emplace(track.filepath(), track);
+        m_trackPaths[track.filepath()].push_back(track);
         if(track.isInArchive()) {
             m_existingArchives[track.archivePath()].push_back(track);
         }
 
-        if(track.hasCue()) {
-            const auto cuePath = track.cuePath() == u"Embedded" ? track.filepath() : track.cuePath();
-            m_existingCueTracks[cuePath].emplace_back(track);
-            if(!QFileInfo::exists(cuePath)) {
-                m_missingCueTracks[cuePath].emplace_back(track);
+        if(includeMissing) {
+            if(track.hasCue()) {
+                const auto cuePath = track.cuePath() == u"Embedded" ? track.filepath() : track.cuePath();
+                m_existingCueTracks[cuePath].emplace_back(track);
+                if(!QFileInfo::exists(cuePath)) {
+                    m_missingCueTracks[cuePath].emplace_back(track);
+                }
             }
-        }
 
-        if(!track.isInArchive()) {
-            if(!QFileInfo::exists(track.filepath())) {
-                m_missingFiles.emplace(track.filename(), track);
-                m_missingHashes.emplace(track.hash(), track);
+            if(!track.isInArchive()) {
+                if(!QFileInfo::exists(track.filepath())) {
+                    m_missingFiles.emplace(track.filename(), track);
+                    m_missingHashes.emplace(track.hash(), track);
+                }
             }
-        }
-        else {
-            if(!QFileInfo::exists(track.archivePath())) {
-                m_missingFiles.emplace(track.filename(), track);
-                m_missingHashes.emplace(track.hash(), track);
+            else {
+                if(!QFileInfo::exists(track.archivePath())) {
+                    m_missingFiles.emplace(track.filename(), track);
+                    m_missingHashes.emplace(track.hash(), track);
+                }
             }
         }
     }
+}
 
-    const auto dirs   = getDirectories(path, Utils::extensionsToWildcards(m_audioLoader->supportedFileExtensions()));
-    m_tracksProcessed = 0;
-    m_totalTracks     = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](int sum, const LibraryDirectory& dir) {
-        return sum + static_cast<int>(dir.files.size()) + static_cast<int>(dir.playlists.size());
-    });
+bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const TrackList& tracks, bool onlyModified)
+{
+    populateExistingTracks(tracks);
 
+    QStringList restrictExtensions = m_settings.value(Settings::Core::Internal::LibraryRestrictTypes).toStringList();
+    const QStringList excludeExtensions
+        = m_settings.value(Settings::Core::Internal::LibraryExcludeTypes, QStringList{QStringLiteral("cue")})
+              .toStringList();
+
+    if(restrictExtensions.empty()) {
+        restrictExtensions = m_audioLoader->supportedFileExtensions();
+        restrictExtensions.append(QStringLiteral("cue"));
+    }
+
+    const auto files = getFiles(path, restrictExtensions, excludeExtensions);
+
+    m_filesScanned = 0;
+    m_totalFiles   = static_cast<int>(files.size());
     reportProgress();
 
-    for(const auto& [_, files, cues] : dirs) {
-        for(const auto& cue : cues) {
-            if(!m_self->mayRun()) {
-                return false;
-            }
-
-            readCue(cue, onlyModified);
-
-            fileScanned();
+    for(const auto& file : files) {
+        if(!m_self->mayRun()) {
+            return false;
         }
 
-        for(const auto& file : files) {
-            if(!m_self->mayRun()) {
-                return false;
-            }
+        const QString filepath = file.absoluteFilePath();
 
-            readFile(file, onlyModified);
-
-            fileScanned();
-            checkBatchFinished();
+        if(file.suffix() == u"cue") {
+            readCue(filepath, onlyModified);
         }
+        else {
+            readFile(filepath, onlyModified);
+        }
+
+        fileScanned();
+        checkBatchFinished();
     }
 
     for(auto& track : m_missingFiles | std::views::values) {
@@ -820,8 +794,8 @@ void LibraryScanner::stopThread()
         QMetaObject::invokeMethod(
             this,
             [this]() {
-                p->m_tracksProcessed = p->m_totalTracks;
-                emit progressChanged(p->m_tracksProcessed, p->m_totalTracks);
+                p->m_filesScanned = p->m_totalFiles;
+                emit progressChanged(p->m_filesScanned, p->m_totalFiles);
             },
             Qt::QueuedConnection);
     }
@@ -891,7 +865,6 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
     setState(Running);
 
     p->m_currentLibrary = library;
-
     p->changeLibraryStatus(LibraryInfo::Status::Scanning);
 
     p->getAndSaveAllTracks(dir, tracks, true);
@@ -911,24 +884,16 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
 {
     setState(Running);
 
-    p->m_tracksProcessed = 0;
-    p->m_totalTracks     = static_cast<int>(tracks.size());
+    const Timer timer;
 
-    const auto handleFinished = [this]() {
-        if(state() != Paused) {
-            setState(Idle);
-            p->m_tracksProcessed = p->m_totalTracks;
-            p->reportProgress();
-            p->cleanupScan();
-            emit finished();
-        }
-    };
+    p->m_filesScanned = 0;
+    p->m_totalFiles   = static_cast<int>(tracks.size());
 
     TrackList tracksToUpdate;
 
     for(const Track& track : tracks) {
         if(!mayRun()) {
-            handleFinished();
+            p->finishScan();
             return;
         }
 
@@ -958,95 +923,72 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
         emit scanUpdate({{}, tracksToUpdate});
     }
 
-    handleFinished();
+    qCInfo(LIB_SCANNER) << "Scan of" << p->m_totalFiles << "tracks took" << timer.elapsedFormatted();
+
+    p->finishScan();
 }
 
 void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>& urls)
 {
     setState(Running);
 
+    const Timer timer;
+
     TrackList tracksScanned;
 
-    std::unordered_map<QString, TrackList> trackMap;
+    p->populateExistingTracks(libraryTracks, false);
+    p->m_filesScanned = 0;
 
-    for(const Track& track : libraryTracks) {
-        trackMap[track.filepath()].push_back(track);
-        if(track.isInArchive()) {
-            p->m_existingArchives[track.archivePath()].push_back(track);
-        }
+    const QStringList playlistExtensions = Playlist::supportedPlaylistExtensions();
+    QStringList restrictExtensions
+        = p->m_settings.value(Settings::Core::Internal::ExternalRestrictTypes).toStringList();
+    const QStringList excludeExtensions
+        = p->m_settings.value(Settings::Core::Internal::ExternalExcludeTypes).toStringList();
+
+    if(restrictExtensions.empty()) {
+        restrictExtensions = p->m_audioLoader->supportedFileExtensions();
+        restrictExtensions.append(playlistExtensions);
     }
 
-    p->m_tracksProcessed = 0;
+    const auto files = getFiles(urls, restrictExtensions, excludeExtensions);
 
-    const auto handleFinished = [this]() {
-        if(state() != Paused) {
-            setState(Idle);
-            p->m_tracksProcessed = p->m_totalTracks;
-            p->reportProgress();
-            p->cleanupScan();
-            emit finished();
-        }
-    };
-
-    const LibraryDirectories dirs
-        = getDirectories(urls, Utils::extensionsToWildcards(p->m_audioLoader->supportedFileExtensions()));
-
-    p->m_totalTracks = std::accumulate(dirs.cbegin(), dirs.cend(), 0, [](size_t sum, const LibraryDirectory& dir) {
-        return sum + dir.files.size() + dir.playlists.size();
-    });
+    p->m_totalFiles = static_cast<int>(files.size());
 
     p->reportProgress();
     std::set<QString> filesScanned;
 
-    for(const auto& [_, files, playlists] : dirs) {
+    for(const auto& file : files) {
         if(!mayRun()) {
-            handleFinished();
+            p->finishScan();
             return;
         }
 
-        for(const auto& playlist : playlists) {
-            const TrackList playlistTracks = p->readPlaylistTracks(playlist, true);
-            for(const Track& playlistTrack : playlistTracks) {
-                const auto trackKey = playlistTrack.filepath();
+        const QString filepath = file.absoluteFilePath();
 
-                if(trackMap.contains(trackKey)) {
-                    const auto existingTracks = trackMap.at(trackKey);
-                    for(const Track& track : existingTracks) {
-                        if(track.uniqueFilepath() == playlistTrack.uniqueFilepath()) {
-                            tracksScanned.push_back(track);
-                            break;
-                        }
-                    }
-                }
-
-                if(!trackMap.contains(trackKey)) {
-                    Track track{playlistTrack};
-                    track.generateHash();
-                    tracksScanned.push_back(track);
-                }
-
-                filesScanned.emplace(playlistTrack.filepath());
+        if(playlistExtensions.contains(file.suffix())) {
+            const TrackList playlistTracks = p->readPlaylist(filepath);
+            for(const Track& track : playlistTracks) {
+                filesScanned.emplace(track.filepath());
+                tracksScanned.emplace_back(track);
             }
-
             p->fileScanned();
         }
-
-        for(const auto& file : files) {
-            if(!filesScanned.contains(file)) {
-                if(trackMap.contains(file)) {
-                    const auto existingTracks = trackMap.at(file);
+        else {
+            if(!filesScanned.contains(filepath)) {
+                if(p->m_trackPaths.contains(filepath)) {
+                    const auto existingTracks = p->m_trackPaths.at(filepath);
                     for(const Track& track : existingTracks) {
                         tracksScanned.push_back(track);
                     }
                 }
-                else if(p->m_existingArchives.contains(file)) {
-                    const auto existingTracks = p->m_existingArchives.at(file);
+                else if(p->m_existingArchives.contains(filepath)) {
+                    const auto existingTracks = p->m_existingArchives.at(filepath);
                     for(const Track& track : existingTracks) {
                         tracksScanned.push_back(track);
                     }
                 }
                 else {
-                    TrackList tracks = p->readTracks(file);
+                    TrackList tracks = p->readTracks(filepath);
                     if(tracks.empty()) {
                         continue;
                     }
@@ -1074,63 +1016,31 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
         emit scannedTracks(tracksScanned);
     }
 
-    handleFinished();
+    qCInfo(LIB_SCANNER) << "Scan of" << p->m_totalFiles << "files took" << timer.elapsedFormatted();
+
+    p->finishScan();
 }
 
 void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QUrl>& urls)
 {
     setState(Running);
 
+    const Timer timer;
+
     TrackList tracksScanned;
 
-    std::unordered_map<QString, TrackList> trackMap;
-
-    for(const Track& track : libraryTracks) {
-        trackMap[track.filepath()].push_back(track);
-        if(track.isInArchive()) {
-            p->m_existingArchives[track.archivePath()].push_back(track);
-        }
-    }
-
-    p->m_tracksProcessed = 0;
-
-    const auto handleFinished = [this]() {
-        if(state() != Paused) {
-            setState(Idle);
-            p->m_tracksProcessed = p->m_totalTracks;
-            p->reportProgress();
-            p->cleanupScan();
-            emit finished();
-        }
-    };
-
+    p->populateExistingTracks(libraryTracks, false);
+    p->m_filesScanned = 0;
     p->reportProgress();
 
     if(!mayRun()) {
-        handleFinished();
+        p->finishScan();
         return;
     }
 
     for(const auto& url : urls) {
-        const TrackList playlistTracks = p->readPlaylistTracks(url.toLocalFile(), true);
-        for(const Track& playlistTrack : playlistTracks) {
-            const auto trackKey = playlistTrack.filepath();
-
-            if(trackMap.contains(trackKey)) {
-                const auto existingTracks = trackMap.at(trackKey);
-                for(const Track& track : existingTracks) {
-                    if(track.uniqueFilepath() == playlistTrack.uniqueFilepath()) {
-                        tracksScanned.push_back(track);
-                        break;
-                    }
-                }
-            }
-            else {
-                Track track{playlistTrack};
-                track.generateHash();
-                tracksScanned.push_back(track);
-            }
-        }
+        const TrackList playlistTracks = p->readPlaylist(url.toLocalFile());
+        tracksScanned.insert(tracksScanned.end(), playlistTracks.cbegin(), playlistTracks.cend());
     }
 
     if(!tracksScanned.empty()) {
@@ -1138,7 +1048,9 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
         emit playlistLoaded(tracksScanned);
     }
 
-    handleFinished();
+    qCInfo(LIB_SCANNER) << "Scan of playlist took" << timer.elapsedFormatted();
+
+    p->finishScan();
 }
 } // namespace Fooyin
 

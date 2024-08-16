@@ -179,6 +179,7 @@ constexpr auto LibraryTreeGroups  = "Fooyin.Page.Widgets.LibraryTree.Groups";
 constexpr auto StatusWidget       = "Fooyin.Page.Widgets.Status";
 constexpr auto PlaybackQueue      = "Fooyin.Page.Widgets.PlaybackQueue";
 constexpr auto Plugins            = "Fooyin.Page.Plugins";
+constexpr auto ShellIntegration   = "Fooyin.Page.ShellIntegration";
 constexpr auto Shortcuts          = "Fooyin.Page.Shortcuts";
 constexpr auto DirBrowser         = "Fooyin.Page.Widgets.DirBrowser";
 } // namespace Page

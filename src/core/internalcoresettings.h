@@ -70,6 +70,10 @@ constexpr auto AutoExportPlaylistsPath = "Playlist/AutoExportPath";
 constexpr auto MarkUnavailable         = "Library/MarkUnavailable";
 constexpr auto MarkUnavailableStartup  = "Library/MarkUnavailableOnStartup";
 constexpr auto SavePlaybackState       = "Player/SavePlaybackState";
+constexpr auto LibraryRestrictTypes    = "Library/RestrictTypes";
+constexpr auto LibraryExcludeTypes     = "Library/ExcludeTypes";
+constexpr auto ExternalRestrictTypes   = "Library/ExternalRestrictTypes";
+constexpr auto ExternalExcludeTypes    = "Library/ExternalExcludeTypes";
 
 enum CoreInternalSettings : uint32_t
 {

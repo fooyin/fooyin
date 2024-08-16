@@ -34,8 +34,10 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QInputDialog>
+#include <QLabel>
 #include <QMenu>
 #include <QPushButton>
 
@@ -99,6 +101,9 @@ private:
     LibraryTableView* m_libraryView;
     LibraryModel* m_model;
 
+    QLineEdit* m_restrictTypes;
+    QLineEdit* m_excludeTypes;
+
     QCheckBox* m_autoRefresh;
     QCheckBox* m_monitorLibraries;
     QCheckBox* m_markUnavailable;
@@ -114,6 +119,8 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     , m_settings{settings}
     , m_libraryView{new LibraryTableView(actionManager, this)}
     , m_model{new LibraryModel(m_libraryManager, this)}
+    , m_restrictTypes{new QLineEdit(this)}
+    , m_excludeTypes{new QLineEdit(this)}
     , m_autoRefresh{new QCheckBox(tr("Auto refresh on startup"), this)}
     , m_monitorLibraries{new QCheckBox(tr("Monitor libraries"), this)}
     , m_markUnavailable{new QCheckBox(tr("Mark unavailable tracks on playback"), this)}
@@ -133,10 +140,27 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     m_autoRefresh->setToolTip(tr("Scan libraries for changes on startup"));
     m_monitorLibraries->setToolTip(tr("Monitor libraries for external changes"));
 
-    auto* mainLayout = new QGridLayout(this);
+    auto* fileTypesGroup  = new QGroupBox(tr("File Types"), this);
+    auto* fileTypesLayout = new QGridLayout(fileTypesGroup);
+
+    auto* restrictLabel = new QLabel(tr("Restrict to") + u":", this);
+    auto* excludeLabel  = new QLabel(tr("Exclude") + u":", this);
+
+    auto* fileHint = new QLabel(QStringLiteral("🛈 e.g. \"mp3;m4a\""), this);
 
     int row{0};
+    fileTypesLayout->addWidget(restrictLabel, row, 0);
+    fileTypesLayout->addWidget(m_restrictTypes, row++, 1);
+    fileTypesLayout->addWidget(excludeLabel, row, 0);
+    fileTypesLayout->addWidget(m_excludeTypes, row++, 1);
+    fileTypesLayout->addWidget(fileHint, row++, 1);
+    fileTypesLayout->setColumnStretch(1, 1);
+
+    auto* mainLayout = new QGridLayout(this);
+
+    row = 0;
     mainLayout->addWidget(m_libraryView, row++, 0, 1, 2);
+    mainLayout->addWidget(fileTypesGroup, row++, 0, 1, 2);
     mainLayout->addWidget(m_autoRefresh, row++, 0, 1, 2);
     mainLayout->addWidget(m_monitorLibraries, row++, 0, 1, 2);
     mainLayout->addWidget(m_markUnavailable, row++, 0, 1, 2);
@@ -156,6 +180,15 @@ void LibraryGeneralPageWidget::load()
 {
     m_model->populate();
 
+    const QStringList restrictExtensions
+        = m_settings->fileValue(Settings::Core::Internal::LibraryRestrictTypes).toStringList();
+    const QStringList excludeExtensions
+        = m_settings->fileValue(Settings::Core::Internal::LibraryExcludeTypes, QStringList{QStringLiteral("cue")})
+              .toStringList();
+
+    m_restrictTypes->setText(restrictExtensions.join(u';'));
+    m_excludeTypes->setText(excludeExtensions.join(u';'));
+
     m_autoRefresh->setChecked(m_settings->value<Settings::Core::AutoRefresh>());
     m_monitorLibraries->setChecked(m_settings->value<Settings::Core::Internal::MonitorLibraries>());
     m_markUnavailable->setChecked(m_settings->fileValue(Settings::Core::Internal::MarkUnavailable, false).toBool());
@@ -169,6 +202,11 @@ void LibraryGeneralPageWidget::apply()
 {
     m_model->processQueue();
 
+    m_settings->fileSet(Settings::Core::Internal::LibraryRestrictTypes,
+                        m_restrictTypes->text().split(u';', Qt::SkipEmptyParts));
+    m_settings->fileSet(Settings::Core::Internal::LibraryExcludeTypes,
+                        m_excludeTypes->text().split(u';', Qt::SkipEmptyParts));
+
     m_settings->set<Settings::Core::AutoRefresh>(m_autoRefresh->isChecked());
     m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
     m_settings->fileSet(Settings::Core::Internal::MarkUnavailable, m_markUnavailable->isChecked());
@@ -179,6 +217,9 @@ void LibraryGeneralPageWidget::apply()
 
 void LibraryGeneralPageWidget::reset()
 {
+    m_settings->fileRemove(Settings::Core::Internal::LibraryRestrictTypes);
+    m_settings->fileRemove(Settings::Core::Internal::LibraryExcludeTypes);
+
     m_settings->reset<Settings::Core::AutoRefresh>();
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailable);

@@ -49,6 +49,7 @@
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
+#include "settings/shellintegrationpage.h"
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/playbackqueuepage.h"
 #include "settings/widgets/statuswidgetpage.h"
@@ -251,6 +252,7 @@ void Widgets::registerPages()
     new PlaybackQueuePage(m_settings, this);
     new StatusWidgetPage(m_settings, this);
     new PluginPage(m_core.pluginManager, m_settings, this);
+    new ShellIntegrationPage(m_settings, this);
 }
 
 void Widgets::registerPropertiesTabs()
