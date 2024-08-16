@@ -296,6 +296,10 @@ QString WaveformGenerator::setup(const Track& track, int samplesPerChannel)
         return {};
     }
 
+    if(!track.isInArchive() && !QFile::exists(track.filepath())) {
+        return {};
+    }
+
     m_decoder = m_audioLoader->decoderForTrack(track);
     if(!m_decoder) {
         return {};
