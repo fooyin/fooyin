@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "core/engine/audiooutput.h"
+#include <core/coresettings.h>
+#include <core/engine/audiooutput.h>
 
 #include <alsa/asoundlib.h>
 
@@ -72,6 +73,7 @@ private:
     bool attemptRecovery(snd_pcm_status_t* status);
     bool recoverState(OutputState* state = nullptr);
 
+    FySettings m_settings;
     AudioFormat m_format;
 
     bool m_initialised;

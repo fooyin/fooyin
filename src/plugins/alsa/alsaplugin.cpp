@@ -20,6 +20,7 @@
 #include "alsaplugin.h"
 
 #include "alsaoutput.h"
+#include "alsasettings.h"
 
 namespace Fooyin::Alsa {
 QString AlsaPlugin::name() const
@@ -32,6 +33,18 @@ OutputCreator AlsaPlugin::creator() const
     return []() {
         return std::make_unique<AlsaOutput>();
     };
+}
+
+bool AlsaPlugin::hasSettings() const
+{
+    return true;
+}
+
+void AlsaPlugin::showSettings(QWidget* parent)
+{
+    auto* dialog = new AlsaSettings(parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
 }
 } // namespace Fooyin::Alsa
 

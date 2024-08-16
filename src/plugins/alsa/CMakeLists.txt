@@ -12,6 +12,8 @@ create_fooyin_plugin_internal(
             alsaoutput.h
             alsaplugin.cpp
             alsaplugin.h
+            alsasettings.cpp
+            alsasettings.h
 )
 
 target_include_directories(

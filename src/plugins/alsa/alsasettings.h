@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,23 +19,30 @@
 
 #pragma once
 
-#include <core/engine/outputplugin.h>
-#include <core/plugins/plugin.h>
+#include <core/coresettings.h>
 
-namespace Fooyin::Alsa {
-class AlsaPlugin : public QObject,
-                   public Plugin,
-                   public OutputPlugin
+#include <QDialog>
+
+class QSpinBox;
+
+namespace Fooyin {
+constexpr auto BufferLengthSetting = "ALSA/BufferLength";
+constexpr auto DefaultBufferLength = 200;
+constexpr auto PeriodLengthSetting = "ALSA/PeriodLength";
+constexpr auto DefaultPeriodLength = 40;
+
+class AlsaSettings : public QDialog
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin/1.0" FILE "alsa.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::OutputPlugin)
 
 public:
-    [[nodiscard]] QString name() const override;
-    [[nodiscard]] OutputCreator creator() const override;
+    explicit AlsaSettings(QWidget* parent = nullptr);
 
-    [[nodiscard]] bool hasSettings() const override;
-    void showSettings(QWidget* parent) override;
+    void accept() override;
+
+private:
+    FySettings m_settings;
+    QSpinBox* m_bufferLength;
+    QSpinBox* m_periodLength;
 };
-} // namespace Fooyin::Alsa
+} // namespace Fooyin

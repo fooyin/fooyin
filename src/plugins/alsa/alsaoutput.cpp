@@ -19,15 +19,14 @@
 
 #include "alsaoutput.h"
 
+#include "alsasettings.h"
+
 #include <alsa/asoundlib.h>
 
 #include <QDebug>
 #include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(ALSA, "ALSA")
-
-constexpr auto BufferLength = 200;
-constexpr auto PeriodLength = 40;
 
 namespace {
 void printError(const QString& message)
@@ -389,13 +388,15 @@ bool AlsaOutput::initAlsa()
         return false;
     }
 
-    uint32_t bufferTime = std::min<uint32_t>(BufferLength * 1000, maxBufferTime);
-    err                 = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
+    uint32_t bufferTime = std::min<uint32_t>(
+        m_settings.value(QLatin1String{BufferLengthSetting}, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
+    err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
     if(checkError(err, QStringLiteral("Unable to set buffer time"))) {
         return false;
     }
-    uint32_t periodTime = std::min<uint32_t>(PeriodLength * 1000, maxPeriodTime);
-    err                 = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
+    uint32_t periodTime = std::min<uint32_t>(
+        m_settings.value(QLatin1String{PeriodLengthSetting}, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
+    err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
     if(checkError(err, QStringLiteral("Unable to set period time"))) {
         return false;
     }
