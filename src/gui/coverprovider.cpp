@@ -116,17 +116,17 @@ QString findDirectoryCover(const Fooyin::CoverPaths& paths, const Fooyin::Track&
 
     if(type == Fooyin::Track::Cover::Front) {
         for(const auto& path : paths.frontCoverPaths) {
-            filters.emplace_back(parser.evaluate(path, track));
+            filters.emplace_back(parser.evaluate(path.trimmed(), track));
         }
     }
     else if(type == Fooyin::Track::Cover::Back) {
         for(const auto& path : paths.backCoverPaths) {
-            filters.emplace_back(parser.evaluate(path, track));
+            filters.emplace_back(parser.evaluate(path.trimmed(), track));
         }
     }
     else if(type == Fooyin::Track::Cover::Artist) {
         for(const auto& path : paths.artistPaths) {
-            filters.emplace_back(parser.evaluate(path, track));
+            filters.emplace_back(parser.evaluate(path.trimmed(), track));
         }
     }
 
