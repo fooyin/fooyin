@@ -133,8 +133,11 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     m_clock.setPaused(true);
     m_clock.sync();
 
+    if(!checkOpenSource()) {
+        updateTrackStatus(TrackStatus::Invalid);
+        return;
+    }
     m_source.filepath = track.filepath();
-    checkOpenSource();
 
     const auto format = m_decoder->init(m_source, track, AudioDecoder::UpdateTracks);
     if(!format) {
@@ -467,18 +470,19 @@ void AudioPlaybackEngine::handleOutputState(AudioOutput::State outState)
     }
 }
 
-void AudioPlaybackEngine::checkOpenSource()
+bool AudioPlaybackEngine::checkOpenSource()
 {
     if(m_currentTrack.isInArchive()) {
-        return;
+        return true;
     }
 
     m_file = std::make_unique<QFile>(m_currentTrack.filepath());
     if(!m_file->open(QIODevice::ReadOnly)) {
         updateTrackStatus(TrackStatus::Invalid);
-        return;
+        return false;
     }
     m_source.device = m_file.get();
+    return true;
 }
 
 void AudioPlaybackEngine::setupDuration()
@@ -530,7 +534,9 @@ bool AudioPlaybackEngine::checkReadyToDecode()
         emit positionChanged(0);
     }
 
-    checkOpenSource();
+    if(!checkOpenSource()) {
+        return false;
+    }
 
     if(!m_decoder->init(m_source, m_currentTrack, AudioDecoder::UpdateTracks)) {
         updateTrackStatus(TrackStatus::Invalid);

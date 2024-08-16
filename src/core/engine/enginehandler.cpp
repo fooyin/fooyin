@@ -75,8 +75,6 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     m_engine->moveToThread(&m_engineThread);
     m_engineThread.start();
 
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
-                     [this](const Track& track) { handleTrackChange(track); });
     QObject::connect(m_playerController, &PlayerController::positionMoved, m_engine, &AudioEngine::seek);
     QObject::connect(&m_engineThread, &QThread::finished, m_engine, &AudioEngine::deleteLater);
     QObject::connect(m_engine, &AudioEngine::trackAboutToFinish, m_self, &EngineHandler::trackAboutToFinish);

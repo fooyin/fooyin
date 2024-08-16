@@ -65,7 +65,7 @@ private:
 
     void handleOutputState(AudioOutput::State outState);
 
-    void checkOpenSource();
+    bool checkOpenSource();
     void setupDuration();
     void updateFormat(const AudioFormat& nextFormat, const std::function<void(bool)>& callback);
     bool checkReadyToDecode();
