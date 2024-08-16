@@ -713,10 +713,11 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
 {
     populateExistingTracks(tracks);
 
-    QStringList restrictExtensions = m_settings.value(Settings::Core::Internal::LibraryRestrictTypes).toStringList();
+    using namespace Settings::Core::Internal;
+
+    QStringList restrictExtensions = m_settings.value(QLatin1String{LibraryRestrictTypes}).toStringList();
     const QStringList excludeExtensions
-        = m_settings.value(Settings::Core::Internal::LibraryExcludeTypes, QStringList{QStringLiteral("cue")})
-              .toStringList();
+        = m_settings.value(QLatin1String{LibraryExcludeTypes}, QStringList{QStringLiteral("cue")}).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = m_audioLoader->supportedFileExtensions();
@@ -939,11 +940,11 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     p->populateExistingTracks(libraryTracks, false);
     p->m_filesScanned = 0;
 
+    using namespace Settings::Core::Internal;
+
     const QStringList playlistExtensions = Playlist::supportedPlaylistExtensions();
-    QStringList restrictExtensions
-        = p->m_settings.value(Settings::Core::Internal::ExternalRestrictTypes).toStringList();
-    const QStringList excludeExtensions
-        = p->m_settings.value(Settings::Core::Internal::ExternalExcludeTypes).toStringList();
+    QStringList restrictExtensions       = p->m_settings.value(QLatin1String{ExternalRestrictTypes}).toStringList();
+    const QStringList excludeExtensions  = p->m_settings.value(QLatin1String{ExternalExcludeTypes}).toStringList();
 
     if(restrictExtensions.empty()) {
         restrictExtensions = p->m_audioLoader->supportedFileExtensions();
