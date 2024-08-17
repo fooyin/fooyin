@@ -372,6 +372,7 @@ void AutoHeaderView::hideHeaderSection(int logical)
     }
 
     hideSection(logical);
+    emit sectionVisiblityChanged(logical);
 
     if(!p->m_stretchEnabled) {
         return;
@@ -389,6 +390,8 @@ void AutoHeaderView::showHeaderSection(int logical)
     }
 
     showSection(logical);
+    emit sectionVisiblityChanged(logical);
+
     p->normaliseWidths();
     p->updateWidths();
 }

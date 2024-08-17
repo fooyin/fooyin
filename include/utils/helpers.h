@@ -71,7 +71,7 @@ Cntr filter(const Cntr& container, Pred pred)
 template <typename Cntr>
 Cntr sortByIndexes(const Cntr& target, const std::vector<int>& indexes)
 {
-    Cntr sorted(target.size());
+    Cntr sorted(indexes.size());
 
     for(size_t i{0}; i < indexes.size(); ++i) {
         sorted[i] = target[indexes.at(i)];

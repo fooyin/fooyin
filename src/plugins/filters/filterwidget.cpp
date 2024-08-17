@@ -468,6 +468,11 @@ void FilterWidget::setupConnections()
             m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
         }
     });
+    QObject::connect(m_header, &AutoHeaderView::sectionVisiblityChanged, this, [this]() {
+        if(m_view->viewMode() == ExpandedTreeView::ViewMode::Icon) {
+            m_model->setColumnOrder(Utils::logicalIndexOrder(m_header));
+        }
+    });
     QObject::connect(m_header, &QHeaderView::sectionMoved, this,
                      [this]() { m_model->setColumnOrder(Utils::logicalIndexOrder(m_header)); });
     QObject::connect(m_header, &QHeaderView::sortIndicatorChanged, m_sortProxy, &QSortFilterProxyModel::sort);

@@ -65,6 +65,7 @@ signals:
     void stretchChanged(bool enabled);
     void stateRestored();
     void leftClicked(int section, const QPoint& pos);
+    void sectionVisiblityChanged(int section);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
