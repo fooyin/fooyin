@@ -69,7 +69,7 @@ void sortFiles(QFileInfoList& files)
 }
 
 QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExtensions,
-                       const QStringList& excludeExtensions)
+                       const QStringList& excludeExtensions, const QStringList& playlistExtensions)
 {
     QFileInfoList files;
 
@@ -97,7 +97,7 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
             }
         }
         else {
-            if(nameFilters.contains(file.suffix())) {
+            if(playlistExtensions.contains(file.suffix())) {
                 files.emplace_back(file.absoluteFilePath());
             }
         }
@@ -111,7 +111,7 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
 QFileInfoList getFiles(const QString& baseDirectory, const QStringList& restrictExtensions,
                        const QStringList& excludeExtensions)
 {
-    return getFiles({QUrl::fromLocalFile(baseDirectory)}, restrictExtensions, excludeExtensions);
+    return getFiles({QUrl::fromLocalFile(baseDirectory)}, restrictExtensions, excludeExtensions, {});
 }
 } // namespace
 
@@ -133,7 +133,7 @@ public:
     void addWatcher(const Fooyin::LibraryInfo& library);
 
     void reportProgress() const;
-    void fileScanned();
+    void fileScanned(const QString& file);
 
     Track matchMissingTrack(const Track& track);
 
@@ -186,8 +186,8 @@ public:
     std::unordered_map<QString, TrackList> m_missingCueTracks;
     std::set<QString> m_cueFilesScanned;
 
-    int m_filesScanned{0};
-    int m_totalFiles{0};
+    std::set<QString> m_filesScanned;
+    size_t m_totalFiles{0};
 
     std::unordered_map<int, LibraryWatcher> m_watchers;
 };
@@ -196,7 +196,6 @@ void LibraryScannerPrivate::finishScan()
 {
     if(m_self->state() != LibraryScanner::Paused) {
         m_self->setState(LibraryScanner::Idle);
-        m_filesScanned = m_totalFiles;
         reportProgress();
         cleanupScan();
         emit m_self->finished();
@@ -206,8 +205,8 @@ void LibraryScannerPrivate::finishScan()
 void LibraryScannerPrivate::cleanupScan()
 {
     m_audioLoader->destroyThreadInstance();
-    m_filesScanned = 0;
-    m_totalFiles   = 0;
+    m_filesScanned.clear();
+    m_totalFiles = 0;
     m_tracksToStore.clear();
     m_tracksToUpdate.clear();
     m_trackPaths.clear();
@@ -238,12 +237,12 @@ void LibraryScannerPrivate::addWatcher(const LibraryInfo& library)
 
 void LibraryScannerPrivate::reportProgress() const
 {
-    emit m_self->progressChanged(m_filesScanned, m_totalFiles);
+    emit m_self->progressChanged(static_cast<int>(m_filesScanned.size()), static_cast<int>(m_totalFiles));
 }
 
-void LibraryScannerPrivate::fileScanned()
+void LibraryScannerPrivate::fileScanned(const QString& file)
 {
-    ++m_filesScanned;
+    m_filesScanned.emplace(file);
     reportProgress();
 }
 
@@ -724,8 +723,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
 
     const auto files = getFiles(path, restrictExtensions, excludeExtensions);
 
-    m_filesScanned = 0;
-    m_totalFiles   = static_cast<int>(files.size());
+    m_totalFiles = files.size();
     reportProgress();
 
     for(const auto& file : files) {
@@ -742,7 +740,7 @@ bool LibraryScannerPrivate::getAndSaveAllTracks(const QString& path, const Track
             readFile(filepath, onlyModified);
         }
 
-        fileScanned();
+        fileScanned(filepath);
         checkBatchFinished();
     }
 
@@ -792,10 +790,7 @@ void LibraryScanner::stopThread()
     if(state() == Running) {
         QMetaObject::invokeMethod(
             this,
-            [this]() {
-                p->m_filesScanned = p->m_totalFiles;
-                emit progressChanged(p->m_filesScanned, p->m_totalFiles);
-            },
+            [this]() { emit progressChanged(static_cast<int>(p->m_totalFiles), static_cast<int>(p->m_totalFiles)); },
             Qt::QueuedConnection);
     }
 
@@ -885,8 +880,7 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
 
     const Timer timer;
 
-    p->m_filesScanned = 0;
-    p->m_totalFiles   = static_cast<int>(tracks.size());
+    p->m_totalFiles = tracks.size();
 
     TrackList tracksToUpdate;
 
@@ -912,7 +906,7 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
             tracksToUpdate.push_back(updatedTrack);
         }
 
-        p->fileScanned();
+        p->fileScanned(track.filepath());
     }
 
     if(!tracksToUpdate.empty()) {
@@ -936,7 +930,6 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     TrackList tracksScanned;
 
     p->populateExistingTracks(libraryTracks, false);
-    p->m_filesScanned = 0;
 
     using namespace Settings::Core::Internal;
 
@@ -946,15 +939,14 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
     if(restrictExtensions.empty()) {
         restrictExtensions = p->m_audioLoader->supportedFileExtensions();
-        restrictExtensions.append(playlistExtensions);
+        restrictExtensions.append(QStringLiteral("cue"));
     }
 
-    const auto files = getFiles(urls, restrictExtensions, excludeExtensions);
+    const auto files = getFiles(urls, restrictExtensions, excludeExtensions, playlistExtensions);
 
-    p->m_totalFiles = static_cast<int>(files.size());
+    p->m_totalFiles = files.size();
 
     p->reportProgress();
-    std::set<QString> filesScanned;
 
     for(const auto& file : files) {
         if(!mayRun()) {
@@ -966,14 +958,16 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
         if(playlistExtensions.contains(file.suffix())) {
             const TrackList playlistTracks = p->readPlaylist(filepath);
+            p->m_totalFiles += playlistTracks.size();
+
             for(const Track& track : playlistTracks) {
-                filesScanned.emplace(track.filepath());
+                p->fileScanned(track.filepath());
                 tracksScanned.emplace_back(track);
             }
-            p->fileScanned();
+            p->fileScanned(filepath);
         }
         else {
-            if(!filesScanned.contains(filepath)) {
+            if(!p->m_filesScanned.contains(filepath)) {
                 if(p->m_trackPaths.contains(filepath)) {
                     const auto existingTracks = p->m_trackPaths.at(filepath);
                     for(const Track& track : existingTracks) {
@@ -1006,7 +1000,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
                 }
             }
 
-            p->fileScanned();
+            p->fileScanned(filepath);
         }
     }
 
@@ -1029,7 +1023,6 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
     TrackList tracksScanned;
 
     p->populateExistingTracks(libraryTracks, false);
-    p->m_filesScanned = 0;
     p->reportProgress();
 
     if(!mayRun()) {
@@ -1039,7 +1032,10 @@ void LibraryScanner::scanPlaylist(const TrackList& libraryTracks, const QList<QU
 
     for(const auto& url : urls) {
         const TrackList playlistTracks = p->readPlaylist(url.toLocalFile());
-        tracksScanned.insert(tracksScanned.end(), playlistTracks.cbegin(), playlistTracks.cend());
+        for(const Track& track : playlistTracks) {
+            p->m_filesScanned.emplace(track.filepath());
+            tracksScanned.push_back(track);
+        }
     }
 
     if(!tracksScanned.empty()) {
