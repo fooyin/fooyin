@@ -572,7 +572,7 @@ void GuiApplicationPrivate::setIconTheme() const
                                                     : QString::fromLatin1(Constants::LightIconTheme));
             break;
         case(IconThemeOption::System):
-            QIcon::setThemeName(QIcon::themeName());
+            QIcon::setThemeName(m_settings->value<Settings::Gui::Internal::SystemIconTheme>());
             break;
         case(IconThemeOption::Light):
             QIcon::setThemeName(QString::fromLatin1(Constants::LightIconTheme));
