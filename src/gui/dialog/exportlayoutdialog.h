@@ -38,7 +38,6 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 
-public slots:
     void accept() override;
 
 private:

@@ -100,7 +100,7 @@ void ExportLayoutDialog::accept()
         return;
     }
 
-    if(m_saveWindowSize) {
+    if(m_saveWindowSize->isChecked()) {
         layout.saveWindowSize();
     }
     const bool success = m_layoutProvider->exportLayout(layout, m_pathEdit->text());
