@@ -195,6 +195,7 @@ void LibraryScannerPrivate::finishScan()
 {
     if(m_self->state() != LibraryScanner::Paused) {
         m_self->setState(LibraryScanner::Idle);
+        m_totalFiles = m_filesScanned.size();
         reportProgress();
         cleanupScan();
         emit m_self->finished();
@@ -927,6 +928,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
     const Timer timer;
 
     TrackList tracksScanned;
+    TrackList playlistTracksScanned;
 
     p->populateExistingTracks(libraryTracks, false);
 
@@ -961,7 +963,7 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
             for(const Track& track : playlistTracks) {
                 p->fileScanned(track.filepath());
-                tracksScanned.emplace_back(track);
+                playlistTracksScanned.emplace_back(track);
             }
             p->fileScanned(filepath);
         }
@@ -1001,6 +1003,11 @@ void LibraryScanner::scanFiles(const TrackList& libraryTracks, const QList<QUrl>
 
             p->fileScanned(filepath);
         }
+    }
+
+    if(!playlistTracksScanned.empty()) {
+        p->m_trackDatabase.storeTracks(playlistTracksScanned);
+        emit playlistLoaded(playlistTracksScanned);
     }
 
     if(!tracksScanned.empty()) {
