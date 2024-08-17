@@ -29,7 +29,7 @@
 #include <QLoggingCategory>
 #include <QTranslator>
 
-Q_LOGGING_CATEGORY(TRANSLATIONS, "Translations")
+Q_LOGGING_CATEGORY(TRANSLATIONS, "fy.translations")
 
 namespace Fooyin {
 Translations::Translations(SettingsManager* settings)

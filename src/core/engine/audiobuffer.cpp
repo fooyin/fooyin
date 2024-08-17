@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(AUD_BUFF, "AudioBuffer")
+Q_LOGGING_CATEGORY(AUD_BUFF, "fy.audiobuffer")
 
 namespace Fooyin {
 class AudioBufferPrivate : public QSharedData

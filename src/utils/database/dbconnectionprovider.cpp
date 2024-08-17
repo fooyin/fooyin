@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(DB_CONPROV, "DB")
+Q_LOGGING_CATEGORY(DB_CONPROV, "fy.db")
 
 namespace Fooyin {
 DbConnectionProvider::DbConnectionProvider()

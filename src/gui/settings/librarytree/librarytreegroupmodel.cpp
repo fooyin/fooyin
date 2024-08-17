@@ -25,7 +25,7 @@
 
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(LIBTREE_MOD, "LibraryTreeGroupModel")
+Q_LOGGING_CATEGORY(LIBTREE_MOD, "fy.libtreegroupmodel")
 
 namespace Fooyin {
 LibraryTreeGroupItem::LibraryTreeGroupItem()

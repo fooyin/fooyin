@@ -26,7 +26,7 @@
 #include <QFile>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(DB_SCHEMA, "DB")
+Q_LOGGING_CATEGORY(DB_SCHEMA, "fy.db")
 
 constexpr auto InitialVersion = 0;
 

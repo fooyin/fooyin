@@ -31,7 +31,7 @@
 #include <QMessageBox>
 #include <QString>
 
-Q_LOGGING_CATEGORY(LAYOUT_PROV, "LayoutProvider")
+Q_LOGGING_CATEGORY(LAYOUT_PROV, "fy.layoutprovider")
 
 namespace {
 bool checkFile(const QFileInfo& file)

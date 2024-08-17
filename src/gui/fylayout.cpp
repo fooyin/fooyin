@@ -25,7 +25,7 @@
 #include <QLoggingCategory>
 #include <QMainWindow>
 
-Q_LOGGING_CATEGORY(LAYOUT, "FyLayout")
+Q_LOGGING_CATEGORY(LAYOUT, "fy.layout")
 
 namespace {
 struct ReadResult

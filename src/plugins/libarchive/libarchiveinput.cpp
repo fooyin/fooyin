@@ -26,7 +26,7 @@
 
 #include <archive_entry.h>
 
-Q_LOGGING_CATEGORY(LIBARCH, "LibArchive")
+Q_LOGGING_CATEGORY(LIBARCH, "fy.libarchive")
 
 namespace {
 QStringList fileExtensions()

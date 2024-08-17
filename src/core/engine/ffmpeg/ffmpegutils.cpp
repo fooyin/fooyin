@@ -28,7 +28,7 @@ extern "C"
 
 #include <QDebug>
 
-Q_LOGGING_CATEGORY(FFMPEG, "FFmpeg")
+Q_LOGGING_CATEGORY(FFMPEG, "fy.ffmpeg")
 
 namespace Fooyin::Utils {
 void printError(int error)

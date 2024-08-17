@@ -23,7 +23,7 @@
 
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(SORT_MOD, "SortingModel")
+Q_LOGGING_CATEGORY(SORT_MOD, "fy.sortingmodel")
 
 namespace Fooyin {
 SortingItem::SortingItem()

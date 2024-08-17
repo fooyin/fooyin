@@ -26,7 +26,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-Q_LOGGING_CATEGORY(AUTO_HEADER, "AutoHeaderView")
+Q_LOGGING_CATEGORY(AUTO_HEADER, "fy.autoheader")
 
 constexpr auto MinSectionWidth = 20;
 

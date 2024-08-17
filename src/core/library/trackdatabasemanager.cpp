@@ -31,7 +31,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(TRK_DBMAN, "TrackDatabaseManager")
+Q_LOGGING_CATEGORY(TRK_DBMAN, "fy.trackdbmanager")
 
 namespace Fooyin {
 TrackDatabaseManager::TrackDatabaseManager(DbConnectionPoolPtr dbPool, std::shared_ptr<AudioLoader> audioLoader,

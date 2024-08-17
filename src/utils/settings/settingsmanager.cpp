@@ -25,7 +25,7 @@
 
 #include <ranges>
 
-Q_LOGGING_CATEGORY(SETTINGS, "Settings")
+Q_LOGGING_CATEGORY(SETTINGS, "fy.settings")
 
 namespace Fooyin {
 SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)

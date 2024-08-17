@@ -23,7 +23,10 @@
 
 #include <QApplication>
 #include <QIcon>
+#include <QRegularExpression>
 #include <QStyle>
+
+constexpr auto MessageSplit = R"lit(([^:]+): (.+))lit";
 
 namespace {
 QString typeToString(QtMsgType type)
@@ -31,14 +34,14 @@ QString typeToString(QtMsgType type)
     switch(type) {
         case(QtDebugMsg):
             return QStringLiteral("Debug");
+        case(QtInfoMsg):
+            return QStringLiteral("Info");
         case(QtWarningMsg):
             return QStringLiteral("Warning");
         case(QtCriticalMsg):
             return QStringLiteral("Critical");
         case(QtFatalMsg):
             return QStringLiteral("Fatal");
-        case(QtInfoMsg):
-            return QStringLiteral("Info");
         default:
             return {};
     }
@@ -48,14 +51,13 @@ QIcon iconForType(QtMsgType type)
 {
     switch(type) {
         case(QtDebugMsg):
+        case(QtInfoMsg):
             return QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
+        case(QtWarningMsg):
+            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
         case(QtCriticalMsg):
         case(QtFatalMsg):
             return QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
-        case(QtWarningMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
-        case(QtInfoMsg):
-            return QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
         default:
             return {};
     }
@@ -74,6 +76,13 @@ void LogModel::addEntry(ConsoleEntry entry)
         beginRemoveRows({}, 0, 0);
         m_items.pop_front();
         endRemoveRows();
+    }
+
+    static const QRegularExpression regex(QLatin1String{MessageSplit});
+    const QRegularExpressionMatch match = regex.match(entry.message);
+    if(match.hasMatch()) {
+        entry.category = match.captured(1);
+        entry.message  = match.captured(2);
     }
 
     const int row = rowCount({});

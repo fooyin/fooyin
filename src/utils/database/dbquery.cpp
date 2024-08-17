@@ -22,7 +22,7 @@
 #include <QLoggingCategory>
 #include <QSqlError>
 
-Q_LOGGING_CATEGORY(DB_QRY, "DB")
+Q_LOGGING_CATEGORY(DB_QRY, "fy.db")
 
 namespace {
 bool prepareQuery(QSqlQuery& query, const QString& statement)

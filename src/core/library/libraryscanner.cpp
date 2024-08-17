@@ -40,11 +40,10 @@
 #include <QDirIterator>
 #include <QFileSystemWatcher>
 #include <QLoggingCategory>
-#include <QRegularExpression>
 
 #include <ranges>
 
-Q_LOGGING_CATEGORY(LIB_SCANNER, "LibraryScanner", QtInfoMsg)
+Q_LOGGING_CATEGORY(LIB_SCANNER, "fy.scanner")
 
 constexpr auto BatchSize   = 250;
 constexpr auto ArchivePath = R"(unpack://%1|%2|file://%3!)";

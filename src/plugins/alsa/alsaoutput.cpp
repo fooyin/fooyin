@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(ALSA, "ALSA")
+Q_LOGGING_CATEGORY(ALSA, "fy.alsa")
 
 namespace {
 void printError(const QString& message)

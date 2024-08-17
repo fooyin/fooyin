@@ -22,7 +22,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(SND_FILE, "SndFile")
+Q_LOGGING_CATEGORY(SND_FILE, "fy.sndfile")
 
 namespace {
 QStringList fileExtensions()

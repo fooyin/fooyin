@@ -22,7 +22,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(RAW_AUD, "RawAudio")
+Q_LOGGING_CATEGORY(RAW_AUD, "fy.rawaudio")
 
 const constexpr auto Format = Fooyin::SampleFormat::S16;
 constexpr auto SampleRate   = 44100;

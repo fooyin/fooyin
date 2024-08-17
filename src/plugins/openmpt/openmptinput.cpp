@@ -22,7 +22,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(OPENMPT, "OpenMPT")
+Q_LOGGING_CATEGORY(OPENMPT, "fy.openmpt")
 
 // TODO: Make configurable
 constexpr auto SampleRate          = 44100;

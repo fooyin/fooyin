@@ -25,7 +25,7 @@
 #include <QLoggingCategory>
 #include <QTimerEvent>
 
-Q_LOGGING_CATEGORY(SDL, "SDL")
+Q_LOGGING_CATEGORY(SDL, "fy.sdl")
 
 using namespace std::chrono_literals;
 

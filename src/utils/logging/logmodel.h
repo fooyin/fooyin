@@ -29,6 +29,7 @@ struct ConsoleEntry
 {
     QDateTime time;
     QtMsgType type;
+    QString category;
     QString message;
 };
 
@@ -37,7 +38,7 @@ class LogModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    enum Column : int
+    enum Column : uint8_t
     {
         Level = 0,
         Time,

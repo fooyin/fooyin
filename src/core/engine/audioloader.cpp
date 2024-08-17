@@ -28,7 +28,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-Q_LOGGING_CATEGORY(AUD_LDR, "AudioLoader")
+Q_LOGGING_CATEGORY(AUD_LDR, "fy.audioloader")
 
 namespace Fooyin {
 using DecoderInstances       = std::unordered_map<QString, std::unique_ptr<AudioDecoder>>;

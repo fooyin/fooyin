@@ -26,7 +26,7 @@
 
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(PL_COLMOD, "PlaylistColumnModel")
+Q_LOGGING_CATEGORY(PL_COLMOD, "fy.playlistcolmodel")
 
 namespace Fooyin {
 ColumnItem::ColumnItem()

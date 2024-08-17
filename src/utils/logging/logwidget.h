@@ -23,25 +23,29 @@
 
 #include <QWidget>
 
+class QComboBox;
 class QTreeView;
 
 namespace Fooyin {
 class LogModel;
+class SettingsManager;
 
 class FYUTILS_EXPORT LogWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit LogWidget(QWidget* parent = nullptr);
+    explicit LogWidget(SettingsManager* settings, QWidget* parent = nullptr);
 
     void addEntry(const QString& message, QtMsgType type);
 
 private:
     void saveLog();
 
+    SettingsManager* m_settings;
     QTreeView* m_view;
     LogModel* m_model;
+    QComboBox* m_level;
     bool m_scrollIsAtBottom;
 };
 } // namespace Fooyin

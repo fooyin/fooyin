@@ -51,7 +51,7 @@
 #include <QProcess>
 #include <QTimerEvent>
 
-Q_LOGGING_CATEGORY(APP, "App")
+Q_LOGGING_CATEGORY(APP, "fy.app")
 
 using namespace std::chrono_literals;
 
@@ -171,8 +171,8 @@ void ApplicationPrivate::registerInputs()
 
 void ApplicationPrivate::setupConnections()
 {
-    QObject::connect(&m_engine, &EngineController::trackStatusChanged, m_self, [this](TrackStatus status) {
-        if(status == TrackStatus::Invalid) {
+    QObject::connect(&m_engine, &EngineController::trackStatusChanged, m_self, [this](AudioEngine::TrackStatus status) {
+        if(status == AudioEngine::TrackStatus::Invalid) {
             const Track track = m_playerController->currentTrack();
             markTrack(track);
         }
@@ -185,7 +185,7 @@ void ApplicationPrivate::setupConnections()
         savePlaybackState();
 
         const auto state = m_engine.engineState();
-        if(state != PlaybackState::Stopped && state != PlaybackState::Error) {
+        if(state != AudioEngine::PlaybackState::Stopped && state != AudioEngine::PlaybackState::Error) {
             QObject::connect(&m_engine, &EngineController::finished, m_self, Application::quit);
             m_playerController->stop();
         }
@@ -384,11 +384,12 @@ Application::Application(QObject* parent)
         currentTrack.track = track;
         p->m_playerController->changeCurrentTrack(currentTrack);
     });
-    QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this, [this](TrackStatus status) {
-        if(status == TrackStatus::Invalid) {
-            p->m_playerController->pause();
-        }
-    });
+    QObject::connect(&p->m_engine, &EngineController::trackStatusChanged, this,
+                     [this](AudioEngine::TrackStatus status) {
+                         if(status == AudioEngine::TrackStatus::Invalid) {
+                             p->m_playerController->pause();
+                         }
+                     });
 
     p->m_library->loadAllTracks();
     p->m_engine.setup();

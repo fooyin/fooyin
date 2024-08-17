@@ -29,7 +29,7 @@
 #include <QMenu>
 #include <QUndoStack>
 
-Q_LOGGING_CATEGORY(WIDGET_PROV, "WidgetProvider")
+Q_LOGGING_CATEGORY(WIDGET_PROV, "fy.widgetprovider")
 
 namespace {
 struct FactoryWidget

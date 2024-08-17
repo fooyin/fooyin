@@ -79,7 +79,7 @@
 #include <QStyle>
 #include <QStyleFactory>
 
-Q_LOGGING_CATEGORY(GUI_APP, "GUI")
+Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
 constexpr auto LastFilePath = "Interface/LastFilePath";
 
@@ -95,6 +95,8 @@ public:
     void showPluginsNotFoundMessage();
     void initialiseTray();
     void updateWindowTitle();
+    void handleTrackStatus(AudioEngine::TrackStatus status);
+
     static void removeExpiredCovers(const TrackList& tracks);
 
     void registerActions();
@@ -163,7 +165,7 @@ public:
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
     : m_self{self_}
-    , m_core{std::move(core_)}
+    , m_core{core_}
     , m_settings{m_core->settingsManager()}
     , m_actionManager{new ActionManager(m_settings, m_self)}
     , m_library{m_core->library()}
@@ -191,7 +193,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_windowController{new WindowController(m_mainWindow.get())}
     , m_guiPluginContext{m_actionManager,    &m_layoutProvider, &m_selectionController, m_searchController,
                          m_propertiesDialog, &m_widgetProvider, m_editableLayout.get(), m_windowController}
-    , m_logWidget{std::make_unique<LogWidget>()}
+    , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_guiPluginContext, &m_playlistInteractor, m_self)}
 {
     setupConnections();
@@ -285,24 +287,8 @@ void GuiApplicationPrivate::setupConnections()
 
     QObject::connect(m_core->engine(), &EngineController::engineError, m_self,
                      [this](const QString& error) { showEngineError(error); });
-    QObject::connect(m_core->engine(), &EngineController::trackStatusChanged, m_self, [this](TrackStatus status) {
-        const Track track = m_playerController->currentTrack();
-        if(status == TrackStatus::Invalid) {
-            if(track.isValid()) {
-                if(track.isInArchive()) {
-                    if(!QFileInfo::exists(track.archivePath())) {
-                        showTrackNotFoundMessage(track);
-                    }
-                }
-                else if(!QFileInfo::exists(track.filepath())) {
-                    showTrackNotFoundMessage(track);
-                }
-            }
-        }
-        else if(status == TrackStatus::Unreadable) {
-            showTrackUnreableMessage(track);
-        }
-    });
+    QObject::connect(m_core->engine(), &EngineController::trackStatusChanged, m_self,
+                     [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
     m_settings->subscribe<Settings::Gui::Style>(
@@ -372,6 +358,27 @@ void GuiApplicationPrivate::updateWindowTitle()
     const QString script = m_settings->value<Settings::Gui::Internal::WindowTitleTrackScript>();
     const QString title  = m_scriptParser.evaluate(script, currentTrack);
     m_mainWindow->setTitle(title);
+}
+
+void GuiApplicationPrivate::handleTrackStatus(AudioEngine::TrackStatus status)
+{
+    const Track track = m_playerController->currentTrack();
+
+    if(status == AudioEngine::TrackStatus::Invalid) {
+        if(track.isValid()) {
+            if(track.isInArchive()) {
+                if(!QFileInfo::exists(track.archivePath())) {
+                    showTrackNotFoundMessage(track);
+                }
+            }
+            else if(!QFileInfo::exists(track.filepath())) {
+                showTrackNotFoundMessage(track);
+            }
+        }
+    }
+    else if(status == AudioEngine::TrackStatus::Unreadable) {
+        showTrackUnreableMessage(track);
+    }
 }
 
 void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)

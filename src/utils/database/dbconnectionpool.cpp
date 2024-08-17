@@ -22,7 +22,7 @@
 #include <QLoggingCategory>
 #include <QSqlQuery>
 
-Q_LOGGING_CATEGORY(DB_POOL, "DB")
+Q_LOGGING_CATEGORY(DB_POOL, "fy.db")
 
 namespace {
 bool updatePragmas(Fooyin::DbConnection* connection)

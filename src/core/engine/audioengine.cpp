@@ -19,32 +19,38 @@
 
 #include <core/engine/audioengine.h>
 
+#include <utils/enum.h>
+
+Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
+
 namespace Fooyin {
-PlaybackState AudioEngine::playbackState() const
+AudioEngine::PlaybackState AudioEngine::playbackState() const
 {
     return m_playbackState.load(std::memory_order_acquire);
 }
 
-TrackStatus AudioEngine::trackStatus() const
+AudioEngine::TrackStatus AudioEngine::trackStatus() const
 {
     return m_trackStatus.load(std::memory_order_acquire);
 }
 
-PlaybackState AudioEngine::updateState(PlaybackState state)
+AudioEngine::PlaybackState AudioEngine::updateState(PlaybackState state)
 {
     const PlaybackState prevState = playbackState();
     m_playbackState.store(state, std::memory_order_release);
     if(prevState != state) {
+        qCDebug(ENGINE) << "State changed:" << Utils::Enum::toString(state);
         emit stateChanged(state);
     }
     return prevState;
 }
 
-TrackStatus AudioEngine::updateTrackStatus(TrackStatus status)
+AudioEngine::TrackStatus AudioEngine::updateTrackStatus(TrackStatus status)
 {
     const TrackStatus prevStatus = trackStatus();
     m_trackStatus.store(status, std::memory_order_release);
     if(prevStatus != status) {
+        qCDebug(ENGINE) << "Track status changed:" << Utils::Enum::toString(status);
         emit trackStatusChanged(status);
     }
     return prevStatus;

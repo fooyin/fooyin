@@ -58,7 +58,7 @@
 
 #include <set>
 
-Q_LOGGING_CATEGORY(TAGLIB, "TagLib")
+Q_LOGGING_CATEGORY(TAGLIB, "fy.taglib")
 
 constexpr auto BufferSize = 1024;
 

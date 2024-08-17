@@ -29,7 +29,7 @@
 #include <QLoggingCategory>
 #include <QRegularExpression>
 
-Q_LOGGING_CATEGORY(FILEOPS, "FileOps")
+Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
 
 namespace {
 QString replaceSeparators(const QString& input)

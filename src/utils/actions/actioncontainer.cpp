@@ -21,7 +21,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 
-Q_LOGGING_CATEGORY(ACTIONS, "Actions")
+Q_LOGGING_CATEGORY(ACTIONS, "fy.actions")
 
 namespace {
 bool canAddAction(Fooyin::Command* action)

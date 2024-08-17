@@ -26,7 +26,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(GME, "GME")
+Q_LOGGING_CATEGORY(GME, "fy.gme")
 
 constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;

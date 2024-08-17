@@ -34,7 +34,7 @@
 
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(VGM_INPUT, "VGMInput")
+Q_LOGGING_CATEGORY(VGM_INPUT, "fy.vgminput")
 
 constexpr auto SampleRate = 44100;
 constexpr auto Bps        = 16;

@@ -30,7 +30,7 @@
 #include <cfenv>
 #include <utility>
 
-Q_LOGGING_CATEGORY(WAVEBAR, "WaveBar")
+Q_LOGGING_CATEGORY(WAVEBAR, "fy.wavebar")
 
 namespace {
 float convertSampleToFloat(const int16_t inSample)

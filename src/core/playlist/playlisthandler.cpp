@@ -34,7 +34,7 @@
 #include <ranges>
 #include <utility>
 
-Q_LOGGING_CATEGORY(PL_HANDLER, "PlaylistHandler")
+Q_LOGGING_CATEGORY(PL_HANDLER, "fy.playlisthandler")
 
 constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
 

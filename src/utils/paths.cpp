@@ -26,7 +26,7 @@
 #include <QLoggingCategory>
 #include <QStandardPaths>
 
-Q_LOGGING_CATEGORY(UTILS_PATHS, "Paths")
+Q_LOGGING_CATEGORY(UTILS_PATHS, "fy.paths")
 
 namespace {
 QString operator/(const QString& first, const QString& second)

@@ -42,7 +42,7 @@ public:
 
     void setup();
 
-    [[nodiscard]] PlaybackState engineState() const override;
+    [[nodiscard]] AudioEngine::PlaybackState engineState() const override;
 
     [[nodiscard]] OutputNames getAllOutputs() const override;
     [[nodiscard]] OutputDevices getOutputDevices(const QString& output) const override;

@@ -22,7 +22,9 @@
 #include "logmodel.h"
 
 #include <utils/logging/messagehandler.h>
+#include <utils/settings/settingsmanager.h>
 
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -32,13 +34,43 @@
 #include <QScrollBar>
 #include <QTreeView>
 
-Q_LOGGING_CATEGORY(LOG_WIDGET, "LogWidget")
+Q_LOGGING_CATEGORY(LOG_WIDGET, "fy.log")
+
+constexpr auto LogLevel = "LogLevel";
+
+namespace {
+QString levelToFilterRule(const QString& level)
+{
+    if(level == u"debug") {
+        return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n");
+    }
+    if(level == u"info") {
+        return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n");
+    }
+    if(level == u"warning") {
+        return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n");
+    }
+    if(level == u"critical") {
+        return QStringLiteral("fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n");
+    }
+    return {};
+}
+
+void setLevel(const QString& level)
+{
+    QString filterRules;
+    filterRules.append(levelToFilterRule(level));
+    QLoggingCategory::setFilterRules(filterRules);
+}
+} // namespace
 
 namespace Fooyin {
-LogWidget::LogWidget(QWidget* parent)
+LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
+    , m_settings{settings}
     , m_view{new QTreeView(this)}
     , m_model{new LogModel(this)}
+    , m_level{new QComboBox(this)}
     , m_scrollIsAtBottom{false}
 {
     setWindowTitle(tr("Log"));
@@ -52,15 +84,29 @@ LogWidget::LogWidget(QWidget* parent)
     buttonBox->addButton(clearButton, QDialogButtonBox::ResetRole);
     buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
 
+    m_level->addItem(QStringLiteral("Debug"));
+    m_level->addItem(QStringLiteral("Info"));
+    m_level->addItem(QStringLiteral("Warning"));
+    m_level->addItem(QStringLiteral("Critical"));
+
+    m_level->setCurrentText(m_settings->fileValue(LogLevel, QStringLiteral("Info")).toString());
+    setLevel(m_level->currentText().toLower());
+
     auto* layout = new QGridLayout(this);
-    layout->addWidget(m_view, 0, 0);
-    layout->addWidget(buttonBox, 1, 0);
+    layout->addWidget(m_view, 0, 0, 1, 2);
+    layout->addWidget(m_level, 1, 0);
+    layout->addWidget(buttonBox, 1, 1);
+    layout->setColumnStretch(1, 1);
 
     m_view->setModel(m_model);
     m_view->setRootIsDecorated(false);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_view->header()->setStretchLastSection(true);
 
+    QObject::connect(m_level, &QComboBox::currentTextChanged, this, [this](const QString& level) {
+        m_settings->fileSet(LogLevel, level);
+        setLevel(level.toLower());
+    });
     QObject::connect(m_model, &QAbstractItemModel::rowsAboutToBeInserted, this, [this]() {
         if(const auto* bar = m_view->verticalScrollBar()) {
             m_scrollIsAtBottom = (bar->value() == bar->maximum());
@@ -79,7 +125,7 @@ LogWidget::LogWidget(QWidget* parent)
 
 void LogWidget::addEntry(const QString& message, QtMsgType type)
 {
-    m_model->addEntry({QDateTime::currentDateTime(), type, message});
+    m_model->addEntry({.time = QDateTime::currentDateTime(), .type = type, .category = {}, .message = message});
 }
 
 void LogWidget::saveLog()

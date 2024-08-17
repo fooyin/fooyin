@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(DB_TR, "DB")
+Q_LOGGING_CATEGORY(DB_TR, "fy.db")
 
 namespace {
 bool beginTransaction(QSqlDatabase& database)

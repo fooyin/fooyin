@@ -28,7 +28,7 @@
 #include <QFileInfo>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(TRK_DB, "TrackDatabase")
+Q_LOGGING_CATEGORY(TRK_DB, "fy.trackdb")
 
 using BindingsMap = std::map<QString, QVariant>;
 

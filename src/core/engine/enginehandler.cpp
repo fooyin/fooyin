@@ -31,7 +31,7 @@
 #include <QLoggingCategory>
 #include <QThread>
 
-Q_LOGGING_CATEGORY(ENG_HANDLER, "EngineHandler")
+Q_LOGGING_CATEGORY(ENG_HANDLER, "fy.engine")
 
 namespace Fooyin {
 class EngineHandlerPrivate
@@ -40,9 +40,9 @@ public:
     EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<AudioLoader> decoderProvider,
                          PlayerController* playerController, SettingsManager* settings);
 
-    void handleStateChange(PlaybackState state) const;
+    void handleStateChange(AudioEngine::PlaybackState state) const;
     void handleTrackChange(const Track& track);
-    void handleTrackStatus(TrackStatus status) const;
+    void handleTrackStatus(AudioEngine::TrackStatus status) const;
     void playStateChanged(Player::PlayState state) const;
 
     void changeOutput(const QString& output);
@@ -82,11 +82,11 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     QObject::connect(m_engine, &AudioEngine::positionChanged, m_playerController,
                      &PlayerController::setCurrentPosition);
     QObject::connect(m_engine, &AudioEngine::stateChanged, m_self,
-                     [this](PlaybackState state) { handleStateChange(state); });
+                     [this](AudioEngine::PlaybackState state) { handleStateChange(state); });
     QObject::connect(m_engine, &AudioEngine::deviceError, m_self, &EngineController::engineError);
     QObject::connect(m_engine, &AudioEngine::trackChanged, m_self, &EngineController::trackChanged);
     QObject::connect(m_engine, &AudioEngine::trackStatusChanged, m_self,
-                     [this](TrackStatus status) { handleTrackStatus(status); });
+                     [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
 
     auto* throttler = new SignalThrottler(m_self);
     throttler->setTimeout(50);
@@ -97,19 +97,19 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     updateVolume(m_settings->value<Settings::Core::OutputVolume>());
 }
 
-void EngineHandlerPrivate::handleStateChange(PlaybackState state) const
+void EngineHandlerPrivate::handleStateChange(AudioEngine::PlaybackState state) const
 {
     switch(state) {
-        case(PlaybackState::Error):
-        case(PlaybackState::Stopped):
+        case(AudioEngine::PlaybackState::Error):
+        case(AudioEngine::PlaybackState::Stopped):
             m_playerController->stop();
             break;
-        case(PlaybackState::Paused):
+        case(AudioEngine::PlaybackState::Paused):
             m_playerController->pause();
             break;
-        case(PlaybackState::Playing):
-        case(PlaybackState::FadingIn):
-        case(PlaybackState::FadingOut):
+        case(AudioEngine::PlaybackState::Playing):
+        case(AudioEngine::PlaybackState::FadingIn):
+        case(AudioEngine::PlaybackState::FadingOut):
             break;
     }
 }
@@ -122,20 +122,20 @@ void EngineHandlerPrivate::handleTrackChange(const Track& track)
     }
 }
 
-void EngineHandlerPrivate::handleTrackStatus(TrackStatus status) const
+void EngineHandlerPrivate::handleTrackStatus(AudioEngine::TrackStatus status) const
 {
     switch(status) {
-        case(TrackStatus::End):
+        case(AudioEngine::TrackStatus::End):
             m_playerController->next();
             break;
-        case(TrackStatus::NoTrack):
+        case(AudioEngine::TrackStatus::NoTrack):
             m_playerController->stop();
             break;
-        case(TrackStatus::Invalid):
-        case(TrackStatus::Loading):
-        case(TrackStatus::Loaded):
-        case(TrackStatus::Buffered):
-        case(TrackStatus::Unreadable):
+        case(AudioEngine::TrackStatus::Invalid):
+        case(AudioEngine::TrackStatus::Loading):
+        case(AudioEngine::TrackStatus::Loaded):
+        case(AudioEngine::TrackStatus::Buffered):
+        case(AudioEngine::TrackStatus::Unreadable):
             break;
     }
 
@@ -144,7 +144,7 @@ void EngineHandlerPrivate::handleTrackStatus(TrackStatus status) const
 
 void EngineHandlerPrivate::playStateChanged(Player::PlayState state) const
 {
-    if(m_engine->playbackState() == PlaybackState::Error) {
+    if(m_engine->playbackState() == AudioEngine::PlaybackState::Error) {
         return;
     }
 
@@ -241,7 +241,7 @@ void EngineHandler::setup()
     p->changeOutput(p->m_settings->value<Settings::Core::AudioOutput>());
 }
 
-PlaybackState EngineHandler::engineState() const
+AudioEngine::PlaybackState EngineHandler::engineState() const
 {
     return p->m_engine->playbackState();
 }
@@ -265,7 +265,7 @@ OutputDevices EngineHandler::getOutputDevices(const QString& output) const
     }
 
     if(auto out = p->m_outputs.at(output)()) {
-        const bool isCurrent = p->m_engine->playbackState() != PlaybackState::Stopped
+        const bool isCurrent = p->m_engine->playbackState() != AudioEngine::PlaybackState::Stopped
                             && (p->m_currentOutput.name == output
                                 || p->m_currentOutput.device.compare(output, Qt::CaseInsensitive) == 0);
         return out->getAllDevices(isCurrent);

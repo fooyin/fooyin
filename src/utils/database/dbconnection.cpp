@@ -23,7 +23,7 @@
 #include <QLoggingCategory>
 #include <QSqlError>
 
-Q_LOGGING_CATEGORY(DB_CON, "DB")
+Q_LOGGING_CATEGORY(DB_CON, "fy.db")
 
 namespace {
 void createDatabase(const Fooyin::DbConnection::DbParams& params, const QString& connectionName)

@@ -36,7 +36,7 @@
 #include <QDBusObjectPath>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(MPRIS, "MPRIS")
+Q_LOGGING_CATEGORY(MPRIS, "fy.mpris")
 
 constexpr auto MprisObjectPath = "/org/mpris/MediaPlayer2";
 constexpr auto ServiceName     = "org.mpris.MediaPlayer2.fooyin";

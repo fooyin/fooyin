@@ -104,6 +104,8 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
         return;
     }
 
+    qCDebug(ENGINE) << "Preparing track:" << track.filenameExt();
+
     updateTrackStatus(TrackStatus::Loading);
 
     m_decoder = m_audioLoader->decoderForTrack(track);
@@ -420,7 +422,7 @@ void AudioPlaybackEngine::timerEvent(QTimerEvent* event)
     QObject::timerEvent(event);
 }
 
-PlaybackState AudioPlaybackEngine::updateState(PlaybackState state)
+AudioEngine::PlaybackState AudioPlaybackEngine::updateState(AudioEngine::PlaybackState state)
 {
     const auto prevState = AudioEngine::updateState(state);
     m_clock.setPaused(state != PlaybackState::Playing && !isFading());

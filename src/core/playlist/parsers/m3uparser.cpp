@@ -28,7 +28,7 @@
 #include <QRegularExpression>
 #include <QTextStream>
 
-Q_LOGGING_CATEGORY(M3U, "M3U")
+Q_LOGGING_CATEGORY(M3U, "fy.m3u")
 
 namespace {
 enum class Type

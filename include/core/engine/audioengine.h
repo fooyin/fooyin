@@ -23,35 +23,41 @@
 
 #include <core/engine/outputplugin.h>
 
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(ENGINE)
+
 namespace Fooyin {
 class Track;
-
-enum class PlaybackState : uint8_t
-{
-    Stopped = 0,
-    Playing,
-    FadingIn,
-    FadingOut,
-    Paused,
-    Error
-};
-
-enum class TrackStatus : uint8_t
-{
-    NoTrack = 0,
-    Loading,
-    Loaded,
-    Buffered,
-    End,
-    Invalid,
-    Unreadable
-};
 
 class FYCORE_EXPORT AudioEngine : public QObject
 {
     Q_OBJECT
 
 public:
+    enum class PlaybackState : uint8_t
+    {
+        Stopped = 0,
+        Playing,
+        FadingIn,
+        FadingOut,
+        Paused,
+        Error
+    };
+    Q_ENUM(PlaybackState)
+
+    enum class TrackStatus : uint8_t
+    {
+        NoTrack = 0,
+        Loading,
+        Loaded,
+        Buffered,
+        End,
+        Invalid,
+        Unreadable
+    };
+    Q_ENUM(TrackStatus)
+
     explicit AudioEngine(QObject* parent = nullptr)
         : QObject{parent}
     { }

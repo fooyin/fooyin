@@ -44,7 +44,7 @@
 
 #include <set>
 
-Q_LOGGING_CATEGORY(COV_PROV, "CoverProvider")
+Q_LOGGING_CATEGORY(COV_PROV, "fy.coverprovider")
 
 constexpr auto MaxSize = 1024;
 

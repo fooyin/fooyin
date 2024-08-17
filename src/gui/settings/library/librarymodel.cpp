@@ -25,7 +25,7 @@
 #include <QFont>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(LIB_MODEL, "LibraryModel")
+Q_LOGGING_CATEGORY(LIB_MODEL, "fy.librarymodel")
 
 namespace Fooyin {
 LibraryItem::LibraryItem()
