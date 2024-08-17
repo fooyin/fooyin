@@ -744,8 +744,9 @@ void GuiApplicationPrivate::openFiles(const QList<QUrl>& urls) const
 
 void GuiApplicationPrivate::loadPlaylist() const
 {
-    const QString playlistExtensions = Playlist::supportedPlaylistExtensions().join(QStringLiteral(" "));
-    const QString playlistFilter     = GuiApplication::tr("Playlists (%1)").arg(playlistExtensions);
+    const QString playlistExtensions
+        = Utils::extensionsToWildcards(m_core->playlistLoader()->supportedSaveExtensions()).join(u" ");
+    const QString playlistFilter = GuiApplication::tr("Playlists (%1)").arg(playlistExtensions);
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
     if(const auto lastPath = m_settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
