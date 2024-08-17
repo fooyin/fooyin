@@ -266,7 +266,7 @@ void AudioPlaybackEngine::pause()
     const int fadeLength = m_settings->value<Settings::Core::Internal::EngineFading>()
                              ? calculateFadeLength(m_fadeIntervals.outPauseStop)
                              : 0;
-    if(fadeLength < m_fadeIntervals.outPauseStop) {
+    if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
         m_pauseNextTrack = true;
     }
 
@@ -298,7 +298,7 @@ void AudioPlaybackEngine::stop()
                       && m_fadeIntervals.outPauseStop > 0;
     if(canFade) {
         const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
-        if(fadeLength < m_fadeIntervals.outPauseStop) {
+        if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
             m_pauseNextTrack = true;
         }
 
