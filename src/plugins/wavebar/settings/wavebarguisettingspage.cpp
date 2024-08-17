@@ -204,7 +204,7 @@ WaveBarGuiSettingsPage::WaveBarGuiSettingsPage(SettingsManager* settings)
 {
     setId(Constants::Page::WaveBarColours);
     setName(tr("Colours"));
-    setCategory({tr("Plugins"), tr("WaveBar")});
+    setCategory({tr("Widgets"), tr("WaveBar")});
     setWidgetCreator([settings] { return new WaveBarGuiSettingsPageWidget(settings); });
 }
 } // namespace Fooyin::WaveBar

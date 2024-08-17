@@ -106,7 +106,7 @@ FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, FilterColumnR
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Columns"));
-    setCategory({tr("Plugins"), tr("Filters")});
+    setCategory({tr("Widgets"), tr("Filters")});
     setWidgetCreator(
         [actionManager, columnRegistry] { return new FiltersColumnPageWidget(actionManager, columnRegistry); });
 }

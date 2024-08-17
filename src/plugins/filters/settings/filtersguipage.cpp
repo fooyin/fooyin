@@ -188,7 +188,7 @@ FiltersGuiPage::FiltersGuiPage(SettingsManager* settings)
 {
     setId(Constants::Page::FiltersAppearance);
     setName(tr("Appearance"));
-    setCategory({tr("Plugins"), tr("Filters")});
+    setCategory({tr("Widgets"), tr("Filters")});
     setWidgetCreator([settings] { return new FiltersGuiPageWidget(settings); });
 }
 } // namespace Fooyin::Filters

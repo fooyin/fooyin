@@ -188,7 +188,7 @@ FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)
 {
     setId(Constants::Page::FiltersGeneral);
     setName(tr("General"));
-    setCategory({tr("Plugins"), tr("Filters")});
+    setCategory({tr("Widgets"), tr("Filters")});
     setWidgetCreator([settings] { return new FiltersGeneralPageWidget(settings); });
 }
 } // namespace Fooyin::Filters

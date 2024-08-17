@@ -319,7 +319,7 @@ WaveBarSettingsPage::WaveBarSettingsPage(SettingsManager* settings)
 {
     setId(Constants::Page::WaveBarGeneral);
     setName(tr("General"));
-    setCategory({tr("Plugins"), tr("WaveBar")});
+    setCategory({tr("Widgets"), tr("WaveBar")});
     setWidgetCreator([this, settings] {
         auto* widget = new WaveBarSettingsPageWidget(settings);
         QObject::connect(widget, &WaveBarSettingsPageWidget::clearCache, this, &WaveBarSettingsPage::clearCache);

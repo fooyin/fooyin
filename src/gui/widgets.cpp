@@ -244,19 +244,19 @@ void Widgets::registerPages()
     new ArtworkPage(m_settings, this);
     new LibraryGeneralPage(m_gui.actionManager, m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui.actionManager, m_core->sortingRegistry(), m_settings, this);
-    new ShortcutsPage(m_gui.actionManager, m_settings, this);
-    new PlaylistGeneralPage(m_core->playlistLoader().get()->supportedSaveExtensions(), m_settings, this);
-    new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
-    new PlaylistColumnPage(m_gui.actionManager, m_playlistController->columnRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
+    new PlaylistGeneralPage(m_core->playlistLoader()->supportedSaveExtensions(), m_settings, this);
+    new PlaylistColumnPage(m_gui.actionManager, m_playlistController->columnRegistry(), m_settings, this);
+    new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
+    new PluginPage(m_core->pluginManager(), m_settings, this);
+    new ShellIntegrationPage(m_settings, this);
+    new ShortcutsPage(m_gui.actionManager, m_settings, this);
     new OutputPage(m_core->engine(), m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui.actionManager, m_libraryTreeController->groupRegistry(), m_settings, this);
     new PlaybackQueuePage(m_settings, this);
     new StatusWidgetPage(m_settings, this);
-    new PluginPage(m_core->pluginManager(), m_settings, this);
-    new ShellIntegrationPage(m_settings, this);
 }
 
 void Widgets::registerPropertiesTabs()
