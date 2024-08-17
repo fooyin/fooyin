@@ -46,7 +46,7 @@ constexpr auto PositionInterval = 50;
 constexpr auto BitrateInterval  = 200;
 #endif
 
-constexpr auto MaxDecodeLength = 200;
+constexpr auto MaxDecodeLength = 100;
 
 namespace Fooyin {
 AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoader, SettingsManager* settings,
@@ -642,6 +642,7 @@ void AudioPlaybackEngine::updateBitrate()
 void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 {
     m_totalBufferTime -= buffer.duration();
+    emit bufferPlayed(buffer);
 }
 
 void AudioPlaybackEngine::onRendererFinished()
