@@ -32,6 +32,7 @@ class PlaylistView : public ExpandedTreeView
 public:
     explicit PlaylistView(QWidget* parent = nullptr);
 
+    void setupRatingDelegate();
     void playlistAboutToBeReset();
     void playlistReset();
 

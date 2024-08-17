@@ -42,6 +42,7 @@ class MusicLibrary;
 class Playlist;
 class PlaylistColumnRegistry;
 class PlaylistController;
+class PlaylistDelegate;
 class PlaylistInteractor;
 class PlaylistModel;
 struct PlaylistTrack;
@@ -50,6 +51,7 @@ struct PlaylistViewState;
 class PlaylistWidget;
 class SettingsManager;
 class SettingsDialogController;
+class StarDelegate;
 class TrackSelectionController;
 class WidgetContext;
 
@@ -145,6 +147,8 @@ public:
 
     QHBoxLayout* m_layout;
     PlaylistModel* m_model;
+    PlaylistDelegate* m_delgate;
+    StarDelegate* m_starDelegate;
     PlaylistView* m_playlistView;
     AutoHeaderView* m_header;
 

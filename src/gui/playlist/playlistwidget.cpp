@@ -164,6 +164,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_sortRegistry{core.sortingRegistry}
     , m_layout{new QHBoxLayout(m_self)}
     , m_model{new PlaylistModel(m_playlistInteractor, coverProvider, m_settings, m_self)}
+    , m_delgate{new PlaylistDelegate(m_self)}
+    , m_starDelegate{nullptr}
     , m_playlistView{new PlaylistView(m_self)}
     , m_header{new AutoHeaderView(Qt::Horizontal, m_self)}
     , m_singleMode{false}
@@ -191,7 +193,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     m_playlistView->setModel(m_model);
     m_playlistView->setHeader(m_header);
-    m_playlistView->setItemDelegate(new PlaylistDelegate(m_self));
+    m_playlistView->setItemDelegate(m_delgate);
     m_playlistView->viewport()->installEventFilter(new ToolTipFilter(m_self));
 
     m_layout->addWidget(m_playlistView);
@@ -208,6 +210,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
 void PlaylistWidgetPrivate::setupConnections()
 {
+    QObject::connect(m_header, &QHeaderView::sectionCountChanged, m_playlistView, &PlaylistView::setupRatingDelegate);
     QObject::connect(m_header, &QHeaderView::sectionResized, m_self, [this](int column, int /*oldSize*/, int newSize) {
         m_model->setPixmapColumnSize(column, newSize);
     });
@@ -1039,17 +1042,31 @@ void PlaylistWidgetPrivate::updateSpans()
             || field == QLatin1String(ArtistPicture);
     };
 
-    for(auto i{0}; const auto& column : m_columns) {
+    bool hasRating{false};
+    for(int i{0}; const auto& column : m_columns) {
         if(isPixmap(column.field)) {
             m_playlistView->setSpan(i, true);
         }
         else {
             m_playlistView->setSpan(i, false);
         }
+
         if(column.field == QLatin1String{RatingEditor}) {
-            m_playlistView->setItemDelegateForColumn(i, new StarDelegate(this));
+            hasRating = true;
+            if(!m_starDelegate) {
+                m_starDelegate = new StarDelegate(this);
+            }
+            m_playlistView->setItemDelegateForColumn(i, m_starDelegate);
+        }
+        else {
+            m_playlistView->setItemDelegateForColumn(i, m_delgate);
         }
         ++i;
+    }
+
+    if(!hasRating && m_starDelegate) {
+        m_starDelegate->deleteLater();
+        m_starDelegate = nullptr;
     }
 }
 

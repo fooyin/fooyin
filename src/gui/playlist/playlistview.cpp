@@ -49,10 +49,8 @@ PlaylistView::PlaylistView(QWidget* parent)
     viewport()->setAcceptDrops(true);
 }
 
-void PlaylistView::playlistAboutToBeReset()
+void PlaylistView::setupRatingDelegate()
 {
-    m_playlistLoaded = false;
-
     const int columnCount = header()->count();
     for(int column{0}; column < columnCount; ++column) {
         if(auto* starDelegate = qobject_cast<StarDelegate*>(itemDelegateForColumn(column))) {
@@ -66,6 +64,11 @@ void PlaylistView::playlistAboutToBeReset()
     m_starDelegate = nullptr;
     m_ratingColumn = -1;
     setMouseTracking(false);
+}
+
+void PlaylistView::playlistAboutToBeReset()
+{
+    m_playlistLoaded = false;
 }
 
 void PlaylistView::playlistReset()
