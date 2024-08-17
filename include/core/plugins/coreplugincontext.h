@@ -25,8 +25,6 @@ namespace Fooyin {
 class EngineController;
 class PlayerController;
 class PlaylistHandler;
-class PlaylistLoader;
-class PluginManager;
 class LibraryManager;
 class MusicLibrary;
 class SettingsManager;
@@ -38,30 +36,25 @@ class SortingRegistry;
  */
 struct CorePluginContext
 {
-    CorePluginContext(PluginManager* pluginManager_, EngineController* engine_, PlayerController* playerController_,
-                      LibraryManager* libraryManager_, MusicLibrary* library_, PlaylistHandler* playlistHandler_,
-                      SettingsManager* settingsManager_, std::shared_ptr<PlaylistLoader> playlistLoader_,
+    CorePluginContext(EngineController* engine_, PlayerController* playerController_, LibraryManager* libraryManager_,
+                      MusicLibrary* library_, PlaylistHandler* playlistHandler_, SettingsManager* settingsManager_,
                       std::shared_ptr<AudioLoader> audioLoader_, SortingRegistry* sortingRegistry_)
-        : pluginManager{pluginManager_}
-        , playerController{playerController_}
+        : playerController{playerController_}
         , libraryManager{libraryManager_}
         , library{library_}
         , playlistHandler{playlistHandler_}
         , settingsManager{settingsManager_}
         , engine{engine_}
-        , playlistLoader{std::move(playlistLoader_)}
         , audioLoader{std::move(audioLoader_)}
         , sortingRegistry{sortingRegistry_}
     { }
 
-    PluginManager* pluginManager;
     PlayerController* playerController;
     LibraryManager* libraryManager;
     MusicLibrary* library;
     PlaylistHandler* playlistHandler;
     SettingsManager* settingsManager;
     EngineController* engine;
-    std::shared_ptr<PlaylistLoader> playlistLoader;
     std::shared_ptr<AudioLoader> audioLoader;
     SortingRegistry* sortingRegistry;
 };

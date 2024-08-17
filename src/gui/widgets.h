@@ -24,7 +24,7 @@
 class QMainWindow;
 
 namespace Fooyin {
-struct CorePluginContext;
+class Application;
 class CoverProvider;
 struct GuiPluginContext;
 class LibraryTreeController;
@@ -40,7 +40,7 @@ class Widgets : public QObject
     Q_OBJECT
 
 public:
-    Widgets(const CorePluginContext& core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
+    Widgets(Application* core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
             QObject* parent = nullptr);
 
     void registerWidgets();
@@ -50,7 +50,7 @@ public:
 private:
     void showScanProgress(const ScanProgress& progress) const;
 
-    const CorePluginContext& m_core;
+    Application* m_core;
     const GuiPluginContext& m_gui;
 
     QMainWindow* m_window;

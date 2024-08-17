@@ -46,7 +46,7 @@ class PlaylistGeneralPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistGeneralPageWidget(PlaylistLoader* playlistLoader, SettingsManager* settings);
+    explicit PlaylistGeneralPageWidget(const QStringList& playlistExtensions, SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -55,7 +55,7 @@ public:
 private:
     void browseExportPath();
 
-    PlaylistLoader* m_playlistLoader;
+    QStringList m_playlistExtensions;
     SettingsManager* m_settings;
 
     QComboBox* m_middleClick;
@@ -80,8 +80,8 @@ private:
     QLineEdit* m_autoExportPath;
 };
 
-PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(PlaylistLoader* playlistLoader, SettingsManager* settings)
-    : m_playlistLoader{playlistLoader}
+PlaylistGeneralPageWidget::PlaylistGeneralPageWidget(const QStringList& playlistExtensions, SettingsManager* settings)
+    : m_playlistExtensions{playlistExtensions}
     , m_settings{settings}
     , m_middleClick{new QComboBox(this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
@@ -220,8 +220,7 @@ void PlaylistGeneralPageWidget::load()
     m_exportMetadata->setChecked(m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool());
 
     m_autoExportType->clear();
-    const auto extensions = m_playlistLoader->supportedSaveExtensions();
-    for(const QString& ext : extensions) {
+    for(const QString& ext : m_playlistExtensions) {
         m_autoExportType->addItem(ext);
     }
 
@@ -304,13 +303,15 @@ void PlaylistGeneralPageWidget::browseExportPath()
     }
 }
 
-PlaylistGeneralPage::PlaylistGeneralPage(PlaylistLoader* playlistLoader, SettingsManager* settings, QObject* parent)
+PlaylistGeneralPage::PlaylistGeneralPage(const QStringList& playlistExtensions, SettingsManager* settings,
+                                         QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::PlaylistGeneral);
     setName(tr("General"));
     setCategory({tr("Playlist")});
-    setWidgetCreator([playlistLoader, settings] { return new PlaylistGeneralPageWidget(playlistLoader, settings); });
+    setWidgetCreator(
+        [playlistExtensions, settings] { return new PlaylistGeneralPageWidget(playlistExtensions, settings); });
 }
 } // namespace Fooyin
 

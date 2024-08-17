@@ -61,9 +61,11 @@
 #include "widgets/statuswidget.h"
 #include "widgets/tabstackwidget.h"
 
+#include <core/application.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
+#include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/plugins/guiplugincontext.h>
@@ -73,15 +75,15 @@
 #include <QMainWindow>
 
 namespace Fooyin {
-Widgets::Widgets(const CorePluginContext& core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
+Widgets::Widgets(Application* core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
                  QObject* parent)
     : QObject{parent}
     , m_core{core}
     , m_gui{gui}
     , m_window{Utils::getMainWindow()}
     , m_provider{m_gui.widgetProvider}
-    , m_settings{m_core.settingsManager}
-    , m_coverProvider{new CoverProvider(m_core.audioLoader, m_settings, this)}
+    , m_settings{m_core->settingsManager()}
+    , m_coverProvider{new CoverProvider(m_core->audioLoader(), m_settings, this)}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistController{playlistInteractor->playlistController()}
     , m_libraryTreeController{new LibraryTreeController(m_settings, this)}
@@ -135,7 +137,8 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("PlaybackQueue"),
         [this]() {
-            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core.audioLoader, m_settings, m_window);
+            return new QueueViewer(m_gui.actionManager, m_playlistInteractor, m_core->audioLoader(), m_settings,
+                                   m_window);
         },
         tr("Playback Queue"));
     m_provider->setLimit(QStringLiteral("PlaybackQueue"), 1);
@@ -155,13 +158,13 @@ void Widgets::registerWidgets()
 
     m_provider->registerWidget(
         QStringLiteral("PlayerControls"),
-        [this]() { return new PlayerControl(m_gui.actionManager, m_core.playerController, m_settings, m_window); },
+        [this]() { return new PlayerControl(m_gui.actionManager, m_core->playerController(), m_settings, m_window); },
         tr("Player Controls"));
     m_provider->setSubMenus(QStringLiteral("PlayerControls"), {tr("Controls")});
 
     m_provider->registerWidget(
         QStringLiteral("PlaylistControls"),
-        [this]() { return new PlaylistControl(m_core.playerController, m_settings, m_window); },
+        [this]() { return new PlaylistControl(m_core->playerController(), m_settings, m_window); },
         tr("Playlist Controls"));
     m_provider->setSubMenus(QStringLiteral("PlaylistControls"), {tr("Controls")});
 
@@ -171,24 +174,25 @@ void Widgets::registerWidgets()
     m_provider->setSubMenus(QStringLiteral("VolumeControls"), {tr("Controls")});
 
     m_provider->registerWidget(
-        QStringLiteral("SeekBar"), [this]() { return new SeekBar(m_core.playerController, m_window); }, tr("Seekbar"));
+        QStringLiteral("SeekBar"), [this]() { return new SeekBar(m_core->playerController(), m_window); },
+        tr("Seekbar"));
     m_provider->setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 
     m_provider->registerWidget(
         QStringLiteral("SelectionInfo"),
-        [this]() { return new InfoWidget(m_core.playerController, m_gui.trackSelection, m_settings, m_window); },
+        [this]() { return new InfoWidget(m_core->playerController(), m_gui.trackSelection, m_settings, m_window); },
         tr("Selection Info"));
 
     m_provider->registerWidget(
         QStringLiteral("ArtworkPanel"),
         [this]() {
-            return new CoverWidget(m_core.playerController, m_gui.trackSelection, m_core.audioLoader, m_settings,
+            return new CoverWidget(m_core->playerController(), m_gui.trackSelection, m_core->audioLoader(), m_settings,
                                    m_window);
         },
         tr("Artwork Panel"));
 
     m_provider->registerWidget(
-        QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(m_core.playerController, m_window); },
+        QStringLiteral("Lyrics"), [this]() { return new LyricsWidget(m_core->playerController(), m_window); },
         tr("Lyrics"));
     m_provider->setLimit(QStringLiteral("Lyrics"), 1);
 
@@ -205,8 +209,8 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("StatusBar"),
         [this]() {
-            m_statusWidget = new StatusWidget(m_core.playerController, m_gui.trackSelection, m_settings, m_window);
-            QObject::connect(m_core.library, &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
+            m_statusWidget = new StatusWidget(m_core->playerController(), m_gui.trackSelection, m_settings, m_window);
+            QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
             return m_statusWidget;
         },
         tr("Status Bar"));
@@ -219,13 +223,13 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("DirectoryBrowser"),
         [this]() {
-            auto* browser = new DirBrowser(m_core.audioLoader->supportedFileExtensions(), m_playlistInteractor,
+            auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_playlistInteractor,
                                            m_settings, m_window);
-            QObject::connect(m_core.playerController, &PlayerController::playStateChanged, browser,
+            QObject::connect(m_core->playerController(), &PlayerController::playStateChanged, browser,
                              &DirBrowser::playstateChanged);
-            QObject::connect(m_core.playerController, &PlayerController::playlistTrackChanged, browser,
+            QObject::connect(m_core->playerController(), &PlayerController::playlistTrackChanged, browser,
                              &DirBrowser::playlistTrackChanged);
-            QObject::connect(m_core.playlistHandler, &PlaylistHandler::activePlaylistChanged, browser,
+            QObject::connect(m_core->playlistHandler(), &PlaylistHandler::activePlaylistChanged, browser,
                              &DirBrowser::activePlaylistChanged);
             return browser;
         },
@@ -238,20 +242,20 @@ void Widgets::registerPages()
     new GeneralPage(m_settings, this);
     new GuiGeneralPage(m_gui.layoutProvider, m_gui.editableLayout, m_settings, this);
     new ArtworkPage(m_settings, this);
-    new LibraryGeneralPage(m_gui.actionManager, m_core.libraryManager, m_core.library, m_settings, this);
-    new LibrarySortingPage(m_gui.actionManager, m_core.sortingRegistry, m_settings, this);
+    new LibraryGeneralPage(m_gui.actionManager, m_core->libraryManager(), m_core->library(), m_settings, this);
+    new LibrarySortingPage(m_gui.actionManager, m_core->sortingRegistry(), m_settings, this);
     new ShortcutsPage(m_gui.actionManager, m_settings, this);
-    new PlaylistGeneralPage(m_core.playlistLoader.get(), m_settings, this);
+    new PlaylistGeneralPage(m_core->playlistLoader().get()->supportedSaveExtensions(), m_settings, this);
     new PlaylistPresetsPage(m_playlistController->presetRegistry(), m_settings, this);
     new PlaylistColumnPage(m_gui.actionManager, m_playlistController->columnRegistry(), m_settings, this);
     new PlaybackPage(m_settings, this);
-    new OutputPage(m_core.engine, m_settings, this);
+    new OutputPage(m_core->engine(), m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui.actionManager, m_libraryTreeController->groupRegistry(), m_settings, this);
     new PlaybackQueuePage(m_settings, this);
     new StatusWidgetPage(m_settings, this);
-    new PluginPage(m_core.pluginManager, m_settings, this);
+    new PluginPage(m_core->pluginManager(), m_settings, this);
     new ShellIntegrationPage(m_settings, this);
 }
 

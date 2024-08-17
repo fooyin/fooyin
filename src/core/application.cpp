@@ -136,8 +136,8 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
                                             m_self)}
     , m_sortingRegistry{new SortingRegistry(m_settings, m_self)}
     , m_pluginManager{m_settings}
-    , m_corePluginContext{&m_pluginManager,  &m_engine,  m_playerController, m_libraryManager, m_library,
-                          m_playlistHandler, m_settings, m_playlistLoader,   m_audioLoader,    m_sortingRegistry}
+    , m_corePluginContext{&m_engine,         m_playerController, m_libraryManager, m_library,
+                          m_playlistHandler, m_settings,         m_audioLoader,    m_sortingRegistry}
 {
     registerTypes();
     registerInputs();
@@ -396,11 +396,6 @@ Application::Application(QObject* parent)
 
 Application::~Application() = default;
 
-CorePluginContext Application::context() const
-{
-    return p->m_corePluginContext;
-}
-
 void Application::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == p->m_playlistSaveTimer.timerId()) {
@@ -448,6 +443,56 @@ void Application::restart()
             QProcess::startDetached(appPath, {QStringLiteral("-s")});
         },
         Qt::QueuedConnection);
+}
+
+PluginManager* Application::pluginManager() const
+{
+    return &p->m_pluginManager;
+}
+
+PlayerController* Application::playerController() const
+{
+    return p->m_playerController;
+}
+
+LibraryManager* Application::libraryManager() const
+{
+    return p->m_libraryManager;
+}
+
+MusicLibrary* Application::library() const
+{
+    return p->m_library;
+}
+
+PlaylistHandler* Application::playlistHandler() const
+{
+    return p->m_playlistHandler;
+}
+
+SettingsManager* Application::settingsManager() const
+{
+    return p->m_settings;
+}
+
+EngineController* Application::engine() const
+{
+    return &p->m_engine;
+}
+
+std::shared_ptr<PlaylistLoader> Application::playlistLoader() const
+{
+    return p->m_playlistLoader;
+}
+
+std::shared_ptr<AudioLoader> Application::audioLoader() const
+{
+    return p->m_audioLoader;
+}
+
+SortingRegistry* Application::sortingRegistry() const
+{
+    return p->m_sortingRegistry;
 }
 } // namespace Fooyin
 

@@ -36,8 +36,8 @@ class QAction;
 
 namespace Fooyin {
 class ActionManager;
+class Application;
 class AutoHeaderView;
-struct CorePluginContext;
 class MusicLibrary;
 class Playlist;
 class PlaylistColumnRegistry;
@@ -61,7 +61,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                          CoverProvider* coverProvider, const CorePluginContext& core);
+                          CoverProvider* coverProvider, Application* core);
 
     void setupConnections();
     void setupActions();

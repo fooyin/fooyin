@@ -23,7 +23,7 @@
 
 namespace Fooyin {
 class ActionManager;
-struct CorePluginContext;
+class Application;
 class CoverProvider;
 class MusicLibrary;
 class PlaylistInteractor;
@@ -36,7 +36,7 @@ class PlaylistWidget : public FyWidget
 
 public:
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                   const CorePluginContext& core, QWidget* parent = nullptr);
+                   Application* core, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
     [[nodiscard]] QString name() const override;

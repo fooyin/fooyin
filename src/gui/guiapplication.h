@@ -24,7 +24,7 @@
 #include <QObject>
 
 namespace Fooyin {
-struct CorePluginContext;
+class Application;
 class GuiApplicationPrivate;
 
 class FYGUI_EXPORT GuiApplication : public QObject
@@ -32,7 +32,7 @@ class FYGUI_EXPORT GuiApplication : public QObject
     Q_OBJECT
 
 public:
-    explicit GuiApplication(const CorePluginContext& core);
+    explicit GuiApplication(Application* core);
     ~GuiApplication() override;
 
     void shutdown();

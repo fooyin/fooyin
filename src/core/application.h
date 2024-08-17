@@ -21,12 +21,22 @@
 
 #include "fycore_export.h"
 
-#include <core/plugins/coreplugincontext.h>
+#include "playlist/playlistloader.h"
+
+#include <core/engine/audioloader.h>
 
 #include <QObject>
 
 namespace Fooyin {
 class ApplicationPrivate;
+class EngineController;
+class LibraryManager;
+class MusicLibrary;
+class PlayerController;
+class PlaylistHandler;
+class PluginManager;
+class SettingsManager;
+class SortingRegistry;
 
 class FYCORE_EXPORT Application : public QObject
 {
@@ -40,7 +50,16 @@ public:
     static void quit();
     static void restart();
 
-    [[nodiscard]] CorePluginContext context() const;
+    [[nodiscard]] PluginManager* pluginManager() const;
+    [[nodiscard]] PlayerController* playerController() const;
+    [[nodiscard]] LibraryManager* libraryManager() const;
+    [[nodiscard]] MusicLibrary* library() const;
+    [[nodiscard]] PlaylistHandler* playlistHandler() const;
+    [[nodiscard]] SettingsManager* settingsManager() const;
+    [[nodiscard]] EngineController* engine() const;
+    [[nodiscard]] std::shared_ptr<PlaylistLoader> playlistLoader() const;
+    [[nodiscard]] std::shared_ptr<AudioLoader> audioLoader() const;
+    [[nodiscard]] SortingRegistry* sortingRegistry() const;
 
 protected:
     void timerEvent(QTimerEvent* event) override;

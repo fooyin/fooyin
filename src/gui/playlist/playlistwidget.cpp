@@ -29,6 +29,7 @@
 #include "playlistview.h"
 #include "playlistwidget_p.h"
 
+#include <core/application.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
@@ -148,7 +149,7 @@ using namespace Settings::Gui::Internal;
 
 PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager,
                                              PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                                             const CorePluginContext& core)
+                                             Application* core)
     : m_self{self}
     , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
@@ -156,12 +157,12 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_playerController{playlistInteractor->playerController()}
     , m_selectionController{m_playlistController->selectionController()}
     , m_library{playlistInteractor->library()}
-    , m_settings{core.settingsManager}
+    , m_settings{core->settingsManager()}
     , m_settingsDialog{m_settings->settingsDialog()}
-    , m_sorter{core.libraryManager}
+    , m_sorter{core->libraryManager()}
     , m_columnRegistry{m_playlistController->columnRegistry()}
     , m_presetRegistry{m_playlistController->presetRegistry()}
-    , m_sortRegistry{core.sortingRegistry}
+    , m_sortRegistry{core->sortingRegistry()}
     , m_layout{new QHBoxLayout(m_self)}
     , m_model{new PlaylistModel(m_playlistInteractor, coverProvider, m_settings, m_self)}
     , m_delgate{new PlaylistDelegate(m_self)}
@@ -1383,7 +1384,7 @@ void PlaylistWidgetPrivate::addColumnsMenu(QMenu* parent)
 }
 
 PlaylistWidget::PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                               CoverProvider* coverProvider, const CorePluginContext& core, QWidget* parent)
+                               CoverProvider* coverProvider, Application* core, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<PlaylistWidgetPrivate>(this, actionManager, playlistInteractor, coverProvider, core)}
 {

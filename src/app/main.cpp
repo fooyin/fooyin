@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 
     // Startup
     Fooyin::Application coreApp;
-    Fooyin::GuiApplication guiApp{coreApp.context()};
+    Fooyin::GuiApplication guiApp{&coreApp};
 
     if(!commandLine.empty()) {
         guiApp.openFiles(commandLine.files());
