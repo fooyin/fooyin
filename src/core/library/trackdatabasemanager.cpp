@@ -114,7 +114,7 @@ void TrackDatabaseManager::updateTrackStats(const TrackList& tracks)
     for(const Track& track : tracks) {
         Track updatedTrack{track};
         bool success{true};
-        if(writeToFile) {
+        if(!track.isInArchive() && writeToFile) {
             success = m_audioLoader->writeTrackMetadata(updatedTrack, options);
         }
         if(success && m_trackDatabase.updateTrackStats(updatedTrack)) {
