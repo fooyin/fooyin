@@ -97,7 +97,7 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
             }
         }
         else {
-            if(playlistExtensions.contains(file.suffix())) {
+            if(nameFilters.contains(file.suffix()) || playlistExtensions.contains(file.suffix())) {
                 files.emplace_back(file.absoluteFilePath());
             }
         }
