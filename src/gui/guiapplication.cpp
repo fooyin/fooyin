@@ -107,7 +107,8 @@ public:
     void setupUtilitesMenu() const;
 
     void mute() const;
-    void restoreTheme() const;
+    void setStyle() const;
+    void setIconTheme() const;
     void registerLayouts();
 
     void showPropertiesDialog() const;
@@ -201,7 +202,8 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     setupScanMenu();
     setupRatingMenu();
     setupUtilitesMenu();
-    restoreTheme();
+    setStyle();
+    setIconTheme();
     registerLayouts();
 
     m_widgets->registerWidgets();
@@ -291,8 +293,8 @@ void GuiApplicationPrivate::setupConnections()
                      [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
-    m_settings->subscribe<Settings::Gui::Style>(
-        m_self, [](const QString& style) { qApp->setStyle(QStyleFactory::create(style)); });
+    m_settings->subscribe<Settings::Gui::Style>(m_self, [this]() { setStyle(); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { setIconTheme(); });
 }
 
 void GuiApplicationPrivate::initialisePlugins()
@@ -550,7 +552,7 @@ void GuiApplicationPrivate::mute() const
     }
 }
 
-void GuiApplicationPrivate::restoreTheme() const
+void GuiApplicationPrivate::setStyle() const
 {
     const auto currStyle = m_settings->value<Settings::Gui::Style>();
     if(auto* style = QStyleFactory::create(currStyle)) {
@@ -559,7 +561,10 @@ void GuiApplicationPrivate::restoreTheme() const
     else if(auto* systemStyle = QStyleFactory::create(m_settings->value<Settings::Gui::Internal::SystemStyle>())) {
         QApplication::setStyle(systemStyle);
     }
+}
 
+void GuiApplicationPrivate::setIconTheme() const
+{
     const auto iconTheme = static_cast<IconThemeOption>(m_settings->value<Settings::Gui::IconTheme>());
     switch(iconTheme) {
         case(IconThemeOption::AutoDetect):

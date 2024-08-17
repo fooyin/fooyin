@@ -292,26 +292,20 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<Style>(m_styles->currentText());
 
     IconThemeOption iconThemeOption;
-
     if(m_detectIconTheme->isChecked()) {
         iconThemeOption = IconThemeOption::AutoDetect;
-        QIcon::setThemeName(Utils::isDarkMode() ? QString::fromLatin1(Constants::DarkIconTheme)
-                                                : QString::fromLatin1(Constants::LightIconTheme));
     }
     else if(m_lightTheme->isChecked()) {
         iconThemeOption = IconThemeOption::Light;
-        QIcon::setThemeName(QString::fromLatin1(Constants::LightIconTheme));
     }
     else if(m_darkTheme->isChecked()) {
         iconThemeOption = IconThemeOption::Dark;
-        QIcon::setThemeName(QString::fromLatin1(Constants::DarkIconTheme));
     }
     else {
         iconThemeOption = IconThemeOption::System;
-        QIcon::setThemeName(m_settings->value<SystemIconTheme>());
     }
-
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
+
     m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
 
     if(m_overrideMargin->isChecked()) {
