@@ -29,24 +29,6 @@
 constexpr auto MessageSplit = R"lit(([^:]+): (.+))lit";
 
 namespace {
-QString typeToString(QtMsgType type)
-{
-    switch(type) {
-        case(QtDebugMsg):
-            return QStringLiteral("Debug");
-        case(QtInfoMsg):
-            return QStringLiteral("Info");
-        case(QtWarningMsg):
-            return QStringLiteral("Warning");
-        case(QtCriticalMsg):
-            return QStringLiteral("Critical");
-        case(QtFatalMsg):
-            return QStringLiteral("Fatal");
-        default:
-            return {};
-    }
-}
-
 QIcon iconForType(QtMsgType type)
 {
     switch(type) {
@@ -106,6 +88,24 @@ void LogModel::setMaxEntries(int maxEntries)
 int LogModel::getMaxEntries() const
 {
     return m_maxEntries;
+}
+
+QString LogModel::typeToString(QtMsgType type)
+{
+    switch(type) {
+        case(QtDebugMsg):
+            return QStringLiteral("Debug");
+        case(QtInfoMsg):
+            return QStringLiteral("Info");
+        case(QtWarningMsg):
+            return QStringLiteral("Warning");
+        case(QtCriticalMsg):
+            return QStringLiteral("Critical");
+        case(QtFatalMsg):
+            return QStringLiteral("Fatal");
+        default:
+            return {};
+    }
 }
 
 void LogModel::clear()

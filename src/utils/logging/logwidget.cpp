@@ -145,8 +145,9 @@ void LogWidget::saveLog()
 
     const auto entries = m_model->entries();
     for(const auto& entry : entries) {
-        out << entry.time.toString(Qt::ISODateWithMs) << " " << static_cast<int>(entry.type) << " " << entry.message
-            << "\n";
+        out << QStringLiteral("%1 %2 %3: %4\n")
+                   .arg(entry.time.toString(Qt::ISODateWithMs), LogModel::typeToString(entry.type), entry.category,
+                        entry.message);
     }
 
     logFile.close();

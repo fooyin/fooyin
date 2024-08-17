@@ -56,6 +56,8 @@ public:
     void setMaxEntries(int maxEntries);
     [[nodiscard]] int getMaxEntries() const;
 
+    static QString typeToString(QtMsgType type);
+
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
