@@ -390,6 +390,7 @@ void FileOpsWorker::reset()
     m_dirsToCreate.clear();
     m_dirsToRemove.clear();
     m_tracksToUpdate.clear();
+    m_trackPaths.clear();
 }
 
 void FileOpsWorker::handleEmptyDirs(const QDir& dir, const QString& filepath)
