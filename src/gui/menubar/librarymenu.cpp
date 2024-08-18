@@ -24,34 +24,63 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/async.h>
+#include <utils/database/dbconnectionhandler.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QMenu>
 
 namespace Fooyin {
 LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent)
     : QObject{parent}
+    , m_database{core->database()}
 {
     auto* libraryMenu = actionManager->actionContainer(Constants::Menus::Library);
+
+    auto* dbMenu = actionManager->createMenu(Constants::Menus::Database);
+    dbMenu->menu()->setTitle(tr("&Database"));
+
+    auto* optimiseDb = new QAction(tr("&Optimise"), this);
+    optimiseDb->setStatusTip(tr("Reduces disk usage and improves query performance"));
+    dbMenu->addAction(optimiseDb);
+    QObject::connect(optimiseDb, &QAction::triggered, this, &LibraryMenu::optimiseDatabase);
 
     auto* refreshLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Scan for changes"), this);
     refreshLibrary->setStatusTip(tr("Update tracks in libraries which have been modified on disk"));
-    libraryMenu->addAction(actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
     QObject::connect(refreshLibrary, &QAction::triggered, core->library(), &MusicLibrary::refreshAll);
 
     auto* rescanLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Reload tracks"), this);
     rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
-    libraryMenu->addAction(actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
     auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
-    libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Configure"));
     QObject::connect(openSettings, &QAction::triggered, this, [core]() {
         core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
+    });
+
+    libraryMenu->addAction(actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
+    libraryMenu->addAction(actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
+    libraryMenu->addSeparator();
+    libraryMenu->addMenu(dbMenu);
+    libraryMenu->addSeparator();
+    libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Configure"));
+}
+
+void LibraryMenu::optimiseDatabase()
+{
+    Utils::asyncExec([this]() {
+        const DbConnectionHandler dbHandler{m_database};
+        const DbConnectionProvider dbProvider{m_database};
+
+        GeneralDatabase generalDb;
+        generalDb.initialise(dbProvider);
+
+        generalDb.optimiseDatabase();
     });
 }
 } // namespace Fooyin

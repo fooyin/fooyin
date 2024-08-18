@@ -71,6 +71,7 @@ constexpr auto Layout        = "Fooyin.Menu.Layout";
 constexpr auto Playback      = "Fooyin.Menu.Playback";
 constexpr auto PlaybackOrder = "Fooyin.Menu.Playback.Order";
 constexpr auto Library       = "Fooyin.Menu.Library";
+constexpr auto Database      = "Fooyin.Menu.Database";
 constexpr auto SwitchLibrary = "Fooyin.Menu.Library.Switch";
 constexpr auto Help          = "Fooyin.Menu.Help";
 

@@ -45,6 +45,8 @@ set(SOURCES
     database/database.h
     database/dbschema.cpp
     database/dbschema.h
+    database/generaldatabase.cpp
+    database/generaldatabase.h
     database/librarydatabase.cpp
     database/librarydatabase.h
     database/playlistdatabase.cpp

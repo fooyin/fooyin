@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,14 @@
 
 #pragma once
 
-#include <core/database/generaldatabase.h>
+#include "fycore_export.h"
 
-#include <QObject>
+#include <utils/database/dbmodule.h>
 
 namespace Fooyin {
-class Application;
-class ActionManager;
-
-class LibraryMenu : public QObject
+class FYCORE_EXPORT GeneralDatabase : public DbModule
 {
-    Q_OBJECT
-
 public:
-    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
-
-private:
     void optimiseDatabase();
-
-    DbConnectionPoolPtr m_database;
 };
 } // namespace Fooyin

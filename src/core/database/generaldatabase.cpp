@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,17 @@
  *
  */
 
-#pragma once
+#include "generaldatabase.h"
 
-#include <core/database/generaldatabase.h>
-
-#include <QObject>
+#include <utils/database/dbquery.h>
 
 namespace Fooyin {
-class Application;
-class ActionManager;
-
-class LibraryMenu : public QObject
+void GeneralDatabase::optimiseDatabase()
 {
-    Q_OBJECT
-
-public:
-    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
-
-private:
-    void optimiseDatabase();
-
-    DbConnectionPoolPtr m_database;
-};
+    DbQuery vacuumQuery{db(), QStringLiteral("VACUUM;")};
+    if(vacuumQuery.exec()) {
+        DbQuery analyzeQuery{db(), QStringLiteral("ANALYZE;")};
+        analyzeQuery.exec();
+    }
+}
 } // namespace Fooyin
