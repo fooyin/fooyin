@@ -100,7 +100,7 @@ public:
     static void removeExpiredCovers(const TrackList& tracks);
 
     void registerActions();
-    void rescanTracks(const TrackList& tracks) const;
+    void rescanTracks(const TrackList& tracks, bool onlyModified) const;
 
     void setupScanMenu();
     void setupRatingMenu();
@@ -426,7 +426,7 @@ void GuiApplicationPrivate::registerActions()
     });
 }
 
-void GuiApplicationPrivate::rescanTracks(const TrackList& tracks) const
+void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModified) const
 {
     auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
                                            Utils::getMainWindow());
@@ -434,9 +434,11 @@ void GuiApplicationPrivate::rescanTracks(const TrackList& tracks) const
     scanDialog->setModal(true);
     scanDialog->setValue(0);
 
-    const ScanRequest request = m_core->library()->scanTracks(tracks);
+    auto* library = m_core->library();
 
-    QObject::connect(m_core->library(), &MusicLibrary::scanProgress, scanDialog,
+    const ScanRequest request = onlyModified ? library->scanModifiedTracks(tracks) : library->scanTracks(tracks);
+
+    QObject::connect(library, &MusicLibrary::scanProgress, scanDialog,
                      [scanDialog, request](const ScanProgress& progress) {
                          if(progress.id != request.id) {
                              return;
@@ -458,17 +460,25 @@ void GuiApplicationPrivate::setupScanMenu()
     taggingMenu->menu()->setTitle(GuiApplication::tr("Tagging"));
     selectionMenu->addMenu(taggingMenu);
 
-    auto* rescanAction = new QAction(GuiApplication::tr("Rescan"), m_mainWindow.get());
+    auto* rescanAction = new QAction(GuiApplication::tr("Reload tags from file(s)"), m_mainWindow.get());
+    auto* rescanChangedAction
+        = new QAction(GuiApplication::tr("Reload tags from modified file(s)"), m_mainWindow.get());
 
-    auto rescan = [this]() {
+    rescanAction->setStatusTip(GuiApplication::tr("Replace tags in selected tracks with tags from the file(s)"));
+    rescanChangedAction->setStatusTip(
+        GuiApplication::tr("Replace tags in selected tracks with tags from the file(s) if modified"));
+
+    auto rescan = [this](const bool onlyModified) {
         if(m_selectionController.hasTracks()) {
             const auto tracks = m_selectionController.selectedTracks();
-            rescanTracks(tracks);
+            rescanTracks(tracks, onlyModified);
         }
     };
 
-    QObject::connect(rescanAction, &QAction::triggered, m_mainWindow.get(), [rescan]() { rescan(); });
+    QObject::connect(rescanAction, &QAction::triggered, m_mainWindow.get(), [rescan]() { rescan(false); });
+    QObject::connect(rescanChangedAction, &QAction::triggered, m_mainWindow.get(), [rescan]() { rescan(true); });
     taggingMenu->menu()->addAction(rescanAction);
+    taggingMenu->menu()->addAction(rescanChangedAction);
 
     QObject::connect(&m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
                      [this, rescanAction]() { rescanAction->setEnabled(m_selectionController.hasTracks()); });

@@ -354,7 +354,12 @@ ScanRequest UnifiedMusicLibrary::rescan(const LibraryInfo& library)
 
 ScanRequest UnifiedMusicLibrary::scanTracks(const TrackList& tracks)
 {
-    return p->m_threadHandler.scanTracks(tracks);
+    return p->m_threadHandler.scanTracks(tracks, false);
+}
+
+ScanRequest UnifiedMusicLibrary::scanModifiedTracks(const TrackList& tracks)
+{
+    return p->m_threadHandler.scanTracks(tracks, true);
 }
 
 ScanRequest UnifiedMusicLibrary::scanFiles(const QList<QUrl>& files)

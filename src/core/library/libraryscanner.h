@@ -62,7 +62,7 @@ public slots:
     void setupWatchers(const Fooyin::LibraryInfoMap& libraries, bool enabled);
     void scanLibrary(const Fooyin::LibraryInfo& library, const Fooyin::TrackList& tracks, bool onlyModified);
     void scanLibraryDirectory(const Fooyin::LibraryInfo& library, const QString& dir, const Fooyin::TrackList& tracks);
-    void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks);
+    void scanTracks(const Fooyin::TrackList& libraryTracks, const Fooyin::TrackList& tracks, bool onlyModified);
     void scanFiles(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
     void scanPlaylist(const Fooyin::TrackList& libraryTracks, const QList<QUrl>& urls);
 

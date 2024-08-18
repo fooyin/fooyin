@@ -874,7 +874,7 @@ void LibraryScanner::scanLibraryDirectory(const LibraryInfo& library, const QStr
     }
 }
 
-void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackList& tracks)
+void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackList& tracks, bool onlyModified)
 {
     setState(Running);
 
@@ -892,6 +892,20 @@ void LibraryScanner::scanTracks(const TrackList& /*libraryTracks*/, const TrackL
 
         if(track.hasCue()) {
             continue;
+        }
+
+        if(onlyModified) {
+            const QFileInfo info{track.filepath()};
+            const QDateTime lastModifiedTime{info.lastModified()};
+            uint64_t lastModified{0};
+
+            if(lastModifiedTime.isValid()) {
+                lastModified = static_cast<uint64_t>(lastModifiedTime.toMSecsSinceEpoch());
+            }
+
+            if(track.modifiedTime() >= lastModified) {
+                continue;
+            }
         }
 
         Track updatedTrack{track.filepath()};

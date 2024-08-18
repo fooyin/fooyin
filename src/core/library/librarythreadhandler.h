@@ -52,7 +52,7 @@ public:
 
     ScanRequest refreshLibrary(const LibraryInfo& library);
     ScanRequest scanLibrary(const LibraryInfo& library);
-    ScanRequest scanTracks(const TrackList& tracks);
+    ScanRequest scanTracks(const TrackList& tracks, bool onlyModified);
     ScanRequest scanFiles(const QList<QUrl>& files);
     ScanRequest loadPlaylist(const QList<QUrl>& files);
 

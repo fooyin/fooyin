@@ -65,7 +65,7 @@ public:
     void scanPlaylist(const LibraryScanRequest& request);
 
     ScanRequest addLibraryScanRequest(const LibraryInfo& libraryInfo, bool onlyModified);
-    ScanRequest addTracksScanRequest(const TrackList& tracks);
+    ScanRequest addTracksScanRequest(const TrackList& tracks, bool onlyModified);
     ScanRequest addFilesScanRequest(const QList<QUrl>& files);
     ScanRequest addDirectoryScanRequest(const LibraryInfo& libraryInfo, const QString& dir);
     ScanRequest addPlaylistRequest(const QList<QUrl>& files);
@@ -128,8 +128,9 @@ void LibraryThreadHandlerPrivate::scanLibrary(const LibraryScanRequest& request)
 
 void LibraryThreadHandlerPrivate::scanTracks(const LibraryScanRequest& request)
 {
-    QMetaObject::invokeMethod(&m_scanner,
-                              [this, request]() { m_scanner.scanTracks(m_library->tracks(), request.tracks); });
+    QMetaObject::invokeMethod(&m_scanner, [this, request]() {
+        m_scanner.scanTracks(m_library->tracks(), request.tracks, request.onlyModified);
+    });
 }
 
 void LibraryThreadHandlerPrivate::scanFiles(const LibraryScanRequest& request)
@@ -174,7 +175,7 @@ ScanRequest LibraryThreadHandlerPrivate::addLibraryScanRequest(const LibraryInfo
     return request;
 }
 
-ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& tracks)
+ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& tracks, bool onlyModified)
 {
     const int id = nextRequestId();
 
@@ -183,9 +184,10 @@ ScanRequest LibraryThreadHandlerPrivate::addTracksScanRequest(const TrackList& t
                         }};
 
     LibraryScanRequest libraryRequest;
-    libraryRequest.id     = id;
-    libraryRequest.type   = ScanRequest::Tracks;
-    libraryRequest.tracks = tracks;
+    libraryRequest.id           = id;
+    libraryRequest.type         = ScanRequest::Tracks;
+    libraryRequest.tracks       = tracks;
+    libraryRequest.onlyModified = onlyModified;
 
     m_scanRequests.emplace_front(libraryRequest);
 
@@ -426,9 +428,9 @@ ScanRequest LibraryThreadHandler::scanLibrary(const LibraryInfo& library)
     return p->addLibraryScanRequest(library, false);
 }
 
-ScanRequest LibraryThreadHandler::scanTracks(const TrackList& tracks)
+ScanRequest LibraryThreadHandler::scanTracks(const TrackList& tracks, bool onlyModified)
 {
-    return p->addTracksScanRequest(tracks);
+    return p->addTracksScanRequest(tracks, onlyModified);
 }
 
 ScanRequest LibraryThreadHandler::scanFiles(const QList<QUrl>& files)

@@ -105,10 +105,15 @@ public:
     virtual ScanRequest rescan(const LibraryInfo& library) = 0;
 
     /*!
-     * Scans the @p tracks for metadata and adds to library.
+     * Rescans the @p tracks, replacing existing metadata.
      * @returns a ScanRequest representing a queued scan operation.
      */
     virtual ScanRequest scanTracks(const TrackList& tracks) = 0;
+    /*!
+     * Rescans the @p tracks, replacing existing metadata if modified.
+     * @returns a ScanRequest representing a queued scan operation.
+     */
+    virtual ScanRequest scanModifiedTracks(const TrackList& tracks) = 0;
     /*!
      * Scans the @p files for tracks and adds to library.
      * @returns a ScanRequest representing a queued scan operation.

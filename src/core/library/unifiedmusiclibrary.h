@@ -53,6 +53,7 @@ public:
     ScanRequest rescan(const LibraryInfo& library) override;
 
     ScanRequest scanTracks(const TrackList& tracks) override;
+    ScanRequest scanModifiedTracks(const TrackList& tracks) override;
     ScanRequest scanFiles(const QList<QUrl>& files) override;
     ScanRequest loadPlaylist(const QList<QUrl>& files) override;
 
