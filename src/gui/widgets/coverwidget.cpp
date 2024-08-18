@@ -47,16 +47,17 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_displayOption{static_cast<SelectionDisplay>(
           m_settings->value<Settings::Gui::Internal::TrackCoverDisplayOption>())}
     , m_coverType{Track::Cover::Front}
+    , m_coverAlignment{Qt::AlignCenter}
     , m_keepAspectRatio{true}
     , m_resizeTimer{new QTimer(this)}
+    , m_coverLayout{new QVBoxLayout(this)}
     , m_coverLabel{new QLabel(this)}
 {
     setObjectName(CoverWidget::name());
 
-    auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setAlignment(Qt::AlignCenter);
-    layout->addWidget(m_coverLabel);
+    m_coverLayout->setContentsMargins(0, 0, 0, 0);
+    m_coverLayout->setAlignment(m_coverAlignment);
+    m_coverLayout->addWidget(m_coverLabel);
 
     m_resizeTimer->setSingleShot(true);
     m_coverLabel->setMinimumSize(100, 100);
@@ -89,6 +90,7 @@ QString CoverWidget::layoutName() const
 void CoverWidget::saveLayoutData(QJsonObject& layout)
 {
     layout[QStringLiteral("CoverType")]       = static_cast<int>(m_coverType);
+    layout[QStringLiteral("CoverAlignment")]  = static_cast<int>(m_coverAlignment);
     layout[QStringLiteral("KeepAspectRatio")] = m_keepAspectRatio;
 }
 
@@ -96,6 +98,9 @@ void CoverWidget::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(QStringLiteral("CoverType"))) {
         m_coverType = static_cast<Track::Cover>(layout.value(QStringLiteral("CoverType")).toInt());
+    }
+    if(layout.contains(QStringLiteral("CoverAlignment"))) {
+        m_coverAlignment = static_cast<Qt::Alignment>(layout.value(QStringLiteral("CoverAlignment")).toInt());
     }
     if(layout.contains(QStringLiteral("KeepAspectRatio"))) {
         m_keepAspectRatio = layout.value(QStringLiteral("KeepAspectRatio")).toBool();
@@ -124,6 +129,33 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(keepAspectRatio, &QAction::triggered, this, [this](bool checked) {
         m_keepAspectRatio = checked;
         rescaleCover();
+    });
+
+    auto* alignmentGroup = new QActionGroup(menu);
+
+    auto* alignCenter    = new QAction(tr("Align to center"), alignmentGroup);
+    auto* alignLeft      = new QAction(tr("Align to left"), alignmentGroup);
+    auto* alignRight     = new QAction(tr("Align to right"), alignmentGroup);
+
+    alignCenter->setCheckable(true);
+    alignLeft->setCheckable(true);
+    alignRight->setCheckable(true);
+
+    alignCenter->setChecked(m_coverAlignment == Qt::AlignCenter);
+    alignLeft->setChecked(m_coverAlignment == Qt::AlignLeft);
+    alignRight->setChecked(m_coverAlignment == Qt::AlignRight);
+
+    QObject::connect(alignCenter, &QAction::triggered, this, [this]() {
+        m_coverAlignment = Qt::AlignCenter;
+        reloadCover();
+    });
+    QObject::connect(alignLeft, &QAction::triggered, this, [this]() {
+        m_coverAlignment = Qt::AlignLeft;
+        reloadCover();
+    });
+    QObject::connect(alignRight, &QAction::triggered, this, [this]() {
+        m_coverAlignment = Qt::AlignRight;
+        reloadCover();
     });
 
     auto* coverGroup = new QActionGroup(menu);
@@ -155,6 +187,10 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     menu->addAction(keepAspectRatio);
     menu->addSeparator();
+    menu->addAction(alignCenter);
+    menu->addAction(alignLeft);
+    menu->addAction(alignRight);
+    menu->addSeparator();
     menu->addAction(frontCover);
     menu->addAction(backCover);
     menu->addAction(artistCover);
@@ -179,6 +215,7 @@ void CoverWidget::reloadCover()
         track = m_playerController->currentTrack();
     }
 
+    m_coverLayout->setAlignment(m_coverAlignment);
     m_cover = m_coverProvider->trackCover(track, m_coverType);
     rescaleCover();
 }
