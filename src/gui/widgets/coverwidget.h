@@ -28,6 +28,7 @@
 
 class QLabel;
 class QTimer;
+class QVBoxLayout;
 
 namespace Fooyin {
 class CoverProvider;
@@ -66,9 +67,11 @@ private:
 
     SelectionDisplay m_displayOption;
     Track::Cover m_coverType;
+    Qt::Alignment m_coverAlignment;
     bool m_keepAspectRatio;
     QTimer* m_resizeTimer;
 
+    QVBoxLayout* m_coverLayout;
     QLabel* m_coverLabel;
     QPixmap m_cover;
 };
