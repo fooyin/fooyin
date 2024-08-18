@@ -24,6 +24,7 @@
 #include "playlist/playlistloader.h"
 
 #include <core/engine/audioloader.h>
+#include <utils/database/dbconnectionpool.h>
 
 #include <QObject>
 
@@ -50,6 +51,7 @@ public:
     static void quit();
     static void restart();
 
+    [[nodiscard]] DbConnectionPoolPtr database() const;
     [[nodiscard]] PluginManager* pluginManager() const;
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] LibraryManager* libraryManager() const;

@@ -446,6 +446,11 @@ void Application::restart()
         Qt::QueuedConnection);
 }
 
+DbConnectionPoolPtr Application::database() const
+{
+    return p->m_database->connectionPool();
+}
+
 PluginManager* Application::pluginManager() const
 {
     return &p->m_pluginManager;
