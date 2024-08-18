@@ -254,6 +254,12 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
         getModuleNames(QStringLiteral("PATT"), m_module->get_pattern_names());
         getModuleNames(QStringLiteral("INST"), m_module->get_instrument_names());
         getModuleNames(QStringLiteral("SMPL"), m_module->get_sample_names());
+
+        track.setExtraProperty(QStringLiteral("MOD_CHANNELS"), QString::number(m_module->get_num_channels()));
+        track.setExtraProperty(QStringLiteral("MOD_INSTRUMENTS"), QString::number(m_module->get_num_instruments()));
+        track.setExtraProperty(QStringLiteral("MOD_ORDERS"), QString::number(m_module->get_num_orders()));
+        track.setExtraProperty(QStringLiteral("MOD_PATTERNS"), QString::number(m_module->get_num_patterns()));
+        track.setExtraProperty(QStringLiteral("MOD_SAMPLES"), QString::number(m_module->get_num_samples()));
     }
     catch(...) {
         qCWarning(OPENMPT) << "Failed to open" << track.filepath();
