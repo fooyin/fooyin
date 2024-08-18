@@ -24,9 +24,8 @@
 
 Q_LOGGING_CATEGORY(RAW_AUD, "fy.rawaudio")
 
-const constexpr auto Format = Fooyin::SampleFormat::S16;
-constexpr auto SampleRate   = 44100;
-constexpr auto Channels     = 2;
+constexpr auto SampleRate = 44100;
+constexpr auto Channels   = 2;
 
 namespace {
 QStringList fileExtensions()
@@ -42,7 +41,7 @@ bool isValidData(QIODevice* file)
     }
 
     static constexpr int preload = 1024;
-    const QByteArray buffer      = file->read(preload);
+    const QByteArray buffer      = file->peek(preload);
     if(buffer.size() != preload) {
         return false;
     }
@@ -56,7 +55,7 @@ RawAudioDecoder::RawAudioDecoder()
     : m_currentFrame{0}
 {
     // Assume 16bit PCM
-    m_format.setSampleFormat(Format);
+    m_format.setSampleFormat(SampleFormat::S16);
     m_format.setSampleRate(SampleRate);
     m_format.setChannelCount(Channels);
 }
@@ -80,8 +79,6 @@ std::optional<AudioFormat> RawAudioDecoder::init(const AudioSource& source, cons
         qCWarning(RAW_AUD) << "Invalid file" << track.filepath();
         return {};
     }
-
-    m_file->seek(0);
 
     return m_format;
 }
