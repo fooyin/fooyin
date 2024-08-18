@@ -61,6 +61,7 @@ public:
     void addTrackMetadata(const Track& track, bool extended);
     void addTrackLocation(int total, const Track& track);
     void addTrackGeneral(int total, const Track& track);
+    void addTrackOther(const Track& track);
 
     void addTrackNodes(InfoItem::Options options, const TrackList& tracks);
 
@@ -97,6 +98,9 @@ void InfoPopulatorPrivate::checkAddParentNode(InfoModel::ItemParent parent)
     }
     else if(parent == InfoModel::ItemParent::General) {
         getOrAddNode(QStringLiteral("General"), InfoPopulator::tr("General"), ItemParent::Root, InfoItem::Header);
+    }
+    else if(parent == InfoModel::ItemParent::Other) {
+        getOrAddNode(QStringLiteral("Other"), InfoPopulator::tr("Other"), ItemParent::Root, InfoItem::Header);
     }
 }
 
@@ -186,6 +190,15 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
                       InfoItem::Percentage);
 }
 
+void InfoPopulatorPrivate::addTrackOther(const Track& track)
+{
+    const auto props = track.extraProperties();
+    for(const auto& [prop, value] : Utils::asRange(props)) {
+        const auto extraProp = QStringLiteral("<%1>").arg(prop);
+        checkAddEntryNode(extraProp, extraProp, ItemParent::Other, value, InfoItem::Percentage);
+    }
+}
+
 void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackList& tracks)
 {
     const int total = static_cast<int>(tracks.size());
@@ -203,6 +216,9 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         }
         if(options & InfoItem::General) {
             addTrackGeneral(total, track);
+        }
+        if(options & InfoItem::Other) {
+            addTrackOther(track);
         }
     }
 }

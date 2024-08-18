@@ -78,9 +78,11 @@ class TagEditorWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,
-                             SettingsManager* settings, QWidget* parent = nullptr);
+    explicit TagEditorWidget(ActionManager* actionManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~TagEditorWidget() override;
+
+    void setTracks(const TrackList& tracks);
+    void setReadOnly(bool readOnly);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;

@@ -58,6 +58,7 @@ public:
     int year{-1};
     Track::ExtraTags extraTags;
     QStringList removedTags;
+    Track::ExtraProperites extraProps;
 
     QString cuePath;
 
@@ -504,6 +505,31 @@ QByteArray Track::serialiseExtrasTags() const
     return out;
 }
 
+bool Track::hasExtraProperty(const QString& prop) const
+{
+    return p->extraProps.contains(prop);
+}
+
+Track::ExtraProperites Track::extraProperties() const
+{
+    return p->extraProps;
+}
+
+QByteArray Track::serialiseExtraProperties() const
+{
+    if(p->extraProps.empty()) {
+        return {};
+    }
+
+    QByteArray out;
+    QDataStream stream(&out, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << p->extraProps;
+
+    return out;
+}
+
 int Track::subsong() const
 {
     return p->subsong;
@@ -905,6 +931,34 @@ void Track::storeExtraTags(const QByteArray& tags)
     stream.setVersion(QDataStream::Qt_6_0);
 
     stream >> p->extraTags;
+}
+
+void Track::setExtraProperty(const QString& prop, const QString& value)
+{
+    p->extraProps[prop] = value;
+}
+
+void Track::removeExtraProperty(const QString& prop)
+{
+    p->extraProps.remove(prop);
+}
+
+void Track::clearExtraProperties()
+{
+    p->extraProps.clear();
+}
+
+void Track::storeExtraProperties(const QByteArray& props)
+{
+    if(props.isEmpty()) {
+        return;
+    }
+
+    QByteArray in{props};
+    QDataStream stream(&in, QIODevice::ReadOnly);
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream >> p->extraProps;
 }
 
 void Track::setSubsong(int index)

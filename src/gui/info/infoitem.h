@@ -21,8 +21,6 @@
 
 #include <utils/treeitem.h>
 
-#include <set>
-
 namespace Fooyin {
 class InfoItem : public TreeItem<InfoItem>
 {
@@ -55,7 +53,8 @@ public:
         Location         = 1 << 1,
         General          = 1 << 2,
         ExtendedMetadata = 1 << 3,
-        Default          = (Metadata | Location | General)
+        Other            = 1 << 4,
+        Default          = (Metadata | Location | General | Other)
     };
     Q_DECLARE_FLAGS(Options, Option)
 

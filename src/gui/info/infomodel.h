@@ -41,7 +41,8 @@ public:
         Root,
         Metadata,
         Location,
-        General
+        General,
+        Other
     };
     Q_ENUM(ItemParent)
 

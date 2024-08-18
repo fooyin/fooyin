@@ -101,6 +101,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":bitDepth"), track.bitDepth()},
             {QStringLiteral(":codec"), track.codec()},
             {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
+            {QStringLiteral(":extraProperties"), track.serialiseExtraProperties()},
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
             {QStringLiteral(":libraryID"), track.libraryId()}};
@@ -136,7 +137,7 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setBitDepth(q.value(23).toInt());
     track.setCodec(q.value(24).toString());
     track.storeExtraTags(q.value(25).toByteArray());
-    // TODO: Extra properties
+    track.storeExtraProperties(q.value(26).toByteArray());
     track.setModifiedTime(q.value(27).toULongLong());
     track.setLibraryId(q.value(28).toInt());
     track.setHash(q.value(29).toString());
@@ -339,6 +340,7 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "BitDepth = :bitDepth,"
                                           "Codec = :codec,"
                                           "ExtraTags = :extraTags,"
+                                          "ExtraProperties = :extraProperties,"
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
                                           "LibraryID = :libraryID"
@@ -563,6 +565,7 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "BitDepth,"
                                           "Codec,"
                                           "ExtraTags,"
+                                          "ExtraProperties,"
                                           "ModifiedDate,"
                                           "TrackHash,"
                                           "LibraryID"
@@ -592,7 +595,8 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":channels,"
                                           ":bitDepth,"
                                           ":codec,"
-                                          ":extraTags, "
+                                          ":extraTags,"
+                                          ":extraProperties,"
                                           ":modifiedDate,"
                                           ":trackHash,"
                                           ":libraryID"

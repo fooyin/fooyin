@@ -202,6 +202,14 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
+    auto* showOther = new QAction(tr("Other"), this);
+    showOther->setCheckable(true);
+    showOther->setChecked(options & InfoItem::Other);
+    QAction::connect(showOther, &QAction::triggered, this, [this](bool checked) {
+        m_model->setOption(InfoItem::Other, checked);
+        resetModel();
+    });
+
     menu->addAction(showHeaders);
     menu->addAction(showScrollBar);
     menu->addAction(altColours);
@@ -210,6 +218,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showExtendedMetadata);
     menu->addAction(showLocation);
     menu->addAction(showGeneral);
+    menu->addAction(showOther);
 
     menu->popup(event->globalPos());
 }

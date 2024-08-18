@@ -54,7 +54,8 @@ public:
         Artist,
     };
 
-    using ExtraTags = QMap<QString, QStringList>;
+    using ExtraTags       = QMap<QString, QStringList>;
+    using ExtraProperites = QMap<QString, QString>;
 
     Track();
     explicit Track(const QString& filepath);
@@ -128,6 +129,10 @@ public:
     [[nodiscard]] QStringList removedTags() const;
     [[nodiscard]] QByteArray serialiseExtrasTags() const;
 
+    [[nodiscard]] bool hasExtraProperty(const QString& prop) const;
+    [[nodiscard]] ExtraProperites extraProperties() const;
+    [[nodiscard]] QByteArray serialiseExtraProperties() const;
+
     [[nodiscard]] int subsong() const;
     [[nodiscard]] uint64_t offset() const;
     [[nodiscard]] uint64_t duration() const;
@@ -181,6 +186,11 @@ public:
     void replaceExtraTag(const QString& tag, const QString& value);
     void clearExtraTags();
     void storeExtraTags(const QByteArray& tags);
+
+    void setExtraProperty(const QString& prop, const QString& value);
+    void removeExtraProperty(const QString& prop);
+    void clearExtraProperties();
+    void storeExtraProperties(const QByteArray& props);
 
     void setSubsong(int index);
     void setOffset(uint64_t offset);
