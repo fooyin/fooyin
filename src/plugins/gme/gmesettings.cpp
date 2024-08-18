@@ -42,7 +42,7 @@ GmeSettings::GmeSettings(QWidget* parent)
     , m_loopCount{new QSpinBox(this)}
     , m_fadeLength{new QSpinBox(this)}
 {
-    setWindowTitle(tr("GME Settings"));
+    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("GME")));
     setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -56,20 +56,20 @@ GmeSettings::GmeSettings(QWidget* parent)
 
     m_maxLength->setRange(1.0, 60.0);
     m_maxLength->setSingleStep(0.5);
-    m_maxLength->setSuffix(tr(" minutes"));
+    m_maxLength->setSuffix(QStringLiteral(" ") + tr("minutes"));
 
     auto* loopLabel     = new QLabel(tr("Loop count") + QStringLiteral(":"), this);
     auto* loopHintLabel = new QLabel(tr("(0 = infinite)"), this);
 
     m_loopCount->setRange(0, 16);
     m_loopCount->setSingleStep(1);
-    m_loopCount->setSuffix(tr(" times"));
+    m_loopCount->setSuffix(QStringLiteral(" ") + tr("times"));
 
     auto* fadeLabel = new QLabel(tr("Fade length") + QStringLiteral(":"), this);
 
     m_fadeLength->setRange(0, 10000);
     m_fadeLength->setSingleStep(500);
-    m_fadeLength->setSuffix(tr(" ms"));
+    m_fadeLength->setSuffix(QStringLiteral(" ") + tr("ms"));
 
     int row{0};
     lengthLayout->addWidget(maxLengthLabel, row, 0);

@@ -41,7 +41,7 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
     , m_guessTrack{new QCheckBox(tr("Guess track number from filename"), this)}
     , m_romLocation{new QLineEdit(this)}
 {
-    setWindowTitle(tr("VGM Input Settings"));
+    setWindowTitle(tr("%1 Settings").arg(QStringLiteral("VGM Input")));
     setModal(true);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -56,19 +56,19 @@ VgmInputSettings::VgmInputSettings(QWidget* parent)
 
     m_loopCount->setRange(0, 16);
     m_loopCount->setSingleStep(1);
-    m_loopCount->setSuffix(tr(" times"));
+    m_loopCount->setSuffix(QStringLiteral(" ") + tr("times"));
 
     auto* fadeLabel = new QLabel(tr("Fade length") + QStringLiteral(":"), this);
 
     m_fadeLength->setRange(0, 10000);
     m_fadeLength->setSingleStep(500);
-    m_fadeLength->setSuffix(tr(" ms"));
+    m_fadeLength->setSuffix(QStringLiteral(" ") + tr("ms"));
 
     auto* silenceLabel = new QLabel(tr("End silence length") + QStringLiteral(":"), this);
 
     m_silenceLength->setRange(0, 10000);
     m_silenceLength->setSingleStep(500);
-    m_silenceLength->setSuffix(tr(" ms"));
+    m_silenceLength->setSuffix(QStringLiteral(" ") + tr("ms"));
 
     int row{0};
     lengthLayout->addWidget(loopLabel, row, 0);

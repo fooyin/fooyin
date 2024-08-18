@@ -133,7 +133,7 @@ void MainWindow::setTitle(const QString& title)
 {
     QString windowTitle{title};
     if(m_settings->value<Settings::Gui::LayoutEditing>()) {
-        windowTitle.append(tr(" - Layout Editing Mode"));
+        windowTitle.append(QStringLiteral(" - ") + tr("Layout Editing Mode"));
     }
     setWindowTitle(windowTitle);
 }
