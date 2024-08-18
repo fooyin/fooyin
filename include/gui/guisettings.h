@@ -49,6 +49,7 @@ enum GuiSettings : uint32_t
     MainWindowPixelRatio  = 9 | Type::Double,
     StarRatingSize        = 10 | Type::Int,
     Style                 = 11 | Type::String,
+    SeekStep              = 12 | Type::Int,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

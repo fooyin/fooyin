@@ -169,7 +169,7 @@ void Widgets::registerWidgets()
     m_provider->setSubMenus(QStringLiteral("VolumeControls"), {tr("Controls")});
 
     m_provider->registerWidget(
-        QStringLiteral("SeekBar"), [this]() { return new SeekBar(m_core->playerController(), m_window); },
+        QStringLiteral("SeekBar"), [this]() { return new SeekBar(m_core->playerController(), m_settings, m_window); },
         tr("Seekbar"));
     m_provider->setSubMenus(QStringLiteral("SeekBar"), {tr("Controls")});
 

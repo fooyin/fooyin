@@ -21,6 +21,7 @@
 
 #include <core/player/playercontroller.h>
 #include <core/track.h>
+#include <gui/guisettings.h>
 #include <gui/widgets/seekcontainer.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -34,7 +35,6 @@
 #include <QSlider>
 #include <QStyleOptionSlider>
 
-constexpr auto SeekDelta    = 5000;
 constexpr auto ToolTipDelay = 5;
 
 namespace Fooyin {
@@ -274,9 +274,10 @@ void TrackSlider::updateToolTip()
     m_toolTip->setSubtext(deltaText);
 }
 
-SeekBar::SeekBar(PlayerController* playerController, QWidget* parent)
+SeekBar::SeekBar(PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_playerController{playerController}
+    , m_settings{settings}
     , m_container{new SeekContainer(playerController, this)}
     , m_slider{new TrackSlider(this)}
 {
@@ -293,9 +294,9 @@ SeekBar::SeekBar(PlayerController* playerController, QWidget* parent)
 
     QObject::connect(m_slider, &TrackSlider::sliderDropped, playerController, &PlayerController::seek);
     QObject::connect(m_slider, &TrackSlider::seekForward, this,
-                     [this]() { m_playerController->seekForward(SeekDelta); });
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStep>()); });
     QObject::connect(m_slider, &TrackSlider::seekBackward, this,
-                     [this]() { m_playerController->seekBackward(SeekDelta); });
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStep>()); });
 
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this, &SeekBar::stateChanged);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &SeekBar::trackChanged);

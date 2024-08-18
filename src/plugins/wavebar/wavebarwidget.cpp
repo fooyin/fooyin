@@ -25,6 +25,7 @@
 
 #include <core/engine/enginecontroller.h>
 #include <core/player/playercontroller.h>
+#include <gui/guisettings.h>
 #include <gui/widgets/seekcontainer.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -36,9 +37,6 @@
 #include <QVBoxLayout>
 
 using namespace std::chrono_literals;
-
-// TODO: Make setting
-constexpr auto SeekDelta = 5000;
 
 namespace Fooyin::WaveBar {
 WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerController, SettingsManager* settings,
@@ -72,9 +70,9 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
         m_playerController->seek(pos);
     });
     QObject::connect(m_seekbar, &WaveSeekBar::seekForward, playerController,
-                     [this]() { m_playerController->seekForward(SeekDelta); });
+                     [this]() { m_playerController->seekForward(m_settings->value<Settings::Gui::SeekStep>()); });
     QObject::connect(m_seekbar, &WaveSeekBar::seekBackward, playerController,
-                     [this]() { m_playerController->seekBackward(SeekDelta); });
+                     [this]() { m_playerController->seekBackward(m_settings->value<Settings::Gui::SeekStep>()); });
 
     QObject::connect(m_container, &SeekContainer::totalClicked, this, [this]() {
         rescaleWaveform(); // Switching to elapsed total may change the width
