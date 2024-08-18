@@ -6,32 +6,32 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="34"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="36"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="38"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="40"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="42"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="44"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="83"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Über %1</translation>
     </message>
 </context>
 <context>
