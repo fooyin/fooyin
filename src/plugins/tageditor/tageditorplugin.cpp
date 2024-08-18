@@ -66,7 +66,9 @@ TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
         return !track.hasCue() && !track.isInArchive() && m_audioLoader->canWriteMetadata(track);
     });
 
-    auto* tagEditor = new TagEditorWidget(tracks, !canWrite, m_actionManager, m_settings);
+    auto* tagEditor = new TagEditorWidget(m_actionManager, m_settings);
+    tagEditor->setReadOnly(!canWrite);
+    tagEditor->setTracks(tracks);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::writeTrackMetadata);
     QObject::connect(tagEditor, &TagEditorWidget::trackStatsChanged, m_library,
                      [this](const TrackList& changedTracks) { m_library->updateTrackStats(changedTracks); });

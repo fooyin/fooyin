@@ -295,8 +295,7 @@ void TagEditorView::ratingHoverOut()
     update(prevIndex);
 }
 
-TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionManager* actionManager,
-                                 SettingsManager* settings, QWidget* parent)
+TagEditorWidget::TagEditorWidget(ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_settings{settings}
     , m_view{new TagEditorView(actionManager, this)}
@@ -327,25 +326,32 @@ TagEditorWidget::TagEditorWidget(const TrackList& tracks, bool readOnly, ActionM
         m_view->resizeRowsToContents();
         restoreState();
     });
-    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this, readOnly]() {
-        if(!readOnly) {
+    QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
+        if(m_toolsButton->isEnabled()) {
             const QModelIndexList selected = m_view->selectionModel()->selectedIndexes();
             m_view->removeRowAction()->setEnabled(!selected.empty());
         }
     });
 
-    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
-    m_view->addRowAction()->setDisabled(readOnly);
-    m_view->removeRowAction()->setDisabled(readOnly);
-    m_toolsButton->setDisabled(readOnly);
-
-    m_model->reset(tracks);
     m_view->setupActions();
 }
 
 TagEditorWidget::~TagEditorWidget()
 {
     saveState();
+}
+
+void TagEditorWidget::setTracks(const TrackList& tracks)
+{
+    m_model->reset(tracks);
+}
+
+void TagEditorWidget::setReadOnly(bool readOnly)
+{
+    m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
+    m_view->addRowAction()->setDisabled(readOnly);
+    m_view->removeRowAction()->setDisabled(readOnly);
+    m_toolsButton->setDisabled(readOnly);
 }
 
 QString TagEditorWidget::name() const
