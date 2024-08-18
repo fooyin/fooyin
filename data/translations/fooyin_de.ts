@@ -47,7 +47,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Datei</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
