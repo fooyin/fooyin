@@ -57,9 +57,6 @@ private:
     QCheckBox* m_skipUnavailable;
     QSlider* m_playedSlider;
     QSpinBox* m_playedPercent;
-
-    QCheckBox* m_alwaysSend;
-    QLineEdit* m_externalPlaylist;
 };
 
 PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
@@ -71,8 +68,6 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_playedSlider{new QSlider(Qt::Horizontal, this)}
     , m_playedPercent{new QSpinBox(this)}
-    , m_alwaysSend{new QCheckBox(tr("Always send to playlist"), this)}
-    , m_externalPlaylist{new QLineEdit(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -81,7 +76,6 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
         "If the current track has been playing for more than 5s, restart it instead of moving to the previous track"));
     m_skipUnavailable->setToolTip(
         tr("If the current track in a playlist is unavailable, silently continue to the next track"));
-    m_externalPlaylist->setToolTip(tr("When opening files, always send to playlist, replacing all existing tracks"));
 
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
@@ -120,18 +114,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
     generalGroupLayout->addLayout(playedLayout, row++, 0, 1, 2);
 
-    auto* externalGroup       = new QGroupBox(tr("External files"), this);
-    auto* externalGroupLayout = new QGridLayout(externalGroup);
-
-    auto* playlistLabel = new QLabel(tr("Playlist name") + QStringLiteral(":"), this);
-
-    externalGroupLayout->addWidget(m_alwaysSend, 0, 0, 1, 2);
-    externalGroupLayout->addWidget(playlistLabel, 1, 0);
-    externalGroupLayout->addWidget(m_externalPlaylist, 1, 1);
-
     layout->addWidget(generalGroup, 0, 0);
-    layout->addWidget(externalGroup, 1, 0);
-    layout->setRowStretch(2, 1);
+    layout->setRowStretch(1, 1);
 }
 
 void PlaybackPageWidget::load()
@@ -147,9 +131,6 @@ void PlaybackPageWidget::load()
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
     m_playedSlider->setValue(playedPercent);
     m_playedPercent->setValue(playedPercent);
-
-    m_alwaysSend->setChecked(m_settings->value<Settings::Core::OpenFilesSendTo>());
-    m_externalPlaylist->setText(m_settings->value<Settings::Core::OpenFilesPlaylist>());
 }
 
 void PlaybackPageWidget::apply()
@@ -163,9 +144,6 @@ void PlaybackPageWidget::apply()
     const int playedPercent    = m_playedPercent->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
-
-    m_settings->set<Settings::Core::OpenFilesSendTo>(m_alwaysSend->isChecked());
-    m_settings->set<Settings::Core::OpenFilesPlaylist>(m_externalPlaylist->text());
 }
 
 void PlaybackPageWidget::reset()
@@ -177,9 +155,6 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
     m_settings->reset<Settings::Core::PlayedThreshold>();
-
-    m_settings->reset<Settings::Core::OpenFilesSendTo>();
-    m_settings->reset<Settings::Core::OpenFilesPlaylist>();
 }
 
 PlaybackPage::PlaybackPage(SettingsManager* settings, QObject* parent)
