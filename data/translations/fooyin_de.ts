@@ -4545,7 +4545,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="168"/>
         <source>Volume Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Lautstärkereglung</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="173"/>
@@ -4565,12 +4565,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="191"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Songtext</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="199"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="202"/>
@@ -4580,12 +4580,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="212"/>
         <source>Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Statusleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="217"/>
         <source>Search Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Suchleiste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="232"/>
@@ -4595,7 +4595,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="260"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Details</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="273"/>
@@ -4615,7 +4615,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="282"/>
         <source>Loading playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Playlist</translation>
     </message>
 </context>
 <context>
@@ -4623,12 +4623,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebrauch</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
@@ -4638,27 +4638,27 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
         <source>Displays help on command line options</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeigt Hilfe zu Befehlszeilenoptionen an</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
         <source>Displays version information</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeigt Versionsinformationen an</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="64"/>
         <source>Arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="64"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu öffnende Dateien</translation>
     </message>
 </context>
 <context>
@@ -4666,22 +4666,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="115"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur aktuellen Playlist hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="116"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur aktiven Playlist hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="117"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>An aktuelle Playlist senden</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="118"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>An neue Playlist senden</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="119"/>
@@ -4701,12 +4701,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschaften</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="318"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe</translation>
     </message>
 </context>
 </TS>
