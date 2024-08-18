@@ -113,7 +113,7 @@ void SettingsModel::setPages(const PageList& pages)
         }
     }
 
-    // rootItem()->sortChildren();
+    rootItem()->sortChildren();
     endResetModel();
 }
 
