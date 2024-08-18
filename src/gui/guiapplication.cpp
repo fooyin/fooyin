@@ -195,7 +195,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_guiPluginContext{m_actionManager,    &m_layoutProvider, &m_selectionController, m_searchController,
                          m_propertiesDialog, &m_widgetProvider, m_editableLayout.get(), m_windowController}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
-    , m_widgets{new Widgets(m_core, m_guiPluginContext, &m_playlistInteractor, m_self)}
+    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_guiPluginContext, &m_playlistInteractor, m_self)}
 {
     setupConnections();
     registerActions();

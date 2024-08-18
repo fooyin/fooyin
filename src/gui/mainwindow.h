@@ -20,11 +20,13 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QPointer>
 
 namespace Fooyin {
 class ActionManager;
 class MainMenuBar;
 class SettingsManager;
+class StatusWidget;
 class Track;
 
 class MainWindow : public QMainWindow
@@ -32,18 +34,18 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum StartupBehaviour
+    enum StartupBehaviour : uint8_t
     {
-        StartNormal,
+        StartNormal = 0,
         StartMaximised,
         StartHidden,
         StartPrev
     };
     Q_ENUM(StartupBehaviour)
 
-    enum WindowState
+    enum WindowState : uint8_t
     {
-        Normal,
+        Normal = 0,
         Maximised,
         Hidden
     };
@@ -60,7 +62,10 @@ public:
     void setTitle(const QString& title);
     void resetTitle();
 
+    void installStatusWidget(StatusWidget* statusWidget);
+
 protected:
+    bool event(QEvent* event) override;
     void showEvent(QShowEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
 
@@ -72,6 +77,7 @@ private:
 
     MainMenuBar* m_mainMenu;
     SettingsManager* m_settings;
+    QPointer<StatusWidget> m_statusWidget;
 
     WindowState m_prevState;
     WindowState m_state;

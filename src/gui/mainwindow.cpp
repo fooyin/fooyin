@@ -21,6 +21,7 @@
 
 #include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
+#include "widgets/statuswidget.h"
 
 #include <core/application.h>
 #include <core/coresettings.h>
@@ -140,6 +141,20 @@ void MainWindow::setTitle(const QString& title)
 void MainWindow::resetTitle()
 {
     setTitle(QStringLiteral("fooyin"));
+}
+
+void MainWindow::installStatusWidget(StatusWidget* statusWidget)
+{
+    m_statusWidget = statusWidget;
+}
+
+bool MainWindow::event(QEvent* event)
+{
+    if(m_statusWidget && event->type() == QEvent::StatusTip) {
+        const QString tip = static_cast<QStatusTipEvent*>(event)->tip();
+        m_statusWidget->showStatusTip(tip);
+    }
+    return QMainWindow::event(event);
 }
 
 void MainWindow::showEvent(QShowEvent* event)

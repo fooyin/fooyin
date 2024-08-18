@@ -21,13 +21,12 @@
 
 #include <QObject>
 
-class QMainWindow;
-
 namespace Fooyin {
 class Application;
 class CoverProvider;
 struct GuiPluginContext;
 class LibraryTreeController;
+class MainWindow;
 class PlaylistController;
 class PlaylistInteractor;
 struct ScanProgress;
@@ -40,7 +39,7 @@ class Widgets : public QObject
     Q_OBJECT
 
 public:
-    Widgets(Application* core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
+    Widgets(Application* core, MainWindow* window, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
             QObject* parent = nullptr);
 
     void registerWidgets();
@@ -53,7 +52,7 @@ private:
     Application* m_core;
     const GuiPluginContext& m_gui;
 
-    QMainWindow* m_window;
+    MainWindow* m_window;
     WidgetProvider* m_provider;
     SettingsManager* m_settings;
 

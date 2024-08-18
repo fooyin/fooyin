@@ -53,6 +53,7 @@ public:
 
     void clearMessage();
     void showMessage(const QString& message, int timeout = 0);
+    void showStatusMessage(const QString& message) const;
 
     void updateScripts();
     void updatePlayingText();
@@ -78,7 +79,6 @@ public:
     QString m_selectionScript;
 
     QTimer m_clearTimer;
-    QString m_tempText;
 };
 
 StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
@@ -109,7 +109,7 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     layout->addWidget(m_statusText, 1);
     layout->addWidget(m_selectionText);
 
-    m_messageText->hide();
+    m_statusText->hide();
     m_clearTimer.setSingleShot(true);
 
     m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
@@ -150,18 +150,38 @@ void StatusWidgetPrivate::clearMessage()
     m_clearTimer.stop();
 
     m_messageText->clear();
-    m_messageText->hide();
-    m_statusText->show();
 }
 
 void StatusWidgetPrivate::showMessage(const QString& message, int timeout)
 {
+    if(m_clearTimer.isActive() && timeout == 0) {
+        return;
+    }
+
+    if(m_statusText->isVisible()) {
+        return;
+    }
+
     m_messageText->setText(message);
     m_statusText->hide();
     m_messageText->show();
 
     if(timeout > 0) {
         m_clearTimer.start(timeout);
+    }
+}
+
+void StatusWidgetPrivate::showStatusMessage(const QString& message) const
+{
+    m_statusText->setText(message);
+
+    if(message.isEmpty()) {
+        m_messageText->show();
+        m_statusText->hide();
+    }
+    else {
+        m_statusText->show();
+        m_messageText->hide();
     }
 }
 
@@ -175,7 +195,7 @@ void StatusWidgetPrivate::updatePlayingText()
 {
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
-        m_statusText->setText(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
+        showMessage(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
     }
 }
 
@@ -221,7 +241,22 @@ QString StatusWidget::layoutName() const
 
 void StatusWidget::showMessage(const QString& message)
 {
-    p->showMessage(message, 5000);
+    p->showMessage(message, 0);
+}
+
+void StatusWidget::showTempMessage(const QString& message)
+{
+    p->showMessage(message, 3000);
+}
+
+void StatusWidget::showTempMessage(const QString& message, int timeout)
+{
+    p->showMessage(message, timeout);
+}
+
+void StatusWidget::showStatusTip(const QString& message)
+{
+    p->showStatusMessage(message);
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)

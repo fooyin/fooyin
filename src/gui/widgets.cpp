@@ -27,6 +27,7 @@
 #include "info/infowidget.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
+#include "mainwindow.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
 #include "playlist/playlistcontroller.h"
@@ -72,15 +73,13 @@
 #include <gui/widgetprovider.h>
 #include <utils/utils.h>
 
-#include <QMainWindow>
-
 namespace Fooyin {
-Widgets::Widgets(Application* core, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
-                 QObject* parent)
+Widgets::Widgets(Application* core, MainWindow* window, const GuiPluginContext& gui,
+                 PlaylistInteractor* playlistInteractor, QObject* parent)
     : QObject{parent}
     , m_core{core}
     , m_gui{gui}
-    , m_window{Utils::getMainWindow()}
+    , m_window{window}
     , m_provider{m_gui.widgetProvider}
     , m_settings{m_core->settingsManager()}
     , m_coverProvider{new CoverProvider(m_core->audioLoader(), m_settings, this)}
@@ -92,10 +91,6 @@ Widgets::Widgets(Application* core, const GuiPluginContext& gui, PlaylistInterac
 
 void Widgets::registerWidgets()
 {
-    if(!m_window) {
-        return;
-    }
-
     m_provider->registerWidget(
         QStringLiteral("Dummy"), [this]() { return new Dummy(m_settings, m_window); }, tr("Dummy"));
     m_provider->setIsHidden(QStringLiteral("Dummy"), true);
@@ -210,6 +205,7 @@ void Widgets::registerWidgets()
         QStringLiteral("StatusBar"),
         [this]() {
             m_statusWidget = new StatusWidget(m_core->playerController(), m_gui.trackSelection, m_settings, m_window);
+            m_window->installStatusWidget(m_statusWidget);
             QObject::connect(m_core->library(), &MusicLibrary::scanProgress, this, &Widgets::showScanProgress);
             return m_statusWidget;
         },
@@ -288,6 +284,6 @@ void Widgets::showScanProgress(const ScanProgress& progress) const
     }
 
     scanText += QStringLiteral(": %1%").arg(progress.percentage());
-    m_statusWidget->showMessage(scanText);
+    m_statusWidget->showTempMessage(scanText);
 }
 } // namespace Fooyin

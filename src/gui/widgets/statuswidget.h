@@ -40,6 +40,9 @@ public:
     [[nodiscard]] QString layoutName() const override;
 
     void showMessage(const QString& message);
+    void showTempMessage(const QString& message);
+    void showTempMessage(const QString& message, int timeout);
+    void showStatusTip(const QString& message);
 
 signals:
     void clicked();
