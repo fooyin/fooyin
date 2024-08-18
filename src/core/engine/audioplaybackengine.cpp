@@ -628,7 +628,9 @@ void AudioPlaybackEngine::onRendererFinished()
 {
     if(m_pauseNextTrack) {
         m_pauseNextTrack = false;
-        return;
+        if(playbackState() == PlaybackState::FadingOut) {
+            return;
+        }
     }
 
     if(m_currentTrack.hasCue()) {
