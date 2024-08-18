@@ -96,7 +96,7 @@ void Dummy::updateText()
         m_label->setText(tr("Missing Widget") + QStringLiteral(":\n") + m_missingName);
     }
     else if(isEditing) {
-        m_label->setText(tr("Right-Click to add a new widget"));
+        m_label->setText(tr("Right-click to add a new widget"));
     }
     else {
         m_label->setText(tr("Enter layout editing mode to edit"));

@@ -35,7 +35,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
 
-    auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick Setup"), this);
+    auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick setup"), this);
     viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup),
                         Actions::Groups::One);
     QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
@@ -46,11 +46,11 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
-    auto* showSandbox = new QAction(tr("&Script Sandbox"), this);
+    auto* showSandbox = new QAction(tr("&Script sandbox"), this);
     viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
     QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);
 
-    auto* showNowPlaying = new QAction(tr("Show Playing &Track"), this);
+    auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
     viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));
     QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }

@@ -48,7 +48,7 @@ void LayoutMenu::setup()
     m_layoutMenu->clear();
 
     if(!m_layoutEditing) {
-        m_layoutEditing    = new QAction(tr("&Editing Mode"), this);
+        m_layoutEditing    = new QAction(tr("&Editing mode"), this);
         m_layoutEditingCmd = m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
         QObject::connect(m_layoutEditing, &QAction::triggered, this,
                          [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
@@ -61,9 +61,9 @@ void LayoutMenu::setup()
 
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
 
-    auto* importLayout = new QAction(tr("&Import Layout…"), m_layoutMenu->menu());
+    auto* importLayout = new QAction(tr("&Import layout…"), m_layoutMenu->menu());
     QObject::connect(importLayout, &QAction::triggered, this, &LayoutMenu::importLayout);
-    auto* exportLayout = new QAction(tr("E&xport Layout…"), m_layoutMenu->menu());
+    auto* exportLayout = new QAction(tr("E&xport layout…"), m_layoutMenu->menu());
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
     m_layoutMenu->addAction(importLayout);

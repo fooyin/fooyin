@@ -19,6 +19,7 @@
 
 #include "librarymenu.h"
 
+#include <core/application.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
@@ -30,29 +31,28 @@
 #include <QAction>
 
 namespace Fooyin {
-LibraryMenu::LibraryMenu(ActionManager* actionManager, MusicLibrary* library, SettingsManager* settings,
-                         QObject* parent)
+LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent)
     : QObject{parent}
-    , m_actionManager{actionManager}
-    , m_library{library}
-    , m_settings{settings}
 {
-    auto* libraryMenu = m_actionManager->actionContainer(Constants::Menus::Library);
+    auto* libraryMenu = actionManager->actionContainer(Constants::Menus::Library);
 
     auto* refreshLibrary
-        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Refresh Libraries"), this);
-    libraryMenu->addAction(m_actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
-    QObject::connect(refreshLibrary, &QAction::triggered, m_library, &MusicLibrary::refreshAll);
+        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Scan for changes"), this);
+    refreshLibrary->setStatusTip(tr("Update tracks in libraries which have been modified on disk"));
+    libraryMenu->addAction(actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
+    QObject::connect(refreshLibrary, &QAction::triggered, core->library(), &MusicLibrary::refreshAll);
 
     auto* rescanLibrary
-        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("Re&scan Libraries"), this);
-    libraryMenu->addAction(m_actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
-    QObject::connect(rescanLibrary, &QAction::triggered, m_library, &MusicLibrary::rescanAll);
+        = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Reload tracks"), this);
+    rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
+    libraryMenu->addAction(actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
+    QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
     auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
     libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Configure"));
-    QObject::connect(openSettings, &QAction::triggered, this,
-                     [this]() { m_settings->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral); });
+    QObject::connect(openSettings, &QAction::triggered, this, [core]() {
+        core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
+    });
 }
 } // namespace Fooyin
 

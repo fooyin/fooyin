@@ -145,13 +145,13 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showCursor = new QAction(tr("Show Cursor"), menu);
+    auto* showCursor = new QAction(tr("Show cursor"), menu);
     showCursor->setCheckable(true);
     showCursor->setChecked(m_settings->value<Settings::WaveBar::ShowCursor>());
     QObject::connect(showCursor, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<Settings::WaveBar::ShowCursor>(checked); });
 
-    auto* showLabels = new QAction(tr("Show Labels"), this);
+    auto* showLabels = new QAction(tr("Show labels"), this);
     showLabels->setCheckable(true);
     showLabels->setChecked(m_container->labelsEnabled());
     QObject::connect(showLabels, &QAction::triggered, this, [this](bool checked) {
@@ -160,7 +160,7 @@ void WaveBarWidget::contextMenuEvent(QContextMenuEvent* event)
         QMetaObject::invokeMethod(m_container, [this]() { rescaleWaveform(); }, Qt::QueuedConnection);
     });
 
-    auto* showElapsed = new QAction(tr("Show Elapsed Total"), this);
+    auto* showElapsed = new QAction(tr("Show elapsed total"), this);
     showElapsed->setCheckable(true);
     showElapsed->setChecked(m_container->elapsedTotal());
     QObject::connect(showElapsed, &QAction::triggered, this, [this](bool checked) {

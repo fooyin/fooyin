@@ -116,7 +116,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* keepAspectRatio = new QAction(tr("Keep Aspect Ratio"), this);
+    auto* keepAspectRatio = new QAction(tr("Keep aspect ratio"), this);
 
     keepAspectRatio->setCheckable(true);
     keepAspectRatio->setChecked(m_keepAspectRatio);
@@ -128,8 +128,8 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* coverGroup = new QActionGroup(menu);
 
-    auto* frontCover  = new QAction(tr("Front Cover"), coverGroup);
-    auto* backCover   = new QAction(tr("Back Cover"), coverGroup);
+    auto* frontCover  = new QAction(tr("Front cover"), coverGroup);
+    auto* backCover   = new QAction(tr("Back cover"), coverGroup);
     auto* artistCover = new QAction(tr("Artist"), coverGroup);
 
     frontCover->setCheckable(true);

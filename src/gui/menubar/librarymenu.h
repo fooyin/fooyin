@@ -22,21 +22,14 @@
 #include <QObject>
 
 namespace Fooyin {
+class Application;
 class ActionManager;
-class SettingsManager;
-class MusicLibrary;
 
 class LibraryMenu : public QObject
 {
     Q_OBJECT
 
 public:
-    LibraryMenu(ActionManager* actionManager, MusicLibrary* library, SettingsManager* settings,
-                QObject* parent = nullptr);
-
-private:
-    ActionManager* m_actionManager;
-    MusicLibrary* m_library;
-    SettingsManager* m_settings;
+    LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent = nullptr);
 };
 } // namespace Fooyin

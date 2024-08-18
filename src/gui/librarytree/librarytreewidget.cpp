@@ -251,8 +251,8 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_sortProxy{new LibraryTreeSortModel(m_self)}
     , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                         m_self)}
-    , m_addToQueueAction{new QAction(LibraryTreeWidget::tr("Add to Playback Queue"), m_self)}
-    , m_removeFromQueueAction{new QAction(LibraryTreeWidget::tr("Remove from Playback Queue"), m_self)}
+    , m_addToQueueAction{new QAction(LibraryTreeWidget::tr("Add to playback queue"), m_self)}
+    , m_removeFromQueueAction{new QAction(LibraryTreeWidget::tr("Remove from playback queue"), m_self)}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeMiddleClick>())}
 {
@@ -458,7 +458,7 @@ void LibraryTreeWidgetPrivate::addOpenMenu(QMenu* menu) const
     dir += u"/" + parentDirs.join(u'/');
     const QFileInfo info{dir};
     if(info.exists() && info.isDir()) {
-        auto* openFolder = new QAction(LibraryTreeWidget::tr("Open Folder"), m_self);
+        auto* openFolder = new QAction(LibraryTreeWidget::tr("Open folder"), m_self);
         QObject::connect(openFolder, &QAction::triggered, m_self, [dir]() { Utils::File::openDirectory(dir); });
         menu->addAction(openFolder);
     }

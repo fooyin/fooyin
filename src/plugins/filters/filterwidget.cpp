@@ -627,15 +627,15 @@ void FilterWidget::addDisplayMenu(QMenu* menu)
         updateCaptions(CaptionDisplay::None);
     });
 
-    auto* displaySummary = new QAction(FilterWidget::tr("Summary Item"), displayMenu);
+    auto* displaySummary = new QAction(FilterWidget::tr("Summary item"), displayMenu);
     displaySummary->setCheckable(true);
     displaySummary->setChecked(m_model->showSummary());
     QObject::connect(displaySummary, &QAction::triggered, m_model, &FilterModel::setShowSummary);
 
     auto* coverGroup = new QActionGroup(displayMenu);
 
-    auto* coverFront  = new QAction(FilterWidget::tr("Front Cover"), coverGroup);
-    auto* coverBack   = new QAction(FilterWidget::tr("Back Cover"), coverGroup);
+    auto* coverFront  = new QAction(FilterWidget::tr("Front cover"), coverGroup);
+    auto* coverBack   = new QAction(FilterWidget::tr("Back cover"), coverGroup);
     auto* coverArtist = new QAction(FilterWidget::tr("Artist"), coverGroup);
 
     coverFront->setCheckable(true);
@@ -718,7 +718,7 @@ void FilterWidget::filterHeaderMenu(const QPoint& pos)
         emit filterUpdated();
     });
 
-    auto* multiColAction = new QAction(FilterWidget::tr("Multiple Columns"), menu);
+    auto* multiColAction = new QAction(FilterWidget::tr("Multiple columns"), menu);
     multiColAction->setCheckable(true);
     multiColAction->setChecked(m_multipleColumns);
     multiColAction->setEnabled(m_columns.size() <= 1);
@@ -741,7 +741,7 @@ void FilterWidget::filterHeaderMenu(const QPoint& pos)
     addDisplayMenu(menu);
 
     menu->addSeparator();
-    auto* manageConnections = new QAction(FilterWidget::tr("Manage Groups"), menu);
+    auto* manageConnections = new QAction(FilterWidget::tr("Manage groups"), menu);
     QObject::connect(manageConnections, &QAction::triggered, this, &FilterWidget::requestEditConnections);
     menu->addAction(manageConnections);
 

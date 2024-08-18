@@ -123,9 +123,9 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_removeCmd{actionManager->registerAction(m_removePlaylist, Constants::Actions::Remove, m_context->context())}
     , m_renamePlaylist{new QAction(tr("Rename"))}
     , m_renameCmd{actionManager->registerAction(m_renamePlaylist, Constants::Actions::Rename, m_context->context())}
-    , m_newGroup{new QAction(tr("New Group"))}
+    , m_newGroup{new QAction(tr("New group"))}
     , m_newGroupCmd{actionManager->registerAction(m_newGroup, "PlaylistOrganiser.NewGroup", m_context->context())}
-    , m_newPlaylist{new QAction(tr("Create Playlist"))}
+    , m_newPlaylist{new QAction(tr("Create playlist"))}
     , m_newPlaylistCmd{
           actionManager->registerAction(m_newPlaylist, "PlaylistOrganiser.NewPlaylist", m_context->context())}
 {

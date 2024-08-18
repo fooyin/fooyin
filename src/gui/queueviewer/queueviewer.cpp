@@ -113,7 +113,7 @@ void QueueViewer::setupActions()
     QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
     m_clear->setEnabled(m_model->rowCount({}) > 0);
 
-    auto* selectAllAction = new QAction(tr("&Select All"), this);
+    auto* selectAllAction = new QAction(tr("&Select all"), this);
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_context->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);

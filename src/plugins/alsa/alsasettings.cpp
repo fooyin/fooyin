@@ -37,8 +37,8 @@ AlsaSettings::AlsaSettings(QWidget* parent)
     QObject::connect(buttons, &QDialogButtonBox::accepted, this, &AlsaSettings::accept);
     QObject::connect(buttons, &QDialogButtonBox::rejected, this, &AlsaSettings::reject);
 
-    auto* bufferLabel = new QLabel(tr("Buffer Length") + u":", this);
-    auto* periodLabel = new QLabel(tr("Period Length") + u":", this);
+    auto* bufferLabel = new QLabel(tr("Buffer length") + u":", this);
+    auto* periodLabel = new QLabel(tr("Period length") + u":", this);
 
     m_bufferLength->setRange(200, 10000);
     m_bufferLength->setSuffix(QStringLiteral(" ms"));

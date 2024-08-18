@@ -188,7 +188,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
     , m_layoutMenu{new LayoutMenu(m_actionManager, &m_layoutProvider, m_settings, m_self)}
     , m_playbackMenu{new PlaybackMenu(m_actionManager, m_playerController, m_settings, m_self)}
-    , m_libraryMenu{new LibraryMenu(m_actionManager, m_library, m_settings, m_self)}
+    , m_libraryMenu{new LibraryMenu(m_core, m_actionManager, m_self)}
     , m_helpMenu{new HelpMenu(m_actionManager, m_self)}
     , m_propertiesDialog{new PropertiesDialog(m_settings, m_self)}
     , m_windowController{new WindowController(m_mainWindow.get())}

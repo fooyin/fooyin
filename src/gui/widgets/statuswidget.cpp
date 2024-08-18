@@ -264,14 +264,14 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showIcon = new QAction(tr("Show Icon"), this);
+    auto* showIcon = new QAction(tr("Show icon"), this);
     showIcon->setCheckable(true);
     showIcon->setChecked(p->m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     QObject::connect(showIcon, &QAction::triggered, this,
                      [this](bool checked) { p->m_settings->set<Settings::Gui::Internal::StatusShowIcon>(checked); });
     menu->addAction(showIcon);
 
-    auto* showSelection = new QAction(tr("Show Track Selection"), this);
+    auto* showSelection = new QAction(tr("Show track selection"), this);
     showSelection->setCheckable(true);
     showSelection->setChecked(p->m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
     QObject::connect(showSelection, &QAction::triggered, this, [this](bool checked) {

@@ -177,8 +177,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_pasteAction{new QAction(tr("Paste"), m_self)}
     , m_clearAction{new QAction(tr("&Clear"), m_self)}
     , m_removeTrackAction{new QAction(tr("Remove"), m_self)}
-    , m_addToQueueAction{new QAction(tr("Add to Playback Queue"), m_self)}
-    , m_removeFromQueueAction{new QAction(tr("Remove from Playback Queue"), m_self)}
+    , m_addToQueueAction{new QAction(tr("Add to playback queue"), m_self)}
+    , m_removeFromQueueAction{new QAction(tr("Remove from playback queue"), m_self)}
     , m_sorting{false}
     , m_sortingColumn{false}
     , m_showPlaying{false}
@@ -336,7 +336,7 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(m_clearAction, &QAction::triggered, this, [this]() { clearTracks(); });
     m_clearAction->setEnabled(m_model->rowCount({}) > 0);
 
-    auto* selectAllAction = new QAction(tr("&Select All"), m_self);
+    auto* selectAllAction = new QAction(tr("&Select all"), m_self);
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_playlistContext->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);

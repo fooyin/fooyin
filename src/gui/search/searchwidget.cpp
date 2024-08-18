@@ -155,11 +155,11 @@ void SearchWidget::showOptionsMenu()
     auto* menu = new QMenu(tr("Options"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* changePlaceholder = new QAction(tr("Change Placeholder Text"), this);
+    auto* changePlaceholder = new QAction(tr("Change placeholder text"), this);
     QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
     menu->addAction(changePlaceholder);
 
-    auto* manageConnections = new QAction(tr("Manage Connections"), this);
+    auto* manageConnections = new QAction(tr("Manage connections"), this);
     QObject::connect(manageConnections, &QAction::triggered, this,
                      [this]() { m_searchController->setupWidgetConnections(id()); });
     menu->addAction(manageConnections);

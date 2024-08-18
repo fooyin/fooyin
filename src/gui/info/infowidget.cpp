@@ -149,20 +149,20 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* showHeaders = new QAction(tr("Show Header"), this);
+    auto* showHeaders = new QAction(tr("Show header"), this);
     showHeaders->setCheckable(true);
     showHeaders->setChecked(!m_view->isHeaderHidden());
     QAction::connect(showHeaders, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<InfoHeader>(checked); });
 
-    auto* showScrollBar = new QAction(tr("Show Scrollbar"), menu);
+    auto* showScrollBar = new QAction(tr("Show scrollbar"), menu);
     showScrollBar->setCheckable(true);
     showScrollBar->setChecked(m_view->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff);
     QAction::connect(showScrollBar, &QAction::triggered, this,
                      [this](bool checked) { m_settings->set<InfoScrollBar>(checked); });
     menu->addAction(showScrollBar);
 
-    auto* altColours = new QAction(tr("Alternating Row Colours"), this);
+    auto* altColours = new QAction(tr("Alternating row colours"), this);
     altColours->setCheckable(true);
     altColours->setChecked(m_view->alternatingRowColors());
     QAction::connect(altColours, &QAction::triggered, this,
@@ -178,7 +178,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
-    auto* showExtendedMetadata = new QAction(tr("Extended Metadata"), this);
+    auto* showExtendedMetadata = new QAction(tr("Extended metadata"), this);
     showExtendedMetadata->setCheckable(true);
     showExtendedMetadata->setChecked(options & InfoItem::ExtendedMetadata);
     QAction::connect(showExtendedMetadata, &QAction::triggered, this, [this](bool checked) {

@@ -73,7 +73,7 @@ TagEditorView::TagEditorView(ActionManager* actionManager, QWidget* parent)
     , m_context{new WidgetContext(this, Context{"Context.TagEditor"}, this)}
     , m_copyAction{new QAction(tr("Copy"), this)}
     , m_pasteAction{new QAction(tr("Paste"), this)}
-    , m_pasteFields{new QAction(tr("Paste Fields"), this)}
+    , m_pasteFields{new QAction(tr("Paste fields"), this)}
     , m_starDelegate{new StarDelegate(this)}
 {
     actionManager->addContextObject(m_context);

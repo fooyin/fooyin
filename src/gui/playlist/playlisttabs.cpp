@@ -280,7 +280,7 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* createPlaylist = new QAction(tr("Add New Playlist"), menu);
+    auto* createPlaylist = new QAction(tr("Add new playlist"), menu);
     QObject::connect(createPlaylist, &QAction::triggered, this, [this]() {
         if(auto* playlist = m_playlistHandler->createEmptyPlaylist()) {
             m_playlistController->changeCurrentPlaylist(playlist);
@@ -291,10 +291,10 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     if(index >= 0) {
         const auto id = tabBar->tabData(index).value<UId>();
 
-        auto* renamePlAction = new QAction(tr("Rename Playlist"), menu);
+        auto* renamePlAction = new QAction(tr("Rename playlist"), menu);
         QObject::connect(renamePlAction, &QAction::triggered, tabBar, &EditableTabBar::showEditor);
 
-        auto* removePlAction = new QAction(tr("Remove Playlist"), menu);
+        auto* removePlAction = new QAction(tr("Remove playlist"), menu);
         QObject::connect(removePlAction, &QAction::triggered, this,
                          [this, id]() { m_playlistHandler->removePlaylist(id); });
 
@@ -309,12 +309,12 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
 
         const auto id = tabBar->tabData(index).value<UId>();
 
-        auto* moveLeft = new QAction(tr("Move Left"), menu);
+        auto* moveLeft = new QAction(tr("Move left"), menu);
         moveLeft->setEnabled(index > 0);
         QObject::connect(moveLeft, &QAction::triggered, m_tabs,
                          [tabBar, index]() { tabBar->moveTab(index, index - 1); });
 
-        auto* moveRight = new QAction(tr("Move Right"), menu);
+        auto* moveRight = new QAction(tr("Move right"), menu);
         moveRight->setEnabled(index < m_tabs->count() - 1);
         QObject::connect(moveRight, &QAction::triggered, m_tabs,
                          [tabBar, index]() { tabBar->moveTab(index, index + 1); });

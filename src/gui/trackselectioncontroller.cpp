@@ -116,9 +116,9 @@ TrackSelectionControllerPrivate::TrackSelectionControllerPrivate(TrackSelectionC
     , m_addActive{new QAction(TrackSelectionController::tr("Add to active playlist"), m_tracksPlaylistMenu)}
     , m_sendCurrent{new QAction(TrackSelectionController::tr("Send to current playlist"), m_tracksPlaylistMenu)}
     , m_sendNew{new QAction(TrackSelectionController::tr("Send to new playlist"), m_tracksPlaylistMenu)}
-    , m_addToQueue{new QAction(TrackSelectionController::tr("Add to Playback Queue"), m_tracksMenu)}
-    , m_removeFromQueue{new QAction(TrackSelectionController::tr("Remove from Playback Queue"), m_tracksMenu)}
-    , m_openFolder{new QAction(TrackSelectionController::tr("Open Containing Folder"), m_tracksMenu)}
+    , m_addToQueue{new QAction(TrackSelectionController::tr("Add to playback queue"), m_tracksMenu)}
+    , m_removeFromQueue{new QAction(TrackSelectionController::tr("Remove from playback queue"), m_tracksMenu)}
+    , m_openFolder{new QAction(TrackSelectionController::tr("Open containing folder"), m_tracksMenu)}
     , m_openProperties{new QAction(TrackSelectionController::tr("Properties"), m_tracksMenu)}
 {
     setupMenu();

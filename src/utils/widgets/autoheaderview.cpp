@@ -483,7 +483,7 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
 
     menu->addSeparator();
 
-    auto* showMenu = new QMenu(tr("Show Hidden"), menu);
+    auto* showMenu = new QMenu(tr("Show hidden"), menu);
 
     const int sectionCount = count();
     const int hiddenCount  = hiddenSectionCount();
@@ -491,8 +491,8 @@ void AutoHeaderView::addHeaderContextMenu(QMenu* menu, const QPoint& pos)
     if(!pos.isNull()) {
         const int logical = logicalIndexAt(mapFromGlobal(pos));
         if(logical >= 0 && logical < sectionCount) {
-            auto* hideSection
-                = new QAction(tr("Hide %1").arg(model()->headerData(logical, orientation()).toString()), menu);
+            auto* hideSection = new QAction(
+                tr("Hide %1").arg(u"\"" + model()->headerData(logical, orientation()).toString() + u"\""), menu);
             QObject::connect(hideSection, &QAction::triggered, this, [this, logical]() { hideHeaderSection(logical); });
             hideSection->setEnabled(sectionCount - hiddenCount > 1);
             menu->addAction(hideSection);

@@ -43,7 +43,7 @@ void FileOpsPlugin::initialise(const GuiPluginContext& context)
     auto* selectionMenu = context.actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
 
     auto* fileOpsMenu = context.actionManager->createMenu("FileOperations");
-    fileOpsMenu->menu()->setTitle(tr("&File Operations"));
+    fileOpsMenu->menu()->setTitle(tr("&File operations"));
     selectionMenu->addMenu(Constants::Menus::Context::Utilities, fileOpsMenu);
 
     auto* copyAction   = new QAction(tr("&Copy to…"), selectionMenu);

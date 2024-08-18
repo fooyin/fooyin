@@ -308,7 +308,7 @@ QString SplitterWidget::layoutName() const
 
 void SplitterWidget::layoutEditingMenu(QMenu* menu)
 {
-    auto* changeSplitter = new QAction(tr("Switch Orientation"), this);
+    auto* changeSplitter = new QAction(tr("Switch orientation"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
         setObjectName(Utils::Enum::toString(m_splitter->orientation()) + QStringLiteral(" Splitter"));

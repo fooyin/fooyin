@@ -47,9 +47,9 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_previous{new QAction(Utils::iconFromTheme(Constants::Icons::Prev), tr("Previous"), this)}
     , m_next{new QAction(Utils::iconFromTheme(Constants::Icons::Next), tr("Next"), this)}
     , m_defaultPlayback{new QAction(tr("&Default"), this)}
-    , m_repeatTrack{new QAction(tr("&Repeat Track"), this)}
-    , m_repeatPlaylist{new QAction(tr("Repeat &Playlist"), this)}
-    , m_shuffle{new QAction(tr("&Shuffle Tracks"), this)}
+    , m_repeatTrack{new QAction(tr("&Repeat track"), this)}
+    , m_repeatPlaylist{new QAction(tr("Repeat &playlist"), this)}
+    , m_shuffle{new QAction(tr("&Shuffle tracks"), this)}
     , m_stopAfterCurrent{new QAction(tr("Stop &after current"), this)}
 {
     auto* playbackMenu = m_actionManager->actionContainer(Constants::Menus::Playback);
@@ -100,8 +100,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     QObject::connect(m_shuffle, &QAction::triggered, this,
                      [this]() { setPlayMode(Playlist::PlayMode::ShuffleTracks); });
 
-    auto* followPlayback = new QAction(tr("Cursor Follows Play&back"), this);
-    auto* followCursor   = new QAction(tr("Playback Follows &Cursor"), this);
+    auto* followPlayback = new QAction(tr("Cursor follows play&back"), this);
+    auto* followCursor   = new QAction(tr("Playback follows &cursor"), this);
 
     auto* stopCurrentCmd = actionManager->registerAction(m_stopAfterCurrent, Constants::Actions::StopAfterCurrent);
 
