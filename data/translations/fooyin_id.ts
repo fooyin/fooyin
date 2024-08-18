@@ -6,32 +6,32 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="34"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Salin</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="36"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Pindah</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="38"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubah nama</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="40"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Buat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="42"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Buang</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="44"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak dikenal</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta&amp;ta letak</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -86,7 +86,7 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="157"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Karya seni</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
@@ -134,7 +134,7 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="92"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukuran cache Pixmap</translation>
     </message>
 </context>
 <context>
@@ -142,7 +142,7 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="475"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Bagian ukuran otomatis</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="483"/>
