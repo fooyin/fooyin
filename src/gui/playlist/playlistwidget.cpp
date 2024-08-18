@@ -1366,10 +1366,9 @@ void PlaylistWidgetPrivate::addColumnsMenu(QMenu* parent)
                 = std::ranges::find_if(m_columns, [columnId](const PlaylistColumn& col) { return col.id == columnId; });
             if(colIt != m_columns.end()) {
                 const int removedIndex = static_cast<int>(std::distance(m_columns.begin(), colIt));
-                if(m_model->removeColumn(removedIndex)) {
-                    m_columns.erase(colIt);
-                    updateSpans();
-                }
+                m_columns.erase(colIt);
+                updateSpans();
+                m_model->removeColumn(removedIndex);
             }
         }
     });
