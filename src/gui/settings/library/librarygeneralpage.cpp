@@ -67,11 +67,11 @@ void LibraryTableView::setupContextActions(QMenu* menu, const QPoint& pos)
     const auto library   = index.data(Qt::UserRole).value<LibraryInfo>();
     const bool isPending = library.status == LibraryInfo::Status::Pending;
 
-    auto* refresh = new QAction(tr("Refresh"), this);
+    auto* refresh = new QAction(tr("&Scan for changes"), this);
     refresh->setEnabled(!isPending);
     QObject::connect(refresh, &QAction::triggered, this, [this, library]() { emit refreshLibrary(library); });
 
-    auto* rescan = new QAction(tr("Rescan"), this);
+    auto* rescan = new QAction(tr("&Reload tracks"), this);
     rescan->setEnabled(!isPending);
     QObject::connect(rescan, &QAction::triggered, this, [this, library]() { emit rescanLibrary(library); });
 
