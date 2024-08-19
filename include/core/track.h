@@ -55,7 +55,7 @@ public:
     };
 
     using ExtraTags       = QMap<QString, QStringList>;
-    using ExtraProperites = QMap<QString, QString>;
+    using ExtraProperties = QMap<QString, QString>;
 
     Track();
     explicit Track(const QString& filepath);
@@ -127,10 +127,10 @@ public:
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
     [[nodiscard]] ExtraTags extraTags() const;
     [[nodiscard]] QStringList removedTags() const;
-    [[nodiscard]] QByteArray serialiseExtrasTags() const;
+    [[nodiscard]] QByteArray serialiseExtraTags() const;
 
     [[nodiscard]] bool hasExtraProperty(const QString& prop) const;
-    [[nodiscard]] ExtraProperites extraProperties() const;
+    [[nodiscard]] ExtraProperties extraProperties() const;
     [[nodiscard]] QByteArray serialiseExtraProperties() const;
 
     [[nodiscard]] int subsong() const;
