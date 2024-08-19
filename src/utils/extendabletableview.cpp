@@ -331,6 +331,20 @@ Context ExtendableTableView::context() const
     return p->m_context->context();
 }
 
+QSize ExtendableTableView::sizeHint() const
+{
+    QSize hint = QTableView::sizeHint();
+    hint.rheight() += ButtonAreaHeight;
+    return hint;
+}
+
+QSize ExtendableTableView::minimumSizeHint() const
+{
+    QSize hint = QTableView::minimumSizeHint();
+    hint.rheight() += ButtonAreaHeight;
+    return hint;
+}
+
 void ExtendableTableView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     if(!index.isValid() || index.row() < model()->rowCount() - 1) {

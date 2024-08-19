@@ -74,6 +74,8 @@ public:
 
     [[nodiscard]] Context context() const;
 
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
     void scrollTo(const QModelIndex& index, ScrollHint hint) override;
 
 protected:
