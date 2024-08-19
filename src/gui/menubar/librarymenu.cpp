@@ -19,6 +19,8 @@
 
 #include "librarymenu.h"
 
+#include "gui/statusevent.h"
+
 #include <core/application.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
@@ -73,6 +75,8 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 
 void LibraryMenu::optimiseDatabase()
 {
+    StatusEvent::post(tr("Optimising database…"), 0);
+
     Utils::asyncExec([this]() {
         const DbConnectionHandler dbHandler{m_database};
         const DbConnectionProvider dbProvider{m_database};
@@ -81,7 +85,7 @@ void LibraryMenu::optimiseDatabase()
         generalDb.initialise(dbProvider);
 
         generalDb.optimiseDatabase();
-    });
+    }).then(this, []() { StatusEvent::post(tr("Database optimised")); });
 }
 } // namespace Fooyin
 
