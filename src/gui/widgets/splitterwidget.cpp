@@ -311,28 +311,28 @@ void SplitterWidget::layoutEditingMenu(QMenu* menu)
     auto* changeSplitter = new QAction(tr("Switch orientation"), this);
     QObject::connect(changeSplitter, &QAction::triggered, this, [this] {
         setOrientation(m_splitter->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
-        setObjectName(Utils::Enum::toString(m_splitter->orientation()) + QStringLiteral(" Splitter"));
+        setObjectName(Utils::Enum::toString(m_splitter->orientation()) + u" " + tr("Splitter"));
     });
     menu->addAction(changeSplitter);
 }
 
 void SplitterWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("State")] = QString::fromUtf8(saveState().toBase64());
+    layout[u"State"] = QString::fromUtf8(saveState().toBase64());
 
     if(!m_widgets.empty()) {
         QJsonArray children;
         for(const auto& widget : m_widgets) {
             widget->saveLayout(children);
         }
-        layout[QStringLiteral("Widgets")] = children;
+        layout[u"Widgets"] = children;
     }
 }
 
 void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const auto state    = QByteArray::fromBase64(layout[QStringLiteral("State")].toString().toUtf8());
-    const auto children = layout[QStringLiteral("Widgets")].toArray();
+    const auto state    = QByteArray::fromBase64(layout[u"State"].toString().toUtf8());
+    const auto children = layout[u"Widgets"].toArray();
 
     WidgetContainer::loadWidgets(children);
 

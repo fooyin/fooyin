@@ -290,10 +290,10 @@ void FilterWidget::loadLayoutData(const QJsonObject& layout)
         m_columns.clear();
 
         const QString columnData    = layout.value(u"Columns").toString();
-        const QStringList columnIds = columnData.split(QStringLiteral("|"));
+        const QStringList columnIds = columnData.split(u'|');
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column = columnId.split(QStringLiteral(":"));
+            const auto column = columnId.split(u':');
 
             if(const auto columnItem = m_columnRegistry->itemById(column.at(0).toInt())) {
                 m_columns.push_back(columnItem.value());

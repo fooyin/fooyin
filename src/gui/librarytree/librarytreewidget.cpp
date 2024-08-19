@@ -908,22 +908,22 @@ QString LibraryTreeWidget::layoutName() const
 
 void LibraryTreeWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("Grouping")] = p->m_grouping.id;
-    layout[QStringLiteral("State")]    = QString::fromUtf8(p->saveState().toBase64());
+    layout[u"Grouping"] = p->m_grouping.id;
+    layout[u"State"]    = QString::fromUtf8(p->saveState().toBase64());
 }
 
 void LibraryTreeWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("Grouping"))) {
-        if(const auto grouping = p->m_groupsRegistry->itemById(layout.value(QStringLiteral("Grouping")).toInt())) {
+    if(layout.contains(u"Grouping")) {
+        if(const auto grouping = p->m_groupsRegistry->itemById(layout.value(u"Grouping").toInt())) {
             if(grouping->isValid()) {
                 p->changeGrouping(grouping.value());
             }
         }
     }
 
-    if(layout.contains(QStringLiteral("State"))) {
-        p->m_pendingState = QByteArray::fromBase64(layout.value(QStringLiteral("State")).toString().toUtf8());
+    if(layout.contains(u"State")) {
+        p->m_pendingState = QByteArray::fromBase64(layout.value(u"State").toString().toUtf8());
         if(!p->m_pendingState.isEmpty() && p->m_settings->value<LibTreeRestoreState>()) {
             p->m_libraryTree->setLoading(true);
         }

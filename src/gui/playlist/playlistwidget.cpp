@@ -1423,7 +1423,7 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
             QString colStr       = QString::number(column.id);
 
             if(alignment != Qt::AlignLeft) {
-                colStr += QStringLiteral(":") + QString::number(alignment.toInt());
+                colStr += u":" + QString::number(alignment.toInt());
             }
 
             columns.push_back(colStr);
@@ -1452,10 +1452,10 @@ void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
         p->m_columns.clear();
 
         const QString columnData    = layout.value(u"Columns").toString();
-        const QStringList columnIds = columnData.split(QStringLiteral("|"));
+        const QStringList columnIds = columnData.split(u'|');
 
         for(int i{0}; const auto& columnId : columnIds) {
-            const auto column = columnId.split(QStringLiteral(":"));
+            const auto column = columnId.split(u':');
 
             if(const auto columnItem = p->m_columnRegistry->itemById(column.at(0).toInt())) {
                 p->m_columns.push_back(columnItem.value());

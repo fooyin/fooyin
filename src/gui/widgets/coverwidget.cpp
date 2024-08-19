@@ -89,21 +89,21 @@ QString CoverWidget::layoutName() const
 
 void CoverWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("CoverType")]       = static_cast<int>(m_coverType);
-    layout[QStringLiteral("CoverAlignment")]  = static_cast<int>(m_coverAlignment);
-    layout[QStringLiteral("KeepAspectRatio")] = m_keepAspectRatio;
+    layout[u"CoverType"]       = static_cast<int>(m_coverType);
+    layout[u"CoverAlignment"]  = static_cast<int>(m_coverAlignment);
+    layout[u"KeepAspectRatio"] = m_keepAspectRatio;
 }
 
 void CoverWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("CoverType"))) {
-        m_coverType = static_cast<Track::Cover>(layout.value(QStringLiteral("CoverType")).toInt());
+    if(layout.contains(u"CoverType")) {
+        m_coverType = static_cast<Track::Cover>(layout.value(u"CoverType").toInt());
     }
-    if(layout.contains(QStringLiteral("CoverAlignment"))) {
-        m_coverAlignment = static_cast<Qt::Alignment>(layout.value(QStringLiteral("CoverAlignment")).toInt());
+    if(layout.contains(u"CoverAlignment")) {
+        m_coverAlignment = static_cast<Qt::Alignment>(layout.value(u"CoverAlignment").toInt());
     }
-    if(layout.contains(QStringLiteral("KeepAspectRatio"))) {
-        m_keepAspectRatio = layout.value(QStringLiteral("KeepAspectRatio")).toBool();
+    if(layout.contains(u"KeepAspectRatio")) {
+        m_keepAspectRatio = layout.value(u"KeepAspectRatio").toBool();
     }
 }
 
@@ -133,9 +133,9 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* alignmentGroup = new QActionGroup(menu);
 
-    auto* alignCenter    = new QAction(tr("Align to center"), alignmentGroup);
-    auto* alignLeft      = new QAction(tr("Align to left"), alignmentGroup);
-    auto* alignRight     = new QAction(tr("Align to right"), alignmentGroup);
+    auto* alignCenter = new QAction(tr("Align to center"), alignmentGroup);
+    auto* alignLeft   = new QAction(tr("Align to left"), alignmentGroup);
+    auto* alignRight  = new QAction(tr("Align to right"), alignmentGroup);
 
     alignCenter->setCheckable(true);
     alignLeft->setCheckable(true);

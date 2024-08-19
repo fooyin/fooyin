@@ -97,18 +97,18 @@ QString WaveBarWidget::layoutName() const
 
 void WaveBarWidget::saveLayoutData(QJsonObject& layout)
 {
-    layout[QStringLiteral("ShowLabels")]   = m_container->labelsEnabled();
-    layout[QStringLiteral("ElapsedTotal")] = m_container->elapsedTotal();
+    layout[u"ShowLabels"]   = m_container->labelsEnabled();
+    layout[u"ElapsedTotal"] = m_container->elapsedTotal();
 }
 
 void WaveBarWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("ShowLabels"))) {
-        const bool showLabels = layout.value(QStringLiteral("ShowLabels")).toBool();
+    if(layout.contains(u"ShowLabels")) {
+        const bool showLabels = layout.value(u"ShowLabels").toBool();
         m_container->setLabelsEnabled(showLabels);
     }
-    if(layout.contains(QStringLiteral("ElapsedTotal"))) {
-        const bool elapsedTotal = layout.value(QStringLiteral("ElapsedTotal")).toBool();
+    if(layout.contains(u"ElapsedTotal")) {
+        const bool elapsedTotal = layout.value(u"ElapsedTotal").toBool();
         m_container->setElapsedTotal(elapsedTotal);
     }
 }

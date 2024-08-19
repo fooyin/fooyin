@@ -84,24 +84,23 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
         state.append(m_tabs->tabText(i));
     }
 
-    layout[QStringLiteral("Position")] = Utils::Enum::toString(m_tabs->tabPosition());
-    layout[QStringLiteral("State")]    = state;
-    layout[QStringLiteral("Widgets")]  = widgets;
+    layout[u"Position"] = Utils::Enum::toString(m_tabs->tabPosition());
+    layout[u"State"]    = state;
+    layout[u"Widgets"]  = widgets;
 }
 
 void TabStackWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(const auto position
-       = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(QStringLiteral("Position")).toString())) {
+    if(const auto position = Utils::Enum::fromString<QTabWidget::TabPosition>(layout.value(u"Position").toString())) {
         changeTabPosition(position.value());
     }
 
-    const auto widgets = layout.value(QStringLiteral("Widgets")).toArray();
+    const auto widgets = layout.value(u"Widgets").toArray();
 
     WidgetContainer::loadWidgets(widgets);
 
-    const auto state         = layout.value(QStringLiteral("State")).toString();
-    const QStringList titles = state.split(QStringLiteral("\037"));
+    const auto state         = layout.value(u"State").toString();
+    const QStringList titles = state.split(u'\037');
 
     for(int i{0}; const QString& title : titles) {
         if(i < m_tabs->count()) {

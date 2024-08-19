@@ -80,7 +80,7 @@ QString SearchWidget::layoutName() const
 
 void SearchWidget::layoutEditingMenu(QMenu* menu)
 {
-    auto* manageConnections = new QAction(tr("Manage Connections"), this);
+    auto* manageConnections = new QAction(tr("Manage connections"), this);
     QObject::connect(manageConnections, &QAction::triggered, this,
                      [this]() { m_searchController->setupWidgetConnections(id()); });
     menu->addAction(manageConnections);
@@ -90,7 +90,7 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
     const QString placeholderText = m_searchBox->placeholderText();
     if(!placeholderText.isEmpty() && placeholderText != m_defaultPlaceholder) {
-        layout[QStringLiteral("Placeholder")] = placeholderText;
+        layout[u"Placeholder"] = placeholderText;
     }
 
     const auto connectedWidgets = m_searchController->connectedWidgets(id());
@@ -102,20 +102,20 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
     QStringList widgetIds;
     std::ranges::transform(connectedWidgets, std::back_inserter(widgetIds), [](const Id& id) { return id.name(); });
 
-    layout[QStringLiteral("Widgets")] = widgetIds.join(QStringLiteral("|"));
+    layout[u"Widgets"] = widgetIds.join(QStringLiteral("|"));
 }
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("Placeholder"))) {
-        m_searchBox->setPlaceholderText(layout.value(QStringLiteral("Placeholder")).toString());
+    if(layout.contains(u"Placeholder")) {
+        m_searchBox->setPlaceholderText(layout.value(u"Placeholder").toString());
     }
 
-    if(!layout.contains(QStringLiteral("Widgets"))) {
+    if(!layout.contains(u"Widgets")) {
         return;
     }
 
-    const QStringList widgetIds = layout.value(QStringLiteral("Widgets")).toString().split(QStringLiteral("|"));
+    const QStringList widgetIds = layout.value(u"Widgets").toString().split(u'|');
 
     if(widgetIds.isEmpty()) {
         return;

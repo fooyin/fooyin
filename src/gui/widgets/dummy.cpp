@@ -72,14 +72,14 @@ QString Dummy::layoutName() const
 void Dummy::saveLayoutData(QJsonObject& layout)
 {
     if(!m_missingName.isEmpty()) {
-        layout[QStringLiteral("MissingWidget")] = m_missingName;
+        layout[u"MissingWidget"] = m_missingName;
     }
 }
 
 void Dummy::loadLayoutData(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("MissingWidget"))) {
-        m_missingName = layout.value(QStringLiteral("MissingWidget")).toString();
+    if(layout.contains(u"MissingWidget")) {
+        m_missingName = layout.value(u"MissingWidget").toString();
     }
 }
 
@@ -93,7 +93,7 @@ void Dummy::updateText()
     const bool isEditing = m_settings->value<Settings::Gui::LayoutEditing>();
 
     if(!m_missingName.isEmpty()) {
-        m_label->setText(tr("Missing Widget") + QStringLiteral(":\n") + m_missingName);
+        m_label->setText(tr("Missing Widget") + u":\n" + m_missingName);
     }
     else if(isEditing) {
         m_label->setText(tr("Right-click to add a new widget"));

@@ -80,7 +80,7 @@ void FyWidget::saveLayout(QJsonArray& layout)
     QJsonObject widgetData;
 
     if(m_features & PersistId || m_features & Search) {
-        widgetData[QStringLiteral("ID")] = m_id.name();
+        widgetData[u"ID"] = m_id.name();
     }
 
     saveLayoutData(widgetData);
@@ -105,8 +105,8 @@ void FyWidget::saveBaseLayout(QJsonArray& layout)
 
 void FyWidget::loadLayout(const QJsonObject& layout)
 {
-    if(layout.contains(QStringLiteral("ID"))) {
-        m_id = Id{layout[QStringLiteral("ID")].toString()};
+    if(layout.contains(u"ID")) {
+        m_id = Id{layout[u"ID"].toString()};
     }
 
     loadLayoutData(layout);

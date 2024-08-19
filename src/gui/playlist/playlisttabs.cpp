@@ -161,12 +161,12 @@ void PlaylistTabs::saveLayoutData(QJsonObject& layout)
     QJsonArray children;
     m_tabsWidget->saveLayout(children);
 
-    layout[QStringLiteral("Widgets")] = children;
+    layout[u"Widgets"] = children;
 }
 
 void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 {
-    const auto children = layout[QStringLiteral("Widgets")].toArray();
+    const auto children = layout[u"Widgets"].toArray();
 
     WidgetContainer::loadWidgets(children);
 }
