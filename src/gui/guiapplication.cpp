@@ -581,15 +581,16 @@ void GuiApplicationPrivate::setIconTheme() const
             QIcon::setThemeName(Utils::isDarkMode() ? QString::fromLatin1(Constants::DarkIconTheme)
                                                     : QString::fromLatin1(Constants::LightIconTheme));
             break;
-        case(IconThemeOption::System):
-            QIcon::setThemeName(m_settings->value<Settings::Gui::Internal::SystemIconTheme>());
-            break;
         case(IconThemeOption::Light):
             QIcon::setThemeName(QString::fromLatin1(Constants::LightIconTheme));
             break;
         case(IconThemeOption::Dark):
             QIcon::setThemeName(QString::fromLatin1(Constants::DarkIconTheme));
             break;
+        case(IconThemeOption::System):
+            QIcon::setThemeName(m_settings->value<Settings::Gui::Internal::SystemIconTheme>());
+            QIcon::setFallbackThemeName(QString::fromLatin1(Constants::DarkIconTheme));
+            return;
     }
 
     QIcon::setFallbackThemeName(m_settings->value<Settings::Gui::Internal::SystemIconTheme>());
