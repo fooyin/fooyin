@@ -52,8 +52,11 @@ public:
     void setupConnections();
 
     void clearMessage();
+    void updateMessageVisibility() const;
+
     void showMessage(const QString& message, int timeout = 0);
     void showStatusMessage(const QString& message) const;
+    void showPlayingMessage(const QString& message) const;
 
     void updateScripts();
     void updatePlayingText();
@@ -71,9 +74,10 @@ public:
     ScriptParser m_scriptParser;
 
     ClickableLabel* m_iconLabel;
+    ElidedLabel* m_playingText;
     ElidedLabel* m_statusText;
     ElidedLabel* m_messageText;
-    ClickableLabel* m_selectionText;
+    ElidedLabel* m_selectionText;
 
     QString m_playingScript;
     QString m_selectionScript;
@@ -91,9 +95,10 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     , m_scriptRegistry{m_playerController}
     , m_scriptParser{&m_scriptRegistry}
     , m_iconLabel{new ClickableLabel(m_self)}
+    , m_playingText{new ElidedLabel(m_self)}
     , m_statusText{new ElidedLabel(m_self)}
     , m_messageText{new ElidedLabel(m_self)}
-    , m_selectionText{new ClickableLabel(m_self)}
+    , m_selectionText{new ElidedLabel(m_self)}
 {
     auto* layout = new QHBoxLayout(m_self);
     layout->setContentsMargins(5, 0, 5, 0);
@@ -104,12 +109,16 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     m_iconLabel->setMaximumHeight(22);
     m_iconLabel->setMaximumWidth(22);
 
-    layout->addWidget(m_iconLabel);
+    layout->addWidget(m_iconLabel, 0, Qt::AlignLeft);
     layout->addWidget(m_messageText, 1);
     layout->addWidget(m_statusText, 1);
+    layout->addWidget(m_playingText, 1);
     layout->addWidget(m_selectionText);
 
     m_statusText->hide();
+    m_playingText->hide();
+    m_messageText->hide();
+
     m_clearTimer.setSingleShot(true);
 
     m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
@@ -148,41 +157,62 @@ void StatusWidgetPrivate::setupConnections()
 void StatusWidgetPrivate::clearMessage()
 {
     m_clearTimer.stop();
+    m_messageText->setText({});
+    updateMessageVisibility();
+}
 
-    m_messageText->clear();
+void StatusWidgetPrivate::updateMessageVisibility() const
+{
+    // Show first non-empty message with the highest priority
+
+    // Status tip
+    if(!m_statusText->text().isEmpty()) {
+        m_statusText->show();
+        m_messageText->hide();
+        m_playingText->hide();
+    }
+    // Message (temp or perm)
+    else if(!m_messageText->text().isEmpty()) {
+        m_messageText->show();
+        m_statusText->hide();
+        m_playingText->hide();
+    }
+    // Playing text
+    else if(!m_playingText->text().isEmpty()) {
+        m_playingText->show();
+        m_messageText->hide();
+        m_statusText->hide();
+    }
+    else {
+        m_playingText->hide();
+        m_messageText->hide();
+        m_statusText->hide();
+    }
 }
 
 void StatusWidgetPrivate::showMessage(const QString& message, int timeout)
 {
-    if(m_clearTimer.isActive() && timeout == 0) {
-        return;
-    }
-
-    if(m_statusText->isVisible()) {
-        return;
-    }
-
     m_messageText->setText(message);
-    m_statusText->hide();
-    m_messageText->show();
+    updateMessageVisibility();
 
     if(timeout > 0) {
         m_clearTimer.start(timeout);
+    }
+    else {
+        m_clearTimer.stop();
     }
 }
 
 void StatusWidgetPrivate::showStatusMessage(const QString& message) const
 {
     m_statusText->setText(message);
+    updateMessageVisibility();
+}
 
-    if(message.isEmpty()) {
-        m_messageText->show();
-        m_statusText->hide();
-    }
-    else {
-        m_statusText->show();
-        m_messageText->hide();
-    }
+void StatusWidgetPrivate::showPlayingMessage(const QString& message) const
+{
+    m_playingText->setText(message);
+    updateMessageVisibility();
 }
 
 void StatusWidgetPrivate::updateScripts()
@@ -195,7 +225,7 @@ void StatusWidgetPrivate::updatePlayingText()
 {
     const auto ps = m_playerController->playState();
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
-        showMessage(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
+        showPlayingMessage(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
     }
 }
 
