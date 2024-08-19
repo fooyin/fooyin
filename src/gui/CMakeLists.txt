@@ -37,6 +37,8 @@ set(SOURCES
     layoutprovider.cpp
     mainwindow.cpp
     mainwindow.h
+    statusevent.cpp
+    statusevent.h
     systemtrayicon.cpp
     systemtrayicon.h
     trackselectioncontroller.cpp
