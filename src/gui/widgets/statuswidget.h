@@ -49,6 +49,7 @@ signals:
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     std::unique_ptr<StatusWidgetPrivate> p;

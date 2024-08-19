@@ -33,10 +33,10 @@
 #include <utils/utils.h>
 #include <utils/widgets/elidedlabel.h>
 
+#include <QBasicTimer>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QMenu>
-#include <QTimer>
 
 constexpr int IconSize = 50;
 
@@ -82,7 +82,7 @@ public:
     QString m_playingScript;
     QString m_selectionScript;
 
-    QTimer m_clearTimer;
+    QBasicTimer m_clearTimer;
 };
 
 StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* playerController,
@@ -119,8 +119,6 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     m_playingText->hide();
     m_messageText->hide();
 
-    m_clearTimer.setSingleShot(true);
-
     m_iconLabel->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_selectionText->setHidden(!m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
 
@@ -136,7 +134,6 @@ void StatusWidgetPrivate::setupConnections()
                      &StatusWidgetPrivate::updatePlayingText);
     QObject::connect(m_selectionController, &TrackSelectionController::selectionChanged, this,
                      &StatusWidgetPrivate::updateSelectionText);
-    QObject::connect(&m_clearTimer, &QTimer::timeout, this, &StatusWidgetPrivate::clearMessage);
 
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [this]() { m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize)); });
@@ -196,7 +193,11 @@ void StatusWidgetPrivate::showMessage(const QString& message, int timeout)
     updateMessageVisibility();
 
     if(timeout > 0) {
-        m_clearTimer.start(timeout);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        m_clearTimer.start(static_cast<std::chrono::milliseconds>(timeout), m_self);
+#else
+        m_clearTimer.start(timeout, m_self);
+#endif
     }
     else {
         m_clearTimer.stop();
@@ -310,6 +311,15 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showSelection);
 
     menu->popup(event->globalPos());
+}
+
+void StatusWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_clearTimer.timerId()) {
+        p->m_clearTimer.stop();
+        p->clearMessage();
+    }
+    FyWidget::timerEvent(event);
 }
 } // namespace Fooyin
 
