@@ -297,7 +297,7 @@ QPixmap changePixmapColour(const QPixmap& orig, const QColor& color)
 
 QMainWindow* getMainWindow()
 {
-    const auto widgets = qApp->topLevelWidgets();
+    const auto widgets = QApplication::topLevelWidgets();
 
     for(QWidget* widget : widgets) {
         if(auto* mainWindow = qobject_cast<QMainWindow*>(widget)) {

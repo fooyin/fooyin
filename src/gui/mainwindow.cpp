@@ -21,6 +21,7 @@
 
 #include "internalguisettings.h"
 #include "menubar/mainmenubar.h"
+#include "statusevent.h"
 #include "widgets/statuswidget.h"
 
 #include <core/application.h>
@@ -150,10 +151,25 @@ void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 
 bool MainWindow::event(QEvent* event)
 {
-    if(m_statusWidget && event->type() == QEvent::StatusTip) {
+    if(!m_statusWidget) {
+        return QMainWindow::event(event);
+    }
+
+    if(event->type() == QEvent::StatusTip) {
         const QString tip = static_cast<QStatusTipEvent*>(event)->tip();
         m_statusWidget->showStatusTip(tip);
     }
+    else if(event->type() == StatusEvent::StatusEventType) {
+        const auto* status = static_cast<StatusEvent*>(event);
+        if(status->timeout() >= 0) {
+            m_statusWidget->showTempMessage(status->message(), status->timeout());
+        }
+        else {
+            m_statusWidget->showTempMessage(status->message());
+        }
+        return true;
+    }
+
     return QMainWindow::event(event);
 }
 
