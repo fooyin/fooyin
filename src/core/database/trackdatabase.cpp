@@ -100,7 +100,7 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":channels"), track.channels()},
             {QStringLiteral(":bitDepth"), track.bitDepth()},
             {QStringLiteral(":codec"), track.codec()},
-            {QStringLiteral(":extraTags"), track.serialiseExtrasTags()},
+            {QStringLiteral(":extraTags"), track.serialiseExtraTags()},
             {QStringLiteral(":extraProperties"), track.serialiseExtraProperties()},
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},

@@ -58,7 +58,7 @@ public:
     int year{-1};
     Track::ExtraTags extraTags;
     QStringList removedTags;
-    Track::ExtraProperites extraProps;
+    Track::ExtraProperties extraProps;
 
     QString cuePath;
 
@@ -490,7 +490,7 @@ QStringList Track::removedTags() const
     return p->removedTags;
 }
 
-QByteArray Track::serialiseExtrasTags() const
+QByteArray Track::serialiseExtraTags() const
 {
     if(p->extraTags.empty()) {
         return {};
@@ -510,7 +510,7 @@ bool Track::hasExtraProperty(const QString& prop) const
     return p->extraProps.contains(prop);
 }
 
-Track::ExtraProperites Track::extraProperties() const
+Track::ExtraProperties Track::extraProperties() const
 {
     return p->extraProps;
 }
