@@ -106,6 +106,7 @@ private:
     int m_writeInterval;
 
     QBasicTimer m_fadeTimer;
+    bool m_fadingOut;
     int m_fadeLength;
     int m_fadeSteps;
     int m_currentFadeStep;
