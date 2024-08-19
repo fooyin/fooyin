@@ -46,7 +46,7 @@ void Translations::initialiseTranslations()
 
     if(!customLanguage.isEmpty()) {
         locale = QLocale{customLanguage};
-        if(customLanguage.compare(QStringLiteral("C"), Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
+        if(customLanguage.compare(u"C", Qt::CaseInsensitive) != 0 && locale.language() == QLocale::C) {
             qCWarning(TRANSLATIONS) << "Custom locale (" << customLanguage << ") not found, using 'C' locale";
         }
         QLocale::setDefault(locale);
@@ -56,6 +56,7 @@ void Translations::initialiseTranslations()
     }
 
     if(locale.language() == QLocale::C) {
+        qCDebug(TRANSLATIONS) << "Skipping loading of translations for C locale" << locale.name();
         return;
     }
 
