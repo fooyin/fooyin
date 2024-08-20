@@ -248,7 +248,7 @@ void Command::addOverrideAction(QAction* action, const Context& context, bool ch
             if(p->m_contextActionMap.contains(contextId)) {
                 if(auto contextAction = p->m_contextActionMap.at(contextId)) {
                     QLoggingCategory log{"Actions"};
-                    qCWarning(log) << "Context" << contextId.name() << "already added for" << contextAction;
+                    qCDebug(log) << "Context" << contextId.name() << "already added for" << contextAction;
                 }
             }
             p->m_contextActionMap.emplace(contextId, action);
