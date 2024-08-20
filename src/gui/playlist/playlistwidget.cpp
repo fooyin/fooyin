@@ -1417,6 +1417,7 @@ PlaylistWidget::~PlaylistWidget()
 void PlaylistWidget::setDetached(bool detached)
 {
     p->m_detached = detached;
+    p->m_playlistView->viewport()->setAcceptDrops(!detached);
 }
 
 PlaylistModel* PlaylistWidget::model() const
@@ -1562,7 +1563,8 @@ void PlaylistWidget::searchEvent(const QString& search)
     auto handleFilteredTracks = [this, selectTracks](const TrackList& filteredTracks) {
         p->m_filteredTracks = filteredTracks;
         if(p->m_detached) {
-            p->m_model->reset(filteredTracks);
+            p->m_model->reset(p->m_currentPreset, p->m_columns, p->m_playlistController->currentPlaylist(),
+                              filteredTracks);
         }
         else {
             selectTracks(filteredTracks);

@@ -51,6 +51,7 @@
 #include <span>
 #include <stack>
 
+constexpr auto MimeModelId       = "application/x-playlistmodel-id";
 constexpr auto MaxPlaylistTracks = 250;
 
 namespace {
@@ -484,6 +485,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_library{playlistInteractor->library()}
     , m_settings{settings}
     , m_coverProvider{coverProvider}
+    , m_id{UId::create()}
     , m_resetting{false}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}
@@ -935,7 +937,8 @@ void PlaylistModel::reset(const TrackList& tracks)
     });
 }
 
-void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
+void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
+                          const TrackList& tracks)
 {
     if(preset.isValid()) {
         m_currentPreset = preset;
@@ -951,7 +954,16 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
     m_currentPlaylist = playlist;
     updateHeader(playlist);
 
-    reset(m_currentPlaylist->tracks());
+    reset(tracks);
+}
+
+void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
+{
+    if(!playlist) {
+        return;
+    }
+
+    reset(preset, columns, playlist, playlist->tracks());
 }
 
 PlaylistTrack PlaylistModel::playingTrack() const
@@ -1552,8 +1564,20 @@ bool PlaylistModel::prepareDrop(const QMimeData* data, Qt::DropAction action, in
         return true;
     }
 
+    bool sameModel{false};
+
+    if(data->hasFormat(QString::fromLatin1(MimeModelId))) {
+        QByteArray modelData = data->data(QString::fromLatin1(MimeModelId));
+        QDataStream stream{&modelData, QIODevice::ReadOnly};
+
+        UId modelId;
+        stream >> modelId;
+
+        sameModel = modelId == m_id;
+    }
+
     const QByteArray playlistData = data->data(QString::fromLatin1(Constants::Mime::PlaylistItems));
-    const bool samePlaylist       = dropOnSamePlaylist(playlistData, m_currentPlaylist);
+    const bool samePlaylist       = sameModel && dropOnSamePlaylist(playlistData, m_currentPlaylist);
 
     if(samePlaylist && action == Qt::MoveAction) {
         const QModelIndexList indexes
@@ -1847,6 +1871,11 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mimeData) const
 {
     if(mimeData) {
+        QByteArray modelId;
+        QDataStream stream{&modelId, QIODevice::WriteOnly};
+        stream << m_id;
+        mimeData->setData(QString::fromLatin1(MimeModelId), modelId);
+
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
         mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),

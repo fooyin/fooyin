@@ -117,6 +117,8 @@ public:
     void setPixmapColumnSizes(const std::vector<int>& sizes);
 
     void reset(const TrackList& tracks);
+    void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist,
+               const TrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
     [[nodiscard]] PlaylistTrack playingTrack() const;
@@ -236,6 +238,7 @@ private:
     SettingsManager* m_settings;
     CoverProvider* m_coverProvider;
 
+    UId m_id;
     bool m_resetting;
     QString m_headerText;
 
