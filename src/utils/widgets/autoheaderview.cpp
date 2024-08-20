@@ -104,8 +104,8 @@ void AutoHeaderViewPrivate::normaliseWidths(const SectionIndexes& sections)
     }
 
     double widthTotal{0.0};
+    const int sectionCount = static_cast<int>(m_sectionWidths.size());
 
-    const int sectionCount = m_self->count();
     for(int section{0}; section < sectionCount; ++section) {
         if(!m_self->isSectionHidden(section)) {
             widthTotal += m_sectionWidths.at(section);
