@@ -947,10 +947,6 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
     m_columns       = columns;
     m_pixmapColumns = pixmapColumns();
 
-    if(!playlist) {
-        return;
-    }
-
     m_currentPlaylist = playlist;
     updateHeader(playlist);
 

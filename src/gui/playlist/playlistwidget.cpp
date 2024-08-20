@@ -251,11 +251,6 @@ void PlaylistWidgetPrivate::setupConnections()
                 m_showPlaying = true;
             }
         });
-        m_settings->subscribe<PlaylistCurrentPreset>(this, [this](int presetId) {
-            if(const auto preset = m_presetRegistry->itemById(presetId)) {
-                changePreset(preset.value());
-            }
-        });
         m_settings->subscribe<PlaylistMiddleClick>(m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
         m_settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
         m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
@@ -486,8 +481,14 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
 
 void PlaylistWidgetPrivate::resetModel() const
 {
-    m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
-                   !m_detached ? m_playlistController->currentPlaylist() : nullptr);
+    if(m_detached) {
+        m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
+                       m_playlistController->currentPlaylist(), m_filteredTracks);
+    }
+    else {
+        m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
+                       m_playlistController->currentPlaylist());
+    }
 }
 
 std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
@@ -1109,10 +1110,8 @@ void PlaylistWidgetPrivate::customHeaderMenuRequested(const QPoint& pos)
     QObject::connect(columnModeAction, &QAction::triggered, m_self, [this]() { setSingleMode(!m_singleMode); });
     menu->addAction(columnModeAction);
 
-    if(!m_detached) {
-        menu->addSeparator();
-        addPresetMenu(menu);
-    }
+    menu->addSeparator();
+    addPresetMenu(menu);
 
     menu->popup(m_self->mapToGlobal(pos));
 }
@@ -1327,8 +1326,7 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
 {
     auto* presetsMenu = new QMenu(PlaylistWidget::tr("Presets"), parent);
 
-    const auto& presets = m_presetRegistry->items();
-
+    const auto presets = m_presetRegistry->items();
     for(const auto& preset : presets) {
         auto* switchPreset = new QAction(preset.name, presetsMenu);
         if(preset == m_currentPreset) {
@@ -1336,8 +1334,11 @@ void PlaylistWidgetPrivate::addPresetMenu(QMenu* parent)
         }
 
         const int presetId = preset.id;
-        QObject::connect(switchPreset, &QAction::triggered, m_self,
-                         [this, presetId]() { m_settings->set<PlaylistCurrentPreset>(presetId); });
+        QObject::connect(switchPreset, &QAction::triggered, m_self, [this, presetId]() {
+            if(const auto item = m_presetRegistry->itemById(presetId)) {
+                changePreset(item.value());
+            }
+        });
 
         presetsMenu->addAction(switchPreset);
     }
@@ -1437,6 +1438,7 @@ QString PlaylistWidget::layoutName() const
 
 void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 {
+    layout[u"Preset"]     = p->m_currentPreset.id;
     layout[u"SingleMode"] = p->m_singleMode;
 
     if(!p->m_columns.empty()) {
@@ -1468,6 +1470,12 @@ void PlaylistWidget::saveLayoutData(QJsonObject& layout)
 
 void PlaylistWidget::loadLayoutData(const QJsonObject& layout)
 {
+    if(layout.contains(u"Preset")) {
+        const int presetId = layout.value(u"Preset").toInt();
+        if(const auto preset = p->m_presetRegistry->itemById(presetId)) {
+            p->m_currentPreset = preset.value();
+        }
+    }
     if(layout.contains(u"SingleMode")) {
         p->m_singleMode = layout.value(u"SingleMode").toBool();
     }
@@ -1516,14 +1524,8 @@ void PlaylistWidget::finalise()
     p->setupConnections();
     p->setupActions();
 
-    if(!p->m_detached) {
-        // TODO: Save current preset to layout
-        if(const auto preset = p->m_presetRegistry->itemById(p->m_settings->value<PlaylistCurrentPreset>())) {
-            p->m_currentPreset = preset.value();
-        }
-    }
-    else {
-        if(const auto preset = p->m_presetRegistry->itemById(0)) {
+    if(!p->m_currentPreset.isValid()) {
+        if(const auto preset = p->m_presetRegistry->itemById(p->m_settings->fileValue(PlaylistCurrentPreset).toInt())) {
             p->m_currentPreset = preset.value();
         }
     }
@@ -1636,9 +1638,10 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     if(!p->m_detached) {
         p->addClipboardMenu(menu, hasSelection);
         menu->addSeparator();
-        p->addPresetMenu(menu);
-        menu->addSeparator();
     }
+
+    p->addPresetMenu(menu);
+    menu->addSeparator();
 
     if(hasSelection) {
         if(!p->m_detached) {

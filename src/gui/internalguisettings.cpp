@@ -69,7 +69,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
-    m_settings->createSetting<Internal::PlaylistCurrentPreset>(0, QStringLiteral("PlaylistWidget/CurrentPreset"));
     m_settings->createSetting<Internal::InfoAltColours>(true, QStringLiteral("InfoPanel/AlternatingColours"));
     m_settings->createSetting<Internal::InfoHeader>(true, QStringLiteral("InfoPanel/Header"));
     m_settings->createSetting<Internal::InfoScrollBar>(true, QStringLiteral("InfoPanel/Scrollbar"));
@@ -83,7 +82,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
         QStringLiteral("StatusWidget/SelectionScript"));
 
     m_settings->createSetting<Internal::LibTreeDoubleClick>(0, QStringLiteral("LibraryTree/DoubleClickBehaviour"));
-    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickkBehaviour"));
+    m_settings->createSetting<Internal::LibTreeMiddleClick>(0, QStringLiteral("LibraryTree/MiddleClickBehaviour"));
     m_settings->createSetting<Internal::LibTreePlaylistEnabled>(false,
                                                                 QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
     m_settings->createSetting<Internal::LibTreeAutoSwitch>(true,

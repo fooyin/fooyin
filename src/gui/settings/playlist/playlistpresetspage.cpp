@@ -162,7 +162,7 @@ class PlaylistPresetsPageWidget : public SettingsPageWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings);
+    explicit PlaylistPresetsPageWidget(PresetRegistry* presetRegistry);
 
     void load() override;
     void apply() override;
@@ -181,7 +181,6 @@ private:
     void clearBlocks();
 
     PresetRegistry* m_presetRegistry;
-    SettingsManager* m_settings;
 
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
@@ -210,9 +209,8 @@ private:
     QPushButton* m_clonePreset;
 };
 
-PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegistry, SettingsManager* settings)
+PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegistry)
     : m_presetRegistry{presetRegistry}
-    , m_settings{settings}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
     , m_headerTitle{new QTextEdit(this)}
@@ -333,14 +331,9 @@ void PlaylistPresetsPageWidget::load()
 {
     m_presetBox->clear();
 
-    const int currentPreset = m_settings->value<Settings::Gui::Internal::PlaylistCurrentPreset>();
-    const auto presets      = m_presetRegistry->items();
-
+    const auto presets = m_presetRegistry->items();
     for(const auto& preset : presets) {
         m_presetBox->insertItem(preset.index, preset.name, preset.id);
-        if(preset.id == currentPreset) {
-            m_presetBox->setCurrentIndex(preset.index);
-        }
     }
 }
 
@@ -528,7 +521,7 @@ PlaylistPresetsPage::PlaylistPresetsPage(PresetRegistry* presetRegistry, Setting
     setId(Constants::Page::PlaylistPresets);
     setName(tr("Presets"));
     setCategory({tr("Playlist"), tr("Presets")});
-    setWidgetCreator([presetRegistry, settings] { return new PlaylistPresetsPageWidget(presetRegistry, settings); });
+    setWidgetCreator([presetRegistry] { return new PlaylistPresetsPageWidget(presetRegistry); });
 }
 } // namespace Fooyin
 
