@@ -45,8 +45,9 @@ AudioRenderer::AudioRenderer(QObject* parent)
     , m_currentBufferResampled{false}
     , m_isRunning{false}
     , m_writeInterval{100}
-    , m_fadingOut{false}
     , m_fadeLength{0}
+    , m_fadingOut{false}
+    , m_flipFade{false}
     , m_fadeSteps{0}
     , m_currentFadeStep{0}
     , m_volumeChange{0.0}
@@ -123,10 +124,12 @@ void AudioRenderer::pause(bool paused, int fadeLength)
     m_fadingOut = paused;
 
     if(paused) {
-        if(m_fadeVolume <= 0) {
-            m_fadeVolume = m_volume;
+        if(!m_flipFade) {
+            if(m_fadeVolume <= 0) {
+                m_fadeVolume = m_volume;
+            }
+            m_volumeChange = -(m_fadeVolume / m_fadeSteps);
         }
-        m_volumeChange = -(m_fadeVolume / m_fadeSteps);
     }
     else {
         if(validOutputState()) {
@@ -134,10 +137,14 @@ void AudioRenderer::pause(bool paused, int fadeLength)
         }
         start();
 
-        if(fadeLength > 0) {
+        if(!m_flipFade && fadeLength > 0) {
             m_fadeVolume   = std::max(m_fadeVolume, 0.0);
             m_volumeChange = std::abs(m_fadeVolume - m_volume) / m_fadeSteps;
         }
+    }
+
+    if(m_flipFade) {
+        m_volumeChange = -m_volumeChange;
     }
 
     m_fadeTimer.start(FadeInterval, this);
@@ -233,11 +240,14 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
         }
     };
 
-    if(m_currentFadeStep <= m_fadeSteps) {
-        if(m_fadeSteps >= 100) {
-            const auto step = static_cast<double>(m_currentFadeStep) / m_fadeSteps;
+    const auto currentStep = m_currentFadeStep;
+    const bool inFade      = m_flipFade ? m_currentFadeStep-- >= 0 : m_currentFadeStep++ <= m_fadeSteps;
+
+    if(inFade) {
+        if(m_fadeLength >= 1000) {
+            const auto step = static_cast<double>(currentStep) / m_fadeSteps;
             m_fadeVolume    = m_volume * ((1.0 + std::erfl(3.0 * step - 1.5)) / 2.0);
-            if(m_fadingOut) {
+            if(m_flipFade ^ m_fadingOut) {
                 m_fadeVolume = m_volume - m_fadeVolume;
             }
         }
@@ -246,13 +256,9 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
         }
 
         m_fadeVolume = std::clamp(m_fadeVolume, 0.0, 1.0);
-
         updateOutputVolume();
-        m_currentFadeStep++;
         return;
     }
-
-    m_currentFadeStep = 0;
 
     if(m_volumeChange < 0.0) {
         // Faded out
@@ -261,6 +267,9 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
     else {
         m_fadeVolume = -1;
     }
+
+    m_currentFadeStep = 0;
+    m_flipFade        = false;
 
     updateOutputVolume();
     m_fadeTimer.stop();
@@ -282,11 +291,14 @@ void AudioRenderer::resetFade(int length)
         m_fadeTimer.stop();
     }
 
-    m_fadeSteps = std::abs(m_currentFadeStep - static_cast<int>(static_cast<double>(length) / FadeInterval));
+    m_flipFade   = !m_flipFade && m_currentFadeStep != 0 && length > 0;
+    m_fadeLength = length;
 
-    m_volumeChange    = 0;
-    m_fadeLength      = length;
-    m_currentFadeStep = 0;
+    if(!m_flipFade) {
+        m_fadeSteps       = static_cast<int>(static_cast<double>(length) / FadeInterval);
+        m_currentFadeStep = 0;
+        m_volumeChange    = 0;
+    }
 }
 
 bool AudioRenderer::canWrite() const
