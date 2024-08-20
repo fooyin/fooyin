@@ -959,11 +959,7 @@ void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList
 
 void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
 {
-    if(!playlist) {
-        return;
-    }
-
-    reset(preset, columns, playlist, playlist->tracks());
+    reset(preset, columns, playlist, playlist ? playlist->tracks() : TrackList{});
 }
 
 PlaylistTrack PlaylistModel::playingTrack() const
