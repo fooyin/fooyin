@@ -42,6 +42,7 @@ public:
     enum Role
     {
         Id = Qt::UserRole + 10,
+        TrackId,
         Title,
         Subtitle,
         Info,

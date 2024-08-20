@@ -1390,6 +1390,8 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             const QString field = m_columns.at(column).field;
             return getIconPosition(field);
         }
+        case(PlaylistItem::Role::TrackId):
+            return track.track().id();
         case(PlaylistItem::Role::ImagePadding):
             return m_pixmapPadding;
         case(PlaylistItem::Role::ImagePaddingTop):
