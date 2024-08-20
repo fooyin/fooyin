@@ -294,8 +294,8 @@ void AudioPlaybackEngine::stop()
     };
 
     const bool canFade = playbackState() != PlaybackState::Paused
-                      && m_settings->value<Settings::Core::Internal::EngineFading>()
-                      && m_fadeIntervals.outPauseStop > 0;
+                      && m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0
+                      && m_volume > 0;
     if(canFade) {
         const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
         if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {

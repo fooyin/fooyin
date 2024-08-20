@@ -241,12 +241,7 @@ void AudioRenderer::timerEvent(QTimerEvent* event)
     };
 
     const auto currentStep = m_currentFadeStep;
-    const bool inFade      = [this]() {
-        if(m_flipFade) {
-            return m_currentFadeStep-- >= 0;
-        }
-        return m_currentFadeStep++ <= m_fadeSteps;
-    }();
+    const bool inFade      = m_flipFade ? m_currentFadeStep-- >= 0 : m_currentFadeStep++ <= m_fadeSteps;
 
     if(inFade) {
         if(m_fadeLength >= 1000) {
