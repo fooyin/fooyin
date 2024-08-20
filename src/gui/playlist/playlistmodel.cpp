@@ -786,7 +786,7 @@ bool PlaylistModel::playlistIsLoaded() const
 
 bool PlaylistModel::haveTracks() const
 {
-    return m_currentPlaylist && m_currentPlaylist->trackCount() > 0;
+    return (m_currentPlaylist && m_currentPlaylist->trackCount() > 0) || !m_trackParents.empty();
 }
 
 MoveOperation PlaylistModel::moveTracks(const MoveOperation& operation)
@@ -930,8 +930,9 @@ void PlaylistModel::reset(const TrackList& tracks)
     m_playlistLoaded = false;
     m_resetting      = true;
 
-    QMetaObject::invokeMethod(
-        &m_populator, [this, tracks] { m_populator.run(m_currentPlaylist->id(), m_currentPreset, m_columns, tracks); });
+    QMetaObject::invokeMethod(&m_populator, [this, tracks] {
+        m_populator.run(m_currentPlaylist ? m_currentPlaylist->id() : UId{}, m_currentPreset, m_columns, tracks);
+    });
 }
 
 void PlaylistModel::reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist)
