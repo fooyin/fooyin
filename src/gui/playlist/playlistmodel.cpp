@@ -1011,6 +1011,36 @@ QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool includeEnd)
     return !includeEnd && result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
+QModelIndexList PlaylistModel::indexesOfTrackId(int id)
+{
+    if(!m_trackParents.contains(id)) {
+        return {};
+    }
+
+    QModelIndexList indexes;
+
+    const auto parents = m_trackParents.at(id);
+
+    for(const auto& parentKey : parents) {
+        if(m_nodes.contains(parentKey)) {
+            auto* parentItem = &m_nodes.at(parentKey);
+
+            if(parentItem->type() == PlaylistItem::Track) {
+                QModelIndex nodeIndex = indexOfItem(parentItem);
+                while(!nodeIndex.isValid() && canFetchMore({})) {
+                    fetchMore({});
+                    nodeIndex = indexOfItem(parentItem);
+                }
+                if(nodeIndex.isValid()) {
+                    indexes.emplace_back(nodeIndex);
+                }
+            }
+        }
+    }
+
+    return indexes;
+}
+
 void PlaylistModel::insertTracks(const TrackGroups& tracks)
 {
     if(m_currentPlaylist) {

@@ -635,6 +635,11 @@ void PlaylistController::showNowPlaying()
     emit showCurrentTrack();
 }
 
+void PlaylistController::selectTrackIds(const std::set<int>& ids)
+{
+    emit selectTracks(ids);
+}
+
 bool PlaylistController::currentIsActive() const
 {
     return p->m_currentPlaylist == p->m_handler->activePlaylist();

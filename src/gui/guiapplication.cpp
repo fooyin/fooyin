@@ -32,6 +32,7 @@
 #include "playlist/playlistinteractor.h"
 #include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
+#include "dialog/searchdialog.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
 
@@ -111,6 +112,7 @@ public:
     void setIconTheme() const;
     void registerLayouts();
 
+    void showSearchWindow();
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
     void showMessage(const QString& title, const Track& track) const;
@@ -263,6 +265,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, m_self, [this]() { savePlaylist(); });
+    QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchWindow(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptSandbox, m_self, [this]() {
@@ -623,6 +626,16 @@ void GuiApplicationPrivate::registerLayouts()
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==x","Widgets":[{"DirectoryBrowser":{}},
             {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
+}
+
+void GuiApplicationPrivate::showSearchWindow()
+{
+    auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
+    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core);
+    search->setAttribute(Qt::WA_DeleteOnClose);
+    coverProvider->setParent(search);
+
+    search->show();
 }
 
 void GuiApplicationPrivate::showPropertiesDialog() const

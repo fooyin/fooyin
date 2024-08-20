@@ -60,6 +60,8 @@ set(SOURCES
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
     dialog/propertiesdialog.cpp
+    dialog/searchdialog.cpp
+    dialog/searchdialog.h
     dirbrowser/dirbrowser.cpp
     dirbrowser/dirbrowser.h
     dirbrowser/dirdelegate.cpp

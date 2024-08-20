@@ -19,7 +19,10 @@
 
 #pragma once
 
-#include "gui/fywidget.h"
+#include <core/track.h>
+#include <gui/fywidget.h>
+
+#include <QModelIndexList>
 
 namespace Fooyin {
 class ActionManager;
@@ -27,6 +30,7 @@ class Application;
 class CoverProvider;
 class MusicLibrary;
 class PlaylistInteractor;
+class PlaylistModel;
 class PlaylistWidgetPrivate;
 class SettingsManager;
 
@@ -39,11 +43,19 @@ public:
                    Application* core, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
+    void setDetached(bool detached);
+    [[nodiscard]] PlaylistModel* model() const;
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
     void finalise() override;
+
+    void searchEvent(const QString& search) override;
+
+signals:
+    void selectionChanged(const QModelIndexList& indexes);
 
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;

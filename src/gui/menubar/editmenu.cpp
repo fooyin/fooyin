@@ -37,6 +37,12 @@ EditMenu::EditMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
+    auto* search        = new QAction(tr("Sear&ch"), this);
+    auto* searchCommand = actionManager->registerAction(search, Constants::Actions::Search);
+    searchCommand->setDefaultShortcut({{QKeySequence::Find}, {QKeySequence{Qt::Key_F3}}});
+    editMenu->addAction(searchCommand, Actions::Groups::Three);
+    QObject::connect(search, &QAction::triggered, this, &EditMenu::requestSearch);
+
     auto* openSettings    = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Settings"), this);
     auto* settingsCommand = actionManager->registerAction(openSettings, Constants::Actions::Settings);
     settingsCommand->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_P});

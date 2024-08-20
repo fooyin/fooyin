@@ -108,7 +108,7 @@ public:
 
     MoveOperation moveTracks(const MoveOperation& operation);
 
-    Qt::Alignment columnAlignment(int column) const;
+    [[nodiscard]] Qt::Alignment columnAlignment(int column) const;
     void changeColumnAlignment(int column, Qt::Alignment alignment);
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
@@ -119,10 +119,11 @@ public:
     void reset(const TrackList& tracks);
     void reset(const PlaylistPreset& preset, const PlaylistColumnList& columns, Playlist* playlist);
 
-    PlaylistTrack playingTrack() const;
+    [[nodiscard]] PlaylistTrack playingTrack() const;
     void stopAfterTrack(const QModelIndex& index);
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
     QModelIndex indexAtPlaylistIndex(int index, bool includeEnd = false);
+    [[nodiscard]] QModelIndexList indexesOfTrackId(int id);
 
     void insertTracks(const TrackGroups& tracks);
     void updateTracks(const std::vector<int>& indexes);

@@ -109,6 +109,7 @@ public:
     void handleTracksChanged(const std::vector<int>& indexes, bool allNew);
     void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
     void handlePlayingTrackChanged(const PlaylistTrack& track) const;
+    void selectTrackIds(const std::set<int>& ids) const;
 
     void setSingleMode(bool enabled);
     void updateSpans();
@@ -141,6 +142,8 @@ public:
     SettingsDialogController* m_settingsDialog;
     TrackSorter m_sorter;
 
+    bool m_detached;
+
     PlaylistColumnRegistry* m_columnRegistry;
     PresetRegistry* m_presetRegistry;
     SortingRegistry* m_sortRegistry;
@@ -171,5 +174,8 @@ public:
     bool m_sorting;
     bool m_sortingColumn;
     bool m_showPlaying;
+
+    QString m_search;
+    TrackList m_filteredTracks;
 };
 } // namespace Fooyin
