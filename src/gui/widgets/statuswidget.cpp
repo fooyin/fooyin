@@ -57,6 +57,7 @@ public:
     void showMessage(const QString& message, int timeout = 0);
     void showStatusMessage(const QString& message) const;
     void showPlayingMessage(const QString& message) const;
+    void showLayoutEditing() const;
 
     void updateScripts();
     void updatePlayingText();
@@ -149,12 +150,13 @@ void StatusWidgetPrivate::setupConnections()
         m_selectionScript = script;
         updateSelectionText();
     });
+    m_settings->subscribe<Settings::Gui::LayoutEditing>(this, [this]() { showLayoutEditing(); });
 }
 
 void StatusWidgetPrivate::clearMessage()
 {
     m_clearTimer.stop();
-    m_messageText->setText({});
+    showLayoutEditing();
     updateMessageVisibility();
 }
 
@@ -214,6 +216,11 @@ void StatusWidgetPrivate::showPlayingMessage(const QString& message) const
 {
     m_playingText->setText(message);
     updateMessageVisibility();
+}
+
+void StatusWidgetPrivate::showLayoutEditing() const
+{
+    m_messageText->setText(m_settings->value<Settings::Gui::LayoutEditing>() ? tr("Layout Editing Mode") : QString{});
 }
 
 void StatusWidgetPrivate::updateScripts()
@@ -316,7 +323,6 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
 void StatusWidget::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == p->m_clearTimer.timerId()) {
-        p->m_clearTimer.stop();
         p->clearMessage();
     }
     FyWidget::timerEvent(event);
