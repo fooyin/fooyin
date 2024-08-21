@@ -106,9 +106,7 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
 
     m_iconLabel->setPixmap(Utils::iconFromTheme(Constants::Icons::Fooyin).pixmap(IconSize));
     m_iconLabel->setScaledContents(true);
-
-    m_iconLabel->setMaximumHeight(22);
-    m_iconLabel->setMaximumWidth(22);
+    m_iconLabel->setMaximumSize(22, 22);
 
     layout->addWidget(m_iconLabel, 0, Qt::AlignLeft);
     layout->addWidget(m_messageText, 1);
@@ -295,6 +293,30 @@ void StatusWidget::showTempMessage(const QString& message, int timeout)
 void StatusWidget::showStatusTip(const QString& message)
 {
     p->showStatusMessage(message);
+}
+
+QSize StatusWidget::sizeHint() const
+{
+    QSize hint;
+
+    hint = hint.expandedTo(p->m_playingText->sizeHint());
+    hint = hint.expandedTo(p->m_statusText->sizeHint());
+    hint = hint.expandedTo(p->m_messageText->sizeHint());
+    hint = hint.expandedTo(p->m_selectionText->sizeHint());
+
+    return hint;
+}
+
+QSize StatusWidget::minimumSizeHint() const
+{
+    QSize hint;
+
+    hint = hint.expandedTo(p->m_playingText->minimumSizeHint());
+    hint = hint.expandedTo(p->m_statusText->minimumSizeHint());
+    hint = hint.expandedTo(p->m_messageText->minimumSizeHint());
+    hint = hint.expandedTo(p->m_selectionText->minimumSizeHint());
+
+    return hint;
 }
 
 void StatusWidget::contextMenuEvent(QContextMenuEvent* event)

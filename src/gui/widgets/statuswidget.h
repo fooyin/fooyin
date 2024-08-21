@@ -44,6 +44,9 @@ public:
     void showTempMessage(const QString& message, int timeout);
     void showStatusTip(const QString& message);
 
+    [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+
 signals:
     void clicked();
 
