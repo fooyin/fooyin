@@ -29,6 +29,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 #include <utils/utils.h>
 
 #include <QAction>
@@ -64,7 +65,6 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
     m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
 
-    QObject::connect(m_searchBar, &QLineEdit::textChanged, this, &SearchDialog::search);
     QObject::connect(m_view, &PlaylistWidget::selectionChanged, this, &SearchDialog::selectInPlaylist);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, &SearchDialog::updateTitle);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, [this]() {
@@ -76,6 +76,11 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
                      &SearchDialog::search);
     QObject::connect(m_playlistInteractor->playlistController(), &PlaylistController::currentPlaylistTracksChanged,
                      this, &SearchDialog::search);
+
+    auto* throttler = new SignalThrottler(this);
+    throttler->setTimeout(100);
+    QObject::connect(m_searchBar, &QLineEdit::textChanged, throttler, &SignalThrottler::throttle);
+    QObject::connect(throttler, &SignalThrottler::triggered, this, &SearchDialog::search);
 
     m_view->setDetached(true);
 
