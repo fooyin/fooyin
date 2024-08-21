@@ -309,7 +309,7 @@ QSize StatusWidget::sizeHint() const
 
 QSize StatusWidget::minimumSizeHint() const
 {
-    QSize hint;
+    QSize hint{0, 22};
 
     hint = hint.expandedTo(p->m_playingText->minimumSizeHint());
     hint = hint.expandedTo(p->m_statusText->minimumSizeHint());
