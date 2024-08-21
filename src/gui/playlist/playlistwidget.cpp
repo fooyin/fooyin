@@ -966,7 +966,7 @@ void PlaylistWidgetPrivate::handlePlayingTrackChanged(const PlaylistTrack& track
     }
 }
 
-void PlaylistWidgetPrivate::selectTrackIds(const std::set<int>& ids) const
+void PlaylistWidgetPrivate::selectTrackIds(const std::vector<int>& ids) const
 {
     QItemSelection selection;
 
@@ -1555,9 +1555,9 @@ void PlaylistWidget::searchEvent(const QString& search)
     }
 
     auto selectTracks = [this](const TrackList& tracks) {
-        std::set<int> trackIds;
+        std::vector<int> trackIds;
         for(const Track& track : tracks) {
-            trackIds.emplace(track.id());
+            trackIds.emplace_back(track.id());
         }
         p->selectTrackIds(trackIds);
     };

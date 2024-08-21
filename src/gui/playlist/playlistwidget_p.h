@@ -109,7 +109,7 @@ public:
     void handleTracksChanged(const std::vector<int>& indexes, bool allNew);
     void handleQueueTracksChanged(const QueueTracks& removed, const QueueTracks& tracks);
     void handlePlayingTrackChanged(const PlaylistTrack& track) const;
-    void selectTrackIds(const std::set<int>& ids) const;
+    void selectTrackIds(const std::vector<int>& ids) const;
 
     void setSingleMode(bool enabled);
     void updateSpans();

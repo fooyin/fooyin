@@ -635,7 +635,7 @@ void PlaylistController::showNowPlaying()
     emit showCurrentTrack();
 }
 
-void PlaylistController::selectTrackIds(const std::set<int>& ids)
+void PlaylistController::selectTrackIds(const std::vector<int>& ids)
 {
     emit selectTracks(ids);
 }
