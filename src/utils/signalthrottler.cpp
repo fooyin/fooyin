@@ -24,6 +24,7 @@
 namespace Fooyin {
 SignalThrottler::SignalThrottler(QObject* parent)
     : QObject{parent}
+    , m_timeout{50}
     , m_timerType{Qt::CoarseTimer}
     , m_pendingEmit{false}
 { }

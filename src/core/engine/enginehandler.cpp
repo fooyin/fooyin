@@ -89,7 +89,6 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
                      [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
 
     auto* throttler = new SignalThrottler(m_self);
-    throttler->setTimeout(50);
     QObject::connect(m_playerController, &PlayerController::currentTrackChanged, throttler, &SignalThrottler::throttle);
     QObject::connect(throttler, &SignalThrottler::triggered, m_self,
                      [this]() { handleTrackChange(m_playerController->currentTrack()); });

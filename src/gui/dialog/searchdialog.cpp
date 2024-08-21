@@ -41,6 +41,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+using namespace std::chrono_literals;
+
 constexpr auto AutoSelect  = "Search/AutoSelect";
 constexpr auto WindowState = "Search/WindowState";
 constexpr auto SearchState = "Search/PlaylistState";
@@ -78,7 +80,7 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
                      this, &SearchDialog::search);
 
     auto* throttler = new SignalThrottler(this);
-    throttler->setTimeout(100);
+    throttler->setTimeout(100ms);
     QObject::connect(m_searchBar, &QLineEdit::textChanged, throttler, &SignalThrottler::throttle);
     QObject::connect(throttler, &SignalThrottler::triggered, this, &SearchDialog::search);
 
