@@ -4436,12 +4436,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Stille</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="208"/>
@@ -4451,22 +4451,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="211"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="213"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="241"/>
         <source>Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen…</translation>
     </message>
 </context>
 <context>
@@ -4512,7 +4512,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="138"/>
         <source>Playback Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabeliste</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="143"/>
@@ -4633,7 +4633,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>URLs</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
@@ -4686,7 +4686,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="119"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Wiedergabeliste hinzufügen</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="120"/>
