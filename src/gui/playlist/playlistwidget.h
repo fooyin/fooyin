@@ -31,6 +31,7 @@ class CoverProvider;
 class MusicLibrary;
 class PlaylistInteractor;
 class PlaylistModel;
+class PlaylistView;
 class PlaylistWidgetPrivate;
 class SettingsManager;
 
@@ -44,6 +45,7 @@ public:
     ~PlaylistWidget() override;
 
     void setDetached(bool detached);
+    [[nodiscard]] PlaylistView* view() const;
     [[nodiscard]] PlaylistModel* model() const;
 
     [[nodiscard]] QString name() const override;

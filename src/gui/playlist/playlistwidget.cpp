@@ -1421,6 +1421,11 @@ void PlaylistWidget::setDetached(bool detached)
     p->m_playlistView->viewport()->setAcceptDrops(!detached);
 }
 
+PlaylistView* PlaylistWidget::view() const
+{
+    return p->m_playlistView;
+}
+
 PlaylistModel* PlaylistWidget::model() const
 {
     return p->m_model;

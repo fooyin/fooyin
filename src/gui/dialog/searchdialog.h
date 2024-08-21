@@ -46,6 +46,7 @@ public:
 private:
     void search();
     void updateTitle();
+    void showOptionsMenu();
     void selectInPlaylist(const QModelIndexList& indexes);
 
     void saveState();
@@ -55,5 +56,6 @@ private:
     SettingsManager* m_settings;
     QLineEdit* m_searchBar;
     PlaylistWidget* m_view;
+    bool m_autoSelect;
 };
 } // namespace Fooyin
