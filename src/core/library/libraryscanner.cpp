@@ -67,6 +67,22 @@ void sortFiles(QFileInfoList& files)
     });
 }
 
+std::optional<QFileInfo> findMatchingCue(const QFileInfo& file)
+{
+    static const QStringList cueExtensions{QStringLiteral("*.cue")};
+
+    const QDir dir           = file.absoluteDir();
+    const QFileInfoList cues = dir.entryInfoList(cueExtensions, QDir::Files);
+
+    for(const auto& cue : cues) {
+        if(cue.completeBaseName() == file.completeBaseName() || cue.fileName().contains(file.fileName())) {
+            return cue;
+        }
+    }
+
+    return {};
+}
+
 QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExtensions,
                        const QStringList& excludeExtensions, const QStringList& playlistExtensions)
 {
@@ -96,7 +112,13 @@ QFileInfoList getFiles(const QList<QUrl>& urls, const QStringList& restrictExten
             }
         }
         else {
-            if(nameFilters.contains(file.suffix()) || playlistExtensions.contains(file.suffix())) {
+            if(playlistExtensions.contains(file.suffix())) {
+                files.emplace_back(file.absoluteFilePath());
+            }
+            else if(nameFilters.contains(file.suffix())) {
+                if(const auto cue = findMatchingCue(file)) {
+                    files.emplace_back(cue.value());
+                }
                 files.emplace_back(file.absoluteFilePath());
             }
         }
