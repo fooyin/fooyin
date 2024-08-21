@@ -39,7 +39,6 @@ public:
     {
         Stopped = 0,
         Playing,
-        FadingIn,
         FadingOut,
         Paused,
         Error

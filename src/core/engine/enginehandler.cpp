@@ -108,7 +108,6 @@ void EngineHandlerPrivate::handleStateChange(AudioEngine::PlaybackState state) c
             m_playerController->pause();
             break;
         case(AudioEngine::PlaybackState::Playing):
-        case(AudioEngine::PlaybackState::FadingIn):
         case(AudioEngine::PlaybackState::FadingOut):
             break;
     }

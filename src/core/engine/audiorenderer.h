@@ -46,7 +46,10 @@ public:
     void drainOutput();
     void reset();
 
-    void pause(bool paused, int fadeLength = 0);
+    void play();
+    void play(int fadeLength);
+    void pause();
+    void pause(int fadeLength);
 
     void queueBuffer(const AudioBuffer& buffer);
 
@@ -71,6 +74,7 @@ protected:
 private:
     void resetBuffer();
     void resetFade(int length);
+    void handleFading();
 
     [[nodiscard]] bool canWrite() const;
 
@@ -80,7 +84,7 @@ private:
     void handleStateChanged(AudioOutput::State state);
     void updateInterval();
 
-    void pause();
+    void pauseOutput();
     void writeNext();
     int writeAudioSamples(int samples);
     int renderAudio(int samples);

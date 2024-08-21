@@ -206,7 +206,7 @@ void AudioPlaybackEngine::play()
                           && (playbackState() == PlaybackState::Paused || isFading());
         const int fadeLength = canFade ? calculateFadeLength(m_fadeIntervals.inPauseStop) : 0;
 
-        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(false, fadeLength); });
+        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.play(fadeLength); });
         updateTrackStatus(TrackStatus::Buffered);
         m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
 
@@ -270,10 +270,10 @@ void AudioPlaybackEngine::pause()
         m_pauseNextTrack = true;
     }
 
-    QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(true, fadeLength); });
+    QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
 
     if(fadeLength > 0) {
-        updateState(playbackState() == PlaybackState::Stopped ? PlaybackState::FadingIn : PlaybackState::FadingOut);
+        updateState(PlaybackState::FadingOut);
     }
 }
 
@@ -304,7 +304,7 @@ void AudioPlaybackEngine::stop()
 
         QObject::disconnect(&m_renderer, &AudioRenderer::paused, this, nullptr);
         QObject::connect(&m_renderer, &AudioRenderer::paused, this, stopEngine, Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(true, fadeLength); });
+        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
 
         AudioPlaybackEngine::updateState(PlaybackState::FadingOut);
     }
@@ -357,7 +357,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
 
     if(outputActive) {
         m_clock.setPaused(true);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.pause(true); });
+        QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::pause));
     }
 
     QMetaObject::invokeMethod(&m_renderer, [this, output, device]() { m_renderer.updateOutput(output, device); });
@@ -372,7 +372,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
                 else if(playbackState() == PlaybackState::Playing) {
                     m_clock.setPaused(false);
                     QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::start);
-                    QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.pause(false); });
+                    QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
                 }
             },
             Qt::SingleShotConnection);
@@ -390,7 +390,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
 
     if(outputActive) {
         m_clock.setPaused(true);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.pause(true); });
+        QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::pause));
     }
 
     QMetaObject::invokeMethod(&m_renderer, [this, device]() { m_renderer.updateDevice(device); });
@@ -403,7 +403,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
             else if(playbackState() == PlaybackState::Playing) {
                 m_clock.setPaused(false);
                 QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::start);
-                QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.pause(false); });
+                QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
             }
         });
         QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_format); });
@@ -657,8 +657,7 @@ bool AudioPlaybackEngine::trackCanPlay() const
 
 bool AudioPlaybackEngine::isFading() const
 {
-    const auto state = playbackState();
-    return state == PlaybackState::FadingIn || state == PlaybackState::FadingOut;
+    return playbackState() == PlaybackState::FadingOut;
 }
 
 int AudioPlaybackEngine::calculateFadeLength(int initialValue) const
