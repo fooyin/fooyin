@@ -214,7 +214,7 @@ void Command::setCurrentContext(const Context& context)
 {
     p->m_context = context;
 
-    QAction* currentAction = nullptr;
+    QAction* currentAction{nullptr};
     for(const Id& contextId : std::as_const(p->m_context)) {
         if(p->m_contextActionMap.contains(contextId)) {
             if(QAction* contextAction = p->m_contextActionMap.at(contextId)) {
@@ -222,6 +222,10 @@ void Command::setCurrentContext(const Context& context)
                 break;
             }
         }
+    }
+
+    if(!currentAction) {
+        return;
     }
 
     p->m_action->setAction(currentAction);
