@@ -51,6 +51,8 @@ public:
     void updateFocusWidget(QWidget* widget);
     void setContext(const Context& updatedContext);
 
+    void clear();
+
     ActionManager* m_self;
 
     SettingsManager* m_settingsManager;
@@ -75,10 +77,13 @@ Command* ActionManagerPrivate::overridableAction(const Id& id)
 
     auto* command = m_idCmdMap.emplace(id, std::make_unique<Command>(id)).first->second.get();
     loadSetting(id, command);
+
     QAction* action = command->action();
     m_mainWindow->addAction(action);
+    action->setParent(m_mainWindow);
     action->setObjectName(id.name());
     action->setShortcutContext(Qt::ApplicationShortcut);
+
     command->setCurrentContext(m_currentContext);
 
     return command;
@@ -172,6 +177,23 @@ void ActionManagerPrivate::setContext(const Context& updatedContext)
     }
 }
 
+void ActionManagerPrivate::clear()
+{
+    for(auto [_, context] : m_contextWidgets) {
+        context->disconnect();
+    }
+
+    m_contextWidgets.clear();
+    m_activeContext.clear();
+
+    for(const auto& [_, container] : m_idContainerMap) {
+        container->disconnect();
+    }
+
+    m_idContainerMap.clear();
+    m_idCmdMap.clear();
+}
+
 ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
     : QObject{parent}
     , p{std::make_unique<ActionManagerPrivate>(this, settingsManager)}
@@ -183,25 +205,13 @@ ActionManager::ActionManager(SettingsManager* settingsManager, QObject* parent)
 ActionManager::~ActionManager()
 {
     QObject::disconnect(qApp, &QApplication::focusChanged, this, nullptr);
-
-    for(auto [_, context] : p->m_contextWidgets) {
-        context->disconnect();
-    }
-
-    p->m_contextWidgets.clear();
-    p->m_activeContext.clear();
-
-    for(const auto& [_, container] : p->m_idContainerMap) {
-        container->disconnect();
-    }
-
-    p->m_idContainerMap.clear();
-    p->m_idCmdMap.clear();
+    p->clear();
 }
 
 void ActionManager::setMainWindow(QMainWindow* mainWindow)
 {
     p->m_mainWindow = mainWindow;
+    QObject::connect(mainWindow, &QObject::destroyed, this, [this] { p->clear(); });
 }
 
 void ActionManager::saveSettings()
