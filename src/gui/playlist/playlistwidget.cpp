@@ -407,7 +407,10 @@ void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 
 void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*playlist*/)
 {
-    saveState(prevPlaylist);
+    QObject::disconnect(m_delayedStateLoad);
+    if(m_playlistView->playlistLoaded()) {
+        saveState(prevPlaylist);
+    }
     resetSort(true);
     resetModel();
 }
@@ -415,7 +418,6 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
 void PlaylistWidgetPrivate::resetTree()
 {
     resetSort();
-    m_playlistView->playlistAboutToBeReset();
     restoreState(m_playlistController->currentPlaylist());
     m_clearAction->setEnabled(m_model->rowCount({}) > 0);
 }
@@ -484,28 +486,34 @@ void PlaylistWidgetPrivate::restoreState(Playlist* playlist)
         return;
     }
 
-    auto loadState = [this, state]() {
-        const auto& [index, end] = m_model->trackIndexAtPlaylistIndex(state->topIndex, true);
+    auto loadState = [this, state](bool fetch) {
+        const auto index = m_model->indexAtPlaylistIndex(state->topIndex, fetch, false);
 
         if(!index.isValid()) {
-            return;
+            return false;
         }
 
-        m_playlistView->playlistReset();
         m_playlistView->scrollTo(index, PlaylistView::PositionAtTop);
         m_playlistView->verticalScrollBar()->setValue(state->scrollPos);
+        m_playlistView->playlistReset();
 
         if(std::exchange(m_showPlaying, false)) {
             followCurrentTrack();
         }
+        return true;
     };
 
-    QObject::connect(
-        m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(); }, Qt::SingleShotConnection);
+    if(!loadState(false)) {
+        m_delayedStateLoad = QObject::connect(
+            m_model, &PlaylistModel::playlistLoaded, this, [loadState]() { loadState(true); },
+            Qt::SingleShotConnection);
+    }
 }
 
 void PlaylistWidgetPrivate::resetModel() const
 {
+    m_playlistView->playlistAboutToBeReset();
+
     if(m_detached) {
         m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
                        m_playlistController->currentPlaylist(), m_filteredTracks);
@@ -540,7 +548,7 @@ void PlaylistWidgetPrivate::restoreSelectedPlaylistIndexes(const std::vector<int
     indexesToSelect.reserve(static_cast<qsizetype>(indexes.size()));
 
     for(const int selectedIndex : indexes) {
-        const QModelIndex index = m_model->indexAtPlaylistIndex(selectedIndex);
+        const QModelIndex index = m_model->indexAtPlaylistIndex(selectedIndex, true);
         if(index.isValid()) {
             const QModelIndex last = index.siblingAtColumn(columnCount - 1);
             indexesToSelect.append({index, last.isValid() ? last : index});
@@ -926,7 +934,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
         restoreSelectedPlaylistIndexes(selectedIndexes);
 
         if(currentIndex >= 0) {
-            const QModelIndex index = m_model->indexAtPlaylistIndex(currentIndex);
+            const QModelIndex index = m_model->indexAtPlaylistIndex(currentIndex, true);
             if(index.isValid()) {
                 m_playlistView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
             }
@@ -1153,7 +1161,7 @@ void PlaylistWidgetPrivate::followCurrentTrack() const
         return;
     }
 
-    QModelIndex modelIndex = m_model->indexAtPlaylistIndex(index);
+    QModelIndex modelIndex = m_model->indexAtPlaylistIndex(index, true);
     while(modelIndex.isValid() && m_header->isSectionHidden(modelIndex.column())) {
         modelIndex = modelIndex.siblingAtColumn(modelIndex.column() + 1);
     }

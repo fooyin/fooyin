@@ -36,7 +36,7 @@ std::map<int, QPersistentModelIndex> saveQueuedIndexes(Fooyin::PlayerController*
 
     for(auto i{0}; const auto& track : queuedTracks) {
         if(track.playlistId == playlistId) {
-            const QModelIndex trackIndex = model->indexAtPlaylistIndex(track.indexInPlaylist);
+            const QModelIndex trackIndex = model->indexAtPlaylistIndex(track.indexInPlaylist, true);
             if(trackIndex.isValid()) {
                 indexes.emplace(i, trackIndex);
             }

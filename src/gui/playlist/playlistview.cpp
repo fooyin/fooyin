@@ -76,6 +76,11 @@ void PlaylistView::playlistReset()
     m_playlistLoaded = true;
 }
 
+bool PlaylistView::playlistLoaded() const
+{
+    return m_playlistLoaded;
+}
+
 void PlaylistView::mouseMoveEvent(QMouseEvent* event)
 {
     if(m_starDelegate) {

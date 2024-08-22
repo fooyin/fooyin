@@ -35,6 +35,7 @@ public:
     void setupRatingDelegate();
     void playlistAboutToBeReset();
     void playlistReset();
+    [[nodiscard]] bool playlistLoaded() const;
 
 protected:
     void mouseMoveEvent(QMouseEvent* event) override;

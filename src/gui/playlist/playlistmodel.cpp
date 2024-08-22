@@ -1009,9 +1009,9 @@ TrackIndexResult PlaylistModel::trackIndexAtPlaylistIndex(int index, bool fetch)
     return {};
 }
 
-QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool includeEnd)
+QModelIndex PlaylistModel::indexAtPlaylistIndex(int index, bool fetch, bool includeEnd)
 {
-    const auto result = trackIndexAtPlaylistIndex(index, true);
+    const auto result = trackIndexAtPlaylistIndex(index, fetch);
     return !includeEnd && result.endOfPlaylist ? QModelIndex{} : result.index;
 }
 
@@ -1217,7 +1217,7 @@ void PlaylistModel::tracksChanged()
 
 void PlaylistModel::playingTrackChanged(const PlaylistTrack& track)
 {
-    m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist);
+    m_playingIndex = indexAtPlaylistIndex(track.indexInPlaylist, true);
 
     if(std::exchange(m_playingTrack, track) != track) {
         emit dataChanged({}, {}, {Qt::DecorationRole, Qt::BackgroundRole});

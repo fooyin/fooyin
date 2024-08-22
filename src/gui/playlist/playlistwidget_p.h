@@ -143,6 +143,7 @@ public:
     TrackSorter m_sorter;
 
     bool m_detached;
+    QMetaObject::Connection m_delayedStateLoad;
 
     PlaylistColumnRegistry* m_columnRegistry;
     PresetRegistry* m_presetRegistry;

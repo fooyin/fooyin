@@ -124,7 +124,7 @@ public:
     [[nodiscard]] PlaylistTrack playingTrack() const;
     void stopAfterTrack(const QModelIndex& index);
     TrackIndexResult trackIndexAtPlaylistIndex(int index, bool fetch = false);
-    QModelIndex indexAtPlaylistIndex(int index, bool includeEnd = false);
+    QModelIndex indexAtPlaylistIndex(int index, bool fetch, bool includeEnd = false);
     [[nodiscard]] QModelIndexList indexesOfTrackId(int id);
 
     void insertTracks(const TrackGroups& tracks);
