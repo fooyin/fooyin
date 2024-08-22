@@ -51,6 +51,7 @@ signals:
     void tabTextChanged(int index, const QString& text);
 
 protected:
+    bool event(QEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
@@ -59,5 +60,6 @@ private:
     QString m_title;
     EditMode m_mode;
     PopupLineEdit* m_lineEdit;
+    QPoint m_accumDelta;
 };
 } // namespace Fooyin

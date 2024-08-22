@@ -79,6 +79,7 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     m_tabs->setMovable(true);
     m_tabs->setTabsClosable(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
     m_tabs->tabBar()->setExpanding(m_settings->value<Settings::Gui::Internal::PlaylistTabsExpand>());
+
     setAcceptDrops(true);
 
     setupConnections();

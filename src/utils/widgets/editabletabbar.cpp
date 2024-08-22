@@ -26,6 +26,7 @@
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMouseEvent>
+#include <QStyle>
 #include <QWheelEvent>
 
 namespace Fooyin {
@@ -95,6 +96,14 @@ void EditableTabBar::setEditMode(EditMode mode)
     m_mode = mode;
 }
 
+bool EditableTabBar::event(QEvent* event)
+{
+    if(event->type() == QEvent::HoverLeave) {
+        m_accumDelta = {};
+    }
+    return QTabBar::event(event);
+}
+
 void EditableTabBar::mouseDoubleClickEvent(QMouseEvent* event)
 {
     const QPoint pos = event->position().toPoint();
@@ -129,7 +138,48 @@ void EditableTabBar::wheelEvent(QWheelEvent* event)
         return;
     }
 
-    QTabBar::wheelEvent(event);
+    if(!style()->styleHint(QStyle::SH_TabBar_AllowWheelScrolling)) {
+        return;
+    }
+
+    if(currentIndex() > 0 && currentIndex() < count() - 1) {
+        QTabBar::wheelEvent(event);
+        emit tabBarClicked(currentIndex());
+        return;
+    }
+
+    // Wrap-around if scrolling on first or last tab
+    // TODO: Make optional via a setting
+
+    m_accumDelta += event->angleDelta();
+    const int xSteps = m_accumDelta.x() / QWheelEvent::DefaultDeltasPerStep;
+    const int ySteps = m_accumDelta.y() / QWheelEvent::DefaultDeltasPerStep;
+
+    int offset{0};
+    if(xSteps > 0 || ySteps > 0) {
+        offset       = -1;
+        m_accumDelta = {};
+    }
+    else if(xSteps < 0 || ySteps < 0) {
+        offset       = 1;
+        m_accumDelta = {};
+    }
+
+    int proposedIndex = currentIndex() + offset;
+    if(proposedIndex < 0) {
+        proposedIndex = count() - 1;
+    }
+    else if(proposedIndex >= count()) {
+        proposedIndex = 0;
+    }
+
+    if(isTabEnabled(proposedIndex) && isTabVisible(proposedIndex)) {
+        if(proposedIndex != currentIndex()) {
+            setCurrentIndex(proposedIndex);
+            emit tabBarClicked(currentIndex());
+            event->accept();
+        }
+    }
 }
 } // namespace Fooyin
 
