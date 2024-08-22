@@ -119,13 +119,13 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
     , m_model{new PlaylistOrganiserModel(playlistInteractor->handler(), m_playerController)}
     , m_context{new WidgetContext(this, Context{Id{"Context.PlaylistOrganiser."}.append(Utils::generateUniqueHash())},
                                   this)}
-    , m_removePlaylist{new QAction(tr("Remove"))}
+    , m_removePlaylist{new QAction(tr("Remove"), this)}
     , m_removeCmd{actionManager->registerAction(m_removePlaylist, Constants::Actions::Remove, m_context->context())}
-    , m_renamePlaylist{new QAction(tr("Rename"))}
+    , m_renamePlaylist{new QAction(tr("Rename"), this)}
     , m_renameCmd{actionManager->registerAction(m_renamePlaylist, Constants::Actions::Rename, m_context->context())}
-    , m_newGroup{new QAction(tr("New group"))}
+    , m_newGroup{new QAction(tr("New group"), this)}
     , m_newGroupCmd{actionManager->registerAction(m_newGroup, "PlaylistOrganiser.NewGroup", m_context->context())}
-    , m_newPlaylist{new QAction(tr("Create playlist"))}
+    , m_newPlaylist{new QAction(tr("Create playlist"), this)}
     , m_newPlaylistCmd{
           actionManager->registerAction(m_newPlaylist, "PlaylistOrganiser.NewPlaylist", m_context->context())}
 {
@@ -149,9 +149,20 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
 
     actionManager->addContextObject(m_context);
 
+    m_removePlaylist->setStatusTip(tr("Remove the selected playlist(s)"));
+    m_removeCmd->setAttribute(ProxyAction::UpdateText);
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
+
+    m_renamePlaylist->setStatusTip(tr("Rename the selected playlist"));
+    m_renameCmd->setAttribute(ProxyAction::UpdateText);
     m_renameCmd->setDefaultShortcut(Qt::Key_F2);
+
+    m_newGroup->setStatusTip(tr("Create a new empty group"));
+    m_newGroupCmd->setAttribute(ProxyAction::UpdateText);
     m_newGroupCmd->setDefaultShortcut(QKeySequence::AddTab);
+
+    m_newPlaylist->setStatusTip(tr("Create a new empty playlist"));
+    m_newPlaylistCmd->setAttribute(ProxyAction::UpdateText);
     m_newPlaylistCmd->setDefaultShortcut(QKeySequence::New);
 
     QAction::connect(m_newGroup, &QAction::triggered, this, [this]() {

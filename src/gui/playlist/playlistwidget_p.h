@@ -163,6 +163,9 @@ public:
     WidgetContext* m_playlistContext;
     TrackAction m_middleClickAction;
 
+    QAction* m_playAction;
+    QAction* m_cropAction;
+    QAction* m_stopAfter;
     QAction* m_cutAction;
     QAction* m_copyAction;
     QAction* m_pasteAction;

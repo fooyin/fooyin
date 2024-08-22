@@ -101,6 +101,7 @@ void QueueViewer::setupActions()
 {
     m_actionManager->addContextObject(m_context);
 
+    m_remove->setStatusTip(tr("Remove the selected tracks from the playback queue"));
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_remove, &QAction::triggered, this, &QueueViewer::removeSelectedTracks);
     QObject::connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -109,11 +110,13 @@ void QueueViewer::setupActions()
 
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
+    m_clear->setStatusTip(tr("Remove all tracks in the playback queue"));
     editMenu->addAction(m_clearCmd);
     QObject::connect(m_clear, &QAction::triggered, m_playerController, &PlayerController::clearQueue);
     m_clear->setEnabled(m_model->rowCount({}) > 0);
 
     auto* selectAllAction = new QAction(tr("&Select all"), this);
+    selectAllAction->setStatusTip(tr("Select all tracks in the playback queue"));
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_context->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);

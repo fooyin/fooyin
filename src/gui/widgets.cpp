@@ -219,8 +219,8 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("DirectoryBrowser"),
         [this]() {
-            auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_playlistInteractor,
-                                           m_settings, m_window);
+            auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_gui.actionManager,
+                                           m_playlistInteractor, m_settings, m_window);
             QObject::connect(m_core->playerController(), &PlayerController::playStateChanged, browser,
                              &DirBrowser::playstateChanged);
             QObject::connect(m_core->playerController(), &PlayerController::playlistTrackChanged, browser,

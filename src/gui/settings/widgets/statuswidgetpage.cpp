@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -47,6 +48,7 @@ private:
 
     QCheckBox* m_showIcon;
     QCheckBox* m_showSelection;
+    QCheckBox* m_showStatusTips;
     QTextEdit* m_playingScript;
     QTextEdit* m_selectionScript;
 };
@@ -55,6 +57,7 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_showIcon{new QCheckBox(tr("Show icon"), this)}
     , m_showSelection{new QCheckBox(tr("Show track selection"), this)}
+    , m_showStatusTips{new QCheckBox(tr("Show action tips"), this)}
     , m_playingScript{new QTextEdit(this)}
     , m_selectionScript{new QTextEdit(this)}
 {
@@ -64,14 +67,15 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     auto* playingScriptLabel   = new QLabel(tr("Playing track") + QStringLiteral(":"), this);
     auto* selectionScriptLabel = new QLabel(tr("Track selection") + QStringLiteral(":"), this);
 
-    auto* appearance       = new QGroupBox(tr("Appearance"), this);
-    auto* appearanceLayout = new QGridLayout(appearance);
+    auto* displayGroup  = new QGroupBox(tr("Display"), this);
+    auto* displayLayout = new QGridLayout(displayGroup);
 
-    appearanceLayout->addWidget(m_showIcon, 0, 0);
-    appearanceLayout->addWidget(m_showSelection, 1, 0);
+    displayLayout->addWidget(m_showIcon, 0, 0);
+    displayLayout->addWidget(m_showSelection, 1, 0);
+    displayLayout->addWidget(m_showStatusTips, 2, 0);
 
-    auto* scripts       = new QGroupBox(tr("Scripts"), this);
-    auto* scriptsLayout = new QGridLayout(scripts);
+    auto* scriptsGroup  = new QGroupBox(tr("Scripts"), this);
+    auto* scriptsLayout = new QGridLayout(scriptsGroup);
 
     scriptsLayout->addWidget(playingScriptLabel, 0, 0);
     scriptsLayout->addWidget(m_playingScript, 1, 0);
@@ -79,8 +83,8 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     scriptsLayout->addWidget(m_selectionScript, 3, 0);
 
     auto* layout = new QGridLayout(this);
-    layout->addWidget(appearance, 0, 0);
-    layout->addWidget(scripts, 1, 0);
+    layout->addWidget(displayGroup, 0, 0);
+    layout->addWidget(scriptsGroup, 1, 0);
 
     layout->setColumnStretch(0, 1);
     layout->setRowStretch(2, 1);
@@ -92,6 +96,7 @@ void StatusWidgetPageWidget::load()
     m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
     m_playingScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
     m_selectionScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
+    m_showStatusTips->setChecked(m_settings->value<Settings::Gui::ShowStatusTips>());
 }
 
 void StatusWidgetPageWidget::apply()
@@ -100,6 +105,7 @@ void StatusWidgetPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::StatusShowSelection>(m_showSelection->isChecked());
     m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->toPlainText());
     m_settings->set<Settings::Gui::Internal::StatusSelectionScript>(m_selectionScript->toPlainText());
+    m_settings->set<Settings::Gui::ShowStatusTips>(m_showStatusTips->isChecked());
 }
 
 void StatusWidgetPageWidget::reset()
@@ -108,6 +114,7 @@ void StatusWidgetPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::StatusShowSelection>();
     m_settings->reset<Settings::Gui::Internal::StatusPlayingScript>();
     m_settings->reset<Settings::Gui::Internal::StatusSelectionScript>();
+    m_settings->reset<Settings::Gui::ShowStatusTips>();
 }
 
 StatusWidgetPage::StatusWidgetPage(SettingsManager* settings, QObject* parent)

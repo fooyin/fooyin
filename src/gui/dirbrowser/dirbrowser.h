@@ -23,6 +23,7 @@
 #include <gui/fywidget.h>
 
 namespace Fooyin {
+class ActionManager;
 class DirBrowserPrivate;
 class PlaylistInteractor;
 class Playlist;
@@ -40,8 +41,8 @@ public:
         List,
     };
 
-    DirBrowser(const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
-               SettingsManager* settings, QWidget* parent = nullptr);
+    DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
+               PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent = nullptr);
     ~DirBrowser() override;
 
     [[nodiscard]] QString name() const override;

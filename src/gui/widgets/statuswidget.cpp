@@ -329,7 +329,6 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     showIcon->setChecked(p->m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     QObject::connect(showIcon, &QAction::triggered, this,
                      [this](bool checked) { p->m_settings->set<Settings::Gui::Internal::StatusShowIcon>(checked); });
-    menu->addAction(showIcon);
 
     auto* showSelection = new QAction(tr("Show track selection"), this);
     showSelection->setCheckable(true);
@@ -337,7 +336,16 @@ void StatusWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showSelection, &QAction::triggered, this, [this](bool checked) {
         p->m_settings->set<Settings::Gui::Internal::StatusShowSelection>(checked);
     });
+
+    auto* showTips = new QAction(tr("Show action tips"), this);
+    showTips->setCheckable(true);
+    showTips->setChecked(p->m_settings->value<Settings::Gui::ShowStatusTips>());
+    QObject::connect(showTips, &QAction::triggered, this,
+                     [this](bool checked) { p->m_settings->set<Settings::Gui::ShowStatusTips>(checked); });
+
+    menu->addAction(showIcon);
     menu->addAction(showSelection);
+    menu->addAction(showTips);
 
     menu->popup(event->globalPos());
 }

@@ -83,5 +83,6 @@ private:
     WindowState m_state;
     bool m_isHiding;
     bool m_hasQuit;
+    bool m_showStatusTips;
 };
 } // namespace Fooyin

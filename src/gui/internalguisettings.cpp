@@ -63,6 +63,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Style>(QString{}, QStringLiteral("Interface/Style"));
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
     m_settings->createSetting<SeekStep>(4000, QStringLiteral("Interface/SeekIncrement"));
+    m_settings->createSetting<ShowStatusTips>(true, QStringLiteral("Interface/ShowStatusTips"));
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));

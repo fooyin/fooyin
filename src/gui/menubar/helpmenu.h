@@ -35,7 +35,5 @@ public:
 
 private:
     ActionManager* m_actionManager;
-
-    QAction* m_about;
 };
 } // namespace Fooyin

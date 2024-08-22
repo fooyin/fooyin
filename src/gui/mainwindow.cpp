@@ -52,6 +52,7 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     , m_state{Normal}
     , m_isHiding{false}
     , m_hasQuit{false}
+    , m_showStatusTips{m_settings->value<Settings::Gui::ShowStatusTips>()}
 {
     actionManager->setMainWindow(this);
     setMenuBar(m_mainMenu->menuBar());
@@ -72,6 +73,8 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
         QObject::connect(windowHandle(), &QWindow::screenChanged, this,
                          [this]() { m_settings->set<Settings::Gui::MainWindowPixelRatio>(devicePixelRatioF()); });
     }
+
+    m_settings->subscribe<Settings::Gui::ShowStatusTips>(this, [this](const bool show) { m_showStatusTips = show; });
 }
 
 MainWindow::~MainWindow()
@@ -151,7 +154,7 @@ void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 
 bool MainWindow::event(QEvent* event)
 {
-    if(!m_statusWidget) {
+    if(!m_statusWidget || !m_showStatusTips) {
         return QMainWindow::event(event);
     }
 

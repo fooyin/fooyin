@@ -32,6 +32,7 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/toolbutton.h>
+#include <utils/actions/actionmanager.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
@@ -147,8 +148,8 @@ namespace Fooyin {
 class DirBrowserPrivate
 {
 public:
-    DirBrowserPrivate(DirBrowser* self, const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
-                      SettingsManager* settings);
+    DirBrowserPrivate(DirBrowser* self, const QStringList& supportedExtensions, ActionManager* actionManager,
+                      PlaylistInteractor* playlistInteractor, SettingsManager* settings);
 
     void checkIconProvider();
 
@@ -177,6 +178,7 @@ public:
     DirBrowser* m_self;
 
     QStringList m_supportedExtensions;
+    ActionManager* m_actionManager;
     PlaylistInteractor* m_playlistInteractor;
     PlaylistHandler* m_playlistHandler;
     SettingsManager* m_settings;
@@ -199,12 +201,24 @@ public:
 
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
+
+    WidgetContext* m_context;
+
+    QAction* m_playAction;
+    QAction* m_addCurrent;
+    QAction* m_addActive;
+    QAction* m_sendCurrent;
+    QAction* m_sendNew;
+    QAction* m_addQueue;
+    QAction* m_sendQueue;
 };
 
 DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& supportedExtensions,
-                                     PlaylistInteractor* playlistInteractor, SettingsManager* settings)
+                                     ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
+                                     SettingsManager* settings)
     : m_self{self}
     , m_supportedExtensions{Utils::extensionsToWildcards(supportedExtensions)}
+    , m_actionManager{actionManager}
     , m_playlistInteractor{playlistInteractor}
     , m_playlistHandler{m_playlistInteractor->handler()}
     , m_settings{settings}
@@ -214,6 +228,14 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_proxyModel{new DirProxyModel(m_self)}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
+    , m_context{new WidgetContext(m_self, Context{Constants::Context::DirBrowser}, m_self)}
+    , m_playAction{new QAction(DirBrowser::tr("&Play"), m_self)}
+    , m_addCurrent{new QAction(DirBrowser::tr("Add to &current playlist"), m_self)}
+    , m_addActive{new QAction(DirBrowser::tr("Add to &active playlist"), m_self)}
+    , m_sendCurrent{new QAction(DirBrowser::tr("&Send to current playlist"), m_self)}
+    , m_sendNew{new QAction(DirBrowser::tr("Send to &new playlist"), m_self)}
+    , m_addQueue{new QAction(DirBrowser::tr("Add to playback &queue"), m_self)}
+    , m_sendQueue{new QAction(DirBrowser::tr("Send to playback q&ueue"), m_self)}
 {
     auto* layout = new QVBoxLayout(m_self);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -240,6 +262,39 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     }
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
     updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+
+    m_playAction->setStatusTip(DirBrowser::tr("Start playback of the selected files(s)"));
+    QObject::connect(m_playAction, &QAction::triggered, m_self, [this]() { handleAction(TrackAction::Play, false); });
+
+    m_addCurrent->setStatusTip(DirBrowser::tr("Append selected tracks to the current playlist"));
+    QObject::connect(m_addCurrent, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::AddCurrentPlaylist, true); });
+    m_actionManager->registerAction(m_addCurrent, Constants::Actions::AddToCurrent, m_context->context());
+
+    m_addActive->setStatusTip(DirBrowser::tr("Append selected tracks to the active playlist"));
+    QObject::connect(m_addActive, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::AddActivePlaylist, true); });
+    m_actionManager->registerAction(m_addActive, Constants::Actions::AddToActive, m_context->context());
+
+    m_sendCurrent->setStatusTip(DirBrowser::tr("Replace contents of the current playlist with the selected tracks"));
+    QObject::connect(m_sendCurrent, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::SendCurrentPlaylist, true); });
+    m_actionManager->registerAction(m_sendCurrent, Constants::Actions::SendToCurrent, m_context->context());
+
+    m_sendNew->setStatusTip(DirBrowser::tr("Create a new playlist containing the selected tracks"));
+    QObject::connect(m_sendNew, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::SendNewPlaylist, true); });
+    m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew, m_context->context());
+
+    m_addQueue->setStatusTip(DirBrowser::tr("Add the selected tracks to the playback queue"));
+    QObject::connect(m_addQueue, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::AddToQueue, true); });
+    m_actionManager->registerAction(m_addQueue, Constants::Actions::AddToQueue, m_context->context());
+
+    m_sendQueue->setStatusTip(DirBrowser::tr("Replace the playback queue with the selected tracks"));
+    QObject::connect(m_sendQueue, &QAction::triggered, m_self,
+                     [this]() { handleAction(TrackAction::SendToQueue, true); });
+    m_actionManager->registerAction(m_sendQueue, Constants::Actions::SendToQueue, m_context->context());
 }
 
 void DirBrowserPrivate::checkIconProvider()
@@ -571,10 +626,10 @@ void DirBrowserPrivate::goUp()
     m_dirHistory.push(changeDir);
 }
 
-DirBrowser::DirBrowser(const QStringList& supportedExtensions, PlaylistInteractor* playlistInteractor,
-                       SettingsManager* settings, QWidget* parent)
+DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* actionManager,
+                       PlaylistInteractor* playlistInteractor, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<DirBrowserPrivate>(this, supportedExtensions, playlistInteractor, settings)}
+    , p{std::make_unique<DirBrowserPrivate>(this, supportedExtensions, actionManager, playlistInteractor, settings)}
 {
     QObject::connect(p->m_dirTree, &QTreeView::doubleClicked, this,
                      [this](const QModelIndex& index) { p->handleDoubleClick(index); });
@@ -678,41 +733,15 @@ void DirBrowser::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    auto* playAction = new QAction(tr("Play"), menu);
-    QObject::connect(playAction, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::Play, false); });
-
-    auto* addCurrent = new QAction(tr("Add to current playlist"), menu);
-    QObject::connect(addCurrent, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::AddCurrentPlaylist, true); });
-
-    auto* addActive = new QAction(tr("Add to active playlist"), menu);
-    QObject::connect(addActive, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::AddActivePlaylist, true); });
-
-    auto* sendCurrent = new QAction(tr("Send to current playlist"), menu);
-    QObject::connect(sendCurrent, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::SendCurrentPlaylist, true); });
-
-    auto* sendNew = new QAction(tr("Send to new playlist"), menu);
-    QObject::connect(sendNew, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::SendNewPlaylist, true); });
-
-    auto* addQueue = new QAction(tr("Add to playback queue"), menu);
-    QObject::connect(addQueue, &QAction::triggered, this, [this]() { p->handleAction(TrackAction::AddToQueue, true); });
-
-    auto* sendQueue = new QAction(tr("Send to playback queue"), menu);
-    QObject::connect(sendQueue, &QAction::triggered, this,
-                     [this]() { p->handleAction(TrackAction::SendToQueue, true); });
-
-    menu->addAction(playAction);
+    menu->addAction(p->m_playAction);
     menu->addSeparator();
-    menu->addAction(addCurrent);
-    menu->addAction(addActive);
-    menu->addAction(sendCurrent);
-    menu->addAction(sendNew);
+    menu->addAction(p->m_addCurrent);
+    menu->addAction(p->m_addActive);
+    menu->addAction(p->m_sendCurrent);
+    menu->addAction(p->m_sendNew);
     menu->addSeparator();
-    menu->addAction(addQueue);
-    menu->addAction(sendQueue);
+    menu->addAction(p->m_addQueue);
+    menu->addAction(p->m_sendQueue);
     menu->addSeparator();
 
     const QModelIndex index = p->m_dirTree->indexAt(p->m_dirTree->mapFromGlobal(event->globalPos()));

@@ -172,7 +172,6 @@ public:
     void playlistTrackChanged(const PlaylistTrack& track);
 
     void addGroupMenu(QMenu* parent);
-    void addPlayMenu(QMenu* menu);
     void addOpenMenu(QMenu* menu) const;
 
     void setScrollbarEnabled(bool enabled) const;
@@ -220,6 +219,7 @@ public:
 
     QAction* m_addToQueueAction;
     QAction* m_removeFromQueueAction;
+    QAction* m_playAction;
 
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
@@ -251,8 +251,9 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_sortProxy{new LibraryTreeSortModel(m_self)}
     , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                         m_self)}
-    , m_addToQueueAction{new QAction(LibraryTreeWidget::tr("Add to playback queue"), m_self)}
-    , m_removeFromQueueAction{new QAction(LibraryTreeWidget::tr("Remove from playback queue"), m_self)}
+    , m_addToQueueAction{new QAction(LibraryTreeWidget::tr("&Add to playback queue"), m_self)}
+    , m_removeFromQueueAction{new QAction(LibraryTreeWidget::tr("&Remove from playback queue"), m_self)}
+    , m_playAction{new QAction(LibraryTreeWidget::tr("&Play"), m_self)}
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<LibTreeMiddleClick>())}
 {
@@ -283,6 +284,10 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     m_model->setColour(m_settings->value<LibTreeColour>());
     m_model->setRowHeight(m_settings->value<LibTreeRowHeight>());
     m_model->setPlayState(playlistController->playerController()->playState());
+
+    m_playAction->setStatusTip(LibraryTreeWidget::tr("Start playback of the selected tracks"));
+    QObject::connect(m_playAction, &QAction::triggered, m_self,
+                     [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
 
     m_addToQueueAction->setEnabled(false);
     m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, m_widgetContext->context());
@@ -413,14 +418,6 @@ void LibraryTreeWidgetPrivate::addGroupMenu(QMenu* parent)
     }
 
     parent->addMenu(groupMenu);
-}
-
-void LibraryTreeWidgetPrivate::addPlayMenu(QMenu* menu)
-{
-    auto* playAction = new QAction(LibraryTreeWidget::tr("Play"), menu);
-    QObject::connect(playAction, &QAction::triggered, m_self,
-                     [this]() { handlePlayback(m_libraryTree->selectionModel()->selectedRows()); });
-    menu->addAction(playAction);
 }
 
 void LibraryTreeWidgetPrivate::addOpenMenu(QMenu* menu) const
@@ -943,7 +940,7 @@ void LibraryTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     const bool hasSelection = p->m_libraryTree->selectionModel()->hasSelection();
 
     if(hasSelection) {
-        p->addPlayMenu(menu);
+        menu->addAction(p->m_playAction);
         p->m_trackSelection->addTrackPlaylistContextMenu(menu);
     }
 

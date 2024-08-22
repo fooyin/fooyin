@@ -36,6 +36,7 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
 
     auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick setup"), this);
+    openQuickSetup->setStatusTip(tr("Open the quick setup dialog"));
     viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup),
                         Actions::Groups::One);
     QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
@@ -43,14 +44,17 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addSeparator();
 
     auto* showLog = new QAction(tr("&Log"), this);
+    showLog->setStatusTip(tr("Open the log dialog"));
     viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
     auto* showSandbox = new QAction(tr("&Script sandbox"), this);
+    showSandbox->setStatusTip(tr("Open the script sandbox dialog"));
     viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
     QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);
 
     auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
+    showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));
     viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));
     QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }

@@ -45,9 +45,11 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
-    m_about = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
-    helpMenu->addAction(m_actionManager->registerAction(m_about, Constants::Actions::About), Actions::Groups::Three);
-    QObject::connect(m_about, &QAction::triggered, this, showAboutDialog);
+    auto* aboutAction = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
+    aboutAction->setStatusTip(tr("Open the about dialog"));
+    helpMenu->addAction(m_actionManager->registerAction(aboutAction, Constants::Actions::About),
+                        Actions::Groups::Three);
+    QObject::connect(aboutAction, &QAction::triggered, this, showAboutDialog);
 }
 } // namespace Fooyin
 

@@ -46,7 +46,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     dbMenu->menu()->setTitle(tr("&Database"));
 
     auto* optimiseDb = new QAction(tr("&Optimise"), this);
-    optimiseDb->setStatusTip(tr("Reduces disk usage and improves query performance"));
+    optimiseDb->setStatusTip(tr("Reduce disk usage and improve query performance"));
     dbMenu->addAction(optimiseDb);
     QObject::connect(optimiseDb, &QAction::triggered, this, &LibraryMenu::optimiseDatabase);
 
@@ -61,6 +61,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
     auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
+    openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
     QObject::connect(openSettings, &QAction::triggered, this, [core]() {
         core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
     });

@@ -18,6 +18,7 @@
  */
 
 #include "guiapplication.h"
+#include "dialog/searchdialog.h"
 #include "internalguisettings.h"
 #include "mainwindow.h"
 #include "menubar/editmenu.h"
@@ -32,7 +33,6 @@
 #include "playlist/playlistinteractor.h"
 #include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
-#include "dialog/searchdialog.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
 

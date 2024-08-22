@@ -106,8 +106,9 @@ constexpr auto PlaylistAddTo = "Fooyin.Group.Playlist.AddTo";
 } // namespace Groups
 
 namespace Context {
-constexpr auto Playlist = "Fooyin.Context.Playlist";
-constexpr auto Search   = "Fooyin.Context.Search";
+constexpr auto Playlist   = "Fooyin.Context.Playlist";
+constexpr auto DirBrowser = "Fooyin.Context.DirBrowser";
+constexpr auto Search     = "Fooyin.Context.Search";
 } // namespace Context
 
 namespace Actions {
@@ -149,6 +150,7 @@ constexpr auto Remove           = "Edit.Remove";
 constexpr auto Rename           = "Edit.Rename";
 constexpr auto Mute             = "Volume.Mute";
 constexpr auto AddToQueue       = "Playback.AddToQueue";
+constexpr auto SendToQueue      = "Playback.SendToQueue";
 constexpr auto RemoveFromQueue  = "Playback.RemoveFromQueue";
 constexpr auto Rate0            = "Tagging.Rate0";
 constexpr auto Rate1            = "Tagging.Rate1";
@@ -156,6 +158,12 @@ constexpr auto Rate2            = "Tagging.Rate2";
 constexpr auto Rate3            = "Tagging.Rate3";
 constexpr auto Rate4            = "Tagging.Rate4";
 constexpr auto Rate5            = "Tagging.Rate5";
+constexpr auto AddToCurrent     = "Tracks.AddToCurrent";
+constexpr auto AddToActive      = "Tracks.AddToActive";
+constexpr auto SendToCurrent    = "Tracks.SendToCurrent";
+constexpr auto SendToNew        = "Tracks.SendToNew";
+constexpr auto OpenFolder       = "Tracks.OpenFolder";
+constexpr auto OpenProperties   = "Tracks.OpenProperties";
 } // namespace Actions
 
 namespace Mime {

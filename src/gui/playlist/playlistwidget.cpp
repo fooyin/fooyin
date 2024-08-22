@@ -174,6 +174,9 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_singleMode{false}
     , m_playlistContext{new WidgetContext(m_self, Context{Constants::Context::Playlist}, m_self)}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
+    , m_playAction{new QAction(tr("&Play"), m_self)}
+    , m_cropAction{new QAction(tr("&Crop"), m_self)}
+    , m_stopAfter{new QAction(tr("&Stop after this"), m_self)}
     , m_cutAction{new QAction(tr("Cut"), m_self)}
     , m_copyAction{new QAction(tr("Copy"), m_self)}
     , m_pasteAction{new QAction(tr("Paste"), m_self)}
@@ -260,15 +263,25 @@ void PlaylistWidgetPrivate::setupConnections()
 
 void PlaylistWidgetPrivate::setupActions()
 {
+    m_playAction->setStatusTip(tr("Start playback of the selected track"));
+    QObject::connect(m_playAction, &QAction::triggered, this, [this]() { playSelectedTracks(); });
+
     if(m_detached) {
         return;
     }
+
+    m_cropAction->setStatusTip(tr("Remove all tracks from the playlist except for the selected tracks"));
+    QObject::connect(m_cropAction, &QAction::triggered, this, [this]() { cropSelection(); });
+
+    m_stopAfter->setStatusTip(tr("Stop playback at the end of the selected track"));
+    QObject::connect(m_stopAfter, &QAction::triggered, this, [this]() { stopAfterTrack(); });
 
     m_actionManager->addContextObject(m_playlistContext);
 
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
     auto* undoAction = new QAction(tr("Undo"), this);
+    undoAction->setStatusTip(tr("Undo the previous playlist change"));
     auto* undoCmd = m_actionManager->registerAction(undoAction, Constants::Actions::Undo, m_playlistContext->context());
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
     editMenu->addAction(undoCmd);
@@ -278,6 +291,7 @@ void PlaylistWidgetPrivate::setupActions()
     undoAction->setEnabled(m_playlistController->canUndo());
 
     auto* redoAction = new QAction(tr("Redo"), this);
+    redoAction->setStatusTip(tr("Redo the previous playlist change"));
     auto* redoCmd = m_actionManager->registerAction(redoAction, Constants::Actions::Redo, m_playlistContext->context());
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
     editMenu->addAction(redoCmd);
@@ -288,6 +302,7 @@ void PlaylistWidgetPrivate::setupActions()
 
     editMenu->addSeparator();
 
+    m_cutAction->setStatusTip(tr("Cut the selected tracks"));
     auto* cutCommand
         = m_actionManager->registerAction(m_cutAction, Constants::Actions::Cut, m_playlistContext->context());
     cutCommand->setDefaultShortcut(QKeySequence::Cut);
@@ -297,6 +312,7 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(m_cutAction, &QAction::triggered, this, &PlaylistWidgetPrivate::cutTracks);
     m_cutAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
 
+    m_copyAction->setStatusTip(tr("Copy the selected tracks"));
     auto* copyCommand
         = m_actionManager->registerAction(m_copyAction, Constants::Actions::Copy, m_playlistContext->context());
     copyCommand->setDefaultShortcut(QKeySequence::Copy);
@@ -306,6 +322,7 @@ void PlaylistWidgetPrivate::setupActions()
     QObject::connect(m_copyAction, &QAction::triggered, this, &PlaylistWidgetPrivate::copyTracks);
     m_copyAction->setEnabled(m_playlistView->selectionModel()->hasSelection());
 
+    m_pasteAction->setStatusTip(tr("Paste the selected tracks"));
     auto* pasteCommand
         = m_actionManager->registerAction(m_pasteAction, Constants::Actions::Paste, m_playlistContext->context());
     pasteCommand->setDefaultShortcut(QKeySequence::Paste);
@@ -317,28 +334,36 @@ void PlaylistWidgetPrivate::setupActions()
 
     editMenu->addSeparator();
 
-    editMenu->addAction(
-        m_actionManager->registerAction(m_clearAction, Constants::Actions::Clear, m_playlistContext->context()));
+    m_clearAction->setStatusTip(tr("Remove all tracks from the current playlist"));
+    auto* clearCmd
+        = m_actionManager->registerAction(m_clearAction, Constants::Actions::Clear, m_playlistContext->context());
+    clearCmd->setAttribute(ProxyAction::UpdateText);
+    editMenu->addAction(clearCmd);
     QObject::connect(m_clearAction, &QAction::triggered, this, [this]() { clearTracks(); });
     m_clearAction->setEnabled(m_model->rowCount({}) > 0);
 
     auto* selectAllAction = new QAction(tr("&Select all"), m_self);
+    selectAllAction->setStatusTip(tr("Select all tracks in the current playlist"));
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_playlistContext->context());
     selectAllCmd->setDefaultShortcut(QKeySequence::SelectAll);
     editMenu->addAction(selectAllCmd);
     QObject::connect(selectAllAction, &QAction::triggered, this, [this]() { selectAll(); });
 
+    m_removeTrackAction->setStatusTip(tr("Remove the selected tracks from the current playlist"));
     m_removeTrackAction->setEnabled(false);
     auto* removeCmd = m_actionManager->registerAction(m_removeTrackAction, Constants::Actions::Remove,
                                                       m_playlistContext->context());
+    removeCmd->setAttribute(ProxyAction::UpdateText);
     removeCmd->setDefaultShortcut(QKeySequence::Delete);
     QObject::connect(m_removeTrackAction, &QAction::triggered, this, [this]() { tracksRemoved(); });
 
+    m_addToQueueAction->setStatusTip(tr("Add the selected tracks to the playback queue"));
     m_addToQueueAction->setEnabled(false);
     m_actionManager->registerAction(m_addToQueueAction, Constants::Actions::AddToQueue, m_playlistContext->context());
     QObject::connect(m_addToQueueAction, &QAction::triggered, this, [this]() { queueSelectedTracks(); });
 
+    m_removeFromQueueAction->setStatusTip(tr("Remove the selected tracks from the playback queue"));
     m_removeFromQueueAction->setVisible(false);
     m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
                                     m_playlistContext->context());
@@ -1611,16 +1636,12 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
     const bool hasSelection = !selected.empty();
 
     if(hasSelection) {
-        auto* playAction = new QAction(tr("&Play"), this);
-        QObject::connect(playAction, &QAction::triggered, this, [this]() { p->playSelectedTracks(); });
-        menu->addAction(playAction);
+        menu->addAction(p->m_playAction);
 
-        if(p->m_playlistController->currentIsActive()) {
+        if(!p->m_detached && p->m_playlistController->currentIsActive()) {
             const auto currentIndex = p->m_playlistView->currentIndex();
             if(currentIndex.isValid() && currentIndex.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-                auto* stopAfterAction = new QAction(tr("&Stop after this"), this);
-                QObject::connect(stopAfterAction, &QAction::triggered, this, [this]() { p->stopAfterTrack(); });
-                menu->addAction(stopAfterAction);
+                menu->addAction(p->m_stopAfter);
             }
         }
 
@@ -1631,9 +1652,7 @@ void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
                 menu->addAction(removeCmd->action());
             }
 
-            auto* crop = new QAction(tr("&Crop"), this);
-            QObject::connect(crop, &QAction::triggered, this, [this]() { p->cropSelection(); });
-            menu->addAction(crop);
+            menu->addAction(p->m_cropAction);
 
             p->addSortMenu(menu, selected.size() == 1);
             menu->addSeparator();

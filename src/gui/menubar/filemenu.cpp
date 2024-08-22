@@ -41,37 +41,43 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
-    auto* addFiles        = new QAction(tr("Add &files"), this);
+    auto* addFiles = new QAction(tr("Add &files"), this);
+    addFiles->setStatusTip(tr("Add the specified file(s) to the current playlist"));
     auto* addFilesCommand = m_actionManager->registerAction(addFiles, Constants::Actions::AddFiles);
     fileMenu->addAction(addFilesCommand, Actions::Groups::One);
     QObject::connect(addFiles, &QAction::triggered, this, &FileMenu::requestAddFiles);
 
-    auto* addFolders        = new QAction(tr("Ad&d folders"), this);
+    auto* addFolders = new QAction(tr("Ad&d folders"), this);
+    addFolders->setStatusTip(tr("Add the contents of the specified directory to the current playlist"));
     auto* addFoldersCommand = m_actionManager->registerAction(addFolders, Constants::Actions::AddFolders);
     fileMenu->addAction(addFoldersCommand, Actions::Groups::One);
     QObject::connect(addFolders, &QAction::triggered, this, &FileMenu::requestAddFolders);
 
     fileMenu->addSeparator();
 
-    auto* newPlaylist        = new QAction(tr("&New playlist"), this);
+    auto* newPlaylist = new QAction(tr("&New playlist"), this);
+    newPlaylist->setStatusTip(tr("Create a new empty playlist"));
     auto* newPlaylistCommand = m_actionManager->registerAction(newPlaylist, Constants::Actions::NewPlaylist);
     newPlaylistCommand->setDefaultShortcut(QKeySequence::New);
     fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
     QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
 
-    auto* loadPlaylist        = new QAction(tr("&Load playlist"), this);
+    auto* loadPlaylist = new QAction(tr("&Load playlist"), this);
+    loadPlaylist->setStatusTip(tr("Load the playlist from the specified file"));
     auto* loadPlaylistCommand = m_actionManager->registerAction(loadPlaylist, Constants::Actions::LoadPlaylist);
     fileMenu->addAction(loadPlaylistCommand, Actions::Groups::Two);
     QObject::connect(loadPlaylist, &QAction::triggered, this, &FileMenu::requestLoadPlaylist);
 
-    auto* savePlaylist        = new QAction(tr("&Save playlist"), this);
+    auto* savePlaylist = new QAction(tr("&Save playlist"), this);
+    savePlaylist->setStatusTip(tr("Save the current playlist to the specified file"));
     auto* savePlaylistCommand = m_actionManager->registerAction(savePlaylist, Constants::Actions::SavePlaylist);
     fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
     QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
 
     fileMenu->addSeparator();
 
-    auto* quit        = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);
+    auto* quit = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);
+    quit->setStatusTip(tr("Exit %1").arg(QStringLiteral("fooyin")));
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
     fileMenu->addAction(quitCommand, Actions::Groups::Three);

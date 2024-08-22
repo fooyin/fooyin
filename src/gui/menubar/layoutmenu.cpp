@@ -48,7 +48,8 @@ void LayoutMenu::setup()
     m_layoutMenu->clear();
 
     if(!m_layoutEditing) {
-        m_layoutEditing    = new QAction(tr("&Editing mode"), this);
+        m_layoutEditing = new QAction(tr("&Editing mode"), this);
+        m_layoutEditing->setStatusTip(tr("Toggle layout editing mode"));
         m_layoutEditingCmd = m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
         QObject::connect(m_layoutEditing, &QAction::triggered, this,
                          [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
@@ -62,8 +63,10 @@ void LayoutMenu::setup()
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
 
     auto* importLayout = new QAction(tr("&Import layout…"), m_layoutMenu->menu());
+    importLayout->setStatusTip(tr("Add the layout from the specified file"));
     QObject::connect(importLayout, &QAction::triggered, this, &LayoutMenu::importLayout);
     auto* exportLayout = new QAction(tr("E&xport layout…"), m_layoutMenu->menu());
+    exportLayout->setStatusTip(tr("Save the current layout to the specified file"));
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
     m_layoutMenu->addAction(importLayout);
@@ -87,6 +90,7 @@ void LayoutMenu::addLayout(const QString& name)
     }
 
     auto* layoutAction = new QAction(name, m_layoutMenu->menu());
+    layoutAction->setStatusTip(tr("Replace the current layout"));
     auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{QStringLiteral("Layout.Switch.%1").arg(name)});
     QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
         const auto layout = m_layoutProvider->layoutByName(name);
