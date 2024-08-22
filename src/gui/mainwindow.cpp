@@ -154,11 +154,11 @@ void MainWindow::installStatusWidget(StatusWidget* statusWidget)
 
 bool MainWindow::event(QEvent* event)
 {
-    if(!m_statusWidget || !m_showStatusTips) {
+    if(!m_statusWidget) {
         return QMainWindow::event(event);
     }
 
-    if(event->type() == QEvent::StatusTip) {
+    if(m_showStatusTips && event->type() == QEvent::StatusTip) {
         const QString tip = static_cast<QStatusTipEvent*>(event)->tip();
         m_statusWidget->showStatusTip(tip);
     }
