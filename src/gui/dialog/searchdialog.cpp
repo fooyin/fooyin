@@ -36,6 +36,7 @@
 #include <QDialogButtonBox>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
 #include <QPushButton>
@@ -99,6 +100,15 @@ SearchDialog::~SearchDialog()
 QSize SearchDialog::sizeHint() const
 {
     return {800, 480};
+}
+
+void SearchDialog::keyPressEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        m_view->startPlayback();
+    }
+
+    QDialog::keyPressEvent(event);
 }
 
 void SearchDialog::search()

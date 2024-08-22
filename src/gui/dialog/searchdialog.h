@@ -44,6 +44,9 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
 
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
+
 private:
     void search();
     void updateTitle();

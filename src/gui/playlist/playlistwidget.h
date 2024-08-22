@@ -48,6 +48,8 @@ public:
     [[nodiscard]] PlaylistView* view() const;
     [[nodiscard]] PlaylistModel* model() const;
 
+    void startPlayback();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
     void saveLayoutData(QJsonObject& layout) override;

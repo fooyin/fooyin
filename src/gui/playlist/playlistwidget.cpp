@@ -1447,6 +1447,13 @@ PlaylistModel* PlaylistWidget::model() const
     return p->m_model;
 }
 
+void PlaylistWidget::startPlayback()
+{
+    if(p->m_selectionController->hasTracks()) {
+        p->m_selectionController->executeAction(TrackAction::Play);
+    }
+}
+
 QString PlaylistWidget::name() const
 {
     return tr("Playlist");
@@ -1684,9 +1691,7 @@ void PlaylistWidget::keyPressEvent(QKeyEvent* event)
         p->selectAll();
     }
     else if(key == Qt::Key_Enter || key == Qt::Key_Return) {
-        if(p->m_selectionController->hasTracks()) {
-            p->m_selectionController->executeAction(TrackAction::Play);
-        }
+        startPlayback();
         p->m_playlistView->clearSelection();
     }
 
