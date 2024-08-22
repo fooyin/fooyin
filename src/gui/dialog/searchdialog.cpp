@@ -67,7 +67,8 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
     m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
 
-    QObject::connect(m_view, &PlaylistWidget::selectionChanged, this, &SearchDialog::selectInPlaylist);
+    QObject::connect(m_view->view()->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &SearchDialog::selectInPlaylist);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, &SearchDialog::updateTitle);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, [this]() {
         if(m_autoSelect) {
@@ -140,11 +141,11 @@ void SearchDialog::showOptionsMenu()
     menu->popup(m_searchBar->mapToGlobal(pos));
 }
 
-void SearchDialog::selectInPlaylist(const QModelIndexList& indexes)
+void SearchDialog::selectInPlaylist(const QItemSelection& selected, const QItemSelection& /*deselected*/)
 {
     std::vector<int> trackIds;
 
-    for(const QModelIndex& index : indexes) {
+    for(const QModelIndex& index : selected.indexes()) {
         trackIds.emplace_back(index.data(PlaylistItem::Role::TrackId).toInt());
     }
 

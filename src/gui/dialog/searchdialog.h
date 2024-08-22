@@ -23,6 +23,7 @@
 #include <QModelIndexList>
 
 class QLineEdit;
+class QItemSelection;
 
 namespace Fooyin {
 class ActionManager;
@@ -47,7 +48,7 @@ private:
     void search();
     void updateTitle();
     void showOptionsMenu();
-    void selectInPlaylist(const QModelIndexList& indexes);
+    void selectInPlaylist(const QItemSelection& selected, const QItemSelection& deselected);
 
     void saveState();
     void loadState();

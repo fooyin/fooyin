@@ -56,9 +56,6 @@ public:
 
     void searchEvent(const QString& search) override;
 
-signals:
-    void selectionChanged(const QModelIndexList& indexes);
-
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;

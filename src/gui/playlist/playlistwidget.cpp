@@ -582,7 +582,7 @@ void PlaylistWidgetPrivate::selectAll() const
 
 void PlaylistWidgetPrivate::selectionChanged() const
 {
-    if(!m_playlistController->currentPlaylist()) {
+    if(m_detached || !m_playlistController->currentPlaylist()) {
         return;
     }
 
@@ -604,7 +604,6 @@ void PlaylistWidgetPrivate::selectionChanged() const
     }
 
     m_selectionController->changeSelectedTracks(m_playlistContext, firstIndex, tracks);
-    emit m_self->selectionChanged(indexes);
 
     if(tracks.empty()) {
         m_removeTrackAction->setEnabled(false);
@@ -694,23 +693,7 @@ void PlaylistWidgetPrivate::playSelectedTracks() const
         return;
     }
 
-    const auto selected = filterSelectedIndexes(m_playlistView);
-
-    if(selected.empty()) {
-        return;
-    }
-
-    for(const QModelIndex& index : selected) {
-        if(index.isValid() && index.data(PlaylistItem::Type).toInt() == PlaylistItem::Track) {
-            auto track = index.data(PlaylistItem::ItemData).value<Track>();
-            if(track.isValid()) {
-                const int playIndex = index.data(PlaylistItem::Index).toInt();
-                m_playlistController->currentPlaylist()->changeCurrentIndex(playIndex);
-                m_playlistController->startPlayback();
-                return;
-            }
-        }
-    }
+    m_selectionController->executeAction(TrackAction::Play);
 }
 
 void PlaylistWidgetPrivate::queueSelectedTracks(bool send) const
