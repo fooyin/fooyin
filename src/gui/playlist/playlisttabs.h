@@ -84,7 +84,6 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void timerEvent(QTimerEvent* event) override;
     void dropEvent(QDropEvent* event) override;
-    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
     void setupConnections();

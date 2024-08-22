@@ -79,7 +79,6 @@ PlaylistTabs::PlaylistTabs(ActionManager* actionManager, WidgetProvider* widgetP
     m_tabs->setMovable(true);
     m_tabs->setTabsClosable(m_settings->value<Settings::Gui::Internal::PlaylistTabsCloseButton>());
     m_tabs->tabBar()->setExpanding(m_settings->value<Settings::Gui::Internal::PlaylistTabsExpand>());
-    m_tabs->tabBar()->installEventFilter(this);
 
     setAcceptDrops(true);
 
@@ -347,34 +346,6 @@ void PlaylistTabs::contextMenuEvent(QContextMenuEvent* event)
     }
 
     menu->popup(mapToGlobal(point));
-}
-
-bool PlaylistTabs::eventFilter(QObject* watched, QEvent* event)
-{
-    if(event->type() != QEvent::Wheel) {
-        return QObject::eventFilter(watched, event);
-    }
-
-    const auto* wheelEvent = static_cast<const QWheelEvent*>(event);
-    auto newIndex          = m_tabs->currentIndex();
-    if(wheelEvent->angleDelta().y() < 0) {
-        newIndex++;
-    }
-    else {
-        newIndex--;
-    }
-
-    const auto highestIndex = m_tabs->tabBar()->count();
-    if(newIndex < 0) {
-        newIndex = highestIndex - 1;
-    }
-    else if(newIndex >= highestIndex) {
-        newIndex = 0;
-    }
-
-    m_tabs->setCurrentIndex(newIndex);
-    tabChanged(newIndex);
-    return true;
 }
 
 void PlaylistTabs::dragEnterEvent(QDragEnterEvent* event)
