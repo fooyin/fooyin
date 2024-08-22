@@ -133,7 +133,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
 
     auto* alignmentGroup = new QActionGroup(menu);
 
-    auto* alignCenter = new QAction(tr("Align to center"), alignmentGroup);
+    auto* alignCenter = new QAction(tr("Align to centre"), alignmentGroup);
     auto* alignLeft   = new QAction(tr("Align to left"), alignmentGroup);
     auto* alignRight  = new QAction(tr("Align to right"), alignmentGroup);
 
