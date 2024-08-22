@@ -33,7 +33,7 @@ QString shortcutsToString(const Fooyin::ShortcutList& sequence)
     QStringList keys;
     std::ranges::transform(removeEmptyKeys(sequence), std::back_inserter(keys),
                            [](const QKeySequence& k) { return k.toString(QKeySequence::NativeText); });
-    return keys.join(QStringLiteral("|"));
+    return keys.join(u", ");
 }
 
 bool sortShortcutItems(const Fooyin::ShortcutItem* lhs, const Fooyin::ShortcutItem* rhs)
