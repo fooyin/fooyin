@@ -590,9 +590,9 @@ uint64_t Track::modifiedTime() const
     return p->modifiedTime;
 }
 
-QString Track::lastModified() const
+uint64_t Track::lastModified() const
 {
-    return Utils::formatTimeMs(p->modifiedTime);
+    return p->modifiedTime;
 }
 
 uint64_t Track::firstPlayed() const

@@ -327,9 +327,13 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Codec)]        = [](const Track& track) {
         return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
     };
-    m_metadata[QString::fromLatin1(MetaData::Channels)]        = trackChannels;
-    m_metadata[QString::fromLatin1(MetaData::AddedTime)]       = &Track::addedTime;
-    m_metadata[QString::fromLatin1(MetaData::LastModified)]    = &Track::lastModified;
+    m_metadata[QString::fromLatin1(MetaData::Channels)]  = trackChannels;
+    m_metadata[QString::fromLatin1(MetaData::AddedTime)] = [](const Track& track) {
+        return formatDateTime(track.addedTime());
+    };
+    m_metadata[QString::fromLatin1(MetaData::LastModified)] = [](const Track& track) {
+        return formatDateTime(track.lastModified());
+    };
     m_metadata[QString::fromLatin1(MetaData::FilePath)]        = &Track::filepath;
     m_metadata[QString::fromLatin1(MetaData::FileName)]        = &Track::filename;
     m_metadata[QString::fromLatin1(MetaData::Extension)]       = &Track::extension;
