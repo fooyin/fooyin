@@ -112,7 +112,7 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     layout->addWidget(m_messageText, 1);
     layout->addWidget(m_statusText, 1);
     layout->addWidget(m_playingText, 1);
-    layout->addWidget(m_selectionText);
+    layout->addWidget(m_selectionText, 0, Qt::AlignRight);
 
     m_statusText->hide();
     m_playingText->hide();
