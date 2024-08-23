@@ -63,6 +63,7 @@ public:
 signals:
     void initialised(bool success);
     void paused();
+    void outputClosed();
     void outputStateChanged(AudioOutput::State state);
     void bufferProcessed(const Fooyin::AudioBuffer& buffer);
     void error(const QString& error);

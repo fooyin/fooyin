@@ -289,8 +289,9 @@ void AudioPlaybackEngine::stop()
 
     auto stopEngine = [this]() {
         AudioPlaybackEngine::updateState(PlaybackState::Stopped);
+        QObject::connect(&m_renderer, &AudioRenderer::outputClosed, this, &AudioPlaybackEngine::finished,
+                         Qt::SingleShotConnection);
         stopWorkers(true);
-        emit finished();
     };
 
     const bool canFade = playbackState() != PlaybackState::Paused
