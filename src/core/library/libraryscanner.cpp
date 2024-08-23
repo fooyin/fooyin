@@ -339,7 +339,7 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath) const
     }
 
     TrackList tracks;
-    const int subsongCount = tagReader->subsongCount();
+    const int subsongCount = std::max(tagReader->subsongCount(), 1);
 
     for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
         Track subTrack{filepath, subIndex};
@@ -394,7 +394,8 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
             return;
         }
 
-        const int subsongCount = fileReader->subsongCount();
+        const int subsongCount = std::max(fileReader->subsongCount(), 1);
+
         for(int subIndex{0}; subIndex < subsongCount; ++subIndex) {
             Track subTrack{archivePath + entry, subIndex};
             subTrack.setFileSize(device->size());
