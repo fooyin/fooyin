@@ -62,7 +62,7 @@ public:
 
 signals:
     void initialised(bool success);
-    void paused();
+    void paused(uint64_t delay);
     void outputClosed();
     void outputStateChanged(AudioOutput::State state);
     void bufferProcessed(const Fooyin::AudioBuffer& buffer);

@@ -377,12 +377,17 @@ void AudioRenderer::pauseOutput()
 
     m_fadeVolume = -1;
 
-    drainOutput();
-    emit paused();
-
     if(validOutputState()) {
+        const auto state       = m_audioOutput->currentState();
+        const uint64_t durLeft = m_outputFormat.durationForFrames(state.queuedSamples);
+
+        emit paused(durLeft);
+        drainOutput();
         m_audioOutput->setPaused(true);
+        return;
     }
+
+    emit paused(0);
 }
 
 void AudioRenderer::writeNext()

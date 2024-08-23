@@ -253,11 +253,13 @@ void AudioPlaybackEngine::pause()
         return;
     }
 
-    auto pauseEngine = [this]() {
-        m_bufferTimer.stop();
-        if(playbackState() != PlaybackState::Stopped) {
-            updateState(PlaybackState::Paused);
-        }
+    auto pauseEngine = [this](const uint64_t delay) {
+        QTimer::singleShot(delay, this, [this]() {
+            m_bufferTimer.stop();
+            if(playbackState() != PlaybackState::Stopped) {
+                updateState(PlaybackState::Paused);
+            }
+        });
     };
 
     QObject::disconnect(&m_renderer, &AudioRenderer::paused, this, nullptr);
