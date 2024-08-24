@@ -11,17 +11,17 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="36"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="38"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="40"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="42"/>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="44"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznane</translation>
     </message>
 </context>
 <context>
@@ -85,7 +85,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="33"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Ustawienia</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="40"/>
@@ -165,7 +165,7 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="486"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż ukryte</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="495"/>
@@ -180,17 +180,17 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="528"/>
         <source>&amp;Left</source>
-        <translation>Do lewej</translation>
+        <translation>&amp;Do lewej</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="529"/>
         <source>&amp;Centre</source>
-        <translation>Do środka</translation>
+        <translation>&amp;Do środka</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="530"/>
         <source>&amp;Right</source>
-        <translation>Do prawej</translation>
+        <translation>&amp;Do prawej</translation>
     </message>
 </context>
 <context>
@@ -211,32 +211,32 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="124"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachowaj proporcje</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="136"/>
         <source>Align to center</source>
-        <translation type="unfinished"></translation>
+        <translation>Do środka</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="137"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Do lewej</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="138"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Do prawej</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="163"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Okładka przednia</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="164"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Okładka tylna</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="165"/>
@@ -249,12 +249,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="82"/>
         <source>Select Font</source>
-        <translation>Wybierz czcionkę</translation>
+        <translation>Wybierz Czcionkę</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="91"/>
         <source>Select Colour</source>
-        <translation>Wybierz kolor</translation>
+        <translation>Wybierz Kolor</translation>
     </message>
 </context>
 <context>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="232"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Odtwarzaj</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="233"/>
@@ -525,7 +525,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="48"/>
         <source>Open the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz okno ustawień</translation>
     </message>
 </context>
 <context>
@@ -807,12 +807,12 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="116"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="117"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="121"/>
@@ -1449,7 +1449,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="52"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Długość</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="55"/>
@@ -1459,7 +1459,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="59"/>
         <source>minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>minuty</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="66"/>
@@ -1469,7 +1469,7 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="72"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="61"/>
@@ -1738,7 +1738,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="127"/>
         <source>Import Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj układ</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="128"/>
@@ -1829,7 +1829,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="97"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokacja</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="100"/>
@@ -1839,7 +1839,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="103"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Inne</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="115"/>
@@ -1849,7 +1849,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="116"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="117"/>
@@ -1874,32 +1874,32 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="124"/>
         <source>Track Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Numer Utworu</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="140"/>
         <source>File Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwy Plików</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="140"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa Pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="143"/>
         <source>Folder Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwy Folderów</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="143"/>
         <source>Folder Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa Folderu</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="147"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Ścieżka Pliku</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="150"/>
@@ -1929,7 +1929,7 @@
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="171"/>
         <source>Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwory</translation>
     </message>
     <message>
         <location filename="../../src/gui/info/infopopulator.cpp" line="175"/>
@@ -2020,7 +2020,7 @@
     <message>
         <location filename="../../src/gui/info/infowidget.cpp" line="205"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Inne</translation>
     </message>
 </context>
 <context>
@@ -5019,7 +5019,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>opcje</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
@@ -5029,7 +5029,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcje</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
@@ -5082,7 +5082,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="120"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń z kolejki odtwarzania</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="121"/>

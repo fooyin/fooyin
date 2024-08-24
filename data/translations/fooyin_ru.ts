@@ -688,7 +688,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>&amp;Save</source>
-        <translation>Сохранить</translation>
+        <translation>&amp;Сохранить</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="99"/>
@@ -2026,7 +2026,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="51"/>
         <source>&amp;Editing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Режим редактирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="52"/>
@@ -2597,7 +2597,7 @@
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="140"/>
         <source>Layout Editing Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим редактирования скина</translation>
     </message>
 </context>
 <context>
@@ -4310,7 +4310,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="221"/>
         <source>Layout Editing Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим редактирования скина</translation>
     </message>
 </context>
 <context>
