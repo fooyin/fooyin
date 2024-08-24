@@ -22,13 +22,13 @@
 #include "internalguisettings.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
 #include <QSpinBox>
 
 namespace Fooyin {
@@ -46,8 +46,8 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QLineEdit* m_titleScript;
-    QLineEdit* m_subtitleScript;
+    ScriptLineEdit* m_titleScript;
+    ScriptLineEdit* m_subtitleScript;
     QCheckBox* m_headers;
     QCheckBox* m_scrollBars;
     QCheckBox* m_altRowColours;
@@ -58,8 +58,8 @@ private:
 
 PlaybackQueuePageWidget::PlaybackQueuePageWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_titleScript{new QLineEdit(this)}
-    , m_subtitleScript{new QLineEdit(this)}
+    , m_titleScript{new ScriptLineEdit(this)}
+    , m_subtitleScript{new ScriptLineEdit(this)}
     , m_headers{new QCheckBox(tr("Show header"), this)}
     , m_scrollBars{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}

@@ -22,6 +22,7 @@
 #include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -47,7 +48,7 @@ private:
 
     QLineEdit* m_restrictTypes;
     QLineEdit* m_excludeTypes;
-    QLineEdit* m_externalSortScript;
+    ScriptLineEdit* m_externalSortScript;
     QCheckBox* m_alwaysSend;
     QLineEdit* m_externalPlaylist;
 };
@@ -56,7 +57,7 @@ ShellIntegrationPageWidget::ShellIntegrationPageWidget(SettingsManager* settings
     : m_settings{settings}
     , m_restrictTypes{new QLineEdit(this)}
     , m_excludeTypes{new QLineEdit(this)}
-    , m_externalSortScript{new QLineEdit(this)}
+    , m_externalSortScript{new ScriptLineEdit(this)}
     , m_alwaysSend{new QCheckBox(tr("Always send to playlist"), this)}
     , m_externalPlaylist{new QLineEdit(this)}
 {

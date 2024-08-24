@@ -19,6 +19,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/scriptlineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     coverprovider.cpp
@@ -248,6 +249,7 @@ set(SOURCES
     widgets/lyricswidget.cpp
     widgets/menuheader.cpp
     widgets/menuheader.h
+    widgets/scriptlineedit.cpp
     widgets/seekcontainer.cpp
     widgets/spacer.cpp
     widgets/spacer.h

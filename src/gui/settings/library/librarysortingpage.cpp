@@ -24,13 +24,13 @@
 #include "sortingmodel.h"
 
 #include <core/coresettings.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QHeaderView>
 #include <QLabel>
-#include <QLineEdit>
 #include <QTableView>
 #include <QVBoxLayout>
 
@@ -54,7 +54,7 @@ private:
     ExtendableTableView* m_sortList;
     SortingModel* m_model;
 
-    QLineEdit* m_sortScript;
+    ScriptLineEdit* m_sortScript;
 };
 
 LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortingRegistry,
@@ -63,7 +63,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     , m_settings{settings}
     , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(m_sortRegistry, this)}
-    , m_sortScript{new QLineEdit(this)}
+    , m_sortScript{new ScriptLineEdit(this)}
 {
     m_sortList->setExtendableModel(m_model);
     m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));

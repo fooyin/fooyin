@@ -21,6 +21,9 @@
 
 #include "scripthighlighter.h"
 
+#include <core/coresettings.h>
+#include <gui/scripting/scriptformatter.h>
+
 #include <QDialog>
 
 class QSplitter;
@@ -37,9 +40,14 @@ class SandboxDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection,
-                           SettingsManager* settings, QWidget* parent = nullptr);
+    SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent = nullptr);
+    explicit SandboxDialog(const QString& script, QWidget* parent = nullptr);
+    explicit SandboxDialog(QWidget* parent = nullptr);
     ~SandboxDialog() override;
+
+    static void openSandbox(const QString& script, const std::function<void(const QString&)>& callback);
+
+    [[nodiscard]] QSize sizeHint() const override;
 
 private:
     void updateResults();
@@ -50,11 +58,12 @@ private:
 
     void showErrors() const;
 
-    void saveState() const;
+    void saveState();
     void restoreState();
 
     TrackSelectionController* m_trackSelection;
-    SettingsManager* m_settings;
+    FySettings m_settings;
+    Track m_placeholderTrack;
 
     QSplitter* m_mainSplitter;
     QSplitter* m_documentSplitter;
@@ -70,6 +79,7 @@ private:
 
     ScriptRegistry m_registry;
     ScriptParser m_parser;
+    ScriptFormatter m_formatter;
 
     ParsedScript m_currentScript;
 };

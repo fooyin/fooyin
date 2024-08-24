@@ -269,8 +269,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptSandbox, m_self, [this]() {
-        auto* sandboxDialog
-            = new SandboxDialog(m_core->libraryManager(), &m_selectionController, m_settings, m_mainWindow.get());
+        auto* sandboxDialog = new SandboxDialog(m_core->libraryManager(), &m_selectionController, m_mainWindow.get());
         sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
         sandboxDialog->show();
     });

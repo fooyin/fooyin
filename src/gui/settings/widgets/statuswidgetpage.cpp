@@ -23,13 +23,14 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/utils.h>
 
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QTextEdit>
 
 namespace Fooyin {
 class StatusWidgetPageWidget : public SettingsPageWidget
@@ -49,8 +50,8 @@ private:
     QCheckBox* m_showIcon;
     QCheckBox* m_showSelection;
     QCheckBox* m_showStatusTips;
-    QTextEdit* m_playingScript;
-    QTextEdit* m_selectionScript;
+    ScriptLineEdit* m_playingScript;
+    ScriptLineEdit* m_selectionScript;
 };
 
 StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
@@ -58,12 +59,9 @@ StatusWidgetPageWidget::StatusWidgetPageWidget(SettingsManager* settings)
     , m_showIcon{new QCheckBox(tr("Show icon"), this)}
     , m_showSelection{new QCheckBox(tr("Show track selection"), this)}
     , m_showStatusTips{new QCheckBox(tr("Show action tips"), this)}
-    , m_playingScript{new QTextEdit(this)}
-    , m_selectionScript{new QTextEdit(this)}
+    , m_playingScript{new ScriptLineEdit(this)}
+    , m_selectionScript{new ScriptLineEdit(this)}
 {
-    m_playingScript->setFixedHeight(100);
-    m_selectionScript->setFixedHeight(100);
-
     auto* playingScriptLabel   = new QLabel(tr("Playing track") + QStringLiteral(":"), this);
     auto* selectionScriptLabel = new QLabel(tr("Track selection") + QStringLiteral(":"), this);
 
@@ -94,8 +92,8 @@ void StatusWidgetPageWidget::load()
 {
     m_showIcon->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowIcon>());
     m_showSelection->setChecked(m_settings->value<Settings::Gui::Internal::StatusShowSelection>());
-    m_playingScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
-    m_selectionScript->setPlainText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
+    m_playingScript->setText(m_settings->value<Settings::Gui::Internal::StatusPlayingScript>());
+    m_selectionScript->setText(m_settings->value<Settings::Gui::Internal::StatusSelectionScript>());
     m_showStatusTips->setChecked(m_settings->value<Settings::Gui::ShowStatusTips>());
 }
 
@@ -103,8 +101,8 @@ void StatusWidgetPageWidget::apply()
 {
     m_settings->set<Settings::Gui::Internal::StatusShowIcon>(m_showIcon->isChecked());
     m_settings->set<Settings::Gui::Internal::StatusShowSelection>(m_showSelection->isChecked());
-    m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->toPlainText());
-    m_settings->set<Settings::Gui::Internal::StatusSelectionScript>(m_selectionScript->toPlainText());
+    m_settings->set<Settings::Gui::Internal::StatusPlayingScript>(m_playingScript->text());
+    m_settings->set<Settings::Gui::Internal::StatusSelectionScript>(m_selectionScript->text());
     m_settings->set<Settings::Gui::ShowStatusTips>(m_showStatusTips->isChecked());
 }
 

@@ -24,7 +24,7 @@
 #include "playlist/presetregistry.h"
 
 #include <gui/guiconstants.h>
-#include <gui/widgets/customisableinput.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -38,7 +38,6 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QTabWidget>
-#include <QTextEdit>
 #include <QVBoxLayout>
 
 namespace Fooyin {
@@ -52,8 +51,8 @@ public:
         , m_groupBox{new QGroupBox(this)}
         , m_overrideHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_leftScript{new QTextEdit(this)}
-        , m_rightScript{new QTextEdit(this)}
+        , m_leftScript{new ScriptLineEdit(this)}
+        , m_rightScript{new ScriptLineEdit(this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -86,22 +85,22 @@ public:
 
     void setLeftScript(const QString& script)
     {
-        m_leftScript->setPlainText(script);
+        m_leftScript->setText(script);
     }
 
     void setRightScript(const QString& script)
     {
-        m_rightScript->setPlainText(script);
+        m_rightScript->setText(script);
     }
 
     [[nodiscard]] QString leftScript() const
     {
-        return m_leftScript->toPlainText();
+        return m_leftScript->text();
     }
 
     [[nodiscard]] QString rightScript() const
     {
-        return m_rightScript->toPlainText();
+        return m_rightScript->text();
     }
 
     [[nodiscard]] int rowHeight() const
@@ -123,8 +122,8 @@ private:
     QGroupBox* m_groupBox;
     QCheckBox* m_overrideHeight;
     QSpinBox* m_rowHeight;
-    QTextEdit* m_leftScript;
-    QTextEdit* m_rightScript;
+    ScriptLineEdit* m_leftScript;
+    ScriptLineEdit* m_rightScript;
 };
 
 void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* box, QWidget* parent)
@@ -185,17 +184,17 @@ private:
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
 
-    QTextEdit* m_headerTitle;
-    QTextEdit* m_headerSubtitle;
-    QTextEdit* m_headerSideText;
-    QTextEdit* m_headerInfo;
+    ScriptLineEdit* m_headerTitle;
+    ScriptLineEdit* m_headerSubtitle;
+    ScriptLineEdit* m_headerSideText;
+    ScriptLineEdit* m_headerInfo;
     QCheckBox* m_overrideHeaderHeight;
     QSpinBox* m_headerRowHeight;
 
     ExpandableInputBox* m_subHeaders;
 
-    QTextEdit* m_trackLeftText;
-    QTextEdit* m_trackRightText;
+    ScriptLineEdit* m_trackLeftText;
+    ScriptLineEdit* m_trackRightText;
     QCheckBox* m_overrideTrackHeight;
     QSpinBox* m_trackRowHeight;
 
@@ -213,15 +212,15 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     : m_presetRegistry{presetRegistry}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
-    , m_headerTitle{new QTextEdit(this)}
-    , m_headerSubtitle{new QTextEdit(this)}
-    , m_headerSideText{new QTextEdit(this)}
-    , m_headerInfo{new QTextEdit(this)}
+    , m_headerTitle{new ScriptLineEdit(this)}
+    , m_headerSubtitle{new ScriptLineEdit(this)}
+    , m_headerSideText{new ScriptLineEdit(this)}
+    , m_headerInfo{new ScriptLineEdit(this)}
     , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
     , m_headerRowHeight{new QSpinBox(this)}
-    , m_trackLeftText{new QTextEdit(tr("Left-aligned text") + QStringLiteral(":"), this)}
-    , m_trackRightText{new QTextEdit(tr("Right-aligned text") + QStringLiteral(":"), this)}
-    , m_overrideTrackHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
+    , m_trackLeftText{new ScriptLineEdit(this)}
+    , m_trackRightText{new ScriptLineEdit(this)}
+    , m_overrideTrackHeight{new QCheckBox(this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show cover"), this)}
     , m_simpleHeader{new QCheckBox(tr("Simple header"), this)}
@@ -413,10 +412,10 @@ void PlaylistPresetsPageWidget::updatePreset()
         return;
     }
 
-    preset.header.title.script    = m_headerTitle->toPlainText();
-    preset.header.subtitle.script = m_headerSubtitle->toPlainText();
-    preset.header.sideText.script = m_headerSideText->toPlainText();
-    preset.header.info.script     = m_headerInfo->toPlainText();
+    preset.header.title.script    = m_headerTitle->text();
+    preset.header.subtitle.script = m_headerSubtitle->text();
+    preset.header.sideText.script = m_headerSideText->text();
+    preset.header.info.script     = m_headerInfo->text();
 
     preset.header.rowHeight = m_overrideHeaderHeight->isChecked() ? m_headerRowHeight->value() : 0;
     preset.header.simple    = m_simpleHeader->isChecked();
@@ -424,8 +423,8 @@ void PlaylistPresetsPageWidget::updatePreset()
 
     updateGroupTextBlocks(m_subHeaders->blocks(), preset.subHeaders);
 
-    preset.track.leftText.script  = m_trackLeftText->toPlainText();
-    preset.track.rightText.script = m_trackRightText->toPlainText();
+    preset.track.leftText.script  = m_trackLeftText->text();
+    preset.track.rightText.script = m_trackRightText->text();
     preset.track.rowHeight        = m_overrideTrackHeight->isChecked() ? m_trackRowHeight->value() : 0;
 
     m_presetRegistry->changeItem(preset);
@@ -472,10 +471,10 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_headerSideText->setReadOnly(preset.isDefault);
     m_headerInfo->setReadOnly(preset.isDefault);
 
-    m_headerTitle->setPlainText(preset.header.title.script);
-    m_headerSubtitle->setPlainText(preset.header.subtitle.script);
-    m_headerSideText->setPlainText(preset.header.sideText.script);
-    m_headerInfo->setPlainText(preset.header.info.script);
+    m_headerTitle->setText(preset.header.title.script);
+    m_headerSubtitle->setText(preset.header.subtitle.script);
+    m_headerSideText->setText(preset.header.sideText.script);
+    m_headerInfo->setText(preset.header.info.script);
 
     m_simpleHeader->setChecked(preset.header.simple);
     m_simpleHeader->setDisabled(preset.isDefault);
@@ -500,8 +499,8 @@ void PlaylistPresetsPageWidget::setupPreset(const PlaylistPreset& preset)
     m_trackLeftText->setReadOnly(preset.isDefault);
     m_trackRightText->setReadOnly(preset.isDefault);
 
-    m_trackLeftText->setPlainText(preset.track.leftText.script);
-    m_trackRightText->setPlainText(preset.track.rightText.script);
+    m_trackLeftText->setText(preset.track.leftText.script);
+    m_trackRightText->setText(preset.track.rightText.script);
 
     m_overrideTrackHeight->setChecked(preset.track.rowHeight > 0);
     m_overrideTrackHeight->setEnabled(!preset.isDefault);

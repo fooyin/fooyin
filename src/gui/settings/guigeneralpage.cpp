@@ -19,14 +19,13 @@
 
 #include "guigeneralpage.h"
 
-#include "dialog/exportlayoutdialog.h"
 #include "internalguisettings.h"
 #include "quicksetup/quicksetupdialog.h"
 
 #include <gui/editablelayout.h>
 #include <gui/guiconstants.h>
-#include <gui/guipaths.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -36,10 +35,7 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QGroupBox>
-#include <QInputDialog>
 #include <QLabel>
-#include <QLineEdit>
-#include <QMessageBox>
 #include <QProxyStyle>
 #include <QPushButton>
 #include <QRadioButton>
@@ -89,7 +85,7 @@ private:
     QCheckBox* m_buttonRaise;
     QCheckBox* m_buttonStretch;
 
-    QLineEdit* m_titleScript;
+    ScriptLineEdit* m_titleScript;
 
     QRadioButton* m_preferPlaying;
     QRadioButton* m_preferSelection;
@@ -115,7 +111,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_splitterHandleGap{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
     , m_buttonStretch{new QCheckBox(tr("Stretch"), this)}
-    , m_titleScript{new QLineEdit(this)}
+    , m_titleScript{new ScriptLineEdit(this)}
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_seekStep{new QSpinBox(this)}

@@ -27,6 +27,7 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QDir>
 #include <QGridLayout>
 #include <QPlainTextEdit>
 #include <QSplitter>
@@ -41,11 +42,9 @@ using namespace std::chrono_literals;
 constexpr auto DialogState = "Interface/ScriptSandboxState";
 
 namespace Fooyin {
-SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection,
-                             SettingsManager* settings, QWidget* parent)
+SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
     : QDialog{parent}
     , m_trackSelection{trackSelection}
-    , m_settings{settings}
     , m_mainSplitter{new QSplitter(Qt::Horizontal, this)}
     , m_documentSplitter{new QSplitter(Qt::Vertical, this)}
     , m_editor{new QTextEdit(this)}
@@ -89,9 +88,39 @@ SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionContr
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
     QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SandboxDialog::selectionChanged);
-    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this,
-                     [this]() { updateResults(); });
+
+    if(m_trackSelection) {
+        QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this,
+                         [this]() { updateResults(); });
+    }
+
+    m_placeholderTrack.setFilePath(QDir::homePath() + u"/placeholder.flac");
+    m_placeholderTrack.setTitle(QStringLiteral("Title"));
+    m_placeholderTrack.setAlbum(QStringLiteral("Album"));
+    m_placeholderTrack.setAlbumArtists({QStringLiteral("Album Artist")});
+    m_placeholderTrack.setArtists({QStringLiteral("Artist")});
+    m_placeholderTrack.setDate(QStringLiteral("2024-08-24"));
+    m_placeholderTrack.setTrackNumber(QStringLiteral("1"));
+    m_placeholderTrack.setDiscNumber(QStringLiteral("1"));
+    m_placeholderTrack.setBitDepth(16);
+    m_placeholderTrack.setSampleRate(48000);
+    m_placeholderTrack.setBitrate(850);
+    m_placeholderTrack.setComment(QStringLiteral("Comment"));
+    m_placeholderTrack.setComposer(QStringLiteral("Composer"));
+    m_placeholderTrack.setPerformer(QStringLiteral("Performer"));
+    m_placeholderTrack.setDuration(180000);
+    m_placeholderTrack.setFileSize(34560000);
 }
+
+SandboxDialog::SandboxDialog(const QString& script, QWidget* parent)
+    : SandboxDialog{nullptr, nullptr, parent}
+{
+    m_editor->setPlainText(script);
+}
+
+SandboxDialog::SandboxDialog(QWidget* parent)
+    : SandboxDialog{nullptr, nullptr, parent}
+{ }
 
 SandboxDialog::~SandboxDialog()
 {
@@ -102,6 +131,23 @@ SandboxDialog::~SandboxDialog()
     m_textChangeTimer->deleteLater();
 
     saveState();
+}
+
+void SandboxDialog::openSandbox(const QString& script, const std::function<void(const QString&)>& callback)
+{
+    auto* sandbox = new SandboxDialog(script);
+    sandbox->setAttribute(Qt::WA_DeleteOnClose);
+    sandbox->setModal(true);
+
+    QObject::connect(sandbox, &QDialog::finished,
+                     [sandbox, callback]() { callback(sandbox->m_editor->toPlainText()); });
+
+    sandbox->show();
+}
+
+QSize SandboxDialog::sizeHint() const
+{
+    return {1280, 720};
 }
 
 void SandboxDialog::updateResults()
@@ -118,13 +164,14 @@ void SandboxDialog::updateResults(const Expression& expression)
     ParsedScript script;
     script.expressions = {expression};
 
-    Track track;
-    if(m_trackSelection->hasTracks()) {
+    Track track{m_placeholderTrack};
+    if(m_trackSelection && m_trackSelection->hasTracks()) {
         track = m_trackSelection->selectedTracks().front();
     }
 
-    const auto result = m_parser.evaluate(script, track);
-    m_results->setText(result);
+    const auto result    = m_parser.evaluate(script, track);
+    const auto formatted = m_formatter.evaluate(result);
+    m_results->setText(formatted.joinedText());
 }
 
 void SandboxDialog::selectionChanged()
@@ -144,8 +191,11 @@ void SandboxDialog::textChanged()
     m_textChangeTimer->start(1500ms);
     m_results->clear();
 
-    const Track track = m_trackSelection->hasTracks() ? m_trackSelection->selectedTracks().front() : Track{};
-    m_currentScript   = m_parser.parse(m_editor->toPlainText(), track);
+    Track track{m_placeholderTrack};
+    if(m_trackSelection && m_trackSelection->hasTracks()) {
+        track = m_trackSelection->selectedTrack();
+    }
+    m_currentScript = m_parser.parse(m_editor->toPlainText(), track);
 
     m_model->populate(m_currentScript.expressions);
     updateResults();
@@ -159,7 +209,7 @@ void SandboxDialog::showErrors() const
     }
 }
 
-void SandboxDialog::saveState() const
+void SandboxDialog::saveState()
 {
     QByteArray byteArray;
     QDataStream out(&byteArray, QIODevice::WriteOnly);
@@ -171,12 +221,12 @@ void SandboxDialog::saveState() const
 
     byteArray = qCompress(byteArray, 9);
 
-    m_settings->fileSet(DialogState, byteArray);
+    m_settings.setValue(QLatin1String{DialogState}, byteArray);
 }
 
 void SandboxDialog::restoreState()
 {
-    QByteArray byteArray = m_settings->fileValue(DialogState).toByteArray();
+    QByteArray byteArray = m_settings.value(QLatin1String{DialogState}).toByteArray();
 
     static auto defaultScript = QStringLiteral("%track%. %title%");
 
