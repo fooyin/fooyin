@@ -19,19 +19,19 @@
 
 #include "librarysortingpage.h"
 
-#include "core/library/sortingregistry.h"
-#include "gui/guiconstants.h"
 #include "sortingmodel.h"
 
 #include <core/coresettings.h>
+#include <core/library/sortingregistry.h>
+#include <gui/guiconstants.h>
+#include <gui/scripting/scripteditor.h>
 #include <gui/widgets/scriptlineedit.h>
-#include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
 #include <QHeaderView>
 #include <QLabel>
-#include <QTableView>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 namespace Fooyin {
@@ -48,6 +48,8 @@ public:
     void reset() override;
 
 private:
+    void updateButtonState();
+
     SortingRegistry* m_sortRegistry;
     SettingsManager* m_settings;
 
@@ -55,6 +57,7 @@ private:
     SortingModel* m_model;
 
     ScriptLineEdit* m_sortScript;
+    QToolButton* m_openEditor;
 };
 
 LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager, SortingRegistry* sortingRegistry,
@@ -64,6 +67,7 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     , m_sortList{new ExtendableTableView(actionManager, this)}
     , m_model{new SortingModel(m_sortRegistry, this)}
     , m_sortScript{new ScriptLineEdit(this)}
+    , m_openEditor{new QToolButton(this)}
 {
     m_sortList->setExtendableModel(m_model);
     m_sortList->setItemDelegateForColumn(2, new MultiLineEditDelegate(this));
@@ -76,6 +80,9 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     m_sortList->horizontalHeader()->setStretchLastSection(true);
     m_sortList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    m_openEditor->setText(tr("Script Editor"));
+    m_sortList->addCustomTool(m_openEditor);
+
     auto* sortScriptLabel = new QLabel(tr("Sort tracks in library by") + u":", this);
 
     auto* mainLayout = new QGridLayout(this);
@@ -84,23 +91,22 @@ LibrarySortingPageWidget::LibrarySortingPageWidget(ActionManager* actionManager,
     mainLayout->addWidget(m_sortScript, 2, 0, 1, 2);
     mainLayout->setRowStretch(0, 1);
 
-    auto updateButtonState = [this]() {
-        const auto selection = m_sortList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_sortList->removeRowAction()) {
-            remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
-                return index.data(Qt::UserRole).value<SortScript>().isDefault;
-            }));
-        }
-    };
+    QObject::connect(m_sortList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &LibrarySortingPageWidget::updateButtonState);
 
-    updateButtonState();
-
-    QObject::connect(m_sortList->selectionModel(), &QItemSelectionModel::selectionChanged, this, updateButtonState);
+    QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
+        const auto selection    = m_sortList->selectionModel()->selectedIndexes();
+        const QModelIndex index = selection.front();
+        ScriptEditor::openEditor(index.data().toString(), [this, index](const QString& script) {
+            m_model->setData(index, script, Qt::EditRole);
+        });
+    });
 }
 
 void LibrarySortingPageWidget::load()
 {
     m_model->populate();
+    updateButtonState();
     m_sortScript->setText(m_settings->value<Settings::Core::LibrarySortScript>());
 }
 
@@ -114,6 +120,22 @@ void LibrarySortingPageWidget::reset()
 {
     m_sortRegistry->reset();
     m_settings->reset<Settings::Core::LibrarySortScript>();
+}
+
+void LibrarySortingPageWidget::updateButtonState()
+{
+    const auto selection  = m_sortList->selectionModel()->selectedIndexes();
+    const bool allDefault = std::ranges::all_of(
+        selection, [](const QModelIndex& index) { return index.data(Qt::UserRole).value<SortScript>().isDefault; });
+
+    if(selection.empty() || allDefault) {
+        m_openEditor->setDisabled(true);
+        m_sortList->removeRowAction()->setDisabled(true);
+        return;
+    }
+
+    m_sortList->removeRowAction()->setEnabled(true);
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
 }
 
 LibrarySortingPage::LibrarySortingPage(ActionManager* actionManager, SortingRegistry* sortingRegistry,

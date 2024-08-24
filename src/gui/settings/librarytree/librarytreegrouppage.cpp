@@ -24,11 +24,13 @@
 #include "librarytreegroupmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/scripting/scripteditor.h>
 #include <utils/multilinedelegate.h>
 
 #include <QAction>
 #include <QGridLayout>
 #include <QHeaderView>
+#include <QToolButton>
 
 namespace Fooyin {
 class LibraryTreeGroupPageWidget : public SettingsPageWidget
@@ -43,10 +45,14 @@ public:
     void reset() override;
 
 private:
+    void updateButtonState();
+
     LibraryTreeGroupRegistry* m_groupsRegistry;
 
     ExtendableTableView* m_groupList;
     LibraryTreeGroupModel* m_model;
+
+    QToolButton* m_openEditor;
 };
 
 LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionManager,
@@ -54,6 +60,7 @@ LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionMana
     : m_groupsRegistry{groupsRegistry}
     , m_groupList{new ExtendableTableView(actionManager, this)}
     , m_model{new LibraryTreeGroupModel(m_groupsRegistry, this)}
+    , m_openEditor{new QToolButton(this)}
 {
     m_groupList->setExtendableModel(m_model);
 
@@ -67,26 +74,28 @@ LibraryTreeGroupPageWidget::LibraryTreeGroupPageWidget(ActionManager* actionMana
     m_groupList->horizontalHeader()->setStretchLastSection(true);
     m_groupList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-    auto updateButtonState = [this]() {
-        const auto selection = m_groupList->selectionModel()->selectedIndexes();
-        if(auto* remove = m_groupList->removeRowAction()) {
-            remove->setDisabled(std::ranges::all_of(selection, [](const QModelIndex& index) {
-                return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
-            }));
-        }
-    };
-
-    updateButtonState();
-
-    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this, updateButtonState);
+    m_openEditor->setText(tr("Script Editor"));
+    m_groupList->addCustomTool(m_openEditor);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(m_groupList, 0, 0);
+
+    QObject::connect(m_groupList->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+                     &LibraryTreeGroupPageWidget::updateButtonState);
+
+    QObject::connect(m_openEditor, &QToolButton::clicked, this, [this]() {
+        const auto selection    = m_groupList->selectionModel()->selectedIndexes();
+        const QModelIndex index = selection.front();
+        ScriptEditor::openEditor(index.data().toString(), [this, index](const QString& script) {
+            m_model->setData(index, script, Qt::EditRole);
+        });
+    });
 }
 
 void LibraryTreeGroupPageWidget::load()
 {
     m_model->populate();
+    updateButtonState();
 }
 
 void LibraryTreeGroupPageWidget::apply()
@@ -97,6 +106,23 @@ void LibraryTreeGroupPageWidget::apply()
 void LibraryTreeGroupPageWidget::reset()
 {
     m_groupsRegistry->reset();
+}
+
+void LibraryTreeGroupPageWidget::updateButtonState()
+{
+    const auto selection  = m_groupList->selectionModel()->selectedIndexes();
+    const bool allDefault = std::ranges::all_of(selection, [](const QModelIndex& index) {
+        return index.data(Qt::UserRole).value<LibraryTreeGrouping>().isDefault;
+    });
+
+    if(selection.empty() || allDefault) {
+        m_openEditor->setDisabled(true);
+        m_groupList->removeRowAction()->setDisabled(true);
+        return;
+    }
+
+    m_groupList->removeRowAction()->setEnabled(true);
+    m_openEditor->setEnabled(selection.size() == 1 && selection.front().column() == 2);
 }
 
 LibraryTreeGroupPage::LibraryTreeGroupPage(ActionManager* actionManager, LibraryTreeGroupRegistry* groupsRegistry,
