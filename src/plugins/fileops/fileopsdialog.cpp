@@ -22,6 +22,7 @@
 #include "fileopsmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -88,7 +89,7 @@ public:
     QRadioButton* m_renameOp;
 
     QLineEdit* m_destination;
-    QLineEdit* m_filename;
+    ScriptLineEdit* m_filename;
     QCheckBox* m_entireSource;
     QCheckBox* m_removeEmpty;
 
@@ -116,7 +117,7 @@ FileOpsDialogPrivate::FileOpsDialogPrivate(FileOpsDialog* self, MusicLibrary* li
     , m_moveOp{new QRadioButton(FileOpsDialog::tr("Move"), self)}
     , m_renameOp{new QRadioButton(FileOpsDialog::tr("Rename"), self)}
     , m_destination{new QLineEdit(self)}
-    , m_filename{new QLineEdit(QStringLiteral("%filename%"), self)}
+    , m_filename{new ScriptLineEdit(QStringLiteral("%filename%"), self)}
     , m_entireSource{new QCheckBox(self)}
     , m_removeEmpty{new QCheckBox(FileOpsDialog::tr("Remove empty source folders"), self)}
     , m_presetBox{new QComboBox(self)}
