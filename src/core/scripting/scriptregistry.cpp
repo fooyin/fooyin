@@ -167,22 +167,22 @@ ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, Pla
 
 void ScriptRegistryPrivate::addPlaybackVars()
 {
-    if(!m_playerController) {
-        return;
-    }
-
     m_playbackVars[QStringLiteral("playback_time")] = [this]() {
-        return Utils::msToString(m_playerController->currentPosition());
+        return Utils::msToString(m_playerController ? m_playerController->currentPosition() : 0);
     };
     m_playbackVars[QStringLiteral("playback_time_s")] = [this]() {
-        return QString::number(m_playerController->currentPosition() / 1000);
+        return QString::number(m_playerController ? m_playerController->currentPosition() / 1000 : 0);
     };
     m_playbackVars[QStringLiteral("playback_time_remaining")] = [this]() {
-        return Utils::msToString(m_playerController->currentTrack().duration() - m_playerController->currentPosition());
+        return Utils::msToString(m_playerController ? m_playerController->currentTrack().duration()
+                                                          - m_playerController->currentPosition()
+                                                    : 0);
     };
     m_playbackVars[QStringLiteral("playback_time_remaining_s")] = [this]() {
-        return QString::number((m_playerController->currentTrack().duration() - m_playerController->currentPosition())
-                               / 1000);
+        return QString::number(
+            m_playerController
+                ? (m_playerController->currentTrack().duration() - m_playerController->currentPosition()) / 1000
+                : 0);
     };
 }
 
@@ -407,7 +407,7 @@ bool ScriptRegistry::isFunction(const QString& func) const
 
 ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
 {
-    if(var.isEmpty() || !isVariable(var, track)) {
+    if(var.isEmpty() || (!isVariable(var, track) && !isListVariable(var))) {
         return {};
     }
 
@@ -419,6 +419,9 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
     }
     if(p->m_libraryVars.contains(var)) {
         return calculateResult(p->m_libraryVars.at(var)(track));
+    }
+    if(p->m_listProperties.contains(var)) {
+        return calculateResult(p->m_listProperties.at(var)({track}));
     }
 
     return calculateResult(track.extraTag(var.toUpper()));
