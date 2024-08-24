@@ -21,7 +21,10 @@
 
 #include "fygui_export.h"
 
+#include <utils/multilinedelegate.h>
+
 #include <QLineEdit>
+#include <QPlainTextEdit>
 
 namespace Fooyin {
 class FYGUI_EXPORT ScriptLineEdit : public QLineEdit
@@ -31,5 +34,20 @@ class FYGUI_EXPORT ScriptLineEdit : public QLineEdit
 public:
     explicit ScriptLineEdit(QWidget* parent = nullptr);
     explicit ScriptLineEdit(const QString& script, QWidget* parent = nullptr);
+};
+
+class FYGUI_EXPORT ScriptTextEdit : public QPlainTextEdit
+{
+    Q_OBJECT
+
+public:
+    explicit ScriptTextEdit(QWidget* parent = nullptr);
+    explicit ScriptTextEdit(const QString& script, QWidget* parent = nullptr);
+
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
+private:
+    QAction* m_openEditor;
 };
 } // namespace Fooyin

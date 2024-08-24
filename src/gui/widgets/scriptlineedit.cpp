@@ -19,13 +19,15 @@
 
 #include <gui/widgets/scriptlineedit.h>
 
-#include "sandbox/sandboxdialog.h"
+#include "gui/scripting/scripteditor.h"
 
 #include <gui/guiconstants.h>
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QIcon>
+#include <QMenu>
 
 namespace Fooyin {
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
@@ -35,10 +37,42 @@ ScriptLineEdit::ScriptLineEdit(QWidget* parent)
 ScriptLineEdit::ScriptLineEdit(const QString& script, QWidget* parent)
     : QLineEdit{script, parent}
 {
-    auto* openEditor = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptSandbox), tr("Open Sandbox"), this);
+    auto* openEditor
+        = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this);
     QObject::connect(openEditor, &QAction::triggered, this, [this]() {
-        SandboxDialog::openSandbox(text(), [this](const QString& editedScript) { setText(editedScript); });
+        ScriptEditor::openEditor(text(), [this](const QString& editedScript) { setText(editedScript); });
     });
     addAction(openEditor, TrailingPosition);
 }
+
+ScriptTextEdit::ScriptTextEdit(QWidget* parent)
+    : ScriptTextEdit{{}, parent}
+{ }
+
+ScriptTextEdit::ScriptTextEdit(const QString& script, QWidget* parent)
+    : QPlainTextEdit{script, parent}
+    , m_openEditor{nullptr}
+{ }
+
+void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
+{
+    QMenu* menu = createStandardContextMenu(event->pos());
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    if(!m_openEditor) {
+        m_openEditor
+            = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this);
+        QObject::connect(m_openEditor, &QAction::triggered, this, [this]() {
+            ScriptEditor::openEditor(toPlainText(),
+                                     [this](const QString& editedScript) { setPlainText(editedScript); });
+        });
+    }
+
+    menu->addSeparator();
+    menu->addAction(m_openEditor);
+
+    menu->popup(event->globalPos());
+}
 } // namespace Fooyin
+
+#include "gui/widgets/moc_scriptlineedit.cpp"
