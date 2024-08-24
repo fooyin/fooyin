@@ -43,12 +43,12 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     viewMenu->addSeparator();
 
-    auto* showLog = new QAction(tr("&Log"), this);
+    auto* showLog = new QAction(Utils::iconFromTheme(Constants::Icons::Log), tr("&Log"), this);
     showLog->setStatusTip(tr("Open the log dialog"));
     viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
-    auto* showSandbox = new QAction(tr("&Script sandbox"), this);
+    auto* showSandbox = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptSandbox), tr("&Script sandbox"), this);
     showSandbox->setStatusTip(tr("Open the script sandbox dialog"));
     viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
     QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);

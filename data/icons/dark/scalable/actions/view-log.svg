@@ -1,0 +1,13 @@
+<svg fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#bebebe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.000133" transform="matrix(2.1428571 0 0 2.1428571 -1.714285 -1.714285)">
+        <path d="m4 12h.01"/>
+        <path d="m4 6h.01"/>
+        <path d="m4 18h.01"/>
+        <path d="m8 18h2"/>
+        <path d="m8 12h2"/>
+        <path d="m8 6h2"/>
+        <path d="m14 6h6"/>
+        <path d="m14 12h6"/>
+        <path d="m14 18h6"/>
+    </g>
+</svg>
