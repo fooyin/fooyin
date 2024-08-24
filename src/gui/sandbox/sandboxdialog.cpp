@@ -147,7 +147,7 @@ void SandboxDialog::openSandbox(const QString& script, const std::function<void(
 
 QSize SandboxDialog::sizeHint() const
 {
-    return {1280, 720};
+    return {800, 500};
 }
 
 void SandboxDialog::updateResults()
