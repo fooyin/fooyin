@@ -24,6 +24,9 @@
 #include <gui/guiconstants.h>
 #include <utils/utils.h>
 
+#include <QAction>
+#include <QIcon>
+
 namespace Fooyin {
 ScriptLineEdit::ScriptLineEdit(QWidget* parent)
     : ScriptLineEdit{{}, parent}
