@@ -48,10 +48,10 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
-    auto* showSandbox = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptSandbox), tr("&Script sandbox"), this);
-    showSandbox->setStatusTip(tr("Open the script sandbox dialog"));
-    viewMenu->addAction(m_actionManager->registerAction(showSandbox, Constants::Actions::ScriptSandbox));
-    QObject::connect(showSandbox, &QAction::triggered, this, &ViewMenu::openScriptSandbox);
+    auto* showEditor = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("&Script editor"), this);
+    showEditor->setStatusTip(tr("Open the script editor dialog"));
+    viewMenu->addAction(m_actionManager->registerAction(showEditor, Constants::Actions::ScriptEditor));
+    QObject::connect(showEditor, &QAction::triggered, this, &ViewMenu::openScriptEditor);
 
     auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
     showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));

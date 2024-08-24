@@ -35,7 +35,7 @@
         <file>icons/dark/scalable/actions/script-variable.svg</file>
         <file>icons/dark/scalable/actions/view-log.svg</file>
         <file>icons/dark/scalable/actions/view-refresh.svg</file>
-        <file>icons/dark/scalable/actions/view-sandbox.svg</file>
+        <file>icons/dark/scalable/actions/view-scripteditor.svg</file>
         <file>icons/dark/scalable/actions/window-close.svg</file>
         <file>icons/light/index.theme</file>
         <file>icons/light/scalable/actions/application-exit.svg</file>
@@ -72,7 +72,7 @@
         <file>icons/light/scalable/actions/script-variable.svg</file>
         <file>icons/light/scalable/actions/view-log.svg</file>
         <file>icons/light/scalable/actions/view-refresh.svg</file>
-        <file>icons/light/scalable/actions/view-sandbox.svg</file>
+        <file>icons/light/scalable/actions/view-scripteditor.svg</file>
         <file>icons/light/scalable/actions/window-close.svg</file>
     </qresource>
 </RCC>

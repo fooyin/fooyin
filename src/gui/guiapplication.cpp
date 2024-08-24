@@ -31,7 +31,6 @@
 #include "menubar/viewmenu.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
-#include "sandbox/sandboxdialog.h"
 #include "search/searchcontroller.h"
 #include "systemtrayicon.h"
 #include "widgets.h"
@@ -56,6 +55,7 @@
 #include <gui/plugins/guiplugin.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
+#include <gui/scripting/scripteditor.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/windowcontroller.h>
@@ -268,10 +268,10 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchWindow(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
-    QObject::connect(m_viewMenu, &ViewMenu::openScriptSandbox, m_self, [this]() {
-        auto* sandboxDialog = new SandboxDialog(m_core->libraryManager(), &m_selectionController, m_mainWindow.get());
-        sandboxDialog->setAttribute(Qt::WA_DeleteOnClose);
-        sandboxDialog->show();
+    QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() {
+        auto* scriptEditor = new ScriptEditor(m_core->libraryManager(), &m_selectionController, m_mainWindow.get());
+        scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
+        scriptEditor->show();
     });
     QObject::connect(m_viewMenu, &ViewMenu::showNowPlaying, m_self, [this]() {
         if(auto* activePlaylist = m_playlistHandler->activePlaylist()) {

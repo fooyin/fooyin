@@ -19,9 +19,9 @@
 
 #include "expressiontreemodel.h"
 
-#include <gui/guiconstants.h>
-#include <utils/crypto.h>
-#include <utils/utils.h>
+#include "gui/guiconstants.h"
+#include "utils/crypto.h"
+#include "utils/utils.h"
 
 #include <QIcon>
 #include <utility>

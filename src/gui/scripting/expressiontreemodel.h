@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <core/scripting/expression.h>
-#include <utils/treeitem.h>
-#include <utils/treemodel.h>
+#include "core/scripting/expression.h"
+#include "utils/treeitem.h"
+#include "utils/treemodel.h"
 
 #include <QIcon>
 

@@ -16,6 +16,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugin.h
     ${CMAKE_SOURCE_DIR}/include/gui/plugins/guiplugincontext.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/richtext.h
+    ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
@@ -172,12 +173,11 @@ set(SOURCES
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupmodel.cpp
     quicksetup/quicksetupmodel.h
-    sandbox/expressiontreemodel.cpp
-    sandbox/expressiontreemodel.h
-    sandbox/sandboxdialog.cpp
-    sandbox/sandboxdialog.h
-    sandbox/scripthighlighter.cpp
-    sandbox/scripthighlighter.h
+    scripting/expressiontreemodel.cpp
+    scripting/expressiontreemodel.h
+    scripting/scripthighlighter.cpp
+    scripting/scripthighlighter.h
+    scripting/scripteditor.cpp
     scripting/scriptformatter.cpp
     scripting/scriptformatterregistry.cpp
     search/searchcontroller.cpp

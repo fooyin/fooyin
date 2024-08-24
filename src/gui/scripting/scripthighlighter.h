@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptscanner.h>
+#include "core/scripting/scriptparser.h"
+#include "core/scripting/scriptscanner.h"
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>

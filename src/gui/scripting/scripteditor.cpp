@@ -17,83 +17,134 @@
  *
  */
 
-#include "sandboxdialog.h"
+#include "gui/scripting/scripteditor.h"
 
 #include "expressiontreemodel.h"
 #include "scripthighlighter.h"
 
+#include <core/coresettings.h>
 #include <core/track.h>
+#include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
-#include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
+#include <QBasicTimer>
 #include <QDir>
 #include <QGridLayout>
 #include <QPlainTextEdit>
 #include <QSplitter>
 #include <QTextEdit>
-#include <QTimer>
+#include <QTimerEvent>
 #include <QTreeView>
 
 #include <chrono>
 
 using namespace std::chrono_literals;
 
-constexpr auto DialogState = "Interface/ScriptSandboxState";
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto TextChangeInterval = 1500ms;
+#else
+constexpr auto TextChangeInterval = 1500;
+#endif
+
+constexpr auto DialogState = "Interface/ScriptEditorState";
 
 namespace Fooyin {
-SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
-    : QDialog{parent}
+class ScriptEditorPrivate
+{
+public:
+    ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, TrackSelectionController* trackSelection);
+
+    void setupConnections();
+    void setupPlaceholder();
+
+    void updateResults();
+    void updateResults(const Expression& expression);
+
+    void selectionChanged();
+    void textChanged();
+
+    void showErrors() const;
+
+    void saveState();
+    void restoreState();
+
+    ScriptEditor* m_self;
+    TrackSelectionController* m_trackSelection;
+    FySettings m_settings;
+    Track m_placeholderTrack;
+
+    QSplitter* m_mainSplitter;
+    QSplitter* m_documentSplitter;
+
+    QTextEdit* m_editor;
+    QTextEdit* m_results;
+    ScriptHighlighter m_highlighter;
+
+    QTreeView* m_expressionTree;
+    ExpressionTreeModel* m_model;
+
+    QBasicTimer m_textChangeTimer;
+
+    ScriptRegistry m_registry;
+    ScriptParser m_parser;
+    ScriptFormatter m_formatter;
+
+    ParsedScript m_currentScript;
+};
+
+ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager,
+                                         TrackSelectionController* trackSelection)
+    : m_self{self}
     , m_trackSelection{trackSelection}
-    , m_mainSplitter{new QSplitter(Qt::Horizontal, this)}
-    , m_documentSplitter{new QSplitter(Qt::Vertical, this)}
-    , m_editor{new QTextEdit(this)}
-    , m_results{new QTextEdit(this)}
+    , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
+    , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
+    , m_editor{new QTextEdit(m_self)}
+    , m_results{new QTextEdit(m_self)}
     , m_highlighter{m_editor->document()}
-    , m_expressionTree{new QTreeView(this)}
-    , m_model{new ExpressionTreeModel(this)}
-    , m_textChangeTimer{new QTimer(this)}
+    , m_expressionTree{new QTreeView(m_self)}
+    , m_model{new ExpressionTreeModel(m_self)}
     , m_registry{libraryManager}
     , m_parser{&m_registry}
 {
-    setWindowTitle(tr("Script Sandbox"));
-
-    auto* mainLayout = new QGridLayout(this);
+    auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});
+    mainLayout->addWidget(m_mainSplitter);
 
     m_expressionTree->setModel(m_model);
     m_expressionTree->setHeaderHidden(true);
     m_expressionTree->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    m_textChangeTimer->setSingleShot(true);
-
     m_documentSplitter->addWidget(m_editor);
     m_documentSplitter->addWidget(m_results);
-
-    m_mainSplitter->addWidget(m_documentSplitter);
-    m_mainSplitter->addWidget(m_expressionTree);
-
     m_documentSplitter->setStretchFactor(0, 3);
     m_documentSplitter->setStretchFactor(1, 1);
 
+    m_mainSplitter->addWidget(m_documentSplitter);
+    m_mainSplitter->addWidget(m_expressionTree);
     m_mainSplitter->setStretchFactor(0, 4);
     m_mainSplitter->setStretchFactor(1, 2);
 
-    mainLayout->addWidget(m_mainSplitter);
-
+    setupConnections();
+    setupPlaceholder();
     restoreState();
+}
 
-    QObject::connect(m_editor, &QTextEdit::textChanged, this, &SandboxDialog::textChanged);
-    QObject::connect(m_textChangeTimer, &QTimer::timeout, this, &SandboxDialog::showErrors);
+void ScriptEditorPrivate::setupConnections()
+{
+    QObject::connect(m_editor, &QTextEdit::textChanged, m_self, [this]() { textChanged(); });
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
-    QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-                     &SandboxDialog::selectionChanged);
+    QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
+                     [this]() { selectionChanged(); });
 
     if(m_trackSelection) {
-        QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this,
+        QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, m_self,
                          [this]() { updateResults(); });
     }
+}
 
+void ScriptEditorPrivate::setupPlaceholder()
+{
     m_placeholderTrack.setFilePath(QDir::homePath() + u"/placeholder.flac");
     m_placeholderTrack.setTitle(QStringLiteral("Title"));
     m_placeholderTrack.setAlbum(QStringLiteral("Album"));
@@ -112,45 +163,14 @@ SandboxDialog::SandboxDialog(LibraryManager* libraryManager, TrackSelectionContr
     m_placeholderTrack.setFileSize(34560000);
 }
 
-SandboxDialog::SandboxDialog(const QString& script, QWidget* parent)
-    : SandboxDialog{nullptr, nullptr, parent}
+ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
+    : QDialog{parent}
+    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager, trackSelection)}
 {
-    m_editor->setPlainText(script);
+    setWindowTitle(tr("Script Editor"));
 }
 
-SandboxDialog::SandboxDialog(QWidget* parent)
-    : SandboxDialog{nullptr, nullptr, parent}
-{ }
-
-SandboxDialog::~SandboxDialog()
-{
-    m_editor->disconnect();
-
-    m_textChangeTimer->disconnect();
-    m_textChangeTimer->stop();
-    m_textChangeTimer->deleteLater();
-
-    saveState();
-}
-
-void SandboxDialog::openSandbox(const QString& script, const std::function<void(const QString&)>& callback)
-{
-    auto* sandbox = new SandboxDialog(script);
-    sandbox->setAttribute(Qt::WA_DeleteOnClose);
-    sandbox->setModal(true);
-
-    QObject::connect(sandbox, &QDialog::finished,
-                     [sandbox, callback]() { callback(sandbox->m_editor->toPlainText()); });
-
-    sandbox->show();
-}
-
-QSize SandboxDialog::sizeHint() const
-{
-    return {800, 500};
-}
-
-void SandboxDialog::updateResults()
+void ScriptEditorPrivate::updateResults()
 {
     if(m_model->rowCount({}) > 0) {
         if(const auto* item = static_cast<ExpressionTreeItem*>(m_model->index(0, 0, {}).internalPointer())) {
@@ -159,7 +179,7 @@ void SandboxDialog::updateResults()
     }
 }
 
-void SandboxDialog::updateResults(const Expression& expression)
+void ScriptEditorPrivate::updateResults(const Expression& expression)
 {
     ParsedScript script;
     script.expressions = {expression};
@@ -174,7 +194,7 @@ void SandboxDialog::updateResults(const Expression& expression)
     m_results->setText(formatted.joinedText());
 }
 
-void SandboxDialog::selectionChanged()
+void ScriptEditorPrivate::selectionChanged()
 {
     const auto indexes = m_expressionTree->selectionModel()->selectedIndexes();
     if(indexes.empty()) {
@@ -186,9 +206,9 @@ void SandboxDialog::selectionChanged()
     updateResults(item->expression());
 }
 
-void SandboxDialog::textChanged()
+void ScriptEditorPrivate::textChanged()
 {
-    m_textChangeTimer->start(1500ms);
+    m_textChangeTimer.start(TextChangeInterval, m_self);
     m_results->clear();
 
     Track track{m_placeholderTrack};
@@ -201,7 +221,7 @@ void SandboxDialog::textChanged()
     updateResults();
 }
 
-void SandboxDialog::showErrors() const
+void ScriptEditorPrivate::showErrors() const
 {
     const auto errors = m_currentScript.errors;
     for(const ScriptError& error : errors) {
@@ -209,12 +229,12 @@ void SandboxDialog::showErrors() const
     }
 }
 
-void SandboxDialog::saveState()
+void ScriptEditorPrivate::saveState()
 {
     QByteArray byteArray;
     QDataStream out(&byteArray, QIODevice::WriteOnly);
 
-    out << size();
+    out << m_self->size();
     out << m_mainSplitter->saveState();
     out << m_documentSplitter->saveState();
     out << m_editor->toPlainText();
@@ -224,7 +244,7 @@ void SandboxDialog::saveState()
     m_settings.setValue(QLatin1String{DialogState}, byteArray);
 }
 
-void SandboxDialog::restoreState()
+void ScriptEditorPrivate::restoreState()
 {
     QByteArray byteArray = m_settings.value(QLatin1String{DialogState}).toByteArray();
 
@@ -253,7 +273,7 @@ void SandboxDialog::restoreState()
         editorText = defaultScript;
     }
 
-    resize(dialogSize);
+    m_self->resize(dialogSize);
     m_mainSplitter->restoreState(mainSplitterState);
     m_documentSplitter->restoreState(documentSplitterState);
     m_editor->setPlainText(editorText);
@@ -264,6 +284,48 @@ void SandboxDialog::restoreState()
 
     updateResults();
 }
+
+ScriptEditor::ScriptEditor(const QString& script, QWidget* parent)
+    : ScriptEditor{nullptr, nullptr, parent}
+{
+    p->m_editor->setPlainText(script);
+}
+
+ScriptEditor::ScriptEditor(QWidget* parent)
+    : ScriptEditor{nullptr, nullptr, parent}
+{ }
+
+ScriptEditor::~ScriptEditor()
+{
+    p->m_editor->disconnect();
+    p->saveState();
+}
+
+void ScriptEditor::openEditor(const QString& script, const std::function<void(const QString&)>& callback)
+{
+    auto* editor = new ScriptEditor(script);
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    editor->setModal(true);
+
+    QObject::connect(editor, &QDialog::finished,
+                     [editor, callback]() { callback(editor->p->m_editor->toPlainText()); });
+
+    editor->show();
+}
+
+QSize ScriptEditor::sizeHint() const
+{
+    return {800, 500};
+}
+
+void ScriptEditor::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == p->m_textChangeTimer.timerId()) {
+        p->m_textChangeTimer.stop();
+        p->showErrors();
+    }
+    QDialog::timerEvent(event);
+}
 } // namespace Fooyin
 
-#include "moc_sandboxdialog.cpp"
+#include "gui/scripting/moc_scripteditor.cpp"

@@ -19,29 +19,33 @@
 
 #pragma once
 
-#include <QObject>
+#include "fygui_export.h"
 
-class QAction;
+#include <QDialog>
 
 namespace Fooyin {
-class ActionManager;
-class SettingsManager;
+class LibraryManager;
+class TrackSelectionController;
+class ScriptEditorPrivate;
 
-class ViewMenu : public QObject
+class FYGUI_EXPORT ScriptEditor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent = nullptr);
+    explicit ScriptEditor(const QString& script, QWidget* parent = nullptr);
+    explicit ScriptEditor(QWidget* parent = nullptr);
+    ~ScriptEditor() override;
 
-signals:
-    void openQuickSetup();
-    void openLog();
-    void openScriptEditor();
-    void showNowPlaying();
+    static void openEditor(const QString& script, const std::function<void(const QString&)>& callback);
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+protected:
+    void timerEvent(QTimerEvent* event) override;
 
 private:
-    ActionManager* m_actionManager;
-    SettingsManager* m_settings;
+    std::unique_ptr<ScriptEditorPrivate> p;
 };
 } // namespace Fooyin

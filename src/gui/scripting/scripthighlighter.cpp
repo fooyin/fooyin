@@ -19,7 +19,7 @@
 
 #include "scripthighlighter.h"
 
-#include <utils/utils.h>
+#include "utils/utils.h"
 
 namespace Fooyin {
 ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
