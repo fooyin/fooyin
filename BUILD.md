@@ -23,10 +23,10 @@ At least one of the following is required for audio output:
 The following libraries are optional:
 * [KDSingleApplication](https://github.com/KDAB/KDSingleApplication) - will use 3rd party dep if not present on system
 * [libvgm](https://github.com/ValleyBell/libvgm) - will use 3rd party dep if not present on system
-* [libsndfile] - for the sndfile audio input plugin
-* [OpenMPT](https://lib.openmpt.org/libopenmpt/) - for the OpenMPT audio input plugin
+* [libsndfile](https://libsndfile.github.io/libsndfile) - for the sndfile audio input plugin
+* [OpenMPT](https://lib.openmpt.org/libopenmpt) - for the OpenMPT audio input plugin
 * [Game Music Emu](https://github.com/libgme/game-music-emu) - for the GME audio input plugin
-* [libarchive](https://www.libarchive.org/) - for the archive support plugin
+* [libarchive](https://www.libarchive.org) - for the archive support plugin
 
 Platform-specific requirements are listed below.
 
