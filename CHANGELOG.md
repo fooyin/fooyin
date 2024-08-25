@@ -1,5 +1,155 @@
 # Changelog
 
+## Unreleased
+
+## New Features
+
+### Plugins
+
+* Archive support
+  - Ability to add and play music directly from archives
+* File operations
+  - Options to rename, copy and move files on disk
+* Audio Inputs:
+  - SndFile - based on libsndfile
+  - VGMInput - based on libvgm
+  - OpenMPT
+  - Game Music Emu
+  - RawAudio (bin files)
+
+### Playlist
+- Auto-export playlists to a custom location ([#211](https://github.com/fooyin/fooyin/issues/211))
+- Option to stop playback at a specified track ([#219](https://github.com/fooyin/fooyin/issues/219))
+- Search functionality ([#109](https://github.com/fooyin/fooyin/issues/109), [#199](https://github.com/fooyin/fooyin/issues/199))
+- Rating column with inline editing support
+
+### Others
+- Log dialog with adjustable log level
+- Shortcut support for layouts
+- Support for alphanumeric track numbers ([#209](https://github.com/fooyin/fooyin/issues/209))
+
+### Improvements
+
+* Engine
+  - Resample audio if output doesn't support format ([#200](https://github.com/fooyin/fooyin/issues/200), [#201](https://github.com/fooyin/fooyin/issues/201))
+  - Delay exiting until track has faded out
+  - Clamp fade durations ([#222](https://github.com/fooyin/fooyin/pull/222))
+  - Use S-curve for longer fade durations ([#237](https://github.com/fooyin/fooyin/pull/237))
+  - ALSA: Make buffer, period size configurable
+* Library
+  - Support reading/writing playcount from files
+  - Make writing rating, playcount to files optional
+  - Add option to rescan a track selection from disk
+  - Match extensions case-insensitively
+  - Store codec as a string
+  - Add separate sort script for incoming/external files
+  - Add options for marking unavailable tracks ([#195](https://github.com/fooyin/fooyin/issues/195))
+  - Add options to restrict and exclude file types
+* Playlist
+  - Support %playingicon% in any column ([#184](https://github.com/fooyin/fooyin/issues/184))
+  - Add undo/redo to sorting ([#191](https://github.com/fooyin/fooyin/issues/191))
+* Plugins
+  - Display plugins list as a tree
+  - Add about dialog to all plugins
+  - Add optional configure dialog
+* Scripting
+  - Add %directory%, %firstplayed%, %lastplayed%, %libraryname%, %librarypath%
+* Selection Info
+  - Add options to prefer showing playing or selected tracks ([#181](https://github.com/fooyin/fooyin/issues/181), [#182](https://github.com/fooyin/fooyin/issues/182))
+  - Add option to show extended metadata ([#210](https://github.com/fooyin/fooyin/issues/210))
+  - Improve appearance on track selection change
+* Settings:
+  - Display play action as Play/Pause on shortcut settings page ([#197](https://github.com/fooyin/fooyin/issues/197))
+  - Use space key as the default shortcut for play/pause ([#197](https://github.com/fooyin/fooyin/issues/197))
+  - Add shortcut to remove current playlist ([#198](https://github.com/fooyin/fooyin/issues/198))
+  - Improve display order of settings pages
+  - Move several groups of settings to more suitable pages
+* TagEditor
+  - Add copy/paste
+  - Add auto track number tool
+  - Improve display of values for multiple tracks
+  - Support direct editing of rating
+* UI
+  - Add a dedicated layout menubar entry
+  - Add option to change application style
+  - Add option to show status tips in the status bar
+  - Add option to change seek step
+  - Artwork Panel: Support changing alignment ([#232](https://github.com/fooyin/fooyin/pull/232))
+  - Status Bar: Show message if in layout editing mode
+  - Add action to open script in script editor for most setting pages
+  - Add library menu option to optimise database
+* WaveBar
+  - Increase number of updates when generating waveform
+  - Start playback when seeking in stopped state
+* LibraryTree: Add option to open folder in folder structure view ([#175](https://github.com/fooyin/fooyin/issues/175))
+* Playback: Add setting to control played threshold
+* PlaylistTabs: Add playlist content submenu ([#188](https://github.com/fooyin/fooyin/issues/188))
+
+### Fixes
+
+* Engine
+  - Fix playback of APE files ([#173](https://github.com/fooyin/fooyin/issues/173))
+  - Fix playback of AAC files
+  - Fix playback of tracks without a duration ([#183](https://github.com/fooyin/fooyin/issues/183))
+  - Fix restoration of last played state on some systems ([#206](https://github.com/fooyin/fooyin/issues/206))
+  - Fix pausing with hardware devices
+  - Fix track ending immediately on restarting playback
+  - Resolve rare crash when seeking in very short files
+  - Handle seeking while fading ([#215](https://github.com/fooyin/fooyin/issues/215))
+  - Fix seeking near end of track ([#218](https://github.com/fooyin/fooyin/issues/218))
+  - Always reinit decoder when track was stopped ([#221](https://github.com/fooyin/fooyin/pull/221))
+  - Fix crash on trying to play non-existent file
+* Filters
+  - Fix empty filters on startup
+  - Resolve crashes when adding/updating tracks
+  - Fix artwork mode captions with hidden sections
+* Library
+  - Fix regression with adding subdirectories ([#174](https://github.com/fooyin/fooyin/issues/174))
+  - Fix multi-value fields not being stored ([#179](https://github.com/fooyin/fooyin/issues/179))
+  - Fix adding files + dirs in same dir ([#197](https://github.com/fooyin/fooyin/issues/197))
+  - Resolve occasional crashes when sorting tracks
+  - Resolve crashes when rescanning tracks
+  - Fix rescans of existing cue tracks
+  - Fix setting added time, modified time
+  - Resolve rare crash on exit in middle of library scan
+  - Handle '/' separator for artists in id3v2.3 ([#216](https://github.com/fooyin/fooyin/issues/216))
+* LibraryTree
+  - Fix display of split field values ([#179](https://github.com/fooyin/fooyin/issues/179))
+  - Fix adding new tracks ([#187](https://github.com/fooyin/fooyin/issues/187))
+* PipeWire
+  - Resolve crashes for some audio formats ([#183](https://github.com/fooyin/fooyin/issues/183), [#185](https://github.com/fooyin/fooyin/issues/185))
+  - Fix silent playback after opening settings
+* Playlist
+  - Fix incorrect order of tracks when loading playlists
+  - Fix duplicate track entries when dropping on new playlist ([#177](https://github.com/fooyin/fooyin/issues/177))
+  - Fix parsing of some cue formats ([#178](https://github.com/fooyin/fooyin/issues/178), [#224](https://github.com/fooyin/fooyin/issues/224))
+  - Fix shuffle skipping tracks ([#180](https://github.com/fooyin/fooyin/issues/180))
+  - Resolve crash when reading single track cues
+  - Resolve crash when adding new columns
+  - Fix middle click actions
+  - Fix parsing of non-UTF-8 files ([#223](https://github.com/fooyin/fooyin/issues/223))
+* TagEditor
+  - Fix display of identical field values
+  - Fix display of custom tags
+  - Fix duplicate tracks on updating metadata
+  - Fix sorting new values
+  - Fix editing metadata for some file types
+  - Fix removing list values ([#179](https://github.com/fooyin/fooyin/issues/179))
+  - Fix writing common fields ([#179](https://github.com/fooyin/fooyin/issues/179))
+  - Fix duplicate rating fields on read after write
+  - Fix editor becoming readonly after right-click
+  - Fix setting max rating
+  - Fix display of multiple numeric field values ([#214](https://github.com/fooyin/fooyin/issues/214))
+* AutoHeaderView: Fix issues updating width for last section
+* DirBrowser: Fix direct playback
+* Layout: Fix window size always being saved
+* PlaylistTabs: Switch playlist when scrolling over playlist tabs ([#240](https://github.com/fooyin/fooyin/issues/240))
+* QueueViewer: Resolve memory leak from unparented actions
+* Selection Info: Fix display of multiple album artists ([#216](https://github.com/fooyin/fooyin/issues/216))
+* Settings: Fix changing language on restart ([#176](https://github.com/fooyin/fooyin/issues/176))
+* WaveBar: Don't draw cursor when stopped
+
+
 ## [0.5.3](https://github.com/fooyin/fooyin/releases/tag/v0.5.3) (2024-07-07)
 
 ### Fixes
