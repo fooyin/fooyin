@@ -56,7 +56,7 @@ TEST_F(CueParserTest, SingleCue)
         EXPECT_EQ(u"Only Shallow", tracks.at(0).title());
 
         EXPECT_EQ(tracks.at(1).discNumber(), QStringLiteral("1"));
-        EXPECT_EQ(tracks.at(1).trackNumber(), QStringLiteral("2"));
+        EXPECT_EQ(tracks.at(1).trackNumber(), QStringLiteral("02"));
     }
 }
 } // namespace Fooyin::Testing
