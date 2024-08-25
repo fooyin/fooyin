@@ -51,8 +51,8 @@ public:
         , m_groupBox{new QGroupBox(this)}
         , m_overrideHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
         , m_rowHeight{new QSpinBox(this)}
-        , m_leftScript{new ScriptLineEdit(this)}
-        , m_rightScript{new ScriptLineEdit(this)}
+        , m_leftScript{new ScriptTextEdit(this)}
+        , m_rightScript{new ScriptTextEdit(this)}
     {
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -122,8 +122,8 @@ private:
     QGroupBox* m_groupBox;
     QCheckBox* m_overrideHeight;
     QSpinBox* m_rowHeight;
-    ScriptLineEdit* m_leftScript;
-    ScriptLineEdit* m_rightScript;
+    ScriptTextEdit* m_leftScript;
+    ScriptTextEdit* m_rightScript;
 };
 
 void createGroupPresetInputs(const SubheaderRow& subheader, ExpandableInputBox* box, QWidget* parent)
@@ -184,17 +184,17 @@ private:
     QComboBox* m_presetBox;
     QTabWidget* m_presetTabs;
 
-    ScriptLineEdit* m_headerTitle;
-    ScriptLineEdit* m_headerSubtitle;
-    ScriptLineEdit* m_headerSideText;
-    ScriptLineEdit* m_headerInfo;
+    ScriptTextEdit* m_headerTitle;
+    ScriptTextEdit* m_headerSubtitle;
+    ScriptTextEdit* m_headerSideText;
+    ScriptTextEdit* m_headerInfo;
     QCheckBox* m_overrideHeaderHeight;
     QSpinBox* m_headerRowHeight;
 
     ExpandableInputBox* m_subHeaders;
 
-    ScriptLineEdit* m_trackLeftText;
-    ScriptLineEdit* m_trackRightText;
+    ScriptTextEdit* m_trackLeftText;
+    ScriptTextEdit* m_trackRightText;
     QCheckBox* m_overrideTrackHeight;
     QSpinBox* m_trackRowHeight;
 
@@ -212,14 +212,14 @@ PlaylistPresetsPageWidget::PlaylistPresetsPageWidget(PresetRegistry* presetRegis
     : m_presetRegistry{presetRegistry}
     , m_presetBox{new QComboBox(this)}
     , m_presetTabs{new QTabWidget(this)}
-    , m_headerTitle{new ScriptLineEdit(this)}
-    , m_headerSubtitle{new ScriptLineEdit(this)}
-    , m_headerSideText{new ScriptLineEdit(this)}
-    , m_headerInfo{new ScriptLineEdit(this)}
+    , m_headerTitle{new ScriptTextEdit(this)}
+    , m_headerSubtitle{new ScriptTextEdit(this)}
+    , m_headerSideText{new ScriptTextEdit(this)}
+    , m_headerInfo{new ScriptTextEdit(this)}
     , m_overrideHeaderHeight{new QCheckBox(tr("Override height") + QStringLiteral(":"), this)}
     , m_headerRowHeight{new QSpinBox(this)}
-    , m_trackLeftText{new ScriptLineEdit(this)}
-    , m_trackRightText{new ScriptLineEdit(this)}
+    , m_trackLeftText{new ScriptTextEdit(this)}
+    , m_trackRightText{new ScriptTextEdit(this)}
     , m_overrideTrackHeight{new QCheckBox(this)}
     , m_trackRowHeight{new QSpinBox(this)}
     , m_showCover{new QCheckBox(tr("Show cover"), this)}

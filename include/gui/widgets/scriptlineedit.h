@@ -44,6 +44,9 @@ public:
     explicit ScriptTextEdit(QWidget* parent = nullptr);
     explicit ScriptTextEdit(const QString& script, QWidget* parent = nullptr);
 
+    [[nodiscard]] QString text() const;
+    void setText(const QString& text);
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 

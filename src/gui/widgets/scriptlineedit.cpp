@@ -58,6 +58,16 @@ ScriptTextEdit::ScriptTextEdit(const QString& script, QWidget* parent)
     , m_openEditor{nullptr}
 { }
 
+QString ScriptTextEdit::text() const
+{
+    return toPlainText();
+}
+
+void ScriptTextEdit::setText(const QString& text)
+{
+    setPlainText(text);
+}
+
 void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
 {
     QMenu* menu = createStandardContextMenu(event->pos());
@@ -67,13 +77,15 @@ void ScriptTextEdit::contextMenuEvent(QContextMenuEvent* event)
         m_openEditor
             = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("Open in script editor"), this);
         QObject::connect(m_openEditor, &QAction::triggered, this, [this]() {
-            ScriptEditor::openEditor(toPlainText(), [this](const QString& editedScript) {
+            ScriptEditor::openEditor(text(), [this](const QString& editedScript) {
                 if(!isReadOnly()) {
-                    setPlainText(editedScript);
+                    setText(editedScript);
                 }
             });
         });
     }
+
+    m_openEditor->setDisabled(isReadOnly());
 
     menu->addSeparator();
     menu->addAction(m_openEditor);
