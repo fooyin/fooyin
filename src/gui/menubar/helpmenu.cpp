@@ -27,13 +27,15 @@
 #include <utils/utils.h>
 
 #include <QAction>
+#include <QDesktopServices>
 #include <QIcon>
+#include <QUrl>
 
 namespace {
 void showAboutDialog()
 {
     auto* aboutDialog = new Fooyin::AboutDialog();
-    QObject::connect(aboutDialog, &QDialog::finished, aboutDialog, &QObject::deleteLater);
+    aboutDialog->setAttribute(Qt::WA_DeleteOnClose);
     aboutDialog->show();
 }
 } // namespace
@@ -45,11 +47,29 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 {
     auto* helpMenu = m_actionManager->actionContainer(Constants::Menus::Help);
 
-    auto* aboutAction = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
-    aboutAction->setStatusTip(tr("Open the about dialog"));
-    helpMenu->addAction(m_actionManager->registerAction(aboutAction, Constants::Actions::About),
-                        Actions::Groups::Three);
-    QObject::connect(aboutAction, &QAction::triggered, this, showAboutDialog);
+    auto* quickStart = new QAction(tr("&Quick start"), this);
+    quickStart->setStatusTip(tr("Open the quick start guide"));
+    QObject::connect(quickStart, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/quick-start")); });
+
+    auto* scripting = new QAction(tr("&Scripting help"), this);
+    scripting->setStatusTip(tr("Open the scripting documentation"));
+    QObject::connect(scripting, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/scripting")); });
+
+    auto* faq = new QAction(tr("&Frequently asked questions"), this);
+    faq->setStatusTip(tr("Open the FAQ"));
+    QObject::connect(faq, &QAction::triggered, this,
+                     []() { QDesktopServices::openUrl(QStringLiteral("https://www.fooyin.org/faq")); });
+
+    auto* about = new QAction(Utils::iconFromTheme(Constants::Icons::Fooyin), tr("&About"), this);
+    about->setStatusTip(tr("Open the about dialog"));
+    QObject::connect(about, &QAction::triggered, this, showAboutDialog);
+
+    helpMenu->addAction(quickStart);
+    helpMenu->addAction(scripting);
+    helpMenu->addAction(faq);
+    helpMenu->addAction(about);
 }
 } // namespace Fooyin
 

@@ -127,7 +127,6 @@ constexpr auto Search           = "Edit.Search";
 constexpr auto LayoutEditing    = "Layout.LayoutEditing";
 constexpr auto QuickSetup       = "View.QuickSetup";
 constexpr auto ShowNowPlaying   = "View.ShowNowPlaying";
-constexpr auto About            = "Help.About";
 constexpr auto Refresh          = "Library.Refresh";
 constexpr auto Rescan           = "Library.Rescan";
 constexpr auto Stop             = "Playback.Stop";
