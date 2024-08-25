@@ -26,4 +26,5 @@ dnf -y --allowerasing install \
      SDL2-devel \
      libopenmpt-devel \
      game-music-emu-devel \
-     libarchive-devel
+     libarchive-devel \
+     libsndfile-devel

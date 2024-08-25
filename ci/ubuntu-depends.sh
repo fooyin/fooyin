@@ -34,4 +34,5 @@ $SUDO apt-get install -y \
         libswresample-dev \
         libopenmpt-dev \
         libgme-dev \
-        libarchive-dev
+        libarchive-dev \
+        libsndfile1-dev

@@ -20,4 +20,5 @@ $SUDO pacman -S --noconfirm --needed \
        sdl2 \
        libopenmpt \
        libgme \
-       libarchive
+       libarchive \
+       libsndfile
