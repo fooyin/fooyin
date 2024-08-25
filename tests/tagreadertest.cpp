@@ -220,7 +220,7 @@ TEST_F(TagReaderTest, WavRead)
     Track track{file.fileName()};
     ASSERT_TRUE(m_parser.readTrack({filepath, &file, nullptr}, track));
 
-    EXPECT_EQ(track.codec(), QStringLiteral("WAV"));
+    EXPECT_EQ(track.codec(), QStringLiteral("PCM"));
     EXPECT_EQ(track.title(), QStringLiteral("WAV Test"));
     EXPECT_EQ(track.album(), QStringLiteral("Fooyin Audio Tests"));
     EXPECT_EQ(track.albumArtist(), QStringLiteral("Fooyin"));
