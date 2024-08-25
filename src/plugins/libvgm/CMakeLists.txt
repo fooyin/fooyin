@@ -19,3 +19,11 @@ create_fooyin_plugin_internal(
             vgminputsettings.cpp
             vgminputsettings.h
 )
+
+fooyin_append_mimes(
+    audio/x-dro
+    audio/x-gym
+    audio/x-s98
+    audio/x-vgm
+    audio/x-vgz
+)

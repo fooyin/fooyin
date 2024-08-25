@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=fooyin
+Type=Application
+GenericName=fooyin Music Player
+Comment=Manages and plays your local music collection
+Exec=fooyin %F
+TryExec=fooyin
+Icon=org.fooyin.fooyin
+Terminal=false
+Categories=AudioVideo;Player;Qt;Audio;
+MimeType=@FOOYIN_MIMETYPES@
+StartupNotify=false
+StartupWMClass=fooyin

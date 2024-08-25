@@ -12,6 +12,12 @@ macro(fooyin_convert_to_relative_path path)
     endif()
 endmacro()
 
+function(fooyin_append_mimes)
+    get_property(current_mimes GLOBAL PROPERTY MIMETYPES)
+    list(APPEND current_mimes ${ARGN})
+    set_property(GLOBAL PROPERTY MIMETYPES ${current_mimes})
+endfunction()
+
 function(create_fooyin_library name)
     cmake_parse_arguments(
         LIB

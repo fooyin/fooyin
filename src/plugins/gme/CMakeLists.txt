@@ -22,3 +22,14 @@ target_include_directories(
     gmeinput
     PRIVATE ${LIBGME_INCLUDE_DIRS}
 )
+
+fooyin_append_mimes(
+    audio/x-ay
+    audio/x-gbs
+    audio/x-hes
+    audio/x-kss
+    audio/x-nsf
+    audio/x-nsfe
+    audio/x-sap
+    audio/x-spc
+)

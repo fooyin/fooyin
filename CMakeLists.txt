@@ -237,7 +237,48 @@ set_target_properties(
     fooyin_lib PROPERTIES VERSION "${FOOYIN_VERSION}" EXPORT_NAME Fooyin
 )
 
+# ---- Mime Types ----
+
+set_property(GLOBAL PROPERTY MIMETYPES
+    x-content/audio-player
+    application/x-cue
+    audio/x-mpegurl
+    application/vnd.apple.mpegurl
+    application/ogg
+    application/x-ogg
+    application/x-ogm-audio
+    audio/flac
+    audio/ogg
+    audio/vorbis
+    audio/aac
+    audio/mp4
+    audio/mpeg
+    audio/mpegurl
+    audio/vnd.rn-realaudio
+    audio/x-flac
+    audio/x-oggflac
+    audio/x-vorbis
+    audio/x-vorbis+ogg
+    audio/x-speex
+    audio/x-wav
+    audio/x-wavpack
+    audio/x-ape
+    audio/x-mp3
+    audio/x-mpeg
+    audio/x-mpegurl
+    audio/x-ms-wma
+    audio/x-musepack
+)
+
 add_subdirectory(src)
+
+get_property(FOOYIN_MIMETYPES GLOBAL PROPERTY MIMETYPES)
+list(REMOVE_DUPLICATES FOOYIN_MIMETYPES)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/dist/linux/org.fooyin.fooyin.desktop.in"
+    "${CMAKE_BINARY_DIR}/dist/linux/org.fooyin.fooyin.desktop" @ONLY
+)
 
 target_link_libraries(
     fooyin_lib

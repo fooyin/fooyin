@@ -14,3 +14,14 @@ create_fooyin_plugin_internal(
             sndfileplugin.cpp
             sndfileplugin.h
 )
+
+fooyin_append_mimes(
+    audio/aiff
+    audio/basic
+    audio/x-sph
+    audio/x-voc
+    audio/wav
+    audio/x-wavex
+    audio/x-w64
+    audio/x-wve
+)
