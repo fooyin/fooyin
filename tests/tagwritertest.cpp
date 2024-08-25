@@ -68,7 +68,6 @@ TEST_F(TagWriterTest, AiffWrite)
     }
 
     {
-        source.device->seek(0);
         Track track{file.fileName()};
         ASSERT_TRUE(m_parser.readTrack(source, track));
 
