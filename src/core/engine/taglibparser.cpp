@@ -49,6 +49,7 @@
 #include <taglib/wavfile.h>
 #include <taglib/wavpackfile.h>
 
+#include <QBuffer>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFileInfo>
@@ -84,6 +85,11 @@ public:
     TagLib::ByteVector readBlock(unsigned long length) override
 #endif
     {
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to read unopened file";
+            return {};
+        }
+
         std::vector<char> data(length);
         const auto lenRead = m_input->read(data.data(), static_cast<qint64>(length));
         if(lenRead < 0) {
@@ -95,6 +101,16 @@ public:
 
     void writeBlock(const TagLib::ByteVector& data) override
     {
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to write to unopened file";
+            return;
+        }
+
+        if(readOnly()) {
+            qCDebug(TAGLIB) << "Unable to write to read-only file";
+            return;
+        }
+
         m_input->write(data.data(), data.size());
     }
 
@@ -104,7 +120,13 @@ public:
     void insert(const TagLib::ByteVector& data, unsigned long start, unsigned long replace) override
 #endif
     {
-        if(!isOpen() || readOnly()) {
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to write to unopened file";
+            return;
+        }
+
+        if(readOnly()) {
+            qCDebug(TAGLIB) << "Unable to write to read-only file";
             return;
         }
 
@@ -158,13 +180,14 @@ public:
     void removeBlock(unsigned long start, unsigned long length) override
 #endif
     {
-        if(!isOpen() || readOnly()) {
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to write to unopened file";
             return;
         }
 
-        const qint64 fileSize = m_input->size();
-        if(start + length > static_cast<size_t>(fileSize)) {
-            length = static_cast<size_t>(fileSize) - start;
+        if(readOnly()) {
+            qCDebug(TAGLIB) << "Unable to write to read-only file";
+            return;
         }
 
         QByteArray buffer(BufferSize, 0);
@@ -177,13 +200,13 @@ public:
             m_input->seek(readPosition);
             bytesRead = m_input->peek(buffer.data(), BufferSize);
 
-            if(bytesRead <= 0) {
+            if(bytesRead < buffer.size()) {
                 clear();
                 buffer.resize(bytesRead);
             }
 
             m_input->seek(writePosition);
-            m_input->write(buffer.left(bytesRead));
+            m_input->write(buffer);
 
             writePosition += bytesRead;
             readPosition += bytesRead;
@@ -204,6 +227,11 @@ public:
 
     void seek(long offset, Position p) override
     {
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to write to unopened file";
+            return;
+        }
+
         const auto seekPos = static_cast<qint64>(offset);
         switch(p) {
             case(Beginning):
@@ -236,12 +264,38 @@ public:
 
     void truncate(long length) override
     {
-        const auto currPos = tell();
+        if(!isOpen()) {
+            qCDebug(TAGLIB) << "Unable to write to unopened file";
+            return;
+        }
 
-        seek(0, Beginning);
-        const QByteArray data = m_input->peek(length);
-        m_input->write(data);
-        seek(currPos, Beginning);
+        if(readOnly()) {
+            qCDebug(TAGLIB) << "Unable to write to read-only file";
+            return;
+        }
+
+        if(length < 0) {
+            return;
+        }
+
+        const auto currPos = m_input->pos();
+
+        if(auto* file = qobject_cast<QFile*>(m_input)) {
+            file->resize(length);
+        }
+        else if(auto* buffer = qobject_cast<QBuffer*>(m_input)) {
+            buffer->buffer().resize(length);
+        }
+        else {
+            qCDebug(TAGLIB) << "Unable to truncate device";
+        }
+
+        if(currPos < length) {
+            m_input->seek(currPos);
+        }
+        else {
+            m_input->seek(length);
+        }
     }
 
 private:
