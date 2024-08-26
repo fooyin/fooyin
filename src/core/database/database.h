@@ -19,13 +19,15 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/database/dbconnectionpool.h>
 
 #include <QObject>
 
 namespace Fooyin {
-class Database : public QObject
+class FYCORE_EXPORT Database : public QObject
 {
     Q_OBJECT
 
@@ -44,6 +46,8 @@ public:
     [[nodiscard]] DbConnectionPoolPtr connectionPool() const;
 
     [[nodiscard]] Status status() const;
+    [[nodiscard]] int currentRevision() const;
+    [[nodiscard]] int previousRevision() const;
 
 signals:
     void statusChanged(Status status);
@@ -55,5 +59,6 @@ private:
     DbConnectionPoolPtr m_dbPool;
     DbConnectionHandler m_connectionHandler;
     Status m_status;
+    int m_previousRevision;
 };
 } // namespace Fooyin

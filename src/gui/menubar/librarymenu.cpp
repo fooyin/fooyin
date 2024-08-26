@@ -38,7 +38,7 @@
 namespace Fooyin {
 LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObject* parent)
     : QObject{parent}
-    , m_database{core->database()}
+    , m_database{core->databasePool()}
 {
     auto* libraryMenu = actionManager->actionContainer(Constants::Menus::Library);
 

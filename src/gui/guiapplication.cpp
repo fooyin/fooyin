@@ -38,6 +38,7 @@
 #include <core/application.h>
 #include <core/corepaths.h>
 #include <core/coresettings.h>
+#include <core/database/database.h>
 #include <core/engine/enginehandler.h>
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
@@ -111,6 +112,9 @@ public:
     void setStyle() const;
     void setIconTheme() const;
     void registerLayouts();
+
+    void checkTracksNeedUpdate() const;
+    void showNeedReloadMessage() const;
 
     void showSearchWindow();
     void showPropertiesDialog() const;
@@ -225,6 +229,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
         if(m_settings->value<Settings::Core::FirstRun>()) {
             QMetaObject::invokeMethod(m_editableLayout.get(), &EditableLayout::showQuickSetup, Qt::QueuedConnection);
         }
+        checkTracksNeedUpdate();
     };
 
     if(m_core->libraryManager()->hasLibrary() && m_core->library()->isEmpty()
@@ -625,6 +630,40 @@ void GuiApplicationPrivate::registerLayouts()
             "Widgets":[{"PlayerControls":{}},{"SeekBar":{}},{"PlaylistControls":{}},{"VolumeControls":{}}]}},
             {"SplitterHorizontal":{"State":"AAAA/wAAAAEAAAACAAACeAAAAnoA/////wEAAAABAA==x","Widgets":[{"DirectoryBrowser":{}},
             {"ArtworkPanel":{}}]}},{"StatusBar":{}}]}}]})");
+}
+
+void GuiApplicationPrivate::checkTracksNeedUpdate() const
+{
+    const int prev = m_core->database()->previousRevision();
+    const int curr = m_core->database()->currentRevision();
+
+    if(prev > 0 && curr >= 7 && prev < 7) {
+        // Revision 7 changed codec storage type
+        showNeedReloadMessage();
+    }
+}
+
+void GuiApplicationPrivate::showNeedReloadMessage() const
+{
+    QMessageBox message;
+    message.setIcon(QMessageBox::Warning);
+    message.setText(GuiApplication::tr("Reload Required"));
+    message.setInformativeText(GuiApplication::tr(
+        "Due to a database change, tracks should be reloaded from disk to update their saved metadata."));
+
+    message.addButton(QMessageBox::Ok);
+    if(auto* button = message.button(QMessageBox::Ok)) {
+        button->setText(GuiApplication::tr("Reload Now"));
+    }
+    QPushButton* okButton = message.addButton(GuiApplication::tr("OK"), QMessageBox::ActionRole);
+    okButton->setIcon(Utils::iconFromTheme(Constants::Icons::Stop));
+    message.setDefaultButton(QMessageBox::Ok);
+
+    message.exec();
+
+    if(message.clickedButton() != okButton) {
+        m_library->rescanAll();
+    }
 }
 
 void GuiApplicationPrivate::showSearchWindow()

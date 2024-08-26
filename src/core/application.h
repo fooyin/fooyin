@@ -30,6 +30,7 @@
 
 namespace Fooyin {
 class ApplicationPrivate;
+class Database;
 class EngineController;
 class LibraryManager;
 class MusicLibrary;
@@ -51,7 +52,8 @@ public:
     static void quit();
     static void restart();
 
-    [[nodiscard]] DbConnectionPoolPtr database() const;
+    [[nodiscard]] Database* database() const;
+    [[nodiscard]] DbConnectionPoolPtr databasePool() const;
     [[nodiscard]] PluginManager* pluginManager() const;
     [[nodiscard]] PlayerController* playerController() const;
     [[nodiscard]] LibraryManager* libraryManager() const;

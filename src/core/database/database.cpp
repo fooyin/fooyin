@@ -48,6 +48,7 @@ Database::Database(QObject* parent)
     , m_dbPool(DbConnectionPool::create(dbConnectionParams(), QStringLiteral("fooyin")))
     , m_connectionHandler{m_dbPool}
     , m_status{Status::Ok}
+    , m_previousRevision{0}
 {
     if(!m_connectionHandler.hasConnection()) {
         changeStatus(Status::ConnectionError);
@@ -67,10 +68,23 @@ Database::Status Database::status() const
     return m_status;
 }
 
+int Database::currentRevision() const
+{
+    const DbConnectionProvider dbProvider{m_dbPool};
+    DbSchema schema{dbProvider};
+    return schema.currentVersion();
+}
+
+int Database::previousRevision() const
+{
+    return m_previousRevision;
+}
+
 bool Database::initSchema()
 {
     const DbConnectionProvider dbProvider{m_dbPool};
     DbSchema schema{dbProvider};
+    m_previousRevision = schema.currentVersion();
 
     const auto upgradeResult = schema.upgradeDatabase(CurrentSchemaVersion, QStringLiteral("://dbschema.xml"));
 

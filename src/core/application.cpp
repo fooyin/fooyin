@@ -446,7 +446,12 @@ void Application::restart()
         Qt::QueuedConnection);
 }
 
-DbConnectionPoolPtr Application::database() const
+Database* Application::database() const
+{
+    return p->m_database;
+}
+
+DbConnectionPoolPtr Application::databasePool() const
 {
     return p->m_database->connectionPool();
 }
