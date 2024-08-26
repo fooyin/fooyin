@@ -7,6 +7,7 @@
 <p align="center" style="font-size: 18px;">
 <a href="https://github.com/ludouzi/fooyin/actions/workflows/build.yml"><img src="https://github.com/ludouzi/fooyin/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
 <a href="https://app.codacy.com/gh/ludouzi/fooyin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"><img src="https://app.codacy.com/project/badge/Grade/ae0c3e9825d849b0b64697e59e4dfea6" alt="Code quality"></a>
+<a href="https://hosted.weblate.org/engage/fooyin/"><img src="https://hosted.weblate.org/widget/fooyin/svg-badge.svg" alt="Translation status" /></a>
 <a href="https://repology.org/project/fooyin/versions"><img src="https://repology.org/badge/tiny-repos/fooyin.svg" alt="Packaging status"></a>
 </p>
 
