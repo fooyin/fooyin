@@ -75,10 +75,6 @@ bool cmpItemsPlaylistItems(Fooyin::PlaylistItem* pItem1, Fooyin::PlaylistItem* p
         }
     }
 
-    if(item1->row() == item2->row()) {
-        return false;
-    }
-
     return reverse ? item1->row() > item2->row() : item1->row() < item2->row();
 };
 

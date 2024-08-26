@@ -3205,7 +3205,7 @@ void ExpandedTreeView::scrollTo(const QModelIndex& index, ScrollHint hint)
         }
     }
     else if(!rect.isEmpty()) {
-        if(hint == EnsureVisible && area.intersects(rect)) {
+        if(hint == EnsureVisible && area.contains(rect)) {
             viewport()->update(rect);
         }
         else {
