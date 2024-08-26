@@ -26,8 +26,24 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QIODevice>
+#include <QRegularExpression>
 
 constexpr auto MaxStarCount = 10;
+constexpr auto YearRegex    = R"lit(\b\d{4}\b)lit";
+
+namespace {
+int extractYear(const QString& input)
+{
+    static const QRegularExpression regex(QLatin1String{YearRegex});
+    const QRegularExpressionMatch match = regex.match(input);
+
+    if(match.hasMatch()) {
+        return match.captured(0).toInt();
+    }
+
+    return 0;
+}
+} // namespace
 
 namespace Fooyin {
 class TrackPrivate : public QSharedData
@@ -777,17 +793,9 @@ void Track::setDate(const QString& date)
 {
     p->date = date;
 
-    const QStringList dateParts = date.split(u'-', Qt::SkipEmptyParts);
-    if(dateParts.empty()) {
-        if(date.length() == 4) {
-            p->year = p->date.toInt();
-        }
-    }
-    else {
-        const auto& year = dateParts.front();
-        if(year.length() == 4) {
-            p->year = year.toInt();
-        }
+    const int year = extractYear(date);
+    if(year > 0) {
+        p->year = year;
     }
 }
 
