@@ -28,9 +28,12 @@ ScriptHighlighter::ScriptHighlighter(QTextDocument* parent)
     const bool isDarkMode = Utils::isDarkMode();
 
     // TODO: Make colours user configurable
-    m_varFormat.setForeground(isDarkMode ? Qt::cyan : Qt::darkCyan);
-    m_keywordFormat.setForeground(isDarkMode ? Qt::blue : Qt::darkBlue);
-    m_errorFormat.setBackground(Qt::red);
+    m_varFormat.setForeground(isDarkMode ? QColor{0x87cefa} : QColor{0x4682b4});
+    m_functionFormat.setForeground(isDarkMode ? QColor{0xff8c00} : QColor{0x804000});
+    m_conditionalFormat.setForeground(isDarkMode ? QColor{0xffff00} : QColor{0x808000});
+    m_operatorFormat.setForeground(isDarkMode ? QColor{0xffffff} : QColor{0xa0a0a0});
+    m_commentFormat.setForeground(isDarkMode ? QColor{0x808080} : QColor{0x404040});
+    m_errorFormat.setBackground(QColor{0xff0000});
 }
 
 void ScriptHighlighter::highlightBlock(const QString& text)
@@ -79,7 +82,10 @@ void ScriptHighlighter::expression()
     }
 }
 
-void ScriptHighlighter::quote() { }
+void ScriptHighlighter::quote()
+{
+    setTokenFormat(m_commentFormat);
+}
 
 void ScriptHighlighter::variable()
 {
@@ -88,9 +94,13 @@ void ScriptHighlighter::variable()
     advance();
 
     if(m_previous.type == ScriptScanner::TokLeftAngle || m_previous.type == ScriptScanner::TokVar) {
+        setTokenFormat(m_operatorFormat);
+        advance();
         setTokenFormat(m_varFormat);
         advance();
-        advance();
+        setTokenFormat(m_operatorFormat);
+    }
+    else {
         setTokenFormat(m_varFormat);
     }
 
@@ -101,17 +111,21 @@ void ScriptHighlighter::variable()
 
 void ScriptHighlighter::function()
 {
-    setTokenFormat(m_varFormat);
+    setTokenFormat(m_functionFormat);
     advance();
-    setTokenFormat(m_keywordFormat);
+    setTokenFormat(m_functionFormat);
     advance();
+    setTokenFormat(m_functionFormat);
+
     if(!currentToken(ScriptScanner::TokRightParen)) {
         functionArgs();
         while(match(ScriptScanner::TokComma)) {
             functionArgs();
         }
     }
+
     advance();
+    setTokenFormat(m_functionFormat);
 }
 
 void ScriptHighlighter::functionArgs()
@@ -124,7 +138,7 @@ void ScriptHighlighter::functionArgs()
 
 void ScriptHighlighter::conditional()
 {
-    setTokenFormat(m_varFormat);
+    setTokenFormat(m_conditionalFormat);
 
     while(!currentToken(ScriptScanner::TokRightSquare) && !currentToken(ScriptScanner::TokEos)) {
         expression();
@@ -132,7 +146,7 @@ void ScriptHighlighter::conditional()
 
     advance();
 
-    setTokenFormat(m_varFormat);
+    setTokenFormat(m_conditionalFormat);
 }
 
 void ScriptHighlighter::setTokenFormat(const QTextCharFormat& format)

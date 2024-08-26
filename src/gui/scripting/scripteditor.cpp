@@ -17,13 +17,14 @@
  *
  */
 
-#include "gui/scripting/scripteditor.h"
-
 #include "expressiontreemodel.h"
 #include "scripthighlighter.h"
 
 #include <core/coresettings.h>
+#include <core/scripting/scriptparser.h>
+#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
+#include <gui/scripting/scripteditor.h>
 #include <gui/scripting/scriptformatter.h>
 #include <gui/trackselectioncontroller.h>
 
@@ -163,13 +164,6 @@ void ScriptEditorPrivate::setupPlaceholder()
     m_placeholderTrack.setFileSize(34560000);
 }
 
-ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
-    : QDialog{parent}
-    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager, trackSelection)}
-{
-    setWindowTitle(tr("Script Editor"));
-}
-
 void ScriptEditorPrivate::updateResults()
 {
     if(m_model->rowCount({}) > 0) {
@@ -283,6 +277,13 @@ void ScriptEditorPrivate::restoreState()
     m_expressionTree->expandAll();
 
     updateResults();
+}
+
+ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
+    : QDialog{parent}
+    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager, trackSelection)}
+{
+    setWindowTitle(tr("Script Editor"));
 }
 
 ScriptEditor::ScriptEditor(const QString& script, QWidget* parent)

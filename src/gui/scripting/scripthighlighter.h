@@ -19,8 +19,7 @@
 
 #pragma once
 
-#include "core/scripting/scriptparser.h"
-#include "core/scripting/scriptscanner.h"
+#include <core/scripting/scriptscanner.h>
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
@@ -47,11 +46,14 @@ private:
     void setTokenFormat(const QTextCharFormat& format);
 
     void advance();
-    bool currentToken(ScriptScanner::TokenType type) const;
+    [[nodiscard]] bool currentToken(ScriptScanner::TokenType type) const;
     bool match(ScriptScanner::TokenType type);
 
     QTextCharFormat m_varFormat;
-    QTextCharFormat m_keywordFormat;
+    QTextCharFormat m_functionFormat;
+    QTextCharFormat m_conditionalFormat;
+    QTextCharFormat m_operatorFormat;
+    QTextCharFormat m_commentFormat;
     QTextCharFormat m_errorFormat;
 
     ScriptScanner m_scanner;
