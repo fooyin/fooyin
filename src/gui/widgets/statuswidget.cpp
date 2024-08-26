@@ -233,6 +233,9 @@ void StatusWidgetPrivate::updatePlayingText()
     if(ps == Player::PlayState::Playing || ps == Player::PlayState::Paused) {
         showPlayingMessage(m_scriptParser.evaluate(m_playingScript, m_playerController->currentTrack()));
     }
+    else {
+        m_playingText->clear();
+    }
 }
 
 void StatusWidgetPrivate::updateSelectionText()
@@ -244,8 +247,8 @@ void StatusWidgetPrivate::stateChanged(const Player::PlayState state)
 {
     switch(state) {
         case(Player::PlayState::Stopped):
+            updatePlayingText();
             clearMessage();
-            m_statusText->clear();
             break;
         case(Player::PlayState::Playing):
             updatePlayingText();
