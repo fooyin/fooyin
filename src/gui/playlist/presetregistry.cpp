@@ -44,7 +44,7 @@ void PresetRegistry::loadDefaults()
 
     addDefaultItem(preset);
 
-    preset.name = QStringLiteral("Album - Disc");
+    preset.name = QStringLiteral("Album/Disc");
 
     preset.header.title.script    = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist)");
     preset.header.subtitle.script = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)");
@@ -61,14 +61,14 @@ void PresetRegistry::loadDefaults()
 
     preset.subHeaders.clear();
 
-    preset.name = QStringLiteral("Split Discs");
+    preset.name = QStringLiteral("Disc Albums");
 
     preset.header.subtitle.script
         = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)");
 
     addDefaultItem(preset);
 
-    preset.name = QStringLiteral("Simple Header");
+    preset.name = QStringLiteral("Simple Artist/Album/Year");
 
     preset.header.simple = true;
     preset.header.subtitle.script.clear();
