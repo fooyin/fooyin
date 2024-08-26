@@ -22,7 +22,6 @@
 #include <core/player/playercontroller.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
-#include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -34,7 +33,18 @@
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
+#include <QStyleOption>
+#include <QStylePainter>
 #include <QTimer>
+#include <QTimerEvent>
+
+using namespace std::chrono_literals;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+constexpr auto ResizeInterval = 5ms;
+#else
+constexpr auto ResizeInterval = 5;
+#endif
 
 namespace Fooyin {
 CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionController* trackSelection,
@@ -49,30 +59,19 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
     , m_coverType{Track::Cover::Front}
     , m_coverAlignment{Qt::AlignCenter}
     , m_keepAspectRatio{true}
-    , m_resizeTimer{new QTimer(this)}
-    , m_coverLayout{new QVBoxLayout(this)}
-    , m_coverLabel{new QLabel(this)}
 {
     setObjectName(CoverWidget::name());
 
-    m_coverLayout->setContentsMargins(0, 0, 0, 0);
-    m_coverLayout->setAlignment(m_coverAlignment);
-    m_coverLayout->addWidget(m_coverLabel);
-
-    m_resizeTimer->setSingleShot(true);
-    m_coverLabel->setMinimumSize(100, 100);
-
-    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, [this]() { reloadCover(); });
-    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, [this]() { reloadCover(); });
-    QObject::connect(
-        m_coverProvider, &CoverProvider::coverAdded, this, [this]() { reloadCover(); }, Qt::QueuedConnection);
-    QObject::connect(m_resizeTimer, &QTimer::timeout, this, &CoverWidget::rescaleCover);
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, this, &CoverWidget::reloadCover);
+    QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, this, &CoverWidget::reloadCover);
+    QObject::connect(m_coverProvider, &CoverProvider::coverAdded, this, &CoverWidget::reloadCover,
+                     Qt::QueuedConnection);
 
     m_settings->subscribe<Settings::Gui::Internal::TrackCoverDisplayOption>(this, [this](const int option) {
         m_displayOption = static_cast<SelectionDisplay>(option);
         reloadCover();
     });
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { reloadCover(); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
 
     reloadCover();
 }
@@ -110,7 +109,7 @@ void CoverWidget::loadLayoutData(const QJsonObject& layout)
 void CoverWidget::resizeEvent(QResizeEvent* event)
 {
     if(!m_cover.isNull()) {
-        m_resizeTimer->start(5);
+        m_resizeTimer.start(ResizeInterval, this);
     }
 
     QWidget::resizeEvent(event);
@@ -129,6 +128,7 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(keepAspectRatio, &QAction::triggered, this, [this](bool checked) {
         m_keepAspectRatio = checked;
         rescaleCover();
+        update();
     });
 
     auto* alignmentGroup = new QActionGroup(menu);
@@ -145,18 +145,14 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     alignLeft->setChecked(m_coverAlignment == Qt::AlignLeft);
     alignRight->setChecked(m_coverAlignment == Qt::AlignRight);
 
-    QObject::connect(alignCenter, &QAction::triggered, this, [this]() {
-        m_coverAlignment = Qt::AlignCenter;
+    auto changeAlignment = [this](Qt::Alignment alignment) {
+        m_coverAlignment = alignment;
         reloadCover();
-    });
-    QObject::connect(alignLeft, &QAction::triggered, this, [this]() {
-        m_coverAlignment = Qt::AlignLeft;
-        reloadCover();
-    });
-    QObject::connect(alignRight, &QAction::triggered, this, [this]() {
-        m_coverAlignment = Qt::AlignRight;
-        reloadCover();
-    });
+    };
+
+    QObject::connect(alignCenter, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignCenter); });
+    QObject::connect(alignLeft, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignLeft); });
+    QObject::connect(alignRight, &QAction::triggered, this, [changeAlignment]() { changeAlignment(Qt::AlignRight); });
 
     auto* coverGroup = new QActionGroup(menu);
 
@@ -172,18 +168,14 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     backCover->setChecked(m_coverType == Track::Cover::Back);
     artistCover->setChecked(m_coverType == Track::Cover::Artist);
 
-    QObject::connect(frontCover, &QAction::triggered, this, [this]() {
-        m_coverType = Track::Cover::Front;
+    auto reload = [this](Track::Cover type) {
+        m_coverType = type;
         reloadCover();
-    });
-    QObject::connect(backCover, &QAction::triggered, this, [this]() {
-        m_coverType = Track::Cover::Back;
-        reloadCover();
-    });
-    QObject::connect(artistCover, &QAction::triggered, this, [this]() {
-        m_coverType = Track::Cover::Artist;
-        reloadCover();
-    });
+    };
+
+    QObject::connect(frontCover, &QAction::triggered, this, [reload]() { reload(Track::Cover::Front); });
+    QObject::connect(backCover, &QAction::triggered, this, [reload]() { reload(Track::Cover::Back); });
+    QObject::connect(artistCover, &QAction::triggered, this, [reload]() { reload(Track::Cover::Artist); });
 
     menu->addAction(keepAspectRatio);
     menu->addSeparator();
@@ -198,10 +190,31 @@ void CoverWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->popup(event->globalPos());
 }
 
-void CoverWidget::rescaleCover() const
+void CoverWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_resizeTimer.timerId()) {
+        m_resizeTimer.stop();
+        rescaleCover();
+    }
+    FyWidget::timerEvent(event);
+}
+
+void CoverWidget::paintEvent(QPaintEvent* /*event*/)
+{
+    QStylePainter painter{this};
+    painter.drawItemPixmap(contentsRect(), static_cast<int>(Qt::AlignVCenter | m_coverAlignment), m_scaledCover);
+}
+
+void CoverWidget::rescaleCover()
 {
     const auto aspectRatio = m_keepAspectRatio ? Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-    m_coverLabel->setPixmap(m_cover.scaled(size(), aspectRatio, Qt::SmoothTransformation));
+    const double dpr       = devicePixelRatioF();
+    const QSize scaledSize = size() * dpr;
+
+    m_scaledCover = m_cover.scaled(scaledSize, aspectRatio, Qt::SmoothTransformation);
+    m_scaledCover.setDevicePixelRatio(dpr);
+
+    update();
 }
 
 void CoverWidget::reloadCover()
@@ -215,7 +228,6 @@ void CoverWidget::reloadCover()
         track = m_playerController->currentTrack();
     }
 
-    m_coverLayout->setAlignment(m_coverAlignment);
     m_cover = m_coverProvider->trackCover(track, m_coverType);
     rescaleCover();
 }

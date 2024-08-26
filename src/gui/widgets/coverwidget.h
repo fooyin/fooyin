@@ -24,11 +24,8 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 
+#include <QBasicTimer>
 #include <QPixmap>
-
-class QLabel;
-class QTimer;
-class QVBoxLayout;
 
 namespace Fooyin {
 class CoverProvider;
@@ -55,9 +52,11 @@ public:
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
-    void rescaleCover() const;
+    void rescaleCover();
     void reloadCover();
 
     PlayerController* m_playerController;
@@ -69,10 +68,9 @@ private:
     Track::Cover m_coverType;
     Qt::Alignment m_coverAlignment;
     bool m_keepAspectRatio;
-    QTimer* m_resizeTimer;
+    QBasicTimer m_resizeTimer;
 
-    QVBoxLayout* m_coverLayout;
-    QLabel* m_coverLabel;
     QPixmap m_cover;
+    QPixmap m_scaledCover;
 };
 } // namespace Fooyin
