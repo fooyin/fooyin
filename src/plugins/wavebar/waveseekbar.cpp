@@ -65,7 +65,7 @@ namespace Fooyin::WaveBar {
 WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     : QWidget{parent}
     , m_settings{settings}
-    , m_playing{false}
+    , m_playState{Player::PlayState::Stopped}
     , m_scale{1.0}
     , m_position{0}
     , m_showCursor{settings->value<Settings::WaveBar::ShowCursor>()}
@@ -136,9 +136,9 @@ void WaveSeekBar::processData(const WaveformData<float>& waveData)
     update();
 }
 
-void WaveSeekBar::setPlaying(bool playing)
+void WaveSeekBar::setPlayState(Player::PlayState state)
 {
-    m_playing = playing;
+    m_playState = state;
 }
 
 void WaveSeekBar::setPosition(uint64_t pos)
@@ -205,7 +205,7 @@ void WaveSeekBar::paintEvent(QPaintEvent* event)
         y += channelHeight;
     }
 
-    if(m_playing && m_showCursor) {
+    if(m_showCursor && m_playState == Player::PlayState::Playing) {
         painter.setPen({m_colours.cursor, static_cast<double>(m_cursorWidth), Qt::SolidLine, Qt::FlatCap});
         const QPointF pt1{posX, 0};
         const QPointF pt2{posX, static_cast<double>(height())};

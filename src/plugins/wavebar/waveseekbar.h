@@ -23,6 +23,7 @@
 #include "wavebarcolours.h"
 #include "waveformdata.h"
 
+#include <core/player/playerdefs.h>
 #include <utils/widgets/tooltip.h>
 
 #include <QPointer>
@@ -41,7 +42,7 @@ public:
 
     void processData(const WaveformData<float>& waveData);
 
-    void setPlaying(bool playing);
+    void setPlayState(Player::PlayState state);
     void setPosition(uint64_t pos);
     [[nodiscard]] bool isSeeking() const;
     void stopSeeking();
@@ -71,7 +72,7 @@ private:
 
     SettingsManager* m_settings;
 
-    bool m_playing;
+    Player::PlayState m_playState;
     WaveformData<float> m_data;
     double m_scale;
     uint64_t m_position;
