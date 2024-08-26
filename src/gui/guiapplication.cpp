@@ -637,7 +637,7 @@ void GuiApplicationPrivate::checkTracksNeedUpdate() const
     const int prev = m_core->database()->previousRevision();
     const int curr = m_core->database()->currentRevision();
 
-    if(prev > 0 && curr >= 7 && prev < 7) {
+    if(prev > 0 && curr >= 7 && prev < 7 && m_library->hasLibrary()) {
         // Revision 7 changed codec storage type
         showNeedReloadMessage();
     }
