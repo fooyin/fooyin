@@ -769,20 +769,35 @@ float popmToRating(int popm)
 
 int ratingToPopm(float rating)
 {
-    if(rating < 0.2) {
+    if(rating < 0.1) {
         return 0;
     }
-    if(rating < 0.4) {
+    if(rating < 0.2) {
+        return 13;
+    }
+    if(rating < 0.3) {
         return 1;
     }
-    if(rating < 0.6) {
+    if(rating < 0.4) {
+        return 54;
+    }
+    if(rating < 0.5) {
         return 64;
     }
-    if(rating < 0.8) {
+    if(rating < 0.6) {
+        return 118;
+    }
+    if(rating < 0.7) {
         return 128;
     }
-    if(rating < 1.0) {
+    if(rating < 0.8) {
+        return 186;
+    }
+    if(rating < 0.9) {
         return 196;
+    }
+    if(rating < 1.0) {
+        return 242;
     }
 
     return 255;
