@@ -328,13 +328,13 @@ TrackList LibraryScannerPrivate::readTracks(const QString& filepath) const
 
     QFile file{filepath};
     if(!file.open(QIODevice::ReadOnly)) {
-        qCWarning(LIB_SCANNER) << "Failed to open file:" << filepath;
+        qCInfo(LIB_SCANNER) << "Failed to open file:" << filepath;
         return {};
     }
     const AudioSource source{filepath, &file, nullptr};
 
     if(!tagReader->init(source)) {
-        qCInfo(LIB_SCANNER) << "Unsupported file:" << filepath;
+        qCDebug(LIB_SCANNER) << "Unsupported file:" << filepath;
         return {};
     }
 
@@ -373,14 +373,14 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
     const QDateTime modifiedTime = archiveInfo.lastModified();
 
     auto readEntry = [&](const QString& entry, QIODevice* device) {
-        if(!device->open(QIODevice::ReadOnly)) {
-            qCInfo(LIB_SCANNER) << "Failed to open file:" << entry;
+        auto* fileReader = m_audioLoader->readerForFile(entry);
+        if(!fileReader) {
+            qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
             return;
         }
 
-        auto* fileReader = m_audioLoader->readerForFile(entry);
-        if(!fileReader) {
-            qCInfo(LIB_SCANNER) << "Unsupported file:" << entry;
+        if(!device->open(QIODevice::ReadOnly)) {
+            qCInfo(LIB_SCANNER) << "Failed to open file:" << entry;
             return;
         }
 
@@ -390,7 +390,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
         source.archiveReader = archiveReader;
 
         if(!fileReader->init(source)) {
-            qCInfo(LIB_SCANNER) << "Unsupported file:" << entry;
+            qCDebug(LIB_SCANNER) << "Unsupported file:" << entry;
             return;
         }
 
@@ -453,7 +453,7 @@ TrackList LibraryScannerPrivate::readPlaylistTracks(const QString& path, bool ad
 
     QFile playlistFile{path};
     if(!playlistFile.open(QIODevice::ReadOnly)) {
-        qCWarning(LIB_SCANNER) << "Could not open file" << path << "for reading:" << playlistFile.errorString();
+        qCInfo(LIB_SCANNER) << "Could not open file" << path << "for reading:" << playlistFile.errorString();
         return {};
     }
 
@@ -474,7 +474,7 @@ TrackList LibraryScannerPrivate::readEmbeddedPlaylistTracks(const Track& track) 
     QByteArray bytes{cues.front().toUtf8()};
     QBuffer buffer(&bytes);
     if(!buffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCWarning(LIB_SCANNER) << "Can't open buffer for reading:" << buffer.errorString();
+        qCInfo(LIB_SCANNER) << "Can't open buffer for reading:" << buffer.errorString();
         return {};
     }
 
