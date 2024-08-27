@@ -41,13 +41,13 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
-    auto* addFiles = new QAction(tr("Add &files"), this);
+    auto* addFiles = new QAction(tr("Add &files…"), this);
     addFiles->setStatusTip(tr("Add the specified file(s) to the current playlist"));
     auto* addFilesCommand = m_actionManager->registerAction(addFiles, Constants::Actions::AddFiles);
     fileMenu->addAction(addFilesCommand, Actions::Groups::One);
     QObject::connect(addFiles, &QAction::triggered, this, &FileMenu::requestAddFiles);
 
-    auto* addFolders = new QAction(tr("Ad&d folders"), this);
+    auto* addFolders = new QAction(tr("Ad&d folders…"), this);
     addFolders->setStatusTip(tr("Add the contents of the specified directory to the current playlist"));
     auto* addFoldersCommand = m_actionManager->registerAction(addFolders, Constants::Actions::AddFolders);
     fileMenu->addAction(addFoldersCommand, Actions::Groups::One);
@@ -62,19 +62,19 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addAction(newPlaylistCommand, Actions::Groups::Two);
     QObject::connect(newPlaylist, &QAction::triggered, this, &FileMenu::requestNewPlaylist);
 
-    auto* loadPlaylist = new QAction(tr("&Load playlist"), this);
+    auto* loadPlaylist = new QAction(tr("&Load playlist…"), this);
     loadPlaylist->setStatusTip(tr("Load the playlist from the specified file"));
     auto* loadPlaylistCommand = m_actionManager->registerAction(loadPlaylist, Constants::Actions::LoadPlaylist);
     fileMenu->addAction(loadPlaylistCommand, Actions::Groups::Two);
     QObject::connect(loadPlaylist, &QAction::triggered, this, &FileMenu::requestLoadPlaylist);
 
-    auto* savePlaylist = new QAction(tr("&Save playlist"), this);
+    auto* savePlaylist = new QAction(tr("&Save playlist…"), this);
     savePlaylist->setStatusTip(tr("Save the current playlist to the specified file"));
     auto* savePlaylistCommand = m_actionManager->registerAction(savePlaylist, Constants::Actions::SavePlaylist);
     fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
     QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
 
-    auto* saveAllPlaylists = new QAction(tr("Save &all playlists"), this);
+    auto* saveAllPlaylists = new QAction(tr("Save &all playlists…"), this);
     saveAllPlaylists->setStatusTip(tr("Save all playlists to the specified location"));
     auto* saveAllPlaylistsCmd = m_actionManager->registerAction(saveAllPlaylists, Constants::Actions::SaveAllPlaylists);
     fileMenu->addAction(saveAllPlaylistsCmd, Actions::Groups::Two);
