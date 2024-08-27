@@ -161,11 +161,11 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
 
         int bytesToRead{bufferSize};
         const int bytesToEnd = endBytes - processedBytes;
-        if(bytesToEnd < bufferSize) {
+        if(bytesToEnd > 0 && bytesToEnd < bufferSize) {
             bytesToRead = bytesToEnd;
             ending      = true;
         }
-        else if(ending || bytesToRead >= endBytes) {
+        else if(ending || bytesToEnd <= 0) {
             m_data.complete = true;
             break;
         }
@@ -247,11 +247,11 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
 
         int bytesToRead{bufferSize};
         const int bytesToEnd = endBytes - processedBytes;
-        if(bytesToEnd < bufferSize) {
+        if(bytesToEnd > 0 && bytesToEnd < bufferSize) {
             bytesToRead = bytesToEnd;
             ending      = true;
         }
-        else if(ending || bytesToRead >= endBytes) {
+        else if(ending || bytesToEnd <= 0) {
             m_data.complete = true;
             break;
         }
