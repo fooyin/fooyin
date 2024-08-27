@@ -15,10 +15,10 @@
 
 ## A customisable music player
 
-fooyin is a music player built around customisation. It offers a growing list of widgets to manage and play your local 
-music collection. It's extensible using a plugin system and many widgets make use of FooScript to offer an even deeper 
-level of control.
+fooyin is a music player built around customisation. It provides a variety of widgets to help you manage and play your local collection.
 
+It's highly extensible with a plugin system and includes _FooScript_,
+a scripting language for advanced configuration of widgets.
 A layout editing mode enables the entire user interface to be customised, starting from a blank slate or a preset layout.
 
 Only Linux is supported at present, though support for other platforms is coming soon.
@@ -29,8 +29,10 @@ Only Linux is supported at present, though support for other platforms is coming
 
 ## Features
 
-* [x] Playback of: FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, Musepack, Monkey's Audio
+* [x] Playback of FLAC, MP3, MP4, Vorbis, Opus, WavPack, WAV, AIFF, Musepack, Monkey's Audio
+* [x] Playback of popular VGM and tracker module formats
 * [x] Gapless playback
+* [x] Add and play files from within archives
 * [x] Audio output and device configuration
 * [x] CUE sheet support (including embedded)
 * [x] Fully customisable layout, starting from a blank window
@@ -39,9 +41,9 @@ Only Linux is supported at present, though support for other platforms is coming
 * [x] Create and manage playlists
 * [x] Import/export playlists (M3U/M3U8)
 * [x] Extensible using a plugin system
-* [x] Tag editor
-* [x] Library tree, with support for direct playback
-* [x] Directory browser, with support for direct playback
+* [x] Tag editing
+* [x] Library tree, including directory structure view
+* [x] Directory browser
 * [x] Waveform seekbar
 * [x] MPRIS support
 
