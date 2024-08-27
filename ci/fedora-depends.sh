@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-dnf -y --allowerasing install \
+dnf -y install \
      @development-tools \
      redhat-lsb-core \
      rpmdevtools \
