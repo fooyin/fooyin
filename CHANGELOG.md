@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.1](https://github.com/fooyin/fooyin/releases/tag/v0.6.1) (2024-08-27)
+
+### Improvements
+
+* Playlist: Add file menu option to save all playlists
+* UI: Improve titles of menu entries which will open dialogs
+
+### Fixes
+
+* Playlist: Fix extensions not being automatically added when saving playlists
+* WaveBar: Fix memory leak when generating waveforms
+
 ## [0.6.0](https://github.com/fooyin/fooyin/releases/tag/v0.6.0) (2024-08-27)
 
 ## New Features

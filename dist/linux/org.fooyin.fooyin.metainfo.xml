@@ -18,13 +18,17 @@
         </p>
         <p>Features:</p>
         <ul>
-            <li>Customisable layout</li>
+            <li>Fully customisable layout, starting from a blank window</li>
             <li>Playback of most popular formats, including VGM</li>
             <li>Gapless playback</li>
             <li>Add and play files from within archives</li>
+            <li>Audio output and device configuration</li>
+            <li>CUE sheet support (including embedded)</li>
+            <li>Customisable keyboard shortcuts</li>
             <li>Filter library on any field(s)</li>
             <li>Create and manage playlists</li>
-            <li>Extend through plugins</li>
+            <li>Import/export playlists (M3U/M3U8)</li>
+            <li>Extensible using a plugin system</li>
             <li>Tag editing</li>
             <li>Library tree, including directory structure view</li>
             <li>Directory browser</li>
@@ -54,6 +58,9 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.6.1" date="2024-08-27">
+            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.6.1</url>
+        </release>
         <release version="0.6.0" date="2024-08-27">
             <url>https://github.com/ludouzi/fooyin/releases/tag/v0.6.0</url>
         </release>
