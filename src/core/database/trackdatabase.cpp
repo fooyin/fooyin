@@ -117,15 +117,15 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setTitle(q.value(3).toString());
     track.setTrackNumber(q.value(4).toString());
     track.setTrackTotal(q.value(5).toString());
-    track.setArtists(q.value(6).toString().split(u'\037'));
-    track.setAlbumArtists(q.value(7).toString().split(u'\037'));
+    track.setArtists(q.value(6).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
+    track.setAlbumArtists(q.value(7).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
     track.setAlbum(q.value(8).toString());
     track.setDiscNumber(q.value(9).toString());
     track.setDiscTotal(q.value(10).toString());
     track.setDate(q.value(11).toString());
     track.setComposer(q.value(12).toString());
     track.setPerformer(q.value(13).toString());
-    track.setGenres(q.value(14).toString().split(u'\037'));
+    track.setGenres(q.value(14).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
     track.setComment(q.value(15).toString());
     track.setCuePath(q.value(16).toString());
     track.setOffset(q.value(17).toULongLong());

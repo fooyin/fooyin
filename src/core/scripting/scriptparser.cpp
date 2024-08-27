@@ -19,6 +19,7 @@
 
 #include <core/scripting/scriptparser.h>
 
+#include <core/constants.h>
 #include <core/scripting/scriptscanner.h>
 #include <core/track.h>
 
@@ -30,7 +31,7 @@ namespace {
 QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringList& result)
 {
     QStringList listResult;
-    const QStringList values = evalExpr.value.split(QStringLiteral("\037"));
+    const QStringList values = evalExpr.value.split(QLatin1String{Fooyin::Constants::UnitSeparator});
     const bool isEmpty       = result.empty();
 
     for(const QString& value : values) {
@@ -348,8 +349,8 @@ ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto
         return {};
     }
 
-    if(result.value.contains(u"\037")) {
-        result.value = result.value.replace(QStringLiteral("\037"), QStringLiteral(", "));
+    if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
+        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
     }
 
     return result;
@@ -381,12 +382,12 @@ ScriptResult ScriptParserPrivate::evalFunctionArg(const Expression& exp, const a
         if(!subExpr.cond) {
             allPassed = false;
         }
-        if(subExpr.value.contains(u"\037")) {
+        if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             QStringList newResult;
-            const auto values = subExpr.value.split(QStringLiteral("\037"));
+            const auto values = subExpr.value.split(QLatin1String{Constants::UnitSeparator});
             std::ranges::transform(values, std::back_inserter(newResult),
                                    [&](const auto& value) { return result.value + value; });
-            result.value = newResult.join(u"\037");
+            result.value = newResult.join(QLatin1String{Constants::UnitSeparator});
         }
         else {
             result.value = result.value + subExpr.value;
@@ -415,7 +416,7 @@ ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const a
                 return result;
             }
         }
-        if(subExpr.value.contains(u"\037")) {
+        if(subExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             const QStringList evalList = evalStringList(subExpr, exprResult);
             if(!evalList.empty()) {
                 exprResult = evalList;
@@ -435,7 +436,7 @@ ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const a
         result.value = exprResult.constFirst();
     }
     else if(exprResult.size() > 1) {
-        result.value = exprResult.join(u"\037");
+        result.value = exprResult.join(QLatin1String{Constants::UnitSeparator});
     }
     return result;
 }
@@ -482,7 +483,7 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
             continue;
         }
 
-        if(evalExpr.value.contains(u"\037")) {
+        if(evalExpr.value.contains(QLatin1String{Constants::UnitSeparator})) {
             const QStringList evalList = evalStringList(evalExpr, m_currentResult);
             if(!evalList.empty()) {
                 m_currentResult = evalList;
@@ -506,7 +507,7 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
     }
 
     if(m_currentResult.size() > 1) {
-        return m_currentResult.join(u"\037");
+        return m_currentResult.join(QLatin1String{Constants::UnitSeparator});
     }
 
     return {};

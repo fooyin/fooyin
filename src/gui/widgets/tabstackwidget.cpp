@@ -79,7 +79,7 @@ void TabStackWidget::saveLayoutData(QJsonObject& layout)
     QString state;
     for(int i{0}; i < m_tabs->count(); ++i) {
         if(!state.isEmpty()) {
-            state.append(u"\037");
+            state.append(QLatin1String{Constants::UnitSeparator});
         }
         state.append(m_tabs->tabText(i));
     }
@@ -100,7 +100,7 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
     WidgetContainer::loadWidgets(widgets);
 
     const auto state         = layout.value(u"State").toString();
-    const QStringList titles = state.split(u'\037');
+    const QStringList titles = state.split(QLatin1String{Constants::UnitSeparator});
 
     for(int i{0}; const QString& title : titles) {
         if(i < m_tabs->count()) {

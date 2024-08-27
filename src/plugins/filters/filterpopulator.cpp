@@ -19,6 +19,7 @@
 
 #include "filterpopulator.h"
 
+#include <core/constants.h>
 #include <utils/crypto.h>
 
 namespace Fooyin::Filters {
@@ -77,18 +78,18 @@ void FilterPopulator::iterateTrack(const Track& track)
 {
     const QString columns = m_parser.evaluate(m_script, track);
 
-    if(columns.contains(u"\037")) {
-        const QStringList values = columns.split(QStringLiteral("\037"));
+    if(columns.contains(QLatin1String{Constants::UnitSeparator})) {
+        const QStringList values = columns.split(QLatin1String{Constants::UnitSeparator});
         QList<QStringList> colValues;
         std::ranges::transform(values, std::back_inserter(colValues),
-                               [](const QString& col) { return col.split(QStringLiteral("\036")); });
+                               [](const QString& col) { return col.split(QLatin1String{Constants::RecordSeparator}); });
         const auto nodes = getOrInsertItems(colValues);
         for(FilterItem* node : nodes) {
             addTrackToNode(track, node);
         }
     }
     else {
-        FilterItem* node = getOrInsertItem(columns.split(QStringLiteral("\036")));
+        FilterItem* node = getOrInsertItem(columns.split(QLatin1String{Constants::RecordSeparator}));
         addTrackToNode(track, node);
     }
 }

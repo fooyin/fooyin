@@ -20,6 +20,9 @@
 #pragma once
 
 namespace Fooyin::Constants {
+constexpr auto RecordSeparator = "\036";
+constexpr auto UnitSeparator   = "\037";
+
 namespace MetaData {
 constexpr auto Title           = "title";
 constexpr auto Artist          = "artist";

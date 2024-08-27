@@ -19,6 +19,7 @@
 
 #include "librarytreepopulator.h"
 
+#include <core/constants.h>
 #include <core/scripting/scriptparser.h>
 #include <core/scripting/scriptregistry.h>
 
@@ -77,7 +78,7 @@ void LibraryTreePopulatorPrivate::iterateTrack(const Track& track)
         return;
     }
 
-    const QStringList values = field.split(u'\037', Qt::SkipEmptyParts);
+    const QStringList values = field.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
     for(const QString& value : values) {
         if(value.isNull()) {
             continue;

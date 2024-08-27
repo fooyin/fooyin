@@ -526,7 +526,7 @@ ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
         result.cond  = !result.value.isEmpty();
     }
     else if(auto* strListVal = std::get_if<QStringList>(&funcRet)) {
-        result.value = strListVal->empty() ? QString{} : strListVal->join(u"\037");
+        result.value = strListVal->empty() ? QString{} : strListVal->join(QLatin1String{Constants::UnitSeparator});
         result.cond  = !result.value.isEmpty();
     }
 

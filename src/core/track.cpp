@@ -356,7 +356,7 @@ QStringList Track::uniqueArtists() const
 
 QString Track::artist() const
 {
-    return p->artists.empty() ? QString{} : p->artists.join(u"\037");
+    return p->artists.empty() ? QString{} : p->artists.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::primaryArtist() const
@@ -376,7 +376,7 @@ QString Track::primaryArtist() const
 QString Track::uniqueArtist() const
 {
     const auto uniqArtists = uniqueArtists();
-    return uniqArtists.isEmpty() ? QString{} : uniqArtists.join(u"\037");
+    return uniqArtists.isEmpty() ? QString{} : uniqArtists.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::album() const
@@ -391,7 +391,7 @@ QStringList Track::albumArtists() const
 
 QString Track::albumArtist() const
 {
-    return p->albumArtists.empty() ? QString{} : p->albumArtists.join(u"\037");
+    return p->albumArtists.empty() ? QString{} : p->albumArtists.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::primaryAlbumArtist() const
@@ -435,7 +435,7 @@ QStringList Track::genres() const
 
 QString Track::genre() const
 {
-    return p->genres.empty() ? QString{} : p->genres.join(u"\037");
+    return p->genres.empty() ? QString{} : p->genres.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::composer() const
@@ -859,7 +859,7 @@ QString Track::metaValue(const QString& name) const
         return metaMap.at(name)(*this);
     }
 
-    return extraTag(name).join(u"\037");
+    return extraTag(name).join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::techInfo(const QString& name) const
@@ -885,7 +885,7 @@ QString Track::techInfo(const QString& name) const
         return infoMap.at(name)(*this);
     }
 
-    return extraTag(name).join(u"\037");
+    return extraTag(name).join(QLatin1String{Constants::UnitSeparator});
 }
 
 void Track::setCuePath(const QString& path)

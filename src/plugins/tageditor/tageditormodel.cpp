@@ -185,8 +185,8 @@ void TagEditorModelPrivate::updateEditorValues()
     for(const auto& track : m_tracks) {
         for(const auto& [field, var] : m_fields) {
             const auto result = var(track);
-            if(result.contains(u"\037")) {
-                m_tags[field].addTrackValue(result.split(QStringLiteral("\037")));
+            if(result.contains(QLatin1String{Constants::UnitSeparator})) {
+                m_tags[field].addTrackValue(result.split(QLatin1String{Constants::UnitSeparator}));
             }
             else {
                 m_tags[field].addTrackValue(result);
@@ -195,7 +195,7 @@ void TagEditorModelPrivate::updateEditorValues()
 
         for(auto& [field, node] : m_customTags) {
             const auto result = m_scriptRegistry.value(field, track);
-            node.addTrackValue(result.value.split(u'\037'));
+            node.addTrackValue(result.value.split(QLatin1String{Constants::UnitSeparator}));
         }
     }
 }
