@@ -18,6 +18,7 @@
  */
 
 #include "guiapplication.h"
+#include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
 #include "internalguisettings.h"
 #include "mainwindow.h"
@@ -83,8 +84,6 @@
 
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
-constexpr auto LastFilePath = "Interface/LastFilePath";
-
 namespace Fooyin {
 class GuiApplicationPrivate
 {
@@ -129,6 +128,7 @@ public:
 
     void loadPlaylist() const;
     void savePlaylist() const;
+    void saveAllPlaylist() const;
 
     GuiApplication* m_self;
     Application* m_core;
@@ -270,6 +270,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, m_self, [this]() { savePlaylist(); });
+    QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, m_self, [this]() { saveAllPlaylist(); });
     QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchWindow(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
@@ -765,7 +766,8 @@ void GuiApplicationPrivate::addFiles() const
     const QStringList filters{allFilter, filesFilter};
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = m_settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+       !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
@@ -776,7 +778,7 @@ void GuiApplicationPrivate::addFiles() const
         return;
     }
 
-    m_settings->fileSet(LastFilePath, files.front());
+    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, files.front());
 
     m_playlistInteractor.filesToCurrentPlaylist(files);
 }
@@ -816,7 +818,8 @@ void GuiApplicationPrivate::loadPlaylist() const
     const QStringList filters{allFilter, playlistFilter};
 
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = m_settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+       !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
@@ -827,7 +830,7 @@ void GuiApplicationPrivate::loadPlaylist() const
         return;
     }
 
-    m_settings->fileSet(LastFilePath, files.front());
+    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, files.front());
 
     const QFileInfo info{files.front().toLocalFile()};
 
@@ -845,24 +848,29 @@ void GuiApplicationPrivate::savePlaylist() const
         = Utils::extensionsToFilterList(m_core->playlistLoader()->supportedSaveExtensions(), QStringLiteral("files"));
 
     QDir dir{QDir::homePath()};
-    if(const auto lastPath = m_settings->fileValue(LastFilePath).toString(); !lastPath.isEmpty()) {
+    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+       !lastPath.isEmpty()) {
         dir = lastPath;
     }
 
     QString selectedFilter;
-    const auto file
+    QString file
         = QFileDialog::getSaveFileName(m_mainWindow.get(), GuiApplication::tr("Save Playlist"),
                                        dir.absoluteFilePath(playlist->name()), playlistFilter, &selectedFilter);
-
     if(file.isEmpty()) {
         return;
     }
 
-    m_settings->fileSet(LastFilePath, file);
+    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, file);
 
     const QString extension = Utils::extensionFromFilter(selectedFilter);
     if(extension.isEmpty()) {
         return;
+    }
+
+    const QFileInfo info{file};
+    if(info.suffix() != extension) {
+        file.append(u"." + extension);
     }
 
     if(auto* parser = m_core->playlistLoader()->parserForExtension(extension)) {
@@ -873,7 +881,6 @@ void GuiApplicationPrivate::savePlaylist() const
             return;
         }
 
-        const QFileInfo info{playlistFile};
         const QDir playlistDir{info.absolutePath()};
         const auto pathType = static_cast<PlaylistParser::PathType>(
             m_settings->fileValue(Settings::Core::Internal::PlaylistSavePathType, 0).toInt());
@@ -882,6 +889,13 @@ void GuiApplicationPrivate::savePlaylist() const
 
         parser->savePlaylist(&playlistFile, extension, playlist->tracks(), playlistDir, pathType, writeMetadata);
     }
+}
+
+void GuiApplicationPrivate::saveAllPlaylist() const
+{
+    auto* savePlaylists = new SavePlaylistsDialog(m_core, m_mainWindow.get());
+    savePlaylists->setAttribute(Qt::WA_DeleteOnClose);
+    savePlaylists->show();
 }
 
 GuiApplication::GuiApplication(Application* core)

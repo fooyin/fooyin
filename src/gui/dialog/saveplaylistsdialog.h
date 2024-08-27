@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,26 @@
 
 #pragma once
 
-#include <QObject>
+#include <QDialog>
+
+class QComboBox;
 
 namespace Fooyin {
-class ActionManager;
+class Application;
 class SettingsManager;
 
-class FileMenu : public QObject
+class SavePlaylistsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
+    explicit SavePlaylistsDialog(Application* core, QWidget* parent = nullptr);
 
-signals:
-    void requestAddFiles();
-    void requestAddFolders();
-    void requestNewPlaylist();
-    void requestLoadPlaylist();
-    void requestSavePlaylist();
-    void requestSaveAllPlaylists();
+    void accept() override;
 
 private:
-    ActionManager* m_actionManager;
+    Application* m_core;
     SettingsManager* m_settings;
+    QComboBox* m_formats;
 };
 } // namespace Fooyin

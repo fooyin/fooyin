@@ -62,6 +62,8 @@ set(SOURCES
     dialog/exportlayoutdialog.cpp
     dialog/exportlayoutdialog.h
     dialog/propertiesdialog.cpp
+    dialog/saveplaylistsdialog.cpp
+    dialog/saveplaylistsdialog.h
     dialog/searchdialog.cpp
     dialog/searchdialog.h
     dirbrowser/dirbrowser.cpp

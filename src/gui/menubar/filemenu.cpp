@@ -74,6 +74,12 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     fileMenu->addAction(savePlaylistCommand, Actions::Groups::Two);
     QObject::connect(savePlaylist, &QAction::triggered, this, &FileMenu::requestSavePlaylist);
 
+    auto* saveAllPlaylists = new QAction(tr("Save &all playlists"), this);
+    saveAllPlaylists->setStatusTip(tr("Save all playlists to the specified location"));
+    auto* saveAllPlaylistsCmd = m_actionManager->registerAction(saveAllPlaylists, Constants::Actions::SaveAllPlaylists);
+    fileMenu->addAction(saveAllPlaylistsCmd, Actions::Groups::Two);
+    QObject::connect(saveAllPlaylists, &QAction::triggered, this, &FileMenu::requestSaveAllPlaylists);
+
     fileMenu->addSeparator();
 
     auto* quit = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);

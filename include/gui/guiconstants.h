@@ -120,6 +120,7 @@ constexpr auto NewPlaylist      = "File.NewPlaylist";
 constexpr auto RemovePlaylist   = "File.RemovePlaylist";
 constexpr auto LoadPlaylist     = "File.LoadPlaylist";
 constexpr auto SavePlaylist     = "File.SavePlaylist";
+constexpr auto SaveAllPlaylists = "File.SaveAllPlaylists";
 constexpr auto New              = "File.New";
 constexpr auto Exit             = "File.Exit";
 constexpr auto Settings         = "Edit.Settings";

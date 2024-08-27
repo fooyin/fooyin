@@ -65,6 +65,7 @@ namespace Settings::Gui::Internal {
 Q_NAMESPACE
 
 constexpr auto PlaylistCurrentPreset = "PlaylistWidget/CurrentPreset";
+constexpr auto LastFilePath          = "Interface/LastFilePath";
 
 enum GuiInternalSettings : uint32_t
 {
