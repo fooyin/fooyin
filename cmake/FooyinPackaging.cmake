@@ -43,7 +43,8 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libsdl2-2.0-0,
         libgme0,
         libopenmpt0,
-        libarchive13"
+        libarchive13,
+        libsndfile1"
 )
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
