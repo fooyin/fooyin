@@ -11,5 +11,5 @@
                 ],
     "Category" : "Audio.Output",
     "Description" : "Adds ALSA as an audio output",
-    "Url" : "https://github.com/ludouzi/fooyin"
+    "Url" : "https://github.com/fooyin/fooyin"
 }

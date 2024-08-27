@@ -17,5 +17,5 @@
                  along with Fooyin.  If not, see <http://www.gnu.org/licenses/>",
     "Category" : "Input",
     "Description" : "Decoder based on Game Music Emu",
-    "Url" : "https://github.com/ludouzi/fooyin"
+    "Url" : "https://github.com/fooyin/fooyin"
 }

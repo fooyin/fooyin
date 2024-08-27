@@ -10,7 +10,7 @@ project(
     fooyin
     VERSION 0.5.3
     DESCRIPTION "A customisable music player"
-    HOMEPAGE_URL "https://github.com/ludouzi/fooyin"
+    HOMEPAGE_URL "https://www.fooyin.org"
     LANGUAGES CXX
 )
 
