@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.6.0](https://github.com/fooyin/fooyin/releases/tag/v0.6.0) (2024-08-27)
 
 ## New Features
 
@@ -64,6 +64,7 @@
   - Add shortcut to remove current playlist ([#198](https://github.com/fooyin/fooyin/issues/198))
   - Improve display order of settings pages
   - Move several groups of settings to more suitable pages
+  - Add action to open script editor for script inputs
 * TagEditor
   - Add copy/paste
   - Add auto track number tool
@@ -78,6 +79,7 @@
   - Status Bar: Show message if in layout editing mode
   - Add action to open script in script editor for most setting pages
   - Add library menu option to optimise database
+  - Add icon for script editor dialog
 * WaveBar
   - Increase number of updates when generating waveform
   - Start playback when seeking in stopped state
@@ -141,6 +143,7 @@
   - Fix setting max rating
   - Fix display of multiple numeric field values ([#214](https://github.com/fooyin/fooyin/issues/214))
 * AutoHeaderView: Fix issues updating width for last section
+* CoverWidget: Consider DPI when scaling image ([#242](https://github.com/fooyin/fooyin/issues/242))
 * DirBrowser: Fix direct playback
 * Layout: Fix window size always being saved
 * PlaylistTabs: Switch playlist when scrolling over playlist tabs ([#240](https://github.com/fooyin/fooyin/issues/240))
@@ -148,6 +151,11 @@
 * Selection Info: Fix display of multiple album artists ([#216](https://github.com/fooyin/fooyin/issues/216))
 * Settings: Fix changing language on restart ([#176](https://github.com/fooyin/fooyin/issues/176))
 * WaveBar: Don't draw cursor when stopped
+
+## Packaging
+
+* Add libvgm as an optional git submodule
+* Add libsndfile, libopenmpt, libgme and libarchive as optional dependencies
 
 
 ## [0.5.3](https://github.com/fooyin/fooyin/releases/tag/v0.5.3) (2024-07-07)
