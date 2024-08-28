@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished">Расположение</translation>
+        <translation>&amp;Скин</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -525,7 +525,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="48"/>
         <source>Open the settings dialog</source>
-        <translation>Открыть меню настроек</translation>
+        <translation>Открыть окно настроек</translation>
     </message>
 </context>
 <context>
@@ -1103,7 +1103,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="721"/>
         <source>Multiple columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Несколько столбцов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="744"/>
@@ -1826,12 +1826,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиционирование</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="193"/>
         <source>Seek step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Шаг позиционирования</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="203"/>
@@ -2283,7 +2283,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
         <source>Open the library page in the settings dialog</source>
-        <translation>Открыть настройки библиотеки</translation>
+        <translation>Открыть окно настроек библиотеки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="79"/>
@@ -2865,12 +2865,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="132"/>
         <source>Start playback of the currently selected track on next</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести выделенный трек следующим</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="136"/>
         <source>Stop playback at the end of the current track</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить после текущего трека</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="171"/>
@@ -2901,22 +2901,22 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="64"/>
         <source>Save/restore playback state</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сохранять состояние воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="65"/>
         <source>Cursor follows playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор следует за воспроизведением</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="66"/>
         <source>Playback follows cursor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Воспроизведение следует за курсором</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="67"/>
         <source>Rewind track on previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать трек с начала</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="68"/>
@@ -2931,12 +2931,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="75"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
-        <translation type="unfinished"></translation>
+        <translation>Если текущий трек играет более 5 с, перезапустить его вместо перехода на предыдущий трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="78"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
-        <translation type="unfinished"></translation>
+        <translation>Если текущий трек в плейлисте недоступен, перейти на следующий трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="80"/>
@@ -2946,7 +2946,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
         <source>Played threshold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Порог прослушанного</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
@@ -3027,7 +3027,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер можно изменять используя также %1 в виджете.</translation>
     </message>
 </context>
 <context>
@@ -3043,7 +3043,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistbox.cpp" line="60"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключатель плейлистов</translation>
     </message>
 </context>
 <context>
@@ -3083,7 +3083,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistcolumnpage.cpp" line="75"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор скриптов</translation>
     </message>
 </context>
 <context>
@@ -3176,12 +3176,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="59"/>
         <source>First Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Впервые проиграно</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="60"/>
         <source>Last Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Последний раз проиграно</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistcolumnregistry.cpp" line="61"/>
@@ -3204,12 +3204,12 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="56"/>
         <source>Repeat</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторять</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="60"/>
         <source>Shuffle</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемешивать</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="103"/>
@@ -3219,12 +3219,12 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="104"/>
         <source>Repeat playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторять плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
         <source>Repeat track</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторять трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="77"/>
@@ -3293,12 +3293,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="97"/>
         <source>Auto-export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Автоматический экспорт</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="99"/>
         <source>Write metadata</source>
-        <translation type="unfinished"></translation>
+        <translation>Записать метаданные</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="103"/>
@@ -3323,7 +3323,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="131"/>
         <source>Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="132"/>
@@ -3333,12 +3333,12 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="134"/>
         <source>Export and synchronise playlists in the specified format and location</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт и синхронизация плейлистов в отдельном месте в собственном формате</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="174"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Лента плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="210"/>
@@ -3401,37 +3401,37 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="126"/>
         <source>New group</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая группа</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="128"/>
         <source>Create playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="152"/>
         <source>Remove the selected playlist(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенный(е) плейлист(ы)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="156"/>
         <source>Rename the selected playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать выделенный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
         <source>Create a new empty group</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новую группу</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="164"/>
         <source>Create a new empty playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="240"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер плейлистов</translation>
     </message>
 </context>
 <context>
@@ -3499,7 +3499,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="442"/>
         <source>Copy of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Копия %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="272"/>
@@ -3568,27 +3568,27 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="284"/>
         <source>Add new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить новый плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="295"/>
         <source>Rename playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="298"/>
         <source>Remove playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="313"/>
         <source>Move left</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить влево</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="318"/>
         <source>Move right</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить вправо</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="490"/>
@@ -3603,12 +3603,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="338"/>
         <source>%1 contents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 содержимое</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="148"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Лента плейлистов</translation>
     </message>
 </context>
 <context>
@@ -3672,17 +3672,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="266"/>
         <source>Start playback of the selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Воспроизвести выбранный трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="273"/>
         <source>Remove all tracks from the playlist except for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить плейлист, за исключением выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="276"/>
         <source>Stop playback at the end of the selected track</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить воспроизведение после выбранного трека</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="283"/>
@@ -3692,7 +3692,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="284"/>
         <source>Undo the previous playlist change</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить изменение в плейлисте</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="293"/>
@@ -3702,47 +3702,47 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="294"/>
         <source>Redo the previous playlist change</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуть изменение в плейлисте</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="305"/>
         <source>Cut the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="315"/>
         <source>Copy the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="325"/>
         <source>Paste the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="337"/>
         <source>Remove all tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="346"/>
         <source>Select all tracks in the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделить всё в текущем плейлисте</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="353"/>
         <source>Remove the selected tracks from the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенные треки в текущем плейлисте</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="361"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выделенные треки в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="366"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенные треки из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1367"/>
@@ -3757,22 +3757,22 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1114"/>
         <source>Reset columns to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить колонки по-умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="177"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Воспроизведение</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="178"/>
         <source>&amp;Crop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Обрезать</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="179"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Остановить после данного</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
@@ -3782,17 +3782,17 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="345"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Выделить всё</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1123"/>
         <source>Single-column mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим одного столбца</translation>
     </message>
 </context>
 <context>
@@ -3871,7 +3871,7 @@
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="169"/>
         <source>Plugins Changed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Плагины изменены</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/plugins/pluginspage.cpp" line="221"/>
@@ -3947,22 +3947,22 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="104"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенные треки из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="113"/>
         <source>Remove all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="118"/>
         <source>&amp;Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Выделить всё</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="119"/>
         <source>Select all tracks in the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделить всё в очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="79"/>
@@ -3983,7 +3983,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewerview.cpp" line="74"/>
         <source>Empty Queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь пуста</translation>
     </message>
 </context>
 <context>
@@ -4004,7 +4004,7 @@
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="51"/>
         <source>Playlist file format</source>
-        <translation type="unfinished"></translation>
+        <translation>Формат файла плейлиста</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="73"/>
@@ -4017,7 +4017,7 @@
     <message>
         <location filename="../../src/gui/scripting/scripteditor.cpp" line="286"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор скриптов</translation>
     </message>
 </context>
 <context>
@@ -4025,7 +4025,7 @@
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="41"/>
         <source>Open in script editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть в редакторе скриптов</translation>
     </message>
 </context>
 <context>
@@ -4033,7 +4033,7 @@
     <message>
         <location filename="../../src/gui/widgets/scriptlineedit.cpp" line="78"/>
         <source>Open in script editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть в редакторе скриптов</translation>
     </message>
 </context>
 <context>
@@ -4053,12 +4053,12 @@
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="134"/>
         <source>Unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Недоступно</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="160"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchcontroller.cpp" line="170"/>
@@ -4072,22 +4072,22 @@
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="67"/>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="133"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Варианты</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="121"/>
         <source>Search Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Найти плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>%1 results</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 результатов</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="136"/>
         <source>Auto-select on search</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделить найденные</translation>
     </message>
 </context>
 <context>
@@ -4101,7 +4101,7 @@
         <location filename="../../src/gui/search/searchwidget.cpp" line="58"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="155"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Варианты</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="73"/>
@@ -4111,13 +4111,13 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="158"/>
         <source>Change placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить текст подсказки</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="83"/>
         <location filename="../../src/gui/search/searchwidget.cpp" line="162"/>
         <source>Manage connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление подключениями</translation>
     </message>
 </context>
 <context>
@@ -4130,12 +4130,12 @@
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="345"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать подписи</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/seekbar.cpp" line="352"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показать сколько прошло</translation>
     </message>
 </context>
 <context>
@@ -4177,7 +4177,7 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="147"/>
         <source>Shell Integration</source>
-        <translation type="unfinished"></translation>
+        <translation>Интеграция оболочки</translation>
     </message>
 </context>
 <context>
@@ -4190,17 +4190,17 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="64"/>
         <source>File Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Типы файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="67"/>
         <source>Restrict to</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ограничить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="68"/>
         <source>Exclude</source>
-        <translation type="unfinished"></translation>
+        <translation>Исключить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="80"/>
@@ -4215,7 +4215,7 @@
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="84"/>
         <source>Sort incoming tracks by</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать полученные треки по</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shellintegrationpage.cpp" line="86"/>
@@ -4233,7 +4233,7 @@
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="234"/>
         <source>Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификатор</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/shortcuts/shortcutsmodel.cpp" line="236"/>
@@ -4309,7 +4309,7 @@
     <message>
         <location filename="../../src/gui/widgets/spacer.cpp" line="32"/>
         <source>Spacer</source>
-        <translation>Разделитель</translation>
+        <translation>Пространство</translation>
     </message>
 </context>
 <context>
@@ -4327,12 +4327,12 @@
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="311"/>
         <source>Switch orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать ориентацию</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/splitterwidget.cpp" line="314"/>
         <source>Splitter</source>
-        <translation type="unfinished"></translation>
+        <translation>Разделитель</translation>
     </message>
 </context>
 <context>
@@ -4350,12 +4350,12 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="336"/>
         <source>Show track selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Показывать выделенные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="343"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать подсказки для действий</translation>
     </message>
 </context>
 <context>
@@ -4386,27 +4386,27 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="60"/>
         <source>Show track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать выделенные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать подсказки для действий</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
         <source>Playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Проигрываемый трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="66"/>
         <source>Track selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделенный трек</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="68"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="75"/>
@@ -4432,42 +4432,42 @@
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="64"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Стопка вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="258"/>
         <source>&amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Позиция</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="262"/>
         <source>&amp;North</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Север</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="263"/>
         <source>&amp;East</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Восток</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="264"/>
         <source>&amp;South</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Юг</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="265"/>
         <source>&amp;West</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Запад</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="304"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переименовать</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="307"/>
         <source>Re&amp;move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Удалить</translation>
     </message>
 </context>
 <context>
@@ -4485,7 +4485,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="76"/>
         <source>Paste fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить поля</translation>
     </message>
 </context>
 <context>
@@ -4493,7 +4493,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="318"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструменты</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="395"/>
@@ -4508,7 +4508,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="415"/>
         <source>Auto &amp;track number</source>
-        <translation type="unfinished"></translation>
+        <translation>Автонумерация</translation>
     </message>
 </context>
 <context>
@@ -4526,7 +4526,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="54"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество циклов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="55"/>
@@ -4536,28 +4536,28 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="61"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Длительность затухания</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="44"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Настройки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="59"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>раз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="65"/>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="71"/>
         <source>ms</source>
-        <translation type="unfinished"></translation>
+        <translation>мс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="67"/>
         <source>End silence length</source>
-        <translation type="unfinished"></translation>
+        <translation>Продолжительность тишины в конце</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="84"/>
@@ -4567,12 +4567,12 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="87"/>
         <source>ROM location</source>
-        <translation type="unfinished"></translation>
+        <translation>Расположение ROM</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="89"/>
         <source>Certain files %1 require their system&apos;s ROM to play %2. Provide a directory where these can be found here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для воспроизведения некоторых файлов% 1 требуется системные ROM% 2. Укажите каталог, в котором они могут быть найдены.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
@@ -4582,7 +4582,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
         <source>Select ROM path</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать путь для ROM</translation>
     </message>
 </context>
 <context>
@@ -4590,32 +4590,32 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="38"/>
         <source>&amp;Quick setup</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Быстрая настройка</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="39"/>
         <source>Open the quick setup dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть диалог быстрой настройки</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="46"/>
         <source>&amp;Log</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Лог</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="47"/>
         <source>Open the log dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть окно лога</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="51"/>
         <source>&amp;Script editor</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Редактор скриптов</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
         <source>Open the script editor dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть окно редактора скриптов</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="56"/>
@@ -5239,7 +5239,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="202"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть диалог свойств</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="326"/>
