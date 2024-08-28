@@ -35,16 +35,22 @@ using DecoderInstances       = std::unordered_map<QString, std::unique_ptr<Audio
 using ReaderInstances        = std::unordered_map<QString, std::unique_ptr<AudioReader>>;
 using ArchiveReaderInstances = std::unordered_map<QString, std::unique_ptr<ArchiveReader>>;
 
+template <typename T>
+struct Loader
+{
+    int index{0};
+    QString name;
+    QStringList extensions;
+    bool enabled{true};
+    T creator;
+};
+
 class AudioLoaderPrivate
 {
 public:
-    std::unordered_map<QString, DecoderCreator> m_decoders;
-    std::unordered_map<QString, ReaderCreator> m_readers;
-    std::unordered_map<QString, ArchiveReaderCreator> m_archiveReaders;
-
-    std::unordered_map<QString, std::vector<QString>> m_extensionToDecoderMap;
-    std::unordered_map<QString, std::vector<QString>> m_extensionToReaderMap;
-    std::unordered_map<QString, std::vector<QString>> m_extensionToArchiveMap;
+    std::vector<Loader<DecoderCreator>> m_decoders;
+    std::vector<Loader<ReaderCreator>> m_readers;
+    std::vector<Loader<ArchiveReaderCreator>> m_archiveReaders;
 
     QThreadStorage<DecoderInstances*> m_decoderInstances;
     QThreadStorage<ReaderInstances*> m_readerInstances;
@@ -67,12 +73,15 @@ QStringList AudioLoader::supportedFileExtensions() const
 
     QStringList extensions;
 
-    for(const auto& [ext, _] : p->m_extensionToDecoderMap) {
-        extensions.emplace_back(ext);
-    }
-    for(const auto& [ext, _] : p->m_extensionToArchiveMap) {
-        extensions.emplace_back(ext);
-    }
+    auto addExtensions = [&extensions](const auto& loaders) {
+        for(const auto& loader : loaders) {
+            extensions.append(loader.extensions);
+        }
+    };
+
+    addExtensions(p->m_decoders);
+    addExtensions(p->m_readers);
+    addExtensions(p->m_archiveReaders);
 
     return extensions;
 }
@@ -90,114 +99,64 @@ bool AudioLoader::canWriteMetadata(const Track& track) const
 
 bool AudioLoader::isArchive(const QString& file) const
 {
-    const QFileInfo info{file};
+    const QString ext = QFileInfo{file}.suffix().toLower();
 
     const std::shared_lock lock{p->m_archiveReaderMutex};
-    return p->m_extensionToArchiveMap.contains(info.suffix().toLower());
+    return std::ranges::any_of(p->m_archiveReaders,
+                               [&ext](const auto& loader) { return loader.extensions.contains(ext); });
 }
 
 AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
 {
-    const QFileInfo info{file};
-
     const std::shared_lock lock{p->m_decoderMutex};
 
-    const auto extensions = info.suffix().toLower();
-    if(!p->m_extensionToDecoderMap.contains(extensions)) {
-        return nullptr;
-    }
+    const QString ext      = QFileInfo{file}.suffix().toLower();
+    const bool isInArchive = file.length() >= 9 && file.first(9) == u"unpack://";
 
-    const QString decoderName = p->m_extensionToDecoderMap.at(extensions).front();
-    if(!p->m_decoders.contains(decoderName)) {
-        return nullptr;
-    }
-
-    if(p->m_decoderInstances.hasLocalData()) {
-        auto& decoders = p->m_decoderInstances.localData();
-        if(decoders->contains(decoderName)) {
-            return decoders->at(decoderName).get();
+    for(const auto& loader : p->m_decoders) {
+        if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
+            if(p->m_decoderInstances.hasLocalData()) {
+                auto& readers = p->m_decoderInstances.localData();
+                if(readers->contains(loader.name)) {
+                    return readers->at(loader.name).get();
+                }
+                return readers->emplace(loader.name, loader.creator()).first->second.get();
+            }
+            p->m_decoderInstances.setLocalData(new DecoderInstances());
+            return p->m_decoderInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
         }
-        return decoders->emplace(decoderName, p->m_decoders.at(decoderName)()).first->second.get();
     }
 
-    p->m_decoderInstances.setLocalData(new DecoderInstances());
-
-    auto decoder = p->m_decoders.at(decoderName)();
-    return p->m_decoderInstances.localData()->emplace(decoderName, std::move(decoder)).first->second.get();
+    return nullptr;
 }
 
 AudioDecoder* AudioLoader::decoderForTrack(const Track& track) const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
-
-    const auto extensions = track.extension();
-    if(!p->m_extensionToDecoderMap.contains(extensions)) {
-        return nullptr;
-    }
-
-    QString decoderName;
-
-    if(track.isInArchive()) {
-        decoderName = QStringLiteral("Archive");
-    }
-    else {
-        decoderName = p->m_extensionToDecoderMap.at(extensions).front();
-    }
-
-    if(!p->m_decoders.contains(decoderName)) {
-        return nullptr;
-    }
-
-    if(p->m_decoderInstances.hasLocalData()) {
-        auto& decoders = p->m_decoderInstances.localData();
-        if(decoders->contains(decoderName)) {
-            return decoders->at(decoderName).get();
-        }
-        return decoders->emplace(decoderName, p->m_decoders.at(decoderName)()).first->second.get();
-    }
-
-    p->m_decoderInstances.setLocalData(new DecoderInstances());
-
-    auto decoder = p->m_decoders.at(decoderName)();
-    return p->m_decoderInstances.localData()->emplace(decoderName, std::move(decoder)).first->second.get();
+    return decoderForFile(track.filepath());
 }
 
 AudioReader* AudioLoader::readerForFile(const QString& file) const
 {
-    const QFileInfo info{file};
-
     const std::shared_lock lock{p->m_readerMutex};
 
-    const auto extensions = info.suffix().toLower();
-    if(!p->m_extensionToReaderMap.contains(extensions)) {
-        return nullptr;
-    }
+    const QString ext      = QFileInfo{file}.suffix().toLower();
+    const bool isInArchive = file.length() >= 9 && file.first(9) == u"unpack://";
 
-    QString readerName;
-
-    if(file.length() >= 9 && file.first(9) == u"unpack://") {
-        readerName = QStringLiteral("Archive");
-    }
-    else {
-        readerName = p->m_extensionToReaderMap.at(extensions).front();
-    }
-
-    if(!p->m_readers.contains(readerName)) {
-        return nullptr;
-    }
-
-    if(p->m_readerInstances.hasLocalData()) {
-        auto& readers = p->m_readerInstances.localData();
-        if(readers->contains(readerName)) {
-            return readers->at(readerName).get();
+    for(const auto& loader : p->m_readers) {
+        if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
+            if(p->m_readerInstances.hasLocalData()) {
+                auto& readers = p->m_readerInstances.localData();
+                if(readers->contains(loader.name)) {
+                    return readers->at(loader.name).get();
+                }
+                return readers->emplace(loader.name, loader.creator()).first->second.get();
+            }
+            p->m_readerInstances.setLocalData(new ReaderInstances());
+            return p->m_readerInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
         }
-        return readers->emplace(readerName, p->m_readers.at(readerName)()).first->second.get();
     }
 
-    p->m_readerInstances.setLocalData(new ReaderInstances());
-
-    auto reader = p->m_readers.at(readerName)();
-    return p->m_readerInstances.localData()->emplace(readerName, std::move(reader)).first->second.get();
+    return nullptr;
 }
 
 AudioReader* AudioLoader::readerForTrack(const Track& track) const
@@ -207,32 +166,29 @@ AudioReader* AudioLoader::readerForTrack(const Track& track) const
 
 ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
 {
-    const QFileInfo info{file};
-
     const std::shared_lock lock{p->m_archiveReaderMutex};
 
-    const auto extensions = info.suffix().toLower();
-    if(!p->m_extensionToArchiveMap.contains(extensions)) {
+    if(!isArchive(file)) {
         return nullptr;
     }
 
-    const QString readerName = p->m_extensionToArchiveMap.at(extensions).front();
-    if(!p->m_archiveReaders.contains(readerName)) {
-        return nullptr;
-    }
+    const QString ext = QFileInfo{file}.suffix().toLower();
 
-    if(p->m_archiveReaderInstances.hasLocalData()) {
-        auto& readers = p->m_archiveReaderInstances.localData();
-        if(readers->contains(readerName)) {
-            return readers->at(readerName).get();
+    for(const auto& loader : p->m_archiveReaders) {
+        if(loader.extensions.contains(ext)) {
+            if(p->m_archiveReaderInstances.hasLocalData()) {
+                auto& readers = p->m_archiveReaderInstances.localData();
+                if(readers->contains(loader.name)) {
+                    return readers->at(loader.name).get();
+                }
+                return readers->emplace(loader.name, loader.creator()).first->second.get();
+            }
+            p->m_archiveReaderInstances.setLocalData(new ArchiveReaderInstances());
+            return p->m_archiveReaderInstances.localData()->emplace(loader.name, loader.creator()).first->second.get();
         }
-        return readers->emplace(readerName, p->m_archiveReaders.at(readerName)()).first->second.get();
     }
 
-    p->m_archiveReaderInstances.setLocalData(new ArchiveReaderInstances());
-
-    auto reader = p->m_archiveReaders.at(readerName)();
-    return p->m_archiveReaderInstances.localData()->emplace(readerName, std::move(reader)).first->second.get();
+    return nullptr;
 }
 
 bool AudioLoader::readTrackMetadata(Track& track) const
@@ -327,20 +283,20 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
 
     const std::unique_lock lock{p->m_decoderMutex};
 
-    if(p->m_decoders.contains(name)) {
+    if(std::ranges::any_of(p->m_decoders, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Decoder" << name << "already registered";
         return;
     }
 
-    auto decoder    = creator();
-    const auto exts = decoder->extensions();
+    auto decoder = creator();
 
-    // TODO: Add order/priority to handle multiple decoders supporting same extensions
-    for(const auto& extension : exts) {
-        p->m_extensionToDecoderMap[extension].emplace_back(name);
-    }
+    Loader<DecoderCreator> loader;
+    loader.name       = name;
+    loader.index      = static_cast<int>(p->m_decoders.size());
+    loader.extensions = decoder->extensions();
+    loader.creator    = creator;
 
-    p->m_decoders.emplace(name, creator);
+    p->m_decoders.push_back(loader);
 }
 
 void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
@@ -352,20 +308,20 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
 
     const std::unique_lock lock{p->m_readerMutex};
 
-    if(p->m_readers.contains(name)) {
+    if(std::ranges::any_of(p->m_readers, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Reader" << name << "already registered";
         return;
     }
 
-    auto reader     = creator();
-    const auto exts = reader->extensions();
+    auto reader = creator();
 
-    // TODO: Add order/priority to handle multiple readers supporting same extensions
-    for(const auto& extension : exts) {
-        p->m_extensionToReaderMap[extension].emplace_back(name);
-    }
+    Loader<ReaderCreator> loader;
+    loader.name       = name;
+    loader.index      = static_cast<int>(p->m_readers.size());
+    loader.extensions = reader->extensions();
+    loader.creator    = creator;
 
-    p->m_readers.emplace(name, creator);
+    p->m_readers.push_back(loader);
 }
 
 void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreator& creator)
@@ -377,20 +333,20 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
 
     const std::unique_lock lock{p->m_archiveReaderMutex};
 
-    if(p->m_archiveReaders.contains(name)) {
+    if(std::ranges::any_of(p->m_archiveReaders, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Reader" << name << "already registered";
         return;
     }
 
-    auto reader     = creator();
-    const auto exts = reader->extensions();
+    auto reader = creator();
 
-    // TODO: Add order/priority to handle multiple readers supporting same extensions
-    for(const auto& extension : exts) {
-        p->m_extensionToArchiveMap[extension].emplace_back(name);
-    }
+    Loader<ArchiveReaderCreator> loader;
+    loader.name       = name;
+    loader.index      = static_cast<int>(p->m_archiveReaders.size());
+    loader.extensions = reader->extensions();
+    loader.creator    = creator;
 
-    p->m_archiveReaders.emplace(name, creator);
+    p->m_archiveReaders.push_back(loader);
 }
 
 void AudioLoader::destroyThreadInstance()
