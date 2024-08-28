@@ -175,7 +175,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
 
     QString readerName;
 
-    if(file.first(9) == u"unpack://") {
+    if(file.length() >= 9 && file.first(9) == u"unpack://") {
         readerName = QStringLiteral("Archive");
     }
     else {
