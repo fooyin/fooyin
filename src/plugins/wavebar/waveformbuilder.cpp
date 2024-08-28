@@ -75,8 +75,8 @@ void WaveformBuilder::generate(const Track& track, bool update)
 {
     m_rescale = false;
 
-    QMetaObject::invokeMethod(&m_generator,
-                              [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, update); });
+    QMetaObject::invokeMethod(
+        &m_generator, [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, false, update); });
 }
 
 void WaveformBuilder::generateAndScale(const Track& track, bool update)
@@ -86,7 +86,7 @@ void WaveformBuilder::generateAndScale(const Track& track, bool update)
     m_rescale = true;
 
     QMetaObject::invokeMethod(
-        &m_generator, [this, track, update]() { m_generator.generateAndRender(track, m_samplesPerChannel, update); });
+        &m_generator, [this, track, update]() { m_generator.generate(track, m_samplesPerChannel, true, update); });
 }
 
 void WaveformBuilder::rescale(const int width)
