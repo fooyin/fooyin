@@ -90,7 +90,7 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="40"/>
         <source>Buffer length</source>
-        <translation type="unfinished">Длина буфера</translation>
+        <translation>Размер буфера</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="41"/>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="232"/>
         <source>&amp;Play</source>
-        <translation>&amp;Воспроизведение</translation>
+        <translation>&amp;Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="233"/>
@@ -632,7 +632,7 @@
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
-        <translation>Изменить имя  %1</translation>
+        <translation>Изменить %1 Имя</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="73"/>
@@ -1545,7 +1545,7 @@
         <location filename="../../src/gui/guiapplication.cpp" line="468"/>
         <location filename="../../src/gui/guiapplication.cpp" line="499"/>
         <source>Tagging</source>
-        <translation type="unfinished">Пометка</translation>
+        <translation>Тэги</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="502"/>
@@ -2626,7 +2626,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="256"/>
         <source>&amp;Play</source>
-        <translation>&amp;Воспроизведение</translation>
+        <translation>&amp;Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="288"/>
@@ -2759,7 +2759,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
         <source>&amp;Play</source>
-        <translation>&amp;Воспроизведение</translation>
+        <translation>&amp;Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="50"/>
@@ -3473,7 +3473,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="231"/>
         <source>Clone</source>
-        <translation>Копировать</translation>
+        <translation>Клонировать</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistpresetspage.cpp" line="247"/>
@@ -3762,7 +3762,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="177"/>
         <source>&amp;Play</source>
-        <translation>&amp;Воспроизведение</translation>
+        <translation>&amp;Играть</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="178"/>
@@ -4661,7 +4661,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="207"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>WaveBar</translation>
     </message>
 </context>
 <context>
@@ -4674,17 +4674,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="95"/>
         <source>Unplayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Не проигрываемый</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="96"/>
         <source>Played</source>
-        <translation type="unfinished"></translation>
+        <translation>Проигрываемый</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="97"/>
         <source>Border</source>
-        <translation type="unfinished"></translation>
+        <translation>Рамка</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="98"/>
@@ -4694,22 +4694,22 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
         <source>Min</source>
-        <translation type="unfinished"></translation>
+        <translation>Минимум</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="101"/>
         <source>RMS Max</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Макс.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="102"/>
         <source>RMS Min</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS Мин.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="103"/>
@@ -4719,12 +4719,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="104"/>
         <source>Seeking</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиционирование</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="105"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор</translation>
     </message>
 </context>
 <context>
@@ -4732,7 +4732,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="92"/>
         <source>Waveform Seekbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Waveform панель перемотки</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="93"/>
@@ -4747,17 +4747,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="100"/>
         <source>Regenerate waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation>Пересоздать данные волны</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="104"/>
         <source>Generate missing waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Генерировать отсутствующие данные</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="108"/>
         <source>Remove waveform data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Удалить данные</translation>
     </message>
 </context>
 <context>
@@ -4775,7 +4775,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="322"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation>WaveBar</translation>
     </message>
 </context>
 <context>
@@ -4783,12 +4783,12 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="82"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="84"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Выключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="85"/>
@@ -4803,77 +4803,77 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="81"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин/Макс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="83"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Тишина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="87"/>
         <source>Show progress cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="99"/>
         <source>Cursor width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина курсора</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="100"/>
         <source>Bar width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина панели</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="101"/>
         <source>Bar gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Зазор между прутками</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="102"/>
         <source>Max scale</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Максимальный масштаб</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="103"/>
         <source>Centre gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Центральный зазор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="133"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="136"/>
         <source>Draw a line in place of silence</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Рисовать черту вместо тишины</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="142"/>
         <source>Channel scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб канала</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="144"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Даунмикс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="156"/>
         <source>Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="164"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Шкала</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="174"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>Величина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="186"/>
@@ -4883,7 +4883,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="196"/>
         <source>Number of samples</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество сэмплов</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="197"/>
@@ -4891,7 +4891,10 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество выборок (на канал) для использования
+для данных формы волны. Более высокие значения приведут
+к более точной и подробной форме волны за счет
+использования большего дискового пространства в кэше.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="314"/>
@@ -4909,47 +4912,47 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="148"/>
         <source>Show cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать курсор</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="154"/>
         <source>Show labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать подписи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="163"/>
         <source>Show elapsed total</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать общее количество</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="171"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="173"/>
         <source>Min/Max</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин/Макс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="174"/>
         <source>RMS</source>
-        <translation type="unfinished"></translation>
+        <translation>RMS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="175"/>
         <source>Silence</source>
-        <translation type="unfinished"></translation>
+        <translation>Тишина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="208"/>
         <source>Downmix</source>
-        <translation type="unfinished"></translation>
+        <translation>Даунмикс</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="211"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Выключено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="212"/>
@@ -4995,17 +4998,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="111"/>
         <source>Playlist Switcher</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключатель плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="124"/>
         <source>Playlist Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Лента плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="130"/>
         <source>Playlist Organiser</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер плейлистов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="138"/>
@@ -5015,7 +5018,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="143"/>
         <source>Tab Stack</source>
-        <translation type="unfinished"></translation>
+        <translation>Стопка вкладок</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="152"/>
@@ -5053,7 +5056,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="179"/>
         <source>Selection Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о выделенном треке</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="187"/>
@@ -5063,7 +5066,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="191"/>
         <source>Lyrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст песни</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="199"/>
@@ -5098,22 +5101,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="273"/>
         <source>Scanning files</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="276"/>
         <source>Scanning tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="279"/>
         <source>Scanning %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="282"/>
         <source>Loading playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка плейлиста</translation>
     </message>
 </context>
 <context>
@@ -5121,22 +5124,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Использование</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>options</source>
-        <translation type="unfinished"></translation>
+        <translation>параметры</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>urls</source>
-        <translation type="unfinished"></translation>
+        <translation>адреса</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="62"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры</translation>
     </message>
     <message>
         <location filename="../../src/app/commandline.cpp" line="63"/>
@@ -5156,7 +5159,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/app/commandline.cpp" line="64"/>
         <source>Files to open</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы для открытия</translation>
     </message>
 </context>
 <context>
@@ -5189,12 +5192,12 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="120"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="121"/>
         <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть содержащую файл папку</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
@@ -5204,37 +5207,37 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранные треки в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="136"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранные треки в активный плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="141"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить содержимое текущего плейлиста на выбранные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="150"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новый плейлист из выбранных треков</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="164"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выделенные треки в очередь воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="174"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выделенные треки из очереди воспроизведения</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="185"/>
         <source>Open the directory containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть папку, содержащую выбранные треки</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="202"/>
