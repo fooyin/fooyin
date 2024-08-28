@@ -502,7 +502,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Enter layout editing mode to edit</source>
-        <translation>Зайдите в режим редактирования скина для редактирования</translation>
+        <translation>Зайдите в режим редактирования оформления для изменения</translation>
     </message>
 </context>
 <context>
@@ -668,7 +668,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="44"/>
         <source>Export Layout</source>
-        <translation>Экспорт скина</translation>
+        <translation>Экспорт оформления</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="53"/>
@@ -693,22 +693,22 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="99"/>
         <source>Failed to save the current layout</source>
-        <translation>Не удалось сохранить текущий скин</translation>
+        <translation>Не удалось сохранить текущее оформление</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="112"/>
         <source>Failed to export layout</source>
-        <translation>Ошибка экспорта скина</translation>
+        <translation>Ошибка экспорта оформления</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
         <source>Save Layout</source>
-        <translation>Сохранить скин</translation>
+        <translation>Сохранить оформление</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="119"/>
         <source>%1 Layout %2</source>
-        <translation>%1 Скин %2</translation>
+        <translation>%1 Оформление %2</translation>
     </message>
 </context>
 <context>
@@ -1776,12 +1776,12 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
         <source>Import Layout</source>
-        <translation>Импорт скина</translation>
+        <translation>Импорт оформления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
         <source>Export Layout</source>
-        <translation>Экспорт скина</translation>
+        <translation>Экспорт оформления</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
@@ -1801,7 +1801,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="148"/>
         <source>Layout</source>
-        <translation>Скин</translation>
+        <translation>Оформление</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="166"/>
@@ -2101,32 +2101,32 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="52"/>
         <source>Toggle layout editing mode</source>
-        <translation>Переключить в режим редактирования скина</translation>
+        <translation>Переключить в режим редактирования оформления</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="65"/>
         <source>&amp;Import layout…</source>
-        <translation>&amp;Импортировать скин …</translation>
+        <translation>&amp;Импортировать оформление …</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="66"/>
         <source>Add the layout from the specified file</source>
-        <translation>Добавить скин из указанного файла</translation>
+        <translation>Добавить оформление из указанного файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="68"/>
         <source>E&amp;xport layout…</source>
-        <translation>&amp;Экспортировать скин …</translation>
+        <translation>&amp;Экспортировать оформление …</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="69"/>
         <source>Save the current layout to the specified file</source>
-        <translation>Сохранить текущий скин в указанный файл</translation>
+        <translation>Сохранить текущее оформление в указанный файл</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="93"/>
         <source>Replace the current layout</source>
-        <translation>Заменить текущий скин</translation>
+        <translation>Заменить текущее оформление</translation>
     </message>
 </context>
 <context>
@@ -2134,32 +2134,32 @@
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="244"/>
         <source>Open Layout</source>
-        <translation>Открыть файл скина</translation>
+        <translation>Открыть оформление</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="244"/>
         <source>%1 Layout</source>
-        <translation>Скин %1</translation>
+        <translation>Оформление %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="252"/>
         <source>Invalid Layout</source>
-        <translation>Некорректный файл скина</translation>
+        <translation>Некорректное оформление</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="252"/>
         <source>Layout could not be imported.</source>
-        <translation>Скин не может быть импортирован.</translation>
+        <translation>Оформление не может быть импортировано.</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="258"/>
         <source>Replace existing layout?</source>
-        <translation>Заменить существующий скин?</translation>
+        <translation>Заменить оформление?</translation>
     </message>
     <message>
         <location filename="../../src/gui/layoutprovider.cpp" line="259"/>
         <source>Unless exported, the current layout will be lost.</source>
-        <translation>Текущий скин будет потерян, если не экспортирован.</translation>
+        <translation>Текущий оформление будет потеряно, если оно не было экспортировано.</translation>
     </message>
 </context>
 <context>
@@ -2680,7 +2680,7 @@
     <message>
         <location filename="../../src/gui/mainwindow.cpp" line="140"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования скина</translation>
+        <translation>Режим редактирования оформления</translation>
     </message>
 </context>
 <context>
@@ -4419,7 +4419,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="221"/>
         <source>Layout Editing Mode</source>
-        <translation>Режим редактирования скина</translation>
+        <translation>Режим редактирования оформления</translation>
     </message>
 </context>
 <context>
