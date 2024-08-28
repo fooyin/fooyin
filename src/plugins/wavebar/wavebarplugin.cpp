@@ -98,14 +98,17 @@ void WaveBarPlugin::initialise(const GuiPluginContext& context)
     selectionMenu->addMenu(utilitiesMenu);
 
     auto* regenerate = new QAction(tr("Regenerate waveform data"), this);
+    regenerate->setStatusTip(tr("Regenerate waveform data for the selected tracks"));
     QObject::connect(regenerate, &QAction::triggered, this, [this]() { regenerateSelection(); });
     utilitiesMenu->addAction(regenerate);
 
     auto* regenerateMissing = new QAction(tr("Generate missing waveform data"), this);
+    regenerateMissing->setStatusTip(tr("Generate waveform data for the selected tracks if missing"));
     QObject::connect(regenerateMissing, &QAction::triggered, this, [this]() { regenerateSelection(true); });
     utilitiesMenu->addAction(regenerateMissing);
 
     auto* removeData = new QAction(tr("Remove waveform data"), this);
+    removeData->setStatusTip(tr("Remove any existing waveform data for the selected tracks"));
     QObject::connect(removeData, &QAction::triggered, this, &WaveBarPlugin::removeSelection);
     utilitiesMenu->addAction(removeData);
 }
@@ -145,8 +148,7 @@ void WaveBarPlugin::regenerateSelection(bool onlyMissing) const
     }
 
     const auto total = static_cast<int>(selectedTracks.size());
-    auto* dialog
-        = new QProgressDialog(QStringLiteral("Generating waveform data…"), QStringLiteral("Abort"), 0, total, nullptr);
+    auto* dialog     = new QProgressDialog(tr("Generating waveform data…"), tr("Abort"), 0, total, nullptr);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
     dialog->setMinimumDuration(500);
