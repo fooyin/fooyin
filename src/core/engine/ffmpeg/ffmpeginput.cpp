@@ -761,8 +761,7 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 
 QStringList FFmpegReader::extensions() const
 {
-    static const QStringList extensions{QStringLiteral("mka")};
-    return extensions;
+    return fileExtensions();
 }
 
 bool FFmpegReader::canReadCover() const
