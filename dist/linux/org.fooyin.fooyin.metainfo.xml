@@ -41,52 +41,52 @@
       <binary>fooyin</binary>
     </provides>
     <content_rating type="oars-1.1" />
-    <url type="homepage">https://github.com/ludouzi/fooyin</url>
-    <url type="bugtracker">https://github.com/ludouzi/fooyin/issues</url>
+    <url type="homepage">https://fooyin.org</url>
+    <url type="bugtracker">https://github.com/fooyin/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/simple.png</image>
+            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/simple.png</image>
             <caption>Simple layout</caption>
         </screenshot>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/obsidian.png</image>
+            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/obsidian.png</image>
             <caption>Obsidian layout</caption>
         </screenshot>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/viewer-dark.png</image>
+            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/viewer-dark.png</image>
             <caption>Custom layout with Breeze dark</caption>
         </screenshot>
     </screenshots>
     <releases>
         <release version="0.6.1" date="2024-08-27">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.6.1</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.1</url>
         </release>
         <release version="0.6.0" date="2024-08-27">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.6.0</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.0</url>
         </release>
         <release version="0.5.3" date="2024-07-07">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.5.3</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.3</url>
         </release>
         <release version="0.5.2" date="2024-07-07">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.5.2</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.2</url>
         </release>
         <release version="0.5.1" date="2024-06-29">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.5.1</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.1</url>
         </release>
         <release version="0.5.0" date="2024-06-28">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.5.0</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.5.0</url>
         </release>
         <release version="0.4.5" date="2024-06-05">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.5</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.5</url>
         </release>
         <release version="0.4.4" date="2024-06-04">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.4</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.4</url>
         </release>
         <release version="0.4.3" date="2024-05-23">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.3</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.3</url>
         </release>
         <release version="0.4.2" date="2024-05-16">
-            <url>https://github.com/ludouzi/fooyin/releases/tag/v0.4.2</url>
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.4.2</url>
         </release>
     </releases>
     <translation type="qt">fooyin</translation>
