@@ -385,7 +385,7 @@ TrackList LibraryScannerPrivate::readArchiveTracks(const QString& filepath) cons
         }
 
         AudioSource source;
-        source.filepath      = filepath;
+        source.filepath      = entry;
         source.device        = device;
         source.archiveReader = archiveReader;
 
