@@ -37,7 +37,10 @@ void DecoderModel::setup(const LoaderVariant& loaders)
 
     m_loaders = loaders;
     std::visit(
-        [](auto& loaders) { std::erase_if(loaders, [](const auto& loader) { return loader.name == u"Archive"; }); },
+        [](auto& currLoaders) {
+            // Archive loader is a special case which shouldn't be disabled
+            std::erase_if(currLoaders, [](const auto& loader) { return loader.name == u"Archive"; });
+        },
         m_loaders);
 
     endResetModel();
@@ -168,11 +171,11 @@ bool DecoderModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
 
         auto handleDrop = [&selected, &row](auto& loaders) {
             for(const QString& loaderName : selected) {
-                auto loader = std::find_if(loaders.begin(), loaders.end(),
-                                           [&](const auto& loader) { return loader.name == loaderName; });
+                auto loaderIt = std::find_if(loaders.begin(), loaders.end(),
+                                             [&](const auto& loader) { return loader.name == loaderName; });
 
-                if(loader != loaders.end()) {
-                    const int currentIndex = static_cast<int>(std::distance(loaders.begin(), loader));
+                if(loaderIt != loaders.end()) {
+                    const int currentIndex = static_cast<int>(std::distance(loaders.begin(), loaderIt));
                     const int newIndex     = row > currentIndex ? row - 1 : row;
                     Utils::move(loaders, currentIndex, newIndex);
                     ++row;
