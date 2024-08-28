@@ -84,6 +84,8 @@ QVariant DecoderModel::data(const QModelIndex& index, int role) const
         switch(role) {
             case(Qt::DisplayRole):
                 return loader.name;
+            case(Qt::ToolTipRole):
+                return QStringLiteral("%1: %2").arg(tr("Supported extensions")).arg(loader.extensions.join(u", "));
             case(Qt::CheckStateRole):
                 return loader.enabled ? Qt::Checked : Qt::Unchecked;
             default:
