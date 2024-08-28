@@ -119,7 +119,7 @@ void WaveformGenerator::initialiseThread()
     m_waveDb.initialiseDatabase();
 }
 
-void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool update)
+void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool render, bool update)
 {
     if(closing()) {
         return;
@@ -133,92 +133,22 @@ void WaveformGenerator::generate(const Track& track, int samplesPerChannel, bool
     setState(Running);
 
     if(!update && m_waveDb.existsInCache(trackKey)) {
-        setState(Idle);
-        emit waveformGenerated({});
-        return;
-    }
+        if(render) {
+            WaveformData<int16_t> data;
+            if(m_waveDb.loadCachedData(trackKey, data)) {
+                const auto floatData = convertCache<float>(data);
+                m_data.channelData   = floatData.channelData;
+                m_data.complete      = true;
 
-    emit generatingWaveform();
-
-    const int bps               = m_format.bytesPerFrame();
-    const uint64_t durationSecs = m_data.duration / 1000;
-    const int samples           = static_cast<int>(durationSecs * m_format.sampleRate()) / bps * bps;
-    const int samplesPerBuffer  = static_cast<int>(static_cast<double>(samples) / samplesPerChannel) / bps * bps;
-
-    int processedBytes{0};
-    bool ending{false};
-    const int bufferSize = samplesPerBuffer * bps;
-    const int endBytes   = m_format.bytesForDuration(track.duration());
-
-    m_decoder->start();
-    m_decoder->seek(track.offset());
-
-    while(true) {
-        if(!mayRun()) {
-            m_decoder->stop();
-            return;
+                setState(Idle);
+                emit waveformGenerated(m_data);
+            }
         }
-
-        int bytesToRead{bufferSize};
-        const int bytesToEnd = endBytes - processedBytes;
-        if(bytesToEnd > 0 && bytesToEnd < bufferSize) {
-            bytesToRead = bytesToEnd;
-            ending      = true;
-        }
-        else if(ending || bytesToEnd <= 0) {
-            m_data.complete = true;
-            break;
-        }
-
-        auto buffer = m_decoder->readBuffer(static_cast<size_t>(bytesToRead));
-        if(!buffer.isValid()) {
-            m_data.complete = true;
-            break;
-        }
-
-        processedBytes += buffer.byteCount();
-        buffer = Audio::convert(buffer, m_requiredFormat);
-        processBuffer(buffer);
-    }
-
-    m_decoder->stop();
-
-    if(!m_waveDb.storeInCache(trackKey, convertCache<int16_t>(m_data))) {
-        qCWarning(WAVEBAR) << "Unable to store waveform for track:" << m_track.filepath();
-    }
-
-    if(!closing()) {
-        setState(Idle);
-    }
-
-    emit waveformGenerated(m_data);
-}
-
-void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChannel, bool update)
-{
-    if(closing()) {
-        return;
-    }
-
-    const QString trackKey = setup(track, samplesPerChannel);
-    if(trackKey.isEmpty()) {
-        return;
-    }
-
-    setState(Running);
-
-    if(!update && m_waveDb.existsInCache(trackKey)) {
-        WaveformData<int16_t> data;
-        if(m_waveDb.loadCachedData(trackKey, data)) {
-            const auto floatData = convertCache<float>(data);
-            m_data.channelData   = floatData.channelData;
-            m_data.complete      = true;
-
+        else {
             setState(Idle);
-            emit waveformGenerated(m_data);
-
-            return;
+            emit waveformGenerated({});
         }
+        return;
     }
 
     emit generatingWaveform();
@@ -266,7 +196,7 @@ void WaveformGenerator::generateAndRender(const Track& track, int samplesPerChan
         buffer = Audio::convert(buffer, m_requiredFormat);
         processBuffer(buffer);
 
-        if(processedCount++ == updateThreshold) {
+        if(render && processedCount++ == updateThreshold) {
             processedCount = 0;
             emit waveformGenerated(m_data);
         }

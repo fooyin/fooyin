@@ -50,8 +50,7 @@ signals:
 
 public slots:
     void initialiseThread() override;
-    void generate(const Fooyin::Track& track, int samplesPerChannel, bool update = false);
-    void generateAndRender(const Fooyin::Track& track, int samplesPerChannel, bool update = false);
+    void generate(const Fooyin::Track& track, int samplesPerChannel, bool render, bool update = false);
 
 private:
     QString setup(const Track& track, int samplesPerChannel);
