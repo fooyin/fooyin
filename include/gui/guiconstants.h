@@ -176,8 +176,9 @@ constexpr auto QueueTracks   = "application/x-fooyin-queuetracks";
 
 namespace Page {
 constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
-constexpr auto Engine             = "Fooyin.Page.Engine";
 constexpr auto Playback           = "Fooyin.Page.Playback";
+constexpr auto Output             = "Fooyin.Page.Playback.Output";
+constexpr auto Decoding           = "Fooyin.Page.Playback.Decoding";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";

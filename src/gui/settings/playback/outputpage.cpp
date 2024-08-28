@@ -255,7 +255,7 @@ void OutputPageWidget::setupDevices(const QString& output)
 OutputPage::OutputPage(EngineController* engine, SettingsManager* settings, QObject* parent)
     : SettingsPage{settings->settingsDialog(), parent}
 {
-    setId(Constants::Page::Engine);
+    setId(Constants::Page::Output);
     setName(tr("General"));
     setCategory({tr("Playback"), tr("Output")});
     setWidgetCreator([engine, settings] { return new OutputPageWidget(engine, settings); });

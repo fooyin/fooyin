@@ -44,6 +44,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreegrouppage.h"
 #include "settings/librarytree/librarytreepage.h"
+#include "settings/playback/decoderpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
 #include "settings/playlist/playlistcolumnpage.h"
@@ -248,6 +249,7 @@ void Widgets::registerPages()
     new ShellIntegrationPage(m_settings, this);
     new ShortcutsPage(m_gui.actionManager, m_settings, this);
     new OutputPage(m_core->engine(), m_settings, this);
+    new DecoderPage(m_core->audioLoader().get(), m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui.actionManager, m_libraryTreeController->groupRegistry(), m_settings, this);

@@ -145,6 +145,7 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     setupConnections();
     loadPlugins();
 
+    m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
 }
 
@@ -425,6 +426,7 @@ void Application::shutdown()
 
     p->m_playlistHandler->savePlaylists();
     p->m_pluginManager.unloadPlugins();
+    p->m_audioLoader->saveState();
     p->m_settings->storeSettings();
     p->m_library->cleanupTracks();
 }

@@ -19,6 +19,7 @@
 
 #include <core/engine/audioloader.h>
 
+#include <core/coresettings.h>
 #include <core/track.h>
 
 #include <QFileInfo>
@@ -30,27 +31,23 @@
 
 Q_LOGGING_CATEGORY(AUD_LDR, "fy.audioloader")
 
+constexpr auto DecoderState = "Engine/DecoderState";
+constexpr auto ReaderState  = "Engine/ReaderState";
+
 namespace Fooyin {
 using DecoderInstances       = std::unordered_map<QString, std::unique_ptr<AudioDecoder>>;
 using ReaderInstances        = std::unordered_map<QString, std::unique_ptr<AudioReader>>;
 using ArchiveReaderInstances = std::unordered_map<QString, std::unique_ptr<ArchiveReader>>;
 
-template <typename T>
-struct Loader
-{
-    int index{0};
-    QString name;
-    QStringList extensions;
-    bool enabled{true};
-    T creator;
-};
-
 class AudioLoaderPrivate
 {
 public:
-    std::vector<Loader<DecoderCreator>> m_decoders;
-    std::vector<Loader<ReaderCreator>> m_readers;
-    std::vector<Loader<ArchiveReaderCreator>> m_archiveReaders;
+    std::vector<AudioLoader::LoaderEntry<DecoderCreator>> m_defaultDecoders;
+    std::vector<AudioLoader::LoaderEntry<ReaderCreator>> m_defaultReaders;
+
+    std::vector<AudioLoader::LoaderEntry<DecoderCreator>> m_decoders;
+    std::vector<AudioLoader::LoaderEntry<ReaderCreator>> m_readers;
+    std::vector<AudioLoader::LoaderEntry<ArchiveReaderCreator>> m_archiveReaders;
 
     QThreadStorage<DecoderInstances*> m_decoderInstances;
     QThreadStorage<ReaderInstances*> m_readerInstances;
@@ -64,6 +61,59 @@ public:
 AudioLoader::AudioLoader()
     : p{std::make_unique<AudioLoaderPrivate>()}
 { }
+
+void AudioLoader::saveState()
+{
+    FySettings settings;
+
+    auto saveLoaders = [&settings](auto& loaders, const char* state) {
+        QByteArray data;
+        QDataStream stream{&data, QIODevice::WriteOnly};
+
+        stream << static_cast<qsizetype>(loaders.size());
+        for(const auto& loader : loaders) {
+            stream << loader.name << loader.index << loader.enabled;
+        }
+
+        settings.setValue(QLatin1String{state}, data);
+    };
+
+    saveLoaders(p->m_decoders, DecoderState);
+    saveLoaders(p->m_readers, ReaderState);
+}
+
+void AudioLoader::restoreState()
+{
+    const FySettings settings;
+
+    auto restoreLoaders = [&settings](auto& loaders, const char* state) {
+        QByteArray data = settings.value(QLatin1String{state}, {}).toByteArray();
+        QDataStream stream{&data, QIODevice::ReadOnly};
+
+        qsizetype size{0};
+        stream >> size;
+
+        while(size > 0) {
+            --size;
+            QString name;
+            int index{0};
+            bool enabled{true};
+
+            stream >> name >> index >> enabled;
+
+            auto loaderIt = std::ranges::find_if(loaders, [&name](const auto& loader) { return loader.name == name; });
+            if(loaderIt != loaders.end()) {
+                loaderIt->index   = index;
+                loaderIt->enabled = enabled;
+            }
+        }
+    };
+
+    p->m_defaultDecoders = p->m_decoders;
+    restoreLoaders(p->m_decoders, DecoderState);
+    p->m_defaultReaders = p->m_readers;
+    restoreLoaders(p->m_readers, ReaderState);
+}
 
 AudioLoader::~AudioLoader() = default;
 
@@ -114,6 +164,9 @@ AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
     const bool isInArchive = file.length() >= 9 && file.first(9) == u"unpack://";
 
     for(const auto& loader : p->m_decoders) {
+        if(!loader.enabled) {
+            continue;
+        }
         if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
             if(p->m_decoderInstances.hasLocalData()) {
                 auto& readers = p->m_decoderInstances.localData();
@@ -143,6 +196,9 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
     const bool isInArchive = file.length() >= 9 && file.first(9) == u"unpack://";
 
     for(const auto& loader : p->m_readers) {
+        if(!loader.enabled) {
+            continue;
+        }
         if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
             if(p->m_readerInstances.hasLocalData()) {
                 auto& readers = p->m_readerInstances.localData();
@@ -175,6 +231,9 @@ ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
     const QString ext = QFileInfo{file}.suffix().toLower();
 
     for(const auto& loader : p->m_archiveReaders) {
+        if(!loader.enabled) {
+            continue;
+        }
         if(loader.extensions.contains(ext)) {
             if(p->m_archiveReaderInstances.hasLocalData()) {
                 auto& readers = p->m_archiveReaderInstances.localData();
@@ -290,7 +349,7 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
 
     auto decoder = creator();
 
-    Loader<DecoderCreator> loader;
+    LoaderEntry<DecoderCreator> loader;
     loader.name       = name;
     loader.index      = static_cast<int>(p->m_decoders.size());
     loader.extensions = decoder->extensions();
@@ -315,7 +374,7 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
 
     auto reader = creator();
 
-    Loader<ReaderCreator> loader;
+    LoaderEntry<ReaderCreator> loader;
     loader.name       = name;
     loader.index      = static_cast<int>(p->m_readers.size());
     loader.extensions = reader->extensions();
@@ -340,13 +399,52 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
 
     auto reader = creator();
 
-    Loader<ArchiveReaderCreator> loader;
+    LoaderEntry<ArchiveReaderCreator> loader;
     loader.name       = name;
     loader.index      = static_cast<int>(p->m_archiveReaders.size());
     loader.extensions = reader->extensions();
     loader.creator    = creator;
 
     p->m_archiveReaders.push_back(loader);
+}
+
+std::vector<AudioLoader::LoaderEntry<DecoderCreator>> AudioLoader::decoders() const
+{
+    return p->m_decoders;
+}
+
+std::vector<AudioLoader::LoaderEntry<ReaderCreator>> AudioLoader::readers() const
+{
+    return p->m_readers;
+}
+
+std::vector<AudioLoader::LoaderEntry<ArchiveReaderCreator>> AudioLoader::archiveReaders() const
+{
+    return p->m_archiveReaders;
+}
+
+void AudioLoader::updateDecoders(const std::vector<LoaderEntry<DecoderCreator>>& decoders)
+{
+    p->m_decoders = decoders;
+}
+
+void AudioLoader::updateReaders(const std::vector<LoaderEntry<ReaderCreator>>& readers)
+{
+    p->m_readers = readers;
+}
+
+void AudioLoader::updateArchiveReaders(const std::vector<LoaderEntry<ArchiveReaderCreator>>& readers)
+{
+    p->m_archiveReaders = readers;
+}
+
+void AudioLoader::reset()
+{
+    FySettings settings;
+    settings.remove(QLatin1String{DecoderState});
+    settings.remove(QLatin1String{ReaderState});
+    p->m_decoders = p->m_defaultDecoders;
+    p->m_readers  = p->m_defaultReaders;
 }
 
 void AudioLoader::destroyThreadInstance()

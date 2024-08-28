@@ -210,6 +210,10 @@ set(SOURCES
     settings/librarytree/librarytreepage.h
     settings/librarytree/librarytreegrouppage.cpp
     settings/librarytree/librarytreegrouppage.h
+    settings/playback/decodermodel.cpp
+    settings/playback/decodermodel.h
+    settings/playback/decoderpage.cpp
+    settings/playback/decoderpage.h
     settings/playback/outputpage.cpp
     settings/playback/outputpage.h
     settings/playback/playbackpage.cpp

@@ -31,8 +31,21 @@ class Track;
 class FYCORE_EXPORT AudioLoader final
 {
 public:
+    template <typename T>
+    struct LoaderEntry
+    {
+        int index{0};
+        QString name;
+        QStringList extensions;
+        bool enabled{true};
+        T creator;
+    };
+
     AudioLoader();
     ~AudioLoader();
+
+    void saveState();
+    void restoreState();
 
     [[nodiscard]] QStringList supportedFileExtensions() const;
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
@@ -52,6 +65,15 @@ public:
     void addReader(const QString& name, const ReaderCreator& creator);
     void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator);
 
+    [[nodiscard]] std::vector<LoaderEntry<DecoderCreator>> decoders() const;
+    [[nodiscard]] std::vector<LoaderEntry<ReaderCreator>> readers() const;
+    [[nodiscard]] std::vector<LoaderEntry<ArchiveReaderCreator>> archiveReaders() const;
+
+    void updateDecoders(const std::vector<LoaderEntry<DecoderCreator>>& decoders);
+    void updateReaders(const std::vector<LoaderEntry<ReaderCreator>>& readers);
+    void updateArchiveReaders(const std::vector<LoaderEntry<ArchiveReaderCreator>>& readers);
+
+    void reset();
     void destroyThreadInstance();
 
 private:
