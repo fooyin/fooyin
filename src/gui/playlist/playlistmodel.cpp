@@ -1381,7 +1381,7 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         return {};
     };
 
-    if(role == Qt::DisplayRole && m_columns.at(column).field == QLatin1String{RatingEditor}) {
+    if(role == Qt::DisplayRole && !m_columns.empty() && m_columns.at(column).field == QLatin1String{RatingEditor}) {
         return QVariant::fromValue(StarRating{track.track().rating(), 5, m_starRatingSize});
     }
 
