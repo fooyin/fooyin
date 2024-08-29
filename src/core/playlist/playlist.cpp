@@ -40,7 +40,7 @@ public:
     PlaylistPrivate(int dbId, QString name, int index);
 
     void createShuffleOrder();
-    int getShuffleIndex(Playlist::PlayModes mode);
+    int getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
     int getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
 
     UId m_id;
@@ -86,25 +86,33 @@ void PlaylistPrivate::createShuffleOrder()
     }
 }
 
-int PlaylistPrivate::getShuffleIndex(Playlist::PlayModes mode)
+int PlaylistPrivate::getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck)
 {
     if(m_shuffleOrder.empty()) {
         createShuffleOrder();
-
-        m_shuffleIndex = (mode & Playlist::RepeatTrack) ? 0 : 1;
+        m_shuffleIndex = 0;
     }
 
-    else if(mode & Playlist::RepeatPlaylist) {
-        if(m_shuffleIndex > static_cast<int>(m_shuffleOrder.size() - 1)) {
-            m_shuffleIndex = 0;
+    int nextIndex{m_shuffleIndex};
+    if(!(mode & Playlist::RepeatTrack)) {
+        nextIndex += delta;
+    }
+
+    if(mode & Playlist::RepeatPlaylist) {
+        if(nextIndex > static_cast<int>(m_shuffleOrder.size() - 1)) {
+            nextIndex = 0;
         }
-        else if(m_shuffleIndex < 0) {
-            m_shuffleIndex = static_cast<int>(m_shuffleOrder.size() - 1);
+        else if(nextIndex < 0) {
+            nextIndex = static_cast<int>(m_shuffleOrder.size() - 1);
         }
     }
 
-    if(m_shuffleIndex >= 0 && m_shuffleIndex < static_cast<int>(m_shuffleOrder.size())) {
-        return m_shuffleOrder.at(m_shuffleIndex);
+    if(!onlyCheck) {
+        m_shuffleIndex = nextIndex;
+    }
+
+    if(nextIndex >= 0 && nextIndex < static_cast<int>(m_shuffleOrder.size())) {
+        return m_shuffleOrder.at(nextIndex);
     }
 
     return -1;
@@ -126,13 +134,7 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
         const int count = static_cast<int>(m_tracks.size());
 
         if(mode & Playlist::ShuffleTracks) {
-            if(!(mode & Playlist::RepeatTrack)) {
-                m_shuffleIndex += delta;
-            }
-            nextIndex = getShuffleIndex(mode);
-            if(onlyCheck) {
-                m_shuffleIndex -= delta;
-            }
+            nextIndex = getShuffleIndex(delta, mode, onlyCheck);
         }
         else if(mode & Playlist::RepeatPlaylist) {
             nextIndex += delta;
@@ -402,14 +404,5 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
     p->m_tracksModified = true;
 
     return removedIndexes;
-}
-
-void Playlist::clear()
-{
-    if(!p->m_tracks.empty()) {
-        p->m_tracks.clear();
-        p->m_tracksModified = true;
-        p->m_shuffleOrder.clear();
-    }
 }
 } // namespace Fooyin

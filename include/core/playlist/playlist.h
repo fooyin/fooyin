@@ -126,9 +126,6 @@ private:
     void updateTrackAtIndex(int index, const Track& track);
     std::vector<int> removeTracks(const std::vector<int>& indexes);
 
-    /** Removes all tracks, including all shuffle order history */
-    void clear();
-
     std::unique_ptr<PlaylistPrivate> p;
 };
 using PlaylistList = std::vector<Playlist*>;
