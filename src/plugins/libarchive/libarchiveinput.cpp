@@ -20,6 +20,7 @@
 #include "libarchiveinput.h"
 
 #include <QBuffer>
+#include <QDir>
 #include <QFileInfo>
 #include <QLoggingCategory>
 #include <QMimeDatabase>
@@ -42,6 +43,20 @@ bool isImageFile(const QString& filePath)
     const QMimeType mimeType = mimeDatabase.mimeTypeForFile(filePath);
 
     return mimeType.name().startsWith(u"image/");
+}
+
+bool setupForReading(archive* archive, const QString& filename)
+{
+    archive_read_support_filter_all(archive);
+    archive_read_support_format_all(archive);
+
+    if(archive_read_open_filename(archive, QFile::encodeName(filename).constData(), 10240) != ARCHIVE_OK) {
+        qCWarning(LIBARCH) << "Unable to open archive:" << archive_error_string(archive);
+        qCWarning(LIBARCH) << "Archive corrupted or insufficient permissions";
+        return false;
+    }
+
+    return true;
 }
 } // namespace
 
@@ -155,11 +170,7 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file)
 {
     ArchivePtr archive{archive_read_new()};
 
-    archive_read_support_filter_all(archive.get());
-    archive_read_support_format_all(archive.get());
-
-    if(archive_read_open_filename(archive.get(), m_file.toUtf8().constData(), 10240) != ARCHIVE_OK) {
-        qCWarning(LIBARCH) << "Unable to open" << m_file << ":" << archive_error_string(archive.get());
+    if(!setupForReading(archive.get(), m_file)) {
         return nullptr;
     }
 
@@ -172,7 +183,7 @@ std::unique_ptr<QIODevice> LibArchiveReader::entry(const QString& file)
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
-            const QString entryPath = QString::fromLocal8Bit(archive_entry_pathname(entry));
+            const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
             if(entryPath == file) {
                 return std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
             }
@@ -187,11 +198,7 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
 {
     ArchivePtr archive{archive_read_new()};
 
-    archive_read_support_filter_all(archive.get());
-    archive_read_support_format_all(archive.get());
-
-    if(archive_read_open_filename(archive.get(), m_file.toUtf8().constData(), 10240) != ARCHIVE_OK) {
-        qCWarning(LIBARCH) << "Unable to open" << m_file << ":" << archive_error_string(archive.get());
+    if(!setupForReading(archive.get(), m_file)) {
         return false;
     }
 
@@ -204,7 +211,7 @@ bool LibArchiveReader::readTracks(ReadEntryCallback readEntry)
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
-            const QString entryPath = QString::fromLocal8Bit(archive_entry_pathname(entry));
+            const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
             auto entryDev           = std::make_unique<LibArchiveIODevice>(std::move(archive), entry, nullptr);
 
             readEntry(entryPath, entryDev.get());
@@ -219,12 +226,8 @@ QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*
 {
     ArchivePtr archive{archive_read_new()};
 
-    archive_read_support_filter_all(archive.get());
-    archive_read_support_format_all(archive.get());
-
-    if(archive_read_open_filename(archive.get(), m_file.toUtf8().constData(), 10240) != ARCHIVE_OK) {
-        qCWarning(LIBARCH) << "Unable to open" << m_file << ":" << archive_error_string(archive.get());
-        return nullptr;
+    if(!setupForReading(archive.get(), m_file)) {
+        return {};
     }
 
     QByteArray coverData;
@@ -238,7 +241,7 @@ QByteArray LibArchiveReader::readCover(const Track& track, Track::Cover /*cover*
         }
 
         if(archive_entry_filetype(entry) == AE_IFREG) {
-            const QString entryPath = QString::fromLocal8Bit(archive_entry_pathname(entry));
+            const QString entryPath = QDir::fromNativeSeparators(QFile::decodeName(archive_entry_pathname(entry)));
 
             if(isImageFile(entryPath)) {
                 const QFileInfo info{entryPath};
