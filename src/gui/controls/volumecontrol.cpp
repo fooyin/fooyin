@@ -69,7 +69,7 @@ public:
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
-    Mode m_mode{Mode::Icon};
+    Mode m_mode{Mode::Slider};
     QVBoxLayout* m_layout;
     QPointer<ToolButton> m_volumeIcon;
     QPointer<HoverMenu> m_volumeMenu;
@@ -82,7 +82,7 @@ VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* a
     , m_actionManager{actionManager}
     , m_settings{settings}
     , m_layout{new QVBoxLayout(m_self)}
-    , m_volumeSlider{new LogSlider(Qt::Vertical, m_self)}
+    , m_volumeSlider{new LogSlider(Qt::Horizontal, m_self)}
 {
     m_layout->setContentsMargins({});
     m_layout->setSpacing(0);
