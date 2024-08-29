@@ -343,7 +343,7 @@ ScriptResult ScriptParserPrivate::evalLiteral(const Expression& exp) const
 ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto& tracks) const
 {
     const QString var   = std::get<QString>(exp.value);
-    ScriptResult result = m_registry->value(var, tracks);
+    ScriptResult result = m_registry->value(var.toLower(), tracks);
 
     if(!result.cond) {
         return {};
@@ -359,7 +359,7 @@ ScriptResult ScriptParserPrivate::evalVariable(const Expression& exp, const auto
 ScriptResult ScriptParserPrivate::evalVariableList(const Expression& exp, const auto& tracks) const
 {
     const QString var = std::get<QString>(exp.value);
-    return m_registry->value(var, tracks);
+    return m_registry->value(var.toLower(), tracks);
 }
 
 ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto& tracks) const

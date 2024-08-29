@@ -86,7 +86,7 @@ QString trackMeta(const Fooyin::Track& track, const QStringList& args)
     }
 
     const QString& tag = args.front();
-    return track.metaValue(tag);
+    return track.metaValue(tag.toLower());
 }
 
 QString trackInfo(const Fooyin::Track& track, const QStringList& args)
@@ -96,7 +96,7 @@ QString trackInfo(const Fooyin::Track& track, const QStringList& args)
     }
 
     const QString& tag = args.front();
-    return track.techInfo(tag);
+    return track.techInfo(tag.toLower());
 }
 
 QString trackTitle(const Fooyin::Track& track)
