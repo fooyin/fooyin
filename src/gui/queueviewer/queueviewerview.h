@@ -29,12 +29,7 @@ class QueueViewerView : public ExpandedTreeView
 public:
     explicit QueueViewerView(QWidget* parent = nullptr);
 
-signals:
-    void middleClicked();
-
 protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseDoubleClickEvent(QMouseEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
 };
 } // namespace Fooyin

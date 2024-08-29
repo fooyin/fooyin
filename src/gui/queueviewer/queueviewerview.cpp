@@ -39,27 +39,6 @@ QueueViewerView::QueueViewerView(QWidget* parent)
     header()->setStretchLastSection(true);
 }
 
-void QueueViewerView::mousePressEvent(QMouseEvent* event)
-{
-    ExpandedTreeView::mousePressEvent(event);
-
-    if(!indexAt(event->position().toPoint()).isValid()) {
-        clearSelection();
-    }
-
-    if(event->button() == Qt::MiddleButton) {
-        emit middleClicked();
-    }
-}
-
-void QueueViewerView::mouseDoubleClickEvent(QMouseEvent* event)
-{
-    if(event->button() == Qt::MiddleButton) {
-        return;
-    }
-    ExpandedTreeView::mouseDoubleClickEvent(event);
-}
-
 void QueueViewerView::paintEvent(QPaintEvent* event)
 {
     QPainter painter{viewport()};
