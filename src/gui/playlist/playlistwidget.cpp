@@ -1572,10 +1572,18 @@ void PlaylistWidget::finalise()
     else if(p->m_playlistController->currentPlaylist()) {
         p->changePlaylist(nullptr, p->m_playlistController->currentPlaylist());
     }
+
+    if(p->m_detached) {
+        QMetaObject::invokeMethod(this, [this]() { p->resetSort(true); }, Qt::QueuedConnection);
+    }
 }
 
 void PlaylistWidget::searchEvent(const QString& search)
 {
+    if(p->m_detached) {
+        p->resetSort(true);
+    }
+
     const auto prevSearch = std::exchange(p->m_search, search);
 
     if(search.length() < 3) {
