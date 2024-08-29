@@ -1284,14 +1284,14 @@ void PlaylistWidgetPrivate::sortColumn(int column, Qt::SortOrder order)
     m_sortingColumn = true;
 
     auto* currentPlaylist    = m_playlistController->currentPlaylist();
-    const auto currentTracks = currentPlaylist->tracks();
+    const auto currentTracks = m_detached ? m_filteredTracks : currentPlaylist->tracks();
     const QString sortField  = m_columns.at(column).field;
 
     Utils::asyncExec([this, sortField, currentTracks, order]() {
         return m_sorter.calcSortTracks(sortField, currentTracks, order);
-    }).then(m_self, [this, currentPlaylist](const TrackList& sortedTracks) {
-        auto* sortCmd = new ResetTracks(m_playerController, m_model, currentPlaylist->id(), currentPlaylist->tracks(),
-                                        sortedTracks);
+    }).then(m_self, [this, currentPlaylist, currentTracks](const TrackList& sortedTracks) {
+        auto* sortCmd
+            = new ResetTracks(m_playerController, m_model, currentPlaylist->id(), currentTracks, sortedTracks);
         m_playlistController->addToHistory(sortCmd);
     });
 }
