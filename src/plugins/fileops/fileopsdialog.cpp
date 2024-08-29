@@ -160,9 +160,9 @@ void FileOpsDialogPrivate::setup()
     auto* presetGroup  = new QGroupBox(tr("Presets"), m_self);
     auto* presetLayout = new QGridLayout(presetGroup);
 
-    QObject::connect(m_loadButton, &QRadioButton::clicked, this, &FileOpsDialogPrivate::loadPreset);
-    QObject::connect(m_saveButton, &QRadioButton::clicked, this, &FileOpsDialogPrivate::savePreset);
-    QObject::connect(m_deleteButton, &QRadioButton::clicked, this, &FileOpsDialogPrivate::deletePreset);
+    QObject::connect(m_loadButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::loadPreset);
+    QObject::connect(m_saveButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::savePreset);
+    QObject::connect(m_deleteButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::deletePreset);
 
     presetLayout->addWidget(m_presetBox, 0, 0, 1, 3);
     presetLayout->addWidget(m_loadButton, 1, 0);
@@ -178,7 +178,7 @@ void FileOpsDialogPrivate::setup()
     updateRunButton();
     QObject::connect(m_destination, &QLineEdit::textChanged, this, [updateRunButton]() { updateRunButton(); });
     QObject::connect(m_filename, &QLineEdit::textChanged, this, [updateRunButton]() { updateRunButton(); });
-    QObject::connect(m_runButton, &QPushButton::clicked, this, &FileOpsDialogPrivate::toggleRun);
+    QObject::connect(m_runButton, &QAbstractButton::clicked, this, &FileOpsDialogPrivate::toggleRun);
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, m_self, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, m_self, &QDialog::reject);
 
