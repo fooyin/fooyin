@@ -58,6 +58,8 @@
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/propertiesdialog.h>
 #include <gui/scripting/scripteditor.h>
+#include <gui/theme/fytheme.h>
+#include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
 #include <gui/windowcontroller.h>
@@ -109,6 +111,7 @@ public:
 
     void mute() const;
     void setStyle() const;
+    void setTheme() const;
     void setIconTheme() const;
     void registerLayouts();
 
@@ -162,6 +165,7 @@ public:
 
     PropertiesDialog* m_propertiesDialog;
     WindowController* m_windowController;
+    ThemeRegistry* m_themeRegistry;
 
     GuiPluginContext m_guiPluginContext;
 
@@ -198,8 +202,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_helpMenu{new HelpMenu(m_actionManager, m_self)}
     , m_propertiesDialog{new PropertiesDialog(m_settings, m_self)}
     , m_windowController{new WindowController(m_mainWindow.get())}
-    , m_guiPluginContext{m_actionManager,    &m_layoutProvider, &m_selectionController, m_searchController,
-                         m_propertiesDialog, &m_widgetProvider, m_editableLayout.get(), m_windowController}
+    , m_themeRegistry{new ThemeRegistry(m_settings, m_self)}
+    , m_guiPluginContext{m_actionManager,        &m_layoutProvider,  &m_selectionController,
+                         m_searchController,     m_propertiesDialog, &m_widgetProvider,
+                         m_editableLayout.get(), m_windowController, m_themeRegistry}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
     , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_guiPluginContext, &m_playlistInteractor, m_self)}
 {
@@ -215,6 +221,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     m_widgets->registerWidgets();
     m_widgets->registerPages();
     m_widgets->registerPropertiesTabs();
+    m_widgets->registerFontEntries();
 
     m_actionManager->addContextObject(m_mainContext);
 
@@ -303,6 +310,10 @@ void GuiApplicationPrivate::setupConnections()
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
     m_settings->subscribe<Settings::Gui::Style>(m_self, [this]() { setStyle(); });
     m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { setIconTheme(); });
+    m_settings->subscribe<Settings::Gui::Theme>(m_self, [this]() {
+        setTheme();
+        setIconTheme();
+    });
 }
 
 void GuiApplicationPrivate::initialisePlugins()
@@ -579,6 +590,40 @@ void GuiApplicationPrivate::setStyle() const
     else if(auto* systemStyle = QStyleFactory::create(m_settings->value<Settings::Gui::Internal::SystemStyle>())) {
         QApplication::setStyle(systemStyle);
     }
+}
+
+void GuiApplicationPrivate::setTheme() const
+{
+    const auto currTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+
+    QPalette newPalette = QApplication::style()->standardPalette();
+    for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
+        newPalette.setColor(key.group, key.role, colour);
+    }
+    QApplication::setPalette(newPalette);
+
+    {
+        // Reset all fonts to default first
+        const auto systemFont = m_settings->value<Settings::Gui::Internal::SystemFont>().value<QFont>();
+        QApplication::setFont(systemFont);
+        const auto fontEntries = m_themeRegistry->fontEntries();
+        for(const auto& [className, _] : fontEntries) {
+            if(!className.isEmpty()) {
+                QApplication::setFont(systemFont, className.toUtf8().constData());
+            }
+        }
+    }
+
+    for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
+        if(className.isEmpty()) {
+            QApplication::setFont(font);
+        }
+        else {
+            QApplication::setFont(font, className.toUtf8().constData());
+        }
+    }
+
+    QPixmapCache::clear();
 }
 
 void GuiApplicationPrivate::setIconTheme() const

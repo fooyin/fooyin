@@ -24,8 +24,12 @@
 #include <QJsonObject>
 
 namespace Fooyin {
+struct FyTheme;
+
 class FYGUI_EXPORT FyLayout
 {
+    Q_GADGET
+
 public:
     FyLayout() = default;
     FyLayout(QString name, QJsonObject json);
@@ -38,6 +42,18 @@ public:
 
     void saveWindowSize();
     void loadWindowSize() const;
+
+    enum ThemeOption : uint8_t
+    {
+        SaveColours = 0,
+        SaveFonts,
+        All = SaveColours | SaveFonts
+    };
+    Q_DECLARE_FLAGS(ThemeOptions, ThemeOption)
+    Q_FLAG(ThemeOptions)
+
+    void saveTheme(const FyTheme& theme, ThemeOptions options = All);
+    [[nodiscard]] FyTheme loadTheme() const;
 
 private:
     QString m_name;

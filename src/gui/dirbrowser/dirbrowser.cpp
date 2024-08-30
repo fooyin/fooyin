@@ -30,6 +30,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
@@ -659,16 +660,17 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         this, [this](int action) { p->m_doubleClickAction = static_cast<TrackAction>(action); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserMiddleClick>(
         this, [this](int action) { p->m_middleClickAction = static_cast<TrackAction>(action); });
-    p->m_settings->subscribe<Settings::Gui::Internal::DirBrowserMode>(
+    settings->subscribe<Settings::Gui::Internal::DirBrowserMode>(
         this, [this](int mode) { p->changeMode(static_cast<Mode>(mode)); });
-    p->m_settings->subscribe<Settings::Gui::Internal::DirBrowserIcons>(
+    settings->subscribe<Settings::Gui::Internal::DirBrowserIcons>(
         this, [this](bool enabled) { p->m_proxyModel->setIconsEnabled(enabled); });
-    p->m_settings->subscribe<Settings::Gui::Internal::DirBrowserListIndent>(
+    settings->subscribe<Settings::Gui::Internal::DirBrowserListIndent>(
         this, [this](bool enabled) { p->updateIndent(enabled); });
-    p->m_settings->subscribe<Settings::Gui::Internal::DirBrowserControls>(
+    settings->subscribe<Settings::Gui::Internal::DirBrowserControls>(
         this, [this](bool enabled) { p->setControlsEnabled(enabled); });
-    p->m_settings->subscribe<Settings::Gui::Internal::DirBrowserLocation>(
+    settings->subscribe<Settings::Gui::Internal::DirBrowserLocation>(
         this, [this](bool enabled) { p->setLocationEnabled(enabled); });
+    settings->subscribe<Settings::Gui::Theme>(this, [this]() { p->m_proxyModel->resetPalette(); });
 
     p->changeMode(static_cast<Mode>(settings->value<Settings::Gui::Internal::DirBrowserMode>()));
     p->setControlsEnabled(settings->value<Settings::Gui::Internal::DirBrowserControls>());

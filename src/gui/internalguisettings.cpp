@@ -50,6 +50,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     using namespace Settings::Gui;
 
     qRegisterMetaType<CoverPaths>("CoverPaths");
+    qRegisterMetaType<FyTheme>("FyTheme");
 
     m_settings->createTempSetting<LayoutEditing>(false);
     m_settings->createSetting<StartupBehaviour>(3, QStringLiteral("Interface/StartupBehaviour"));
@@ -64,6 +65,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<MainWindowPixelRatio>(1.0);
     m_settings->createSetting<SeekStep>(4000, QStringLiteral("Interface/SeekIncrement"));
     m_settings->createSetting<ShowStatusTips>(true, QStringLiteral("Interface/ShowStatusTips"));
+    m_settings->createTempSetting<Theme>(QVariant{});
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
@@ -92,9 +94,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
     m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));
-    m_settings->createSetting<Internal::LibTreeFont>(QString{}, QStringLiteral("LibraryTree/Font"));
-    m_settings->createSetting<Internal::LibTreeColour>(QApplication::palette().text().color().name(),
-                                                       QStringLiteral("LibraryTree/Colour"));
     m_settings->createSetting<Internal::LibTreeRowHeight>(0, QStringLiteral("LibraryTree/RowHeight"));
     m_settings->createTempSetting<Internal::SystemIconTheme>(QIcon::themeName());
     m_settings->createSetting<Internal::DirBrowserPath>(QString{}, QStringLiteral("DirectoryBrowser/Path"));
@@ -147,5 +146,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::PlaylistMiddleClick>(0, QStringLiteral("PlaylistWidget/MiddleClickBehaviour"));
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, QStringLiteral("SelectionInfo/PreferDisplay"));
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
+    m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
 }
 } // namespace Fooyin

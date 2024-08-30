@@ -32,6 +32,7 @@ class PlaylistInteractor;
 struct ScanProgress;
 class StatusWidget;
 class SettingsManager;
+class ThemeRegistry;
 class WidgetProvider;
 
 class Widgets : public QObject
@@ -45,6 +46,7 @@ public:
     void registerWidgets();
     void registerPages();
     void registerPropertiesTabs();
+    void registerFontEntries() const;
 
 private:
     void showScanProgress(const ScanProgress& progress) const;

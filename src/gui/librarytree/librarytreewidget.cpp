@@ -36,6 +36,7 @@
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/guiconstants.h>
+#include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -280,8 +281,6 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     m_actionManager->addContextObject(m_widgetContext);
     m_trackSelection->changePlaybackOnSend(m_widgetContext, m_settings->value<LibTreeSendPlayback>());
 
-    m_model->setFont(m_settings->value<LibTreeFont>());
-    m_model->setColour(m_settings->value<LibTreeColour>());
     m_model->setRowHeight(m_settings->value<LibTreeRowHeight>());
     m_model->setPlayState(playlistController->playerController()->playState());
 
@@ -356,12 +355,11 @@ void LibraryTreeWidgetPrivate::setupConnections()
     m_settings->subscribe<LibTreeScrollBar>(m_self, [this](bool show) { setScrollbarEnabled(show); });
     m_settings->subscribe<LibTreeAltColours>(m_self,
                                              [this](bool enable) { m_libraryTree->setAlternatingRowColors(enable); });
-    m_settings->subscribe<LibTreeFont>(m_self, [this](const QString& font) { m_model->setFont(font); });
-    m_settings->subscribe<LibTreeColour>(m_self, [this](const QString& colour) { m_model->setColour(colour); });
     m_settings->subscribe<LibTreeRowHeight>(m_self, [this](const int height) {
         m_model->setRowHeight(height);
         QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     });
+    m_settings->subscribe<Settings::Gui::Theme>(m_self, [this]() { m_model->resetPalette(); });
 }
 
 void LibraryTreeWidgetPrivate::reset() const

@@ -72,6 +72,7 @@ CoverWidget::CoverWidget(PlayerController* playerController, TrackSelectionContr
         reloadCover();
     });
     m_settings->subscribe<Settings::Gui::IconTheme>(this, &CoverWidget::reloadCover);
+    m_settings->subscribe<Settings::Gui::Theme>(this, &CoverWidget::reloadCover);
 
     reloadCover();
 }

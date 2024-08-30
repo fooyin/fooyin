@@ -33,6 +33,7 @@
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/autoheaderview.h>
 
+#include <QApplication>
 #include <QColor>
 #include <QFont>
 #include <QIODevice>
@@ -144,8 +145,6 @@ public:
 
     bool m_showSummary{true};
     int m_rowHeight{0};
-    QFont m_font;
-    QColor m_colour;
 
     TrackList m_tracksPendingRemoval;
 };
@@ -344,24 +343,6 @@ Track::Cover FilterModel::coverType() const
     return p->m_coverType;
 }
 
-void FilterModel::setFont(const QString& font)
-{
-    if(font.isEmpty()) {
-        p->m_font = {};
-    }
-    else {
-        p->m_font.fromString(font);
-    }
-
-    p->dataUpdated({Qt::FontRole, Qt::SizeHintRole});
-}
-
-void FilterModel::setColour(const QColor& colour)
-{
-    p->m_colour = colour;
-    p->dataUpdated();
-}
-
 void FilterModel::setRowHeight(int height)
 {
     p->m_rowHeight = height;
@@ -497,10 +478,6 @@ QVariant FilterModel::data(const QModelIndex& index, int role) const
             break;
         case(Qt::SizeHintRole):
             return QSize{0, p->m_rowHeight};
-        case(Qt::FontRole):
-            return p->m_font;
-        case(Qt::ForegroundRole):
-            return p->m_colour;
         case(Qt::TextAlignmentRole):
             return QVariant::fromValue(Qt::AlignVCenter | columnAlignment(col));
         default:

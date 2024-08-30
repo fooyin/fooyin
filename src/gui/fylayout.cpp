@@ -19,6 +19,7 @@
 
 #include <gui/fylayout.h>
 
+#include <gui/theme/fytheme.h>
 #include <utils/utils.h>
 
 #include <QJsonDocument>
@@ -131,5 +132,45 @@ void FyLayout::loadWindowSize() const
     if(size.isValid()) {
         window->resize(size);
     }
+}
+
+void FyLayout::saveTheme(const FyTheme& theme, ThemeOptions options)
+{
+    if(!theme.isValid()) {
+        return;
+    }
+
+    FyTheme saveTheme{theme};
+
+    if(!(options & SaveColours)) {
+        saveTheme.colours.clear();
+    }
+    if(!(options & SaveFonts)) {
+        saveTheme.fonts.clear();
+    }
+
+    QByteArray currTheme;
+    QDataStream stream{&currTheme, QDataStream::WriteOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream << theme;
+    m_json[u"Theme"] = QString::fromUtf8(currTheme.toBase64());
+}
+
+FyTheme FyLayout::loadTheme() const
+{
+    if(!m_json.contains(u"Theme")) {
+        return {};
+    }
+
+    FyTheme theme;
+
+    auto data = QByteArray::fromBase64(m_json.value(u"Theme").toString().toUtf8());
+    QDataStream stream{&data, QDataStream::ReadOnly};
+    stream.setVersion(QDataStream::Qt_6_0);
+
+    stream >> theme;
+
+    return theme;
 }
 } // namespace Fooyin

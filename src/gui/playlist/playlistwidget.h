@@ -59,6 +59,7 @@ public:
     void searchEvent(const QString& search) override;
 
 protected:
+    void changeEvent(QEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 

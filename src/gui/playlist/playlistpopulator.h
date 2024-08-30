@@ -21,7 +21,6 @@
 
 #include "playlistcolumn.h"
 #include "playlistitem.h"
-#include "playlistitemmodels.h"
 
 #include <core/track.h>
 #include <utils/crypto.h>
@@ -33,13 +32,12 @@ class PlayerController;
 class PlaylistPopulatorPrivate;
 struct PlaylistPreset;
 
-using ItemList        = std::vector<PlaylistItem>;
-using TrackItemMap    = std::unordered_map<Track, PlaylistItem, Track::TrackHash>;
-using ItemKeyMap      = std::unordered_map<UId, PlaylistItem, UId::UIdHash>;
-using ContainerKeyMap = std::unordered_map<UId, PlaylistContainerItem*, UId::UIdHash>;
-using NodeKeyMap      = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
-using TrackIdNodeMap  = std::unordered_map<int, std::vector<UId>>;
-using IndexGroupMap   = std::map<int, std::vector<UId>>;
+using ItemList       = std::vector<PlaylistItem>;
+using TrackItemMap   = std::unordered_map<Track, PlaylistItem, Track::TrackHash>;
+using ItemKeyMap     = std::unordered_map<UId, PlaylistItem, UId::UIdHash>;
+using NodeKeyMap     = std::unordered_map<UId, std::vector<UId>, UId::UIdHash>;
+using TrackIdNodeMap = std::unordered_map<int, std::vector<UId>>;
+using IndexGroupMap  = std::map<int, std::vector<UId>>;
 
 struct PendingData
 {
@@ -73,6 +71,8 @@ class PlaylistPopulator : public Worker
 public:
     explicit PlaylistPopulator(PlayerController* playerController, QObject* parent = nullptr);
     ~PlaylistPopulator() override;
+
+    void setFont(const QFont& font);
 
     void run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
              const TrackList& tracks);

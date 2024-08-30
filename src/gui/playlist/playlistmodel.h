@@ -113,6 +113,7 @@ public:
     void resetColumnAlignment(int column);
     void resetColumnAlignments();
 
+    void setFont(const QFont& font);
     void setPixmapColumnSize(int column, int size);
     void setPixmapColumnSizes(const std::vector<int>& sizes);
 

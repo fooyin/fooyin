@@ -527,6 +527,11 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
         m_starRatingSize = size;
         emit dataChanged({}, {}, {Qt::DisplayRole});
     });
+    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+        m_playingColour = QApplication::palette().highlight().color();
+        m_playingColour.setAlpha(90);
+        emit dataChanged({}, {}, {Qt::BackgroundRole});
+    });
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
@@ -906,6 +911,11 @@ void PlaylistModel::resetColumnAlignment(int column)
 void PlaylistModel::resetColumnAlignments()
 {
     m_columnAlignments.clear();
+}
+
+void PlaylistModel::setFont(const QFont& font)
+{
+    QMetaObject::invokeMethod(&m_populator, [this, font]() { m_populator.setFont(font); });
 }
 
 void PlaylistModel::setPixmapColumnSize(int column, int size)

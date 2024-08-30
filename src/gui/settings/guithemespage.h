@@ -19,28 +19,17 @@
 
 #pragma once
 
-#include "fygui_export.h"
-
-#include <gui/scripting/richtext.h>
-
-#include <QColor>
-#include <QFont>
+#include <utils/settings/settingspage.h>
 
 namespace Fooyin {
-class ScriptFormatterPrivate;
-class ScriptFormatterRegistry;
+class ThemeRegistry;
+class SettingsManager;
 
-class FYGUI_EXPORT ScriptFormatter
+class GuiThemesPage : public SettingsPage
 {
+    Q_OBJECT
+
 public:
-    ScriptFormatter();
-    ~ScriptFormatter();
-
-    RichText evaluate(const QString& input);
-
-    void setBaseFont(const QFont& font);
-
-private:
-    std::unique_ptr<ScriptFormatterPrivate> p;
+    GuiThemesPage(ThemeRegistry* colourRegistry, SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Fooyin

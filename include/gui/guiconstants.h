@@ -180,6 +180,7 @@ constexpr auto Playback           = "Fooyin.Page.Playback";
 constexpr auto Output             = "Fooyin.Page.Playback.Output";
 constexpr auto Decoding           = "Fooyin.Page.Playback.Decoding";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
+constexpr auto InterfaceTheme     = "Fooyin.Page.Interface.Theme";
 constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
 constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";

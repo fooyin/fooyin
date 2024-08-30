@@ -38,6 +38,7 @@
 #include <utils/widgets/expandedtreeview.h>
 
 #include <QActionGroup>
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -75,12 +76,20 @@ Fooyin::TrackList fetchAllTracks(QAbstractItemView* view)
 } // namespace
 
 namespace Fooyin::Filters {
+class FilterView : public ExpandedTreeView
+{
+    Q_OBJECT
+
+public:
+    using ExpandedTreeView::ExpandedTreeView;
+};
+
 FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager* libraryManager,
                            CoverProvider* coverProvider, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_columnRegistry{columnRegistry}
     , m_settings{settings}
-    , m_view{new ExpandedTreeView(this)}
+    , m_view{new FilterView(this)}
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_model{new FilterModel(libraryManager, coverProvider, m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
@@ -121,10 +130,7 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager*
         m_columns = {column.value()};
     }
 
-    m_model->setFont(m_settings->value<Settings::Filters::FilterFont>());
-    m_model->setColour(m_settings->value<Settings::Filters::FilterColour>());
     m_model->setRowHeight(m_settings->value<Settings::Filters::FilterRowHeight>());
-
     hideHeader(!m_settings->value<Settings::Filters::FilterHeader>());
     setScrollbarEnabled(m_settings->value<Settings::Filters::FilterScrollBar>());
     m_view->setAlternatingRowColors(m_settings->value<Settings::Filters::FilterAltColours>());
@@ -491,9 +497,6 @@ void FilterWidget::setupConnections()
     m_settings->subscribe<Settings::Filters::FilterHeader>(this, [this](bool enabled) { hideHeader(!enabled); });
     m_settings->subscribe<Settings::Filters::FilterScrollBar>(this,
                                                               [this](bool enabled) { setScrollbarEnabled(enabled); });
-    m_settings->subscribe<Settings::Filters::FilterFont>(this, [this](const QString& font) { m_model->setFont(font); });
-    m_settings->subscribe<Settings::Filters::FilterColour>(
-        this, [this](const QString& colour) { m_model->setColour(colour); });
     m_settings->subscribe<Settings::Filters::FilterRowHeight>(this, [this](const int height) {
         m_model->setRowHeight(height);
         QMetaObject::invokeMethod(m_view->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
@@ -776,4 +779,5 @@ void FilterWidget::columnRemoved(int id)
 }
 } // namespace Fooyin::Filters
 
+#include "filterwidget.moc"
 #include "moc_filterwidget.cpp"

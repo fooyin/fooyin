@@ -19,6 +19,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scripteditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatter.h
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
+    ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/scriptlineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
@@ -192,6 +194,8 @@ set(SOURCES
     settings/generalpage.h
     settings/guigeneralpage.cpp
     settings/guigeneralpage.h
+    settings/guithemespage.cpp
+    settings/guithemespage.h
     settings/shellintegrationpage.cpp
     settings/shellintegrationpage.h
     settings/dirbrowser/dirbrowserpage.cpp
@@ -242,6 +246,8 @@ set(SOURCES
     settings/widgets/playbackqueuepage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
+    theme/fytheme.cpp
+    theme/themeregistry.cpp
     widgets/coverwidget.cpp
     widgets/coverwidget.h
     widgets/customisableinput.cpp

@@ -62,10 +62,7 @@ public:
     [[nodiscard]] bool showSummary() const;
     [[nodiscard]] Track::Cover coverType() const;
 
-    void setFont(const QString& font);
-    void setColour(const QColor& colour);
     void setRowHeight(int height);
-
     void setShowSummary(bool show);
     void setShowDecoration(bool show);
     void setShowLabels(bool show);

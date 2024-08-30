@@ -41,6 +41,14 @@
 constexpr int IconSize = 50;
 
 namespace Fooyin {
+class StatusLabel : public ElidedLabel
+{
+    Q_OBJECT
+
+public:
+    using ElidedLabel::ElidedLabel;
+};
+
 class StatusWidgetPrivate : public QObject
 {
     Q_OBJECT
@@ -75,10 +83,10 @@ public:
     ScriptParser m_scriptParser;
 
     ClickableLabel* m_iconLabel;
-    ElidedLabel* m_playingText;
-    ElidedLabel* m_statusText;
-    ElidedLabel* m_messageText;
-    ElidedLabel* m_selectionText;
+    StatusLabel* m_playingText;
+    StatusLabel* m_statusText;
+    StatusLabel* m_messageText;
+    StatusLabel* m_selectionText;
 
     QString m_playingScript;
     QString m_selectionScript;
@@ -96,10 +104,10 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     , m_scriptRegistry{m_playerController}
     , m_scriptParser{&m_scriptRegistry}
     , m_iconLabel{new ClickableLabel(m_self)}
-    , m_playingText{new ElidedLabel(m_self)}
-    , m_statusText{new ElidedLabel(m_self)}
-    , m_messageText{new ElidedLabel(m_self)}
-    , m_selectionText{new ElidedLabel(m_self)}
+    , m_playingText{new StatusLabel(m_self)}
+    , m_statusText{new StatusLabel(m_self)}
+    , m_messageText{new StatusLabel(m_self)}
+    , m_selectionText{new StatusLabel(m_self)}
 {
     auto* layout = new QHBoxLayout(m_self);
     layout->setContentsMargins(5, 0, 5, 0);

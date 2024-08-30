@@ -40,6 +40,7 @@
 #include "settings/dirbrowser/dirbrowserpage.h"
 #include "settings/generalpage.h"
 #include "settings/guigeneralpage.h"
+#include "settings/guithemespage.h"
 #include "settings/library/librarygeneralpage.h"
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreegrouppage.h"
@@ -71,6 +72,7 @@
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/plugins/guiplugincontext.h>
+#include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 #include <utils/utils.h>
 
@@ -238,6 +240,7 @@ void Widgets::registerPages()
 {
     new GeneralPage(m_settings, this);
     new GuiGeneralPage(m_gui.layoutProvider, m_gui.editableLayout, m_settings, this);
+    new GuiThemesPage(m_gui.themeRegistry, m_settings, this);
     new ArtworkPage(m_settings, this);
     new LibraryGeneralPage(m_gui.actionManager, m_core->libraryManager(), m_core->library(), m_settings, this);
     new LibrarySortingPage(m_gui.actionManager, m_core->sortingRegistry(), m_settings, this);
@@ -261,6 +264,18 @@ void Widgets::registerPropertiesTabs()
 {
     m_gui.propertiesDialog->addTab(tr("Details"),
                                    [this](const TrackList& tracks) { return new InfoWidget(tracks, m_window); });
+}
+
+void Widgets::registerFontEntries() const
+{
+    auto* themeReg = m_gui.themeRegistry;
+
+    themeReg->registerFontEntry(tr("Default"), {});
+    themeReg->registerFontEntry(tr("Tabs"), QStringLiteral("QTabBar"));
+    themeReg->registerFontEntry(tr("Lists"), QStringLiteral("QAbstractItemView"));
+    themeReg->registerFontEntry(tr("Library Tree"), QStringLiteral("Fooyin::LibraryTreeView"));
+    themeReg->registerFontEntry(tr("Playlist"), QStringLiteral("Fooyin::PlaylistView"));
+    themeReg->registerFontEntry(tr("Status bar"), QStringLiteral("Fooyin::StatusLabel"));
 }
 
 void Widgets::showScanProgress(const ScanProgress& progress) const

@@ -25,8 +25,6 @@
 #include <gui/trackselectioncontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/colourbutton.h>
-#include <utils/widgets/fontbutton.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -67,8 +65,6 @@ private:
     QCheckBox* m_header;
     QCheckBox* m_showScrollbar;
     QCheckBox* m_altColours;
-    FontButton* m_fontButton;
-    ColourButton* m_colourButton;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
 };
@@ -87,8 +83,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     , m_header{new QCheckBox(tr("Show header"), this)}
     , m_showScrollbar{new QCheckBox(tr("Show scrollbar"), this)}
     , m_altColours{new QCheckBox(tr("Alternating row colours"), this)}
-    , m_fontButton{new FontButton(Utils::iconFromTheme(Constants::Icons::Font), tr("Font"), this)}
-    , m_colourButton{new ColourButton(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
     , m_rowHeight{new QSpinBox(this)}
 {
@@ -127,9 +121,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     auto* appearanceGroup       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceGroupLayout = new QGridLayout(appearanceGroup);
 
-    auto* fontLabel   = new QLabel(tr("Font") + QStringLiteral(":"), this);
-    auto* colourLabel = new QLabel(tr("Colour") + QStringLiteral(":"), this);
-
     m_rowHeight->setMinimum(1);
 
     int row{0};
@@ -139,10 +130,6 @@ LibraryTreePageWidget::LibraryTreePageWidget(SettingsManager* settings)
     appearanceGroupLayout->addWidget(m_altColours, row++, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
     appearanceGroupLayout->addWidget(m_rowHeight, row++, 2);
-    appearanceGroupLayout->addWidget(fontLabel, row, 0);
-    appearanceGroupLayout->addWidget(m_fontButton, row++, 1, 1, 2);
-    appearanceGroupLayout->addWidget(colourLabel, row, 0);
-    appearanceGroupLayout->addWidget(m_colourButton, row++, 1, 1, 2);
     appearanceGroupLayout->setColumnStretch(appearanceGroupLayout->columnCount(), 1);
     appearanceGroupLayout->setRowStretch(appearanceGroupLayout->rowCount(), 1);
 
@@ -218,8 +205,6 @@ void LibraryTreePageWidget::load()
     m_header->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeHeader>());
     m_showScrollbar->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeScrollBar>());
     m_altColours->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeAltColours>());
-    m_fontButton->setButtonFont(m_settings->value<Settings::Gui::Internal::LibTreeFont>());
-    m_colourButton->setColour(m_settings->value<Settings::Gui::Internal::LibTreeColour>());
     m_rowHeight->setValue(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>());
 
     m_overrideRowHeight->setChecked(m_settings->value<Settings::Gui::Internal::LibTreeRowHeight>() > 0);
@@ -242,13 +227,6 @@ void LibraryTreePageWidget::apply()
     m_settings->set<Settings::Gui::Internal::LibTreeHeader>(m_header->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeScrollBar>(m_showScrollbar->isChecked());
     m_settings->set<Settings::Gui::Internal::LibTreeAltColours>(m_altColours->isChecked());
-
-    if(m_fontButton->fontChanged()) {
-        m_settings->set<Settings::Gui::Internal::LibTreeFont>(m_fontButton->buttonFont().toString());
-    }
-    if(m_colourButton->colourChanged()) {
-        m_settings->set<Settings::Gui::Internal::LibTreeColour>(m_colourButton->colour().name());
-    }
 
     if(m_overrideRowHeight->isChecked()) {
         m_settings->set<Settings::Gui::Internal::LibTreeRowHeight>(m_rowHeight->value());
@@ -273,8 +251,6 @@ void LibraryTreePageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::LibTreeHeader>();
     m_settings->reset<Settings::Gui::Internal::LibTreeScrollBar>();
     m_settings->reset<Settings::Gui::Internal::LibTreeAltColours>();
-    m_settings->reset<Settings::Gui::Internal::LibTreeFont>();
-    m_settings->reset<Settings::Gui::Internal::LibTreeColour>();
     m_settings->reset<Settings::Gui::Internal::LibTreeRowHeight>();
 }
 

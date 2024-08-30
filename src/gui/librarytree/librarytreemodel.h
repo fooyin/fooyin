@@ -54,8 +54,7 @@ public:
     explicit LibraryTreeModel(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
-    void setFont(const QString& font);
-    void setColour(const QColor& colour);
+    void resetPalette();
     void setRowHeight(int height);
     void setPlayState(Player::PlayState state);
     void setPlayingPath(const QString& parentNode, const QString& path);

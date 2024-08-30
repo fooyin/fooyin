@@ -30,6 +30,7 @@
 #include <gui/editablelayout.h>
 #include <gui/layoutprovider.h>
 #include <gui/plugins/guiplugincontext.h>
+#include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
 #include <utils/actions/actioncontainer.h>
 
@@ -49,6 +50,7 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
 
     context.widgetProvider->registerWidget(
         QStringLiteral("LibraryFilter"), [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
+    context.themeRegistry->registerFontEntry(tr("Filters"), QStringLiteral("Fooyin::Filters::FilterView"));
 
     m_generalPage = std::make_unique<FiltersGeneralPage>(m_core->settingsManager);
     m_guiPage     = std::make_unique<FiltersGuiPage>(m_core->settingsManager);

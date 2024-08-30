@@ -21,26 +21,24 @@
 
 #include "fygui_export.h"
 
-#include <gui/scripting/richtext.h>
-
-#include <QColor>
-#include <QFont>
+#include <gui/theme/fytheme.h>
+#include <utils/itemregistry.h>
 
 namespace Fooyin {
-class ScriptFormatterPrivate;
-class ScriptFormatterRegistry;
+class SettingsManager;
 
-class FYGUI_EXPORT ScriptFormatter
+class FYGUI_EXPORT ThemeRegistry : public ItemRegistry<FyTheme>
 {
 public:
-    ScriptFormatter();
-    ~ScriptFormatter();
+    explicit ThemeRegistry(SettingsManager* settings, QObject* parent = nullptr);
 
-    RichText evaluate(const QString& input);
+    [[nodiscard]] std::map<QString, QString> fontEntries() const;
+    void registerFontEntry(const QString& title, const QString& className);
 
-    void setBaseFont(const QFont& font);
+protected:
+    void loadDefaults() override;
 
 private:
-    std::unique_ptr<ScriptFormatterPrivate> p;
+    std::map<QString, QString> m_fontEntries;
 };
 } // namespace Fooyin

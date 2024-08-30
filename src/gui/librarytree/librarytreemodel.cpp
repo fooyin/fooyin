@@ -153,19 +153,14 @@ public:
     QString m_parentNode;
     QString m_playingPath;
     int m_rowHeight{0};
-    QFont m_font;
-    QColor m_colour;
-    QColor m_playingColour;
-    QPixmap m_playingIcon;
-    QPixmap m_pausedIcon;
+    QColor m_playingColour{QApplication::palette().highlight().color()};
+    QPixmap m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)};
+    QPixmap m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)};
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager)
     : m_self{self}
     , m_populator{libraryManager}
-    , m_playingColour{QApplication::palette().highlight().color()}
-    , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
-    , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
 {
     m_playingColour.setAlpha(90);
 
@@ -416,22 +411,11 @@ LibraryTreeModel::~LibraryTreeModel()
     p->m_populatorThread.wait();
 }
 
-void LibraryTreeModel::setFont(const QString& font)
+void LibraryTreeModel::resetPalette()
 {
-    if(font.isEmpty()) {
-        p->m_font = {};
-    }
-    else {
-        p->m_font.fromString(font);
-    }
-
-    emit dataUpdated({}, {}, {Qt::FontRole, Qt::SizeHintRole});
-}
-
-void LibraryTreeModel::setColour(const QColor& colour)
-{
-    p->m_colour = colour;
-    emit dataUpdated({}, {});
+    p->m_playingColour = QApplication::palette().highlight().color();
+    p->m_playingColour.setAlpha(90);
+    emit dataChanged({}, {}, {Qt::BackgroundRole});
 }
 
 void LibraryTreeModel::setRowHeight(int height)
@@ -522,10 +506,6 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             return QVariant::fromValue(item->tracks());
         case(LibraryTreeItem::TrackCount):
             return item->trackCount();
-        case(Qt::FontRole):
-            return p->m_font;
-        case(Qt::ForegroundRole):
-            return p->m_colour;
         case(Qt::SizeHintRole): {
             if(p->m_rowHeight > 0) {
                 return QSize{0, p->m_rowHeight};

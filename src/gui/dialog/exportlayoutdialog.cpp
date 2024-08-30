@@ -21,7 +21,10 @@
 
 #include <gui/editablelayout.h>
 #include <gui/guipaths.h>
+#include <gui/guisettings.h>
 #include <gui/layoutprovider.h>
+#include <gui/theme/fytheme.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -32,13 +35,17 @@
 #include <QPushButton>
 
 namespace Fooyin {
-ExportLayoutDialog::ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider, QWidget* parent)
+ExportLayoutDialog::ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider,
+                                       SettingsManager* settings, QWidget* parent)
     : QDialog{parent}
     , m_editableLayout{editableLayout}
     , m_layoutProvider{layoutProvider}
+    , m_settings{settings}
     , m_nameEdit{new QLineEdit(this)}
     , m_pathEdit{new QLineEdit(this)}
     , m_saveWindowSize{new QCheckBox(tr("Save window size"), this)}
+    , m_saveColours{new QCheckBox(tr("Save colours"), this)}
+    , m_saveFonts{new QCheckBox(tr("Save fonts"), this)}
     , m_errorLabel{new QLabel(this)}
 {
     setWindowTitle(tr("Export Layout"));
@@ -72,17 +79,20 @@ ExportLayoutDialog::ExportLayoutDialog(EditableLayout* editableLayout, LayoutPro
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    layout->addWidget(nameLabel, 0, 0);
-    layout->addWidget(m_nameEdit, 0, 1, 1, 3);
-    layout->addWidget(pathLabel, 1, 0);
-    layout->addWidget(m_pathEdit, 1, 1, 1, 2);
-    layout->addWidget(browseButton, 1, 3);
-    layout->addWidget(m_saveWindowSize, 2, 0, 1, 3);
-    layout->addWidget(m_errorLabel, 4, 0, 1, 2);
-    layout->addWidget(buttonBox, 4, 2, 1, 2);
+    int row{0};
+    layout->addWidget(nameLabel, row, 0);
+    layout->addWidget(m_nameEdit, row++, 1, 1, 3);
+    layout->addWidget(pathLabel, row, 0);
+    layout->addWidget(m_pathEdit, row, 1, 1, 2);
+    layout->addWidget(browseButton, row++, 3);
+    layout->addWidget(m_saveWindowSize, row++, 0, 1, 3);
+    layout->addWidget(m_saveColours, row++, 0, 1, 3);
+    layout->addWidget(m_saveFonts, row++, 0, 1, 3);
+    layout->addWidget(m_errorLabel, row, 0, 1, 2);
+    layout->addWidget(buttonBox, row++, 2, 1, 2);
 
     layout->setColumnStretch(1, 1);
-    layout->setRowStretch(3, 1);
+    layout->setRowStretch(layout->rowCount(), 1);
 }
 
 QSize ExportLayoutDialog::sizeHint() const
@@ -103,6 +113,19 @@ void ExportLayoutDialog::accept()
     if(m_saveWindowSize->isChecked()) {
         layout.saveWindowSize();
     }
+
+    const auto currentTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    if(currentTheme.isValid()) {
+        FyLayout::ThemeOptions themeOptions;
+        if(m_saveColours) {
+            themeOptions |= FyLayout::SaveColours;
+        }
+        if(m_saveFonts) {
+            themeOptions |= FyLayout::SaveFonts;
+        }
+        layout.saveTheme(currentTheme, themeOptions);
+    }
+
     const bool success = m_layoutProvider->exportLayout(layout, m_pathEdit->text());
     if(success) {
         QDialog::accept();

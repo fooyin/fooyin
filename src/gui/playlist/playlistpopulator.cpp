@@ -19,6 +19,7 @@
 
 #include "playlistpopulator.h"
 
+#include "playlistitemmodels.h"
 #include "playlistpreset.h"
 #include "playlistscriptregistry.h"
 
@@ -64,7 +65,6 @@ public:
 
     std::unique_ptr<PlaylistScriptRegistry> m_registry;
     ScriptParser m_parser;
-
     ScriptFormatter m_formatter;
 
     int m_trackDepth{0};
@@ -78,6 +78,7 @@ public:
 
     PlaylistItem m_root;
     PendingData m_data;
+    using ContainerKeyMap = std::unordered_map<UId, PlaylistContainerItem*, UId::UIdHash>;
     ContainerKeyMap m_headers;
     TrackList m_pendingTracks;
 };
@@ -361,6 +362,11 @@ PlaylistPopulator::PlaylistPopulator(PlayerController* playerController, QObject
 }
 
 PlaylistPopulator::~PlaylistPopulator() = default;
+
+void PlaylistPopulator::setFont(const QFont& font)
+{
+    p->m_formatter.setBaseFont(font);
+}
 
 void PlaylistPopulator::run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                             const TrackList& tracks)

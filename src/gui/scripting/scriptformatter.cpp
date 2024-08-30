@@ -49,6 +49,7 @@ public:
 
     ScriptScanner m_scanner;
     ScriptFormatterRegistry m_registry;
+    QFont m_font;
 
     ScriptScanner::Token m_current;
     ScriptScanner::Token m_previous;
@@ -241,6 +242,7 @@ void ScriptFormatterPrivate::closeBlock()
 void ScriptFormatterPrivate::resetFormat()
 {
     m_currentBlock               = {};
+    m_currentBlock.format.font   = m_font;
     m_currentBlock.format.colour = QApplication::palette().text().color();
 }
 
@@ -272,5 +274,10 @@ RichText ScriptFormatter::evaluate(const QString& input)
     }
 
     return p->m_formatResult;
+}
+
+void ScriptFormatter::setBaseFont(const QFont& font)
+{
+    p->m_font = font;
 }
 } // namespace Fooyin

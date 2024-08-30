@@ -22,6 +22,7 @@
 #include "settings/wavebarsettings.h"
 
 #include <core/track.h>
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -117,6 +118,10 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
     });
     m_settings->subscribe<Settings::WaveBar::ColourOptions>(this, [this](const QVariant& var) {
         m_colours = var.value<Colours>();
+        update();
+    });
+    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+        m_colours = m_settings->value<Settings::WaveBar::ColourOptions>().value<Colours>();
         update();
     });
 }

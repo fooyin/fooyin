@@ -25,9 +25,8 @@
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/colourbutton.h>
-#include <utils/widgets/fontbutton.h>
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -53,8 +52,6 @@ private:
     QCheckBox* m_filterScrollBars;
     QCheckBox* m_altRowColours;
 
-    FontButton* m_fontButton;
-    ColourButton* m_colourButton;
     QCheckBox* m_overrideRowHeight;
     QSpinBox* m_rowHeight;
     QSpinBox* m_iconWidth;
@@ -66,8 +63,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     , m_filterHeaders{new QCheckBox(tr("Show headers"), this)}
     , m_filterScrollBars{new QCheckBox(tr("Show scrollbars"), this)}
     , m_altRowColours{new QCheckBox(tr("Alternating row colours"), this)}
-    , m_fontButton{new FontButton(Utils::iconFromTheme(Fooyin::Constants::Icons::Font), {}, this)}
-    , m_colourButton{new ColourButton(this)}
     , m_overrideRowHeight{new QCheckBox(tr("Override row height") + QStringLiteral(":"), this)}
     , m_rowHeight{new QSpinBox(this)}
     , m_iconWidth{new QSpinBox(this)}
@@ -75,9 +70,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
 {
     auto* appearance       = new QGroupBox(tr("Appearance"), this);
     auto* appearanceLayout = new QGridLayout(appearance);
-
-    auto* fontLabel   = new QLabel(tr("Font") + QStringLiteral(":"), this);
-    auto* colourLabel = new QLabel(tr("Colour") + QStringLiteral(":"), this);
 
     m_rowHeight->setMinimum(1);
 
@@ -115,10 +107,6 @@ FiltersGuiPageWidget::FiltersGuiPageWidget(SettingsManager* settings)
     appearanceLayout->addWidget(m_altRowColours, row++, 0, 1, 2);
     appearanceLayout->addWidget(m_overrideRowHeight, row, 0, 1, 2);
     appearanceLayout->addWidget(m_rowHeight, row++, 2);
-    appearanceLayout->addWidget(fontLabel, row, 0);
-    appearanceLayout->addWidget(m_fontButton, row++, 1, 1, 2);
-    appearanceLayout->addWidget(colourLabel, row, 0);
-    appearanceLayout->addWidget(m_colourButton, row++, 1, 1, 2);
     appearanceLayout->setColumnStretch(3, 1);
 
     auto* mainLayout = new QGridLayout(this);
@@ -135,9 +123,6 @@ void FiltersGuiPageWidget::load()
     m_filterHeaders->setChecked(m_settings->value<Settings::Filters::FilterHeader>());
     m_filterScrollBars->setChecked(m_settings->value<Settings::Filters::FilterScrollBar>());
     m_altRowColours->setChecked(m_settings->value<Settings::Filters::FilterAltColours>());
-
-    m_fontButton->setButtonFont(m_settings->value<Settings::Filters::FilterFont>());
-    m_colourButton->setColour(m_settings->value<Settings::Filters::FilterColour>());
     m_overrideRowHeight->setChecked(m_settings->value<Settings::Filters::FilterRowHeight>() > 0);
     m_rowHeight->setValue(m_settings->value<Settings::Filters::FilterRowHeight>());
     m_rowHeight->setEnabled(m_overrideRowHeight->isChecked());
@@ -152,13 +137,6 @@ void FiltersGuiPageWidget::apply()
     m_settings->set<Settings::Filters::FilterHeader>(m_filterHeaders->isChecked());
     m_settings->set<Settings::Filters::FilterScrollBar>(m_filterScrollBars->isChecked());
     m_settings->set<Settings::Filters::FilterAltColours>(m_altRowColours->isChecked());
-
-    if(m_fontButton->fontChanged()) {
-        m_settings->set<Settings::Filters::FilterFont>(m_fontButton->buttonFont().toString());
-    }
-    if(m_colourButton->colourChanged()) {
-        m_settings->set<Settings::Filters::FilterColour>(m_colourButton->colour().name());
-    }
 
     if(m_overrideRowHeight->isChecked()) {
         m_settings->set<Settings::Filters::FilterRowHeight>(m_rowHeight->value());
@@ -176,9 +154,6 @@ void FiltersGuiPageWidget::reset()
     m_settings->reset<Settings::Filters::FilterHeader>();
     m_settings->reset<Settings::Filters::FilterScrollBar>();
     m_settings->reset<Settings::Filters::FilterAltColours>();
-
-    m_settings->reset<Settings::Filters::FilterFont>();
-    m_settings->reset<Settings::Filters::FilterColour>();
     m_settings->reset<Settings::Filters::FilterRowHeight>();
     m_settings->reset<Settings::Filters::FilterIconSize>();
 }

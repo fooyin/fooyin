@@ -23,6 +23,7 @@
 #include "wavebarcolours.h"
 #include "wavebarconstants.h"
 
+#include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/widgets/colourbutton.h>
 
@@ -141,6 +142,8 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
 
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
+
+    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() { load(); });
 }
 
 void WaveBarGuiSettingsPageWidget::load()
@@ -191,12 +194,13 @@ void WaveBarGuiSettingsPageWidget::apply()
     }
     else {
         m_settings->set<Settings::WaveBar::ColourOptions>(QVariant{});
+        load();
     }
 }
 
 void WaveBarGuiSettingsPageWidget::reset()
 {
-    m_settings->reset<Settings::WaveBar::ColourOptions>();
+    m_settings->set<Settings::WaveBar::ColourOptions>(QVariant::fromValue(Colours{}));
 }
 
 WaveBarGuiSettingsPage::WaveBarGuiSettingsPage(SettingsManager* settings)

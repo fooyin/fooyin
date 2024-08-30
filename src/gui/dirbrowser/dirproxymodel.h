@@ -45,6 +45,7 @@ public:
     explicit DirProxyModel(QObject* parent = nullptr);
 
     void reset(const QModelIndex& root);
+    void resetPalette();
 
     void setSourceModel(QAbstractItemModel* model) override;
 
@@ -72,9 +73,8 @@ private:
     [[nodiscard]] int nodeCount() const;
     void sourceRowsRemoved(const QModelIndex& parent, int first, int last);
 
-    bool m_flat;
     QAbstractFileIconProvider* m_iconProvider;
-
+    bool m_flat;
     QString m_rootPath;
     QString m_goUpPath;
 

@@ -28,13 +28,15 @@ class QLineEdit;
 namespace Fooyin {
 class EditableLayout;
 class LayoutProvider;
+class SettingsManager;
 
 class ExportLayoutDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider, QWidget* parent = nullptr);
+    ExportLayoutDialog(EditableLayout* editableLayout, LayoutProvider* layoutProvider, SettingsManager* settings,
+                       QWidget* parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
 
@@ -45,10 +47,13 @@ private:
 
     EditableLayout* m_editableLayout;
     LayoutProvider* m_layoutProvider;
+    SettingsManager* m_settings;
 
     QLineEdit* m_nameEdit;
     QLineEdit* m_pathEdit;
     QCheckBox* m_saveWindowSize;
+    QCheckBox* m_saveColours;
+    QCheckBox* m_saveFonts;
     QLabel* m_errorLabel;
 };
 } // namespace Fooyin

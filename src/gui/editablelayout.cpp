@@ -589,13 +589,20 @@ FyLayout EditableLayout::saveCurrentToLayout(const QString& name)
         layoutName = QStringLiteral("Layout %1").arg(p->m_layoutProvider->layouts().size());
     }
 
-    root[QStringLiteral("Name")]    = layoutName;
-    root[QStringLiteral("Version")] = LayoutVersion;
-    root[QStringLiteral("Widgets")] = array;
+    root[u"Name"]    = layoutName;
+    root[u"Version"] = LayoutVersion;
+    root[u"Widgets"] = array;
 
     const QByteArray json = QJsonDocument(root).toJson();
 
-    return FyLayout{json};
+    FyLayout layout{json};
+
+    const auto theme = p->m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
+    if(theme.isValid()) {
+        layout.saveTheme(theme);
+    }
+
+    return layout;
 }
 
 FyWidget* EditableLayout::findWidget(const Id& id) const
@@ -684,18 +691,23 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
     p->m_layoutHistory->clear();
     layout.loadWindowSize();
 
-    if(!json.contains(QStringLiteral("Widgets"))) {
+    if(!json.contains(u"Widgets")) {
         return false;
     }
 
-    if(!json.value(QStringLiteral("Widgets")).isArray()) {
+    if(!json.value(u"Widgets").isArray()) {
         return false;
     }
 
-    const auto rootWidgets = json.value(QStringLiteral("Widgets")).toArray();
+    const auto rootWidgets = json.value(u"Widgets").toArray();
 
     if(rootWidgets.empty() || !rootWidgets.cbegin()->isObject()) {
         return false;
+    }
+
+    const FyTheme theme = layout.loadTheme();
+    if(theme.isValid()) {
+        p->m_settings->set<Settings::Gui::Theme>(QVariant::fromValue(theme));
     }
 
     const auto rootObject = rootWidgets.cbegin()->toObject();
@@ -719,7 +731,7 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
 void EditableLayout::exportLayout(QWidget* parent)
 {
-    auto* exportDialog = new ExportLayoutDialog(this, p->m_layoutProvider, parent);
+    auto* exportDialog = new ExportLayoutDialog(this, p->m_layoutProvider, p->m_settings, parent);
     exportDialog->setAttribute(Qt::WA_DeleteOnClose);
     exportDialog->show();
 }

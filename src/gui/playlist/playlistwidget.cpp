@@ -51,6 +51,7 @@
 #include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QJsonObject>
@@ -209,6 +210,9 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     m_model->playingTrackChanged(m_playlistController->currentTrack());
     m_model->playStateChanged(m_playlistController->playState());
+    // QApplication::font only works from main thread,
+    // so we have to pass this to the script formatter from here
+    m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
 }
 
 void PlaylistWidgetPrivate::setupConnections()
@@ -259,6 +263,11 @@ void PlaylistWidgetPrivate::setupConnections()
         m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
     }
     // clang-format on
+
+    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+        m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
+        resetModel();
+    });
 }
 
 void PlaylistWidgetPrivate::setupActions()
@@ -1631,6 +1640,14 @@ void PlaylistWidget::searchEvent(const QString& search)
             selectTracks({});
         }
     }
+}
+
+void PlaylistWidget::changeEvent(QEvent* event)
+{
+    if(event->type() == QEvent::PaletteChange) {
+        p->resetModel();
+    }
+    FyWidget::changeEvent(event);
 }
 
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)

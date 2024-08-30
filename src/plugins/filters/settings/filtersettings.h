@@ -41,12 +41,10 @@ enum FiltersSettings : uint32_t
     FilterPlaylistEnabled = 6 | Type::Bool,
     FilterAutoSwitch      = 7 | Type::Bool,
     FilterAutoPlaylist    = 8 | Type::String,
-    FilterFont            = 9 | Type::String,
-    FilterColour          = 10 | Type::String,
-    FilterRowHeight       = 11 | Type::Int,
-    FilterSendPlayback    = 12 | Type::Bool,
-    FilterKeepAlive       = 13 | Type::Bool,
-    FilterIconSize        = 14 | Type::Variant
+    FilterRowHeight       = 9 | Type::Int,
+    FilterSendPlayback    = 10 | Type::Bool,
+    FilterKeepAlive       = 11 | Type::Bool,
+    FilterIconSize        = 12 | Type::Variant
 };
 Q_ENUM_NS(FiltersSettings)
 } // namespace Settings::Filters

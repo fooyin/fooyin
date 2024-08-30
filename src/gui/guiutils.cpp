@@ -22,7 +22,9 @@
 #include <core/library/musiclibrary.h>
 #include <utils/datastream.h>
 
+#include <QApplication>
 #include <QIODevice>
+#include <QStyle>
 
 namespace Fooyin::Gui {
 TrackList tracksFromMimeData(MusicLibrary* library, QByteArray data)
@@ -69,5 +71,50 @@ QueueTracks queueTracksFromMimeData(MusicLibrary* library, QByteArray data)
     }
 
     return tracks;
+}
+
+QMap<PaletteKey, QColor> coloursFromPalette()
+{
+    return coloursFromPalette(QApplication::palette());
+}
+
+QMap<PaletteKey, QColor> coloursFromStylePalette()
+{
+    return coloursFromPalette(QApplication::style()->standardPalette());
+}
+
+QMap<PaletteKey, QColor> coloursFromPalette(const QPalette& palette)
+{
+    QMap<PaletteKey, QColor> colours;
+
+    using P = QPalette;
+
+    colours[PaletteKey{P::WindowText}]                   = palette.color(P::Active, P::WindowText);
+    colours[PaletteKey{P::WindowText, P::Disabled}]      = palette.color(P::Disabled, P::WindowText);
+    colours[PaletteKey{P::Button}]                       = palette.color(P::Active, P::Button);
+    colours[PaletteKey{P::Light}]                        = palette.color(P::Active, P::Light);
+    colours[PaletteKey{P::Midlight}]                     = palette.color(P::Active, P::Midlight);
+    colours[PaletteKey{P::Dark}]                         = palette.color(P::Active, P::Dark);
+    colours[PaletteKey{P::Mid}]                          = palette.color(P::Active, P::Mid);
+    colours[PaletteKey{P::Text}]                         = palette.color(P::Active, P::Text);
+    colours[PaletteKey{P::Text, P::Disabled}]            = palette.color(P::Disabled, P::Text);
+    colours[PaletteKey{P::BrightText}]                   = palette.color(P::Active, P::BrightText);
+    colours[PaletteKey{P::ButtonText}]                   = palette.color(P::Active, P::ButtonText);
+    colours[PaletteKey{P::ButtonText, P::Disabled}]      = palette.color(P::Disabled, P::ButtonText);
+    colours[PaletteKey{P::Base}]                         = palette.color(P::Active, P::Base);
+    colours[PaletteKey{P::Window}]                       = palette.color(P::Active, P::Window);
+    colours[PaletteKey{P::Shadow}]                       = palette.color(P::Active, P::Shadow);
+    colours[PaletteKey{P::Highlight}]                    = palette.color(P::Active, P::Highlight);
+    colours[PaletteKey{P::Highlight, P::Disabled}]       = palette.color(P::Disabled, P::Highlight);
+    colours[PaletteKey{P::HighlightedText}]              = palette.color(P::Active, P::HighlightedText);
+    colours[PaletteKey{P::HighlightedText, P::Disabled}] = palette.color(P::Disabled, P::HighlightedText);
+    colours[PaletteKey{P::Link}]                         = palette.color(P::Active, P::Link);
+    colours[PaletteKey{P::LinkVisited}]                  = palette.color(P::Active, P::LinkVisited);
+    colours[PaletteKey{P::AlternateBase}]                = palette.color(P::Active, P::AlternateBase);
+    colours[PaletteKey{P::ToolTipBase}]                  = palette.color(P::Active, P::ToolTipBase);
+    colours[PaletteKey{P::ToolTipText}]                  = palette.color(P::Active, P::ToolTipText);
+    colours[PaletteKey{P::PlaceholderText}]              = palette.color(P::Active, P::PlaceholderText);
+
+    return colours;
 }
 } // namespace Fooyin::Gui

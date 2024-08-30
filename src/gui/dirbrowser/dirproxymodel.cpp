@@ -62,6 +62,13 @@ void DirProxyModel::reset(const QModelIndex& root)
     endResetModel();
 }
 
+void DirProxyModel::resetPalette()
+{
+    m_playingColour = QApplication::palette().highlight().color();
+    m_playingColour.setAlpha(90);
+    emit dataChanged({}, {}, {Qt::BackgroundRole});
+}
+
 void DirProxyModel::setSourceModel(QAbstractItemModel* model)
 {
     if(model == sourceModel()) {
