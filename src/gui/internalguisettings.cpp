@@ -147,5 +147,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::InfoDisplayPrefer>(0, QStringLiteral("SelectionInfo/PreferDisplay"));
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
     m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
+    m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
 }
 } // namespace Fooyin

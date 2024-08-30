@@ -596,7 +596,7 @@ void GuiApplicationPrivate::setTheme() const
 {
     const auto currTheme = m_settings->value<Settings::Gui::Theme>().value<FyTheme>();
 
-    QPalette newPalette = QApplication::style()->standardPalette();
+    auto newPalette = m_settings->value<Settings::Gui::Internal::SystemPalette>().value<QPalette>();
     for(const auto& [key, colour] : Utils::asRange(currTheme.colours)) {
         newPalette.setColor(key.group, key.role, colour);
     }

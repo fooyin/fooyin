@@ -131,6 +131,7 @@ enum GuiInternalSettings : uint32_t
     InfoDisplayPrefer       = 59 | Type::Int,
     SystemStyle             = 60 | Type::String,
     SystemFont              = 61 | Type::Variant,
+    SystemPalette           = 62 | Type::Variant,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal

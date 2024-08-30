@@ -23,6 +23,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/internalguisettings.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
 #include <utils/helpers.h>
@@ -259,7 +260,8 @@ FyTheme GuiColoursPageWidget::currentTheme() const
 
 void GuiColoursPageWidget::loadDefaults()
 {
-    const auto currentColours = Gui::coloursFromStylePalette();
+    const auto systemPalette  = m_settings->value<Settings::Gui::Internal::SystemPalette>().value<QPalette>();
+    const auto currentColours = Gui::coloursFromPalette(systemPalette);
     for(const auto& [key, colour] : Utils::asRange(currentColours)) {
         if(m_colourMapping.contains(key)) {
             const auto& [button, option] = m_colourMapping.at(key);
