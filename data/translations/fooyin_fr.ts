@@ -3811,7 +3811,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="179"/>
         <source>&amp;Stop after this</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Arrêter la lecture après ce titre</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
@@ -4116,12 +4116,12 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="121"/>
         <source>Search Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche dans la liste de lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>%1 results</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 résultats</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="136"/>
@@ -4394,7 +4394,7 @@
     <message>
         <location filename="../../src/gui/widgets/statuswidget.cpp" line="343"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le détail de l&apos;action en cours</translation>
     </message>
 </context>
 <context>
@@ -4430,7 +4430,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="61"/>
         <source>Show action tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le détail de l&apos;action en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/statuswidgetpage.cpp" line="65"/>
