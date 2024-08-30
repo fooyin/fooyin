@@ -1642,14 +1642,6 @@ void PlaylistWidget::searchEvent(const QString& search)
     }
 }
 
-void PlaylistWidget::changeEvent(QEvent* event)
-{
-    if(event->type() == QEvent::PaletteChange) {
-        p->resetModel();
-    }
-    FyWidget::changeEvent(event);
-}
-
 void PlaylistWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     auto* menu = new QMenu(this);
