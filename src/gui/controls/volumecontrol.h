@@ -33,6 +33,14 @@ class VolumeControl : public FyWidget
     Q_OBJECT
 
 public:
+    enum Option : uint8_t
+    {
+        Icon   = 1 << 0,
+        Slider = 1 << 1,
+        All    = Icon | Slider
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
     explicit VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent = nullptr);
     ~VolumeControl() override;
 
@@ -49,3 +57,5 @@ private:
     std::unique_ptr<VolumeControlPrivate> p;
 };
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::VolumeControl::Options)
