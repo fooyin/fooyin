@@ -62,7 +62,7 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation>$Disposition</translation>
+        <translation>&amp;Disposition</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
@@ -293,7 +293,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="70"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Lecteur de Métadonnées</translation>
     </message>
 </context>
 <context>
@@ -666,7 +666,7 @@
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Onglet</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/editabletabbar.cpp" line="72"/>
@@ -707,12 +707,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="47"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder les couleurs</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder les polices</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="51"/>
@@ -1413,7 +1413,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="53"/>
         <source>Filters</source>
-        <translation type="unfinished">Filtres</translation>
+        <translation>Filtres</translation>
     </message>
 </context>
 <context>
@@ -1443,12 +1443,12 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="88"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished">Afficher l&apos;icône dans la barre de miniatures du système</translation>
+        <translation>Afficher l&apos;icône dans la zone de notifications</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="89"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished">Conserver dans la barre de miniatures après fermeture</translation>
+        <translation>Réduire dans la zone de notifications à la fermeture</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
@@ -1458,7 +1458,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished">Attendre que toutes les pistes soient chargées pour ouvrir fooyin</translation>
+        <translation>Attendre que toutes les pistes soient chargées pour ouvrir fooyin</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
@@ -1589,7 +1589,7 @@
         <location filename="../../src/gui/guiapplication.cpp" line="479"/>
         <location filename="../../src/gui/guiapplication.cpp" line="510"/>
         <source>Tagging</source>
-        <translation>Étiquette</translation>
+        <translation>Métadonnées</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="513"/>
@@ -1664,22 +1664,22 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Reload tags from file(s)</source>
-        <translation>Recharger les étiquettes des fichiers</translation>
+        <translation>Recharger les métadonnées à partir des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="484"/>
         <source>Reload tags from modified file(s)</source>
-        <translation>Recharger les étiquettes des fichiers modifiés</translation>
+        <translation>Recharger les métadonnées à partir des fichiers modifiés</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="486"/>
         <source>Replace tags in selected tracks with tags from the file(s)</source>
-        <translation>Remplacer les étiquettes des pistes sélectionnées par les étiquettes des fichiers</translation>
+        <translation>Remplacer les métadonnées des pistes sélectionnées par les métadonnées des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="488"/>
         <source>Replace tags in selected tracks with tags from the file(s) if modified</source>
-        <translation>Remplacer les étiquettes des pistes sélectionnées par les étiquettes des fichiers modifiés</translation>
+        <translation>Remplacer les métadonnées des pistes sélectionnées par les métadonnées des fichiers si elles ont été modifiées</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="568"/>
@@ -1742,132 +1742,132 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="87"/>
         <source>&amp;Load</source>
-        <translation type="unfinished">&amp;Charger</translation>
+        <translation>&amp;Charger</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="88"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Enregistrer</translation>
+        <translation>&amp;Enregistrer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="89"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Supprimer</translation>
+        <translation>&amp;Supprimer</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>Par défaut (système)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Thèmes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
         <source>Background</source>
-        <translation type="unfinished">Arrière Plan</translation>
+        <translation>Arrière-Plan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Premier Plan</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Premier Plan (clair)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte Générique</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Base (alternatif)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte Sélectionné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton (Arrière-Plan)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton (Texte)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Premier Plan (Désactivé)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
         <source>Highlight (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection (Désactivé)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte Sélectionné (Désactivé)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte (Désactivé)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte des Boutons (Désactivé)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Infobulle (Arrière-Plan)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Infobulle (Texte)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
         <source>Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Lien</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="136"/>
         <source>Link (Visited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lien (Visité)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
         <source>Light</source>
-        <translation type="unfinished">Clair</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="138"/>
@@ -1877,7 +1877,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="139"/>
         <source>Dark</source>
-        <translation type="unfinished">Sombre</translation>
+        <translation>Sombre</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="140"/>
@@ -1887,32 +1887,32 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="141"/>
         <source>Shadow</source>
-        <translation type="unfinished"></translation>
+        <translation>Ombre</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="163"/>
         <source>Basic Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleurs de base</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleurs avancées</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Polices</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>Theme already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Thème déjà existant</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>Theme %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Le thème %1 existe déjà. L&apos;écraser&#x202f;?</translation>
     </message>
 </context>
 <context>
@@ -2071,17 +2071,17 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Thèmes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Interface</source>
-        <translation type="unfinished">Interface</translation>
+        <translation>Interface</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleurs et Polices</translation>
     </message>
 </context>
 <context>
@@ -2632,7 +2632,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegrouppage.cpp" line="134"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arborescence de la Bibliothèque</translation>
+        <translation>Arborescence de la Bibliothèque</translation>
     </message>
 </context>
 <context>
@@ -2666,7 +2666,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreemodel.cpp" line="461"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arborescence de la Bibliothèque</translation>
+        <translation>Arborescence de la Bibliothèque</translation>
     </message>
 </context>
 <context>
@@ -2684,7 +2684,7 @@
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="262"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arborescence de la Bibliothèque</translation>
+        <translation>Arborescence de la Bibliothèque</translation>
     </message>
 </context>
 <context>
@@ -2870,7 +2870,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="896"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arborescence de la bibliothèque</translation>
+        <translation>Arborescence de la bibliothèque</translation>
     </message>
 </context>
 <context>
@@ -3231,12 +3231,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="73"/>
         <source>Left script</source>
-        <translation type="unfinished">Script à gauche</translation>
+        <translation>Script à gauche</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="74"/>
         <source>Right script</source>
-        <translation type="unfinished">Script à droite</translation>
+        <translation>Script à droite</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="81"/>
@@ -3572,7 +3572,7 @@
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="210"/>
         <source>None</source>
-        <translation type="unfinished">Non Assigné</translation>
+        <translation>Non Assigné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="211"/>
@@ -4745,7 +4745,7 @@
     <message>
         <location filename="../../src/gui/theme/themeregistry.cpp" line="44"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode sombre</translation>
     </message>
 </context>
 <context>
@@ -4926,7 +4926,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="99"/>
         <source>Background</source>
-        <translation>Arrière Plan</translation>
+        <translation>Arrière-Plan</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarguisettingspage.cpp" line="100"/>
@@ -5286,7 +5286,7 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
         <location filename="../../src/gui/widgets.cpp" line="155"/>
         <location filename="../../src/gui/widgets.cpp" line="276"/>
         <source>Library Tree</source>
-        <translation type="unfinished">Arborescence de la bibliothèque</translation>
+        <translation>Arborescence de la bibliothèque</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="160"/>
@@ -5365,22 +5365,22 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="273"/>
         <source>Default</source>
-        <translation type="unfinished">Par Défaut</translation>
+        <translation>Par Défaut</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="274"/>
         <source>Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Onglets</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="275"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Listes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="278"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;état</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="290"/>
