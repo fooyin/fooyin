@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.2](https://github.com/fooyin/fooyin/releases/tag/v0.6.2) (2024-08-31)
+
+### New Features
+
+* Theme support
+  - Ability to change palette colours and fonts
+  - Includes dark mode theme
+  - Option to save to layouts on export
+
+### Improvements
+
+* Filters: Enable library viewer playlist by default
+* Scripting: Make variable calls case-insensitive
+* Settings: Add page to toggle and adjust order of decoders/tag readers
+* VolumeControl: Support enabling both icon and slider
+
+### Fixes
+
+* Controls: Fix volume slider resizing splitter ([#248](https://github.com/fooyin/fooyin/issues/248))
+* Engine: Fix crash when reading short archive entries
+* ExpandedTreeView: Fix setting uniform row heights
+* Playlist
+  - Fix crash when switching to single-column mode
+  - Fix track repeating with shuffle + repeat playlist enabled ([#245](https://github.com/fooyin/fooyin/issues/245))
+  - Fix some rare instances of duplicate tracks
+  - Fix auto-naming of new playlists for tracks with limited metadata 
+* Search: Fix sorting by column
+
+
 ## [0.6.1](https://github.com/fooyin/fooyin/releases/tag/v0.6.1) (2024-08-27)
 
 ### Improvements
