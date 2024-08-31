@@ -271,11 +271,11 @@ void Widgets::registerFontEntries() const
     auto* themeReg = m_gui.themeRegistry;
 
     themeReg->registerFontEntry(tr("Default"), {});
-    themeReg->registerFontEntry(tr("Tabs"), QStringLiteral("QTabBar"));
     themeReg->registerFontEntry(tr("Lists"), QStringLiteral("QAbstractItemView"));
     themeReg->registerFontEntry(tr("Library Tree"), QStringLiteral("Fooyin::LibraryTreeView"));
     themeReg->registerFontEntry(tr("Playlist"), QStringLiteral("Fooyin::PlaylistView"));
     themeReg->registerFontEntry(tr("Status bar"), QStringLiteral("Fooyin::StatusLabel"));
+    themeReg->registerFontEntry(tr("Tabs"), QStringLiteral("Fooyin::EditableTabBar"));
 }
 
 void Widgets::showScanProgress(const ScanProgress& progress) const
