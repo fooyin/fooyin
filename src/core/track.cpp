@@ -1085,7 +1085,9 @@ QString Track::findCommonField(const TrackList& tracks)
                                             [&primaryDir](const Track& track) { return track.directory() == primaryDir; });
 
         if(sameArtist && sameAlbum) {
-            name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
+            if(!primaryArtist.isEmpty() && !primaryAlbum.isEmpty()) {
+                name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
+            }
         }
         else if(sameAlbum) {
             name = primaryAlbum;
