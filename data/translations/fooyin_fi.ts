@@ -39,7 +39,7 @@
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="83"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tietoa %1</translation>
     </message>
 </context>
 <context>
@@ -47,37 +47,37 @@
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="47"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tiedosto</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="51"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Muokkaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="55"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="59"/>
         <source>La&amp;yout</source>
-        <translation type="unfinished"></translation>
+        <translation>As&amp;ettelu</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="63"/>
         <source>&amp;Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="67"/>
         <source>&amp;Library</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kirjasto</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/mainmenubar.cpp" line="71"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Apua</translation>
     </message>
 </context>
 <context>
@@ -85,17 +85,17 @@
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="33"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Asetukset</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="40"/>
         <source>Buffer length</source>
-        <translation type="unfinished"></translation>
+        <translation>Puskurin pituus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/alsa/alsasettings.cpp" line="41"/>
         <source>Period length</source>
-        <translation type="unfinished"></translation>
+        <translation>Jakson pituus</translation>
     </message>
 </context>
 <context>
@@ -104,12 +104,12 @@
         <location filename="../../src/gui/settings/artworkpage.cpp" line="157"/>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>Kuvamateriaali</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="158"/>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttöliittymä</translation>
     </message>
 </context>
 <context>
@@ -117,42 +117,42 @@
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="65"/>
         <source>Prefer currently playing track</source>
-        <translation type="unfinished"></translation>
+        <translation>Suosioi parhaillaan soivaa kappaletta</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="66"/>
         <source>Prefer current selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Suosioi nykyistä valintaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="75"/>
         <source>Display</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="85"/>
         <source>Front Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="86"/>
         <source>Back Cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="87"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="89"/>
         <source>Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Välimuisti</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/artworkpage.cpp" line="92"/>
         <source>Pixmap cache size</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixmap välimuistin koko</translation>
     </message>
 </context>
 <context>
@@ -160,37 +160,37 @@
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="480"/>
         <source>Auto-size sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Koo sektiot automaattisesti</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="488"/>
         <source>Show hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä piiloitetut</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="497"/>
         <source>Hide %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Piilota %1</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="520"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Sijoitus</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="530"/>
         <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vasemmalla</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="531"/>
         <source>&amp;Centre</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Keskellä</translation>
     </message>
     <message>
         <location filename="../../src/utils/widgets/autoheaderview.cpp" line="532"/>
         <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oikealla</translation>
     </message>
 </context>
 <context>
@@ -198,7 +198,7 @@
     <message>
         <location filename="../../src/utils/widgets/colourbutton.cpp" line="71"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse väri</translation>
     </message>
 </context>
 <context>
@@ -206,42 +206,42 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="82"/>
         <source>Artwork Panel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kansikuva paneeli</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="124"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Säilytä kuvasuhde</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="137"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Sijoita keskelle</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="138"/>
         <source>Align to left</source>
-        <translation type="unfinished"></translation>
+        <translation>Sijoita vasemmalle</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
         <source>Align to right</source>
-        <translation type="unfinished"></translation>
+        <translation>Sijoita oikealle</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="160"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Etukansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="161"/>
         <source>Back cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Takakansi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="162"/>
         <source>Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artisti</translation>
     </message>
 </context>
 <context>
@@ -249,12 +249,12 @@
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="82"/>
         <source>Select Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse Fontti</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/customisableinput.cpp" line="91"/>
         <source>Select Colour</source>
-        <translation type="unfinished"></translation>
+        <translation>Valitse Väri</translation>
     </message>
 </context>
 <context>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="88"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuetut lisäosat</translation>
     </message>
 </context>
 <context>
@@ -270,17 +270,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="111"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Yleiset</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekoodaus</translation>
     </message>
 </context>
 <context>
@@ -288,12 +288,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="69"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Dekooderit</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="70"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunniste lukijat</translation>
     </message>
 </context>
 <context>
@@ -301,42 +301,42 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="233"/>
         <source>&amp;Play</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pelaa</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="234"/>
         <source>Add to &amp;current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää &amp;nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="235"/>
         <source>Add to &amp;active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää &amp;aktiiviseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="236"/>
         <source>&amp;Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lähetä nykyiseen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="237"/>
         <source>Send to &amp;new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Lähetä &amp;uuteen soittolistaan</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="238"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisää toisto &amp;jonoon</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="239"/>
         <source>Send to playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Lähetä toisto jo&amp;noon</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Start playback of the selected files(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Aloita valittujen tiedostoiden toisto</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="270"/>
