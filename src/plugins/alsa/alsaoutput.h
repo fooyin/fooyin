@@ -66,8 +66,7 @@ private:
     void resetAlsa();
     bool initAlsa();
 
-    bool checkError(int error, const QString& message);
-    [[nodiscard]] bool formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams);
+    bool checkError(int error, const char* message);
     bool setAlsaFormat(snd_pcm_hw_params_t* hwParams);
     void getHardwareDevices(OutputDevices& devices);
     bool attemptRecovery(snd_pcm_status_t* status);

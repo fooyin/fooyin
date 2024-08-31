@@ -29,11 +29,6 @@
 Q_LOGGING_CATEGORY(ALSA, "fy.alsa")
 
 namespace {
-void printError(const QString& message)
-{
-    qCWarning(ALSA) << message;
-}
-
 snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
 {
     switch(format) {
@@ -190,8 +185,8 @@ void AlsaOutput::uninit()
 
 void AlsaOutput::reset()
 {
-    checkError(snd_pcm_drop(m_pcmHandle.get()), QStringLiteral("ALSA drop error"));
-    checkError(snd_pcm_prepare(m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
+    checkError(snd_pcm_drop(m_pcmHandle.get()), "ALSA drop error");
+    checkError(snd_pcm_prepare(m_pcmHandle.get()), "ALSA prepare error");
 
     m_started = false;
     recoverState();
@@ -255,12 +250,11 @@ int AlsaOutput::write(const AudioBuffer& buffer)
 
     snd_pcm_sframes_t err{0};
     err = snd_pcm_writei(m_pcmHandle.get(), adjustedBuff.constData().data(), frameCount);
-    if(checkError(static_cast<int>(err), QStringLiteral("Write error"))) {
+    if(checkError(static_cast<int>(err), "Write error")) {
         return 0;
     }
     if(err != frameCount) {
-        printError(
-            QStringLiteral("Unexpected partial write (%1 of %2 frames)").arg(static_cast<int>(err)).arg(frameCount));
+        qCWarning(ALSA) << "Unexpected partial write";
     }
     return static_cast<int>(err);
 }
@@ -277,10 +271,10 @@ void AlsaOutput::setPaused(bool pause)
 
     const auto state = snd_pcm_state(m_pcmHandle.get());
     if(state == SND_PCM_STATE_RUNNING && pause) {
-        checkError(snd_pcm_pause(m_pcmHandle.get(), 1), QStringLiteral("Couldn't pause device"));
+        checkError(snd_pcm_pause(m_pcmHandle.get(), 1), "Couldn't pause device");
     }
     else if(state == SND_PCM_STATE_PAUSED && !pause) {
-        checkError(snd_pcm_pause(m_pcmHandle.get(), 0), QStringLiteral("Couldn't unpause device"));
+        checkError(snd_pcm_pause(m_pcmHandle.get(), 0), "Couldn't unpause device");
     }
 }
 
@@ -321,7 +315,7 @@ bool AlsaOutput::initAlsa()
     {
         snd_pcm_t* rawHandle;
         err = snd_pcm_open(&rawHandle, m_device.toLocal8Bit().constData(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
-        if(checkError(err, QStringLiteral("Failed to open device"))) {
+        if(checkError(err, "Failed to open device")) {
             return false;
         }
         m_pcmHandle = {rawHandle, PcmHandleDeleter()};
@@ -332,14 +326,14 @@ bool AlsaOutput::initAlsa()
     snd_pcm_hw_params_alloca(&hwParams);
 
     err = snd_pcm_hw_params_any(handle, hwParams);
-    if(checkError(err, QStringLiteral("Failed to initialise hardware parameters"))) {
+    if(checkError(err, "Failed to initialise hardware parameters")) {
         return false;
     }
 
     m_pausable = snd_pcm_hw_params_can_pause(hwParams);
 
     err = snd_pcm_hw_params_set_access(handle, hwParams, SND_PCM_ACCESS_RW_INTERLEAVED);
-    if(checkError(err, QStringLiteral("Failed to set access mode"))) {
+    if(checkError(err, "Failed to set access mode")) {
         return false;
     }
 
@@ -348,14 +342,14 @@ bool AlsaOutput::initAlsa()
     }
 
     err = snd_pcm_hw_params_set_rate_resample(handle, hwParams, 1);
-    if(checkError(err, QStringLiteral("Failed to setup resampling"))) {
+    if(checkError(err, "Failed to setup resampling")) {
         return false;
     }
 
     auto sampleRate = static_cast<uint32_t>(m_format.sampleRate());
 
     err = snd_pcm_hw_params_set_rate_near(handle, hwParams, &sampleRate, nullptr);
-    if(checkError(err, QStringLiteral("Failed to set sample rate"))) {
+    if(checkError(err, "Failed to set sample rate")) {
         return false;
     }
 
@@ -368,7 +362,7 @@ bool AlsaOutput::initAlsa()
     uint32_t channelCount = m_format.channelCount();
 
     err = snd_pcm_hw_params_set_channels_near(handle, hwParams, &channelCount);
-    if(checkError(err, QStringLiteral("Failed to set channel count"))) {
+    if(checkError(err, "Failed to set channel count")) {
         return false;
     }
 
@@ -379,25 +373,25 @@ bool AlsaOutput::initAlsa()
 
     uint32_t maxBufferTime;
     err = snd_pcm_hw_params_get_buffer_time_max(hwParams, &maxBufferTime, nullptr);
-    if(checkError(err, QStringLiteral("Unable to get max buffer time"))) {
+    if(checkError(err, "Unable to get max buffer time")) {
         return false;
     }
     uint32_t maxPeriodTime;
     err = snd_pcm_hw_params_get_period_time_max(hwParams, &maxPeriodTime, nullptr);
-    if(checkError(err, QStringLiteral("Unable to get max period time"))) {
+    if(checkError(err, "Unable to get max period time")) {
         return false;
     }
 
     uint32_t bufferTime = std::min<uint32_t>(
         m_settings.value(QLatin1String{BufferLengthSetting}, DefaultBufferLength).toUInt() * 1000, maxBufferTime);
     err = snd_pcm_hw_params_set_buffer_time_near(handle, hwParams, &bufferTime, nullptr);
-    if(checkError(err, QStringLiteral("Unable to set buffer time"))) {
+    if(checkError(err, "Unable to set buffer time")) {
         return false;
     }
     uint32_t periodTime = std::min<uint32_t>(
         m_settings.value(QLatin1String{PeriodLengthSetting}, DefaultPeriodLength).toUInt() * 1000, maxPeriodTime);
     err = snd_pcm_hw_params_set_period_time_near(handle, hwParams, &periodTime, nullptr);
-    if(checkError(err, QStringLiteral("Unable to set period time"))) {
+    if(checkError(err, "Unable to set period time")) {
         return false;
     }
 
@@ -405,7 +399,7 @@ bool AlsaOutput::initAlsa()
     m_periodSize = m_format.framesForDuration(periodTime / 1000);
 
     err = snd_pcm_hw_params(handle, hwParams);
-    if(checkError(err, QStringLiteral("Failed to apply hardware parameters"))) {
+    if(checkError(err, "Failed to apply hardware parameters")) {
         return false;
     }
 
@@ -413,81 +407,54 @@ bool AlsaOutput::initAlsa()
     snd_pcm_sw_params_alloca(&swParams);
 
     err = snd_pcm_sw_params_current(handle, swParams);
-    if(checkError(err, QStringLiteral("Unable to get sw-parameters"))) {
+    if(checkError(err, "Unable to get sw-parameters")) {
         return false;
     }
 
     snd_pcm_uframes_t boundary;
     err = snd_pcm_sw_params_get_boundary(swParams, &boundary);
-    if(checkError(err, QStringLiteral("Unable to get boundary"))) {
+    if(checkError(err, "Unable to get boundary")) {
         return false;
     }
 
     // Play silence when underrun
     err = snd_pcm_sw_params_set_silence_size(handle, swParams, boundary);
-    if(checkError(err, QStringLiteral("Unable to set silence size"))) {
+    if(checkError(err, "Unable to set silence size")) {
         return false;
     }
 
     err = snd_pcm_sw_params_set_silence_threshold(handle, swParams, 0);
-    if(checkError(err, QStringLiteral("Unable to set silence threshold"))) {
+    if(checkError(err, "Unable to set silence threshold")) {
         return false;
     }
 
     err = snd_pcm_sw_params_set_start_threshold(handle, swParams, INT_MAX);
-    if(checkError(err, QStringLiteral("Unable to set start threshold"))) {
+    if(checkError(err, "Unable to set start threshold")) {
         return false;
     }
 
     err = snd_pcm_sw_params_set_stop_threshold(handle, swParams, INT_MAX);
-    if(checkError(err, QStringLiteral("Unable to set stop threshold"))) {
+    if(checkError(err, "Unable to set stop threshold")) {
         return false;
     }
 
     err = snd_pcm_sw_params(handle, swParams);
-    if(checkError(err, QStringLiteral("Failed to apply software parameters"))) {
+    if(checkError(err, "Failed to apply software parameters")) {
         return false;
     }
 
-    return !checkError(snd_pcm_prepare(m_pcmHandle.get()), QStringLiteral("Prepare error"));
+    return !checkError(snd_pcm_prepare(m_pcmHandle.get()), "Prepare error");
 }
 
-bool AlsaOutput::checkError(int error, const QString& message)
+bool AlsaOutput::checkError(int error, const char* message)
 {
     if(error < 0) {
-        m_error = message;
-        printError(QLatin1String(snd_strerror(error)) + message);
+        m_error = QString::fromUtf8(message);
+        qCWarning(ALSA) << message << ":" << snd_strerror(error);
         emit stateChanged(State::Error);
         return true;
     }
     return false;
-}
-
-bool AlsaOutput::formatSupported(snd_pcm_format_t requestedFormat, snd_pcm_hw_params_t* hwParams)
-{
-    if(requestedFormat < 0) {
-        return false;
-    }
-
-    snd_pcm_format_mask_t* mask;
-    snd_pcm_format_mask_alloca(&mask);
-    snd_pcm_hw_params_get_format_mask(hwParams, mask);
-    const bool isSupported = snd_pcm_format_mask_test(mask, requestedFormat);
-    QStringList supportedFormats;
-
-    for(int format = 0; format <= SND_PCM_FORMAT_LAST; ++format) {
-        if(snd_pcm_format_mask_test(mask, snd_pcm_format_t(format))) {
-            supportedFormats.emplace_back(QString::fromLatin1(snd_pcm_format_name(snd_pcm_format_t(format))));
-        }
-    }
-
-    if(!isSupported) {
-        checkError(-1, QStringLiteral("[ALSA] Format not supported: %1\n[ALSA] Supported formats: %2")
-                           .arg(QLatin1String(snd_pcm_format_name(requestedFormat)))
-                           .arg(supportedFormats.join(QStringLiteral(", "))));
-    }
-
-    return isSupported;
 }
 
 bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
@@ -524,7 +491,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         }
 
         if(compatFormat == SND_PCM_FORMAT_UNKNOWN) {
-            checkError(-1, QStringLiteral("Fallback format could not be found"));
+            checkError(-1, "Fallback format could not be found");
             return false;
         }
 
@@ -545,7 +512,7 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
 
     while(true) {
         int err = snd_card_next(&card);
-        if(checkError(err, QStringLiteral("Unable to get soundcard"))) {
+        if(checkError(err, "Unable to get soundcard")) {
             break;
         }
 
@@ -558,13 +525,13 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
 
         snd_ctl_t* rawHandle;
         err = snd_ctl_open(&rawHandle, str, 0);
-        if(checkError(err, QStringLiteral("Unable to open soundcard (%1)").arg(card))) {
+        if(checkError(err, "Unable to open soundcard")) {
             continue;
         }
         const CtlHandleUPtr handle = {rawHandle, CtlHandleDeleter()};
 
         err = snd_ctl_card_info(handle.get(), cardinfo);
-        if(checkError(err, QStringLiteral("Control failure for soundcard (%1)").arg(card))) {
+        if(checkError(err, "Control failure for soundcard")) {
             continue;
         }
 
@@ -573,7 +540,7 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
         snd_pcm_info_alloca(&pcminfo);
         while(true) {
             err = snd_ctl_pcm_next_device(handle.get(), &dev);
-            if(checkError(err, QStringLiteral("Failed to get device for soundcard (%1)").arg(card))) {
+            if(checkError(err, "Failed to get device for soundcard")) {
                 continue;
             }
             if(dev < 0) {
@@ -585,7 +552,7 @@ void AlsaOutput::getHardwareDevices(OutputDevices& devices)
             snd_pcm_info_set_stream(pcminfo, SND_PCM_STREAM_PLAYBACK);
 
             err = snd_ctl_pcm_info(handle.get(), pcminfo);
-            if(checkError(err, QStringLiteral("Failed to get control info for soundcard (%1)").arg(card))) {
+            if(checkError(err, "Failed to get control info for soundcard (%1)")) {
                 continue;
             }
 
@@ -646,27 +613,27 @@ bool AlsaOutput::attemptRecovery(snd_pcm_status_t* status)
             // Underrun
             case(SND_PCM_STATE_DRAINING):
             case(SND_PCM_STATE_XRUN):
-                checkError(snd_pcm_prepare(m_pcmHandle.get()), QStringLiteral("ALSA prepare error"));
+                checkError(snd_pcm_prepare(m_pcmHandle.get()), "ALSA prepare error");
                 continue;
             // Hardware suspend
             case(SND_PCM_STATE_SUSPENDED):
-                printError(QStringLiteral("Suspended. Attempting to resume.."));
+                qCInfo(ALSA) << "Suspended - attempting to resume…";
                 err = snd_pcm_resume(m_pcmHandle.get());
                 if(err == -EAGAIN) {
-                    printError(QStringLiteral("Resume failed. Retrying..."));
+                    qCWarning(ALSA) << "Resume failed - retrying…";
                     continue;
                 }
                 if(err == -ENOSYS) {
-                    printError(QStringLiteral("Resume not supported. Trying prepare..."));
+                    qCWarning(ALSA) << "Resume not supported - trying prepare…";
                     err = snd_pcm_prepare(m_pcmHandle.get());
                 }
-                checkError(err, QStringLiteral("Could not be resumed"));
+                checkError(err, "Could not be resumed");
                 continue;
             // Device lost
             case(SND_PCM_STATE_DISCONNECTED):
             case(SND_PCM_STATE_OPEN):
             default:
-                printError(QStringLiteral("Device lost. Stopping playback."));
+                qCWarning(ALSA) << "Device lost - stopping playback";
                 QMetaObject::invokeMethod(this, [this]() { emit this->stateChanged(State::Disconnected); });
                 return false;
         }
@@ -686,7 +653,7 @@ bool AlsaOutput::recoverState(OutputState* state)
     const bool recovered = attemptRecovery(status);
 
     if(!recovered) {
-        printError(QStringLiteral("Could not recover"));
+        qCWarning(ALSA) << "Could not recover";
     }
 
     if(state) {
