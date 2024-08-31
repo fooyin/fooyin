@@ -45,6 +45,7 @@
 #include <utils/async.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsdialogcontroller.h>
+#include <utils/signalthrottler.h>
 #include <utils/stardelegate.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
@@ -163,6 +164,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_settingsDialog{m_settings->settingsDialog()}
     , m_sorter{core->libraryManager()}
     , m_detached{false}
+    , m_resetThrottler{new SignalThrottler(m_self)}
     , m_columnRegistry{m_playlistController->columnRegistry()}
     , m_presetRegistry{m_playlistController->presetRegistry()}
     , m_sortRegistry{core->sortingRegistry()}
@@ -231,6 +233,8 @@ void PlaylistWidgetPrivate::setupConnections()
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::itemRemoved, this, &PlaylistWidgetPrivate::onColumnRemoved);
     QObject::connect(m_columnRegistry, &PlaylistColumnRegistry::columnChanged, this, &PlaylistWidgetPrivate::onColumnChanged);
 
+    QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this, &PlaylistWidgetPrivate::resetModel);
+
     if(!m_detached) {
         QObject::connect(m_presetRegistry, &PresetRegistry::presetChanged, this, &PlaylistWidgetPrivate::onPresetChanged);
 
@@ -266,7 +270,7 @@ void PlaylistWidgetPrivate::setupConnections()
 
     auto handleStyleChange = [this]() {
         m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
-        resetModel();
+        resetModelThrottled();
     };
     m_settings->subscribe<Settings::Gui::Theme>(this, handleStyleChange);
     m_settings->subscribe<Settings::Gui::Style>(this, handleStyleChange);
@@ -390,7 +394,7 @@ void PlaylistWidgetPrivate::onColumnChanged(const PlaylistColumn& changedColumn)
 
     if(existingIt != m_columns.end()) {
         *existingIt = changedColumn;
-        resetModel();
+        resetModelThrottled();
     }
 }
 
@@ -399,7 +403,7 @@ void PlaylistWidgetPrivate::onColumnRemoved(int id)
     PlaylistColumnList columns;
     std::ranges::copy_if(m_columns, std::back_inserter(columns), [id](const auto& column) { return column.id != id; });
     if(std::exchange(m_columns, columns) != columns) {
-        resetModel();
+        resetModelThrottled();
     }
 }
 
@@ -413,7 +417,7 @@ void PlaylistWidgetPrivate::onPresetChanged(const PlaylistPreset& preset)
 void PlaylistWidgetPrivate::changePreset(const PlaylistPreset& preset)
 {
     m_currentPreset = preset;
-    resetModel();
+    resetModelThrottled();
 }
 
 void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*playlist*/)
@@ -423,7 +427,7 @@ void PlaylistWidgetPrivate::changePlaylist(Playlist* prevPlaylist, Playlist* /*p
         saveState(prevPlaylist);
     }
     resetSort(true);
-    resetModel();
+    resetModelThrottled();
 }
 
 void PlaylistWidgetPrivate::resetTree()
@@ -533,6 +537,11 @@ void PlaylistWidgetPrivate::resetModel() const
         m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns,
                        m_playlistController->currentPlaylist());
     }
+}
+
+void PlaylistWidgetPrivate::resetModelThrottled() const
+{
+    m_resetThrottler->throttle();
 }
 
 std::vector<int> PlaylistWidgetPrivate::selectedPlaylistIndexes() const
@@ -967,7 +976,7 @@ void PlaylistWidgetPrivate::handleTracksChanged(const std::vector<int>& indexes,
                 Qt::SingleShotConnection);
         }
 
-        resetModel();
+        resetModelThrottled();
     }
     else {
         int currentIndex{-1};
@@ -1071,7 +1080,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
         }
     }
 
-    resetModel();
+    resetModelThrottled();
 }
 
 void PlaylistWidgetPrivate::updateSpans()

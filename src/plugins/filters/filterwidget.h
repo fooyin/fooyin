@@ -30,6 +30,7 @@ class AutoHeaderView;
 class CoverProvider;
 class LibraryManager;
 class SettingsManager;
+class SignalThrottler;
 class WidgetContext;
 
 namespace Filters {
@@ -119,6 +120,7 @@ private:
     AutoHeaderView* m_header;
     FilterModel* m_model;
     FilterSortModel* m_sortProxy;
+    SignalThrottler* m_resetThrottler;
 
     Id m_group;
     int m_index{-1};

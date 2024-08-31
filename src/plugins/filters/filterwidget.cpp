@@ -32,6 +32,7 @@
 #include <utils/async.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -93,6 +94,7 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager*
     , m_header{new AutoHeaderView(Qt::Horizontal, this)}
     , m_model{new FilterModel(libraryManager, coverProvider, m_settings, this)}
     , m_sortProxy{new FilterSortModel(this)}
+    , m_resetThrottler{new SignalThrottler(this)}
     , m_widgetContext{new WidgetContext(this, Context{Id{"Fooyin.Context.FilterWidget."}.append(id())}, this)}
 {
     setObjectName(FilterWidget::name());
@@ -212,7 +214,7 @@ void FilterWidget::clearFilteredTracks()
 void FilterWidget::reset(const TrackList& tracks)
 {
     m_tracks = tracks;
-    m_model->reset(m_columns, tracks);
+    m_resetThrottler->throttle();
 }
 
 void FilterWidget::softReset(const TrackList& tracks)
@@ -466,6 +468,9 @@ void FilterWidget::keyPressEvent(QKeyEvent* event)
 
 void FilterWidget::setupConnections()
 {
+    QObject::connect(m_resetThrottler, &SignalThrottler::triggered, this,
+                     [this]() { m_model->reset(m_columns, m_tracks); });
+
     QObject::connect(m_columnRegistry, &FilterColumnRegistry::columnChanged, this, &FilterWidget::columnChanged);
     QObject::connect(m_columnRegistry, &FilterColumnRegistry::itemRemoved, this, &FilterWidget::columnRemoved);
 

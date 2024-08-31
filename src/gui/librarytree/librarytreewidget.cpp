@@ -43,6 +43,7 @@
 #include <utils/actions/widgetcontext.h>
 #include <utils/datastream.h>
 #include <utils/fileutils.h>
+#include <utils/signalthrottler.h>
 #include <utils/tooltipfilter.h>
 
 #include <QActionGroup>
@@ -209,6 +210,7 @@ public:
     TrackSelectionController* m_trackSelection;
     SettingsManager* m_settings;
 
+    SignalThrottler* m_resetThrottler;
     LibraryTreeGrouping m_grouping;
 
     QVBoxLayout* m_layout;
@@ -246,6 +248,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_groupsRegistry{controller->groupRegistry()}
     , m_trackSelection{playlistController->selectionController()}
     , m_settings{core->settingsManager()}
+    , m_resetThrottler{new SignalThrottler(m_self)}
     , m_layout{new QVBoxLayout(m_self)}
     , m_libraryTree{new LibraryTreeView(m_self)}
     , m_model{new LibraryTreeModel(core->libraryManager(), m_self)}
@@ -302,6 +305,9 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
 
 void LibraryTreeWidgetPrivate::setupConnections()
 {
+    QObject::connect(m_resetThrottler, &SignalThrottler::triggered, m_self,
+                     [this]() { m_model->reset(m_library->tracks()); });
+
     QObject::connect(m_model, &LibraryTreeModel::dataUpdated, m_libraryTree, &QTreeView::dataChanged);
     QObject::connect(m_model, &LibraryTreeModel::modelLoaded, m_self, [this]() { restoreState(m_pendingState); });
 
@@ -365,7 +371,7 @@ void LibraryTreeWidgetPrivate::setupConnections()
 
 void LibraryTreeWidgetPrivate::reset() const
 {
-    m_model->reset(m_library->tracks());
+    m_resetThrottler->throttle();
 }
 
 void LibraryTreeWidgetPrivate::changeGrouping(const LibraryTreeGrouping& newGrouping)

@@ -51,6 +51,7 @@ struct PlaylistViewState;
 class PlaylistWidget;
 class SettingsManager;
 class SettingsDialogController;
+class SignalThrottler;
 class StarDelegate;
 class TrackSelectionController;
 class WidgetContext;
@@ -78,6 +79,7 @@ public:
     void saveState(Playlist* playlist) const;
     void restoreState(Playlist* playlist);
     void resetModel() const;
+    void resetModelThrottled() const;
 
     [[nodiscard]] std::vector<int> selectedPlaylistIndexes() const;
     void restoreSelectedPlaylistIndexes(const std::vector<int>& indexes) const;
@@ -144,6 +146,7 @@ public:
 
     bool m_detached;
     QMetaObject::Connection m_delayedStateLoad;
+    SignalThrottler* m_resetThrottler;
 
     PlaylistColumnRegistry* m_columnRegistry;
     PresetRegistry* m_presetRegistry;
