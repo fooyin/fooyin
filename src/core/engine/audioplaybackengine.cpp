@@ -507,7 +507,7 @@ void AudioPlaybackEngine::updateFormat(const AudioFormat& nextFormat, const std:
     const auto prevFormat = std::exchange(m_format, nextFormat);
 
     if(m_settings->value<Settings::Core::GaplessPlayback>() && prevFormat == m_format
-       && playbackState() != PlaybackState::Paused) {
+       && playbackState() != PlaybackState::Paused && m_outputState != AudioOutput::State::Error) {
         callback(true);
         return;
     }

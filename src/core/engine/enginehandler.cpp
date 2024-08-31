@@ -142,10 +142,6 @@ void EngineHandlerPrivate::handleTrackStatus(AudioEngine::TrackStatus status) co
 
 void EngineHandlerPrivate::playStateChanged(Player::PlayState state) const
 {
-    if(m_engine->playbackState() == AudioEngine::PlaybackState::Error) {
-        return;
-    }
-
     if(state == Player::PlayState::Playing) {
         QMetaObject::invokeMethod(m_engine, &AudioEngine::play);
     }
