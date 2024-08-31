@@ -236,7 +236,9 @@ void VolumeControl::saveLayoutData(QJsonObject& layout)
 void VolumeControl::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(u"Mode")) {
-        p->changeDisplay(static_cast<Option>(layout.value(u"Mode").toInt()));
+        // Support old format (0=Icon)
+        const int mode = std::max(1, layout.value(u"Mode").toInt());
+        p->changeDisplay(static_cast<Option>(mode));
     }
 }
 
