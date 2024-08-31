@@ -34,15 +34,7 @@ DecoderModel::DecoderModel(QObject* parent)
 void DecoderModel::setup(const LoaderVariant& loaders)
 {
     beginResetModel();
-
     m_loaders = loaders;
-    std::visit(
-        [](auto& currLoaders) {
-            // Archive loader is a special case which shouldn't be disabled
-            std::erase_if(currLoaders, [](const auto& loader) { return loader.name == u"Archive"; });
-        },
-        m_loaders);
-
     endResetModel();
 }
 

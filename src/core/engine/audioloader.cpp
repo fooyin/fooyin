@@ -167,7 +167,7 @@ AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
         if(!loader.enabled) {
             continue;
         }
-        if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
+        if((isInArchive && loader.name == u"Archive") || (!isInArchive && loader.extensions.contains(ext))) {
             if(p->m_decoderInstances.hasLocalData()) {
                 auto& readers = p->m_decoderInstances.localData();
                 if(readers->contains(loader.name)) {
