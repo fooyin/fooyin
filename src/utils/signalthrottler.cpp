@@ -72,10 +72,6 @@ void SignalThrottler::throttle()
     m_pendingEmit = true;
 
     if(!m_timer.isActive()) {
-        emitTriggered();
-    }
-
-    if(!m_timer.isActive()) {
         m_timer.start(m_timeout, m_timerType, this);
     }
 }
