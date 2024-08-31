@@ -28,6 +28,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QPixmapCache>
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QTime>
@@ -35,6 +36,8 @@
 #include <QWindow>
 
 #include <unicode/ucsdet.h>
+
+constexpr auto DefaultIconSize = 20;
 
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
@@ -421,5 +424,25 @@ QIcon iconFromTheme(const QString& icon)
 QIcon iconFromTheme(const char* icon)
 {
     return iconFromTheme(QString::fromLatin1(icon));
+}
+
+QPixmap pixmapFromTheme(const char* icon)
+{
+    return pixmapFromTheme(icon, {DefaultIconSize, DefaultIconSize});
+}
+
+QPixmap pixmapFromTheme(const char* icon, const QSize& size)
+{
+    const QString key = QStringLiteral("ThemeIcon|%1|%2x%3").arg(QLatin1String{icon}).arg(size.width(), size.height());
+
+    QPixmap pixmap;
+    if(QPixmapCache::find(key, &pixmap)) {
+        return pixmap;
+    }
+
+    pixmap = QIcon::fromTheme(QString::fromLatin1(icon)).pixmap(size);
+    QPixmapCache::insert(key, pixmap);
+
+    return pixmap;
 }
 } // namespace Fooyin::Utils

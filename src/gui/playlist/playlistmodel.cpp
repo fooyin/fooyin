@@ -39,6 +39,7 @@
 #include <utils/datastream.h>
 #include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/signalthrottler.h>
 #include <utils/starrating.h>
 #include <utils/utils.h>
 #include <utils/widgets/autoheaderview.h>
@@ -497,17 +498,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_playingColour.setAlpha(90);
     m_disabledColour.setAlpha(50);
 
-    auto updateIcons = [this]() {
-        m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
-        m_pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
-        m_stoppedIcon = Utils::iconFromTheme(Constants::Icons::Stop).pixmap(20);
-        m_missingIcon = Utils::iconFromTheme(Constants::Icons::Close).pixmap(15);
-    };
-
-    updateIcons();
-
-    settings->subscribe<Settings::Gui::IconTheme>(this, updateIcons);
-
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
@@ -536,11 +526,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
     m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 
-    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
-        m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);
-        m_pausedIcon  = Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20);
-        emit dataChanged({}, {}, {Qt::DecorationRole});
-    });
+    m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
 
     QObject::connect(&m_populator, &PlaylistPopulator::finished, this, [this]() {
         m_playlistLoaded = true;
@@ -1469,21 +1455,21 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
         case(Qt::DecorationRole): {
             if(singleColumnMode || m_columns.at(column).field.contains(QLatin1String(PlayingIcon))) {
                 if(!track.track().isEnabled()) {
-                    return m_missingIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Close);
                 }
 
                 if(isPlaying) {
                     switch(m_currentPlayState) {
                         case(Player::PlayState::Playing):
-                            return m_playingIcon;
+                            return Utils::pixmapFromTheme(Constants::Icons::Play);
                         case(Player::PlayState::Paused):
-                            return m_pausedIcon;
+                            return Utils::pixmapFromTheme(Constants::Icons::Pause);
                         case(Player::PlayState::Stopped):
                             break;
                     }
                 }
                 if(index == m_stopAtIndex) {
-                    return m_stoppedIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Stop);
                 }
             }
             break;

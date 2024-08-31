@@ -21,7 +21,7 @@
 
 #include <core/player/playerdefs.h>
 
-#include <QPixmap>
+#include <QColor>
 #include <QSortFilterProxyModel>
 
 class QAbstractFileIconProvider;
@@ -86,7 +86,5 @@ private:
 
     bool m_showIcons;
     QColor m_playingColour;
-    QPixmap m_playingIcon;
-    QPixmap m_pausedIcon;
 };
 } // namespace Fooyin

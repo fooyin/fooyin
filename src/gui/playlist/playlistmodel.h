@@ -243,11 +243,6 @@ private:
     bool m_resetting;
     QString m_headerText;
 
-    QPixmap m_playingIcon;
-    QPixmap m_pausedIcon;
-    QPixmap m_stoppedIcon;
-    QPixmap m_missingIcon;
-
     QColor m_playingColour;
     QColor m_disabledColour;
 

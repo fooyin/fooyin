@@ -75,4 +75,6 @@ FYUTILS_EXPORT std::vector<int> logicalIndexOrder(const QHeaderView* headerView)
 FYUTILS_EXPORT bool isDarkMode();
 FYUTILS_EXPORT QIcon iconFromTheme(const QString& icon);
 FYUTILS_EXPORT QIcon iconFromTheme(const char* icon);
+FYUTILS_EXPORT QPixmap pixmapFromTheme(const char* icon);
+FYUTILS_EXPORT QPixmap pixmapFromTheme(const char* icon, const QSize& size);
 } // namespace Fooyin::Utils

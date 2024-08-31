@@ -154,8 +154,6 @@ public:
     QString m_playingPath;
     int m_rowHeight{0};
     QColor m_playingColour{QApplication::palette().highlight().color()};
-    QPixmap m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)};
-    QPixmap m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)};
 };
 
 LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager)
@@ -480,9 +478,9 @@ QVariant LibraryTreeModel::data(const QModelIndex& index, int role) const
             if(role == Qt::DecorationRole) {
                 switch(p->m_playingState) {
                     case(Player::PlayState::Playing):
-                        return p->m_playingIcon;
+                        return Utils::pixmapFromTheme(Constants::Icons::Play);
                     case(Player::PlayState::Paused):
-                        return p->m_pausedIcon;
+                        return Utils::pixmapFromTheme(Constants::Icons::Pause);
                     case(Player::PlayState::Stopped):
                         break;
                 }

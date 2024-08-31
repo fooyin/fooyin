@@ -308,7 +308,10 @@ void GuiApplicationPrivate::setupConnections()
                      [this](AudioEngine::TrackStatus status) { handleTrackStatus(status); });
 
     m_settings->subscribe<Settings::Gui::LayoutEditing>(m_self, [this]() { updateWindowTitle(); });
-    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() { setIconTheme(); });
+    m_settings->subscribe<Settings::Gui::IconTheme>(m_self, [this]() {
+        setIconTheme();
+        QPixmapCache::clear();
+    });
     m_settings->subscribe<Settings::Gui::Theme>(m_self, [this]() {
         setTheme();
         setIconTheme();

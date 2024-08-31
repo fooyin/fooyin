@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QFileSystemModel>
 #include <QPalette>
+#include <QPixmap>
 
 namespace Fooyin {
 DirProxyModel::DirProxyModel(QObject* parent)
@@ -34,8 +35,6 @@ DirProxyModel::DirProxyModel(QObject* parent)
     , m_playingState{Player::PlayState::Stopped}
     , m_showIcons{true}
     , m_playingColour{QApplication::palette().highlight().color()}
-    , m_playingIcon{Utils::iconFromTheme(Constants::Icons::Play).pixmap(20, 20)}
-    , m_pausedIcon{Utils::iconFromTheme(Constants::Icons::Pause).pixmap(20, 20)}
 {
     m_playingColour.setAlpha(90);
 }
@@ -157,9 +156,9 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         if(role == Qt::DecorationRole) {
             switch(m_playingState) {
                 case(Player::PlayState::Playing):
-                    return m_playingIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Play);
                 case(Player::PlayState::Paused):
-                    return m_pausedIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Pause);
                 case(Player::PlayState::Stopped):
                     break;
             }
