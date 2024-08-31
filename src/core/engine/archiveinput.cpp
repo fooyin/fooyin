@@ -150,27 +150,27 @@ int GeneralArchiveReader::subsongCount() const
 
 bool GeneralArchiveReader::init(const AudioSource& source)
 {
-    Track track{source.filepath};
+    const Track track{source.filepath};
 
     const QString archivePath = track.archivePath();
     m_archiveReader           = m_audioLoader->archiveReaderForFile(archivePath);
     if(!m_archiveReader) {
-        return {};
+        return false;
     }
 
     if(!m_archiveReader->init(archivePath)) {
-        return {};
+        return false;
     }
 
     const QString filepath = track.pathInArchive();
     m_device               = m_archiveReader->entry(filepath);
     if(!m_device) {
-        return {};
+        return false;
     }
 
     m_reader = m_audioLoader->readerForFile(filepath);
     if(!m_reader) {
-        return {};
+        return false;
     }
 
     AudioSource aSource;

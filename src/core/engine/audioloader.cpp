@@ -199,7 +199,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
         if(!loader.enabled) {
             continue;
         }
-        if((isInArchive && loader.name == u"Archive") || loader.extensions.contains(ext)) {
+        if((isInArchive && loader.name == u"Archive") || (!isInArchive && loader.extensions.contains(ext))) {
             if(p->m_readerInstances.hasLocalData()) {
                 auto& readers = p->m_readerInstances.localData();
                 if(readers->contains(loader.name)) {
