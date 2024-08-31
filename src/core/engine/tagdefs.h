@@ -43,6 +43,18 @@ constexpr auto Disc          = "DISCNUMBER";
 constexpr auto DiscAlt       = "DISC";
 constexpr auto DiscTotal     = "DISCTOTAL";
 constexpr auto DiscTotalAlt  = "TOTALDISCS";
+
+namespace ReplayGain {
+constexpr auto ReplayGainStart = "REPLAYGAIN_";
+constexpr auto AlbumPeak       = "REPLAYGAIN_ALBUM_PEAK";
+constexpr auto AlbumPeakAlt    = "REPLAYGAIN_ALBUMPEAK";
+constexpr auto AlbumGain       = "REPLAYGAIN_ALBUM_GAIN";
+constexpr auto AlbumGainAlt    = "REPLAYGAIN_ALBUMGAIN";
+constexpr auto TrackPeak       = "REPLAYGAIN_TRACK_PEAK";
+constexpr auto TrackPeakAlt    = "REPLAYGAIN_TRACKPEAK";
+constexpr auto TrackGain       = "REPLAYGAIN_TRACK_GAIN";
+constexpr auto TrackGainAlt    = "REPLAYGAIN_TRACKGAIN";
+} // namespace ReplayGain
 } // namespace Tag
 
 namespace Mp4 {

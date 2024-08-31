@@ -62,9 +62,13 @@ QString fetchTrackColumns()
                                                   "Codec,"
                                                   "ExtraTags,"
                                                   "ExtraProperties,"
-                                                  "ModifiedDate, "
+                                                  "ModifiedDate,"
                                                   "LibraryID,"
                                                   "TrackHash,"
+                                                  "RGTrackGain,"
+                                                  "RGAlbumGain,"
+                                                  "RGTrackPeak,"
+                                                  "RGAlbumPeak,"
                                                   "AddedDate,"
                                                   "FirstPlayed,"
                                                   "LastPlayed,"
@@ -104,7 +108,11 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":extraProperties"), track.serialiseExtraProperties()},
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
-            {QStringLiteral(":libraryID"), track.libraryId()}};
+            {QStringLiteral(":libraryID"), track.libraryId()},
+            {QStringLiteral(":rgTrackGain"), track.replayGainTrackGain()},
+            {QStringLiteral(":rgAlbumGain"), track.replayGainAlbumGain()},
+            {QStringLiteral(":rgTrackPeak"), track.replayGainTrackPeak()},
+            {QStringLiteral(":rgAlbumPeak"), track.replayGainAlbumPeak()}};
 }
 
 Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
@@ -141,11 +149,15 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setModifiedTime(q.value(27).toULongLong());
     track.setLibraryId(q.value(28).toInt());
     track.setHash(q.value(29).toString());
-    track.setAddedTime(q.value(30).toULongLong());
-    track.setFirstPlayed(q.value(31).toULongLong());
-    track.setLastPlayed(q.value(32).toULongLong());
-    track.setPlayCount(q.value(33).toInt());
-    track.setRating(q.value(34).toFloat());
+    track.setReplayGainTrackGain(q.value(30).toFloat());
+    track.setReplayGainAlbumGain(q.value(31).toFloat());
+    track.setReplayGainTrackPeak(q.value(32).toFloat());
+    track.setReplayGainTrackPeak(q.value(33).toFloat());
+    track.setAddedTime(q.value(34).toULongLong());
+    track.setFirstPlayed(q.value(35).toULongLong());
+    track.setLastPlayed(q.value(36).toULongLong());
+    track.setPlayCount(q.value(37).toInt());
+    track.setRating(q.value(38).toFloat());
 
     track.generateHash();
 
@@ -343,7 +355,11 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "ExtraProperties = :extraProperties,"
                                           "ModifiedDate = :modifiedDate,"
                                           "TrackHash = :trackHash,"
-                                          "LibraryID = :libraryID"
+                                          "LibraryID = :libraryID,"
+                                          "RGTrackGain = :rgTrackGain,"
+                                          "RGAlbumGain = :rgAlbumGain,"
+                                          "RGTrackPeak = :rgTrackPeak,"
+                                          "RGAlbumPeak = :rgAlbumPeak"
                                           " WHERE TrackID = :trackId;");
 
     DbQuery query{db(), statement};
@@ -507,6 +523,10 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.ModifiedDate,"
                                           "Tracks.LibraryID,"
                                           "Tracks.TrackHash,"
+                                          "Tracks.RGTrackGain,"
+                                          "Tracks.RGAlbumGain,"
+                                          "Tracks.RGTrackPeak,"
+                                          "Tracks.RGAlbumPeak,"
                                           "TrackStats.AddedDate,"
                                           "TrackStats.FirstPlayed,"
                                           "TrackStats.LastPlayed,"
@@ -568,7 +588,11 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "ExtraProperties,"
                                           "ModifiedDate,"
                                           "TrackHash,"
-                                          "LibraryID"
+                                          "LibraryID,"
+                                          "RGTrackGain,"
+                                          "RGAlbumGain,"
+                                          "RGTrackPeak,"
+                                          "RGAlbumPeak"
                                           ") "
                                           "VALUES ("
                                           ":filePath,"
@@ -599,7 +623,11 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":extraProperties,"
                                           ":modifiedDate,"
                                           ":trackHash,"
-                                          ":libraryID"
+                                          ":libraryID,"
+                                          ":rgTrackGain,"
+                                          ":rgAlbumGain,"
+                                          ":rgTrackPeak,"
+                                          ":rgAlbumPeak"
                                           ");");
 
     DbQuery query{db(), statement};

@@ -94,6 +94,11 @@ public:
     uint64_t firstPlayed{0};
     uint64_t lastPlayed{0};
 
+    float replayGainTrackGain{0.0};
+    float replayGainAlbumGain{0.0};
+    float replayGainTrackPeak{0.0};
+    float replayGainAlbumPeak{0.0};
+
     QString sort;
 
     bool metadataWasModified{false};
@@ -473,6 +478,26 @@ int Track::ratingStars() const
     return static_cast<int>(std::floor(p->rating * MaxStarCount));
 }
 
+float Track::replayGainTrackGain() const
+{
+    return p->replayGainTrackGain;
+}
+
+float Track::replayGainAlbumGain() const
+{
+    return p->replayGainAlbumGain;
+}
+
+float Track::replayGainTrackPeak() const
+{
+    return p->replayGainTrackPeak;
+}
+
+float Track::replayGainAlbumPeak() const
+{
+    return p->replayGainAlbumPeak;
+}
+
 bool Track::hasCue() const
 {
     return !p->cuePath.isEmpty();
@@ -822,6 +847,26 @@ void Track::setRatingStars(int rating)
     else {
         p->rating = static_cast<float>(rating) / MaxStarCount;
     }
+}
+
+void Track::setReplayGainTrackGain(float gain)
+{
+    p->replayGainTrackGain = gain;
+}
+
+void Track::setReplayGainAlbumGain(float gain)
+{
+    p->replayGainAlbumGain = gain;
+}
+
+void Track::setReplayGainTrackPeak(float peak)
+{
+    p->replayGainTrackPeak = peak;
+}
+
+void Track::setReplayGainAlbumPeak(float peak)
+{
+    p->replayGainAlbumPeak = peak;
 }
 
 QString Track::metaValue(const QString& name) const

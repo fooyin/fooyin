@@ -576,6 +576,20 @@ void readAudioProperties(const TagLib::File& file, Fooyin::Track& track)
 
 void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& track)
 {
+    const auto gainStringToFloat = [](const TagLib::String& gainString) -> float {
+        const auto& string = convertString(gainString);
+        if(string.size() <= 1) {
+            return 0.0;
+        }
+
+        if(string.endsWith(QStringLiteral("dB"), Qt::CaseInsensitive)) {
+            return string.chopped(2).toDouble();
+        }
+
+        // Lack of dB suffix is unusual, but try to convert anyway
+        return string.toFloat();
+    };
+
     track.clearExtraTags();
 
     for(const auto& [field, value] : props) {
@@ -644,6 +658,20 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             const int count = convertString(value.toString()).toInt();
             if(count > 0) {
                 track.setPlayCount(count);
+            }
+        }
+        else if(field.startsWith(Fooyin::Tag::ReplayGain::ReplayGainStart)) {
+            if(field == Fooyin::Tag::ReplayGain::TrackGain || field == Fooyin::Tag::ReplayGain::TrackGainAlt) {
+                track.setReplayGainTrackGain(gainStringToFloat(value.toString()));
+            }
+            else if(field == Fooyin::Tag::ReplayGain::AlbumGain || field == Fooyin::Tag::ReplayGain::AlbumGainAlt) {
+                track.setReplayGainAlbumGain(gainStringToFloat(value.toString()));
+            }
+            if(field == Fooyin::Tag::ReplayGain::TrackPeak || field == Fooyin::Tag::ReplayGain::TrackPeakAlt) {
+                track.setReplayGainTrackPeak(convertString(value.toString()).toFloat());
+            }
+            else if(field == Fooyin::Tag::ReplayGain::AlbumPeak || field == Fooyin::Tag::ReplayGain::AlbumPeakAlt) {
+                track.setReplayGainAlbumPeak(convertString(value.toString()).toFloat());
             }
         }
         else {
