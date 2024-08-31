@@ -670,7 +670,8 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         this, [this](bool enabled) { p->setControlsEnabled(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserLocation>(
         this, [this](bool enabled) { p->setLocationEnabled(enabled); });
-    settings->subscribe<Settings::Gui::Theme>(this, [this]() { p->m_proxyModel->resetPalette(); });
+    settings->subscribe<Settings::Gui::Theme>(p->m_proxyModel, &DirProxyModel::resetPalette);
+    settings->subscribe<Settings::Gui::Style>(p->m_proxyModel, &DirProxyModel::resetPalette);
 
     p->changeMode(static_cast<Mode>(settings->value<Settings::Gui::Internal::DirBrowserMode>()));
     p->setControlsEnabled(settings->value<Settings::Gui::Internal::DirBrowserControls>());

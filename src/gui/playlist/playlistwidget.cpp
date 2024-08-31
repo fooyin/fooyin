@@ -264,10 +264,12 @@ void PlaylistWidgetPrivate::setupConnections()
     }
     // clang-format on
 
-    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+    auto handleStyleChange = [this]() {
         m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
         resetModel();
-    });
+    };
+    m_settings->subscribe<Settings::Gui::Theme>(this, handleStyleChange);
+    m_settings->subscribe<Settings::Gui::Style>(this, handleStyleChange);
 }
 
 void PlaylistWidgetPrivate::setupActions()

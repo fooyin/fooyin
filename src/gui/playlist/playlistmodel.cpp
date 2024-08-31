@@ -527,11 +527,14 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
         m_starRatingSize = size;
         emit dataChanged({}, {}, {Qt::DisplayRole});
     });
-    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+
+    auto updateColours = [this]() {
         m_playingColour = QApplication::palette().highlight().color();
         m_playingColour.setAlpha(90);
         emit dataChanged({}, {}, {Qt::BackgroundRole});
-    });
+    };
+    m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
+    m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 
     m_settings->subscribe<Settings::Gui::IconTheme>(this, [this]() {
         m_playingIcon = Utils::iconFromTheme(Constants::Icons::Play).pixmap(20);

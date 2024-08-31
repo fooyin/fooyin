@@ -143,7 +143,8 @@ WaveBarGuiSettingsPageWidget::WaveBarGuiSettingsPageWidget(SettingsManager* sett
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(2, 1);
 
-    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() { load(); });
+    m_settings->subscribe<Settings::Gui::Theme>(this, &SettingsPageWidget::load);
+    m_settings->subscribe<Settings::Gui::Style>(this, &SettingsPageWidget::load);
 }
 
 void WaveBarGuiSettingsPageWidget::load()

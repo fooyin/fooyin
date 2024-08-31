@@ -359,7 +359,8 @@ void LibraryTreeWidgetPrivate::setupConnections()
         m_model->setRowHeight(height);
         QMetaObject::invokeMethod(m_libraryTree->itemDelegate(), "sizeHintChanged", Q_ARG(QModelIndex, {}));
     });
-    m_settings->subscribe<Settings::Gui::Theme>(m_self, [this]() { m_model->resetPalette(); });
+    m_settings->subscribe<Settings::Gui::Theme>(m_model, &LibraryTreeModel::resetPalette);
+    m_settings->subscribe<Settings::Gui::Style>(m_model, &LibraryTreeModel::resetPalette);
 }
 
 void LibraryTreeWidgetPrivate::reset() const

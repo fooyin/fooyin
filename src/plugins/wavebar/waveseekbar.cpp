@@ -120,10 +120,13 @@ WaveSeekBar::WaveSeekBar(SettingsManager* settings, QWidget* parent)
         m_colours = var.value<Colours>();
         update();
     });
-    m_settings->subscribe<Settings::Gui::Theme>(this, [this]() {
+
+    auto updateColours = [this]() {
         m_colours = m_settings->value<Settings::WaveBar::ColourOptions>().value<Colours>();
         update();
-    });
+    };
+    m_settings->subscribe<Settings::Gui::Theme>(this, updateColours);
+    m_settings->subscribe<Settings::Gui::Style>(this, updateColours);
 }
 
 void WaveSeekBar::processData(const WaveformData<float>& waveData)
