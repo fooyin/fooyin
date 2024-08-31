@@ -1080,7 +1080,7 @@ void PlaylistWidgetPrivate::setSingleMode(bool enabled)
         }
     }
 
-    resetModelThrottled();
+    resetModel();
 }
 
 void PlaylistWidgetPrivate::updateSpans()
