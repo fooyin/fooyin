@@ -28,12 +28,12 @@ class SettingsManager;
 
 struct FadingIntervals
 {
-    int inPauseStop{100};
-    int outPauseStop{100};
-    int inSeek{100};
-    int outSeek{100};
-    int inChange{100};
-    int outChange{100};
+    int inPauseStop{1000};
+    int outPauseStop{1000};
+    int inSeek{1000};
+    int outSeek{1000};
+    int inChange{1000};
+    int outChange{1000};
 
     friend QDataStream& operator<<(QDataStream& stream, const FadingIntervals& fading)
     {
