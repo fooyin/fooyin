@@ -109,6 +109,16 @@ void AudioLoader::restoreState()
         }
     };
 
+    const QStringList archiveExts = supportedArchiveExtensions();
+    auto archiveDec = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
+    if(archiveDec != p->m_decoders.end()) {
+        archiveDec->extensions = archiveExts;
+    }
+    auto archiveRead = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
+    if(archiveRead != p->m_readers.end()) {
+        archiveRead->extensions = archiveExts;
+    }
+
     p->m_defaultDecoders = p->m_decoders;
     restoreLoaders(p->m_decoders, DecoderState);
     p->m_defaultReaders = p->m_readers;
@@ -132,6 +142,37 @@ QStringList AudioLoader::supportedFileExtensions() const
     addExtensions(p->m_decoders);
     addExtensions(p->m_readers);
     addExtensions(p->m_archiveReaders);
+
+    return extensions;
+}
+
+QStringList AudioLoader::supportedTrackExtensions() const
+{
+    const std::shared_lock lock{p->m_decoderMutex};
+
+    QStringList extensions;
+
+    auto addExtensions = [&extensions](const auto& loaders) {
+        for(const auto& loader : loaders) {
+            extensions.append(loader.extensions);
+        }
+    };
+
+    addExtensions(p->m_decoders);
+    addExtensions(p->m_readers);
+
+    return extensions;
+}
+
+QStringList AudioLoader::supportedArchiveExtensions() const
+{
+    const std::shared_lock lock{p->m_decoderMutex};
+
+    QStringList extensions;
+
+    for(const auto& loader : p->m_archiveReaders) {
+        extensions.append(loader.extensions);
+    }
 
     return extensions;
 }

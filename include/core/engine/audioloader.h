@@ -48,6 +48,8 @@ public:
     void restoreState();
 
     [[nodiscard]] QStringList supportedFileExtensions() const;
+    [[nodiscard]] QStringList supportedTrackExtensions() const;
+    [[nodiscard]] QStringList supportedArchiveExtensions() const;
     [[nodiscard]] bool canWriteMetadata(const Track& track) const;
 
     [[nodiscard]] bool isArchive(const QString& file) const;
