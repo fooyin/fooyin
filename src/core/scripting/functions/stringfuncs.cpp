@@ -441,7 +441,8 @@ QString abbr(const QStringList& vec)
         }
     }
 
-    static const QRegularExpression regex{QStringLiteral(R"(\b[\w])")};
+    static const QRegularExpression regex{QStringLiteral(R"((?<!\S)[^\s])"),
+                                          QRegularExpression::UseUnicodePropertiesOption};
 
     QString abbreviated;
     const auto matches = regex.globalMatch(vec.front());
