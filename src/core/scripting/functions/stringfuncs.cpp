@@ -54,12 +54,54 @@ QString replace(const QStringList& vec)
 {
     const qsizetype count = vec.size();
 
-    if(count != 3) {
+    if(count < 1) {
         return {};
     }
 
-    QString origStr{vec.at(0)};
-    return origStr.replace(vec.at(1), vec.at(2));
+    if(count < 3) {
+        return vec.front();
+    }
+
+    if(count == 3) {
+        // Single replace call
+        QString origStr{vec.front()};
+        return origStr.replace(vec.at(1), vec.at(2));
+    }
+
+    // Arbitrary replacements
+    // Much slower as we need to match all and then rebuild
+
+    const QString& origStr = vec.front();
+    std::map<qsizetype, QString, std::greater<>> replacements;
+
+    for(qsizetype i{1}; i < count - 1; i += 2) {
+        const QString& search  = vec[i];
+        const QString& replace = vec[i + 1];
+        const QRegularExpression regex{QRegularExpression::escape(search)};
+        QRegularExpressionMatchIterator matches = regex.globalMatch(origStr);
+
+        while(matches.hasNext()) {
+            const QRegularExpressionMatch match = matches.next();
+            const qsizetype start               = match.capturedStart();
+            replacements[start]                 = replace;
+        }
+    }
+
+    QString result;
+    qsizetype lastIndex = origStr.size();
+    for(const auto& [pos, replace] : replacements) {
+        if(pos >= lastIndex) {
+            continue;
+        }
+
+        const QString& replacement = replacements.at(pos);
+        result.prepend(origStr.mid(pos, lastIndex - pos)
+                           .replace(QRegularExpression::escape(origStr.mid(pos, replacement.length())), replacement));
+        lastIndex = pos;
+    }
+    result.prepend(origStr.left(lastIndex));
+
+    return result;
 }
 
 QString slice(const QStringList& vec)
