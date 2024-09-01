@@ -23,6 +23,11 @@ target_include_directories(
     PRIVATE ${LIBGME_INCLUDE_DIRS}
 )
 
+target_link_directories(
+    gmeinput
+    PRIVATE ${LIBGME_LIBRARY_DIRS}
+)
+
 fooyin_append_mimes(
     audio/x-ay
     audio/x-gbs
