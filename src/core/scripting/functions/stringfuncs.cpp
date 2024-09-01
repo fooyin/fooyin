@@ -483,11 +483,15 @@ QString abbr(const QStringList& vec)
         }
     }
 
+    QString str{vec.front()};
+    static const QRegularExpression stripRegex{QStringLiteral("[()]")};
+    str.replace(stripRegex, QStringLiteral(" "));
+
     static const QRegularExpression regex{QStringLiteral(R"((?<!\S)[^\s])"),
                                           QRegularExpression::UseUnicodePropertiesOption};
+    const auto matches = regex.globalMatch(str);
 
     QString abbreviated;
-    const auto matches = regex.globalMatch(vec.front());
     for(const auto& match : matches) {
         abbreviated.append(match.captured(0));
     }
