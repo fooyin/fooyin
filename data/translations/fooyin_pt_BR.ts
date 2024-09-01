@@ -1142,7 +1142,7 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="640"/>
         <source>Front cover</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa da frente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="641"/>
