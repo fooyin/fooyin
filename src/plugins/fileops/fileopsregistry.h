@@ -25,6 +25,7 @@ namespace Fooyin {
 class FileOpsRegistry : public ScriptRegistry
 {
 public:
+    using ScriptRegistry::value;
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
     static QString replaceSeparators(const QString& input);
