@@ -120,7 +120,12 @@ void AudioRenderer::reset()
 
 void AudioRenderer::play()
 {
-    play(0);
+    if(validOutputState()) {
+        m_audioOutput->setPaused(false);
+        m_audioOutput->setVolume(m_volume);
+    }
+
+    start();
 }
 
 void AudioRenderer::play(int fadeLength)
@@ -138,8 +143,7 @@ void AudioRenderer::play(int fadeLength)
         m_fadeVolume   = std::max(m_fadeVolume, 0.0);
         m_volumeChange = std::abs(m_fadeVolume - m_volume) / m_fadeSteps;
     }
-
-    if(m_flipFade) {
+    else {
         m_volumeChange = -m_volumeChange;
     }
 
@@ -148,7 +152,7 @@ void AudioRenderer::play(int fadeLength)
 
 void AudioRenderer::pause()
 {
-    pause(0);
+    pauseOutput();
 }
 
 void AudioRenderer::pause(int fadeLength)
@@ -162,8 +166,7 @@ void AudioRenderer::pause(int fadeLength)
         }
         m_volumeChange = -(m_fadeVolume / m_fadeSteps);
     }
-
-    if(m_flipFade) {
+    else {
         m_volumeChange = -m_volumeChange;
     }
 
@@ -285,7 +288,7 @@ void AudioRenderer::resetFade(int length)
 void AudioRenderer::handleFading()
 {
     auto updateOutputVolume = [this]() {
-        if(m_audioOutput && m_audioOutput->initialised()) {
+        if(validOutputState()) {
             m_audioOutput->setVolume(m_fadeSteps > 0 && m_fadeVolume >= 0 ? m_fadeVolume : m_volume);
         }
     };
@@ -296,7 +299,7 @@ void AudioRenderer::handleFading()
     if(inFade) {
         if(m_fadeLength >= 1000) {
             const auto step = static_cast<double>(currentStep) / m_fadeSteps;
-            m_fadeVolume    = m_volume * ((1.0 + std::erfl(3.0 * step - 1.5)) / 2.0);
+            m_fadeVolume    = m_volume * ((1.0 + std::erf(3.0 * step - 1.5)) / 2.0);
             if(m_flipFade ^ m_fadingOut) {
                 m_fadeVolume = m_volume - m_fadeVolume;
             }
