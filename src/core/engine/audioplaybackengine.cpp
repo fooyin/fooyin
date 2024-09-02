@@ -253,7 +253,7 @@ void AudioPlaybackEngine::pause()
         return;
     }
 
-    auto pauseEngine = [this](const uint64_t delay) {
+    const auto pauseEngine = [this](const uint64_t delay) {
         QTimer::singleShot(delay, this, [this]() {
             m_bufferTimer.stop();
             if(playbackState() != PlaybackState::Stopped) {
@@ -265,17 +265,18 @@ void AudioPlaybackEngine::pause()
     QObject::disconnect(&m_renderer, &AudioRenderer::paused, this, nullptr);
     QObject::connect(&m_renderer, &AudioRenderer::paused, this, pauseEngine, Qt::SingleShotConnection);
 
-    const int fadeLength = m_settings->value<Settings::Core::Internal::EngineFading>()
+    const int fadeLength = (m_settings->value<Settings::Core::Internal::EngineFading>() && m_volume > 0.0)
                              ? calculateFadeLength(m_fadeIntervals.outPauseStop)
                              : 0;
-    if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
-        m_pauseNextTrack = true;
-    }
-
-    QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
-
     if(fadeLength > 0) {
+        if(fadeLength < m_fadeIntervals.outPauseStop) {
+            m_pauseNextTrack = true;
+        }
+        QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.pause(fadeLength); });
         updateState(PlaybackState::FadingOut);
+    }
+    else {
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.pause(); });
     }
 }
 
@@ -298,7 +299,7 @@ void AudioPlaybackEngine::stop()
 
     const bool canFade = playbackState() != PlaybackState::Paused
                       && m_settings->value<Settings::Core::Internal::EngineFading>() && m_fadeIntervals.outPauseStop > 0
-                      && m_volume > 0;
+                      && m_volume > 0.0;
     if(canFade) {
         const int fadeLength = calculateFadeLength(m_fadeIntervals.outPauseStop);
         if(fadeLength > 0 && fadeLength < m_fadeIntervals.outPauseStop) {
