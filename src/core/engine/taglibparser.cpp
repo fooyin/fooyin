@@ -583,7 +583,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         }
 
         if(string.endsWith(QStringLiteral("dB"), Qt::CaseInsensitive)) {
-            return string.chopped(2).toDouble();
+            return string.chopped(2).toFloat();
         }
 
         // Lack of dB suffix is unusual, but try to convert anyway
@@ -667,7 +667,7 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             else if(field == Fooyin::Tag::ReplayGain::AlbumGain || field == Fooyin::Tag::ReplayGain::AlbumGainAlt) {
                 track.setReplayGainAlbumGain(gainStringToFloat(value.toString()));
             }
-            if(field == Fooyin::Tag::ReplayGain::TrackPeak || field == Fooyin::Tag::ReplayGain::TrackPeakAlt) {
+            else if(field == Fooyin::Tag::ReplayGain::TrackPeak || field == Fooyin::Tag::ReplayGain::TrackPeakAlt) {
                 track.setReplayGainTrackPeak(convertString(value.toString()).toFloat());
             }
             else if(field == Fooyin::Tag::ReplayGain::AlbumPeak || field == Fooyin::Tag::ReplayGain::AlbumPeakAlt) {
