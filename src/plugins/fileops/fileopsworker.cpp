@@ -31,20 +31,12 @@
 
 Q_LOGGING_CATEGORY(FILEOPS, "fy.fileops")
 
-namespace {
-QString replaceSeparators(const QString& input)
-{
-    static const QRegularExpression regex(QStringLiteral(R"([/\\])"));
-    QString output{input};
-    return output.replace(regex, QStringLiteral("-"));
-}
-} // namespace
-
 namespace Fooyin::FileOps {
 FileOpsWorker::FileOpsWorker(MusicLibrary* library, TrackList tracks, SettingsManager* settings, QObject* parent)
     : Worker{parent}
     , m_library{library}
     , m_settings{settings}
+    , m_scriptParser{&m_scriptRegistry}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Settings::Core::Internal::MonitorLibraries>()}
 { }
@@ -288,7 +280,7 @@ void FileOpsWorker::simulateRename()
         m_tracksProcessed.emplace(track.filepath());
 
         QString destFilename = QDir::cleanPath(m_scriptParser.evaluate(script, track));
-        destFilename         = replaceSeparators(destFilename);
+        destFilename         = FileOpsRegistry::replaceSeparators(destFilename);
 
         if(track.filenameExt() == destFilename) {
             continue;
