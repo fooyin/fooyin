@@ -127,7 +127,7 @@ public:
     void sortChildren(SortFunc&& func)
     {
         for(auto* child : m_children) {
-            child->sortChildren();
+            child->sortChildren(std::forward<SortFunc>(func));
             child->resetRow();
         }
 
