@@ -182,6 +182,8 @@ void InfoModel::populate(const InfoData& data)
         }
     }
 
+    rootItem()->sortChildren();
+
     endResetModel();
 }
 } // namespace Fooyin

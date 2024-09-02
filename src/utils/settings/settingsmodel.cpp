@@ -34,32 +34,21 @@ SettingsItem::SettingsItem(SettingsCategory* data, SettingsItem* parent)
     , m_data{data}
 { }
 
-SettingsCategory* SettingsItem::data() const
+bool SettingsItem::operator<(const SettingsItem& other) const
 {
-    return m_data;
-}
-
-void SettingsItem::sortChildren()
-{
-    for(SettingsItem* child : m_children) {
-        child->sortChildren();
-        child->resetRow();
-    }
-
-    if(!m_parent) {
-        return;
-    }
-
     QCollator collator;
     collator.setNumericMode(true);
 
-    std::ranges::sort(m_children, [collator](const SettingsItem* lhs, const SettingsItem* rhs) {
-        const auto cmp = collator.compare(lhs->m_data->name, rhs->m_data->name);
-        if(cmp == 0) {
-            return false;
-        }
-        return cmp < 0;
-    });
+    const auto cmp = collator.compare(m_data->name, other.m_data->name);
+    if(cmp == 0) {
+        return false;
+    }
+    return cmp < 0;
+}
+
+SettingsCategory* SettingsItem::data() const
+{
+    return m_data;
 }
 
 SettingsModel::SettingsModel(QObject* parent)

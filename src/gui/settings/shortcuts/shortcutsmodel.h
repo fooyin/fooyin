@@ -40,6 +40,8 @@ public:
     ShortcutItem();
     explicit ShortcutItem(QString title, Command* command, ShortcutItem* parent);
 
+    bool operator<(const ShortcutItem& other) const;
+
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString shortcut() const;
     [[nodiscard]] ShortcutList shortcuts() const;
@@ -49,8 +51,6 @@ public:
     [[nodiscard]] bool isCategory() const;
 
     void updateShortcuts(const ShortcutList& shortcuts);
-
-    void sortChildren();
 
 private:
     QString m_title;

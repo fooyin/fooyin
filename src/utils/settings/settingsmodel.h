@@ -42,9 +42,9 @@ public:
     SettingsItem();
     SettingsItem(SettingsCategory* data, SettingsItem* parent);
 
-    SettingsCategory* data() const;
+    bool operator<(const SettingsItem& other) const;
 
-    void sortChildren();
+    SettingsCategory* data() const;
 
 private:
     SettingsCategory* m_data;

@@ -64,6 +64,8 @@ public:
     InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType);
     InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc);
 
+    bool operator<(const InfoItem& other) const;
+
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] QString name() const;
     [[nodiscard]] QVariant value() const;

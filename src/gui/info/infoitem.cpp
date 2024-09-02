@@ -83,6 +83,33 @@ InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valu
     , m_formatNum{std::move(numFunc)}
 { }
 
+bool InfoItem::operator<(const InfoItem& other) const
+{
+    const bool leftIsCustom  = m_name.startsWith(u'<');
+    const bool rightIsCustom = other.m_name.startsWith(u'<');
+
+    if(leftIsCustom && !rightIsCustom) {
+        return false;
+    }
+    if(!leftIsCustom && rightIsCustom) {
+        return true;
+    }
+
+    const auto cmp = QString::localeAwareCompare(name(), other.name());
+    if(cmp == 0) {
+        return false;
+    }
+
+    if(m_type == Entry) {
+        if(leftIsCustom && rightIsCustom) {
+            return cmp < 0;
+        }
+        return false;
+    }
+
+    return cmp > 0;
+}
+
 InfoItem::ItemType InfoItem::type() const
 {
     return m_type;

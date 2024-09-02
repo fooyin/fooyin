@@ -35,20 +35,6 @@ QString shortcutsToString(const Fooyin::ShortcutList& sequence)
                            [](const QKeySequence& k) { return k.toString(QKeySequence::NativeText); });
     return keys.join(u", ");
 }
-
-bool sortShortcutItems(const Fooyin::ShortcutItem* lhs, const Fooyin::ShortcutItem* rhs)
-{
-    if(lhs->parent()->parent() && rhs->parent()->parent()) {
-        if(lhs->childCount() != rhs->childCount()) {
-            return lhs->childCount() < rhs->childCount();
-        }
-    }
-    const auto cmp = QString::localeAwareCompare(lhs->title(), rhs->title());
-    if(cmp == 0) {
-        return false;
-    }
-    return cmp < 0;
-}
 } // namespace
 
 namespace Fooyin {
@@ -65,6 +51,20 @@ ShortcutItem::ShortcutItem(QString title, Command* command, ShortcutItem* parent
         m_shortcuts = command->shortcuts();
         m_shortcut  = shortcutsToString(m_shortcuts);
     }
+}
+
+bool ShortcutItem::operator<(const ShortcutItem& other) const
+{
+    if(parent()->parent() && other.parent()->parent()) {
+        if(childCount() != other.childCount()) {
+            return childCount() < other.childCount();
+        }
+    }
+    const auto cmp = QString::localeAwareCompare(title(), other.title());
+    if(cmp == 0) {
+        return false;
+    }
+    return cmp < 0;
 }
 
 QString ShortcutItem::title() const
@@ -96,14 +96,6 @@ void ShortcutItem::updateShortcuts(const ShortcutList& shortcuts)
 {
     m_shortcuts = shortcuts;
     m_shortcut  = shortcutsToString(m_shortcuts);
-}
-
-void ShortcutItem::sortChildren()
-{
-    std::vector<ShortcutItem*> sortedChildren{m_children};
-    std::ranges::sort(sortedChildren, sortShortcutItems);
-    m_children = sortedChildren;
-    std::ranges::for_each(m_children, &ShortcutItem::sortChildren);
 }
 
 ShortcutsModel::ShortcutsModel(QObject* parent)

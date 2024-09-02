@@ -30,7 +30,6 @@ class TreeItem
 public:
     explicit TreeItem(Item* parent = nullptr)
         : m_parent{parent}
-        , m_row{-1}
     { }
 
     virtual ~TreeItem()
@@ -124,11 +123,32 @@ public:
         }
     }
 
+    template <typename SortFunc>
+    void sortChildren(SortFunc&& func)
+    {
+        for(auto* child : m_children) {
+            child->sortChildren();
+            child->resetRow();
+        }
+
+        std::ranges::sort(m_children, std::forward<SortFunc>(func));
+    }
+
+    void sortChildren()
+    {
+        sortChildren([](const Item* a, const Item* b) {
+            if(!a || !b) {
+                return false;
+            }
+            return *a < *b;
+        });
+    }
+
 private:
     friend Item;
 
     Item* m_parent;                // Not owned
     std::vector<Item*> m_children; // Not owned
-    mutable int m_row;
+    mutable int m_row{-1};
 };
 } // namespace Fooyin
