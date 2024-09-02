@@ -224,6 +224,7 @@ void ScriptRegistryPrivate::addDefaultFunctions()
 
     m_funcs[QStringLiteral("num")]            = Fooyin::Scripting::num;
     m_funcs[QStringLiteral("replace")]        = Fooyin::Scripting::replace;
+    m_funcs[QStringLiteral("ascii")]          = Fooyin::Scripting::ascii;
     m_funcs[QStringLiteral("slice")]          = Fooyin::Scripting::slice;
     m_funcs[QStringLiteral("chop")]           = Fooyin::Scripting::chop;
     m_funcs[QStringLiteral("left")]           = Fooyin::Scripting::left;

@@ -106,6 +106,30 @@ QString replace(const QStringList& vec)
     return result;
 }
 
+QString ascii(const QStringList& vec)
+{
+    if(vec.empty()) {
+        return {};
+    }
+
+    const QString normalizedStr = vec.front().normalized(QString::NormalizationForm_D);
+
+    QString result;
+    for(QChar ch : normalizedStr) {
+        if(ch.unicode() < 128) {
+            result.append(ch);
+        }
+        else if(ch.category() != QChar::Mark_NonSpacing) {
+            const char asciiChar = ch.toLatin1();
+            if(asciiChar != 0) {
+                result.append(QChar::fromLatin1(asciiChar));
+            }
+        }
+    }
+
+    return result;
+}
+
 QString slice(const QStringList& vec)
 {
     const qsizetype count = vec.size();

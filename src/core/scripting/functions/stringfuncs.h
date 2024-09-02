@@ -26,6 +26,7 @@
 namespace Fooyin::Scripting {
 QString num(const QStringList& vec);
 QString replace(const QStringList& vec);
+QString ascii(const QStringList& vec);
 QString slice(const QStringList& vec);
 QString chop(const QStringList& vec);
 QString left(const QStringList& vec);
