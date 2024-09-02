@@ -50,18 +50,17 @@ bool FontButton::fontChanged() const
 void FontButton::setButtonFont(const QFont& font)
 {
     m_font = font;
+    setFont(m_font);
     updateText();
 }
 
 void FontButton::setButtonFont(const QString& font)
 {
+    QFont newFont;
     if(!font.isEmpty()) {
-        m_font.fromString(font);
+        newFont.fromString(font);
     }
-    else {
-        m_font = {};
-    }
-    updateText();
+    setButtonFont(newFont);
 }
 
 void FontButton::pickFont()
@@ -69,9 +68,8 @@ void FontButton::pickFont()
     bool ok;
     const QFont chosenFont = QFontDialog::getFont(&ok, m_font, this, tr("Select Font"));
     if(ok && chosenFont != m_font) {
-        m_font    = chosenFont;
+        setButtonFont(chosenFont);
         m_changed = true;
-        updateText();
     }
 }
 
