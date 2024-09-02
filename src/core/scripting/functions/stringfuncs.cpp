@@ -77,7 +77,8 @@ QString replace(const QStringList& vec)
     for(qsizetype i{1}; i < count - 1; i += 2) {
         const QString& search  = vec[i];
         const QString& replace = vec[i + 1];
-        const QRegularExpression regex{QRegularExpression::escape(search)};
+        const QRegularExpression regex{QRegularExpression::escape(search),
+                                       QRegularExpression::UseUnicodePropertiesOption};
         QRegularExpressionMatchIterator matches = regex.globalMatch(origStr);
 
         while(matches.hasNext()) {
@@ -95,8 +96,9 @@ QString replace(const QStringList& vec)
         }
 
         const QString& replacement = replacements.at(pos);
-        result.prepend(origStr.mid(pos, lastIndex - pos)
-                           .replace(QRegularExpression::escape(origStr.mid(pos, replacement.length())), replacement));
+        const QRegularExpression regex{QRegularExpression::escape(origStr.mid(pos, replacement.length())),
+                                       QRegularExpression::UseUnicodePropertiesOption};
+        result.prepend(origStr.mid(pos, lastIndex - pos).replace(regex, replacement));
         lastIndex = pos;
     }
     result.prepend(origStr.left(lastIndex));
