@@ -299,4 +299,15 @@
             WHERE DiscTotal = '-1';
         </sql>
     </revision>
+    <revision version="11">
+        <description>
+            Add ReplayGain metadata fields.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN RGTrackGain FLOAT(3,7) DEFAULT 0.0;
+            ALTER TABLE Tracks ADD COLUMN RGAlbumGain FLOAT(3,7) DEFAULT 0.0;
+            ALTER TABLE Tracks ADD COLUMN RGTrackPeak FLOAT(3,7) DEFAULT 0.0;
+            ALTER TABLE Tracks ADD COLUMN RGAlbumPeak FLOAT(3,7) DEFAULT 0.0;
+        </sql>
+    </revision>
 </schema>

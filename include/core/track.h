@@ -120,6 +120,11 @@ public:
     [[nodiscard]] float rating() const;
     [[nodiscard]] int ratingStars() const;
 
+    [[nodiscard]] float replayGainTrackGain() const;
+    [[nodiscard]] float replayGainAlbumGain() const;
+    [[nodiscard]] float replayGainTrackPeak() const;
+    [[nodiscard]] float replayGainAlbumPeak() const;
+
     [[nodiscard]] bool hasCue() const;
     [[nodiscard]] QString cuePath() const;
 
@@ -175,6 +180,10 @@ public:
     void setYear(int year);
     void setRating(float rating);
     void setRatingStars(int rating);
+    void setReplayGainTrackGain(float gain);
+    void setReplayGainAlbumGain(float gain);
+    void setReplayGainTrackPeak(float peak);
+    void setReplayGainAlbumPeak(float peak);
 
     [[nodiscard]] QString metaValue(const QString& name) const;
     [[nodiscard]] QString techInfo(const QString& name) const;
