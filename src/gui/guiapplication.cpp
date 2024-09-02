@@ -687,12 +687,17 @@ void GuiApplicationPrivate::registerLayouts()
 
 void GuiApplicationPrivate::checkTracksNeedUpdate() const
 {
-    const int prev = m_core->database()->previousRevision();
-    const int curr = m_core->database()->currentRevision();
+    const auto libraryOutOfDate = [this](int threshold) -> bool {
+        const int prev = m_core->database()->previousRevision();
+        const int curr = m_core->database()->currentRevision();
+        return prev > 0 && prev < threshold && curr >= threshold;
+    };
 
-    if(prev > 0 && curr >= 7 && prev < 7 && m_library->hasLibrary()) {
-        // Revision 7 changed codec storage type
-        showNeedReloadMessage();
+    if(m_library->hasLibrary()) {
+        if(libraryOutOfDate(7) /* changed codec storage type */
+           || libraryOutOfDate(11) /* removed ReplayGain data in extra tags */) {
+            showNeedReloadMessage();
+        }
     }
 }
 
