@@ -83,6 +83,7 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QTimer>
 
 Q_LOGGING_CATEGORY(GUI_APP, "fy.gui")
 
@@ -621,16 +622,21 @@ void GuiApplicationPrivate::setTheme() const
         }
     }
 
-    for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
-        if(className.isEmpty()) {
-            QApplication::setFont(font);
+    auto updateFonts = [currTheme]() {
+        for(const auto& [className, font] : Utils::asRange(currTheme.fonts)) {
+            if(className.isEmpty()) {
+                QApplication::setFont(font);
+            }
+            else {
+                QApplication::setFont(font, className.toUtf8().constData());
+            }
         }
-        else {
-            QApplication::setFont(font, className.toUtf8().constData());
-        }
-    }
+        QPixmapCache::clear();
+    };
+    updateFonts();
 
-    QPixmapCache::clear();
+    // Fonts can sometimes reset, so set again
+    QTimer::singleShot(0, m_self, [updateFonts]() { updateFonts(); });
 }
 
 void GuiApplicationPrivate::setIconTheme() const
