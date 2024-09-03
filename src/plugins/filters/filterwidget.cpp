@@ -143,6 +143,7 @@ FilterWidget::FilterWidget(FilterColumnRegistry* columnRegistry, LibraryManager*
 
 FilterWidget::~FilterWidget()
 {
+    QObject::disconnect(m_resetThrottler, nullptr, this, nullptr);
     emit filterDeleted();
 }
 

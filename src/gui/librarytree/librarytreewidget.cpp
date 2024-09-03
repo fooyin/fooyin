@@ -898,6 +898,11 @@ LibraryTreeWidget::LibraryTreeWidget(ActionManager* actionManager, PlaylistContr
     setFeature(FyWidget::Search);
 }
 
+LibraryTreeWidget::~LibraryTreeWidget()
+{
+    QObject::disconnect(p->m_resetThrottler, nullptr, this, nullptr);
+}
+
 QString LibraryTreeWidget::name() const
 {
     return tr("Library Tree");

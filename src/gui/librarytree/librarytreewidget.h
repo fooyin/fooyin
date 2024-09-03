@@ -37,6 +37,7 @@ class LibraryTreeWidget : public FyWidget
 public:
     LibraryTreeWidget(ActionManager* actionManager, PlaylistController* playlistController,
                       LibraryTreeController* controller, Application* core, QWidget* parent = nullptr);
+    ~LibraryTreeWidget() override;
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
