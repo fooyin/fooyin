@@ -93,7 +93,5 @@ private:
 
     QString m_activePlaylistKey;
     QColor m_playingColour;
-    QIcon m_playIcon;
-    QIcon m_pauseIcon;
 };
 } // namespace Fooyin

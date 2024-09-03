@@ -113,8 +113,6 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
     : m_playlistHandler{playlistHandler}
     , m_playerController{playerController}
     , m_playingColour{QApplication::palette().highlight().color()}
-    , m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
-    , m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
 {
     m_playingColour.setAlpha(90);
 
@@ -400,10 +398,10 @@ QVariant PlaylistOrganiserModel::data(const QModelIndex& index, int role) const
             if(currentIsActive) {
                 const auto state = m_playerController->playState();
                 if(state == Player::PlayState::Playing) {
-                    return m_playIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Play);
                 }
                 if(state == Player::PlayState::Paused) {
-                    return m_pauseIcon;
+                    return Utils::pixmapFromTheme(Constants::Icons::Pause);
                 }
             }
             break;
