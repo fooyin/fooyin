@@ -125,9 +125,11 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
 
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
                      [this, playlistChanged](Playlist* playlist) {
-                         const QString prevKey = std::exchange(m_activePlaylistKey, playlistKey(playlist->name()));
-                         playlistChanged(prevKey, Qt::BackgroundRole);
-                         playlistChanged(m_activePlaylistKey, Qt::BackgroundRole);
+                         if(playlist) {
+                             const QString prevKey = std::exchange(m_activePlaylistKey, playlistKey(playlist->name()));
+                             playlistChanged(prevKey, Qt::BackgroundRole);
+                             playlistChanged(m_activePlaylistKey, Qt::BackgroundRole);
+                         }
                      });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
                      [this, playlistChanged]() { playlistChanged(m_activePlaylistKey, Qt::DecorationRole); });

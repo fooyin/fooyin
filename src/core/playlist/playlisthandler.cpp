@@ -695,7 +695,7 @@ void PlaylistHandler::removePlaylist(const UId& id)
 
     if(playlist == p->m_activePlaylist) {
         p->m_activePlaylist = nullptr;
-        emit activePlaylistChanged({});
+        emit activePlaylistChanged(nullptr);
     }
 
     const int index = p->indexFromName(playlist->name());
