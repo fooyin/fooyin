@@ -23,9 +23,12 @@
 #include "version.h"
 
 #include <core/coresettings.h>
+#include <utils/logging/messagehandler.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QFileInfo>
+
+constexpr auto LogLevel = "LogLevel";
 
 namespace Fooyin {
 FySettings::FySettings(QObject* parent)
@@ -72,5 +75,18 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                          QStringLiteral("Engine/FadingIntervals"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
+
+    auto logLevel = m_settings->fileValue(LogLevel, QtInfoMsg);
+    bool newLogFormat{false};
+    int level = logLevel.toInt(&newLogFormat);
+    if(!newLogFormat) {
+        level = QtMsgType::QtInfoMsg;
+    }
+    MessageHandler::setLevel(static_cast<QtMsgType>(level));
+}
+
+CoreSettings::~CoreSettings()
+{
+    m_settings->fileSet(LogLevel, MessageHandler::level());
 }
 } // namespace Fooyin

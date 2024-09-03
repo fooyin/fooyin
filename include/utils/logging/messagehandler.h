@@ -37,11 +37,15 @@ public:
     static void install(LogWidget* widget);
     static void handler(QtMsgType type, const QMessageLogContext&, const QString& msg);
 
+    static QtMsgType level();
+    static void setLevel(QtMsgType level);
+
 signals:
     void showMessage(QString msg, QtMsgType type);
 
 private:
     static MessageHandler* instance();
+    std::atomic<QtMsgType> m_level;
 };
 } // namespace Fooyin
 

@@ -21,11 +21,32 @@
 
 #include "logging/logwidget.h"
 
+#include <QLoggingCategory>
+
 #include <iostream>
+
+namespace {
+QString levelToFilterRule(QtMsgType level)
+{
+    switch(level) {
+        case(QtDebugMsg):
+            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=true\n");
+        case(QtInfoMsg):
+            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=true\nfy.*.debug=false\n");
+        case(QtWarningMsg):
+            return QStringLiteral("fy.*.critical=true\nfy.*.warning=true\nfy.*.info=false\nfy.*.debug=false\n");
+        case(QtCriticalMsg):
+            return QStringLiteral("fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n");
+        case(QtFatalMsg):
+            return {};
+    }
+}
+} // namespace
 
 namespace Fooyin {
 MessageHandler::MessageHandler(QObject* parent)
     : QObject{parent}
+    , m_level{QtInfoMsg}
 {
     qRegisterMetaType<QtMsgType>();
 }
@@ -63,6 +84,19 @@ void MessageHandler::handler(QtMsgType type, const QMessageLogContext& context, 
     QMetaObject::invokeMethod(
         instance(), [formattedMsg, type]() { emit instance() -> showMessage(formattedMsg, type); },
         Qt::QueuedConnection);
+}
+
+QtMsgType MessageHandler::level()
+{
+    return instance()->m_level.load(std::memory_order_acquire);
+}
+
+void MessageHandler::setLevel(QtMsgType level)
+{
+    QString filterRules;
+    filterRules.append(levelToFilterRule(level));
+    QLoggingCategory::setFilterRules(filterRules);
+    instance()->m_level.store(level, std::memory_order_release);
 }
 
 MessageHandler* MessageHandler::instance()

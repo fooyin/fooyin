@@ -90,6 +90,7 @@ class CoreSettings
 {
 public:
     explicit CoreSettings(SettingsManager* settingsManager);
+    ~CoreSettings();
 
 private:
     SettingsManager* m_settings;
