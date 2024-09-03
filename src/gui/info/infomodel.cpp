@@ -37,10 +37,6 @@ InfoModel::InfoModel(QObject* parent)
     m_headerFont.setBold(true);
 
     QObject::connect(&m_populator, &InfoPopulator::populated, this, &InfoModel::populate);
-    QObject::connect(&m_populator, &Worker::finished, this, [this]() {
-        m_populator.stopThread();
-        m_populatorThread.quit();
-    });
 }
 
 Qt::ItemFlags InfoModel::flags(const QModelIndex& index) const
@@ -58,7 +54,11 @@ Qt::ItemFlags InfoModel::flags(const QModelIndex& index) const
     return flags;
 }
 
-InfoModel::~InfoModel() = default;
+InfoModel::~InfoModel()
+{
+    m_populatorThread.quit();
+    m_populatorThread.wait();
+}
 
 QVariant InfoModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
