@@ -118,10 +118,21 @@ PlaylistOrganiserModel::PlaylistOrganiserModel(PlaylistHandler* playlistHandler,
 {
     m_playingColour.setAlpha(90);
 
+    auto playlistChanged = [this](const QString& key, Qt::ItemDataRole role) {
+        if(m_nodes.contains(key)) {
+            const QModelIndex index = indexOfItem(&m_nodes.at(key));
+            emit dataChanged(index, index, {role});
+        }
+    };
+
     QObject::connect(m_playlistHandler, &PlaylistHandler::activePlaylistChanged, this,
-                     [this]() { emit dataChanged({}, {}, {Qt::BackgroundRole}); });
+                     [this, playlistChanged](Playlist* playlist) {
+                         const QString prevKey = std::exchange(m_activePlaylistKey, playlistKey(playlist->name()));
+                         playlistChanged(prevKey, Qt::BackgroundRole);
+                         playlistChanged(m_activePlaylistKey, Qt::BackgroundRole);
+                     });
     QObject::connect(m_playerController, &PlayerController::playStateChanged, this,
-                     [this]() { emit dataChanged({}, {}, {Qt::DecorationRole}); });
+                     [this, playlistChanged]() { playlistChanged(m_activePlaylistKey, Qt::DecorationRole); });
 }
 
 void PlaylistOrganiserModel::populate()
