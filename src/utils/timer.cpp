@@ -20,6 +20,7 @@
 #include <utils/timer.h>
 
 #include <iomanip>
+#include <sstream>
 
 namespace Fooyin {
 void Timer::reset()
