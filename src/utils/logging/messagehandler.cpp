@@ -38,6 +38,7 @@ QString levelToFilterRule(QtMsgType level)
         case(QtCriticalMsg):
             return QStringLiteral("fy.*.critical=true\nfy.*.warning=false\nfy.*.info=false\nfy.*.debug=false\n");
         case(QtFatalMsg):
+        default:
             return {};
     }
 }
