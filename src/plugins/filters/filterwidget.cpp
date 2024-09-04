@@ -364,16 +364,12 @@ void FilterWidget::finalise()
 
     if(!m_columns.empty()) {
         if(m_headerState.isEmpty()) {
-            updateViewMode(m_view->viewMode());
             m_header->setSortIndicator(0, Qt::AscendingOrder);
         }
         else {
             QObject::connect(
                 m_header, &AutoHeaderView::stateRestored, this,
-                [this]() {
-                    updateViewMode(m_view->viewMode());
-                    m_sortProxy->sort(m_header->sortIndicatorSection(), m_header->sortIndicatorOrder());
-                },
+                [this]() { m_sortProxy->sort(m_header->sortIndicatorSection(), m_header->sortIndicatorOrder()); },
                 Qt::SingleShotConnection);
 
             m_header->restoreHeaderState(m_headerState);

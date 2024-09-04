@@ -1895,7 +1895,7 @@ void IconView::doItemLayout()
     const int totalWidthAvailable = segEndPosition - segStartPosition;
     const int totalItemWidth      = m_segmentSize * itemWidth(0);
     const int totalPadding        = totalWidthAvailable - totalItemWidth;
-    const int itmWidth            = haveSideCaptions() ? header()->length() / m_segmentSize : itemWidth(0);
+    const int itmWidth            = haveSideCaptions() ? totalWidthAvailable / m_segmentSize : itemWidth(0);
     const int maxPadding          = static_cast<int>(totalWidthAvailable * maxPaddingRatio);
 
     m_itemSpacing = std::max(0, totalPadding / (m_segmentSize + 1));
