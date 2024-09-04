@@ -250,6 +250,11 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     auto* menu = new QMenu(this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
+    QObject::connect(menu, &QObject::destroyed, this, [this]() {
+        m_removePlaylist->setEnabled(true);
+        m_renamePlaylist->setEnabled(true);
+    });
+
     const QPoint point      = m_organiserTree->viewport()->mapFrom(this, event->pos());
     const QModelIndex index = m_organiserTree->indexAt(point);
 
