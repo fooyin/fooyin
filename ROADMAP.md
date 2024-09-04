@@ -13,10 +13,10 @@ This document outlines the upcoming features for fooyin.
 | Archive support (Adding to library, playback) | ✅ 0.6.0  |
 | Scrobbling                                    | 🔄 0.7.0 |
 | ReplayGain support                            | 🔄 0.7.0 |
-| Query-based language for searching/filtering  | ❓ TBD    |
+| Query-based language for advanced searching   | ❓ TBD    |
 | Smart playlists                               | ❓ TBD    |
 | Album artwork downloading/saving              | ❓ TBD    |
-| Lyric support                                 | ❓ TBD    |
+| Synchronised lyric support                    | ❓ TBD    |
 | Audio conversion                              | ❓ TBD    |
 | Metadata searching                            | ❓ TBD    |
 | Internet radio support                        | ❓ TBD    |
@@ -24,13 +24,15 @@ This document outlines the upcoming features for fooyin.
 
 ## Enhancements
 
-| Enhancement                                    | Release   |
-|------------------------------------------------|-----------|
-| Support custom tags within scripts             | ✅ 0.4.0   |
-| Add HTML-like tags to FooScript for formatting | ✅ 0.4.0   |
-| Import/Export playlists                        | ✅ 0.5.0   |
-| Add icon/artwork mode to Library Filter        | ✅ 0.5.0   |
-| Per-playlist playback queue                    | ❓ TBD     |
+| Enhancement                                        | Release  |
+|----------------------------------------------------|----------|
+| Support custom tags within scripts                 | ✅ 0.4.0  |
+| Add HTML-like tags to FooScript for formatting     | ✅ 0.4.0  |
+| Import/Export playlists                            | ✅ 0.5.0  |
+| Add icon/artwork mode to Library Filter            | ✅ 0.5.0  |
+| Customise default tag editor/selection info fields | 🔄 0.7.0 |
+| Variable bitrate display                           | 🔄 0.7.0 |
+| Per-playlist playback queue                        | ❓ TBD    |
 
 ## Widgets
 
