@@ -25,7 +25,6 @@
 #include <QDialogButtonBox>
 #include <QDir>
 #include <QDoubleSpinBox>
-#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>

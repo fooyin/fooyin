@@ -23,6 +23,7 @@
 #include <core/engine/audioinput.h>
 
 #include <gme/gme.h>
+#undef byte // Fix conflicts with QSpan
 
 namespace Fooyin::Gme {
 struct MusicEmuDeleter
