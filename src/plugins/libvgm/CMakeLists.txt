@@ -2,7 +2,7 @@ find_package(LibVgm QUIET MODULE)
 
 if(LIBVGM_FOUND)
     message(STATUS "Using system libvgm")
-elseif(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/3rdparty/libvgm")
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/libvgm/CMakeLists.txt")
     message(STATUS "Using 3rd-party libvgm")
     add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/libvgm libvgm EXCLUDE_FROM_ALL)
     add_library(libvgm::vgm-player ALIAS vgm-player)
