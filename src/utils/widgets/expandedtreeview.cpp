@@ -264,6 +264,7 @@ public:
                             std::vector<QStyleOptionViewItem::ViewItemPosition>& itemPositions, int left,
                             int right) const;
     [[nodiscard]] ItemViewPaintPairs draggablePaintPairs(const QModelIndexList& indexes, QRect& rect) const;
+    [[nodiscard]] int findValidItem(int item, int step) const;
 
     [[nodiscard]] bool isIndexValid(const QModelIndex& index) const
     {
@@ -546,6 +547,18 @@ ItemViewPaintPairs BaseView::draggablePaintPairs(const QModelIndexList& indexes,
     rect.setRight(clipped.right());
 
     return ret;
+}
+
+int BaseView::findValidItem(int item, int step) const
+{
+    int newItem{item + step};
+    while(newItem >= 0 && newItem < itemCount()) {
+        if(!m_p->isItemDisabled(newItem)) {
+            return newItem;
+        }
+        newItem += step;
+    }
+    return item;
 }
 
 class TreeView : public BaseView
@@ -1061,16 +1074,12 @@ int TreeView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
 
 int TreeView::itemAbove(int item) const
 {
-    const int i{item};
-    while(m_p->isItemDisabled(--item) || m_p->itemHasChildren(item)) { }
-    return item < 0 ? i : item;
+    return findValidItem(item, -1);
 }
 
 int TreeView::itemBelow(int item) const
 {
-    const int i{item};
-    while(m_p->isItemDisabled(++item) || m_p->itemHasChildren(item)) { }
-    return item >= itemCount() ? i : item;
+    return findValidItem(item, 1);
 }
 
 int TreeView::itemLeft(int /*item*/) const
@@ -2332,6 +2341,7 @@ int IconView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
     }
 
     coordinate += {0, verticalScrollBar()->value()};
+    coordinate.ry() = std::clamp(coordinate.y(), m_rowSpacing, m_contentsSize.height() - m_rowSpacing - 1);
 
     for(int i{0}; i < count; ++i) {
         const auto& rect = includePadding ? viewItem(i).rect() : mapToViewport(viewItem(i).rect());
@@ -2345,16 +2355,12 @@ int IconView::itemAtCoordinate(QPoint coordinate, bool includePadding) const
 
 int IconView::itemAbove(int item) const
 {
-    const int i{item};
-    while(m_p->isItemDisabled(item -= m_segmentSize)) { }
-    return item < 0 ? i : item;
+    return findValidItem(item, -m_segmentSize);
 }
 
 int IconView::itemBelow(int item) const
 {
-    const int i{item};
-    while(m_p->isItemDisabled(item += m_segmentSize)) { }
-    return item >= itemCount() ? i : item;
+    return findValidItem(item, m_segmentSize);
 }
 
 int IconView::itemLeft(int item) const
@@ -2362,7 +2368,11 @@ int IconView::itemLeft(int item) const
     if(item % m_segmentSize == 0) {
         return item;
     }
-    while(m_p->isItemDisabled(--item)) { }
+
+    --item;
+    while(m_p->isItemDisabled(item)) {
+        --item;
+    }
     return item;
 }
 
@@ -2371,7 +2381,11 @@ int IconView::itemRight(int item) const
     if((item + 1) % m_segmentSize == 0) {
         return item;
     }
-    while(m_p->isItemDisabled(++item)) { }
+
+    ++item;
+    while(m_p->isItemDisabled(item)) {
+        ++item;
+    }
     return item;
 }
 
