@@ -26,6 +26,12 @@
 namespace Fooyin {
 class SettingsManager;
 
+enum class ReplayGainType : uint8_t
+{
+    Track = 0,
+    Album,
+};
+
 struct FadingIntervals
 {
     int inPauseStop{1000};

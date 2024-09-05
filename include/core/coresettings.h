@@ -57,7 +57,9 @@ enum CoreSettings : uint32_t
     ExternalSortScript      = 18 | Type::String,
     Shutdown                = 19 | Type::Bool,
     StopAfterCurrent        = 20 | Type::Bool,
-
+    ReplayGainEnabled       = 21 | Type::Bool,
+    ReplayGainType          = 22 | Type::Int,
+    ReplayGainPreAmp        = 23 | Type::Int,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

@@ -275,7 +275,7 @@ void AudioRenderer::resetFade(int length)
         m_fadeTimer.stop();
     }
 
-    m_flipFade   = !m_flipFade && m_currentFadeStep != 0 && length > 0;
+    m_flipFade   = !m_flipFade && m_currentFadeStep > 0 && length > 0;
     m_fadeLength = length;
 
     if(!m_flipFade) {

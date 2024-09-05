@@ -222,6 +222,8 @@ set(SOURCES
     settings/playback/outputpage.h
     settings/playback/playbackpage.cpp
     settings/playback/playbackpage.h
+    settings/playback/replaygainpage.cpp
+    settings/playback/replaygainpage.h
     settings/playlist/playlistcolumnmodel.cpp
     settings/playlist/playlistcolumnmodel.h
     settings/playlist/playlistcolumnpage.cpp

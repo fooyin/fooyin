@@ -85,6 +85,7 @@ constexpr auto TrackQueue     = "Fooyin.Menu.Queue";
 constexpr auto TracksPlaylist = "Fooyin.Menu.Tracks.Playlist";
 constexpr auto Playlist       = "Fooyin.Menu.Playlist";
 constexpr auto PlaylistAddTo  = "Fooyin.Menu.Playlist.AddTo";
+constexpr auto ReplayGain     = "Fooyin.Menu.ReplayGain";
 constexpr auto Tagging        = "Fooyin.Menu.Tagging";
 constexpr auto Utilities      = "Fooyin.Menu.Utilities";
 } // namespace Context
@@ -179,6 +180,7 @@ constexpr auto GeneralCore        = "Fooyin.Page.General.Core";
 constexpr auto Playback           = "Fooyin.Page.Playback";
 constexpr auto Output             = "Fooyin.Page.Playback.Output";
 constexpr auto Decoding           = "Fooyin.Page.Playback.Decoding";
+constexpr auto ReplayGain         = "Fooyin.Page.Playback.ReplayGain";
 constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceTheme     = "Fooyin.Page.Interface.Theme";
 constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
