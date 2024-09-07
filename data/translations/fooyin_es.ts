@@ -216,7 +216,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="138"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Alinear al centro</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="80"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Extenciones soportadas</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
@@ -288,12 +288,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="69"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Decodificadores</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="70"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Lectores de etiquetas</translation>
     </message>
 </context>
 <context>
@@ -5451,37 +5451,37 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="116"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar a lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="117"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviar a lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="118"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviar a lista de reproducción nueva</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="119"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar a cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="120"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitar de la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="121"/>
         <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir carpeta contenedora</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propiedades</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="132"/>
@@ -5491,7 +5491,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="136"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished">Añadir las pistas seleccionadas a la lista de reproducción activa</translation>
+        <translation>Añadir pistas seleccionadas a la lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="141"/>
@@ -5511,22 +5511,22 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="174"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitar pistas seleccionadas de la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="185"/>
         <source>Open the directory containing the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir carpeta contenedora de las pistas seleccionadas</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="202"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir el dialogo de propiedades</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="326"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción</translation>
     </message>
 </context>
 </TS>
