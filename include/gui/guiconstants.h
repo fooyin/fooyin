@@ -198,5 +198,6 @@ constexpr auto Plugins            = "Fooyin.Page.Plugins";
 constexpr auto ShellIntegration   = "Fooyin.Page.ShellIntegration";
 constexpr auto Shortcuts          = "Fooyin.Page.Shortcuts";
 constexpr auto DirBrowser         = "Fooyin.Page.Widgets.DirBrowser";
+constexpr auto Network            = "Fooyin.Page.Network";
 } // namespace Page
 } // namespace Fooyin::Constants

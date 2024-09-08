@@ -23,6 +23,7 @@
 
 #include <utils/settings/settingsentry.h>
 
+#include <QNetworkProxy>
 #include <QObject>
 #include <QSettings>
 
@@ -60,6 +61,9 @@ enum CoreSettings : uint32_t
     ReplayGainEnabled       = 21 | Type::Bool,
     ReplayGainType          = 22 | Type::Int,
     ReplayGainPreAmp        = 23 | Type::Int,
+    ProxyMode               = 24 | Type::Int,
+    ProxyConfig             = 25 | Type::Variant,
+
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

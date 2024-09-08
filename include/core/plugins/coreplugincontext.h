@@ -22,13 +22,14 @@
 #include <memory>
 
 namespace Fooyin {
+class AudioLoader;
 class EngineController;
-class PlayerController;
-class PlaylistHandler;
 class LibraryManager;
 class MusicLibrary;
+class NetworkAccessManager;
+class PlayerController;
+class PlaylistHandler;
 class SettingsManager;
-class AudioLoader;
 class SortingRegistry;
 
 /*!
@@ -38,7 +39,8 @@ struct CorePluginContext
 {
     CorePluginContext(EngineController* engine_, PlayerController* playerController_, LibraryManager* libraryManager_,
                       MusicLibrary* library_, PlaylistHandler* playlistHandler_, SettingsManager* settingsManager_,
-                      std::shared_ptr<AudioLoader> audioLoader_, SortingRegistry* sortingRegistry_)
+                      std::shared_ptr<AudioLoader> audioLoader_, SortingRegistry* sortingRegistry_,
+                      std::shared_ptr<NetworkAccessManager> networkAccess)
         : playerController{playerController_}
         , libraryManager{libraryManager_}
         , library{library_}
@@ -47,6 +49,7 @@ struct CorePluginContext
         , engine{engine_}
         , audioLoader{std::move(audioLoader_)}
         , sortingRegistry{sortingRegistry_}
+        , m_networkAccess{std::move(networkAccess)}
     { }
 
     PlayerController* playerController;
@@ -57,5 +60,6 @@ struct CorePluginContext
     EngineController* engine;
     std::shared_ptr<AudioLoader> audioLoader;
     SortingRegistry* sortingRegistry;
+    std::shared_ptr<NetworkAccessManager> m_networkAccess;
 };
 } // namespace Fooyin

@@ -45,6 +45,7 @@
 #include "settings/library/librarysortingpage.h"
 #include "settings/librarytree/librarytreegrouppage.h"
 #include "settings/librarytree/librarytreepage.h"
+#include "settings/networkpage.h"
 #include "settings/playback/decoderpage.h"
 #include "settings/playback/outputpage.h"
 #include "settings/playback/playbackpage.h"
@@ -255,6 +256,7 @@ void Widgets::registerPages()
     new OutputPage(m_core->engine(), m_settings, this);
     new DecoderPage(m_core->audioLoader().get(), m_settings, this);
     new ReplayGainPage(m_settings, this);
+    new NetworkPage(m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui.actionManager, m_libraryTreeController->groupRegistry(), m_settings, this);
