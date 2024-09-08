@@ -38,6 +38,7 @@ namespace Fooyin {
 AudioRenderer::AudioRenderer(QObject* parent)
     : QObject{parent}
     , m_volume{0.0}
+    , m_gainScale{1.0}
     , m_bufferSize{0}
     , m_bufferPrefilled{false}
     , m_samplePos{0}
@@ -240,6 +241,11 @@ void AudioRenderer::updateVolume(double volume)
     if(validOutputState()) {
         m_audioOutput->setVolume(m_volume);
     }
+}
+
+void AudioRenderer::setReplayGainScale(double scale)
+{
+    m_gainScale = scale;
 }
 
 QString AudioRenderer::deviceError() const
@@ -445,6 +451,8 @@ int AudioRenderer::writeAudioSamples(int samples)
             m_bufferQueue.pop();
             continue;
         }
+
+        buffer.scale(m_gainScale);
 
         const int sstride     = m_outputFormat.bytesPerFrame();
         const int sampleCount = std::min(bytesLeft / sstride, samples - samplesBuffered);

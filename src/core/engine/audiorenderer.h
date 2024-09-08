@@ -58,6 +58,8 @@ public:
     void updateDevice(const QString& device);
     void updateVolume(double volume);
 
+    void setReplayGainScale(double scale);
+
     [[nodiscard]] QString deviceError() const;
 
 signals:
@@ -94,6 +96,7 @@ private:
     AudioFormat m_format;
     AudioFormat m_outputFormat;
     double m_volume;
+    double m_gainScale;
     int m_bufferSize;
     bool m_bufferPrefilled;
     std::unique_ptr<FFmpegResampler> m_resampler;

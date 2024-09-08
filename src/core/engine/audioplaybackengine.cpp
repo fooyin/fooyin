@@ -608,7 +608,10 @@ void AudioPlaybackEngine::readNextBuffer()
             auto gainScale = std::pow(10.0, gain / 20.0);
             // Clipping prevention
             gainScale = std::min(gainScale, 1.0 / m_currentTrack.replayGainTrackPeak());
-            buffer.scale(gainScale);
+            m_renderer.setReplayGainScale(gainScale);
+        }
+        else {
+            m_renderer.setReplayGainScale(1.0);
         }
         m_totalBufferTime += buffer.duration();
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
