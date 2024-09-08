@@ -31,11 +31,21 @@
 Q_LOGGING_CATEGORY(SCROBBLER_AUTH, "fy.scrobbler")
 
 namespace {
-QString getIcon()
+QString getSuccessIcon()
 {
     QBuffer buffer;
     if(buffer.open(QIODevice::WriteOnly)) {
         QApplication::style()->standardIcon(QStyle::SP_DialogOkButton).pixmap(40).toImage().save(&buffer, "PNG");
+        return QString::fromUtf8(buffer.data().toBase64());
+    }
+    return {};
+}
+
+QString getErrorIcon()
+{
+    QBuffer buffer;
+    if(buffer.open(QIODevice::WriteOnly)) {
+        QApplication::style()->standardIcon(QStyle::SP_DialogAbortButton).pixmap(40).toImage().save(&buffer, "PNG");
         return QString::fromUtf8(buffer.data().toBase64());
     }
     return {};
@@ -88,23 +98,24 @@ void ScrobblerAuthSession::processCallback()
 {
     const auto requestParts = requestData.split(u' ');
     if(requestParts.size() < 2 || requestParts.at(1).isEmpty()) {
-        onError("400 Bad Request", tr("Malformed login callback"));
+        onError("400 Bad Request", tr("Malformed login callback."));
         return;
     }
 
     const QUrlQuery query{QUrl(QString::fromUtf8(requestParts.at(1))).query()};
     if(!query.hasQueryItem(QStringLiteral("token"))) {
-        onError("400 Bad Request", tr("No login token in callback"));
+        onError("400 Bad Request", tr("No login token in callback."));
         return;
     }
 
-    qCDebug(SCROBBLER_AUTH) << "Found the token in callback; logging in";
+    qCDebug(SCROBBLER_AUTH) << "Found the token in callback";
 
-    const auto msg = tr("<div style='text-align:center;'>"
-                        "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
-                        "<p>The application has successfully logged in. This window can now be closed.</p>"
-                        "</div>\r\n")
-                         .arg(getIcon());
+    const auto msg
+        = QStringLiteral("<div style='text-align:center;'>"
+                         "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
+                         "<p>%2</p>"
+                         "</div>\r\n")
+              .arg(getSuccessIcon(), tr("The application has successfully logged in. This window can now be closed."));
 
     sendHttpResponse("200 OK", msg.toUtf8());
 
@@ -124,7 +135,14 @@ void ScrobblerAuthSession::sendHttpResponse(const QByteArray& code, const QByteA
 
 void ScrobblerAuthSession::onError(const QByteArray& code, const QString& errorMsg)
 {
-    qCWarning(SCROBBLER_AUTH).nospace() << errorMsg;
-    sendHttpResponse(code, "<h3>" + errorMsg.toUtf8() + "</h3>");
+    qCWarning(SCROBBLER_AUTH) << errorMsg;
+
+    const auto msg = QStringLiteral("<div style='text-align:center;'>"
+                                    "<img src='data:image/png;base64,%1' alt='icon' width='40' height='40'/><br/>"
+                                    "<p>%2</p>"
+                                    "</div>\r\n")
+                         .arg(getErrorIcon(), errorMsg);
+
+    sendHttpResponse(code, msg.toUtf8());
 }
 } // namespace Fooyin::Scrobbler
