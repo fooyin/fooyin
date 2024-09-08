@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/engine/audiooutput.h>
+#include <core/track.h>
 
 #include "ffmpeg/ffmpegresampler.h"
 
@@ -31,15 +32,16 @@
 namespace Fooyin {
 class AudioBuffer;
 class AudioFormat;
+class SettingsManager;
 
 class AudioRenderer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit AudioRenderer(QObject* parent = nullptr);
+    explicit AudioRenderer(SettingsManager* settings, QObject* parent = nullptr);
 
-    void init(const AudioFormat& format);
+    void init(const Track& track, const AudioFormat& format);
     void start();
     void stop();
     void closeOutput();
@@ -57,8 +59,6 @@ public:
     void updateOutput(const OutputCreator& output, const QString& device);
     void updateDevice(const QString& device);
     void updateVolume(double volume);
-
-    void setReplayGainScale(double scale);
 
     [[nodiscard]] QString deviceError() const;
 
@@ -86,13 +86,16 @@ private:
     [[nodiscard]] bool validOutputState() const;
     void handleStateChanged(AudioOutput::State state);
     void updateInterval();
+    void calculateGain();
 
     void pauseOutput();
     void writeNext();
     int writeAudioSamples(int samples);
     int renderAudio(int samples);
 
+    SettingsManager* m_settings;
     std::unique_ptr<AudioOutput> m_audioOutput;
+    Track m_currentTrack;
     AudioFormat m_format;
     AudioFormat m_outputFormat;
     double m_volume;
