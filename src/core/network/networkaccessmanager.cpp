@@ -136,6 +136,7 @@ public:
             m_self->setProxyFactory(proxy); // Takes ownership
         };
 
+        m_settings->subscribe<Settings::Core::ProxyMode>(m_self, reconfigure);
         m_settings->subscribe<Settings::Core::ProxyConfig>(m_self, reconfigure);
 
         reconfigure();
