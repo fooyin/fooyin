@@ -653,7 +653,7 @@ void ScrobblerService::authenticate()
     auto* openButton = new QPushButton(tr("Open"), message);
     message->addButton(openButton, QMessageBox::YesRole);
     auto* copyButton = new QPushButton(tr("Copy URL"), message);
-    message->addButton(copyButton, QMessageBox::YesRole);
+    message->addButton(copyButton, QMessageBox::ActionRole);
 
     QObject::connect(openButton, &QPushButton::clicked, this, [message, url]() {
         if(QDesktopServices::openUrl(url)) {
@@ -675,7 +675,7 @@ void ScrobblerService::authenticate()
     });
     QObject::connect(message, &QMessageBox::finished, this, [this, url](const int result) {
         switch(result) {
-            case(QMessageBox::Save):
+            case(QMessageBox::ActionRole):
                 QApplication::clipboard()->setText(url.toString());
                 break;
             case(QMessageBox::Cancel):
