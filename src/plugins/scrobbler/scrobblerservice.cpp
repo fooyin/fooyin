@@ -127,7 +127,7 @@ public:
     void deleteAll();
     void cleanupAuth();
 
-    void handleAuthError(QAnyStringView error) const;
+    void handleAuthError(const char* error) const;
 
     ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) const;
     QNetworkReply* createRequest(const std::map<QString, QString>& params);
@@ -187,10 +187,10 @@ void ScrobblerServicePrivate::cleanupAuth()
     }
 }
 
-void ScrobblerServicePrivate::handleAuthError(QAnyStringView error) const
+void ScrobblerServicePrivate::handleAuthError(const char* error) const
 {
     qCWarning(SCROBBLER) << error;
-    emit m_self->authenticationFinished(false, error.toString());
+    emit m_self->authenticationFinished(false, QString::fromUtf8(error));
 }
 
 ReplyResult ScrobblerServicePrivate::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) const
@@ -310,7 +310,7 @@ void ScrobblerServicePrivate::authFinished(QNetworkReply* reply)
     QJsonObject obj;
     QString error;
     if(getJsonFromReply(reply, &obj, &error) != ReplyResult::Success) {
-        handleAuthError(error);
+        handleAuthError(error.toUtf8().constData());
         return;
     }
 
