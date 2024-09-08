@@ -80,7 +80,7 @@ signals:
     void deviceError(const QString& error);
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
-    void positionChanged(uint64_t ms);
+    void positionChanged(const Fooyin::Track& track, uint64_t ms);
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
     void finished();

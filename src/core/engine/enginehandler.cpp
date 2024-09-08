@@ -47,6 +47,7 @@ public:
 
     void changeOutput(const QString& output);
     void updateVolume(double volume);
+    void updatePosition(const Fooyin::Track& track, uint64_t ms) const;
 
     EngineHandler* m_self;
     PlayerController* m_playerController;
@@ -79,8 +80,8 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     QObject::connect(&m_engineThread, &QThread::finished, m_engine, &AudioEngine::deleteLater);
     QObject::connect(m_engine, &AudioEngine::trackAboutToFinish, m_self, &EngineHandler::trackAboutToFinish);
     QObject::connect(m_engine, &AudioEngine::finished, m_self, &EngineHandler::finished);
-    QObject::connect(m_engine, &AudioEngine::positionChanged, m_playerController,
-                     &PlayerController::setCurrentPosition);
+    QObject::connect(m_engine, &AudioEngine::positionChanged, m_self,
+                     [this](const Fooyin::Track& track, uint64_t ms) { updatePosition(track, ms); });
     QObject::connect(m_engine, &AudioEngine::stateChanged, m_self,
                      [this](AudioEngine::PlaybackState state) { handleStateChange(state); });
     QObject::connect(m_engine, &AudioEngine::deviceError, m_self, &EngineController::engineError);
@@ -200,6 +201,14 @@ void EngineHandlerPrivate::changeOutput(const QString& output)
 void EngineHandlerPrivate::updateVolume(double volume)
 {
     QMetaObject::invokeMethod(m_engine, [this, volume]() { m_engine->setVolume(volume); }, Qt::QueuedConnection);
+}
+
+void EngineHandlerPrivate::updatePosition(const Track& track, uint64_t ms) const
+{
+    const Track currentTrack = m_playerController->currentTrack();
+    if(track.id() == currentTrack.id() || track.uniqueFilepath() == currentTrack.uniqueFilepath()) {
+        m_playerController->setCurrentPosition(ms);
+    }
 }
 
 EngineHandler::EngineHandler(std::shared_ptr<AudioLoader> decoderProvider, PlayerController* playerController,

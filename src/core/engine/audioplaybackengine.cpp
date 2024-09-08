@@ -119,7 +119,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
 
     if(m_ending && track.filepath() == prevTrack.filepath() && m_endPosition == track.offset()) {
         // Multi-track file
-        emit positionChanged(0);
+        emit positionChanged(m_currentTrack, 0);
         m_ending = false;
         m_clock.sync(0);
         setupDuration();
@@ -131,7 +131,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     stopWorkers();
-    emit positionChanged(0);
+    emit positionChanged(m_currentTrack, 0);
     m_ending = false;
     m_clock.setPaused(true);
     m_clock.sync();
@@ -251,7 +251,7 @@ void AudioPlaybackEngine::pause()
 
     if(trackStatus() == TrackStatus::End && playbackState() == PlaybackState::Stopped) {
         seek(0);
-        emit positionChanged(0);
+        emit positionChanged(m_currentTrack, 0);
         return;
     }
 
@@ -320,7 +320,7 @@ void AudioPlaybackEngine::stop()
 
     m_posTimer.stop();
     m_lastPosition = 0;
-    emit positionChanged(0);
+    emit positionChanged(m_currentTrack, 0);
 }
 
 void AudioPlaybackEngine::seek(uint64_t pos)
@@ -539,7 +539,7 @@ bool AudioPlaybackEngine::checkReadyToDecode()
 
     if(trackStatus() == TrackStatus::End) {
         seek(0);
-        emit positionChanged(0);
+        emit positionChanged(m_currentTrack, 0);
     }
 
     if(!checkOpenSource()) {
@@ -626,7 +626,7 @@ void AudioPlaybackEngine::updatePosition()
 {
     const auto currentPosition = m_startPosition + m_clock.currentPosition();
     if(std::exchange(m_lastPosition, currentPosition) != m_lastPosition) {
-        emit positionChanged(m_lastPosition - m_startPosition);
+        emit positionChanged(m_currentTrack, m_lastPosition - m_startPosition);
     }
 
     if(m_currentTrack.hasCue() && m_lastPosition >= m_endPosition) {
@@ -643,8 +643,6 @@ void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 
 void AudioPlaybackEngine::onRendererFinished()
 {
-    m_posTimer.stop();
-
     if(m_pauseNextTrack) {
         m_pauseNextTrack = false;
         if(playbackState() == PlaybackState::FadingOut) {
