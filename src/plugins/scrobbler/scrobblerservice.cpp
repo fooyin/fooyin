@@ -341,8 +341,8 @@ void ScrobblerServicePrivate::authFinished(QNetworkReply* reply)
 
     FySettings settings;
     settings.beginGroup(m_name);
-    settings.setValue("Username", m_username);
-    settings.setValue("SessionKey", m_sessionKey);
+    settings.setValue(QLatin1String{"Username"}, m_username);
+    settings.setValue(QLatin1String{"SessionKey"}, m_sessionKey);
     settings.endGroup();
 
     emit m_self->authenticationFinished(true);
