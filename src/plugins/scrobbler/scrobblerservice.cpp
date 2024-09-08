@@ -651,19 +651,13 @@ void ScrobblerService::authenticate()
     message->setTextFormat(Qt::RichText);
 
     auto* openButton = new QPushButton(tr("Open"), message);
-    message->addButton(openButton, QMessageBox::YesRole);
+    message->addButton(openButton, QMessageBox::AcceptRole);
     auto* copyButton = new QPushButton(tr("Copy URL"), message);
     message->addButton(copyButton, QMessageBox::ActionRole);
 
-    QObject::connect(openButton, &QPushButton::clicked, this, [message, url]() {
-        if(QDesktopServices::openUrl(url)) {
-            message->accept();
-        }
-        else {
-            message->setText(tr("Could not open url. Try copying the url and opening it in your browser.")
-                             + QStringLiteral("<br /><br /><a href=\"%1\">%1</a><br />").arg(url.toString()));
-        }
-    });
+    QObject::connect(openButton, &QPushButton::clicked, this, [url]() { QDesktopServices::openUrl(url); });
+    QObject::connect(copyButton, &QPushButton::clicked, this,
+                     [url]() { QApplication::clipboard()->setText(url.toString()); });
 
     QObject::connect(this, &ScrobblerService::authenticationFinished, this, [this, message](const bool success) {
         if(success) {
@@ -675,9 +669,6 @@ void ScrobblerService::authenticate()
     });
     QObject::connect(message, &QMessageBox::finished, this, [this, url](const int result) {
         switch(result) {
-            case(QMessageBox::ActionRole):
-                QApplication::clipboard()->setText(url.toString());
-                break;
             case(QMessageBox::Cancel):
                 p->cleanupAuth();
                 emit authenticationFinished(false);
