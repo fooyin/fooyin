@@ -395,20 +395,19 @@ void AudioRenderer::calculateGain()
     }
 
     float peak{0.0};
+    const auto preamp   = static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
+
     switch(gainType) {
         case(ReplayGainType::Track):
-            m_gainScale = std::pow(10.0, m_currentTrack.replayGainTrackGain() / 20.0);
+            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainTrackGain() + preamp) / 20.0);
             peak        = m_currentTrack.replayGainTrackPeak();
             break;
         case(ReplayGainType::Album):
-            m_gainScale = std::pow(10.0, m_currentTrack.replayGainAlbumGain() / 20.0);
+            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainAlbumGain() + preamp) / 20.0);
             peak        = m_currentTrack.replayGainAlbumPeak();
             break;
     }
-
-    const auto preamp = static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
-    m_gainScale *= std::pow(10.0, preamp / 20.0);
 
     if(peak > 0.0) {
         // Prevent clipping
