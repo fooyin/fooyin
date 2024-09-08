@@ -643,6 +643,8 @@ void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 
 void AudioPlaybackEngine::onRendererFinished()
 {
+    m_posTimer.stop();
+
     if(m_pauseNextTrack) {
         m_pauseNextTrack = false;
         if(playbackState() == PlaybackState::FadingOut) {
