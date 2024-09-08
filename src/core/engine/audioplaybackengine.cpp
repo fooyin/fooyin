@@ -61,6 +61,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
     , m_duration{0}
     , m_volume{1.0}
+    , m_trackPeak{1.0F}
     , m_ending{false}
     , m_decoding{false}
     , m_updatingTrack{false}
@@ -150,6 +151,7 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     if(m_decoder->trackHasChanged()) {
         m_updatingTrack = true;
         m_currentTrack  = m_decoder->changedTrack();
+        m_trackPeak     = m_currentTrack.replayGainTrackPeak();
         emit trackChanged(m_currentTrack);
     }
 
@@ -595,8 +597,19 @@ void AudioPlaybackEngine::readNextBuffer()
         = std::min(bytesToEnd, static_cast<size_t>(m_format.bytesForDuration(m_bufferLength - m_totalBufferTime)));
     const auto maxBytes = std::min(bytesLeft, static_cast<size_t>(m_format.bytesForDuration(MaxDecodeLength)));
 
-    const auto buffer = m_decoder->readBuffer(maxBytes);
+    auto buffer = m_decoder->readBuffer(maxBytes);
     if(buffer.isValid()) {
+        if(m_settings->value<Settings::Core::ReplayGainEnabled>()) {
+            auto gain = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>())
+                             == ReplayGainType::Track
+                          ? m_currentTrack.replayGainTrackGain()
+                          : m_currentTrack.replayGainAlbumGain();
+            gain += static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
+            auto gainScale = std::pow(10.0, gain / 20.0);
+            // Clipping prevention
+            gainScale = std::min(gainScale, 1.0 / m_currentTrack.replayGainTrackPeak());
+            buffer.scale(gainScale);
+        }
         m_totalBufferTime += buffer.duration();
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
     }

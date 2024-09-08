@@ -98,6 +98,7 @@ private:
 
     uint64_t m_duration;
     double m_volume;
+    float m_trackPeak;
     bool m_ending;
     bool m_decoding;
     bool m_updatingTrack;
