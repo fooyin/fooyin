@@ -179,9 +179,7 @@ void ScrobblerPageWidget::toggleLogin(const QString& name)
     }
 
     const auto authFinished = [this, name](const bool success, const QString& error) {
-        if(!success) {
-            m_serviceContext.at(name).error = error;
-        }
+        m_serviceContext.at(name).error = success ? QString{} : error;
         updateServiceState(name);
     };
 

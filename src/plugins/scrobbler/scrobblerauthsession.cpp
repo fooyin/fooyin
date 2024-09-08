@@ -126,6 +126,5 @@ void ScrobblerAuthSession::onError(const QByteArray& code, const QString& errorM
 {
     qCWarning(SCROBBLER_AUTH).nospace() << errorMsg;
     sendHttpResponse(code, "<h3>" + errorMsg.toUtf8() + "</h3>");
-    m_socket->disconnectFromHost();
 }
 } // namespace Fooyin::Scrobbler
