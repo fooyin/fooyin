@@ -216,7 +216,7 @@
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="138"/>
         <source>Align to centre</source>
-        <translation type="unfinished"></translation>
+        <translation>Align to center</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/coverwidget.cpp" line="139"/>
@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="80"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Supported extensions</translation>
     </message>
 </context>
 <context>
@@ -280,7 +280,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoding</translation>
     </message>
 </context>
 <context>
@@ -288,12 +288,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="69"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Decoders</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="70"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag readers</translation>
     </message>
 </context>
 <context>
@@ -707,12 +707,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="47"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Save colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Save fonts</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="51"/>
@@ -793,12 +793,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>Add &amp;files…</source>
-        <translation type="unfinished"></translation>
+        <translation>Add &amp;files…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="50"/>
         <source>Ad&amp;d folders…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ad&amp;d folder…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="51"/>
@@ -818,12 +818,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="65"/>
         <source>&amp;Load playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Load playlist…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;Save playlist…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Save playlist…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="66"/>
@@ -838,12 +838,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="77"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished"></translation>
+        <translation>Save &amp;all playlists…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
         <source>Save all playlists to the specified location</source>
-        <translation type="unfinished"></translation>
+        <translation>Save all playlists to the specified location</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
@@ -1221,7 +1221,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Script Editor</translation>
     </message>
 </context>
 <context>
@@ -1448,7 +1448,7 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="89"/>
         <source>Minimise to tray on close</source>
-        <translation>Minimise to tray on close</translation>
+        <translation>Minimize to tray on close</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
@@ -1629,17 +1629,17 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="708"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Reload Required</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="709"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="714"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Reload Now</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="716"/>
@@ -1757,12 +1757,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>System default</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Themes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
@@ -1772,57 +1772,57 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreground</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreground (Bright)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Placeholder text</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Base (Alternate)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Highlight</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Highlighted text</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Button (Background)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Button (Foreground)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Foreground (Disabled)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
@@ -1892,12 +1892,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="163"/>
         <source>Basic Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Basic Colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Advanced Colors</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
@@ -2081,7 +2081,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Colors &amp; Fonts</translation>
     </message>
 </context>
 <context>
