@@ -202,7 +202,7 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
     }
     else {
         button->setText(tr("Login"));
-        label->setText(tr("Not signed in").arg(service->username()));
+        label->setText(tr("Not signed in"));
         icon->hide();
     }
 
