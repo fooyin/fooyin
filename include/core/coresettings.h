@@ -60,9 +60,10 @@ enum CoreSettings : uint32_t
     StopAfterCurrent        = 20 | Type::Bool,
     ReplayGainEnabled       = 21 | Type::Bool,
     ReplayGainType          = 22 | Type::Int,
-    ReplayGainPreAmp        = 23 | Type::Int,
-    ProxyMode               = 24 | Type::Int,
-    ProxyConfig             = 25 | Type::Variant,
+    ReplayGainPreAmp        = 23 | Type::Float,
+    NonRGPreAmp             = 24 | Type::Float,
+    ProxyMode               = 25 | Type::Int,
+    ProxyConfig             = 26 | Type::Variant,
 
 };
 Q_ENUM_NS(CoreSettings)

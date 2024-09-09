@@ -64,6 +64,7 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     m_settings->subscribe<Settings::Core::ReplayGainEnabled>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::ReplayGainType>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::ReplayGainPreAmp>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::calculateGain);
 }
 
 void AudioRenderer::init(const Track& track, const AudioFormat& format)
@@ -395,18 +396,27 @@ void AudioRenderer::calculateGain()
     }
 
     float peak{0.0};
-    const auto preamp   = static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
-    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
 
-    switch(gainType) {
-        case(ReplayGainType::Track):
-            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainTrackGain() + preamp) / 20.0);
-            peak        = m_currentTrack.replayGainTrackPeak();
-            break;
-        case(ReplayGainType::Album):
-            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainAlbumGain() + preamp) / 20.0);
-            peak        = m_currentTrack.replayGainAlbumPeak();
-            break;
+    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
+    float preamp        = m_settings->value<Settings::Core::ReplayGainPreAmp>();
+
+    float gain{0.0};
+    if(gainType == ReplayGainType::Album) {
+        gain = m_currentTrack.replayGainAlbumGain();
+        peak = m_currentTrack.replayGainAlbumPeak();
+    }
+    else if(gainType == ReplayGainType::Track) {
+        gain = m_currentTrack.replayGainTrackGain();
+        peak = m_currentTrack.replayGainTrackPeak();
+    }
+
+    if(gain == 0.0) {
+        // Assume no rg info
+        preamp = m_settings->value<Settings::Core::NonRGPreAmp>();
+    }
+
+    if(gain > 0.0 || preamp > 0.0) {
+        m_gainScale = std::pow(10.0, (gain + preamp) / 20.0);
     }
 
     if(peak > 0.0) {

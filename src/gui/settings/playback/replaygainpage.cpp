@@ -24,15 +24,16 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/widgets/doubleslidereditor.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QRadioButton>
 #include <QSlider>
-#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace Fooyin {
@@ -53,8 +54,8 @@ private:
     QCheckBox* m_enabled;
     QRadioButton* m_trackGain;
     QRadioButton* m_albumGain;
-    QSlider* m_preAmpSlider;
-    QSpinBox* m_preAmpSpinBox;
+    DoubleSliderEditor* m_rgPreAmp;
+    DoubleSliderEditor* m_preAmp;
 };
 
 ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
@@ -62,8 +63,8 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     , m_enabled{new QCheckBox(tr("Enable ReplayGain"), this)}
     , m_trackGain{new QRadioButton(tr("Use track-based gain"), this)}
     , m_albumGain{new QRadioButton(tr("Use album-based gain"), this)}
-    , m_preAmpSlider{new QSlider(Qt::Horizontal, this)}
-    , m_preAmpSpinBox{new QSpinBox(this)}
+    , m_rgPreAmp{new DoubleSliderEditor(this)}
+    , m_preAmp{new DoubleSliderEditor(this)}
 {
     m_enabled->setToolTip(tr("Normalize loudness for tracks or albums"));
     m_trackGain->setToolTip(tr("Base normalization on track loudness"));
@@ -81,34 +82,36 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     typeBoxLayout->addWidget(m_trackGain);
     typeBoxLayout->addWidget(m_albumGain);
 
-    auto* preAmpLabel = new QLabel(tr("Pre-amplification") + QStringLiteral(":"), this);
+    auto* preAmpGroup  = new QGroupBox(tr("Pre-amplification"), this);
+    auto* preAmpLayout = new QGridLayout(preAmpGroup);
 
-    m_preAmpSlider->setRange(-20, 20);
-    m_preAmpSlider->setSingleStep(1);
+    auto* rgPreAmpLabel = new QLabel(tr("With RG info") + u":", this);
+    auto* preAmpLabel   = new QLabel(tr("Without RG info") + u":", this);
 
-    m_preAmpSpinBox->setRange(-20, 20);
-    m_preAmpSpinBox->setSingleStep(1);
-    m_preAmpSpinBox->setSuffix(QStringLiteral(" dB"));
+    m_rgPreAmp->setRange(-20, 20);
+    m_rgPreAmp->setSingleStep(0.5);
+    m_rgPreAmp->setSuffix(QStringLiteral(" dB"));
 
-    const auto preAmpToolTip = tr("Amount of gain to apply in combination with ReplayGain");
-    m_preAmpSpinBox->setToolTip(preAmpToolTip);
-    m_preAmpSlider->setToolTip(preAmpToolTip);
+    m_preAmp->setRange(-20, 20);
+    m_preAmp->setSingleStep(0.5);
+    m_preAmp->setSuffix(QStringLiteral(" dB"));
+
+    const auto rgPreAmpToolTip = tr("Amount of gain to apply in combination with ReplayGain");
+    m_rgPreAmp->setToolTip(rgPreAmpToolTip);
+    preAmpLabel->setToolTip(rgPreAmpToolTip);
+    const auto preAmpToolTip = tr("Amount of gain to apply for tracks without ReplayGain info");
+    m_preAmp->setToolTip(preAmpToolTip);
     preAmpLabel->setToolTip(preAmpToolTip);
 
-    QObject::connect(m_preAmpSlider, &QSlider::valueChanged, this,
-                     [this](int value) { m_preAmpSpinBox->setValue(value); });
-    QObject::connect(m_preAmpSpinBox, &QSpinBox::valueChanged, this,
-                     [this](int value) { m_preAmpSlider->setValue(value); });
-
-    auto* preAmpLayout = new QGridLayout();
-    preAmpLayout->addWidget(preAmpLabel, 0, 0);
-    preAmpLayout->addWidget(m_preAmpSlider, 0, 1);
-    preAmpLayout->addWidget(m_preAmpSpinBox, 0, 2);
+    preAmpLayout->addWidget(rgPreAmpLabel, 0, 0);
+    preAmpLayout->addWidget(m_rgPreAmp, 0, 1);
+    preAmpLayout->addWidget(preAmpLabel, 1, 0);
+    preAmpLayout->addWidget(m_preAmp, 1, 1);
     preAmpLayout->setColumnStretch(1, 1);
 
     layout->addWidget(m_enabled, 0, 0);
     layout->addWidget(typeGroupBox, 1, 0);
-    layout->addLayout(preAmpLayout, 2, 0);
+    layout->addWidget(preAmpGroup, 2, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
 }
@@ -123,9 +126,11 @@ void ReplayGainWidget::load()
     else {
         m_albumGain->setChecked(true);
     }
-    const auto preAmp = m_settings->value<Settings::Core::ReplayGainPreAmp>();
-    m_preAmpSlider->setValue(preAmp);
-    m_preAmpSpinBox->setValue(preAmp);
+
+    const auto rgPreAmp = static_cast<double>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
+    m_rgPreAmp->setValue(rgPreAmp);
+    const auto preAmp = static_cast<double>(m_settings->value<Settings::Core::NonRGPreAmp>());
+    m_preAmp->setValue(preAmp);
 }
 
 void ReplayGainWidget::apply()
@@ -133,13 +138,15 @@ void ReplayGainWidget::apply()
     m_settings->set<Settings::Core::ReplayGainEnabled>(m_enabled->isChecked());
     m_settings->set<Settings::Core::ReplayGainType>(
         static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track : ReplayGainType::Album));
-    m_settings->set<Settings::Core::ReplayGainPreAmp>(m_preAmpSpinBox->value());
+    m_settings->set<Settings::Core::ReplayGainPreAmp>(static_cast<float>(m_rgPreAmp->value()));
+    m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 }
 
 void ReplayGainWidget::reset()
 {
     m_settings->reset<Settings::Core::ReplayGainEnabled>();
     m_settings->reset<Settings::Core::ReplayGainPreAmp>();
+    m_settings->reset<Settings::Core::NonRGPreAmp>();
 }
 
 ReplayGainPage::ReplayGainPage(SettingsManager* settings, QObject* parent)
