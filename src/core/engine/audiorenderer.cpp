@@ -415,7 +415,7 @@ void AudioRenderer::calculateGain()
         preamp = m_settings->value<Settings::Core::NonRGPreAmp>();
     }
 
-    if(gain > 0.0 || preamp > 0.0) {
+    if(gain != 0.0 || preamp != 0.0) {
         m_gainScale = std::pow(10.0, (gain + preamp) / 20.0);
     }
 
