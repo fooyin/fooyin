@@ -143,7 +143,7 @@ std::optional<AudioFormat> SndFileDecoder::init(const AudioSource& source, const
 
     m_format.setChannelCount(info.channels);
     m_format.setSampleRate(info.samplerate);
-    m_format.setSampleFormat(SampleFormat::F32);
+    m_format.setSampleFormat(SampleFormat::F64);
 
     return m_format;
 }
@@ -172,7 +172,7 @@ AudioBuffer SndFileDecoder::readBuffer(size_t bytes)
 
     const auto frames = static_cast<sf_count_t>(m_format.framesForBytes(static_cast<int>(bytes)));
 
-    const auto readFrames = sf_readf_float(m_sndFile, std::bit_cast<float*>(buffer.data()), frames);
+    const auto readFrames = sf_readf_double(m_sndFile, std::bit_cast<double*>(buffer.data()), frames);
     m_currentFrame += readFrames;
 
     if(readFrames == 0) {
@@ -240,6 +240,9 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
         case(SF_FORMAT_PCM_32):
         case(SF_FORMAT_FLOAT):
             track.setBitDepth(32);
+            break;
+        case(SF_FORMAT_DOUBLE):
+            track.setBitDepth(64);
             break;
         default:
             break;
