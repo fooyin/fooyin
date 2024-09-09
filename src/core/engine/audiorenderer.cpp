@@ -19,8 +19,12 @@
 
 #include "audiorenderer.h"
 
+#include "internalcoresettings.h"
+
+#include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audiooutput.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/threadqueue.h>
 
 #include <QBasicTimer>
@@ -35,9 +39,11 @@ using namespace std::chrono_literals;
 constexpr auto FadeInterval = 10;
 
 namespace Fooyin {
-AudioRenderer::AudioRenderer(QObject* parent)
+AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     : QObject{parent}
+    , m_settings{settings}
     , m_volume{0.0}
+    , m_gainScale{1.0}
     , m_bufferSize{0}
     , m_bufferPrefilled{false}
     , m_samplePos{0}
@@ -54,11 +60,18 @@ AudioRenderer::AudioRenderer(QObject* parent)
     , m_fadeVolume{-1}
 {
     setObjectName(QStringLiteral("Renderer"));
+
+    m_settings->subscribe<Settings::Core::ReplayGainEnabled>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::ReplayGainType>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::ReplayGainPreAmp>(this, &AudioRenderer::calculateGain);
 }
 
-void AudioRenderer::init(const AudioFormat& format)
+void AudioRenderer::init(const Track& track, const AudioFormat& format)
 {
-    m_format = format;
+    m_format       = format;
+    m_currentTrack = track;
+
+    calculateGain();
 
     if(!m_audioOutput) {
         emit initialised(false);
@@ -373,6 +386,37 @@ void AudioRenderer::updateInterval()
     m_writeInterval = interval;
 }
 
+void AudioRenderer::calculateGain()
+{
+    m_gainScale = 1.0;
+
+    if(!m_settings->value<Settings::Core::ReplayGainEnabled>()) {
+        return;
+    }
+
+    float peak{0.0};
+    const auto preamp   = static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
+    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
+
+    switch(gainType) {
+        case(ReplayGainType::Track):
+            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainTrackGain() + preamp) / 20.0);
+            peak        = m_currentTrack.replayGainTrackPeak();
+            break;
+        case(ReplayGainType::Album):
+            m_gainScale = std::pow(10.0, (m_currentTrack.replayGainAlbumGain() + preamp) / 20.0);
+            peak        = m_currentTrack.replayGainAlbumPeak();
+            break;
+    }
+
+    if(peak > 0.0) {
+        // Prevent clipping
+        m_gainScale = (m_gainScale * peak) > 1.0 ? (1.0 / peak) : m_gainScale;
+    }
+    // Clamp to +-20 dB
+    m_gainScale = std::clamp(m_gainScale, 0.1, 10.0);
+}
+
 void AudioRenderer::pauseOutput()
 {
     m_isRunning = false;
@@ -467,6 +511,8 @@ int AudioRenderer::writeAudioSamples(int samples)
     if(!m_tempBuffer.isValid()) {
         return 0;
     }
+
+    m_tempBuffer.scale(m_gainScale);
 
     return samplesBuffered;
 }

@@ -67,6 +67,7 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_updatingTrack{false}
     , m_pauseNextTrack{false}
     , m_outputThread{new QThread(this)}
+    , m_renderer{settings}
     , m_fadeIntervals{m_settings->value<Settings::Core::Internal::FadingIntervals>().value<FadingIntervals>()}
 {
     m_renderer.moveToThread(m_outputThread);
@@ -228,7 +229,7 @@ void AudioPlaybackEngine::play()
                 }
             },
             Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
     }
     else {
         runOutput();
@@ -382,7 +383,7 @@ void AudioPlaybackEngine::setAudioOutput(const OutputCreator& output, const QStr
                 }
             },
             Qt::SingleShotConnection);
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
     }
 }
 
@@ -412,7 +413,7 @@ void AudioPlaybackEngine::setOutputDevice(const QString& device)
                 QMetaObject::invokeMethod(&m_renderer, qOverload<>(&AudioRenderer::play));
             }
         });
-        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_format); });
+        QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
     }
 }
 
@@ -524,7 +525,7 @@ void AudioPlaybackEngine::updateFormat(const AudioFormat& nextFormat, const std:
             callback(success);
         },
         Qt::SingleShotConnection);
-    QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_format); });
+    QMetaObject::invokeMethod(&m_renderer, [this]() { m_renderer.init(m_currentTrack, m_format); });
 }
 
 bool AudioPlaybackEngine::checkReadyToDecode()
@@ -597,19 +598,8 @@ void AudioPlaybackEngine::readNextBuffer()
         = std::min(bytesToEnd, static_cast<size_t>(m_format.bytesForDuration(m_bufferLength - m_totalBufferTime)));
     const auto maxBytes = std::min(bytesLeft, static_cast<size_t>(m_format.bytesForDuration(MaxDecodeLength)));
 
-    auto buffer = m_decoder->readBuffer(maxBytes);
+    const auto buffer = m_decoder->readBuffer(maxBytes);
     if(buffer.isValid()) {
-        if(m_settings->value<Settings::Core::ReplayGainEnabled>()) {
-            auto gain = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>())
-                             == ReplayGainType::Track
-                          ? m_currentTrack.replayGainTrackGain()
-                          : m_currentTrack.replayGainAlbumGain();
-            gain += static_cast<float>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
-            auto gainScale = std::pow(10.0, gain / 20.0);
-            // Clipping prevention
-            gainScale = std::min(gainScale, 1.0 / m_currentTrack.replayGainTrackPeak());
-            buffer.scale(gainScale);
-        }
         m_totalBufferTime += buffer.duration();
         QMetaObject::invokeMethod(&m_renderer, [this, buffer]() { m_renderer.queueBuffer(buffer); });
     }
