@@ -75,12 +75,12 @@ int32_t convertU8ToS32(const uint8_t inSample)
 
 float convertU8ToFloat(const uint8_t inSample)
 {
-    return static_cast<float>(inSample) / 0x80 - 1.0F;
+    return static_cast<float>(inSample) * (1.0F / static_cast<float>(0x80)) - 1.0F;
 }
 
 double convertU8ToDouble(const uint8_t inSample)
 {
-    return static_cast<double>(inSample) / 0x80 - 1.0;
+    return static_cast<double>(inSample) * (1.0 / static_cast<double>(0x80)) - 1.0;
 }
 
 uint8_t convertS16ToU8(const int16_t inSample)
@@ -100,12 +100,12 @@ int32_t convertS16ToS32(const int16_t inSample)
 
 float convertS16ToFloat(const int16_t inSample)
 {
-    return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
+    return static_cast<float>(inSample) * (1.0F / static_cast<float>(0x8000));
 }
 
 double convertS16ToDouble(const int16_t inSample)
 {
-    return static_cast<double>(inSample) / static_cast<double>(std::numeric_limits<int16_t>::max());
+    return static_cast<double>(inSample) * (1.0 / static_cast<double>(0x8000));
 }
 
 uint8_t convertS32ToU8(const int32_t inSample)
@@ -125,12 +125,12 @@ int32_t convertS32ToS32(const int32_t inSample)
 
 float convertS32ToFloat(const int32_t inSample)
 {
-    return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int32_t>::max());
+    return static_cast<float>(inSample) * (1.0F / static_cast<float>(0x80000000));
 }
 
 double convertS32ToDouble(const int32_t inSample)
 {
-    return static_cast<double>(inSample) / static_cast<double>(std::numeric_limits<int32_t>::max());
+    return static_cast<double>(inSample) * (1.0 / static_cast<double>(0x80000000));
 }
 
 template <typename T, typename R>

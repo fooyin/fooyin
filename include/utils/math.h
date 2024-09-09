@@ -25,24 +25,24 @@
 namespace Fooyin::Math {
 #if(defined(__GNUC__) && defined(__x86_64__))
 #include <emmintrin.h>
-inline int fltToInt(float flt)
+inline int32_t fltToInt(float flt)
 {
     return _mm_cvtss_si32(_mm_load_ss(&flt));
 }
 
-inline int fltToInt(double flt)
+inline int32_t fltToInt(double flt)
 {
     return _mm_cvtsd_si32(_mm_load_sd(&flt));
 }
 #else
-inline int fltToInt(float flt)
+inline int32_t fltToInt(float flt)
 {
-    return static_cast<int>(std::floor(flt + 0.5));
+    return static_cast<int32_t>(std::floor(flt + 0.5));
 }
 
-inline int fltToInt(double flt)
+inline int32_t fltToInt(double flt)
 {
-    return static_cast<int>(std::floor(flt + 0.5));
+    return static_cast<int32_t>(std::floor(flt + 0.5));
 }
 #endif
 } // namespace Fooyin::Math
