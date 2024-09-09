@@ -190,6 +190,11 @@ void AudioRenderer::pause(int fadeLength)
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
+    if(!buffer.isValid()) {
+        m_bufferQueue.emplace(buffer);
+        return;
+    }
+
     auto convertedBuffer = Audio::convert(buffer, m_format);
     if(convertedBuffer.isValid()) {
         m_bufferQueue.emplace(convertedBuffer);
