@@ -26,14 +26,15 @@
 #include <cstdint>
 
 namespace Fooyin {
-enum class SampleFormat
+enum class SampleFormat : uint8_t
 {
-    Unknown,
+    Unknown = 0,
     U8,
     S16,
     S24,
     S32,
     F32,
+    F64,
 };
 
 // TODO: Handle channel layout

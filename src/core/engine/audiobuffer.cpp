@@ -267,6 +267,9 @@ void AudioBuffer::scale(double volume)
         case(SampleFormat::F32):
             p->scale<float>(volume);
             break;
+        case(SampleFormat::F64):
+            p->scale<double>(volume);
+            break;
         case(SampleFormat::Unknown):
         default:
             qCWarning(AUD_BUFF) << "Unable to scale samples of unsupported format";

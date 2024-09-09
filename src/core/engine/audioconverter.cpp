@@ -78,14 +78,19 @@ float convertU8ToFloat(const uint8_t inSample)
     return static_cast<float>(inSample) / 0x80 - 1.0F;
 }
 
-int16_t convertS16ToS16(const int16_t inSample)
+double convertU8ToDouble(const uint8_t inSample)
 {
-    return inSample;
+    return static_cast<double>(inSample) / 0x80 - 1.0;
 }
 
 uint8_t convertS16ToU8(const int16_t inSample)
 {
     return static_cast<uint8_t>(inSample >> 8 ^ 0x80);
+}
+
+int16_t convertS16ToS16(const int16_t inSample)
+{
+    return inSample;
 }
 
 int32_t convertS16ToS32(const int16_t inSample)
@@ -96,6 +101,11 @@ int32_t convertS16ToS32(const int16_t inSample)
 float convertS16ToFloat(const int16_t inSample)
 {
     return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int16_t>::max());
+}
+
+double convertS16ToDouble(const int16_t inSample)
+{
+    return static_cast<double>(inSample) / static_cast<double>(std::numeric_limits<int16_t>::max());
 }
 
 uint8_t convertS32ToU8(const int32_t inSample)
@@ -118,55 +128,79 @@ float convertS32ToFloat(const int32_t inSample)
     return static_cast<float>(inSample) / static_cast<float>(std::numeric_limits<int32_t>::max());
 }
 
-uint8_t convertFloatToU8(const float inSample)
+double convertS32ToDouble(const int32_t inSample)
 {
-    const int prevRoundingMode = std::fegetround();
+    return static_cast<double>(inSample) / static_cast<double>(std::numeric_limits<int32_t>::max());
+}
+
+template <typename T, typename R>
+R convertToIntegral(const T inSample, const R scalingFactor, const R minValue, const R maxValue)
+{
+    const int32_t prevRoundingMode = std::fegetround();
     std::fesetround(FE_TONEAREST);
 
-    static constexpr auto minS8 = static_cast<int>(std::numeric_limits<uint8_t>::min());
-    static constexpr auto maxS8 = static_cast<int>(std::numeric_limits<uint8_t>::max());
-
-    int intSample = Fooyin::Math::fltToInt(inSample * 0x80);
-    intSample     = std::clamp(intSample, minS8, maxS8);
+    int32_t intSample = Fooyin::Math::fltToInt(inSample * scalingFactor);
+    intSample         = std::clamp(intSample, static_cast<int32_t>(minValue), static_cast<int32_t>(maxValue));
 
     std::fesetround(prevRoundingMode);
 
-    return static_cast<uint8_t>(intSample ^ 0x80);
+    return static_cast<R>(intSample);
+}
+
+uint8_t convertFloatToU8(const float inSample)
+{
+    return convertToIntegral<float, uint8_t>(inSample, 0x80, std::numeric_limits<uint8_t>::min(),
+                                             std::numeric_limits<uint8_t>::max())
+         ^ 0x80;
 }
 
 int16_t convertFloatToS16(const float inSample)
 {
-    const int prevRoundingMode = std::fegetround();
-    std::fesetround(FE_TONEAREST);
-
-    static constexpr auto minS16 = static_cast<int>(std::numeric_limits<int16_t>::min());
-    static constexpr auto maxS16 = static_cast<int>(std::numeric_limits<int16_t>::max());
-
-    int intSample = Fooyin::Math::fltToInt(inSample * 0x8000);
-    intSample     = std::clamp(intSample, minS16, maxS16);
-
-    std::fesetround(prevRoundingMode);
-
-    return static_cast<int16_t>(intSample);
+    return convertToIntegral<float, int16_t>(inSample, static_cast<int16_t>(0x8000),
+                                             std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max());
 }
 
 int32_t convertFloatToS32(const float inSample)
 {
-    const int prevRoundingMode = std::fegetround();
-    std::fesetround(FE_TONEAREST);
-
-    static constexpr int minS32 = std::numeric_limits<int32_t>::min();
-    static constexpr int maxS32 = std::numeric_limits<int32_t>::max();
-
-    int intSample = Fooyin::Math::fltToInt(inSample * static_cast<float>(0x80000000));
-    intSample     = std::clamp(intSample, minS32, maxS32);
-
-    std::fesetround(prevRoundingMode);
-
-    return intSample;
+    return convertToIntegral<float, int32_t>(inSample, static_cast<int32_t>(0x80000000),
+                                             std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
 }
 
 float convertFloatToFloat(const float inSample)
+{
+    return inSample;
+}
+
+double convertFloatToDouble(const float inSample)
+{
+    return static_cast<double>(inSample);
+}
+
+uint8_t convertDoubleToU8(const double inSample)
+{
+    return convertToIntegral<double, uint8_t>(inSample, 0x80, std::numeric_limits<uint8_t>::min(),
+                                              std::numeric_limits<uint8_t>::max())
+         ^ 0x80;
+}
+
+int16_t convertDoubleToS16(const double inSample)
+{
+    return convertToIntegral<double, int16_t>(inSample, static_cast<int16_t>(0x8000),
+                                              std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max());
+}
+
+int32_t convertDoubleToS32(const double inSample)
+{
+    return convertToIntegral<double, int32_t>(inSample, static_cast<int32_t>(0x80000000),
+                                              std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max());
+}
+
+float convertDoubleToFloat(const double inSample)
+{
+    return static_cast<float>(inSample);
+}
+
+double convertDoubleToDouble(const double inSample)
 {
     return inSample;
 }
@@ -201,6 +235,9 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::F32):
                     convert<uint8_t, float>(inFormat, input, outFormat, output, samples, channels, convertU8ToFloat);
                     return true;
+                case(SampleFormat::F64):
+                    convert<uint8_t, double>(inFormat, input, outFormat, output, samples, channels, convertU8ToDouble);
+                    return true;
                 default:
                     break;
             }
@@ -220,6 +257,9 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                     return true;
                 case(SampleFormat::F32):
                     convert<int16_t, float>(inFormat, input, outFormat, output, samples, channels, convertS16ToFloat);
+                    return true;
+                case(SampleFormat::F64):
+                    convert<int16_t, double>(inFormat, input, outFormat, output, samples, channels, convertS16ToDouble);
                     return true;
                 default:
                     break;
@@ -242,6 +282,9 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                 case(SampleFormat::F32):
                     convert<int32_t, float>(inFormat, input, outFormat, output, samples, channels, convertS32ToFloat);
                     return true;
+                case(SampleFormat::F64):
+                    convert<int32_t, double>(inFormat, input, outFormat, output, samples, channels, convertS32ToDouble);
+                    return true;
                 default:
                     break;
             }
@@ -261,6 +304,33 @@ bool convertFormat(const Fooyin::AudioFormat& inFormat, const std::byte* input, 
                     return true;
                 case(SampleFormat::F32):
                     convert<float, float>(inFormat, input, outFormat, output, samples, channels, convertFloatToFloat);
+                    return true;
+                case(SampleFormat::F64):
+                    convert<float, double>(inFormat, input, outFormat, output, samples, channels, convertFloatToDouble);
+                    return true;
+                default:
+                    break;
+            }
+            break;
+        }
+        case(SampleFormat::F64): {
+            switch(outFormat.sampleFormat()) {
+                case(SampleFormat::U8):
+                    convert<double, uint8_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToU8);
+                    return true;
+                case(SampleFormat::S16):
+                    convert<double, int16_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToS16);
+                    return true;
+                case(SampleFormat::S24):
+                case(SampleFormat::S32):
+                    convert<double, int32_t>(inFormat, input, outFormat, output, samples, channels, convertDoubleToS32);
+                    return true;
+                case(SampleFormat::F32):
+                    convert<double, float>(inFormat, input, outFormat, output, samples, channels, convertDoubleToFloat);
+                    return true;
+                case(SampleFormat::F64):
+                    convert<double, double>(inFormat, input, outFormat, output, samples, channels,
+                                            convertDoubleToDouble);
                     return true;
                 default:
                     break;

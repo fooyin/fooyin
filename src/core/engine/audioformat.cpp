@@ -143,6 +143,8 @@ int AudioFormat::bytesPerSample() const
         case(SampleFormat::S32):
         case(SampleFormat::F32):
             return 4;
+        case(SampleFormat::F64):
+            return 8;
         case(SampleFormat::Unknown):
         default:
             return 0;
@@ -167,6 +169,8 @@ QString AudioFormat::prettyFormat() const
             return QStringLiteral("32 bit (signed)");
         case(SampleFormat::F32):
             return QStringLiteral("32 bit (float)");
+        case(SampleFormat::F64):
+            return QStringLiteral("64 bit (float)");
         case(SampleFormat::Unknown):
         default:
             return QStringLiteral("Unknown format");

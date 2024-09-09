@@ -23,6 +23,7 @@
 
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
+#include <core/engine/audioconverter.h>
 #include <core/engine/audiooutput.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadqueue.h>
@@ -48,7 +49,6 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
     , m_bufferPrefilled{false}
     , m_samplePos{0}
     , m_currentBufferOffset{0}
-    , m_currentBufferResampled{false}
     , m_isRunning{false}
     , m_writeInterval{100}
     , m_fadeLength{0}
@@ -69,7 +69,8 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 
 void AudioRenderer::init(const Track& track, const AudioFormat& format)
 {
-    m_format       = format;
+    m_format = format;
+    m_format.setSampleFormat(SampleFormat::F64);
     m_currentTrack = track;
 
     calculateGain();
@@ -189,7 +190,10 @@ void AudioRenderer::pause(int fadeLength)
 
 void AudioRenderer::queueBuffer(const AudioBuffer& buffer)
 {
-    m_bufferQueue.emplace(buffer);
+    auto convertedBuffer = Audio::convert(buffer, m_format);
+    if(convertedBuffer.isValid()) {
+        m_bufferQueue.emplace(convertedBuffer);
+    }
 }
 
 bool AudioRenderer::resetResampler()
@@ -468,8 +472,7 @@ void AudioRenderer::writeNext()
 
 int AudioRenderer::writeAudioSamples(int samples)
 {
-    m_tempBuffer.clear();
-
+    m_tempBuffer = {};
     int samplesBuffered{0};
 
     while(m_isRunning && !m_bufferQueue.empty() && samplesBuffered < samples) {
@@ -484,10 +487,13 @@ int AudioRenderer::writeAudioSamples(int samples)
             return samplesBuffered;
         }
 
-        if(m_resampler && !m_currentBufferResampled) {
-            buffer = m_resampler->resample(buffer);
-
+        if(!m_currentBufferResampled) {
             m_currentBufferResampled = true;
+            buffer.scale(m_gainScale);
+
+            if(m_resampler) {
+                buffer = m_resampler->resample(buffer);
+            }
         }
 
         const int bytesLeft = buffer.byteCount() - m_currentBufferOffset;
@@ -521,8 +527,6 @@ int AudioRenderer::writeAudioSamples(int samples)
     if(!m_tempBuffer.isValid()) {
         return 0;
     }
-
-    m_tempBuffer.scale(m_gainScale);
 
     return samplesBuffered;
 }
