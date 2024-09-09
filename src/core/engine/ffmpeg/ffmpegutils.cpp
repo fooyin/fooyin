@@ -75,6 +75,9 @@ SampleFormat sampleFormat(AVSampleFormat format, int bps)
         case(AV_SAMPLE_FMT_FLT):
         case(AV_SAMPLE_FMT_FLTP):
             return SampleFormat::F32;
+        case(AV_SAMPLE_FMT_DBL):
+        case(AV_SAMPLE_FMT_DBLP):
+            return SampleFormat::F64;
         default:
             return SampleFormat::Unknown;
     }
@@ -92,6 +95,8 @@ AVSampleFormat sampleFormat(SampleFormat format)
             return AV_SAMPLE_FMT_S32;
         case(SampleFormat::F32):
             return AV_SAMPLE_FMT_FLT;
+        case(SampleFormat::F64):
+            return AV_SAMPLE_FMT_DBL;
         case(SampleFormat::Unknown):
         default:
             return AV_SAMPLE_FMT_NONE;

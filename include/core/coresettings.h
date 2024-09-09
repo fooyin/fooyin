@@ -64,7 +64,6 @@ enum CoreSettings : uint32_t
     NonRGPreAmp             = 24 | Type::Float,
     ProxyMode               = 25 | Type::Int,
     ProxyConfig             = 26 | Type::Variant,
-
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

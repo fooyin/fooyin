@@ -58,6 +58,8 @@ spa_audio_format findSpaFormat(const Fooyin::SampleFormat& format)
             return SPA_AUDIO_FORMAT_S32;
         case(Fooyin::SampleFormat::F32):
             return SPA_AUDIO_FORMAT_F32;
+        case(Fooyin::SampleFormat::F64):
+            return SPA_AUDIO_FORMAT_F64;
         case(Fooyin::SampleFormat::Unknown):
         default:
             return SPA_AUDIO_FORMAT_UNKNOWN;

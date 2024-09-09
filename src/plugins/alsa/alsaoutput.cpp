@@ -41,6 +41,8 @@ snd_pcm_format_t findAlsaFormat(Fooyin::SampleFormat format)
             return SND_PCM_FORMAT_S32;
         case(Fooyin::SampleFormat::F32):
             return SND_PCM_FORMAT_FLOAT;
+        case(Fooyin::SampleFormat::F64):
+            return SND_PCM_FORMAT_FLOAT64;
         case(Fooyin::SampleFormat::Unknown):
         default:
             return SND_PCM_FORMAT_UNKNOWN;
@@ -58,6 +60,8 @@ Fooyin::SampleFormat findSampleFormat(snd_pcm_format_t format)
             return Fooyin::SampleFormat::S32;
         case(SND_PCM_FORMAT_FLOAT):
             return Fooyin::SampleFormat::F32;
+        case(SND_PCM_FORMAT_FLOAT64):
+            return Fooyin::SampleFormat::F64;
         case(SND_PCM_FORMAT_UNKNOWN):
         default:
             return Fooyin::SampleFormat::Unknown;
@@ -466,8 +470,11 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         qCInfo(ALSA) << "Format not supported:" << m_format.prettyFormat();
         qCDebug(ALSA) << "Trying all supported formats";
 
-        static constexpr std::array<std::pair<snd_pcm_format_t, int>, 4> formats{
-            {{SND_PCM_FORMAT_S16, 16}, {SND_PCM_FORMAT_S32, 32}, {SND_PCM_FORMAT_FLOAT, 32}, {SND_PCM_FORMAT_U8, 8}}};
+        static constexpr std::array<std::pair<snd_pcm_format_t, int>, 5> formats{{{SND_PCM_FORMAT_S16, 16},
+                                                                                  {SND_PCM_FORMAT_S32, 32},
+                                                                                  {SND_PCM_FORMAT_FLOAT, 32},
+                                                                                  {SND_PCM_FORMAT_FLOAT64, 64},
+                                                                                  {SND_PCM_FORMAT_U8, 8}}};
 
         snd_pcm_format_t compatFormat{SND_PCM_FORMAT_UNKNOWN};
 
