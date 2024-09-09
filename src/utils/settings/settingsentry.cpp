@@ -93,6 +93,9 @@ void SettingsEntry::notifySubscribers()
         case(Settings::Bool):
             emit settingChangedBool(m_value.toBool());
             break;
+        case(Settings::Float):
+            emit settingChangedFloat(m_value.toFloat());
+            break;
         case(Settings::Double):
             emit settingChangedDouble(m_value.toDouble());
             break;

@@ -30,10 +30,11 @@ enum Type : uint32_t
     Variant    = 0 << 28,
     Bool       = 1 << 28,
     Int        = 2 << 28,
-    Double     = 3 << 28,
-    String     = 4 << 28,
-    StringList = 5 << 28,
-    ByteArray  = 6 << 28,
+    Float      = 3 << 28,
+    Double     = 4 << 28,
+    String     = 5 << 28,
+    StringList = 6 << 28,
+    ByteArray  = 7 << 28,
 };
 }
 
@@ -63,6 +64,7 @@ signals:
     void settingChangedVariant(const QVariant& value);
     void settingChangedBool(bool value);
     void settingChangedInt(int value);
+    void settingChangedFloat(float value);
     void settingChangedDouble(double value);
     void settingChangedString(const QString& value);
     void settingChangedStringList(const QStringList& value);

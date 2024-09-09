@@ -52,29 +52,26 @@ consteval int findType()
 
 template <auto key, typename Value>
 concept IsVariant = findType<key>() == Settings::Variant;
-
 template <auto key, typename Value>
 concept IsBool = findType<key>() == Settings::Bool && std::same_as<Value, bool>;
-
+template <auto key, typename Value>
+concept IsFloat = findType<key>() == Settings::Float && std::same_as<Value, float>;
 template <auto key, typename Value>
 concept IsDouble = findType<key>() == Settings::Double && std::same_as<Value, double>;
-
 template <auto key, typename Value>
 concept IsInt = findType<key>() == Settings::Int && std::same_as<Value, int>;
-
 template <auto key, typename Value>
 concept IsString
     = findType<key>() == Settings::String && (std::same_as<Value, QString> || std::same_as<Value, const char*>);
-
 template <auto key, typename Value>
 concept IsStringList = findType<key>() == Settings::StringList && std::same_as<Value, QStringList>;
-
 template <auto key, typename Value>
 concept IsByteArray = findType<key>() == Settings::ByteArray && std::same_as<Value, QByteArray>;
 
 template <auto key, typename Value>
-concept ValidValueType = IsVariant<key, Value> || IsBool<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
-                      || IsString<key, Value> || IsStringList<key, Value> || IsByteArray<key, Value>;
+concept ValidValueType
+    = IsVariant<key, Value> || IsBool<key, Value> || IsFloat<key, Value> || IsDouble<key, Value> || IsInt<key, Value>
+   || IsString<key, Value> || IsStringList<key, Value> || IsByteArray<key, Value>;
 
 /*!
  * Manages all settings in the application.
@@ -234,6 +231,9 @@ public:
         if constexpr(type == Settings::Bool) {
             return settingValue.toBool();
         }
+        else if constexpr(type == Settings::Float) {
+            return settingValue.toFloat();
+        }
         else if constexpr(type == Settings::Double) {
             return settingValue.toDouble();
         }
@@ -358,6 +358,10 @@ public:
             }
             else if constexpr(type == Settings::Bool) {
                 QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedBool, obj,
+                                 std::forward<Func>(func));
+            }
+            else if constexpr(type == Settings::Float) {
+                QObject::connect(m_settings.at(mapKey), &SettingsEntry::settingChangedFloat, obj,
                                  std::forward<Func>(func));
             }
             else if constexpr(type == Settings::Double) {
