@@ -24,6 +24,7 @@
 #include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioconverter.h>
+#include <core/engine/audioengine.h>
 #include <core/engine/audiooutput.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadqueue.h>
@@ -400,9 +401,8 @@ void AudioRenderer::calculateGain()
 {
     m_gainScale = 1.0;
 
-    using RGProcess = Settings::Core::RGProcess;
     const auto mode = m_settings->value<Settings::Core::ReplayGainMode>();
-    if(mode == RGProcess::None) {
+    if(mode == AudioEngine::NoProcessing) {
         return;
     }
 
@@ -414,12 +414,12 @@ void AudioRenderer::calculateGain()
     float gain{0.0F};
     switch(gainType) {
         case(ReplayGainType::Track):
-            gain = (mode & RGProcess::ApplyGain) ? m_currentTrack.replayGainAlbumGain() : 0.0F;
-            peak = (mode & RGProcess::PreventClipping) ? m_currentTrack.replayGainAlbumPeak() : 0.0F;
+            gain = (mode & AudioEngine::ApplyGain) ? m_currentTrack.replayGainAlbumGain() : 0.0F;
+            peak = (mode & AudioEngine::PreventClipping) ? m_currentTrack.replayGainAlbumPeak() : 0.0F;
             break;
         case(ReplayGainType::Album):
-            gain = (mode & RGProcess::ApplyGain) ? m_currentTrack.replayGainTrackGain() : 0.0F;
-            peak = (mode & RGProcess::PreventClipping) ? m_currentTrack.replayGainTrackPeak() : 0.0F;
+            gain = (mode & AudioEngine::ApplyGain) ? m_currentTrack.replayGainTrackGain() : 0.0F;
+            peak = (mode & AudioEngine::PreventClipping) ? m_currentTrack.replayGainTrackPeak() : 0.0F;
             break;
     }
 

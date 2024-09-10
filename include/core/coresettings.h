@@ -37,15 +37,6 @@ public:
 namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
-enum RGProcess : uint8_t
-{
-    None            = 0,
-    ApplyGain       = 1 << 0,
-    PreventClipping = 1 << 1,
-};
-Q_DECLARE_FLAGS(RGProcessing, RGProcess)
-Q_FLAG_NS(RGProcessing)
-
 enum CoreSettings : uint32_t
 {
     Version                 = 1 | Type::String,

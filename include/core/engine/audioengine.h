@@ -57,6 +57,15 @@ public:
     };
     Q_ENUM(TrackStatus)
 
+    enum RGProcess : uint8_t
+    {
+        NoProcessing    = 0,
+        ApplyGain       = 1 << 0,
+        PreventClipping = 1 << 1,
+    };
+    Q_DECLARE_FLAGS(RGProcessing, RGProcess)
+    Q_FLAG(RGProcessing)
+
     explicit AudioEngine(QObject* parent = nullptr)
         : QObject{parent}
     { }

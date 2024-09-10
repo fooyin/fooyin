@@ -111,12 +111,11 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
 
     auto* processLabel = new QLabel(tr("Mode") + u":", this);
 
-    using RGProcess = Settings::Core::RGProcess;
-    m_process->addItem(tr("None"), RGProcess::None);
-    m_process->addItem(tr("Apply gain"), RGProcess::ApplyGain);
+    m_process->addItem(tr("None"), AudioEngine::NoProcessing);
+    m_process->addItem(tr("Apply gain"), AudioEngine::ApplyGain);
     m_process->addItem(tr("Apply gain and prevent clipping according to peak"),
-                       RGProcess::ApplyGain | RGProcess::PreventClipping);
-    m_process->addItem(tr("Only prevent clipping according to peak"), RGProcess::PreventClipping);
+                       AudioEngine::ApplyGain | AudioEngine::PreventClipping);
+    m_process->addItem(tr("Only prevent clipping according to peak"), AudioEngine::PreventClipping);
 
     layout->addWidget(processLabel, 0, 0);
     layout->addWidget(m_process, 0, 1);
