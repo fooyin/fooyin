@@ -114,7 +114,7 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     m_process->addItem(tr("None"), AudioEngine::NoProcessing);
     m_process->addItem(tr("Apply gain"), AudioEngine::ApplyGain);
     m_process->addItem(tr("Apply gain and prevent clipping according to peak"),
-                       AudioEngine::ApplyGain | AudioEngine::PreventClipping);
+                       QVariant::fromValue(AudioEngine::ApplyGain | AudioEngine::PreventClipping));
     m_process->addItem(tr("Only prevent clipping according to peak"), AudioEngine::PreventClipping);
 
     layout->addWidget(processLabel, 0, 0);
