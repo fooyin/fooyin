@@ -62,9 +62,9 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 {
     setObjectName(QStringLiteral("Renderer"));
 
-    m_settings->subscribe<Settings::Core::ReplayGainMode>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::ReplayGainType>(this, &AudioRenderer::calculateGain);
-    m_settings->subscribe<Settings::Core::ReplayGainPreAmp>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::RGMode>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::RGType>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::RGPreAmp>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::calculateGain);
 }
 
@@ -401,43 +401,68 @@ void AudioRenderer::calculateGain()
 {
     m_gainScale = 1.0;
 
-    const auto mode = m_settings->value<Settings::Core::ReplayGainMode>();
+    const auto mode = m_settings->value<Settings::Core::RGMode>();
     if(mode == AudioEngine::NoProcessing) {
         return;
     }
 
-    float peak{0.0F};
-
-    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
-    float preamp        = m_settings->value<Settings::Core::ReplayGainPreAmp>();
-
     float gain{0.0F};
+    float peak{1.0F};
+    bool haveGain{false};
+    bool havePeak{false};
+
+    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
+
     switch(gainType) {
         case(ReplayGainType::Track):
-            gain = (mode & AudioEngine::ApplyGain) ? m_currentTrack.replayGainAlbumGain() : 0.0F;
-            peak = (mode & AudioEngine::PreventClipping) ? m_currentTrack.replayGainAlbumPeak() : 0.0F;
+            if(m_currentTrack.hasTrackGain()) {
+                gain     = m_currentTrack.rgTrackGain();
+                haveGain = true;
+            }
+            else if(m_currentTrack.hasAlbumGain()) {
+                gain     = m_currentTrack.rgAlbumGain();
+                haveGain = true;
+            }
+            if(m_currentTrack.hasTrackPeak()) {
+                peak     = m_currentTrack.rgTrackPeak();
+                havePeak = true;
+            }
+            else if(m_currentTrack.hasAlbumPeak()) {
+                peak     = m_currentTrack.rgAlbumPeak();
+                havePeak = true;
+            }
             break;
         case(ReplayGainType::Album):
-            gain = (mode & AudioEngine::ApplyGain) ? m_currentTrack.replayGainTrackGain() : 0.0F;
-            peak = (mode & AudioEngine::PreventClipping) ? m_currentTrack.replayGainTrackPeak() : 0.0F;
+            if(m_currentTrack.hasAlbumGain()) {
+                gain     = m_currentTrack.rgAlbumGain();
+                haveGain = true;
+            }
+            else if(m_currentTrack.hasTrackGain()) {
+                gain     = m_currentTrack.rgTrackGain();
+                haveGain = true;
+            }
+            if(m_currentTrack.hasAlbumPeak()) {
+                peak     = m_currentTrack.rgAlbumPeak();
+                havePeak = true;
+            }
+            else if(m_currentTrack.hasTrackPeak()) {
+                peak     = m_currentTrack.rgTrackPeak();
+                havePeak = true;
+            }
             break;
     }
 
-    if((mode & AudioEngine::ApplyGain) && gain == 0.0) {
-        // Assume no rg info
-        preamp = m_settings->value<Settings::Core::NonRGPreAmp>();
+    gain += haveGain ? m_settings->value<Settings::Core::RGPreAmp>() : m_settings->value<Settings::Core::NonRGPreAmp>();
+
+    if(mode & AudioEngine::ApplyGain) {
+        m_gainScale = std::pow(10.0, gain / 20.0);
     }
 
-    if(gain != 0.0 || preamp != 0.0) {
-        m_gainScale = std::pow(10.0, (gain + preamp) / 20.0);
-    }
-
-    if(peak > 0.0) {
-        // Prevent clipping
+    if((mode & AudioEngine::PreventClipping) && havePeak) {
         m_gainScale = (m_gainScale * peak) > 1.0 ? (1.0 / peak) : m_gainScale;
     }
-    // Clamp to +-20 dB
-    m_gainScale = std::clamp(m_gainScale, 0.1, 10.0);
+
+    m_gainScale = std::clamp(m_gainScale, 0.1, 10.0); // Clamp to +-20 dB
 }
 
 void AudioRenderer::pauseOutput()

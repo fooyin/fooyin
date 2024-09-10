@@ -282,21 +282,10 @@
             Update number metadata fields to NULL where they match the previous default value '-1'.
         </description>
         <sql>
-            UPDATE Tracks
-            SET TrackNumber = NULL
-            WHERE TrackNumber = '-1';
-
-            UPDATE Tracks
-            SET TrackTotal = NULL
-            WHERE TrackTotal = '-1';
-
-            UPDATE Tracks
-            SET DiscNumber = NULL
-            WHERE DiscNumber = '-1';
-
-            UPDATE Tracks
-            SET DiscTotal = NULL
-            WHERE DiscTotal = '-1';
+            UPDATE Tracks SET TrackNumber = NULL WHERE TrackNumber = '-1';
+            UPDATE Tracks SET TrackTotal = NULL WHERE TrackTotal = '-1';
+            UPDATE Tracks SET DiscNumber = NULL WHERE DiscNumber = '-1';
+            UPDATE Tracks SET DiscTotal = NULL WHERE DiscTotal = '-1';
         </sql>
     </revision>
     <revision version="11">
@@ -308,6 +297,32 @@
             ALTER TABLE Tracks ADD COLUMN RGAlbumGain FLOAT(3,7) DEFAULT 0.0;
             ALTER TABLE Tracks ADD COLUMN RGTrackPeak FLOAT(3,7) DEFAULT 0.0;
             ALTER TABLE Tracks ADD COLUMN RGAlbumPeak FLOAT(3,7) DEFAULT 0.0;
+        </sql>
+    </revision>
+    <revision version="12">
+        <description>
+            Remove default value from ReplayGain metadata fields.
+        </description>
+        <sql>
+            ALTER TABLE Tracks RENAME COLUMN RGTrackGain TO RGTrackGainOld;
+            ALTER TABLE Tracks RENAME COLUMN RGAlbumGain TO RGAlbumGainOld;
+            ALTER TABLE Tracks RENAME COLUMN RGTrackPeak TO RGTrackPeakOld;
+            ALTER TABLE Tracks RENAME COLUMN RGAlbumPeak TO RGAlbumPeakOld;
+
+            ALTER TABLE Tracks ADD COLUMN RGTrackGain FLOAT(3,7);
+            ALTER TABLE Tracks ADD COLUMN RGAlbumGain FLOAT(3,7);
+            ALTER TABLE Tracks ADD COLUMN RGTrackPeak FLOAT(3,7);
+            ALTER TABLE Tracks ADD COLUMN RGAlbumPeak FLOAT(3,7);
+
+            UPDATE Tracks SET RGTrackGain = RGTrackGainOld WHERE RGTrackGainOld != 0.0;
+            UPDATE Tracks SET RGAlbumGain = RGAlbumGainOld WHERE RGAlbumGainOld != 0.0;
+            UPDATE Tracks SET RGTrackPeak = RGTrackPeakOld WHERE RGTrackPeakOld != 0.0;
+            UPDATE Tracks SET RGAlbumPeak = RGAlbumPeakOld WHERE RGAlbumPeakOld != 0.0;
+
+            ALTER TABLE Tracks DROP COLUMN RGTrackGainOld;
+            ALTER TABLE Tracks DROP COLUMN RGAlbumGainOld;
+            ALTER TABLE Tracks DROP COLUMN RGTrackPeakOld;
+            ALTER TABLE Tracks DROP COLUMN RGAlbumPeakOld;
         </sql>
     </revision>
 </schema>

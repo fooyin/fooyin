@@ -109,10 +109,10 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
             {QStringLiteral(":trackHash"), track.hash()},
             {QStringLiteral(":libraryID"), track.libraryId()},
-            {QStringLiteral(":rgTrackGain"), track.replayGainTrackGain()},
-            {QStringLiteral(":rgAlbumGain"), track.replayGainAlbumGain()},
-            {QStringLiteral(":rgTrackPeak"), track.replayGainTrackPeak()},
-            {QStringLiteral(":rgAlbumPeak"), track.replayGainAlbumPeak()}};
+            {QStringLiteral(":rgTrackGain"), track.rgTrackGain()},
+            {QStringLiteral(":rgAlbumGain"), track.rgAlbumGain()},
+            {QStringLiteral(":rgTrackPeak"), track.rgTrackPeak()},
+            {QStringLiteral(":rgAlbumPeak"), track.rgAlbumPeak()}};
 }
 
 Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
@@ -149,10 +149,21 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setModifiedTime(q.value(27).toULongLong());
     track.setLibraryId(q.value(28).toInt());
     track.setHash(q.value(29).toString());
-    track.setReplayGainTrackGain(q.value(30).toFloat());
-    track.setReplayGainAlbumGain(q.value(31).toFloat());
-    track.setReplayGainTrackPeak(q.value(32).toFloat());
-    track.setReplayGainTrackPeak(q.value(33).toFloat());
+
+    bool isValid{false};
+    if(const auto rgTrackGain = q.value(30).toFloat(&isValid); isValid) {
+        track.setRGTrackGain(rgTrackGain);
+    }
+    if(const auto rgAlbumGain = q.value(31).toFloat(&isValid); isValid) {
+        track.setRGAlbumGain(rgAlbumGain);
+    }
+    if(const auto rgTrackPeak = q.value(32).toFloat(&isValid); isValid) {
+        track.setRGTrackPeak(rgTrackPeak);
+    }
+    if(const auto rgAlbumPeak = q.value(33).toFloat(&isValid); isValid) {
+        track.setRGAlbumPeak(rgAlbumPeak);
+    }
+
     track.setAddedTime(q.value(34).toULongLong());
     track.setFirstPlayed(q.value(35).toULongLong());
     track.setLastPlayed(q.value(36).toULongLong());

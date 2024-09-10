@@ -30,6 +30,8 @@
 
 constexpr auto MaxStarCount = 10;
 constexpr auto YearRegex    = R"lit(\b\d{4}\b)lit";
+constexpr auto InvalidGain  = -1000;
+constexpr auto InvalidPeak  = -1;
 
 namespace {
 int extractYear(const QString& input)
@@ -94,10 +96,10 @@ public:
     uint64_t firstPlayed{0};
     uint64_t lastPlayed{0};
 
-    float replayGainTrackGain{0.0};
-    float replayGainAlbumGain{0.0};
-    float replayGainTrackPeak{0.0};
-    float replayGainAlbumPeak{0.0};
+    float rgTrackGain{InvalidGain};
+    float rgAlbumGain{InvalidGain};
+    float rgTrackPeak{InvalidPeak};
+    float rgAlbumPeak{InvalidPeak};
 
     QString sort;
 
@@ -478,24 +480,44 @@ int Track::ratingStars() const
     return static_cast<int>(std::floor(p->rating * MaxStarCount));
 }
 
-float Track::replayGainTrackGain() const
+bool Track::hasTrackGain() const
 {
-    return p->replayGainTrackGain;
+    return p->rgTrackGain != InvalidGain;
 }
 
-float Track::replayGainAlbumGain() const
+bool Track::hasAlbumGain() const
 {
-    return p->replayGainAlbumGain;
+    return p->rgAlbumGain != InvalidGain;
 }
 
-float Track::replayGainTrackPeak() const
+bool Track::hasTrackPeak() const
 {
-    return p->replayGainTrackPeak;
+    return p->rgTrackPeak != InvalidPeak;
 }
 
-float Track::replayGainAlbumPeak() const
+bool Track::hasAlbumPeak() const
 {
-    return p->replayGainAlbumPeak;
+    return p->rgAlbumPeak != InvalidPeak;
+}
+
+float Track::rgTrackGain() const
+{
+    return p->rgTrackGain;
+}
+
+float Track::rgAlbumGain() const
+{
+    return p->rgAlbumGain;
+}
+
+float Track::rgTrackPeak() const
+{
+    return p->rgTrackPeak;
+}
+
+float Track::rgAlbumPeak() const
+{
+    return p->rgAlbumPeak;
 }
 
 bool Track::hasCue() const
@@ -849,24 +871,24 @@ void Track::setRatingStars(int rating)
     }
 }
 
-void Track::setReplayGainTrackGain(float gain)
+void Track::setRGTrackGain(float gain)
 {
-    p->replayGainTrackGain = gain;
+    p->rgTrackGain = gain;
 }
 
-void Track::setReplayGainAlbumGain(float gain)
+void Track::setRGAlbumGain(float gain)
 {
-    p->replayGainAlbumGain = gain;
+    p->rgAlbumGain = gain;
 }
 
-void Track::setReplayGainTrackPeak(float peak)
+void Track::setRGTrackPeak(float peak)
 {
-    p->replayGainTrackPeak = peak;
+    p->rgTrackPeak = peak;
 }
 
-void Track::setReplayGainAlbumPeak(float peak)
+void Track::setRGAlbumPeak(float peak)
 {
-    p->replayGainAlbumPeak = peak;
+    p->rgAlbumPeak = peak;
 }
 
 QString Track::metaValue(const QString& name) const

@@ -128,10 +128,10 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
 
 void ReplayGainWidget::load()
 {
-    const int mode = m_process->findData(m_settings->value<Settings::Core::ReplayGainMode>());
+    const int mode = m_process->findData(m_settings->value<Settings::Core::RGMode>());
     m_process->setCurrentIndex(mode >= 0 ? mode : 0);
 
-    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
+    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
     if(gainType == ReplayGainType::Track) {
         m_trackGain->setChecked(true);
     }
@@ -139,7 +139,7 @@ void ReplayGainWidget::load()
         m_albumGain->setChecked(true);
     }
 
-    const auto rgPreAmp = static_cast<double>(m_settings->value<Settings::Core::ReplayGainPreAmp>());
+    const auto rgPreAmp = static_cast<double>(m_settings->value<Settings::Core::RGPreAmp>());
     m_rgPreAmp->setValue(rgPreAmp);
     const auto preAmp = static_cast<double>(m_settings->value<Settings::Core::NonRGPreAmp>());
     m_preAmp->setValue(preAmp);
@@ -147,17 +147,17 @@ void ReplayGainWidget::load()
 
 void ReplayGainWidget::apply()
 {
-    m_settings->set<Settings::Core::ReplayGainMode>(m_process->currentData().toInt());
-    m_settings->set<Settings::Core::ReplayGainType>(
+    m_settings->set<Settings::Core::RGMode>(m_process->currentData().toInt());
+    m_settings->set<Settings::Core::RGType>(
         static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track : ReplayGainType::Album));
-    m_settings->set<Settings::Core::ReplayGainPreAmp>(static_cast<float>(m_rgPreAmp->value()));
+    m_settings->set<Settings::Core::RGPreAmp>(static_cast<float>(m_rgPreAmp->value()));
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 }
 
 void ReplayGainWidget::reset()
 {
-    m_settings->reset<Settings::Core::ReplayGainMode>();
-    m_settings->reset<Settings::Core::ReplayGainPreAmp>();
+    m_settings->reset<Settings::Core::RGMode>();
+    m_settings->reset<Settings::Core::RGPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();
 }
 

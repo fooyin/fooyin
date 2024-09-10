@@ -662,16 +662,16 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
         }
         else if(field.startsWith(Fooyin::Tag::ReplayGain::ReplayGainStart)) {
             if(field == Fooyin::Tag::ReplayGain::TrackGain || field == Fooyin::Tag::ReplayGain::TrackGainAlt) {
-                track.setReplayGainTrackGain(gainStringToFloat(value.toString()));
+                track.setRGTrackGain(gainStringToFloat(value.toString()));
             }
             else if(field == Fooyin::Tag::ReplayGain::AlbumGain || field == Fooyin::Tag::ReplayGain::AlbumGainAlt) {
-                track.setReplayGainAlbumGain(gainStringToFloat(value.toString()));
+                track.setRGAlbumGain(gainStringToFloat(value.toString()));
             }
             else if(field == Fooyin::Tag::ReplayGain::TrackPeak || field == Fooyin::Tag::ReplayGain::TrackPeakAlt) {
-                track.setReplayGainTrackPeak(convertString(value.toString()).toFloat());
+                track.setRGTrackPeak(convertString(value.toString()).toFloat());
             }
             else if(field == Fooyin::Tag::ReplayGain::AlbumPeak || field == Fooyin::Tag::ReplayGain::AlbumPeakAlt) {
-                track.setReplayGainAlbumPeak(convertString(value.toString()).toFloat());
+                track.setRGAlbumPeak(convertString(value.toString()).toFloat());
             }
         }
         else {

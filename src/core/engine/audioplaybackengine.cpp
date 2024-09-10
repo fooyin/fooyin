@@ -61,7 +61,6 @@ AudioPlaybackEngine::AudioPlaybackEngine(std::shared_ptr<AudioLoader> audioLoade
     , m_bufferLength{static_cast<uint64_t>(m_settings->value<Settings::Core::BufferLength>())}
     , m_duration{0}
     , m_volume{1.0}
-    , m_trackPeak{1.0F}
     , m_ending{false}
     , m_decoding{false}
     , m_updatingTrack{false}
@@ -152,7 +151,6 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     if(m_decoder->trackHasChanged()) {
         m_updatingTrack = true;
         m_currentTrack  = m_decoder->changedTrack();
-        m_trackPeak     = m_currentTrack.replayGainTrackPeak();
         emit trackChanged(m_currentTrack);
     }
 
