@@ -30,6 +30,8 @@ enum class ReplayGainType : uint8_t
 {
     Track = 0,
     Album,
+    // Track gain if shuffle, else album gain
+    PlaybackOrder
 };
 
 struct FadingIntervals

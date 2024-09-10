@@ -26,6 +26,7 @@
 #include <core/engine/audioconverter.h>
 #include <core/engine/audioengine.h>
 #include <core/engine/audiooutput.h>
+#include <core/playlist/playlist.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/threadqueue.h>
 
@@ -62,6 +63,7 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 {
     setObjectName(QStringLiteral("Renderer"));
 
+    m_settings->subscribe<Settings::Core::PlayMode>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::RGMode>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::RGType>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::RGPreAmp>(this, &AudioRenderer::calculateGain);
@@ -411,45 +413,48 @@ void AudioRenderer::calculateGain()
     bool haveGain{false};
     bool havePeak{false};
 
-    const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
+    auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
 
-    switch(gainType) {
-        case(ReplayGainType::Track):
-            if(m_currentTrack.hasTrackGain()) {
-                gain     = m_currentTrack.rgTrackGain();
-                haveGain = true;
-            }
-            else if(m_currentTrack.hasAlbumGain()) {
-                gain     = m_currentTrack.rgAlbumGain();
-                haveGain = true;
-            }
-            if(m_currentTrack.hasTrackPeak()) {
-                peak     = m_currentTrack.rgTrackPeak();
-                havePeak = true;
-            }
-            else if(m_currentTrack.hasAlbumPeak()) {
-                peak     = m_currentTrack.rgAlbumPeak();
-                havePeak = true;
-            }
-            break;
-        case(ReplayGainType::Album):
-            if(m_currentTrack.hasAlbumGain()) {
-                gain     = m_currentTrack.rgAlbumGain();
-                haveGain = true;
-            }
-            else if(m_currentTrack.hasTrackGain()) {
-                gain     = m_currentTrack.rgTrackGain();
-                haveGain = true;
-            }
-            if(m_currentTrack.hasAlbumPeak()) {
-                peak     = m_currentTrack.rgAlbumPeak();
-                havePeak = true;
-            }
-            else if(m_currentTrack.hasTrackPeak()) {
-                peak     = m_currentTrack.rgTrackPeak();
-                havePeak = true;
-            }
-            break;
+    if(gainType == ReplayGainType::PlaybackOrder) {
+        const auto playMode = m_settings->value<Settings::Core::PlayMode>();
+        gainType            = playMode == Playlist::ShuffleTracks ? ReplayGainType::Track : ReplayGainType::Album;
+    }
+
+    if(gainType == ReplayGainType::Track) {
+        if(m_currentTrack.hasTrackGain()) {
+            gain     = m_currentTrack.rgTrackGain();
+            haveGain = true;
+        }
+        else if(m_currentTrack.hasAlbumGain()) {
+            gain     = m_currentTrack.rgAlbumGain();
+            haveGain = true;
+        }
+        if(m_currentTrack.hasTrackPeak()) {
+            peak     = m_currentTrack.rgTrackPeak();
+            havePeak = true;
+        }
+        else if(m_currentTrack.hasAlbumPeak()) {
+            peak     = m_currentTrack.rgAlbumPeak();
+            havePeak = true;
+        }
+    }
+    else if(gainType == ReplayGainType::Album) {
+        if(m_currentTrack.hasAlbumGain()) {
+            gain     = m_currentTrack.rgAlbumGain();
+            haveGain = true;
+        }
+        else if(m_currentTrack.hasTrackGain()) {
+            gain     = m_currentTrack.rgTrackGain();
+            haveGain = true;
+        }
+        if(m_currentTrack.hasAlbumPeak()) {
+            peak     = m_currentTrack.rgAlbumPeak();
+            havePeak = true;
+        }
+        else if(m_currentTrack.hasTrackPeak()) {
+            peak     = m_currentTrack.rgTrackPeak();
+            havePeak = true;
+        }
     }
 
     gain += haveGain ? m_settings->value<Settings::Core::RGPreAmp>() : m_settings->value<Settings::Core::NonRGPreAmp>();

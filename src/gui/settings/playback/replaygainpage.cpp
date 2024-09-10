@@ -55,6 +55,7 @@ private:
     QComboBox* m_process;
     QRadioButton* m_trackGain;
     QRadioButton* m_albumGain;
+    QRadioButton* m_orderGain;
     DoubleSliderEditor* m_rgPreAmp;
     DoubleSliderEditor* m_preAmp;
 };
@@ -64,11 +65,13 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     , m_process{new QComboBox(this)}
     , m_trackGain{new QRadioButton(tr("Use track-based gain"), this)}
     , m_albumGain{new QRadioButton(tr("Use album-based gain"), this)}
+    , m_orderGain{new QRadioButton(tr("Use gain based on playback order"), this)}
     , m_rgPreAmp{new DoubleSliderEditor(this)}
     , m_preAmp{new DoubleSliderEditor(this)}
 {
     m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
     m_albumGain->setToolTip(tr("Base normalisation on album loudness"));
+    m_orderGain->setToolTip(tr("Base normalisation on track loudness if shuffling tracks, else album loudness"));
 
     auto* layout = new QGridLayout(this);
 
@@ -78,9 +81,11 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
 
     typeButtonGroup->addButton(m_trackGain);
     typeButtonGroup->addButton(m_albumGain);
+    typeButtonGroup->addButton(m_orderGain);
 
     typeBoxLayout->addWidget(m_trackGain);
     typeBoxLayout->addWidget(m_albumGain);
+    typeBoxLayout->addWidget(m_orderGain);
 
     auto* preAmpGroup  = new QGroupBox(tr("Pre-amplification"), this);
     auto* preAmpLayout = new QGridLayout(preAmpGroup);
