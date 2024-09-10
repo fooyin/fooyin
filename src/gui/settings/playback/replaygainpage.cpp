@@ -180,8 +180,10 @@ void ReplayGainWidget::apply()
 
     m_settings->set<Settings::Core::RGMode>(mode);
 
-    m_settings->set<Settings::Core::RGType>(
-        static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track : ReplayGainType::Album));
+    m_settings->set<Settings::Core::RGType>(static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track
+                                                             : m_albumGain->isChecked()
+                                                                 ? ReplayGainType::Album
+                                                                 : ReplayGainType::PlaybackOrder));
     m_settings->set<Settings::Core::RGPreAmp>(static_cast<float>(m_rgPreAmp->value()));
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 }
