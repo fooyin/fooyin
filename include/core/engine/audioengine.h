@@ -103,3 +103,5 @@ private:
     std::atomic<TrackStatus> m_trackStatus;
 };
 } // namespace Fooyin
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Fooyin::AudioEngine::RGProcessing)
