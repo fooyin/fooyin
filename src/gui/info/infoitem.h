@@ -54,6 +54,7 @@ public:
         General          = 1 << 2,
         ExtendedMetadata = 1 << 3,
         Other            = 1 << 4,
+        ReplayGain       = 1 << 5,
         Default          = (Metadata | Location | General | Other)
     };
     Q_DECLARE_FLAGS(Options, Option)

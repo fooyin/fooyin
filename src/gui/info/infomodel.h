@@ -42,6 +42,7 @@ public:
         Metadata,
         Location,
         General,
+        ReplayGain,
         Other
     };
     Q_ENUM(ItemParent)

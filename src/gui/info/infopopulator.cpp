@@ -27,6 +27,8 @@
 
 #include <QFileInfo>
 
+#include <set>
+
 namespace Fooyin {
 using ItemParent = InfoModel::ItemParent;
 
@@ -37,6 +39,8 @@ public:
         : m_self{self}
     { }
 
+    void reset();
+
     InfoItem* getOrAddNode(const QString& key, const QString& name, ItemParent parent, InfoItem::ItemType type,
                            InfoItem::ValueType valueType = InfoItem::Concat, InfoItem::FormatFunc numFunc = {});
     void checkAddParentNode(InfoModel::ItemParent parent);
@@ -45,9 +49,9 @@ public:
     template <typename Value>
     void checkAddEntryNode(const QString& key, const QString& name, InfoModel::ItemParent parent, Value&& value,
                            InfoItem::ValueType valueType  = InfoItem::ValueType::Concat,
-                           InfoItem::FormatFunc&& numFunc = {}, bool includeEmpty = false)
+                           InfoItem::FormatFunc&& numFunc = {}, bool isFloat = false)
     {
-        if(!includeEmpty && (!std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>)) {
+        if constexpr(!std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>) {
             if(value.isEmpty()) {
                 return;
             }
@@ -55,19 +59,34 @@ public:
 
         checkAddParentNode(parent);
         auto* node = getOrAddNode(key, name, parent, InfoItem::Entry, valueType, std::move(numFunc));
+        node->setIsFloat(isFloat);
         node->addTrackValue(std::forward<Value>(value));
     }
 
     void addTrackMetadata(const Track& track, bool extended);
     void addTrackLocation(int total, const Track& track);
     void addTrackGeneral(int total, const Track& track);
+    void addTrackReplayGain(int total);
     void addTrackOther(const Track& track);
 
     void addTrackNodes(InfoItem::Options options, const TrackList& tracks);
 
     InfoPopulator* m_self;
     InfoData m_data;
+    std::set<float> m_trackGain;
+    std::set<float> m_trackPeak;
+    std::set<float> m_albumGain;
+    std::set<float> m_albumPeak;
 };
+
+void InfoPopulatorPrivate::reset()
+{
+    m_data.clear();
+    m_trackGain.clear();
+    m_trackPeak.clear();
+    m_albumGain.clear();
+    m_albumPeak.clear();
+}
 
 InfoItem* InfoPopulatorPrivate::getOrAddNode(const QString& key, const QString& name, ItemParent parent,
                                              InfoItem::ItemType type, InfoItem::ValueType valueType,
@@ -98,6 +117,9 @@ void InfoPopulatorPrivate::checkAddParentNode(InfoModel::ItemParent parent)
     }
     else if(parent == InfoModel::ItemParent::General) {
         getOrAddNode(QStringLiteral("General"), InfoPopulator::tr("General"), ItemParent::Root, InfoItem::Header);
+    }
+    else if(parent == InfoModel::ItemParent::ReplayGain) {
+        getOrAddNode(QStringLiteral("ReplayGain"), InfoPopulator::tr("ReplayGain"), ItemParent::Root, InfoItem::Header);
     }
     else if(parent == InfoModel::ItemParent::Other) {
         getOrAddNode(QStringLiteral("Other"), InfoPopulator::tr("Other"), ItemParent::Root, InfoItem::Header);
@@ -197,6 +219,42 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
                       InfoItem::Percentage);
 }
 
+void InfoPopulatorPrivate::addTrackReplayGain(int total)
+{
+    const auto formatGain = [](const double gain) -> QString {
+        return QStringLiteral("%1 dB").arg(QString::number(gain, 'f', 2));
+    };
+    const auto formatPeak = [](const double gain) -> QString {
+        return QString::number(gain, 'f', 6);
+    };
+
+    if(m_trackGain.size() == 1) {
+        checkAddEntryNode(QStringLiteral("TrackGain"), InfoPopulator::tr("Track Gain"), ItemParent::ReplayGain,
+                          QString::number(*m_trackGain.cbegin()), InfoItem::Total,
+                          InfoItem::FormatFloatFunc{formatGain}, true);
+    }
+    if(m_trackPeak.size() == 1) {
+        checkAddEntryNode(QStringLiteral("TrackPeak"), InfoPopulator::tr("Track Peak"), ItemParent::ReplayGain,
+                          QString::number(*m_trackPeak.cbegin()), InfoItem::Total,
+                          InfoItem::FormatFloatFunc{formatPeak}, true);
+    }
+    if(m_albumGain.size() == 1) {
+        checkAddEntryNode(QStringLiteral("AlbumGain"), InfoPopulator::tr("Album Gain"), ItemParent::ReplayGain,
+                          QString::number(*m_albumGain.cbegin()), InfoItem::Total,
+                          InfoItem::FormatFloatFunc{formatGain}, true);
+    }
+    if(m_albumPeak.size() == 1) {
+        checkAddEntryNode(QStringLiteral("AlbumPeak"), InfoPopulator::tr("Album Peak"), ItemParent::ReplayGain,
+                          QString::number(*m_albumPeak.cbegin()), InfoItem::Total,
+                          InfoItem::FormatFloatFunc{formatPeak}, true);
+    }
+    if(total > 1 && !m_trackPeak.empty()) {
+        checkAddEntryNode(QStringLiteral("TotalPeak"), InfoPopulator::tr("Total Peak"), ItemParent::ReplayGain,
+                          QString::number(*std::ranges::max_element(m_trackPeak)), InfoItem::Max,
+                          InfoItem::FormatFloatFunc{formatPeak}, true);
+    }
+}
+
 void InfoPopulatorPrivate::addTrackOther(const Track& track)
 {
     const auto props = track.extraProperties();
@@ -227,6 +285,23 @@ void InfoPopulatorPrivate::addTrackNodes(InfoItem::Options options, const TrackL
         if(options & InfoItem::Other) {
             addTrackOther(track);
         }
+
+        if(track.hasTrackGain()) {
+            m_trackGain.emplace(track.rgTrackGain());
+        }
+        if(track.hasTrackPeak()) {
+            m_trackPeak.emplace(track.rgTrackPeak());
+        }
+        if(track.hasAlbumGain()) {
+            m_albumGain.emplace(track.rgAlbumGain());
+        }
+        if(track.hasAlbumPeak()) {
+            m_albumPeak.emplace(track.rgAlbumPeak());
+        }
+    }
+
+    if(options & InfoItem::ReplayGain) {
+        addTrackReplayGain(total);
     }
 }
 
@@ -241,7 +316,7 @@ void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks)
 {
     setState(Running);
 
-    p->m_data.clear();
+    p->reset();
 
     p->addTrackNodes(options, tracks);
 
@@ -249,6 +324,8 @@ void InfoPopulator::run(InfoItem::Options options, const TrackList& tracks)
         emit populated(p->m_data);
         emit finished();
     }
+
+    p->reset();
 
     setState(Idle);
 }

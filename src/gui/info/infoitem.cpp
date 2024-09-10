@@ -211,14 +211,11 @@ bool InfoItem::operator<(const InfoItem& other) const
         return false;
     }
 
-    if(m_type == Entry) {
-        if(leftIsCustom && rightIsCustom) {
-            return cmp < 0;
-        }
-        return false;
+    if(m_type == Entry && leftIsCustom && rightIsCustom) {
+        return cmp < 0;
     }
 
-    return cmp > 0;
+    return false;
 }
 
 InfoItem::ItemType InfoItem::type() const

@@ -202,6 +202,14 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
         resetModel();
     });
 
+    auto* showReplayGain = new QAction(tr("ReplayGain"), this);
+    showReplayGain->setCheckable(true);
+    showReplayGain->setChecked(options & InfoItem::ReplayGain);
+    QAction::connect(showReplayGain, &QAction::triggered, this, [this](bool checked) {
+        m_model->setOption(InfoItem::ReplayGain, checked);
+        resetModel();
+    });
+
     auto* showOther = new QAction(tr("Other"), this);
     showOther->setCheckable(true);
     showOther->setChecked(options & InfoItem::Other);
@@ -218,6 +226,7 @@ void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
     menu->addAction(showExtendedMetadata);
     menu->addAction(showLocation);
     menu->addAction(showGeneral);
+    menu->addAction(showReplayGain);
     menu->addAction(showOther);
 
     menu->popup(event->globalPos());
