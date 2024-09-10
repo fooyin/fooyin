@@ -423,7 +423,7 @@ void AudioRenderer::calculateGain()
             break;
     }
 
-    if(gain == 0.0) {
+    if((mode & AudioEngine::ApplyGain) && gain == 0.0) {
         // Assume no rg info
         preamp = m_settings->value<Settings::Core::NonRGPreAmp>();
     }
