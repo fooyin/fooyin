@@ -44,10 +44,10 @@ public:
 
     template <typename Value>
     void checkAddEntryNode(const QString& key, const QString& name, InfoModel::ItemParent parent, Value&& value,
-                           InfoItem::ValueType valueType = InfoItem::ValueType::Concat,
-                           InfoItem::FormatFunc numFunc  = {})
+                           InfoItem::ValueType valueType  = InfoItem::ValueType::Concat,
+                           InfoItem::FormatFunc&& numFunc = {}, bool includeEmpty = false)
     {
-        if constexpr(std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>) {
+        if(!includeEmpty && (!std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>)) {
             if(value.isEmpty()) {
                 return;
             }
@@ -148,41 +148,48 @@ void InfoPopulatorPrivate::addTrackLocation(int total, const Track& track)
                           track.prettyFilepath());
         if(track.subsong() >= 0) {
             checkAddEntryNode(QStringLiteral("SubsongIndex"), InfoPopulator::tr("Subsong Index"), ItemParent::Location,
-                              track.subsong());
+                              QString::number(track.subsong()));
         }
     }
 
     checkAddEntryNode(QStringLiteral("FileSize"),
                       total > 1 ? InfoPopulator::tr("Total Size") : InfoPopulator::tr("File Size"),
-                      ItemParent::Location, track.fileSize(), InfoItem::Total,
-                      [](uint64_t size) -> QString { return Utils::formatFileSize(size, true); });
+                      ItemParent::Location, QString::number(track.fileSize()), InfoItem::Total,
+                      InfoItem::FormatUIntFunc{[](uint64_t size) -> QString {
+                          return Utils::formatFileSize(size, true);
+                      }});
     checkAddEntryNode(QStringLiteral("LastModified"), InfoPopulator::tr("Last Modified"), ItemParent::Location,
-                      track.modifiedTime(), InfoItem::Max, Utils::formatTimeMs);
+                      QString::number(track.modifiedTime()), InfoItem::Max,
+                      InfoItem::FormatUIntFunc{Utils::formatTimeMs});
 
     if(total == 1) {
-        checkAddEntryNode(QStringLiteral("Added"), InfoPopulator::tr("Added"), ItemParent::Location, track.addedTime(),
-                          InfoItem::Max, Utils::formatTimeMs);
+        checkAddEntryNode(QStringLiteral("Added"), InfoPopulator::tr("Added"), ItemParent::Location,
+                          QString::number(track.addedTime()), InfoItem::Max,
+                          InfoItem::FormatUIntFunc{Utils::formatTimeMs});
     }
 }
 
 void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
 {
     if(total > 1) {
-        checkAddEntryNode(QStringLiteral("Tracks"), InfoPopulator::tr("Tracks"), ItemParent::General, 1,
-                          InfoItem::Total);
+        checkAddEntryNode(QStringLiteral("Tracks"), InfoPopulator::tr("Tracks"), ItemParent::General,
+                          QStringLiteral("1"), InfoItem::Total);
     }
 
-    checkAddEntryNode(QStringLiteral("Duration"), InfoPopulator::tr("Duration"), ItemParent::General, track.duration(),
-                      InfoItem::Total, Utils::msToStringExtended);
-    checkAddEntryNode(QStringLiteral("Channels"), InfoPopulator::tr("Channels"), ItemParent::General, track.channels(),
-                      InfoItem::Percentage);
-    checkAddEntryNode(QStringLiteral("BitDepth"), InfoPopulator::tr("Bit Depth"), ItemParent::General, track.bitDepth(),
-                      InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("Duration"), InfoPopulator::tr("Duration"), ItemParent::General,
+                      QString::number(track.duration()), InfoItem::Total,
+                      InfoItem::FormatUIntFunc{Utils::msToStringExtended});
+    checkAddEntryNode(QStringLiteral("Channels"), InfoPopulator::tr("Channels"), ItemParent::General,
+                      QString::number(track.channels()), InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("BitDepth"), InfoPopulator::tr("Bit Depth"), ItemParent::General,
+                      QString::number(track.bitDepth()), InfoItem::Percentage);
     if(track.bitrate() > 0) {
-        checkAddEntryNode(
-            QStringLiteral("Bitrate"), total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
-            ItemParent::General, track.bitrate(), InfoItem::Average,
-            [](uint64_t bitrate) -> QString { return QString::number(bitrate) + QStringLiteral(" kbps"); });
+        checkAddEntryNode(QStringLiteral("Bitrate"),
+                          total > 1 ? InfoPopulator::tr("Avg. Bitrate") : InfoPopulator::tr("Bitrate"),
+                          ItemParent::General, QString::number(track.bitrate()), InfoItem::Average,
+                          InfoItem::FormatUIntFunc{[](uint64_t bitrate) -> QString {
+                              return QStringLiteral("%1 kbps").arg(bitrate);
+                          }});
     }
     checkAddEntryNode(QStringLiteral("SampleRate"), InfoPopulator::tr("Sample Rate"), ItemParent::General,
                       QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);

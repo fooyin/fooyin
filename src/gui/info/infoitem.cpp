@@ -21,36 +21,98 @@
 
 #include <QCollator>
 
-#include <algorithm>
-
 namespace {
-QString formatPercentage(const std::map<QString, int>& values)
+double getTotalFloat(const QStringList& values)
 {
-    if(values.size() == 1) {
-        const auto val = values.cbegin();
+    double total{0.0};
+
+    for(const QString& str : values) {
+        bool ok{false};
+        const double value = str.toDouble(&ok);
+        if(ok) {
+            total += value;
+        }
+    }
+
+    return total;
+};
+
+uint64_t getTotal(const QStringList& values)
+{
+    uint64_t total{0};
+
+    for(const QString& str : values) {
+        bool ok{false};
+        const uint64_t value = str.toULongLong(&ok);
+        if(ok) {
+            total += value;
+        }
+    }
+
+    return total;
+};
+
+double getMaxFloat(const QStringList& values)
+{
+    double max{0.0};
+
+    for(const QString& str : values) {
+        bool ok{false};
+        const double value = str.toDouble(&ok);
+        if(ok) {
+            max = std::max(max, value);
+        }
+    }
+
+    return max;
+};
+
+uint64_t getMax(const QStringList& values)
+{
+    uint64_t max{0};
+
+    for(const QString& str : values) {
+        bool ok{false};
+        const uint64_t value = str.toULongLong(&ok);
+        if(ok) {
+            max = std::max(max, value);
+        }
+    }
+
+    return max;
+};
+
+QString formatPercentage(const QStringList& values)
+{
+    std::map<QString, int> valueCounts;
+    for(const auto& value : values) {
+        ++valueCounts[value];
+    }
+
+    if(valueCounts.size() == 1) {
+        const auto val = valueCounts.cbegin();
         if(val->first == u"-1") {
             return {};
         }
         return val->first;
     }
 
-    int count{0};
-    for(const auto& [_, value] : values) {
-        count += value;
+    int totalCount{0};
+    for(const auto& [_, count] : valueCounts) {
+        totalCount += count;
     }
 
     std::map<QString, double> ratios;
-    for(const auto& [key, value] : values) {
-        ratios[key] = (static_cast<double>(value) / count) * 100;
+    for(const auto& [key, count] : valueCounts) {
+        ratios[key] = (static_cast<double>(count) / totalCount) * 100;
     }
 
     QStringList formattedList;
-    for(const auto& [key, value] : ratios) {
+    for(const auto& [key, ratio] : ratios) {
         if(key != u"-1") {
-            formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(value, 'f', 1)));
+            formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(ratio, 'f', 1)));
         }
     }
-
     return formattedList.join(u"; ");
 }
 
@@ -60,26 +122,75 @@ QString joinValues(const QStringList& values)
     for(const QString& value : values) {
         list.append(value);
     }
-
     return list.join(u"; ");
+}
+
+QString calculateAverage(const QStringList& values, const Fooyin::InfoItem::FormatFunc& format, bool isFloat)
+{
+    const double average
+        = (isFloat ? getTotalFloat(values) : static_cast<double>(getTotal(values))) / static_cast<int>(values.size());
+    return std::visit(
+        [average](const auto& func) -> QString {
+            if(func) {
+                return func(average);
+            }
+            return QString::number(average);
+        },
+        format);
+}
+
+QString calculateTotal(const QStringList& values, const Fooyin::InfoItem::FormatFunc& format, bool isFloat)
+{
+    return std::visit(
+        [&values, isFloat](const auto& func) -> QString {
+            if(func) {
+                if(isFloat) {
+                    return func(getTotalFloat(values));
+                }
+                return func(getTotal(values));
+            }
+            if(isFloat) {
+                return QString::number(getTotalFloat(values));
+            }
+            return QString::number(getTotal(values));
+        },
+        format);
+}
+
+QString calculateMax(const QStringList& values, const Fooyin::InfoItem::FormatFunc& format, bool isFloat)
+{
+    return std::visit(
+        [&values, isFloat](const auto& func) -> QString {
+            if(func) {
+                if(isFloat) {
+                    return func(getMaxFloat(values));
+                }
+                return func(getMax(values));
+            }
+            if(isFloat) {
+                return QString::number(getMaxFloat(values));
+            }
+            return QString::number(getMax(values));
+        },
+        format);
 }
 } // namespace
 
 namespace Fooyin {
 InfoItem::InfoItem()
-    : InfoItem{Header, {}, nullptr, ValueType::Concat, {}}
+    : InfoItem{Header, {}, nullptr, ValueType::Concat, FormatUIntFunc{nullptr}}
 { }
 
 InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType)
-    : InfoItem{type, std::move(name), parent, valueType, {}}
+    : InfoItem{type, std::move(name), parent, valueType, FormatUIntFunc{nullptr}}
 { }
 
 InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc)
     : TreeItem{parent}
     , m_type{type}
     , m_valueType{valueType}
+    , m_isFloat{false}
     , m_name{std::move(name)}
-    , m_numValue{0}
     , m_formatNum{std::move(numFunc)}
 { }
 
@@ -131,65 +242,35 @@ QVariant InfoItem::value() const
         }
         case(ValueType::Percentage): {
             if(m_value.isEmpty()) {
-                m_value = formatPercentage(m_percentValues);
+                m_value = formatPercentage(m_values);
             }
             return m_value;
         }
-        case(ValueType::Average):
-            if(m_numValue == 0 && !m_numValues.empty()) {
-                m_numValue = std::reduce(m_numValues.cbegin(), m_numValues.cend()) / m_numValues.size();
+        case(ValueType::Average): {
+            if(m_value.isEmpty() && !m_values.empty()) {
+                m_value = calculateAverage(m_values, m_formatNum, m_isFloat);
             }
-            // Fallthrough
-        case(ValueType::Total):
-        case(ValueType::Max):
-            if(m_formatNum) {
-                return m_formatNum(m_numValue);
+            return m_value;
+        }
+        case(ValueType::Total): {
+            if(m_value.isEmpty() && !m_values.empty()) {
+                m_value = calculateTotal(m_values, m_formatNum, m_isFloat);
             }
-            return QVariant::fromValue(m_numValue);
+            return m_value;
+        }
+        case(ValueType::Max): {
+            if(m_value.isEmpty() && !m_values.empty()) {
+                m_value = calculateMax(m_values, m_formatNum, m_isFloat);
+            }
+            return m_value;
+        }
     }
     return m_value;
 }
 
-void InfoItem::addTrackValue(uint64_t value)
+void InfoItem::setIsFloat(bool isFloat)
 {
-    switch(m_valueType) {
-        case(ValueType::Concat):
-            addTrackValue(QString::number(value));
-            break;
-        case(ValueType::Average):
-            m_numValues.push_back(value);
-            break;
-        case(ValueType::Total):
-            m_numValue += value;
-            break;
-        case(ValueType::Max):
-            m_numValue = std::max(m_numValue, value);
-            break;
-        case(ValueType::Percentage):
-            m_percentValues[QString::number(value)]++;
-            break;
-    }
-}
-
-void InfoItem::addTrackValue(int value)
-{
-    switch(m_valueType) {
-        case(ValueType::Concat):
-            addTrackValue(QString::number(value));
-            break;
-        case(ValueType::Average):
-            m_numValues.push_back(value);
-            break;
-        case(ValueType::Total):
-            m_numValue += value;
-            break;
-        case(ValueType::Max):
-            m_numValue = std::max(m_numValue, static_cast<uint64_t>(value));
-            break;
-        case(ValueType::Percentage):
-            m_percentValues[QString::number(value)]++;
-            break;
-    }
+    m_isFloat = isFloat;
 }
 
 void InfoItem::addTrackValue(const QString& value)
@@ -198,8 +279,8 @@ void InfoItem::addTrackValue(const QString& value)
         return;
     }
 
-    if(m_valueType == ValueType::Percentage) {
-        m_percentValues[value]++;
+    if(m_valueType != ValueType::Concat) {
+        m_values.append(value);
         return;
     }
 

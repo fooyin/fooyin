@@ -25,28 +25,28 @@ namespace Fooyin {
 class InfoItem : public TreeItem<InfoItem>
 {
 public:
-    enum ItemType
+    enum ItemType : uint16_t
     {
         Header = Qt::UserRole,
         Entry
     };
 
-    enum Role
+    enum Role : uint16_t
     {
         Type = Qt::UserRole + 5,
         Value
     };
 
-    enum ValueType
+    enum ValueType : uint8_t
     {
-        Concat,
+        Concat = 0,
         Average,
         Total,
         Max,
         Percentage
     };
 
-    enum Option
+    enum Option : uint16_t
     {
         None             = 0,
         Metadata         = 1 << 0,
@@ -58,7 +58,9 @@ public:
     };
     Q_DECLARE_FLAGS(Options, Option)
 
-    using FormatFunc = std::function<QString(uint64_t)>;
+    using FormatUIntFunc  = std::function<QString(uint64_t)>;
+    using FormatFloatFunc = std::function<QString(double)>;
+    using FormatFunc      = std::variant<FormatUIntFunc, FormatFloatFunc>;
 
     InfoItem();
     InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType);
@@ -70,20 +72,18 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] QVariant value() const;
 
-    void addTrackValue(uint64_t value);
-    void addTrackValue(int value);
+    void setIsFloat(bool isFloat);
+
     void addTrackValue(const QString& value);
     void addTrackValue(const QStringList& values);
 
 private:
     ItemType m_type;
     ValueType m_valueType;
+    bool m_isFloat;
 
     QString m_name;
-    std::vector<uint64_t> m_numValues;
-    mutable uint64_t m_numValue;
     QStringList m_values;
-    std::map<QString, int> m_percentValues;
     mutable QString m_value;
 
     FormatFunc m_formatNum;
