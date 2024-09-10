@@ -141,10 +141,11 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
 
 void ReplayGainWidget::load()
 {
-    const auto mode = m_settings->value<Settings::Core::RGMode>();
+    const auto mode = static_cast<AudioEngine::RGProcessing>(m_settings->value<Settings::Core::RGMode>());
     m_disabled->setChecked(mode == AudioEngine::NoProcessing);
     m_applyGain->setChecked(mode == AudioEngine::ApplyGain);
-    m_applyGainClipping->setChecked(mode == (AudioEngine::ApplyGain | AudioEngine::PreventClipping));
+    m_applyGainClipping->setChecked(
+        mode == static_cast<AudioEngine::RGProcessing>(AudioEngine::ApplyGain | AudioEngine::PreventClipping));
     m_clipping->setChecked(mode == AudioEngine::PreventClipping);
 
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
@@ -180,10 +181,16 @@ void ReplayGainWidget::apply()
 
     m_settings->set<Settings::Core::RGMode>(mode);
 
-    m_settings->set<Settings::Core::RGType>(static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track
-                                                             : m_albumGain->isChecked()
-                                                                 ? ReplayGainType::Album
-                                                                 : ReplayGainType::PlaybackOrder));
+    if(m_trackGain->isChecked()) {
+        m_settings->set<Settings::Core::RGType>(static_cast<int>(ReplayGainType::Track));
+    }
+    else if(m_albumGain->isChecked()) {
+        m_settings->set<Settings::Core::RGType>(static_cast<int>(ReplayGainType::Album));
+    }
+    else if(m_orderGain->isChecked()) {
+        m_settings->set<Settings::Core::RGType>(static_cast<int>(ReplayGainType::PlaybackOrder));
+    }
+
     m_settings->set<Settings::Core::RGPreAmp>(static_cast<float>(m_rgPreAmp->value()));
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 }
