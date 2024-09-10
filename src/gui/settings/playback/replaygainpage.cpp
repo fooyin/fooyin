@@ -149,12 +149,9 @@ void ReplayGainWidget::load()
     m_clipping->setChecked(mode == AudioEngine::PreventClipping);
 
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
-    if(gainType == ReplayGainType::Track) {
-        m_trackGain->setChecked(true);
-    }
-    else {
-        m_albumGain->setChecked(true);
-    }
+    m_trackGain->setChecked(gainType == ReplayGainType::Track);
+    m_albumGain->setChecked(gainType == ReplayGainType::Album);
+    m_orderGain->setChecked(gainType == ReplayGainType::PlaybackOrder);
 
     const auto rgPreAmp = static_cast<double>(m_settings->value<Settings::Core::RGPreAmp>());
     m_rgPreAmp->setValue(rgPreAmp);
