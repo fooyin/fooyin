@@ -327,7 +327,8 @@ void ApplicationPrivate::loadPlaybackState() const
 
     auto seek = [this, lastPos]() {
         if(lastPos > 0) {
-            m_playerController->seek(lastPos);
+            QMetaObject::invokeMethod(
+                m_playerController, [this, lastPos]() { m_playerController->seek(lastPos); }, Qt::QueuedConnection);
         }
     };
 
@@ -336,17 +337,17 @@ void ApplicationPrivate::loadPlaybackState() const
         switch(state.value()) {
             case(Player::PlayState::Paused):
                 qCDebug(APP) << "Restoring paused state…";
-                m_playerController->pause();
+                QMetaObject::invokeMethod(m_playerController, &PlayerController::pause, Qt::QueuedConnection);
                 seek();
                 break;
             case(Player::PlayState::Playing):
                 qCDebug(APP) << "Restoring playing state…";
-                m_playerController->play();
+                QMetaObject::invokeMethod(m_playerController, &PlayerController::play, Qt::QueuedConnection);
                 seek();
                 break;
             case(Player::PlayState::Stopped):
                 qCDebug(APP) << "Restoring stopped state…";
-                m_playerController->stop();
+                QMetaObject::invokeMethod(m_playerController, &PlayerController::stop, Qt::QueuedConnection);
                 break;
         }
     }

@@ -57,14 +57,14 @@ WaveBarWidget::WaveBarWidget(WaveformBuilder* builder, PlayerController* playerC
     m_container->insertWidget(1, m_seekbar);
     m_container->setLabelsEnabled(false);
 
-    m_seekbar->setPlayState(playerController->playState());
+    m_seekbar->setPlayState(m_playerController->playState());
+    m_seekbar->setPosition(m_playerController->currentPosition());
 
     QObject::connect(m_builder, &WaveformBuilder::generatingWaveform, this, [this]() { m_seekbar->processData({}); });
     QObject::connect(m_builder, &WaveformBuilder::waveformRescaled, m_seekbar, &WaveSeekBar::processData);
 
     QObject::connect(playerController, &PlayerController::positionChanged, m_seekbar, &WaveSeekBar::setPosition);
-    QObject::connect(playerController, &PlayerController::playStateChanged, this,
-                     [this](Player::PlayState state) { m_seekbar->setPlayState(state); });
+    QObject::connect(playerController, &PlayerController::playStateChanged, m_seekbar, &WaveSeekBar::setPlayState);
     QObject::connect(m_seekbar, &WaveSeekBar::sliderMoved, playerController, [this](uint64_t pos) {
         m_playerController->seek(pos);
         if(m_playerController->playState() == Player::PlayState::Stopped) {
@@ -117,7 +117,7 @@ void WaveBarWidget::loadLayoutData(const QJsonObject& layout)
 
 void WaveBarWidget::changeTrack(const Track& track)
 {
-    m_seekbar->setPosition(0);
+    m_seekbar->setPosition(m_playerController->currentPosition());
     m_builder->generateAndScale(track);
 }
 
