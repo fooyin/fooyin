@@ -28,8 +28,6 @@
 
 #include <QButtonGroup>
 #include <QCheckBox>
-#include <QComboBox>
-#include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -52,7 +50,10 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QComboBox* m_process;
+    QRadioButton* m_disabled;
+    QRadioButton* m_applyGain;
+    QRadioButton* m_applyGainClipping;
+    QRadioButton* m_clipping;
     QRadioButton* m_trackGain;
     QRadioButton* m_albumGain;
     QRadioButton* m_orderGain;
@@ -62,7 +63,10 @@ private:
 
 ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_process{new QComboBox(this)}
+    , m_disabled{new QRadioButton(tr("Disabled"), this)}
+    , m_applyGain{new QRadioButton(tr("Apply gain"), this)}
+    , m_applyGainClipping{new QRadioButton(tr("Apply gain and prevent clipping according to peak"), this)}
+    , m_clipping{new QRadioButton(tr("Only prevent clipping according to peak"), this)}
     , m_trackGain{new QRadioButton(tr("Use track-based gain"), this)}
     , m_albumGain{new QRadioButton(tr("Use album-based gain"), this)}
     , m_orderGain{new QRadioButton(tr("Use gain based on playback order"), this)}
@@ -74,6 +78,20 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     m_orderGain->setToolTip(tr("Base normalisation on track loudness if shuffling tracks, else album loudness"));
 
     auto* layout = new QGridLayout(this);
+
+    auto* modeGroupBox    = new QGroupBox(tr("Mode"), this);
+    auto* modeButtonGroup = new QButtonGroup(this);
+    auto* modeBoxLayout   = new QGridLayout(modeGroupBox);
+
+    modeButtonGroup->addButton(m_disabled);
+    modeButtonGroup->addButton(m_applyGain);
+    modeButtonGroup->addButton(m_applyGainClipping);
+    modeButtonGroup->addButton(m_clipping);
+
+    modeBoxLayout->addWidget(m_disabled);
+    modeBoxLayout->addWidget(m_applyGain);
+    modeBoxLayout->addWidget(m_applyGainClipping);
+    modeBoxLayout->addWidget(m_clipping);
 
     auto* typeGroupBox    = new QGroupBox(tr("Type"), this);
     auto* typeButtonGroup = new QButtonGroup(this);
@@ -114,27 +132,20 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     preAmpLayout->addWidget(m_preAmp, 1, 1);
     preAmpLayout->setColumnStretch(1, 1);
 
-    auto* processLabel = new QLabel(tr("Mode") + u":", this);
+    layout->addWidget(modeGroupBox, 0, 0);
+    layout->addWidget(typeGroupBox, 1, 0);
+    layout->addWidget(preAmpGroup, 2, 0);
 
-    m_process->addItem(tr("None"), AudioEngine::NoProcessing);
-    m_process->addItem(tr("Apply gain"), AudioEngine::ApplyGain);
-    m_process->addItem(tr("Apply gain and prevent clipping according to peak"),
-                       QVariant::fromValue(AudioEngine::ApplyGain | AudioEngine::PreventClipping));
-    m_process->addItem(tr("Only prevent clipping according to peak"), AudioEngine::PreventClipping);
-
-    layout->addWidget(processLabel, 0, 0);
-    layout->addWidget(m_process, 0, 1);
-    layout->addWidget(typeGroupBox, 1, 0, 1, 2);
-    layout->addWidget(preAmpGroup, 2, 0, 1, 2);
-
-    layout->setColumnStretch(1, 1);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
 void ReplayGainWidget::load()
 {
-    const int mode = m_process->findData(m_settings->value<Settings::Core::RGMode>());
-    m_process->setCurrentIndex(mode >= 0 ? mode : 0);
+    const auto mode = m_settings->value<Settings::Core::RGMode>();
+    m_disabled->setChecked(mode == AudioEngine::NoProcessing);
+    m_applyGain->setChecked(mode == AudioEngine::ApplyGain);
+    m_applyGainClipping->setChecked(mode == (AudioEngine::ApplyGain | AudioEngine::PreventClipping));
+    m_clipping->setChecked(mode == AudioEngine::PreventClipping);
 
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::RGType>());
     if(gainType == ReplayGainType::Track) {
@@ -152,7 +163,23 @@ void ReplayGainWidget::load()
 
 void ReplayGainWidget::apply()
 {
-    m_settings->set<Settings::Core::RGMode>(m_process->currentData().toInt());
+    int mode{AudioEngine::NoProcessing};
+
+    if(m_disabled->isChecked()) {
+        mode = AudioEngine::NoProcessing;
+    }
+    else if(m_applyGain->isChecked()) {
+        mode = AudioEngine::ApplyGain;
+    }
+    else if(m_applyGainClipping->isChecked()) {
+        mode = AudioEngine::ApplyGain | AudioEngine::PreventClipping;
+    }
+    else if(m_clipping->isChecked()) {
+        mode = AudioEngine::PreventClipping;
+    }
+
+    m_settings->set<Settings::Core::RGMode>(mode);
+
     m_settings->set<Settings::Core::RGType>(
         static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track : ReplayGainType::Album));
     m_settings->set<Settings::Core::RGPreAmp>(static_cast<float>(m_rgPreAmp->value()));
