@@ -36,6 +36,16 @@ public:
 
 namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
+
+enum RGProcess : uint8_t
+{
+    None            = 0,
+    ApplyGain       = 1 << 0,
+    PreventClipping = 1 << 1,
+};
+Q_DECLARE_FLAGS(RGProcessing, RGProcess)
+Q_FLAG_NS(RGProcessing)
+
 enum CoreSettings : uint32_t
 {
     Version                 = 1 | Type::String,
@@ -58,7 +68,7 @@ enum CoreSettings : uint32_t
     ExternalSortScript      = 18 | Type::String,
     Shutdown                = 19 | Type::Bool,
     StopAfterCurrent        = 20 | Type::Bool,
-    ReplayGainEnabled       = 21 | Type::Bool,
+    ReplayGainMode          = 21 | Type::Int,
     ReplayGainType          = 22 | Type::Int,
     ReplayGainPreAmp        = 23 | Type::Float,
     NonRGPreAmp             = 24 | Type::Float,

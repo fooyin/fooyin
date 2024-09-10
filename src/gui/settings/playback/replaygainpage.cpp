@@ -28,6 +28,7 @@
 
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -51,7 +52,7 @@ public:
 private:
     SettingsManager* m_settings;
 
-    QCheckBox* m_enabled;
+    QComboBox* m_process;
     QRadioButton* m_trackGain;
     QRadioButton* m_albumGain;
     DoubleSliderEditor* m_rgPreAmp;
@@ -60,15 +61,14 @@ private:
 
 ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     : m_settings{settings}
-    , m_enabled{new QCheckBox(tr("Enable ReplayGain"), this)}
+    , m_process{new QComboBox(this)}
     , m_trackGain{new QRadioButton(tr("Use track-based gain"), this)}
     , m_albumGain{new QRadioButton(tr("Use album-based gain"), this)}
     , m_rgPreAmp{new DoubleSliderEditor(this)}
     , m_preAmp{new DoubleSliderEditor(this)}
 {
-    m_enabled->setToolTip(tr("Normalize loudness for tracks or albums"));
-    m_trackGain->setToolTip(tr("Base normalization on track loudness"));
-    m_albumGain->setToolTip(tr("Base normalization on album loudness"));
+    m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
+    m_albumGain->setToolTip(tr("Base normalisation on album loudness"));
 
     auto* layout = new QGridLayout(this);
 
@@ -109,16 +109,29 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     preAmpLayout->addWidget(m_preAmp, 1, 1);
     preAmpLayout->setColumnStretch(1, 1);
 
-    layout->addWidget(m_enabled, 0, 0);
-    layout->addWidget(typeGroupBox, 1, 0);
-    layout->addWidget(preAmpGroup, 2, 0);
+    auto* processLabel = new QLabel(tr("Mode") + u":", this);
 
+    using RGProcess = Settings::Core::RGProcess;
+    m_process->addItem(tr("None"), RGProcess::None);
+    m_process->addItem(tr("Apply gain"), RGProcess::ApplyGain);
+    m_process->addItem(tr("Apply gain and prevent clipping according to peak"),
+                       RGProcess::ApplyGain | RGProcess::PreventClipping);
+    m_process->addItem(tr("Only prevent clipping according to peak"), RGProcess::PreventClipping);
+
+    layout->addWidget(processLabel, 0, 0);
+    layout->addWidget(m_process, 0, 1);
+    layout->addWidget(typeGroupBox, 1, 0, 1, 2);
+    layout->addWidget(preAmpGroup, 2, 0, 1, 2);
+
+    layout->setColumnStretch(1, 1);
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
 void ReplayGainWidget::load()
 {
-    m_enabled->setChecked(m_settings->value<Settings::Core::ReplayGainEnabled>());
+    const int mode = m_process->findData(m_settings->value<Settings::Core::ReplayGainMode>());
+    m_process->setCurrentIndex(mode >= 0 ? mode : 0);
+
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
     if(gainType == ReplayGainType::Track) {
         m_trackGain->setChecked(true);
@@ -135,7 +148,7 @@ void ReplayGainWidget::load()
 
 void ReplayGainWidget::apply()
 {
-    m_settings->set<Settings::Core::ReplayGainEnabled>(m_enabled->isChecked());
+    m_settings->set<Settings::Core::ReplayGainMode>(m_process->currentData().toInt());
     m_settings->set<Settings::Core::ReplayGainType>(
         static_cast<int>(m_trackGain->isChecked() ? ReplayGainType::Track : ReplayGainType::Album));
     m_settings->set<Settings::Core::ReplayGainPreAmp>(static_cast<float>(m_rgPreAmp->value()));
@@ -144,7 +157,7 @@ void ReplayGainWidget::apply()
 
 void ReplayGainWidget::reset()
 {
-    m_settings->reset<Settings::Core::ReplayGainEnabled>();
+    m_settings->reset<Settings::Core::ReplayGainMode>();
     m_settings->reset<Settings::Core::ReplayGainPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();
 }

@@ -83,9 +83,9 @@ constexpr auto ExternalExcludeTypes    = "Library/ExternalExcludeTypes";
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries = 0 | Settings::Bool,
-    MuteVolume       = 1 | Settings::Double,
-    DisabledPlugins  = 2 | Settings::StringList,
+    MonitorLibraries = 0 | Type::Bool,
+    MuteVolume       = 1 | Type::Double,
+    DisabledPlugins  = 2 | Type::StringList,
     EngineFading     = 3 | Type::Bool,
     FadingIntervals  = 4 | Type::Variant,
 };

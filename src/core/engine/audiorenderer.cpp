@@ -61,7 +61,7 @@ AudioRenderer::AudioRenderer(SettingsManager* settings, QObject* parent)
 {
     setObjectName(QStringLiteral("Renderer"));
 
-    m_settings->subscribe<Settings::Core::ReplayGainEnabled>(this, &AudioRenderer::calculateGain);
+    m_settings->subscribe<Settings::Core::ReplayGainMode>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::ReplayGainType>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::ReplayGainPreAmp>(this, &AudioRenderer::calculateGain);
     m_settings->subscribe<Settings::Core::NonRGPreAmp>(this, &AudioRenderer::calculateGain);
@@ -400,23 +400,27 @@ void AudioRenderer::calculateGain()
 {
     m_gainScale = 1.0;
 
-    if(!m_settings->value<Settings::Core::ReplayGainEnabled>()) {
+    using RGProcess = Settings::Core::RGProcess;
+    const auto mode = m_settings->value<Settings::Core::ReplayGainMode>();
+    if(mode == RGProcess::None) {
         return;
     }
 
-    float peak{0.0};
+    float peak{0.0F};
 
     const auto gainType = static_cast<ReplayGainType>(m_settings->value<Settings::Core::ReplayGainType>());
     float preamp        = m_settings->value<Settings::Core::ReplayGainPreAmp>();
 
-    float gain{0.0};
-    if(gainType == ReplayGainType::Album) {
-        gain = m_currentTrack.replayGainAlbumGain();
-        peak = m_currentTrack.replayGainAlbumPeak();
-    }
-    else if(gainType == ReplayGainType::Track) {
-        gain = m_currentTrack.replayGainTrackGain();
-        peak = m_currentTrack.replayGainTrackPeak();
+    float gain{0.0F};
+    switch(gainType) {
+        case(ReplayGainType::Track):
+            gain = (mode & RGProcess::ApplyGain) ? m_currentTrack.replayGainAlbumGain() : 0.0F;
+            peak = (mode & RGProcess::PreventClipping) ? m_currentTrack.replayGainAlbumPeak() : 0.0F;
+            break;
+        case(ReplayGainType::Album):
+            gain = (mode & RGProcess::ApplyGain) ? m_currentTrack.replayGainTrackGain() : 0.0F;
+            peak = (mode & RGProcess::PreventClipping) ? m_currentTrack.replayGainTrackPeak() : 0.0F;
+            break;
     }
 
     if(gain == 0.0) {

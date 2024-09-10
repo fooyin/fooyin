@@ -67,7 +67,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                   QStringLiteral("Library/ExternalSortScript"));
     m_settings->createTempSetting<Shutdown>(false);
     m_settings->createTempSetting<StopAfterCurrent>(false);
-    m_settings->createSetting<ReplayGainEnabled>(false, QStringLiteral("Engine/ReplayGainEnabled"));
+    m_settings->createSetting<ReplayGainMode>(0, QStringLiteral("Engine/ReplayGainMode"));
     m_settings->createSetting<Settings::Core::ReplayGainType>(static_cast<int>(ReplayGainType::Track),
                                                               QStringLiteral("Engine/ReplayGainType"));
     m_settings->createSetting<ReplayGainPreAmp>(0.0F, QStringLiteral("Engine/ReplayGainPreAmp"));
