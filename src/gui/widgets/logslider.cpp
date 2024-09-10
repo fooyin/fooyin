@@ -30,6 +30,11 @@ LogSlider::LogSlider(Qt::Orientation type, QWidget* parent)
                      [this](double value) { emit logValueChanged(std::pow(10, (value / m_scale))); });
 }
 
+double LogSlider::scale() const
+{
+    return m_scale;
+}
+
 void LogSlider::setRange(double min, double max)
 {
     const auto logMin = static_cast<int>(std::log10(min) * m_scale);

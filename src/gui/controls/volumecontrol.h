@@ -35,9 +35,11 @@ class VolumeControl : public FyWidget
 public:
     enum Option : uint8_t
     {
-        Icon   = 1 << 0,
-        Slider = 1 << 1,
-        All    = Icon | Slider
+        IconMode   = 1 << 0,
+        SliderMode = 1 << 1,
+        AllModes   = IconMode | SliderMode,
+
+        Tooltip = 1 << 2,
     };
     Q_DECLARE_FLAGS(Options, Option)
 
