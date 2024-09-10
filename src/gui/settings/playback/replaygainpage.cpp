@@ -195,6 +195,7 @@ void ReplayGainWidget::apply()
 void ReplayGainWidget::reset()
 {
     m_settings->reset<Settings::Core::RGMode>();
+    m_settings->reset<Settings::Core::RGType>();
     m_settings->reset<Settings::Core::RGPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();
 }
