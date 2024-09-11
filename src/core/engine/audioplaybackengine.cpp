@@ -131,7 +131,6 @@ void AudioPlaybackEngine::changeTrack(const Track& track)
     }
 
     stopWorkers();
-    emit positionChanged(m_currentTrack, 0);
     m_ending = false;
     m_clock.setPaused(true);
     m_clock.sync();
