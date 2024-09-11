@@ -356,9 +356,7 @@ QString swapPrefix(const QStringList& vec)
         const QString firstWord = words.first();
         if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
             words.removeFirst();
-            if(!words.isEmpty()) {
-                words.last().append(QStringLiteral(","));
-            }
+            words.last().append(QStringLiteral(","));
             words.append(firstWord);
         }
 
