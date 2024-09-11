@@ -145,8 +145,9 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
     }
 
     if(options & VolumeControl::Tooltip) {
-        QObject::connect(m_volumeSlider, &LogSlider::sliderMoved, [this](int value) { updateToolTip(value); });
-        QObject::connect(m_volumeSlider, &LogSlider::sliderReleased, [this]() {
+        QObject::connect(m_volumeSlider, &LogSlider::sliderMoved, m_volumeSlider,
+                         [this](int value) { updateToolTip(value); });
+        QObject::connect(m_volumeSlider, &LogSlider::sliderReleased, m_volumeSlider, [this]() {
             if(m_toolTip) {
                 m_toolTip->deleteLater();
             }
@@ -227,12 +228,12 @@ void VolumeControlPrivate::updateToolTip(int value)
         m_toolTip->show();
     }
 
-    constexpr auto MinVolumeLog10 = -2;
+    static const auto MinVolumeLog10 = std::log10(MinVolume);
     if(value > (MinVolumeLog10 * m_volumeSlider->scale())) {
         m_toolTip->setText(QString(u8"%1 dB").arg(20 * (value / m_volumeSlider->scale()), 0, 'f', 1));
     }
     else {
-        m_toolTip->setText(QString(u8"-∞ dB"));
+        m_toolTip->setText(QStringLiteral(u"-∞ dB"));
     }
 
     QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());
