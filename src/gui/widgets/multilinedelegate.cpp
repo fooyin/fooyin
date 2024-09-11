@@ -17,7 +17,7 @@
  *
  */
 
-#include "utils/multilinedelegate.h"
+#include <gui/widgets/multilinedelegate.h>
 
 #include <QPainter>
 #include <QPlainTextEdit>
@@ -115,4 +115,4 @@ void MultiLineEditDelegate::adjustEditorHeight(QWidget* editor, const QStyleOpti
 }
 } // namespace Fooyin
 
-#include "utils/moc_multilinedelegate.cpp"
+#include "gui/widgets/moc_multilinedelegate.cpp"

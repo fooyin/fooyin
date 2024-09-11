@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/slider.h>
+#include <gui/widgets/slider.h>
 
 #include <QMouseEvent>
 #include <QProxyStyle>
@@ -51,4 +51,4 @@ void Slider::mousePressEvent(QMouseEvent* e)
 }
 } // namespace Fooyin
 
-#include "utils/moc_slider.cpp"
+#include "gui/widgets/moc_slider.cpp"

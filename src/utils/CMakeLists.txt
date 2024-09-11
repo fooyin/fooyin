@@ -8,10 +8,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
     ${CMAKE_SOURCE_DIR}/include/utils/itemregistry.h
     ${CMAKE_SOURCE_DIR}/include/utils/math.h
-    ${CMAKE_SOURCE_DIR}/include/utils/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/paths.h
     ${CMAKE_SOURCE_DIR}/include/utils/signalthrottler.h
-    ${CMAKE_SOURCE_DIR}/include/utils/slider.h
     ${CMAKE_SOURCE_DIR}/include/utils/stareditor.h
     ${CMAKE_SOURCE_DIR}/include/utils/stardelegate.h
     ${CMAKE_SOURCE_DIR}/include/utils/starrating.h
@@ -48,12 +46,8 @@ set(SOURCES
     id.cpp
     modelutils.cpp
     modelutils.h
-    multilinedelegate.cpp
     paths.cpp
-    scrollarea.cpp
-    scrollarea.h
     signalthrottler.cpp
-    slider.cpp
     stareditor.cpp
     stardelegate.cpp
     starrating.cpp

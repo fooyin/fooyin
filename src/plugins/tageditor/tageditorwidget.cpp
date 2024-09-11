@@ -24,10 +24,10 @@
 #include "tageditormodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/multilinedelegate.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
-#include <utils/multilinedelegate.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/stardelegate.h>
 #include <utils/stareditor.h>

@@ -19,19 +19,100 @@
 
 #include "settingsdialog.h"
 
-#include "scrollarea.h"
 #include "settingsmodel.h"
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
 
 #include <QDialogButtonBox>
+#include <QEvent>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QResizeEvent>
+#include <QScrollArea>
 #include <QStackedLayout>
 #include <QTreeView>
 
 namespace Fooyin {
+class ScrollArea : public QScrollArea
+{
+    Q_OBJECT
+
+public:
+    explicit ScrollArea(QWidget* parent);
+
+private:
+    void resizeEvent(QResizeEvent* event) override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
+    bool event(QEvent* event) override;
+
+    [[nodiscard]] int scrollBarWidth() const;
+};
+
+ScrollArea::ScrollArea(QWidget* parent)
+    : QScrollArea{parent}
+{
+    setFrameShape(QFrame::NoFrame);
+    setFrameShadow(QFrame::Plain);
+    setWidgetResizable(true);
+    setAutoFillBackground(true);
+}
+
+void ScrollArea::resizeEvent(QResizeEvent* event)
+{
+    QWidget* child = widget();
+    if(child) {
+        const QSize chilSizeHint = child->minimumSizeHint();
+        const int width          = frameWidth() * 2;
+        QSize innerSize          = event->size() - QSize{width, width};
+
+        if(chilSizeHint.height() > innerSize.height()) {
+            // Child widget is bigger
+            innerSize.setWidth(innerSize.width() - scrollBarWidth());
+            innerSize.setHeight(chilSizeHint.height());
+        }
+        // Resize to fit scroll area
+        child->resize(innerSize);
+    }
+    QScrollArea::resizeEvent(event);
+}
+
+QSize ScrollArea::minimumSizeHint() const
+{
+    QWidget* child = widget();
+    if(child) {
+        const int width = frameWidth() * 2;
+        QSize minSize   = child->minimumSizeHint();
+
+        minSize += QSize{width, width};
+        minSize += QSize{scrollBarWidth(), 0};
+
+        minSize.setWidth(std::min(minSize.width(), 250));
+        minSize.setHeight(std::min(minSize.height(), 250));
+
+        return minSize;
+    }
+    return {0, 0};
+}
+
+bool ScrollArea::event(QEvent* event)
+{
+    if(event->type() == QEvent::LayoutRequest) {
+        updateGeometry();
+    }
+    return QScrollArea::event(event);
+}
+
+int ScrollArea::scrollBarWidth() const
+{
+    auto* scrollArea = const_cast<ScrollArea*>(this); // NOLINT
+    QWidgetList list = scrollArea->scrollBarWidgets(Qt::AlignRight);
+    if(list.isEmpty()) {
+        return 0;
+    }
+    return list.first()->sizeHint().width();
+}
+
 class SimpleTreeView : public QTreeView
 {
     Q_OBJECT

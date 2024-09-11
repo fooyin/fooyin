@@ -21,7 +21,7 @@
 
 #include "fygui_export.h"
 
-#include <utils/multilinedelegate.h>
+#include <gui/widgets/multilinedelegate.h>
 
 #include <QLineEdit>
 #include <QPlainTextEdit>

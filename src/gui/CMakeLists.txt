@@ -34,11 +34,13 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandedtreeview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/extendabletableview.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/multilinedelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/overlaywidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/popuplineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/scriptlineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/singletabbedwidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/slider.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
     coverprovider.cpp
@@ -297,11 +299,13 @@ set(SOURCES
     widgets/logslider.h
     widgets/menuheader.cpp
     widgets/menuheader.h
+    widgets/multilinedelegate.cpp
     widgets/overlaywidget.cpp
     widgets/popuplineedit.cpp
     widgets/scriptlineedit.cpp
     widgets/seekcontainer.cpp
     widgets/singletabbedwidget.cpp
+    widgets/slider.cpp
     widgets/spacer.cpp
     widgets/spacer.h
     widgets/statuswidget.cpp

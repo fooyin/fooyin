@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <utils/slider.h>
+#include <gui/widgets/slider.h>
 
 namespace Fooyin {
 class LogSlider : public Slider
