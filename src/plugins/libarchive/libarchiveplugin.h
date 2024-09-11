@@ -25,8 +25,8 @@
 
 namespace Fooyin::LibArchive {
 class LibArchivePlugin : public QObject,
-                      public Plugin,
-                      public InputPlugin
+                         public Plugin,
+                         public InputPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "libarchive.json")
@@ -36,4 +36,4 @@ public:
     [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
 };
-} // namespace Fooyin::Archive
+} // namespace Fooyin::LibArchive

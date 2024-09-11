@@ -21,7 +21,7 @@
 
 #include "playlist/playlistcolumn.h"
 
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/tablemodel.h>
 #include <utils/treestatusitem.h>
 

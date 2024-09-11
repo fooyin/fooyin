@@ -24,7 +24,7 @@
 #include "waveformdata.h"
 
 #include <core/player/playerdefs.h>
-#include <utils/widgets/tooltip.h>
+#include <gui/widgets/tooltip.h>
 
 #include <QPointer>
 #include <QWidget>

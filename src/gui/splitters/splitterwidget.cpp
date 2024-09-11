@@ -19,8 +19,8 @@
 
 #include "splitterwidget.h"
 
-#include "dummy.h"
 #include "internalguisettings.h"
+#include "widgets/dummy.h"
 
 #include <gui/widgetprovider.h>
 #include <utils/enum.h>

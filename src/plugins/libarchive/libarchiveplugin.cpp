@@ -35,4 +35,4 @@ InputCreator LibArchivePlugin::inputCreator() const
     };
     return input;
 }
-} // namespace Fooyin::Archive
+} // namespace Fooyin::LibArchive

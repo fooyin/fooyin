@@ -20,7 +20,7 @@
 #pragma once
 
 #include <gui/widgetcontainer.h>
-#include <utils/widgets/editabletabwidget.h>
+#include <gui/widgets/editabletabwidget.h>
 
 namespace Fooyin {
 class SettingsManager;

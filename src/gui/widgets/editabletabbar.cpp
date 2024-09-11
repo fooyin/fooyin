@@ -17,11 +17,11 @@
  *
  */
 
-#include <utils/widgets/editabletabbar.h>
+#include <gui/widgets/editabletabbar.h>
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/popuplineedit.h>
 #include <utils/utils.h>
-#include <utils/widgets/popuplineedit.h>
 
 #include <QInputDialog>
 #include <QMainWindow>
@@ -183,4 +183,4 @@ void EditableTabBar::wheelEvent(QWheelEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_editabletabbar.cpp"
+#include "gui/widgets/moc_editabletabbar.cpp"

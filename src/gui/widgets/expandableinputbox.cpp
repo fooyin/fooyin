@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/expandableinputbox.h>
+#include <gui/widgets/expandableinputbox.h>
 
 #include <utils/utils.h>
 
@@ -310,4 +310,4 @@ void ExpandableInputBox::clearBlocks()
 }
 } // namespace Fooyin
 
-#include "utils/moc_expandableinputbox.cpp"
+#include "gui/widgets/moc_expandableinputbox.cpp"

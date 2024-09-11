@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/fontbutton.h>
+#include <gui/widgets/fontbutton.h>
 
 #include <QFontDialog>
 

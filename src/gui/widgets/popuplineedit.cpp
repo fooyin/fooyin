@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/popuplineedit.h>
+#include <gui/widgets/popuplineedit.h>
 
 #include <QKeyEvent>
 #include <QPainter>
@@ -59,4 +59,4 @@ void PopupLineEdit::focusOutEvent(QFocusEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_popuplineedit.cpp"
+#include "gui/widgets/moc_popuplineedit.cpp"

@@ -21,8 +21,8 @@
 
 #include "fyutils_export.h"
 
-#include <QObject>
 #include <QBasicTimer>
+#include <QObject>
 
 namespace Fooyin {
 class FYUTILS_EXPORT SignalThrottler : public QObject

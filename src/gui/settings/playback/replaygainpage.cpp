@@ -23,8 +23,8 @@
 #include <core/engine/enginecontroller.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/doubleslidereditor.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/doubleslidereditor.h>
 
 #include <QButtonGroup>
 #include <QCheckBox>

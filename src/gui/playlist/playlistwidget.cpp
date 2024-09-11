@@ -39,6 +39,7 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
+#include <gui/widgets/autoheaderview.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
@@ -49,7 +50,6 @@
 #include <utils/stardelegate.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
-#include <utils/widgets/autoheaderview.h>
 
 #include <QActionGroup>
 #include <QApplication>

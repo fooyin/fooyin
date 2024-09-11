@@ -1,12 +1,8 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/async.h
-    ${CMAKE_SOURCE_DIR}/include/utils/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/utils/crypto.h
     ${CMAKE_SOURCE_DIR}/include/utils/datastream.h
     ${CMAKE_SOURCE_DIR}/include/utils/enum.h
-    ${CMAKE_SOURCE_DIR}/include/utils/expandableinputbox.h
-    ${CMAKE_SOURCE_DIR}/include/utils/expandingcombobox.h
-    ${CMAKE_SOURCE_DIR}/include/utils/extendabletableview.h
     ${CMAKE_SOURCE_DIR}/include/utils/fileutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/helpers.h
     ${CMAKE_SOURCE_DIR}/include/utils/id.h
@@ -46,24 +42,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/autoheaderview.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/colourbutton.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/doubleslidereditor.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabbar.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/editabletabwidget.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/elidedlabel.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/expandedtreeview.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/fontbutton.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/overlaywidget.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/popuplineedit.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/singletabbedwidget.h
-    ${CMAKE_SOURCE_DIR}/include/utils/widgets/tooltip.h
-    clickablelabel.cpp
     crypto.cpp
     datastream.cpp
-    expandableinputbox.cpp
-    expandingcombobox.cpp
-    extendabletableview.cpp
     fileutils.cpp
     id.cpp
     modelutils.cpp
@@ -73,8 +53,6 @@ set(SOURCES
     scrollarea.cpp
     scrollarea.h
     signalthrottler.cpp
-    simpletreeview.cpp
-    simpletreeview.h
     slider.cpp
     stareditor.cpp
     stardelegate.cpp
@@ -111,18 +89,6 @@ set(SOURCES
     settings/settingsmodel.cpp
     settings/settingsmodel.h
     settings/settingspage.cpp
-    widgets/autoheaderview.cpp
-    widgets/colourbutton.cpp
-    widgets/doubleslidereditor.cpp
-    widgets/editabletabbar.cpp
-    widgets/editabletabwidget.cpp
-    widgets/elidedlabel.cpp
-    widgets/expandedtreeview.cpp
-    widgets/fontbutton.cpp
-    widgets/overlaywidget.cpp
-    widgets/popuplineedit.cpp
-    widgets/singletabbedwidget.cpp
-    widgets/tooltip.cpp
 )
 
 create_fooyin_library(

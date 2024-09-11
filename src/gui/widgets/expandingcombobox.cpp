@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/expandingcombobox.h>
+#include <gui/widgets/expandingcombobox.h>
 
 #include <QAbstractItemView>
 
@@ -64,4 +64,4 @@ void ExpandingComboBox::resizeDropDown()
 }
 } // namespace Fooyin
 
-#include "utils/moc_expandingcombobox.cpp"
+#include "gui/widgets/moc_expandingcombobox.cpp"

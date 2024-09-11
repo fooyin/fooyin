@@ -21,7 +21,6 @@
 
 #include "scrollarea.h"
 #include "settingsmodel.h"
-#include "simpletreeview.h"
 
 #include <utils/settings/settingsmanager.h>
 #include <utils/settings/settingspage.h>
@@ -33,6 +32,49 @@
 #include <QTreeView>
 
 namespace Fooyin {
+class SimpleTreeView : public QTreeView
+{
+    Q_OBJECT
+
+public:
+    explicit SimpleTreeView(QWidget* parent = nullptr);
+
+    [[nodiscard]] QSize sizeHint() const override;
+
+private:
+    [[nodiscard]] int calculateMaxItemWidth(const QModelIndex& index) const;
+};
+
+SimpleTreeView::SimpleTreeView(QWidget* parent)
+    : QTreeView{parent}
+{
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+QSize SimpleTreeView::sizeHint() const
+{
+    const int maxWidth = calculateMaxItemWidth({});
+    return {maxWidth, 100};
+}
+
+int SimpleTreeView::calculateMaxItemWidth(const QModelIndex& index) const
+{
+    int maxItemWidth{0};
+
+    const int itemWidth = sizeHintForIndex(index).width();
+    maxItemWidth        = std::max(maxItemWidth, itemWidth);
+
+    const int rowCount = model()->rowCount(index);
+    for(int row{0}; row < rowCount; ++row) {
+        const QModelIndex childIndex = model()->index(row, 0, index);
+        const int childWidth         = calculateMaxItemWidth(childIndex);
+        maxItemWidth                 = std::max(maxItemWidth, childWidth);
+    }
+    maxItemWidth += indentation();
+    return maxItemWidth;
+}
+
 SettingsDialog::SettingsDialog(PageList pages, QWidget* parent)
     : QDialog{parent}
     , m_model{new SettingsModel(this)}
@@ -257,3 +299,4 @@ SettingsPage* SettingsDialog::findPage(const Id& id)
 } // namespace Fooyin
 
 #include "moc_settingsdialog.cpp"
+#include "settingsdialog.moc"

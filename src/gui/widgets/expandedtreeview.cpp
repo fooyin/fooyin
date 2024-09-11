@@ -17,8 +17,9 @@
  *
  */
 
-#include "utils/utils.h"
-#include <utils/widgets/expandedtreeview.h>
+#include <gui/widgets/expandedtreeview.h>
+
+#include <utils/utils.h>
 
 #include <QDrag>
 #include <QHeaderView>
@@ -4112,5 +4113,5 @@ QModelIndexList ExpandedTreeView::selectedIndexes() const
 }
 } // namespace Fooyin
 
-#include "utils/widgets/expandedtreeview.moc"
-#include "utils/widgets/moc_expandedtreeview.cpp"
+#include "expandedtreeview.moc"
+#include "gui/widgets/moc_expandedtreeview.cpp"

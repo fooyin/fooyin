@@ -28,10 +28,10 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/trackselectioncontroller.h>
-#include <utils/clickablelabel.h>
+#include <gui/widgets/clickablelabel.h>
+#include <gui/widgets/elidedlabel.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/elidedlabel.h>
 
 #include <QBasicTimer>
 #include <QContextMenuEvent>

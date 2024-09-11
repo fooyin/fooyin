@@ -22,7 +22,7 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 #include <gui/propertiesdialog.h>
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 
 #include <QWidget>
 

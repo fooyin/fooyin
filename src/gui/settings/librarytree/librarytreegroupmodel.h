@@ -21,7 +21,7 @@
 
 #include "librarytree/librarytreegroup.h"
 
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/treestatusitem.h>
 
 namespace Fooyin {

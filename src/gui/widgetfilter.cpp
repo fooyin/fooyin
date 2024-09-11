@@ -20,7 +20,7 @@
 #include <gui/widgetfilter.h>
 
 #include <gui/editablelayout.h>
-#include <utils/widgets/overlaywidget.h>
+#include <gui/widgets/overlaywidget.h>
 
 #include <QApplication>
 #include <QEvent>

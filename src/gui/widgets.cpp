@@ -26,6 +26,7 @@
 #include "dirbrowser/dirbrowser.h"
 #include "librarytree/librarytreecontroller.h"
 #include "librarytree/librarytreewidget.h"
+#include "lyrics/lyricswidget.h"
 #include "mainwindow.h"
 #include "playlist/organiser/playlistorganiser.h"
 #include "playlist/playlistbox.h"
@@ -58,25 +59,22 @@
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/playbackqueuepage.h"
 #include "settings/widgets/statuswidgetpage.h"
+#include "splitters/splitterwidget.h"
+#include "splitters/tabstackwidget.h"
 #include "widgets/coverwidget.h"
 #include "widgets/dummy.h"
-#include "widgets/lyricswidget.h"
 #include "widgets/spacer.h"
-#include "widgets/splitterwidget.h"
 #include "widgets/statuswidget.h"
-#include "widgets/tabstackwidget.h"
 
 #include <core/application.h>
 #include <core/library/musiclibrary.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
-#include <core/playlist/playlistloader.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/plugins/guiplugincontext.h>
 #include <gui/theme/themeregistry.h>
 #include <gui/widgetprovider.h>
-#include <utils/utils.h>
 
 namespace Fooyin {
 Widgets::Widgets(Application* core, MainWindow* window, const GuiPluginContext& gui,

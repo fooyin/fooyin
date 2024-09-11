@@ -24,8 +24,8 @@
 #include "playlist/presetregistry.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/expandableinputbox.h>
 #include <gui/widgets/scriptlineedit.h>
-#include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>

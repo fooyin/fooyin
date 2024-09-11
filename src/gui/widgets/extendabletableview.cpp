@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 
 #include <gui/guiconstants.h>
 #include <utils/actions/actionmanager.h>
@@ -389,4 +389,4 @@ void ExtendableTableView::resizeEvent(QResizeEvent* event)
 } // namespace Fooyin
 
 #include "extendabletableview.moc"
-#include "utils/moc_extendabletableview.cpp"
+#include "gui/widgets/moc_extendabletableview.cpp"

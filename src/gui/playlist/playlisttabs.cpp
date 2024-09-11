@@ -27,13 +27,13 @@
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/editabletabbar.h>
+#include <gui/widgets/singletabbedwidget.h>
 #include <gui/widgets/toolbutton.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/editabletabbar.h>
-#include <utils/widgets/singletabbedwidget.h>
 
 #include <QContextMenuEvent>
 #include <QIcon>

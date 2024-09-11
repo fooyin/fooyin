@@ -107,7 +107,8 @@ TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& trac
     return calcSortTracks(p->parseScript(sort), tracks, indexes, order);
 }
 
-TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order) const
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
+                                      Qt::SortOrder order) const
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
     return sortTracks(calcTracks, order);

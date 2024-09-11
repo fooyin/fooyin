@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/doubleslidereditor.h>
+#include <gui/widgets/doubleslidereditor.h>
 
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
@@ -160,4 +160,4 @@ void DoubleSliderEditor::updateSlider()
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_doubleslidereditor.cpp"
+#include "gui/widgets/moc_doubleslidereditor.cpp"

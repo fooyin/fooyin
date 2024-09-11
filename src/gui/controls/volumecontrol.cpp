@@ -26,11 +26,11 @@
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/toolbutton.h>
+#include <gui/widgets/tooltip.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/tooltip.h>
 
 #include <QAction>
 #include <QApplication>
@@ -66,7 +66,7 @@ public:
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
-    VolumeControl::Options m_options{VolumeControl::AllModes};
+    VolumeControl::Options m_options{VolumeControl::Default};
     QHBoxLayout* m_layout;
     QPointer<ToolButton> m_volumeIcon;
     QPointer<HoverMenu> m_volumeMenu;
@@ -181,8 +181,8 @@ void VolumeControlPrivate::showVolumeMenu() const
     // Only display volume slider above icon if it won't clip above the main window.
     const bool displayAbove = (yPosToWindow - menuHeight) > 0;
 
-    const int x            = (m_self->width() / 2) - (m_volumeMenu->sizeHint().width() / 2);
-    const int y            = displayAbove ? (-menuHeight - 10) : (m_self->height() + 10);
+    const int x = (m_self->width() / 2) - (m_volumeMenu->sizeHint().width() / 2);
+    const int y = displayAbove ? (-menuHeight - 10) : (m_self->height() + 10);
 
     const QPoint pos(m_self->mapToGlobal(QPoint{x, y}));
     m_volumeMenu->move(pos);
@@ -230,10 +230,10 @@ void VolumeControlPrivate::updateToolTip(int value)
 
     static const auto MinVolumeLog10 = std::log10(MinVolume);
     if(value > (MinVolumeLog10 * m_volumeSlider->scale())) {
-        m_toolTip->setText(QString(u8"%1 dB").arg(20 * (value / m_volumeSlider->scale()), 0, 'f', 1));
+        m_toolTip->setText(QStringLiteral("%1 dB").arg(20 * (value / m_volumeSlider->scale()), 0, 'f', 1));
     }
     else {
-        m_toolTip->setText(QStringLiteral(u"-∞ dB"));
+        m_toolTip->setText(QStringLiteral("-∞ dB"));
     }
 
     QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());

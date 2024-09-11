@@ -28,6 +28,8 @@
 #include "settings/filtersettings.h"
 
 #include <core/track.h>
+#include <gui/widgets/autoheaderview.h>
+#include <gui/widgets/expandedtreeview.h>
 #include <utils/actions/widgetcontext.h>
 #include <utils/async.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -35,8 +37,6 @@
 #include <utils/signalthrottler.h>
 #include <utils/tooltipfilter.h>
 #include <utils/utils.h>
-#include <utils/widgets/autoheaderview.h>
-#include <utils/widgets/expandedtreeview.h>
 
 #include <QActionGroup>
 #include <QApplication>

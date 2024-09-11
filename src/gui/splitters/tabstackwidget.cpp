@@ -21,10 +21,10 @@
 
 #include <core/constants.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/editabletabbar.h>
+#include <gui/widgets/editabletabwidget.h>
 #include <utils/enum.h>
 #include <utils/helpers.h>
-#include <utils/widgets/editabletabbar.h>
-#include <utils/widgets/editabletabwidget.h>
 
 #include <QActionGroup>
 #include <QContextMenuEvent>

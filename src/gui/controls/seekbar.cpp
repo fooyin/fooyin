@@ -23,9 +23,9 @@
 #include <core/track.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/seekcontainer.h>
+#include <gui/widgets/tooltip.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/tooltip.h>
 
 #include <QContextMenuEvent>
 #include <QHBoxLayout>

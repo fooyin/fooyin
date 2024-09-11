@@ -26,10 +26,10 @@
 #include <gui/internalguisettings.h>
 #include <gui/theme/fytheme.h>
 #include <gui/theme/themeregistry.h>
+#include <gui/widgets/colourbutton.h>
+#include <gui/widgets/fontbutton.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/colourbutton.h>
-#include <utils/widgets/fontbutton.h>
 
 #include <QApplication>
 #include <QCheckBox>

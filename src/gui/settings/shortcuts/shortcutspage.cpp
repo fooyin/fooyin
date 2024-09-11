@@ -22,8 +22,8 @@
 #include "shortcutsmodel.h"
 
 #include <gui/guiconstants.h>
+#include <gui/widgets/expandableinputbox.h>
 #include <utils/actions/actionmanager.h>
-#include <utils/expandableinputbox.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>

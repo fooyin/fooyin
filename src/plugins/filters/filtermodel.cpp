@@ -28,10 +28,10 @@
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/autoheaderview.h>
 #include <utils/datastream.h>
 #include <utils/helpers.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/autoheaderview.h>
 
 #include <QApplication>
 #include <QColor>

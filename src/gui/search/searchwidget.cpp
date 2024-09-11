@@ -23,10 +23,10 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/popuplineedit.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
-#include <utils/widgets/popuplineedit.h>
 
 #include <QHBoxLayout>
 #include <QJsonObject>

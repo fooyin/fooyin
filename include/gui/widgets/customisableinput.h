@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <utils/expandableinputbox.h>
+#include <gui/widgets/expandableinputbox.h>
 
 namespace Fooyin {
 class CustomisableInputPrivate;

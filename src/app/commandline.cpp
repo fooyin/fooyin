@@ -66,8 +66,7 @@ bool CommandLine::parse()
                 return false;
             }
             case('v'): {
-                const auto version
-                    = QStringLiteral("%1 %2").arg(QStringLiteral("fooyin"), QLatin1String(VERSION));
+                const auto version = QStringLiteral("%1 %2").arg(QStringLiteral("fooyin"), QLatin1String(VERSION));
                 std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }

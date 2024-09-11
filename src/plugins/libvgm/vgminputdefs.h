@@ -22,10 +22,10 @@
 namespace Fooyin::VgmInput {
 constexpr auto RomPathSetting = "VgmInput/RomPath";
 
-constexpr auto DefaultLoopCount = 2;
-constexpr auto LoopCountSetting = "VgmInput/LoopCount";
-constexpr auto DefaultFadeLength = 4000;
-constexpr auto FadeLengthSetting = "VgmInput/FadeLength";
+constexpr auto DefaultLoopCount     = 2;
+constexpr auto LoopCountSetting     = "VgmInput/LoopCount";
+constexpr auto DefaultFadeLength    = 4000;
+constexpr auto FadeLengthSetting    = "VgmInput/FadeLength";
 constexpr auto DefaultSilenceLength = 1000;
 constexpr auto SilenceLengthSetting = "VgmInput/SilenceLength";
 

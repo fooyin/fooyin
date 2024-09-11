@@ -17,16 +17,22 @@
  *
  */
 
-#pragma once
+#include <gui/widgets/editabletabwidget.h>
 
-#include <QTreeView>
+#include <gui/widgets/editabletabbar.h>
 
 namespace Fooyin {
-class SimpleTreeView : public QTreeView
+EditableTabWidget::EditableTabWidget(QWidget* parent)
+    : QTabWidget{parent}
+    , m_tabBar{new EditableTabBar(this)}
 {
-public:
-    explicit SimpleTreeView(QWidget* parent = nullptr);
+    setTabBar(m_tabBar);
+}
 
-    [[nodiscard]] QSize sizeHint() const override;
-};
+EditableTabBar* EditableTabWidget::editableTabBar() const
+{
+    return m_tabBar;
+}
 } // namespace Fooyin
+
+#include "gui/widgets/moc_editabletabwidget.cpp"

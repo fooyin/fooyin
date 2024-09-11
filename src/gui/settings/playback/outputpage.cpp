@@ -23,7 +23,7 @@
 #include <core/engine/enginehandler.h>
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
-#include <utils/expandingcombobox.h>
+#include <gui/widgets/expandingcombobox.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/elidedlabel.h>
+#include <gui/widgets/elidedlabel.h>
 
 #include <QResizeEvent>
 

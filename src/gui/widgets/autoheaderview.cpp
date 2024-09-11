@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/autoheaderview.h>
+#include <gui/widgets/autoheaderview.h>
 
 #include <QActionGroup>
 #include <QApplication>
@@ -779,4 +779,4 @@ void AutoHeaderView::resizeEvent(QResizeEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_autoheaderview.cpp"
+#include "gui/widgets/moc_autoheaderview.cpp"

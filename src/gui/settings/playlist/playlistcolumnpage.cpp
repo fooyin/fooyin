@@ -24,7 +24,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/scripting/scripteditor.h>
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>

@@ -29,12 +29,12 @@
 
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/expandedtreeview.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/crypto.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/expandedtreeview.h>
 
 #include <QContextMenuEvent>
 #include <QHeaderView>

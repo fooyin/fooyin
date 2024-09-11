@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/colourbutton.h>
+#include <gui/widgets/colourbutton.h>
 
 #include <QColorDialog>
 #include <QMouseEvent>
@@ -87,4 +87,4 @@ void ColourButton::paintEvent(QPaintEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_colourbutton.cpp"
+#include "gui/widgets/moc_colourbutton.cpp"

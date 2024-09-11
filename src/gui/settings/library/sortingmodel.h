@@ -20,7 +20,7 @@
 #pragma once
 
 #include <core/library/librarysort.h>
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/treestatusitem.h>
 
 #include <QObject>

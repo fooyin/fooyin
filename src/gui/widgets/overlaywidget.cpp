@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/overlaywidget.h>
+#include <gui/widgets/overlaywidget.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -314,4 +314,4 @@ void OverlayWidget::paintEvent(QPaintEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_overlaywidget.cpp"
+#include "gui/widgets/moc_overlaywidget.cpp"

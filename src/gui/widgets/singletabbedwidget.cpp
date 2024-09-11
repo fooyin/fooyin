@@ -17,9 +17,9 @@
  *
  */
 
-#include <utils/widgets/singletabbedwidget.h>
+#include <gui/widgets/singletabbedwidget.h>
 
-#include <utils/widgets/editabletabbar.h>
+#include <gui/widgets/editabletabbar.h>
 
 #include <QApplication>
 #include <QIcon>
@@ -691,4 +691,4 @@ bool SingleTabbedWidget::event(QEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_singletabbedwidget.cpp"
+#include "gui/widgets/moc_singletabbedwidget.cpp"

@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/clickablelabel.h>
+#include <gui/widgets/clickablelabel.h>
 
 #include <QHBoxLayout>
 #include <QMouseEvent>
@@ -47,4 +47,4 @@ void ClickableLabel::leaveEvent(QEvent* event)
 }
 } // namespace Fooyin
 
-#include "utils/moc_clickablelabel.cpp"
+#include "gui/widgets/moc_clickablelabel.cpp"

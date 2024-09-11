@@ -20,7 +20,7 @@
 #pragma once
 
 #include <core/track.h>
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/tablemodel.h>
 
 namespace Fooyin {

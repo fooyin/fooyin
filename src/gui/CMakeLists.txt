@@ -21,10 +21,26 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/scripting/scriptformatterregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/autoheaderview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/doubleslidereditor.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabbar.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabwidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/elidedlabel.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandableinputbox.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandingcombobox.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandedtreeview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/extendabletableview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/fontbutton.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/overlaywidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/popuplineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/scriptlineedit.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/singletabbedwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
     coverprovider.cpp
     editablelayout.cpp
     fylayout.cpp
@@ -105,6 +121,8 @@ set(SOURCES
     librarytree/librarytreeview.h
     librarytree/librarytreewidget.cpp
     librarytree/librarytreewidget.h
+    lyrics/lyricswidget.h
+    lyrics/lyricswidget.cpp
     menubar/editmenu.cpp
     menubar/editmenu.h
     menubar/filemenu.cpp
@@ -250,32 +268,46 @@ set(SOURCES
     settings/widgets/playbackqueuepage.h
     settings/widgets/statuswidgetpage.cpp
     settings/widgets/statuswidgetpage.h
+    splitters/splitterwidget.cpp
+    splitters/splitterwidget.h
+    splitters/tabstackwidget.cpp
+    splitters/tabstackwidget.h
     theme/fytheme.cpp
     theme/themeregistry.cpp
+    widgets/autoheaderview.cpp
+    widgets/clickablelabel.cpp
+    widgets/colourbutton.cpp
     widgets/coverwidget.cpp
     widgets/coverwidget.h
     widgets/customisableinput.cpp
+    widgets/doubleslidereditor.cpp
     widgets/dummy.cpp
     widgets/dummy.h
+    widgets/elidedlabel.cpp
+    widgets/editabletabbar.cpp
+    widgets/editabletabwidget.cpp
+    widgets/expandableinputbox.cpp
+    widgets/expandedtreeview.cpp
+    widgets/expandingcombobox.cpp
+    widgets/extendabletableview.cpp
+    widgets/fontbutton.cpp
     widgets/hovermenu.cpp
     widgets/hovermenu.h
     widgets/logslider.cpp
     widgets/logslider.h
-    widgets/lyricswidget.h
-    widgets/lyricswidget.cpp
     widgets/menuheader.cpp
     widgets/menuheader.h
+    widgets/overlaywidget.cpp
+    widgets/popuplineedit.cpp
     widgets/scriptlineedit.cpp
     widgets/seekcontainer.cpp
+    widgets/singletabbedwidget.cpp
     widgets/spacer.cpp
     widgets/spacer.h
-    widgets/splitterwidget.cpp
-    widgets/splitterwidget.h
     widgets/statuswidget.cpp
     widgets/statuswidget.h
-    widgets/tabstackwidget.cpp
-    widgets/tabstackwidget.h
     widgets/toolbutton.cpp
+    widgets/tooltip.cpp
     widgets/widgetcontainer.cpp
 )
 

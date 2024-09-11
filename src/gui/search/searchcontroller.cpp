@@ -22,7 +22,7 @@
 #include <gui/editablelayout.h>
 #include <gui/fywidget.h>
 #include <gui/widgetfilter.h>
-#include <utils/widgets/overlaywidget.h>
+#include <gui/widgets/overlaywidget.h>
 
 #include <QGraphicsDropShadowEffect>
 #include <QLabel>

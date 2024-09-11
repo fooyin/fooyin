@@ -29,6 +29,8 @@ class SettingsManager;
 
 class FYGUI_EXPORT ThemeRegistry : public ItemRegistry<FyTheme>
 {
+    Q_OBJECT
+
 public:
     explicit ThemeRegistry(SettingsManager* settings, QObject* parent = nullptr);
 

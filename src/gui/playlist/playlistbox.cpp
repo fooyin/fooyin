@@ -122,7 +122,7 @@ void PlaylistBox::currentPlaylistChanged(const Playlist* playlist) const
     }
 
     const int count = m_playlistBox->count();
-    const UId id  = playlist->id();
+    const UId id    = playlist->id();
 
     for(int i{0}; i < count; ++i) {
         if(m_playlistBox->itemData(i).value<UId>() == id) {

@@ -17,7 +17,7 @@
  *
  */
 
-#include <utils/widgets/tooltip.h>
+#include <gui/widgets/tooltip.h>
 
 #include <QPainter>
 
@@ -117,4 +117,4 @@ void ToolTip::redraw()
 }
 } // namespace Fooyin
 
-#include "utils/widgets/moc_tooltip.cpp"
+#include "gui/widgets/moc_tooltip.cpp"

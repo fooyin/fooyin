@@ -24,8 +24,8 @@
 #include "wavebarconstants.h"
 
 #include <gui/guisettings.h>
+#include <gui/widgets/colourbutton.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/colourbutton.h>
 
 #include <QCheckBox>
 #include <QDoubleSpinBox>

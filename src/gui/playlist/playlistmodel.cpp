@@ -35,6 +35,7 @@
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/autoheaderview.h>
 #include <utils/crypto.h>
 #include <utils/datastream.h>
 #include <utils/modelutils.h>
@@ -42,7 +43,6 @@
 #include <utils/signalthrottler.h>
 #include <utils/starrating.h>
 #include <utils/utils.h>
-#include <utils/widgets/autoheaderview.h>
 
 #include <QApplication>
 #include <QIODevice>

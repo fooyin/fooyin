@@ -20,7 +20,7 @@
 #pragma once
 
 #include <core/track.h>
-#include <utils/widgets/expandedtreeview.h>
+#include <gui/widgets/expandedtreeview.h>
 
 namespace Fooyin {
 class StarDelegate;

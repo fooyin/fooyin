@@ -37,9 +37,8 @@ public:
     {
         IconMode   = 1 << 0,
         SliderMode = 1 << 1,
-        AllModes   = IconMode | SliderMode,
-
-        Tooltip = 1 << 2,
+        Tooltip    = 1 << 2,
+        Default    = (IconMode | SliderMode),
     };
     Q_DECLARE_FLAGS(Options, Option)
 

@@ -32,11 +32,11 @@
 #include <gui/layoutprovider.h>
 #include <gui/widgetcontainer.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/overlaywidget.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/id.h>
 #include <utils/settings/settingsmanager.h>
-#include <utils/widgets/overlaywidget.h>
 
 #include <QApplication>
 #include <QHBoxLayout>

@@ -27,7 +27,7 @@
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
-#include <utils/extendabletableview.h>
+#include <gui/widgets/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>

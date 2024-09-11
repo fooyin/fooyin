@@ -23,7 +23,7 @@
 
 #include <core/track.h>
 #include <gui/fywidget.h>
-#include <utils/widgets/expandedtreeview.h>
+#include <gui/widgets/expandedtreeview.h>
 
 namespace Fooyin {
 class AutoHeaderView;

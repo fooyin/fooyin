@@ -26,6 +26,8 @@
 namespace Fooyin {
 class DecoderModel : public QAbstractListModel
 {
+    Q_OBJECT
+
 public:
     using LoaderVariant = std::variant<std::vector<AudioLoader::LoaderEntry<DecoderCreator>>,
                                        std::vector<AudioLoader::LoaderEntry<ReaderCreator>>>;

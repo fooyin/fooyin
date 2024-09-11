@@ -20,7 +20,7 @@
 #include <gui/widgets/seekcontainer.h>
 
 #include <core/player/playercontroller.h>
-#include <utils/clickablelabel.h>
+#include <gui/widgets/clickablelabel.h>
 #include <utils/utils.h>
 
 #include <QFontMetrics>
