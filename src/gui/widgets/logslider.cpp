@@ -50,7 +50,7 @@ void LogSlider::setScale(double scale)
 
 void LogSlider::setNaturalValue(double value)
 {
-    QSlider::setValue(value == 0.0 ? 0 : static_cast<int>(std::log10(value) * m_scale));
+    QSlider::setValue(value == 0.0 ? minimum() : static_cast<int>(std::log10(value) * m_scale));
 }
 } // namespace Fooyin
 
