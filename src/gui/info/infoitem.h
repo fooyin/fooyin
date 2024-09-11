@@ -46,7 +46,7 @@ public:
         Percentage
     };
 
-    enum Option : uint16_t
+    enum Option : uint8_t
     {
         None             = 0,
         Metadata         = 1 << 0,
@@ -65,7 +65,9 @@ public:
 
     InfoItem();
     InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType);
-    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc);
+    InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, const FormatFunc& formatFunc);
+
+    InfoItem(const InfoItem& other);
 
     bool operator<(const InfoItem& other) const;
 

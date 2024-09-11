@@ -20,6 +20,7 @@
 #include "infoitem.h"
 
 #include <QCollator>
+#include <utility>
 
 namespace {
 double getTotalFloat(const QStringList& values)
@@ -178,21 +179,23 @@ QString calculateMax(const QStringList& values, const Fooyin::InfoItem::FormatFu
 
 namespace Fooyin {
 InfoItem::InfoItem()
-    : InfoItem{Header, {}, nullptr, ValueType::Concat, FormatUIntFunc{nullptr}}
+    : InfoItem{Header, {}, nullptr, ValueType::Concat, {}}
 { }
 
 InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType)
-    : InfoItem{type, std::move(name), parent, valueType, FormatUIntFunc{nullptr}}
+    : InfoItem{type, std::move(name), parent, valueType, {}}
 { }
 
-InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, FormatFunc numFunc)
+InfoItem::InfoItem(ItemType type, QString name, InfoItem* parent, ValueType valueType, const FormatFunc& formatFunc)
     : TreeItem{parent}
     , m_type{type}
     , m_valueType{valueType}
     , m_isFloat{false}
     , m_name{std::move(name)}
-    , m_formatNum{std::move(numFunc)}
+    , m_formatNum{formatFunc}
 { }
+
+InfoItem::InfoItem(const InfoItem& other) = default;
 
 bool InfoItem::operator<(const InfoItem& other) const
 {
