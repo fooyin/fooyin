@@ -338,38 +338,31 @@ QString tab(const QStringList& vec)
 
 QString swapPrefix(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count < 1) {
+    if(vec.isEmpty()) {
         return {};
     }
 
     QStringList result;
+    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{QStringLiteral("A"), QStringLiteral("The")};
+    const QStringList strings  = vec.first().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
 
-    const auto strings = vec.front().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
     for(const QString& str : strings) {
         QStringList words = str.split(QStringLiteral(" "), Qt::SkipEmptyParts);
-
-        if(words.empty()) {
-            result.append(vec.front());
+        if(words.isEmpty()) {
+            result.append(str);
             continue;
-        }
-
-        QStringList prefixes = vec.mid(1);
-        if(prefixes.empty()) {
-            prefixes = {QStringLiteral("A"), QStringLiteral("The")};
         }
 
         const QString firstWord = words.first();
         if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
             words.removeFirst();
-            words.last().append(QStringLiteral(","));
+            if(!words.isEmpty()) {
+                words.last().append(QStringLiteral(","));
+            }
             words.append(firstWord);
-            result.append(words.join(QStringLiteral(" ")));
         }
-        else {
-            result.append(str);
-        }
+
+        result.append(words.join(QStringLiteral(" ")).trimmed());
     }
 
     return result.join(QLatin1String{Constants::UnitSeparator});
@@ -377,31 +370,28 @@ QString swapPrefix(const QStringList& vec)
 
 QString stripPrefix(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count < 1) {
+    if(vec.isEmpty()) {
         return {};
     }
 
-    QStringList words = vec.front().split(QStringLiteral(" "), Qt::SkipEmptyParts);
+    QStringList result;
+    const QStringList prefixes = vec.size() > 1 ? vec.mid(1) : QStringList{QStringLiteral("A"), QStringLiteral("The")};
+    const QStringList strings  = vec.first().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
 
-    if(words.empty()) {
-        return vec.front();
+    for(const QString& str : strings) {
+        QStringList words = str.split(QStringLiteral(" "), Qt::SkipEmptyParts);
+        if(words.isEmpty()) {
+            result.append(str);
+            continue;
+        }
+
+        if(prefixes.contains(words.first(), Qt::CaseInsensitive)) {
+            words.removeFirst();
+        }
+        result.append(words.join(QStringLiteral(" ")).trimmed());
     }
 
-    QStringList prefixes = vec.mid(1);
-
-    if(prefixes.empty()) {
-        prefixes = {QStringLiteral("A"), QStringLiteral("The")};
-    }
-
-    const QString firstWord = words.first();
-    if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
-        words.removeFirst();
-        return words.join(QStringLiteral(" "));
-    }
-
-    return vec.front();
+    return result.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString pad(const QStringList& vec)
