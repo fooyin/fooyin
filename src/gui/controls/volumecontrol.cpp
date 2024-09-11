@@ -30,6 +30,7 @@
 #include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+#include <utils/widgets/tooltip.h>
 
 #include <QAction>
 #include <QApplication>
@@ -37,6 +38,8 @@
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QMenu>
+#include <QStyle>
+#include <QToolTip>
 #include <QWheelEvent>
 
 #include <chrono>
@@ -57,17 +60,19 @@ public:
     void showVolumeMenu() const;
     void volumeChanged(double volume) const;
     void updateDisplay(double volume) const;
+    void updateToolTip(int value);
 
     VolumeControl* m_self;
     ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
-    VolumeControl::Options m_options{VolumeControl::All};
+    VolumeControl::Options m_options{VolumeControl::AllModes};
     QHBoxLayout* m_layout;
     QPointer<ToolButton> m_volumeIcon;
     QPointer<HoverMenu> m_volumeMenu;
     QPointer<QVBoxLayout> m_menuLayout;
     LogSlider* m_volumeSlider;
+    QPointer<ToolTip> m_toolTip;
 };
 
 VolumeControlPrivate::VolumeControlPrivate(VolumeControl* self, ActionManager* actionManager, SettingsManager* settings)
@@ -108,20 +113,20 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
         m_menuLayout->deleteLater();
     }
 
-    if(options & VolumeControl::Slider) {
+    if(options & VolumeControl::SliderMode) {
         m_volumeSlider->setOrientation(Qt::Horizontal);
         m_volumeSlider->setMinimumSize(75, 0);
         m_layout->addWidget(m_volumeSlider);
     }
 
-    if(options & VolumeControl::Icon) {
+    if(options & VolumeControl::IconMode) {
         m_volumeIcon = new ToolButton(m_self);
         if(auto* muteCmd = m_actionManager->command(Constants::Actions::Mute)) {
             m_volumeIcon->setDefaultAction(muteCmd->action());
         }
 
         // If both icon and slider are enabled, avoid hover menu and just add the icon
-        if(!(options & VolumeControl::Slider)) {
+        if(!(options & VolumeControl::SliderMode)) {
             m_volumeMenu = new HoverMenu(m_self);
             m_menuLayout = new QVBoxLayout(m_volumeMenu);
 
@@ -137,6 +142,16 @@ void VolumeControlPrivate::changeDisplay(VolumeControl::Options options, bool in
         m_layout->addWidget(m_volumeIcon);
         updateDisplay(m_settings->value<Settings::Core::OutputVolume>());
         updateButtonStyle();
+    }
+
+    if(options & VolumeControl::Tooltip) {
+        QObject::connect(m_volumeSlider, &LogSlider::sliderMoved, m_volumeSlider,
+                         [this](int value) { updateToolTip(value); });
+        QObject::connect(m_volumeSlider, &LogSlider::sliderReleased, m_volumeSlider, [this]() {
+            if(m_toolTip) {
+                m_toolTip->deleteLater();
+            }
+        });
     }
 }
 
@@ -166,7 +181,7 @@ void VolumeControlPrivate::showVolumeMenu() const
     // Only display volume slider above icon if it won't clip above the main window.
     const bool displayAbove = (yPosToWindow - menuHeight) > 0;
 
-    static constexpr int x = -15;
+    const int x            = (m_self->width() / 2) - (m_volumeMenu->sizeHint().width() / 2);
     const int y            = displayAbove ? (-menuHeight - 10) : (m_self->height() + 10);
 
     const QPoint pos(m_self->mapToGlobal(QPoint{x, y}));
@@ -206,6 +221,54 @@ void VolumeControlPrivate::updateDisplay(double volume) const
     }
 }
 
+void VolumeControlPrivate::updateToolTip(int value)
+{
+    if(!m_toolTip) {
+        m_toolTip = new ToolTip(m_self->window());
+        m_toolTip->show();
+    }
+
+    static const auto MinVolumeLog10 = std::log10(MinVolume);
+    if(value > (MinVolumeLog10 * m_volumeSlider->scale())) {
+        m_toolTip->setText(QString(u8"%1 dB").arg(20 * (value / m_volumeSlider->scale()), 0, 'f', 1));
+    }
+    else {
+        m_toolTip->setText(QStringLiteral(u"-∞ dB"));
+    }
+
+    QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());
+    const QPoint posToWindow = m_volumeSlider->mapToGlobal(QPoint{0, 0});
+
+    if(m_volumeSlider->orientation() == Qt::Horizontal) {
+        const bool displayAbove = (posToWindow.y() - (m_volumeSlider->height() + m_toolTip->height())) > 0;
+
+        toolTipPos.setX(toolTipPos.x() - m_toolTip->width());
+        toolTipPos.setX(std::clamp(toolTipPos.x(), -m_toolTip->width(), m_volumeSlider->width() - m_toolTip->width()));
+
+        if(displayAbove) {
+            toolTipPos.setY(m_volumeSlider->rect().top() - m_toolTip->height() / 4);
+        }
+        else {
+            toolTipPos.setY(m_volumeSlider->rect().bottom() + (m_volumeSlider->height() + m_toolTip->height()));
+        }
+    }
+    else {
+        const bool displayLeft = (posToWindow.x() - (m_volumeSlider->width() + m_toolTip->width())) > 0;
+        const auto pos         = m_volumeSlider->mapToGlobal(m_volumeSlider->pos());
+
+        toolTipPos.ry() += m_toolTip->height() / 2;
+
+        if(displayLeft) {
+            toolTipPos.setX(pos.x() - (m_toolTip->width() * 2 + m_volumeSlider->width()));
+        }
+        else {
+            toolTipPos.setX(pos.x() - m_volumeSlider->width());
+        }
+    }
+
+    m_toolTip->setPosition(m_volumeSlider->mapTo(m_volumeSlider->window(), toolTipPos));
+}
+
 VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , p{std::make_unique<VolumeControlPrivate>(this, actionManager, settings)}
@@ -237,8 +300,8 @@ void VolumeControl::loadLayoutData(const QJsonObject& layout)
 {
     if(layout.contains(u"Mode")) {
         // Support old format (0=Icon)
-        const int mode = std::max(1, layout.value(u"Mode").toInt());
-        p->changeDisplay(static_cast<Option>(mode));
+        auto options = static_cast<Options>(std::max(1, layout.value(u"Mode").toInt()));
+        p->changeDisplay(options);
     }
 }
 
@@ -249,12 +312,15 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
 
     auto* iconMode   = new QAction(tr("Icon"), menu);
     auto* sliderMode = new QAction(tr("Slider"), menu);
+    auto* toolTip    = new QAction(tr("Tooltip"), menu);
 
     iconMode->setCheckable(true);
     sliderMode->setCheckable(true);
+    toolTip->setCheckable(true);
 
-    iconMode->setChecked(p->m_options & Icon);
-    sliderMode->setChecked(p->m_options & Slider);
+    iconMode->setChecked(p->m_options & IconMode);
+    sliderMode->setChecked(p->m_options & SliderMode);
+    toolTip->setChecked(p->m_options & Tooltip);
 
     auto toggleOption = [this](QAction* action, VolumeControl::Option option) {
         VolumeControl::Options newOptions = p->m_options;
@@ -265,8 +331,8 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
             newOptions &= ~option;
         }
 
-        // Ensure at least one option is always selected
-        if(!(newOptions & Icon) && !(newOptions & Slider)) {
+        // Ensure at least one mode option is always selected
+        if(!(newOptions & (IconMode | SliderMode))) {
             action->setChecked(true);
         }
         else {
@@ -274,12 +340,16 @@ void VolumeControl::contextMenuEvent(QContextMenuEvent* event)
         }
     };
 
-    QObject::connect(iconMode, &QAction::triggered, this, [toggleOption, iconMode]() { toggleOption(iconMode, Icon); });
+    QObject::connect(iconMode, &QAction::triggered, this,
+                     [toggleOption, iconMode]() { toggleOption(iconMode, IconMode); });
     QObject::connect(sliderMode, &QAction::triggered, this,
-                     [toggleOption, sliderMode]() { toggleOption(sliderMode, Slider); });
+                     [toggleOption, sliderMode]() { toggleOption(sliderMode, SliderMode); });
+    QObject::connect(toolTip, &QAction::triggered, this, [toggleOption, toolTip]() { toggleOption(toolTip, Tooltip); });
 
     menu->addAction(iconMode);
     menu->addAction(sliderMode);
+    menu->addSeparator();
+    menu->addAction(toolTip);
 
     menu->popup(event->globalPos());
 }

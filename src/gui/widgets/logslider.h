@@ -29,6 +29,8 @@ class LogSlider : public Slider
 public:
     explicit LogSlider(Qt::Orientation type, QWidget* parent = nullptr);
 
+    [[nodiscard]] double scale() const;
+
     void setRange(double min, double max);
     void setScale(double scale);
     void setNaturalValue(double value);
