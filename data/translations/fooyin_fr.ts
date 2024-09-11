@@ -2917,12 +2917,12 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="180"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="181"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Réseaux</translation>
     </message>
 </context>
 <context>
@@ -2930,52 +2930,52 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="69"/>
         <source>No proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun proxy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="70"/>
         <source>Use system proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser le proxy du système</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
         <source>Manual proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy manuel</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="75"/>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Authentification</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="95"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hôte</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Port</translation>
     </message>
 </context>
 <context>
@@ -4299,17 +4299,17 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="173"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="174"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture en cours</translation>
+        <translation>Lecture en cours</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="174"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -4317,42 +4317,42 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="66"/>
         <source>Use track-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode gain par piste</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="67"/>
         <source>Use album-based gain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode gain par album</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="68"/>
         <source>Use gain based on playback order</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mode gain par ordre de lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
         <source>Base normalisation on track loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normaliser en fonction de l&apos;intensité sonore des pistes</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
         <source>Base normalisation on album loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normaliser en fonction de l&apos;intensité sonore des albums</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="74"/>
         <source>Base normalisation on track loudness if shuffling tracks, else album loudness</source>
-        <translation type="unfinished"></translation>
+        <translation>Normaliser en fonction de l&apos;intensité sonore des pistes si la lecture est aléatoire, sinon en fonction de l&apos;intensité sonore des albums</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="90"/>
         <source>Pre-amplification</source>
-        <translation type="unfinished"></translation>
+        <translation>Pré-amplification</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="93"/>
@@ -4377,12 +4377,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="117"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="119"/>
         <source>None</source>
-        <translation type="unfinished">Non Assigné</translation>
+        <translation>Non Assigné</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="120"/>
@@ -4460,12 +4460,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="218"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Réseaux</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
@@ -4478,7 +4478,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="75"/>
         <source>Enable scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le scrobbling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="76"/>
@@ -4488,27 +4488,27 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="79"/>
         <source>General</source>
-        <translation type="unfinished">Général</translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="82"/>
         <source>Scrobble delay</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Délai des scrobbles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="84"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Temps d&apos;attente avant de transmettre des scrobbles</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="90"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>secondes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="100"/>
         <source>Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Services</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="199"/>
@@ -4541,17 +4541,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="647"/>
         <source>Open url in web browser?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le lien dans le navigateur web&#x202f;?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="655"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="657"/>
         <source>Copy URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier le lien</translation>
     </message>
 </context>
 <context>
