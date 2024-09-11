@@ -18,6 +18,7 @@
  */
 
 #include "stringfuncs.h"
+#include "core/constants.h"
 
 #include <utils/utils.h>
 
@@ -343,27 +344,35 @@ QString swapPrefix(const QStringList& vec)
         return {};
     }
 
-    QStringList words = vec.front().split(QStringLiteral(" "), Qt::SkipEmptyParts);
+    QStringList result;
 
-    if(words.empty()) {
-        return vec.front();
+    const auto strings = vec.front().split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts);
+    for(const QString& str : strings) {
+        QStringList words = str.split(QStringLiteral(" "), Qt::SkipEmptyParts);
+
+        if(words.empty()) {
+            result.append(vec.front());
+            continue;
+        }
+
+        QStringList prefixes = vec.mid(1);
+        if(prefixes.empty()) {
+            prefixes = {QStringLiteral("A"), QStringLiteral("The")};
+        }
+
+        const QString firstWord = words.first();
+        if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
+            words.removeFirst();
+            words.last().append(QStringLiteral(","));
+            words.append(firstWord);
+            result.append(words.join(QStringLiteral(" ")));
+        }
+        else {
+            result.append(str);
+        }
     }
 
-    QStringList prefixes = vec.mid(1);
-
-    if(prefixes.empty()) {
-        prefixes = {QStringLiteral("A"), QStringLiteral("The")};
-    }
-
-    const QString firstWord = words.first();
-    if(prefixes.contains(firstWord, Qt::CaseInsensitive)) {
-        words.removeFirst();
-        words.last().append(QStringLiteral(","));
-        words.append(firstWord);
-        return words.join(QStringLiteral(" "));
-    }
-
-    return vec.front();
+    return result.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString stripPrefix(const QStringList& vec)
