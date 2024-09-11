@@ -76,18 +76,18 @@ set(SOURCES
     dirbrowser/dirproxymodel.h
     dirbrowser/dirtree.cpp
     dirbrowser/dirtree.h
-    info/infodelegate.cpp
-    info/infodelegate.h
-    info/infoitem.cpp
-    info/infoitem.h
-    info/infomodel.cpp
-    info/infomodel.h
-    info/infopopulator.cpp
-    info/infopopulator.h
-    info/infoview.cpp
-    info/infoview.h
-    info/infowidget.cpp
-    info/infowidget.h
+    selectioninfo/infodelegate.cpp
+    selectioninfo/infodelegate.h
+    selectioninfo/infoitem.cpp
+    selectioninfo/infoitem.h
+    selectioninfo/infomodel.cpp
+    selectioninfo/infomodel.h
+    selectioninfo/infopopulator.cpp
+    selectioninfo/infopopulator.h
+    selectioninfo/infoview.cpp
+    selectioninfo/infoview.h
+    selectioninfo/infowidget.cpp
+    selectioninfo/infowidget.h
     librarytree/librarytreecontroller.cpp
     librarytree/librarytreecontroller.h
     librarytree/librarytreedelegate.cpp
