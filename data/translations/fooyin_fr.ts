@@ -4470,7 +4470,7 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
         <source>Scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scrobbling</translation>
     </message>
 </context>
 <context>
