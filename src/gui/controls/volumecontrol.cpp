@@ -181,7 +181,7 @@ void VolumeControlPrivate::showVolumeMenu() const
     // Only display volume slider above icon if it won't clip above the main window.
     const bool displayAbove = (yPosToWindow - menuHeight) > 0;
 
-    static constexpr int x = -15;
+    const int x            = (m_self->width() / 2) - (m_volumeMenu->sizeHint().width() / 2);
     const int y            = displayAbove ? (-menuHeight - 10) : (m_self->height() + 10);
 
     const QPoint pos(m_self->mapToGlobal(QPoint{x, y}));
