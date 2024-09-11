@@ -37,8 +37,8 @@ double LogSlider::scale() const
 
 void LogSlider::setRange(double min, double max)
 {
-    const auto logMin = static_cast<int>(std::log10(min) * m_scale);
-    const auto logMax = static_cast<int>(std::log10(max) * m_scale);
+    const auto logMin = min == 0.0 ? 0 : static_cast<int>(std::log10(min) * m_scale);
+    const auto logMax = max == 0.0 ? 0 : static_cast<int>(std::log10(max) * m_scale);
 
     QSlider::setRange(logMin, logMax);
 }
@@ -50,7 +50,7 @@ void LogSlider::setScale(double scale)
 
 void LogSlider::setNaturalValue(double value)
 {
-    QSlider::setValue(static_cast<int>(std::log10(value) * m_scale));
+    QSlider::setValue(value == 0.0 ? 0 : static_cast<int>(std::log10(value) * m_scale));
 }
 } // namespace Fooyin
 
