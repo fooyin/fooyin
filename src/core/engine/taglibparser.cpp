@@ -515,6 +515,23 @@ TagLib::StringList convertStringList(const QStringList& strList)
     return list;
 }
 
+float gainStringToFloat(const TagLib::String& gainString)
+{
+    const auto& string = convertString(gainString);
+    if(string.size() <= 1) {
+        return 0.0;
+    }
+
+    if(string.endsWith(QStringLiteral("dB"), Qt::CaseInsensitive)) {
+        return string.chopped(2).toFloat();
+    }
+
+    // Lack of dB suffix is unusual, but try to convert anyway
+    bool ok{false};
+    const float gain = string.toFloat(&ok);
+    return ok ? gain : -1000;
+};
+
 QString codecForMime(const QString& mimeType)
 {
     if(mimeType == u"audio/mpeg" || mimeType == u"audio/mpeg3" || mimeType == u"audio/x-mpeg") {
@@ -576,20 +593,6 @@ void readAudioProperties(const TagLib::File& file, Fooyin::Track& track)
 
 void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& track)
 {
-    const auto gainStringToFloat = [](const TagLib::String& gainString) -> float {
-        const auto& string = convertString(gainString);
-        if(string.size() <= 1) {
-            return 0.0;
-        }
-
-        if(string.endsWith(QStringLiteral("dB"), Qt::CaseInsensitive)) {
-            return string.chopped(2).toFloat();
-        }
-
-        // Lack of dB suffix is unusual, but try to convert anyway
-        return string.toFloat();
-    };
-
     track.clearExtraTags();
 
     using namespace Fooyin::Tag;
@@ -1297,6 +1300,30 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
         }
     }
 
+    if(items.contains(Fooyin::Mp4::ReplayGain::TrackGain)) {
+        const float gain
+            = convertString(items[Fooyin::Mp4::ReplayGain::TrackGain].toStringList().toString("\n")).toFloat();
+        track.setRGTrackGain(gain);
+    }
+
+    if(items.contains(Fooyin::Mp4::ReplayGain::TrackPeak)) {
+        const float peak
+            = convertString(items[Fooyin::Mp4::ReplayGain::TrackPeak].toStringList().toString("\n")).toFloat();
+        track.setRGTrackPeak(peak);
+    }
+
+    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumGain)) {
+        const float gain
+            = convertString(items[Fooyin::Mp4::ReplayGain::AlbumGain].toStringList().toString("\n")).toFloat();
+        track.setRGAlbumGain(gain);
+    }
+
+    if(items.contains(Fooyin::Mp4::ReplayGain::AlbumPeak)) {
+        const float gain
+            = convertString(items[Fooyin::Mp4::ReplayGain::AlbumPeak].toStringList().toString("\n")).toFloat();
+        track.setRGAlbumPeak(gain);
+    }
+
     if(!skipExtra) {
         using namespace Fooyin::Mp4;
         static const std::set<TagLib::String> baseMp4Tags
@@ -1436,6 +1463,24 @@ void writeMp4Tags(TagLib::MP4::Tag* mp4Tags, const Fooyin::Track& track, Fooyin:
         else {
             mp4Tags->setItem(Fooyin::Mp4::PlayCount, {convertString(QString::number(track.playCount()))});
         }
+    }
+
+    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumGain);
+    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::AlbumPeak);
+    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackGain);
+    mp4Tags->removeItem(Fooyin::Mp4::ReplayGain::TrackPeak);
+
+    if(track.hasTrackGain()) {
+        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackGain, {convertString(QString::number(track.rgTrackGain()))});
+    }
+    if(track.hasTrackPeak()) {
+        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::TrackPeak, {convertString(QString::number(track.rgTrackPeak()))});
+    }
+    if(track.hasAlbumGain()) {
+        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumGain, {convertString(QString::number(track.rgAlbumGain()))});
+    }
+    if(track.hasAlbumPeak()) {
+        mp4Tags->setItem(Fooyin::Mp4::ReplayGain::AlbumPeak, {convertString(QString::number(track.rgAlbumPeak()))});
     }
 
     using namespace Fooyin::Tag;

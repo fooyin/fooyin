@@ -81,5 +81,11 @@ constexpr auto DiscAlt       = "----:com.apple.iTunes:disc";
 constexpr auto DiscTotal     = "----:com.apple.iTunes:DISCTOTAL";
 constexpr auto DiscTotalAlt  = "----:com.apple.iTunes:TOTALDISCS";
 constexpr auto Cover         = "covr";
+namespace ReplayGain {
+constexpr auto AlbumPeak = "----:com.apple.iTunes:replaygain_album_peak";
+constexpr auto AlbumGain = "----:com.apple.iTunes:replaygain_album_gain";
+constexpr auto TrackPeak = "----:com.apple.iTunes:replaygain_track_peak";
+constexpr auto TrackGain = "----:com.apple.iTunes:replaygain_track_gain";
+} // namespace ReplayGain
 } // namespace Mp4
 } // namespace Fooyin
