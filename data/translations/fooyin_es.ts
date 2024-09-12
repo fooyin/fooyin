@@ -270,7 +270,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="111"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
@@ -336,7 +336,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="267"/>
         <source>Start playback of the selected files(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Comenzar reproducción de los archivos seleccionados</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="270"/>
@@ -483,25 +483,25 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="133"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="141"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir a la lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="142"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Agregar a lista de reproducción activa</translation>
+        <translation>Agregar a lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="143"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Enviar a lista de reproducción activa</translation>
+        <translation>Enviar a lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="136"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="144"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Enviar a lista de reproducción nueva</translation>
+        <translation>Enviar a una nueva lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="137"/>
@@ -518,7 +518,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Vacío</translation>
     </message>
 </context>
 <context>
@@ -531,12 +531,12 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
         <source>Missing Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget faltante</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
         <source>Right-click to add a new widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Click derecho para agregar un widger</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
