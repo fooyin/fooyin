@@ -99,11 +99,6 @@ QString trackInfo(const Fooyin::Track& track, const QStringList& args)
     return track.techInfo(tag.toLower());
 }
 
-QString trackTitle(const Fooyin::Track& track)
-{
-    return !track.title().isEmpty() ? track.title() : track.filename();
-}
-
 QString trackChannels(const Fooyin::Track& track)
 {
     switch(track.channels()) {
@@ -276,7 +271,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
 {
     using namespace Fooyin::Constants;
 
-    m_metadata[QString::fromLatin1(MetaData::Title)]        = trackTitle;
+    m_metadata[QString::fromLatin1(MetaData::Title)]        = &Track::effectiveTitle;
     m_metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::primaryArtist;
     m_metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
     m_metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
