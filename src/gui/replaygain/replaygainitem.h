@@ -29,7 +29,11 @@ public:
     enum ItemType : uint16_t
     {
         Header = Qt::UserRole,
-        Entry
+        Entry,
+        TrackGain,
+        TrackPeak,
+        AlbumGain,
+        AlbumPeak
     };
 
     enum Role : uint16_t
@@ -39,8 +43,9 @@ public:
     };
 
     ReplayGainItem();
+    ReplayGainItem(ItemType type, QString name, float value, const Track& track);
     ReplayGainItem(ItemType type, QString name, ReplayGainItem* parent);
-    ReplayGainItem(ItemType type, QString name, Track track, ReplayGainItem* parent);
+    ReplayGainItem(ItemType type, QString name, const Track& track, ReplayGainItem* parent);
 
     bool operator<(const ReplayGainItem& other) const;
 
@@ -48,11 +53,13 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] Track track() const;
 
+    [[nodiscard]] float value() const;
     [[nodiscard]] float trackGain() const;
     [[nodiscard]] float trackPeak() const;
     [[nodiscard]] float albumGain() const;
     [[nodiscard]] float albumPeak() const;
 
+    bool setValue(float value);
     bool setTrackGain(float value);
     bool setTrackPeak(float value);
     bool setAlbumGain(float value);
@@ -63,8 +70,8 @@ public:
 private:
     ItemType m_type;
     QString m_name;
-
     Track m_track;
+
     float m_trackGain;
     float m_trackPeak;
     float m_albumGain;

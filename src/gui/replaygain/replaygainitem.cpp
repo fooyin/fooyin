@@ -26,15 +26,37 @@ ReplayGainItem::ReplayGainItem()
     : ReplayGainItem{Entry, {}, nullptr}
 { }
 
+ReplayGainItem::ReplayGainItem(ItemType type, QString name, float value, const Track& track)
+    : ReplayGainItem{type, std::move(name), track, nullptr}
+{
+    switch(type) {
+        case(TrackGain):
+            setTrackGain(value);
+            break;
+        case(TrackPeak):
+            setTrackPeak(value);
+            break;
+        case(AlbumGain):
+            setAlbumGain(value);
+            break;
+        case(AlbumPeak):
+            setAlbumPeak(value);
+            break;
+        case(Header):
+        case(Entry):
+            break;
+    }
+}
+
 ReplayGainItem::ReplayGainItem(ItemType type, QString name, ReplayGainItem* parent)
     : ReplayGainItem{type, std::move(name), {}, parent}
 { }
 
-ReplayGainItem::ReplayGainItem(ItemType type, QString name, Track track, ReplayGainItem* parent)
+ReplayGainItem::ReplayGainItem(ItemType type, QString name, const Track& track, ReplayGainItem* parent)
     : TreeStatusItem{parent}
     , m_type{type}
     , m_name{std::move(name)}
-    , m_track{std::move(track)}
+    , m_track{track}
     , m_trackGain{Constants::InvalidGain}
     , m_trackPeak{Constants::InvalidPeak}
     , m_albumGain{Constants::InvalidGain}
@@ -83,10 +105,6 @@ float ReplayGainItem::albumPeak() const
 
 bool ReplayGainItem::setTrackGain(float value)
 {
-    if(m_trackGain == value) {
-        return false;
-    }
-
     if(m_trackGain == value) {
         return false;
     }

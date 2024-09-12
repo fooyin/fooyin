@@ -44,9 +44,14 @@ ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& track
     m_view->setModel(m_model);
     m_model->resetModel(tracks);
 
-    m_view->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    for(int i{1}; i < m_view->header()->count(); ++i) {
-        m_view->header()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    if(tracks.size() == 1) {
+        m_view->header()->setSectionResizeMode(QHeaderView::Stretch);
+    }
+    else {
+        m_view->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        for(int i{1}; i < m_view->header()->count(); ++i) {
+            m_view->header()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+        }
     }
 }
 

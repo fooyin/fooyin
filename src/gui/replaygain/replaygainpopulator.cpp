@@ -28,6 +28,8 @@ class ReplayGainPopulatorPrivate
 {
 public:
     void reset();
+    void addNodeIfNew(const QString& key, const QString& name, float value, ReplayGainItem::ItemType type,
+                      const Track& track);
     void addNodeIfNew(const QString& key, const QString& name, ReplayGainModel::ItemParent parent,
                       ReplayGainItem::ItemType type, const Track& track = {});
     void checkAddParentNode(ReplayGainModel::ItemParent parent);
@@ -40,6 +42,21 @@ public:
 void ReplayGainPopulatorPrivate::reset()
 {
     m_data.clear();
+}
+
+void ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name, float value,
+                                              ReplayGainItem::ItemType type, const Track& track)
+{
+    if(key.isEmpty() || name.isEmpty()) {
+        return;
+    }
+
+    if(m_data.nodes.contains(key)) {
+        return;
+    }
+
+    m_data.nodes.emplace(key, ReplayGainItem{type, name, value, track});
+    m_data.parents[Utils::Enum::toString(ReplayGainModel::ItemParent::Root)].emplace_back(key);
 }
 
 void ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name,
@@ -91,13 +108,26 @@ void ReplayGainPopulator::run(const TrackList& tracks)
 
     p->reset();
 
-    for(const Track& track : tracks) {
-        if(!mayRun()) {
-            return;
-        }
+    if(tracks.size() == 1) {
+        const Track& track = tracks.front();
+        p->addNodeIfNew(QStringLiteral("TrackGain"), QStringLiteral("Track Gain"), track.rgTrackGain(),
+                        ReplayGainItem::TrackGain, track);
+        p->addNodeIfNew(QStringLiteral("TrackPeak"), QStringLiteral("Track Peak"), track.rgTrackPeak(),
+                        ReplayGainItem::TrackPeak, track);
+        p->addNodeIfNew(QStringLiteral("AlbumGain"), QStringLiteral("Album Gain"), track.rgAlbumGain(),
+                        ReplayGainItem::AlbumGain, track);
+        p->addNodeIfNew(QStringLiteral("AlbumPeak"), QStringLiteral("Album Peak"), track.rgAlbumPeak(),
+                        ReplayGainItem::AlbumPeak, track);
+    }
+    else {
+        for(const Track& track : tracks) {
+            if(!mayRun()) {
+                return;
+            }
 
-        const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
-        p->checkAddEntryNode(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, track);
+            const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
+            p->checkAddEntryNode(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, track);
+        }
     }
 
     if(mayRun()) {
