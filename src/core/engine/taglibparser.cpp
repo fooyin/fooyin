@@ -21,6 +21,7 @@
 
 #include "tagdefs.h"
 
+#include <core/constants.h>
 #include <core/track.h>
 #include <utils/helpers.h>
 
@@ -529,7 +530,7 @@ float gainStringToFloat(const TagLib::String& gainString)
     // Lack of dB suffix is unusual, but try to convert anyway
     bool ok{false};
     const float gain = string.toFloat(&ok);
-    return ok ? gain : -1000;
+    return ok ? gain : Fooyin::Constants::InvalidGain;
 };
 
 QString codecForMime(const QString& mimeType)

@@ -19,8 +19,7 @@
 
 #include "replaygainitem.h"
 
-constexpr auto InvalidGain = -1000;
-constexpr auto InvalidPeak = -1;
+#include <core/constants.h>
 
 namespace Fooyin {
 ReplayGainItem::ReplayGainItem()
@@ -28,7 +27,7 @@ ReplayGainItem::ReplayGainItem()
 { }
 
 ReplayGainItem::ReplayGainItem(ItemType type, QString name, ReplayGainItem* parent)
-    : ReplayGainItem{type, name, {}, parent}
+    : ReplayGainItem{type, std::move(name), {}, parent}
 { }
 
 ReplayGainItem::ReplayGainItem(ItemType type, QString name, Track track, ReplayGainItem* parent)
@@ -36,10 +35,10 @@ ReplayGainItem::ReplayGainItem(ItemType type, QString name, Track track, ReplayG
     , m_type{type}
     , m_name{std::move(name)}
     , m_track{std::move(track)}
-    , m_trackGain{InvalidGain}
-    , m_trackPeak{InvalidPeak}
-    , m_albumGain{InvalidGain}
-    , m_albumPeak{InvalidPeak}
+    , m_trackGain{Constants::InvalidGain}
+    , m_trackPeak{Constants::InvalidPeak}
+    , m_albumGain{Constants::InvalidGain}
+    , m_albumPeak{Constants::InvalidPeak}
 { }
 
 bool ReplayGainItem::operator<(const ReplayGainItem& /*other*/) const
@@ -64,22 +63,22 @@ Track ReplayGainItem::track() const
 
 float ReplayGainItem::trackGain() const
 {
-    return m_trackGain == InvalidGain ? m_track.rgTrackGain() : m_trackGain;
+    return m_trackGain == Constants::InvalidGain ? m_track.rgTrackGain() : m_trackGain;
 }
 
 float ReplayGainItem::trackPeak() const
 {
-    return m_trackPeak == InvalidPeak ? m_track.rgTrackPeak() : m_trackPeak;
+    return m_trackPeak == Constants::InvalidPeak ? m_track.rgTrackPeak() : m_trackPeak;
 }
 
 float ReplayGainItem::albumGain() const
 {
-    return m_albumGain == InvalidGain ? m_track.rgAlbumGain() : m_albumGain;
+    return m_albumGain == Constants::InvalidGain ? m_track.rgAlbumGain() : m_albumGain;
 }
 
 float ReplayGainItem::albumPeak() const
 {
-    return m_albumPeak == InvalidPeak ? m_track.rgAlbumPeak() : m_albumPeak;
+    return m_albumPeak == Constants::InvalidPeak ? m_track.rgAlbumPeak() : m_albumPeak;
 }
 
 bool ReplayGainItem::setTrackGain(float value)
@@ -94,7 +93,7 @@ bool ReplayGainItem::setTrackGain(float value)
 
     if(value == m_track.rgTrackGain()) {
         setStatus(None);
-        if(std::exchange(m_trackGain, InvalidGain) == InvalidGain) {
+        if(std::exchange(m_trackGain, Constants::InvalidGain) == Constants::InvalidGain) {
             return false;
         }
     }
@@ -114,7 +113,7 @@ bool ReplayGainItem::setTrackPeak(float value)
 
     if(value == m_track.rgTrackPeak()) {
         setStatus(None);
-        if(std::exchange(m_trackPeak, InvalidPeak) == InvalidPeak) {
+        if(std::exchange(m_trackPeak, Constants::InvalidPeak) == Constants::InvalidPeak) {
             return false;
         }
     }
@@ -134,7 +133,7 @@ bool ReplayGainItem::setAlbumGain(float value)
 
     if(value == m_track.rgAlbumGain()) {
         setStatus(None);
-        if(std::exchange(m_albumGain, InvalidGain) == InvalidGain) {
+        if(std::exchange(m_albumGain, Constants::InvalidGain) == Constants::InvalidGain) {
             return false;
         }
     }
@@ -154,7 +153,7 @@ bool ReplayGainItem::setAlbumPeak(float value)
 
     if(value == m_track.rgAlbumPeak()) {
         setStatus(None);
-        if(std::exchange(m_albumPeak, InvalidPeak) == InvalidPeak) {
+        if(std::exchange(m_albumPeak, Constants::InvalidPeak) == Constants::InvalidPeak) {
             return false;
         }
     }
@@ -172,16 +171,16 @@ bool ReplayGainItem::applyChanges()
         return false;
     }
 
-    if(m_trackGain != InvalidGain) {
+    if(m_trackGain != Constants::InvalidGain) {
         m_track.setRGTrackGain(m_trackGain);
     }
-    if(m_trackPeak != InvalidPeak) {
+    if(m_trackPeak != Constants::InvalidPeak) {
         m_track.setRGTrackPeak(m_trackPeak);
     }
-    if(m_albumGain != InvalidGain) {
+    if(m_albumGain != Constants::InvalidGain) {
         m_track.setRGAlbumGain(m_albumGain);
     }
-    if(m_albumPeak != InvalidPeak) {
+    if(m_albumPeak != Constants::InvalidPeak) {
         m_track.setRGAlbumPeak(m_albumPeak);
     }
 

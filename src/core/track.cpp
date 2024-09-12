@@ -20,6 +20,7 @@
 #include "core/constants.h"
 #include <core/track.h>
 
+#include <core/constants.h>
 #include <utils/crypto.h>
 #include <utils/utils.h>
 
@@ -30,8 +31,6 @@
 
 constexpr auto MaxStarCount = 10;
 constexpr auto YearRegex    = R"lit(\b\d{4}\b)lit";
-constexpr auto InvalidGain  = -1000;
-constexpr auto InvalidPeak  = -1;
 
 namespace {
 int extractYear(const QString& input)
@@ -96,10 +95,10 @@ public:
     uint64_t firstPlayed{0};
     uint64_t lastPlayed{0};
 
-    float rgTrackGain{InvalidGain};
-    float rgAlbumGain{InvalidGain};
-    float rgTrackPeak{InvalidPeak};
-    float rgAlbumPeak{InvalidPeak};
+    float rgTrackGain{Constants::InvalidGain};
+    float rgAlbumGain{Constants::InvalidGain};
+    float rgTrackPeak{Constants::InvalidPeak};
+    float rgAlbumPeak{Constants::InvalidPeak};
 
     QString sort;
 
@@ -482,22 +481,22 @@ int Track::ratingStars() const
 
 bool Track::hasTrackGain() const
 {
-    return p->rgTrackGain != InvalidGain;
+    return p->rgTrackGain != Constants::InvalidGain;
 }
 
 bool Track::hasAlbumGain() const
 {
-    return p->rgAlbumGain != InvalidGain;
+    return p->rgAlbumGain != Constants::InvalidGain;
 }
 
 bool Track::hasTrackPeak() const
 {
-    return p->rgTrackPeak != InvalidPeak;
+    return p->rgTrackPeak != Constants::InvalidPeak;
 }
 
 bool Track::hasAlbumPeak() const
 {
-    return p->rgAlbumPeak != InvalidPeak;
+    return p->rgAlbumPeak != Constants::InvalidPeak;
 }
 
 float Track::rgTrackGain() const

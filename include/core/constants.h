@@ -23,6 +23,9 @@ namespace Fooyin::Constants {
 constexpr auto RecordSeparator = "\036";
 constexpr auto UnitSeparator   = "\037";
 
+constexpr auto InvalidGain = -1000;
+constexpr auto InvalidPeak = -1;
+
 namespace MetaData {
 constexpr auto Title           = "title";
 constexpr auto Artist          = "artist";

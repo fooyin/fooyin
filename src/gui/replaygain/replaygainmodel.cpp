@@ -19,6 +19,8 @@
 
 #include "replaygainmodel.h"
 
+#include <core/constants.h>
+
 constexpr auto HeaderFontDelta = 2;
 
 namespace Fooyin {
@@ -134,36 +136,39 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
         return type == ReplayGainItem::Header ? m_headerFont : item->font();
     }
 
-    if(role == Qt::EditRole) {
-        switch(index.column()) {
-            case(1):
-                return QString::number(item->trackGain(), 'f', 2);
-            case(2):
-                return QString::number(item->trackPeak(), 'f', 6);
-            case(3):
-                return QString::number(item->albumGain(), 'f', 2);
-            case(4):
-                return QString::number(item->albumPeak(), 'f', 6);
-            default:
-                return {};
-        }
-    }
+    const bool isEdit = role == Qt::EditRole;
 
-    if(role != Qt::DisplayRole) {
+    if(role != Qt::DisplayRole && !isEdit) {
         return {};
     }
 
     switch(index.column()) {
         case(0):
             return item->name();
-        case(1):
-            return QStringLiteral("%1 dB").arg(QString::number(item->trackGain(), 'f', 2));
-        case(2):
-            return QString::number(item->trackPeak(), 'f', 6);
-        case(3):
-            return QStringLiteral("%1 dB").arg(QString::number(item->albumGain(), 'f', 2));
-        case(4):
-            return QString::number(item->albumPeak(), 'f', 6);
+        case(1): {
+            const float gain = item->trackGain();
+            if(gain == Constants::InvalidGain) {
+                return {};
+            }
+            const auto gainStr = QString::number(gain, 'f', 2);
+            return isEdit ? gainStr : QStringLiteral("%1 dB").arg(gainStr);
+        }
+        case(2): {
+            const float peak = item->trackPeak();
+            return (peak == Constants::InvalidPeak) ? QString{} : QString::number(peak, 'f', 6);
+        }
+        case(3): {
+            const float gain = item->albumGain();
+            if(gain == Constants::InvalidGain) {
+                return {};
+            }
+            const auto gainStr = QString::number(gain, 'f', 2);
+            return isEdit ? gainStr : QStringLiteral("%1 dB").arg(gainStr);
+        }
+        case(4): {
+            const float peak = item->albumPeak();
+            return (peak == Constants::InvalidPeak) ? QString{} : QString::number(peak, 'f', 6);
+        }
         default:
             break;
     }
@@ -188,29 +193,30 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
         return false;
     }
 
-    const auto setValue = value.toFloat();
+    bool ok{false};
+    float setValue = value.toFloat(&ok);
 
     switch(column) {
         case(1):
-            if(!item->setTrackGain(setValue)) {
+            if(!item->setTrackGain(ok ? setValue : Constants::InvalidGain)) {
                 item->setStatus(ReplayGainItem::None);
                 return false;
             }
             break;
         case(2):
-            if(!item->setTrackPeak(setValue)) {
+            if(!item->setTrackPeak(ok ? setValue : Constants::InvalidPeak)) {
                 item->setStatus(ReplayGainItem::None);
                 return false;
             }
             break;
         case(3):
-            if(!item->setAlbumGain(setValue)) {
+            if(!item->setAlbumGain(ok ? setValue : Constants::InvalidGain)) {
                 item->setStatus(ReplayGainItem::None);
                 return false;
             }
             break;
         case(4):
-            if(!item->setAlbumPeak(setValue)) {
+            if(!item->setAlbumPeak(ok ? setValue : Constants::InvalidPeak)) {
                 item->setStatus(ReplayGainItem::None);
                 return false;
             }
