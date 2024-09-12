@@ -23,6 +23,12 @@
 
 #include <core/track.h>
 
+#if defined(__GNUG__)
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif
+
 extern "C"
 {
 #include <libavfilter/avfilter.h>
@@ -33,14 +39,7 @@ extern "C"
 
 #include <QDebug>
 #include <QFile>
-
-#include <format>
-
-#if defined(__GNUG__)
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#elif defined(__clang__)
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#endif
+#include <QString>
 
 Q_LOGGING_CATEGORY(REPLAYGAIN, "fy.replaygain")
 
@@ -161,9 +160,14 @@ ReplayGainFilter allocRGFilter(const AudioFormat& format)
     const auto sampleFmt  = format.sampleFormat();
     const auto sampleRate = format.sampleRate();
 
-    const auto args = std::format(
-        "time_base={}/{}:sample_rate={}:sample_fmt={}:channel_layout={:#x}", 1, sampleRate, sampleRate,
-        av_get_sample_fmt_name(Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar())), AV_CH_LAYOUT_STEREO);
+    const auto sampleFmtName
+        = std::string{av_get_sample_fmt_name(Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar()))};
+    const auto args = QString{QStringLiteral("time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4")}
+                          .arg(1)
+                          .arg(sampleRate)
+                          .arg(QString::fromStdString(sampleFmtName))
+                          .arg(AV_CH_LAYOUT_STEREO, 0, 16)
+                          .toStdString();
 
     // Allocate and configure filter
     AVFilterContext* filterCtx{nullptr};
