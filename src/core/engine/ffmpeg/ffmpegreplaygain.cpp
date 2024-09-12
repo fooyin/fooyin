@@ -21,6 +21,7 @@
 #include "ffmpegcodec.h"
 #include "ffmpegutils.h"
 
+#include <core/constants.h>
 #include <core/track.h>
 
 #if defined(__GNUG__)
@@ -56,15 +57,15 @@ FFmpegReplayGain::FFmpegReplayGain(MusicLibrary* library)
 
 void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
 {
-    if(!asAlbum) {
-        for(const auto& track : tracks) {
+    if(asAlbum) {
+        handleAlbum(tracks);
+    }
+    else {
+        for(auto track : tracks) {
             if(setupTrack(track)) {
                 handleTrack(track);
             }
         }
-    }
-    else {
-        // TODO
     }
     if(m_decoder) {
         m_decoder->stop();
@@ -206,7 +207,7 @@ ReplayGainFilter allocRGFilter(const AudioFormat& format)
 
 void FFmpegReplayGain::handleTrack(Track track)
 {
-    int rc = 0;
+    int rc{0};
     const FormatContextPtr formatCtxPtr{avformat_alloc_context()};
     auto* formatCtx = formatCtxPtr.get();
 
@@ -218,7 +219,11 @@ void FFmpegReplayGain::handleTrack(Track track)
         return;
     }
 
+#if(LIBAVFORMAT_VERSION_INT > AV_VERSION_INT(58, 79, 100))
     const AVCodec* decoder{};
+#else
+    AVCodec* decoder{};
+#endif
     AVStream* stream{};
     int streamIndex = -1;
     for(unsigned int i = 0; i < formatCtx->nb_streams; i++) {
@@ -298,5 +303,26 @@ void FFmpegReplayGain::handleTrack(Track track)
     track.setRGTrackGain(static_cast<float>(trackGain));
     track.setRGTrackPeak(static_cast<float>(trackPeak));
     m_library->writeTrackMetadata({track});
+}
+
+void FFmpegReplayGain::handleAlbum(const TrackList& album)
+{
+    auto albumPeak{static_cast<float>(Constants::InvalidPeak)};
+    for(auto track : album) {
+        if(setupTrack(track)) {
+            handleTrack(track);
+            albumPeak = std::max(albumPeak, track.rgTrackPeak());
+        }
+    }
+
+    if(albumPeak != static_cast<float>(Constants::InvalidPeak)) {
+        for(auto track : album) {
+            track.setRGAlbumPeak(albumPeak);
+        }
+
+        m_library->writeTrackMetadata(album);
+    }
+
+    // TODO - album gain
 }
 } // namespace Fooyin

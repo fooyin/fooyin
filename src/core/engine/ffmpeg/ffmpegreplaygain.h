@@ -38,6 +38,7 @@ public:
 private:
     bool setupTrack(Track track);
     void handleTrack(Track track);
+    void handleAlbum(const TrackList& album);
 
     std::unique_ptr<QIODevice> m_file;
     std::unique_ptr<FFmpegDecoder> m_decoder;
