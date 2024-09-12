@@ -47,8 +47,10 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
 {
     AudioFormat format;
 
-    const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format), codec->bits_per_raw_sample);
+    const auto avFmt     = static_cast<AVSampleFormat>(codec->format);
+    const auto sampleFmt = sampleFormat(avFmt, codec->bits_per_raw_sample);
     format.setSampleFormat(sampleFmt);
+    format.setSampleFormatIsPlanar(av_sample_fmt_is_planar(avFmt) == 1);
     format.setSampleRate(codec->sample_rate);
 #if OLD_CHANNEL_LAYOUT
     format.setChannelCount(codec->channels);
@@ -85,6 +87,24 @@ SampleFormat sampleFormat(AVSampleFormat format, int bps)
 
 AVSampleFormat sampleFormat(SampleFormat format)
 {
+    if(planar) {
+        switch(format) {
+            case SampleFormat::U8:
+                return AV_SAMPLE_FMT_U8P;
+            case SampleFormat::S16:
+                return AV_SAMPLE_FMT_S16P;
+            case SampleFormat::S24:
+            case SampleFormat::S32:
+                return AV_SAMPLE_FMT_S32P;
+            case SampleFormat::F32:
+                return AV_SAMPLE_FMT_FLTP;
+            case SampleFormat::F64:
+                return AV_SAMPLE_FMT_DBLP;
+            case SampleFormat::Unknown:
+                break;
+        }
+    }
+    else {
     switch(format) {
         case(SampleFormat::U8):
             return AV_SAMPLE_FMT_U8;
@@ -98,9 +118,10 @@ AVSampleFormat sampleFormat(SampleFormat format)
         case(SampleFormat::F64):
             return AV_SAMPLE_FMT_DBL;
         case(SampleFormat::Unknown):
-        default:
-            return AV_SAMPLE_FMT_NONE;
+                break;
+        }
     }
+    return AV_SAMPLE_FMT_NONE;
 }
 
 } // namespace Fooyin::Utils

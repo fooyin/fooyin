@@ -41,6 +41,6 @@ void printError(int error);
 void printError(const QString& error);
 
 SampleFormat sampleFormat(AVSampleFormat format, int bps);
-AVSampleFormat sampleFormat(SampleFormat format);
+AVSampleFormat sampleFormat(SampleFormat format, bool planar = false);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
 } // namespace Fooyin::Utils

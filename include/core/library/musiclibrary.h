@@ -137,9 +137,9 @@ public:
     /** Updates the tracks @p tracks in the library.  */
     virtual void updateTracks(const TrackList& tracks) = 0;
 
-    /** Updates the metdata in the database for @p tracks.  */
+    /** Updates the metadata in the database for @p tracks.  */
     virtual void updateTrackMetadata(const TrackList& tracks) = 0;
-    /** Updates the metdata in the database for @p tracks and writes metdata to files.  */
+    /** Updates the metadata in the database for @p tracks and writes metadata to files.  */
     virtual void writeTrackMetadata(const TrackList& tracks) = 0;
 
     /** Updates the statistics (playcount, rating etc) in the database for @p tracks.  */
