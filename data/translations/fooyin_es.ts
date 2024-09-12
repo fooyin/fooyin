@@ -483,13 +483,13 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="133"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="141"/>
         <source>Add to current playlist</source>
-        <translation>Añadir a la lista de reproducción</translation>
+        <translation>Añadir a la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="134"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="142"/>
         <source>Add to active playlist</source>
-        <translation>Agregar a lista de reproducción actual</translation>
+        <translation>Añadir a lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="135"/>
@@ -617,7 +617,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="454"/>
         <source>&amp;Split</source>
-        <translation>&amp;Separar</translation>
+        <translation>&amp;Dividir</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
