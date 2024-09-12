@@ -29,6 +29,7 @@ $SUDO apt-get install -y \
         qt6-tools-dev-tools \
         qt6-l10n-tools \
         libavcodec-dev \
+        libavfilter-dev \
         libavformat-dev \
         libavutil-dev \
         libswresample-dev \
