@@ -541,7 +541,7 @@
     <message>
         <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
         <source>Enter layout editing mode to edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingresa al modo de edición de escena para editar</translation>
     </message>
 </context>
 <context>
@@ -549,17 +549,17 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>Sear&amp;ch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bus&amp;car</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="41"/>
         <source>Search the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar en la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="47"/>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustes</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="48"/>
