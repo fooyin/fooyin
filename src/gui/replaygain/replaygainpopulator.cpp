@@ -97,7 +97,7 @@ void ReplayGainPopulator::run(const TrackList& tracks)
         }
 
         const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
-        p->checkAddEntryNode(key, track.title(), ReplayGainModel::ItemParent::Details, track);
+        p->checkAddEntryNode(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, track);
     }
 
     if(mayRun()) {
