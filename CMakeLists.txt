@@ -128,6 +128,7 @@ find_package(Taglib REQUIRED taglib>=1.12)
 find_package(
     FFmpeg REQUIRED
     COMPONENTS AVCODEC
+               AVFILTER
                AVFORMAT
                AVUTIL
                SWRESAMPLE
