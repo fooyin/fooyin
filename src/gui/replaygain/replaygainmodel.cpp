@@ -27,6 +27,8 @@ namespace Fooyin {
 ReplayGainModel::ReplayGainModel(QObject* parent)
     : TreeModel{parent}
 {
+    m_populator.moveToThread(&m_populatorThread);
+
     m_headerFont.setPointSize(m_headerFont.pointSize() + HeaderFontDelta);
     m_headerFont.setBold(true);
 
