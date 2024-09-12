@@ -513,7 +513,7 @@
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="138"/>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="146"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>Enviar a la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="140"/>
