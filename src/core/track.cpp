@@ -344,6 +344,11 @@ QString Track::title() const
     return p->title;
 }
 
+QString Track::effectiveTitle() const
+{
+    return !p->title.isEmpty() ? p->title : p->filename;
+}
+
 QStringList Track::artists() const
 {
     return p->artists;
