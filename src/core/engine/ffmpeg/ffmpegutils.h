@@ -21,20 +21,69 @@
 
 #include <core/engine/audioformat.h>
 
+#if defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif
+
 extern "C"
 {
 #include <libavcodec/avcodec.h>
 }
 
+#if defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
 #include <QLoggingCategory>
 
+#include <memory>
+
 class QString;
-class AVCodecParameters;
+struct AVCodecParameters;
+struct AVFormatContext;
+struct AVIOContext;
+struct AVPacket;
 
 #define OLD_CHANNEL_LAYOUT (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(59, 24, 100))
 #define OLD_FRAME (LIBAVUTIL_VERSION_MAJOR < 58)
 
 Q_DECLARE_LOGGING_CATEGORY(FFMPEG)
+
+struct IOContextDeleter
+{
+    void operator()(AVIOContext* context) const;
+};
+using IOContextPtr = std::unique_ptr<AVIOContext, IOContextDeleter>;
+
+struct FormatContextDeleter
+{
+    void operator()(AVFormatContext* context) const;
+};
+using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
+
+struct FrameDeleter
+{
+    void operator()(AVFrame* frame) const;
+};
+using FramePtr = std::unique_ptr<AVFrame, FrameDeleter>;
+
+struct FormatContext
+{
+    FormatContextPtr formatContext;
+    IOContextPtr ioContext;
+};
+
+struct PacketDeleter
+{
+    void operator()(AVPacket* packet) const;
+};
+using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 
 namespace Fooyin::Utils {
 void printError(int error);

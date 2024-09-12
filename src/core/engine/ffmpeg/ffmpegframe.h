@@ -19,25 +19,28 @@
 
 #pragma once
 
+#if defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif
+
 extern "C"
 {
 #include <libavutil/frame.h>
 }
 
-#include <memory>
+#if defined(__GNUG__)
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
+#include "ffmpegutils.h"
 
 namespace Fooyin {
-struct FrameDeleter
-{
-    void operator()(AVFrame* frame) const
-    {
-        if(frame != nullptr) {
-            av_frame_free(&frame);
-        }
-    }
-};
-using FramePtr = std::unique_ptr<AVFrame, FrameDeleter>;
-
 class Frame
 {
 public:
