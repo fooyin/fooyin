@@ -719,30 +719,25 @@ void writeGenericProperties(TagLib::PropertyMap& oldProperties, const Fooyin::Tr
     replaceOrErase(oldProperties, Comment, track.comment());
     replaceOrErase(oldProperties, Date, track.date());
 
-    if(oldProperties.contains(Track)) {
-        replaceOrErase(oldProperties, Track, track.trackNumber());
-    }
-    if(oldProperties.contains(TrackAlt)) {
-        replaceOrErase(oldProperties, TrackAlt, track.trackNumber());
-    }
-    if(oldProperties.contains(TrackTotal)) {
-        replaceOrErase(oldProperties, TrackTotal, track.trackTotal());
-    }
-    if(oldProperties.contains(TrackTotalAlt)) {
-        replaceOrErase(oldProperties, TrackTotalAlt, track.trackTotal());
-    }
-    if(oldProperties.contains(Disc)) {
-        replaceOrErase(oldProperties, Disc, track.discNumber());
-    }
-    if(oldProperties.contains(DiscAlt)) {
-        replaceOrErase(oldProperties, DiscAlt, track.discNumber());
-    }
-    if(oldProperties.contains(DiscTotal)) {
-        replaceOrErase(oldProperties, DiscTotal, track.discTotal());
-    }
-    if(oldProperties.contains(DiscTotalAlt)) {
-        replaceOrErase(oldProperties, DiscTotalAlt, track.discTotal());
-    }
+    const auto handleAltProp = [&oldProperties](QString value, auto tag, auto tagAlt) {
+        if(!value.isEmpty()) {
+            if(oldProperties.contains(tagAlt)) {
+                replaceOrErase(oldProperties, tagAlt, value);
+            }
+            else {
+                replaceOrErase(oldProperties, tag, value);
+            }
+        }
+        else {
+            replaceOrErase(oldProperties, tag, QString{});
+            replaceOrErase(oldProperties, tagAlt, QString{});
+        }
+    };
+
+    handleAltProp(track.trackNumber(), Track, TrackAlt);
+    handleAltProp(track.trackTotal(), TrackTotal, TrackTotalAlt);
+    handleAltProp(track.discNumber(), Disc, DiscAlt);
+    handleAltProp(track.discTotal(), DiscTotal, DiscTotalAlt);
 
     const auto gainToString = [](const float gain) {
         return QStringLiteral("%1 dB").arg(QString::number(gain, 'f', 2));
