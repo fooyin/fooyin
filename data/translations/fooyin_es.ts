@@ -564,7 +564,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="48"/>
         <source>Open the settings dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir la pestaña de ajustes</translation>
     </message>
 </context>
 <context>
@@ -572,22 +572,22 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="380"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Izquierda</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="380"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Arriba</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="387"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Derecha</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="387"/>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Abajo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="394"/>
@@ -612,28 +612,28 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="416"/>
         <source>Paste (Insert)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar (insertar)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="454"/>
         <source>&amp;Split</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Separar</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="481"/>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mover</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="449"/>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reemplazar</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="357"/>
         <location filename="../../src/gui/editablelayout.cpp" line="364"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Insertar</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="459"/>
@@ -643,17 +643,17 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="472"/>
         <source>Paste (Replace)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar (Reemplazar)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="487"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Quitar</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="554"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="563"/>
