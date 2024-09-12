@@ -36,12 +36,12 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-class ReplayGainWidget : public SettingsPageWidget
+class ReplayGainPageWidget : public SettingsPageWidget
 {
     Q_OBJECT
 
 public:
-    explicit ReplayGainWidget(SettingsManager* settings);
+    explicit ReplayGainPageWidget(SettingsManager* settings);
 
     void load() override;
     void apply() override;
@@ -61,7 +61,7 @@ private:
     DoubleSliderEditor* m_preAmp;
 };
 
-ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
+ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     : m_settings{settings}
     , m_disabled{new QRadioButton(tr("Disabled"), this)}
     , m_applyGain{new QRadioButton(tr("Apply gain"), this)}
@@ -139,7 +139,7 @@ ReplayGainWidget::ReplayGainWidget(SettingsManager* settings)
     layout->setRowStretch(layout->rowCount(), 1);
 }
 
-void ReplayGainWidget::load()
+void ReplayGainPageWidget::load()
 {
     const auto mode = static_cast<AudioEngine::RGProcessing>(m_settings->value<Settings::Core::RGMode>());
     m_disabled->setChecked(mode == AudioEngine::NoProcessing);
@@ -159,7 +159,7 @@ void ReplayGainWidget::load()
     m_preAmp->setValue(preAmp);
 }
 
-void ReplayGainWidget::apply()
+void ReplayGainPageWidget::apply()
 {
     int mode{AudioEngine::NoProcessing};
 
@@ -192,7 +192,7 @@ void ReplayGainWidget::apply()
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 }
 
-void ReplayGainWidget::reset()
+void ReplayGainPageWidget::reset()
 {
     m_settings->reset<Settings::Core::RGMode>();
     m_settings->reset<Settings::Core::RGType>();
@@ -206,7 +206,7 @@ ReplayGainPage::ReplayGainPage(SettingsManager* settings, QObject* parent)
     setId(Constants::Page::ReplayGain);
     setName(tr("General"));
     setCategory({tr("Playback"), tr("ReplayGain")});
-    setWidgetCreator([settings] { return new ReplayGainWidget(settings); });
+    setWidgetCreator([settings] { return new ReplayGainPageWidget(settings); });
 }
 } // namespace Fooyin
 

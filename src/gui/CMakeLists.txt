@@ -197,6 +197,18 @@ set(SOURCES
     quicksetup/quicksetupdialog.h
     quicksetup/quicksetupmodel.cpp
     quicksetup/quicksetupmodel.h
+    replaygain/replaygaindelegate.cpp
+    replaygain/replaygaindelegate.h
+    replaygain/replaygainitem.cpp
+    replaygain/replaygainitem.h
+    replaygain/replaygainmodel.cpp
+    replaygain/replaygainmodel.h
+    replaygain/replaygainpopulator.cpp
+    replaygain/replaygainpopulator.h
+    replaygain/replaygainview.cpp
+    replaygain/replaygainview.h
+    replaygain/replaygainwidget.cpp
+    replaygain/replaygainwidget.h
     scripting/expressiontreemodel.cpp
     scripting/expressiontreemodel.h
     scripting/scripthighlighter.cpp

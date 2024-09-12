@@ -35,6 +35,7 @@
 #include "playlist/playlisttabs.h"
 #include "playlist/playlistwidget.h"
 #include "queueviewer/queueviewer.h"
+#include "replaygain/replaygainwidget.h"
 #include "search/searchwidget.h"
 #include "selectioninfo/infowidget.h"
 #include "settings/artworkpage.h"
@@ -266,6 +267,9 @@ void Widgets::registerPropertiesTabs()
 {
     m_gui.propertiesDialog->addTab(tr("Details"),
                                    [this](const TrackList& tracks) { return new InfoWidget(tracks, m_window); });
+    m_gui.propertiesDialog->addTab(tr("ReplayGain"), [this](const TrackList& tracks) {
+        return new ReplayGainWidget(m_core->library(), tracks, m_window);
+    });
 }
 
 void Widgets::registerFontEntries() const
