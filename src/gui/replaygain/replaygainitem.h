@@ -43,7 +43,7 @@ public:
     };
 
     ReplayGainItem();
-    ReplayGainItem(ItemType type, QString name, float value, const Track& track);
+    ReplayGainItem(ItemType type, QString name, float value, const Track& track, ReplayGainItem* parent);
     ReplayGainItem(ItemType type, QString name, ReplayGainItem* parent);
     ReplayGainItem(ItemType type, QString name, const Track& track, ReplayGainItem* parent);
 
@@ -53,11 +53,14 @@ public:
     [[nodiscard]] QString name() const;
     [[nodiscard]] Track track() const;
 
-    [[nodiscard]] float value() const;
     [[nodiscard]] float trackGain() const;
     [[nodiscard]] float trackPeak() const;
     [[nodiscard]] float albumGain() const;
     [[nodiscard]] float albumPeak() const;
+
+    [[nodiscard]] bool isSummary() const;
+    [[nodiscard]] bool isEditable() const;
+    [[nodiscard]] bool multipleValues() const;
 
     bool setValue(float value);
     bool setTrackGain(float value);
@@ -65,12 +68,40 @@ public:
     bool setAlbumGain(float value);
     bool setAlbumPeak(float value);
 
+    void setIsEditable(bool isEditable);
+    void setMultipleValues(bool multiple);
+
     bool applyChanges();
 
 private:
+    template <typename T>
+    bool setGainOrPeak(T& currentValue, float value, float trackValue, float invalidValue)
+    {
+        if(currentValue == value) {
+            return false;
+        }
+
+        if(value == trackValue) {
+            setStatus(None);
+            if(std::exchange(currentValue, invalidValue) == invalidValue) {
+                return false;
+            }
+        }
+        else {
+            currentValue     = value;
+            m_multipleValues = false;
+            setStatus(Changed);
+        }
+
+        return true;
+    }
+
     ItemType m_type;
     QString m_name;
     Track m_track;
+    bool m_summaryItem;
+    bool m_isEditable;
+    bool m_multipleValues;
 
     float m_trackGain;
     float m_trackPeak;

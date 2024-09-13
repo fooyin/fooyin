@@ -21,20 +21,21 @@
 
 #include "replaygainmodel.h"
 
+#include <core/constants.h>
 #include <utils/enum.h>
+
+#include <set>
 
 namespace Fooyin {
 class ReplayGainPopulatorPrivate
 {
 public:
     void reset();
-    void addNodeIfNew(const QString& key, const QString& name, float value, ReplayGainItem::ItemType type,
-                      const Track& track);
-    void addNodeIfNew(const QString& key, const QString& name, ReplayGainModel::ItemParent parent,
-                      ReplayGainItem::ItemType type, const Track& track = {});
+    ReplayGainItem* addNodeIfNew(const QString& key, const QString& name, float value,
+                                 ReplayGainModel::ItemParent parent, ReplayGainItem::ItemType type, const Track& track);
+    ReplayGainItem* addNodeIfNew(const QString& key, const QString& name, ReplayGainModel::ItemParent parent,
+                                 ReplayGainItem::ItemType type, const Track& track = {});
     void checkAddParentNode(ReplayGainModel::ItemParent parent);
-    void checkAddEntryNode(const QString& key, const QString& name, ReplayGainModel::ItemParent parent,
-                           const Track& track = {});
 
     RGInfoData m_data;
 };
@@ -44,35 +45,44 @@ void ReplayGainPopulatorPrivate::reset()
     m_data.clear();
 }
 
-void ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name, float value,
-                                              ReplayGainItem::ItemType type, const Track& track)
+ReplayGainItem* ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name, float value,
+                                                         ReplayGainModel::ItemParent parent,
+                                                         ReplayGainItem::ItemType type, const Track& track)
 {
     if(key.isEmpty() || name.isEmpty()) {
-        return;
+        return nullptr;
     }
 
     if(m_data.nodes.contains(key)) {
-        return;
+        return &m_data.nodes.at(key);
     }
 
-    m_data.nodes.emplace(key, ReplayGainItem{type, name, value, track});
-    m_data.parents[Utils::Enum::toString(ReplayGainModel::ItemParent::Root)].emplace_back(key);
+    checkAddParentNode(parent);
+
+    m_data.nodes.emplace(key, ReplayGainItem{type, name, value, track, nullptr});
+    m_data.parents[Utils::Enum::toString(parent)].emplace_back(key);
+
+    return &m_data.nodes.at(key);
 }
 
-void ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name,
-                                              ReplayGainModel::ItemParent parent, ReplayGainItem::ItemType type,
-                                              const Track& track)
+ReplayGainItem* ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, const QString& name,
+                                                         ReplayGainModel::ItemParent parent,
+                                                         ReplayGainItem::ItemType type, const Track& track)
 {
     if(key.isEmpty() || name.isEmpty()) {
-        return;
+        return nullptr;
     }
 
     if(m_data.nodes.contains(key)) {
-        return;
+        return nullptr;
     }
+
+    checkAddParentNode(parent);
 
     m_data.nodes.emplace(key, ReplayGainItem{type, name, track, nullptr});
     m_data.parents[Utils::Enum::toString(parent)].emplace_back(key);
+
+    return &m_data.nodes.at(key);
 }
 
 void ReplayGainPopulatorPrivate::checkAddParentNode(ReplayGainModel::ItemParent parent)
@@ -86,13 +96,6 @@ void ReplayGainPopulatorPrivate::checkAddParentNode(ReplayGainModel::ItemParent 
         addNodeIfNew(QStringLiteral("Details"), ReplayGainPopulator::tr("Details"), ItemParent::Root,
                      ReplayGainItem::Header);
     }
-}
-
-void ReplayGainPopulatorPrivate::checkAddEntryNode(const QString& key, const QString& name,
-                                                   ReplayGainModel::ItemParent parent, const Track& track)
-{
-    checkAddParentNode(parent);
-    addNodeIfNew(key, name, parent, ReplayGainItem::Entry, track);
 }
 
 ReplayGainPopulator::ReplayGainPopulator(QObject* parent)
@@ -110,23 +113,63 @@ void ReplayGainPopulator::run(const TrackList& tracks)
 
     if(tracks.size() == 1) {
         const Track& track = tracks.front();
-        p->addNodeIfNew(QStringLiteral("TrackGain"), QStringLiteral("Track Gain"), track.rgTrackGain(),
-                        ReplayGainItem::TrackGain, track);
-        p->addNodeIfNew(QStringLiteral("TrackPeak"), QStringLiteral("Track Peak"), track.rgTrackPeak(),
-                        ReplayGainItem::TrackPeak, track);
-        p->addNodeIfNew(QStringLiteral("AlbumGain"), QStringLiteral("Album Gain"), track.rgAlbumGain(),
-                        ReplayGainItem::AlbumGain, track);
-        p->addNodeIfNew(QStringLiteral("AlbumPeak"), QStringLiteral("Album Peak"), track.rgAlbumPeak(),
-                        ReplayGainItem::AlbumPeak, track);
+        p->addNodeIfNew(QStringLiteral("TrackGain"), tr("Track Gain"), track.rgTrackGain(),
+                        ReplayGainModel::ItemParent::Root, ReplayGainItem::TrackGain, track);
+        p->addNodeIfNew(QStringLiteral("TrackPeak"), tr("Track Peak"), track.rgTrackPeak(),
+                        ReplayGainModel::ItemParent::Root, ReplayGainItem::TrackPeak, track);
+        p->addNodeIfNew(QStringLiteral("AlbumGain"), tr("Album Gain"), track.rgAlbumGain(),
+                        ReplayGainModel::ItemParent::Root, ReplayGainItem::AlbumGain, track);
+        p->addNodeIfNew(QStringLiteral("AlbumPeak"), tr("Album Peak"), track.rgAlbumPeak(),
+                        ReplayGainModel::ItemParent::Root, ReplayGainItem::AlbumPeak, track);
     }
     else {
+        std::set<float> trackGain;
+        std::set<float> albumGain;
+        float totalPeak{Constants::InvalidPeak};
+
         for(const Track& track : tracks) {
             if(!mayRun()) {
                 return;
             }
 
+            if(track.hasTrackGain()) {
+                trackGain.emplace(track.rgTrackGain());
+            }
+            if(track.hasAlbumGain()) {
+                albumGain.emplace(track.rgAlbumGain());
+            }
+            if(track.hasTrackPeak()) {
+                totalPeak = std::max(totalPeak, track.rgTrackPeak());
+            }
+
             const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
-            p->checkAddEntryNode(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, track);
+            p->addNodeIfNew(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, ReplayGainItem::Entry,
+                            track);
+        }
+
+        if(auto* gain = p->addNodeIfNew(QStringLiteral("TrackGain"), tr("Track Gain"),
+                                        trackGain.empty() ? Constants::InvalidGain : *trackGain.cbegin(),
+                                        ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
+            gain->setMultipleValues(trackGain.size() > 1);
+        }
+        if(auto* gain = p->addNodeIfNew(QStringLiteral("AlbumGain"), tr("Album Gain"),
+                                        albumGain.empty() ? Constants::InvalidGain : *albumGain.cbegin(),
+                                        ReplayGainModel::ItemParent::Summary, ReplayGainItem::AlbumGain, {})) {
+            gain->setMultipleValues(albumGain.size() > 1);
+        }
+        if(auto* maxPeak = p->addNodeIfNew(QStringLiteral("TotalPeak"), QStringLiteral("Total Peak"), totalPeak,
+                                           ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackPeak, {})) {
+            maxPeak->setIsEditable(false);
+        }
+        if(auto* lowestGain = p->addNodeIfNew(QStringLiteral("LowestGain"), tr("Lowest Gain (Loudest track)"),
+                                              *std::ranges::max_element(trackGain),
+                                              ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
+            lowestGain->setIsEditable(false);
+        }
+        if(auto* highestGain = p->addNodeIfNew(QStringLiteral("HighestGain"), tr("Highest Gain (Quietest track)"),
+                                               *std::ranges::min_element(trackGain),
+                                               ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
+            highestGain->setIsEditable(false);
         }
     }
 

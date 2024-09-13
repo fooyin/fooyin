@@ -80,7 +80,9 @@ Qt::ItemFlags ReplayGainModel::flags(const QModelIndex& index) const
 
     if(index.data(ReplayGainItem::Type).toInt() != ReplayGainItem::Header) {
         flags |= Qt::ItemNeverHasChildren;
-        if(index.column() > 0) {
+
+        const auto* item = itemForIndex(index);
+        if(index.column() > 0 && item->isEditable()) {
             flags |= Qt::ItemIsEditable;
         }
     }
@@ -156,33 +158,53 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
         return item->name();
     }
 
-    if(column == 1) {
-        QString value;
-        bool isPeak{false};
+    if(item->isSummary()) {
+        if(column == 1) {
+            if(item->multipleValues()) {
+                return QStringLiteral("<<multiple>>");
+            }
 
-        switch(type) {
-            case(ReplayGainItem::TrackPeak):
-                value  = formatPeak(item->trackPeak(), 6);
-                isPeak = true;
-                break;
-            case(ReplayGainItem::AlbumGain):
-                value = formatGain(item->albumGain(), 2);
-                break;
-            case(ReplayGainItem::AlbumPeak):
-                value  = formatPeak(item->albumPeak(), 6);
-                isPeak = true;
-                break;
-            case(ReplayGainItem::TrackGain):
-            default:
-                value = formatGain(item->trackGain(), 2);
-                break;
+            QString value;
+            bool isPeak{false};
+
+            switch(type) {
+                case(ReplayGainItem::TrackPeak):
+                    value  = formatPeak(item->trackPeak(), 6);
+                    isPeak = true;
+                    break;
+                case(ReplayGainItem::AlbumGain):
+                    value = formatGain(item->albumGain(), 2);
+                    break;
+                case(ReplayGainItem::AlbumPeak):
+                    value  = formatPeak(item->albumPeak(), 6);
+                    isPeak = true;
+                    break;
+                case(ReplayGainItem::TrackGain):
+                default:
+                    value = formatGain(item->trackGain(), 2);
+                    break;
+            }
+
+            if(value.isEmpty()) {
+                return {};
+            }
+
+            return (isEdit || isPeak) ? value : QStringLiteral("%1 dB").arg(value);
+        }
+        return {};
+    }
+
+    if(column == 1) {
+        if(item->multipleValues()) {
+            return QStringLiteral("<<multiple values>>");
         }
 
+        const QString value = formatGain(item->trackGain(), 2);
         if(value.isEmpty()) {
             return {};
         }
 
-        return (isEdit || isPeak) ? value : QStringLiteral("%1 dB").arg(value);
+        return isEdit ? value : QStringLiteral("%1 dB").arg(value);
     }
 
     if(column == 2) {
@@ -222,12 +244,27 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
     bool ok              = false;
     const float setValue = value.toFloat(&ok);
 
-    auto setGainOrPeak = [this, &index, item](auto setFunc, float validValue, float invalidValue) {
-        if(validValue == invalidValue || !setFunc(validValue)) {
-            item->setStatus(ReplayGainItem::None);
-            return false;
+    const auto setGainOrPeak = [this, &index, item](auto setFunc, float validValue, float invalidValue) {
+        auto applyFunc = [&](auto& node) {
+            if(validValue == invalidValue || !(node.*setFunc)(validValue)) {
+                node.setStatus(ReplayGainItem::None);
+                return false;
+            }
+            emit dataChanged(index, index);
+            return true;
+        };
+
+        if(item->isSummary()) {
+            for(auto& [_, node] : m_nodes) {
+                if(!applyFunc(node)) {
+                    return false;
+                }
+            }
         }
-        emit dataChanged(index, index);
+        else {
+            return applyFunc(*item);
+        }
+
         return true;
     };
 
@@ -236,38 +273,34 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
             switch(type) {
                 case ReplayGainItem::TrackPeak: {
                     const float validValue = ok ? setValue : Constants::InvalidPeak;
-                    return setGainOrPeak([item](float v) { return item->setTrackPeak(v); }, validValue,
-                                         Constants::InvalidPeak);
+                    return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue, Constants::InvalidPeak);
                 }
                 case ReplayGainItem::AlbumGain: {
                     const float validValue = ok ? setValue : Constants::InvalidGain;
-                    return setGainOrPeak([item](float v) { return item->setAlbumGain(v); }, validValue,
-                                         Constants::InvalidGain);
+                    return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue, Constants::InvalidGain);
                 }
                 case ReplayGainItem::AlbumPeak: {
                     const float validValue = ok ? setValue : Constants::InvalidPeak;
-                    return setGainOrPeak([item](float v) { return item->setAlbumPeak(v); }, validValue,
-                                         Constants::InvalidPeak);
+                    return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue, Constants::InvalidPeak);
                 }
                 case ReplayGainItem::TrackGain:
                 default: {
                     const float validValue = ok ? setValue : Constants::InvalidGain;
-                    return setGainOrPeak([item](float v) { return item->setTrackGain(v); }, validValue,
-                                         Constants::InvalidGain);
+                    return setGainOrPeak(&ReplayGainItem::setTrackGain, validValue, Constants::InvalidGain);
                 }
             }
             break;
         case(2): {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
-            return setGainOrPeak([item](float v) { return item->setTrackPeak(v); }, validValue, Constants::InvalidPeak);
+            return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue, Constants::InvalidPeak);
         }
         case(3): {
             const float validValue = ok ? setValue : Constants::InvalidGain;
-            return setGainOrPeak([item](float v) { return item->setAlbumGain(v); }, validValue, Constants::InvalidGain);
+            return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue, Constants::InvalidGain);
         }
         case(4): {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
-            return setGainOrPeak([item](float v) { return item->setAlbumPeak(v); }, validValue, Constants::InvalidPeak);
+            return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue, Constants::InvalidPeak);
         }
         default:
             break;

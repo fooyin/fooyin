@@ -26,21 +26,23 @@ ReplayGainItem::ReplayGainItem()
     : ReplayGainItem{Entry, {}, nullptr}
 { }
 
-ReplayGainItem::ReplayGainItem(ItemType type, QString name, float value, const Track& track)
-    : ReplayGainItem{type, std::move(name), track, nullptr}
+ReplayGainItem::ReplayGainItem(ItemType type, QString name, float value, const Track& track, ReplayGainItem* parent)
+    : ReplayGainItem{type, std::move(name), track, parent}
 {
+    m_summaryItem = true;
+
     switch(type) {
         case(TrackGain):
-            setTrackGain(value);
+            m_trackGain = value;
             break;
         case(TrackPeak):
-            setTrackPeak(value);
+            m_trackPeak = value;
             break;
         case(AlbumGain):
-            setAlbumGain(value);
+            m_albumGain = value;
             break;
         case(AlbumPeak):
-            setAlbumPeak(value);
+            m_albumPeak = value;
             break;
         case(Header):
         case(Entry):
@@ -57,14 +59,26 @@ ReplayGainItem::ReplayGainItem(ItemType type, QString name, const Track& track, 
     , m_type{type}
     , m_name{std::move(name)}
     , m_track{track}
+    , m_summaryItem{false}
+    , m_isEditable{true}
+    , m_multipleValues{false}
     , m_trackGain{Constants::InvalidGain}
     , m_trackPeak{Constants::InvalidPeak}
     , m_albumGain{Constants::InvalidGain}
     , m_albumPeak{Constants::InvalidPeak}
 { }
 
-bool ReplayGainItem::operator<(const ReplayGainItem& /*other*/) const
+bool ReplayGainItem::operator<(const ReplayGainItem& other) const
 {
+    const auto cmp = QString::localeAwareCompare(name(), other.name());
+    if(cmp == 0) {
+        return false;
+    }
+
+    if(m_type == Header) {
+        return cmp > 0;
+    }
+
     return false;
 }
 
@@ -103,84 +117,49 @@ float ReplayGainItem::albumPeak() const
     return m_albumPeak == Constants::InvalidPeak ? m_track.rgAlbumPeak() : m_albumPeak;
 }
 
+bool ReplayGainItem::isSummary() const
+{
+    return m_summaryItem;
+}
+
+bool ReplayGainItem::isEditable() const
+{
+    return m_isEditable;
+}
+
+bool ReplayGainItem::multipleValues() const
+{
+    return m_multipleValues;
+}
+
 bool ReplayGainItem::setTrackGain(float value)
 {
-    if(m_trackGain == value) {
-        return false;
-    }
-
-    if(value == m_track.rgTrackGain()) {
-        setStatus(None);
-        if(std::exchange(m_trackGain, Constants::InvalidGain) == Constants::InvalidGain) {
-            return false;
-        }
-    }
-    else {
-        m_trackGain = value;
-        setStatus(Changed);
-    }
-
-    return true;
+    return setGainOrPeak(m_trackGain, value, m_track.rgTrackGain(), Constants::InvalidGain);
 }
 
 bool ReplayGainItem::setTrackPeak(float value)
 {
-    if(m_trackPeak == value) {
-        return false;
-    }
-
-    if(value == m_track.rgTrackPeak()) {
-        setStatus(None);
-        if(std::exchange(m_trackPeak, Constants::InvalidPeak) == Constants::InvalidPeak) {
-            return false;
-        }
-    }
-    else {
-        m_trackPeak = value;
-        setStatus(Changed);
-    }
-
-    return true;
+    return setGainOrPeak(m_trackPeak, value, m_track.rgTrackPeak(), Constants::InvalidPeak);
 }
 
 bool ReplayGainItem::setAlbumGain(float value)
 {
-    if(m_albumGain == value) {
-        return false;
-    }
-
-    if(value == m_track.rgAlbumGain()) {
-        setStatus(None);
-        if(std::exchange(m_albumGain, Constants::InvalidGain) == Constants::InvalidGain) {
-            return false;
-        }
-    }
-    else {
-        m_albumGain = value;
-        setStatus(Changed);
-    }
-
-    return true;
+    return setGainOrPeak(m_albumGain, value, m_track.rgAlbumGain(), Constants::InvalidGain);
 }
 
 bool ReplayGainItem::setAlbumPeak(float value)
 {
-    if(m_albumPeak == value) {
-        return false;
-    }
+    return setGainOrPeak(m_albumPeak, value, m_track.rgAlbumPeak(), Constants::InvalidPeak);
+}
 
-    if(value == m_track.rgAlbumPeak()) {
-        setStatus(None);
-        if(std::exchange(m_albumPeak, Constants::InvalidPeak) == Constants::InvalidPeak) {
-            return false;
-        }
-    }
-    else {
-        m_albumPeak = value;
-        setStatus(Changed);
-    }
+void ReplayGainItem::setIsEditable(bool isEditable)
+{
+    m_isEditable = isEditable;
+}
 
-    return true;
+void ReplayGainItem::setMultipleValues(bool multiple)
+{
+    m_multipleValues = multiple;
 }
 
 bool ReplayGainItem::applyChanges()
