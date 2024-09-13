@@ -209,6 +209,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
 
     setHeaderHidden(!m_settings->value<PlaylistHeader>());
     setScrollbarHidden(m_settings->value<PlaylistScrollBar>());
+    m_playlistView->setAlternatingRowColors(m_settings->value<Settings::Gui::Internal::PlaylistAltColours>());
 
     m_model->playingTrackChanged(m_playlistController->currentTrack());
     m_model->playStateChanged(m_playlistController->playState());
@@ -265,6 +266,7 @@ void PlaylistWidgetPrivate::setupConnections()
         m_settings->subscribe<PlaylistMiddleClick>(m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
         m_settings->subscribe<PlaylistHeader>(this, [this](bool show) { setHeaderHidden(!show); });
         m_settings->subscribe<PlaylistScrollBar>(this, &PlaylistWidgetPrivate::setScrollbarHidden);
+        m_settings->subscribe<PlaylistAltColours>(m_playlistView, &PlaylistView::setAlternatingRowColors);
     }
     // clang-format on
 

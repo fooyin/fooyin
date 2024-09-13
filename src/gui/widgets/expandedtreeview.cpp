@@ -1340,20 +1340,31 @@ void TreeView::drawRow(QPainter* painter, const QStyleOptionViewItem& option, co
     const QModelIndex hover = m_p->m_hoverIndex;
     const bool hoverRow     = index.parent() == hover.parent() && index.row() == hover.row();
     const bool rowFocused   = m_view->hasFocus();
+    const bool isParent     = model()->hasChildren(index);
 
     opt.state.setFlag(QStyle::State_MouseOver, hoverRow);
 
-    if(m_view->alternatingRowColors()) {
-        opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
-    }
-
-    if(model()->hasChildren(index)) {
-        // Span first column of headers/subheaders
+    if(isParent) {
+        // Span first column of parents
         opt.rect.setX(0);
         opt.rect.setWidth(header()->length());
         m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         delegate(index)->paint(painter, opt, index);
         return;
+    }
+
+    if(m_view->alternatingRowColors()) {
+        if(index.parent().isValid()) {
+            // For child rows, apply alternating colour starting from index 0
+            opt.features.setFlag(QStyleOptionViewItem::Alternate, (index.row() % 2) == 0);
+        }
+        else if(isParent) {
+            // Ensure parent rows always use the base colour (no alternate)
+            opt.features.setFlag(QStyleOptionViewItem::Alternate, false);
+        }
+        else {
+            opt.features.setFlag(QStyleOptionViewItem::Alternate, index.row() & 1);
+        }
     }
 
     const QPoint offset       = m_p->m_scrollDelayOffset;
@@ -1452,6 +1463,7 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
         if(rect.width() > 0) {
             opt.rect = rect;
             painter->fillRect(opt.rect, bg);
+            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
         }
     }

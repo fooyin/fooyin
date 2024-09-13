@@ -486,7 +486,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     , m_resetting{false}
     , m_playingColour{QApplication::palette().highlight().color()}
     , m_disabledColour{Qt::red}
-    , m_altColours{settings->value<Settings::Gui::Internal::PlaylistAltColours>()}
     , m_populator{playlistInteractor->playerController()}
     , m_playlistLoaded{false}
     , m_pixmapPadding{settings->value<Settings::Gui::Internal::PlaylistImagePadding>()}
@@ -501,10 +500,6 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
-    m_settings->subscribe<Settings::Gui::Internal::PlaylistAltColours>(this, [this](bool enabled) {
-        m_altColours = enabled;
-        emit dataChanged({}, {}, {Qt::BackgroundRole});
-    });
     m_settings->subscribe<Settings::Gui::Internal::PlaylistImagePadding>(this, [this](int padding) {
         m_pixmapPadding = padding;
         emit dataChanged({}, {}, {PlaylistItem::ImagePadding});
@@ -1438,10 +1433,6 @@ QVariant PlaylistModel::trackData(PlaylistItem* item, const QModelIndex& index, 
             }
             if(isPlaying) {
                 return m_playingColour;
-            }
-            if(m_altColours) {
-                return item->row() & 1 ? QApplication::palette().base().color()
-                                       : QApplication::palette().alternateBase().color();
             }
 
             break;

@@ -246,7 +246,6 @@ private:
     QColor m_playingColour;
     QColor m_disabledColour;
 
-    bool m_altColours;
     QThread m_populatorThread;
     PlaylistPopulator m_populator;
 
