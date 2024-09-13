@@ -30,11 +30,11 @@
 #include <QVBoxLayout>
 
 namespace Fooyin {
-ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, QWidget* parent)
+ReplayGainWidget::ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_library{library}
     , m_view{new ReplayGainView(this)}
-    , m_model{new ReplayGainModel(this)}
+    , m_model{new ReplayGainModel(readOnly, this)}
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins({});

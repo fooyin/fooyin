@@ -41,7 +41,7 @@ public:
     };
     Q_ENUM(ItemParent)
 
-    explicit ReplayGainModel(QObject* parent = nullptr);
+    explicit ReplayGainModel(bool readOnly, QObject* parent = nullptr);
     ~ReplayGainModel() override;
 
     void resetModel(const TrackList& tracks);
@@ -57,6 +57,7 @@ private:
     void populate(const RGInfoData& data);
     void updateSummary();
 
+    bool m_readOnly;
     QThread m_populatorThread;
     ReplayGainPopulator m_populator;
     TrackList m_tracks;

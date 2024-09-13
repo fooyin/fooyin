@@ -24,8 +24,9 @@
 constexpr auto HeaderFontDelta = 2;
 
 namespace Fooyin {
-ReplayGainModel::ReplayGainModel(QObject* parent)
+ReplayGainModel::ReplayGainModel(bool readOnly, QObject* parent)
     : TreeModel{parent}
+    , m_readOnly{readOnly}
 {
     m_populator.moveToThread(&m_populatorThread);
 
@@ -82,7 +83,7 @@ Qt::ItemFlags ReplayGainModel::flags(const QModelIndex& index) const
         flags |= Qt::ItemNeverHasChildren;
 
         const auto* item = itemForIndex(index);
-        if(index.column() > 0 && item->isEditable()) {
+        if(!m_readOnly && index.column() > 0 && item->isEditable()) {
             flags |= Qt::ItemIsEditable;
         }
     }

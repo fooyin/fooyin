@@ -268,7 +268,10 @@ void Widgets::registerPropertiesTabs()
     m_gui.propertiesDialog->addTab(tr("Details"),
                                    [this](const TrackList& tracks) { return new InfoWidget(tracks, m_window); });
     m_gui.propertiesDialog->addTab(tr("ReplayGain"), [this](const TrackList& tracks) {
-        return new ReplayGainWidget(m_core->library(), tracks, m_window);
+        const bool canWrite = std::ranges::all_of(tracks, [this](const Track& track) {
+            return !track.hasCue() && !track.isInArchive() && m_core->audioLoader()->canWriteMetadata(track);
+        });
+        return new ReplayGainWidget(m_core->library(), tracks, !canWrite, m_window);
     });
 }
 

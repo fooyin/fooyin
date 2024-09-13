@@ -31,7 +31,7 @@ class ReplayGainWidget : public PropertiesTabWidget
     Q_OBJECT
 
 public:
-    ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, QWidget* parent = nullptr);
+    ReplayGainWidget(MusicLibrary* library, const TrackList& tracks, bool readOnly, QWidget* parent = nullptr);
 
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
