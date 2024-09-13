@@ -158,37 +158,37 @@
 <context>
     <name>Fooyin::AutoHeaderView</name>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="480"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="480"/>
         <source>Auto-size sections</source>
         <translation>Taille Auto. des sections</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="488"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="488"/>
         <source>Show hidden</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="497"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="497"/>
         <source>Hide %1</source>
         <translation>Masquer %1</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="520"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="520"/>
         <source>Alignment</source>
         <translation>Alignement</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="530"/>
         <source>&amp;Left</source>
         <translation>&amp;Gauche</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="531"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="531"/>
         <source>&amp;Centre</source>
         <translation>&amp;Centre</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/autoheaderview.cpp" line="532"/>
+        <location filename="../../src/gui/widgets/autoheaderview.cpp" line="532"/>
         <source>&amp;Right</source>
         <translation>&amp;Droite</translation>
     </message>
@@ -196,7 +196,7 @@
 <context>
     <name>Fooyin::ColourButton</name>
     <message>
-        <location filename="../../src/utils/widgets/colourbutton.cpp" line="71"/>
+        <location filename="../../src/gui/widgets/colourbutton.cpp" line="71"/>
         <source>Select Colour</source>
         <translation>Choisir une couleur</translation>
     </message>
@@ -664,17 +664,17 @@
 <context>
     <name>Fooyin::EditableTabBar</name>
     <message>
-        <location filename="../../src/utils/widgets/editabletabbar.cpp" line="35"/>
+        <location filename="../../src/gui/widgets/editabletabbar.cpp" line="35"/>
         <source>Tab</source>
         <translation>Onglet</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/editabletabbar.cpp" line="72"/>
+        <location filename="../../src/gui/widgets/editabletabbar.cpp" line="72"/>
         <source>Edit %1 Name</source>
         <translation>Modifier le nom de %1</translation>
     </message>
     <message>
-        <location filename="../../src/utils/widgets/editabletabbar.cpp" line="73"/>
+        <location filename="../../src/gui/widgets/editabletabbar.cpp" line="73"/>
         <source>%1 name:</source>
         <translation>nom de %1&#x202f;:</translation>
     </message>
@@ -763,22 +763,22 @@
 <context>
     <name>Fooyin::ExtendableTableView</name>
     <message>
-        <location filename="../../src/utils/extendabletableview.cpp" line="134"/>
+        <location filename="../../src/gui/widgets/extendabletableview.cpp" line="134"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
     <message>
-        <location filename="../../src/utils/extendabletableview.cpp" line="135"/>
+        <location filename="../../src/gui/widgets/extendabletableview.cpp" line="135"/>
         <source>Remove</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../../src/utils/extendabletableview.cpp" line="175"/>
+        <location filename="../../src/gui/widgets/extendabletableview.cpp" line="175"/>
         <source>Move Up</source>
         <translation>Monter</translation>
     </message>
     <message>
-        <location filename="../../src/utils/extendabletableview.cpp" line="183"/>
+        <location filename="../../src/gui/widgets/extendabletableview.cpp" line="183"/>
         <source>Move Down</source>
         <translation>Descendre</translation>
     </message>
@@ -1419,7 +1419,7 @@
 <context>
     <name>Fooyin::FontButton</name>
     <message>
-        <location filename="../../src/utils/widgets/fontbutton.cpp" line="69"/>
+        <location filename="../../src/gui/widgets/fontbutton.cpp" line="69"/>
         <source>Select Font</source>
         <translation>Choisir la Police</translation>
     </message>
@@ -2130,155 +2130,185 @@
 <context>
     <name>Fooyin::InfoPopulator</name>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="94"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="113"/>
         <source>Metadata</source>
         <translation>Métadonnées</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="97"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="116"/>
         <source>Location</source>
         <translation>Emplacement</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="100"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="119"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="103"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="122"/>
+        <source>ReplayGain</source>
+        <translation type="unfinished">ReplayGain</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="125"/>
         <source>Other</source>
         <translation>Autre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="115"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="137"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="116"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="138"/>
         <source>Title</source>
         <translation>Titre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="117"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="139"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="118"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="140"/>
         <source>Date</source>
         <translation>Date</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="119"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="141"/>
         <source>Genre</source>
         <translation>Genre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="120"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="142"/>
         <source>Album Artist</source>
         <translation>Artiste de l&apos;Album</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="124"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="146"/>
         <source>Track Number</source>
         <translation>Numéro de Piste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="140"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="162"/>
         <source>File Names</source>
         <translation>Noms de Fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="140"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="162"/>
         <source>File Name</source>
         <translation>Nom du Fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="143"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="165"/>
         <source>Folder Names</source>
         <translation>Noms de Dossiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="143"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="165"/>
         <source>Folder Name</source>
         <translation>Nom du Dossier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="147"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="169"/>
         <source>File Path</source>
         <translation>Chemin du fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="150"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="172"/>
         <source>Subsong Index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="156"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="178"/>
         <source>Total Size</source>
         <translation>Taille Totale</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="156"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="178"/>
         <source>File Size</source>
         <translation>Taille du Fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="159"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="183"/>
         <source>Last Modified</source>
         <translation>Dernière Modification</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="163"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="188"/>
         <source>Added</source>
         <translation>Ajouté</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="171"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="197"/>
         <source>Tracks</source>
         <translation>Pistes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="175"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="201"/>
         <source>Duration</source>
         <translation>Durée</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="177"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="204"/>
         <source>Channels</source>
         <translation>Canaux</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="179"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="206"/>
         <source>Bit Depth</source>
         <translation>Résolution</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="183"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="210"/>
         <source>Avg. Bitrate</source>
         <translation>Taux d&apos;Échantillonnage Moy.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="183"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="210"/>
         <source>Bitrate</source>
         <translation>Débit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="187"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="216"/>
         <source>Sample Rate</source>
         <translation>Taux d’Échantillonnage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infopopulator.cpp" line="189"/>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="218"/>
         <source>Codec</source>
         <translation>Codec</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="232"/>
+        <source>Track Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="237"/>
+        <source>Track Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="242"/>
+        <source>Album Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
+        <source>Album Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
+        <source>Total Peak</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Fooyin::InfoView</name>
     <message>
-        <location filename="../../src/gui/info/infoview.cpp" line="45"/>
+        <location filename="../../src/gui/selectioninfo/infoview.cpp" line="45"/>
         <source>No Selection</source>
         <translation>Aucune Sélection</translation>
     </message>
@@ -2286,47 +2316,52 @@
 <context>
     <name>Fooyin::InfoWidget</name>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="115"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="115"/>
         <source>Selection Info</source>
         <translation>Infos sur la Sélection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="152"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="152"/>
         <source>Show header</source>
         <translation>Afficher l&apos;en-tête</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="158"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="158"/>
         <source>Show scrollbar</source>
         <translation>Afficher la barre de défilement</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="165"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="165"/>
         <source>Alternating row colours</source>
         <translation>Alterner la couleur des lignes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="173"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="173"/>
         <source>Metadata</source>
         <translation>Métadonnées</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="181"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="181"/>
         <source>Extended metadata</source>
         <translation>Métadonnées détaillées</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="189"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="189"/>
         <source>Location</source>
         <translation>Emplacement</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="197"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="197"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/info/infowidget.cpp" line="205"/>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="205"/>
+        <source>ReplayGain</source>
+        <translation type="unfinished">ReplayGain</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/selectioninfo/infowidget.cpp" line="213"/>
         <source>Other</source>
         <translation>Autre</translation>
     </message>
@@ -2899,7 +2934,7 @@
 <context>
     <name>Fooyin::LyricsWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/lyricswidget.cpp" line="51"/>
+        <location filename="../../src/gui/lyrics/lyricswidget.cpp" line="51"/>
         <source>Lyrics</source>
         <translation>Paroles</translation>
     </message>
@@ -4268,7 +4303,7 @@
 <context>
     <name>Fooyin::QueueViewerModel</name>
     <message>
-        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="190"/>
+        <location filename="../../src/gui/queueviewer/queueviewermodel.cpp" line="189"/>
         <source>Playback Queue</source>
         <translation>File d&apos;Attente</translation>
     </message>
@@ -4295,108 +4330,194 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::ReplayGainModel</name>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="105"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="107"/>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="107"/>
+        <source>Track Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="109"/>
+        <source>Track Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="111"/>
+        <source>Album Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="113"/>
+        <source>Album Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::ReplayGainPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="173"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="207"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="174"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
         <source>Playback</source>
         <translation>Lecture en cours</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="174"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
 </context>
 <context>
-    <name>Fooyin::ReplayGainWidget</name>
+    <name>Fooyin::ReplayGainPageWidget</name>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="66"/>
-        <source>Use track-based gain</source>
-        <translation type="unfinished">Mode gain par piste</translation>
+        <source>Disabled</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="67"/>
-        <source>Use album-based gain</source>
-        <translation type="unfinished">Mode gain par album</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="68"/>
-        <source>Use gain based on playback order</source>
-        <translation type="unfinished">Mode gain par ordre de lecture</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
-        <source>Base normalisation on track loudness</source>
-        <translation>Normaliser en fonction de l&apos;intensité sonore des pistes</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
-        <source>Base normalisation on album loudness</source>
-        <translation>Normaliser en fonction de l&apos;intensité sonore des albums</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="74"/>
-        <source>Base normalisation on track loudness if shuffling tracks, else album loudness</source>
-        <translation>Normaliser en fonction de l&apos;intensité sonore des pistes si la lecture est aléatoire, sinon en fonction de l&apos;intensité sonore des albums</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="90"/>
-        <source>Pre-amplification</source>
-        <translation>Pré-amplification</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="93"/>
-        <source>With RG info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="94"/>
-        <source>Without RG info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="104"/>
-        <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="107"/>
-        <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="117"/>
-        <source>Mode</source>
-        <translation>Mode</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="119"/>
-        <source>None</source>
-        <translation>Non Assigné</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="120"/>
         <source>Apply gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="121"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="68"/>
         <source>Apply gain and prevent clipping according to peak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="123"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="69"/>
         <source>Only prevent clipping according to peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
+        <source>Use track-based gain</source>
+        <translation type="unfinished">Mode gain par piste</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="71"/>
+        <source>Use album-based gain</source>
+        <translation type="unfinished">Mode gain par album</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="72"/>
+        <source>Use gain based on playback order</source>
+        <translation type="unfinished">Mode gain par ordre de lecture</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="76"/>
+        <source>Base normalisation on track loudness</source>
+        <translation type="unfinished">Normaliser en fonction de l&apos;intensité sonore des pistes</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="77"/>
+        <source>Base normalisation on album loudness</source>
+        <translation type="unfinished">Normaliser en fonction de l&apos;intensité sonore des albums</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
+        <source>Base normalisation on track loudness if shuffling tracks, else album loudness</source>
+        <translation type="unfinished">Normaliser en fonction de l&apos;intensité sonore des pistes si la lecture est aléatoire, sinon en fonction de l&apos;intensité sonore des albums</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="82"/>
+        <source>Mode</source>
+        <translation type="unfinished">Mode</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="96"/>
+        <source>Type</source>
+        <translation type="unfinished">Type</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="108"/>
+        <source>Pre-amplification</source>
+        <translation type="unfinished">Pré-amplification</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="111"/>
+        <source>With RG info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="112"/>
+        <source>Without RG info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="122"/>
+        <source>Amount of gain to apply in combination with ReplayGain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="125"/>
+        <source>Amount of gain to apply for tracks without ReplayGain info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ReplayGainPopulator</name>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="92"/>
+        <source>Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="96"/>
+        <source>Details</source>
+        <translation type="unfinished">Détails</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="116"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="150"/>
+        <source>Track Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="118"/>
+        <source>Track Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="120"/>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="155"/>
+        <source>Album Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="122"/>
+        <source>Album Peak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="164"/>
+        <source>Lowest Gain (Loudest track)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="169"/>
+        <source>Highest Gain (Quietest track)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::ReplayGainWidget</name>
+    <message>
+        <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="60"/>
+        <source>ReplayGain Editor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4659,28 +4780,28 @@
 <context>
     <name>Fooyin::SettingsDialog</name>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="59"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="182"/>
         <source>Reset Page</source>
         <translation>Réinitialiser la page</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="60"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="183"/>
         <source>Reset All</source>
         <translation>Tout Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="156"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="279"/>
         <source>Are you sure?</source>
         <translation>Êtes-vous sûr(e)&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="157"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="280"/>
         <source>This will reset all settings to default.</source>
         <translation>Tous les paramètres seront alors rétablis par défaut.</translation>
     </message>
     <message>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="46"/>
-        <location filename="../../src/utils/settings/settingsdialog.cpp" line="191"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="169"/>
+        <location filename="../../src/utils/settings/settingsdialog.cpp" line="314"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
@@ -4833,22 +4954,22 @@
 <context>
     <name>Fooyin::SplitterWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="299"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="299"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Séparateur (Haut/Bas)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="301"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="301"/>
         <source>Splitter (Left/Right)</source>
         <translation>Séparateur (Gauche/Droite)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="311"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="311"/>
         <source>Switch orientation</source>
         <translation>Changer l&apos;orientation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/splitterwidget.cpp" line="314"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="314"/>
         <source>Splitter</source>
         <translation>Séparateur</translation>
     </message>
@@ -4943,47 +5064,47 @@
 <context>
     <name>Fooyin::TabStackWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="51"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="51"/>
         <source>Playlist</source>
         <translation>Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="64"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="64"/>
         <source>Tab Stack</source>
         <translation>Barre d&apos;Onglets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="258"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="258"/>
         <source>&amp;Position</source>
         <translation>&amp;Position</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="262"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="262"/>
         <source>&amp;North</source>
         <translation>&amp;Nord</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="263"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="263"/>
         <source>&amp;East</source>
         <translation>&amp;Est</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="264"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="264"/>
         <source>&amp;South</source>
         <translation>&amp;Sud</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="265"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="265"/>
         <source>&amp;West</source>
         <translation>&amp;Ouest</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="304"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="304"/>
         <source>&amp;Rename</source>
         <translation>&amp;Renommer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/tabstackwidget.cpp" line="307"/>
+        <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="307"/>
         <source>Re&amp;move</source>
         <translation>Suppri&amp;mer</translation>
     </message>
@@ -5157,19 +5278,24 @@
 <context>
     <name>Fooyin::VolumeControl</name>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="223"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="286"/>
         <source>Volume Controls</source>
         <translation>Contrôles de Volume</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="250"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="313"/>
         <source>Icon</source>
         <translation>Icône</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="251"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="314"/>
         <source>Slider</source>
         <translation>Curseur</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="315"/>
+        <source>Tooltip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5524,170 +5650,175 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
 <context>
     <name>Fooyin::Widgets</name>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="100"/>
+        <location filename="../../src/gui/widgets.cpp" line="99"/>
         <source>Dummy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="105"/>
+        <location filename="../../src/gui/widgets.cpp" line="104"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Séparateur (Haut/Bas)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="106"/>
-        <location filename="../../src/gui/widgets.cpp" line="112"/>
-        <location filename="../../src/gui/widgets.cpp" line="130"/>
-        <location filename="../../src/gui/widgets.cpp" line="149"/>
+        <location filename="../../src/gui/widgets.cpp" line="105"/>
+        <location filename="../../src/gui/widgets.cpp" line="111"/>
+        <location filename="../../src/gui/widgets.cpp" line="129"/>
+        <location filename="../../src/gui/widgets.cpp" line="148"/>
         <source>Splitters</source>
         <translation>Séparateurs</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="111"/>
+        <location filename="../../src/gui/widgets.cpp" line="110"/>
         <source>Splitter (Left/Right)</source>
         <translation>Séparateur (Gauche/Droite)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="116"/>
+        <location filename="../../src/gui/widgets.cpp" line="115"/>
         <source>Playlist Switcher</source>
         <translation>Sélecteur de Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="129"/>
+        <location filename="../../src/gui/widgets.cpp" line="128"/>
         <source>Playlist Tabs</source>
         <translation>Onglets de Listes de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="135"/>
+        <location filename="../../src/gui/widgets.cpp" line="134"/>
         <source>Playlist Organiser</source>
         <translation type="unfinished">Répertoire des Listes de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="143"/>
+        <location filename="../../src/gui/widgets.cpp" line="142"/>
         <source>Playback Queue</source>
         <translation>File d&apos;Attente</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="148"/>
+        <location filename="../../src/gui/widgets.cpp" line="147"/>
         <source>Tab Stack</source>
         <translation>Barre d&apos;Onglets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="157"/>
-        <location filename="../../src/gui/widgets.cpp" line="279"/>
+        <location filename="../../src/gui/widgets.cpp" line="156"/>
+        <location filename="../../src/gui/widgets.cpp" line="281"/>
         <source>Library Tree</source>
         <translation>Arborescence de la bibliothèque</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="162"/>
+        <location filename="../../src/gui/widgets.cpp" line="161"/>
         <source>Player Controls</source>
         <translation>Contrôles du Lecteur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="163"/>
-        <location filename="../../src/gui/widgets.cpp" line="169"/>
-        <location filename="../../src/gui/widgets.cpp" line="174"/>
-        <location filename="../../src/gui/widgets.cpp" line="179"/>
+        <location filename="../../src/gui/widgets.cpp" line="162"/>
+        <location filename="../../src/gui/widgets.cpp" line="168"/>
+        <location filename="../../src/gui/widgets.cpp" line="173"/>
+        <location filename="../../src/gui/widgets.cpp" line="178"/>
         <source>Controls</source>
         <translation>Contrôles</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="168"/>
+        <location filename="../../src/gui/widgets.cpp" line="167"/>
         <source>Playlist Controls</source>
         <translation>Contrôles de Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="173"/>
+        <location filename="../../src/gui/widgets.cpp" line="172"/>
         <source>Volume Controls</source>
         <translation>Contrôles de Volume</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="178"/>
+        <location filename="../../src/gui/widgets.cpp" line="177"/>
         <source>Seekbar</source>
         <translation>Barre de lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="184"/>
+        <location filename="../../src/gui/widgets.cpp" line="183"/>
         <source>Selection Info</source>
         <translation>Infos sur la Sélection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="192"/>
+        <location filename="../../src/gui/widgets.cpp" line="191"/>
         <source>Artwork Panel</source>
         <translation>Panneau des illustrations</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="196"/>
+        <location filename="../../src/gui/widgets.cpp" line="195"/>
         <source>Lyrics</source>
         <translation>Paroles</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="204"/>
-        <location filename="../../src/gui/widgets.cpp" line="280"/>
+        <location filename="../../src/gui/widgets.cpp" line="203"/>
+        <location filename="../../src/gui/widgets.cpp" line="282"/>
         <source>Playlist</source>
         <translation>Liste de Lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="207"/>
+        <location filename="../../src/gui/widgets.cpp" line="206"/>
         <source>Spacer</source>
         <translation>Espace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="217"/>
+        <location filename="../../src/gui/widgets.cpp" line="216"/>
         <source>Status Bar</source>
         <translation>Barre d&apos;État</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="222"/>
+        <location filename="../../src/gui/widgets.cpp" line="221"/>
         <source>Search Bar</source>
         <translation>Barre de Recherche</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="237"/>
+        <location filename="../../src/gui/widgets.cpp" line="236"/>
         <source>Directory Browser</source>
         <translation>Explorateur de fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="269"/>
+        <location filename="../../src/gui/widgets.cpp" line="268"/>
         <source>Details</source>
         <translation>Détails</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="277"/>
+        <location filename="../../src/gui/widgets.cpp" line="270"/>
+        <source>ReplayGain</source>
+        <translation type="unfinished">ReplayGain</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets.cpp" line="279"/>
         <source>Default</source>
         <translation>Par Défaut</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="282"/>
+        <location filename="../../src/gui/widgets.cpp" line="284"/>
         <source>Tabs</source>
         <translation>Onglets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="278"/>
+        <location filename="../../src/gui/widgets.cpp" line="280"/>
         <source>Lists</source>
         <translation>Listes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="281"/>
+        <location filename="../../src/gui/widgets.cpp" line="283"/>
         <source>Status bar</source>
         <translation>Barre d&apos;état</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="294"/>
+        <location filename="../../src/gui/widgets.cpp" line="296"/>
         <source>Scanning files</source>
         <translation>Analyse des fichiers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="297"/>
+        <location filename="../../src/gui/widgets.cpp" line="299"/>
         <source>Scanning tracks</source>
         <translation>Analyse des pistes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="300"/>
+        <location filename="../../src/gui/widgets.cpp" line="302"/>
         <source>Scanning %1</source>
         <translation>Analyse de %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets.cpp" line="303"/>
+        <location filename="../../src/gui/widgets.cpp" line="305"/>
         <source>Loading playlist</source>
         <translation>Chargement de la liste de lecture</translation>
     </message>
