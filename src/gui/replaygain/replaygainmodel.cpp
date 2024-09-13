@@ -256,7 +256,7 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
 
         if(item->isSummary()) {
             for(auto& [_, node] : m_nodes) {
-                if(!applyFunc(node)) {
+                if(node.type() == ReplayGainItem::ItemType::Entry && !applyFunc(node)) {
                     return false;
                 }
             }
