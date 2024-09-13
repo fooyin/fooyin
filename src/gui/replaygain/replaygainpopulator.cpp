@@ -35,6 +35,7 @@ public:
                                  ReplayGainModel::ItemParent parent, ReplayGainItem::ItemType type, const Track& track);
     ReplayGainItem* addNodeIfNew(const QString& key, const QString& name, ReplayGainModel::ItemParent parent,
                                  ReplayGainItem::ItemType type, const Track& track = {});
+    ReplayGainItem* addSummaryNode(const QString& key, const QString& name, float value, ReplayGainItem::ItemType type);
     void checkAddParentNode(ReplayGainModel::ItemParent parent);
 
     RGInfoData m_data;
@@ -85,6 +86,12 @@ ReplayGainItem* ReplayGainPopulatorPrivate::addNodeIfNew(const QString& key, con
     return &m_data.nodes.at(key);
 }
 
+ReplayGainItem* ReplayGainPopulatorPrivate::addSummaryNode(const QString& key, const QString& name, float value,
+                                                           ReplayGainItem::ItemType type)
+{
+    return addNodeIfNew(key, name, value, ReplayGainModel::ItemParent::Summary, type, {});
+}
+
 void ReplayGainPopulatorPrivate::checkAddParentNode(ReplayGainModel::ItemParent parent)
 {
     using ItemParent = ReplayGainModel::ItemParent;
@@ -123,53 +130,72 @@ void ReplayGainPopulator::run(const TrackList& tracks)
                         ReplayGainModel::ItemParent::Root, ReplayGainItem::AlbumPeak, track);
     }
     else {
-        std::set<float> trackGain;
-        std::set<float> albumGain;
-        float totalPeak{Constants::InvalidPeak};
+        if(auto* gain = p->addSummaryNode(QStringLiteral("TrackGain"), tr("Track Gain"), Constants::InvalidGain,
+                                          ReplayGainItem::TrackGain)) {
+            gain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
+                if(values.contains(ReplayGainItem::TrackGain)) {
+                    auto gains = values.at(ReplayGainItem::TrackGain);
+                    parent->setTrackGain(gains.empty() ? Constants::InvalidGain : *gains.cbegin());
+                    parent->setMultipleValues(gains.size() > 1);
+                }
+            });
+        }
+
+        if(auto* gain = p->addSummaryNode(QStringLiteral("AlbumGain"), tr("Album Gain"), Constants::InvalidGain,
+                                          ReplayGainItem::AlbumGain)) {
+            gain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
+                if(values.contains(ReplayGainItem::AlbumGain)) {
+                    const auto& gains = values.at(ReplayGainItem::AlbumGain);
+                    parent->setAlbumGain(gains.empty() ? Constants::InvalidGain : *gains.cbegin());
+                    parent->setMultipleValues(gains.size() > 1);
+                }
+            });
+        }
+
+        if(auto* maxPeak = p->addSummaryNode(QStringLiteral("TotalPeak"), QStringLiteral("Total Peak"),
+                                             Constants::InvalidPeak, ReplayGainItem::TrackPeak)) {
+            maxPeak->setIsEditable(false);
+            maxPeak->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
+                if(values.contains(ReplayGainItem::TrackPeak)) {
+                    auto peaks = values.at(ReplayGainItem::TrackPeak);
+                    peaks.erase(Constants::InvalidPeak);
+                    parent->setTrackPeak(peaks.empty() ? Constants::InvalidPeak : *std::ranges::max_element(peaks));
+                }
+            });
+        }
+
+        if(auto* lowestGain = p->addSummaryNode(QStringLiteral("LowestGain"), tr("Lowest Gain (Loudest track)"),
+                                                Constants::InvalidGain, ReplayGainItem::TrackGain)) {
+            lowestGain->setIsEditable(false);
+            lowestGain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
+                if(values.contains(ReplayGainItem::TrackGain)) {
+                    auto gains = values.at(ReplayGainItem::TrackGain);
+                    gains.erase(Constants::InvalidGain);
+                    parent->setTrackGain(gains.empty() ? Constants::InvalidGain : *std::ranges::max_element(gains));
+                }
+            });
+        }
+
+        if(auto* highestGain = p->addSummaryNode(QStringLiteral("HighestGain"), tr("Highest Gain (Quietest track)"),
+                                                 Constants::InvalidGain, ReplayGainItem::TrackGain)) {
+            highestGain->setIsEditable(false);
+            highestGain->setSummaryFunc([](ReplayGainItem* parent, const ReplayGainItem::RGValues& values) {
+                if(values.contains(ReplayGainItem::TrackGain)) {
+                    auto gains = values.at(ReplayGainItem::TrackGain);
+                    gains.erase(Constants::InvalidGain);
+                    parent->setTrackGain(gains.empty() ? Constants::InvalidGain : *std::ranges::min_element(gains));
+                }
+            });
+        }
 
         for(const Track& track : tracks) {
             if(!mayRun()) {
                 return;
             }
 
-            if(track.hasTrackGain()) {
-                trackGain.emplace(track.rgTrackGain());
-            }
-            if(track.hasAlbumGain()) {
-                albumGain.emplace(track.rgAlbumGain());
-            }
-            if(track.hasTrackPeak()) {
-                totalPeak = std::max(totalPeak, track.rgTrackPeak());
-            }
-
             const auto key = QStringLiteral("%1|%2").arg(track.id()).arg(track.effectiveTitle());
             p->addNodeIfNew(key, track.effectiveTitle(), ReplayGainModel::ItemParent::Details, ReplayGainItem::Entry,
                             track);
-        }
-
-        if(auto* gain = p->addNodeIfNew(QStringLiteral("TrackGain"), tr("Track Gain"),
-                                        trackGain.empty() ? Constants::InvalidGain : *trackGain.cbegin(),
-                                        ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
-            gain->setMultipleValues(trackGain.size() > 1);
-        }
-        if(auto* gain = p->addNodeIfNew(QStringLiteral("AlbumGain"), tr("Album Gain"),
-                                        albumGain.empty() ? Constants::InvalidGain : *albumGain.cbegin(),
-                                        ReplayGainModel::ItemParent::Summary, ReplayGainItem::AlbumGain, {})) {
-            gain->setMultipleValues(albumGain.size() > 1);
-        }
-        if(auto* maxPeak = p->addNodeIfNew(QStringLiteral("TotalPeak"), QStringLiteral("Total Peak"), totalPeak,
-                                           ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackPeak, {})) {
-            maxPeak->setIsEditable(false);
-        }
-        if(auto* lowestGain = p->addNodeIfNew(QStringLiteral("LowestGain"), tr("Lowest Gain (Loudest track)"),
-                                              *std::ranges::max_element(trackGain),
-                                              ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
-            lowestGain->setIsEditable(false);
-        }
-        if(auto* highestGain = p->addNodeIfNew(QStringLiteral("HighestGain"), tr("Highest Gain (Quietest track)"),
-                                               *std::ranges::min_element(trackGain),
-                                               ReplayGainModel::ItemParent::Summary, ReplayGainItem::TrackGain, {})) {
-            highestGain->setIsEditable(false);
         }
     }
 

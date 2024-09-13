@@ -135,6 +135,9 @@ QVariant ReplayGainModel::data(const QModelIndex& index, int role) const
     if(role == ReplayGainItem::Type) {
         return type;
     }
+    if(role == ReplayGainItem::IsSummary) {
+        return item->isSummary();
+    }
     if(role == Qt::FontRole) {
         return (type == ReplayGainItem::Header) ? m_headerFont : item->font();
     }
@@ -244,13 +247,13 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
     bool ok              = false;
     const float setValue = value.toFloat(&ok);
 
-    const auto setGainOrPeak = [this, &index, item](auto setFunc, float validValue, float invalidValue) {
+    const auto setGainOrPeak = [this, &index, item](auto setFunc, float validValue) {
         auto applyFunc = [&](auto& node) {
-            if(validValue == invalidValue || !(node.*setFunc)(validValue)) {
-                node.setStatus(ReplayGainItem::None);
+            if(!(node.*setFunc)(validValue)) {
                 return false;
             }
             emit dataChanged(index, index);
+            updateSummary();
             return true;
         };
 
@@ -273,34 +276,34 @@ bool ReplayGainModel::setData(const QModelIndex& index, const QVariant& value, i
             switch(type) {
                 case ReplayGainItem::TrackPeak: {
                     const float validValue = ok ? setValue : Constants::InvalidPeak;
-                    return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue, Constants::InvalidPeak);
+                    return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue);
                 }
                 case ReplayGainItem::AlbumGain: {
                     const float validValue = ok ? setValue : Constants::InvalidGain;
-                    return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue, Constants::InvalidGain);
+                    return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue);
                 }
                 case ReplayGainItem::AlbumPeak: {
                     const float validValue = ok ? setValue : Constants::InvalidPeak;
-                    return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue, Constants::InvalidPeak);
+                    return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue);
                 }
                 case ReplayGainItem::TrackGain:
                 default: {
                     const float validValue = ok ? setValue : Constants::InvalidGain;
-                    return setGainOrPeak(&ReplayGainItem::setTrackGain, validValue, Constants::InvalidGain);
+                    return setGainOrPeak(&ReplayGainItem::setTrackGain, validValue);
                 }
             }
             break;
         case(2): {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
-            return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue, Constants::InvalidPeak);
+            return setGainOrPeak(&ReplayGainItem::setTrackPeak, validValue);
         }
         case(3): {
             const float validValue = ok ? setValue : Constants::InvalidGain;
-            return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue, Constants::InvalidGain);
+            return setGainOrPeak(&ReplayGainItem::setAlbumGain, validValue);
         }
         case(4): {
             const float validValue = ok ? setValue : Constants::InvalidPeak;
-            return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue, Constants::InvalidPeak);
+            return setGainOrPeak(&ReplayGainItem::setAlbumPeak, validValue);
         }
         default:
             break;
@@ -338,6 +341,37 @@ void ReplayGainModel::populate(const RGInfoData& data)
 
     rootItem()->sortChildren();
 
+    updateSummary();
+
     endResetModel();
+}
+
+void ReplayGainModel::updateSummary()
+{
+    if(!m_nodes.contains(QStringLiteral("Summary"))) {
+        return;
+    }
+    if(!m_nodes.contains(QStringLiteral("Details"))) {
+        return;
+    }
+
+    auto& summary           = m_nodes.at(QStringLiteral("Summary"));
+    auto& parent            = m_nodes.at(QStringLiteral("Details"));
+    const auto summaryItems = summary.children();
+    const auto children     = parent.children();
+
+    ReplayGainItem::RGValues values;
+    for(const auto& child : children) {
+        values[ReplayGainItem::TrackGain].emplace(child->trackGain());
+        values[ReplayGainItem::TrackPeak].emplace(child->trackPeak());
+        values[ReplayGainItem::AlbumGain].emplace(child->albumGain());
+        values[ReplayGainItem::AlbumPeak].emplace(child->albumPeak());
+    }
+
+    for(auto* summaryRow : summaryItems) {
+        if(summaryRow->summaryFunc()) {
+            summaryRow->summaryFunc()(summaryRow, values);
+        }
+    }
 }
 } // namespace Fooyin

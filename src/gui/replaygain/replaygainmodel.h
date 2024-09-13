@@ -55,6 +55,7 @@ public:
 
 private:
     void populate(const RGInfoData& data);
+    void updateSummary();
 
     QThread m_populatorThread;
     ReplayGainPopulator m_populator;

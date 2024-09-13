@@ -35,5 +35,6 @@ ReplayGainView::ReplayGainView(QWidget* parent)
     setIndentation(0);
     setUniformHeightRole(ReplayGainItem::Role::Type);
     setEditTriggers(QAbstractItemView::AllEditTriggers);
+    setAlternatingRowColors(true);
 }
 } // namespace Fooyin

@@ -68,17 +68,8 @@ ReplayGainItem::ReplayGainItem(ItemType type, QString name, const Track& track, 
     , m_albumPeak{Constants::InvalidPeak}
 { }
 
-bool ReplayGainItem::operator<(const ReplayGainItem& other) const
+bool ReplayGainItem::operator<(const ReplayGainItem& /*other*/) const
 {
-    const auto cmp = QString::localeAwareCompare(name(), other.name());
-    if(cmp == 0) {
-        return false;
-    }
-
-    if(m_type == Header) {
-        return cmp > 0;
-    }
-
     return false;
 }
 
@@ -132,6 +123,11 @@ bool ReplayGainItem::multipleValues() const
     return m_multipleValues;
 }
 
+ReplayGainItem::SummaryFunc ReplayGainItem::summaryFunc() const
+{
+    return m_func;
+}
+
 bool ReplayGainItem::setTrackGain(float value)
 {
     return setGainOrPeak(m_trackGain, value, m_track.rgTrackGain(), Constants::InvalidGain);
@@ -162,9 +158,14 @@ void ReplayGainItem::setMultipleValues(bool multiple)
     m_multipleValues = multiple;
 }
 
+void ReplayGainItem::setSummaryFunc(const SummaryFunc& func)
+{
+    m_func = func;
+}
+
 bool ReplayGainItem::applyChanges()
 {
-    if(status() != Changed) {
+    if(m_isEditable && status() != Changed) {
         return false;
     }
 

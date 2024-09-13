@@ -22,6 +22,8 @@
 #include <core/track.h>
 #include <utils/treestatusitem.h>
 
+#include <set>
+
 namespace Fooyin {
 class ReplayGainItem : public TreeStatusItem<ReplayGainItem>
 {
@@ -38,7 +40,8 @@ public:
 
     enum Role : uint16_t
     {
-        Type = Qt::UserRole + 5,
+        Type = Qt::UserRole,
+        IsSummary,
         Value
     };
 
@@ -48,6 +51,9 @@ public:
     ReplayGainItem(ItemType type, QString name, const Track& track, ReplayGainItem* parent);
 
     bool operator<(const ReplayGainItem& other) const;
+
+    using RGValues    = std::map<ReplayGainItem::ItemType, std::set<float>>;
+    using SummaryFunc = std::function<void(ReplayGainItem*, const RGValues&)>;
 
     [[nodiscard]] ItemType type() const;
     [[nodiscard]] QString name() const;
@@ -61,8 +67,8 @@ public:
     [[nodiscard]] bool isSummary() const;
     [[nodiscard]] bool isEditable() const;
     [[nodiscard]] bool multipleValues() const;
+    [[nodiscard]] SummaryFunc summaryFunc() const;
 
-    bool setValue(float value);
     bool setTrackGain(float value);
     bool setTrackPeak(float value);
     bool setAlbumGain(float value);
@@ -70,6 +76,7 @@ public:
 
     void setIsEditable(bool isEditable);
     void setMultipleValues(bool multiple);
+    void setSummaryFunc(const SummaryFunc& func);
 
     bool applyChanges();
 
@@ -90,7 +97,9 @@ private:
         else {
             currentValue     = value;
             m_multipleValues = false;
-            setStatus(Changed);
+            if(!m_summaryItem) {
+                setStatus(Changed);
+            }
         }
 
         return true;
@@ -102,6 +111,7 @@ private:
     bool m_summaryItem;
     bool m_isEditable;
     bool m_multipleValues;
+    SummaryFunc m_func;
 
     float m_trackGain;
     float m_trackPeak;

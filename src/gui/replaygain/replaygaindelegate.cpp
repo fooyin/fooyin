@@ -19,6 +19,8 @@
 
 #include "replaygaindelegate.h"
 
+#include "replaygainitem.h"
+
 #include <QApplication>
 #include <QPainter>
 
@@ -48,19 +50,32 @@ void paintHeader(QPainter* painter, const QStyleOptionViewItem& opt, const QMode
     }
 }
 
-void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& /*index*/)
+void paintEntry(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& index)
 {
     QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
-
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+
+    if(!index.data(Fooyin::ReplayGainItem::IsSummary).toBool()) {
+        QPen linePen = painter->pen();
+        linePen.setWidth(1);
+        QColor lineColour = opt.palette.color(QPalette::Text);
+        lineColour.setAlpha(40);
+        linePen.setColor(lineColour);
+
+        painter->setPen(linePen);
+        const int x = opt.rect.right();
+        painter->drawLine(x, opt.rect.top(), x, opt.rect.bottom());
+    }
 }
 } // namespace
 
 namespace Fooyin {
 void ReplayGainDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    QStyleOptionViewItem opt = option;
+    QStyleOptionViewItem opt{option};
     initStyleOption(&opt, index);
+
+    painter->save();
 
     if(index.flags() & Qt::ItemNeverHasChildren) {
         paintEntry(painter, opt, index);
@@ -68,6 +83,8 @@ void ReplayGainDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
     else {
         paintHeader(painter, opt, index);
     }
+
+    painter->restore();
 }
 } // namespace Fooyin
 
