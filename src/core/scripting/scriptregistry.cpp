@@ -392,8 +392,7 @@ bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) con
         return false;
     }
 
-    return isVariable(var, tracks.front()) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
-        || tracks.front().hasExtraTag(var.toUpper());
+    return isVariable(var, tracks.front());
 }
 
 bool ScriptRegistry::isFunction(const QString& func) const
