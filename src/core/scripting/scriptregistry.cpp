@@ -490,8 +490,27 @@ void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& t
         return;
     }
 
-    if(isVariable(var, track)) {
+    if(p->m_setMetadata.contains(var)) {
         p->m_setMetadata.at(var)(track, value);
+        return;
+    }
+
+    const QString tag = var.toUpper();
+
+    const auto setOrAddTag = [&](const auto& val) {
+        if(track.hasExtraTag(tag)) {
+            track.replaceExtraTag(tag, val);
+        }
+        else {
+            track.addExtraTag(var, val);
+        }
+    };
+
+    if(const auto* strVal = std::get_if<QString>(&value)) {
+        setOrAddTag(*strVal);
+    }
+    else if(const auto* listVal = std::get_if<QStringList>(&value)) {
+        setOrAddTag(*listVal);
     }
 }
 
