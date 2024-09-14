@@ -20,6 +20,7 @@
 #pragma once
 
 #include <core/library/musiclibrary.h>
+#include <utils/worker.h>
 
 #include "ffmpeginput.h"
 
@@ -29,20 +30,32 @@
 Q_DECLARE_LOGGING_CATEGORY(REPLAYGAIN)
 
 namespace Fooyin {
-class FYCORE_EXPORT FFmpegReplayGain
+struct ReplayGainFilter;
+
+struct ReplayGainResult
 {
+    double peak;
+    double gain;
+};
+
+class FYCORE_EXPORT FFmpegReplayGain : public Worker
+{
+    Q_OBJECT
+
 public:
-    FFmpegReplayGain(MusicLibrary* library);
+    explicit FFmpegReplayGain(MusicLibrary* library, QObject* parent = nullptr);
     void calculate(const TrackList& tracks, bool asAlbum);
 
+signals:
+    void calculationFinished();
+
 private:
-    bool setupTrack(Track track);
-    void handleTrack(Track track);
+    bool setupTrack(const Track& track, ReplayGainFilter& filter);
+    ReplayGainResult handleTrack(const Track& track, bool inAlbum);
     void handleAlbum(const TrackList& album);
 
     std::unique_ptr<QIODevice> m_file;
     std::unique_ptr<FFmpegDecoder> m_decoder;
-    AudioSource m_source;
     AudioFormat m_format;
 
     MusicLibrary* m_library;
