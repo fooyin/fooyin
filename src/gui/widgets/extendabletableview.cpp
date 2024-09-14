@@ -86,6 +86,10 @@ private:
     QHBoxLayout* m_customToolLayout;
 };
 
+void ExtendableTableModel::moveRowUp(int /*row*/) { }
+
+void ExtendableTableModel::moveRowDown(int /*row*/) { }
+
 class ExtendableTableViewPrivate
 {
 public:
@@ -131,8 +135,8 @@ ExtendableTableViewPrivate::ExtendableTableViewPrivate(ExtendableTableView* self
     , m_context{new WidgetContext(
           m_self, Context{Id{"Context.ExtendableTableView."}.append(Utils::generateUniqueHash())}, m_self)}
     , m_toolArea{new ExtendableToolArea(m_self)}
-    , m_add{new QAction(ExtendableTableView::tr("Add"), m_self)}
-    , m_remove{new QAction(ExtendableTableView::tr("Remove"), m_self)}
+    , m_add{new QAction(Utils::iconFromTheme(Constants::Icons::Add), ExtendableTableView::tr("Add"), m_self)}
+    , m_remove{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), ExtendableTableView::tr("Remove"), m_self)}
     , m_addCommand{m_actionManager->registerAction(m_add, Constants::Actions::New, m_context->context())}
     , m_removeCommand{m_actionManager->registerAction(m_remove, Constants::Actions::Remove, m_context->context())}
     , m_addButton{new QToolButton(m_self)}
@@ -207,42 +211,64 @@ void ExtendableTableViewPrivate::updateTools()
 
 void ExtendableTableViewPrivate::handleNewRow()
 {
-    if(m_model) {
-        QObject::connect(
-            m_model, &QAbstractItemModel::rowsInserted, m_self,
-            [this](const QModelIndex& parent, int first) {
-                const QModelIndex index = m_model->index(first, m_column, parent);
-                if(index.isValid()) {
-                    m_self->scrollTo(index, QAbstractItemView::EnsureVisible);
-                    m_self->edit(index);
-                }
-            },
-            Qt::SingleShotConnection);
-
-        m_model->addPendingRow();
+    if(!m_model) {
+        return;
     }
+
+    QObject::connect(
+        m_model, &QAbstractItemModel::rowsInserted, m_self,
+        [this](const QModelIndex& parent, int first) {
+            const QModelIndex index = m_model->index(first, m_column, parent);
+            if(index.isValid()) {
+                m_self->scrollTo(index, QAbstractItemView::EnsureVisible);
+                m_self->edit(index);
+            }
+        },
+        Qt::SingleShotConnection);
+
+    m_model->addPendingRow();
 }
 
 void ExtendableTableViewPrivate::handleRemoveRow() const
 {
-    if(m_model) {
-        const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
-
-        std::set<int> rows;
-        std::ranges::transform(selected, std::inserter(rows, rows.begin()),
-                               [](const QModelIndex& index) { return index.row(); });
-        std::ranges::for_each(rows, [this](const int row) { m_model->removeRow(row); });
+    if(!m_model) {
+        return;
     }
+
+    const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
+
+    std::set<int> rows;
+    std::ranges::transform(selected, std::inserter(rows, rows.begin()),
+                           [](const QModelIndex& index) { return index.row(); });
+    std::ranges::for_each(rows, [this](const int row) { m_model->removeRow(row); });
 }
 
 void ExtendableTableViewPrivate::handleMoveUp() const
 {
-    // TODO: Implement
+    if(!m_model) {
+        return;
+    }
+
+    const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
+
+    std::set<int> rows;
+    std::ranges::transform(selected, std::inserter(rows, rows.begin()),
+                           [](const QModelIndex& index) { return index.row(); });
+    std::ranges::for_each(rows, [this](const int row) { m_model->moveRowUp(row); });
 }
 
 void ExtendableTableViewPrivate::handleMoveDown() const
 {
-    // TODO: Implement
+    if(!m_model) {
+        return;
+    }
+
+    const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
+
+    std::set<int> rows;
+    std::ranges::transform(selected, std::inserter(rows, rows.begin()),
+                           [](const QModelIndex& index) { return index.row(); });
+    std::ranges::for_each(rows, [this](const int row) { m_model->moveRowDown(row); });
 }
 
 ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* parent)

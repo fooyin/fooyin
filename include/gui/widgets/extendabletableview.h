@@ -40,6 +40,9 @@ public:
     virtual void addPendingRow()    = 0;
     virtual void removePendingRow() = 0;
 
+    virtual void moveRowUp(int row);
+    virtual void moveRowDown(int row);
+
 signals:
     void pendingRowCancelled();
 };
