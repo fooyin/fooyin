@@ -177,16 +177,17 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_singleMode{false}
     , m_playlistContext{new WidgetContext(m_self, Context{Constants::Context::Playlist}, m_self)}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<PlaylistMiddleClick>())}
-    , m_playAction{new QAction(tr("&Play"), m_self)}
+    , m_playAction{new QAction(Utils::iconFromTheme(Constants::Icons::Play), tr("&Play"), m_self)}
     , m_cropAction{new QAction(tr("&Crop"), m_self)}
-    , m_stopAfter{new QAction(tr("&Stop after this"), m_self)}
+    , m_stopAfter{new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("&Stop after this"), m_self)}
     , m_cutAction{new QAction(tr("Cut"), m_self)}
     , m_copyAction{new QAction(tr("Copy"), m_self)}
     , m_pasteAction{new QAction(tr("Paste"), m_self)}
     , m_clearAction{new QAction(tr("&Clear"), m_self)}
-    , m_removeTrackAction{new QAction(tr("Remove"), m_self)}
-    , m_addToQueueAction{new QAction(tr("Add to playback queue"), m_self)}
-    , m_removeFromQueueAction{new QAction(tr("Remove from playback queue"), m_self)}
+    , m_removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), m_self)}
+    , m_addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to playback queue"), m_self)}
+    , m_removeFromQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove),
+                                          tr("Remove from playback queue"), m_self)}
     , m_sorting{false}
     , m_sortingColumn{false}
     , m_showPlaying{false}
