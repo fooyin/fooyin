@@ -55,6 +55,7 @@ public:
 
     virtual void insertChild(int row, Item* child)
     {
+        row = std::min(row, static_cast<int>(m_children.size()));
         m_children.insert(m_children.begin() + row, child);
         child->m_parent = static_cast<Item*>(this);
     }
