@@ -49,6 +49,7 @@ public:
     { }
 
 signals:
+    void itemAdded(int id);
     void itemChanged(int id);
     void itemRemoved(int id);
 };
@@ -76,9 +77,20 @@ public:
         return m_items;
     }
 
+    [[nodiscard]] int count() const
+    {
+        return static_cast<int>(m_items.size());
+    }
+
     [[nodiscard]] bool empty() const
     {
         return m_items.empty();
+    }
+
+    void reset()
+    {
+        m_items.clear();
+        loadDefaults();
     }
 
     Item addItem(const Item& item)
@@ -87,8 +99,9 @@ public:
         newItem.name  = findUniqueName(newItem.name);
         newItem.id    = findValidId();
         newItem.index = static_cast<int>(m_items.size());
-
         m_items.push_back(newItem);
+
+        emit itemAdded(newItem.id);
         saveItems();
         return newItem;
     }
@@ -111,6 +124,7 @@ public:
         }
         *itemIt = changedItem;
 
+        sortByIndex();
         emit itemChanged(changedItem.id);
         saveItems();
         return true;
@@ -171,10 +185,6 @@ public:
 
     void saveItems() const
     {
-        if(m_items.empty()) {
-            return;
-        }
-
         QByteArray byteArray;
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_0);
@@ -241,11 +251,6 @@ public:
         }
     }
 
-    void reset()
-    {
-        m_settings->fileRemove(m_settingKey);
-    }
-
 protected:
     virtual void loadDefaults() { }
 
@@ -283,6 +288,16 @@ private:
         auto ids         = m_items | std::views::transform([](const auto& regItem) { return regItem.id; });
         const int nextId = *std::ranges::max_element(ids) + 1;
         return nextId;
+    }
+
+    void sortByIndex()
+    {
+        std::ranges::sort(m_items, [](const auto& a, const auto& b) {
+            if(a.index == b.index) {
+                return false;
+            }
+            return a.index < b.index;
+        });
     }
 
     SettingsManager* m_settings;
