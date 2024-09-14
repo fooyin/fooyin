@@ -20,7 +20,6 @@
 #include "core/constants.h"
 #include <core/track.h>
 
-#include <core/constants.h>
 #include <utils/crypto.h>
 #include <utils/utils.h>
 
@@ -44,12 +43,51 @@ int extractYear(const QString& input)
 
     return 0;
 }
+
+QString validNum(auto num)
+{
+    if(num > 0) {
+        return QString::number(num);
+    }
+    return {};
+};
+
+using MetaMap = std::unordered_map<QString, std::function<QString(const Fooyin::Track& track)>>;
+MetaMap metaMap()
+{
+    using namespace Fooyin::Constants::MetaData;
+    // clang-format off
+    static const std::unordered_map<QString, std::function<QString(const Fooyin::Track& track)>> metaMap{
+        {QLatin1String(Title),        [](const Fooyin::Track& track) { return track.title(); }},
+        {QLatin1String(Artist),       [](const Fooyin::Track& track) { return track.artist(); }},
+        {QLatin1String(Album),        [](const Fooyin::Track& track) { return track.album(); }},
+        {QLatin1String(AlbumArtist),  [](const Fooyin::Track& track) { return track.albumArtist(); }},
+        {QLatin1String(Track),        [](const Fooyin::Track& track) { return track.trackNumber(); }},
+        {QLatin1String(TrackTotal),   [](const Fooyin::Track& track) { return track.trackTotal(); }},
+        {QLatin1String(Disc),         [](const Fooyin::Track& track) { return track.discNumber(); }},
+        {QLatin1String(DiscTotal),    [](const Fooyin::Track& track) { return track.discTotal(); }},
+        {QLatin1String(Genre),        [](const Fooyin::Track& track) { return track.genre(); }},
+        {QLatin1String(Composer),     [](const Fooyin::Track& track) { return track.composer(); }},
+        {QLatin1String(Performer),    [](const Fooyin::Track& track) { return track.performer(); }},
+        {QLatin1String(Comment),      [](const Fooyin::Track& track) { return track.comment(); }},
+        {QLatin1String(Date),         [](const Fooyin::Track& track) { return track.date(); }},
+        {QLatin1String(Year),         [](const Fooyin::Track& track) { return validNum(track.year()); }},
+        {QLatin1String(PlayCount),    [](const Fooyin::Track& track) { return validNum(track.playCount()); }},
+        {QLatin1String(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating()); }},
+        {QLatin1String(RatingEditor), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
+        {QLatin1String(RatingStars),  [](const Fooyin::Track& track) { return validNum(track.ratingStars()); }}
+    };
+    // clang-format on
+    return metaMap;
+}
 } // namespace
 
 namespace Fooyin {
 class TrackPrivate : public QSharedData
 {
 public:
+    void splitArchiveUrl();
+
     int libraryId{-1};
     bool enabled{true};
     int id{-1};
@@ -109,31 +147,31 @@ public:
     bool isInArchive{false};
     QString archivePath;
     QString filepathWithinArchive;
-
-    void splitArchiveUrl()
-    {
-        QString path = filepath.mid(filepath.indexOf(u"://") + 3);
-        path         = path.mid(path.indexOf(u'|') + 1);
-
-        const auto lengthEndIndex   = path.indexOf(u'|');
-        const int archivePathLength = path.left(lengthEndIndex).toInt();
-        path                        = path.mid(lengthEndIndex + 1);
-
-        const QString filePrefix = QStringLiteral("file://");
-        path                     = path.sliced(filePrefix.length());
-
-        archivePath           = path.left(archivePathLength);
-        filepathWithinArchive = path.mid(archivePathLength + 1);
-
-        const QFileInfo info{filepathWithinArchive};
-        filename  = info.completeBaseName();
-        extension = info.suffix().toLower();
-        directory = info.dir().dirName();
-        if(directory == u".") {
-            directory = QFileInfo{archivePath}.fileName();
-        }
-    }
 };
+
+void TrackPrivate::splitArchiveUrl()
+{
+    QString path = filepath.mid(filepath.indexOf(u"://") + 3);
+    path         = path.mid(path.indexOf(u'|') + 1);
+
+    const auto lengthEndIndex   = path.indexOf(u'|');
+    const int archivePathLength = path.left(lengthEndIndex).toInt();
+    path                        = path.mid(lengthEndIndex + 1);
+
+    const QString filePrefix = QStringLiteral("file://");
+    path                     = path.sliced(filePrefix.length());
+
+    archivePath           = path.left(archivePathLength);
+    filepathWithinArchive = path.mid(archivePathLength + 1);
+
+    const QFileInfo info{filepathWithinArchive};
+    filename  = info.completeBaseName();
+    extension = info.suffix().toLower();
+    directory = info.dir().dirName();
+    if(directory == u".") {
+        directory = QFileInfo{archivePath}.fileName();
+    }
+}
 
 Track::Track()
     : Track{{}}
@@ -534,6 +572,26 @@ QString Track::cuePath() const
     return p->cuePath;
 }
 
+bool Track::isMultiValueTag(const QString& tag)
+{
+    const auto map         = metaMap();
+    const QString trackTag = tag.toLower();
+
+    if(!map.contains(trackTag)) {
+        return true;
+    }
+
+    return trackTag == QLatin1String{Constants::MetaData::Artist}
+        || trackTag == QLatin1String{Constants::MetaData::AlbumArtist}
+        || trackTag == QLatin1String{Constants::MetaData::Genre};
+}
+
+bool Track::isExtraTag(const QString& tag)
+{
+    const auto map = metaMap();
+    return !map.contains(tag);
+}
+
 bool Track::hasExtraTag(const QString& tag) const
 {
     return p->extraTags.contains(tag);
@@ -570,6 +628,56 @@ QByteArray Track::serialiseExtraTags() const
     stream << p->extraTags;
 
     return out;
+}
+
+QMap<QString, QString> Track::metadata() const
+{
+    QMap<QString, QString> map;
+
+    const auto addField = [&map]<typename T>(const QString& title, const T& field) {
+        if constexpr(std::is_same_v<T, QString>) {
+            if(!field.isEmpty()) {
+                map[title] = field;
+            }
+        }
+        if constexpr(std::is_same_v<T, QStringList>) {
+            if(!field.isEmpty()) {
+                map[title] = field.join(u"; ");
+            }
+        }
+    };
+
+    using namespace Constants;
+
+    static const QString TitleKey       = QString::fromLatin1(MetaData::Title).toUpper();
+    static const QString ArtistKey      = QString::fromLatin1(MetaData::Artist).toUpper();
+    static const QString AlbumKey       = QString::fromLatin1(MetaData::Album).toUpper();
+    static const QString AlbumArtistKey = QString::fromLatin1(MetaData::AlbumArtist).toUpper();
+    static const QString TrackKey       = QString::fromLatin1(MetaData::Track).toUpper();
+    static const QString TrackTotalKey  = QString::fromLatin1(MetaData::TrackTotal).toUpper();
+    static const QString DiscKey        = QString::fromLatin1(MetaData::Disc).toUpper();
+    static const QString DiscTotalKey   = QString::fromLatin1(MetaData::DiscTotal).toUpper();
+    static const QString GenreKey       = QString::fromLatin1(MetaData::Genre).toUpper();
+    static const QString ComposerKey    = QString::fromLatin1(MetaData::Composer).toUpper();
+    static const QString PerformerKey   = QString::fromLatin1(MetaData::Performer).toUpper();
+    static const QString CommentKey     = QString::fromLatin1(MetaData::Comment).toUpper();
+    static const QString DateKey        = QString::fromLatin1(MetaData::Date).toUpper();
+
+    addField(TitleKey, p->title);
+    addField(ArtistKey, p->artists);
+    addField(AlbumKey, p->album);
+    addField(AlbumArtistKey, p->albumArtists);
+    addField(TrackKey, p->trackNumber);
+    addField(TrackTotalKey, p->trackTotal);
+    addField(DiscKey, p->discNumber);
+    addField(DiscTotalKey, p->discTotal);
+    addField(GenreKey, p->genres);
+    addField(ComposerKey, p->composer);
+    addField(PerformerKey, p->performer);
+    addField(CommentKey, p->comment);
+    addField(DateKey, p->date);
+
+    return map;
 }
 
 bool Track::hasExtraProperty(const QString& prop) const
@@ -897,40 +1005,12 @@ void Track::setRGAlbumPeak(float peak)
 
 QString Track::metaValue(const QString& name) const
 {
-    auto validNum = [](auto num) -> QString {
-        if(num > 0) {
-            return QString::number(num);
-        }
-        return {};
-    };
-
-    // clang-format off
-    static const std::unordered_map<QString, std::function<QString(const Track& track)>> metaMap{
-        {QLatin1String(Constants::MetaData::Title),       [](const Track& track) { return track.title(); }},
-        {QLatin1String(Constants::MetaData::Artist),      [](const Track& track) { return track.artist(); }},
-        {QLatin1String(Constants::MetaData::Album),       [](const Track& track) { return track.album(); }},
-        {QLatin1String(Constants::MetaData::AlbumArtist), [](const Track& track) { return track.albumArtist(); }},
-        {QLatin1String(Constants::MetaData::Track),       [](const Track& track) { return track.trackNumber(); }},
-        {QLatin1String(Constants::MetaData::TrackTotal),  [](const Track& track) { return track.trackTotal(); }},
-        {QLatin1String(Constants::MetaData::Disc),        [](const Track& track) { return track.discNumber(); }},
-        {QLatin1String(Constants::MetaData::DiscTotal),   [](const Track& track) { return track.discTotal(); }},
-        {QLatin1String(Constants::MetaData::Genre),       [](const Track& track) { return track.genre(); }},
-        {QLatin1String(Constants::MetaData::Composer),    [](const Track& track) { return track.composer(); }},
-        {QLatin1String(Constants::MetaData::Performer),   [](const Track& track) { return track.performer(); }},
-        {QLatin1String(Constants::MetaData::Comment),     [](const Track& track) { return track.comment(); }},
-        {QLatin1String(Constants::MetaData::Date),        [](const Track& track) { return track.date(); }},
-        {QLatin1String(Constants::MetaData::Year),        [validNum](const Track& track) { return validNum(track.year()); }},
-        {QLatin1String(Constants::MetaData::PlayCount),   [validNum](const Track& track) { return validNum(track.playCount()); }},
-        {QLatin1String(Constants::MetaData::Rating),      [validNum](const Track& track) { return validNum(track.rating()); }},
-        {QLatin1String(Constants::MetaData::RatingStars), [validNum](const Track& track) { return validNum(track.ratingStars()); }}
-    };
-    // clang-format on
-
-    if(metaMap.contains(name)) {
-        return metaMap.at(name)(*this);
+    const auto map = metaMap();
+    if(map.contains(name)) {
+        return map.at(name)(*this);
     }
 
-    return extraTag(name).join(QLatin1String{Constants::UnitSeparator});
+    return extraTag(name.toUpper()).join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::techInfo(const QString& name) const
@@ -972,6 +1052,14 @@ void Track::addExtraTag(const QString& tag, const QString& value)
     p->extraTags[tag.toUpper()].push_back(value);
 }
 
+void Track::addExtraTag(const QString& tag, const QStringList& value)
+{
+    if(tag.isEmpty() || value.isEmpty()) {
+        return;
+    }
+    p->extraTags[tag.toUpper()].append(value);
+}
+
 void Track::removeExtraTag(const QString& tag)
 {
     if(p->extraTags.contains(tag)) {
@@ -991,6 +1079,20 @@ void Track::replaceExtraTag(const QString& tag, const QString& value)
     }
     else {
         p->extraTags[tag] = {value};
+    }
+}
+
+void Track::replaceExtraTag(const QString& tag, const QStringList& value)
+{
+    if(tag.isEmpty() || value.isEmpty()) {
+        return;
+    }
+
+    if(value.isEmpty()) {
+        removeExtraTag(tag);
+    }
+    else {
+        p->extraTags[tag] = value;
     }
 }
 

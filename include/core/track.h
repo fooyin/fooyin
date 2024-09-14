@@ -133,11 +133,16 @@ public:
     [[nodiscard]] bool hasCue() const;
     [[nodiscard]] QString cuePath() const;
 
+    static bool isMultiValueTag(const QString& tag);
+    static bool isExtraTag(const QString& tag);
+
     [[nodiscard]] bool hasExtraTag(const QString& tag) const;
     [[nodiscard]] QStringList extraTag(const QString& tag) const;
     [[nodiscard]] ExtraTags extraTags() const;
     [[nodiscard]] QStringList removedTags() const;
     [[nodiscard]] QByteArray serialiseExtraTags() const;
+
+    [[nodiscard]] QMap<QString, QString> metadata() const;
 
     [[nodiscard]] bool hasExtraProperty(const QString& prop) const;
     [[nodiscard]] ExtraProperties extraProperties() const;
@@ -197,8 +202,10 @@ public:
     void setCuePath(const QString& path);
 
     void addExtraTag(const QString& tag, const QString& value);
+    void addExtraTag(const QString& tag, const QStringList& value);
     void removeExtraTag(const QString& tag);
     void replaceExtraTag(const QString& tag, const QString& value);
+    void replaceExtraTag(const QString& tag, const QStringList& value);
     void clearExtraTags();
     void storeExtraTags(const QByteArray& tags);
 
