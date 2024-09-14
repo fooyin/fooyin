@@ -22,6 +22,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/theme/fytheme.h
     ${CMAKE_SOURCE_DIR}/include/gui/theme/themeregistry.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/autoheaderview.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/checkboxdelegate.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/clickablelabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/colourbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/customisableinput.h
@@ -268,8 +269,6 @@ set(SOURCES
     settings/playlist/playlistpresetspage.h
     settings/plugins/pluginaboutdialog.cpp
     settings/plugins/pluginaboutdialog.h
-    settings/plugins/pluginsdelegate.cpp
-    settings/plugins/pluginsdelegate.h
     settings/plugins/pluginsmodel.cpp
     settings/plugins/pluginsmodel.h
     settings/plugins/pluginspage.cpp
@@ -289,6 +288,7 @@ set(SOURCES
     theme/fytheme.cpp
     theme/themeregistry.cpp
     widgets/autoheaderview.cpp
+    widgets/checkboxdelegate.cpp
     widgets/clickablelabel.cpp
     widgets/colourbutton.cpp
     widgets/coverwidget.cpp

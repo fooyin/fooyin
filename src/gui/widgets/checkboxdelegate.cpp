@@ -17,14 +17,24 @@
  *
  */
 
-#include "pluginsdelegate.h"
+#include <gui/widgets/checkboxdelegate.h>
 
 #include <QApplication>
 #include <QMouseEvent>
 #include <QPainter>
 
 namespace Fooyin {
-void PluginsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget* CheckBoxDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                                        const QModelIndex& index) const
+{
+    if(index.data(Qt::CheckStateRole).isValid()) {
+        // Prevent editing for checkbox cells
+        return nullptr;
+    }
+    return QStyledItemDelegate::createEditor(parent, option, index);
+}
+
+void CheckBoxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
@@ -72,8 +82,8 @@ void PluginsDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
     }
 }
 
-bool PluginsDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
-                                  const QModelIndex& index)
+bool CheckBoxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
+                                   const QModelIndex& index)
 {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);

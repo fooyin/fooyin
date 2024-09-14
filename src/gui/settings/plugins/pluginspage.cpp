@@ -19,7 +19,6 @@
 
 #include "pluginspage.h"
 
-#include "pluginsdelegate.h"
 #include "pluginsmodel.h"
 #include "settings/plugins/pluginaboutdialog.h"
 
@@ -29,6 +28,7 @@
 #include <core/plugins/plugininfo.h>
 #include <core/plugins/pluginmanager.h>
 #include <gui/guiconstants.h>
+#include <gui/widgets/checkboxdelegate.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -108,7 +108,7 @@ PluginPageWidget::PluginPageWidget(PluginManager* pluginManager, SettingsManager
     m_aboutPlugin->setDisabled(true);
 
     m_pluginList->setModel(proxyModel);
-    m_pluginList->setItemDelegateForColumn(3, new PluginsDelegate(this));
+    m_pluginList->setItemDelegateForColumn(3, new CheckBoxDelegate(this));
 
     m_pluginList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_pluginList->setSelectionMode(QAbstractItemView::SingleSelection);

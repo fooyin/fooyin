@@ -19,16 +19,20 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <QStyledItemDelegate>
 
 namespace Fooyin {
-class PluginsDelegate : public QStyledItemDelegate
+class FYGUI_EXPORT CheckBoxDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
     using QStyledItemDelegate::QStyledItemDelegate;
 
+    [[nodiscard]] QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                                        const QModelIndex& index) const override;
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 protected:
