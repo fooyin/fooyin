@@ -138,6 +138,11 @@ void InfoWidget::loadLayoutData(const QJsonObject& layout)
     }
 }
 
+bool InfoWidget::canApply() const
+{
+    return false;
+}
+
 void InfoWidget::contextMenuEvent(QContextMenuEvent* event)
 {
     if(!m_settings) {

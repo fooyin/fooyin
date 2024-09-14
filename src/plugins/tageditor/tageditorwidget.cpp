@@ -302,6 +302,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, SettingsManager* 
     , m_model{new TagEditorModel(settings, this)}
     , m_toolsButton{new QToolButton(this)}
     , m_toolsMenu{new QMenu(this)}
+    , m_autoTrackNum{new QAction(tr("Auto &track number"), this)}
 {
     setObjectName(TagEditorWidget::name());
     setWindowFlags(Qt::Dialog);
@@ -334,6 +335,7 @@ TagEditorWidget::TagEditorWidget(ActionManager* actionManager, SettingsManager* 
     });
 
     m_view->setupActions();
+    QObject::connect(m_autoTrackNum, &QAction::triggered, m_model, &TagEditorModel::autoNumberTracks);
 }
 
 TagEditorWidget::~TagEditorWidget()
@@ -351,7 +353,7 @@ void TagEditorWidget::setReadOnly(bool readOnly)
     m_view->setTagEditTriggers(readOnly ? QAbstractItemView::NoEditTriggers : QAbstractItemView::AllEditTriggers);
     m_view->addRowAction()->setDisabled(readOnly);
     m_view->removeRowAction()->setDisabled(readOnly);
-    m_toolsButton->setDisabled(readOnly);
+    m_autoTrackNum->setDisabled(readOnly);
 }
 
 QString TagEditorWidget::name() const
@@ -362,6 +364,16 @@ QString TagEditorWidget::name() const
 QString TagEditorWidget::layoutName() const
 {
     return QStringLiteral("TagEditor");
+}
+
+bool TagEditorWidget::hasTools() const
+{
+    return true;
+}
+
+void TagEditorWidget::addTools(QMenu* menu)
+{
+    menu->addAction(m_autoTrackNum);
 }
 
 void TagEditorWidget::apply()
@@ -391,7 +403,7 @@ void TagEditorWidget::apply()
 
     QMessageBox message;
     message.setIcon(QMessageBox::Warning);
-    message.setText(QStringLiteral("Are you sure?"));
+    message.setText(tr("Are you sure?"));
     message.setInformativeText(tr("Metadata in the associated files will be overwritten."));
 
     auto* dontAskAgain = new QCheckBox(tr("Don't ask again"), &message);
@@ -408,13 +420,6 @@ void TagEditorWidget::apply()
         }
         applyChanges();
     }
-}
-
-void TagEditorWidget::setupToolsMenu()
-{
-    auto* autoTrackNum = new QAction(tr("Auto &track number"), this);
-    QObject::connect(autoTrackNum, &QAction::triggered, m_model, &TagEditorModel::autoNumberTracks);
-    m_toolsMenu->addAction(autoTrackNum);
 }
 
 void TagEditorWidget::saveState() const

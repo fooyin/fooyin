@@ -24,6 +24,8 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 
+#include <QPointer>
+
 namespace Fooyin {
 class SettingsManager;
 
@@ -36,7 +38,11 @@ public:
         : FyWidget{parent}
     { }
 
-    virtual void apply() {};
+    [[nodiscard]] virtual bool canApply() const;
+    [[nodiscard]] virtual bool hasTools() const;
+
+    virtual void apply();
+    virtual void addTools(QMenu* menu);
 };
 
 using WidgetBuilder = std::function<PropertiesTabWidget*(const TrackList& tracks)>;
@@ -49,7 +55,7 @@ public:
 
     [[nodiscard]] int index() const;
     [[nodiscard]] QString title() const;
-    [[nodiscard]] QWidget* widget(const TrackList& tracks) const;
+    [[nodiscard]] PropertiesTabWidget* widget(const TrackList& tracks) const;
     [[nodiscard]] bool hasVisited() const;
 
     void updateIndex(int index);
@@ -62,8 +68,8 @@ private:
     int m_index;
     QString m_title;
     WidgetBuilder m_widgetBuilder;
-    mutable PropertiesTabWidget* m_widget{nullptr};
-    bool m_visited{false};
+    mutable QPointer<PropertiesTabWidget> m_widget;
+    bool m_visited;
 };
 
 class FYGUI_EXPORT PropertiesDialog : public QObject

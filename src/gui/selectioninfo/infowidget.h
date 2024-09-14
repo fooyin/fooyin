@@ -48,6 +48,8 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+    [[nodiscard]] bool canApply() const override;
+
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
     void timerEvent(QTimerEvent* event) override;

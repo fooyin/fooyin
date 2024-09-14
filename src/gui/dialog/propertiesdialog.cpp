@@ -18,25 +18,42 @@
  */
 
 #include "qdialog.h"
-#include "utils/settings/settingsmanager.h"
 
 #include <gui/propertiesdialog.h>
+#include <utils/settings/settingsmanager.h>
 
-#include <QDialog>
 #include <QDialogButtonBox>
 #include <QGridLayout>
+#include <QMenu>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QToolButton>
 
 #include <ranges>
 
 constexpr auto DialogSize = "Interface/PropertiesDialogSize";
 
 namespace Fooyin {
+bool PropertiesTabWidget::canApply() const
+{
+    return true;
+}
+
+bool PropertiesTabWidget::hasTools() const
+{
+    return false;
+}
+
+void PropertiesTabWidget::apply() { }
+
+void PropertiesTabWidget::addTools(QMenu* /*menu*/) { }
+
 PropertiesTab::PropertiesTab(QString title, WidgetBuilder widgetBuilder, int index)
     : m_index{index}
     , m_title{std::move(title)}
     , m_widgetBuilder{std::move(widgetBuilder)}
+    , m_widget{nullptr}
+    , m_visited{false}
 { }
 
 int PropertiesTab::index() const
@@ -49,7 +66,7 @@ QString PropertiesTab::title() const
     return m_title;
 }
 
-QWidget* PropertiesTab::widget(const TrackList& tracks) const
+PropertiesTabWidget* PropertiesTab::widget(const TrackList& tracks) const
 {
     if(!m_widget) {
         if(m_widgetBuilder) {
@@ -121,21 +138,22 @@ private:
 
     void currentTabChanged(int index);
 
+    QPushButton* m_applyButton{nullptr};
+    QToolButton* m_toolsButton;
+    QMenu* m_toolsMenu;
     PropertiesDialog::TabList m_tabs;
     TrackList m_tracks;
 };
 
 PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialog::TabList tabs)
-    : m_tabs{std::move(tabs)}
+    : m_toolsButton{new QToolButton(this)}
+    , m_toolsMenu{new QMenu(tr("Tools"), this)}
+    , m_tabs{std::move(tabs)}
     , m_tracks{std::move(tracks)}
 {
-    auto* layout = new QGridLayout(this);
-    layout->setContentsMargins(0, 0, 0, 5);
-
     setWindowTitle(tr("Properties"));
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
-    layout->addWidget(buttonBox);
     buttonBox->setContentsMargins(0, 0, 5, 5);
 
     QObject::connect(buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
@@ -146,17 +164,26 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     auto* tabWidget = new QTabWidget(this);
     QObject::connect(tabWidget, &QTabWidget::currentChanged, this, &PropertiesDialogWidget::currentTabChanged);
 
+    m_applyButton = buttonBox->button(QDialogButtonBox::Apply);
+    buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+    tabWidget->setCurrentIndex(0);
+
+    m_toolsButton->setText(tr("Tools"));
+    m_toolsButton->setMenu(m_toolsMenu);
+    m_toolsButton->setPopupMode(QToolButton::InstantPopup);
+
+    auto* layout = new QGridLayout(this);
+    layout->setContentsMargins(5, 0, 0, 5);
+    layout->setSizeConstraint(QLayout::SetMinimumSize);
+
+    layout->addWidget(tabWidget, 0, 0, 1, 2);
+    layout->addWidget(m_toolsButton, 1, 0);
+    layout->addWidget(buttonBox, 1, 1);
+    layout->setColumnStretch(1, 1);
+
     for(const auto& tab : m_tabs) {
         tabWidget->insertTab(tab.index(), tab.widget(m_tracks), tab.title());
     }
-
-    layout->addWidget(tabWidget, 0, 0);
-    layout->addWidget(buttonBox, 1, 0);
-
-    buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
-    layout->setSizeConstraint(QLayout::SetMinimumSize);
-
-    tabWidget->setCurrentIndex(0);
 }
 
 void PropertiesDialogWidget::done(int value)
@@ -196,15 +223,32 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     }
 
     auto tabIt = std::ranges::find_if(m_tabs, [index](const PropertiesTab& tab) { return tab.index() == index; });
-    if(tabIt != m_tabs.cend()) {
-        tabIt->setVisited(true);
-        const Track firstTrack = m_tracks.front();
-        const QString title    = !firstTrack.title().isEmpty() ? firstTrack.title() : firstTrack.filename();
-        const QString subtitle = m_tracks.size() == 1
-                                   ? QStringLiteral(" (%1): %2").arg(title, tabIt->title())
-                                   : QStringLiteral(" (%1 tracks): %2").arg(m_tracks.size()).arg(tabIt->title());
-        setWindowTitle(tr("Properties") + subtitle);
+    if(tabIt == m_tabs.cend()) {
+        return;
     }
+
+    tabIt->setVisited(true);
+    const Track firstTrack = m_tracks.front();
+    const QString title    = !firstTrack.title().isEmpty() ? firstTrack.title() : firstTrack.filename();
+    const QString subtitle = m_tracks.size() == 1
+                               ? QStringLiteral(" (%1): %2").arg(title, tabIt->title())
+                               : QStringLiteral(" (%1 tracks): %2").arg(m_tracks.size()).arg(tabIt->title());
+
+    setWindowTitle(tr("Properties") + subtitle);
+
+    if(auto* widget = tabIt->widget(m_tracks)) {
+        if(m_applyButton) {
+            m_applyButton->setHidden(!widget->canApply());
+        }
+        if(widget->hasTools()) {
+            m_toolsButton->show();
+            m_toolsMenu->clear();
+            widget->addTools(m_toolsMenu);
+            return;
+        }
+    }
+
+    m_toolsButton->hide();
 }
 
 PropertiesDialog::PropertiesDialog(SettingsManager* settings, QObject* parent)
@@ -236,7 +280,7 @@ void PropertiesDialog::insertTab(int index, const QString& title, const WidgetBu
     m_tabs.insert(m_tabs.begin() + index, {title, widgetBuilder, index});
 
     const int count = static_cast<int>(m_tabs.size());
-    for(int i = 0; i < count; ++i) {
+    for(int i{0}; i < count; ++i) {
         m_tabs[i].updateIndex(i);
     }
 }

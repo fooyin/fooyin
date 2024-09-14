@@ -87,6 +87,8 @@ public:
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 
+    [[nodiscard]] bool hasTools() const override;
+    void addTools(QMenu* menu) override;
     void apply() override;
 
 signals:
@@ -94,7 +96,6 @@ signals:
     void trackStatsChanged(const Fooyin::TrackList& tracks);
 
 private:
-    void setupToolsMenu();
     void saveState() const;
     void restoreState() const;
 
@@ -103,6 +104,7 @@ private:
     TagEditorModel* m_model;
     QToolButton* m_toolsButton;
     QMenu* m_toolsMenu;
+    QAction* m_autoTrackNum;
 };
 } // namespace TagEditor
 } // namespace Fooyin
