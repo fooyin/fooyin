@@ -30,7 +30,7 @@ class FiltersGuiPage : public SettingsPage
     Q_OBJECT
 
 public:
-    explicit FiltersGuiPage(SettingsManager* settings);
+    explicit FiltersGuiPage(SettingsManager* settings, QObject* parent = nullptr);
 };
 } // namespace Filters
 } // namespace Fooyin

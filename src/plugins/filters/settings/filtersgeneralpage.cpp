@@ -183,8 +183,8 @@ void FiltersGeneralPageWidget::reset()
     m_settings->reset<Settings::Filters::FilterAutoPlaylist>();
 }
 
-FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+FiltersGeneralPage::FiltersGeneralPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::FiltersGeneral);
     setName(tr("General"));

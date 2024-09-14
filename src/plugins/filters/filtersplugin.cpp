@@ -52,10 +52,10 @@ void FiltersPlugin::initialise(const GuiPluginContext& context)
         QStringLiteral("LibraryFilter"), [this]() { return m_filterController->createFilter(); }, tr("Library Filter"));
     context.themeRegistry->registerFontEntry(tr("Filters"), QStringLiteral("Fooyin::Filters::FilterView"));
 
-    m_generalPage = std::make_unique<FiltersGeneralPage>(m_core->settingsManager);
-    m_guiPage     = std::make_unique<FiltersGuiPage>(m_core->settingsManager);
-    m_columnsPage = std::make_unique<FiltersColumnPage>(context.actionManager, m_filterController->columnRegistry(),
-                                                        m_core->settingsManager);
+    m_generalPage = new FiltersGeneralPage(m_core->settingsManager, this);
+    m_guiPage     = new FiltersGuiPage(m_core->settingsManager, this);
+    m_columnsPage = new FiltersColumnPage(context.actionManager, m_filterController->columnRegistry(),
+                                          m_core->settingsManager, this);
 
     registerLayouts();
 }

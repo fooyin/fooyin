@@ -126,8 +126,8 @@ void FiltersColumnPageWidget::updateButtonState()
 }
 
 FiltersColumnPage::FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnRegistry,
-                                     SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+                                     SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::FiltersFields);
     setName(tr("Columns"));

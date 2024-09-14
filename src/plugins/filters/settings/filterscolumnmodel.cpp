@@ -29,11 +29,6 @@ ColumnItem::ColumnItem()
     : ColumnItem{{}, nullptr}
 { }
 
-FiltersColumnModel::FiltersColumnModel(FilterColumnRegistry* columnsRegistry, QObject* parent)
-    : ExtendableTableModel{parent}
-    , m_columnsRegistry{columnsRegistry}
-{ }
-
 ColumnItem::ColumnItem(FilterColumn column, ColumnItem* parent)
     : TreeStatusItem{parent}
     , m_column{std::move(column)}
@@ -48,6 +43,11 @@ void ColumnItem::changeColumn(const FilterColumn& column)
 {
     m_column = column;
 }
+
+FiltersColumnModel::FiltersColumnModel(FilterColumnRegistry* columnsRegistry, QObject* parent)
+    : ExtendableTableModel{parent}
+    , m_columnsRegistry{columnsRegistry}
+{ }
 
 void FiltersColumnModel::populate()
 {
@@ -163,8 +163,6 @@ QVariant FiltersColumnModel::headerData(int section, Qt::Orientation orientation
             return tr("Name");
         case(2):
             return tr("Field");
-        case(3):
-            return tr("Sort Field");
         default:
             break;
     }

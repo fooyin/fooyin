@@ -53,8 +53,8 @@ private:
     FilterController* m_filterController;
     std::unique_ptr<FiltersSettings> m_filterSettings;
 
-    std::unique_ptr<FiltersGeneralPage> m_generalPage;
-    std::unique_ptr<FiltersGuiPage> m_guiPage;
-    std::unique_ptr<FiltersColumnPage> m_columnsPage;
+    FiltersGeneralPage* m_generalPage;
+    FiltersGuiPage* m_guiPage;
+    FiltersColumnPage* m_columnsPage;
 };
 } // namespace Fooyin::Filters

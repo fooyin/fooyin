@@ -158,8 +158,8 @@ void FiltersGuiPageWidget::reset()
     m_settings->reset<Settings::Filters::FilterIconSize>();
 }
 
-FiltersGuiPage::FiltersGuiPage(SettingsManager* settings)
-    : SettingsPage{settings->settingsDialog()}
+FiltersGuiPage::FiltersGuiPage(SettingsManager* settings, QObject* parent)
+    : SettingsPage{settings->settingsDialog(), parent}
 {
     setId(Constants::Page::FiltersAppearance);
     setName(tr("Appearance"));

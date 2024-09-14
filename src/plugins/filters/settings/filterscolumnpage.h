@@ -33,7 +33,8 @@ class FiltersColumnPage : public SettingsPage
     Q_OBJECT
 
 public:
-    FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, SettingsManager* settings);
+    FiltersColumnPage(ActionManager* actionManager, FilterColumnRegistry* columnRegistry, SettingsManager* settings,
+                      QObject* parent = nullptr);
 };
 } // namespace Filters
 } // namespace Fooyin
