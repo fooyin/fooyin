@@ -22,21 +22,13 @@
 #include <core/library/musiclibrary.h>
 #include <utils/worker.h>
 
-#include "ffmpeginput.h"
-
 #include <QFile>
 #include <QLoggingCategory>
 
 Q_DECLARE_LOGGING_CATEGORY(REPLAYGAIN)
 
 namespace Fooyin {
-struct ReplayGainFilter;
-
-struct ReplayGainResult
-{
-    double peak;
-    double gain;
-};
+class FFmpegReplayGainPrivate;
 
 class FYCORE_EXPORT FFmpegReplayGain : public Worker
 {
@@ -44,20 +36,10 @@ class FYCORE_EXPORT FFmpegReplayGain : public Worker
 
 public:
     explicit FFmpegReplayGain(MusicLibrary* library, QObject* parent = nullptr);
+    ~FFmpegReplayGain() override;
     void calculate(const TrackList& tracks, bool asAlbum);
 
-signals:
-    void calculationFinished();
-
 private:
-    bool setupTrack(const Track& track, ReplayGainFilter& filter);
-    ReplayGainResult handleTrack(const Track& track, bool inAlbum);
-    void handleAlbum(const TrackList& album);
-
-    std::unique_ptr<QIODevice> m_file;
-    std::unique_ptr<FFmpegDecoder> m_decoder;
-    AudioFormat m_format;
-
-    MusicLibrary* m_library;
+    std::unique_ptr<FFmpegReplayGainPrivate> p;
 };
 } // namespace Fooyin
