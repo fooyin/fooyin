@@ -138,6 +138,7 @@ private:
 
     void currentTabChanged(int index);
 
+    bool m_closing{false};
     QPushButton* m_applyButton{nullptr};
     QToolButton* m_toolsButton;
     QMenu* m_toolsMenu;
@@ -194,6 +195,7 @@ void PropertiesDialogWidget::done(int value)
 void PropertiesDialogWidget::accept()
 {
     apply();
+    m_closing = true;
     for(PropertiesTab& tab : m_tabs) {
         tab.finish();
     }
@@ -202,6 +204,7 @@ void PropertiesDialogWidget::accept()
 
 void PropertiesDialogWidget::reject()
 {
+    m_closing = true;
     for(PropertiesTab& tab : m_tabs) {
         tab.finish();
     }
@@ -218,7 +221,7 @@ void PropertiesDialogWidget::apply()
 
 void PropertiesDialogWidget::currentTabChanged(int index)
 {
-    if(index < 0) {
+    if(index < 0 || m_closing) {
         return;
     }
 
