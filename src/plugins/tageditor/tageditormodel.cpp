@@ -80,7 +80,7 @@ bool TagEditorModelPrivate::hasDefaultField(const QString& field) const
 {
     const QString fieldToFind = field.toUpper();
     return std::ranges::any_of(std::as_const(m_fields), [fieldToFind](const auto& editorField) {
-        return editorField.scriptField == fieldToFind;
+        return editorField.scriptField.compare(fieldToFind, Qt::CaseInsensitive) == 0;
     });
 }
 
