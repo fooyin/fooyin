@@ -143,7 +143,10 @@ FFmpegReplayGain::~FFmpegReplayGain() = default;
 FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(MusicLibrary* library)
     : m_file{nullptr}
     , m_decoder{nullptr}
+    , m_format{}
     , m_library{library}
+    , m_albumFilter{}
+    , m_trackFilter{}
 { }
 
 void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
@@ -175,7 +178,7 @@ void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
 ReplayGainFilter initialiseRGFilter(const AudioFormat& format)
 {
     int rc{0};
-    ReplayGainFilter filter;
+    ReplayGainFilter filter{};
 
     AVFilterGraph* filterGraph = avfilter_graph_alloc();
     if(!filterGraph) {
