@@ -85,8 +85,7 @@ QString trackMeta(const Fooyin::Track& track, const QStringList& args)
         return {};
     }
 
-    const QString& tag = args.front();
-    return track.metaValue(tag.toLower());
+    return track.metaValue(args.front());
 }
 
 QString trackInfo(const Fooyin::Track& track, const QStringList& args)
@@ -95,8 +94,7 @@ QString trackInfo(const Fooyin::Track& track, const QStringList& args)
         return {};
     }
 
-    const QString& tag = args.front();
-    return track.techInfo(tag.toLower());
+    return track.techInfo(args.front());
 }
 
 QString trackChannels(const Fooyin::Track& track)
@@ -156,24 +154,24 @@ ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, Pla
     addPlaybackVars();
     addLibraryVars();
 
-    m_funcs.emplace(QStringLiteral("info"), trackInfo);
-    m_funcs.emplace(QStringLiteral("meta"), trackMeta);
+    m_funcs.emplace(QStringLiteral("INFO"), trackInfo);
+    m_funcs.emplace(QStringLiteral("META"), trackMeta);
 }
 
 void ScriptRegistryPrivate::addPlaybackVars()
 {
-    m_playbackVars[QStringLiteral("playback_time")] = [this]() {
+    m_playbackVars[QStringLiteral("PLAYBACK_TIME")] = [this]() {
         return Utils::msToString(m_playerController ? m_playerController->currentPosition() : 0);
     };
-    m_playbackVars[QStringLiteral("playback_time_s")] = [this]() {
+    m_playbackVars[QStringLiteral("PLAYBACK_TIME_s")] = [this]() {
         return QString::number(m_playerController ? m_playerController->currentPosition() / 1000 : 0);
     };
-    m_playbackVars[QStringLiteral("playback_time_remaining")] = [this]() {
+    m_playbackVars[QStringLiteral("PLAYBACK_TIME_REMAINING")] = [this]() {
         return Utils::msToString(m_playerController ? m_playerController->currentTrack().duration()
                                                           - m_playerController->currentPosition()
                                                     : 0);
     };
-    m_playbackVars[QStringLiteral("playback_time_remaining_s")] = [this]() {
+    m_playbackVars[QStringLiteral("PLAYBACK_TIME_REMAINING_S")] = [this]() {
         return QString::number(
             m_playerController
                 ? (m_playerController->currentTrack().duration() - m_playerController->currentPosition()) / 1000
@@ -187,19 +185,19 @@ void ScriptRegistryPrivate::addLibraryVars()
         return;
     }
 
-    m_libraryVars[QStringLiteral("libraryname")] = [this](const Track& track) {
+    m_libraryVars[QStringLiteral("LIBRARYNAME")] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return library->name;
         }
         return QString{};
     };
-    m_libraryVars[QStringLiteral("librarypath")] = [this](const Track& track) {
+    m_libraryVars[QStringLiteral("LIBRARYPATH")] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return library->path;
         }
         return QString{};
     };
-    m_libraryVars[QStringLiteral("relativepath")] = [this](const Track& track) {
+    m_libraryVars[QStringLiteral("RELATIVEPATH")] = [this](const Track& track) {
         if(const auto library = m_libraryManager->libraryInfo(track.libraryId())) {
             return QDir{library->path}.relativeFilePath(track.prettyFilepath());
         }
@@ -262,9 +260,9 @@ void ScriptRegistryPrivate::addDefaultFunctions()
 
 void ScriptRegistryPrivate::addDefaultListFuncs()
 {
-    m_listProperties[QStringLiteral("trackcount")] = Fooyin::Scripting::trackCount;
-    m_listProperties[QStringLiteral("playtime")]   = Fooyin::Scripting::playtime;
-    m_listProperties[QStringLiteral("genres")]     = Fooyin::Scripting::genres;
+    m_listProperties[QStringLiteral("TRACKCOUNT")] = Fooyin::Scripting::trackCount;
+    m_listProperties[QStringLiteral("PLAYTIME")]   = Fooyin::Scripting::playtime;
+    m_listProperties[QStringLiteral("GENRES")]     = Fooyin::Scripting::genres;
 }
 
 void ScriptRegistryPrivate::addDefaultMetadata()
@@ -378,8 +376,9 @@ ScriptRegistry::~ScriptRegistry() = default;
 
 bool ScriptRegistry::isVariable(const QString& var, const Track& track) const
 {
-    return p->m_metadata.contains(var) || p->m_playbackVars.contains(var) || p->m_libraryVars.contains(var)
-        || track.hasExtraTag(var.toUpper());
+    const QString variable = var.toUpper();
+    return p->m_metadata.contains(variable) || p->m_playbackVars.contains(variable)
+        || p->m_libraryVars.contains(variable) || track.hasExtraTag(variable);
 }
 
 bool ScriptRegistry::isVariable(const QString& var, const TrackList& tracks) const
@@ -406,20 +405,22 @@ ScriptResult ScriptRegistry::value(const QString& var, const Track& track) const
         return {};
     }
 
-    if(p->m_metadata.contains(var)) {
-        return calculateResult(p->m_metadata.at(var)(track));
+    const QString variable = var.toUpper();
+
+    if(p->m_metadata.contains(variable)) {
+        return calculateResult(p->m_metadata.at(variable)(track));
     }
-    if(p->m_playbackVars.contains(var)) {
-        return calculateResult(p->m_playbackVars.at(var)());
+    if(p->m_playbackVars.contains(variable)) {
+        return calculateResult(p->m_playbackVars.at(variable)());
     }
-    if(p->m_libraryVars.contains(var)) {
-        return calculateResult(p->m_libraryVars.at(var)(track));
+    if(p->m_libraryVars.contains(variable)) {
+        return calculateResult(p->m_libraryVars.at(variable)(track));
     }
-    if(p->m_listProperties.contains(var)) {
-        return calculateResult(p->m_listProperties.at(var)({track}));
+    if(p->m_listProperties.contains(variable)) {
+        return calculateResult(p->m_listProperties.at(variable)({track}));
     }
 
-    return calculateResult(track.extraTag(var.toUpper()));
+    return calculateResult(track.extraTag(variable));
 }
 
 ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) const
@@ -428,15 +429,17 @@ ScriptResult ScriptRegistry::value(const QString& var, const TrackList& tracks) 
         return {};
     }
 
-    if(p->m_listProperties.contains(var)) {
-        return calculateResult(p->m_listProperties.at(var)(tracks));
+    const QString variable = var.toUpper();
+
+    if(p->m_listProperties.contains(variable)) {
+        return calculateResult(p->m_listProperties.at(variable)(tracks));
     }
 
     if(!tracks.empty()) {
-        if(p->m_metadata.contains(var)) {
-            return calculateResult(p->m_metadata.at(var)(tracks.front()));
+        if(p->m_metadata.contains(variable)) {
+            return calculateResult(p->m_metadata.at(variable)(tracks.front()));
         }
-        return calculateResult(tracks.front().extraTag(var.toUpper()));
+        return calculateResult(tracks.front().extraTag(variable.toUpper()));
     }
 
     return {};
@@ -490,19 +493,19 @@ void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& t
         return;
     }
 
-    if(p->m_setMetadata.contains(var)) {
-        p->m_setMetadata.at(var)(track, value);
+    const QString tag = var.toUpper();
+
+    if(p->m_setMetadata.contains(tag)) {
+        p->m_setMetadata.at(tag)(track, value);
         return;
     }
-
-    const QString tag = var.toUpper();
 
     const auto setOrAddTag = [&](const auto& val) {
         if(track.hasExtraTag(tag)) {
             track.replaceExtraTag(tag, val);
         }
         else {
-            track.addExtraTag(var, val);
+            track.addExtraTag(tag, val);
         }
     };
 
