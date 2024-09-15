@@ -3553,12 +3553,13 @@ void ExpandedTreeView::mousePressEvent(QMouseEvent* event)
 
     setDragEnabled(true);
 
-    const QItemSelection selection = selectRecursively(p->m_model, {modelIndex, modelIndex});
-
     QAbstractItemView::mousePressEvent(event);
 
-    auto command = selectionCommand(index, event);
-    selectModel->select(selection, command);
+    if(p->m_model->hasChildren(modelIndex)) {
+        const QItemSelection selection = selectRecursively(p->m_model, {modelIndex, modelIndex});
+        const auto command             = selectionCommand(index, event);
+        selectModel->select(selection, command);
+    }
 }
 
 void ExpandedTreeView::mouseDoubleClickEvent(QMouseEvent* event)
