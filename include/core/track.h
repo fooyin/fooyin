@@ -113,7 +113,9 @@ public:
     [[nodiscard]] QString discTotal() const;
     [[nodiscard]] QStringList genres() const;
     [[nodiscard]] QString genre() const;
+    [[nodiscard]] QStringList composers() const;
     [[nodiscard]] QString composer() const;
+    [[nodiscard]] QStringList performers() const;
     [[nodiscard]] QString performer() const;
     [[nodiscard]] QString comment() const;
     [[nodiscard]] QString date() const;
@@ -183,8 +185,8 @@ public:
     void setDiscNumber(const QString& num);
     void setDiscTotal(const QString& total);
     void setGenres(const QStringList& genres);
-    void setComposer(const QString& composer);
-    void setPerformer(const QString& performer);
+    void setComposers(const QStringList& composers);
+    void setPerformers(const QStringList& performers);
     void setComment(const QString& comment);
     void setDate(const QString& date);
     void setYear(int year);

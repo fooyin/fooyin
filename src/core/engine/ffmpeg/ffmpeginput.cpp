@@ -145,10 +145,10 @@ void parseTag(Fooyin::Track& track, AVDictionaryEntry* tag)
         track.setYear(convertString(tag->value).toInt());
     }
     else if(strcasecmp(tag->key, "composer") == 0) {
-        track.setComposer(convertString(tag->value));
+        track.setComposers({convertString(tag->value)});
     }
     else if(strcasecmp(tag->key, "performer") == 0) {
-        track.setPerformer(convertString(tag->value));
+        track.setPerformers({convertString(tag->value)});
     }
     else if(strcasecmp(tag->key, "comment") == 0) {
         track.setComment(convertString(tag->value));

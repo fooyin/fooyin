@@ -345,8 +345,8 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_setMetadata[QString::fromLatin1(MetaData::Disc)]         = generateSetFunc(&Track::setDiscNumber);
     m_setMetadata[QString::fromLatin1(MetaData::DiscTotal)]    = generateSetFunc(&Track::setDiscTotal);
     m_setMetadata[QString::fromLatin1(MetaData::Genre)]        = generateSetFunc(&Track::setGenres);
-    m_setMetadata[QString::fromLatin1(MetaData::Composer)]     = generateSetFunc(&Track::setComposer);
-    m_setMetadata[QString::fromLatin1(MetaData::Performer)]    = generateSetFunc(&Track::setPerformer);
+    m_setMetadata[QString::fromLatin1(MetaData::Composer)]     = generateSetFunc(&Track::setComposers);
+    m_setMetadata[QString::fromLatin1(MetaData::Performer)]    = generateSetFunc(&Track::setPerformers);
     m_setMetadata[QString::fromLatin1(MetaData::Duration)]     = generateSetFunc(&Track::setDuration);
     m_setMetadata[QString::fromLatin1(MetaData::Comment)]      = generateSetFunc(&Track::setComment);
     m_setMetadata[QString::fromLatin1(MetaData::Rating)]       = generateSetFunc(&Track::setRating);

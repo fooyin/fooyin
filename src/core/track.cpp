@@ -106,8 +106,8 @@ public:
     QString discNumber;
     QString discTotal;
     QStringList genres;
-    QString composer;
-    QString performer;
+    QStringList composers;
+    QStringList performers;
     QString comment;
     QString date;
     int year{-1};
@@ -451,7 +451,7 @@ QString Track::primaryAlbumArtist() const
     if(!artists().empty()) {
         return artist();
     }
-    if(!composer().isEmpty()) {
+    if(!composers().isEmpty()) {
         return composer();
     }
     return performer();
@@ -487,14 +487,24 @@ QString Track::genre() const
     return p->genres.empty() ? QString{} : p->genres.join(QLatin1String{Constants::UnitSeparator});
 }
 
+QStringList Track::composers() const
+{
+    return p->composers;
+}
+
 QString Track::composer() const
 {
-    return p->composer;
+    return p->composers.empty() ? QString{} : p->composers.join(QLatin1String{Constants::UnitSeparator});
+}
+
+QStringList Track::performers() const
+{
+    return p->performers;
 }
 
 QString Track::performer() const
 {
-    return p->performer;
+    return p->performers.empty() ? QString{} : p->performers.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString Track::comment() const
@@ -583,7 +593,9 @@ bool Track::isMultiValueTag(const QString& tag)
 
     return trackTag == QLatin1String{Constants::MetaData::Artist}
         || trackTag == QLatin1String{Constants::MetaData::AlbumArtist}
-        || trackTag == QLatin1String{Constants::MetaData::Genre};
+        || trackTag == QLatin1String{Constants::MetaData::Genre}
+        || trackTag == QLatin1String{Constants::MetaData::Composer}
+        || trackTag == QLatin1String{Constants::MetaData::Performer};
 }
 
 bool Track::isExtraTag(const QString& tag)
@@ -674,8 +686,8 @@ QMap<QString, QString> Track::metadata() const
     addField(DiscKey, p->discNumber);
     addField(DiscTotalKey, p->discTotal);
     addField(GenreKey, p->genres);
-    addField(ComposerKey, p->composer);
-    addField(PerformerKey, p->performer);
+    addField(ComposerKey, p->composers);
+    addField(PerformerKey, p->performers);
     addField(CommentKey, p->comment);
     addField(DateKey, p->date);
 
@@ -935,14 +947,14 @@ void Track::setGenres(const QStringList& genres)
     }
 }
 
-void Track::setComposer(const QString& composer)
+void Track::setComposers(const QStringList& composers)
 {
-    p->composer = composer;
+    p->composers = composers;
 }
 
-void Track::setPerformer(const QString& performer)
+void Track::setPerformers(const QStringList& performers)
 {
-    p->performer = performer;
+    p->performers = performers;
 }
 
 void Track::setComment(const QString& comment)

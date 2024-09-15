@@ -45,8 +45,8 @@ void TagEditorFieldRegistry::loadDefaultFields()
     addItem({.name = tr("Album Title"), .scriptField = QStringLiteral("album")});
     addItem({.name = tr("Date"), .scriptField = QStringLiteral("date")});
     addItem({.name = tr("Genre"), .scriptField = QStringLiteral("genre"), .multivalue = true});
-    addItem({.name = tr("Composer"), .scriptField = QStringLiteral("composer")});
-    addItem({.name = tr("Performer"), .scriptField = QStringLiteral("performer")});
+    addItem({.name = tr("Composer"), .scriptField = QStringLiteral("composer"), .multivalue = true});
+    addItem({.name = tr("Performer"), .scriptField = QStringLiteral("performer"), .multivalue = true});
     addItem({.name = tr("Album Artist"), .scriptField = QStringLiteral("albumartist"), .multivalue = true});
     addItem({.name = tr("Track Number"), .scriptField = QStringLiteral("track")});
     addItem({.name = tr("Total Tracks"), .scriptField = QStringLiteral("tracktotal")});

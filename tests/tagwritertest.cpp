@@ -58,8 +58,8 @@ TEST_F(TagWriterTest, AiffWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -119,8 +119,8 @@ TEST_F(TagWriterTest, FlacWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -180,8 +180,8 @@ TEST_F(TagWriterTest, M4aWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -241,8 +241,8 @@ TEST_F(TagWriterTest, Mp3Write)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -302,8 +302,8 @@ TEST_F(TagWriterTest, OggWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -363,8 +363,8 @@ TEST_F(TagWriterTest, OpusWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));
@@ -424,8 +424,8 @@ TEST_F(TagWriterTest, WavWrite)
         track.setDiscNumber(QStringLiteral("4"));
         track.setDiscTotal(QStringLiteral("44"));
         track.setGenres({QStringLiteral("TestGenre")});
-        track.setPerformer(QStringLiteral("TestPerformer"));
-        track.setComposer(QStringLiteral("testComposer"));
+        track.setPerformers({QStringLiteral("TestPerformer")});
+        track.setComposers({QStringLiteral("testComposer")});
         track.setComment(QStringLiteral("TestComment"));
         track.addExtraTag(QStringLiteral("WRITETEST"), QStringLiteral("Success"));
         track.removeExtraTag(QStringLiteral("TEST"));

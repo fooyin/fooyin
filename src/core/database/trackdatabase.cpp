@@ -131,8 +131,8 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setDiscNumber(q.value(9).toString());
     track.setDiscTotal(q.value(10).toString());
     track.setDate(q.value(11).toString());
-    track.setComposer(q.value(12).toString());
-    track.setPerformer(q.value(13).toString());
+    track.setComposers(q.value(12).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
+    track.setPerformers(q.value(13).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
     track.setGenres(q.value(14).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
     track.setComment(q.value(15).toString());
     track.setCuePath(q.value(16).toString());

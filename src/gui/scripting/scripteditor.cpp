@@ -149,8 +149,8 @@ void ScriptEditorPrivate::setupPlaceholder()
     m_placeholderTrack.setFilePath(QDir::homePath() + u"/placeholder.flac");
     m_placeholderTrack.setTitle(QStringLiteral("Title"));
     m_placeholderTrack.setAlbum(QStringLiteral("Album"));
-    m_placeholderTrack.setAlbumArtists({QStringLiteral("Album Artist")});
-    m_placeholderTrack.setArtists({QStringLiteral("Artist")});
+    m_placeholderTrack.setAlbumArtists({QStringLiteral("Album Artist 1"), QStringLiteral("Album Artist 2")});
+    m_placeholderTrack.setArtists({QStringLiteral("Artist 1"), QStringLiteral("Artist 2")});
     m_placeholderTrack.setDate(QStringLiteral("2024-08-24"));
     m_placeholderTrack.setTrackNumber(QStringLiteral("1"));
     m_placeholderTrack.setDiscNumber(QStringLiteral("1"));
@@ -158,8 +158,8 @@ void ScriptEditorPrivate::setupPlaceholder()
     m_placeholderTrack.setSampleRate(48000);
     m_placeholderTrack.setBitrate(850);
     m_placeholderTrack.setComment(QStringLiteral("Comment"));
-    m_placeholderTrack.setComposer(QStringLiteral("Composer"));
-    m_placeholderTrack.setPerformer(QStringLiteral("Performer"));
+    m_placeholderTrack.setComposers({QStringLiteral("Composer 1"), QStringLiteral("Composer 2")});
+    m_placeholderTrack.setPerformers({QStringLiteral("Performer 1"), QStringLiteral("Performer 2")});
     m_placeholderTrack.setDuration(180000);
     m_placeholderTrack.setFileSize(34560000);
 }

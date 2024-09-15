@@ -615,10 +615,10 @@ void readGeneralProperties(const TagLib::PropertyMap& props, Fooyin::Track& trac
             track.setGenres(convertStringList(value));
         }
         else if(field == Composer) {
-            track.setComposer(convertString(value.toString()));
+            track.setComposers(convertStringList(value));
         }
         else if(field == Performer) {
-            track.setPerformer(convertString(value.toString()));
+            track.setPerformers(convertStringList(value));
         }
         else if(field == Comment) {
             track.setComment(convertString(value.toString()));
@@ -1202,7 +1202,7 @@ void readMp4Tags(const TagLib::MP4::Tag* mp4Tags, Fooyin::Track& track, bool ski
     if(items.contains(Fooyin::Mp4::PerformerAlt)) {
         const auto performer = items[Fooyin::Mp4::PerformerAlt].toStringList();
         if(performer.size() > 0) {
-            track.setPerformer(convertString(performer.toString()));
+            track.setPerformers(convertStringList(performer));
         }
     }
 

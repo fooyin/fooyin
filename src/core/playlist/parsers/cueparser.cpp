@@ -146,7 +146,7 @@ void finaliseTrack(const CueSheet& sheet, Fooyin::Track& track)
     track.setDate(sheet.date);
     track.setDiscNumber(sheet.disc);
     track.setComment(sheet.comment);
-    track.setComposer(sheet.composer);
+    track.setComposers({sheet.composer});
 }
 
 void finaliseLastTrack(const CueSheet& sheet, Fooyin::Track& track, const QString& trackPath, Fooyin::TrackList& tracks)
@@ -299,7 +299,7 @@ void CueParser::processCueLine(CueSheet& sheet, const QString& line, Track& trac
     else if(field.compare(u"COMPOSER", Qt::CaseInsensitive) == 0
             || field.compare(u"SONGWRITER", Qt::CaseInsensitive) == 0) {
         if(track.isValid()) {
-            track.setComposer(value);
+            track.setComposers({value});
         }
         else {
             sheet.composer = value;
