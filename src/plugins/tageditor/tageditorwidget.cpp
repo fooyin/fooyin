@@ -102,7 +102,8 @@ void TagEditorWidget::setTracks(const TrackList& tracks)
 
     const auto items = m_registry->items();
     for(int row{0}; const auto& item : items) {
-        if(item.scriptField == QLatin1String{Fooyin::Constants::MetaData::RatingEditor}) {
+        if(item.scriptField.compare(QLatin1String{Fooyin::Constants::MetaData::RatingEditor}, Qt::CaseInsensitive)
+           == 0) {
             if(!m_starDelegate) {
                 m_starDelegate = new StarDelegate(this);
             }

@@ -27,6 +27,7 @@
 #include <gui/widgets/extendabletableview.h>
 #include <utils/settings/settingsmanager.h>
 
+#include <QAction>
 #include <QGridLayout>
 #include <QHeaderView>
 #include <QLabel>
