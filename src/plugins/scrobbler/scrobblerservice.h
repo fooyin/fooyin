@@ -19,8 +19,11 @@
 
 #pragma once
 
+#include "scrobblercache.h"
+
 #include <core/track.h>
 
+#include <QBasicTimer>
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -33,7 +36,8 @@ class NetworkAccessManager;
 class SettingsManager;
 
 namespace Scrobbler {
-class ScrobblerServicePrivate;
+class ScrobblerAuthSession;
+class ScrobblerCache;
 
 class ScrobblerService : public QObject
 {
@@ -45,6 +49,7 @@ public:
 
     [[nodiscard]] QString name() const;
     [[nodiscard]] bool isAuthenticated() const;
+    [[nodiscard]] QString apiKey() const;
     [[nodiscard]] QString username() const;
 
     virtual void authenticate();
@@ -59,6 +64,10 @@ signals:
     void authenticationFinished(bool success, const QString& error = {});
 
 protected:
+    virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) = 0;
+    virtual void requestAuth(const QString& token);
+    virtual void authFinished(QNetworkReply* reply);
+
     void setName(const QString& name);
     void setApiUrl(const QUrl& url);
     void setAuthUrl(const QUrl& url);
@@ -67,7 +76,49 @@ protected:
     void timerEvent(QTimerEvent* event) override;
 
 private:
-    std::unique_ptr<ScrobblerServicePrivate> p;
+    void deleteAll();
+    void cleanupAuth();
+
+    void handleAuthError(const char* error);
+
+    enum class ReplyResult : uint8_t
+    {
+        Success = 0,
+        ServerError,
+        ApiError,
+    };
+
+    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc);
+    QNetworkReply* createRequest(const std::map<QString, QString>& params);
+
+    void updateNowPlayingFinished(QNetworkReply* reply);
+    void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
+
+    void doDelayedSubmit(bool initial = false);
+    void submit();
+
+    NetworkAccessManager* m_network;
+    SettingsManager* m_settings;
+
+    QString m_name;
+    QUrl m_apiUrl;
+    QUrl m_authUrl;
+    QString m_apiKey;
+    QString m_secret;
+
+    ScrobblerAuthSession* m_authSession{nullptr};
+    std::vector<QNetworkReply*> m_replies;
+    ScrobblerCache* m_cache{nullptr};
+    QString m_username;
+    QString m_sessionKey;
+
+    QBasicTimer m_submitTimer;
+    bool m_submitError{false};
+
+    Track m_currentTrack;
+    uint64_t m_timestamp{0};
+    bool m_scrobbled{false};
+    bool m_submitted{false};
 };
 } // namespace Scrobbler
 } // namespace Fooyin

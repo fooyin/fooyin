@@ -19,6 +19,13 @@
 
 #include "lastfmservice.h"
 
+#include "scrobblerauthsession.h"
+
+#include <QUrlQuery>
+
+constexpr auto ApiKey    = "YjJkNTdjOTc4YTIyYmUyNzljYzNiZTZkNjc2MjdmZWE=";
+constexpr auto ApiSecret = "ODYzZDBiNWI0M2I2NmQ1MmVkOTU4NGFiOWJiZTc3MDY=";
+
 namespace Fooyin::Scrobbler {
 LastFmService::LastFmService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent)
     : ScrobblerService{network, settings, parent}
@@ -26,7 +33,13 @@ LastFmService::LastFmService(NetworkAccessManager* network, SettingsManager* set
     setName(QStringLiteral("LastFM"));
     setApiUrl(QStringLiteral("https://ws.audioscrobbler.com/2.0/"));
     setAuthUrl(QStringLiteral("https://www.last.fm/api/auth/"));
-    setApiKey(QStringLiteral("b2d57c978a22be279cc3be6d67627fea"));
-    setSecret(QStringLiteral("863d0b5b43b66d52ed9584ab9bbe7706"));
+    setApiKey(QString::fromLatin1(QByteArray::fromBase64(ApiKey)));
+    setSecret(QString::fromLatin1(QByteArray::fromBase64(ApiSecret)));
+}
+
+void LastFmService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query)
+{
+    query.addQueryItem(QStringLiteral("api_key"), apiKey());
+    query.addQueryItem(QStringLiteral("cb"), session->callbackUrl());
 }
 } // namespace Fooyin::Scrobbler

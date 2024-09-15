@@ -56,6 +56,8 @@ namespace Fooyin::Scrobbler {
 ScrobblerAuthSession::ScrobblerAuthSession(QObject* parent)
     : QObject{parent}
     , m_server{new QTcpServer(this)}
+    , m_socket{nullptr}
+    , m_tokenName{QStringLiteral("token")}
 {
     m_server->setProxy(QNetworkProxy::NoProxy);
     if(!m_server->listen(QHostAddress::LocalHost)) {
@@ -94,6 +96,11 @@ QString ScrobblerAuthSession::callbackUrl() const
     return m_callbackUrl;
 }
 
+void ScrobblerAuthSession::setAuthTokenName(const QString& name)
+{
+    m_tokenName = name;
+}
+
 void ScrobblerAuthSession::processCallback()
 {
     const auto requestParts = requestData.split(u' ');
@@ -103,7 +110,7 @@ void ScrobblerAuthSession::processCallback()
     }
 
     const QUrlQuery query{QUrl(QString::fromUtf8(requestParts.at(1))).query()};
-    if(!query.hasQueryItem(QStringLiteral("token"))) {
+    if(!query.hasQueryItem(m_tokenName)) {
         onError("400 Bad Request", tr("No login token in callback."));
         return;
     }
@@ -119,7 +126,7 @@ void ScrobblerAuthSession::processCallback()
 
     sendHttpResponse("200 OK", msg.toUtf8());
 
-    emit tokenReceived(query.queryItemValue(QStringLiteral("token")));
+    emit tokenReceived(query.queryItemValue(m_tokenName));
 }
 
 void ScrobblerAuthSession::sendHttpResponse(const QByteArray& code, const QByteArray& msg)

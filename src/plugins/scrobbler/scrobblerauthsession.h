@@ -35,6 +35,8 @@ public:
 
     [[nodiscard]] QString callbackUrl() const;
 
+    void setAuthTokenName(const QString& name);
+
 signals:
     void tokenReceived(const QString& token);
 
@@ -45,7 +47,8 @@ private:
 
     QString m_callbackUrl;
     QTcpServer* m_server;
-    QTcpSocket* m_socket{nullptr};
+    QTcpSocket* m_socket;
+    QString m_tokenName;
     QByteArray requestData;
 };
 } // namespace Fooyin::Scrobbler

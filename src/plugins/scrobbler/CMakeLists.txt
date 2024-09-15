@@ -1,10 +1,3 @@
-find_package(Qt6 COMPONENTS Network QUIET)
-
-if(NOT Qt6Network_FOUND)
-    message(STATUS "Qt6::Network not found; skipping scrobbler plugin.")
-    return()
-endif()
-
 create_fooyin_plugin_internal(
     scrobbler
     DEPENDS Fooyin::Core

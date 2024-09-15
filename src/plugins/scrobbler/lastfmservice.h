@@ -26,5 +26,8 @@ class LastFmService : public ScrobblerService
 {
 public:
     LastFmService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
+
+protected:
+    void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) override;
 };
 } // namespace Fooyin::Scrobbler

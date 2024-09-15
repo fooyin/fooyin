@@ -20,7 +20,6 @@
 #include "scrobblerservice.h"
 
 #include "scrobblerauthsession.h"
-#include "scrobblercache.h"
 #include "scrobblersettings.h"
 
 #include <core/network/networkaccessmanager.h>
@@ -51,13 +50,6 @@ constexpr auto MinScrobbleDelay        = 5000;
 constexpr auto MinScrobbleDelayOnError = 30000;
 
 namespace {
-enum class ReplyResult : uint8_t
-{
-    Success = 0,
-    ServerError,
-    ApiError,
-};
-
 enum class ScrobbleError : uint8_t
 {
     // Reference: https://www.last.fm/api/errorcodes
@@ -115,161 +107,175 @@ bool canBeScrobbled(const Fooyin::Track& track)
 } // namespace
 
 namespace Fooyin::Scrobbler {
-class ScrobblerServicePrivate
+ScrobblerService::ScrobblerService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent)
+    : QObject{parent}
+    , m_network{network}
+    , m_settings{settings}
+{ }
+
+ScrobblerService::~ScrobblerService()
 {
-public:
-    ScrobblerServicePrivate(ScrobblerService* self, NetworkAccessManager* network, SettingsManager* settings)
-        : m_self{self}
-        , m_network{network}
-        , m_settings{settings}
-    { }
+    deleteAll();
+}
 
-    void deleteAll();
-    void cleanupAuth();
-
-    void handleAuthError(const char* error);
-
-    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) const;
-    QNetworkReply* createRequest(const std::map<QString, QString>& params);
-
-    void requestAuth(const QString& token);
-    void authFinished(QNetworkReply* reply);
-
-    void updateNowPlayingFinished(QNetworkReply* reply);
-    void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
-
-    void doDelayedSubmit(bool initial = false);
-    void submit();
-
-    ScrobblerService* m_self;
-    NetworkAccessManager* m_network;
-    SettingsManager* m_settings;
-
-    QString m_name;
-    QUrl m_apiUrl;
-    QUrl m_authUrl;
-    QString m_apiKey;
-    QString m_secret;
-
-    ScrobblerAuthSession* m_authSession{nullptr};
-    std::vector<QNetworkReply*> m_replies;
-    ScrobblerCache* m_cache{nullptr};
-    QString m_username;
-    QString m_sessionKey;
-
-    QBasicTimer m_submitTimer;
-    bool m_submitError{false};
-
-    Track m_currentTrack;
-    uint64_t m_timestamp{0};
-    bool m_scrobbled{false};
-    bool m_submitted{false};
-};
-
-void ScrobblerServicePrivate::deleteAll()
+QString ScrobblerService::name() const
 {
-    for(auto* reply : m_replies) {
-        QObject::disconnect(reply, nullptr, m_self, nullptr);
-        reply->abort();
-        reply->deleteLater();
+    return m_name;
+}
+
+bool ScrobblerService::isAuthenticated() const
+{
+    return !m_username.isEmpty() && !m_sessionKey.isEmpty();
+}
+
+QString ScrobblerService::apiKey() const
+{
+    return m_apiKey;
+}
+
+QString ScrobblerService::username() const
+{
+    return m_username;
+}
+
+void ScrobblerService::authenticate()
+{
+    if(!m_authSession) {
+        m_authSession = new ScrobblerAuthSession(this);
+        QObject::connect(m_authSession, &ScrobblerAuthSession::tokenReceived, this,
+                         [this](const QString& token) { requestAuth(token); });
     }
 
-    m_replies.clear();
-    cleanupAuth();
-}
+    QUrlQuery query;
+    setupAuthQuery(m_authSession, query);
 
-void ScrobblerServicePrivate::cleanupAuth()
-{
-    if(m_authSession) {
-        QObject::disconnect(m_authSession, nullptr, m_self, nullptr);
-        m_authSession->deleteLater();
-        m_authSession = nullptr;
-    }
-}
+    QUrl url{m_authUrl};
+    url.setQuery(query);
 
-void ScrobblerServicePrivate::handleAuthError(const char* error)
-{
-    qCWarning(SCROBBLER) << error;
-    emit m_self->authenticationFinished(false, QString::fromUtf8(error));
-    cleanupAuth();
-}
+    const QString messageTitle    = tr("%1 Authentication").arg(m_name);
+    const QString messageSubtitle = tr("Open url in web browser?")
+                                  + QStringLiteral("<br /><br /><a href=\"%1\">%1</a><br />").arg(url.toString());
 
-ReplyResult ScrobblerServicePrivate::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) const
-{
-    ReplyResult replyResult{ReplyResult::ServerError};
+    const QPointer<QMessageBox> message
+        = new QMessageBox(QMessageBox::Information, messageTitle, messageSubtitle, QMessageBox::Cancel);
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->setTextFormat(Qt::RichText);
 
-    if(reply->error() == QNetworkReply::NoError) {
-        if(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 200) {
-            replyResult = ReplyResult::Success;
+    auto* openButton = new QPushButton(tr("Open"), message);
+    message->addButton(openButton, QMessageBox::AcceptRole);
+    auto* copyButton = new QPushButton(tr("Copy URL"), message);
+    message->addButton(copyButton, QMessageBox::ActionRole);
+
+    QObject::connect(openButton, &QPushButton::clicked, this, [url]() { QDesktopServices::openUrl(url); });
+    QObject::connect(copyButton, &QPushButton::clicked, this,
+                     [url]() { QApplication::clipboard()->setText(url.toString()); });
+
+    QObject::connect(this, &ScrobblerService::authenticationFinished, this, [this, message](const bool success) {
+        if(success) {
+            if(message) {
+                message->deleteLater();
+            }
+            cleanupAuth();
         }
-        else {
-            *errorDesc = QStringLiteral("Received HTTP code %1")
-                             .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+    });
+    QObject::connect(message, &QMessageBox::finished, this, [this, url](const int result) {
+        switch(result) {
+            case(QMessageBox::Cancel):
+                cleanupAuth();
+                emit authenticationFinished(false);
+            default:
+                break;
         }
-    }
-    else {
-        *errorDesc = QStringLiteral("%1 (%2)").arg(reply->errorString()).arg(reply->error());
-    }
+    });
 
-    if(reply->error() == QNetworkReply::NoError || reply->error() >= 200) {
-        const QByteArray data = reply->readAll();
-        int errorCode{0};
-
-        if(!data.isEmpty() && extractJsonObj(data, obj, errorDesc) && obj->contains(u"error")
-           && obj->contains(u"message")) {
-            errorCode   = obj->value(u"error").toInt();
-            *errorDesc  = QStringLiteral("%1 (%2)").arg(obj->value(u"message").toString()).arg(errorCode);
-            replyResult = ReplyResult::ApiError;
-        }
-
-        const auto lastfmError = static_cast<ScrobbleError>(errorCode);
-        if(reply->error() == QNetworkReply::AuthenticationRequiredError
-           || lastfmError == ScrobbleError::InvalidSessionKey || lastfmError == ScrobbleError::UnauthorisedToken
-           || lastfmError == ScrobbleError::LoginRequired || lastfmError == ScrobbleError::APIKeySuspended) {
-            m_self->logout();
-        }
-    }
-
-    return replyResult;
+    message->show();
 }
 
-QNetworkReply* ScrobblerServicePrivate::createRequest(const std::map<QString, QString>& params)
+void ScrobblerService::loadSession()
 {
-    std::map<QString, QString> queryParams{{QStringLiteral("api_key"), m_apiKey},
-                                           {QStringLiteral("sk"), m_sessionKey},
-                                           {QStringLiteral("lang"), QLocale{}.name().left(2).toLower()}};
-    queryParams.insert(params.cbegin(), params.cend());
-
-    QUrlQuery queryUrl;
-    QString data;
-
-    for(const auto& [key, value] : std::as_const(queryParams)) {
-        queryUrl.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(key)),
-                              QString::fromLatin1(QUrl::toPercentEncoding(value)));
-        data += key + value;
-    }
-    data += m_secret;
-
-    const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
-    const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
-
-    queryUrl.addQueryItem(QStringLiteral("api_sig"), QString::fromLatin1(QUrl::toPercentEncoding(signature)));
-    queryUrl.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
-
-    const QUrl url{m_apiUrl};
-    QNetworkRequest req(url);
-    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
-
-    const QByteArray query = queryUrl.toString(QUrl::FullyEncoded).toUtf8();
-
-    QNetworkReply* reply = m_replies.emplace_back(m_network->post(req, query));
-    qCDebug(SCROBBLER) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);
-
-    return reply;
+    FySettings settings;
+    settings.beginGroup(m_name);
+    m_username   = settings.value(QLatin1String{"Username"}).toString();
+    m_sessionKey = settings.value(QLatin1String{"SessionKey"}).toString();
+    settings.endGroup();
 }
 
-void ScrobblerServicePrivate::requestAuth(const QString& token)
+void ScrobblerService::logout()
+{
+    m_username.clear();
+    m_sessionKey.clear();
+
+    FySettings settings;
+    settings.beginGroup(m_name);
+    settings.remove(QLatin1String{"Username"});
+    settings.remove(QLatin1String{"SessionKey"});
+    settings.endGroup();
+}
+
+void ScrobblerService::saveCache()
+{
+    m_cache->writeCache();
+}
+
+void ScrobblerService::updateNowPlaying(const Track& track)
+{
+    m_currentTrack = track;
+    m_timestamp    = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch());
+    m_scrobbled    = false;
+
+    if(!m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+        return;
+    }
+
+    if(!isAuthenticated() || !canBeScrobbled(track)) {
+        return;
+    }
+
+    const bool preferAlbumArtist = m_settings->value<Settings::Scrobbler::PreferAlbumArtist>();
+
+    std::map<QString, QString> params = {{QStringLiteral("method"), QStringLiteral("track.updateNowPlaying")},
+                                         {QStringLiteral("artist"), preferAlbumArtist && !track.albumArtists().empty()
+                                                                        ? track.albumArtists().join(u", ")
+                                                                        : track.artists().join(u", ")},
+                                         {QStringLiteral("track"), track.title()}};
+
+    if(!track.album().isEmpty()) {
+        params.emplace(QStringLiteral("album"), track.album());
+    }
+
+    if(!preferAlbumArtist && !track.albumArtist().isEmpty()) {
+        params.emplace(QStringLiteral("albumArtist"), track.albumArtists().join(u','));
+    }
+
+    QNetworkReply* reply = createRequest(params);
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { updateNowPlayingFinished(reply); });
+}
+
+void ScrobblerService::scrobble(const Track& track)
+{
+    if(!m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()) {
+        return;
+    }
+
+    if(!canBeScrobbled(track)) {
+        return;
+    }
+
+    if(track.id() != m_currentTrack.id() || track.uniqueFilepath() != m_currentTrack.uniqueFilepath()) {
+        return;
+    }
+
+    m_scrobbled = true;
+    m_cache->add(track, m_timestamp);
+
+    if(!isAuthenticated()) {
+        return;
+    }
+
+    doDelayedSubmit(true);
+}
+
+void ScrobblerService::requestAuth(const QString& token)
 {
     QUrl url{m_apiUrl};
 
@@ -296,16 +302,16 @@ void ScrobblerServicePrivate::requestAuth(const QString& token)
     QNetworkRequest req{url};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     QNetworkReply* reply = m_replies.emplace_back(m_network->get(req));
-    QObject::connect(reply, &QNetworkReply::finished, m_self, [this, reply]() { authFinished(reply); });
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { authFinished(reply); });
 }
 
-void ScrobblerServicePrivate::authFinished(QNetworkReply* reply)
+void ScrobblerService::authFinished(QNetworkReply* reply)
 {
     if(std::erase(m_replies, reply) == 0) {
         return;
     }
 
-    QObject::disconnect(reply, nullptr, m_self, nullptr);
+    QObject::disconnect(reply, nullptr, this, nullptr);
     reply->deleteLater();
 
     QJsonObject obj;
@@ -346,17 +352,158 @@ void ScrobblerServicePrivate::authFinished(QNetworkReply* reply)
     settings.setValue(QLatin1String{"SessionKey"}, m_sessionKey);
     settings.endGroup();
 
-    emit m_self->authenticationFinished(true);
+    emit authenticationFinished(true);
     cleanupAuth();
 }
 
-void ScrobblerServicePrivate::updateNowPlayingFinished(QNetworkReply* reply)
+void ScrobblerService::setName(const QString& name)
+{
+    m_name = name;
+    if(!m_cache) {
+        m_cache = new ScrobblerCache(Utils::cachePath() + u"/" + name.toLower() + u".cache", this);
+    }
+}
+
+void ScrobblerService::setApiUrl(const QUrl& url)
+{
+    m_apiUrl = url;
+}
+
+void ScrobblerService::setAuthUrl(const QUrl& url)
+{
+    m_authUrl = url;
+}
+
+void ScrobblerService::setApiKey(const QString& key)
+{
+    m_apiKey = key;
+}
+
+void ScrobblerService::setSecret(const QString& secret)
+{
+    m_secret = secret;
+}
+
+void ScrobblerService::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_submitTimer.timerId()) {
+        m_submitTimer.stop();
+        submit();
+    }
+    QObject::timerEvent(event);
+}
+
+void ScrobblerService::deleteAll()
+{
+    for(auto* reply : m_replies) {
+        QObject::disconnect(reply, nullptr, this, nullptr);
+        reply->abort();
+        reply->deleteLater();
+    }
+
+    m_replies.clear();
+    cleanupAuth();
+}
+
+void ScrobblerService::cleanupAuth()
+{
+    if(m_authSession) {
+        QObject::disconnect(m_authSession, nullptr, this, nullptr);
+        m_authSession->deleteLater();
+        m_authSession = nullptr;
+    }
+}
+
+void ScrobblerService::handleAuthError(const char* error)
+{
+    qCWarning(SCROBBLER) << error;
+    emit authenticationFinished(false, QString::fromUtf8(error));
+    cleanupAuth();
+}
+
+ScrobblerService::ReplyResult ScrobblerService::getJsonFromReply(QNetworkReply* reply, QJsonObject* obj,
+                                                                 QString* errorDesc)
+{
+    ReplyResult replyResult{ReplyResult::ServerError};
+
+    if(reply->error() == QNetworkReply::NoError) {
+        if(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 200) {
+            replyResult = ReplyResult::Success;
+        }
+        else {
+            *errorDesc = QStringLiteral("Received HTTP code %1")
+                             .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+        }
+    }
+    else {
+        *errorDesc = QStringLiteral("%1 (%2)").arg(reply->errorString()).arg(reply->error());
+    }
+
+    if(reply->error() == QNetworkReply::NoError || reply->error() >= 200) {
+        const QByteArray data = reply->readAll();
+        int errorCode{0};
+
+        if(!data.isEmpty() && extractJsonObj(data, obj, errorDesc) && obj->contains(u"error")
+           && obj->contains(u"message")) {
+            errorCode   = obj->value(u"error").toInt();
+            *errorDesc  = QStringLiteral("%1 (%2)").arg(obj->value(u"message").toString()).arg(errorCode);
+            replyResult = ReplyResult::ApiError;
+        }
+
+        const auto lastfmError = static_cast<ScrobbleError>(errorCode);
+        if(reply->error() == QNetworkReply::AuthenticationRequiredError
+           || lastfmError == ScrobbleError::InvalidSessionKey || lastfmError == ScrobbleError::UnauthorisedToken
+           || lastfmError == ScrobbleError::LoginRequired || lastfmError == ScrobbleError::APIKeySuspended) {
+            logout();
+        }
+    }
+
+    return replyResult;
+}
+
+QNetworkReply* ScrobblerService::createRequest(const std::map<QString, QString>& params)
+{
+    std::map<QString, QString> queryParams{{QStringLiteral("api_key"), m_apiKey},
+                                           {QStringLiteral("sk"), m_sessionKey},
+                                           {QStringLiteral("lang"), QLocale{}.name().left(2).toLower()}};
+    queryParams.insert(params.cbegin(), params.cend());
+
+    QUrlQuery queryUrl;
+    QString data;
+
+    for(const auto& [key, value] : std::as_const(queryParams)) {
+        queryUrl.addQueryItem(QString::fromLatin1(QUrl::toPercentEncoding(key)),
+                              QString::fromLatin1(QUrl::toPercentEncoding(value)));
+        data += key + value;
+    }
+    data += m_secret;
+
+    const QByteArray digest = QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5);
+    const QString signature = QString::fromLatin1(digest.toHex()).rightJustified(32, u'0').toLower();
+
+    queryUrl.addQueryItem(QStringLiteral("api_sig"), QString::fromLatin1(QUrl::toPercentEncoding(signature)));
+    queryUrl.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
+
+    const QUrl url{m_apiUrl};
+    QNetworkRequest req(url);
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
+
+    const QByteArray query = queryUrl.toString(QUrl::FullyEncoded).toUtf8();
+
+    QNetworkReply* reply = m_replies.emplace_back(m_network->post(req, query));
+    qCDebug(SCROBBLER) << "Sending request" << queryUrl.toString(QUrl::FullyDecoded);
+
+    return reply;
+}
+
+void ScrobblerService::updateNowPlayingFinished(QNetworkReply* reply)
 {
     if(std::erase(m_replies, reply) == 0) {
         return;
     }
 
-    QObject::disconnect(reply, nullptr, m_self, nullptr);
+    QObject::disconnect(reply, nullptr, this, nullptr);
     reply->deleteLater();
 
     QJsonObject obj;
@@ -372,13 +519,13 @@ void ScrobblerServicePrivate::updateNowPlayingFinished(QNetworkReply* reply)
     }
 }
 
-void ScrobblerServicePrivate::scrobbleFinished(QNetworkReply* reply, const CacheItemList& items)
+void ScrobblerService::scrobbleFinished(QNetworkReply* reply, const CacheItemList& items)
 {
     if(std::erase(m_replies, reply) == 0) {
         return;
     }
 
-    QObject::disconnect(reply, nullptr, m_self, nullptr);
+    QObject::disconnect(reply, nullptr, this, nullptr);
     reply->deleteLater();
 
     m_submitted = false;
@@ -528,7 +675,7 @@ void ScrobblerServicePrivate::scrobbleFinished(QNetworkReply* reply, const Cache
     doDelayedSubmit();
 }
 
-void ScrobblerServicePrivate::doDelayedSubmit(bool initial)
+void ScrobblerService::doDelayedSubmit(bool initial)
 {
     if(m_submitted || m_cache->count() == 0) {
         return;
@@ -544,13 +691,13 @@ void ScrobblerServicePrivate::doDelayedSubmit(bool initial)
     }
     else if(!m_submitTimer.isActive()) {
         const int delay = std::max(scrobbleDelay, m_submitError ? MinScrobbleDelayOnError : MinScrobbleDelay);
-        m_submitTimer.start(delay, m_self);
+        m_submitTimer.start(delay, this);
     }
 }
 
-void ScrobblerServicePrivate::submit()
+void ScrobblerService::submit()
 {
-    if(!m_self->isAuthenticated()) {
+    if(!isAuthenticated()) {
         return;
     }
 
@@ -600,206 +747,7 @@ void ScrobblerServicePrivate::submit()
     m_submitted = true;
 
     QNetworkReply* reply = createRequest(params);
-    QObject::connect(reply, &QNetworkReply::finished, m_self,
+    QObject::connect(reply, &QNetworkReply::finished, this,
                      [this, reply, sentItems]() { scrobbleFinished(reply, sentItems); });
-}
-
-ScrobblerService::ScrobblerService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent)
-    : QObject{parent}
-    , p{std::make_unique<ScrobblerServicePrivate>(this, network, settings)}
-{ }
-
-ScrobblerService::~ScrobblerService()
-{
-    p->deleteAll();
-}
-
-QString ScrobblerService::name() const
-{
-    return p->m_name;
-}
-
-bool ScrobblerService::isAuthenticated() const
-{
-    return !p->m_username.isEmpty() && !p->m_sessionKey.isEmpty();
-}
-
-QString ScrobblerService::username() const
-{
-    return p->m_username;
-}
-
-void ScrobblerService::authenticate()
-{
-    if(!p->m_authSession) {
-        p->m_authSession = new ScrobblerAuthSession(this);
-        QObject::connect(p->m_authSession, &ScrobblerAuthSession::tokenReceived, this,
-                         [this](const QString& token) { p->requestAuth(token); });
-    }
-
-    const QUrlQuery query{{QStringLiteral("api_key"), p->m_apiKey},
-                          {QStringLiteral("cb"), p->m_authSession->callbackUrl()}};
-
-    QUrl url{p->m_authUrl};
-    url.setQuery(query);
-
-    const QString messageTitle    = tr("%1 Authentication").arg(p->m_name);
-    const QString messageSubtitle = tr("Open url in web browser?")
-                                  + QStringLiteral("<br /><br /><a href=\"%1\">%1</a><br />").arg(url.toString());
-
-    const QPointer<QMessageBox> message
-        = new QMessageBox(QMessageBox::Information, messageTitle, messageSubtitle, QMessageBox::Cancel);
-    message->setAttribute(Qt::WA_DeleteOnClose);
-    message->setTextFormat(Qt::RichText);
-
-    auto* openButton = new QPushButton(tr("Open"), message);
-    message->addButton(openButton, QMessageBox::AcceptRole);
-    auto* copyButton = new QPushButton(tr("Copy URL"), message);
-    message->addButton(copyButton, QMessageBox::ActionRole);
-
-    QObject::connect(openButton, &QPushButton::clicked, this, [url]() { QDesktopServices::openUrl(url); });
-    QObject::connect(copyButton, &QPushButton::clicked, this,
-                     [url]() { QApplication::clipboard()->setText(url.toString()); });
-
-    QObject::connect(this, &ScrobblerService::authenticationFinished, this, [this, message](const bool success) {
-        if(success) {
-            if(message) {
-                message->deleteLater();
-            }
-            p->cleanupAuth();
-        }
-    });
-    QObject::connect(message, &QMessageBox::finished, this, [this, url](const int result) {
-        switch(result) {
-            case(QMessageBox::Cancel):
-                p->cleanupAuth();
-                emit authenticationFinished(false);
-            default:
-                break;
-        }
-    });
-
-    message->show();
-}
-
-void ScrobblerService::loadSession()
-{
-    FySettings settings;
-    settings.beginGroup(p->m_name);
-    p->m_username   = settings.value(QLatin1String{"Username"}).toString();
-    p->m_sessionKey = settings.value(QLatin1String{"SessionKey"}).toString();
-    settings.endGroup();
-}
-
-void ScrobblerService::logout()
-{
-    p->m_username.clear();
-    p->m_sessionKey.clear();
-
-    FySettings settings;
-    settings.beginGroup(p->m_name);
-    settings.remove(QLatin1String{"Username"});
-    settings.remove(QLatin1String{"SessionKey"});
-    settings.endGroup();
-}
-
-void ScrobblerService::saveCache()
-{
-    p->m_cache->writeCache();
-}
-
-void ScrobblerService::updateNowPlaying(const Track& track)
-{
-    p->m_currentTrack = track;
-    p->m_timestamp    = static_cast<uint64_t>(QDateTime::currentSecsSinceEpoch());
-    p->m_scrobbled    = false;
-
-    if(!p->m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()) {
-        return;
-    }
-
-    if(!isAuthenticated() || !canBeScrobbled(track)) {
-        return;
-    }
-
-    const bool preferAlbumArtist = p->m_settings->value<Settings::Scrobbler::PreferAlbumArtist>();
-
-    std::map<QString, QString> params = {{QStringLiteral("method"), QStringLiteral("track.updateNowPlaying")},
-                                         {QStringLiteral("artist"), preferAlbumArtist && !track.albumArtists().empty()
-                                                                        ? track.albumArtists().join(u", ")
-                                                                        : track.artists().join(u", ")},
-                                         {QStringLiteral("track"), track.title()}};
-
-    if(!track.album().isEmpty()) {
-        params.emplace(QStringLiteral("album"), track.album());
-    }
-
-    if(!preferAlbumArtist && !track.albumArtist().isEmpty()) {
-        params.emplace(QStringLiteral("albumArtist"), track.albumArtists().join(u','));
-    }
-
-    QNetworkReply* reply = p->createRequest(params);
-    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply]() { p->updateNowPlayingFinished(reply); });
-}
-
-void ScrobblerService::scrobble(const Track& track)
-{
-    if(!p->m_settings->value<Settings::Scrobbler::ScrobblingEnabled>()) {
-        return;
-    }
-
-    if(!canBeScrobbled(track)) {
-        return;
-    }
-
-    if(track.id() != p->m_currentTrack.id() || track.uniqueFilepath() != p->m_currentTrack.uniqueFilepath()) {
-        return;
-    }
-
-    p->m_scrobbled = true;
-    p->m_cache->add(track, p->m_timestamp);
-
-    if(!isAuthenticated()) {
-        return;
-    }
-
-    p->doDelayedSubmit(true);
-}
-
-void ScrobblerService::setName(const QString& name)
-{
-    p->m_name = name;
-    if(!p->m_cache) {
-        p->m_cache = new ScrobblerCache(Utils::cachePath() + u"/" + name.toLower() + u".cache", this);
-    }
-}
-
-void ScrobblerService::setApiUrl(const QUrl& url)
-{
-    p->m_apiUrl = url;
-}
-
-void ScrobblerService::setAuthUrl(const QUrl& url)
-{
-    p->m_authUrl = url;
-}
-
-void ScrobblerService::setApiKey(const QString& key)
-{
-    p->m_apiKey = key;
-}
-
-void ScrobblerService::setSecret(const QString& secret)
-{
-    p->m_secret = secret;
-}
-
-void ScrobblerService::timerEvent(QTimerEvent* event)
-{
-    if(event->timerId() == p->m_submitTimer.timerId()) {
-        p->m_submitTimer.stop();
-        p->submit();
-    }
-    QObject::timerEvent(event);
 }
 } // namespace Fooyin::Scrobbler
