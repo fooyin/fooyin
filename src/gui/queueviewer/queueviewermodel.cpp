@@ -24,6 +24,7 @@
 #include <core/player/playbackqueue.h>
 #include <core/player/playercontroller.h>
 #include <gui/guiconstants.h>
+#include <utils/modelutils.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -60,66 +61,6 @@ QModelIndexList restoreIndexes(QAbstractItemModel* model, QByteArray data)
         }
     }
     return result;
-}
-
-bool cmpTrackIndices(const QModelIndex& index1, const QModelIndex& index2)
-{
-    QModelIndex item1{index1};
-    QModelIndex item2{index2};
-
-    QModelIndexList item1Parents;
-    QModelIndexList item2Parents;
-    const QModelIndex root;
-
-    while(item1.parent() != item2.parent()) {
-        if(item1.parent() != root) {
-            item1Parents.push_back(item1);
-            item1 = item1.parent();
-        }
-        if(item2.parent() != root) {
-            item2Parents.push_back(item2);
-            item2 = item2.parent();
-        }
-    }
-    if(item1.row() == item2.row()) {
-        return item1Parents.size() < item2Parents.size();
-    }
-    return item1.row() < item2.row();
-}
-
-struct cmpIndexes
-{
-    bool operator()(const QModelIndex& index1, const QModelIndex& index2) const
-    {
-        return cmpTrackIndices(index1, index2);
-    }
-};
-
-using IndexRangeList = std::vector<QModelIndexList>;
-
-IndexRangeList determineIndexGroups(const QModelIndexList& indexes)
-{
-    IndexRangeList indexGroups;
-
-    QModelIndexList sortedIndexes{indexes};
-    std::ranges::sort(sortedIndexes, cmpTrackIndices);
-
-    auto startOfSequence = sortedIndexes.cbegin();
-    while(startOfSequence != sortedIndexes.cend()) {
-        auto endOfSequence
-            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
-                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
-              });
-        if(endOfSequence != sortedIndexes.cend()) {
-            std::advance(endOfSequence, 1);
-        }
-
-        indexGroups.emplace_back(startOfSequence, endOfSequence);
-
-        startOfSequence = endOfSequence;
-    }
-
-    return indexGroups;
 }
 } // namespace
 
@@ -446,7 +387,7 @@ void QueueViewerModel::regenerateTitles()
 
 void QueueViewerModel::moveTracks(int row, const QModelIndexList& indexes)
 {
-    const auto indexGroups = determineIndexGroups(indexes);
+    const auto indexGroups = Utils::getIndexRanges(indexes);
 
     if(row < 0) {
         row = rowCount({});
