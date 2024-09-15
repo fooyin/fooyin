@@ -1462,9 +1462,8 @@ void TreeView::drawRowBackground(QPainter* painter, const QStyleOptionViewItem& 
     for(const auto& rect : paintRects) {
         if(rect.width() > 0) {
             opt.rect = rect;
-            painter->fillRect(opt.rect, bg);
-            m_view->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, m_view);
             m_view->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, m_view);
+            painter->fillRect(opt.rect, bg);
         }
     }
 }
