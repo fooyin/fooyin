@@ -23,6 +23,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/crypto.h>
+#include <utils/modelutils.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
@@ -86,9 +87,9 @@ private:
     QHBoxLayout* m_customToolLayout;
 };
 
-void ExtendableTableModel::moveRowUp(int /*row*/) { }
+void ExtendableTableModel::moveRowsUp(const QModelIndexList& /*indexes*/) { }
 
-void ExtendableTableModel::moveRowDown(int /*row*/) { }
+void ExtendableTableModel::moveRowsDown(const QModelIndexList& /*indexes*/) { }
 
 class ExtendableTableViewPrivate
 {
@@ -249,12 +250,22 @@ void ExtendableTableViewPrivate::handleMoveUp() const
         return;
     }
 
+    std::set<QModelIndex> uniqueRows;
     const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
+    for(const auto& index : selected) {
+        uniqueRows.emplace(index.siblingAtColumn(0));
+    }
+    QModelIndexList rows;
+    for(const auto& index : uniqueRows) {
+        rows.emplace_back(index);
+    }
+    std::sort(rows.begin(), rows.end());
 
-    std::set<int> rows;
-    std::ranges::transform(selected, std::inserter(rows, rows.begin()),
-                           [](const QModelIndex& index) { return index.row(); });
-    std::ranges::for_each(rows, [this](const int row) { m_model->moveRowUp(row); });
+    const auto ranges = Utils::getIndexRanges(rows);
+
+    for(const auto& range : ranges) {
+        m_model->moveRowsUp(range);
+    }
 }
 
 void ExtendableTableViewPrivate::handleMoveDown() const
@@ -263,12 +274,22 @@ void ExtendableTableViewPrivate::handleMoveDown() const
         return;
     }
 
+    std::set<QModelIndex> uniqueRows;
     const QModelIndexList selected = m_self->selectionModel()->selectedIndexes();
+    for(const auto& index : selected) {
+        uniqueRows.emplace(index.siblingAtColumn(0));
+    }
+    QModelIndexList rows;
+    for(const auto& index : uniqueRows) {
+        rows.emplace_back(index);
+    }
+    std::sort(rows.begin(), rows.end());
 
-    std::set<int> rows;
-    std::ranges::transform(selected, std::inserter(rows, rows.begin()),
-                           [](const QModelIndex& index) { return index.row(); });
-    std::ranges::for_each(rows, [this](const int row) { m_model->moveRowDown(row); });
+    const auto ranges = Utils::getIndexRanges(rows);
+
+    for(const auto& range : ranges) {
+        m_model->moveRowsDown(range);
+    }
 }
 
 ExtendableTableView::ExtendableTableView(ActionManager* actionManager, QWidget* parent)

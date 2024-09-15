@@ -62,11 +62,12 @@ public:
 
     void addPendingRow() override;
     void removePendingRow() override;
-    void moveRowUp(int row) override;
-    void moveRowDown(int row) override;
+    void moveRowsUp(const QModelIndexList& indexes) override;
+    void moveRowsDown(const QModelIndexList& indexes) override;
 
 private:
     bool hasField(const QString& field, int id) const;
+    void adjustIndicies();
 
     TagEditorFieldRegistry* m_fieldRegistry;
     TagEditorFieldItem m_root;

@@ -381,48 +381,60 @@ void TagEditorFieldsModel::removePendingRow()
     endRemoveRows();
 }
 
-void TagEditorFieldsModel::moveRowUp(int row)
+void TagEditorFieldsModel::moveRowsUp(const QModelIndexList& indexes)
 {
-    const int newRow = row - 1;
-    if(newRow < 0) {
+    const int row = indexes.front().row() - 1;
+    if(row < 0) {
         return;
     }
 
-    beginMoveRows({}, row, row, {}, newRow);
-    m_root.moveChild(row, newRow);
-    Utils::move(m_nodes, row, newRow);
-    m_root.resetChildren();
+    const auto children = std::views::transform(
+        indexes, [](const QModelIndex& index) { return static_cast<TagEditorFieldItem*>(index.internalPointer()); });
 
-    for(int i{0}; const auto& item : m_nodes) {
-        auto field = item->field();
-        if(std::exchange(field.index, i++) != field.index) {
-            item->changeField(field);
-            item->setStatus(TagEditorFieldItem::Changed);
-        }
+    int currRow{row};
+    const int firstRow = children.front()->row();
+    const int lastRow  = static_cast<int>(firstRow + children.size()) - 1;
+
+    beginMoveRows({}, firstRow, lastRow, {}, row);
+
+    for(auto* childItem : children) {
+        childItem->resetRow();
+        const int oldRow = childItem->row();
+        m_root.moveChild(oldRow, currRow);
+        Utils::move(m_nodes, oldRow, currRow);
+        ++currRow;
     }
+
+    m_root.resetChildren();
+    adjustIndicies();
 
     endMoveRows();
 }
 
-void TagEditorFieldsModel::moveRowDown(int row)
+void TagEditorFieldsModel::moveRowsDown(const QModelIndexList& indexes)
 {
-    const int newRow = row + 2;
-    if(std::cmp_greater(newRow, m_nodes.size())) {
+    const int row = indexes.back().row() + 2;
+    if(row > rowCount({})) {
         return;
     }
 
-    beginMoveRows({}, row, row, {}, newRow);
-    m_root.moveChild(row, newRow);
-    Utils::move(m_nodes, row, newRow - 1);
-    m_root.resetChildren();
+    const auto children = std::views::transform(
+        indexes, [](const QModelIndex& index) { return static_cast<TagEditorFieldItem*>(index.internalPointer()); });
 
-    for(int i{0}; const auto& item : m_nodes) {
-        auto field = item->field();
-        if(std::exchange(field.index, i++) != field.index) {
-            item->changeField(field);
-            item->setStatus(TagEditorFieldItem::Changed);
-        }
+    const int firstRow = children.front()->row();
+    const int lastRow  = static_cast<int>(firstRow + children.size()) - 1;
+
+    beginMoveRows({}, firstRow, lastRow, {}, row);
+
+    for(auto* childItem : children) {
+        childItem->resetRow();
+        const int oldRow = childItem->row();
+        m_root.moveChild(oldRow, row);
+        Utils::move(m_nodes, oldRow, row - 1);
     }
+
+    m_root.resetChildren();
+    adjustIndicies();
 
     endMoveRows();
 }
@@ -433,5 +445,16 @@ bool TagEditorFieldsModel::hasField(const QString& field, int id) const
         const auto modelField = node->field();
         return modelField.scriptField == field && modelField.id != id;
     });
+}
+
+void TagEditorFieldsModel::adjustIndicies()
+{
+    for(int i{0}; const auto& item : m_nodes) {
+        auto field = item->field();
+        if(std::exchange(field.index, i++) != field.index) {
+            item->changeField(field);
+            item->setStatus(TagEditorFieldItem::Changed);
+        }
+    }
 }
 } // namespace Fooyin::TagEditor

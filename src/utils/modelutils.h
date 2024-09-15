@@ -21,8 +21,11 @@
 
 #include "fyutils_export.h"
 
-class QModelIndex;
+#include <QModelIndexList>
 
 namespace Fooyin::Utils {
+using IndexRangeList = std::vector<QModelIndexList>;
+
+FYUTILS_EXPORT IndexRangeList getIndexRanges(const QModelIndexList& indexes);
 FYUTILS_EXPORT bool sortModelIndexes(const QModelIndex& index1, const QModelIndex& index2);
 } // namespace Fooyin::Utils

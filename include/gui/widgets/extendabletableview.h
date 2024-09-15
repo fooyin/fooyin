@@ -40,8 +40,8 @@ public:
     virtual void addPendingRow()    = 0;
     virtual void removePendingRow() = 0;
 
-    virtual void moveRowUp(int row);
-    virtual void moveRowDown(int row);
+    virtual void moveRowsUp(const QModelIndexList& indexes);
+    virtual void moveRowsDown(const QModelIndexList& indexes);
 
 signals:
     void pendingRowCancelled();

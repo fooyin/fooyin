@@ -115,9 +115,8 @@ void TagEditorFieldsPageWidget::updateButtonState()
     bool canMoveDown{false};
 
     if(!isEmpty) {
-        const int row = selection.front().row();
-        canMoveUp     = row > 0;
-        canMoveDown   = row < m_registry->count() - 1;
+        canMoveUp   = selection.front().row() > 0;
+        canMoveDown = selection.back().row() < m_registry->count() - 1;
     }
 
     m_fieldList->removeRowAction()->setEnabled(!isEmpty);

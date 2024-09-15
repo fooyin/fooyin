@@ -22,6 +22,31 @@
 #include <QModelIndex>
 
 namespace Fooyin::Utils {
+IndexRangeList getIndexRanges(const QModelIndexList& indexes)
+{
+    IndexRangeList indexGroups;
+
+    QModelIndexList sortedIndexes{indexes};
+    std::ranges::sort(sortedIndexes, sortModelIndexes);
+
+    auto startOfSequence = sortedIndexes.cbegin();
+    while(startOfSequence != sortedIndexes.cend()) {
+        auto endOfSequence
+            = std::adjacent_find(startOfSequence, sortedIndexes.cend(), [](const auto& lhs, const auto& rhs) {
+                  return lhs.parent() != rhs.parent() || rhs.row() != lhs.row() + 1;
+              });
+        if(endOfSequence != sortedIndexes.cend()) {
+            std::advance(endOfSequence, 1);
+        }
+
+        indexGroups.emplace_back(startOfSequence, endOfSequence);
+
+        startOfSequence = endOfSequence;
+    }
+
+    return indexGroups;
+}
+
 bool sortModelIndexes(const QModelIndex& index1, const QModelIndex& index2)
 {
     QModelIndex item1{index1};
