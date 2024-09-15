@@ -30,55 +30,23 @@ class QToolButton;
 
 namespace Fooyin {
 class ActionManager;
+class MultiLineEditDelegate;
 class SettingsManager;
 class StarDelegate;
 class WidgetContext;
 
 namespace TagEditor {
+class TagEditorFieldRegistry;
 class TagEditorModel;
-
-class TagEditorView : public ExtendableTableView
-{
-    Q_OBJECT
-
-public:
-    explicit TagEditorView(ActionManager* actionManager, QWidget* parent = nullptr);
-
-    void setTagEditTriggers(EditTrigger triggers);
-    void setupActions();
-
-    [[nodiscard]] int sizeHintForRow(int row) const override;
-
-protected:
-    void setupContextActions(QMenu* menu, const QPoint& pos) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void leaveEvent(QEvent* event) override;
-
-private:
-    void copySelection();
-    void pasteSelection(bool match);
-    void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
-    void ratingHoverOut();
-
-    ActionManager* m_actionManager;
-
-    EditTrigger m_editTrigger;
-    WidgetContext* m_context;
-    QAction* m_copyAction;
-    QAction* m_pasteAction;
-    QAction* m_pasteFields;
-
-    StarDelegate* m_starDelegate;
-};
+class TagEditorView;
 
 class TagEditorWidget : public PropertiesTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorWidget(ActionManager* actionManager, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit TagEditorWidget(ActionManager* actionManager, TagEditorFieldRegistry* registry, SettingsManager* settings,
+                             QWidget* parent = nullptr);
     ~TagEditorWidget() override;
 
     void setTracks(const TrackList& tracks);
@@ -99,12 +67,19 @@ private:
     void saveState() const;
     void restoreState() const;
 
+    TagEditorFieldRegistry* m_registry;
     SettingsManager* m_settings;
+
+    bool m_readOnly;
     TagEditorView* m_view;
     TagEditorModel* m_model;
-    QToolButton* m_toolsButton;
-    QMenu* m_toolsMenu;
+
+    std::set<int> m_delegateRows;
+    MultiLineEditDelegate* m_multilineDelegate;
+    StarDelegate* m_starDelegate;
+
     QAction* m_autoTrackNum;
+    QAction* m_changeFields;
 };
 } // namespace TagEditor
 } // namespace Fooyin

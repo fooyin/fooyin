@@ -19,6 +19,8 @@
 
 #include "tageditorplugin.h"
 
+#include "settings/tageditorfieldregistry.h"
+#include "settings/tageditorpage.h"
 #include "tageditorwidget.h"
 
 #include <core/engine/audioloader.h>
@@ -39,6 +41,8 @@ void TagEditorPlugin::initialise(const CorePluginContext& context)
     m_settings    = context.settingsManager;
     m_library     = context.library;
     m_audioLoader = context.audioLoader;
+
+    m_registry = new TagEditorFieldRegistry(m_settings, this);
 }
 
 void TagEditorPlugin::initialise(const GuiPluginContext& context)
@@ -47,6 +51,8 @@ void TagEditorPlugin::initialise(const GuiPluginContext& context)
     m_trackSelection   = context.trackSelection;
     m_propertiesDialog = context.propertiesDialog;
     m_widgetProvider   = context.widgetProvider;
+
+    m_fieldsPage = new TagEditorFieldsPage(m_registry, m_actionManager, m_settings, this);
 
     // m_widgetProvider->registerWidget(
     //     QStringLiteral("TagEditor"), [this]() { return createEditor(); }, QStringLiteral("Tag Editor"));
@@ -66,7 +72,7 @@ TagEditorWidget* TagEditorPlugin::createEditor(const TrackList& tracks)
         return !track.hasCue() && !track.isInArchive() && m_audioLoader->canWriteMetadata(track);
     });
 
-    auto* tagEditor = new TagEditorWidget(m_actionManager, m_settings);
+    auto* tagEditor = new TagEditorWidget(m_actionManager, m_registry, m_settings);
     tagEditor->setReadOnly(!canWrite);
     tagEditor->setTracks(tracks);
     QObject::connect(tagEditor, &TagEditorWidget::trackMetadataChanged, m_library, &MusicLibrary::writeTrackMetadata);

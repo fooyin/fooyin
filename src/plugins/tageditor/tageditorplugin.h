@@ -25,6 +25,8 @@
 #include <gui/plugins/guiplugin.h>
 
 namespace Fooyin::TagEditor {
+class TagEditorFieldRegistry;
+class TagEditorFieldsPage;
 class TagEditorWidget;
 
 class TagEditorPlugin : public QObject,
@@ -51,5 +53,8 @@ private:
     PropertiesDialog* m_propertiesDialog;
     WidgetProvider* m_widgetProvider;
     SettingsManager* m_settings;
+
+    TagEditorFieldRegistry* m_registry;
+    TagEditorFieldsPage* m_fieldsPage;
 };
 } // namespace Fooyin::TagEditor

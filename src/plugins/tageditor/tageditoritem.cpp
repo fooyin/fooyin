@@ -34,13 +34,12 @@ bool withinCharLimit(const QStringList& strings)
 
 namespace Fooyin::TagEditor {
 TagEditorItem::TagEditorItem()
-    : TagEditorItem{{}, nullptr, true}
+    : TagEditorItem{{}, nullptr}
 { }
 
-TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefault)
+TagEditorItem::TagEditorItem(TagEditorField field, TagEditorItem* parent)
     : TreeStatusItem{parent}
-    , m_isDefault{isDefault}
-    , m_title{std::move(title)}
+    , m_field{std::move(field)}
     , m_titleChanged{false}
     , m_valueChanged{false}
     , m_trackCount{0}
@@ -48,9 +47,14 @@ TagEditorItem::TagEditorItem(QString title, TagEditorItem* parent, bool isDefaul
     , m_splitTrackValues{false}
 { }
 
+TagEditorField TagEditorItem::field() const
+{
+    return m_field;
+}
+
 QString TagEditorItem::title() const
 {
-    return m_title;
+    return m_field.name;
 }
 
 QString TagEditorItem::changedTitle() const
@@ -114,9 +118,14 @@ bool TagEditorItem::valueChanged() const
     return m_valueChanged;
 }
 
+bool TagEditorItem::isSetField() const
+{
+    return m_field.id >= 0;
+}
+
 bool TagEditorItem::isDefault() const
 {
-    return m_isDefault;
+    return m_field.id >= 0 || m_field.isDefault;
 }
 
 int TagEditorItem::trackCount() const
@@ -210,7 +219,7 @@ bool TagEditorItem::setValue(const QString& newValue)
 
 bool TagEditorItem::setTitle(const QString& title)
 {
-    if(m_title == title) {
+    if(m_field.name == title) {
         if(status() == None) {
             return false;
         }
@@ -263,11 +272,14 @@ void TagEditorItem::sortCustomTags()
     m_children = sortedChildren;
 }
 
-void TagEditorItem::applyChanges()
+void TagEditorItem::applyChanges(const TagEditorField& field)
 {
-    if(!m_isDefault || !m_changedTitle.isEmpty()) {
-        m_title = m_changedTitle;
+    m_field = field;
+
+    if(m_titleChanged) {
+        m_field.name = m_changedTitle;
     }
+
     m_values = m_changedValues;
     m_value  = m_changedValue;
     reset();

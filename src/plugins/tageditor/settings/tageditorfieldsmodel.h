@@ -1,6 +1,6 @@
 /*
  * Fooyin
- * Copyright © 2023, Luke Taylor <LukeT1@proton.me>
+ * Copyright © 2024, Luke Taylor <LukeT1@proton.me>
  *
  * Fooyin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,34 @@
 
 #include "tageditorfield.h"
 
-#include <core/track.h>
 #include <gui/widgets/extendabletableview.h>
-#include <utils/tablemodel.h>
+#include <utils/treestatusitem.h>
 
-namespace Fooyin {
-class SettingsManager;
+namespace Fooyin::TagEditor {
+class TagEditorFieldRegistry;
 
-namespace TagEditor {
-class TagEditorModelPrivate;
+class TagEditorFieldItem : public TreeStatusItem<TagEditorFieldItem>
+{
+public:
+    TagEditorFieldItem();
+    TagEditorFieldItem(TagEditorField field, TagEditorFieldItem* parent);
 
-class TagEditorModel : public ExtendableTableModel
+    [[nodiscard]] TagEditorField field() const;
+    void changeField(const TagEditorField& field);
+
+private:
+    TagEditorField m_field;
+};
+
+class TagEditorFieldsModel : public ExtendableTableModel
 {
     Q_OBJECT
 
 public:
-    explicit TagEditorModel(SettingsManager* settings, QObject* parent = nullptr);
-    ~TagEditorModel() override;
+    explicit TagEditorFieldsModel(TagEditorFieldRegistry* registry, QObject* parent = nullptr);
 
-    [[nodiscard]] TrackList tracks() const;
-    void reset(const TrackList& tracks, const std::vector<TagEditorField>& fields);
-    void setRatingRow(int row);
-
-    void autoNumberTracks();
-    void updateValues(const std::map<QString, QString>& fieldValues, bool match);
-
-    bool haveChanges();
-    bool haveOnlyStatChanges();
-    void applyChanges();
+    void populate();
+    void processQueue();
 
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
@@ -62,9 +62,14 @@ public:
 
     void addPendingRow() override;
     void removePendingRow() override;
+    void moveRowUp(int row) override;
+    void moveRowDown(int row) override;
 
 private:
-    std::unique_ptr<TagEditorModelPrivate> p;
+    bool hasField(const QString& field, int id) const;
+
+    TagEditorFieldRegistry* m_fieldRegistry;
+    TagEditorFieldItem m_root;
+    std::vector<std::unique_ptr<TagEditorFieldItem>> m_nodes;
 };
-} // namespace TagEditor
-} // namespace Fooyin
+} // namespace Fooyin::TagEditor

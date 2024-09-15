@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "tageditorfield.h"
 #include <utils/treestatusitem.h>
 
 #include <QList>
@@ -34,7 +35,9 @@ public:
     };
 
     TagEditorItem();
-    TagEditorItem(QString title, TagEditorItem* parent, bool isDefault);
+    TagEditorItem(TagEditorField field, TagEditorItem* parent);
+
+    [[nodiscard]] TagEditorField field() const;
 
     [[nodiscard]] QString title() const;
     [[nodiscard]] QString changedTitle() const;
@@ -47,6 +50,7 @@ public:
     [[nodiscard]] QString changedValue() const;
 
     [[nodiscard]] bool valueChanged() const;
+    [[nodiscard]] bool isSetField() const;
     [[nodiscard]] bool isDefault() const;
     [[nodiscard]] int trackCount() const;
     [[nodiscard]] bool splitTrackValues() const;
@@ -64,12 +68,11 @@ public:
     void setSplitTrackValues(bool enabled);
 
     void sortCustomTags();
-    void applyChanges();
+    void applyChanges(const TagEditorField& field);
     void reset();
 
 private:
-    bool m_isDefault;
-    QString m_title;
+    TagEditorField m_field;
     QString m_changedTitle;
     bool m_titleChanged;
     QStringList m_values;

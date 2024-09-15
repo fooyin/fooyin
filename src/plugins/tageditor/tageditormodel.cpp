@@ -34,12 +34,6 @@ constexpr auto MultipleValuesPrefix = "<<multiple values>>";
 namespace Fooyin::TagEditor {
 using TagFieldMap = std::unordered_map<QString, TagEditorItem>;
 
-struct EditorPair
-{
-    QString displayName;
-    std::function<QString(const Track&)> metadata;
-};
-
 class TagEditorModelPrivate
 {
 public:
@@ -48,20 +42,14 @@ public:
         , m_settings{settings}
     { }
 
-    bool hasCustomTagConflict(TagEditorItem* item, const QString& title) const;
+    bool hasTagConflict(TagEditorItem* item, const QString& title) const;
+    bool hasDefaultField(const QString& field) const;
     bool isDefaultField(const QString& name) const;
-    QString findSetField(const QString& name);
 
     void reset();
 
     void updateFields();
-    void updateEditorValues();
-
-    void updateTrackMetadata(const QString& name, const QVariant& value, bool split = false);
-
-    void addCustomTrackMetadata(const QString& name, const QString& value, bool split = false);
-    void replaceCustomTrackMetadata(const QString& name, const QString& value, bool split = false);
-    void removeCustomTrackMetadata(const QString& name);
+    bool updateTrackMetadata(const TagEditorField& field, const QVariant& value, bool split = false);
 
     TagEditorModel* m_self;
 
@@ -71,153 +59,93 @@ public:
     TrackList m_tracks;
 
     QString m_defaultFieldtext{QStringLiteral("<input field name>")};
-    // TODO: Make m_fields shown configurable
-    const std::vector<EditorPair> m_fields{
-        {QStringLiteral("Artist Name"), &Track::artist},
-        {QStringLiteral("Track Title"), &Track::title},
-        {QStringLiteral("Album Title"), &Track::album},
-        {QStringLiteral("Date"), &Track::date},
-        {QStringLiteral("Genre"), &Track::genre},
-        {QStringLiteral("Composer"), &Track::composer},
-        {QStringLiteral("Performer"), &Track::performer},
-        {QStringLiteral("Album Artist"), &Track::albumArtist},
-        {QStringLiteral("Track Number"),
-         [](const Track& track) {
-             return track.metaValue(QString::fromLatin1(Constants::MetaData::Track));
-         }},
-        {QStringLiteral("Total Tracks"),
-         [](const Track& track) {
-             return track.metaValue(QString::fromLatin1(Constants::MetaData::TrackTotal));
-         }},
-        {QStringLiteral("Disc Number"),
-         [](const Track& track) {
-             return track.metaValue(QString::fromLatin1(Constants::MetaData::Disc));
-         }},
-        {QStringLiteral("Total Discs"),
-         [](const Track& track) {
-             return track.metaValue(QString::fromLatin1(Constants::MetaData::DiscTotal));
-         }},
-        {QStringLiteral("Comment"), &Track::comment},
-        {QStringLiteral("Rating"), [](const Track& track) {
-             return track.metaValue(QString::fromLatin1(Constants::MetaData::Rating));
-         }}};
-
-    const std::unordered_map<QString, QString> m_setFields{
-        {QStringLiteral("Artist Name"), QString::fromLatin1(Constants::MetaData::Artist)},
-        {QStringLiteral("Track Title"), QString::fromLatin1(Constants::MetaData::Title)},
-        {QStringLiteral("Album Title"), QString::fromLatin1(Constants::MetaData::Album)},
-        {QStringLiteral("Date"), QString::fromLatin1(Constants::MetaData::Date)},
-        {QStringLiteral("Genre"), QString::fromLatin1(Constants::MetaData::Genre)},
-        {QStringLiteral("Composer"), QString::fromLatin1(Constants::MetaData::Composer)},
-        {QStringLiteral("Performer"), QString::fromLatin1(Constants::MetaData::Performer)},
-        {QStringLiteral("Album Artist"), QString::fromLatin1(Constants::MetaData::AlbumArtist)},
-        {QStringLiteral("Track Number"), QString::fromLatin1(Constants::MetaData::Track)},
-        {QStringLiteral("Total Tracks"), QString::fromLatin1(Constants::MetaData::TrackTotal)},
-        {QStringLiteral("Disc Number"), QString::fromLatin1(Constants::MetaData::Disc)},
-        {QStringLiteral("Total Discs"), QString::fromLatin1(Constants::MetaData::DiscTotal)},
-        {QStringLiteral("Comment"), QString::fromLatin1(Constants::MetaData::Comment)},
-        {QStringLiteral("Rating"), QString::fromLatin1(Constants::MetaData::Rating)}};
+    std::vector<TagEditorField> m_fields;
+    int m_ratingRow{-1};
 
     TagEditorItem m_root;
     TagFieldMap m_tags;
-    TagFieldMap m_customTags;
 };
 
-bool TagEditorModelPrivate::hasCustomTagConflict(TagEditorItem* item, const QString& title) const
+bool TagEditorModelPrivate::hasTagConflict(TagEditorItem* item, const QString& title) const
 {
-    for(const auto& [_, tag] : m_customTags) {
-        if(item != &tag) {
-            if(tag.title() == title || tag.changedTitle() == title) {
-                return true;
-            }
+    for(const auto& [key, tag] : m_tags) {
+        if(item != &tag && (title == key || tag.title() == title || tag.changedTitle() == title)) {
+            return true;
         }
     }
     return false;
 }
 
-bool TagEditorModelPrivate::isDefaultField(const QString& name) const
+bool TagEditorModelPrivate::hasDefaultField(const QString& field) const
 {
-    return std::ranges::any_of(std::as_const(m_fields),
-                               [name](const EditorPair& pair) { return pair.displayName == name; });
+    const QString fieldToFind = field.toUpper();
+    return std::ranges::any_of(std::as_const(m_fields), [fieldToFind](const auto& editorField) {
+        return editorField.scriptField == fieldToFind;
+    });
 }
 
-QString TagEditorModelPrivate::findSetField(const QString& name)
+bool TagEditorModelPrivate::isDefaultField(const QString& name) const
 {
-    if(!m_setFields.contains(name)) {
-        return {};
-    }
-    return m_setFields.at(name);
+    return std::ranges::any_of(std::as_const(m_fields), [name](const auto& field) { return field.name == name; });
 }
 
 void TagEditorModelPrivate::reset()
 {
     m_root = {};
     m_tags.clear();
-    m_customTags.clear();
 }
 
 void TagEditorModelPrivate::updateFields()
 {
-    for(const Track& track : m_tracks) {
-        const auto trackTags = track.extraTags();
-
-        for(const auto& [field, values] : Utils::asRange(trackTags)) {
-            if(values.empty()) {
+    const auto iterateTags = [this](const auto& tags, const bool isDefault = false) {
+        for(const auto& [field, value] : Utils::asRange(tags)) {
+            if(value.isEmpty() || hasDefaultField(field)) {
                 continue;
             }
 
-            if(!m_customTags.contains(field)) {
-                auto* item = &m_customTags.emplace(field, TagEditorItem{field, &m_root, false}).first->second;
+            if(!m_tags.contains(field)) {
+                TagEditorField editorField;
+                editorField.name        = field;
+                editorField.scriptField = field;
+                editorField.isDefault   = isDefault;
+                auto* item              = &m_tags.emplace(field, TagEditorItem{editorField, &m_root}).first->second;
                 m_root.appendChild(item);
             }
+            auto& node = m_tags.at(field);
+            node.addTrackValue(value);
         }
-    }
+    };
 
-    updateEditorValues();
-}
-
-void TagEditorModelPrivate::updateEditorValues()
-{
-    if(m_tracks.empty()) {
-        return;
-    }
-
-    for(const auto& track : m_tracks) {
-        for(const auto& [field, var] : m_fields) {
-            const auto result = var(track);
-            if(result.contains(QLatin1String{Constants::UnitSeparator})) {
-                m_tags[field].addTrackValue(result.split(QLatin1String{Constants::UnitSeparator}));
-            }
-            else {
-                m_tags[field].addTrackValue(result);
-            }
+    for(const Track& track : m_tracks) {
+        for(auto& [field, node] : m_tags) {
+            const auto result = track.metaValue(node.field().scriptField);
+            node.addTrackValue(result.split(QLatin1String{Constants::UnitSeparator}, Qt::SkipEmptyParts));
         }
 
-        for(auto& [field, node] : m_customTags) {
-            const auto result = m_scriptRegistry.value(field, track);
-            node.addTrackValue(result.value.split(QLatin1String{Constants::UnitSeparator}));
-        }
+        iterateTags(track.metadata(), true);
+        iterateTags(track.extraTags());
     }
 }
 
-void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVariant& value, bool split)
+bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, const QVariant& value, bool split)
 {
-    if(m_tracks.empty()) {
-        return;
+    if(m_tracks.empty() || field.scriptField.isEmpty()) {
+        return false;
     }
 
-    const QString metadata = findSetField(name);
-    const bool isList      = split
-                     || (metadata == QLatin1String{Constants::MetaData::AlbumArtist}
-                         || metadata == QLatin1String{Constants::MetaData::Artist}
-                         || metadata == QLatin1String{Constants::MetaData::Genre});
-    const bool isFloat = (metadata == QLatin1String{Constants::MetaData::Rating});
+    const bool isList  = split || field.multivalue;
+    const bool isFloat = (field.scriptField == QLatin1String{Constants::MetaData::RatingEditor});
+
+    QString tag{field.scriptField};
+    if(tag == QLatin1String{Constants::MetaData::RatingEditor}) {
+        tag = QLatin1String{Constants::MetaData::Rating};
+    }
 
     QStringList listValue;
     float floatValue{-1};
 
     if(isList) {
-        listValue = value.toString().split(u';', Qt::SkipEmptyParts);
+        listValue = value.toString().split(QStringLiteral(";"), Qt::SkipEmptyParts);
         std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
     }
     else if(isFloat) {
@@ -235,73 +163,26 @@ void TagEditorModelPrivate::updateTrackMetadata(const QString& name, const QVari
 
         if(split && std::cmp_less(i, listValue.size())) {
             if(isFloat) {
-                m_scriptRegistry.setValue(metadata, listValue.at(i).toFloat(), track);
+                m_scriptRegistry.setValue(tag, listValue.at(i).toFloat(), track);
             }
             else {
-                m_scriptRegistry.setValue(metadata, listValue.at(i), track);
+                m_scriptRegistry.setValue(tag, listValue.at(i), track);
             }
         }
         else if(isList) {
-            m_scriptRegistry.setValue(metadata, listValue, track);
+            m_scriptRegistry.setValue(tag, listValue, track);
         }
         else if(isFloat) {
-            m_scriptRegistry.setValue(metadata, floatValue, track);
+            m_scriptRegistry.setValue(tag, floatValue, track);
         }
         else {
-            m_scriptRegistry.setValue(metadata, value.toString(), track);
+            m_scriptRegistry.setValue(tag, value.toString(), track);
         }
 
         ++i;
     }
-}
 
-void TagEditorModelPrivate::addCustomTrackMetadata(const QString& name, const QString& value, bool split)
-{
-    if(m_tracks.empty()) {
-        return;
-    }
-
-    QStringList listValue = value.split(u';', Qt::SkipEmptyParts);
-    std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
-
-    for(int i{0}; Track & track : m_tracks) {
-        QString newValue{value};
-        if(split && std::cmp_less(i, listValue.size())) {
-            newValue = listValue.at(i);
-        }
-        track.addExtraTag(name, newValue);
-        ++i;
-    }
-}
-
-void TagEditorModelPrivate::replaceCustomTrackMetadata(const QString& name, const QString& value, bool split)
-{
-    if(m_tracks.empty()) {
-        return;
-    }
-
-    QStringList listValue = value.split(u';', Qt::SkipEmptyParts);
-    std::ranges::transform(listValue, listValue.begin(), [](const QString& val) { return val.trimmed(); });
-
-    for(int i{0}; Track & track : m_tracks) {
-        QString newValue{value};
-        if(split && std::cmp_less(i, listValue.size())) {
-            newValue = listValue.at(i);
-        }
-        track.replaceExtraTag(name, newValue);
-        ++i;
-    }
-}
-
-void TagEditorModelPrivate::removeCustomTrackMetadata(const QString& name)
-{
-    if(m_tracks.empty()) {
-        return;
-    }
-
-    for(Track& track : m_tracks) {
-        track.removeExtraTag(name);
-    }
+    return true;
 }
 
 TagEditorModel::TagEditorModel(SettingsManager* settings, QObject* parent)
@@ -316,14 +197,15 @@ TrackList TagEditorModel::tracks() const
     return p->m_tracks;
 }
 
-void TagEditorModel::reset(const TrackList& tracks)
+void TagEditorModel::reset(const TrackList& tracks, const std::vector<TagEditorField>& fields)
 {
     beginResetModel();
     p->reset();
     p->m_tracks = tracks;
+    p->m_fields = fields;
 
-    for(const auto& [field, _] : p->m_fields) {
-        auto* item = &p->m_tags.emplace(field, TagEditorItem{field, &p->m_root, true}).first->second;
+    for(const auto& field : fields) {
+        auto* item = &p->m_tags.emplace(field.scriptField.toUpper(), TagEditorItem{field, &p->m_root}).first->second;
         p->m_root.appendChild(item);
     }
 
@@ -333,23 +215,48 @@ void TagEditorModel::reset(const TrackList& tracks)
     endResetModel();
 }
 
+void TagEditorModel::setRatingRow(int row)
+{
+    p->m_ratingRow = row;
+}
+
 void TagEditorModel::autoNumberTracks()
 {
     const auto total = static_cast<int>(p->m_tracks.size());
     QStringList trackNums;
+
     for(int i{1}; i <= total; ++i) {
         trackNums.append(QString::number(i));
     }
 
-    auto& trackTag = p->m_tags.at(QLatin1String("Track Number"));
-    auto& totalTag = p->m_tags.at(QLatin1String("Total Tracks"));
+    const auto addMissingTag = [this](const QString& tag) {
+        if(!p->m_tags.contains(tag)) {
+            TagEditorField field;
+            field.name        = tag;
+            field.scriptField = tag;
 
-    if(trackTag.setValue(trackNums.join(u"; "))) {
-        trackTag.setMultipleValues(total > 1);
-        trackTag.setSplitTrackValues(true);
+            auto* item = &p->m_tags.emplace(tag, TagEditorItem{field, &p->m_root}).first->second;
+            p->m_root.appendChild(item);
+        }
+    };
+
+    static const auto trackTag      = QString::fromLatin1(Constants::MetaData::Track);
+    static const auto trackTotalTag = QString::fromLatin1(Constants::MetaData::TrackTotal);
+
+    addMissingTag(trackTag);
+    addMissingTag(trackTotalTag);
+
+    auto& track = p->m_tags.at(trackTag);
+    if(track.setValue(trackNums.join(u"; "))) {
+        track.setMultipleValues(total > 1);
+        track.setSplitTrackValues(true);
+        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
     }
 
-    totalTag.setValue(total);
+    auto& totalTotal = p->m_tags.at(trackTotalTag);
+    if(totalTotal.setValue(total)) {
+        emit dataChanged({}, {}, {Qt::DisplayRole, Qt::FontRole});
+    }
 }
 
 void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues, bool match)
@@ -375,17 +282,16 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
     };
 
     for(const auto& [tag, value] : fieldValues) {
-        if(p->m_tags.contains(tag)) {
-            updateItem(p->m_tags.at(tag), value);
-        }
-        else if(p->m_customTags.contains(tag)) {
-            updateItem(p->m_customTags.at(tag), value);
+        const auto tagIt
+            = std::ranges::find_if(p->m_tags, [&tag](const auto& field) { return field.second.field().name == tag; });
+        if(tagIt != p->m_tags.cend()) {
+            updateItem(tagIt->second, value);
         }
         else if(match) {
             const int row = rowCount({});
             beginInsertRows({}, row, row);
 
-            auto* item = &p->m_customTags.emplace(tag, TagEditorItem{{}, &p->m_root, false}).first->second;
+            auto* item = &p->m_tags.emplace(tag, TagEditorItem{{}, &p->m_root}).first->second;
             item->setTitle(tag);
             item->addTrack(static_cast<int>(p->m_tracks.size()));
             updateItem(*item, value);
@@ -401,9 +307,7 @@ void TagEditorModel::updateValues(const std::map<QString, QString>& fieldValues,
 
 bool TagEditorModel::haveChanges()
 {
-    return std::ranges::any_of(p->m_tags, [](const auto& tag) { return tag.second.status() != TagEditorItem::None; })
-        || std::ranges::any_of(p->m_customTags,
-                               [](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
+    return std::ranges::any_of(p->m_tags, [](const auto& tag) { return tag.second.status() != TagEditorItem::None; });
 }
 
 bool TagEditorModel::haveOnlyStatChanges()
@@ -416,75 +320,66 @@ bool TagEditorModel::haveOnlyStatChanges()
 
 void TagEditorModel::applyChanges()
 {
-    const auto updateChangedNodes = [this](TagFieldMap& tags, bool custom) {
-        QStringList fieldsToRemove;
+    QStringList fieldsToRemove;
 
-        for(auto& [index, node] : tags) {
-            const TagEditorItem::ItemStatus status = node.status();
+    for(auto& [index, node] : p->m_tags) {
+        const TagEditorItem::ItemStatus status = node.status();
+        TagEditorField field                   = node.field();
+        if(field.scriptField.isEmpty()) {
+            field.scriptField = node.titleChanged() ? node.changedTitle() : node.title();
+        }
+        field.multivalue = Track::isMultiValueTag(field.scriptField);
+        field.isDefault  = !Track::isExtraTag(field.scriptField);
 
-            switch(status) {
-                case(TagEditorItem::Added): {
-                    if(custom) {
-                        p->addCustomTrackMetadata(node.changedTitle(), node.changedValue(), node.splitTrackValues());
-                    }
-                    else {
-                        p->updateTrackMetadata(node.changedTitle(), node.changedValue(), node.splitTrackValues());
-                    }
-
-                    node.applyChanges();
+        switch(status) {
+            case(TagEditorItem::Added): {
+                if(p->updateTrackMetadata(field, node.changedValue(), node.splitTrackValues())) {
+                    node.applyChanges(field);
                     emit dataChanged({}, {}, {Qt::FontRole});
-                    break;
                 }
-                case(TagEditorItem::Removed): {
-                    p->removeCustomTrackMetadata(node.title());
-
+                break;
+            }
+            case(TagEditorItem::Removed): {
+                if(p->updateTrackMetadata(field, {})) {
                     beginRemoveRows({}, node.row(), node.row());
                     p->m_root.removeChild(node.row());
                     endRemoveRows();
                     fieldsToRemove.push_back(node.title());
-
-                    break;
                 }
-                case(TagEditorItem::Changed): {
-                    if(custom) {
-                        const auto fieldIt
-                            = std::ranges::find_if(std::as_const(p->m_customTags), [node](const auto& tag) {
-                                  return tag.second.title() == node.title();
-                              });
-                        if(fieldIt != p->m_customTags.end()) {
-                            auto tagItem = p->m_customTags.extract(fieldIt);
-
-                            p->removeCustomTrackMetadata(tagItem.key());
-
-                            tagItem.key() = node.changedTitle();
-                            p->m_customTags.insert(std::move(tagItem));
-
-                            p->replaceCustomTrackMetadata(node.changedTitle(), node.changedValue(),
-                                                          node.splitTrackValues());
-                            node.applyChanges();
+                break;
+            }
+            case(TagEditorItem::Changed): {
+                if(node.titleChanged()) {
+                    const auto fieldIt = std::ranges::find_if(std::as_const(p->m_tags), [node](const auto& tag) {
+                        return tag.second.title() == node.title();
+                    });
+                    if(fieldIt != p->m_tags.end()) {
+                        auto tagItem      = p->m_tags.extract(fieldIt);
+                        field.scriptField = tagItem.key();
+                        if(p->updateTrackMetadata(field, {})) {
+                            const QString key = node.changedTitle();
+                            tagItem.key()     = key;
+                            p->m_tags.insert(std::move(tagItem));
                         }
                     }
-                    else {
-                        p->updateTrackMetadata(node.title(), node.changedValue(), node.splitTrackValues());
-                        node.applyChanges();
-                        node.setSplitTrackValues(false);
-                    }
-
-                    emit dataChanged({}, {}, {Qt::FontRole});
-                    break;
                 }
-                case(TagEditorItem::None):
-                    break;
+
+                if(p->updateTrackMetadata(node.field(), node.valueChanged() ? node.changedValue() : node.value(),
+                                          node.splitTrackValues())) {
+                    node.applyChanges(field);
+                    node.setSplitTrackValues(false);
+                    emit dataChanged({}, {}, {Qt::FontRole});
+                }
+                break;
             }
+            case(TagEditorItem::None):
+                break;
         }
+    }
 
-        for(const auto& field : fieldsToRemove) {
-            tags.erase(field);
-        }
-    };
-
-    updateChangedNodes(p->m_tags, false);
-    updateChangedNodes(p->m_customTags, true);
+    for(const auto& field : fieldsToRemove) {
+        p->m_tags.erase(field);
+    }
 }
 
 QVariant TagEditorModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -546,7 +441,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
             if(role == Qt::EditRole) {
                 return title;
             }
-            if(!item->isDefault() && role != TagEditorItem::Title) {
+            if(!item->isSetField() && role != TagEditorItem::Title) {
                 const QString name = QStringLiteral("<") + title + QStringLiteral(">");
                 return name;
             }
@@ -554,7 +449,7 @@ QVariant TagEditorModel::data(const QModelIndex& index, int role) const
             return title;
         }
 
-        if(index.row() == 13) {
+        if(index.row() == p->m_ratingRow) {
             if(item->trackCount() > 1) {
                 return QString::fromLatin1(MultipleValuesPrefix);
             }
@@ -587,17 +482,17 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
 
     switch(index.column()) {
         case(0): {
-            const QString newTitle = value.toString();
+            const QString newTitle = value.toString().toUpper();
+
             if((item->status() == TagEditorItem::Added && newTitle == p->m_defaultFieldtext)
-               || p->hasCustomTagConflict(item, newTitle)) {
+               || p->hasTagConflict(item, newTitle)) {
                 if(item->status() == TagEditorItem::Added) {
                     emit pendingRowCancelled();
                 }
                 return false;
             }
 
-            const QString name = value.toString().toUpper();
-            if(!item->setTitle(name)) {
+            if(!item->setTitle(newTitle)) {
                 if(item->status() == TagEditorItem::Added) {
                     emit pendingRowCancelled();
                 }
@@ -607,9 +502,9 @@ bool TagEditorModel::setData(const QModelIndex& index, const QVariant& value, in
             break;
         }
         case(1): {
-            QString setValue = value.toString();
+            QString setValue = value.toString().trimmed();
 
-            if(index.row() == 13) {
+            if(index.row() == p->m_ratingRow) {
                 const auto rating = value.value<StarRating>();
                 setValue          = rating.rating() == 0 ? QString{} : QString::number(rating.rating());
             }
@@ -658,23 +553,25 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
             return false;
         }
 
-        if(index.data(TagEditorItem::IsDefault).toBool()) {
+        auto* item = static_cast<TagEditorItem*>(index.internalPointer());
+        if(!item) {
+            continue;
+        }
+
+        if(item->isSetField()) {
             setData(index.siblingAtColumn(1), {}, Qt::EditRole);
             continue;
         }
 
-        auto* item = static_cast<TagEditorItem*>(index.internalPointer());
-        if(item) {
-            if(item->status() == TagEditorItem::Added) {
-                beginRemoveRows({}, i, i);
-                p->m_root.removeChild(i);
-                endRemoveRows();
-                p->m_customTags.erase(p->m_defaultFieldtext + QString::number(row));
-            }
-            else {
-                item->setStatus(TagEditorItem::Removed);
-                emit dataChanged({}, {}, {Qt::FontRole});
-            }
+        if(item->status() == TagEditorItem::Added) {
+            beginRemoveRows({}, i, i);
+            p->m_root.removeChild(i);
+            endRemoveRows();
+            p->m_tags.erase(p->m_defaultFieldtext + QString::number(row));
+        }
+        else {
+            item->setStatus(TagEditorItem::Removed);
+            emit dataChanged({}, {}, {Qt::FontRole});
         }
     }
 
@@ -683,11 +580,13 @@ bool TagEditorModel::removeRows(int row, int count, const QModelIndex& /*parent*
 
 void TagEditorModel::addPendingRow()
 {
-    TagEditorItem newItem{p->m_defaultFieldtext, &p->m_root, false};
+    TagEditorField field;
+    field.name = p->m_defaultFieldtext;
+    TagEditorItem newItem{field, &p->m_root};
     newItem.setStatus(TagEditorItem::Added);
 
     const int row = p->m_root.childCount();
-    auto* item    = &p->m_customTags.emplace(p->m_defaultFieldtext + QString::number(row), newItem).first->second;
+    auto* item    = &p->m_tags.emplace(p->m_defaultFieldtext + QString::number(row), newItem).first->second;
 
     beginInsertRows({}, row, row);
     p->m_root.appendChild(item);
