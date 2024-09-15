@@ -108,6 +108,7 @@ void TagEditorModelPrivate::updateFields()
                 editorField.name        = field;
                 editorField.scriptField = field;
                 editorField.isDefault   = isDefault;
+                editorField.multivalue  = Track::isMultiValueTag(field);
                 auto* item              = &m_tags.emplace(field, TagEditorItem{editorField, &m_root}).first->second;
                 m_root.appendChild(item);
             }
