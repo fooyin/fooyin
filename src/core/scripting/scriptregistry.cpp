@@ -519,7 +519,7 @@ void ScriptRegistry::setValue(const QString& var, const FuncRet& value, Track& t
 
 bool ScriptRegistry::isListVariable(const QString& var) const
 {
-    return p->m_listProperties.contains(var);
+    return p->m_listProperties.contains(var.toUpper());
 }
 
 ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
