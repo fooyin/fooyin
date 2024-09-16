@@ -794,6 +794,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
     track.setSampleRate(format.sampleRate());
     track.setChannels(format.channelCount());
     track.setBitDepth(format.bitsPerSample());
+    track.setEncoding(isLossless(codec->codec_id) ? QStringLiteral("Lossless") : QStringLiteral("Lossy"));
 
     if(track.duration() == 0) {
         AVRational timeBase = avStream->time_base;

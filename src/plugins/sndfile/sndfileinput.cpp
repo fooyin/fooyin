@@ -30,7 +30,7 @@ QStringList fileExtensions()
     static const QStringList extensions
         = {QStringLiteral("aif"), QStringLiteral("aiff"), QStringLiteral("au"),  QStringLiteral("snd"),
            QStringLiteral("sph"), QStringLiteral("voc"),  QStringLiteral("wav"), QStringLiteral("wavex"),
-           QStringLiteral("w64"), QStringLiteral("wve")};
+           QStringLiteral("w64"), QStringLiteral("wv"),   QStringLiteral("wve")};
     return extensions;
 }
 
@@ -247,6 +247,19 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
         default:
             break;
     }
+
+    bool lossless{true};
+    switch(info.format & SF_FORMAT_TYPEMASK) {
+        case(SF_FORMAT_MPEG):
+        case(SF_FORMAT_OGG):
+        case(SF_FORMAT_VOC):
+            lossless = false;
+            break;
+        default:
+            break;
+    }
+
+    track.setEncoding(lossless ? QStringLiteral("Lossless") : QStringLiteral("Lossy"));
 
     if(const char* title = sf_get_string(sndFile, SF_STR_TITLE)) {
         track.setTitle(QString::fromUtf8(title));

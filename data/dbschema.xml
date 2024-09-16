@@ -325,4 +325,15 @@
             ALTER TABLE Tracks DROP COLUMN RGAlbumPeakOld;
         </sql>
     </revision>
+    <revision version="13">
+        <description>
+            Add additional tech info fields.
+        </description>
+        <sql>
+            ALTER TABLE Tracks ADD COLUMN CodecProfile TEXT;
+            ALTER TABLE Tracks ADD COLUMN Tool TEXT;
+            ALTER TABLE Tracks ADD COLUMN TagTypes TEXT;
+            ALTER TABLE Tracks ADD COLUMN Encoding TEXT;
+        </sql>
+    </revision>
 </schema>

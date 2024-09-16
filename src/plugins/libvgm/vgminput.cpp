@@ -322,6 +322,7 @@ bool VgmReader::readTrack(const AudioSource& source, Track& track)
     track.setSampleRate(static_cast<int>(player->GetSampleRate()));
     track.setBitDepth(Bps);
     track.setChannels(Channels);
+    track.setEncoding(QStringLiteral("Synthesized"));
 
     const auto* tagList = player->GetTags();
     for(const auto* tag = tagList; *tag; tag += 2) {

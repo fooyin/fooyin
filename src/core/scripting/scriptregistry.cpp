@@ -133,6 +133,8 @@ public:
     void addDefaultListFuncs();
     void addDefaultMetadata();
 
+    QString getBitrate(const Track& track) const;
+
     LibraryManager* m_libraryManager{nullptr};
     PlayerController* m_playerController{nullptr};
 
@@ -299,8 +301,8 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
     m_metadata[QString::fromLatin1(MetaData::Year)]     = &Track::year;
     m_metadata[QString::fromLatin1(MetaData::FileSize)] = &Track::fileSize;
-    m_metadata[QString::fromLatin1(MetaData::Bitrate)]  = [](const Track& track) {
-        return track.bitrate() > 0 ? QStringLiteral("%1 kbps").arg(track.bitrate()) : QString{};
+    m_metadata[QString::fromLatin1(MetaData::Bitrate)]  = [this](const Track& track) {
+        return getBitrate(track);
     };
     m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
         return track.sampleRate() > 0 ? QStringLiteral("%1 Hz").arg(track.sampleRate()) : QString{};
@@ -321,6 +323,12 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Codec)]        = [](const Track& track) {
         return !track.codec().isEmpty() ? track.codec() : track.extension().toUpper();
     };
+    m_metadata[QString::fromLatin1(MetaData::CodecProfile)] = &Track::codecProfile;
+    m_metadata[QString::fromLatin1(MetaData::Tool)]         = &Track::tool;
+    m_metadata[QString::fromLatin1(MetaData::TagType)]      = [](const Track& track) {
+        return track.tagType(QStringLiteral(" | "));
+    };
+    m_metadata[QString::fromLatin1(MetaData::Encoding)]  = &Track::encoding;
     m_metadata[QString::fromLatin1(MetaData::Channels)]  = trackChannels;
     m_metadata[QString::fromLatin1(MetaData::AddedTime)] = [](const Track& track) {
         return formatDateTime(track.addedTime());
@@ -354,6 +362,15 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_setMetadata[QString::fromLatin1(MetaData::RatingEditor)] = generateSetFunc(&Track::setRatingStars);
     m_setMetadata[QString::fromLatin1(MetaData::Date)]         = generateSetFunc(&Track::setDate);
     m_setMetadata[QString::fromLatin1(MetaData::Year)]         = generateSetFunc(&Track::setYear);
+}
+
+QString ScriptRegistryPrivate::getBitrate(const Track& track) const
+{
+    int bitrate = track.bitrate();
+    if(m_playerController && m_playerController->bitrate() > 0) {
+        bitrate = m_playerController->bitrate();
+    }
+    return bitrate > 0 ? QStringLiteral("%1 kbps").arg(bitrate) : QString{};
 }
 
 ScriptRegistry::ScriptRegistry()

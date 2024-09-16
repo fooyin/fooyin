@@ -125,6 +125,10 @@ public:
     int sampleRate{0};
     int channels{2};
     int bitDepth{-1};
+    QString codecProfile;
+    QString tool;
+    QStringList tagTypes;
+    QString encoding;
 
     float rating{-1};
     int playcount{0};
@@ -764,6 +768,32 @@ QString Track::codec() const
     return p->codec;
 }
 
+QString Track::codecProfile() const
+{
+    return p->codecProfile;
+}
+
+QString Track::tool() const
+{
+    return p->tool;
+}
+
+QString Track::tagType(const QString& sep) const
+{
+    return p->tagTypes.empty() ? QString{}
+                               : p->tagTypes.join(!sep.isEmpty() ? sep : QLatin1String{Constants::UnitSeparator});
+}
+
+QStringList Track::tagTypes() const
+{
+    return p->tagTypes;
+}
+
+QString Track::encoding() const
+{
+    return p->encoding;
+}
+
 int Track::playCount() const
 {
     return p->playcount;
@@ -817,11 +847,6 @@ void Track::setId(int id)
 void Track::setHash(const QString& hash)
 {
     p->hash = hash;
-}
-
-void Track::setCodec(const QString& codec)
-{
-    p->codec = codec;
 }
 
 void Track::setFilePath(const QString& path)
@@ -1042,11 +1067,16 @@ QString Track::techInfo(const QString& name) const
 
     // clang-format off
     static const std::unordered_map<QString, std::function<QString(const Track& track)>> infoMap{
-        {QLatin1String(Constants::MetaData::Codec),      [](const Track& track) { return track.codec(); }},
-        {QLatin1String(Constants::MetaData::SampleRate), [validNum](const Track& track) { return validNum(track.sampleRate()); }},
-        {QLatin1String(Constants::MetaData::Channels),   [validNum](const Track& track) { return validNum(track.channels()); }},
-        {QLatin1String(Constants::MetaData::BitDepth),   [validNum](const Track& track) { return validNum(track.bitDepth()); }},
-        {QLatin1String(Constants::MetaData::Duration),   [validNum](const Track& track) { return validNum(track.duration()); }}
+        {QString::fromLatin1(Constants::MetaData::Codec),        [](const Track& track) { return track.codec(); }},
+        {QString::fromLatin1(Constants::MetaData::CodecProfile), [](const Track& track) { return track.codecProfile(); }},
+        {QString::fromLatin1(Constants::MetaData::Tool),         [](const Track& track) { return track.tool(); }},
+        {QString::fromLatin1(Constants::MetaData::Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
+        {QString::fromLatin1(Constants::MetaData::TagType),      [](const Track& track) { return track.encoding(); }},
+        {QString::fromLatin1(Constants::MetaData::SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
+        {QString::fromLatin1(Constants::MetaData::Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
+        {QString::fromLatin1(Constants::MetaData::Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
+        {QString::fromLatin1(Constants::MetaData::BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
+        {QString::fromLatin1(Constants::MetaData::Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
     };
     // clang-format on
 
@@ -1198,6 +1228,31 @@ void Track::setChannels(int channels)
 void Track::setBitDepth(int depth)
 {
     p->bitDepth = depth;
+}
+
+void Track::setCodec(const QString& codec)
+{
+    p->codec = codec;
+}
+
+void Track::setCodecProfile(const QString& profile)
+{
+    p->codecProfile = profile;
+}
+
+void Track::setTool(const QString& tool)
+{
+    p->tool = tool;
+}
+
+void Track::setTagTypes(const QStringList& tagTypes)
+{
+    p->tagTypes = tagTypes;
+}
+
+void Track::setEncoding(const QString& encoding)
+{
+    p->encoding = encoding;
 }
 
 void Track::setPlayCount(int count)

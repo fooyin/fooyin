@@ -297,6 +297,7 @@ bool GmeReader::readTrack(const AudioSource& source, Track& track)
     track.setDuration(getDuration(info.get()));
     track.setSampleRate(SampleRate);
     track.setBitDepth(Bps);
+    track.setEncoding(QStringLiteral("Synthesized"));
 
     if(*info->song) {
         track.setTitle(QString::fromUtf8(info->song));

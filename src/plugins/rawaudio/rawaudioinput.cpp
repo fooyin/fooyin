@@ -146,6 +146,7 @@ bool RawAudioReader::readTrack(const AudioSource& source, Track& track)
     track.setBitrate(static_cast<int>(track.fileSize() * 8 / track.duration()));
     track.setBitDepth(16);
     track.setCodec(QStringLiteral("PCM"));
+    track.setEncoding(QStringLiteral("Lossless"));
 
     return true;
 }

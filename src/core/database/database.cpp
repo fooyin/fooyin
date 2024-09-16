@@ -28,7 +28,7 @@
 
 #include <QFileInfo>
 
-constexpr auto CurrentSchemaVersion = 12;
+constexpr auto CurrentSchemaVersion = 13;
 
 namespace {
 Fooyin::DbConnection::DbParams dbConnectionParams()
@@ -71,7 +71,7 @@ Database::Status Database::status() const
 int Database::currentRevision() const
 {
     const DbConnectionProvider dbProvider{m_dbPool};
-    DbSchema schema{dbProvider};
+    const DbSchema schema{dbProvider};
     return schema.currentVersion();
 }
 

@@ -60,6 +60,10 @@ QString fetchTrackColumns()
                                                   "Channels,"
                                                   "BitDepth,"
                                                   "Codec,"
+                                                  "CodecProfile,"
+                                                  "Tool,"
+                                                  "TagTypes,"
+                                                  "Encoding,"
                                                   "ExtraTags,"
                                                   "ExtraProperties,"
                                                   "ModifiedDate,"
@@ -104,6 +108,10 @@ BindingsMap trackBindings(const Fooyin::Track& track)
             {QStringLiteral(":channels"), track.channels()},
             {QStringLiteral(":bitDepth"), track.bitDepth()},
             {QStringLiteral(":codec"), track.codec()},
+            {QStringLiteral(":codecProfile"), track.codecProfile()},
+            {QStringLiteral(":tool"), track.tool()},
+            {QStringLiteral(":tagTypes"), track.tagType()},
+            {QStringLiteral(":encoding"), track.encoding()},
             {QStringLiteral(":extraTags"), track.serialiseExtraTags()},
             {QStringLiteral(":extraProperties"), track.serialiseExtraProperties()},
             {QStringLiteral(":modifiedDate"), static_cast<quint64>(track.modifiedTime())},
@@ -144,31 +152,35 @@ Fooyin::Track readToTrack(const Fooyin::DbQuery& q)
     track.setChannels(q.value(22).toInt());
     track.setBitDepth(q.value(23).toInt());
     track.setCodec(q.value(24).toString());
-    track.storeExtraTags(q.value(25).toByteArray());
-    track.storeExtraProperties(q.value(26).toByteArray());
-    track.setModifiedTime(q.value(27).toULongLong());
-    track.setLibraryId(q.value(28).toInt());
-    track.setHash(q.value(29).toString());
+    track.setCodecProfile(q.value(25).toString());
+    track.setTool(q.value(26).toString());
+    track.setTagTypes(q.value(27).toString().split(QLatin1String{Fooyin::Constants::UnitSeparator}));
+    track.setEncoding(q.value(28).toString());
+    track.storeExtraTags(q.value(29).toByteArray());
+    track.storeExtraProperties(q.value(30).toByteArray());
+    track.setModifiedTime(q.value(31).toULongLong());
+    track.setLibraryId(q.value(32).toInt());
+    track.setHash(q.value(33).toString());
 
     bool isValid{false};
-    if(const auto rgTrackGain = q.value(30).toFloat(&isValid); isValid) {
+    if(const auto rgTrackGain = q.value(34).toFloat(&isValid); isValid) {
         track.setRGTrackGain(rgTrackGain);
     }
-    if(const auto rgAlbumGain = q.value(31).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumGain = q.value(35).toFloat(&isValid); isValid) {
         track.setRGAlbumGain(rgAlbumGain);
     }
-    if(const auto rgTrackPeak = q.value(32).toFloat(&isValid); isValid) {
+    if(const auto rgTrackPeak = q.value(36).toFloat(&isValid); isValid) {
         track.setRGTrackPeak(rgTrackPeak);
     }
-    if(const auto rgAlbumPeak = q.value(33).toFloat(&isValid); isValid) {
+    if(const auto rgAlbumPeak = q.value(37).toFloat(&isValid); isValid) {
         track.setRGAlbumPeak(rgAlbumPeak);
     }
 
-    track.setAddedTime(q.value(34).toULongLong());
-    track.setFirstPlayed(q.value(35).toULongLong());
-    track.setLastPlayed(q.value(36).toULongLong());
-    track.setPlayCount(q.value(37).toInt());
-    track.setRating(q.value(38).toFloat());
+    track.setAddedTime(q.value(38).toULongLong());
+    track.setFirstPlayed(q.value(39).toULongLong());
+    track.setLastPlayed(q.value(40).toULongLong());
+    track.setPlayCount(q.value(41).toInt());
+    track.setRating(q.value(42).toFloat());
 
     track.generateHash();
 
@@ -362,6 +374,10 @@ bool TrackDatabase::updateTrack(const Track& track)
                                           "Channels = :channels,"
                                           "BitDepth = :bitDepth,"
                                           "Codec = :codec,"
+                                          "CodecProfile = :codecProfile,"
+                                          "Tool = :tool,"
+                                          "TagTypes = :tagTypes,"
+                                          "Encoding = :encoding,"
                                           "ExtraTags = :extraTags,"
                                           "ExtraProperties = :extraProperties,"
                                           "ModifiedDate = :modifiedDate,"
@@ -529,6 +545,10 @@ void TrackDatabase::insertViews(const QSqlDatabase& db)
                                           "Tracks.Channels,"
                                           "Tracks.BitDepth,"
                                           "Tracks.Codec,"
+                                          "Tracks.CodecProfile,"
+                                          "Tracks.Tool,"
+                                          "Tracks.TagTypes,"
+                                          "Tracks.Encoding,"
                                           "Tracks.ExtraTags,"
                                           "Tracks.ExtraProperties,"
                                           "Tracks.ModifiedDate,"
@@ -595,6 +615,10 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           "Channels,"
                                           "BitDepth,"
                                           "Codec,"
+                                          "CodecProfile,"
+                                          "Tool,"
+                                          "TagTypes,"
+                                          "Encoding,"
                                           "ExtraTags,"
                                           "ExtraProperties,"
                                           "ModifiedDate,"
@@ -630,6 +654,10 @@ bool TrackDatabase::insertTrack(Track& track) const
                                           ":channels,"
                                           ":bitDepth,"
                                           ":codec,"
+                                          ":codecProfile,"
+                                          ":tool,"
+                                          ":tagTypes,"
+                                          ":encoding,"
                                           ":extraTags,"
                                           ":extraProperties,"
                                           ":modifiedDate,"

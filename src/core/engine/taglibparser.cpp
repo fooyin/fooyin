@@ -27,6 +27,7 @@
 
 #include <taglib/aifffile.h>
 #include <taglib/apefile.h>
+#include <taglib/apefooter.h>
 #include <taglib/apetag.h>
 #include <taglib/asffile.h>
 #include <taglib/asfpicture.h>
@@ -39,6 +40,7 @@
 #include <taglib/mp4tag.h>
 #include <taglib/mpcfile.h>
 #include <taglib/mpegfile.h>
+#include <taglib/mpegheader.h>
 #include <taglib/oggfile.h>
 #include <taglib/opusfile.h>
 #include <taglib/popularimeterframe.h>
@@ -49,6 +51,7 @@
 #include <taglib/vorbisfile.h>
 #include <taglib/wavfile.h>
 #include <taglib/wavpackfile.h>
+#include <taglib/xingheader.h>
 
 #include <QBuffer>
 #include <QCryptographicHash>
@@ -523,7 +526,7 @@ float gainStringToFloat(const TagLib::String& gainString)
         return 0.0;
     }
 
-    if(string.endsWith(QStringLiteral("dB"), Qt::CaseInsensitive)) {
+    if(string.endsWith(u"dB", Qt::CaseInsensitive)) {
         return string.chopped(2).toFloat();
     }
 
@@ -1801,6 +1804,176 @@ bool TagLibReader::canWriteMetaData() const
     return true;
 }
 
+enum VbrMethod : uint8_t
+{
+    Unknown  = 0,
+    CBR      = 1,
+    ABR      = 2,
+    VBR1     = 3,
+    VBR2     = 4,
+    VBR3     = 5,
+    VBR4     = 6,
+    CBR2Pass = 8,
+    ABR2Pass = 9,
+};
+
+enum XingFlag : uint8_t
+{
+    Frames   = 1,
+    Bytes    = 2,
+    TOC      = 4,
+    VBRScale = 8,
+};
+
+void checkXingHeader(TagLib::MPEG::File* file, Fooyin::Track& track)
+{
+    // Reference: http://gabriel.mp3-tech.org/mp3infotag.html
+
+    const auto firstFrameOffset = file->firstFrameOffset();
+    if(firstFrameOffset < 0) {
+        return;
+    }
+
+    const TagLib::MPEG::Header firstHeader(file, firstFrameOffset, false);
+
+    file->seek(firstFrameOffset);
+    const TagLib::ByteVector header{file->readBlock(firstHeader.frameLength())};
+
+    const QByteArray data{header.data(), header.size()};
+    QDataStream stream{data};
+    stream.setByteOrder(QDataStream::BigEndian);
+
+    qsizetype offset = data.indexOf("Info");
+    if(offset >= 0) {
+        track.setCodecProfile(QStringLiteral("CBR"));
+    }
+    else {
+        offset = data.indexOf("Xing");
+        if(offset < 0) {
+            if(data.indexOf("VBRI") >= 0) {
+                track.setCodecProfile(QStringLiteral("VBR"));
+            }
+            return;
+        }
+    }
+
+    stream.skipRawData(offset + 4);
+
+    qint32 flags;
+    stream >> flags;
+
+    qint32 vbrScale{-1};
+
+    if(flags & Frames) {
+        stream.skipRawData(4);
+    }
+    if(flags & Bytes) {
+        stream.skipRawData(4);
+    }
+    if(flags & TOC) {
+        stream.skipRawData(100);
+    }
+    if(flags & VBRScale) {
+        stream >> vbrScale;
+    }
+
+    QByteArray encoderData{9, '\0'};
+    const auto len = stream.readRawData(encoderData.data(), 9);
+
+    if(len == 9) {
+        auto encoder = QString::fromLatin1(encoderData.constData(), encoderData.size());
+        if(encoder.endsWith(u'.')) {
+            encoder.chop(1);
+        }
+        track.setTool(encoder);
+    }
+    else if(!encoderData.contains("LAME") && !encoderData.contains("L3.99")) {
+        if(vbrScale != -1) {
+            track.setCodecProfile(QStringLiteral("VBR"));
+        }
+        else {
+            track.setCodecProfile(QStringLiteral("CBR"));
+        }
+        return;
+    }
+
+    if(stream.atEnd() || !track.codecProfile().isEmpty()) {
+        // Likely CBR
+        return;
+    }
+
+    qint8 info;
+    stream >> info;
+    const auto vbrMethod = static_cast<VbrMethod>(info & 0x0F);
+
+    stream.skipRawData(1); // Lowpass
+    stream.skipRawData(4); // Peak amp
+    stream.skipRawData(2); // Track RG
+    stream.skipRawData(2); // Album RG
+    stream.skipRawData(1); // Encoding flags
+    stream.skipRawData(1); // Bitrate
+    stream.skipRawData(3); // Delays
+    stream.skipRawData(1); // Misc
+    stream.skipRawData(1); // MP3 gain
+
+    if(stream.atEnd()) {
+        return;
+    }
+
+    qint16 preset;
+    stream >> preset;
+    preset &= 0x07FF;
+
+    QString codecProfile;
+    switch(vbrMethod) {
+        case(CBR):
+        case(CBR2Pass):
+            codecProfile = QStringLiteral("CBR");
+            break;
+        case(ABR):
+        case(ABR2Pass):
+            codecProfile = QStringLiteral("ABR");
+            break;
+        case(VBR1):
+        case(VBR2):
+        case(VBR3):
+        case(VBR4):
+        case(Unknown):
+        default:
+            // Assume VBR if we've got this far
+            codecProfile = QStringLiteral("VBR");
+            break;
+    }
+
+    static const std::map<int, QString> presets{
+        {8, QStringLiteral("8")},
+        {320, QStringLiteral("320")},
+        {410, QStringLiteral("V9")},
+        {420, QStringLiteral("V8")},
+        {430, QStringLiteral("V7")},
+        {440, QStringLiteral("V6")},
+        {450, QStringLiteral("V5")},
+        {460, QStringLiteral("V4")},
+        {470, QStringLiteral("V3")},
+        {480, QStringLiteral("V2")},
+        {490, QStringLiteral("V1")},
+        {500, QStringLiteral("V0")},
+        {1000, QStringLiteral("R3mix")},
+        {1001, QStringLiteral("Standard")},
+        {1002, QStringLiteral("Extreme")},
+        {1003, QStringLiteral("Insane")},
+        {1004, QStringLiteral("Standard Fast")},
+        {1005, QStringLiteral("Extreme Fast")},
+        {1006, QStringLiteral("Medium")},
+        {1007, QStringLiteral("Medium Fast")},
+    };
+
+    if(!codecProfile.isEmpty() && presets.contains(preset)) {
+        codecProfile += u" " + presets.at(preset);
+    }
+    track.setCodecProfile(codecProfile);
+}
+
 bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 {
     IODeviceStream stream{source.device, track.filename()};
@@ -1830,20 +2003,37 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 #endif
         if(file.isValid()) {
             readProperties(file);
-            if(file.hasID3v2Tag()) {
-                readId3Tags(file.ID3v2Tag(), track);
+            checkXingHeader(&file, track);
+            track.setEncoding(QStringLiteral("Lossy"));
+
+            QStringList types;
+            if(file.hasAPETag()) {
+                types.emplace_back(QStringLiteral("apev%1").arg(file.APETag()->footer()->version() / 1000));
             }
+            if(file.hasID3v1Tag()) {
+                types.emplace_back(QStringLiteral("ID3v1"));
+            }
+            if(file.hasID3v2Tag()) {
+                const auto* id3Tag = file.ID3v2Tag();
+                types.emplace_back(QStringLiteral("ID3v2.%1").arg(id3Tag->header()->majorVersion()));
+                readId3Tags(id3Tag, track);
+            }
+            track.setTagTypes(types);
         }
     }
     else if(mimeType == u"audio/x-aiff" || mimeType == u"audio/x-aifc") {
         const TagLib::RIFF::AIFF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
             if(file.hasID3v2Tag()) {
-                readId3Tags(file.tag(), track);
+                const auto* id3Tag = file.tag();
+                readId3Tags(id3Tag, track);
+                track.setTagTypes({QStringLiteral("ID3v2.%1").arg(id3Tag->header()->majorVersion())});
             }
         }
     }
@@ -1851,11 +2041,15 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         const TagLib::RIFF::WAV::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
             if(file.hasID3v2Tag()) {
-                readId3Tags(file.ID3v2Tag(), track);
+                const auto* id3Tag = file.ID3v2Tag();
+                readId3Tags(id3Tag, track);
+                track.setTagTypes({QStringLiteral("ID3v2.%1").arg(id3Tag->header()->majorVersion())});
             }
         }
     }
@@ -1863,32 +2057,69 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         TagLib::MPC::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
-            if(file.APETag()) {
-                readApeTags(file.APETag(), track);
+            track.setEncoding(QStringLiteral("Lossy"));
+
+            QStringList types;
+
+            if(file.hasID3v1Tag()) {
+                types.emplace_back(QStringLiteral("ID3v1"));
             }
+            if(file.hasAPETag()) {
+                const auto* apeTag = file.APETag();
+                readApeTags(apeTag, track);
+                types.emplace_back(QStringLiteral("APEv%1").arg(apeTag->footer()->version() / 1000));
+            }
+
+            track.setTagTypes(types);
         }
     }
     else if(mimeType == u"audio/x-ape") {
         TagLib::APE::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
-            if(file.APETag()) {
-                readApeTags(file.APETag(), track);
+
+            QStringList types;
+
+            if(file.hasID3v1Tag()) {
+                types.emplace_back(QStringLiteral("ID3v1"));
             }
+
+            if(file.hasAPETag()) {
+                const auto* apeTag = file.APETag();
+                readApeTags(apeTag, track);
+                types.emplace_back(QStringLiteral("APEv%1").arg(apeTag->footer()->version() / 1000));
+            }
+
+            track.setTagTypes(types);
         }
     }
     else if(mimeType == u"audio/x-wavpack") {
         TagLib::WavPack::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
-            if(file.APETag()) {
-                readApeTags(file.APETag(), track);
+
+            track.setEncoding(file.audioProperties()->isLossless() ? QStringLiteral("Lossless")
+                                                                   : QStringLiteral("Lossy"));
+
+            QStringList types;
+
+            if(file.hasID3v1Tag()) {
+                types.emplace_back(QStringLiteral("ID3v1"));
+            }
+
+            if(file.hasAPETag()) {
+                const auto* apeTag = file.APETag();
+                readApeTags(apeTag, track);
+                types.emplace_back(QStringLiteral("APEv%1").arg(apeTag->footer()->version() / 1000));
             }
         }
     }
@@ -1896,21 +2127,25 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         const TagLib::MP4::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
+
             const auto codec = file.audioProperties()->codec();
             switch(codec) {
                 case(TagLib::MP4::Properties::AAC):
                     track.setCodec(QStringLiteral("AAC"));
+                    track.setEncoding(QStringLiteral("Lossy"));
                     break;
                 case(TagLib::MP4::Properties::ALAC):
                     track.setCodec(QStringLiteral("ALAC"));
+                    track.setEncoding(QStringLiteral("Lossless"));
                     break;
                 case(TagLib::MP4::Properties::Unknown):
                     break;
             }
 
-            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
-                track.setBitDepth(bps);
-            }
             if(file.hasMP4Tag()) {
                 readMp4Tags(file.tag(), track);
             }
@@ -1924,11 +2159,14 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
 #endif
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }
             if(file.hasXiphComment()) {
                 readXiphComment(file.xiphComment(), track);
+                track.setTagTypes({QStringLiteral("XiphComment")});
             }
         }
     }
@@ -1936,8 +2174,11 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         const TagLib::Ogg::Vorbis::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossy"));
+
             if(file.tag()) {
                 readXiphComment(file.tag(), track);
+                track.setTagTypes({QStringLiteral("XiphComment")});
             }
         }
     }
@@ -1945,8 +2186,11 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         const TagLib::Ogg::Opus::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+            track.setEncoding(QStringLiteral("Lossy"));
+
             if(file.tag()) {
                 readXiphComment(file.tag(), track);
+                track.setTagTypes({QStringLiteral("XiphComment")});
             }
         }
     }
@@ -1954,6 +2198,28 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
         const TagLib::ASF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
+
+            switch(file.audioProperties()->codec()) {
+                case(TagLib::ASF::Properties::WMA1):
+                    track.setCodecProfile(QStringLiteral("V1"));
+                    track.setEncoding(QStringLiteral("Lossy"));
+                    break;
+                case(TagLib::ASF::Properties::WMA2):
+                    track.setCodecProfile(QStringLiteral("V2"));
+                    track.setEncoding(QStringLiteral("Lossy"));
+                    break;
+                case(TagLib::ASF::Properties::WMA9Pro):
+                    track.setCodecProfile(QStringLiteral("V9"));
+                    track.setEncoding(QStringLiteral("Lossy"));
+                    break;
+                case(TagLib::ASF::Properties::WMA9Lossless):
+                    track.setCodecProfile(QStringLiteral("V9"));
+                    track.setEncoding(QStringLiteral("Lossless"));
+                    break;
+                default:
+                    break;
+            }
+
             if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
                 track.setBitDepth(bps);
             }

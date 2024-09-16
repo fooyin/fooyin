@@ -237,7 +237,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
         if(m_settings->value<Settings::Core::FirstRun>()) {
             QMetaObject::invokeMethod(m_editableLayout.get(), &EditableLayout::showQuickSetup, Qt::QueuedConnection);
         }
-        checkTracksNeedUpdate();
+        QMetaObject::invokeMethod(m_mainWindow.get(), [this]() { checkTracksNeedUpdate(); }, Qt::QueuedConnection);
     };
 
     if(m_core->libraryManager()->hasLibrary() && m_core->library()->isEmpty()
@@ -700,8 +700,9 @@ void GuiApplicationPrivate::checkTracksNeedUpdate() const
     };
 
     if(m_library->hasLibrary()) {
-        if(libraryOutOfDate(7) /* changed codec storage type */
-           || libraryOutOfDate(11) /* removed ReplayGain data in extra tags */) {
+        if(libraryOutOfDate(7)     /* changed codec storage type */
+           || libraryOutOfDate(11) /* removed ReplayGain data in extra tags */
+           || libraryOutOfDate(13) /* added more tech fields */) {
             showNeedReloadMessage();
         }
     }

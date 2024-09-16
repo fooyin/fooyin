@@ -229,6 +229,12 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
                       QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);
     checkAddEntryNode(QStringLiteral("Codec"), InfoPopulator::tr("Codec"), ItemParent::General, track.codec(),
                       InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("CodecProfile"), InfoPopulator::tr("Codec Profile"), ItemParent::General,
+                      track.codecProfile(), InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("Tool"), InfoPopulator::tr("Tool"), ItemParent::General, track.tool(),
+                      InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("TagTypes"), InfoPopulator::tr("Tag Types"), ItemParent::General,
+                      track.tagType(QStringLiteral(" | ")), InfoItem::Percentage);
 }
 
 void InfoPopulatorPrivate::addTrackReplayGain(int total)

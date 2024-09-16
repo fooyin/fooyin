@@ -269,6 +269,7 @@ bool OpenMptReader::readTrack(const AudioSource& /*source*/, Track& track)
     track.setSampleRate(SampleRate);
     track.setChannels(Channels);
     track.setBitDepth(32);
+    track.setEncoding(QStringLiteral("Synthesized"));
 
     return true;
 }

@@ -159,6 +159,11 @@ public:
     [[nodiscard]] int channels() const;
     [[nodiscard]] int bitDepth() const;
     [[nodiscard]] QString codec() const;
+    [[nodiscard]] QString codecProfile() const;
+    [[nodiscard]] QString tool() const;
+    [[nodiscard]] QString tagType(const QString& sep = {}) const;
+    [[nodiscard]] QStringList tagTypes() const;
+    [[nodiscard]] QString encoding() const;
 
     [[nodiscard]] int playCount() const;
 
@@ -174,7 +179,6 @@ public:
     void setIsEnabled(bool enabled);
     void setId(int id);
     void setHash(const QString& hash);
-    void setCodec(const QString& codec);
     void setFilePath(const QString& path);
     void setTitle(const QString& title);
     void setArtists(const QStringList& artists);
@@ -224,6 +228,11 @@ public:
     void setSampleRate(int rate);
     void setChannels(int channels);
     void setBitDepth(int depth);
+    void setCodec(const QString& codec);
+    void setCodecProfile(const QString& profile);
+    void setTool(const QString& tool);
+    void setTagTypes(const QStringList& tagTypes);
+    void setEncoding(const QString& encoding);
 
     void setPlayCount(int count);
 
