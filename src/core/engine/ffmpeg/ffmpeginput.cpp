@@ -376,22 +376,6 @@ FormatContext createAVFormatContext(QIODevice* source)
     return fc;
 }
 
-Fooyin::Stream findStream(AVFormatContext* context)
-{
-    const auto count = static_cast<int>(context->nb_streams);
-
-    for(int i{0}; i < count; ++i) {
-        AVStream* avStream = context->streams[i];
-        const auto type    = avStream->codecpar->codec_type;
-
-        if(type == AVMEDIA_TYPE_AUDIO) {
-            return Fooyin::Stream{avStream};
-        }
-    }
-
-    return {};
-}
-
 QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
 {
     using Cover = Fooyin::Track::Cover;
@@ -425,6 +409,22 @@ QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
 } // namespace
 
 namespace Fooyin {
+Stream findAudioStream(AVFormatContext* context)
+{
+    const auto count = static_cast<int>(context->nb_streams);
+
+    for(int i{0}; i < count; ++i) {
+        AVStream* avStream = context->streams[i];
+        const auto type    = avStream->codecpar->codec_type;
+
+        if(type == AVMEDIA_TYPE_AUDIO) {
+            return Stream{avStream};
+        }
+    }
+
+    return {};
+}
+
 class FFmpegInputPrivate
 {
 public:
@@ -505,7 +505,7 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
 
     m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
 
-    m_stream = findStream(m_context.get());
+    m_stream = findAudioStream(m_context.get());
     if(!m_stream.isValid()) {
         return false;
     }
@@ -852,7 +852,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const Stream stream = findStream(context.formatContext.get());
+    const Stream stream = findAudioStream(context.formatContext.get());
     if(!stream.isValid()) {
         return false;
     }
