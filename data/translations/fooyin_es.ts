@@ -828,32 +828,32 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="66"/>
         <source>Load the playlist from the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar la lista de reproducción desde el archivo especificado</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="72"/>
         <source>Save the current playlist to the specified file</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar la lista de reproducción actual en el archivo especificado</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="77"/>
         <source>Save &amp;all playlists…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar &amp;todas las listas de reproducción…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
         <source>Save all playlists to the specified location</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar todas las listas de reproducción en la ubicación especificada</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
         <source>E&amp;xit</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;alir</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>Exit %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salir %1</translation>
     </message>
 </context>
 <context>
@@ -861,67 +861,67 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="116"/>
         <source>Copy</source>
-        <translation type="unfinished">Copiar</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="117"/>
         <source>Move</source>
-        <translation type="unfinished">Mover</translation>
+        <translation>Mover</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="118"/>
         <source>Rename</source>
-        <translation type="unfinished">Renombrar</translation>
+        <translation>Renombrar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="122"/>
         <source>Remove empty source folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar carpetas de origen vacías</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="124"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Cargar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="125"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Guardar</translation>
+        <translation>&amp;Guardar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="126"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Borrar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="427"/>
         <source>Determining operations…</source>
-        <translation type="unfinished"></translation>
+        <translation>Determinando operaciones…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="451"/>
         <source>Nothing to do</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay nada que hacer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="455"/>
         <source>Cannot write to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede escribir en %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="459"/>
         <source>Pending operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Operaciones en curso</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="467"/>
         <source>Select Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar directorio</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="484"/>
         <source>File Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Funcionamiento de los archivos</translation>
     </message>
 </context>
 <context>
@@ -929,54 +929,54 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="155"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operación</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="157"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destino</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="158"/>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del archivo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="160"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes preestablecidos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="175"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="433"/>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="449"/>
         <source>&amp;Run</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ejecutar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="237"/>
         <source>Copy entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar todo el contenido de la carpeta de origen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="238"/>
         <source>Move entire source folder contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover todo el contenido de la carpeta de origen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="271"/>
         <source>Preset already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>El ajuste preestablecido ya existe</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="272"/>
         <source>Preset %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>El valor preestablecido %1 ya existe. ¿Sobrescribir?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="437"/>
         <source>&amp;Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abortar</translation>
     </message>
 </context>
 <context>
@@ -984,17 +984,17 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="113"/>
         <source>Operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Operación</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="115"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="117"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destino</translation>
     </message>
 </context>
 <context>
@@ -1002,22 +1002,22 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="46"/>
         <source>&amp;File operations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Operaciones con archivos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="49"/>
         <source>&amp;Copy to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copiar a…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="50"/>
         <source>&amp;Move to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mover a…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsplugin.cpp" line="51"/>
         <source>&amp;Rename to…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Renombrar a…</translation>
     </message>
 </context>
 <context>
@@ -1025,27 +1025,27 @@
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="37"/>
         <source>Genre</source>
-        <translation type="unfinished"></translation>
+        <translation>Género</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="38"/>
         <source>Album Artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Artista del álbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="39"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="40"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Álbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Fecha</translation>
     </message>
 </context>
 <context>
@@ -1053,44 +1053,44 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="108"/>
         <source>Clear Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar el grupo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="118"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="313"/>
         <source>Clear Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar los grupos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="251"/>
         <source>Ungrouped</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin agrupar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="185"/>
         <source>Add</source>
-        <translation type="unfinished">Añadir</translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="304"/>
         <source>Add New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir un nuevo grupo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="332"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Volver</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="349"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalizar</translation>
     </message>
 </context>
 <context>
@@ -1098,12 +1098,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="205"/>
         <source>All (%1 %2s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Todo (%1 %2s)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermodel.cpp" line="419"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrar</translation>
     </message>
 </context>
 <context>
@@ -1111,68 +1111,68 @@
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="586"/>
         <source>Display</source>
-        <translation type="unfinished">Visualización</translation>
+        <translation>Pantalla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="589"/>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="684"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Columnas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="590"/>
         <source>Artwork (bottom labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilustraciones (etiquetas inferiores)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="591"/>
         <source>Artwork (right labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilustraciones (etiquetas a la derecha)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="592"/>
         <source>Artwork (no labels)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilustraciones (sin etiquetas)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="635"/>
         <source>Summary item</source>
-        <translation type="unfinished"></translation>
+        <translation>Artículo resumen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="642"/>
         <source>Front cover</source>
-        <translation type="unfinished">Portada</translation>
+        <translation>Portada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="643"/>
         <source>Back cover</source>
-        <translation type="unfinished">Contraportada</translation>
+        <translation>Contraportada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="726"/>
         <source>Multiple columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Varias columnas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="749"/>
         <source>Manage groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Administrar grupos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="644"/>
         <source>Artist</source>
-        <translation type="unfinished">Artista</translation>
+        <translation>Artista</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="734"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Más …</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filterwidget.cpp" line="259"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro de la biblioteca</translation>
     </message>
 </context>
 <context>
@@ -1180,22 +1180,22 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="161"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Índice</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="163"/>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="165"/>
         <source>Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Campo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnmodel.cpp" line="167"/>
         <source>Sort Field</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordenar campo</translation>
     </message>
 </context>
 <context>
@@ -1203,17 +1203,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="133"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Columnas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="134"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtros</translation>
     </message>
 </context>
 <context>
@@ -1221,7 +1221,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filterscolumnpage.cpp" line="78"/>
         <source>Script Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor de scripts</translation>
     </message>
 </context>
 <context>
@@ -1229,17 +1229,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="190"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="191"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="191"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtros</translation>
     </message>
 </context>
 <context>
@@ -1247,94 +1247,94 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="66"/>
         <source>Start playback on send</source>
-        <translation type="unfinished">Iniciar la reproducción al enviar</translation>
+        <translation>Iniciar reproducción al enviar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="67"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Activado</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="68"/>
         <source>Switch when changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Conmutar al cambiar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="69"/>
         <source>Keep alive</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobrevivir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="72"/>
         <source>Click Behaviour</source>
-        <translation type="unfinished">Comportamiento de los clics</translation>
+        <translation>Comportamiento al hacer clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="85"/>
         <source>Filter Selection Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrar selección lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="75"/>
         <source>Double-click</source>
-        <translation type="unfinished">Doble clic</translation>
+        <translation>Doble clic</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="76"/>
         <source>Middle-click</source>
-        <translation type="unfinished">Clic con el botón central</translation>
+        <translation>Clic con el botón central</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="88"/>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="90"/>
         <source>If this is the active playlist, keep it alive when changing selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Si esta es la lista de reproducción activa, manténgala activa al cambiar la selección</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="126"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="134"/>
         <source>None</source>
-        <translation type="unfinished">Ninguno</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="127"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="135"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">Añadir a la lista de reproducción actual</translation>
+        <translation>Añadir a la lista de reproducción actual</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="128"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="136"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">Agregar a lista de reproducción activa</translation>
+        <translation>Agregar a lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="129"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="137"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">Enviar a lista de reproducción activa</translation>
+        <translation>Enviar a lista de reproducción activa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="130"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="138"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">Enviar a lista de reproducción nueva</translation>
+        <translation>Enviar a una nueva lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="131"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="139"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">Agregar a cola de reproducción</translation>
+        <translation>Agregar a la cola de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="132"/>
         <location filename="../../src/plugins/filters/settings/filtersgeneralpage.cpp" line="140"/>
         <source>Send to playback queue</source>
-        <translation type="unfinished">Enviar a la cola de reproducción</translation>
+        <translation>Enviar a la cola de reproducción</translation>
     </message>
 </context>
 <context>
@@ -1342,17 +1342,17 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="165"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspecto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="166"/>
         <source>Widgets</source>
-        <translation type="unfinished">Widgets</translation>
+        <translation>Widgets</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="166"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtros</translation>
     </message>
 </context>
 <context>
@@ -1360,47 +1360,47 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="63"/>
         <source>Show headers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar encabezados</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="64"/>
         <source>Show scrollbars</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar barras de desplazamiento</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="65"/>
         <source>Alternating row colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Colores de las filas alternados</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="66"/>
         <source>Override row height</source>
-        <translation type="unfinished"></translation>
+        <translation>Anular altura de la fila</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="71"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspecto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="76"/>
         <source>Artwork Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de la portada del álbum</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="79"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="80"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Alto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="93"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño también se puede cambiar usando %1 en el widget.</translation>
     </message>
 </context>
 <context>
@@ -1408,12 +1408,12 @@
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="52"/>
         <source>Library Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtro de la biblioteca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtersplugin.cpp" line="53"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtros</translation>
     </message>
 </context>
 <context>
@@ -1421,7 +1421,7 @@
     <message>
         <location filename="../../src/gui/widgets/fontbutton.cpp" line="69"/>
         <source>Select Font</source>
-        <translation type="unfinished">Seleccionar fuente</translation>
+        <translation>Seleccionar fuente</translation>
     </message>
 </context>
 <context>
@@ -1430,7 +1430,7 @@
         <location filename="../../src/gui/settings/generalpage.cpp" line="221"/>
         <location filename="../../src/gui/settings/generalpage.cpp" line="222"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
 </context>
 <context>
@@ -1438,67 +1438,67 @@
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="87"/>
         <source>Wait for tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Esperar pistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="88"/>
         <source>Show system tray icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar el icono de la bandeja del sistema</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="89"/>
         <source>Minimise to tray on close</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimizar a la bandeja al cerrar</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="92"/>
         <source>Behaviour</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamiento</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="94"/>
         <source>Delay opening fooyin until all tracks have been loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrasar la apertura de fooyin hasta que se hayan cargado todas las pistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="96"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicialización</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="105"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="121"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="122"/>
         <source>Start maximised</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar maximimizado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="123"/>
         <source>Start hidden to tray</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar oculto en la bandeja</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="124"/>
         <source>Remember from last run</source>
-        <translation type="unfinished"></translation>
+        <translation>Recordar como se ejecutó la última vez</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="150"/>
         <source>Language changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma cambiado</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/generalpage.cpp" line="151"/>
         <source>Restart for changes to take effect. Restart now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar para que los cambios surtan efecto. ¿Reiniciar ahora?</translation>
     </message>
 </context>
 <context>
@@ -1506,27 +1506,27 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="44"/>
         <source>%1 Settings</source>
-        <translation type="unfinished">%1 ajustes</translation>
+        <translation>%1 ajustes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="51"/>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="54"/>
         <source>Maximum length</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración máxima</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="58"/>
         <source>minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>minutos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="65"/>
         <source>times</source>
-        <translation type="unfinished"></translation>
+        <translation>veces</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="71"/>
@@ -1536,17 +1536,17 @@
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="60"/>
         <source>Loop count</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeticiones</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="61"/>
         <source>(0 = infinite)</source>
-        <translation type="unfinished"></translation>
+        <translation>(0 = infinito)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/gme/gmesettings.cpp" line="67"/>
         <source>Fade length</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración del desvanecimiento</translation>
     </message>
 </context>
 <context>
@@ -1554,40 +1554,42 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="342"/>
         <source>Plugins not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins no encontrados</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="343"/>
         <source>Some plugins are required for full functionality.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se requieren algunos plugins para una funcionalidad completa.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="344"/>
         <source>Plugin search locations:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Directorio de búsqueda de complementos:
+
+</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="348"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="424"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenciar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="446"/>
         <source>Remove Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar lista de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="487"/>
         <location filename="../../src/gui/guiapplication.cpp" line="518"/>
         <source>Tagging</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquetado</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="521"/>
@@ -1627,47 +1629,47 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="714"/>
         <source>Reload Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Recarga requerida</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="715"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
-        <translation type="unfinished"></translation>
+        <translation>Debido a un cambio en la base de datos, las pistas deben volver a cargarse desde el disco para actualizar sus metadatos guardados.</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="720"/>
         <source>Reload Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Recargar ahora</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="722"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>De acuerdo</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="759"/>
         <source>Playback Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de reproducción</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="812"/>
         <source>Track Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista no encontrada</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="784"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Reload tags from file(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Recargar etiquetas desde archivo(s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="492"/>
         <source>Reload tags from modified file(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Recargar etiquetas de archivo(s) modificado(s)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="494"/>
