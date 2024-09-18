@@ -38,8 +38,8 @@ namespace {
 template <typename Func>
 void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
 {
-    auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
-                                           Fooyin::Utils::getMainWindow());
+    auto* scanDialog = new QProgressDialog(Fooyin::PlaylistInteractor::tr("Reading tracks…"), QStringLiteral("Abort"),
+                                           0, 100, Fooyin::Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
     scanDialog->setMinimumDuration(500);
@@ -72,8 +72,8 @@ void scanFiles(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& f
 template <typename Func>
 void loadPlaylistTracks(Fooyin::MusicLibrary* library, const QList<QUrl>& files, Func&& func)
 {
-    auto* scanDialog = new QProgressDialog(QStringLiteral("Loading playlist..."), QStringLiteral("Abort"), 0, 100,
-                                           Fooyin::Utils::getMainWindow());
+    auto* scanDialog = new QProgressDialog(Fooyin::PlaylistInteractor::tr("Loading playlist…"), QStringLiteral("Abort"),
+                                           0, 100, Fooyin::Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
     scanDialog->setMinimumDuration(500);

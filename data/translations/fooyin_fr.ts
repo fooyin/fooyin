@@ -1581,6 +1581,11 @@
         <translation>Supprimer une Liste de Lecture</translation>
     </message>
     <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="458"/>
+        <source>Reading tracks…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/guiapplication.cpp" line="487"/>
         <location filename="../../src/gui/guiapplication.cpp" line="518"/>
         <source>Tagging</source>
@@ -3724,6 +3729,19 @@
         <location filename="../../src/gui/settings/playlist/playlistgeneralpage.cpp" line="163"/>
         <source>Appearance</source>
         <translation>Apparence</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::PlaylistInteractor</name>
+    <message>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="41"/>
+        <source>Reading tracks…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="75"/>
+        <source>Loading playlist…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

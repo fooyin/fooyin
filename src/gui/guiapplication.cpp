@@ -455,7 +455,7 @@ void GuiApplicationPrivate::registerActions()
 
 void GuiApplicationPrivate::rescanTracks(const TrackList& tracks, bool onlyModified) const
 {
-    auto* scanDialog = new QProgressDialog(QStringLiteral("Reading tracks..."), QStringLiteral("Abort"), 0, 100,
+    auto* scanDialog = new QProgressDialog(GuiApplication::tr("Reading tracks…"), QStringLiteral("Abort"), 0, 100,
                                            Utils::getMainWindow());
     scanDialog->setAttribute(Qt::WA_DeleteOnClose);
     scanDialog->setModal(true);
