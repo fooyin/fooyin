@@ -262,7 +262,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decodermodel.cpp" line="80"/>
         <source>Supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддерживаемые расширения</translation>
     </message>
 </context>
 <context>
@@ -280,7 +280,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="112"/>
         <source>Decoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Декодирование</translation>
     </message>
 </context>
 <context>
@@ -288,7 +288,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="69"/>
         <source>Decoders</source>
-        <translation type="unfinished"></translation>
+        <translation>Декодеры</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="70"/>
@@ -707,12 +707,12 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="47"/>
         <source>Save colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="48"/>
         <source>Save fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить шрифты</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="51"/>
@@ -1747,7 +1747,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="88"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сохранить</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="89"/>
@@ -1757,12 +1757,12 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="90"/>
         <source>System default</source>
-        <translation type="unfinished"></translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="92"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Темы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="110"/>
@@ -1772,97 +1772,97 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="111"/>
         <source>Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Передний план</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="112"/>
         <source>Foreground (Bright)</source>
-        <translation type="unfinished"></translation>
+        <translation>Передний план (светлый)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="113"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="114"/>
         <source>Placeholder text</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст-заполнитель</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="115"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Основной</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="116"/>
         <source>Base (Alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Основной (альтернативный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="117"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделение</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="118"/>
         <source>Highlighted text</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделенный текст</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="119"/>
         <source>Button (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка (фон)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="120"/>
         <source>Button (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопка (текст)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="128"/>
         <source>Foreground (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Передний план (Неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="129"/>
         <source>Highlight (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделение (неактивное)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="130"/>
         <source>Highlighted Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделенный текст (неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="131"/>
         <source>Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст (неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="132"/>
         <source>Button Text (Disabled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст кнопки (Неактивный)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="133"/>
         <source>ToolTip (Background)</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсказка (Фон)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="134"/>
         <source>ToolTip (Foreground)</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсказка (Передний план)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="135"/>
         <source>Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылка</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="136"/>
         <source>Link (Visited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылка (посещённая)</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="137"/>
@@ -1887,32 +1887,32 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="141"/>
         <source>Shadow</source>
-        <translation type="unfinished"></translation>
+        <translation>Тень</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="163"/>
         <source>Basic Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Базовые цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="164"/>
         <source>Advanced Colours</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительные Цвета</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="165"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Шрифты</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="315"/>
         <source>Theme already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема уже существует</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="316"/>
         <source>Theme %1 already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема %1 уже существует. Заменить?</translation>
     </message>
 </context>
 <context>
@@ -2028,7 +2028,7 @@
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="166"/>
         <source>Tool Buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки инструментов</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guigeneralpage.cpp" line="172"/>
@@ -2071,7 +2071,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="383"/>
         <source>Themes</source>
-        <translation type="unfinished"></translation>
+        <translation>Темы</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
@@ -2081,7 +2081,7 @@
     <message>
         <location filename="../../src/gui/settings/guithemespage.cpp" line="384"/>
         <source>Colours &amp; Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвета &amp; Шрифты</translation>
     </message>
 </context>
 <context>
@@ -2282,27 +2282,27 @@
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="232"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Усиление трека</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="237"/>
         <source>Track Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Пик трека</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="242"/>
         <source>Album Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Усиление альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="247"/>
         <source>Album Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Пик альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/selectioninfo/infopopulator.cpp" line="252"/>
         <source>Total Peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Общий пик</translation>
     </message>
 </context>
 <context>
@@ -2957,7 +2957,7 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="181"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеть</translation>
     </message>
 </context>
 <context>
@@ -2965,52 +2965,52 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="69"/>
         <source>No proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Без прокси</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="70"/>
         <source>Use system proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать системный прокси</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="71"/>
         <source>Manual proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Ручная настройка прокси</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="75"/>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Аутентификация</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="81"/>
         <source>Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation>Прокси</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="95"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя пользователя</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="97"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="107"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="109"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>Порт</translation>
     </message>
 </context>
 <context>
@@ -3332,12 +3332,12 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="73"/>
         <source>Left script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт слева</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="74"/>
         <source>Right script</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрипт справа</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="81"/>
@@ -4339,7 +4339,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="107"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Значение</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainmodel.cpp" line="107"/>
@@ -4385,7 +4385,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="66"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключено</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="67"/>
@@ -4395,12 +4395,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="68"/>
         <source>Apply gain and prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Применить усиление и предотвратить ограничение по пику</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="69"/>
         <source>Only prevent clipping according to peak</source>
-        <translation type="unfinished"></translation>
+        <translation>Предотвращать клиппинг в соответствии с пиком</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="70"/>
@@ -4440,32 +4440,32 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="96"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="108"/>
         <source>Pre-amplification</source>
-        <translation type="unfinished"></translation>
+        <translation>Предусиление</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="111"/>
         <source>With RG info</source>
-        <translation type="unfinished"></translation>
+        <translation>С RG инфо</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="112"/>
         <source>Without RG info</source>
-        <translation type="unfinished"></translation>
+        <translation>Без RG инфо</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="122"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>Величина усиления, применяемая в сочетании с ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="125"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
-        <translation type="unfinished"></translation>
+        <translation>Величина усиления, применяемая для треков без информации ReplayGain</translation>
     </message>
 </context>
 <context>
@@ -4473,7 +4473,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="92"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Суммарно</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainpopulator.cpp" line="96"/>
@@ -4518,7 +4518,7 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainwidget.cpp" line="60"/>
         <source>ReplayGain Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain редактор</translation>
     </message>
 </context>
 <context>
@@ -4563,17 +4563,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="101"/>
         <source>Malformed login callback.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неправильный коллбэк логина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="107"/>
         <source>No login token in callback.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">В коллбэке отсутствует токен логина</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="118"/>
         <source>The application has successfully logged in. This window can now be closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Приложение успешно авторизовалось. Теперь это окно можно закрыть.</translation>
     </message>
 </context>
 <context>
@@ -4586,12 +4586,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
         <source>Networking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сеть</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
         <source>Scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation>Скробблинг</translation>
     </message>
 </context>
 <context>
@@ -4599,12 +4599,12 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="75"/>
         <source>Enable scrobbling</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить скробблинг</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="76"/>
         <source>Prefer album artist</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочитаемый исполнитель альбома</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="79"/>
@@ -4614,42 +4614,42 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="82"/>
         <source>Scrobble delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Задержка скробблинга</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="84"/>
         <source>Time to wait before submitting scrobbles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание перед подтверждением скробблинга</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="90"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>секунд</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="100"/>
         <source>Services</source>
-        <translation type="unfinished"></translation>
+        <translation>Сервисы</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="199"/>
         <source>Sign-out</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="200"/>
         <source>Signed in as %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Подключён как %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="204"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Логин</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="205"/>
         <source>Not signed in</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не авторизовано</translation>
     </message>
 </context>
 <context>
@@ -4657,22 +4657,22 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="646"/>
         <source>%1 Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Аутентификация</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="647"/>
         <source>Open url in web browser?</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть URL в браузере?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="655"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="657"/>
         <source>Copy URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать URL</translation>
     </message>
 </context>
 <context>
@@ -5155,7 +5155,7 @@
     <message>
         <location filename="../../src/gui/theme/themeregistry.cpp" line="44"/>
         <source>Dark mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Тёмный режим</translation>
     </message>
 </context>
 <context>
@@ -5295,7 +5295,7 @@
     <message>
         <location filename="../../src/gui/controls/volumecontrol.cpp" line="315"/>
         <source>Tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Подсказка</translation>
     </message>
 </context>
 <context>
@@ -5404,7 +5404,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="101"/>
         <source>Regenerate waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Регенерировать данные формы сигнала для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="105"/>
@@ -5414,7 +5414,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="106"/>
         <source>Generate waveform data for the selected tracks if missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать данные формы сигнала для выбранных дорожек, если они отсутствуют</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="110"/>
@@ -5424,17 +5424,17 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="111"/>
         <source>Remove any existing waveform data for the selected tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить все существующие данные формы сигнала для выбранных дорожек</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="151"/>
         <source>Generating waveform data…</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерация данных формы сигнала…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="151"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Прервать</translation>
     </message>
 </context>
 <context>
@@ -5790,17 +5790,17 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="284"/>
         <source>Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Вкладки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="280"/>
         <source>Lists</source>
-        <translation type="unfinished"></translation>
+        <translation>Списки</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="283"/>
         <source>Status bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка статуса</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="296"/>
