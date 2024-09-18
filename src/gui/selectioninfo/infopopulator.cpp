@@ -51,28 +51,17 @@ public:
                            InfoItem::ValueType valueType  = InfoItem::ValueType::Concat,
                            InfoItem::FormatFunc&& numFunc = {}, bool isFloat = false)
     {
-        if constexpr(std::is_same_v<Value, QString> || std::is_same_v<Value, QStringList>) {
-            if(value.isEmpty()) {
-                return;
-            }
-        }
-        else if constexpr(std::is_same_v<Value, int>) {
-            if(value < 0) {
-                return;
-            }
-        }
-        else if constexpr(std::is_same_v<Value, uint64_t>) {
-            if(value == 0) {
-                return;
-            }
-        }
-
         checkAddParentNode(parent);
-        auto* node = getOrAddNode(key, name, parent, InfoItem::Entry, valueType, std::move(numFunc));
+        auto* node = getOrAddNode(key, name, parent, InfoItem::Entry, valueType, numFunc);
         node->setIsFloat(isFloat);
 
         if constexpr(std::is_same_v<Value, int> || std::is_same_v<Value, uint64_t>) {
-            node->addTrackValue(QString::number(value));
+            if(value <= 0) {
+                node->addTrackValue(QString{});
+            }
+            else {
+                node->addTrackValue(QString::number(value));
+            }
         }
         else {
             node->addTrackValue(std::forward<Value>(value));

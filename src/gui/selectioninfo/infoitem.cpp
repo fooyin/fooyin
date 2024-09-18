@@ -92,9 +92,6 @@ QString formatPercentage(const QStringList& values)
 
     if(valueCounts.size() == 1) {
         const auto val = valueCounts.cbegin();
-        if(val->first == u"-1") {
-            return {};
-        }
         return val->first;
     }
 
@@ -110,7 +107,7 @@ QString formatPercentage(const QStringList& values)
 
     QStringList formattedList;
     for(const auto& [key, ratio] : ratios) {
-        if(key != u"-1") {
+        if(!key.isEmpty()) {
             formattedList.append(QStringLiteral("%1 (%2%)").arg(key, QString::number(ratio, 'f', 1)));
         }
     }
@@ -121,7 +118,9 @@ QString joinValues(const QStringList& values)
 {
     QStringList list;
     for(const QString& value : values) {
-        list.append(value);
+        if(!value.isEmpty()) {
+            list.append(value);
+        }
     }
     return list.join(u"; ");
 }
@@ -275,10 +274,6 @@ void InfoItem::setIsFloat(bool isFloat)
 
 void InfoItem::addTrackValue(const QString& value)
 {
-    if(value.isEmpty()) {
-        return;
-    }
-
     if(m_valueType != ValueType::Concat) {
         m_values.append(value);
         return;

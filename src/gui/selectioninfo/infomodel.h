@@ -36,9 +36,9 @@ class InfoModel : public TreeModel<InfoItem>
     Q_OBJECT
 
 public:
-    enum class ItemParent
+    enum class ItemParent : uint8_t
     {
-        Root,
+        Root = 0,
         Metadata,
         Location,
         General,
@@ -53,6 +53,7 @@ public:
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+    [[nodiscard]] bool hasChildren(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
 
     [[nodiscard]] InfoItem::Options options() const;

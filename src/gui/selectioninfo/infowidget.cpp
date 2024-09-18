@@ -35,14 +35,36 @@
 #include <QJsonObject>
 #include <QMenu>
 #include <QScrollBar>
+#include <QSortFilterProxyModel>
 
 namespace Fooyin {
+class InfoFilterModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+
+public:
+    explicit InfoFilterModel(QObject* parent = nullptr)
+        : QSortFilterProxyModel{parent}
+    { }
+
+protected:
+    [[nodiscard]] bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override
+    {
+        const QModelIndex index = sourceModel()->index(sourceRow, 1, sourceParent);
+        if(sourceModel()->hasChildren(index)) {
+            return true;
+        }
+        return !sourceModel()->data(index).toString().isEmpty();
+    }
+};
+
 InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
     : PropertiesTabWidget{parent}
     , m_selectionController{nullptr}
     , m_playerController{nullptr}
     , m_settings{nullptr}
     , m_view{new InfoView(this)}
+    , m_proxyModel{new InfoFilterModel(this)}
     , m_model{new InfoModel(this)}
     , m_displayOption{SelectionDisplay::PreferSelection}
     , m_scrollPos{-1}
@@ -54,7 +76,8 @@ InfoWidget::InfoWidget(const TrackList& tracks, QWidget* parent)
     layout->addWidget(m_view);
 
     m_view->setItemDelegate(new ItemDelegate(this));
-    m_view->setModel(m_model);
+    m_proxyModel->setSourceModel(m_model);
+    m_view->setModel(m_proxyModel);
     m_view->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     QObject::connect(m_model, &QAbstractItemModel::modelReset, this, [this]() { resetView(); });
@@ -69,6 +92,7 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     , m_playerController{playerController}
     , m_settings{settings}
     , m_view{new InfoView(this)}
+    , m_proxyModel{new InfoFilterModel(this)}
     , m_model{new InfoModel(this)}
     , m_displayOption{static_cast<SelectionDisplay>(m_settings->value<Settings::Gui::Internal::InfoDisplayPrefer>())}
     , m_scrollPos{-1}
@@ -80,7 +104,8 @@ InfoWidget::InfoWidget(PlayerController* playerController, TrackSelectionControl
     layout->addWidget(m_view);
 
     m_view->setItemDelegate(new ItemDelegate(this));
-    m_view->setModel(m_model);
+    m_proxyModel->setSourceModel(m_model);
+    m_view->setModel(m_proxyModel);
 
     m_view->setHeaderHidden(!settings->value<Settings::Gui::Internal::InfoHeader>());
     m_view->setVerticalScrollBarPolicy(
@@ -278,3 +303,5 @@ void InfoWidget::resetView()
     }
 }
 } // namespace Fooyin
+
+#include "infowidget.moc"

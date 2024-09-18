@@ -51,3 +51,5 @@ void InfoView::paintEvent(QPaintEvent* event)
     ExpandedTreeView::paintEvent(event);
 }
 } // namespace Fooyin
+
+#include "moc_infoview.cpp"

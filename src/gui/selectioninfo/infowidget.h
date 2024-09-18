@@ -27,8 +27,9 @@
 #include <QWidget>
 
 namespace Fooyin {
-class InfoView;
+class InfoFilterModel;
 class InfoModel;
+class InfoView;
 class PlayerController;
 class SettingsManager;
 class TrackSelectionController;
@@ -63,6 +64,7 @@ private:
     SettingsManager* m_settings;
 
     InfoView* m_view;
+    InfoFilterModel* m_proxyModel;
     InfoModel* m_model;
     QBasicTimer m_resetTimer;
     SelectionDisplay m_displayOption;
