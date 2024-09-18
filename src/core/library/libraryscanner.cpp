@@ -293,7 +293,7 @@ void LibraryScannerPrivate::checkBatchFinished()
         if(m_tracksToUpdate.size() >= BatchSize) {
             m_trackDatabase.updateTracks(m_tracksToUpdate);
         }
-        emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = {}});
+        emit m_self->scanUpdate({.addedTracks = m_tracksToStore, .updatedTracks = m_tracksToUpdate});
         m_tracksToStore.clear();
         m_tracksToUpdate.clear();
     }
