@@ -1877,11 +1877,11 @@ void checkXingHeader(TagLib::MPEG::File* file, Fooyin::Track& track)
         stream >> vbrScale;
     }
 
-    QByteArray encoderData{9, '\0'};
+    QByteArray encoderData{9, Qt::Uninitialized};
     const auto len = stream.readRawData(encoderData.data(), 9);
 
     if(len == 9) {
-        auto encoder = QString::fromLatin1(encoderData.constData(), encoderData.size());
+        auto encoder = QString::fromLatin1(encoderData.constData(), encoderData.size()).simplified().remove(u'\0');
         if(encoder.endsWith(u'.')) {
             encoder.chop(1);
         }
