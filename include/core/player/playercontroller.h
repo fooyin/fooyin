@@ -50,6 +50,8 @@ public:
 
     /** Returns the current playback position in ms. */
     [[nodiscard]] uint64_t currentPosition() const;
+    /** Returns the current bitrate. */
+    [[nodiscard]] int bitrate() const;
 
     /*!
      * Returns the currently playing track.
@@ -84,7 +86,10 @@ public:
     void seek(uint64_t ms);
     void seekForward(uint64_t delta);
     void seekBackward(uint64_t delta);
+
     void setCurrentPosition(uint64_t ms);
+    void setBitrate(int bitrate);
+
     void changeCurrentTrack(const Track& track);
     void changeCurrentTrack(const PlaylistTrack& track);
     void updateCurrentTrackPlaylist(const UId& playlistId);

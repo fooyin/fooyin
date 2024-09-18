@@ -79,6 +79,18 @@ QString getCodec(AVCodecID codec)
     }
 }
 
+bool isLossless(AVCodecID codec)
+{
+    switch(codec) {
+        case(AV_CODEC_ID_ALAC):
+        case(AV_CODEC_ID_WAVPACK):
+        case(AV_CODEC_ID_FLAC):
+            return true;
+        default:
+            return false;
+    }
+}
+
 void readTrackTotalPair(const QString& trackNumbers, Fooyin::Track& track)
 {
     const qsizetype splitIdx = trackNumbers.indexOf(u'/');
@@ -400,6 +412,7 @@ public:
 
     void reset();
     bool setup(QIODevice* source);
+    void checkIsVbr(const Track& track);
 
     bool createCodec(AVStream* avStream);
 
@@ -424,11 +437,13 @@ public:
     bool m_error{false};
     bool m_eof{false};
     bool m_isDecoding{false};
+    bool m_isVbr{false};
 
     AudioBuffer m_buffer;
     int m_bufferPos{0};
     int64_t m_seekPos{0};
     uint64_t m_currentPos{0};
+    int m_bitrate{0};
     int m_skipBytes{0};
 };
 
@@ -438,6 +453,8 @@ void FFmpegInputPrivate::reset()
     m_eof        = false;
     m_isDecoding = false;
     m_draining   = false;
+    m_isVbr      = false;
+    m_bitrate    = 0;
     m_bufferPos  = 0;
     m_currentPos = 0;
     m_skipBytes  = 0;
@@ -473,6 +490,12 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
     m_audioFormat = Utils::audioFormatFromCodec(m_stream.avStream()->codecpar);
 
     return createCodec(m_stream.avStream());
+}
+
+void FFmpegInputPrivate::checkIsVbr(const Track& track)
+{
+    const auto codec = m_codec.context()->codec_id;
+    m_isVbr = track.codecProfile().contains(u"VBR") || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
 }
 
 bool FFmpegInputPrivate::createCodec(AVStream* avStream)
@@ -645,6 +668,18 @@ void FFmpegInputPrivate::readNext()
         return;
     }
 
+    if(m_isVbr && packet && packet->duration > 0) {
+        const auto durSecs = static_cast<double>(av_rescale_q_rnd(packet->duration, m_timeBase, TimeBaseAv,
+                                                                  AVRounding::AV_ROUND_NEAR_INF))
+                           / static_cast<double>(AV_TIME_BASE);
+        if(durSecs > 0) {
+            const int bitrate = static_cast<int>((packet->size * 8) / durSecs);
+            if(bitrate > 0) {
+                m_bitrate = bitrate / 1000;
+            }
+        }
+    }
+
     if(m_seekPos > 0 && m_codec.context()->codec_id == AV_CODEC_ID_APE) {
         const auto packetPts = av_rescale_q_rnd(packet->pts, m_timeBase, TimeBaseMs, AVRounding::AV_ROUND_DOWN);
         m_skipBytes          = m_audioFormat.bytesForDuration(std::abs(m_seekPos - packetPts));
@@ -691,12 +726,19 @@ QStringList FFmpegDecoder::extensions() const
     return fileExtensions();
 }
 
-std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& /*track*/,
+int FFmpegDecoder::bitrate() const
+{
+    return p->m_bitrate;
+}
+
+std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track,
                                                DecoderOptions /*options*/)
 {
     if(p->setup(source.device)) {
+        p->checkIsVbr(track);
         return p->m_audioFormat;
     }
+
     p->m_error = true;
     return {};
 }

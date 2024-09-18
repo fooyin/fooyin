@@ -39,17 +39,22 @@ QStringList ArchiveDecoder::extensions() const
 
 bool ArchiveDecoder::isSeekable() const
 {
-    return m_decoder ? m_decoder->isSeekable() : false;
+    return m_decoder != nullptr && m_decoder->isSeekable();
 }
 
 bool ArchiveDecoder::trackHasChanged() const
 {
-    return m_decoder ? m_decoder->trackHasChanged() : false;
+    return m_decoder != nullptr && m_decoder->trackHasChanged();
 }
 
 Track ArchiveDecoder::changedTrack() const
 {
     return m_decoder ? m_decoder->changedTrack() : Track{};
+}
+
+int ArchiveDecoder::bitrate() const
+{
+    return m_decoder ? m_decoder->bitrate() : 0;
 }
 
 std::optional<AudioFormat> ArchiveDecoder::init(const AudioSource& /*source*/, const Track& track,

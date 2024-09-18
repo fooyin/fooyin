@@ -39,9 +39,11 @@ using namespace std::chrono_literals;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 constexpr auto BufferInterval   = 5ms;
 constexpr auto PositionInterval = 50ms;
+constexpr auto BitrateInterval  = 200ms;
 #else
 constexpr auto BufferInterval   = 5;
 constexpr auto PositionInterval = 50;
+constexpr auto BitrateInterval  = 200;
 #endif
 
 constexpr auto MaxDecodeLength = 200;
@@ -208,7 +210,9 @@ void AudioPlaybackEngine::play()
 
         QMetaObject::invokeMethod(&m_renderer, [this, fadeLength]() { m_renderer.play(fadeLength); });
         updateTrackStatus(TrackStatus::Buffered);
+
         m_posTimer.start(PositionInterval, Qt::PreciseTimer, this);
+        m_bitrateTimer.start(BitrateInterval, Qt::PreciseTimer, this);
 
         updateState(PlaybackState::Playing);
     };
@@ -317,6 +321,7 @@ void AudioPlaybackEngine::stop()
     }
 
     m_posTimer.stop();
+    m_bitrateTimer.stop();
     m_lastPosition = 0;
     emit positionChanged(m_currentTrack, 0);
 }
@@ -422,6 +427,9 @@ void AudioPlaybackEngine::timerEvent(QTimerEvent* event)
     else if(event->timerId() == m_posTimer.timerId()) {
         updatePosition();
     }
+    else if(event->timerId() == m_bitrateTimer.timerId()) {
+        updateBitrate();
+    }
 
     QObject::timerEvent(event);
 }
@@ -445,6 +453,7 @@ void AudioPlaybackEngine::stopWorkers(bool full)
 {
     m_bufferTimer.stop();
     m_posTimer.stop();
+    m_bitrateTimer.stop();
 
     m_clock.setPaused(true);
     m_clock.sync();
@@ -620,6 +629,13 @@ void AudioPlaybackEngine::updatePosition()
         m_clock.setPaused(true);
         m_clock.sync(m_duration);
         updateTrackStatus(TrackStatus::End);
+    }
+}
+
+void AudioPlaybackEngine::updateBitrate()
+{
+    if(m_decoder) {
+        AudioEngine::updateBitrate(m_decoder->bitrate());
     }
 }
 

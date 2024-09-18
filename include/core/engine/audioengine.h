@@ -66,9 +66,7 @@ public:
     Q_DECLARE_FLAGS(RGProcessing, RGProcess)
     Q_FLAG(RGProcessing)
 
-    explicit AudioEngine(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    explicit AudioEngine(QObject* parent = nullptr);
 
     [[nodiscard]] PlaybackState playbackState() const;
     [[nodiscard]] TrackStatus trackStatus() const;
@@ -87,9 +85,13 @@ public:
 
 signals:
     void deviceError(const QString& error);
+
     void stateChanged(PlaybackState state);
     void trackStatusChanged(TrackStatus status);
+
     void positionChanged(const Fooyin::Track& track, uint64_t ms);
+    void bitrateChanged(int bitrate);
+
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
     void finished();
@@ -97,10 +99,12 @@ signals:
 protected:
     virtual PlaybackState updateState(PlaybackState state);
     virtual TrackStatus updateTrackStatus(TrackStatus status);
+    void updateBitrate(int bitrate);
 
 private:
     std::atomic<PlaybackState> m_playbackState;
     std::atomic<TrackStatus> m_trackStatus;
+    int m_bitrate;
 };
 } // namespace Fooyin
 

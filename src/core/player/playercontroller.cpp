@@ -68,6 +68,8 @@ public:
     PlaylistTrack m_currentTrack;
     uint64_t m_totalDuration{0};
     uint64_t m_position{0};
+    int m_bitrate{0};
+
     uint64_t m_timeListened{0};
     uint64_t m_playedThreshold{0};
 
@@ -98,6 +100,7 @@ void PlayerController::reset()
     p->m_currentTrack = {};
     p->m_playStatus   = Player::PlayState::Stopped;
     p->m_position     = 0;
+    p->m_bitrate      = 0;
 }
 
 void PlayerController::play()
@@ -187,6 +190,11 @@ void PlayerController::setCurrentPosition(uint64_t ms)
     emit positionChanged(ms);
 }
 
+void PlayerController::setBitrate(int bitrate)
+{
+    p->m_bitrate = bitrate;
+}
+
 void PlayerController::changeCurrentTrack(const Track& track)
 {
     changeCurrentTrack(PlaylistTrack{track, {}});
@@ -269,6 +277,11 @@ Playlist::PlayModes PlayerController::playMode() const
 uint64_t PlayerController::currentPosition() const
 {
     return p->m_position;
+}
+
+int PlayerController::bitrate() const
+{
+    return p->m_bitrate;
 }
 
 Track PlayerController::currentTrack() const

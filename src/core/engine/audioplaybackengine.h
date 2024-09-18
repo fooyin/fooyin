@@ -73,6 +73,7 @@ private:
 
     void readNextBuffer();
     void updatePosition();
+    void updateBitrate();
     void onBufferProcessed(const AudioBuffer& buffer);
     void onRendererFinished();
 
@@ -112,6 +113,7 @@ private:
     AudioRenderer m_renderer;
 
     QBasicTimer m_posTimer;
+    QBasicTimer m_bitrateTimer;
     QBasicTimer m_bufferTimer;
     QBasicTimer m_pauseTimer;
 

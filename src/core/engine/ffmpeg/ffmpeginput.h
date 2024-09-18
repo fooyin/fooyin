@@ -33,6 +33,7 @@ public:
     ~FFmpegDecoder() override;
 
     [[nodiscard]] QStringList extensions() const override;
+    [[nodiscard]] int bitrate() const override;
 
     std::optional<AudioFormat> init(const AudioSource& source, const Track& track, DecoderOptions options) override;
     void start() override;

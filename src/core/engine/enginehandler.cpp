@@ -82,6 +82,7 @@ EngineHandlerPrivate::EngineHandlerPrivate(EngineHandler* self, std::shared_ptr<
     QObject::connect(m_engine, &AudioEngine::finished, m_self, &EngineHandler::finished);
     QObject::connect(m_engine, &AudioEngine::positionChanged, m_self,
                      [this](const Fooyin::Track& track, uint64_t ms) { updatePosition(track, ms); });
+    QObject::connect(m_engine, &AudioEngine::bitrateChanged, m_playerController, &PlayerController::setBitrate);
     QObject::connect(m_engine, &AudioEngine::stateChanged, m_self,
                      [this](AudioEngine::PlaybackState state) { handleStateChange(state); });
     QObject::connect(m_engine, &AudioEngine::deviceError, m_self, &EngineController::engineError);

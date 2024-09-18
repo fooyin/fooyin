@@ -24,6 +24,11 @@
 Q_LOGGING_CATEGORY(ENGINE, "fy.engine")
 
 namespace Fooyin {
+AudioEngine::AudioEngine(QObject* parent)
+    : QObject{parent}
+    , m_bitrate{0}
+{ }
+
 AudioEngine::PlaybackState AudioEngine::playbackState() const
 {
     return m_playbackState.load(std::memory_order_acquire);
@@ -54,5 +59,12 @@ AudioEngine::TrackStatus AudioEngine::updateTrackStatus(TrackStatus status)
         emit trackStatusChanged(status);
     }
     return prevStatus;
+}
+
+void AudioEngine::updateBitrate(int bitrate)
+{
+    if(std::exchange(m_bitrate, bitrate) != bitrate) {
+        emit bitrateChanged(m_bitrate);
+    }
 }
 } // namespace Fooyin

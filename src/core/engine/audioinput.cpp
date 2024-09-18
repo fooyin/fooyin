@@ -32,6 +32,11 @@ Track AudioDecoder::changedTrack() const
     return {};
 }
 
+int AudioDecoder::bitrate() const
+{
+    return 0;
+}
+
 void AudioDecoder::start() { }
 
 int AudioReader::subsongCount() const

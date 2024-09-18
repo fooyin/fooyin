@@ -84,6 +84,12 @@ public:
      * @note this will only be called if @fn trackHasChanged returns @c true.
      */
     [[nodiscard]] virtual Track changedTrack() const;
+    /*!
+     * Returns the current variable/dynamic bitrate.
+     * @note this should return 0 if the file isn't encoded with VBR.
+     * @note the base class implementation of this function returns 0.
+     */
+    [[nodiscard]] virtual int bitrate() const;
 
     /*!
      * Setup the decoder for the given Track @p track.
