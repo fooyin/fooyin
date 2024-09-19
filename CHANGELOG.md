@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.7.0](https://github.com/fooyin/fooyin/releases/tag/v0.7.0) (2024-09-19)
+
+### New Features
+
+* ReplayGain support ([#251](https://github.com/fooyin/fooyin/pull/251), [#262](https://github.com/fooyin/fooyin/pull/262))
+  - Adds support for reading and applying RG info
+* Scrobbling
+  - Last.fm and ListenBrainz are currently supported
+
+### Improvements
+
+* General
+  - Support multiple values for composer, performer
+  - Store additional fields: codec profile, encoding, tool, tag types
+* Interface
+  - FontButton: Apply set font to button text
+  - Show dynamic bitrate in status bar for vbr/abr tracks ([#250](https://github.com/fooyin/fooyin/issues/250))
+  - ToolTip: Improve positioning
+  - Volume: Add slider dB tooltip ([#267](https://github.com/fooyin/fooyin/pull/267))
+* Scripting
+  - Improve implementation of $abbr and $replace ([#253](https://github.com/fooyin/fooyin/issues/253))
+  - Add $ascii function ([#253](https://github.com/fooyin/fooyin/issues/253))
+* SelectionInfo 
+  - Add optional ReplayGain section
+  - Hide empty entries 
+* Engine: Handle audio samples as float64 ([#265](https://github.com/fooyin/fooyin/pull/265))
+* FileOps: Replace directory separators in variable calls ([#253](https://github.com/fooyin/fooyin/issues/253))
+* PlaylistOrganiser: Support dropping tracks on existing playlists
+* TagEditor: Support customising default fields ([#256](https://github.com/fooyin/fooyin/issues/256))
+
+### Fixes
+
+* Interface
+  - Resolve crash when changing layouts
+  - Fix fonts not being set correctly on startup
+  - Fix painting alternating row colours
+  - Fix toggling selection in some views
+  - LogSlider: Fix undefined behaviour
+  - SeekBar: Fix some fonts causing widget to resize ([#277](https://github.com/fooyin/fooyin/issues/277))
+* Engine
+  - Fix playback not pausing while muted ([#258](https://github.com/fooyin/fooyin/pull/258))
+  - Fix listened duration carrying over to next track
+  - Fix track always being considered played when restoring state on startup
+* Filters:
+  - Fix incorrect item width on startup
+  - Fix page up/down in artwork mode
+* PlaylistOrganiser
+  - Resolve crash when deleting active playlist
+  - Fix shortcuts not working after right-click
+* General: Fix building with Qt6.8
+* Library: Notify of updated tracks while reloading
+* Scripting: Support split values with $swapprefix, $stripprefix
+* Selection Info: Fix sorting of entries
+* WaveBar: Fix restoring playing/paused state
+
+
 ## [0.6.2](https://github.com/fooyin/fooyin/releases/tag/v0.6.2) (2024-08-31)
 
 ### New Features

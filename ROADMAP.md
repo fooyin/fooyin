@@ -4,7 +4,7 @@ This document outlines the upcoming features for fooyin.
 
 ### Next Release
 
-**0.7.0** - 19/09/2024
+**0.8.0** - 14/10/2024
 
 ## New Features
 
@@ -29,15 +29,15 @@ This document outlines the upcoming features for fooyin.
 
 ## Enhancements
 
-| Enhancement                                    | Release  |
-|------------------------------------------------|----------|
-| Support custom tags within scripts             | ✅ 0.4.0  |
-| Add HTML-like tags to FooScript for formatting | ✅ 0.4.0  |
-| Import/Export playlists                        | ✅ 0.5.0  |
-| Add icon/artwork mode to Library Filter        | ✅ 0.5.0  |
+| Enhancement                                    | Release |
+|------------------------------------------------|---------|
+| Support custom tags within scripts             | ✅ 0.4.0 |
+| Add HTML-like tags to FooScript for formatting | ✅ 0.4.0 |
+| Import/Export playlists                        | ✅ 0.5.0 |
+| Add icon/artwork mode to Library Filter        | ✅ 0.5.0 |
 | Customise default tag editor fields            | ✅ 0.7.0 |
-| Variable bitrate display                       | 🔄 0.7.0 |
-| Per-playlist playback queue                    | ❓ TBD    |
+| Variable bitrate display                       | ✅ 0.7.0 |
+| Per-playlist playback queue                    | ❓ TBD   |
 
 ## Widgets
 

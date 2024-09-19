@@ -34,6 +34,7 @@
             <li>Directory browser</li>
             <li>Waveform seekbar</li>
             <li>MPRIS support</li>
+            <li>Scrobbling</li>
         </ul>
     </description>
     <launchable type="desktop-id">org.fooyin.fooyin.desktop</launchable>
@@ -45,19 +46,29 @@
     <url type="bugtracker">https://github.com/fooyin/fooyin/issues</url>
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/simple.png</image>
+            <image>https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0</image>
             <caption>Simple layout</caption>
         </screenshot>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/obsidian.png</image>
+            <image>https://github.com/user-attachments/assets/7dcc92be-04ea-402f-9cbb-a92ee855b893</image>
             <caption>Obsidian layout</caption>
         </screenshot>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/fooyin/fooyin/master/data/images/viewer-dark.png</image>
+            <image>https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597</image>
+            <caption>Directory browser layout with Breeze dark</caption>
+        </screenshot>
+        <screenshot type="default">
+            <image>https://github.com/user-attachments/assets/de5b4b3a-cd9d-4520-a975-e268e472e0f9</image>
             <caption>Custom layout with Breeze dark</caption>
         </screenshot>
     </screenshots>
     <releases>
+        <release version="0.7.0" date="2024-09-19">
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.7.0</url>
+        </release>
+        <release version="0.6.2" date="2024-08-31">
+            <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.2</url>
+        </release>
         <release version="0.6.1" date="2024-08-27">
             <url>https://github.com/fooyin/fooyin/releases/tag/v0.6.1</url>
         </release>
