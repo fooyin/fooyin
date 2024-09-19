@@ -4613,17 +4613,17 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPage</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="218"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="272"/>
         <source>General</source>
         <translation type="unfinished">Основное</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="273"/>
         <source>Networking</source>
         <translation type="unfinished">Сеть</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="219"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="273"/>
         <source>Scrobbling</source>
         <translation>Скробблинг</translation>
     </message>
@@ -4631,57 +4631,72 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerPageWidget</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="75"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="83"/>
         <source>Enable scrobbling</source>
         <translation>Включить скробблинг</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="76"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="84"/>
         <source>Prefer album artist</source>
         <translation>Предпочитаемый исполнитель альбома</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="79"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="87"/>
         <source>General</source>
         <translation type="unfinished">Основное</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="82"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="90"/>
         <source>Scrobble delay</source>
         <translation>Задержка скробблинга</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="84"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="92"/>
         <source>Time to wait before submitting scrobbles</source>
         <translation>Ожидание перед подтверждением скробблинга</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="90"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="98"/>
         <source>seconds</source>
         <translation>секунд</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="100"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="108"/>
         <source>Services</source>
         <translation>Сервисы</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="199"/>
-        <source>Sign-out</source>
-        <translation>Выход</translation>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="179"/>
+        <source>User token</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="200"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="187"/>
+        <source>You can find you user token here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
+        <source>Sign Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="250"/>
+        <source>Signed in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="254"/>
+        <source>Sign In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="250"/>
         <source>Signed in as %1</source>
         <translation type="unfinished">Подключён как %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="204"/>
-        <source>Login</source>
-        <translation>Логин</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="205"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
         <source>Not signed in</source>
         <translation type="unfinished">Не авторизовано</translation>
     </message>
@@ -4689,22 +4704,22 @@
 <context>
     <name>Fooyin::Scrobbler::ScrobblerService</name>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="155"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="99"/>
         <source>%1 Authentication</source>
         <translation>%1 Аутентификация</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="156"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="100"/>
         <source>Open url in web browser?</source>
         <translation>Открыть URL в браузере?</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="164"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="108"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="166"/>
+        <location filename="../../src/plugins/scrobbler/scrobblerservice.cpp" line="110"/>
         <source>Copy URL</source>
         <translation>Копировать URL</translation>
     </message>
@@ -5242,13 +5257,21 @@
 <context>
     <name>Fooyin::TagEditor::TagEditorFieldsPage</name>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="132"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="133"/>
         <source>Fields</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="133"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="134"/>
         <source>Tag Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::TagEditor::TagEditorFieldsPageWidget</name>
+    <message>
+        <location filename="../../src/plugins/tageditor/settings/tageditorpage.cpp" line="81"/>
+        <source>Multiple values can be specified in the editor using %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5426,22 +5449,22 @@
 <context>
     <name>Fooyin::VolumeControl</name>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="286"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="291"/>
         <source>Volume Controls</source>
         <translation>Регулятор громкости</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="313"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="318"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="314"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="319"/>
         <source>Slider</source>
         <translation>Ползунок</translation>
     </message>
     <message>
-        <location filename="../../src/gui/controls/volumecontrol.cpp" line="315"/>
+        <location filename="../../src/gui/controls/volumecontrol.cpp" line="320"/>
         <source>Tooltip</source>
         <translation>Подсказка</translation>
     </message>
