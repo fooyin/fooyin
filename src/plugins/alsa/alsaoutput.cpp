@@ -26,6 +26,8 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
+#include <ranges>
+
 Q_LOGGING_CATEGORY(ALSA, "fy.alsa")
 
 namespace {
@@ -470,11 +472,11 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         qCInfo(ALSA) << "Format not supported:" << m_format.prettyFormat();
         qCDebug(ALSA) << "Trying all supported formats";
 
-        static constexpr std::array<std::pair<snd_pcm_format_t, int>, 5> formats{{{SND_PCM_FORMAT_S16, 16},
+        static constexpr std::array<std::pair<snd_pcm_format_t, int>, 5> formats{{{SND_PCM_FORMAT_U8, 8},
+                                                                                  {SND_PCM_FORMAT_S16, 16},
                                                                                   {SND_PCM_FORMAT_S32, 32},
                                                                                   {SND_PCM_FORMAT_FLOAT, 32},
-                                                                                  {SND_PCM_FORMAT_FLOAT64, 64},
-                                                                                  {SND_PCM_FORMAT_U8, 8}}};
+                                                                                  {SND_PCM_FORMAT_FLOAT64, 64}}};
 
         snd_pcm_format_t compatFormat{SND_PCM_FORMAT_UNKNOWN};
 
@@ -488,7 +490,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
             }
         }
 
-        for(const auto& [format, bps] : formats) {
+        for(const auto& [format, bps] : formats | std::views::reverse) {
             if(format != alsaFormat && bps < m_format.bitsPerSample()) {
                 if(snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, format) >= 0) {
                     compatFormat = format;
