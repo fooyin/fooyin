@@ -33,7 +33,7 @@ public:
 
     void setText(const QString& text);
     void setSubtext(const QString& text);
-    void setPosition(const QPoint& pos);
+    void setPosition(const QPoint& pos, Qt::Alignment align = Qt::AlignLeft);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -44,6 +44,7 @@ private:
     QString m_text;
     QString m_subText;
     QPoint m_pos;
+    Qt::Alignment m_align;
 
     QFont m_font;
     QFont m_subFont;

@@ -233,8 +233,8 @@ void TrackSlider::updateSeekPosition(const QPointF& pos)
         const int yPosToWindow  = mapToGlobal(QPoint{0, 0}).y();
         const bool displayAbove = (yPosToWindow - (height() + m_toolTip->height())) > 0;
 
-        seekPoint.setX(seekPoint.x() - m_toolTip->width());
-        seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - (2 * m_toolTip->width())));
+        seekPoint.setX(seekPoint.x() - (m_toolTip->width() / 2));
+        seekPoint.setX(std::clamp(seekPoint.x(), 0, width() - m_toolTip->width()));
 
         if(displayAbove) {
             seekPoint.setY(rect().y() - m_toolTip->height() / 4);

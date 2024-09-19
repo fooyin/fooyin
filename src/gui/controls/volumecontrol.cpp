@@ -228,9 +228,10 @@ void VolumeControlPrivate::updateToolTip(int value)
         m_toolTip->show();
     }
 
-    static const auto MinVolumeLog10 = std::log10(MinVolume);
-    if(value > (MinVolumeLog10 * m_volumeSlider->scale())) {
-        m_toolTip->setText(QStringLiteral("%1 dB").arg(20 * (value / m_volumeSlider->scale()), 0, 'f', 1));
+    static const auto minLogVolume = std::log10(MinVolume);
+    if(value > (minLogVolume * m_volumeSlider->scale())) {
+        const auto volumeDb = 20 * (value / m_volumeSlider->scale());
+        m_toolTip->setText(QStringLiteral("%1 dB").arg(volumeDb, 0, 'f', 1));
     }
     else {
         m_toolTip->setText(QStringLiteral("-∞ dB"));
@@ -238,12 +239,13 @@ void VolumeControlPrivate::updateToolTip(int value)
 
     QPoint toolTipPos        = m_volumeSlider->mapFrom(m_volumeSlider->window(), QCursor::pos());
     const QPoint posToWindow = m_volumeSlider->mapToGlobal(QPoint{0, 0});
+    Qt::Alignment alignment{Qt::AlignLeft};
 
     if(m_volumeSlider->orientation() == Qt::Horizontal) {
         const bool displayAbove = (posToWindow.y() - (m_volumeSlider->height() + m_toolTip->height())) > 0;
 
-        toolTipPos.setX(toolTipPos.x() - m_toolTip->width());
-        toolTipPos.setX(std::clamp(toolTipPos.x(), -m_toolTip->width(), m_volumeSlider->width() - m_toolTip->width()));
+        toolTipPos.rx() -= m_toolTip->width() / 2;
+        toolTipPos.rx() = std::clamp(toolTipPos.x(), 0, m_self->width() - m_toolTip->width());
 
         if(displayAbove) {
             toolTipPos.setY(m_volumeSlider->rect().top() - m_toolTip->height() / 4);
@@ -259,14 +261,17 @@ void VolumeControlPrivate::updateToolTip(int value)
         toolTipPos.ry() += m_toolTip->height() / 2;
 
         if(displayLeft) {
-            toolTipPos.setX(pos.x() - (m_toolTip->width() * 2 + m_volumeSlider->width()));
-        }
-        else {
+            alignment = Qt::AlignRight;
             toolTipPos.setX(pos.x() - m_volumeSlider->width());
         }
+        else {
+            toolTipPos.setX(pos.x() + m_volumeSlider->width());
+        }
+
+        toolTipPos.rx() = std::max(toolTipPos.x(), 0);
     }
 
-    m_toolTip->setPosition(m_volumeSlider->mapTo(m_volumeSlider->window(), toolTipPos));
+    m_toolTip->setPosition(m_volumeSlider->mapTo(m_volumeSlider->window(), toolTipPos), alignment);
 }
 
 VolumeControl::VolumeControl(ActionManager* actionManager, SettingsManager* settings, QWidget* parent)

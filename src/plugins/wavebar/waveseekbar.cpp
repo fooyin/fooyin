@@ -501,15 +501,19 @@ void WaveSeekBar::drawSeekTip()
     m_seekTip->setSubtext((seekPos > m_position ? QStringLiteral("+") : QStringLiteral("-"))
                           + Utils::msToString(seekDelta));
 
-    auto seekTipPos{m_seekPos};
+    QPoint seekTipPos{m_seekPos};
 
+    static constexpr int offset = 8;
     if(seekTipPos.x() > (width() / 2)) {
         // Display to left of cursor to avoid clipping
-        seekTipPos.setX(seekTipPos.x() - (2 * m_seekTip->width()));
+        seekTipPos.rx() -= m_seekTip->width() + m_cursorWidth + offset;
+    }
+    else {
+        seekTipPos.rx() += m_cursorWidth + offset;
     }
 
-    seekTipPos.setY(std::max(seekTipPos.y(), m_seekTip->height()));
-    seekTipPos.setY(std::min(seekTipPos.y(), height()));
+    seekTipPos.ry() += m_seekTip->height() / 2;
+    seekTipPos.ry() = std::clamp(seekTipPos.y(), m_seekTip->height() / 2, height());
 
     m_seekTip->setPosition(mapTo(window(), seekTipPos));
 }

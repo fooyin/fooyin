@@ -27,6 +27,7 @@ constexpr int BorderMargin = 2;
 namespace Fooyin {
 ToolTip::ToolTip(QWidget* parent)
     : QWidget{parent}
+    , m_align{Qt::AlignLeft}
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
 
@@ -46,9 +47,10 @@ void ToolTip::setSubtext(const QString& text)
     redraw();
 }
 
-void ToolTip::setPosition(const QPoint& pos)
+void ToolTip::setPosition(const QPoint& pos, Qt::Alignment align)
 {
-    m_pos = pos;
+    m_pos   = pos;
+    m_align = align;
 }
 
 void ToolTip::paintEvent(QPaintEvent* /*event*/)
@@ -112,7 +114,14 @@ void ToolTip::redraw()
     p.drawText(subTextRect, Qt::AlignHCenter, m_subText);
 
     resize(m_pixmap.size());
-    move(m_pos.x() + (m_pixmap.width() / 2), m_pos.y() - m_pixmap.height());
+
+    if(m_align == Qt::AlignLeft) {
+        move(m_pos.x(), m_pos.y() - m_pixmap.height());
+    }
+    else if(m_align == Qt::AlignRight) {
+        move(m_pos.x() - m_pixmap.width(), m_pos.y() - m_pixmap.height());
+    }
+
     update();
 }
 } // namespace Fooyin
