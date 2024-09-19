@@ -370,6 +370,7 @@ void SeekBar::trackChanged(const Track& track)
 {
     if(track.isValid()) {
         m_max = track.duration();
+        m_slider->setValue(0);
         m_slider->updateMaximum(m_max);
     }
 }
