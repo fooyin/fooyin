@@ -20,6 +20,7 @@
 #include "scrobbler.h"
 
 #include "lastfmservice.h"
+#include "listenbrainzservice.h"
 
 #include <core/player/playercontroller.h>
 
@@ -31,11 +32,13 @@ Scrobbler::Scrobbler(PlayerController* playerController, std::shared_ptr<Network
     , m_settings{settings}
 {
     m_services.emplace_back(std::make_unique<LastFmService>(m_network.get(), m_settings));
+    m_services.emplace_back(std::make_unique<ListenBrainzService>(m_network.get(), m_settings));
 
     for(auto& service : m_services) {
+        service->initialise();
         service->loadSession();
         QObject::connect(m_playerController, &PlayerController::currentTrackChanged, service.get(),
-                         &ScrobblerService::updateNowPlaying);
+                         qOverload<const Track&>(&ScrobblerService::updateNowPlaying));
         QObject::connect(m_playerController, &PlayerController::trackPlayed, service.get(),
                          &ScrobblerService::scrobble);
     }

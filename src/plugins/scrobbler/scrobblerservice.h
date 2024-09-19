@@ -24,10 +24,13 @@
 #include <core/track.h>
 
 #include <QBasicTimer>
+#include <QLoggingCategory>
 #include <QObject>
 #include <QString>
 #include <QUrl>
 #include <QVariant>
+
+Q_DECLARE_LOGGING_CATEGORY(SCROBBLER)
 
 class QNetworkReply;
 
@@ -47,39 +50,41 @@ public:
     explicit ScrobblerService(NetworkAccessManager* network, SettingsManager* settings, QObject* parent = nullptr);
     ~ScrobblerService() override;
 
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] bool isAuthenticated() const;
-    [[nodiscard]] QString apiKey() const;
-    [[nodiscard]] QString username() const;
+    [[nodiscard]] virtual QString name() const = 0;
+    [[nodiscard]] virtual QUrl authUrl() const = 0;
+    [[nodiscard]] virtual QString username() const;
+    [[nodiscard]] virtual bool isAuthenticated() const = 0;
 
+    void initialise();
     virtual void authenticate();
-    virtual void loadSession();
-    virtual void logout();
+    virtual void loadSession() = 0;
+    virtual void logout()      = 0;
     void saveCache();
 
-    virtual void updateNowPlaying(const Track& track);
-    virtual void scrobble(const Track& track);
+    void updateNowPlaying(const Track& track);
+    void scrobble(const Track& track);
+
+    virtual void updateNowPlaying() = 0;
+    virtual void submit()           = 0;
+
+    virtual QString tokenSetting() const;
 
 signals:
     void authenticationFinished(bool success, const QString& error = {});
 
 protected:
     virtual void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) = 0;
-    virtual void requestAuth(const QString& token);
-    virtual void authFinished(QNetworkReply* reply);
+    virtual void requestAuth(const QString& token)                               = 0;
+    virtual void authFinished(QNetworkReply* reply)                              = 0;
 
-    void setName(const QString& name);
-    void setApiUrl(const QUrl& url);
-    void setAuthUrl(const QUrl& url);
-    void setApiKey(const QString& key);
-    void setSecret(const QString& secret);
-    void timerEvent(QTimerEvent* event) override;
+    [[nodiscard]] Track currentTrack() const;
+    [[nodiscard]] NetworkAccessManager* network() const;
+    [[nodiscard]] ScrobblerAuthSession* authSession() const;
+    [[nodiscard]] ScrobblerCache* cache() const;
+    [[nodiscard]] SettingsManager* settings() const;
 
-private:
-    void deleteAll();
-    void cleanupAuth();
-
-    void handleAuthError(const char* error);
+    QNetworkReply* addReply(QNetworkReply* reply);
+    bool removeReply(QNetworkReply* reply);
 
     enum class ReplyResult : uint8_t
     {
@@ -87,38 +92,35 @@ private:
         ServerError,
         ApiError,
     };
+    virtual ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc) = 0;
+    bool extractJsonObj(const QByteArray& data, QJsonObject* obj, QString* errorDesc);
 
-    ReplyResult getJsonFromReply(QNetworkReply* reply, QJsonObject* obj, QString* errorDesc);
-    QNetworkReply* createRequest(const std::map<QString, QString>& params);
-
-    void updateNowPlayingFinished(QNetworkReply* reply);
-    void scrobbleFinished(QNetworkReply* reply, const CacheItemList& items);
+    void handleAuthError(const char* error);
+    void cleanupAuth();
+    void deleteAll();
 
     void doDelayedSubmit(bool initial = false);
-    void submit();
+    void setSubmitted(bool submitted);
+    void setSubmitError(bool error);
+    void setScrobbled(bool scrobbled);
 
+    void timerEvent(QTimerEvent* event) override;
+
+private:
     NetworkAccessManager* m_network;
     SettingsManager* m_settings;
 
-    QString m_name;
-    QUrl m_apiUrl;
-    QUrl m_authUrl;
-    QString m_apiKey;
-    QString m_secret;
-
-    ScrobblerAuthSession* m_authSession{nullptr};
+    ScrobblerAuthSession* m_authSession;
     std::vector<QNetworkReply*> m_replies;
-    ScrobblerCache* m_cache{nullptr};
-    QString m_username;
-    QString m_sessionKey;
+    ScrobblerCache* m_cache;
 
     QBasicTimer m_submitTimer;
-    bool m_submitError{false};
+    bool m_submitError;
 
     Track m_currentTrack;
-    uint64_t m_timestamp{0};
-    bool m_scrobbled{false};
-    bool m_submitted{false};
+    uint64_t m_timestamp;
+    bool m_scrobbled;
+    bool m_submitted;
 };
 } // namespace Scrobbler
 } // namespace Fooyin

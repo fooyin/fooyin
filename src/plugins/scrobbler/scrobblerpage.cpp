@@ -29,6 +29,7 @@
 #include <QGroupBox>
 #include <QIcon>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QStyle>
@@ -59,11 +60,18 @@ private:
 
     struct ServiceContext
     {
-        ScrobblerService* service;
-        QPushButton* button;
-        QLabel* label;
-        QLabel* icon;
+        ScrobblerService* service{nullptr};
+        QPushButton* button{nullptr};
+        QLabel* label{nullptr};
+        QLabel* icon{nullptr};
         QString error;
+        QString tokenSetting;
+        QLineEdit* tokenInput{nullptr};
+
+        [[nodiscard]] bool isValid() const
+        {
+            return service && button && label && icon;
+        }
     };
 
     std::map<QString, ServiceContext> m_serviceContext;
@@ -126,6 +134,12 @@ void ScrobblerPageWidget::apply()
     m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(m_scrobblingEnabled->isChecked());
     m_settings->set<Settings::Scrobbler::ScrobblingDelay>(m_scrobbleDelay->value());
     m_settings->set<Settings::Scrobbler::PreferAlbumArtist>(m_preferAlbumArtist->isChecked());
+
+    for(const auto& [_, context] : m_serviceContext) {
+        if(context.tokenInput && !context.tokenSetting.isEmpty()) {
+            m_settings->fileSet(context.tokenSetting, context.tokenInput->text());
+        }
+    }
 }
 
 void ScrobblerPageWidget::reset()
@@ -148,15 +162,29 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
         auto* serviceIcon = new QLabel(this);
         serviceIcon->setPixmap(style()->standardIcon(QStyle::SP_DialogApplyButton).pixmap(24, 24));
 
-        m_serviceContext.emplace(service->name(),
-                                 ServiceContext{service, loginBtn, serviceStatus, serviceIcon, QString{}});
-
-        updateServiceState(service->name());
+        m_serviceContext.emplace(service->name(), ServiceContext{service, loginBtn, serviceStatus, serviceIcon,
+                                                                 QString{}, QString{}, nullptr});
 
         layout->addWidget(serviceIcon, row, 0, Qt::AlignLeft);
         layout->addWidget(serviceName, row, 1, Qt::AlignLeft);
-        layout->addWidget(serviceStatus, row, 2, Qt::AlignLeft);
+        layout->addWidget(serviceStatus, row, 2, Qt::AlignRight);
         layout->addWidget(loginBtn, row, 3, Qt::AlignRight);
+
+        const QString token = service->tokenSetting();
+        if(!token.isEmpty()) {
+            auto* tokenLayout = new QGridLayout();
+            auto* tokenLabel  = new QLabel(tr("User token") + u":", this);
+            auto* tokenInput  = new QLineEdit(this);
+            tokenLayout->addWidget(tokenLabel, 0, 0);
+            tokenLayout->addWidget(tokenInput, 0, 1);
+            tokenLayout->setColumnStretch(1, 1);
+            layout->addLayout(tokenLayout, ++row, 1, 1, 3);
+
+            m_serviceContext.at(service->name()).tokenSetting = token;
+            m_serviceContext.at(service->name()).tokenInput   = tokenInput;
+        }
+
+        updateServiceState(service->name());
 
         QObject::connect(loginBtn, &QPushButton::clicked, this, [this, service]() { toggleLogin(service->name()); });
 
@@ -193,11 +221,16 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
         return;
     }
 
-    const auto& [service, button, label, icon, error] = m_serviceContext.at(name);
+    if(!m_serviceContext.at(name).isValid()) {
+        return;
+    }
+
+    const auto& [service, button, label, icon, error, tokenSetting, tokenInput] = m_serviceContext.at(name);
 
     if(service->isAuthenticated()) {
         button->setText(tr("Sign-out"));
-        label->setText(tr("Signed in as %1").arg(service->username()));
+        const QString username = service->username();
+        label->setText(username.isEmpty() ? tr("Signed in") : tr("Signed in as %1").arg(username));
         icon->show();
     }
     else {
@@ -208,6 +241,10 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
 
     if(!error.isEmpty()) {
         label->setText(error);
+    }
+
+    if(tokenInput && !tokenSetting.isEmpty()) {
+        tokenInput->setText(m_settings->fileValue(tokenSetting).toString());
     }
 }
 

@@ -5,6 +5,8 @@ create_fooyin_plugin_internal(
             Qt6::Network
     SOURCES lastfmservice.cpp
             lastfmservice.h
+            listenbrainzservice.cpp
+            listenbrainzservice.h
             scrobbler.cpp
             scrobbler.h
             scrobblerauthsession.cpp
