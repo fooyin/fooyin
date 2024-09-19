@@ -67,7 +67,8 @@ public:
     virtual void updateNowPlaying() = 0;
     virtual void submit()           = 0;
 
-    virtual QString tokenSetting() const;
+    [[nodiscard]] virtual QString tokenSetting() const;
+    [[nodiscard]] virtual QUrl tokenUrl() const;
 
 signals:
     void authenticationFinished(bool success, const QString& error = {});

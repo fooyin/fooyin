@@ -186,6 +186,11 @@ QString ScrobblerService::tokenSetting() const
     return {};
 }
 
+QUrl ScrobblerService::tokenUrl() const
+{
+    return {};
+}
+
 Track ScrobblerService::currentTrack() const
 {
     return m_currentTrack;

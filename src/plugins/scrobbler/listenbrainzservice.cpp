@@ -172,6 +172,11 @@ QString ListenBrainzService::tokenSetting() const
     return QStringLiteral("%1/UserToken").arg(name());
 }
 
+QUrl ListenBrainzService::tokenUrl() const
+{
+    return QStringLiteral("https://listenbrainz.org/profile/");
+}
+
 void ListenBrainzService::setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query)
 {
     query.addQueryItem(QStringLiteral("response_type"), QStringLiteral("code"));

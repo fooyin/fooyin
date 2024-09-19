@@ -162,8 +162,11 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
         auto* serviceIcon = new QLabel(this);
         serviceIcon->setPixmap(style()->standardIcon(QStyle::SP_DialogApplyButton).pixmap(24, 24));
 
-        m_serviceContext.emplace(service->name(), ServiceContext{service, loginBtn, serviceStatus, serviceIcon,
-                                                                 QString{}, QString{}, nullptr});
+        ServiceContext context;
+        context.service = service;
+        context.button  = loginBtn;
+        context.label   = serviceStatus;
+        context.icon    = serviceIcon;
 
         layout->addWidget(serviceIcon, row, 0, Qt::AlignLeft);
         layout->addWidget(serviceName, row, 1, Qt::AlignLeft);
@@ -175,15 +178,26 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
             auto* tokenLayout = new QGridLayout();
             auto* tokenLabel  = new QLabel(tr("User token") + u":", this);
             auto* tokenInput  = new QLineEdit(this);
+
             tokenLayout->addWidget(tokenLabel, 0, 0);
             tokenLayout->addWidget(tokenInput, 0, 1);
+
+            const QUrl tokenUrl = service->tokenUrl();
+            if(tokenUrl.isValid()) {
+                auto* urlLabel = new QLabel(QStringLiteral("🛈 ") + tr("You can find you user token here") + u": "
+                                                + QStringLiteral("<a href=\"%1\">%1</a>").arg(tokenUrl.toString()),
+                                            this);
+                tokenLayout->addWidget(urlLabel, 1, 0, 1, 2);
+            }
+
             tokenLayout->setColumnStretch(1, 1);
             layout->addLayout(tokenLayout, ++row, 1, 1, 3);
 
-            m_serviceContext.at(service->name()).tokenSetting = token;
-            m_serviceContext.at(service->name()).tokenInput   = tokenInput;
+            context.tokenSetting = token;
+            context.tokenInput   = tokenInput;
         }
 
+        m_serviceContext.emplace(service->name(), context);
         updateServiceState(service->name());
 
         QObject::connect(loginBtn, &QPushButton::clicked, this, [this, service]() { toggleLogin(service->name()); });

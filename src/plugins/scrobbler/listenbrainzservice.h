@@ -42,6 +42,7 @@ public:
     void submit() override;
 
     [[nodiscard]] QString tokenSetting() const override;
+    [[nodiscard]] QUrl tokenUrl() const override;
 
 protected:
     void setupAuthQuery(ScrobblerAuthSession* session, QUrlQuery& query) override;
