@@ -23,9 +23,9 @@ A layout editing mode enables the entire user interface to be customised, starti
 
 Only Linux is supported at present, though support for other platforms is coming soon.
 
-| ![Simple](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/simple-dark.png)     | ![Browser](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/browser-dark.png) |
+| ![Simple](https://github.com/user-attachments/assets/8e8732a7-a7e5-4542-87b4-7d0a7b5e8fa0)     | ![Browser](https://github.com/user-attachments/assets/d9f4ed62-e50a-419c-aa26-8801a76a6597) |
 |----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| ![Obsidian](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/obsidian-dark.png) | ![Wave](https://raw.githubusercontent.com/ludouzi/fooyin/master/data/images/viewer-dark.png)     |
+| ![Obsidian](https://github.com/user-attachments/assets/7dcc92be-04ea-402f-9cbb-a92ee855b893) | ![Wave](https://github.com/user-attachments/assets/de5b4b3a-cd9d-4520-a975-e268e472e0f9)     |
 
 ## Features
 
@@ -46,6 +46,8 @@ Only Linux is supported at present, though support for other platforms is coming
 * [x] Directory browser
 * [x] Waveform seekbar
 * [x] MPRIS support
+* [x] ReplayGain support
+* [x] Scrobbling
 
 ### Roadmap
 
