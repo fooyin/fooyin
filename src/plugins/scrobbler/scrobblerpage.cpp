@@ -187,6 +187,9 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
                 auto* urlLabel = new QLabel(QStringLiteral("🛈 ") + tr("You can find you user token here") + u": "
                                                 + QStringLiteral("<a href=\"%1\">%1</a>").arg(tokenUrl.toString()),
                                             this);
+                urlLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+                urlLabel->setOpenExternalLinks(true);
+                urlLabel->setTextFormat(Qt::RichText);
                 tokenLayout->addWidget(urlLabel, 1, 0, 1, 2);
             }
 
