@@ -37,6 +37,7 @@ public:
     void trackChanged(const Track& track);
     void stateChanged(Player::PlayState state);
     void updateLabels(uint64_t time) const;
+    void updateLabelSize() const;
 
     SeekContainer* m_self;
 
@@ -58,9 +59,7 @@ SeekContainerPrivate::SeekContainerPrivate(SeekContainer* self, PlayerController
 {
     m_layout->setContentsMargins({});
 
-    const QFontMetrics fm{m_self->fontMetrics()};
-    m_elapsed->setMinimumWidth(fm.horizontalAdvance(Utils::msToString(0)));
-    m_total->setMinimumWidth(fm.horizontalAdvance(QStringLiteral("-") + Utils::msToString(0)));
+    updateLabelSize();
 
     m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
     m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
@@ -112,6 +111,14 @@ void SeekContainerPrivate::updateLabels(uint64_t time) const
     }
 }
 
+void SeekContainerPrivate::updateLabelSize() const
+{
+    const QFontMetrics fm{m_self->fontMetrics()};
+    const QString zero = Utils::msToString(0);
+    m_elapsed->setFixedWidth(fm.horizontalAdvance(zero));
+    m_total->setFixedWidth(fm.horizontalAdvance((m_elapsedTotal ? QStringLiteral("-") : QString{}) + zero));
+}
+
 SeekContainer::SeekContainer(PlayerController* playerController, QWidget* parent)
     : QWidget{parent}
     , p{std::make_unique<SeekContainerPrivate>(this, playerController)}
@@ -150,11 +157,13 @@ void SeekContainer::setLabelsEnabled(bool enabled)
 {
     p->m_elapsed->setHidden(!enabled);
     p->m_total->setHidden(!enabled);
+    p->updateLabelSize();
 }
 
 void SeekContainer::setElapsedTotal(bool enabled)
 {
     p->m_elapsedTotal = enabled;
+    p->updateLabelSize();
     if(!p->m_elapsedTotal) {
         p->m_total->setText(Utils::msToString(p->m_max));
     }
