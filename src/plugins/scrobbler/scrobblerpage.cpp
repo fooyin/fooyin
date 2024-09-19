@@ -228,13 +228,13 @@ void ScrobblerPageWidget::updateServiceState(const QString& name)
     const auto& [service, button, label, icon, error, tokenSetting, tokenInput] = m_serviceContext.at(name);
 
     if(service->isAuthenticated()) {
-        button->setText(tr("Sign-out"));
+        button->setText(tr("Sign Out"));
         const QString username = service->username();
         label->setText(username.isEmpty() ? tr("Signed in") : tr("Signed in as %1").arg(username));
         icon->show();
     }
     else {
-        button->setText(tr("Login"));
+        button->setText(tr("Sign In"));
         label->setText(tr("Not signed in"));
         icon->hide();
     }
