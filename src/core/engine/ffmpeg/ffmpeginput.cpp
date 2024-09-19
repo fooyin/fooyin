@@ -495,7 +495,8 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
 void FFmpegInputPrivate::checkIsVbr(const Track& track)
 {
     const auto codec = m_codec.context()->codec_id;
-    m_isVbr = track.codecProfile().contains(u"VBR") || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
+    m_isVbr          = track.codecProfile().contains(u"VBR") || track.codecProfile().contains(u"ABR")
+           || codec == AV_CODEC_ID_OPUS || codec == AV_CODEC_ID_VORBIS;
 }
 
 bool FFmpegInputPrivate::createCodec(AVStream* avStream)
