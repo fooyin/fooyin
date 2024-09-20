@@ -40,7 +40,10 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_settings{settings}
     , m_layoutMenu{nullptr}
     , m_layoutEditing{nullptr}
-{ }
+    , m_layoutEditingCmd{nullptr}
+{
+    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::addLayout);
+}
 
 void LayoutMenu::setup()
 {
@@ -51,13 +54,11 @@ void LayoutMenu::setup()
         m_layoutEditing = new QAction(tr("&Editing mode"), this);
         m_layoutEditing->setStatusTip(tr("Toggle layout editing mode"));
         m_layoutEditingCmd = m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
+        m_layoutEditing->setCheckable(true);
+        m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
         QObject::connect(m_layoutEditing, &QAction::triggered, this,
                          [this](bool checked) { m_settings->set<Settings::Gui::LayoutEditing>(checked); });
         m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
-        m_layoutEditing->setCheckable(true);
-        m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
-        m_settings->subscribe<Settings::Gui::LayoutEditing>(
-            this, [this](bool enabled) { m_layoutEditing->setChecked(enabled); });
     }
 
     m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
@@ -69,25 +70,25 @@ void LayoutMenu::setup()
     exportLayout->setStatusTip(tr("Save the current layout to the specified file"));
     QObject::connect(exportLayout, &QAction::triggered, this, &LayoutMenu::exportLayout);
 
+    m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
+    m_layoutMenu->addAction(m_lockSplittersCmd);
     m_layoutMenu->addAction(importLayout);
     m_layoutMenu->addAction(exportLayout);
-
     m_layoutMenu->addSeparator();
 
     const auto layouts = m_layoutProvider->layouts();
     for(const auto& layout : layouts) {
-        addLayout(layout.name());
+        addLayout(layout);
     }
-
-    QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this,
-                     [this](const FyLayout& layout) { addLayout(layout.name()); });
 }
 
-void LayoutMenu::addLayout(const QString& name)
+void LayoutMenu::addLayout(const FyLayout& layout)
 {
     if(!m_layoutMenu) {
         return;
     }
+
+    const QString name = layout.name();
 
     auto* layoutAction = new QAction(name, m_layoutMenu->menu());
     layoutAction->setStatusTip(tr("Replace the current layout"));

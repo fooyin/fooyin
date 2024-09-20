@@ -299,7 +299,6 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_layoutMenu, &LayoutMenu::exportLayout, m_self,
                      [this]() { m_editableLayout->exportLayout(m_editableLayout.get()); });
 
-    QObject::connect(&m_layoutProvider, &LayoutProvider::layoutAdded, m_layoutMenu, &LayoutMenu::setup);
     QObject::connect(&m_layoutProvider, &LayoutProvider::requestChangeLayout, m_editableLayout.get(),
                      &EditableLayout::changeLayout);
 
