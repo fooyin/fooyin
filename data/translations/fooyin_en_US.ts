@@ -570,93 +570,93 @@
 <context>
     <name>Fooyin::EditableLayout</name>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="357"/>
-        <location filename="../../src/gui/editablelayout.cpp" line="364"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="361"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="368"/>
         <source>&amp;Insert</source>
         <translation>&amp;Insert</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="380"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Left</source>
         <translation>Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="380"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="384"/>
         <source>Up</source>
         <translation>Up</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="387"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="391"/>
         <source>Right</source>
         <translation>Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="387"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="391"/>
         <source>Down</source>
         <translation>Down</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="394"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="398"/>
         <source>Far Left</source>
         <translation>Far Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="394"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="398"/>
         <source>Top</source>
         <translation>Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="401"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="405"/>
         <source>Far Right</source>
         <translation>Far Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="401"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="405"/>
         <source>Bottom</source>
         <translation>Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="416"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="420"/>
         <source>Paste (Insert)</source>
         <translation>Paste (Insert)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="449"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="453"/>
         <source>&amp;Replace</source>
         <translation>&amp;Replace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="454"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="458"/>
         <source>&amp;Split</source>
         <translation>&amp;Split</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="459"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="463"/>
         <source>Copy</source>
         <translation>Copy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="472"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="476"/>
         <source>Paste (Replace)</source>
         <translation>Paste (Replace)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="481"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="485"/>
         <source>&amp;Move</source>
         <translation>&amp;Move</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="487"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="491"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="554"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="558"/>
         <source>Undo</source>
         <translation>Undo</translation>
     </message>
     <message>
-        <location filename="../../src/gui/editablelayout.cpp" line="563"/>
+        <location filename="../../src/gui/editablelayout.cpp" line="567"/>
         <source>Redo</source>
         <translation>Redo</translation>
     </message>
@@ -1918,12 +1918,12 @@
 <context>
     <name>Fooyin::GuiGeneralPage</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="390"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="397"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="391"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="398"/>
         <source>Interface</source>
         <translation>Interface</translation>
     </message>
@@ -1931,137 +1931,142 @@
 <context>
     <name>Fooyin::GuiGeneralPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="103"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="104"/>
         <source>Auto-detect theme</source>
         <translation>Auto-detect theme</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="104"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="105"/>
         <source>Light</source>
         <translation>Light</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="105"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="106"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
         <source>Use system icons</source>
         <translation>Use system icons</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="109"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="110"/>
         <source>Show splitter handles</source>
         <translation>Show splitter handles</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="107"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="108"/>
         <source>Override root margin</source>
         <translation>Override root margin</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="110"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="111"/>
+        <source>Lock splitters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
         <source>Override splitter handle size</source>
         <translation>Override splitter handle size</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="114"/>
         <source>Raise</source>
         <translation>Raise</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="113"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
         <source>Stretch</source>
         <translation>Stretch</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="115"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="117"/>
         <source>Prefer currently playing track</source>
         <translation>Prefer currently playing track</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="116"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="118"/>
         <source>Prefer current selection</source>
         <translation>Prefer current selection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="120"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="122"/>
         <source>Setup</source>
         <translation>Setup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
         <source>Quick Setup</source>
         <translation>Quick Setup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="123"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="125"/>
         <source>Import Layout</source>
         <translation>Import Layout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="124"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="126"/>
         <source>Export Layout</source>
         <translation>Export Layout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="130"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="132"/>
         <source>Theme</source>
         <translation>Theme</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="133"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
         <source>Style</source>
         <translation>Style</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="135"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="137"/>
         <source>Icons</source>
         <translation>Icons</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="148"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="150"/>
         <source>Layout</source>
         <translation>Layout</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="166"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="170"/>
         <source>Tool Buttons</source>
         <translation>Tool Buttons</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="172"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="176"/>
         <source>Playback Scripts</source>
         <translation>Playback Scripts</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="175"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="179"/>
         <source>Window title</source>
         <translation>Window title</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="180"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="184"/>
         <source>Selection Info</source>
         <translation>Selection Info</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="190"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="194"/>
         <source>Seeking</source>
         <translation>Seeking</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="193"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="197"/>
         <source>Seek step</source>
         <translation>Seek step</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="203"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="207"/>
         <source>Rating</source>
         <translation>Rating</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="206"/>
+        <location filename="../../src/gui/settings/guigeneralpage.cpp" line="210"/>
         <source>Star size</source>
         <translation>Star size</translation>
     </message>
@@ -2384,37 +2389,47 @@
 <context>
     <name>Fooyin::LayoutMenu</name>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="51"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="56"/>
         <source>&amp;Editing mode</source>
         <translation>&amp;Editing mode</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="57"/>
         <source>Toggle layout editing mode</source>
         <translation>Toggle layout editing mode</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="65"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="67"/>
+        <source>Loc&amp;k splitters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="68"/>
+        <source>Prevent manual resizing of splitters when not in layout editing mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="77"/>
         <source>&amp;Import layout…</source>
         <translation>&amp;Import layout…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="66"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="78"/>
         <source>Add the layout from the specified file</source>
         <translation>Add the layout from the specified file</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="68"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="80"/>
         <source>E&amp;xport layout…</source>
         <translation>E&amp;xport layout…</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="69"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="81"/>
         <source>Save the current layout to the specified file</source>
         <translation>Save the current layout to the specified file</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="93"/>
+        <location filename="../../src/gui/menubar/layoutmenu.cpp" line="105"/>
         <source>Replace the current layout</source>
         <translation>Replace the current layout</translation>
     </message>
@@ -4571,7 +4586,7 @@
 <context>
     <name>Fooyin::ScriptEditor</name>
     <message>
-        <location filename="../../src/gui/scripting/scripteditor.cpp" line="286"/>
+        <location filename="../../src/gui/scripting/scripteditor.cpp" line="273"/>
         <source>Script Editor</source>
         <translation type="unfinished">Script Editor</translation>
     </message>
@@ -5003,22 +5018,22 @@
 <context>
     <name>Fooyin::SplitterWidget</name>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="299"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="363"/>
         <source>Splitter (Top/Bottom)</source>
         <translation>Splitter (Top/Bottom)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="301"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="365"/>
         <source>Splitter (Left/Right)</source>
         <translation>Splitter (Left/Right)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="311"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="375"/>
         <source>Switch orientation</source>
         <translation>Switch orientation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="314"/>
+        <location filename="../../src/gui/splitters/splitterwidget.cpp" line="378"/>
         <source>Splitter</source>
         <translation>Splitter</translation>
     </message>
@@ -5416,22 +5431,22 @@
         <translation>Open the quick setup dialog</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="46"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="44"/>
         <source>&amp;Log</source>
         <translation>&amp;Log</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="47"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="45"/>
         <source>Open the log dialog</source>
         <translation>Open the log dialog</translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="51"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>&amp;Script editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/menubar/viewmenu.cpp" line="52"/>
+        <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
         <source>Open the script editor dialog</source>
         <translation type="unfinished"></translation>
     </message>
