@@ -52,6 +52,9 @@ enum GuiSettings : uint32_t
     SeekStep              = 12 | Type::Int,
     ShowStatusTips        = 13 | Type::Bool,
     Theme                 = 14 | Type::Variant,
+    ShowSplitterHandles   = 15 | Type::Bool,
+    LockSplitterHandles   = 16 | Type::Bool,
+    SplitterHandleSize    = 17 | Type::Int,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

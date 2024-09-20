@@ -66,9 +66,11 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<SeekStep>(4000, QStringLiteral("Interface/SeekIncrement"));
     m_settings->createSetting<ShowStatusTips>(true, QStringLiteral("Interface/ShowStatusTips"));
     m_settings->createTempSetting<Theme>(QVariant{});
+    m_settings->createSetting<ShowSplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
+    m_settings->createSetting<LockSplitterHandles>(false, QStringLiteral("Interface/LockSplitterHandles"));
+    m_settings->createSetting<SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
-    m_settings->createSetting<Internal::SplitterHandles>(false, QStringLiteral("Interface/SplitterHandles"));
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));
     m_settings->createSetting<Internal::PlaylistScrollBar>(true, QStringLiteral("PlaylistWidget/Scrollbar"));
@@ -121,7 +123,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                 QStringLiteral("DirectoryBrowser/StartPlaybackOnSend"));
     m_settings->createSetting<Internal::EditableLayoutMargin>(-1, QStringLiteral("Interface/EditableLayoutMargin"));
     m_settings->createSetting<Internal::PlaylistTabsAddButton>(false, QStringLiteral("PlaylistTabs/ShowAddButton"));
-    m_settings->createSetting<Internal::SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
     m_settings->createSetting<Internal::LibTreeRestoreState>(true, QStringLiteral("LibraryTree/RestoreState"));
     m_settings->createSetting<Internal::ShowTrayIcon>(false, QStringLiteral("Interface/ShowTrayIcon"));
     m_settings->createSetting<Internal::TrayOnClose>(true, QStringLiteral("Interface/TrayOnClose"));

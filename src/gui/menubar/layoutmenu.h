@@ -47,7 +47,7 @@ signals:
     void exportLayout();
 
 private:
-    void addLayout(const QString& name);
+    void addLayout(const FyLayout& layout);
 
     ActionManager* m_actionManager;
     LayoutProvider* m_layoutProvider;
@@ -56,5 +56,7 @@ private:
     ActionContainer* m_layoutMenu;
     QAction* m_layoutEditing;
     Command* m_layoutEditingCmd;
+    QAction* m_lockSplitters;
+    Command* m_lockSplittersCmd;
 };
 } // namespace Fooyin

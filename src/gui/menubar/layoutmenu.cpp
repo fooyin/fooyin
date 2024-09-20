@@ -41,6 +41,8 @@ LayoutMenu::LayoutMenu(ActionManager* actionManager, LayoutProvider* layoutProvi
     , m_layoutMenu{nullptr}
     , m_layoutEditing{nullptr}
     , m_layoutEditingCmd{nullptr}
+    , m_lockSplitters{nullptr}
+    , m_lockSplittersCmd{nullptr}
 {
     QObject::connect(m_layoutProvider, &LayoutProvider::layoutAdded, this, &LayoutMenu::addLayout);
 }
@@ -61,7 +63,16 @@ void LayoutMenu::setup()
         m_settings->subscribe<Settings::Gui::LayoutEditing>(m_layoutEditing, &QAction::setChecked);
     }
 
-    m_layoutMenu->addAction(m_layoutEditingCmd, Actions::Groups::One);
+    if(!m_lockSplitters) {
+        m_lockSplitters = new QAction(tr("Loc&k splitters"), this);
+        m_lockSplitters->setStatusTip(tr("Prevent manual resizing of splitters when not in layout editing mode"));
+        m_lockSplittersCmd = m_actionManager->registerAction(m_lockSplitters, Constants::Actions::LockSplitters);
+        m_lockSplitters->setCheckable(true);
+        m_lockSplitters->setChecked(m_settings->value<Settings::Gui::LockSplitterHandles>());
+        QObject::connect(m_lockSplitters, &QAction::triggered, this,
+                         [this](bool checked) { m_settings->set<Settings::Gui::LockSplitterHandles>(checked); });
+        m_settings->subscribe<Settings::Gui::LockSplitterHandles>(m_lockSplitters, &QAction::setChecked);
+    }
 
     auto* importLayout = new QAction(tr("&Import layout…"), m_layoutMenu->menu());
     importLayout->setStatusTip(tr("Add the layout from the specified file"));
@@ -94,9 +105,9 @@ void LayoutMenu::addLayout(const FyLayout& layout)
     layoutAction->setStatusTip(tr("Replace the current layout"));
     auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{QStringLiteral("Layout.Switch.%1").arg(name)});
     QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
-        const auto layout = m_layoutProvider->layoutByName(name);
-        if(layout.isValid()) {
-            emit changeLayout(layout);
+        const auto fyLayout = m_layoutProvider->layoutByName(name);
+        if(fyLayout.isValid()) {
+            emit changeLayout(fyLayout);
         }
     });
     m_layoutMenu->addAction(layoutCmd->action());

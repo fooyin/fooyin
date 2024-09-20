@@ -127,6 +127,7 @@ constexpr auto Exit             = "File.Exit";
 constexpr auto Settings         = "Edit.Settings";
 constexpr auto Search           = "Edit.Search";
 constexpr auto LayoutEditing    = "Layout.LayoutEditing";
+constexpr auto LockSplitters    = "Layout.LockSplitters";
 constexpr auto QuickSetup       = "View.QuickSetup";
 constexpr auto ShowNowPlaying   = "View.ShowNowPlaying";
 constexpr auto Refresh          = "Library.Refresh";

@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 #include "widgets/dummy.h"
 
+#include <gui/guisettings.h>
 #include <gui/widgetprovider.h>
 #include <utils/enum.h>
 #include <utils/helpers.h>
@@ -31,6 +32,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QSplitter>
 
 namespace Fooyin {
@@ -43,46 +45,106 @@ public:
         : QSplitterHandle{type, parent}
     { }
 
-    void showHandle(bool show)
-    {
-        m_showHandle = show;
-        update();
-    }
+    void showHandle(bool show);
+    void setHandleLocked(bool locked);
+    void setHandleSize(int size);
 
-    void setHandleSize(int size)
-    {
-        m_customSize = size;
-        updateGeometry();
-    }
-
-    [[nodiscard]] QSize sizeHint() const override
-    {
-        QSize size = QSplitterHandle::sizeHint();
-
-        if(m_customSize >= 0) {
-            if(orientation() == Qt::Vertical) {
-                size.setHeight(m_customSize);
-            }
-            else {
-                size.setWidth(m_customSize);
-            }
-        }
-
-        return size;
-    }
+    [[nodiscard]] QSize sizeHint() const override;
 
 protected:
-    void paintEvent(QPaintEvent* event) override
-    {
-        if(m_showHandle) {
-            QSplitterHandle::paintEvent(event);
-        }
-    };
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 
 private:
     bool m_showHandle{true};
     int m_customSize{-1};
+    bool m_lockHandle{false};
 };
+
+void SplitterHandle::showHandle(bool show)
+{
+    m_showHandle = show;
+    update();
+}
+
+void SplitterHandle::setHandleLocked(bool locked)
+{
+    m_lockHandle = locked;
+}
+
+void SplitterHandle::setHandleSize(int size)
+{
+    m_customSize = size;
+    updateGeometry();
+}
+
+QSize SplitterHandle::sizeHint() const
+{
+    QSize size = QSplitterHandle::sizeHint();
+
+    if(m_customSize >= 0) {
+        if(orientation() == Qt::Vertical) {
+            size.setHeight(m_customSize);
+        }
+        else {
+            size.setWidth(m_customSize);
+        }
+    }
+
+    return size;
+}
+
+void SplitterHandle::mousePressEvent(QMouseEvent* event)
+{
+    if(m_lockHandle) {
+        event->ignore();
+    }
+    else {
+        QSplitterHandle::mousePressEvent(event);
+    }
+}
+
+void SplitterHandle::mouseMoveEvent(QMouseEvent* event)
+{
+    if(m_lockHandle) {
+        event->ignore();
+    }
+    else {
+        QSplitterHandle::mouseMoveEvent(event);
+    }
+}
+
+void SplitterHandle::mouseReleaseEvent(QMouseEvent* event)
+{
+    if(m_lockHandle) {
+        event->ignore();
+    }
+    else {
+        QSplitterHandle::mouseReleaseEvent(event);
+    }
+}
+
+void SplitterHandle::enterEvent(QEnterEvent* event)
+{
+    QSplitterHandle::enterEvent(event);
+
+    if(m_lockHandle) {
+        setCursor({});
+    }
+    else {
+        setCursor(orientation() == Qt::Horizontal ? Qt::SplitHCursor : Qt::SplitVCursor);
+    }
+}
+
+void SplitterHandle::paintEvent(QPaintEvent* event)
+{
+    if(m_showHandle) {
+        QSplitterHandle::paintEvent(event);
+    }
+}
 
 class Splitter : public QSplitter
 {
@@ -102,11 +164,13 @@ protected:
     {
         auto* handle = new SplitterHandle(orientation(), this);
 
-        handle->showHandle(m_settings->value<Settings::Gui::Internal::SplitterHandles>());
-        handle->setHandleSize(m_settings->value<Settings::Gui::Internal::SplitterHandleSize>());
+        handle->showHandle(m_settings->value<Settings::Gui::ShowSplitterHandles>());
+        handle->setHandleLocked(m_settings->value<Settings::Gui::LockSplitterHandles>());
+        handle->setHandleSize(m_settings->value<Settings::Gui::SplitterHandleSize>());
 
-        m_settings->subscribe<Settings::Gui::Internal::SplitterHandles>(handle, &SplitterHandle::showHandle);
-        m_settings->subscribe<Settings::Gui::Internal::SplitterHandleSize>(handle, &SplitterHandle::setHandleSize);
+        m_settings->subscribe<Settings::Gui::ShowSplitterHandles>(handle, &SplitterHandle::showHandle);
+        m_settings->subscribe<Settings::Gui::LockSplitterHandles>(handle, &SplitterHandle::setHandleLocked);
+        m_settings->subscribe<Settings::Gui::SplitterHandleSize>(handle, &SplitterHandle::setHandleSize);
 
         return handle;
     };

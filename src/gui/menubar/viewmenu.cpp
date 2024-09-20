@@ -53,6 +53,8 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     viewMenu->addAction(m_actionManager->registerAction(showEditor, Constants::Actions::ScriptEditor));
     QObject::connect(showEditor, &QAction::triggered, this, &ViewMenu::openScriptEditor);
 
+    viewMenu->addSeparator();
+
     auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
     showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));
     viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));

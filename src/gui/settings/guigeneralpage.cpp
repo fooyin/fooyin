@@ -79,6 +79,7 @@ private:
     QSpinBox* m_editableLayoutMargin;
 
     QCheckBox* m_splitterHandles;
+    QCheckBox* m_lockSplitters;
     QCheckBox* m_overrideSplitterHandle;
     QSpinBox* m_splitterHandleGap;
 
@@ -107,6 +108,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_overrideMargin{new QCheckBox(tr("Override root margin") + QStringLiteral(":"), this)}
     , m_editableLayoutMargin{new QSpinBox(this)}
     , m_splitterHandles{new QCheckBox(tr("Show splitter handles"), this)}
+    , m_lockSplitters{new QCheckBox(tr("Lock splitters"), this)}
     , m_overrideSplitterHandle{new QCheckBox(tr("Override splitter handle size") + QStringLiteral(":"), this)}
     , m_splitterHandleGap{new QSpinBox(this)}
     , m_buttonRaise{new QCheckBox(tr("Raise"), this)}
@@ -148,11 +150,13 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     auto* layoutGroup       = new QGroupBox(tr("Layout"), this);
     auto* layoutGroupLayout = new QGridLayout(layoutGroup);
 
-    layoutGroupLayout->addWidget(m_splitterHandles, 0, 0, 1, 3);
-    layoutGroupLayout->addWidget(m_overrideSplitterHandle, 1, 0);
-    layoutGroupLayout->addWidget(m_splitterHandleGap, 1, 1);
-    layoutGroupLayout->addWidget(m_overrideMargin, 2, 0);
-    layoutGroupLayout->addWidget(m_editableLayoutMargin, 2, 1);
+    int row{0};
+    layoutGroupLayout->addWidget(m_splitterHandles, row++, 0, 1, 3);
+    layoutGroupLayout->addWidget(m_lockSplitters, row++, 0, 1, 3);
+    layoutGroupLayout->addWidget(m_overrideSplitterHandle, row, 0);
+    layoutGroupLayout->addWidget(m_splitterHandleGap, row++, 1);
+    layoutGroupLayout->addWidget(m_overrideMargin, row, 0);
+    layoutGroupLayout->addWidget(m_editableLayoutMargin, row++, 1);
     layoutGroupLayout->setColumnStretch(2, 1);
 
     m_editableLayoutMargin->setMinimum(0);
@@ -215,7 +219,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
 
     auto* mainLayout = new QGridLayout(this);
 
-    int row{0};
+    row = 0;
     mainLayout->addWidget(setupBox, row++, 0, 1, 2);
     mainLayout->addWidget(themeBox, row++, 0, 1, 2);
     mainLayout->addWidget(layoutGroup, row++, 0, 1, 2);
@@ -272,7 +276,8 @@ void GuiGeneralPageWidget::load()
             break;
     }
 
-    m_splitterHandles->setChecked(m_settings->value<SplitterHandles>());
+    m_splitterHandles->setChecked(m_settings->value<ShowSplitterHandles>());
+    m_lockSplitters->setChecked(m_settings->value<LockSplitterHandles>());
 
     m_overrideMargin->setChecked(m_settings->value<EditableLayoutMargin>() >= 0);
     m_editableLayoutMargin->setValue(m_settings->value<EditableLayoutMargin>());
@@ -319,7 +324,8 @@ void GuiGeneralPageWidget::apply()
     }
     m_settings->set<IconTheme>(static_cast<int>(iconThemeOption));
 
-    m_settings->set<SplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<ShowSplitterHandles>(m_splitterHandles->isChecked());
+    m_settings->set<LockSplitterHandles>(m_lockSplitters->isChecked());
 
     if(m_overrideMargin->isChecked()) {
         m_settings->set<EditableLayoutMargin>(m_editableLayoutMargin->value());
@@ -355,7 +361,8 @@ void GuiGeneralPageWidget::reset()
 {
     m_settings->reset<Style>();
     m_settings->reset<IconTheme>();
-    m_settings->reset<SplitterHandles>();
+    m_settings->reset<ShowSplitterHandles>();
+    m_settings->reset<LockSplitterHandles>();
     m_settings->reset<EditableLayoutMargin>();
     m_settings->reset<SplitterHandleSize>();
     m_settings->reset<WindowTitleTrackScript>();
