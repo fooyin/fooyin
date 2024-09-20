@@ -539,7 +539,7 @@ bool ScriptRegistry::isListVariable(const QString& var) const
     return p->m_listProperties.contains(var.toUpper());
 }
 
-ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet)
+ScriptResult ScriptRegistry::calculateResult(ScriptRegistry::FuncRet funcRet) const
 {
     ScriptResult result;
 

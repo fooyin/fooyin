@@ -63,7 +63,7 @@ protected:
     }
 
     [[nodiscard]] bool isListVariable(const QString& var) const;
-    static ScriptResult calculateResult(FuncRet funcRet);
+    [[nodiscard]] virtual ScriptResult calculateResult(FuncRet funcRet) const;
 
 private:
     std::unique_ptr<ScriptRegistryPrivate> p;

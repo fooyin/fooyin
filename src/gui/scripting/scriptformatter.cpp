@@ -130,7 +130,6 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokFunc):
         case(ScriptScanner::TokQuote):
         case(ScriptScanner::TokLeftSquare):
-        case(ScriptScanner::TokEscape):
         case(ScriptScanner::TokRightAngle):
         case(ScriptScanner::TokComma):
         case(ScriptScanner::TokLeftParen):
@@ -141,6 +140,11 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokEquals):
         case(ScriptScanner::TokLiteral):
             m_currentBlock.text += m_previous.value.toString();
+            break;
+        case(ScriptScanner::TokEscape):
+            advance();
+            m_currentBlock.text += m_previous.value.toString();
+            break;
         case(ScriptScanner::TokEos):
         case(ScriptScanner::TokError):
             break;
@@ -149,14 +153,6 @@ void ScriptFormatterPrivate::expression()
 
 void ScriptFormatterPrivate::formatBlock()
 {
-    if(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
-        if(!m_registry.isFormatFunc(m_current.value.toString())) {
-            // Treat '<' as literal if not valid function
-            m_currentBlock.text += m_previous.value.toString();
-            return;
-        }
-    }
-
     QString func;
     QString option;
 

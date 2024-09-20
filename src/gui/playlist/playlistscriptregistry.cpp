@@ -146,4 +146,11 @@ ScriptResult PlaylistScriptRegistry::value(const QString& var, const Track& trac
 
     return ScriptRegistry::value(var, track);
 }
+
+ScriptResult PlaylistScriptRegistry::calculateResult(FuncRet funcRet) const
+{
+    ScriptResult result = ScriptRegistry::calculateResult(funcRet);
+    result.value.replace(u'<', QStringLiteral("\\<"));
+    return result;
+}
 } // namespace Fooyin

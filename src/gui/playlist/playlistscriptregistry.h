@@ -47,6 +47,9 @@ public:
     [[nodiscard]] bool isVariable(const QString& var, const Track& track) const override;
     [[nodiscard]] ScriptResult value(const QString& var, const Track& track) const override;
 
+protected:
+    [[nodiscard]] ScriptResult calculateResult(FuncRet funcRet) const override;
+
 private:
     std::unique_ptr<PlaylistScriptRegistryPrivate> p;
 };
