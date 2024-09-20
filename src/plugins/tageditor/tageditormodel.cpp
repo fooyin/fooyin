@@ -134,13 +134,13 @@ bool TagEditorModelPrivate::updateTrackMetadata(const TagEditorField& field, con
         return false;
     }
 
-    const bool isList  = split || field.multivalue;
-    const bool isFloat = (field.scriptField == QLatin1String{Constants::MetaData::RatingEditor});
-
     QString tag{field.scriptField};
-    if(tag == QLatin1String{Constants::MetaData::RatingEditor}) {
+    if(tag.compare(QLatin1String{Constants::MetaData::RatingEditor}, Qt::CaseInsensitive) == 0) {
         tag = QLatin1String{Constants::MetaData::Rating};
     }
+
+    const bool isList  = split || field.multivalue;
+    const bool isFloat = (tag.compare(QLatin1String{Constants::MetaData::Rating}, Qt::CaseInsensitive) == 0);
 
     QStringList listValue;
     float floatValue{-1};
