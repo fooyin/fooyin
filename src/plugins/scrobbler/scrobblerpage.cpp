@@ -184,7 +184,7 @@ void ScrobblerPageWidget::populateServices(QGridLayout* layout)
 
             const QUrl tokenUrl = service->tokenUrl();
             if(tokenUrl.isValid()) {
-                auto* urlLabel = new QLabel(QStringLiteral("🛈 ") + tr("You can find you user token here") + u": "
+                auto* urlLabel = new QLabel(QStringLiteral("🛈 ") + tr("You can find your user token here") + u": "
                                                 + QStringLiteral("<a href=\"%1\">%1</a>").arg(tokenUrl.toString()),
                                             this);
                 urlLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);

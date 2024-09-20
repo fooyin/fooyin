@@ -10,6 +10,6 @@
                   "You should have received a copy of the GNU General Public License along with Fooyin.  If not, see <http://www.gnu.org/licenses/>"
                 ],
     "Category" : "General",
-    "Description" : "Adds functionality to scrobble to last.fm",
+    "Description" : "Adds functionality to scrobble to online services",
     "Url" : "https://github.com/fooyin/fooyin"
 }
