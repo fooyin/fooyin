@@ -360,8 +360,8 @@ bool AlsaOutput::initAlsa()
     }
 
     if(std::cmp_not_equal(sampleRate, m_format.sampleRate())) {
-        qCInfo(ALSA) << "Sample rate not supported:" << m_format.sampleRate() << "Hz";
-        qCInfo(ALSA) << "Using sample rate:" << sampleRate << "Hz";
+        qCDebug(ALSA) << "Sample rate not supported:" << m_format.sampleRate() << "Hz";
+        qCDebug(ALSA) << "Using sample rate:" << sampleRate << "Hz";
         m_format.setSampleRate(static_cast<int>(sampleRate));
     }
 
@@ -373,7 +373,7 @@ bool AlsaOutput::initAlsa()
     }
 
     if(std::cmp_not_equal(channelCount, m_format.channelCount())) {
-        qCInfo(ALSA) << "Using channels:" << channelCount;
+        qCDebug(ALSA) << "Using channels:" << channelCount;
         m_format.setChannelCount(static_cast<int>(channelCount));
     }
 
@@ -469,7 +469,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
     const int err   = snd_pcm_hw_params_set_format(m_pcmHandle.get(), hwParams, alsaFormat);
 
     if(err < 0) {
-        qCInfo(ALSA) << "Format not supported:" << m_format.prettyFormat();
+        qCDebug(ALSA) << "Format not supported:" << m_format.prettyFormat();
         qCDebug(ALSA) << "Trying all supported formats";
 
         static constexpr std::array<std::pair<snd_pcm_format_t, int>, 5> formats{{{SND_PCM_FORMAT_U8, 8},
@@ -505,7 +505,7 @@ bool AlsaOutput::setAlsaFormat(snd_pcm_hw_params_t* hwParams)
         }
 
         m_format.setSampleFormat(findSampleFormat(compatFormat));
-        qCInfo(ALSA) << "Found compatible format:" << m_format.prettyFormat();
+        qCDebug(ALSA) << "Found compatible format:" << m_format.prettyFormat();
     }
 
     return true;
