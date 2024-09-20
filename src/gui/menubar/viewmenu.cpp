@@ -41,8 +41,6 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
                         Actions::Groups::One);
     QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
-    viewMenu->addSeparator();
-
     auto* showLog = new QAction(Utils::iconFromTheme(Constants::Icons::Log), tr("&Log"), this);
     showLog->setStatusTip(tr("Open the log dialog"));
     viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));

@@ -21,6 +21,8 @@
 
 #include "fygui_export.h"
 
+#include <core/track.h>
+
 #include <QDialog>
 
 namespace Fooyin {
@@ -33,12 +35,14 @@ class FYGUI_EXPORT ScriptEditor : public QDialog
     Q_OBJECT
 
 public:
-    ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent = nullptr);
-    explicit ScriptEditor(const QString& script, QWidget* parent = nullptr);
+    ScriptEditor(LibraryManager* libraryManager, const Track& track, QWidget* parent = nullptr);
+    explicit ScriptEditor(LibraryManager* libraryManager, QWidget* parent = nullptr);
+    ScriptEditor(const QString& script, const Track& track, QWidget* parent = nullptr);
     explicit ScriptEditor(QWidget* parent = nullptr);
     ~ScriptEditor() override;
 
-    static void openEditor(const QString& script, const std::function<void(const QString&)>& callback);
+    static void openEditor(const QString& script, const std::function<void(const QString&)>& callback,
+                           const Track& track = {});
 
     [[nodiscard]] QSize sizeHint() const override;
 

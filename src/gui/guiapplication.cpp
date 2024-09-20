@@ -283,7 +283,8 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() {
-        auto* scriptEditor = new ScriptEditor(m_core->libraryManager(), &m_selectionController, m_mainWindow.get());
+        auto* scriptEditor
+            = new ScriptEditor(m_core->libraryManager(), m_selectionController.selectedTrack(), m_mainWindow.get());
         scriptEditor->setAttribute(Qt::WA_DeleteOnClose);
         scriptEditor->show();
     });

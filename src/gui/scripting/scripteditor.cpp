@@ -54,7 +54,7 @@ namespace Fooyin {
 class ScriptEditorPrivate
 {
 public:
-    ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, TrackSelectionController* trackSelection);
+    ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track);
 
     void setupConnections();
     void setupPlaceholder();
@@ -71,8 +71,8 @@ public:
     void restoreState();
 
     ScriptEditor* m_self;
-    TrackSelectionController* m_trackSelection;
     FySettings m_settings;
+    Track m_track;
     Track m_placeholderTrack;
 
     QSplitter* m_mainSplitter;
@@ -94,10 +94,9 @@ public:
     ParsedScript m_currentScript;
 };
 
-ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager,
-                                         TrackSelectionController* trackSelection)
+ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* libraryManager, const Track& track)
     : m_self{self}
-    , m_trackSelection{trackSelection}
+    , m_track{track}
     , m_mainSplitter{new QSplitter(Qt::Horizontal, m_self)}
     , m_documentSplitter{new QSplitter(Qt::Vertical, m_self)}
     , m_editor{new QTextEdit(m_self)}
@@ -137,11 +136,6 @@ void ScriptEditorPrivate::setupConnections()
     QObject::connect(m_model, &QAbstractItemModel::modelReset, m_expressionTree, &QTreeView::expandAll);
     QObject::connect(m_expressionTree->selectionModel(), &QItemSelectionModel::selectionChanged, m_self,
                      [this]() { selectionChanged(); });
-
-    if(m_trackSelection) {
-        QObject::connect(m_trackSelection, &TrackSelectionController::selectionChanged, m_self,
-                         [this]() { updateResults(); });
-    }
 }
 
 void ScriptEditorPrivate::setupPlaceholder()
@@ -178,11 +172,7 @@ void ScriptEditorPrivate::updateResults(const Expression& expression)
     ParsedScript script;
     script.expressions = {expression};
 
-    Track track{m_placeholderTrack};
-    if(m_trackSelection && m_trackSelection->hasTracks()) {
-        track = m_trackSelection->selectedTracks().front();
-    }
-
+    const Track track    = m_track.isValid() ? m_track : m_placeholderTrack;
     const auto result    = m_parser.evaluate(script, track);
     const auto formatted = m_formatter.evaluate(result);
     m_results->setText(formatted.joinedText());
@@ -205,11 +195,8 @@ void ScriptEditorPrivate::textChanged()
     m_textChangeTimer.start(TextChangeInterval, m_self);
     m_results->clear();
 
-    Track track{m_placeholderTrack};
-    if(m_trackSelection && m_trackSelection->hasTracks()) {
-        track = m_trackSelection->selectedTrack();
-    }
-    m_currentScript = m_parser.parse(m_editor->toPlainText(), track);
+    const Track track = m_track.isValid() ? m_track : m_placeholderTrack;
+    m_currentScript   = m_parser.parse(m_editor->toPlainText(), track);
 
     m_model->populate(m_currentScript.expressions);
     updateResults();
@@ -279,21 +266,25 @@ void ScriptEditorPrivate::restoreState()
     updateResults();
 }
 
-ScriptEditor::ScriptEditor(LibraryManager* libraryManager, TrackSelectionController* trackSelection, QWidget* parent)
+ScriptEditor::ScriptEditor(LibraryManager* libraryManager, const Track& track, QWidget* parent)
     : QDialog{parent}
-    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager, trackSelection)}
+    , p{std::make_unique<ScriptEditorPrivate>(this, libraryManager, track)}
 {
     setWindowTitle(tr("Script Editor"));
 }
 
-ScriptEditor::ScriptEditor(const QString& script, QWidget* parent)
-    : ScriptEditor{nullptr, nullptr, parent}
+ScriptEditor::ScriptEditor(LibraryManager* libraryManager, QWidget* parent)
+    : ScriptEditor{libraryManager, {}, parent}
+{ }
+
+ScriptEditor::ScriptEditor(const QString& script, const Track& track, QWidget* parent)
+    : ScriptEditor{nullptr, track, parent}
 {
     p->m_editor->setPlainText(script);
 }
 
 ScriptEditor::ScriptEditor(QWidget* parent)
-    : ScriptEditor{nullptr, nullptr, parent}
+    : ScriptEditor{nullptr, parent}
 { }
 
 ScriptEditor::~ScriptEditor()
@@ -302,9 +293,10 @@ ScriptEditor::~ScriptEditor()
     p->saveState();
 }
 
-void ScriptEditor::openEditor(const QString& script, const std::function<void(const QString&)>& callback)
+void ScriptEditor::openEditor(const QString& script, const std::function<void(const QString&)>& callback,
+                              const Track& track)
 {
-    auto* editor = new ScriptEditor(script);
+    auto* editor = new ScriptEditor(script, track);
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setModal(true);
 
