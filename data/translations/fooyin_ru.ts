@@ -4671,11 +4671,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="187"/>
-        <source>You can find you user token here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="248"/>
         <source>Sign Out</source>
         <translation type="unfinished"></translation>
@@ -4694,6 +4689,11 @@
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="250"/>
         <source>Signed in as %1</source>
         <translation type="unfinished">Подключён как %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="187"/>
+        <source>You can find your user token here</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerpage.cpp" line="255"/>
