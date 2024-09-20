@@ -149,6 +149,14 @@ void ScriptFormatterPrivate::expression()
 
 void ScriptFormatterPrivate::formatBlock()
 {
+    if(m_current.type != ScriptScanner::TokRightAngle && m_current.type != ScriptScanner::TokEos) {
+        if(!m_registry.isFormatFunc(m_current.value.toString())) {
+            // Treat '<' as literal if not valid function
+            m_currentBlock.text += m_previous.value.toString();
+            return;
+        }
+    }
+
     QString func;
     QString option;
 
