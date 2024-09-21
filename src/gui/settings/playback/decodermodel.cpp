@@ -164,7 +164,7 @@ bool DecoderModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
         beginResetModel();
 
         auto handleDrop = [&selected, &row](auto& loaders) {
-            for(const QString& loaderName : selected) {
+            for(const QString& loaderName : std::as_const(selected)) {
                 auto loaderIt = std::find_if(loaders.begin(), loaders.end(),
                                              [&](const auto& loader) { return loader.name == loaderName; });
 
