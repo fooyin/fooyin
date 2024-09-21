@@ -33,7 +33,6 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QSlider>
-#include <QVBoxLayout>
 
 namespace Fooyin {
 class ReplayGainPageWidget : public SettingsPageWidget
@@ -70,8 +69,8 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     , m_trackGain{new QRadioButton(tr("Use track-based gain"), this)}
     , m_albumGain{new QRadioButton(tr("Use album-based gain"), this)}
     , m_orderGain{new QRadioButton(tr("Use gain based on playback order"), this)}
-    , m_rgPreAmp{new DoubleSliderEditor(tr("With RG info"), this)}
-    , m_preAmp{new DoubleSliderEditor(tr("Without RG info"), this)}
+    , m_rgPreAmp{new DoubleSliderEditor(this)}
+    , m_preAmp{new DoubleSliderEditor(this)}
 {
     m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
     m_albumGain->setToolTip(tr("Base normalisation on album loudness"));
@@ -108,6 +107,9 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     auto* preAmpGroup  = new QGroupBox(tr("Pre-amplification"), this);
     auto* preAmpLayout = new QGridLayout(preAmpGroup);
 
+    auto* rgPreAmpLabel = new QLabel(tr("With RG info") + u":", this);
+    auto* preAmpLabel   = new QLabel(tr("Without RG info") + u":", this);
+
     m_rgPreAmp->setRange(-20, 20);
     m_rgPreAmp->setSingleStep(0.5);
     m_rgPreAmp->setSuffix(QStringLiteral(" dB"));
@@ -118,11 +120,16 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
 
     const auto rgPreAmpToolTip = tr("Amount of gain to apply in combination with ReplayGain");
     m_rgPreAmp->setToolTip(rgPreAmpToolTip);
+    preAmpLabel->setToolTip(rgPreAmpToolTip);
     const auto preAmpToolTip = tr("Amount of gain to apply for tracks without ReplayGain info");
     m_preAmp->setToolTip(preAmpToolTip);
+    preAmpLabel->setToolTip(preAmpToolTip);
 
-    preAmpLayout->addWidget(m_rgPreAmp, 0, 0);
-    preAmpLayout->addWidget(m_preAmp, 1, 0);
+    preAmpLayout->addWidget(rgPreAmpLabel, 0, 0);
+    preAmpLayout->addWidget(m_rgPreAmp, 0, 1);
+    preAmpLayout->addWidget(preAmpLabel, 1, 0);
+    preAmpLayout->addWidget(m_preAmp, 1, 1);
+    preAmpLayout->setColumnStretch(1, 1);
 
     layout->addWidget(modeGroupBox, 0, 0);
     layout->addWidget(typeGroupBox, 1, 0);
