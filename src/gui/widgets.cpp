@@ -198,7 +198,8 @@ void Widgets::registerWidgets()
     m_provider->registerWidget(
         QStringLiteral("Playlist"),
         [this]() {
-            return new PlaylistWidget(m_gui.actionManager, m_playlistInteractor, m_coverProvider, m_core, m_window);
+            return new PlaylistWidget(m_gui.actionManager, m_playlistInteractor, m_coverProvider, m_core,
+                                      PlaylistWidget::Mode::Playlist, m_window);
         },
         tr("Playlist"));
     m_provider->setLimit(QStringLiteral("Playlist"), 1);

@@ -119,7 +119,8 @@ public:
     void checkTracksNeedUpdate() const;
     void showNeedReloadMessage() const;
 
-    void showSearchWindow();
+    void showSearchPlaylistDialog();
+    void showSearchLibraryDialog();
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
     void showMessage(const QString& title, const Track& track) const;
@@ -279,7 +280,8 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSavePlaylist, m_self, [this]() { savePlaylist(); });
     QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, m_self, [this]() { saveAllPlaylist(); });
-    QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchWindow(); });
+    QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchPlaylistDialog(); });
+    QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, m_self, [this]() { showSearchLibraryDialog(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() {
@@ -731,10 +733,22 @@ void GuiApplicationPrivate::showNeedReloadMessage() const
     }
 }
 
-void GuiApplicationPrivate::showSearchWindow()
+void GuiApplicationPrivate::showSearchPlaylistDialog()
 {
     auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
-    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core);
+    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
+                                           PlaylistWidget::Mode::DetachedPlaylist);
+    search->setAttribute(Qt::WA_DeleteOnClose);
+    coverProvider->setParent(search);
+
+    search->show();
+}
+
+void GuiApplicationPrivate::showSearchLibraryDialog()
+{
+    auto* coverProvider = new CoverProvider(m_core->audioLoader(), m_settings, m_self);
+    auto* search        = new SearchDialog(m_actionManager, &m_playlistInteractor, coverProvider, m_core,
+                                           PlaylistWidget::Mode::DetachedLibrary);
     search->setAttribute(Qt::WA_DeleteOnClose);
     coverProvider->setParent(search);
 

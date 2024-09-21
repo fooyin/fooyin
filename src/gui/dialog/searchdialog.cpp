@@ -44,18 +44,21 @@
 
 using namespace std::chrono_literals;
 
-constexpr auto AutoSelect  = "Search/AutoSelect";
-constexpr auto WindowState = "Search/WindowState";
-constexpr auto SearchState = "Search/PlaylistState";
+constexpr auto AutoSelect         = "Search/AutoSelect";
+constexpr auto WindowState        = "Search/WindowState";
+constexpr auto SearchState        = "Search/PlaylistState";
+constexpr auto LibraryWindowState = "Search/LibraryWindowState";
+constexpr auto LibrarySearchState = "Search/LibraryPlaylistState";
 
 namespace Fooyin {
 SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                           CoverProvider* coverProvider, Application* core, QWidget* parent)
+                           CoverProvider* coverProvider, Application* core, PlaylistWidget::Mode mode, QWidget* parent)
     : QDialog{parent}
+    , m_mode{mode}
     , m_playlistInteractor{playlistInteractor}
     , m_settings{core->settingsManager()}
     , m_searchBar{new QLineEdit(this)}
-    , m_view{new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, this)}
+    , m_view{new PlaylistWidget(actionManager, playlistInteractor, coverProvider, core, m_mode, this)}
     , m_autoSelect{m_settings->fileValue(AutoSelect, false).toBool()}
 {
     auto* layout = new QVBoxLayout(this);
@@ -64,15 +67,17 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     layout->addWidget(m_searchBar);
     layout->addWidget(m_view);
 
-    auto* searchMenu = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
-    QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
-    m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
+    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+        auto* searchMenu = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
+        QObject::connect(searchMenu, &QAction::triggered, this, &SearchDialog::showOptionsMenu);
+        m_searchBar->addAction(searchMenu, QLineEdit::TrailingPosition);
+    }
 
     QObject::connect(m_view->view()->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SearchDialog::selectInPlaylist);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, &SearchDialog::updateTitle);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, [this]() {
-        if(m_autoSelect) {
+        if(m_autoSelect && m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
             m_view->view()->selectAll();
         }
     });
@@ -85,8 +90,6 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     throttler->setTimeout(100ms);
     QObject::connect(m_searchBar, &QLineEdit::textChanged, throttler, &SignalThrottler::throttle);
     QObject::connect(throttler, &SignalThrottler::triggered, this, &SearchDialog::search);
-
-    m_view->setDetached(true);
 
     updateTitle();
     loadState();
@@ -151,11 +154,16 @@ void SearchDialog::showOptionsMenu()
     menu->popup(m_searchBar->mapToGlobal(pos));
 }
 
-void SearchDialog::selectInPlaylist(const QItemSelection& selected, const QItemSelection& /*deselected*/)
+void SearchDialog::selectInPlaylist()
 {
+    if(m_mode != PlaylistWidget::Mode::DetachedPlaylist) {
+        return;
+    }
+
     std::vector<int> trackIds;
 
-    for(const QModelIndex& index : selected.indexes()) {
+    const auto selected = m_view->view()->selectionModel()->selectedIndexes();
+    for(const QModelIndex& index : selected) {
         trackIds.emplace_back(index.data(PlaylistItem::Role::TrackId).toInt());
     }
 
@@ -164,20 +172,33 @@ void SearchDialog::selectInPlaylist(const QItemSelection& selected, const QItemS
 
 void SearchDialog::saveState()
 {
-    m_settings->fileSet(WindowState, saveGeometry());
-
     QJsonObject layout;
     m_view->saveLayoutData(layout);
 
     const QByteArray state = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
-    m_settings->fileSet(SearchState, state);
+
+    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+        m_settings->fileSet(SearchState, state);
+        m_settings->fileSet(WindowState, saveGeometry());
+    }
+    else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
+        m_settings->fileSet(LibrarySearchState, state);
+        m_settings->fileSet(LibraryWindowState, saveGeometry());
+    }
 }
 
 void SearchDialog::loadState()
 {
-    restoreGeometry(m_settings->fileValue(WindowState).toByteArray());
+    QByteArray state;
+    if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
+        state = m_settings->fileValue(SearchState).toByteArray();
+        restoreGeometry(m_settings->fileValue(WindowState).toByteArray());
+    }
+    else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
+        state = m_settings->fileValue(LibrarySearchState).toByteArray();
+        restoreGeometry(m_settings->fileValue(LibraryWindowState).toByteArray());
+    }
 
-    const QByteArray state = m_settings->fileValue(SearchState).toByteArray();
     if(!state.isEmpty()) {
         const QJsonObject layout = QJsonDocument::fromJson(QByteArray::fromBase64(state)).object();
         if(!layout.isEmpty()) {

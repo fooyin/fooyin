@@ -21,6 +21,7 @@
 
 #include "playlistmodel.h"
 #include "playlistpreset.h"
+#include "playlistwidget.h"
 #include "presetregistry.h"
 
 #include <core/library/sortingregistry.h>
@@ -62,7 +63,7 @@ class PlaylistWidgetPrivate : public QObject
 
 public:
     PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
-                          CoverProvider* coverProvider, Application* core);
+                          CoverProvider* coverProvider, Application* core, PlaylistWidget::Mode mode);
 
     void setupConnections();
     void setupActions();
@@ -144,7 +145,7 @@ public:
     SettingsDialogController* m_settingsDialog;
     TrackSorter m_sorter;
 
-    bool m_detached;
+    PlaylistWidget::Mode m_mode;
     QMetaObject::Connection m_delayedStateLoad;
     SignalThrottler* m_resetThrottler;
 

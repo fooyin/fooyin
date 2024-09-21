@@ -60,6 +60,10 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
+    auto* search = new QAction(tr("Sear&ch"), this);
+    search->setStatusTip(tr("Search all libraries"));
+    QObject::connect(search, &QAction::triggered, this, &LibraryMenu::requestSearch);
+
     auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
     openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
     QObject::connect(openSettings, &QAction::triggered, this, [core]() {
@@ -70,6 +74,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     libraryMenu->addAction(actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
     libraryMenu->addSeparator();
     libraryMenu->addMenu(dbMenu);
+    libraryMenu->addAction(actionManager->registerAction(search, Constants::Actions::SearchLibrary));
     libraryMenu->addSeparator();
     libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Configure"));
 }

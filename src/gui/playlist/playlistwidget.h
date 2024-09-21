@@ -40,11 +40,19 @@ class PlaylistWidget : public FyWidget
     Q_OBJECT
 
 public:
+    // TODO: Separate main playlist logic into it's own class,
+    // as this is quite hacky
+    enum class Mode : uint8_t
+    {
+        Playlist         = 0,
+        DetachedPlaylist = 1,
+        DetachedLibrary  = 2
+    };
+
     PlaylistWidget(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                   Application* core, QWidget* parent = nullptr);
+                   Application* core, Mode mode = Mode::Playlist, QWidget* parent = nullptr);
     ~PlaylistWidget() override;
 
-    void setDetached(bool detached);
     [[nodiscard]] PlaylistView* view() const;
     [[nodiscard]] PlaylistModel* model() const;
 

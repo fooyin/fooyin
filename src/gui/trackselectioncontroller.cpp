@@ -40,6 +40,8 @@
 
 #include <ranges>
 
+constexpr auto TempSelectionPlaylist = "␟TempSelectionPlaylist␟";
+
 namespace Fooyin {
 struct WidgetSelection
 {
@@ -65,10 +67,11 @@ public:
     void updateActiveContext(QWidget* widget);
 
     void handleActions(Playlist* playlist, PlaylistAction::ActionOptions options) const;
-    void sendToNewPlaylist(PlaylistAction::ActionOptions options = {}, const QString& playlistName = {}) const;
-    void sendToCurrentPlaylist(PlaylistAction::ActionOptions options = {}) const;
+    void sendToNewPlaylist(PlaylistAction::ActionOptions options, const QString& playlistName) const;
+    void sendToCurrentPlaylist(PlaylistAction::ActionOptions options) const;
     void addToCurrentPlaylist() const;
     void addToActivePlaylist() const;
+    void startPlayback(PlaylistAction::ActionOptions options);
     void addToQueue() const;
     void sendToQueue() const;
 
@@ -85,6 +88,7 @@ public:
     std::unordered_map<WidgetContext*, WidgetSelection> m_contextSelection;
     WidgetContext* m_activeContext{nullptr};
     TrackList m_tracks;
+    Playlist* m_tempPlaylist{nullptr};
 
     ActionContainer* m_tracksMenu{nullptr};
     ActionContainer* m_tracksQueueMenu{nullptr};
@@ -153,7 +157,7 @@ void TrackSelectionControllerPrivate::setupMenu()
             const auto& selection = m_contextSelection.at(m_activeContext);
             const auto options    = PlaylistAction::Switch
                                | (selection.playbackOnSend ? PlaylistAction::StartPlayback : PlaylistAction::Switch);
-            sendToNewPlaylist(static_cast<PlaylistAction::ActionOptions>(options));
+            sendToNewPlaylist(static_cast<PlaylistAction::ActionOptions>(options), {});
         }
     });
     m_tracksPlaylistMenu->addAction(m_actionManager->registerAction(m_sendNew, Constants::Actions::SendToNew));
@@ -307,7 +311,7 @@ void TrackSelectionControllerPrivate::handleActions(Playlist* playlist, Playlist
 void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOptions options,
                                                         const QString& playlistName) const
 {
-    if(!m_self->hasTracks()) {
+    if(!hasTracks()) {
         return;
     }
 
@@ -342,24 +346,28 @@ void TrackSelectionControllerPrivate::sendToNewPlaylist(PlaylistAction::ActionOp
 
 void TrackSelectionControllerPrivate::sendToCurrentPlaylist(PlaylistAction::ActionOptions options) const
 {
-    if(m_self->hasTracks()) {
-        const auto& selection = m_contextSelection.at(m_activeContext);
-        if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
-            m_playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
-            handleActions(currentPlaylist, options);
-            emit m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
-        }
+    if(!hasTracks()) {
+        return;
+    }
+
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
+        m_playlistHandler->createPlaylist(currentPlaylist->name(), selection.tracks);
+        handleActions(currentPlaylist, options);
+        emit m_self->actionExecuted(TrackAction::SendCurrentPlaylist);
     }
 }
 
 void TrackSelectionControllerPrivate::addToCurrentPlaylist() const
 {
-    if(m_self->hasTracks()) {
-        const auto& selection = m_contextSelection.at(m_activeContext);
-        if(const auto* playlist = m_playlistController->currentPlaylist()) {
-            m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
-            emit m_self->actionExecuted(TrackAction::AddCurrentPlaylist);
-        }
+    if(!hasTracks()) {
+        return;
+    }
+
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    if(const auto* playlist = m_playlistController->currentPlaylist()) {
+        m_playlistHandler->appendToPlaylist(playlist->id(), selection.tracks);
+        emit m_self->actionExecuted(TrackAction::AddCurrentPlaylist);
     }
 }
 
@@ -374,22 +382,56 @@ void TrackSelectionControllerPrivate::addToActivePlaylist() const
     }
 }
 
+void TrackSelectionControllerPrivate::startPlayback(PlaylistAction::ActionOptions options)
+{
+    if(!hasTracks()) {
+        return;
+    }
+
+    if(options & PlaylistAction::TempPlaylist) {
+        if(!m_tempPlaylist) {
+            m_tempPlaylist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(TempSelectionPlaylist));
+            if(!m_tempPlaylist) {
+                return;
+            }
+        }
+
+        const auto& selection = m_contextSelection.at(m_activeContext);
+        m_playlistHandler->replacePlaylistTracks(m_tempPlaylist->id(), selection.tracks);
+        m_tempPlaylist->changeCurrentIndex(selection.firstIndex >= 0 ? selection.firstIndex : 0);
+        m_playlistHandler->startPlayback(m_tempPlaylist);
+    }
+    else {
+        if(auto* playlist = m_playlistController->currentPlaylist()) {
+            const auto& selection = m_contextSelection.at(m_activeContext);
+            if(selection.firstIndex >= 0) {
+                playlist->changeCurrentIndex(selection.firstIndex);
+            }
+            m_playlistHandler->startPlayback(playlist);
+        }
+    }
+}
+
 void TrackSelectionControllerPrivate::addToQueue() const
 {
-    if(m_self->hasTracks()) {
-        const auto& selection = m_contextSelection.at(m_activeContext);
-        m_playlistController->playerController()->queueTracks(selection.tracks);
-        emit m_self->actionExecuted(TrackAction::AddToQueue);
+    if(!hasTracks()) {
+        return;
     }
+
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    m_playlistController->playerController()->queueTracks(selection.tracks);
+    emit m_self->actionExecuted(TrackAction::AddToQueue);
 }
 
 void TrackSelectionControllerPrivate::sendToQueue() const
 {
-    if(m_self->hasTracks()) {
-        const auto& selection = m_contextSelection.at(m_activeContext);
-        m_playlistController->playerController()->replaceTracks(selection.tracks);
-        emit m_self->actionExecuted(TrackAction::SendToQueue);
+    if(!hasTracks()) {
+        return;
     }
+
+    const auto& selection = m_contextSelection.at(m_activeContext);
+    m_playlistController->playerController()->replaceTracks(selection.tracks);
+    emit m_self->actionExecuted(TrackAction::SendToQueue);
 }
 
 void TrackSelectionControllerPrivate::updateActionState()
@@ -553,18 +595,9 @@ void TrackSelectionController::executeAction(TrackAction action, PlaylistAction:
         case(TrackAction::AddActivePlaylist):
             p->addToActivePlaylist();
             break;
-        case(TrackAction::Play): {
-            if(hasTracks()) {
-                if(auto* playlist = p->m_playlistController->currentPlaylist()) {
-                    const auto& selection = p->m_contextSelection.at(p->m_activeContext);
-                    if(selection.firstIndex >= 0) {
-                        playlist->changeCurrentIndex(selection.firstIndex);
-                    }
-                    p->m_playlistHandler->startPlayback(playlist->id());
-                }
-            }
+        case(TrackAction::Play):
+            p->startPlayback(options);
             break;
-        }
         case(TrackAction::AddToQueue):
             p->addToQueue();
             break;

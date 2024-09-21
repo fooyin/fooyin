@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "playlist/playlistwidget.h"
+
 #include <QDialog>
 #include <QModelIndexList>
 
@@ -30,7 +32,6 @@ class ActionManager;
 class Application;
 class CoverProvider;
 class PlaylistInteractor;
-class PlaylistWidget;
 class SettingsManager;
 
 class SearchDialog : public QDialog
@@ -39,7 +40,7 @@ class SearchDialog : public QDialog
 
 public:
     SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
-                 Application* core, QWidget* parent = nullptr);
+                 Application* core, PlaylistWidget::Mode mode, QWidget* parent = nullptr);
     ~SearchDialog() override;
 
     [[nodiscard]] QSize sizeHint() const override;
@@ -51,13 +52,15 @@ private:
     void search();
     void updateTitle();
     void showOptionsMenu();
-    void selectInPlaylist(const QItemSelection& selected, const QItemSelection& deselected);
+    void selectInPlaylist();
 
     void saveState();
     void loadState();
 
+    PlaylistWidget::Mode m_mode;
     PlaylistInteractor* m_playlistInteractor;
     SettingsManager* m_settings;
+
     QLineEdit* m_searchBar;
     PlaylistWidget* m_view;
     bool m_autoSelect;

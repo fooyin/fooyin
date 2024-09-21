@@ -49,10 +49,11 @@ enum class TrackAction
 namespace PlaylistAction {
 enum ActionOption : uint8_t
 {
-    None          = 1 << 0,
-    Switch        = 1 << 1,
-    KeepActive    = 1 << 2,
-    StartPlayback = 1 << 3
+    None          = 0,
+    Switch        = 1 << 0,
+    KeepActive    = 1 << 1,
+    StartPlayback = 1 << 2,
+    TempPlaylist  = 1 << 3
 };
 Q_DECLARE_FLAGS(ActionOptions, ActionOption)
 } // namespace PlaylistAction
