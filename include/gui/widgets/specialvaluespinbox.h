@@ -41,6 +41,8 @@ public:
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
 
+    [[nodiscard]] QValidator::State validate(QString& input, int& pos) const override;
+
 protected:
     [[nodiscard]] int valueFromText(const QString& text) const override;
     [[nodiscard]] QString textFromValue(int val) const override;
@@ -70,6 +72,8 @@ public:
 
     [[nodiscard]] QSize sizeHint() const override;
     [[nodiscard]] QSize minimumSizeHint() const override;
+
+    [[nodiscard]] QValidator::State validate(QString& input, int& pos) const override;
 
 protected:
     [[nodiscard]] double valueFromText(const QString& text) const override;

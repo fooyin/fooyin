@@ -119,14 +119,29 @@ QSize SpecialValueSpinBox::minimumSizeHint() const
     return m_cachedMinimumSizeHint;
 }
 
+QValidator::State SpecialValueSpinBox::validate(QString& input, int& pos) const
+{
+    QString text{input};
+    text.remove(m_prefix).remove(m_suffix);
+
+    const QValidator::State state = QSpinBox::validate(text, pos);
+    if(state != QValidator::Invalid) {
+        input = m_prefix + text + m_suffix;
+    }
+    return state;
+}
+
 int SpecialValueSpinBox::valueFromText(const QString& text) const
 {
+    QString input{text};
+    input.remove(m_prefix).remove(m_suffix);
+
     for(const auto& [val, str] : m_specialValues) {
-        if(str == text) {
+        if(str == input) {
             return val;
         }
     }
-    return QSpinBox::valueFromText(text);
+    return QSpinBox::valueFromText(input);
 }
 
 QString SpecialValueSpinBox::textFromValue(int val) const
@@ -240,14 +255,29 @@ QSize SpecialValueDoubleSpinBox::minimumSizeHint() const
     return m_cachedMinimumSizeHint;
 }
 
+QValidator::State SpecialValueDoubleSpinBox::validate(QString& input, int& pos) const
+{
+    QString text{input};
+    text.remove(m_prefix).remove(m_suffix);
+
+    const QValidator::State state = QDoubleSpinBox::validate(text, pos);
+    if(state != QValidator::Invalid) {
+        input = m_prefix + text + m_suffix;
+    }
+    return state;
+}
+
 double SpecialValueDoubleSpinBox::valueFromText(const QString& text) const
 {
+    QString input{text};
+    input.remove(m_prefix).remove(m_suffix);
+
     for(const auto& [val, str] : m_specialValues) {
-        if(str == text) {
+        if(str == input) {
             return val;
         }
     }
-    return QDoubleSpinBox::valueFromText(text);
+    return QDoubleSpinBox::valueFromText(input);
 }
 
 QString SpecialValueDoubleSpinBox::textFromValue(double val) const
