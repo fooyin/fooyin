@@ -3246,12 +3246,12 @@
 <context>
     <name>Fooyin::PlaybackPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="164"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="143"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="165"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="144"/>
         <source>Playback</source>
         <translation>Lecture en cours</translation>
     </message>
@@ -3259,57 +3259,57 @@
 <context>
     <name>Fooyin::PlaybackPageWidget</name>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="64"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="63"/>
         <source>Save/restore playback state</source>
         <translation>Sauvegarde/restauration de l&apos;état de lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="65"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="64"/>
         <source>Cursor follows playback</source>
         <translation>Sélectionner la piste lue</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="66"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="65"/>
         <source>Playback follows cursor</source>
         <translation>La lecture suit la sélection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="67"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="66"/>
         <source>Rewind track on previous</source>
         <translation>Retour au début de la piste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="68"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="67"/>
         <source>Skip unavailable tracks</source>
         <translation>Ignorer les pistes indisponibles</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="74"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="72"/>
         <source>Save playback state on exit and restore it on next startup</source>
         <translation>Sauvegarder l&apos;état de la lecture à la fermeture et le restaurer au prochain démarrage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="75"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="73"/>
         <source>If the current track has been playing for more than 5s, restart it instead of moving to the previous track</source>
         <translation>Si la lecture de la piste a commencé il y a plus de 5 secondes, elle est relancée au lieu de passer à la piste précédente</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="78"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="76"/>
         <source>If the current track in a playlist is unavailable, silently continue to the next track</source>
         <translation>Si la piste d&apos;une liste de lecture est indisponible, la lecture passe automatiquement à la piste suivante</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="80"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="78"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="83"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="68"/>
         <source>Played threshold</source>
         <translation>Seuil de lecture</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="86"/>
+        <location filename="../../src/gui/settings/playback/playbackpage.cpp" line="82"/>
         <source>The percentage of a track that must be listened to before it is counted as &apos;played&apos;</source>
         <translation>Le pourcentage d&apos;une piste qui doit être écoutée avant d&apos;être comptée comme &quot;lue&quot;</translation>
     </message>
@@ -4414,17 +4414,17 @@
 <context>
     <name>Fooyin::ReplayGainPage</name>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="207"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="199"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="200"/>
         <source>Playback</source>
         <translation>Lecture en cours</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="208"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="200"/>
         <source>ReplayGain</source>
         <translation>ReplayGain</translation>
     </message>
@@ -4497,22 +4497,22 @@
         <translation type="unfinished">Pré-amplification</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="111"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="73"/>
         <source>With RG info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="112"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="74"/>
         <source>Without RG info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="122"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="119"/>
         <source>Amount of gain to apply in combination with ReplayGain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="125"/>
+        <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="121"/>
         <source>Amount of gain to apply for tracks without ReplayGain info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6007,6 +6007,70 @@ au prix d&apos;une plus grande du disque pour le cache.</translation>
         <location filename="../../src/gui/widgets.cpp" line="308"/>
         <source>Loading playlist</source>
         <translation>Chargement de la liste de lecture</translation>
+    </message>
+</context>
+<context>
+    <name>OpenMptSettings</name>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="38"/>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="39"/>
+        <source>Separation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="40"/>
+        <source>Volume ramping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="41"/>
+        <source>Use Amiga resampler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
+        <source>%1 Settings</source>
+        <translation type="unfinished">Réglages %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="62"/>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
+        <source>Default</source>
+        <translation type="unfinished">Par Défaut</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="63"/>
+        <source>Off</source>
+        <translation type="unfinished">Désactiver</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="65"/>
+        <source>Interpolation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
+        <source>None</source>
+        <translation type="unfinished">Non Assigné</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
+        <source>Cubic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
+        <source>Sinc</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
