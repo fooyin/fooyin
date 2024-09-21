@@ -42,6 +42,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/seekcontainer.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/singletabbedwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/slider.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/slidereditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
     coverprovider.cpp
@@ -318,6 +319,7 @@ set(SOURCES
     widgets/seekcontainer.cpp
     widgets/singletabbedwidget.cpp
     widgets/slider.cpp
+    widgets/slidereditor.cpp
     widgets/spacer.cpp
     widgets/spacer.h
     widgets/statuswidget.cpp

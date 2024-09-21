@@ -21,10 +21,11 @@
 
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QSlider>
 
 namespace Fooyin {
-DoubleSliderEditor::DoubleSliderEditor(QWidget* parent)
+DoubleSliderEditor::DoubleSliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_slider{new QSlider(Qt::Horizontal, this)}
     , m_spinBox{new QDoubleSpinBox(this)}
@@ -34,7 +35,12 @@ DoubleSliderEditor::DoubleSliderEditor(QWidget* parent)
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins({});
 
-    layout->addWidget(m_slider);
+    if(!name.isEmpty()) {
+        auto* label = new QLabel(name + u":", this);
+        layout->addWidget(label);
+    }
+
+    layout->addWidget(m_slider, 1);
     layout->addWidget(m_spinBox);
 
     QObject::connect(m_slider, &QSlider::valueChanged, this, &DoubleSliderEditor::sliderValueChanged);
@@ -44,6 +50,10 @@ DoubleSliderEditor::DoubleSliderEditor(QWidget* parent)
     m_slider->setMaximum(1000000);
     m_slider->setSingleStep(0);
 }
+
+DoubleSliderEditor::DoubleSliderEditor(QWidget* parent)
+    : DoubleSliderEditor{{}, parent}
+{ }
 
 double DoubleSliderEditor::value() const
 {
@@ -55,46 +65,26 @@ double DoubleSliderEditor::minimum() const
     return m_spinBox->minimum();
 }
 
-double DoubleSliderEditor::maximum() const
-{
-    return m_spinBox->maximum();
-}
-
-double DoubleSliderEditor::singleStep() const
-{
-    return m_spinBox->singleStep();
-}
-
-QString DoubleSliderEditor::prefix() const
-{
-    return m_spinBox->prefix();
-}
-
-QString DoubleSliderEditor::suffix() const
-{
-    return m_spinBox->suffix();
-}
-
-void DoubleSliderEditor::setValue(double value)
-{
-    if(value != m_spinBox->value()) {
-        m_updatingSpinBox = true;
-        m_spinBox->setValue(value);
-        m_updatingSpinBox = false;
-        updateSlider();
-    }
-}
-
 void DoubleSliderEditor::setMinimum(double min)
 {
     m_spinBox->setMinimum(min);
     updateSlider();
 }
 
+double DoubleSliderEditor::maximum() const
+{
+    return m_spinBox->maximum();
+}
+
 void DoubleSliderEditor::setMaximum(double max)
 {
     m_spinBox->setMaximum(max);
     updateSlider();
+}
+
+double DoubleSliderEditor::singleStep() const
+{
+    return m_spinBox->singleStep();
 }
 
 void DoubleSliderEditor::setSingleStep(double step)
@@ -108,14 +98,34 @@ void DoubleSliderEditor::setRange(double min, double max)
     updateSlider();
 }
 
+QString DoubleSliderEditor::prefix() const
+{
+    return m_spinBox->prefix();
+}
+
 void DoubleSliderEditor::setPrefix(const QString& prefix)
 {
     m_spinBox->setPrefix(prefix);
 }
 
+QString DoubleSliderEditor::suffix() const
+{
+    return m_spinBox->suffix();
+}
+
 void DoubleSliderEditor::setSuffix(const QString& suffix)
 {
     m_spinBox->setSuffix(suffix);
+}
+
+void DoubleSliderEditor::setValue(double value)
+{
+    if(value != m_spinBox->value()) {
+        m_updatingSpinBox = true;
+        m_spinBox->setValue(value);
+        m_updatingSpinBox = false;
+        updateSlider();
+    }
 }
 
 void DoubleSliderEditor::sliderValueChanged(int value)

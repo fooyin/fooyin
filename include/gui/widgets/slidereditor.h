@@ -23,31 +23,31 @@
 
 #include <QWidget>
 
-class QDoubleSpinBox;
 class QSlider;
+class QSpinBox;
 
 namespace Fooyin {
-class FYUTILS_EXPORT DoubleSliderEditor : public QWidget
+class FYUTILS_EXPORT SliderEditor : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DoubleSliderEditor(const QString& name, QWidget* parent = nullptr);
-    explicit DoubleSliderEditor(QWidget* parent = nullptr);
+    explicit SliderEditor(const QString& name, QWidget* parent = nullptr);
+    explicit SliderEditor(QWidget* parent = nullptr);
 
-    [[nodiscard]] double value() const;
-    void setValue(double value);
+    [[nodiscard]] int value() const;
+    void setValue(int value);
 
-    [[nodiscard]] double minimum() const;
-    void setMinimum(double min);
+    [[nodiscard]] int minimum() const;
+    void setMinimum(int min);
 
-    [[nodiscard]] double maximum() const;
-    void setMaximum(double max);
+    [[nodiscard]] int maximum() const;
+    void setMaximum(int max);
 
-    [[nodiscard]] double singleStep() const;
-    void setSingleStep(double step);
+    [[nodiscard]] int singleStep() const;
+    void setSingleStep(int step);
 
-    void setRange(double min, double max);
+    void setRange(int min, int max);
 
     [[nodiscard]] QString prefix() const;
     void setPrefix(const QString& prefix);
@@ -56,17 +56,15 @@ public:
     void setSuffix(const QString& suffix);
 
 signals:
-    void valueChanged(double value);
+    void valueChanged(int value);
 
 private slots:
     void sliderValueChanged(int value);
-    void spinBoxValueChanged(double value);
+    void spinBoxValueChanged(int value);
 
 private:
-    void updateSlider();
-
     QSlider* m_slider;
-    QDoubleSpinBox* m_spinBox;
+    QSpinBox* m_spinBox;
     bool m_updatingSlider;
     bool m_updatingSpinBox;
 };

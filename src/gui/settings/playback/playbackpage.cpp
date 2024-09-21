@@ -24,6 +24,7 @@
 #include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QCheckBox>
@@ -32,7 +33,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QSlider>
-#include <QSpinBox>
 
 namespace Fooyin {
 class PlaybackPageWidget : public SettingsPageWidget
@@ -55,8 +55,7 @@ private:
     QCheckBox* m_playbackFollowsCursor;
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_skipUnavailable;
-    QSlider* m_playedSlider;
-    QSpinBox* m_playedPercent;
+    SliderEditor* m_playedSlider;
 };
 
 PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
@@ -66,8 +65,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_playbackFollowsCursor{new QCheckBox(tr("Playback follows cursor"), this)}
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
-    , m_playedSlider{new QSlider(Qt::Horizontal, this)}
-    , m_playedPercent{new QSpinBox(this)}
+    , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -80,31 +78,13 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* generalGroup       = new QGroupBox(tr("General"), this);
     auto* generalGroupLayout = new QGridLayout(generalGroup);
 
-    auto* playedLabel = new QLabel(tr("Played threshold") + QStringLiteral(":"), this);
-
     const auto playedToolTip
         = tr("The percentage of a track that must be listened to before it is counted as 'played'");
-    playedLabel->setToolTip(playedToolTip);
     m_playedSlider->setToolTip(playedToolTip);
-    m_playedPercent->setToolTip(playedToolTip);
 
     m_playedSlider->setRange(0, 100);
     m_playedSlider->setSingleStep(25);
-
-    m_playedPercent->setRange(0, 100);
-    m_playedPercent->setSingleStep(25);
-    m_playedPercent->setSuffix(QStringLiteral(" %"));
-
-    QObject::connect(m_playedSlider, &QSlider::valueChanged, this,
-                     [this](int value) { m_playedPercent->setValue(value); });
-    QObject::connect(m_playedPercent, &QSpinBox::valueChanged, this,
-                     [this](int value) { m_playedSlider->setValue(value); });
-
-    auto* playedLayout = new QGridLayout();
-    playedLayout->addWidget(playedLabel, 0, 0);
-    playedLayout->addWidget(m_playedSlider, 0, 1);
-    playedLayout->addWidget(m_playedPercent, 0, 2);
-    playedLayout->setColumnStretch(1, 1);
+    m_playedSlider->setSuffix(QStringLiteral(" %"));
 
     int row{0};
     generalGroupLayout->addWidget(m_restorePlayback, row++, 0, 1, 2);
@@ -112,7 +92,7 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_playbackFollowsCursor, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_rewindPrevious, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
-    generalGroupLayout->addLayout(playedLayout, row++, 0, 1, 2);
+    generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
 
     layout->addWidget(generalGroup, 0, 0);
     layout->setRowStretch(1, 1);
@@ -130,7 +110,6 @@ void PlaybackPageWidget::load()
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
     m_playedSlider->setValue(playedPercent);
-    m_playedPercent->setValue(playedPercent);
 }
 
 void PlaybackPageWidget::apply()
@@ -141,7 +120,7 @@ void PlaybackPageWidget::apply()
     m_settings->set<Settings::Core::RewindPreviousTrack>(m_rewindPrevious->isChecked());
     m_settings->fileSet(Settings::Core::Internal::PlaylistSkipUnavailable, m_skipUnavailable->isChecked());
 
-    const int playedPercent    = m_playedPercent->value();
+    const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
 }
