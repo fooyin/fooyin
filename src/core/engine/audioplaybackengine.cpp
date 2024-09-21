@@ -469,7 +469,6 @@ void AudioPlaybackEngine::stopWorkers(bool full)
     }
     if(m_decoder && (full || playbackState() != PlaybackState::Stopped)) {
         m_decoder->stop();
-        m_decoder = nullptr;
     }
 
     m_totalBufferTime = 0;
