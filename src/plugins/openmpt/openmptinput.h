@@ -23,11 +23,14 @@
 
 #include <libopenmpt/libopenmpt.hpp>
 
-namespace Fooyin::OpenMpt {
+namespace Fooyin {
+class SettingsManager;
+
+namespace OpenMpt {
 class OpenMptDecoder : public AudioDecoder
 {
 public:
-    OpenMptDecoder();
+    explicit OpenMptDecoder(SettingsManager* settings);
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool isSeekable() const override;
@@ -39,6 +42,7 @@ public:
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:
+    SettingsManager* m_settings;
     std::unique_ptr<openmpt::module> m_module;
     AudioFormat m_format;
     bool m_eof;
@@ -47,7 +51,7 @@ private:
 class OpenMptReader : public AudioReader
 {
 public:
-    OpenMptReader();
+    explicit OpenMptReader(SettingsManager* settings);
 
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool canReadCover() const override;
@@ -58,7 +62,9 @@ public:
     bool readTrack(const AudioSource& source, Track& track) override;
 
 private:
+    SettingsManager* m_settings;
     std::unique_ptr<openmpt::module> m_module;
     int m_subsongCount;
 };
-} // namespace Fooyin::OpenMpt
+} // namespace OpenMpt
+} // namespace Fooyin

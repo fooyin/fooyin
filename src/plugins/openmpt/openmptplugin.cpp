@@ -20,23 +20,49 @@
 #include "openmptplugin.h"
 
 #include "openmptinput.h"
+#include "openmptsettings.h"
+
+#include <utils/settings/settingsmanager.h>
 
 namespace Fooyin::OpenMpt {
-QString RawAudioPlugin::inputName() const
+void OpenMptPlugin::initialise(const CorePluginContext& context)
+{
+    m_settings = context.settingsManager;
+
+    m_settings->createSetting<Settings::OpenMpt::Gain>(0.0, QStringLiteral("OpenMpt/Gain"));
+    m_settings->createSetting<Settings::OpenMpt::Separation>(100, QStringLiteral("OpenMpt/Separation"));
+    m_settings->createSetting<Settings::OpenMpt::VolumeRamping>(-1, QStringLiteral("OpenMpt/VolumeRamping"));
+    m_settings->createSetting<Settings::OpenMpt::InterpolationFilter>(0, QStringLiteral("OpenMpt/InterpolationFilter"));
+    m_settings->createSetting<Settings::OpenMpt::EmulateAmiga>(true, QStringLiteral("OpenMpt/EmulateAmiga"));
+}
+
+QString OpenMptPlugin::inputName() const
 {
     return QStringLiteral("OpenMpt");
 }
 
-InputCreator RawAudioPlugin::inputCreator() const
+InputCreator OpenMptPlugin::inputCreator() const
 {
     InputCreator creator;
-    creator.decoder = []() {
-        return std::make_unique<OpenMptDecoder>();
+    creator.decoder = [this]() {
+        return std::make_unique<OpenMptDecoder>(m_settings);
     };
-    creator.reader = []() {
-        return std::make_unique<OpenMptReader>();
+    creator.reader = [this]() {
+        return std::make_unique<OpenMptReader>(m_settings);
     };
     return creator;
+}
+
+bool OpenMptPlugin::hasSettings() const
+{
+    return true;
+}
+
+void OpenMptPlugin::showSettings(QWidget* parent)
+{
+    auto* dialog = new OpenMptSettings(m_settings, parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
 }
 } // namespace Fooyin::OpenMpt
 

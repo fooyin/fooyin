@@ -19,20 +19,20 @@
 
 #include "openmptinput.h"
 
+#include "openmptsettings.h"
+
+#include <utils/settings/settingsmanager.h>
+
 #include <QFileInfo>
 #include <QLoggingCategory>
 
 Q_LOGGING_CATEGORY(OPENMPT, "fy.openmpt")
 
 // TODO: Make configurable
-constexpr auto SampleRate          = 44100;
-constexpr auto Channels            = 2;
-constexpr auto BufferLen           = 1024UL;
-constexpr auto RepeatCount         = 0;
-constexpr auto VolumeRamping       = -1;
-constexpr auto StereoSeperation    = 100;
-constexpr auto InterpolationFilter = 0;
-constexpr auto EmulateAmiga        = true;
+constexpr auto SampleRate  = 44100;
+constexpr auto Channels    = 2;
+constexpr auto BufferLen   = 1024UL;
+constexpr auto RepeatCount = 0;
 
 namespace {
 QStringList fileExtensions()
@@ -47,18 +47,24 @@ QStringList fileExtensions()
     return extensions;
 }
 
-void setupModule(openmpt::module* module)
+void setupModule(Fooyin::SettingsManager* settings, openmpt::module* module)
 {
-    module->set_render_param(openmpt::module::RENDER_STEREOSEPARATION_PERCENT, StereoSeperation);
-    module->set_render_param(openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, InterpolationFilter);
-    module->set_render_param(openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, VolumeRamping);
-    module->ctl_set_boolean("render.resampler.emulate_amiga", EmulateAmiga);
+    using namespace Fooyin::Settings::OpenMpt;
+
+    module->set_render_param(openmpt::module::RENDER_MASTERGAIN_MILLIBEL,
+                             static_cast<int32_t>(settings->value<Gain>() * 100));
+    module->set_render_param(openmpt::module::RENDER_STEREOSEPARATION_PERCENT, settings->value<Separation>());
+    module->set_render_param(openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH,
+                             settings->value<InterpolationFilter>());
+    module->set_render_param(openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, settings->value<VolumeRamping>());
+    module->ctl_set_boolean("render.resampler.emulate_amiga", settings->value<EmulateAmiga>());
 }
 } // namespace
 
 namespace Fooyin::OpenMpt {
-OpenMptDecoder::OpenMptDecoder()
-    : m_eof{false}
+OpenMptDecoder::OpenMptDecoder(SettingsManager* settings)
+    : m_settings{settings}
+    , m_eof{false}
 {
     m_format.setSampleFormat(SampleFormat::F32);
     m_format.setChannelCount(Channels);
@@ -91,7 +97,7 @@ std::optional<AudioFormat> OpenMptDecoder::init(const AudioSource& source, const
             repeat = 0;
         }
         m_module->set_repeat_count(repeat);
-        setupModule(m_module.get());
+        setupModule(m_settings, m_module.get());
         m_module->select_subsong(track.subsong());
     }
     catch(...) {
@@ -146,8 +152,9 @@ AudioBuffer OpenMptDecoder::readBuffer(size_t bytes)
     return buffer;
 }
 
-OpenMptReader::OpenMptReader()
-    : m_subsongCount{1}
+OpenMptReader::OpenMptReader(SettingsManager* settings)
+    : m_settings{settings}
+    , m_subsongCount{1}
 { }
 
 QStringList OpenMptReader::extensions() const
@@ -178,7 +185,7 @@ bool OpenMptReader::init(const AudioSource& source)
     try {
         const std::map<std::string, std::string> ctls;
         m_module = std::make_unique<openmpt::module>(data, std::clog, ctls);
-        setupModule(m_module.get());
+        setupModule(m_settings, m_module.get());
 
         m_subsongCount = m_module->get_num_subsongs();
     }

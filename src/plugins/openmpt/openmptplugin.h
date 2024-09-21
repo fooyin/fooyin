@@ -21,19 +21,29 @@
 
 #include <core/engine/audioinput.h>
 #include <core/engine/inputplugin.h>
+#include <core/plugins/coreplugin.h>
 #include <core/plugins/plugin.h>
 
 namespace Fooyin::OpenMpt {
-class RawAudioPlugin : public QObject,
-                       public Plugin,
-                       public InputPlugin
+class OpenMptPlugin : public QObject,
+                      public Plugin,
+                      public CorePlugin,
+                      public InputPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.fooyin.fooyin.plugin" FILE "openmpt.json")
-    Q_INTERFACES(Fooyin::Plugin Fooyin::InputPlugin)
+    Q_INTERFACES(Fooyin::Plugin Fooyin::CorePlugin Fooyin::InputPlugin)
 
 public:
+    void initialise(const CorePluginContext& context) override;
+
     [[nodiscard]] QString inputName() const override;
     [[nodiscard]] InputCreator inputCreator() const override;
+
+    [[nodiscard]] bool hasSettings() const override;
+    void showSettings(QWidget* parent) override;
+
+private:
+    SettingsManager* m_settings;
 };
 } // namespace Fooyin::OpenMpt

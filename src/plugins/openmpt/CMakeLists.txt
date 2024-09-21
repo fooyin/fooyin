@@ -8,11 +8,14 @@ endif()
 create_fooyin_plugin_internal(
     openmpt
     DEPENDS Fooyin::Core
+            Fooyin::Gui
             ${OPENMPT_LIBRARIES}
     SOURCES openmptinput.cpp
             openmptinput.h
             openmptplugin.cpp
             openmptplugin.h
+            openmptsettings.cpp
+            openmptsettings.h
 )
 
 target_include_directories(
