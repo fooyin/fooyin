@@ -19,6 +19,8 @@
 
 #include <gui/widgets/slidereditor.h>
 
+#include <gui/widgets/specialvaluespinbox.h>
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSlider>
@@ -28,7 +30,7 @@ namespace Fooyin {
 SliderEditor::SliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_slider{new QSlider(Qt::Horizontal, this)}
-    , m_spinBox{new QSpinBox(this)}
+    , m_spinBox{new SpecialValueSpinBox(this)}
     , m_updatingSlider{false}
     , m_updatingSpinBox{false}
 {
@@ -111,7 +113,7 @@ QString SliderEditor::prefix() const
 
 void SliderEditor::setPrefix(const QString& prefix)
 {
-    m_spinBox->setPrefix(prefix);
+    m_spinBox->setSpecialPrefix(prefix);
 }
 
 QString SliderEditor::suffix() const
@@ -121,7 +123,12 @@ QString SliderEditor::suffix() const
 
 void SliderEditor::setSuffix(const QString& suffix)
 {
-    m_spinBox->setSuffix(suffix);
+    m_spinBox->setSpecialSuffix(suffix);
+}
+
+void SliderEditor::addSpecialValue(int val, const QString& text)
+{
+    m_spinBox->addSpecialValue(val, text);
 }
 
 void SliderEditor::sliderValueChanged(int value)

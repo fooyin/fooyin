@@ -27,6 +27,8 @@ class QDoubleSpinBox;
 class QSlider;
 
 namespace Fooyin {
+class SpecialValueDoubleSpinBox;
+
 class FYGUI_EXPORT DoubleSliderEditor : public QWidget
 {
     Q_OBJECT
@@ -55,6 +57,8 @@ public:
     [[nodiscard]] QString suffix() const;
     void setSuffix(const QString& suffix);
 
+    void addSpecialValue(double val, const QString& text);
+
 signals:
     void valueChanged(double value);
 
@@ -66,7 +70,7 @@ private:
     void updateSlider();
 
     QSlider* m_slider;
-    QDoubleSpinBox* m_spinBox;
+    SpecialValueDoubleSpinBox* m_spinBox;
     bool m_updatingSlider;
     bool m_updatingSpinBox;
 };

@@ -19,6 +19,8 @@
 
 #include <gui/widgets/doubleslidereditor.h>
 
+#include <gui/widgets/specialvaluespinbox.h>
+
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -28,7 +30,7 @@ namespace Fooyin {
 DoubleSliderEditor::DoubleSliderEditor(const QString& name, QWidget* parent)
     : QWidget{parent}
     , m_slider{new QSlider(Qt::Horizontal, this)}
-    , m_spinBox{new QDoubleSpinBox(this)}
+    , m_spinBox{new SpecialValueDoubleSpinBox(this)}
     , m_updatingSlider{false}
     , m_updatingSpinBox{false}
 {
@@ -105,7 +107,7 @@ QString DoubleSliderEditor::prefix() const
 
 void DoubleSliderEditor::setPrefix(const QString& prefix)
 {
-    m_spinBox->setPrefix(prefix);
+    m_spinBox->setSpecialPrefix(prefix);
 }
 
 QString DoubleSliderEditor::suffix() const
@@ -115,7 +117,12 @@ QString DoubleSliderEditor::suffix() const
 
 void DoubleSliderEditor::setSuffix(const QString& suffix)
 {
-    m_spinBox->setSuffix(suffix);
+    m_spinBox->setSpecialSuffix(suffix);
+}
+
+void DoubleSliderEditor::addSpecialValue(double val, const QString& text)
+{
+    m_spinBox->addSpecialValue(val, text);
 }
 
 void DoubleSliderEditor::setValue(double value)

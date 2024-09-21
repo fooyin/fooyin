@@ -43,6 +43,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/singletabbedwidget.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/slider.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/slidereditor.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/specialvaluespinbox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/toolbutton.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/tooltip.h
     coverprovider.cpp
@@ -322,6 +323,7 @@ set(SOURCES
     widgets/slidereditor.cpp
     widgets/spacer.cpp
     widgets/spacer.h
+    widgets/specialvaluespinbox.cpp
     widgets/statuswidget.cpp
     widgets/statuswidget.h
     widgets/toolbutton.cpp
