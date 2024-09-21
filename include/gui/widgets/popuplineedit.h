@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QLineEdit>
 
 namespace Fooyin {
-class FYUTILS_EXPORT PopupLineEdit : public QLineEdit
+class FYGUI_EXPORT PopupLineEdit : public QLineEdit
 {
     Q_OBJECT
 

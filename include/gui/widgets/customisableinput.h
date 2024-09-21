@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <gui/widgets/expandableinputbox.h>
 
 namespace Fooyin {
 class CustomisableInputPrivate;
 
-class CustomisableInput : public ExpandableInput
+class FYGUI_EXPORT CustomisableInput : public ExpandableInput
 {
     Q_OBJECT
 

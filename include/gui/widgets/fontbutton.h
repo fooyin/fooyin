@@ -19,13 +19,13 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QFont>
 #include <QPushButton>
 
 namespace Fooyin {
-class FYUTILS_EXPORT FontButton : public QPushButton
+class FYGUI_EXPORT FontButton : public QPushButton
 {
     Q_OBJECT
 

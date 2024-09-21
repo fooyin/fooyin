@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QWidget>
 
@@ -27,7 +27,7 @@ namespace Fooyin {
 class EditableTabBar;
 class SingleTabbedWidgetPrivate;
 
-class FYUTILS_EXPORT SingleTabbedWidget : public QWidget
+class FYGUI_EXPORT SingleTabbedWidget : public QWidget
 {
     Q_OBJECT
 

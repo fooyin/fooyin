@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QTabBar>
 
 namespace Fooyin {
 class PopupLineEdit;
 
-class FYUTILS_EXPORT EditableTabBar : public QTabBar
+class FYGUI_EXPORT EditableTabBar : public QTabBar
 {
     Q_OBJECT
 

@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <QToolButton>
 
 namespace Fooyin {
-class ToolButton : public QToolButton
+class FYGUI_EXPORT ToolButton : public QToolButton
 {
     Q_OBJECT
 

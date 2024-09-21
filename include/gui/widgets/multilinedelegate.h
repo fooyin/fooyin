@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QStyledItemDelegate>
 
 namespace Fooyin {
-class FYUTILS_EXPORT MultiLineEditDelegate : public QStyledItemDelegate
+class FYGUI_EXPORT MultiLineEditDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 

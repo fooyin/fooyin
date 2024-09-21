@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fygui_export.h"
+
 #include <gui/fywidget.h>
 
 namespace Fooyin {
@@ -32,7 +34,7 @@ class WidgetProvider;
  * It's recommended to save the child widgets under the 'Widgets' key
  * when reimplementing @fn saveLayoutData.
  */
-class WidgetContainer : public FyWidget
+class FYGUI_EXPORT WidgetContainer : public FyWidget
 {
     Q_OBJECT
 

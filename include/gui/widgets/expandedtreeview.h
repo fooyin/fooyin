@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QAbstractItemView>
 
@@ -30,7 +30,7 @@ class QHeaderView;
 namespace Fooyin {
 class ExpandedTreeViewPrivate;
 
-class FYUTILS_EXPORT ExpandedTreeView : public QAbstractItemView
+class FYGUI_EXPORT ExpandedTreeView : public QAbstractItemView
 {
     Q_OBJECT
 

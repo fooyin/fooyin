@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QHeaderView>
 
 namespace Fooyin {
 class AutoHeaderViewPrivate;
 
-class FYUTILS_EXPORT AutoHeaderView : public QHeaderView
+class FYGUI_EXPORT AutoHeaderView : public QHeaderView
 {
     Q_OBJECT
 

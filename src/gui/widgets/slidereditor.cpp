@@ -140,3 +140,5 @@ void SliderEditor::spinBoxValueChanged(int value)
     }
 }
 } // namespace Fooyin
+
+#include "gui/widgets/moc_slidereditor.cpp"

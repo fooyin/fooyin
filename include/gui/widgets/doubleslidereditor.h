@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QWidget>
 
@@ -27,7 +27,7 @@ class QDoubleSpinBox;
 class QSlider;
 
 namespace Fooyin {
-class FYUTILS_EXPORT DoubleSliderEditor : public QWidget
+class FYGUI_EXPORT DoubleSliderEditor : public QWidget
 {
     Q_OBJECT
 

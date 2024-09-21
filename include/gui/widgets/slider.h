@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QSlider>
 
 namespace Fooyin {
-class FYUTILS_EXPORT Slider : public QSlider
+class FYGUI_EXPORT Slider : public QSlider
 {
     Q_OBJECT
 

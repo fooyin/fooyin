@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QLabel>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ElidedLabel : public QLabel
+class FYGUI_EXPORT ElidedLabel : public QLabel
 {
     Q_OBJECT
 

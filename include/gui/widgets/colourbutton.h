@@ -19,13 +19,13 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QColor>
 #include <QWidget>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ColourButton : public QWidget
+class FYGUI_EXPORT ColourButton : public QWidget
 {
     Q_OBJECT
 

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QWidget>
 
@@ -29,7 +29,7 @@ namespace Fooyin {
 class ExpandableInputPrivate;
 class ExpandableInputBoxPrivate;
 
-class FYUTILS_EXPORT ExpandableInput : public QWidget
+class FYGUI_EXPORT ExpandableInput : public QWidget
 {
     Q_OBJECT
 
@@ -64,7 +64,7 @@ private:
 };
 using ExpandableInputList = std::vector<ExpandableInput*>;
 
-class FYUTILS_EXPORT ExpandableInputBox : public QWidget
+class FYGUI_EXPORT ExpandableInputBox : public QWidget
 {
     Q_OBJECT
 

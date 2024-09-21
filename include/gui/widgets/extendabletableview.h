@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QTableView>
 
@@ -28,7 +28,7 @@ class ActionManager;
 class Context;
 class ExtendableTableViewPrivate;
 
-class FYUTILS_EXPORT ExtendableTableModel : public QAbstractTableModel
+class FYGUI_EXPORT ExtendableTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -47,7 +47,7 @@ signals:
     void pendingRowCancelled();
 };
 
-class FYUTILS_EXPORT ExtendableTableView : public QTableView
+class FYGUI_EXPORT ExtendableTableView : public QTableView
 {
     Q_OBJECT
 

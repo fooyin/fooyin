@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QComboBox>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ExpandingComboBox : public QComboBox
+class FYGUI_EXPORT ExpandingComboBox : public QComboBox
 {
     Q_OBJECT
 

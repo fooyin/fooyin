@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QWidget>
 
@@ -29,7 +29,7 @@ class QPushButton;
 namespace Fooyin {
 class OverlayWidgetPrivate;
 
-class FYUTILS_EXPORT OverlayWidget : public QWidget
+class FYGUI_EXPORT OverlayWidget : public QWidget
 {
     Q_OBJECT
 

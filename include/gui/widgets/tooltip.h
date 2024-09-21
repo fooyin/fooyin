@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include "fyutils_export.h"
+#include "fygui_export.h"
 
 #include <QWidget>
 
 namespace Fooyin {
-class FYUTILS_EXPORT ToolTip : public QWidget
+class FYGUI_EXPORT ToolTip : public QWidget
 {
     Q_OBJECT
 
