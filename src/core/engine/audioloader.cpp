@@ -107,6 +107,8 @@ void AudioLoader::restoreState()
                 loaderIt->enabled = enabled;
             }
         }
+
+        std::ranges::sort(loaders, [](const auto& a, const auto& b) { return a.index < b.index; });
     };
 
     const QStringList archiveExts = supportedArchiveExtensions();
