@@ -220,7 +220,7 @@ void PlaylistGeneralPageWidget::load()
     m_exportMetadata->setChecked(m_settings->fileValue(Settings::Core::Internal::PlaylistSaveMetadata, false).toBool());
 
     m_autoExportType->clear();
-    for(const QString& ext : m_playlistExtensions) {
+    for(const QString& ext : std::as_const(m_playlistExtensions)) {
         m_autoExportType->addItem(ext);
     }
 
