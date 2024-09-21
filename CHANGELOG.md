@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.7.1](https://github.com/fooyin/fooyin/releases/tag/v0.7.1) (2024-09-21)
+
+### Improvements
+
+* Interface: Add option to lock splitters ([#280](https://github.com/fooyin/fooyin/issues/280))
+* OpenMpt: Add config dialog
+* ScriptEditor: Open with currently selected track if available
+
+### Fixes
+
+* Interface: Fix a few misspellings
+* ScriptFormatter: Fix parsing of '<' in metadata fields ([#279](https://github.com/fooyin/fooyin/issues/279))
+* SelectionInfo: Fix empty model on some systems ([#281](https://github.com/fooyin/fooyin/issues/281))
+* TagEditor: Fix changing rating
+
+
 ## [0.7.0](https://github.com/fooyin/fooyin/releases/tag/v0.7.0) (2024-09-19)
 
 ### New Features
