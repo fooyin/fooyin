@@ -149,5 +149,6 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createTempSetting<Internal::SystemStyle>(QApplication::style()->name());
     m_settings->createTempSetting<Internal::SystemFont>(QApplication::font());
     m_settings->createTempSetting<Internal::SystemPalette>(QApplication::palette());
+    m_settings->createSetting<Internal::DirBrowserElide>(true, QStringLiteral("DirectoryBrowser/ElideText"));
 }
 } // namespace Fooyin

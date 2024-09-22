@@ -60,6 +60,7 @@ private:
 
     QCheckBox* m_showIcons;
     QCheckBox* m_indentList;
+    QCheckBox* m_elideText;
     QCheckBox* m_showControls;
     QCheckBox* m_showLocation;
 
@@ -74,6 +75,7 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
     , m_listMode{new QRadioButton(tr("List"), this)}
     , m_showIcons{new QCheckBox(tr("Show icons"), this)}
     , m_indentList{new QCheckBox(tr("Show indent"), this)}
+    , m_elideText{new QCheckBox(tr("Elide text"), this)}
     , m_showControls{new QCheckBox(tr("Show controls"), this)}
     , m_showLocation{new QCheckBox(tr("Show location"), this)}
     , m_doubleClick{new QComboBox(this)}
@@ -109,14 +111,14 @@ DirBrowserPageWidget::DirBrowserPageWidget(SettingsManager* settings)
 
     displayOptionsLayout->addWidget(m_showIcons, 0, 0);
     displayOptionsLayout->addWidget(m_indentList, 1, 0);
-    displayOptionsLayout->addWidget(m_showControls, 2, 0);
-    displayOptionsLayout->addWidget(m_showLocation, 3, 0);
+    displayOptionsLayout->addWidget(m_elideText, 2, 0);
+    displayOptionsLayout->addWidget(m_showControls, 3, 0);
+    displayOptionsLayout->addWidget(m_showLocation, 4, 0);
 
     auto* mainLayout = new QGridLayout(this);
     mainLayout->addWidget(clickBehaviour, 0, 0);
     mainLayout->addWidget(browserMode, 1, 0);
     mainLayout->addWidget(displayOptions, 2, 0);
-    // mainLayout->setColumnStretch(2, 1);
     mainLayout->setRowStretch(mainLayout->rowCount(), 1);
 
     using ActionIndexMap = std::map<int, int>;
@@ -166,6 +168,7 @@ void DirBrowserPageWidget::load()
 {
     m_showIcons->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
     m_indentList->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+    m_elideText->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserElide>());
     m_showControls->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserControls>());
     m_showLocation->setChecked(m_settings->value<Settings::Gui::Internal::DirBrowserLocation>());
 
@@ -187,6 +190,7 @@ void DirBrowserPageWidget::apply()
     m_settings->set<Settings::Gui::Internal::DirBrowserSendPlayback>(m_playbackOnSend->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserIcons>(m_showIcons->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserListIndent>(m_indentList->isChecked());
+    m_settings->set<Settings::Gui::Internal::DirBrowserElide>(m_elideText->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserControls>(m_showControls->isChecked());
     m_settings->set<Settings::Gui::Internal::DirBrowserLocation>(m_showLocation->isChecked());
 
@@ -205,6 +209,7 @@ void DirBrowserPageWidget::reset()
     m_settings->reset<Settings::Gui::Internal::DirBrowserSendPlayback>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserIcons>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserListIndent>();
+    m_settings->reset<Settings::Gui::Internal::DirBrowserElide>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserMode>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserControls>();
     m_settings->reset<Settings::Gui::Internal::DirBrowserLocation>();

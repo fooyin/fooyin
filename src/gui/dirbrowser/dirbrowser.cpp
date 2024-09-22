@@ -256,6 +256,7 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
 
     m_dirTree->setItemDelegate(new DirDelegate(m_self));
     m_dirTree->setModel(m_proxyModel);
+    m_dirTree->setElideText(m_settings->value<Settings::Gui::Internal::DirBrowserElide>());
 
     QString rootPath = m_settings->value<Settings::Gui::Internal::DirBrowserPath>();
     if(rootPath.isEmpty()) {
@@ -653,6 +654,7 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
             emit rootChanged();
             p->m_dirTree->selectionModel()->setCurrentIndex(p->m_proxyModel->index(0, 0, {}),
                                                             QItemSelectionModel::NoUpdate);
+            p->m_dirTree->resizeView();
         },
         Qt::QueuedConnection);
 
@@ -666,6 +668,8 @@ DirBrowser::DirBrowser(const QStringList& supportedExtensions, ActionManager* ac
         this, [this](bool enabled) { p->m_proxyModel->setIconsEnabled(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserListIndent>(
         this, [this](bool enabled) { p->updateIndent(enabled); });
+    settings->subscribe<Settings::Gui::Internal::DirBrowserElide>(
+        this, [this](bool enabled) { p->m_dirTree->setElideText(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserControls>(
         this, [this](bool enabled) { p->setControlsEnabled(enabled); });
     settings->subscribe<Settings::Gui::Internal::DirBrowserLocation>(

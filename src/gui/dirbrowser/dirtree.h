@@ -29,13 +29,20 @@ class DirTree : public QTreeView
 public:
     explicit DirTree(QWidget* parent = nullptr);
 
+    void resizeView();
+    void setElideText(bool enabled);
+
 signals:
     void backClicked();
     void forwardClicked();
     void middleClicked();
 
 protected:
+    void resizeEvent(QResizeEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+
+private:
+    bool m_elideText;
 };
 } // namespace Fooyin

@@ -19,11 +19,14 @@
 
 #include "dirtree.h"
 
+#include <QHeaderView>
 #include <QMouseEvent>
+#include <QScrollBar>
 
 namespace Fooyin {
 DirTree::DirTree(QWidget* parent)
     : QTreeView{parent}
+    , m_elideText{true}
 {
     setUniformRowHeights(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -33,6 +36,33 @@ DirTree::DirTree(QWidget* parent)
     setHeaderHidden(true);
     setTextElideMode(Qt::ElideRight);
     setAllColumnsShowFocus(true);
+    header()->setStretchLastSection(true);
+
+    QObject::connect(this, &QTreeView::expanded, this, &DirTree::resizeView);
+    QObject::connect(this, &QTreeView::collapsed, this, &DirTree::resizeView);
+}
+
+void DirTree::resizeView()
+{
+    if(!m_elideText) {
+        resizeColumnToContents(0);
+    }
+    else {
+        setColumnWidth(0, 1);
+    }
+}
+
+void DirTree::setElideText(bool enabled)
+{
+    if(std::exchange(m_elideText, enabled) != enabled) {
+        resizeView();
+    }
+}
+
+void DirTree::resizeEvent(QResizeEvent* event)
+{
+    QTreeView::resizeEvent(event);
+    resizeView();
 }
 
 void DirTree::mousePressEvent(QMouseEvent* event)

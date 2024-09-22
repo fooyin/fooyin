@@ -130,6 +130,7 @@ enum GuiInternalSettings : uint32_t
     SystemStyle             = 58 | Type::String,
     SystemFont              = 59 | Type::Variant,
     SystemPalette           = 60 | Type::Variant,
+    DirBrowserElide         = 61 | Type::Bool,
 };
 Q_ENUM_NS(GuiInternalSettings)
 } // namespace Settings::Gui::Internal
