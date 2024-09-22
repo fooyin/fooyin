@@ -572,10 +572,9 @@ void DirBrowserPrivate::startPlayback(const TrackList& tracks, int row)
 {
     if(!m_playlist) {
         m_playlist = m_playlistHandler->createTempPlaylist(QString::fromLatin1(DirPlaylist));
-    }
-
-    if(!m_playlist) {
-        return;
+        if(!m_playlist) {
+            return;
+        }
     }
 
     m_playlistHandler->replacePlaylistTracks(m_playlist->id(), tracks);
@@ -711,11 +710,15 @@ void DirBrowser::playstateChanged(Player::PlayState state)
 
 void DirBrowser::activePlaylistChanged(Playlist* playlist)
 {
-    if(!playlist || !p->m_playlist) {
+    if(!playlist) {
         return;
     }
 
-    if(playlist->id() != p->m_playlist->id()) {
+    if(!p->m_playlist) {
+        p->m_playlist = p->m_playlistHandler->playlistByName(QString::fromLatin1(DirPlaylist));
+    }
+
+    if(!playlist || !p->m_playlist || (playlist && playlist->id() != p->m_playlist->id())) {
         p->m_proxyModel->setPlayingPath({});
     }
 }

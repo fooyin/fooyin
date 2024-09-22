@@ -24,6 +24,7 @@
 namespace Fooyin {
 class Application;
 class CoverProvider;
+class FyWidget;
 struct GuiPluginContext;
 class LibraryTreeController;
 class MainWindow;
@@ -49,6 +50,7 @@ public:
     void registerFontEntries() const;
 
 private:
+    FyWidget* createDirBrowser();
     void showScanProgress(const ScanProgress& progress) const;
 
     Application* m_core;

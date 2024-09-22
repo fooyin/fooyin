@@ -222,19 +222,7 @@ void Widgets::registerWidgets()
         [this]() { return new SearchWidget(m_gui.searchController, m_settings, m_window); }, tr("Search Bar"));
 
     m_provider->registerWidget(
-        QStringLiteral("DirectoryBrowser"),
-        [this]() {
-            auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_gui.actionManager,
-                                           m_playlistInteractor, m_settings, m_window);
-            QObject::connect(m_core->playerController(), &PlayerController::playStateChanged, browser,
-                             &DirBrowser::playstateChanged);
-            QObject::connect(m_core->playerController(), &PlayerController::playlistTrackChanged, browser,
-                             &DirBrowser::playlistTrackChanged);
-            QObject::connect(m_core->playlistHandler(), &PlaylistHandler::activePlaylistChanged, browser,
-                             &DirBrowser::activePlaylistChanged);
-            return browser;
-        },
-        tr("Directory Browser"));
+        QStringLiteral("DirectoryBrowser"), [this]() { return createDirBrowser(); }, tr("Directory Browser"));
     m_provider->setLimit(QStringLiteral("DirectoryBrowser"), 1);
 }
 
@@ -286,6 +274,25 @@ void Widgets::registerFontEntries() const
     themeReg->registerFontEntry(tr("Playlist"), QStringLiteral("Fooyin::PlaylistView"));
     themeReg->registerFontEntry(tr("Status bar"), QStringLiteral("Fooyin::StatusLabel"));
     themeReg->registerFontEntry(tr("Tabs"), QStringLiteral("Fooyin::EditableTabBar"));
+}
+
+FyWidget* Widgets::createDirBrowser()
+{
+    auto* browser = new DirBrowser(m_core->audioLoader()->supportedFileExtensions(), m_gui.actionManager,
+                                   m_playlistInteractor, m_settings, m_window);
+
+    browser->playstateChanged(m_core->playerController()->playState());
+    browser->activePlaylistChanged(m_core->playlistHandler()->activePlaylist());
+    browser->playlistTrackChanged(m_core->playerController()->currentPlaylistTrack());
+
+    QObject::connect(m_core->playerController(), &PlayerController::playStateChanged, browser,
+                     &DirBrowser::playstateChanged);
+    QObject::connect(m_core->playerController(), &PlayerController::playlistTrackChanged, browser,
+                     &DirBrowser::playlistTrackChanged);
+    QObject::connect(m_core->playlistHandler(), &PlaylistHandler::activePlaylistChanged, browser,
+                     &DirBrowser::activePlaylistChanged);
+
+    return browser;
 }
 
 void Widgets::showScanProgress(const ScanProgress& progress) const
