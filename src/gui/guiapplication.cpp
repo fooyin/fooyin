@@ -110,6 +110,7 @@ public:
     void setupRatingMenu();
     void setupUtilitesMenu() const;
 
+    void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
     void setTheme() const;
@@ -423,6 +424,16 @@ void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
 
 void GuiApplicationPrivate::registerActions()
 {
+    auto* volumeUp = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeHigh), GuiApplication::tr("Volume up"),
+                                 m_mainWindow.get());
+    m_actionManager->registerAction(volumeUp, Constants::Actions::VolumeUp);
+    QObject::connect(volumeUp, &QAction::triggered, m_mainWindow.get(), [this]() { changeVolume(0.05); });
+
+    auto* volumeDown = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeLow), GuiApplication::tr("Volume down"),
+                                   m_mainWindow.get());
+    m_actionManager->registerAction(volumeDown, Constants::Actions::VolumeDown);
+    QObject::connect(volumeDown, &QAction::triggered, m_mainWindow.get(), [this]() { changeVolume(-0.05); });
+
     auto* muteAction = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeMute), GuiApplication::tr("Mute"),
                                    m_mainWindow.get());
     m_actionManager->registerAction(muteAction, Constants::Actions::Mute);
@@ -577,6 +588,13 @@ void GuiApplicationPrivate::setupUtilitesMenu() const
     auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
     utilitiesMenu->menu()->setTitle(GuiApplication::tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
+}
+
+void GuiApplicationPrivate::changeVolume(double delta) const
+{
+    double volume = m_settings->value<Settings::Core::OutputVolume>() + delta;
+    volume        = std::clamp(volume, 0.0, 1.0);
+    m_settings->set<Settings::Core::OutputVolume>(volume);
 }
 
 void GuiApplicationPrivate::mute() const
