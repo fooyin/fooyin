@@ -461,14 +461,6 @@ void DirBrowserPrivate::handleDoubleClick(const QModelIndex& index)
         if(m_mode == DirBrowser::Mode::List) {
             changeRoot(filePath.absoluteFilePath());
         }
-        else {
-            if(m_dirTree->isExpanded(index)) {
-                m_dirTree->collapse(index);
-            }
-            else {
-                m_dirTree->expand(index);
-            }
-        }
         return;
     }
 
