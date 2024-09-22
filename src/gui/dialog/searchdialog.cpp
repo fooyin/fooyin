@@ -119,7 +119,7 @@ void SearchDialog::search()
 
 void SearchDialog::updateTitle()
 {
-    QString title = tr("Search Playlist");
+    QString title = (m_mode == PlaylistWidget::Mode::DetachedLibrary) ? tr("Search Library") : tr("Search Playlist");
 
     if(!m_searchBar->text().isEmpty()) {
         const int trackCount = m_view->model()->rowCount({});
