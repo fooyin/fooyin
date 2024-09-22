@@ -857,7 +857,7 @@ void Track::setFilePath(const QString& path)
 
     p->filepath = path;
 
-    if(path.length() >= 9 && path.first(9) == u"unpack://") {
+    if(path.startsWith(u"unpack://")) {
         p->isInArchive = true;
         p->splitArchiveUrl();
     }
