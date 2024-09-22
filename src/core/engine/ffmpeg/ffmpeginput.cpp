@@ -343,21 +343,19 @@ FormatContext createAVFormatContext(QIODevice* source)
         qCWarning(FFMPEG) << "Unable to allocate AVFormat context";
         return {};
     }
-    fc.formatContext.reset(avContext);
-    auto* context = fc.formatContext.get();
 
-    fc.formatContext->pb = fc.ioContext.get();
+    avContext->pb = fc.ioContext.get();
 
-    const int ret = avformat_open_input(&context, "", nullptr, nullptr);
+    const int ret = avformat_open_input(&avContext, "", nullptr, nullptr);
     if(ret < 0) {
-        if(ret == AVERROR(EACCES)) {
-            qCWarning(FFMPEG) << "Access denied";
-        }
-        else if(ret == AVERROR(EINVAL)) {
-            qCWarning(FFMPEG) << "Invalid format";
-        }
+        // Format context is freed on failure
+        char err[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(ret, err, AV_ERROR_MAX_STRING_SIZE);
+        qCWarning(FFMPEG) << "Error opening input:" << err;
         return {};
     }
+
+    fc.formatContext.reset(avContext);
 
     if(avformat_find_stream_info(avContext, nullptr) < 0) {
         qCWarning(FFMPEG) << "Could not find stream info";
