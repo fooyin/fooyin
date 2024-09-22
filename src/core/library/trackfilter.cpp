@@ -23,11 +23,6 @@
 #include <utils/helpers.h>
 
 namespace {
-bool containsSearch(const QString& text, const QString& search)
-{
-    return text.contains(search, Qt::CaseInsensitive);
-}
-
 // TODO: Use user-defined search script
 bool matchSearch(const Fooyin::Track& track, const QString& search)
 {
@@ -35,9 +30,8 @@ bool matchSearch(const Fooyin::Track& track, const QString& search)
         return true;
     }
 
-    return containsSearch(track.artist(), search) || containsSearch(track.title(), search)
-        || containsSearch(track.album(), search) || containsSearch(track.albumArtist(), search)
-        || containsSearch(track.filename(), search) || containsSearch(track.filepath(), search);
+    const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
+    return std::ranges::all_of(terms, [&track](const QString& term) { return track.hasMatch(term); });
 }
 } // namespace
 

@@ -174,6 +174,7 @@ public:
     [[nodiscard]] uint64_t lastPlayed() const;
 
     [[nodiscard]] QString sort() const;
+    [[nodiscard]] bool hasMatch(const QString& term) const;
 
     void setLibraryId(int id);
     void setIsEnabled(bool enabled);

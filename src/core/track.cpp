@@ -829,6 +829,24 @@ QString Track::sort() const
     return p->sort;
 }
 
+bool Track::hasMatch(const QString& term) const
+{
+    const auto contains = [&term](const QString& text) {
+        return text.contains(term, Qt::CaseInsensitive);
+    };
+
+    // clang-format off
+    return contains(artist()) ||
+           contains(title()) ||
+           contains(album()) ||
+           contains(albumArtist()) ||
+           contains(performer()) ||
+           contains(composer()) ||
+           contains(genre()) ||
+           contains(filepath());
+    // clang-format on
+}
+
 void Track::setLibraryId(int id)
 {
     p->libraryId = id;
