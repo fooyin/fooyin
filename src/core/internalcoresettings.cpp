@@ -81,6 +81,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<Internal::EngineFading>(false, QStringLiteral("Engine/Fading"));
     m_settings->createSetting<Internal::FadingIntervals>(QVariant::fromValue(FadingIntervals{}),
                                                          QStringLiteral("Engine/FadingIntervals"));
+    m_settings->createSetting<Internal::FFmpegAllExtensions>(false, QStringLiteral("Engine/FFmpegAllExtensions"));
 
     m_settings->set<FirstRun>(!QFileInfo::exists(Core::settingsPath()));
 

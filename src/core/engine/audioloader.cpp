@@ -515,6 +515,28 @@ void AudioLoader::changeReaderIndex(const QString& name, int index)
     sortLoaderEntries(p->m_readers);
 }
 
+void AudioLoader::reloadDecoderExtensions(const QString& name)
+{
+    const std::unique_lock lock{p->m_mutex};
+    auto decoder = std::ranges::find_if(p->m_decoders, [&name](const auto& entry) { return entry.name == name; });
+    if(decoder != p->m_decoders.end()) {
+        if(auto instance = decoder->creator()) {
+            decoder->extensions = instance->extensions();
+        }
+    }
+}
+
+void AudioLoader::reloadReaderExtensions(const QString& name)
+{
+    const std::unique_lock lock{p->m_mutex};
+    auto reader = std::ranges::find_if(p->m_readers, [&name](const auto& entry) { return entry.name == name; });
+    if(reader != p->m_readers.end()) {
+        if(auto instance = reader->creator()) {
+            reader->extensions = instance->extensions();
+        }
+    }
+}
+
 void AudioLoader::reset()
 {
     FySettings settings;

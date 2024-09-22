@@ -23,8 +23,10 @@
 #include "ffmpegframe.h"
 #include "ffmpegstream.h"
 #include "ffmpegutils.h"
+#include "internalcoresettings.h"
 
 #include <core/engine/audiobuffer.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/worker.h>
 
 #include <QDebug>
@@ -43,13 +45,29 @@ constexpr AVRational TimeBaseMs = {1, 1000};
 using namespace std::chrono_literals;
 
 namespace {
-QStringList fileExtensions()
+QStringList fileExtensions(bool allSupported)
 {
-    static const QStringList extensions{
-        QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"), QStringLiteral("oga"),
-        QStringLiteral("m4a"), QStringLiteral("wav"),  QStringLiteral("wv"),   QStringLiteral("flac"),
-        QStringLiteral("wma"), QStringLiteral("asf"),  QStringLiteral("mpc"),  QStringLiteral("aiff"),
-        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
+    if(!allSupported) {
+        return {QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"), QStringLiteral("oga"),
+                QStringLiteral("m4a"), QStringLiteral("wav"),  QStringLiteral("wv"),   QStringLiteral("flac"),
+                QStringLiteral("wma"), QStringLiteral("asf"),  QStringLiteral("mpc"),  QStringLiteral("aiff"),
+                QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
+    }
+
+    QStringList extensions;
+
+    const AVInputFormat* format{nullptr};
+    void* i{nullptr};
+
+    while((format = av_demuxer_iterate(&i))) {
+        if(format->extensions) {
+            const QString exts{QString::fromLatin1(format->extensions)};
+            const QStringList extList = exts.split(u',', Qt::SkipEmptyParts);
+            extensions.append(extList);
+        }
+    }
+
+    extensions.removeDuplicates();
     return extensions;
 }
 
@@ -406,8 +424,9 @@ namespace Fooyin {
 class FFmpegInputPrivate
 {
 public:
-    explicit FFmpegInputPrivate(FFmpegDecoder* self)
+    explicit FFmpegInputPrivate(FFmpegDecoder* self, SettingsManager* settings)
         : m_self{self}
+        , m_settings{settings}
     { }
 
     void reset();
@@ -424,6 +443,7 @@ public:
     void seek(uint64_t pos);
 
     FFmpegDecoder* m_self;
+    SettingsManager* m_settings;
 
     AVIOContextPtr m_ioContext;
     FormatContextPtr m_context;
@@ -716,15 +736,15 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     m_currentPos = pos;
 }
 
-FFmpegDecoder::FFmpegDecoder()
-    : p{std::make_unique<FFmpegInputPrivate>(this)}
+FFmpegDecoder::FFmpegDecoder(SettingsManager* settings)
+    : p{std::make_unique<FFmpegInputPrivate>(this, settings)}
 { }
 
 FFmpegDecoder::~FFmpegDecoder() = default;
 
 QStringList FFmpegDecoder::extensions() const
 {
-    return fileExtensions();
+    return fileExtensions(p->m_settings->value<Settings::Core::Internal::FFmpegAllExtensions>());
 }
 
 int FFmpegDecoder::bitrate() const
@@ -802,9 +822,13 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
     return buffer;
 }
 
+FFmpegReader::FFmpegReader(SettingsManager* settings)
+    : m_settings{settings}
+{ }
+
 QStringList FFmpegReader::extensions() const
 {
-    return fileExtensions();
+    return fileExtensions(m_settings->value<Settings::Core::Internal::FFmpegAllExtensions>());
 }
 
 bool FFmpegReader::canReadCover() const

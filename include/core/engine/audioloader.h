@@ -76,6 +76,9 @@ public:
     void setReaderEnabled(const QString& name, bool enabled);
     void changeReaderIndex(const QString& name, int index);
 
+    void reloadDecoderExtensions(const QString& name);
+    void reloadReaderExtensions(const QString& name);
+
     void reset();
     void destroyThreadInstance();
 
