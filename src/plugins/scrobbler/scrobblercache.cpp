@@ -194,13 +194,13 @@ void ScrobblerCache::flush(const CacheItemList& items)
 
 void ScrobblerCache::writeCache()
 {
-    qCDebug(SCROBBLER_CACHE) << "Writing cache to file" << m_filepath;
-
     if(m_items.empty()) {
         QFile file{m_filepath};
         file.remove();
         return;
     }
+
+    qCDebug(SCROBBLER_CACHE) << "Writing cache to file" << m_filepath;
 
     QJsonArray array;
 
