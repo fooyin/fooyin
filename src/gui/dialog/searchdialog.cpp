@@ -33,7 +33,6 @@
 #include <utils/utils.h>
 
 #include <QAction>
-#include <QDialogButtonBox>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -44,11 +43,9 @@
 
 using namespace std::chrono_literals;
 
-constexpr auto AutoSelect         = "Search/AutoSelect";
-constexpr auto WindowState        = "Search/WindowState";
-constexpr auto SearchState        = "Search/PlaylistState";
-constexpr auto LibraryWindowState = "Search/LibraryWindowState";
-constexpr auto LibrarySearchState = "Search/LibraryPlaylistState";
+constexpr auto AutoSelect    = "Search/AutoSelect";
+constexpr auto PlaylistState = "Search/PlaylistState";
+constexpr auto LibraryState  = "Search/LibraryState";
 
 namespace Fooyin {
 SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
@@ -95,14 +92,15 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     loadState();
 }
 
-SearchDialog::~SearchDialog()
-{
-    saveState();
-}
-
 QSize SearchDialog::sizeHint() const
 {
     return {800, 480};
+}
+
+void SearchDialog::closeEvent(QCloseEvent* event)
+{
+    saveState();
+    QDialog::closeEvent(event);
 }
 
 void SearchDialog::keyPressEvent(QKeyEvent* event)
@@ -174,35 +172,37 @@ void SearchDialog::saveState()
 {
     QJsonObject layout;
     m_view->saveLayoutData(layout);
+    layout[u"Geometry"] = QString::fromUtf8(saveGeometry().toBase64());
 
     const QByteArray state = QJsonDocument{layout}.toJson(QJsonDocument::Compact).toBase64();
 
     if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
-        m_settings->fileSet(SearchState, state);
-        m_settings->fileSet(WindowState, saveGeometry());
+        m_settings->fileSet(PlaylistState, state);
     }
     else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
-        m_settings->fileSet(LibrarySearchState, state);
-        m_settings->fileSet(LibraryWindowState, saveGeometry());
+        m_settings->fileSet(LibraryState, state);
     }
 }
 
 void SearchDialog::loadState()
 {
     QByteArray state;
+
     if(m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
-        state = m_settings->fileValue(SearchState).toByteArray();
-        restoreGeometry(m_settings->fileValue(WindowState).toByteArray());
+        state = m_settings->fileValue(PlaylistState).toByteArray();
     }
     else if(m_mode == PlaylistWidget::Mode::DetachedLibrary) {
-        state = m_settings->fileValue(LibrarySearchState).toByteArray();
-        restoreGeometry(m_settings->fileValue(LibraryWindowState).toByteArray());
+        state = m_settings->fileValue(LibraryState).toByteArray();
     }
 
     if(!state.isEmpty()) {
         const QJsonObject layout = QJsonDocument::fromJson(QByteArray::fromBase64(state)).object();
         if(!layout.isEmpty()) {
             m_view->loadLayoutData(layout);
+
+            if(layout.contains(u"Geometry")) {
+                restoreGeometry(QByteArray::fromBase64(layout.value(u"Geometry").toString().toUtf8()));
+            }
         }
     }
 
