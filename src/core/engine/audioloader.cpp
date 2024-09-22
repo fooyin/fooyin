@@ -117,23 +117,17 @@ void AudioLoader::restoreState()
         sortLoaderEntries(loaders);
     };
 
-    {
-        const QStringList archiveExts = supportedArchiveExtensions();
-        const std::unique_lock lock{p->m_mutex};
-
-        auto archiveDec
-            = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
-        if(archiveDec != p->m_decoders.end()) {
-            archiveDec->extensions = archiveExts;
-        }
-        auto archiveRead
-            = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
-        if(archiveRead != p->m_readers.end()) {
-            archiveRead->extensions = archiveExts;
-        }
-    }
-
+    const QStringList archiveExts = supportedArchiveExtensions();
     const std::unique_lock lock{p->m_mutex};
+
+    auto archiveDec = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
+    if(archiveDec != p->m_decoders.end()) {
+        archiveDec->extensions = archiveExts;
+    }
+    auto archiveRead = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
+    if(archiveRead != p->m_readers.end()) {
+        archiveRead->extensions = archiveExts;
+    }
 
     p->m_defaultDecoders = p->m_decoders;
     restoreLoaders(p->m_decoders, DecoderState);
