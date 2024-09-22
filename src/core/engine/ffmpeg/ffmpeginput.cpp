@@ -68,7 +68,41 @@ QStringList fileExtensions(bool allSupported)
         }
     }
 
+    static constexpr std::array extensionBlacklist = {"apc",            // apc (CRYO APC)
+                                                      "aqt", "aqtitle", // aqtitle (AQTitle subtitles)
+                                                      "ass",            // ass (SSA (SubStation Alpha) subtitle)
+                                                      "bin",            // bin (Binary text)
+                                                      "dss",            // dss (Digital Speech Standard (DSS))
+                                                      "dvbsub",         // dvbsub (raw dvbsub)
+                                                      "ffmetadata",     // ffmetadata (FFmpeg metadata in text)
+                                                      "ilbc",           // ilbc (iLBC storage)
+                                                      "image2pipe",     // image2pipe (piped image2 sequence)
+                                                      "jacosub",        // jacosub (JACOsub subtitle format)
+                                                      "txt",            // txt (Text file)
+                                                      "mpl2",           // mpl2 (MPL2 subtitles)
+                                                      "sub", "mpsub",   // mpsub (MPlayer subtitles)
+                                                      "pjs", // pjs (PJS (Phoenix Japanimation Society) subtitles)
+                                                      "smi", "sami",       // sami (SAMI subtitle format)
+                                                      "srt",               // srt (SubRip subtitle)
+                                                      "stl",               // stl (Spruce subtitle format)
+                                                      "sub", "subviewer1", // subviewer1 (SubViewer v1 subtitle format)
+                                                      "sup", // sup (raw HDMV Presentation Graphic Stream subtitles)
+                                                      "vtt", "webvtt", // webvtt (WebVTT subtitle)
+                                                      "bmp_pipe",      // bmp_pipe (piped bmp sequence)
+                                                      "dds_pipe",      // dds_pipe (piped dds sequence)
+                                                      "dpx_pipe",      // dpx_pipe (piped dpx sequence)
+                                                      "exr_pipe",      // exr_pipe (piped exr sequence)
+                                                      "jpeg_pipe",     // jpeg_pipe (piped jpeg sequence)
+                                                      "png_pipe",      // png_pipe (piped png sequence)
+                                                      "tiff_pipe",     // tiff_pipe (piped tiff sequence)
+                                                      // Image formats:
+                                                      "bmp", "jpg", "jpeg", "png", "tif", "tiff", "gif", "ico", "exr"};
+
+    for(const auto* ext : extensionBlacklist) {
+        extensions.removeAll(QLatin1String{ext});
+    }
     extensions.removeDuplicates();
+
     return extensions;
 }
 
