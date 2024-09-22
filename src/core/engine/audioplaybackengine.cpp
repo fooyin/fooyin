@@ -193,6 +193,10 @@ void AudioPlaybackEngine::play()
     auto runOutput = [this]() {
         QObject::disconnect(&m_renderer, &AudioRenderer::paused, this, nullptr);
 
+        if(!m_decoder) {
+            return;
+        }
+
         if(!m_decoding) {
             m_decoding = true;
             m_decoder->start();
