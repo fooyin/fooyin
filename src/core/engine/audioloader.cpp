@@ -83,6 +83,7 @@ void AudioLoader::saveState()
         settings.setValue(QLatin1String{state}, data);
     };
 
+    const std::shared_lock lock{p->m_mutex};
     saveLoaders(p->m_decoders, DecoderState);
     saveLoaders(p->m_readers, ReaderState);
 }
@@ -116,15 +117,23 @@ void AudioLoader::restoreState()
         sortLoaderEntries(loaders);
     };
 
-    const QStringList archiveExts = supportedArchiveExtensions();
-    auto archiveDec = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
-    if(archiveDec != p->m_decoders.end()) {
-        archiveDec->extensions = archiveExts;
+    {
+        const QStringList archiveExts = supportedArchiveExtensions();
+        const std::unique_lock lock{p->m_mutex};
+
+        auto archiveDec
+            = std::ranges::find_if(p->m_decoders, [](const auto& loader) { return loader.name == u"Archive"; });
+        if(archiveDec != p->m_decoders.end()) {
+            archiveDec->extensions = archiveExts;
+        }
+        auto archiveRead
+            = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
+        if(archiveRead != p->m_readers.end()) {
+            archiveRead->extensions = archiveExts;
+        }
     }
-    auto archiveRead = std::ranges::find_if(p->m_readers, [](const auto& loader) { return loader.name == u"Archive"; });
-    if(archiveRead != p->m_readers.end()) {
-        archiveRead->extensions = archiveExts;
-    }
+
+    const std::unique_lock lock{p->m_mutex};
 
     p->m_defaultDecoders = p->m_decoders;
     restoreLoaders(p->m_decoders, DecoderState);
@@ -136,7 +145,7 @@ AudioLoader::~AudioLoader() = default;
 
 QStringList AudioLoader::supportedFileExtensions() const
 {
-    const std::shared_lock decoderLock{p->m_mutex};
+    const std::shared_lock lock{p->m_mutex};
 
     QStringList extensions;
 
@@ -155,7 +164,7 @@ QStringList AudioLoader::supportedFileExtensions() const
 
 QStringList AudioLoader::supportedTrackExtensions() const
 {
-    const std::shared_lock decoderLock{p->m_mutex};
+    const std::shared_lock lock{p->m_mutex};
 
     QStringList extensions;
 
