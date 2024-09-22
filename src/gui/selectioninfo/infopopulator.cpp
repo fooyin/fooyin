@@ -216,8 +216,8 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
     }
     checkAddEntryNode(QStringLiteral("SampleRate"), InfoPopulator::tr("Sample Rate"), ItemParent::General,
                       QStringLiteral("%1 Hz").arg(track.sampleRate()), InfoItem::Percentage);
-    checkAddEntryNode(QStringLiteral("Codec"), InfoPopulator::tr("Codec"), ItemParent::General, track.codec(),
-                      InfoItem::Percentage);
+    checkAddEntryNode(QStringLiteral("Codec"), InfoPopulator::tr("Codec"), ItemParent::General,
+                      !track.codec().isEmpty() ? track.codec() : track.extension().toUpper(), InfoItem::Percentage);
     checkAddEntryNode(QStringLiteral("CodecProfile"), InfoPopulator::tr("Codec Profile"), ItemParent::General,
                       track.codecProfile(), InfoItem::Percentage);
     checkAddEntryNode(QStringLiteral("Tool"), InfoPopulator::tr("Tool"), ItemParent::General, track.tool(),
