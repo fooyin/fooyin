@@ -45,11 +45,11 @@ using namespace std::chrono_literals;
 namespace {
 QStringList fileExtensions()
 {
-    static const QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
-                                        QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
-                                        QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
-                                        QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
-                                        QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
+    static const QStringList extensions{
+        QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"), QStringLiteral("oga"),
+        QStringLiteral("m4a"), QStringLiteral("wav"),  QStringLiteral("wv"),   QStringLiteral("flac"),
+        QStringLiteral("wma"), QStringLiteral("asf"),  QStringLiteral("mpc"),  QStringLiteral("aiff"),
+        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4"),  QStringLiteral("mka")};
     return extensions;
 }
 

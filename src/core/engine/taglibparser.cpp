@@ -1783,11 +1783,11 @@ void writeAsfTags(TagLib::ASF::Tag* asfTags, const Fooyin::Track& track, Fooyin:
 namespace Fooyin {
 QStringList TagLibReader::extensions() const
 {
-    static const QStringList extensions{QStringLiteral("mp3"),  QStringLiteral("ogg"),  QStringLiteral("opus"),
-                                        QStringLiteral("oga"),  QStringLiteral("m4a"),  QStringLiteral("wav"),
-                                        QStringLiteral("wv"),   QStringLiteral("flac"), QStringLiteral("wma"),
-                                        QStringLiteral("mpc"),  QStringLiteral("aiff"), QStringLiteral("ape"),
-                                        QStringLiteral("webm"), QStringLiteral("mp4")};
+    static const QStringList extensions{QStringLiteral("mp3"), QStringLiteral("ogg"),  QStringLiteral("opus"),
+                                        QStringLiteral("oga"), QStringLiteral("m4a"),  QStringLiteral("wav"),
+                                        QStringLiteral("wv"),  QStringLiteral("flac"), QStringLiteral("wma"),
+                                        QStringLiteral("asf"), QStringLiteral("mpc"),  QStringLiteral("aiff"),
+                                        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4")};
     return extensions;
 }
 
@@ -2191,7 +2191,7 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
-    else if(mimeType == u"audio/x-ms-wma") {
+    else if(mimeType == u"audio/x-ms-wma" || mimeType == u"video/x-ms-asf" || mimeType == u"application/vnd.ms-asf") {
         const TagLib::ASF::File file(&stream, true, style);
         if(file.isValid()) {
             readProperties(file);
@@ -2321,7 +2321,7 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readFlacCover(file.tag()->pictureList(), cover);
         }
     }
-    else if(mimeType == u"audio/x-ms-wma") {
+    else if(mimeType == u"audio/x-ms-wma" || mimeType == u"video/x-ms-asf" || mimeType == u"application/vnd.ms-asf") {
         const TagLib::ASF::File file(&stream, true);
         if(file.isValid() && file.tag()) {
             return readAsfCover(file.tag(), cover);
@@ -2462,7 +2462,7 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
-    else if(mimeType == u"audio/x-ms-wma") {
+    else if(mimeType == u"audio/x-ms-wma" || mimeType == u"video/x-ms-asf" || mimeType == u"application/vnd.ms-asf") {
         TagLib::ASF::File file(&stream, false);
         if(file.isValid()) {
             writeProperties(file);

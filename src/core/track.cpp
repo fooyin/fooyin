@@ -1368,9 +1368,12 @@ QStringList Track::supportedMimeTypes()
                                                QStringLiteral("audio/flac"),
                                                QStringLiteral("audio/ogg"),
                                                QStringLiteral("audio/x-vorbis+ogg"),
+                                               QStringLiteral("application/ogg"),
                                                QStringLiteral("audio/opus"),
                                                QStringLiteral("audio/x-opus+ogg"),
-                                               QStringLiteral("audio/x-ms-wma")};
+                                               QStringLiteral("audio/x-ms-wma"),
+                                               QStringLiteral("video/x-ms-asf"),
+                                               QStringLiteral("application/vnd.ms-asf")};
     return supportedTypes;
 }
 
