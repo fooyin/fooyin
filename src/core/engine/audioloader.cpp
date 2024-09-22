@@ -37,7 +37,12 @@ constexpr auto ReaderState  = "Engine/ReaderState";
 namespace {
 void sortLoaderEntries(auto& entries)
 {
-    std::ranges::sort(entries, [](const auto& a, const auto& b) { return a.index < b.index; });
+    std::ranges::sort(entries, [](const auto& a, const auto& b) {
+        if(a.index == b.index) {
+            return false;
+        }
+        return a.index < b.index;
+    });
 }
 } // namespace
 
@@ -115,6 +120,7 @@ void AudioLoader::restoreState()
         }
 
         sortLoaderEntries(loaders);
+        std::ranges::for_each(loaders, [i = 0](auto& loader) mutable { loader.index = i++; });
     };
 
     const QStringList archiveExts = supportedArchiveExtensions();
@@ -384,7 +390,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
     return decoder->writeTrack(source, track, options);
 }
 
-void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
+void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator, int priority)
 {
     if(!creator) {
         qCWarning(AUD_LDR) << "Decoder" << name << "cannot be created";
@@ -402,14 +408,14 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
 
     LoaderEntry<DecoderCreator> loader;
     loader.name       = name;
-    loader.index      = static_cast<int>(p->m_decoders.size());
+    loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_decoders.size());
     loader.extensions = decoder->extensions();
     loader.creator    = creator;
 
     p->m_decoders.push_back(loader);
 }
 
-void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
+void AudioLoader::addReader(const QString& name, const ReaderCreator& creator, int priority)
 {
     if(!creator) {
         qCWarning(AUD_LDR) << "Reader" << name << "cannot be created";
@@ -427,14 +433,14 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
 
     LoaderEntry<ReaderCreator> loader;
     loader.name       = name;
-    loader.index      = static_cast<int>(p->m_readers.size());
+    loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_readers.size());
     loader.extensions = reader->extensions();
     loader.creator    = creator;
 
     p->m_readers.push_back(loader);
 }
 
-void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreator& creator)
+void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority)
 {
     if(!creator) {
         qCWarning(AUD_LDR) << "Reader" << name << "cannot be created";
@@ -452,7 +458,7 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
 
     LoaderEntry<ArchiveReaderCreator> loader;
     loader.name       = name;
-    loader.index      = static_cast<int>(p->m_archiveReaders.size());
+    loader.index      = priority >= 0 ? priority : static_cast<int>(p->m_archiveReaders.size());
     loader.extensions = reader->extensions();
     loader.creator    = creator;
 

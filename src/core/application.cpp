@@ -167,11 +167,12 @@ void ApplicationPrivate::registerInputs()
     m_audioLoader->addReader(QStringLiteral("TagLib"), {[]() {
                                  return std::make_unique<TagLibReader>();
                              }});
-    m_audioLoader->addDecoder(QStringLiteral("FFmpeg"),
-                              [this]() { return std::make_unique<FFmpegDecoder>(m_settings); });
+    m_audioLoader->addDecoder(
+        QStringLiteral("FFmpeg"), [this]() { return std::make_unique<FFmpegDecoder>(m_settings); }, 99);
     m_audioLoader->addReader(QStringLiteral("FFmpeg"), {[this]() {
                                  return std::make_unique<FFmpegReader>(m_settings);
-                             }});
+                             }},
+                             99);
 }
 
 void ApplicationPrivate::setupConnections()

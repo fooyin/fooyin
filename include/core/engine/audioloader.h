@@ -63,9 +63,9 @@ public:
     [[nodiscard]] QByteArray readTrackCover(const Track& track, Track::Cover cover) const;
     [[nodiscard]] bool writeTrackMetadata(const Track& track, AudioReader::WriteOptions options) const;
 
-    void addDecoder(const QString& name, const DecoderCreator& creator);
-    void addReader(const QString& name, const ReaderCreator& creator);
-    void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator);
+    void addDecoder(const QString& name, const DecoderCreator& creator, int priority = -1);
+    void addReader(const QString& name, const ReaderCreator& creator, int priority = -1);
+    void addArchiveReader(const QString& name, const ArchiveReaderCreator& creator, int priority = -1);
 
     [[nodiscard]] std::vector<LoaderEntry<DecoderCreator>> decoders() const;
     [[nodiscard]] std::vector<LoaderEntry<ReaderCreator>> readers() const;
