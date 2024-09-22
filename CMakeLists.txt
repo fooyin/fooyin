@@ -268,6 +268,8 @@ set_property(GLOBAL PROPERTY MIMETYPES
     audio/x-mpegurl
     audio/x-ms-wma
     audio/x-musepack
+    video/x-ms-asf
+    application/vnd.ms-asf
 )
 
 add_subdirectory(src)
