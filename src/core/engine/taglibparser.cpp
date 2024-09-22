@@ -565,11 +565,8 @@ QString codecForMime(const QString& mimeType)
     if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
         return QStringLiteral("Opus");
     }
-    if(mimeType == u"audio/x-ms-wma") {
-        return QStringLiteral("WMA");
-    }
 
-    return QStringLiteral("Unknown");
+    return {};
 }
 
 void readAudioProperties(const TagLib::File& file, Fooyin::Track& track)
