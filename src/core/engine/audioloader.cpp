@@ -34,6 +34,13 @@ Q_LOGGING_CATEGORY(AUD_LDR, "fy.audioloader")
 constexpr auto DecoderState = "Engine/DecoderState";
 constexpr auto ReaderState  = "Engine/ReaderState";
 
+namespace {
+void sortLoaderEntries(auto& entries)
+{
+    std::ranges::sort(entries, [](const auto& a, const auto& b) { return a.index < b.index; });
+}
+} // namespace
+
 namespace Fooyin {
 using DecoderInstances       = std::unordered_map<QString, std::unique_ptr<AudioDecoder>>;
 using ReaderInstances        = std::unordered_map<QString, std::unique_ptr<AudioReader>>;
@@ -53,9 +60,7 @@ public:
     QThreadStorage<ReaderInstances*> m_readerInstances;
     QThreadStorage<ArchiveReaderInstances*> m_archiveReaderInstances;
 
-    std::shared_mutex m_decoderMutex;
-    std::shared_mutex m_readerMutex;
-    std::shared_mutex m_archiveReaderMutex;
+    std::shared_mutex m_mutex;
 };
 
 AudioLoader::AudioLoader()
@@ -108,7 +113,7 @@ void AudioLoader::restoreState()
             }
         }
 
-        std::ranges::sort(loaders, [](const auto& a, const auto& b) { return a.index < b.index; });
+        sortLoaderEntries(loaders);
     };
 
     const QStringList archiveExts = supportedArchiveExtensions();
@@ -131,7 +136,7 @@ AudioLoader::~AudioLoader() = default;
 
 QStringList AudioLoader::supportedFileExtensions() const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock decoderLock{p->m_mutex};
 
     QStringList extensions;
 
@@ -150,7 +155,7 @@ QStringList AudioLoader::supportedFileExtensions() const
 
 QStringList AudioLoader::supportedTrackExtensions() const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock decoderLock{p->m_mutex};
 
     QStringList extensions;
 
@@ -168,7 +173,7 @@ QStringList AudioLoader::supportedTrackExtensions() const
 
 QStringList AudioLoader::supportedArchiveExtensions() const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     QStringList extensions;
 
@@ -194,14 +199,14 @@ bool AudioLoader::isArchive(const QString& file) const
 {
     const QString ext = QFileInfo{file}.suffix().toLower();
 
-    const std::shared_lock lock{p->m_archiveReaderMutex};
+    const std::shared_lock lock{p->m_mutex};
     return std::ranges::any_of(p->m_archiveReaders,
                                [&ext](const auto& loader) { return loader.extensions.contains(ext); });
 }
 
 AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = file.startsWith(u"unpack://");
@@ -233,7 +238,7 @@ AudioDecoder* AudioLoader::decoderForTrack(const Track& track) const
 
 AudioReader* AudioLoader::readerForFile(const QString& file) const
 {
-    const std::shared_lock lock{p->m_readerMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     const QString ext      = QFileInfo{file}.suffix().toLower();
     const bool isInArchive = file.startsWith(u"unpack://");
@@ -265,7 +270,7 @@ AudioReader* AudioLoader::readerForTrack(const Track& track) const
 
 ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
 {
-    const std::shared_lock lock{p->m_archiveReaderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     if(!isArchive(file)) {
         return nullptr;
@@ -295,7 +300,7 @@ ArchiveReader* AudioLoader::archiveReaderForFile(const QString& file) const
 
 bool AudioLoader::readTrackMetadata(Track& track) const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     auto* decoder = readerForTrack(track);
     if(!decoder) {
@@ -323,7 +328,7 @@ bool AudioLoader::readTrackMetadata(Track& track) const
 
 QByteArray AudioLoader::readTrackCover(const Track& track, Track::Cover cover) const
 {
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     auto* decoder = readerForTrack(track);
     if(!decoder) {
@@ -357,7 +362,7 @@ bool AudioLoader::writeTrackMetadata(const Track& track, AudioReader::WriteOptio
         return false;
     }
 
-    const std::shared_lock lock{p->m_decoderMutex};
+    const std::shared_lock lock{p->m_mutex};
 
     auto* decoder = readerForTrack(track);
     if(!decoder || !decoder->canWriteMetaData()) {
@@ -383,7 +388,7 @@ void AudioLoader::addDecoder(const QString& name, const DecoderCreator& creator)
         return;
     }
 
-    const std::unique_lock lock{p->m_decoderMutex};
+    const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_decoders, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Decoder" << name << "already registered";
@@ -408,7 +413,7 @@ void AudioLoader::addReader(const QString& name, const ReaderCreator& creator)
         return;
     }
 
-    const std::unique_lock lock{p->m_readerMutex};
+    const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_readers, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Reader" << name << "already registered";
@@ -433,7 +438,7 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
         return;
     }
 
-    const std::unique_lock lock{p->m_archiveReaderMutex};
+    const std::unique_lock lock{p->m_mutex};
 
     if(std::ranges::any_of(p->m_archiveReaders, [&name](const auto& loader) { return loader.name == name; })) {
         qCWarning(AUD_LDR) << "Reader" << name << "already registered";
@@ -453,32 +458,58 @@ void AudioLoader::addArchiveReader(const QString& name, const ArchiveReaderCreat
 
 std::vector<AudioLoader::LoaderEntry<DecoderCreator>> AudioLoader::decoders() const
 {
+    const std::shared_lock lock{p->m_mutex};
     return p->m_decoders;
 }
 
 std::vector<AudioLoader::LoaderEntry<ReaderCreator>> AudioLoader::readers() const
 {
+    const std::shared_lock lock{p->m_mutex};
     return p->m_readers;
 }
 
 std::vector<AudioLoader::LoaderEntry<ArchiveReaderCreator>> AudioLoader::archiveReaders() const
 {
+    const std::shared_lock lock{p->m_mutex};
     return p->m_archiveReaders;
 }
 
-void AudioLoader::updateDecoders(const std::vector<LoaderEntry<DecoderCreator>>& decoders)
+void AudioLoader::setDecoderEnabled(const QString& name, bool enabled)
 {
-    p->m_decoders = decoders;
+    const std::unique_lock lock{p->m_mutex};
+    auto decoder = std::ranges::find_if(p->m_decoders, [&name](const auto& entry) { return entry.name == name; });
+    if(decoder != p->m_decoders.end()) {
+        decoder->enabled = enabled;
+    }
 }
 
-void AudioLoader::updateReaders(const std::vector<LoaderEntry<ReaderCreator>>& readers)
+void AudioLoader::changeDecoderIndex(const QString& name, int index)
 {
-    p->m_readers = readers;
+    const std::unique_lock lock{p->m_mutex};
+    auto decoder = std::ranges::find_if(p->m_decoders, [&name](const auto& entry) { return entry.name == name; });
+    if(decoder != p->m_decoders.end()) {
+        decoder->index = index;
+    }
+    sortLoaderEntries(p->m_decoders);
 }
 
-void AudioLoader::updateArchiveReaders(const std::vector<LoaderEntry<ArchiveReaderCreator>>& readers)
+void AudioLoader::setReaderEnabled(const QString& name, bool enabled)
 {
-    p->m_archiveReaders = readers;
+    const std::unique_lock lock{p->m_mutex};
+    auto reader = std::ranges::find_if(p->m_readers, [&name](const auto& entry) { return entry.name == name; });
+    if(reader != p->m_readers.end()) {
+        reader->enabled = enabled;
+    }
+}
+
+void AudioLoader::changeReaderIndex(const QString& name, int index)
+{
+    const std::unique_lock lock{p->m_mutex};
+    auto reader = std::ranges::find_if(p->m_readers, [&name](const auto& entry) { return entry.name == name; });
+    if(reader != p->m_readers.end()) {
+        reader->index = index;
+    }
+    sortLoaderEntries(p->m_readers);
 }
 
 void AudioLoader::reset()
@@ -486,13 +517,15 @@ void AudioLoader::reset()
     FySettings settings;
     settings.remove(QLatin1String{DecoderState});
     settings.remove(QLatin1String{ReaderState});
+
+    const std::unique_lock lock{p->m_mutex};
     p->m_decoders = p->m_defaultDecoders;
     p->m_readers  = p->m_defaultReaders;
 }
 
 void AudioLoader::destroyThreadInstance()
 {
-    const std::scoped_lock lock{p->m_decoderMutex, p->m_readerMutex, p->m_archiveReaderMutex};
+    const std::unique_lock lock{p->m_mutex};
 
     p->m_decoderInstances.setLocalData(nullptr);
     p->m_readerInstances.setLocalData(nullptr);

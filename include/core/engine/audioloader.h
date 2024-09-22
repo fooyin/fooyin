@@ -71,9 +71,10 @@ public:
     [[nodiscard]] std::vector<LoaderEntry<ReaderCreator>> readers() const;
     [[nodiscard]] std::vector<LoaderEntry<ArchiveReaderCreator>> archiveReaders() const;
 
-    void updateDecoders(const std::vector<LoaderEntry<DecoderCreator>>& decoders);
-    void updateReaders(const std::vector<LoaderEntry<ReaderCreator>>& readers);
-    void updateArchiveReaders(const std::vector<LoaderEntry<ArchiveReaderCreator>>& readers);
+    void setDecoderEnabled(const QString& name, bool enabled);
+    void changeDecoderIndex(const QString& name, int index);
+    void setReaderEnabled(const QString& name, bool enabled);
+    void changeReaderIndex(const QString& name, int index);
 
     void reset();
     void destroyThreadInstance();

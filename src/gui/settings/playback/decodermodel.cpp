@@ -102,9 +102,11 @@ bool DecoderModel::setData(const QModelIndex& index, const QVariant& value, int 
         auto& loader = loaders.at(index.row());
 
         if(role == Qt::CheckStateRole) {
-            loader.enabled = (value.value<Qt::CheckState>() == Qt::Checked);
-            emit dataChanged(index, index, {role});
-            return true;
+            const bool isChecked = (value.value<Qt::CheckState>() == Qt::Checked);
+            if(std::exchange(loader.enabled, isChecked) != isChecked) {
+                emit dataChanged(index, index, {role});
+                return true;
+            }
         }
 
         return false;

@@ -29,6 +29,33 @@
 #include <QLabel>
 #include <QListView>
 
+namespace {
+template <typename T>
+void applyChanges(std::vector<T> existing, std::vector<T> loaders,
+                  const std::function<void(const QString&, int)>& changeIndexFunc,
+                  const std::function<void(const QString&, bool)>& setEnabledFunc)
+{
+    const auto sortByName = [](const auto& a, const auto& b) {
+        return a.name < b.name;
+    };
+
+    std::ranges::sort(existing, sortByName);
+    std::ranges::sort(loaders, sortByName);
+
+    const size_t minSize = std::min(loaders.size(), existing.size());
+    for(size_t i{0}; i < minSize; ++i) {
+        const auto& modelLoader    = loaders[i];
+        const auto& existingLoader = existing[i];
+        if(modelLoader.index != existingLoader.index) {
+            changeIndexFunc(modelLoader.name, modelLoader.index);
+        }
+        if(modelLoader.enabled != existingLoader.enabled) {
+            setEnabledFunc(modelLoader.name, modelLoader.enabled);
+        }
+    }
+}
+} // namespace
+
 namespace Fooyin {
 class DecoderPageWidget : public SettingsPageWidget
 {
@@ -93,10 +120,15 @@ void DecoderPageWidget::load()
 
 void DecoderPageWidget::apply()
 {
-    const auto decoders = std::get<0>(m_decoderModel->loaders());
-    m_audioLoader->updateDecoders(decoders);
-    const auto readers = std::get<1>(m_readerModel->loaders());
-    m_audioLoader->updateReaders(readers);
+    applyChanges(
+        m_audioLoader->decoders(), std::get<0>(m_decoderModel->loaders()),
+        [this](const QString& name, int index) { m_audioLoader->changeDecoderIndex(name, index); },
+        [this](const QString& name, bool enabled) { m_audioLoader->setDecoderEnabled(name, enabled); });
+
+    applyChanges(
+        m_audioLoader->readers(), std::get<1>(m_readerModel->loaders()),
+        [this](const QString& name, int index) { m_audioLoader->changeReaderIndex(name, index); },
+        [this](const QString& name, bool enabled) { m_audioLoader->setReaderEnabled(name, enabled); });
 }
 
 void DecoderPageWidget::reset()
