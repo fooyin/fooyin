@@ -90,7 +90,7 @@ DecoderPageWidget::DecoderPageWidget(AudioLoader* audioLoader, SettingsManager* 
     , m_decoderModel{new DecoderModel(this)}
     , m_readerList{new QListView(this)}
     , m_readerModel{new DecoderModel(this)}
-    , m_ffmpegAllExts{new QCheckBox(tr("Use all supported extensions"), this)}
+    , m_ffmpegAllExts{new QCheckBox(tr("Enable all supported extensions"), this)}
 {
     auto setupModel = [](QAbstractItemView* view) {
         view->setDragDropMode(QAbstractItemView::InternalMove);
