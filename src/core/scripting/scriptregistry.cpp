@@ -156,8 +156,8 @@ ScriptRegistryPrivate::ScriptRegistryPrivate(LibraryManager* libraryManager, Pla
     addPlaybackVars();
     addLibraryVars();
 
-    m_funcs.emplace(QStringLiteral("INFO"), trackInfo);
-    m_funcs.emplace(QStringLiteral("META"), trackMeta);
+    m_funcs.emplace(QStringLiteral("info"), trackInfo);
+    m_funcs.emplace(QStringLiteral("meta"), trackMeta);
 }
 
 void ScriptRegistryPrivate::addPlaybackVars()
