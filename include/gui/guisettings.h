@@ -55,6 +55,7 @@ enum GuiSettings : uint32_t
     ShowSplitterHandles   = 15 | Type::Bool,
     LockSplitterHandles   = 16 | Type::Bool,
     SplitterHandleSize    = 17 | Type::Int,
+    VolumeStep            = 18 | Type::Double,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui

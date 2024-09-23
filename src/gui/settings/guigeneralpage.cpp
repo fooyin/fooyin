@@ -92,6 +92,7 @@ private:
     QRadioButton* m_preferSelection;
 
     QSpinBox* m_seekStep;
+    QDoubleSpinBox* m_volumeStep;
     QSpinBox* m_starRatingSize;
 };
 
@@ -117,6 +118,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     , m_preferPlaying{new QRadioButton(tr("Prefer currently playing track"), this)}
     , m_preferSelection{new QRadioButton(tr("Prefer current selection"), this)}
     , m_seekStep{new QSpinBox(this)}
+    , m_volumeStep{new QDoubleSpinBox(this)}
     , m_starRatingSize{new QSpinBox(this)}
 {
     auto* setupBox        = new QGroupBox(tr("Setup"));
@@ -191,18 +193,23 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     selectionGroupLayout->addWidget(m_preferPlaying);
     selectionGroupLayout->addWidget(m_preferSelection);
 
-    auto* seekingGroup       = new QGroupBox(tr("Seeking"), this);
-    auto* seekingGroupLayout = new QGridLayout(seekingGroup);
+    auto* controlsGroup  = new QGroupBox(tr("Controls"), this);
+    auto* controlsLayout = new QGridLayout(controlsGroup);
 
-    auto* seekStepLabel = new QLabel(tr("Seek step") + u":", this);
+    auto* seekStepLabel   = new QLabel(tr("Seek step") + u":", this);
+    auto* volumeStepLabel = new QLabel(tr("Volume step") + u":", this);
 
-    m_seekStep->setMinimum(100);
-    m_seekStep->setMaximum(30000);
+    m_seekStep->setRange(100, 30000);
     m_seekStep->setSuffix(QStringLiteral(" ms"));
 
-    seekingGroupLayout->addWidget(seekStepLabel, 0, 0);
-    seekingGroupLayout->addWidget(m_seekStep, 0, 1);
-    seekingGroupLayout->setColumnStretch(2, 1);
+    m_volumeStep->setRange(1, 5);
+    m_volumeStep->setSuffix(QStringLiteral(" dB"));
+
+    controlsLayout->addWidget(seekStepLabel, 0, 0);
+    controlsLayout->addWidget(m_seekStep, 0, 1);
+    controlsLayout->addWidget(volumeStepLabel, 1, 0);
+    controlsLayout->addWidget(m_volumeStep, 1, 1);
+    controlsLayout->setColumnStretch(2, 1);
 
     auto* ratingGroupBox    = new QGroupBox(tr("Rating"), this);
     auto* ratingGroupLayout = new QGridLayout(ratingGroupBox);
@@ -226,7 +233,7 @@ GuiGeneralPageWidget::GuiGeneralPageWidget(LayoutProvider* layoutProvider, Edita
     mainLayout->addWidget(toolButtonGroup, row++, 0, 1, 2);
     mainLayout->addWidget(playbackScriptsGroup, row++, 0, 1, 2);
     mainLayout->addWidget(selectionGroupBox, row++, 0, 1, 2);
-    mainLayout->addWidget(seekingGroup, row++, 0, 1, 2);
+    mainLayout->addWidget(controlsGroup, row++, 0, 1, 2);
     mainLayout->addWidget(ratingGroupBox, row++, 0, 1, 2);
 
     mainLayout->setColumnStretch(1, 1);
@@ -302,6 +309,7 @@ void GuiGeneralPageWidget::load()
     }
 
     m_seekStep->setValue(m_settings->value<SeekStep>());
+    m_volumeStep->setValue(m_settings->value<VolumeStep>());
     m_starRatingSize->setValue(m_settings->value<StarRatingSize>());
 }
 
@@ -354,6 +362,7 @@ void GuiGeneralPageWidget::apply()
     m_settings->set<InfoDisplayPrefer>(static_cast<int>(option));
 
     m_settings->set<SeekStep>(m_seekStep->value());
+    m_settings->set<VolumeStep>(m_volumeStep->value());
     m_settings->set<StarRatingSize>(m_starRatingSize->value());
 }
 
@@ -368,6 +377,7 @@ void GuiGeneralPageWidget::reset()
     m_settings->reset<WindowTitleTrackScript>();
     m_settings->reset<InfoDisplayPrefer>();
     m_settings->reset<SeekStep>();
+    m_settings->reset<VolumeStep>();
     m_settings->reset<StarRatingSize>();
 }
 

@@ -34,6 +34,7 @@
 #include "playlist/playlistinteractor.h"
 #include "search/searchcontroller.h"
 #include "systemtrayicon.h"
+#include "utils/audioutils.h"
 #include "widgets.h"
 
 #include <core/application.h>
@@ -428,12 +429,14 @@ void GuiApplicationPrivate::registerActions()
     auto* volumeUp = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeHigh), GuiApplication::tr("Volume up"),
                                  m_mainWindow.get());
     m_actionManager->registerAction(volumeUp, Constants::Actions::VolumeUp);
-    QObject::connect(volumeUp, &QAction::triggered, m_mainWindow.get(), [this]() { changeVolume(0.05); });
+    QObject::connect(volumeUp, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { changeVolume(m_settings->value<Settings::Gui::VolumeStep>()); });
 
     auto* volumeDown = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeLow), GuiApplication::tr("Volume down"),
                                    m_mainWindow.get());
     m_actionManager->registerAction(volumeDown, Constants::Actions::VolumeDown);
-    QObject::connect(volumeDown, &QAction::triggered, m_mainWindow.get(), [this]() { changeVolume(-0.05); });
+    QObject::connect(volumeDown, &QAction::triggered, m_mainWindow.get(),
+                     [this]() { changeVolume(-m_settings->value<Settings::Gui::VolumeStep>()); });
 
     auto* muteAction = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeMute), GuiApplication::tr("Mute"),
                                    m_mainWindow.get());
@@ -593,9 +596,11 @@ void GuiApplicationPrivate::setupUtilitesMenu() const
 
 void GuiApplicationPrivate::changeVolume(double delta) const
 {
-    double volume = m_settings->value<Settings::Core::OutputVolume>() + delta;
-    volume        = std::clamp(volume, 0.0, 1.0);
-    m_settings->set<Settings::Core::OutputVolume>(volume);
+    const double currentVolume = std::max(m_settings->value<Settings::Core::OutputVolume>(), 0.01);
+    const double currentDb     = Audio::volumeToDb(currentVolume);
+    const double newVolume     = Audio::dbToVolume(currentDb + delta);
+
+    m_settings->set<Settings::Core::OutputVolume>(newVolume);
 }
 
 void GuiApplicationPrivate::mute() const

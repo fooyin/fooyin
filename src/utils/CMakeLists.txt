@@ -1,5 +1,6 @@
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/async.h
+    ${CMAKE_SOURCE_DIR}/include/utils/audioutils.h
     ${CMAKE_SOURCE_DIR}/include/utils/crypto.h
     ${CMAKE_SOURCE_DIR}/include/utils/datastream.h
     ${CMAKE_SOURCE_DIR}/include/utils/enum.h
@@ -40,6 +41,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsentry.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingsmanager.h
     ${CMAKE_SOURCE_DIR}/include/utils/settings/settingspage.h
+    audioutils.cpp
     crypto.cpp
     datastream.cpp
     fileutils.cpp
