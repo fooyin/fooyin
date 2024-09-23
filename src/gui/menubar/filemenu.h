@@ -33,6 +33,7 @@ public:
     explicit FileMenu(ActionManager* actionManager, SettingsManager* settings, QObject* parent = nullptr);
 
 signals:
+    void requestExit();
     void requestAddFiles();
     void requestAddFolders();
     void requestNewPlaylist();

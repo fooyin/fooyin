@@ -276,6 +276,7 @@ void GuiApplicationPrivate::setupConnections()
             m_playlistController->changeCurrentPlaylist(playlist);
         }
     });
+    QObject::connect(m_fileMenu, &FileMenu::requestExit, m_mainWindow.get(), &QMainWindow::close);
     QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, m_self, [this]() { addFiles(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
