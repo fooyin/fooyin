@@ -150,6 +150,11 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
                 track.setSubsong(subsong);
             }
 
+            if(!isArchive && !QFile::exists(path)) {
+                // Handle potential windows filepath
+                track.setFilePath(path.replace(u'\\', u'/'));
+            }
+
             Track readTrack = PlaylistParser::readMetadata(track);
             if(readTrack.isValid() || !skipNotFound) {
                 if(readTrack.title().isEmpty() && !metadata.title.isEmpty()) {
