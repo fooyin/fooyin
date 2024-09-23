@@ -82,8 +82,8 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 
     fileMenu->addSeparator();
 
-    auto* quit = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("E&xit"), this);
-    quit->setStatusTip(tr("Exit %1").arg(QStringLiteral("fooyin")));
+    auto* quit = new QAction(Utils::iconFromTheme(Constants::Icons::Quit), tr("&Quit"), this);
+    quit->setStatusTip(tr("Quit %1").arg(QStringLiteral("fooyin")));
     auto* quitCommand = m_actionManager->registerAction(quit, Constants::Actions::Exit);
     quitCommand->setDefaultShortcut(QKeySequence::Quit);
     fileMenu->addAction(quitCommand, Actions::Groups::Three);
