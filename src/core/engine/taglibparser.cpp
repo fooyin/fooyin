@@ -1787,7 +1787,7 @@ QStringList TagLibReader::extensions() const
                                         QStringLiteral("oga"), QStringLiteral("m4a"),  QStringLiteral("wav"),
                                         QStringLiteral("wv"),  QStringLiteral("flac"), QStringLiteral("wma"),
                                         QStringLiteral("asf"), QStringLiteral("mpc"),  QStringLiteral("aiff"),
-                                        QStringLiteral("ape"), QStringLiteral("webm"), QStringLiteral("mp4")};
+                                        QStringLiteral("ape"), QStringLiteral("mp4")};
     return extensions;
 }
 
