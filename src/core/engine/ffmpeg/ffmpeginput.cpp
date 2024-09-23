@@ -121,7 +121,6 @@ QStringList fileExtensions(bool allSupported)
         extensions.removeAll(QLatin1String{ext});
     }
     extensions.removeDuplicates();
-    qDebug() << extensions;
 
     return extensions;
 }
