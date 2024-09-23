@@ -43,6 +43,7 @@ void sortLoaderEntries(auto& entries)
         }
         return a.index < b.index;
     });
+    std::ranges::for_each(entries, [i = 0](auto& loader) mutable { loader.index = i++; });
 }
 } // namespace
 
@@ -97,7 +98,10 @@ void AudioLoader::restoreState()
 {
     const FySettings settings;
 
-    auto restoreLoaders = [&settings](auto& loaders, const char* state) {
+    auto restoreLoaders = [&settings](auto& loaders, auto& defaultLoaders, const char* state) {
+        defaultLoaders = loaders;
+        sortLoaderEntries(defaultLoaders);
+
         QByteArray data = settings.value(QLatin1String{state}, {}).toByteArray();
         QDataStream stream{&data, QIODevice::ReadOnly};
 
@@ -120,7 +124,6 @@ void AudioLoader::restoreState()
         }
 
         sortLoaderEntries(loaders);
-        std::ranges::for_each(loaders, [i = 0](auto& loader) mutable { loader.index = i++; });
     };
 
     const QStringList archiveExts = supportedArchiveExtensions();
@@ -135,10 +138,8 @@ void AudioLoader::restoreState()
         archiveRead->extensions = archiveExts;
     }
 
-    p->m_defaultDecoders = p->m_decoders;
-    restoreLoaders(p->m_decoders, DecoderState);
-    p->m_defaultReaders = p->m_readers;
-    restoreLoaders(p->m_readers, ReaderState);
+    restoreLoaders(p->m_decoders, p->m_defaultDecoders, DecoderState);
+    restoreLoaders(p->m_readers, p->m_defaultReaders, ReaderState);
 }
 
 AudioLoader::~AudioLoader() = default;
