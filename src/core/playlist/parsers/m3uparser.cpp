@@ -132,9 +132,10 @@ TrackList M3uParser::readPlaylist(QIODevice* device, const QString& /*filepath*/
         }
         else if(!line.isEmpty()) {
             QString path;
+            const bool isArchive = Track::isArchivePath(path);
 
             if(dir.exists()) {
-                if(QDir::isAbsolutePath(line) || line.left(9) == u"unpack://") {
+                if(QDir::isAbsolutePath(line) || isArchive) {
                     path = line;
                 }
                 else {

@@ -219,7 +219,7 @@ AudioDecoder* AudioLoader::decoderForFile(const QString& file) const
     const std::shared_lock lock{p->m_mutex};
 
     const QString ext      = QFileInfo{file}.suffix().toLower();
-    const bool isInArchive = file.startsWith(u"unpack://");
+    const bool isInArchive = Track::isArchivePath(file);
 
     for(const auto& loader : p->m_decoders) {
         if(!loader.enabled) {
@@ -251,7 +251,7 @@ AudioReader* AudioLoader::readerForFile(const QString& file) const
     const std::shared_lock lock{p->m_mutex};
 
     const QString ext      = QFileInfo{file}.suffix().toLower();
-    const bool isInArchive = file.startsWith(u"unpack://");
+    const bool isInArchive = Track::isArchivePath(file);
 
     for(const auto& loader : p->m_readers) {
         if(!loader.enabled) {

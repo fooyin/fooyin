@@ -586,6 +586,11 @@ QString Track::cuePath() const
     return p->cuePath;
 }
 
+bool Track::isArchivePath(const QString& path)
+{
+    return path.startsWith(u"unpack://");
+}
+
 bool Track::isMultiValueTag(const QString& tag)
 {
     const QString trackTag = tag.toUpper();
@@ -875,7 +880,7 @@ void Track::setFilePath(const QString& path)
 
     p->filepath = path;
 
-    if(path.startsWith(u"unpack://")) {
+    if(Track::isArchivePath(path)) {
         p->isInArchive = true;
         p->splitArchiveUrl();
     }

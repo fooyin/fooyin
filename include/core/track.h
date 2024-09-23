@@ -135,6 +135,7 @@ public:
     [[nodiscard]] bool hasCue() const;
     [[nodiscard]] QString cuePath() const;
 
+    static bool isArchivePath(const QString& path);
     static bool isMultiValueTag(const QString& tag);
     static bool isExtraTag(const QString& tag);
 
