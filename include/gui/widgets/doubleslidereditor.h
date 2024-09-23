@@ -71,7 +71,6 @@ private:
 
     QSlider* m_slider;
     SpecialValueDoubleSpinBox* m_spinBox;
-    bool m_updatingSlider;
     bool m_updatingSpinBox;
 };
 } // namespace Fooyin
