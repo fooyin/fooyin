@@ -1867,6 +1867,7 @@ void IconView::invalidate()
     m_uniformRowHeight = 0;
     m_segmentSize      = 0;
     m_itemSpacing      = MinItemSpacing;
+    m_rowSpacing       = haveSideCaptions() ? 0 : IconRowSpacing;
 }
 
 void IconView::doItemLayout()
@@ -1888,10 +1889,7 @@ void IconView::doItemLayout()
     int deltaSegPosition{0};
     int segPosition{topLeft.y()};
 
-    if(haveSideCaptions()) {
-        m_rowSpacing = 0;
-    }
-    else {
+    if(!haveSideCaptions()) {
         segStartPosition += m_itemSpacing;
         segEndPosition -= m_itemSpacing;
     }
