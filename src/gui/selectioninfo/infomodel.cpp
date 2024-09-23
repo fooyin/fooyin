@@ -89,7 +89,7 @@ int InfoModel::columnCount(const QModelIndex& /*parent*/) const
 
 bool InfoModel::hasChildren(const QModelIndex& parent) const
 {
-    return !parent.isValid() || parent.data(InfoItem::Type).toInt() == InfoItem::Header;
+    return !parent.isValid() || itemForIndex(parent)->childCount() > 0;
 }
 
 QVariant InfoModel::data(const QModelIndex& index, int role) const
@@ -98,7 +98,7 @@ QVariant InfoModel::data(const QModelIndex& index, int role) const
         return {};
     }
 
-    const auto* item              = static_cast<InfoItem*>(index.internalPointer());
+    const auto* item              = itemForIndex(index);
     const InfoItem::ItemType type = item->type();
 
     if(role == InfoItem::Type) {
