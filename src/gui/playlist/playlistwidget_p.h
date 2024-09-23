@@ -67,6 +67,7 @@ public:
 
     void setupConnections();
     void setupActions();
+    void setupView() const;
 
     void onColumnChanged(const PlaylistColumn& column);
     void onColumnRemoved(int id);

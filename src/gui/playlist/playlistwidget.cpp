@@ -219,6 +219,8 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     // QApplication::font only works from main thread,
     // so we have to pass this to the script formatter from here
     m_model->setFont(QApplication::font("Fooyin::PlaylistView"));
+
+    setupView();
 }
 
 void PlaylistWidgetPrivate::setupConnections()
@@ -392,6 +394,24 @@ void PlaylistWidgetPrivate::setupActions()
         m_actionManager->registerAction(m_removeFromQueueAction, Constants::Actions::RemoveFromQueue,
                                         m_playlistContext->context());
         QObject::connect(m_removeFromQueueAction, &QAction::triggered, this, [this]() { dequeueSelectedTracks(); });
+    }
+}
+
+void PlaylistWidgetPrivate::setupView() const
+{
+    switch(m_mode) {
+        case(PlaylistWidget::Mode::Playlist):
+            m_playlistView->setEmptyText(tr("Playlist empty"));
+            m_playlistView->setLoadingText(tr("Loading playlist…"));
+            break;
+        case(PlaylistWidget::Mode::DetachedPlaylist):
+            m_playlistView->setEmptyText(tr("No results"));
+            m_playlistView->setLoadingText(tr("Searching…"));
+            break;
+        case(PlaylistWidget::Mode::DetachedLibrary):
+            m_playlistView->setEmptyText(tr("No results"));
+            m_playlistView->setLoadingText(tr("Searching…"));
+            break;
     }
 }
 

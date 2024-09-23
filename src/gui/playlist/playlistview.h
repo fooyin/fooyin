@@ -32,7 +32,10 @@ class PlaylistView : public ExpandedTreeView
 public:
     explicit PlaylistView(QWidget* parent = nullptr);
 
+    void setLoadingText(const QString& text);
+    void setEmptyText(const QString& text);
     void setupRatingDelegate();
+
     void playlistAboutToBeReset();
     void playlistReset();
     [[nodiscard]] bool playlistLoaded() const;
@@ -51,6 +54,8 @@ private:
     void ratingHoverIn(const QModelIndex& index, const QPoint& pos);
     void ratingHoverOut();
 
+    QString m_emptyText;
+    QString m_loadingText;
     bool m_playlistLoaded;
     StarDelegate* m_starDelegate;
     int m_ratingColumn;

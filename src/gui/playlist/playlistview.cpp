@@ -49,6 +49,16 @@ PlaylistView::PlaylistView(QWidget* parent)
     viewport()->setAcceptDrops(true);
 }
 
+void PlaylistView::setEmptyText(const QString& text)
+{
+    m_emptyText = text;
+}
+
+void PlaylistView::setLoadingText(const QString& text)
+{
+    m_loadingText = text;
+}
+
 void PlaylistView::setupRatingDelegate()
 {
     const int columnCount = header()->count();
@@ -148,9 +158,11 @@ void PlaylistView::paintEvent(QPaintEvent* event)
     QPainter painter{viewport()};
 
     auto drawCentreText = [this, &painter](const QString& text) {
-        QRect textRect = painter.fontMetrics().boundingRect(text);
-        textRect.moveCenter(viewport()->rect().center());
-        painter.drawText(textRect, Qt::AlignCenter, text);
+        if(!text.isEmpty()) {
+            QRect textRect = painter.fontMetrics().boundingRect(text);
+            textRect.moveCenter(viewport()->rect().center());
+            painter.drawText(textRect, Qt::AlignCenter, text);
+        }
     };
 
     if(auto* playlistModel = qobject_cast<PlaylistModel*>(model())) {
@@ -159,11 +171,11 @@ void PlaylistView::paintEvent(QPaintEvent* event)
                 ExpandedTreeView::paintEvent(event);
             }
             else {
-                drawCentreText(tr("Loading Playlist…"));
+                drawCentreText(m_loadingText);
             }
         }
         else {
-            drawCentreText(tr("Empty Playlist"));
+            drawCentreText(m_emptyText);
         }
     }
 }
