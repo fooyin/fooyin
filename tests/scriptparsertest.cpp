@@ -126,4 +126,23 @@ TEST_F(ScriptParserTest, TrackListTest)
     EXPECT_EQ(u"00:05", m_parser.evaluate(QStringLiteral("%playtime%"), tracks));
     EXPECT_EQ(u"Pop / Rock", m_parser.evaluate(QStringLiteral("%genres%"), tracks));
 }
+
+TEST_F(ScriptParserTest, MetaTest)
+{
+    Track track;
+    track.setArtists({QStringLiteral("The Verve")});
+
+    EXPECT_EQ(u"The Verve", m_parser.evaluate(QStringLiteral("%albumartist%"), track));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(albumartist)"), track));
+    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(%albumartist%)"), track));
+}
+
+TEST_F(ScriptParserTest, InfoTest)
+{
+    Track track;
+    track.setChannels(2);
+
+    EXPECT_EQ(u"Stereo", m_parser.evaluate(QStringLiteral("%channels%"), track));
+    EXPECT_EQ(u"2", m_parser.evaluate(QStringLiteral("$info(channels)"), track));
+}
 } // namespace Fooyin::Testing
