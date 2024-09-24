@@ -1502,6 +1502,22 @@ PlaylistModel* PlaylistWidget::model() const
     return p->m_model;
 }
 
+int PlaylistWidget::trackCount() const
+{
+    switch(p->m_mode) {
+        case(Mode::Playlist):
+            if(auto* playlist = p->m_playlistController->currentPlaylist()) {
+                return playlist->trackCount();
+            }
+            break;
+        case(Mode::DetachedPlaylist):
+        case(Mode::DetachedLibrary):
+            return static_cast<int>(p->m_filteredTracks.size());
+    }
+
+    return 0;
+}
+
 void PlaylistWidget::startPlayback()
 {
     if(p->m_selectionController->hasTracks()) {

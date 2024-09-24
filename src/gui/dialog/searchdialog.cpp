@@ -122,8 +122,7 @@ void SearchDialog::updateTitle()
     QString title = (m_mode == PlaylistWidget::Mode::DetachedLibrary) ? tr("Search Library") : tr("Search Playlist");
 
     if(!m_searchBar->text().isEmpty()) {
-        const int trackCount = m_view->model()->rowCount({});
-        title += u" (" + tr("%1 results").arg(trackCount) + u")";
+        title += u" (" + tr("%1 results").arg(m_view->trackCount()) + u")";
     }
 
     setWindowTitle(title);

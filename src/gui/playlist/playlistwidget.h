@@ -55,6 +55,7 @@ public:
 
     [[nodiscard]] PlaylistView* view() const;
     [[nodiscard]] PlaylistModel* model() const;
+    [[nodiscard]] int trackCount() const;
 
     void startPlayback();
 
