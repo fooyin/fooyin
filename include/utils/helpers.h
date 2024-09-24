@@ -95,6 +95,18 @@ void move(std::vector<T>& v, size_t from, size_t to)
     }
 }
 
+template <typename T>
+std::optional<T> take(std::vector<T>& vec, std::size_t index)
+{
+    if(index >= vec.size()) {
+        return {};
+    }
+
+    T element = std::move(vec.at(index));
+    vec.erase(vec.begin() + index);
+    return element;
+}
+
 template <typename T, typename StringExtractor>
 QString findUniqueString(const QString& name, const T& elements, StringExtractor&& extractor)
 {
