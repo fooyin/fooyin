@@ -1,5 +1,33 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+* DirBrowser: Add option to toggle text elision ([#285](https://github.com/fooyin/fooyin/issues/285))
+* Engine: Support playback of ASF
+* FFmpeg: Add option to enable all supported formats
+* General: Don't exit immediately on File->Quit if fading is enabled
+* Interface: Add shortcuts for adjusting volume
+* Search
+  - Add dialog for searching entire library
+  - Match all terms (words) individually
+  - Update window title and loading text based on search mode
+
+### Fixes
+
+* Engine: Resolve crash when attempting to restart playback with disabled decoder
+* ExpandedTreeView: Fix empty space at top/bottom in right caption mode
+* DirBrowser: Fix expand/collapse in tree mode
+* FFmpeg: Resolve crash on failing to open input
+* M3UParser: Handle Windows filepaths ([#289](https://github.com/fooyin/fooyin/issues/289))
+* Scripting: Fix $meta and $info calls
+* Selection Info: Fix formatting of durations longer than 1 day ([#290](https://github.com/fooyin/fooyin/pull/290))
+* Settings
+  - Fix saving/restoring decoder and tag reader order
+  - Fix manual editing of spinboxes on some pages
+
+
 ## [0.7.1](https://github.com/fooyin/fooyin/releases/tag/v0.7.1) (2024-09-21)
 
 ### Improvements
