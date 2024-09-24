@@ -27,25 +27,30 @@ namespace Fooyin {
 class FYCORE_EXPORT ScriptScanner
 {
 public:
-    enum TokenType : char
+    enum TokenType : uint8_t
     {
-        TokVar         = '%',
-        TokLeftAngle   = '<',
-        TokRightAngle  = '>',
-        TokFunc        = '$',
-        TokComma       = ',',
-        TokQuote       = '"',
-        TokLeftParen   = '(',
-        TokRightParen  = ')',
-        TokLeftSquare  = '[',
-        TokRightSquare = ']',
-        TokSlash       = '/',
-        TokColon       = ':',
-        TokEquals      = '=',
-        TokEscape      = '\\',
-        TokEos         = '\0',
-        TokError,
-        TokLiteral,
+        TokError          = 0,
+        TokEos            = 1,
+        TokVar            = 2,
+        TokLeftAngle      = 3,
+        TokRightAngle     = 4,
+        TokFunc           = 5,
+        TokComma          = 6,
+        TokQuote          = 7,
+        TokLeftParen      = 8,
+        TokRightParen     = 9,
+        TokLeftSquare     = 10,
+        TokRightSquare    = 11,
+        TokSlash          = 12,
+        TokColon          = 13,
+        TokEquals         = 14,
+        TokExclamation    = 15,
+        TokEscape         = 16,
+        TokLiteral        = 17,
+        TokAnd            = 18,
+        TokOr             = 19,
+        TokSortAscending  = 20,
+        TokSortDescending = 21,
     };
 
     struct Token
@@ -67,6 +72,7 @@ private:
     [[nodiscard]] bool isAtEnd() const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
+    bool matchKeyword(const QString& keyword);
 
     QStringView m_input;
     const QChar* m_start;

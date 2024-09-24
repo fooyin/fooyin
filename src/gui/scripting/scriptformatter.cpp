@@ -138,7 +138,12 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokSlash):
         case(ScriptScanner::TokColon):
         case(ScriptScanner::TokEquals):
+        case(ScriptScanner::TokExclamation):
         case(ScriptScanner::TokLiteral):
+        case(ScriptScanner::TokAnd):
+        case(ScriptScanner::TokOr):
+        case(ScriptScanner::TokSortAscending):
+        case(ScriptScanner::TokSortDescending):
             m_currentBlock.text += m_previous.value.toString();
             break;
         case(ScriptScanner::TokEscape):

@@ -145,4 +145,27 @@ TEST_F(ScriptParserTest, InfoTest)
     EXPECT_EQ(u"Stereo", m_parser.evaluate(QStringLiteral("%channels%"), track));
     EXPECT_EQ(u"2", m_parser.evaluate(QStringLiteral("$info(channels)"), track));
 }
+
+TEST_F(ScriptParserTest, QueryTest)
+{
+    TrackList tracks;
+
+    Track track1;
+    track1.setTitle(QStringLiteral("ABC"));
+    track1.setGenres({QStringLiteral("Pop")});
+    track1.setDuration(2000);
+    track1.setPlayCount(1);
+    tracks.push_back(track1);
+
+    Track track2;
+    track2.setTitle(QStringLiteral("DEF"));
+    track2.setGenres({QStringLiteral("Rock")});
+    track2.setDuration(3000);
+    tracks.push_back(track2);
+
+    EXPECT_TRUE(m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size() == 1);
+    EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>1"), tracks).empty());
+    EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>=1"), tracks).size() == 1);
+    EXPECT_TRUE(m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size() == 1);
+}
 } // namespace Fooyin::Testing

@@ -23,20 +23,25 @@ namespace Fooyin {
 bool isLiteral(const QChar ch)
 {
     switch(ch.unicode()) {
-        case(ScriptScanner::TokComma):
-        case(ScriptScanner::TokQuote):
-        case(ScriptScanner::TokLeftParen):
-        case(ScriptScanner::TokRightParen):
-        case(ScriptScanner::TokLeftSquare):
-        case(ScriptScanner::TokRightSquare):
-        case(ScriptScanner::TokFunc):
-        case(ScriptScanner::TokVar):
-        case(ScriptScanner::TokLeftAngle):
-        case(ScriptScanner::TokRightAngle):
-        case(ScriptScanner::TokSlash):
-        case(ScriptScanner::TokColon):
-        case(ScriptScanner::TokEquals):
-        case(ScriptScanner::TokEscape):
+        case(u'%'):
+        case(u'<'):
+        case(u'>'):
+        case(u'$'):
+        case(u','):
+        case(u'"'):
+        case(u'('):
+        case(u')'):
+        case(u'['):
+        case(u']'):
+        case(u'/'):
+        case(u':'):
+        case(u'='):
+        case(u'!'):
+        case(u'\\'):
+        case(u'\0'):
+        case(u'A'):
+        case(u'O'):
+        case(u'S'):
             return false;
         default:
             return true;
@@ -81,17 +86,71 @@ ScriptScanner::Token ScriptScanner::scanNext()
 {
     m_start = m_current;
 
-    if(isAtEnd()) {
-        return makeToken(TokEos);
-    }
-
     const QChar c = advance();
+    switch(c.unicode()) {
+        case(u'%'):
+            return makeToken(TokVar);
+        case(u'<'):
+            return makeToken(TokLeftAngle);
+        case(u'>'):
+            return makeToken(TokRightAngle);
+        case(u'$'):
+            return makeToken(TokFunc);
+        case(u','):
+            return makeToken(TokComma);
+        case(u'"'):
+            return makeToken(TokQuote);
+        case(u'('):
+            return makeToken(TokLeftParen);
+        case(u')'):
+            return makeToken(TokRightParen);
+        case(u'['):
+            return makeToken(TokLeftSquare);
+        case(u']'):
+            return makeToken(TokRightSquare);
+        case(u'/'):
+            return makeToken(TokSlash);
+        case(u':'):
+            return makeToken(TokColon);
+        case(u'='):
+            return makeToken(TokEquals);
+        case(u'!'):
+            return makeToken(TokExclamation);
+        case(u'\\'):
+            return makeToken(TokEscape);
+        case(u'\0'):
+            return makeToken(TokEos);
+        case(u'A'): {
+            if(matchKeyword(QStringLiteral("ND "))) {
+                return makeToken(TokAnd);
+            }
+            return literal();
+        }
+        case(u'O'): {
+            if(matchKeyword(QStringLiteral("R "))) {
+                return makeToken(TokOr);
+            }
+            return literal();
+        }
+        case(u'S'):
+            if(matchKeyword(QStringLiteral("ORT "))) {
+                if(matchKeyword(QStringLiteral("BY ")) || matchKeyword(QStringLiteral("ASCENDING BY "))) {
+                    return makeToken(TokSortAscending);
+                }
+                if(matchKeyword(QStringLiteral("DESCENDING BY "))) {
+                    return makeToken(TokSortDescending);
+                }
+            }
+            return literal();
+        default:
+            break;
+    }
 
     if(isLiteral(c)) {
         return literal();
     }
 
-    return makeToken(static_cast<TokenType>(c.unicode()));
+    return makeToken(TokError);
 }
 
 ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
@@ -114,7 +173,7 @@ ScriptScanner::Token ScriptScanner::literal()
 
 bool ScriptScanner::isAtEnd() const
 {
-    return *m_current == QChar::fromLatin1('\0');
+    return *m_current == u'\0';
 }
 
 QChar ScriptScanner::advance()
@@ -126,5 +185,19 @@ QChar ScriptScanner::advance()
 QChar ScriptScanner::peek() const
 {
     return *m_current;
+}
+
+bool ScriptScanner::matchKeyword(const QString& keyword)
+{
+    const QChar* it = m_current;
+    for(const QChar& ch : keyword) {
+        if(*it == u'\0' || *it != ch) {
+            return false;
+        }
+        ++it;
+    }
+
+    std::advance(m_current, keyword.length());
+    return true;
 }
 } // namespace Fooyin

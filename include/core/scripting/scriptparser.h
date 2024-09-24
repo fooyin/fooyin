@@ -45,7 +45,7 @@ struct ParsedScript
 
     [[nodiscard]] bool isValid() const
     {
-        return errors.empty();
+        return errors.empty() && !expressions.empty();
     }
 };
 
@@ -63,8 +63,7 @@ public:
     [[nodiscard]] ScriptRegistry* registry() const;
 
     ParsedScript parse(const QString& input);
-    ParsedScript parse(const QString& input, const Track& track);
-    ParsedScript parse(const QString& input, const TrackList& tracks);
+    ParsedScript parseQuery(const QString& input);
 
     QString evaluate(const QString& input);
     QString evaluate(const ParsedScript& input);
@@ -74,6 +73,9 @@ public:
 
     QString evaluate(const QString& input, const TrackList& tracks);
     QString evaluate(const ParsedScript& input, const TrackList& tracks);
+
+    TrackList filter(const QString& input, const TrackList& tracks);
+    TrackList filter(const ParsedScript& input, const TrackList& tracks);
 
     void clearCache();
 

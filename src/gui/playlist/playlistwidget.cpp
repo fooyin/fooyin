@@ -32,7 +32,6 @@
 #include <core/application.h>
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
-#include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
@@ -1690,14 +1689,12 @@ void PlaylistWidget::searchEvent(const QString& search)
 
     auto filterAndHandleTracks = [this, handleFilteredTracks](const TrackList& tracks) {
         Utils::asyncExec([search = p->m_search, tracks]() {
-            return Filter::filterTracks(tracks, search);
+            ScriptParser parser;
+            return parser.filter(search, tracks);
         }).then(this, handleFilteredTracks);
     };
 
-    if(!prevSearch.isEmpty() && p->m_search.length() > prevSearch.length()) {
-        filterAndHandleTracks(p->m_filteredTracks);
-    }
-    else if(!p->m_search.isEmpty()) {
+    if(!p->m_search.isEmpty()) {
         if(p->m_mode == Mode::DetachedLibrary) {
             filterAndHandleTracks(p->m_library->tracks());
         }

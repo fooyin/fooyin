@@ -193,9 +193,7 @@ void ScriptEditorPrivate::textChanged()
     m_textChangeTimer.start(TextChangeInterval, m_self);
     m_results->clear();
 
-    const Track track = m_track.isValid() ? m_track : m_placeholderTrack;
-    m_currentScript   = m_parser.parse(m_editor->toPlainText(), track);
-
+    m_currentScript = m_parser.parse(m_editor->toPlainText());
     m_model->populate(m_currentScript.expressions);
     updateResults();
 }

@@ -78,6 +78,11 @@ void ScriptHighlighter::expression()
         case(ScriptScanner::TokEquals):
         case(ScriptScanner::TokEos):
         case(ScriptScanner::TokError):
+        case(ScriptScanner::TokExclamation):
+        case(ScriptScanner::TokSortAscending):
+        case(ScriptScanner::TokSortDescending):
+        case(ScriptScanner::TokAnd):
+        case(ScriptScanner::TokOr):
             break;
     }
 }

@@ -25,7 +25,6 @@
 #include "playlist/playlistwidget.h"
 
 #include <core/application.h>
-#include <core/library/trackfilter.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
 #include <utils/settings/settingsmanager.h>
