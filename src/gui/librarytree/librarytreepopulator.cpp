@@ -32,8 +32,7 @@ class LibraryTreePopulatorPrivate
 public:
     explicit LibraryTreePopulatorPrivate(LibraryTreePopulator* self, LibraryManager* libraryManager)
         : m_self{self}
-        , m_registry{libraryManager}
-        , m_parser{&m_registry}
+        , m_parser{new ScriptRegistry(libraryManager)}
         , m_data{}
     { }
 
@@ -44,7 +43,6 @@ public:
 
     LibraryTreePopulator* m_self;
 
-    ScriptRegistry m_registry;
     ScriptParser m_parser;
 
     QString m_currentGrouping;

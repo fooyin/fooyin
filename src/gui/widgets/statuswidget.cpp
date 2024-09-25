@@ -79,7 +79,6 @@ public:
 
     SettingsManager* m_settings;
 
-    ScriptRegistry m_scriptRegistry;
     ScriptParser m_scriptParser;
 
     ClickableLabel* m_iconLabel;
@@ -101,8 +100,7 @@ StatusWidgetPrivate::StatusWidgetPrivate(StatusWidget* self, PlayerController* p
     , m_playerController{playerController}
     , m_selectionController{selectionController}
     , m_settings{settings}
-    , m_scriptRegistry{m_playerController}
-    , m_scriptParser{&m_scriptRegistry}
+    , m_scriptParser{new ScriptRegistry(m_playerController)}
     , m_iconLabel{new ClickableLabel(m_self)}
     , m_playingText{new StatusLabel(m_self)}
     , m_statusText{new StatusLabel(m_self)}

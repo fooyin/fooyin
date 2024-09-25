@@ -38,8 +38,8 @@ public:
     explicit PlaylistPopulatorPrivate(PlaylistPopulator* self, PlayerController* playerController)
         : m_self{self}
         , m_playerController{playerController}
-        , m_registry{std::make_unique<PlaylistScriptRegistry>()}
-        , m_parser{m_registry.get()}
+        , m_registry{new PlaylistScriptRegistry()}
+        , m_parser{m_registry}
     { }
 
     void reset();
@@ -63,7 +63,7 @@ public:
     PlaylistPreset m_currentPreset;
     PlaylistColumnList m_columns;
 
-    std::unique_ptr<PlaylistScriptRegistry> m_registry;
+    PlaylistScriptRegistry* m_registry;
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
 

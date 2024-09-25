@@ -51,7 +51,6 @@ namespace Fooyin {
 class ScriptParserPrivate
 {
 public:
-    explicit ScriptParserPrivate(ScriptParser* self);
     ScriptParserPrivate(ScriptParser* self, ScriptRegistry* registry);
 
     void advance();
@@ -85,8 +84,7 @@ public:
     ScriptParser* m_self;
 
     ScriptScanner m_scanner;
-    std::unique_ptr<ScriptRegistry> m_defaultRegistry;
-    ScriptRegistry* m_registry;
+    std::unique_ptr<ScriptRegistry> m_registry;
 
     ScriptScanner::Token m_current;
     ScriptScanner::Token m_previous;
@@ -96,16 +94,16 @@ public:
     QStringList m_currentResult;
 };
 
-ScriptParserPrivate::ScriptParserPrivate(ScriptParser* self)
-    : m_self{self}
-    , m_defaultRegistry{std::make_unique<ScriptRegistry>()}
-    , m_registry{m_defaultRegistry.get()}
-{ }
-
 ScriptParserPrivate::ScriptParserPrivate(ScriptParser* self, ScriptRegistry* registry)
     : m_self{self}
-    , m_registry{registry}
-{ }
+{
+    if(registry) {
+        m_registry.reset(registry);
+    }
+    else {
+        m_registry = std::make_unique<ScriptRegistry>();
+    }
+}
 
 void ScriptParserPrivate::advance()
 {
@@ -514,12 +512,17 @@ QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tra
 }
 
 ScriptParser::ScriptParser()
-    : p{std::make_unique<ScriptParserPrivate>(this)}
+    : p{std::make_unique<ScriptParserPrivate>(this, nullptr)}
 { }
 
 ScriptParser::ScriptParser(ScriptRegistry* registry)
     : p{std::make_unique<ScriptParserPrivate>(this, registry)}
 { }
+
+ScriptRegistry* ScriptParser::registry() const
+{
+    return p->m_registry.get();
+}
 
 ScriptParser::~ScriptParser() = default;
 

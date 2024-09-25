@@ -49,12 +49,18 @@ struct ParsedScript
     }
 };
 
+/*!
+ * Parses and evaluates scripts for a given Track or TrackList.
+ * @note this class will take ownership of ScriptRegistry if passed in the constructor.
+ */
 class FYCORE_EXPORT ScriptParser
 {
 public:
     ScriptParser();
     explicit ScriptParser(ScriptRegistry* registry);
     virtual ~ScriptParser();
+
+    [[nodiscard]] ScriptRegistry* registry() const;
 
     ParsedScript parse(const QString& input);
     ParsedScript parse(const QString& input, const Track& track);

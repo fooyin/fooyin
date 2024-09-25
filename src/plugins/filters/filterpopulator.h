@@ -22,7 +22,6 @@
 #include "filteritem.h"
 
 #include <core/scripting/scriptparser.h>
-#include <core/scripting/scriptregistry.h>
 #include <core/track.h>
 #include <utils/worker.h>
 
@@ -61,7 +60,6 @@ private:
     void iterateTrack(const Track& track);
     bool runBatch(const TrackList& tracks);
 
-    ScriptRegistry m_registry;
     ScriptParser m_parser;
 
     QString m_currentColumns;

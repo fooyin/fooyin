@@ -87,7 +87,6 @@ public:
 
     QBasicTimer m_textChangeTimer;
 
-    ScriptRegistry m_registry;
     ScriptParser m_parser;
     ScriptFormatter m_formatter;
 
@@ -104,8 +103,7 @@ ScriptEditorPrivate::ScriptEditorPrivate(ScriptEditor* self, LibraryManager* lib
     , m_highlighter{m_editor->document()}
     , m_expressionTree{new QTreeView(m_self)}
     , m_model{new ExpressionTreeModel(m_self)}
-    , m_registry{libraryManager}
-    , m_parser{&m_registry}
+    , m_parser{new ScriptRegistry(libraryManager)}
 {
     auto* mainLayout = new QGridLayout(m_self);
     mainLayout->setContentsMargins({});

@@ -20,13 +20,13 @@
 #include "filterpopulator.h"
 
 #include <core/constants.h>
+#include <core/scripting/scriptregistry.h>
 #include <utils/crypto.h>
 
 namespace Fooyin::Filters {
 FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
     : Worker{parent}
-    , m_registry{libraryManager}
-    , m_parser{&m_registry}
+    , m_parser{new ScriptRegistry(libraryManager)}
 { }
 
 void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "fileopsdefs.h"
-#include "fileopsregistry.h"
 
 #include <core/scripting/scriptparser.h>
 #include <utils/worker.h>
@@ -86,7 +85,6 @@ private:
 
     MusicLibrary* m_library;
     SettingsManager* m_settings;
-    FileOpsRegistry m_scriptRegistry;
     ScriptParser m_scriptParser;
     TrackList m_tracks;
     std::unordered_multimap<QString, Track> m_trackPaths;

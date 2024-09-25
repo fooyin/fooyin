@@ -19,6 +19,8 @@
 
 #include "fileopsworker.h"
 
+#include "fileopsregistry.h"
+
 #include <core/internalcoresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
@@ -36,7 +38,7 @@ FileOpsWorker::FileOpsWorker(MusicLibrary* library, TrackList tracks, SettingsMa
     : Worker{parent}
     , m_library{library}
     , m_settings{settings}
-    , m_scriptParser{&m_scriptRegistry}
+    , m_scriptParser{new FileOpsRegistry()}
     , m_tracks{std::move(tracks)}
     , m_isMonitoring{settings->value<Settings::Core::Internal::MonitorLibraries>()}
 { }

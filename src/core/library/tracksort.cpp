@@ -32,13 +32,11 @@ class TrackSorterPrivate
 {
 public:
     explicit TrackSorterPrivate(LibraryManager* libraryManager)
-        : m_registry{libraryManager}
-        , m_parser{&m_registry}
+        : m_parser{new ScriptRegistry(libraryManager)}
     { }
 
     ParsedScript parseScript(const QString& sort);
 
-    ScriptRegistry m_registry;
     ScriptParser m_parser;
     std::mutex m_parserGuard;
 };
