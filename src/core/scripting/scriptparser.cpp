@@ -226,6 +226,8 @@ Expression ScriptParserPrivate::expression()
             return m_isQuery ? group() : literal();
         case(TokenType::TokExclamation):
             return m_isQuery ? notKeyword({}) : literal();
+        case(TokenType::TokAll):
+            return m_isQuery ? Expression{Expr::All} : literal();
         case(TokenType::TokAnd):
         case(TokenType::TokOr):
         case(TokenType::TokColon):
@@ -618,6 +620,8 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return compareValues(exp, tracks, std::less<double>());
         case(Expr::LessEqual):
             return compareValues(exp, tracks, std::less_equal<double>());
+        case(Expr::All):
+            return ScriptResult{.value = {}, .cond = true};
         case(Expr::Null):
         default:
             return {};

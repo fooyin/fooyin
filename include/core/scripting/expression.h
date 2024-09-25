@@ -44,6 +44,7 @@ enum Type : uint8_t
     LessEqual      = 16,
     SortAscending  = 17,
     SortDescending = 18,
+    All            = 19,
 };
 }
 

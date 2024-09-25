@@ -124,6 +124,9 @@ ScriptScanner::Token ScriptScanner::scanNext()
             if(matchKeyword(QStringLiteral("ND "))) {
                 return makeToken(TokAnd);
             }
+            if(matchKeyword(QStringLiteral("LL"))) {
+                return makeToken(TokAll);
+            }
             return literal();
         }
         case(u'O'): {

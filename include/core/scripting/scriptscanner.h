@@ -51,6 +51,7 @@ public:
         TokOr             = 19,
         TokSortAscending  = 20,
         TokSortDescending = 21,
+        TokAll            = 22,
     };
 
     struct Token

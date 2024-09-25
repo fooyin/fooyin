@@ -83,6 +83,7 @@ void ScriptHighlighter::expression()
         case(ScriptScanner::TokSortDescending):
         case(ScriptScanner::TokAnd):
         case(ScriptScanner::TokOr):
+        case(ScriptScanner::TokAll):
             break;
     }
 }
