@@ -64,7 +64,7 @@ public:
     [[nodiscard]] int index() const;
 
     [[nodiscard]] TrackList tracks() const;
-    [[nodiscard]] Track track(int index) const;
+    [[nodiscard]] std::optional<Track> track(int index) const;
     [[nodiscard]] int trackCount() const;
 
     [[nodiscard]] int currentTrackIndex() const;

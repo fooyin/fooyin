@@ -42,6 +42,7 @@ public:
     void createShuffleOrder();
     int getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
     int getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
+    std::optional<Track> getTrack(int index) const;
 
     UId m_id;
     int m_dbId{-1};
@@ -156,6 +157,15 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
     return nextIndex;
 }
 
+std::optional<Track> PlaylistPrivate::getTrack(int index) const
+{
+    if(m_tracks.empty() || index < 0 || std::cmp_greater_equal(index, m_tracks.size())) {
+        return {};
+    }
+
+    return m_tracks.at(index);
+}
+
 Playlist::Playlist(PrivateKey /*key*/, QString name)
     : p{std::make_unique<PlaylistPrivate>(std::move(name))}
 { }
@@ -191,13 +201,9 @@ TrackList Playlist::tracks() const
     return p->m_tracks;
 }
 
-Track Playlist::track(int index) const
+std::optional<Track> Playlist::track(int index) const
 {
-    if(p->m_tracks.empty() || index < 0 || index >= trackCount()) {
-        return {};
-    }
-
-    return p->m_tracks.at(index);
+    return p->getTrack(index);
 }
 
 int Playlist::trackCount() const

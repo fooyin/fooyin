@@ -1064,9 +1064,8 @@ void PlaylistModel::updateTracks(const std::vector<int>& indexes)
             const auto& [index, end] = trackIndexAtPlaylistIndex(*it, true);
             if(!end) {
                 m_indexesPendingRemoval.push_back(index);
-                const auto track = m_currentPlaylist->track(*it);
-                if(track.isValid()) {
-                    groups[first].push_back(track);
+                if(const auto track = m_currentPlaylist->track(*it)) {
+                    groups[first].push_back(track.value());
                 }
             }
         }
@@ -1084,8 +1083,9 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
     for(const int index : indexes) {
         const auto& [modelIndex, end] = trackIndexAtPlaylistIndex(index, true);
         if(!end) {
-            const auto track = m_currentPlaylist->track(index);
-            items.emplace(track, *itemForIndex(modelIndex));
+            if(const auto track = m_currentPlaylist->track(index)) {
+                items.emplace(track.value(), *itemForIndex(modelIndex));
+            }
         }
     }
 
