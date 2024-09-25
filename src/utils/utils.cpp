@@ -50,11 +50,11 @@ int randomNumber(int min, int max)
 
 QString msToString(uint64_t ms)
 {
-    constexpr auto msPerSecond = 1000;
-    constexpr auto msPerMinute = msPerSecond * 60;
-    constexpr auto msPerHour   = msPerMinute * 60;
-    constexpr auto msPerDay    = msPerHour * 24;
-    constexpr auto msPerWeek   = msPerDay * 7;
+    static constexpr auto msPerSecond = 1000;
+    static constexpr auto msPerMinute = msPerSecond * 60;
+    static constexpr auto msPerHour   = msPerMinute * 60;
+    static constexpr auto msPerDay    = msPerHour * 24;
+    static constexpr auto msPerWeek   = msPerDay * 7;
 
     const uint64_t weeks   = ms / msPerWeek;
     const uint64_t days    = (ms % msPerWeek) / msPerDay;
