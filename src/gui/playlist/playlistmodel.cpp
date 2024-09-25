@@ -497,6 +497,7 @@ PlaylistModel::PlaylistModel(PlaylistInteractor* playlistInteractor, CoverProvid
     m_playingColour.setAlpha(90);
     m_disabledColour.setAlpha(50);
 
+    m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
     m_populator.moveToThread(&m_populatorThread);
     m_populatorThread.start();
 
@@ -923,6 +924,7 @@ void PlaylistModel::reset(const TrackList& tracks)
     m_resetting      = true;
 
     QMetaObject::invokeMethod(&m_populator, [this, tracks] {
+        m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
         m_populator.run(m_currentPlaylist ? m_currentPlaylist->id() : UId{}, m_currentPreset, m_columns, tracks);
     });
 }
@@ -1089,6 +1091,7 @@ void PlaylistModel::refreshTracks(const std::vector<int>& indexes)
 
     if(m_currentPlaylist) {
         QMetaObject::invokeMethod(&m_populator, [this, items] {
+            m_populator.setUseVarious(m_settings->value<Settings::Core::UseVariousForCompilations>());
             m_populator.updateTracks(m_currentPlaylist->id(), m_currentPreset, m_columns, items);
         });
     }

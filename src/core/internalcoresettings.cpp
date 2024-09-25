@@ -74,6 +74,8 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ProxyMode>(static_cast<int>(NetworkAccessManager::Mode::None),
                                          QStringLiteral("Networking/ProxyMode"));
     m_settings->createSetting<ProxyConfig>(QVariant{}, QStringLiteral("Networking/ProxyConfig"));
+    m_settings->createSetting<UseVariousForCompilations>(false,
+                                                         QStringLiteral("Library/UseVariousArtistsForCompilations"));
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

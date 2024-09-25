@@ -108,6 +108,7 @@ private:
     QCheckBox* m_monitorLibraries;
     QCheckBox* m_markUnavailable;
     QCheckBox* m_markUnavailableStart;
+    QCheckBox* m_useVariousCompilations;
     QCheckBox* m_saveRatings;
     QCheckBox* m_savePlaycounts;
 };
@@ -125,6 +126,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     , m_monitorLibraries{new QCheckBox(tr("Monitor libraries"), this)}
     , m_markUnavailable{new QCheckBox(tr("Mark unavailable tracks on playback"), this)}
     , m_markUnavailableStart{new QCheckBox(tr("Mark unavailable tracks on startup"), this)}
+    , m_useVariousCompilations{new QCheckBox(tr("Use 'Various Artists' for compilations"), this)}
     , m_saveRatings{new QCheckBox(tr("Save ratings to file metadata"), this)}
     , m_savePlaycounts{new QCheckBox(tr("Save playcount to file metadata"), this)}
 {
@@ -165,6 +167,7 @@ LibraryGeneralPageWidget::LibraryGeneralPageWidget(ActionManager* actionManager,
     mainLayout->addWidget(m_monitorLibraries, row++, 0, 1, 2);
     mainLayout->addWidget(m_markUnavailable, row++, 0, 1, 2);
     mainLayout->addWidget(m_markUnavailableStart, row++, 0, 1, 2);
+    mainLayout->addWidget(m_useVariousCompilations, row++, 0, 1, 2);
     mainLayout->addWidget(m_saveRatings, row++, 0, 1, 2);
     mainLayout->addWidget(m_savePlaycounts, row++, 0, 1, 2);
     mainLayout->setColumnStretch(1, 1);
@@ -194,6 +197,7 @@ void LibraryGeneralPageWidget::load()
     m_markUnavailable->setChecked(m_settings->fileValue(Settings::Core::Internal::MarkUnavailable, false).toBool());
     m_markUnavailableStart->setChecked(
         m_settings->fileValue(Settings::Core::Internal::MarkUnavailableStartup, false).toBool());
+    m_useVariousCompilations->setChecked(m_settings->value<Settings::Core::UseVariousForCompilations>());
     m_saveRatings->setChecked(m_settings->value<Settings::Core::SaveRatingToMetadata>());
     m_savePlaycounts->setChecked(m_settings->value<Settings::Core::SavePlaycountToMetadata>());
 }
@@ -211,6 +215,7 @@ void LibraryGeneralPageWidget::apply()
     m_settings->set<Settings::Core::Internal::MonitorLibraries>(m_monitorLibraries->isChecked());
     m_settings->fileSet(Settings::Core::Internal::MarkUnavailable, m_markUnavailable->isChecked());
     m_settings->fileSet(Settings::Core::Internal::MarkUnavailableStartup, m_markUnavailableStart->isChecked());
+    m_settings->set<Settings::Core::UseVariousForCompilations>(m_useVariousCompilations->isChecked());
     m_settings->set<Settings::Core::SaveRatingToMetadata>(m_saveRatings->isChecked());
     m_settings->set<Settings::Core::SavePlaycountToMetadata>(m_savePlaycounts->isChecked());
 }
@@ -224,6 +229,7 @@ void LibraryGeneralPageWidget::reset()
     m_settings->reset<Settings::Core::Internal::MonitorLibraries>();
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailable);
     m_settings->fileRemove(Settings::Core::Internal::MarkUnavailableStartup);
+    m_settings->reset<Settings::Core::UseVariousForCompilations>();
     m_settings->reset<Settings::Core::SaveRatingToMetadata>();
     m_settings->reset<Settings::Core::SavePlaycountToMetadata>();
 }

@@ -21,8 +21,10 @@
 
 #include "librarytreepopulator.h"
 
+#include <core/coresettings.h>
 #include <gui/guiconstants.h>
 #include <utils/datastream.h>
+#include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QApplication>
@@ -115,7 +117,7 @@ bool LibraryTreeSortModel::lessThan(const QModelIndex& left, const QModelIndex& 
 class LibraryTreeModelPrivate
 {
 public:
-    explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager);
+    explicit LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager, SettingsManager* settings);
 
     void updateSummary();
 
@@ -132,6 +134,7 @@ public:
     void beginReset();
 
     LibraryTreeModel* m_self;
+    SettingsManager* m_settings;
 
     QString m_grouping;
     bool m_loaded{false};
@@ -156,8 +159,10 @@ public:
     QColor m_playingColour{QApplication::palette().highlight().color()};
 };
 
-LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager)
+LibraryTreeModelPrivate::LibraryTreeModelPrivate(LibraryTreeModel* self, LibraryManager* libraryManager,
+                                                 SettingsManager* settings)
     : m_self{self}
+    , m_settings{settings}
     , m_populator{libraryManager}
 {
     m_playingColour.setAlpha(90);
@@ -384,9 +389,9 @@ void LibraryTreeModelPrivate::beginReset()
     updateSummary();
 }
 
-LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, QObject* parent)
+LibraryTreeModel::LibraryTreeModel(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent)
     : TreeModel{parent}
-    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager)}
+    , p{std::make_unique<LibraryTreeModelPrivate>(this, libraryManager, settings)}
 {
     QObject::connect(&p->m_populator, &LibraryTreePopulator::populated, this,
                      [this](const PendingTreeData& data) { p->batchFinished(data); });
@@ -638,7 +643,10 @@ void LibraryTreeModel::addTracks(const TrackList& tracks)
     p->m_addingTracks = true;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd] { p->m_populator.run(p->m_grouping, tracksToAdd); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToAdd] {
+        p->m_populator.run(p->m_grouping, tracksToAdd,
+                           p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 }
 
 void LibraryTreeModel::updateTracks(const TrackList& tracks)
@@ -657,8 +665,10 @@ void LibraryTreeModel::updateTracks(const TrackList& tracks)
     p->m_addingTracks         = false;
     p->m_populatorThread.start();
 
-    QMetaObject::invokeMethod(&p->m_populator,
-                              [this, tracksToUpdate] { p->m_populator.run(p->m_grouping, tracksToUpdate); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, tracksToUpdate] {
+        p->m_populator.run(p->m_grouping, tracksToUpdate,
+                           p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 
     addTracks(tracks);
 }
@@ -708,7 +718,9 @@ void LibraryTreeModel::reset(const TrackList& tracks)
 
     p->m_resetting = true;
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, tracks] { p->m_populator.run(p->m_grouping, tracks); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, tracks] {
+        p->m_populator.run(p->m_grouping, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 }
 
 QModelIndex LibraryTreeModel::indexForKey(const Md5Hash& key)

@@ -19,12 +19,13 @@
 
 #include "filtermodel.h"
 
-#include "core/library/tracksort.h"
 #include "filterfwd.h"
 #include "filteritem.h"
 #include "filterpopulator.h"
 #include "settings/filtersettings.h"
 
+#include <core/coresettings.h>
+#include <core/library/tracksort.h>
 #include <core/track.h>
 #include <gui/coverprovider.h>
 #include <gui/guiconstants.h>
@@ -575,8 +576,9 @@ void FilterModel::addTracks(const TrackList& tracks)
     QStringList columns;
     std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->m_populator,
-                              [this, columns, tracksToAdd] { p->m_populator.run(columns, tracksToAdd); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, columns, tracksToAdd] {
+        p->m_populator.run(columns, tracksToAdd, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 }
 
 void FilterModel::updateTracks(const TrackList& tracks)
@@ -598,8 +600,9 @@ void FilterModel::updateTracks(const TrackList& tracks)
     QStringList columns;
     std::ranges::transform(p->m_columns, std::back_inserter(columns), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->m_populator,
-                              [this, columns, tracksToUpdate] { p->m_populator.run(columns, tracksToUpdate); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, columns, tracksToUpdate] {
+        p->m_populator.run(columns, tracksToUpdate, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 
     addTracks(tracks);
 }
@@ -697,6 +700,8 @@ void FilterModel::reset(const FilterColumnList& columns, const TrackList& tracks
     QStringList fields;
     std::ranges::transform(p->m_columns, std::back_inserter(fields), [](const auto& column) { return column.field; });
 
-    QMetaObject::invokeMethod(&p->m_populator, [this, fields, tracks] { p->m_populator.run(fields, tracks); });
+    QMetaObject::invokeMethod(&p->m_populator, [this, fields, tracks] {
+        p->m_populator.run(fields, tracks, p->m_settings->value<Settings::Core::UseVariousForCompilations>());
+    });
 }
 } // namespace Fooyin::Filters

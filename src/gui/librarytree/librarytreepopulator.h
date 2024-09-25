@@ -54,7 +54,7 @@ public:
     explicit LibraryTreePopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
     ~LibraryTreePopulator() override;
 
-    void run(const QString& grouping, const TrackList& tracks);
+    void run(const QString& grouping, const TrackList& tracks, bool useVarious);
 
 signals:
     void populated(Fooyin::PendingTreeData data);

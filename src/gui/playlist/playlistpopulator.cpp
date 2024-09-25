@@ -368,6 +368,11 @@ void PlaylistPopulator::setFont(const QFont& font)
     p->m_formatter.setBaseFont(font);
 }
 
+void PlaylistPopulator::setUseVarious(bool enabled)
+{
+    p->m_registry->setUseVariousArtists(enabled);
+}
+
 void PlaylistPopulator::run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
                             const TrackList& tracks)
 {

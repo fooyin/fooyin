@@ -142,11 +142,15 @@ LibraryTreePopulator::LibraryTreePopulator(LibraryManager* libraryManager, QObje
 
 LibraryTreePopulator::~LibraryTreePopulator() = default;
 
-void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks)
+void LibraryTreePopulator::run(const QString& grouping, const TrackList& tracks, bool useVarious)
 {
     setState(Running);
 
     p->m_data.clear();
+
+    if(auto* registry = p->m_parser.registry()) {
+        registry->setUseVariousArtists(useVarious);
+    }
 
     if(std::exchange(p->m_currentGrouping, grouping) != grouping) {
         p->m_script = p->m_parser.parse(p->m_currentGrouping);

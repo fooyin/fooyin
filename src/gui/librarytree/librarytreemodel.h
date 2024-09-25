@@ -31,6 +31,7 @@
 namespace Fooyin {
 class LibraryManager;
 class LibraryTreeModelPrivate;
+class SettingsManager;
 
 class LibraryTreeSortModel : public QSortFilterProxyModel
 {
@@ -51,7 +52,7 @@ class LibraryTreeModel : public TreeModel<LibraryTreeItem>
     Q_OBJECT
 
 public:
-    explicit LibraryTreeModel(LibraryManager* libraryManager, QObject* parent = nullptr);
+    explicit LibraryTreeModel(LibraryManager* libraryManager, SettingsManager* settings, QObject* parent = nullptr);
     ~LibraryTreeModel() override;
 
     void resetPalette();

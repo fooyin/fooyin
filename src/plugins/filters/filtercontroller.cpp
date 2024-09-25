@@ -19,14 +19,15 @@
 
 #include "filtercontroller.h"
 
-#include "core/library/tracksort.h"
 #include "filtercolumnregistry.h"
 #include "filtermanager.h"
 #include "filterwidget.h"
 #include "settings/filtersettings.h"
 
+#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
+#include <core/library/tracksort.h>
 #include <core/plugins/coreplugincontext.h>
 #include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
@@ -136,6 +137,7 @@ FilterControllerPrivate::FilterControllerPrivate(FilterController* self, const C
     m_settings->subscribe<Settings::Filters::FilterMiddleClick>(
         m_self, [this](int action) { m_middleClickAction = static_cast<TrackAction>(action); });
     m_settings->subscribe<Settings::Filters::FilterSendPlayback>(m_self, [this]() { updateAllPlaylistActions(); });
+    m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { resetAll(); });
 }
 
 void FilterControllerPrivate::handleAction(const TrackAction& action) const

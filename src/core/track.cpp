@@ -447,10 +447,16 @@ QString Track::albumArtist() const
     return p->albumArtists.empty() ? QString{} : p->albumArtists.join(QLatin1String{Constants::UnitSeparator});
 }
 
-QString Track::primaryAlbumArtist() const
+QString Track::effectiveAlbumArtist(bool useVarious) const
 {
     if(!albumArtists().empty()) {
         return albumArtist();
+    }
+    if(useVarious && hasExtraTag(QStringLiteral("COMPILATION"))) {
+        const auto compilation = extraTag(QStringLiteral("COMPILATION"));
+        if(!compilation.empty() && compilation.front().toInt() == 1) {
+            return QStringLiteral("Various Artists");
+        }
     }
     if(!artists().empty()) {
         return artist();
@@ -1333,7 +1339,7 @@ QString Track::findCommonField(const TrackList& tracks)
     }
     else {
         const QString primaryGenre  = tracks.front().genre();
-        const QString primaryArtist = tracks.front().primaryAlbumArtist();
+        const QString primaryArtist = tracks.front().effectiveAlbumArtist();
         const QString primaryAlbum  = tracks.front().album();
         const QString primaryDir    = tracks.front().directory();
 
@@ -1341,7 +1347,7 @@ QString Track::findCommonField(const TrackList& tracks)
             return track.genre() == primaryGenre;
         });
         const bool sameArtist = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryArtist](const Track& track) {
-            return track.primaryAlbumArtist() == primaryArtist;
+            return track.effectiveAlbumArtist() == primaryArtist;
         });
         const bool sameAlbum  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryAlbum](const Track& track) {
             return track.album() == primaryAlbum;

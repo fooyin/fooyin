@@ -28,6 +28,7 @@
 #include "playlist/playlistcontroller.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
@@ -251,7 +252,7 @@ LibraryTreeWidgetPrivate::LibraryTreeWidgetPrivate(LibraryTreeWidget* self, Acti
     , m_resetThrottler{new SignalThrottler(m_self)}
     , m_layout{new QVBoxLayout(m_self)}
     , m_libraryTree{new LibraryTreeView(m_self)}
-    , m_model{new LibraryTreeModel(core->libraryManager(), m_self)}
+    , m_model{new LibraryTreeModel(core->libraryManager(), m_settings, m_self)}
     , m_sortProxy{new LibraryTreeSortModel(m_self)}
     , m_widgetContext{new WidgetContext(m_self, Context{Id{"Fooyin.Context.LibraryTree."}.append(m_self->id())},
                                         m_self)}
@@ -367,6 +368,8 @@ void LibraryTreeWidgetPrivate::setupConnections()
     });
     m_settings->subscribe<Settings::Gui::Theme>(m_model, &LibraryTreeModel::resetPalette);
     m_settings->subscribe<Settings::Gui::Style>(m_model, &LibraryTreeModel::resetPalette);
+
+    m_settings->subscribe<Settings::Core::UseVariousForCompilations>(m_self, [this]() { reset(); });
 }
 
 void LibraryTreeWidgetPrivate::reset() const

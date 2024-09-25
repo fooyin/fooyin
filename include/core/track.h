@@ -106,7 +106,7 @@ public:
     [[nodiscard]] QString album() const;
     [[nodiscard]] QStringList albumArtists() const;
     [[nodiscard]] QString albumArtist() const;
-    [[nodiscard]] QString primaryAlbumArtist() const;
+    [[nodiscard]] QString effectiveAlbumArtist(bool useVarious = false) const;
     [[nodiscard]] QString trackNumber() const;
     [[nodiscard]] QString trackTotal() const;
     [[nodiscard]] QString discNumber() const;

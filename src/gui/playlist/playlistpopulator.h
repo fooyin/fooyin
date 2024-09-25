@@ -73,6 +73,7 @@ public:
     ~PlaylistPopulator() override;
 
     void setFont(const QFont& font);
+    void setUseVarious(bool enabled);
 
     void run(const UId& playlistId, const PlaylistPreset& preset, const PlaylistColumnList& columns,
              const TrackList& tracks);

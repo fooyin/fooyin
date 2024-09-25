@@ -138,6 +138,8 @@ public:
     LibraryManager* m_libraryManager{nullptr};
     PlayerController* m_playerController{nullptr};
 
+    bool m_useVariousArtists{false};
+
     std::unordered_map<QString, TrackFunc> m_metadata;
     std::unordered_map<QString, TrackSetFunc> m_setMetadata;
     std::unordered_map<QString, TrackListFunc> m_listProperties;
@@ -275,15 +277,17 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Artist)]       = &Track::primaryArtist;
     m_metadata[QString::fromLatin1(MetaData::UniqueArtist)] = &Track::uniqueArtists;
     m_metadata[QString::fromLatin1(MetaData::Album)]        = &Track::album;
-    m_metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = &Track::primaryAlbumArtist;
-    m_metadata[QString::fromLatin1(MetaData::Track)]        = &Track::trackNumber;
-    m_metadata[QString::fromLatin1(MetaData::TrackTotal)]   = &Track::trackTotal;
-    m_metadata[QString::fromLatin1(MetaData::Disc)]         = &Track::discNumber;
-    m_metadata[QString::fromLatin1(MetaData::DiscTotal)]    = &Track::discTotal;
-    m_metadata[QString::fromLatin1(MetaData::Genre)]        = &Track::genres;
-    m_metadata[QString::fromLatin1(MetaData::Composer)]     = &Track::composer;
-    m_metadata[QString::fromLatin1(MetaData::Performer)]    = &Track::performer;
-    m_metadata[QString::fromLatin1(MetaData::Duration)]     = [](const Track& track) {
+    m_metadata[QString::fromLatin1(MetaData::AlbumArtist)]  = [this](const Track& track) {
+        return track.effectiveAlbumArtist(m_useVariousArtists);
+    };
+    m_metadata[QString::fromLatin1(MetaData::Track)]      = &Track::trackNumber;
+    m_metadata[QString::fromLatin1(MetaData::TrackTotal)] = &Track::trackTotal;
+    m_metadata[QString::fromLatin1(MetaData::Disc)]       = &Track::discNumber;
+    m_metadata[QString::fromLatin1(MetaData::DiscTotal)]  = &Track::discTotal;
+    m_metadata[QString::fromLatin1(MetaData::Genre)]      = &Track::genres;
+    m_metadata[QString::fromLatin1(MetaData::Composer)]   = &Track::composer;
+    m_metadata[QString::fromLatin1(MetaData::Performer)]  = &Track::performer;
+    m_metadata[QString::fromLatin1(MetaData::Duration)]   = [](const Track& track) {
         const auto duration = track.duration();
         if(duration == 0) {
             return QString{};
@@ -388,6 +392,11 @@ ScriptRegistry::ScriptRegistry(PlayerController* playerController)
 ScriptRegistry::ScriptRegistry(LibraryManager* libraryManager, PlayerController* playerController)
     : p{std::make_unique<ScriptRegistryPrivate>(libraryManager, playerController)}
 { }
+
+void ScriptRegistry::setUseVariousArtists(bool enabled)
+{
+    p->m_useVariousArtists = enabled;
+}
 
 ScriptRegistry::~ScriptRegistry() = default;
 

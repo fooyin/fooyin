@@ -48,7 +48,7 @@ class FilterPopulator : public Worker
 public:
     explicit FilterPopulator(LibraryManager* libraryManager, QObject* parent = nullptr);
 
-    void run(const QStringList& columns, const TrackList& tracks);
+    void run(const QStringList& columns, const TrackList& tracks, bool useVarious);
 
 signals:
     void populated(Fooyin::Filters::PendingTreeData data);

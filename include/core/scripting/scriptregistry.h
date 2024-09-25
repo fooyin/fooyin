@@ -42,6 +42,8 @@ public:
     ScriptRegistry(LibraryManager* libraryManager, PlayerController* playerController);
     virtual ~ScriptRegistry();
 
+    void setUseVariousArtists(bool enabled);
+
     [[nodiscard]] virtual bool isVariable(const QString& var, const Track& track) const;
     [[nodiscard]] virtual bool isVariable(const QString& var, const TrackList& tracks) const;
     [[nodiscard]] virtual bool isFunction(const QString& func) const;

@@ -30,6 +30,7 @@
 #include "playlistwidget_p.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
 #include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
@@ -281,6 +282,9 @@ void PlaylistWidgetPrivate::setupConnections()
     };
     m_settings->subscribe<Settings::Gui::Theme>(this, handleStyleChange);
     m_settings->subscribe<Settings::Gui::Style>(this, handleStyleChange);
+
+    m_settings->subscribe<Settings::Core::UseVariousForCompilations>(
+        m_self, [this]() { changePlaylist(m_playlistController->currentPlaylist(), nullptr); });
 }
 
 void PlaylistWidgetPrivate::setupActions()

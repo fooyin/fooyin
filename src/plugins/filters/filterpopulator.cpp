@@ -20,8 +20,10 @@
 #include "filterpopulator.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
 #include <core/scripting/scriptregistry.h>
 #include <utils/crypto.h>
+#include <utils/settings/settingsmanager.h>
 
 namespace Fooyin::Filters {
 FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent)
@@ -29,11 +31,15 @@ FilterPopulator::FilterPopulator(LibraryManager* libraryManager, QObject* parent
     , m_parser{new ScriptRegistry(libraryManager)}
 { }
 
-void FilterPopulator::run(const QStringList& columns, const TrackList& tracks)
+void FilterPopulator::run(const QStringList& columns, const TrackList& tracks, bool useVarious)
 {
     setState(Running);
 
     m_data.clear();
+
+    if(auto* registry = m_parser.registry()) {
+        registry->setUseVariousArtists(useVarious);
+    }
 
     const QString newColumns = columns.join(u"\036");
     if(std::exchange(m_currentColumns, newColumns) != newColumns) {
