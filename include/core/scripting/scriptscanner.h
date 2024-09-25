@@ -57,8 +57,8 @@ public:
     struct Token
     {
         TokenType type{TokError};
-        QStringView value;
-        int position{0};
+        QString value;
+        int position{-1};
     };
 
     void setup(const QString& input);
@@ -70,10 +70,13 @@ private:
     [[nodiscard]] Token makeToken(TokenType type) const;
     Token literal();
 
+    bool currentIsLiteral();
     [[nodiscard]] bool isAtEnd() const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
-    bool matchKeyword(const QString& keyword);
+
+    bool checkKeyword(const QString& keyword);
+    bool matchKeyword(const QString& keyword, bool advance = true);
 
     QStringView m_input;
     const QChar* m_start;

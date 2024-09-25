@@ -19,8 +19,8 @@
 
 #include <core/scripting/scriptscanner.h>
 
-namespace Fooyin {
-bool isLiteral(const QChar ch)
+namespace {
+bool isLiteral(const QChar ch, bool includeKeywords = true)
 {
     switch(ch.unicode()) {
         case(u'%'):
@@ -39,15 +39,19 @@ bool isLiteral(const QChar ch)
         case(u'!'):
         case(u'\\'):
         case(u'\0'):
+            return false;
         case(u'A'):
         case(u'O'):
         case(u'S'):
-            return false;
+            return !includeKeywords;
         default:
             return true;
     }
 }
 
+} // namespace
+
+namespace Fooyin {
 void ScriptScanner::setup(const QString& input)
 {
     m_input   = input;
@@ -160,18 +164,43 @@ ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
 {
     Token token;
     token.type     = type;
-    token.value    = {m_start, m_current - m_start};
+    token.value    = QStringView{m_start, m_current - m_start}.toString();
     token.position = static_cast<int>(m_start - m_input.cbegin());
     return token;
 }
 
 ScriptScanner::Token ScriptScanner::literal()
 {
-    while(isLiteral(peek()) && !isAtEnd()) {
+    while(currentIsLiteral() && !isAtEnd()) {
         advance();
     }
 
     return makeToken(TokLiteral);
+}
+
+bool ScriptScanner::currentIsLiteral()
+{
+    const QChar c = *m_current;
+    if(!isLiteral(c, false)) {
+        return false;
+    }
+
+    switch(c.unicode()) {
+        case(u'A'):
+            return !checkKeyword(QStringLiteral("AND ")) && !checkKeyword(QStringLiteral("ALL"));
+        case(u'O'):
+            return !checkKeyword(QStringLiteral("OR "));
+        case(u'S'):
+            if(!checkKeyword(QStringLiteral("SORT "))) {
+                return true;
+            }
+            return !checkKeyword(QStringLiteral("SORT BY ")) && !checkKeyword(QStringLiteral("SORT ASCENDING BY "))
+                && !checkKeyword(QStringLiteral("SORT DESCENDING BY "));
+        default:
+            break;
+    }
+
+    return true;
 }
 
 bool ScriptScanner::isAtEnd() const
@@ -190,7 +219,12 @@ QChar ScriptScanner::peek() const
     return *m_current;
 }
 
-bool ScriptScanner::matchKeyword(const QString& keyword)
+bool ScriptScanner::checkKeyword(const QString& keyword)
+{
+    return matchKeyword(keyword, false);
+}
+
+bool ScriptScanner::matchKeyword(const QString& keyword, bool advance)
 {
     const QChar* it = m_current;
     for(const QChar& ch : keyword) {
@@ -200,7 +234,9 @@ bool ScriptScanner::matchKeyword(const QString& keyword)
         ++it;
     }
 
-    std::advance(m_current, keyword.length());
+    if(advance) {
+        std::advance(m_current, keyword.length());
+    }
     return true;
 }
 } // namespace Fooyin

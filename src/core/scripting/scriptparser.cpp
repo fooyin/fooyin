@@ -145,7 +145,7 @@ void ScriptParserPrivate::advance()
 
     m_current = m_scanner.next();
     if(m_current.type == TokenType::TokError) {
-        errorAtCurrent(m_current.value.toString());
+        errorAtCurrent(m_current.value);
     }
 }
 
@@ -185,13 +185,13 @@ void ScriptParserPrivate::errorAt(const ScriptScanner::Token& token, const QStri
         errorMsg += QStringLiteral(" at end of string");
     }
     else {
-        errorMsg += QStringLiteral(": '") + token.value.toString() + QStringLiteral("'");
+        errorMsg += QStringLiteral(": '") + token.value + QStringLiteral("'");
     }
 
     errorMsg += QStringLiteral(" (%1)").arg(message);
 
     ScriptError currentError;
-    currentError.value    = token.value.toString();
+    currentError.value    = token.value;
     currentError.position = token.position;
     currentError.message  = errorMsg;
 
@@ -250,7 +250,7 @@ Expression ScriptParserPrivate::expression()
 
 Expression ScriptParserPrivate::literal()
 {
-    QString value = m_previous.value.toString();
+    QString value = m_previous.value;
 
     if(m_isQuery) {
         value = value.trimmed();
@@ -269,10 +269,10 @@ Expression ScriptParserPrivate::quote()
 
     while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
         advance();
-        val.append(m_previous.value.toString());
+        val.append(m_previous.value);
         if(currentToken(TokenType::TokEscape)) {
             advance();
-            val.append(m_current.value.toString());
+            val.append(m_current.value);
             advance();
         }
     }
@@ -292,12 +292,12 @@ Expression ScriptParserPrivate::variable()
     if(m_previous.type == TokenType::TokLeftAngle) {
         advance();
         expr.type = Expr::VariableList;
-        value     = QString{m_previous.value.toString()}.toLower();
+        value     = QString{m_previous.value}.toLower();
         consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
     }
     else {
         expr.type = Expr::Variable;
-        value     = m_previous.value.toString();
+        value     = m_previous.value;
         if(m_isQuery) {
             value = value.trimmed();
         }
@@ -318,7 +318,7 @@ Expression ScriptParserPrivate::function()
 
     Expression expr{Expr::Function};
     FuncValue funcExpr;
-    funcExpr.name = QString{m_previous.value.toString()}.toLower();
+    funcExpr.name = QString{m_previous.value}.toLower();
 
     if(!m_registry->isFunction(funcExpr.name)) {
         error(QStringLiteral("Function not found"));
@@ -382,6 +382,13 @@ Expression ScriptParserPrivate::group()
         if(argExpr.type != Expr::Null) {
             args.emplace_back(argExpr);
         }
+    }
+
+    if(args.size() == 1 && args.front().type == Expr::Literal) {
+        expr.type  = Expr::Literal;
+        expr.value = QStringLiteral("(%1)").arg(std::get<QString>(args.front().value));
+        consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after expression"));
+        return expr;
     }
 
     expr.value = args;
@@ -577,7 +584,7 @@ Expression ScriptParserPrivate::sort(TokenType order)
 
     while(!currentToken(TokenType::TokEos)) {
         advance();
-        val.append(m_previous.value.toString());
+        val.append(m_previous.value);
     }
 
     expr.value = val;
@@ -906,7 +913,14 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
 
     advance();
     while(m_current.type != TokenType::TokEos) {
-        const Expression expr = checkOperator(expression());
+        Expression prevExpr = expression();
+        Expression expr     = checkOperator(prevExpr);
+
+        while(expr.type != prevExpr.type) {
+            prevExpr = expr;
+            expr     = checkOperator(prevExpr);
+        }
+
         if(expr.type != Expr::Null) {
             script.expressions.emplace_back(expr);
         }
