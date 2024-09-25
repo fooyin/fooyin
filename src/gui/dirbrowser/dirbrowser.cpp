@@ -205,6 +205,10 @@ public:
 
     WidgetContext* m_context;
 
+    QAction* m_goUp;
+    QAction* m_goBack;
+    QAction* m_goForward;
+
     QAction* m_playAction;
     QAction* m_addCurrent;
     QAction* m_addActive;
@@ -230,6 +234,9 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     , m_doubleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserDoubleClick>())}
     , m_middleClickAction{static_cast<TrackAction>(m_settings->value<Settings::Gui::Internal::DirBrowserMiddleClick>())}
     , m_context{new WidgetContext(m_self, Context{Constants::Context::DirBrowser}, m_self)}
+    , m_goUp{new QAction(Utils::iconFromTheme(Constants::Icons::Up), DirBrowser::tr("Go up"), m_self)}
+    , m_goBack{new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), DirBrowser::tr("Go back"), m_self)}
+    , m_goForward{new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), DirBrowser::tr("Go forwards"), m_self)}
     , m_playAction{new QAction(DirBrowser::tr("&Play"), m_self)}
     , m_addCurrent{new QAction(DirBrowser::tr("Add to &current playlist"), m_self)}
     , m_addActive{new QAction(DirBrowser::tr("Add to &active playlist"), m_self)}
@@ -264,6 +271,26 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     }
     m_dirTree->setRootIndex(m_proxyModel->mapFromSource(m_model->setRootPath(rootPath)));
     updateIndent(m_settings->value<Settings::Gui::Internal::DirBrowserListIndent>());
+
+    m_goUp->setStatusTip(DirBrowser::tr("Go up to the parent directory"));
+    QObject::connect(m_goUp, &QAction::triggered, m_self, [this]() { goUp(); });
+    m_actionManager->registerAction(m_goUp, "Directory Browser.GoUp", m_context->context());
+
+    m_goBack->setStatusTip(DirBrowser::tr("Return to the previous directory"));
+    QObject::connect(m_goBack, &QAction::triggered, m_self, [this]() {
+        if(m_dirHistory.canUndo()) {
+            m_dirHistory.undo();
+        }
+    });
+    m_actionManager->registerAction(m_goBack, "Directory Browser.GoBack", m_context->context());
+
+    m_goForward->setStatusTip(DirBrowser::tr("Undo a Go->Back action"));
+    QObject::connect(m_goForward, &QAction::triggered, m_self, [this]() {
+        if(m_dirHistory.canRedo()) {
+            m_dirHistory.redo();
+        }
+    });
+    m_actionManager->registerAction(m_goForward, "Directory Browser.GoForward", m_context->context());
 
     m_playAction->setStatusTip(DirBrowser::tr("Start playback of the selected files(s)"));
     QObject::connect(m_playAction, &QAction::triggered, m_self, [this]() { handleAction(TrackAction::Play, false); });
@@ -503,24 +530,9 @@ void DirBrowserPrivate::setControlsEnabled(bool enabled)
         m_backDir    = new ToolButton(m_self);
         m_forwardDir = new ToolButton(m_self);
 
-        m_upDir->setDefaultAction(
-            new QAction(Utils::iconFromTheme(Constants::Icons::Up), DirBrowser::tr("Go up"), m_upDir));
-        m_backDir->setDefaultAction(
-            new QAction(Utils::iconFromTheme(Constants::Icons::GoPrevious), DirBrowser::tr("Go back"), m_backDir));
-        m_forwardDir->setDefaultAction(
-            new QAction(Utils::iconFromTheme(Constants::Icons::GoNext), DirBrowser::tr("Go forwards"), m_forwardDir));
-
-        QObject::connect(m_upDir, &QPushButton::pressed, m_self, [this]() { goUp(); });
-        QObject::connect(m_backDir, &QPushButton::pressed, m_self, [this]() {
-            if(m_dirHistory.canUndo()) {
-                m_dirHistory.undo();
-            }
-        });
-        QObject::connect(m_forwardDir, &QPushButton::pressed, m_self, [this]() {
-            if(m_dirHistory.canRedo()) {
-                m_dirHistory.redo();
-            }
-        });
+        m_upDir->setDefaultAction(m_goUp);
+        m_backDir->setDefaultAction(m_goBack);
+        m_forwardDir->setDefaultAction(m_goForward);
 
         m_controlLayout->insertWidget(0, m_upDir);
         m_controlLayout->insertWidget(0, m_forwardDir);
