@@ -378,7 +378,14 @@ Expression ScriptParserPrivate::group()
     ExpressionList args;
 
     while(!currentToken(TokenType::TokRightParen) && !currentToken(TokenType::TokEos)) {
-        const Expression argExpr = checkOperator(expression());
+        Expression prevExpr = expression();
+        Expression argExpr  = checkOperator(prevExpr);
+
+        while(argExpr.type != prevExpr.type) {
+            prevExpr = argExpr;
+            argExpr  = checkOperator(prevExpr);
+        }
+
         if(argExpr.type != Expr::Null) {
             args.emplace_back(argExpr);
         }
@@ -425,7 +432,7 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
         }
     }
     else {
-        const Expression argExpr = checkOperator(expression());
+        const Expression argExpr = expression();
         if(argExpr.type != Expr::Null) {
             args.emplace_back(argExpr);
         }
@@ -869,6 +876,7 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     }
 
     m_isQuery = false;
+    m_scanner.setIgnoreWhitespace(false);
 
     if(m_parsedScripts.contains(input)) {
         return m_parsedScripts.at(input);
@@ -900,6 +908,7 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
     }
 
     m_isQuery = true;
+    m_scanner.setIgnoreWhitespace(true);
 
     if(m_parsedScripts.contains(input)) {
         return m_parsedScripts.at(input);
@@ -996,11 +1005,9 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
     }
 
     for(const Track& track : tracks) {
-        for(const auto& expr : expressions) {
-            const auto evalExpr = evalExpression(expr, track);
-            if(evalExpr.cond) {
-                filteredTracks.emplace_back(track);
-            }
+        if(std::ranges::all_of(expressions,
+                               [this, &track](const auto& expr) { return evalExpression(expr, track).cond; })) {
+            filteredTracks.emplace_back(track);
         }
     }
 

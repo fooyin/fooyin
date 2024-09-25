@@ -163,9 +163,13 @@ TEST_F(ScriptParserTest, QueryTest)
     track2.setDuration(3000);
     tracks.push_back(track2);
 
-    EXPECT_TRUE(m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size() == 1);
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size());
     EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>1"), tracks).empty());
-    EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>=1"), tracks).size() == 1);
-    EXPECT_TRUE(m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size() == 1);
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:DE AND genre=rock AND title:D"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title:AB"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title=ABC"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("!(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
 }
 } // namespace Fooyin::Testing

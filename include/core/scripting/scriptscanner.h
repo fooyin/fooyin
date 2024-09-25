@@ -61,9 +61,13 @@ public:
         int position{-1};
     };
 
+    ScriptScanner();
+
     void setup(const QString& input);
     Token next();
     Token peekNext(int delta = 1);
+
+    void setIgnoreWhitespace(bool enabled);
 
 private:
     Token scanNext();
@@ -84,5 +88,6 @@ private:
 
     std::vector<Token> m_tokens;
     int m_currentTokenIndex;
+    bool m_ignoreWhitespace;
 };
 } // namespace Fooyin

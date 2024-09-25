@@ -52,6 +52,10 @@ bool isLiteral(const QChar ch, bool includeKeywords = true)
 } // namespace
 
 namespace Fooyin {
+ScriptScanner::ScriptScanner()
+    : m_ignoreWhitespace{false}
+{ }
+
 void ScriptScanner::setup(const QString& input)
 {
     m_input   = input;
@@ -86,11 +90,23 @@ ScriptScanner::Token ScriptScanner::peekNext(int delta)
     return m_tokens.at(next);
 }
 
+void ScriptScanner::setIgnoreWhitespace(bool enabled)
+{
+    m_ignoreWhitespace = enabled;
+}
+
 ScriptScanner::Token ScriptScanner::scanNext()
 {
     m_start = m_current;
 
-    const QChar c = advance();
+    QChar c = advance();
+
+    if(m_ignoreWhitespace) {
+        while(c.unicode() == u' ') {
+            c = advance();
+        }
+    }
+
     switch(c.unicode()) {
         case(u'%'):
             return makeToken(TokVar);
