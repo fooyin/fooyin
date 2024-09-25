@@ -42,7 +42,6 @@ public:
 private:
     void updateButtonStyle() const;
     void setupMenus();
-    void shuffleClicked() const;
     void setMode(Playlist::PlayModes mode) const;
 
     PlayerController* m_playerController;

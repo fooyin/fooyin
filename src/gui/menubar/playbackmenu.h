@@ -58,8 +58,10 @@ private:
 
     QAction* m_defaultPlayback;
     QAction* m_repeatTrack;
+    QAction* m_repeatAlbum;
     QAction* m_repeatPlaylist;
-    QAction* m_shuffle;
+    QAction* m_shuffleTracks;
+    QAction* m_random;
 
     QAction* m_stopAfterCurrent;
 };

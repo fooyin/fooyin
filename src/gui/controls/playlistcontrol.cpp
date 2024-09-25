@@ -51,6 +51,7 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
     layout->addWidget(m_shuffle);
 
     m_repeat->setPopupMode(QToolButton::InstantPopup);
+    m_shuffle->setPopupMode(QToolButton::InstantPopup);
 
     auto* repeatAction = new QAction(this);
     repeatAction->setToolTip(tr("Repeat"));
@@ -65,7 +66,6 @@ PlaylistControl::PlaylistControl(PlayerController* playerController, SettingsMan
     setupMenus();
     updateButtonStyle();
 
-    QObject::connect(m_shuffle, &QToolButton::clicked, this, &PlaylistControl::shuffleClicked);
     QObject::connect(playerController, &PlayerController::playModeChanged, this, &PlaylistControl::setMode);
 
     settings->subscribe<Settings::Gui::IconTheme>(this, [this]() { setMode(m_playerController->playMode()); });
@@ -96,22 +96,27 @@ void PlaylistControl::updateButtonStyle() const
 
 void PlaylistControl::setupMenus()
 {
-    auto* menu = new QMenu(this);
+    auto* repeatMenu = new QMenu(this);
 
-    auto* repeatGroup = new QActionGroup(menu);
+    auto* repeatGroup = new QActionGroup(repeatMenu);
 
     auto* defaultAction  = new QAction(tr("Default"), repeatGroup);
     auto* repeatPlaylist = new QAction(tr("Repeat playlist"), repeatGroup);
+    auto* repeatAlbum    = new QAction(tr("Repeat album"), repeatGroup);
     auto* repeatTrack    = new QAction(tr("Repeat track"), repeatGroup);
 
     defaultAction->setCheckable(true);
     repeatPlaylist->setCheckable(true);
+    repeatAlbum->setCheckable(true);
     repeatTrack->setCheckable(true);
 
     auto playMode = m_playerController->playMode();
 
     if(playMode & Playlist::RepeatPlaylist) {
         repeatPlaylist->setChecked(true);
+    }
+    else if(playMode & Playlist::RepeatAlbum) {
+        repeatAlbum->setChecked(true);
     }
     else if(playMode & Playlist::RepeatTrack) {
         repeatTrack->setChecked(true);
@@ -120,45 +125,73 @@ void PlaylistControl::setupMenus()
         defaultAction->setChecked(true);
     }
 
-    QObject::connect(defaultAction, &QAction::triggered, this, [this]() {
+    const auto setRepeatMode = [this](Playlist::PlayModes newMode) {
         const auto pMode = m_playerController->playMode();
-        m_playerController->setPlayMode(pMode & ~Playlist::RepeatTrack & ~Playlist::RepeatPlaylist);
-    });
+        m_playerController->setPlayMode(
+            (pMode & ~(Playlist::RepeatTrack | Playlist::RepeatAlbum | Playlist::RepeatPlaylist)) | newMode);
+    };
 
-    QObject::connect(repeatPlaylist, &QAction::triggered, this, [this]() {
-        const auto pMode = m_playerController->playMode();
-        m_playerController->setPlayMode((pMode & ~Playlist::RepeatTrack) | Playlist::RepeatPlaylist);
-    });
+    QObject::connect(defaultAction, &QAction::triggered, this, [setRepeatMode]() { setRepeatMode(Playlist::Default); });
+    QObject::connect(repeatAlbum, &QAction::triggered, this,
+                     [setRepeatMode]() { setRepeatMode(Playlist::RepeatAlbum); });
+    QObject::connect(repeatPlaylist, &QAction::triggered, this,
+                     [setRepeatMode]() { setRepeatMode(Playlist::RepeatPlaylist); });
+    QObject::connect(repeatTrack, &QAction::triggered, this,
+                     [setRepeatMode]() { setRepeatMode(Playlist::RepeatTrack); });
 
-    QObject::connect(repeatTrack, &QAction::triggered, this, [this]() {
-        const auto pMode = m_playerController->playMode();
-        m_playerController->setPlayMode((pMode & ~Playlist::RepeatPlaylist) | Playlist::RepeatTrack);
-    });
+    repeatMenu->addAction(defaultAction);
+    repeatMenu->addAction(repeatPlaylist);
+    repeatMenu->addAction(repeatAlbum);
+    repeatMenu->addAction(repeatTrack);
 
-    menu->addAction(defaultAction);
-    menu->addAction(repeatPlaylist);
-    menu->addAction(repeatTrack);
+    m_repeat->setMenu(repeatMenu);
 
-    m_repeat->setMenu(menu);
-}
+    auto* shuffleMenu = new QMenu(this);
 
-void PlaylistControl::shuffleClicked() const
-{
-    Playlist::PlayModes mode = m_playerController->playMode();
+    auto* shuffleGroup = new QActionGroup(shuffleMenu);
 
-    if(mode & Playlist::ShuffleTracks) {
-        mode &= ~Playlist::ShuffleTracks;
+    auto* offAction     = new QAction(tr("Shuffle off"), shuffleGroup);
+    auto* shuffleTracks = new QAction(tr("Shuffle tracks"), shuffleGroup);
+    auto* random        = new QAction(tr("Random"), shuffleGroup);
+
+    offAction->setCheckable(true);
+    shuffleTracks->setCheckable(true);
+    random->setCheckable(true);
+
+    if(playMode & Playlist::ShuffleTracks) {
+        shuffleTracks->setChecked(true);
+    }
+    else if(playMode & Playlist::Random) {
+        random->setChecked(true);
     }
     else {
-        mode |= Playlist::ShuffleTracks;
+        offAction->setChecked(true);
     }
 
-    m_playerController->setPlayMode(mode);
+    const auto clearShuffleMode = [this]() {
+        const auto pMode = m_playerController->playMode();
+        m_playerController->setPlayMode(pMode & ~(Playlist::ShuffleTracks | Playlist::Random));
+    };
+    const auto setShuffleMode = [this](Playlist::PlayModes newMode) {
+        const auto pMode = m_playerController->playMode();
+        m_playerController->setPlayMode((pMode & ~(Playlist::ShuffleTracks | Playlist::Random)) | newMode);
+    };
+
+    QObject::connect(offAction, &QAction::triggered, this, [clearShuffleMode]() { clearShuffleMode(); });
+    QObject::connect(shuffleTracks, &QAction::triggered, this,
+                     [setShuffleMode]() { setShuffleMode(Playlist::ShuffleTracks); });
+    QObject::connect(random, &QAction::triggered, this, [setShuffleMode]() { setShuffleMode(Playlist::Random); });
+
+    shuffleMenu->addAction(offAction);
+    shuffleMenu->addAction(shuffleTracks);
+    shuffleMenu->addAction(random);
+
+    m_shuffle->setMenu(shuffleMenu);
 }
 
 void PlaylistControl::setMode(Playlist::PlayModes mode) const
 {
-    if(mode & Playlist::RepeatPlaylist) {
+    if(mode & (Playlist::RepeatPlaylist | Playlist::RepeatAlbum)) {
         m_repeat->setIcon(
             Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Repeat).pixmap({128, 128}), m_iconColour));
     }
@@ -170,7 +203,7 @@ void PlaylistControl::setMode(Playlist::PlayModes mode) const
         m_repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
     }
 
-    if(mode & Playlist::ShuffleTracks) {
+    if(mode & (Playlist::ShuffleTracks | Playlist::Random)) {
         m_shuffle->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
                                                      m_iconColour));
     }

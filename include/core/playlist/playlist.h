@@ -42,11 +42,11 @@ public:
     {
         Default        = 0,
         RepeatPlaylist = 1 << 0,
-        RepeatAlbum    = 1 << 1, // Not implemented
+        RepeatAlbum    = 1 << 1,
         RepeatTrack    = 1 << 2,
         ShuffleAlbums  = 1 << 3, // Not implemented
         ShuffleTracks  = 1 << 4,
-        Random         = 1 << 5 // Not implemented
+        Random         = 1 << 5,
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
