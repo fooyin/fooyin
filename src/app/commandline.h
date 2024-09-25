@@ -25,6 +25,17 @@
 class CommandLine
 {
 public:
+    enum class PlayerAction : uint8_t
+    {
+        None      = 0,
+        PlayPause = 1,
+        Play      = 2,
+        Pause     = 3,
+        Stop      = 4,
+        Next      = 5,
+        Previous  = 6,
+    };
+
     explicit CommandLine(int argc = 0, char** argv = nullptr);
 
     bool parse();
@@ -32,6 +43,7 @@ public:
     [[nodiscard]] bool empty() const;
     [[nodiscard]] QList<QUrl> files() const;
     [[nodiscard]] bool skipSingleApp() const;
+    [[nodiscard]] PlayerAction playerAction() const;
 
     [[nodiscard]] QByteArray saveOptions() const;
     void loadOptions(const QByteArray& options);
@@ -41,4 +53,5 @@ private:
     char** m_argv;
     QList<QUrl> m_files;
     bool m_skipSingle;
+    PlayerAction m_playerAction;
 };

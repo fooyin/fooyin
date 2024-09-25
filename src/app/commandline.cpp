@@ -32,14 +32,17 @@ CommandLine::CommandLine(int argc, char** argv)
     : m_argc{argc}
     , m_argv{argv}
     , m_skipSingle{false}
+    , m_playerAction{PlayerAction::None}
 { }
 
 bool CommandLine::parse()
 {
-    static constexpr option cmdOptions[] = {{"help", no_argument, nullptr, 'h'},
-                                            {"version", no_argument, nullptr, 'v'},
-                                            {"skip", no_argument, nullptr, 's'},
-                                            {nullptr, 0, nullptr, 0}};
+    static constexpr option cmdOptions[]
+        = {{"help", no_argument, nullptr, 'h'},        {"version", no_argument, nullptr, 'v'},
+           {"skip-single", no_argument, nullptr, 'x'}, {"play-pause", no_argument, nullptr, 't'},
+           {"play", no_argument, nullptr, 'p'},        {"pause", no_argument, nullptr, 'u'},
+           {"stop", no_argument, nullptr, 's'},        {"next", no_argument, nullptr, 'f'},
+           {"previous", no_argument, nullptr, 'r'},    {nullptr, 0, nullptr, 0}};
 
     static const auto help = QStringLiteral("%1: fooyin [%2] [%3]\n"
                                             "\n"
@@ -48,10 +51,18 @@ bool CommandLine::parse()
                                             "  -v, --version   %6\n"
                                             "\n"
                                             "%7:\n"
-                                            "  urls            %8\n");
+                                            "  -t, --play-pause  %8\n"
+                                            "  -p, --play        %9\n"
+                                            "  -u, --pause       %10\n"
+                                            "  -s, --stop        %11\n"
+                                            "  -f, --next        %12\n"
+                                            "  -r, --previous    %13\n"
+                                            "\n"
+                                            "%14:\n"
+                                            "  urls            %15\n");
 
     for(;;) {
-        const int c = getopt_long(m_argc, m_argv, "hvs", cmdOptions, nullptr);
+        const int c = getopt_long(m_argc, m_argv, "hvxtpusfr", cmdOptions, nullptr);
         if(c == -1) {
             break;
         }
@@ -60,8 +71,10 @@ bool CommandLine::parse()
             case('h'): {
                 const auto helpText = QString{help}.arg(
                     QObject::tr("Usage"), QObject::tr("options"), QObject::tr("urls"), QObject::tr("Options"),
-                    QObject::tr("Displays help on command line options"), QObject::tr("Displays version information"),
-                    QObject::tr("Arguments"), QObject::tr("Files to open"));
+                    QObject::tr("Display help on command line options"), QObject::tr("Display version information"),
+                    QObject::tr("Player options"), QObject::tr("Toggle playback"), QObject::tr("Start playback"),
+                    QObject::tr("Pause playback"), QObject::tr("Stop playback"), QObject::tr("Skip to next track"),
+                    QObject::tr("Skip to previous track"), QObject::tr("Arguments"), QObject::tr("Files to open"));
                 std::cout << helpText.toLocal8Bit().constData() << '\n';
                 return false;
             }
@@ -70,8 +83,26 @@ bool CommandLine::parse()
                 std::cout << version.toLocal8Bit().constData() << '\n';
                 std::exit(0);
             }
-            case('s'):
+            case('x'):
                 m_skipSingle = true;
+                break;
+            case('t'):
+                m_playerAction = PlayerAction::PlayPause;
+                break;
+            case('p'):
+                m_playerAction = PlayerAction::Play;
+                break;
+            case('u'):
+                m_playerAction = PlayerAction::Pause;
+                break;
+            case('s'):
+                m_playerAction = PlayerAction::Stop;
+                break;
+            case('f'):
+                m_playerAction = PlayerAction::Next;
+                break;
+            case('r'):
+                m_playerAction = PlayerAction::Previous;
                 break;
             default:
                 return false;
@@ -90,7 +121,7 @@ bool CommandLine::parse()
 
 bool CommandLine::empty() const
 {
-    return m_files.empty() && !m_skipSingle;
+    return m_files.empty() && !m_skipSingle && m_playerAction == PlayerAction::None;
 }
 
 QList<QUrl> CommandLine::files() const
@@ -103,6 +134,11 @@ bool CommandLine::skipSingleApp() const
     return m_skipSingle;
 }
 
+CommandLine::PlayerAction CommandLine::playerAction() const
+{
+    return m_playerAction;
+}
+
 QByteArray CommandLine::saveOptions() const
 {
     QByteArray out;
@@ -110,6 +146,7 @@ QByteArray CommandLine::saveOptions() const
 
     stream << m_files;
     stream << m_skipSingle;
+    stream << static_cast<quint8>(m_playerAction);
 
     return out;
 }
@@ -121,4 +158,8 @@ void CommandLine::loadOptions(const QByteArray& options)
 
     stream >> m_files;
     stream >> m_skipSingle;
+
+    quint8 playerAction{0};
+    stream >> playerAction;
+    m_playerAction = static_cast<PlayerAction>(playerAction);
 }

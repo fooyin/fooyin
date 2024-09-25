@@ -22,12 +22,50 @@
 #include "commandline.h"
 
 #include <core/application.h>
+#include <core/player/playercontroller.h>
 #include <gui/guiapplication.h>
 
 #include <kdsingleapplication.h>
 
 #include <QApplication>
 #include <QLoggingCategory>
+
+namespace {
+void parseCmdOptions(Fooyin::Application& app, Fooyin::GuiApplication& guiApp, CommandLine& cmdLine)
+{
+    const auto playerAction = cmdLine.playerAction();
+    if(playerAction != CommandLine::PlayerAction::None) {
+        auto* player = app.playerController();
+        switch(playerAction) {
+            case(CommandLine::PlayerAction::PlayPause):
+                player->playPause();
+                break;
+            case(CommandLine::PlayerAction::Play):
+                player->play();
+                break;
+            case(CommandLine::PlayerAction::Pause):
+                player->pause();
+                break;
+            case(CommandLine::PlayerAction::Stop):
+                player->stop();
+                break;
+            case(CommandLine::PlayerAction::Next):
+                player->next();
+                break;
+            case(CommandLine::PlayerAction::Previous):
+                player->previous();
+                break;
+            case(CommandLine::PlayerAction::None):
+                break;
+        }
+    }
+
+    const auto files = cmdLine.files();
+    if(!files.empty()) {
+        guiApp.openFiles(files);
+    }
+}
+} // namespace
 
 int main(int argc, char** argv)
 {
@@ -82,14 +120,14 @@ int main(int argc, char** argv)
     Fooyin::GuiApplication guiApp{&coreApp};
 
     if(!commandLine.empty()) {
-        guiApp.openFiles(commandLine.files());
+        parseCmdOptions(coreApp, guiApp, commandLine);
     }
 
-    QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&guiApp](const QByteArray& options) {
+    QObject::connect(&instance, &KDSingleApplication::messageReceived, &guiApp, [&](const QByteArray& options) {
         CommandLine command;
         command.loadOptions(options);
         if(!command.empty()) {
-            guiApp.openFiles(command.files());
+            parseCmdOptions(coreApp, guiApp, command);
         }
         else {
             guiApp.raise();

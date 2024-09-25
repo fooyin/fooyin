@@ -454,7 +454,7 @@ void Application::restart()
         []() {
             const QString appPath = QCoreApplication::applicationFilePath();
             QCoreApplication::quit();
-            QProcess::startDetached(appPath, {QStringLiteral("-s")});
+            QProcess::startDetached(appPath, {QStringLiteral("--skip-single")});
         },
         Qt::QueuedConnection);
 }
