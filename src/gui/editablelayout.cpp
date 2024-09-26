@@ -263,8 +263,6 @@ public:
     QPointer<OverlayWidget> m_overlay;
     RootContainer* m_root;
     bool m_layoutEditing{false};
-    bool m_prevShowHandles{false};
-    bool m_prevLockSplitters{false};
 
     WidgetContext* m_editingContext;
     QJsonObject m_widgetClipboard;
@@ -320,11 +318,6 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
     }
 
     if(editing) {
-        m_prevShowHandles   = m_settings->value<Settings::Gui::ShowSplitterHandles>();
-        m_prevLockSplitters = m_settings->value<Settings::Gui::LockSplitterHandles>();
-        m_settings->set<Settings::Gui::ShowSplitterHandles>(true);
-        m_settings->set<Settings::Gui::LockSplitterHandles>(false);
-
         m_actionManager->overrideContext(m_editingContext, true);
         m_overlay = new OverlayWidget(m_self);
         qApp->installEventFilter(m_self);
@@ -336,8 +329,6 @@ void EditableLayoutPrivate::changeEditingState(bool editing)
             m_overlay->deleteLater();
         }
 
-        m_settings->set<Settings::Gui::ShowSplitterHandles>(m_prevShowHandles);
-        m_settings->set<Settings::Gui::LockSplitterHandles>(m_prevLockSplitters);
         m_self->saveLayout();
     }
 }
