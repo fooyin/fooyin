@@ -19,6 +19,8 @@
 
 #include "mathfuncs.h"
 
+#include <random>
+
 namespace Fooyin::Scripting {
 QString baseOperation(const QStringList& vec, const QChar op)
 {
@@ -99,5 +101,12 @@ QString mod(const QStringList& vec)
         total %= vec.at(i).toInt();
     }
     return QString::number(total);
+}
+
+QString rand()
+{
+    std::mt19937 gen{std::random_device{}()};
+    std::uniform_int_distribution<uint32_t> dist{0, std::numeric_limits<uint32_t>::max()};
+    return QString::number(dist(gen));
 }
 } // namespace Fooyin::Scripting

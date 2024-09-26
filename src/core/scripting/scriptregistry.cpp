@@ -211,13 +211,14 @@ void ScriptRegistryPrivate::addLibraryVars()
 
 void ScriptRegistryPrivate::addDefaultFunctions()
 {
-    m_funcs[QStringLiteral("add")] = Fooyin::Scripting::add;
-    m_funcs[QStringLiteral("sub")] = Fooyin::Scripting::sub;
-    m_funcs[QStringLiteral("mul")] = Fooyin::Scripting::mul;
-    m_funcs[QStringLiteral("div")] = Fooyin::Scripting::div;
-    m_funcs[QStringLiteral("min")] = Fooyin::Scripting::min;
-    m_funcs[QStringLiteral("max")] = Fooyin::Scripting::max;
-    m_funcs[QStringLiteral("mod")] = Fooyin::Scripting::mod;
+    m_funcs[QStringLiteral("add")]  = Fooyin::Scripting::add;
+    m_funcs[QStringLiteral("sub")]  = Fooyin::Scripting::sub;
+    m_funcs[QStringLiteral("mul")]  = Fooyin::Scripting::mul;
+    m_funcs[QStringLiteral("div")]  = Fooyin::Scripting::div;
+    m_funcs[QStringLiteral("min")]  = Fooyin::Scripting::min;
+    m_funcs[QStringLiteral("max")]  = Fooyin::Scripting::max;
+    m_funcs[QStringLiteral("mod")]  = Fooyin::Scripting::mod;
+    m_funcs[QStringLiteral("rand")] = Fooyin::Scripting::rand;
 
     m_funcs[QStringLiteral("num")]            = Fooyin::Scripting::num;
     m_funcs[QStringLiteral("replace")]        = Fooyin::Scripting::replace;
