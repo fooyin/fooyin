@@ -47,6 +47,9 @@ signals:
     void elapsedClicked();
     void totalClicked();
 
+protected:
+    void showEvent(QShowEvent* event) override;
+
 private:
     std::unique_ptr<SeekContainerPrivate> p;
 };

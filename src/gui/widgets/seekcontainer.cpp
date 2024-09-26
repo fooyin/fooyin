@@ -59,8 +59,6 @@ SeekContainerPrivate::SeekContainerPrivate(SeekContainer* self, PlayerController
 {
     m_layout->setContentsMargins({});
 
-    updateLabelSize();
-
     m_layout->addWidget(m_elapsed, 0, Qt::AlignVCenter | Qt::AlignLeft);
     m_layout->addWidget(m_total, 0, Qt::AlignVCenter | Qt::AlignLeft);
 
@@ -167,5 +165,11 @@ void SeekContainer::setElapsedTotal(bool enabled)
     if(!p->m_elapsedTotal) {
         p->m_total->setText(Utils::msToString(p->m_max));
     }
+}
+
+void SeekContainer::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    p->updateLabelSize();
 }
 } // namespace Fooyin
