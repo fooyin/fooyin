@@ -61,6 +61,7 @@ private:
     QAction* m_repeatAlbum;
     QAction* m_repeatPlaylist;
     QAction* m_shuffleTracks;
+    QAction* m_shuffleAlbums;
     QAction* m_random;
 
     QAction* m_stopAfterCurrent;

@@ -152,14 +152,19 @@ void PlaylistControl::setupMenus()
 
     auto* offAction     = new QAction(tr("Shuffle off"), shuffleGroup);
     auto* shuffleTracks = new QAction(tr("Shuffle tracks"), shuffleGroup);
+    auto* shuffleAlbums = new QAction(tr("Shuffle albums"), shuffleGroup);
     auto* random        = new QAction(tr("Random"), shuffleGroup);
 
     offAction->setCheckable(true);
     shuffleTracks->setCheckable(true);
+    shuffleAlbums->setCheckable(true);
     random->setCheckable(true);
 
     if(playMode & Playlist::ShuffleTracks) {
         shuffleTracks->setChecked(true);
+    }
+    else if(playMode & Playlist::ShuffleAlbums) {
+        shuffleAlbums->setChecked(true);
     }
     else if(playMode & Playlist::Random) {
         random->setChecked(true);
@@ -170,20 +175,25 @@ void PlaylistControl::setupMenus()
 
     const auto clearShuffleMode = [this]() {
         const auto pMode = m_playerController->playMode();
-        m_playerController->setPlayMode(pMode & ~(Playlist::ShuffleTracks | Playlist::Random));
+        m_playerController->setPlayMode(pMode
+                                        & ~(Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random));
     };
     const auto setShuffleMode = [this](Playlist::PlayModes newMode) {
         const auto pMode = m_playerController->playMode();
-        m_playerController->setPlayMode((pMode & ~(Playlist::ShuffleTracks | Playlist::Random)) | newMode);
+        m_playerController->setPlayMode(
+            (pMode & ~(Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random)) | newMode);
     };
 
     QObject::connect(offAction, &QAction::triggered, this, [clearShuffleMode]() { clearShuffleMode(); });
     QObject::connect(shuffleTracks, &QAction::triggered, this,
                      [setShuffleMode]() { setShuffleMode(Playlist::ShuffleTracks); });
+    QObject::connect(shuffleAlbums, &QAction::triggered, this,
+                     [setShuffleMode]() { setShuffleMode(Playlist::ShuffleAlbums); });
     QObject::connect(random, &QAction::triggered, this, [setShuffleMode]() { setShuffleMode(Playlist::Random); });
 
     shuffleMenu->addAction(offAction);
     shuffleMenu->addAction(shuffleTracks);
+    shuffleMenu->addAction(shuffleAlbums);
     shuffleMenu->addAction(random);
 
     m_shuffle->setMenu(shuffleMenu);
@@ -203,7 +213,7 @@ void PlaylistControl::setMode(Playlist::PlayModes mode) const
         m_repeat->setIcon(Utils::iconFromTheme(Constants::Icons::Repeat));
     }
 
-    if(mode & (Playlist::ShuffleTracks | Playlist::Random)) {
+    if(mode & (Playlist::ShuffleTracks | Playlist::ShuffleAlbums | Playlist::Random)) {
         m_shuffle->setIcon(Utils::changePixmapColour(Utils::iconFromTheme(Constants::Icons::Shuffle).pixmap({128, 128}),
                                                      m_iconColour));
     }

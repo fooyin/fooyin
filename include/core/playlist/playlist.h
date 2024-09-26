@@ -44,7 +44,7 @@ public:
         RepeatPlaylist = 1 << 0,
         RepeatAlbum    = 1 << 1,
         RepeatTrack    = 1 << 2,
-        ShuffleAlbums  = 1 << 3, // Not implemented
+        ShuffleAlbums  = 1 << 3,
         ShuffleTracks  = 1 << 4,
         Random         = 1 << 5,
     };

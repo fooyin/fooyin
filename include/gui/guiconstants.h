@@ -142,6 +142,7 @@ constexpr auto RepeatTrack      = "Playback.Order.RepeatTrack";
 constexpr auto RepeatAlbum      = "Playback.Order.RepeatAlbum";
 constexpr auto RepeatPlaylist   = "Playback.Order.RepeatPlaylist";
 constexpr auto ShuffleTracks    = "Playback.Order.ShuffleTracks";
+constexpr auto ShuffleAlbums    = "Playback.Order.ShuffleAlbums";
 constexpr auto Random           = "Playback.Order.Random";
 constexpr auto StopAfterCurrent = "Playback.StopAfterCurrent";
 constexpr auto ScriptEditor     = "View.ScriptEditor";

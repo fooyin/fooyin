@@ -51,6 +51,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_repeatAlbum{new QAction(tr("Repeat &album"), this)}
     , m_repeatPlaylist{new QAction(tr("Repeat &playlist"), this)}
     , m_shuffleTracks{new QAction(tr("&Shuffle tracks"), this)}
+    , m_shuffleAlbums{new QAction(tr("Shu&ffle albums"), this)}
     , m_random{new QAction(tr("&Random"), this)}
     , m_stopAfterCurrent{new QAction(tr("Stop &after current"), this)}
 {
@@ -100,6 +101,7 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     m_repeatAlbum->setCheckable(true);
     m_repeatPlaylist->setCheckable(true);
     m_shuffleTracks->setCheckable(true);
+    m_shuffleAlbums->setCheckable(true);
     m_random->setCheckable(true);
 
     auto* defaultCmd = actionManager->registerAction(m_defaultPlayback, Constants::Actions::PlaybackDefault);
@@ -122,6 +124,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     m_repeatPlaylist->setStatusTip(tr("Set playback order to repeat the current playlist"));
     orderMenu->addAction(repeatPlaylistCmd);
 
+    auto* shuffleAlbumsCmd = actionManager->registerAction(m_shuffleAlbums, Constants::Actions::ShuffleAlbums);
+    shuffleAlbumsCmd->setAttribute(ProxyAction::UpdateText);
+    m_shuffleTracks->setStatusTip(tr("Set playback order to shuffle albums in the current playlist"));
+    orderMenu->addAction(shuffleAlbumsCmd);
+
     auto* shuffleCmd = actionManager->registerAction(m_shuffleTracks, Constants::Actions::ShuffleTracks);
     shuffleCmd->setAttribute(ProxyAction::UpdateText);
     m_shuffleTracks->setStatusTip(tr("Set playback order to shuffle tracks in the current playlist"));
@@ -141,6 +148,8 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
                      [this]() { setPlayMode(Playlist::PlayMode::RepeatPlaylist); });
     QObject::connect(m_shuffleTracks, &QAction::triggered, this,
                      [this]() { setPlayMode(Playlist::PlayMode::ShuffleTracks); });
+    QObject::connect(m_shuffleAlbums, &QAction::triggered, this,
+                     [this]() { setPlayMode(Playlist::PlayMode::ShuffleAlbums); });
     QObject::connect(m_random, &QAction::triggered, this, [this]() { setPlayMode(Playlist::PlayMode::Random); });
 
     auto* followPlayback = new QAction(tr("Cursor follows play&back"), this);
@@ -196,66 +205,64 @@ void PlaybackMenu::updatePlayPause(Player::PlayState state) const
 
 void PlaybackMenu::updatePlayMode(Playlist::PlayModes mode) const
 {
+    m_defaultPlayback->setChecked(
+        mode & Playlist::Default
+        || !(mode & (Playlist::RepeatTrack | Playlist::RepeatAlbum | Playlist::RepeatPlaylist)));
     m_repeatTrack->setChecked(mode & Playlist::RepeatTrack);
     m_repeatAlbum->setChecked(mode & Playlist::RepeatAlbum);
     m_repeatPlaylist->setChecked(mode & Playlist::RepeatPlaylist);
     m_shuffleTracks->setChecked(mode & Playlist::ShuffleTracks);
+    m_shuffleAlbums->setChecked(mode & Playlist::ShuffleAlbums);
     m_random->setChecked(mode & Playlist::Random);
-
-    if(mode == 0) {
-        m_defaultPlayback->setChecked(true);
-        m_repeatTrack->setChecked(false);
-        m_repeatAlbum->setChecked(false);
-        m_repeatPlaylist->setChecked(false);
-        m_shuffleTracks->setChecked(false);
-        m_random->setChecked(false);
-    }
-    else {
-        m_defaultPlayback->setChecked(false);
-    }
 }
 
 void PlaybackMenu::setPlayMode(Playlist::PlayMode mode) const
 {
     Playlist::PlayModes currentMode = m_playerController->playMode();
-    const bool noChange             = currentMode == mode;
 
-    switch(mode) {
-        case(Playlist::Default):
-            currentMode = mode;
-            break;
-        case(Playlist::RepeatTrack):
-            currentMode |= Playlist::RepeatTrack;
-            currentMode &= ~(Playlist::RepeatAlbum | Playlist::RepeatPlaylist);
-            break;
-        case(Playlist::RepeatAlbum):
-            currentMode |= Playlist::RepeatAlbum;
-            currentMode &= ~(Playlist::RepeatTrack | Playlist::RepeatPlaylist);
-            break;
-        case(Playlist::RepeatPlaylist):
-            currentMode |= Playlist::RepeatPlaylist;
-            currentMode &= ~(Playlist::RepeatTrack | Playlist::RepeatAlbum);
-            break;
-        case(Playlist::ShuffleTracks):
-            currentMode |= Playlist::ShuffleTracks;
-            currentMode &= ~(Playlist::ShuffleAlbums | Playlist::Random);
-            break;
-        case(Playlist::ShuffleAlbums):
-            currentMode |= Playlist::ShuffleAlbums;
-            currentMode &= ~(Playlist::ShuffleTracks | Playlist::Random);
-            break;
-        case(Playlist::Random):
-            currentMode |= Playlist::Random;
-            currentMode &= ~(Playlist::ShuffleAlbums | Playlist::ShuffleTracks);
-            break;
-        default:
-            currentMode |= mode;
-            break;
+    const bool isModeActive = currentMode & mode;
+
+    if(isModeActive) {
+        currentMode &= ~mode;
+    }
+    else {
+        switch(mode) {
+            case Playlist::Default:
+                currentMode |= Playlist::Default;
+                currentMode &= ~(Playlist::RepeatTrack | Playlist::RepeatAlbum | Playlist::RepeatPlaylist);
+                break;
+            case Playlist::RepeatTrack:
+                currentMode |= Playlist::RepeatTrack;
+                currentMode &= ~(Playlist::RepeatAlbum | Playlist::RepeatPlaylist);
+                break;
+            case Playlist::RepeatAlbum:
+                currentMode |= Playlist::RepeatAlbum;
+                currentMode &= ~(Playlist::RepeatTrack | Playlist::RepeatPlaylist);
+                break;
+            case Playlist::RepeatPlaylist:
+                currentMode |= Playlist::RepeatPlaylist;
+                currentMode &= ~(Playlist::RepeatTrack | Playlist::RepeatAlbum);
+                break;
+            case Playlist::ShuffleTracks:
+                currentMode |= Playlist::ShuffleTracks;
+                currentMode &= ~(Playlist::ShuffleAlbums | Playlist::Random);
+                break;
+            case Playlist::ShuffleAlbums:
+                currentMode |= Playlist::ShuffleAlbums;
+                currentMode &= ~(Playlist::ShuffleTracks | Playlist::Random);
+                break;
+            case Playlist::Random:
+                currentMode |= Playlist::Random;
+                currentMode &= ~(Playlist::ShuffleAlbums | Playlist::ShuffleTracks);
+                break;
+            default:
+                currentMode |= mode;
+                break;
+        }
     }
 
     m_playerController->setPlayMode(currentMode);
-
-    if(noChange) {
+    if(!isModeActive) {
         updatePlayMode(m_playerController->playMode());
     }
 }
