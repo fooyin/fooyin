@@ -21,11 +21,14 @@
 
 #include "fycore_export.h"
 
+#include <core/scripting/scriptparser.h>
 #include <core/track.h>
 
-#include <Qt>
+#include <QCollator>
+#include <QString>
 
-class QString;
+#include <mutex>
+#include <ranges>
 
 namespace Fooyin {
 class LibraryManager;
@@ -53,7 +56,7 @@ public:
      * @param tracks the tracks to calculate
      * @returns a new TrackList with the calculated sortFields
      */
-    [[nodiscard]] TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks) const;
+    [[nodiscard]] TrackList calcSortFields(const ParsedScript& sortScript, const TrackList& tracks);
 
     /*!
      * Sorts @p tracks using their current sort fields
@@ -91,7 +94,7 @@ public:
      * @returns a new sorted TrackList
      */
     TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                             Qt::SortOrder order = Qt::AscendingOrder) const;
+                             Qt::SortOrder order = Qt::AscendingOrder);
 
     /*!
      * Calculates the sort fields and then sorts @p tracks in the given @p indexes.
@@ -103,9 +106,49 @@ public:
      * @returns a new sorted TrackList
      */
     TrackList calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, const std::vector<int>& indexes,
-                             Qt::SortOrder order = Qt::AscendingOrder) const;
+                             Qt::SortOrder order = Qt::AscendingOrder);
+
+    template <typename Container, typename Extractor>
+    void calcSortFields(const QString& sort, Container& items, Extractor extractor)
+    {
+        const std::scoped_lock lock{m_parserGuard};
+
+        for(auto& item : items) {
+            Track& track = extractor(item);
+            track.setSort(m_parser.evaluate(sort, track));
+        }
+    }
+
+    template <typename Container, typename SortExtractor, typename Extractor>
+    void calcSortTracks(const QString& sort, Container& items, SortExtractor sortExtractor, Extractor extractor,
+                        Qt::SortOrder order = Qt::AscendingOrder)
+    {
+        calcSortFields(sort, items, sortExtractor);
+
+        QCollator collator;
+        collator.setNumericMode(true);
+
+        std::ranges::stable_sort(items, [order, collator, extractor](const auto& lhs, const auto& rhs) {
+            const Track& leftTrack  = extractor(lhs);
+            const Track& rightTrack = extractor(rhs);
+
+            const auto cmp = collator.compare(leftTrack.sort(), rightTrack.sort());
+
+            if(cmp == 0) {
+                return false;
+            }
+
+            if(order == Qt::AscendingOrder) {
+                return cmp < 0;
+            }
+            return cmp > 0;
+        });
+    }
 
 private:
-    std::unique_ptr<TrackSorterPrivate> p;
+    ParsedScript parseScript(const QString& sort);
+
+    ScriptParser m_parser;
+    std::mutex m_parserGuard;
 };
 } // namespace Fooyin

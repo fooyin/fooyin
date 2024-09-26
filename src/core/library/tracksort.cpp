@@ -19,56 +19,29 @@
 
 #include <core/library/tracksort.h>
 
-#include <core/scripting/scriptparser.h>
-#include <core/track.h>
-
-#include <mutex>
-#include <ranges>
-
-#include <QCollator>
-
 namespace Fooyin {
-class TrackSorterPrivate
-{
-public:
-    explicit TrackSorterPrivate(LibraryManager* libraryManager)
-        : m_parser{new ScriptRegistry(libraryManager)}
-    { }
-
-    ParsedScript parseScript(const QString& sort);
-
-    ScriptParser m_parser;
-    std::mutex m_parserGuard;
-};
-
-ParsedScript TrackSorterPrivate::parseScript(const QString& sort)
-{
-    const std::scoped_lock lock{m_parserGuard};
-    return m_parser.parse(sort);
-}
-
 TrackSorter::TrackSorter()
     : TrackSorter{nullptr}
 { }
 
 TrackSorter::TrackSorter(LibraryManager* libraryManager)
-    : p{std::make_unique<TrackSorterPrivate>(libraryManager)}
+    : m_parser{new ScriptRegistry(libraryManager)}
 { }
 
 TrackSorter::~TrackSorter() = default;
 
 TrackList TrackSorter::calcSortFields(const QString& sort, const TrackList& tracks)
 {
-    return calcSortFields(p->parseScript(sort), tracks);
+    return calcSortFields(parseScript(sort), tracks);
 }
 
-TrackList TrackSorter::calcSortFields(const ParsedScript& sortScript, const TrackList& tracks) const
+TrackList TrackSorter::calcSortFields(const ParsedScript& sortScript, const TrackList& tracks)
 {
-    const std::scoped_lock lock{p->m_parserGuard};
+    const std::scoped_lock lock{m_parserGuard};
 
     TrackList calcTracks{tracks};
     for(Track& track : calcTracks) {
-        track.setSort(p->m_parser.evaluate(sortScript, track));
+        track.setSort(m_parser.evaluate(sortScript, track));
     }
     return calcTracks;
 }
@@ -96,24 +69,23 @@ TrackList TrackSorter::sortTracks(const TrackList& tracks, Qt::SortOrder order)
 
 TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, Qt::SortOrder order)
 {
-    return calcSortTracks(p->parseScript(sort), tracks, order);
+    return calcSortTracks(parseScript(sort), tracks, order);
 }
 
 TrackList TrackSorter::calcSortTracks(const QString& sort, const TrackList& tracks, const std::vector<int>& indexes,
                                       Qt::SortOrder order)
 {
-    return calcSortTracks(p->parseScript(sort), tracks, indexes, order);
+    return calcSortTracks(parseScript(sort), tracks, indexes, order);
 }
 
-TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                      Qt::SortOrder order) const
+TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks, Qt::SortOrder order)
 {
     const TrackList calcTracks = calcSortFields(sortScript, tracks);
     return sortTracks(calcTracks, order);
 }
 
 TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const TrackList& tracks,
-                                      const std::vector<int>& indexes, Qt::SortOrder order) const
+                                      const std::vector<int>& indexes, Qt::SortOrder order)
 {
     TrackList sortedTracks{tracks};
     TrackList tracksToSort;
@@ -134,5 +106,11 @@ TrackList TrackSorter::calcSortTracks(const ParsedScript& sortScript, const Trac
     }
 
     return sortedTracks;
+}
+
+ParsedScript TrackSorter::parseScript(const QString& sort)
+{
+    const std::scoped_lock lock{m_parserGuard};
+    return m_parser.parse(sort);
 }
 } // namespace Fooyin
