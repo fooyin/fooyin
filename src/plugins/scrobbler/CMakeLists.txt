@@ -21,4 +21,6 @@ create_fooyin_plugin_internal(
             scrobblerservice.h
             scrobblersettings.cpp
             scrobblersettings.h
+            scrobblertoggle.cpp
+            scrobblertoggle.h
 )

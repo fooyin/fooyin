@@ -19,6 +19,12 @@
 
 #include "scrobblerplugin.h"
 
+#include "scrobblertoggle.h"
+
+#include <gui/widgetprovider.h>
+#include <utils/actions/actionmanager.h>
+#include <utils/settings/settingsmanager.h>
+
 #include "scrobbler.h"
 #include "scrobblerpage.h"
 #include "scrobblersettings.h"
@@ -34,8 +40,22 @@ void ScrobblerPlugin::initialise(const CorePluginContext& context)
     m_scrobblerSettings = std::make_unique<ScrobblerSettings>(m_settings);
 }
 
-void ScrobblerPlugin::initialise(const GuiPluginContext& /*context*/)
+void ScrobblerPlugin::initialise(const GuiPluginContext& context)
 {
+    m_actionManager = context.actionManager;
+
+    auto* toggleScrobble = new QAction(tr("Toggle scrobbling"), this);
+    QObject::connect(toggleScrobble, &QAction::triggered, this, [this]() {
+        m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(
+            !m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
+    });
+    m_actionManager->registerAction(toggleScrobble, "Scrobbler.Toggle");
+
+    context.widgetProvider->registerWidget(
+        QStringLiteral("ScrobbleToggle"), [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
+        tr("Scrobble Toggler"));
+    context.widgetProvider->setSubMenus(QStringLiteral("ScrobbleToggle"), {tr("Controls")});
+
     new ScrobblerPage(m_scrobbler.get(), m_settings, this);
 }
 

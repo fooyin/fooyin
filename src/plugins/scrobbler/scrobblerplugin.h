@@ -44,6 +44,7 @@ public:
 private:
     PlayerController* m_playerController;
     std::shared_ptr<NetworkAccessManager> m_networkAccess;
+    ActionManager* m_actionManager;
     SettingsManager* m_settings;
 
     std::unique_ptr<Scrobbler> m_scrobbler;
