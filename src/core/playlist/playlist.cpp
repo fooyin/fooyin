@@ -618,8 +618,19 @@ void Playlist::updateTrackAtIndex(int index, const Track& track)
 
 std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
 {
-    std::vector<int> removedIndexes;
+    const auto updateAlbumShuffleOrder = [this](int removedIndex) {
+        for(auto& album : p->m_albumShuffleOrder) {
+            std::erase_if(album.trackOrder, [removedIndex](int trackIndex) { return trackIndex == removedIndex; });
+            std::ranges::transform(album.trackOrder, album.trackOrder.begin(), [removedIndex](int trackIndex) {
+                return trackIndex > removedIndex ? trackIndex - 1 : trackIndex;
+            });
+            if(album.trackOrder.empty()) {
+                std::erase_if(p->m_albumShuffleOrder, [&album](const auto& a) { return a == album; });
+            }
+        }
+    };
 
+    std::vector<int> removedIndexes;
     std::set<int> indexesToRemove{indexes.cbegin(), indexes.cend()};
 
     auto prevHistory = p->m_trackShuffleOrder | std::views::take(p->m_trackShuffleIndex + 1);
@@ -643,13 +654,13 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
             std::erase_if(p->m_trackShuffleOrder, [index](int num) { return num == index; });
             std::ranges::transform(p->m_trackShuffleOrder, p->m_trackShuffleOrder.begin(),
                                    [index](int num) { return num > index ? num - 1 : num; });
+
+            updateAlbumShuffleOrder(index);
         }
     }
 
     std::erase_if(p->m_trackShuffleOrder, [](int num) { return num < 0; });
-
     changeCurrentIndex(adjustedTrackIndex);
-
     if(indexesToRemove.contains(p->m_nextTrackIndex)) {
         p->m_nextTrackIndex = -1;
     }
