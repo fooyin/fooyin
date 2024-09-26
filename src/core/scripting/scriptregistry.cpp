@@ -211,63 +211,63 @@ void ScriptRegistryPrivate::addLibraryVars()
 
 void ScriptRegistryPrivate::addDefaultFunctions()
 {
-    m_funcs[QStringLiteral("add")]  = Fooyin::Scripting::add;
-    m_funcs[QStringLiteral("sub")]  = Fooyin::Scripting::sub;
-    m_funcs[QStringLiteral("mul")]  = Fooyin::Scripting::mul;
-    m_funcs[QStringLiteral("div")]  = Fooyin::Scripting::div;
-    m_funcs[QStringLiteral("min")]  = Fooyin::Scripting::min;
-    m_funcs[QStringLiteral("max")]  = Fooyin::Scripting::max;
-    m_funcs[QStringLiteral("mod")]  = Fooyin::Scripting::mod;
-    m_funcs[QStringLiteral("rand")] = Fooyin::Scripting::rand;
+    m_funcs[QStringLiteral("add")]  = Scripting::add;
+    m_funcs[QStringLiteral("sub")]  = Scripting::sub;
+    m_funcs[QStringLiteral("mul")]  = Scripting::mul;
+    m_funcs[QStringLiteral("div")]  = Scripting::div;
+    m_funcs[QStringLiteral("min")]  = Scripting::min;
+    m_funcs[QStringLiteral("max")]  = Scripting::max;
+    m_funcs[QStringLiteral("mod")]  = Scripting::mod;
+    m_funcs[QStringLiteral("rand")] = Scripting::rand;
 
-    m_funcs[QStringLiteral("num")]            = Fooyin::Scripting::num;
-    m_funcs[QStringLiteral("replace")]        = Fooyin::Scripting::replace;
-    m_funcs[QStringLiteral("ascii")]          = Fooyin::Scripting::ascii;
-    m_funcs[QStringLiteral("slice")]          = Fooyin::Scripting::slice;
-    m_funcs[QStringLiteral("chop")]           = Fooyin::Scripting::chop;
-    m_funcs[QStringLiteral("left")]           = Fooyin::Scripting::left;
-    m_funcs[QStringLiteral("right")]          = Fooyin::Scripting::right;
-    m_funcs[QStringLiteral("insert")]         = Fooyin::Scripting::insert;
-    m_funcs[QStringLiteral("substr")]         = Fooyin::Scripting::substr;
-    m_funcs[QStringLiteral("len")]            = Fooyin::Scripting::len;
-    m_funcs[QStringLiteral("longest")]        = Fooyin::Scripting::longest;
-    m_funcs[QStringLiteral("strcmp")]         = Fooyin::Scripting::strcmp;
-    m_funcs[QStringLiteral("stricmp")]        = Fooyin::Scripting::stricmp;
-    m_funcs[QStringLiteral("longer")]         = Fooyin::Scripting::longer;
-    m_funcs[QStringLiteral("sep")]            = Fooyin::Scripting::sep;
-    m_funcs[QStringLiteral("crlf")]           = Fooyin::Scripting::crlf;
-    m_funcs[QStringLiteral("tab")]            = Fooyin::Scripting::tab;
-    m_funcs[QStringLiteral("swapprefix")]     = Fooyin::Scripting::swapPrefix;
-    m_funcs[QStringLiteral("stripprefix")]    = Fooyin::Scripting::stripPrefix;
-    m_funcs[QStringLiteral("pad")]            = Fooyin::Scripting::pad;
-    m_funcs[QStringLiteral("padright")]       = Fooyin::Scripting::padRight;
-    m_funcs[QStringLiteral("repeat")]         = Fooyin::Scripting::repeat;
-    m_funcs[QStringLiteral("trim")]           = Fooyin::Scripting::trim;
-    m_funcs[QStringLiteral("lower")]          = Fooyin::Scripting::lower;
-    m_funcs[QStringLiteral("upper")]          = Fooyin::Scripting::upper;
-    m_funcs[QStringLiteral("abbr")]           = Fooyin::Scripting::abbr;
-    m_funcs[QStringLiteral("caps")]           = Fooyin::Scripting::caps;
-    m_funcs[QStringLiteral("directory")]      = Fooyin::Scripting::directory;
-    m_funcs[QStringLiteral("directory_path")] = Fooyin::Scripting::directoryPath;
-    m_funcs[QStringLiteral("ext")]            = Fooyin::Scripting::ext;
-    m_funcs[QStringLiteral("filename")]       = Fooyin::Scripting::filename;
-    m_funcs[QStringLiteral("progress")]       = Fooyin::Scripting::progress;
-    m_funcs[QStringLiteral("progress2")]      = Fooyin::Scripting::progress2;
+    m_funcs[QStringLiteral("num")]            = Scripting::num;
+    m_funcs[QStringLiteral("replace")]        = Scripting::replace;
+    m_funcs[QStringLiteral("ascii")]          = Scripting::ascii;
+    m_funcs[QStringLiteral("slice")]          = Scripting::slice;
+    m_funcs[QStringLiteral("chop")]           = Scripting::chop;
+    m_funcs[QStringLiteral("left")]           = Scripting::left;
+    m_funcs[QStringLiteral("right")]          = Scripting::right;
+    m_funcs[QStringLiteral("insert")]         = Scripting::insert;
+    m_funcs[QStringLiteral("substr")]         = Scripting::substr;
+    m_funcs[QStringLiteral("len")]            = Scripting::len;
+    m_funcs[QStringLiteral("longest")]        = Scripting::longest;
+    m_funcs[QStringLiteral("strcmp")]         = Scripting::strcmp;
+    m_funcs[QStringLiteral("stricmp")]        = Scripting::stricmp;
+    m_funcs[QStringLiteral("longer")]         = Scripting::longer;
+    m_funcs[QStringLiteral("sep")]            = Scripting::sep;
+    m_funcs[QStringLiteral("crlf")]           = Scripting::crlf;
+    m_funcs[QStringLiteral("tab")]            = Scripting::tab;
+    m_funcs[QStringLiteral("swapprefix")]     = Scripting::swapPrefix;
+    m_funcs[QStringLiteral("stripprefix")]    = Scripting::stripPrefix;
+    m_funcs[QStringLiteral("pad")]            = Scripting::pad;
+    m_funcs[QStringLiteral("padright")]       = Scripting::padRight;
+    m_funcs[QStringLiteral("repeat")]         = Scripting::repeat;
+    m_funcs[QStringLiteral("trim")]           = Scripting::trim;
+    m_funcs[QStringLiteral("lower")]          = Scripting::lower;
+    m_funcs[QStringLiteral("upper")]          = Scripting::upper;
+    m_funcs[QStringLiteral("abbr")]           = Scripting::abbr;
+    m_funcs[QStringLiteral("caps")]           = Scripting::caps;
+    m_funcs[QStringLiteral("directory")]      = Scripting::directory;
+    m_funcs[QStringLiteral("directory_path")] = Scripting::directoryPath;
+    m_funcs[QStringLiteral("ext")]            = Scripting::ext;
+    m_funcs[QStringLiteral("filename")]       = Scripting::filename;
+    m_funcs[QStringLiteral("progress")]       = Scripting::progress;
+    m_funcs[QStringLiteral("progress2")]      = Scripting::progress2;
 
-    m_funcs[QStringLiteral("timems")] = Fooyin::Scripting::msToString;
+    m_funcs[QStringLiteral("timems")] = Scripting::msToString;
 
-    m_funcs[QStringLiteral("if")]        = Fooyin::Scripting::cif;
-    m_funcs[QStringLiteral("if2")]       = Fooyin::Scripting::cif2;
-    m_funcs[QStringLiteral("ifgreater")] = Fooyin::Scripting::ifgreater;
-    m_funcs[QStringLiteral("iflonger")]  = Fooyin::Scripting::iflonger;
-    m_funcs[QStringLiteral("ifequal")]   = Fooyin::Scripting::ifequal;
+    m_funcs[QStringLiteral("if")]        = Scripting::cif;
+    m_funcs[QStringLiteral("if2")]       = Scripting::cif2;
+    m_funcs[QStringLiteral("ifgreater")] = Scripting::ifgreater;
+    m_funcs[QStringLiteral("iflonger")]  = Scripting::iflonger;
+    m_funcs[QStringLiteral("ifequal")]   = Scripting::ifequal;
 }
 
 void ScriptRegistryPrivate::addDefaultListFuncs()
 {
-    m_listProperties[QStringLiteral("TRACKCOUNT")] = Fooyin::Scripting::trackCount;
-    m_listProperties[QStringLiteral("PLAYTIME")]   = Fooyin::Scripting::playtime;
-    m_listProperties[QStringLiteral("GENRES")]     = Fooyin::Scripting::genres;
+    m_listProperties[QStringLiteral("TRACKCOUNT")] = Scripting::trackCount;
+    m_listProperties[QStringLiteral("PLAYTIME")]   = Scripting::playtime;
+    m_listProperties[QStringLiteral("GENRES")]     = Scripting::genres;
 }
 
 void ScriptRegistryPrivate::addDefaultMetadata()
