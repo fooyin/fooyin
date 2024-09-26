@@ -36,6 +36,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/fileutils.h>
 #include <utils/settings/settingsmanager.h>
+#include <utils/tooltipfilter.h>
 #include <utils/utils.h>
 
 #include <QActionGroup>
@@ -261,6 +262,7 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     m_proxyModel->setSourceModel(m_model);
     m_proxyModel->setIconsEnabled(m_settings->value<Settings::Gui::Internal::DirBrowserIcons>());
 
+    m_dirTree->viewport()->installEventFilter(new ToolTipFilter(m_self));
     m_dirTree->setItemDelegate(new DirDelegate(m_self));
     m_dirTree->setModel(m_proxyModel);
     m_dirTree->setElideText(m_settings->value<Settings::Gui::Internal::DirBrowserElide>());

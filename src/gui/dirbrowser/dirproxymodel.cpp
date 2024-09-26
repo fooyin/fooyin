@@ -125,6 +125,10 @@ QVariant DirProxyModel::data(const QModelIndex& proxyIndex, int role) const
         return {};
     }
 
+    if(role == Qt::ToolTipRole) {
+        role = Qt::DisplayRole;
+    }
+
     QString sourcePath;
 
     if(m_flat) {
