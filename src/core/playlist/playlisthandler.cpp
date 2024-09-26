@@ -55,6 +55,7 @@ public:
     void next();
     void previous();
 
+    void resetShuffleOrder();
     void updateIndices();
     void savePlaylists();
 
@@ -101,7 +102,7 @@ void PlaylistHandlerPrivate::reloadPlaylists()
     const std::vector<PlaylistInfo> infos = m_playlistConnector.getAllPlaylists();
 
     for(const auto& info : infos) {
-        m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index));
+        m_playlists.emplace_back(Playlist::create(info.dbId, info.name, info.index, m_settings));
     }
 }
 
@@ -185,6 +186,13 @@ void PlaylistHandlerPrivate::previous()
     }
     else {
         nextTrackChange(-1);
+    }
+}
+
+void PlaylistHandlerPrivate::resetShuffleOrder()
+{
+    for(auto& playlist : m_playlists) {
+        playlist->reset();
     }
 }
 
@@ -316,7 +324,7 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
 
     if(isTemporary) {
         const QString tempName = !name.isEmpty() ? name : findUniqueName(QStringLiteral("TempPlaylist"));
-        auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName)).get();
+        auto* playlist         = m_playlists.emplace_back(Playlist::create(tempName, m_settings)).get();
         return playlist;
     }
 
@@ -326,7 +334,7 @@ Playlist* PlaylistHandlerPrivate::addNewPlaylist(const QString& name, bool isTem
     const int dbId  = m_playlistConnector.insertPlaylist(playlistName, index);
 
     if(dbId >= 0) {
-        auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index)).get();
+        auto* playlist = m_playlists.emplace_back(Playlist::create(dbId, playlistName, index, m_settings)).get();
         return playlist;
     }
 
@@ -347,6 +355,9 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
 
     QObject::connect(p->m_playerController, &PlayerController::nextTrack, this, [this]() { p->next(); });
     QObject::connect(p->m_playerController, &PlayerController::previousTrack, this, [this]() { p->previous(); });
+
+    p->m_settings->subscribe<Settings::Core::ShuffleAlbumsGroupScript>(this, [this]() { p->resetShuffleOrder(); });
+    p->m_settings->subscribe<Settings::Core::ShuffleAlbumsSortScript>(this, [this]() { p->resetShuffleOrder(); });
 }
 
 PlaylistHandler::~PlaylistHandler()

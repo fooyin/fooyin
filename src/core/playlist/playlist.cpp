@@ -19,13 +19,34 @@
 
 #include <core/playlist/playlist.h>
 
+#include <core/coresettings.h>
+#include <core/library/tracksort.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/crypto.h>
+#include <utils/settings/settingsmanager.h>
 
 #include <random>
 #include <ranges>
 #include <set>
+
+namespace {
+struct TrackIndex
+{
+    Fooyin::Track track;
+    int index;
+
+    static Fooyin::Track& extractor(TrackIndex& item)
+    {
+        return item.track;
+    };
+
+    static const Fooyin::Track& extractorConst(const TrackIndex& item)
+    {
+        return item.track;
+    };
+};
+} // namespace
 
 namespace Fooyin {
 struct Playlist::PrivateKey
@@ -37,8 +58,8 @@ struct Playlist::PrivateKey
 class PlaylistPrivate
 {
 public:
-    explicit PlaylistPrivate(QString name);
-    PlaylistPrivate(int dbId, QString name, int index);
+    explicit PlaylistPrivate(QString name, SettingsManager* settings);
+    PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings);
 
     void createShuffleOrder();
     void createAlbumShuffleOrder();
@@ -55,6 +76,7 @@ public:
         }
     };
     AlbumBoundaries getAlbumBoundaries(int currentIndex);
+    void sortAlbumTracks(AlbumBoundaries& album, const QString& sortScript);
 
     int getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
     int handleTrackShuffle(int delta, Playlist::PlayModes mode, bool onlyCheck);
@@ -71,13 +93,17 @@ public:
     QString m_name;
     int m_index{-1};
     TrackList m_tracks;
+
+    SettingsManager* m_settings;
     ScriptParser m_parser;
+    TrackSorter m_sorter;
 
     int m_currentTrackIndex{0};
     int m_nextTrackIndex{-1};
 
     int m_trackShuffleIndex{-1};
     std::vector<int> m_trackShuffleOrder;
+
     int m_albumShuffleIndex{-1};
     int m_trackInAlbumIndex{-1};
     std::vector<AlbumBoundaries> m_albumShuffleOrder;
@@ -87,17 +113,18 @@ public:
     bool m_tracksModified{false};
 };
 
-PlaylistPrivate::PlaylistPrivate(QString name)
-    : m_id{UId::create()}
-    , m_name{std::move(name)}
-    , m_isTemporary{true}
-{ }
+PlaylistPrivate::PlaylistPrivate(QString name, SettingsManager* settings)
+    : PlaylistPrivate{-1, std::move(name), -1, settings}
+{
+    m_isTemporary = true;
+}
 
-PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index)
+PlaylistPrivate::PlaylistPrivate(int dbId, QString name, int index, SettingsManager* settings)
     : m_id{UId::create()}
     , m_dbId{dbId}
     , m_name{std::move(name)}
     , m_index{index}
+    , m_settings{settings}
 { }
 
 void PlaylistPrivate::createShuffleOrder()
@@ -118,6 +145,7 @@ void PlaylistPrivate::createAlbumShuffleOrder()
     m_albumShuffleOrder.clear();
 
     AlbumBoundaries currentAlbum;
+    const QString sortScript = m_settings->value<Settings::Core::ShuffleAlbumsSortScript>();
 
     int trackIndex{0};
     while(trackIndex < static_cast<int>(m_tracks.size())) {
@@ -128,7 +156,10 @@ void PlaylistPrivate::createAlbumShuffleOrder()
         if(albumBounds.startIndex >= 0) {
             albumBounds.trackOrder.resize(albumBounds.endIndex - albumBounds.startIndex + 1);
             std::iota(albumBounds.trackOrder.begin(), albumBounds.trackOrder.end(), albumBounds.startIndex);
-            // TODO: Support changing order of tracks within albums
+
+            if(!sortScript.isEmpty()) {
+                sortAlbumTracks(albumBounds, sortScript);
+            }
 
             m_albumShuffleOrder.push_back(albumBounds);
             trackIndex = albumBounds.endIndex + 1;
@@ -159,9 +190,8 @@ PlaylistPrivate::AlbumBoundaries PlaylistPrivate::getAlbumBoundaries(int current
         return {};
     }
 
-    // TODO: Make configurable
-    static const QString groupScript{QStringLiteral("%albumartist% | %date% | %album%")};
-    const QString albumGroup = m_parser.evaluate(groupScript, currentTrack.value());
+    const QString groupScript = m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>();
+    const QString albumGroup  = m_parser.evaluate(groupScript, currentTrack.value());
 
     int albumStart{currentIndex};
     int albumEnd{currentIndex};
@@ -191,6 +221,22 @@ PlaylistPrivate::AlbumBoundaries PlaylistPrivate::getAlbumBoundaries(int current
     }
 
     return {albumStart, albumEnd, {}};
+}
+
+void PlaylistPrivate::sortAlbumTracks(AlbumBoundaries& album, const QString& sortScript)
+{
+    std::vector<TrackIndex> trackIndexes;
+
+    for(int i = album.startIndex; i <= album.endIndex; ++i) {
+        trackIndexes.emplace_back(m_tracks.at(i), i);
+    }
+
+    m_sorter.calcSortTracks(sortScript, trackIndexes, TrackIndex::extractor, TrackIndex::extractorConst);
+
+    album.trackOrder.clear();
+    for(const auto& track : trackIndexes) {
+        album.trackOrder.emplace_back(track.index);
+    }
 }
 
 int PlaylistPrivate::getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck)
@@ -410,12 +456,12 @@ std::optional<Track> PlaylistPrivate::getTrack(int index) const
     return m_tracks.at(index);
 }
 
-Playlist::Playlist(PrivateKey /*key*/, QString name)
-    : p{std::make_unique<PlaylistPrivate>(std::move(name))}
+Playlist::Playlist(PrivateKey /*key*/, QString name, SettingsManager* settings)
+    : p{std::make_unique<PlaylistPrivate>(std::move(name), settings)}
 { }
 
-Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index)
-    : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index)}
+Playlist::Playlist(PrivateKey /*key*/, int dbId, QString name, int index, SettingsManager* settings)
+    : p{std::make_unique<PlaylistPrivate>(dbId, std::move(name), index, settings)}
 { }
 
 Playlist::~Playlist() = default;
@@ -533,7 +579,11 @@ void Playlist::changeCurrentIndex(int index)
 void Playlist::reset()
 {
     p->m_trackShuffleOrder.clear();
+    p->m_trackShuffleIndex = -1;
+
     p->m_albumShuffleOrder.clear();
+    p->m_albumShuffleIndex = -1;
+    p->m_trackInAlbumIndex = -1;
 }
 
 void Playlist::resetFlags()
@@ -549,14 +599,14 @@ QStringList Playlist::supportedPlaylistExtensions()
     return supportedExtensions;
 }
 
-std::unique_ptr<Playlist> Playlist::create(const QString& name)
+std::unique_ptr<Playlist> Playlist::create(const QString& name, SettingsManager* settings)
 {
-    return std::make_unique<Playlist>(PrivateKey{}, name);
+    return std::make_unique<Playlist>(PrivateKey{}, name, settings);
 }
 
-std::unique_ptr<Playlist> Playlist::create(int dbId, const QString& name, int index)
+std::unique_ptr<Playlist> Playlist::create(int dbId, const QString& name, int index, SettingsManager* settings)
 {
-    return std::make_unique<Playlist>(PrivateKey{}, dbId, name, index);
+    return std::make_unique<Playlist>(PrivateKey{}, dbId, name, index, settings);
 }
 
 void Playlist::setName(const QString& name)

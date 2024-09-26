@@ -28,6 +28,8 @@
 
 namespace Fooyin {
 class PlaylistPrivate;
+class SettingsManager;
+
 /*!
  * Represents a list of tracks for playback.
  * Playlists are saved to the database and restored
@@ -50,8 +52,8 @@ public:
     };
     Q_DECLARE_FLAGS(PlayModes, PlayMode)
 
-    Playlist(PrivateKey, QString name);
-    Playlist(PrivateKey, int dbId, QString name, int index);
+    Playlist(PrivateKey, QString name, SettingsManager* settings);
+    Playlist(PrivateKey, int dbId, QString name, int index, SettingsManager* settings);
 
     Playlist(const Playlist&)            = delete;
     Playlist& operator=(const Playlist&) = delete;
@@ -112,8 +114,8 @@ private:
     friend class PlaylistHandler;
     friend class PlaylistHandlerPrivate;
 
-    static std::unique_ptr<Playlist> create(const QString& name);
-    static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index);
+    static std::unique_ptr<Playlist> create(const QString& name, SettingsManager* settings);
+    static std::unique_ptr<Playlist> create(int dbId, const QString& name, int index, SettingsManager* settings);
 
     void setName(const QString& name);
     void setIndex(int index);

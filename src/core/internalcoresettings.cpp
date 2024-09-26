@@ -76,6 +76,10 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     m_settings->createSetting<ProxyConfig>(QVariant{}, QStringLiteral("Networking/ProxyConfig"));
     m_settings->createSetting<UseVariousForCompilations>(false,
                                                          QStringLiteral("Library/UseVariousArtistsForCompilations"));
+    m_settings->createSetting<ShuffleAlbumsGroupScript>(QStringLiteral("%albumartist% - %date% - %album%"),
+                                                        QStringLiteral("Playback/ShuffleAlbumsGroupScript"));
+    m_settings->createSetting<ShuffleAlbumsSortScript>(QStringLiteral("%disc% - %track% - %title%"),
+                                                       QStringLiteral("Playback/ShuffleAlbumsSortScript"));
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

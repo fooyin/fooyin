@@ -19,11 +19,11 @@
 
 #include "playbackpage.h"
 
-#include "core/internalcoresettings.h"
-
 #include <core/coresettings.h>
+#include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -56,6 +56,8 @@ private:
     QCheckBox* m_rewindPrevious;
     QCheckBox* m_skipUnavailable;
     SliderEditor* m_playedSlider;
+    ScriptLineEdit* m_shuffleAlbumsGroup;
+    ScriptLineEdit* m_shuffleAlbumsSort;
 };
 
 PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
@@ -66,6 +68,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     , m_rewindPrevious{new QCheckBox(tr("Rewind track on previous"), this)}
     , m_skipUnavailable{new QCheckBox(tr("Skip unavailable tracks"), this)}
     , m_playedSlider{new SliderEditor(tr("Played threshold"), this)}
+    , m_shuffleAlbumsGroup{new ScriptLineEdit(this)}
+    , m_shuffleAlbumsSort{new ScriptLineEdit(this)}
 {
     auto* layout = new QGridLayout(this);
 
@@ -94,8 +98,21 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     generalGroupLayout->addWidget(m_skipUnavailable, row++, 0, 1, 2);
     generalGroupLayout->addWidget(m_playedSlider, row++, 0, 1, 2);
 
+    auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
+    auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
+
+    auto* shuffleGroupLabel = new QLabel(tr("Album grouping pattern"), this);
+    auto* shuffleSortLabel  = new QLabel(tr("Album sorting pattern"), this);
+
+    shuffleGroupLayout->addWidget(shuffleGroupLabel, 0, 0);
+    shuffleGroupLayout->addWidget(m_shuffleAlbumsGroup, 0, 1);
+    shuffleGroupLayout->addWidget(shuffleSortLabel, 1, 0);
+    shuffleGroupLayout->addWidget(m_shuffleAlbumsSort, 1, 1);
+    shuffleGroupLayout->setColumnStretch(1, 1);
+
     layout->addWidget(generalGroup, 0, 0);
-    layout->setRowStretch(1, 1);
+    layout->addWidget(shuffleGroup, 1, 0);
+    layout->setRowStretch(2, 1);
 }
 
 void PlaybackPageWidget::load()
@@ -110,6 +127,9 @@ void PlaybackPageWidget::load()
     const double playedThreshold = m_settings->value<Settings::Core::PlayedThreshold>();
     const auto playedPercent     = static_cast<int>(playedThreshold * 100);
     m_playedSlider->setValue(playedPercent);
+
+    m_shuffleAlbumsGroup->setText(m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>());
+    m_shuffleAlbumsSort->setText(m_settings->value<Settings::Core::ShuffleAlbumsSortScript>());
 }
 
 void PlaybackPageWidget::apply()
@@ -123,6 +143,9 @@ void PlaybackPageWidget::apply()
     const int playedPercent    = m_playedSlider->value();
     const auto playedThreshold = static_cast<double>(playedPercent) / 100;
     m_settings->set<Settings::Core::PlayedThreshold>(playedThreshold);
+
+    m_settings->set<Settings::Core::ShuffleAlbumsGroupScript>(m_shuffleAlbumsGroup->text());
+    m_settings->set<Settings::Core::ShuffleAlbumsSortScript>(m_shuffleAlbumsSort->text());
 }
 
 void PlaybackPageWidget::reset()
@@ -134,6 +157,8 @@ void PlaybackPageWidget::reset()
     m_settings->reset<Settings::Core::RewindPreviousTrack>();
     m_settings->fileRemove(Settings::Core::Internal::PlaylistSkipUnavailable);
     m_settings->reset<Settings::Core::PlayedThreshold>();
+    m_settings->reset<Settings::Core::ShuffleAlbumsGroupScript>();
+    m_settings->reset<Settings::Core::ShuffleAlbumsSortScript>();
 }
 
 PlaybackPage::PlaybackPage(SettingsManager* settings, QObject* parent)
