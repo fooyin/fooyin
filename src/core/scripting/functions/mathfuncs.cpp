@@ -108,17 +108,23 @@ QString mod(const QStringList& vec)
     return QString::number(total);
 }
 
-QString rand()
-{
-    return QString::number(getRandomNumber(0, std::numeric_limits<uint32_t>::max()));
-}
-
-QString rand2(const QStringList& vec)
+QString rand(const QStringList& vec)
 {
     if(vec.size() < 2) {
+        return QString::number(getRandomNumber(0, std::numeric_limits<uint32_t>::max()));
+    }
+
+    bool ok{false};
+    const int min = vec.at(0).toInt(&ok);
+    if(!ok) {
         return {};
     }
 
-    return QString::number(getRandomNumber(vec.at(0).toInt(), vec.at(1).toInt()));
+    const int max = vec.at(1).toInt(&ok);
+    if(!ok) {
+        return {};
+    }
+
+    return QString::number(getRandomNumber(min, max));
 }
 } // namespace Fooyin::Scripting
