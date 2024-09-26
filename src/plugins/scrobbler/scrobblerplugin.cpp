@@ -53,7 +53,7 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
 
     context.widgetProvider->registerWidget(
         QStringLiteral("ScrobbleToggle"), [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
-        tr("Scrobble Toggler"));
+        tr("Scrobble Toggle"));
     context.widgetProvider->setSubMenus(QStringLiteral("ScrobbleToggle"), {tr("Controls")});
 
     new ScrobblerPage(m_scrobbler.get(), m_settings, this);
