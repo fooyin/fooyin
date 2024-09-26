@@ -29,6 +29,7 @@
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
+#include <QIcon>
 
 constexpr auto ScrobbleIcon = "scrobble";
 

@@ -19,15 +19,16 @@
 
 #include "scrobblerplugin.h"
 
+#include "scrobbler.h"
+#include "scrobblerpage.h"
+#include "scrobblersettings.h"
 #include "scrobblertoggle.h"
 
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/settings/settingsmanager.h>
 
-#include "scrobbler.h"
-#include "scrobblerpage.h"
-#include "scrobblersettings.h"
+#include <QAction>
 
 namespace Fooyin::Scrobbler {
 void ScrobblerPlugin::initialise(const CorePluginContext& context)
