@@ -1,31 +1,41 @@
 # Changelog
 
-## Unreleased
+## [0.7.2](https://github.com/fooyin/fooyin/releases/tag/v0.7.2) (2024-09-26)
 
 ### Improvements
 
-* DirBrowser: Add option to toggle text elision ([#285](https://github.com/fooyin/fooyin/issues/285))
-* Engine: Support playback of ASF
-* FFmpeg: Add option to enable all supported formats
-* General: Don't exit immediately on File->Quit if fading is enabled
-* Interface: Add shortcuts for adjusting volume
+* General
+  - Add option to use 'Various Artists' for compilations ([#286](https://github.com/fooyin/fooyin/issues/286))
+  - Don't exit immediately on File->Quit if fading is enabled
+* DirBrowser
+  - Add option to toggle text elision ([#285](https://github.com/fooyin/fooyin/issues/285))
+  - Add shortcut support ([#292](https://github.com/fooyin/fooyin/issues/292))
+  - Add tooltips for elided text
 * Search
   - Add dialog for searching entire library
   - Match all terms (words) individually
   - Update window title and loading text based on search mode
+* CLI: Add playback control options ([#287](https://github.com/fooyin/fooyin/issues/287))
+* Engine: Support playback of ASF
+* FFmpeg: Add option to enable all supported formats
+* Interface: Add shortcuts for adjusting volume
+* Playlist: Add repeat album, shuffle albums and random playback modes ([#122](https://github.com/fooyin/fooyin/pull/122))
+* Scripting: Add $rand ([#295](https://github.com/fooyin/fooyin/pull/295))
+* Scrobbler: Add toggle button widget
 
 ### Fixes
 
+* Settings
+  - Fix saving/restoring decoder and tag reader order
+  - Fix manual editing of spinboxes on some pages
 * Engine: Resolve crash when attempting to restart playback with disabled decoder
 * ExpandedTreeView: Fix empty space at top/bottom in right caption mode
 * DirBrowser: Fix expand/collapse in tree mode
 * FFmpeg: Resolve crash on failing to open input
 * M3UParser: Handle Windows filepaths ([#289](https://github.com/fooyin/fooyin/issues/289))
 * Scripting: Fix $meta and $info calls
+* SeekBar: Fix setting width on startup
 * Selection Info: Fix formatting of durations longer than 1 day ([#290](https://github.com/fooyin/fooyin/pull/290))
-* Settings
-  - Fix saving/restoring decoder and tag reader order
-  - Fix manual editing of spinboxes on some pages
 
 
 ## [0.7.1](https://github.com/fooyin/fooyin/releases/tag/v0.7.1) (2024-09-21)
