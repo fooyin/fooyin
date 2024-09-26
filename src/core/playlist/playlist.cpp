@@ -66,6 +66,7 @@ public:
     void createShuffleOrder();
     void createAlbumShuffleOrder();
 
+    std::vector<AlbumTracks>::iterator findAlbumContainingTrack(int trackIndex);
     AlbumTracks getAlbumTracks(int currentIndex);
     void sortAlbumTracks(AlbumTracks& album, const QString& sortScript);
 
@@ -145,13 +146,7 @@ void PlaylistPrivate::createAlbumShuffleOrder()
         albums[albumGroup].emplace_back(i);
     }
 
-    AlbumTracks currentAlbum;
-
     for(auto& [albumGroup, albumTracks] : albums) {
-        if(std::ranges::find(albumTracks, m_currentTrackIndex) != albumTracks.end()) {
-            currentAlbum = albumTracks;
-        }
-
         const QString sortScript = m_settings->value<Settings::Core::ShuffleAlbumsSortScript>();
         if(!sortScript.isEmpty()) {
             sortAlbumTracks(albumTracks, sortScript);
@@ -163,15 +158,22 @@ void PlaylistPrivate::createAlbumShuffleOrder()
     std::ranges::shuffle(m_albumShuffleOrder, std::mt19937{std::random_device{}()});
 
     // Move the current album to the front
-    if(!currentAlbum.empty()) {
-        auto it = std::ranges::find(m_albumShuffleOrder, currentAlbum);
-        if(it != m_albumShuffleOrder.end()) {
-            std::rotate(m_albumShuffleOrder.begin(), it, it + 1);
+    if(m_currentTrackIndex >= 0 && std::cmp_less(m_currentTrackIndex, m_tracks.size())) {
+        auto albumIt = findAlbumContainingTrack(m_currentTrackIndex);
+        if(albumIt != m_albumShuffleOrder.end()) {
+            std::rotate(m_albumShuffleOrder.begin(), albumIt, albumIt + 1);
         }
     }
 
     m_albumShuffleIndex = 0;
     m_trackInAlbumIndex = 0;
+}
+
+std::vector<AlbumTracks>::iterator PlaylistPrivate::findAlbumContainingTrack(int trackIndex)
+{
+    return std::ranges::find_if(m_albumShuffleOrder, [trackIndex](const AlbumTracks& album) {
+        return std::ranges::find(album, trackIndex) != album.end();
+    });
 }
 
 AlbumTracks PlaylistPrivate::getAlbumTracks(int currentIndex)
