@@ -158,15 +158,15 @@ void PlaylistPrivate::createAlbumShuffleOrder()
     std::ranges::shuffle(m_albumShuffleOrder, std::mt19937{std::random_device{}()});
 
     // Move the current album to the front
-    if(m_currentTrackIndex >= 0 && std::cmp_less(m_currentTrackIndex, m_tracks.size())) {
-        auto albumIt = findAlbumContainingTrack(m_currentTrackIndex);
-        if(albumIt != m_albumShuffleOrder.end()) {
-            std::rotate(m_albumShuffleOrder.begin(), albumIt, albumIt + 1);
-        }
+    auto albumIt = findAlbumContainingTrack(m_currentTrackIndex);
+    if(albumIt != m_albumShuffleOrder.end()) {
+        m_trackInAlbumIndex = static_cast<int>(
+            std::distance(albumIt->begin(), std::find(albumIt->begin(), albumIt->end(), m_currentTrackIndex)));
+        std::rotate(m_albumShuffleOrder.begin(), albumIt, albumIt + 1);
     }
-
-    m_albumShuffleIndex = 0;
-    m_trackInAlbumIndex = 0;
+    else {
+        m_trackInAlbumIndex = 0;
+    }
 }
 
 std::vector<AlbumTracks>::iterator PlaylistPrivate::findAlbumContainingTrack(int trackIndex)
@@ -255,7 +255,6 @@ int PlaylistPrivate::handleAlbumShuffle(int delta, Playlist::PlayModes mode, boo
     if(m_albumShuffleOrder.empty()) {
         createAlbumShuffleOrder();
         m_albumShuffleIndex = 0;
-        m_trackInAlbumIndex = 0;
     }
 
     AlbumTracks currentAlbum = m_albumShuffleOrder.at(m_albumShuffleIndex);
