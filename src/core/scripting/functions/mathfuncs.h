@@ -30,4 +30,5 @@ QString mod(const QStringList& vec);
 QString min(const QStringList& vec);
 QString max(const QStringList& vec);
 QString rand();
+QString rand2(const QStringList& vec);
 } // namespace Fooyin::Scripting

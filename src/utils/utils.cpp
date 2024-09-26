@@ -42,9 +42,14 @@ constexpr auto DefaultIconSize = 20;
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
 {
-    if(min == max) {
+    if(min >= max) {
         return max;
     }
+
+    if(max == std::numeric_limits<int>::max()) {
+        --max;
+    }
+
     return QRandomGenerator::global()->bounded(min, max + 1);
 }
 
