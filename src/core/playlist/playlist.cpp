@@ -31,6 +31,8 @@
 #include <set>
 
 namespace {
+using AlbumTracks = std::vector<int>;
+
 struct TrackIndex
 {
     Fooyin::Track track;
@@ -64,26 +66,14 @@ public:
     void createShuffleOrder();
     void createAlbumShuffleOrder();
 
-    struct AlbumBoundaries
-    {
-        int startIndex{-1};
-        int endIndex{-1};
-        std::vector<int> trackOrder;
-
-        bool operator==(const AlbumBoundaries& other) const
-        {
-            return std::tie(startIndex, endIndex) == std::tie(other.startIndex, other.endIndex);
-        }
-    };
-    AlbumBoundaries getAlbumBoundaries(int currentIndex);
-    void sortAlbumTracks(AlbumBoundaries& album, const QString& sortScript);
+    AlbumTracks getAlbumTracks(int currentIndex);
+    void sortAlbumTracks(AlbumTracks& album, const QString& sortScript);
 
     int getShuffleIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
     int handleTrackShuffle(int delta, Playlist::PlayModes mode, bool onlyCheck);
     int handleAlbumShuffle(int delta, Playlist::PlayModes mode, bool onlyCheck);
-    int handleNextAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumBoundaries& currentAlbum, int& nextIndex);
-    int handlePreviousAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumBoundaries& currentAlbum,
-                            int& nextIndex);
+    int handleNextAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumTracks& currentAlbum, int& nextIndex);
+    int handlePreviousAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumTracks& currentAlbum, int& nextIndex);
 
     int getNextIndex(int delta, Playlist::PlayModes mode, bool onlyCheck);
     [[nodiscard]] std::optional<Track> getTrack(int index) const;
@@ -106,7 +96,7 @@ public:
 
     int m_albumShuffleIndex{-1};
     int m_trackInAlbumIndex{-1};
-    std::vector<AlbumBoundaries> m_albumShuffleOrder;
+    std::vector<AlbumTracks> m_albumShuffleOrder;
 
     bool m_isTemporary{false};
     bool m_modified{false};
@@ -144,35 +134,36 @@ void PlaylistPrivate::createAlbumShuffleOrder()
 {
     m_albumShuffleOrder.clear();
 
-    AlbumBoundaries currentAlbum;
-    const QString sortScript = m_settings->value<Settings::Core::ShuffleAlbumsSortScript>();
+    std::unordered_map<QString, AlbumTracks> albums;
 
-    int trackIndex{0};
-    while(trackIndex < static_cast<int>(m_tracks.size())) {
-        AlbumBoundaries albumBounds = getAlbumBoundaries(trackIndex);
-        if(trackIndex == m_currentTrackIndex) {
-            currentAlbum = albumBounds;
-        }
-        if(albumBounds.startIndex >= 0) {
-            albumBounds.trackOrder.resize(albumBounds.endIndex - albumBounds.startIndex + 1);
-            std::iota(albumBounds.trackOrder.begin(), albumBounds.trackOrder.end(), albumBounds.startIndex);
+    const QString groupScript = m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>();
 
-            if(!sortScript.isEmpty()) {
-                sortAlbumTracks(albumBounds, sortScript);
-            }
+    const auto count = static_cast<int>(m_tracks.size());
+    for(int i{0}; i < count; ++i) {
+        const auto& track        = m_tracks.at(i);
+        const QString albumGroup = m_parser.evaluate(groupScript, track);
+        albums[albumGroup].emplace_back(i);
+    }
 
-            m_albumShuffleOrder.push_back(albumBounds);
-            trackIndex = albumBounds.endIndex + 1;
+    AlbumTracks currentAlbum;
+
+    for(auto& [albumGroup, albumTracks] : albums) {
+        if(std::ranges::find(albumTracks, m_currentTrackIndex) != albumTracks.end()) {
+            currentAlbum = albumTracks;
         }
-        else {
-            ++trackIndex;
+
+        const QString sortScript = m_settings->value<Settings::Core::ShuffleAlbumsSortScript>();
+        if(!sortScript.isEmpty()) {
+            sortAlbumTracks(albumTracks, sortScript);
         }
+
+        m_albumShuffleOrder.push_back(albumTracks);
     }
 
     std::ranges::shuffle(m_albumShuffleOrder, std::mt19937{std::random_device{}()});
 
     // Move the current album to the front
-    if(m_currentTrackIndex >= 0) {
+    if(!currentAlbum.empty()) {
         auto it = std::ranges::find(m_albumShuffleOrder, currentAlbum);
         if(it != m_albumShuffleOrder.end()) {
             std::rotate(m_albumShuffleOrder.begin(), it, it + 1);
@@ -183,59 +174,36 @@ void PlaylistPrivate::createAlbumShuffleOrder()
     m_trackInAlbumIndex = 0;
 }
 
-PlaylistPrivate::AlbumBoundaries PlaylistPrivate::getAlbumBoundaries(int currentIndex)
+AlbumTracks PlaylistPrivate::getAlbumTracks(int currentIndex)
 {
-    const auto currentTrack = getTrack(currentIndex);
-    if(!currentTrack) {
+    if(currentIndex < 0 || std::cmp_greater_equal(currentIndex, m_tracks.size())) {
         return {};
     }
 
-    const QString groupScript = m_settings->value<Settings::Core::ShuffleAlbumsGroupScript>();
-    const QString albumGroup  = m_parser.evaluate(groupScript, currentTrack.value());
-
-    int albumStart{currentIndex};
-    int albumEnd{currentIndex};
-
-    // Move albumStart to the first track of the album
-    while(albumStart > 0) {
-        const auto& previousTrack   = m_tracks.at(albumStart - 1);
-        const QString previousGroup = m_parser.evaluate(groupScript, previousTrack);
-        if(previousGroup == albumGroup) {
-            --albumStart;
-        }
-        else {
-            break;
+    for(const auto& album : m_albumShuffleOrder) {
+        const auto it = std::ranges::find(album, currentIndex);
+        if(it != album.cend()) {
+            return album;
         }
     }
 
-    // Move albumEnd to the last track of the album
-    while(std::cmp_less(albumEnd, m_tracks.size() - 1)) {
-        const auto& nextTrack   = m_tracks.at(albumEnd + 1);
-        const QString nextGroup = m_parser.evaluate(groupScript, nextTrack);
-        if(nextGroup == albumGroup) {
-            ++albumEnd;
-        }
-        else {
-            break;
-        }
-    }
-
-    return {albumStart, albumEnd, {}};
+    return {};
 }
 
-void PlaylistPrivate::sortAlbumTracks(AlbumBoundaries& album, const QString& sortScript)
+void PlaylistPrivate::sortAlbumTracks(AlbumTracks& album, const QString& sortScript)
 {
     std::vector<TrackIndex> trackIndexes;
+    trackIndexes.reserve(album.size());
 
-    for(int i = album.startIndex; i <= album.endIndex; ++i) {
-        trackIndexes.emplace_back(m_tracks.at(i), i);
+    for(const int trackIndex : album) {
+        trackIndexes.emplace_back(m_tracks.at(trackIndex), trackIndex);
     }
 
     m_sorter.calcSortTracks(sortScript, trackIndexes, TrackIndex::extractor, TrackIndex::extractorConst);
 
-    album.trackOrder.clear();
+    album.clear();
     for(const auto& track : trackIndexes) {
-        album.trackOrder.emplace_back(track.index);
+        album.emplace_back(track.index);
     }
 }
 
@@ -288,12 +256,12 @@ int PlaylistPrivate::handleAlbumShuffle(int delta, Playlist::PlayModes mode, boo
         m_trackInAlbumIndex = 0;
     }
 
-    AlbumBoundaries currentAlbum = m_albumShuffleOrder.at(m_albumShuffleIndex);
+    AlbumTracks currentAlbum = m_albumShuffleOrder.at(m_albumShuffleIndex);
 
     int nextIndex         = m_trackInAlbumIndex + delta;
     int albumShuffleIndex = m_albumShuffleIndex;
 
-    if(std::cmp_greater_equal(nextIndex, currentAlbum.trackOrder.size())) {
+    if(std::cmp_greater_equal(nextIndex, currentAlbum.size())) {
         albumShuffleIndex = handleNextAlbum(mode, albumShuffleIndex, currentAlbum, nextIndex);
     }
     else if(nextIndex < 0) {
@@ -305,14 +273,14 @@ int PlaylistPrivate::handleAlbumShuffle(int delta, Playlist::PlayModes mode, boo
         m_trackInAlbumIndex = nextIndex;
     }
 
-    if(nextIndex < 0 || std::cmp_greater_equal(nextIndex, currentAlbum.trackOrder.size())) {
+    if(nextIndex < 0 || std::cmp_greater_equal(nextIndex, currentAlbum.size())) {
         return -1;
     }
 
-    return currentAlbum.trackOrder.at(nextIndex);
+    return currentAlbum.at(nextIndex);
 }
 
-int PlaylistPrivate::handleNextAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumBoundaries& currentAlbum,
+int PlaylistPrivate::handleNextAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumTracks& currentAlbum,
                                      int& nextIndex)
 {
     if(mode & Playlist::RepeatAlbum) {
@@ -337,11 +305,11 @@ int PlaylistPrivate::handleNextAlbum(Playlist::PlayModes mode, int albumShuffleI
     return albumShuffleIndex;
 }
 
-int PlaylistPrivate::handlePreviousAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumBoundaries& currentAlbum,
+int PlaylistPrivate::handlePreviousAlbum(Playlist::PlayModes mode, int albumShuffleIndex, AlbumTracks& currentAlbum,
                                          int& nextIndex)
 {
     if(mode & Playlist::RepeatAlbum) {
-        nextIndex = static_cast<int>(currentAlbum.trackOrder.size()) - 1;
+        nextIndex = static_cast<int>(currentAlbum.size()) - 1;
         return albumShuffleIndex;
     }
 
@@ -359,7 +327,7 @@ int PlaylistPrivate::handlePreviousAlbum(Playlist::PlayModes mode, int albumShuf
         --albumShuffleIndex;
     }
     currentAlbum = m_albumShuffleOrder.at(albumShuffleIndex);
-    nextIndex    = static_cast<int>(currentAlbum.trackOrder.size()) - 1;
+    nextIndex    = static_cast<int>(currentAlbum.size()) - 1;
 
     return albumShuffleIndex;
 }
@@ -379,11 +347,11 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
     }
 
     const auto getRandomIndexInAlbum = [this]() {
-        const AlbumBoundaries albumBounds = getAlbumBoundaries(m_currentTrackIndex);
-        if(albumBounds.startIndex >= 0) {
+        const AlbumTracks albumTracks = getAlbumTracks(m_currentTrackIndex);
+        if(!albumTracks.empty()) {
             std::mt19937 gen(std::random_device{}());
-            std::uniform_int_distribution<int> dist(albumBounds.startIndex, albumBounds.endIndex);
-            return dist(gen);
+            std::uniform_int_distribution<int> dist(0, static_cast<int>(albumTracks.size()) - 1);
+            return albumTracks.at(dist(gen));
         }
         return -1;
     };
@@ -429,18 +397,21 @@ int PlaylistPrivate::getNextIndex(int delta, Playlist::PlayModes mode, bool only
         }
     }
     else if(mode & Playlist::RepeatAlbum) {
-        const AlbumBoundaries albumBounds = getAlbumBoundaries(m_currentTrackIndex);
-        if(albumBounds.startIndex < 0) {
+        const AlbumTracks albumTracks = getAlbumTracks(m_currentTrackIndex);
+        if(albumTracks.empty()) {
             return -1;
         }
 
         nextIndex += delta;
 
-        if(nextIndex < albumBounds.startIndex) {
-            nextIndex = albumBounds.endIndex; // Loop back to the last track of the album
+        const int startIndex = albumTracks.front();
+        const int endIndex   = albumTracks.back();
+
+        if(nextIndex < startIndex) {
+            nextIndex = endIndex; // Loop back to the last track of the album
         }
-        else if(nextIndex > albumBounds.endIndex) {
-            nextIndex = albumBounds.startIndex; // Loop back to the first track of the album
+        else if(nextIndex > endIndex) {
+            nextIndex = startIndex; // Loop back to the first track of the album
         }
     }
 
@@ -670,11 +641,11 @@ std::vector<int> Playlist::removeTracks(const std::vector<int>& indexes)
 {
     const auto updateAlbumShuffleOrder = [this](int removedIndex) {
         for(auto& album : p->m_albumShuffleOrder) {
-            std::erase_if(album.trackOrder, [removedIndex](int trackIndex) { return trackIndex == removedIndex; });
-            std::ranges::transform(album.trackOrder, album.trackOrder.begin(), [removedIndex](int trackIndex) {
+            std::erase_if(album, [removedIndex](int trackIndex) { return trackIndex == removedIndex; });
+            std::ranges::transform(album, album.begin(), [removedIndex](int trackIndex) {
                 return trackIndex > removedIndex ? trackIndex - 1 : trackIndex;
             });
-            if(album.trackOrder.empty()) {
+            if(album.empty()) {
                 std::erase_if(p->m_albumShuffleOrder, [&album](const auto& a) { return a == album; });
             }
         }
