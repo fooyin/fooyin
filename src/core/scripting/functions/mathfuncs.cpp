@@ -21,6 +21,15 @@
 
 #include <random>
 
+namespace {
+    uint32_t getRandomNumber(uint32_t min, uint32_t max)
+    {
+        std::mt19937 gen{std::random_device{}()};
+        std::uniform_int_distribution<uint32_t> dist{min, max};
+        return dist(gen);
+    }
+} // namespace
+
 namespace Fooyin::Scripting {
 QString baseOperation(const QStringList& vec, const QChar op)
 {
@@ -105,8 +114,15 @@ QString mod(const QStringList& vec)
 
 QString rand()
 {
-    std::mt19937 gen{std::random_device{}()};
-    std::uniform_int_distribution<uint32_t> dist{0, std::numeric_limits<uint32_t>::max()};
-    return QString::number(dist(gen));
+    return QString::number(getRandomNumber(0, std::numeric_limits<uint32_t>::max()));
+}
+
+QString rand2(const QStringList& vec)
+{
+    if(vec.size() < 2) {
+        return {};
+    }
+
+    return QString::number(getRandomNumber(vec.at(0).toInt(), vec.at(1).toInt()));
 }
 } // namespace Fooyin::Scripting
