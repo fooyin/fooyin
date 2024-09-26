@@ -101,8 +101,8 @@ PlaybackPageWidget::PlaybackPageWidget(SettingsManager* settings)
     auto* shuffleGroup       = new QGroupBox(tr("Shuffle"), this);
     auto* shuffleGroupLayout = new QGridLayout(shuffleGroup);
 
-    auto* shuffleGroupLabel = new QLabel(tr("Album grouping pattern"), this);
-    auto* shuffleSortLabel  = new QLabel(tr("Album sorting pattern"), this);
+    auto* shuffleGroupLabel = new QLabel(tr("Album grouping pattern") + u":", this);
+    auto* shuffleSortLabel  = new QLabel(tr("Album sorting pattern") + u":", this);
 
     shuffleGroupLayout->addWidget(shuffleGroupLabel, 0, 0);
     shuffleGroupLayout->addWidget(m_shuffleAlbumsGroup, 0, 1);
