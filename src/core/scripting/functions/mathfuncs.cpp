@@ -22,60 +22,56 @@
 #include <random>
 
 namespace {
-    uint32_t getRandomNumber(uint32_t min, uint32_t max)
-    {
-        std::mt19937 gen{std::random_device{}()};
-        std::uniform_int_distribution<uint32_t> dist{min, max};
-        return dist(gen);
-    }
+uint32_t getRandomNumber(uint32_t min, uint32_t max)
+{
+    std::mt19937 gen{std::random_device{}()};
+    std::uniform_int_distribution<uint32_t> dist{min, max};
+    return dist(gen);
+}
 } // namespace
 
 namespace Fooyin::Scripting {
-QString baseOperation(const QStringList& vec, const QChar op)
+template <typename Operation>
+QString baseOperation(const QStringList& vec, Operation op)
 {
     if(vec.size() < 2) {
         return {};
     }
-    double total = vec.front().toDouble();
-    for(int i = 1; i < static_cast<int>(vec.size()); ++i) {
-        const double num = vec.at(i).toDouble();
-        switch(op.unicode()) {
-            case('+'):
-                total += num;
-                break;
-            case('-'):
-                total -= num;
-                break;
-            case('*'):
-                total *= num;
-                break;
-            case('/'):
-                total /= num;
-                break;
-            default:
-                break;
+
+    bool ok{false};
+    double total = vec.front().toDouble(&ok);
+    if(!ok) {
+        return {};
+    }
+
+    for(int i{1}; i < vec.size(); ++i) {
+        const double num = vec.at(i).toDouble(&ok);
+        if(ok) {
+            total = op(total, num);
         }
     }
+
     return QString::number(total);
 }
+
 QString add(const QStringList& vec)
 {
-    return baseOperation(vec, QChar::fromLatin1('+'));
+    return baseOperation(vec, std::plus<>());
 }
 
 QString sub(const QStringList& vec)
 {
-    return baseOperation(vec, QChar::fromLatin1('-'));
+    return baseOperation(vec, std::minus<>());
 }
 
 QString mul(const QStringList& vec)
 {
-    return baseOperation(vec, QChar::fromLatin1('*'));
+    return baseOperation(vec, std::multiplies<>());
 }
 
 QString div(const QStringList& vec)
 {
-    return baseOperation(vec, QChar::fromLatin1('/'));
+    return baseOperation(vec, std::divides<>());
 }
 
 QString min(const QStringList& vec)
