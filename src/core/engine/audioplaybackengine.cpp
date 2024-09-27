@@ -184,12 +184,6 @@ void AudioPlaybackEngine::play()
         return;
     }
 
-    if(m_pendingSeek) {
-        resetWorkers();
-        m_decoder->seek(m_pendingSeek.value());
-        m_pendingSeek = {};
-    }
-
     auto runOutput = [this]() {
         QObject::disconnect(&m_renderer, &AudioRenderer::paused, this, nullptr);
 
@@ -201,6 +195,13 @@ void AudioPlaybackEngine::play()
             m_decoding = true;
             m_decoder->start();
         }
+
+        if(m_pendingSeek) {
+            resetWorkers();
+            m_decoder->seek(m_pendingSeek.value());
+            m_pendingSeek = {};
+        }
+
         m_bufferTimer.start(BufferInterval, this);
         QMetaObject::invokeMethod(&m_renderer, &AudioRenderer::start);
 
@@ -546,11 +547,6 @@ bool AudioPlaybackEngine::checkReadyToDecode()
 
     if(!m_decoder || !trackCanPlay()) {
         return false;
-    }
-
-    if(trackStatus() == TrackStatus::End) {
-        seek(0);
-        emit positionChanged(m_currentTrack, 0);
     }
 
     if(!checkOpenSource()) {
