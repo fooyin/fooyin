@@ -48,10 +48,14 @@ QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringLi
     return listResult;
 }
 
-bool matchSearch(const Fooyin::Track& track, const QString& search)
+bool matchSearch(const Fooyin::Track& track, const QString& search, bool singleString)
 {
     if(search.isEmpty()) {
         return true;
+    }
+
+    if(singleString) {
+        return track.hasMatch(search);
     }
 
     const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
@@ -264,7 +268,7 @@ Expression ScriptParserPrivate::literal()
 
 Expression ScriptParserPrivate::quote()
 {
-    Expression expr{Expr::Literal};
+    Expression expr{Expr::QuotedLiteral};
     QString val;
 
     while(!currentToken(TokenType::TokQuote) && !currentToken(TokenType::TokEos)) {
@@ -391,11 +395,14 @@ Expression ScriptParserPrivate::group()
         }
     }
 
-    if(args.size() == 1 && args.front().type == Expr::Literal) {
-        expr.type  = Expr::Literal;
-        expr.value = QStringLiteral("(%1)").arg(std::get<QString>(args.front().value));
-        consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after expression"));
-        return expr;
+    if(args.size() == 1) {
+        const auto& firstArg = args.front();
+        if(firstArg.type == Expr::Literal || firstArg.type == Expr::QuotedLiteral) {
+            expr.type  = firstArg.type;
+            expr.value = QStringLiteral("(%1)").arg(std::get<QString>(firstArg.value));
+            consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after expression"));
+            return expr;
+        }
     }
 
     expr.value = args;
@@ -603,6 +610,7 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
 {
     switch(exp.type) {
         case(Expr::Literal):
+        case(Expr::QuotedLiteral):
             return evalLiteral(exp);
         case(Expr::Variable):
             return evalVariable(exp, tracks);
@@ -627,13 +635,13 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
         case(Expr::Contains):
             return evalContains(exp, tracks);
         case(Expr::Greater):
-            return compareValues(exp, tracks, std::greater<double>());
+            return compareValues(exp, tracks, std::greater<>());
         case(Expr::GreaterEqual):
-            return compareValues(exp, tracks, std::greater_equal<double>());
+            return compareValues(exp, tracks, std::greater_equal<>());
         case(Expr::Less):
-            return compareValues(exp, tracks, std::less<double>());
+            return compareValues(exp, tracks, std::less<>());
         case(Expr::LessEqual):
-            return compareValues(exp, tracks, std::less_equal<double>());
+            return compareValues(exp, tracks, std::less_equal<>());
         case(Expr::All):
             return ScriptResult{.value = {}, .cond = true};
         case(Expr::Null):
@@ -718,7 +726,7 @@ ScriptResult ScriptParserPrivate::evalConditional(const Expression& exp, const a
         const auto subExpr = evalExpression(subArg, tracks);
 
         // Literals return false
-        if(subArg.type != Expr::Literal) {
+        if(subArg.type != Expr::Literal && subArg.type != Expr::QuotedLiteral) {
             if(!subExpr.cond || subExpr.value.isEmpty()) {
                 // No need to evaluate rest
                 result.value.clear();
@@ -998,10 +1006,15 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
 
     const ExpressionList expressions = input.expressions;
 
-    if(expressions.size() == 1 && expressions.front().type == Expr::Literal) {
-        // Simple search query - just match all terms in metadata/filepath
-        const QString search = std::get<QString>(expressions.front().value);
-        return Utils::filter(tracks, [&search](const Track& track) { return matchSearch(track, search); });
+    if(expressions.size() == 1) {
+        const auto& firstExpr = expressions.front();
+        if(firstExpr.type == Expr::Literal || firstExpr.type == Expr::QuotedLiteral) {
+            // Simple search query - just match all terms in metadata/filepath
+            const QString search = std::get<QString>(expressions.front().value);
+            return Utils::filter(tracks, [&search, &firstExpr](const Track& track) {
+                return matchSearch(track, search, firstExpr.type == Expr::QuotedLiteral);
+            });
+        }
     }
 
     for(const Track& track : tracks) {

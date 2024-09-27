@@ -45,6 +45,7 @@ enum Type : uint8_t
     SortAscending  = 17,
     SortDescending = 18,
     All            = 19,
+    QuotedLiteral  = 20,
 };
 }
 
