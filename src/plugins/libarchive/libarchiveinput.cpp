@@ -33,7 +33,7 @@ namespace {
 QStringList fileExtensions()
 {
     static const QStringList extensions = {QStringLiteral("zip"), QStringLiteral("rar"), QStringLiteral("tar"),
-                                           QStringLiteral("gz"), QStringLiteral("7z")};
+                                           QStringLiteral("gz"),  QStringLiteral("7z"),  QStringLiteral("vgm7z")};
     return extensions;
 }
 
