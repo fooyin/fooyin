@@ -93,7 +93,7 @@ public:
     Expression contains(const Expression& key);
     Expression greater(const Expression& key);
     Expression less(const Expression& key);
-    Expression sort(TokenType order);
+    Expression sort();
 
     ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
     ScriptResult evalLiteral(const Expression& exp) const;
@@ -223,9 +223,6 @@ Expression ScriptParserPrivate::expression()
         case(TokenType::TokEscape):
             advance();
             return literal();
-        case(TokenType::TokSortAscending):
-        case(TokenType::TokSortDescending):
-            return m_isQuery ? sort(m_previous.type) : literal();
         case(TokenType::TokLeftParen):
             return m_isQuery ? group() : literal();
         case(TokenType::TokExclamation):
@@ -240,7 +237,22 @@ Expression ScriptParserPrivate::expression()
         case(TokenType::TokRightAngle):
         case(TokenType::TokRightParen):
         case(TokenType::TokComma):
+        case(TokenType::TokSort):
+            return m_isQuery ? sort() : literal();
+        case(TokenType::TokBy):
+        case(TokenType::TokBefore):
+        case(TokenType::TokAfter):
+        case(TokenType::TokSince):
+        case(TokenType::TokDuring):
+        case(TokenType::TokLast):
+        case(TokenType::TokSecond):
+        case(TokenType::TokMinute):
+        case(TokenType::TokHour):
+        case(TokenType::TokDay):
+        case(TokenType::TokWeek):
         case(TokenType::TokRightSquare):
+        case(TokenType::TokAscending):
+        case(TokenType::TokDescending):
         case(TokenType::TokSlash):
         case(TokenType::TokLiteral):
             return literal();
@@ -591,10 +603,25 @@ Expression ScriptParserPrivate::less(const Expression& key)
     return expr;
 }
 
-Expression ScriptParserPrivate::sort(TokenType order)
+Expression ScriptParserPrivate::sort()
 {
-    Expression expr{order == TokenType::TokSortAscending ? Expr::SortAscending : Expr::SortDescending};
+    Expression expr;
     QString val;
+
+    if(currentToken(TokenType::TokBy)) {
+        advance();
+        expr.type = Expr::SortAscending;
+    }
+    else if(currentToken(TokenType::TokAscending)) {
+        advance();
+        expr.type = Expr::SortAscending;
+        consume(TokenType::TokBy, QStringLiteral("Expected 'BY' after 'ASCENDING'"));
+    }
+    else if(currentToken(TokenType::TokDescending)) {
+        advance();
+        expr.type = Expr::SortDescending;
+        consume(TokenType::TokBy, QStringLiteral("Expected 'BY' after 'DESCENDING'"));
+    }
 
     while(!currentToken(TokenType::TokEos)) {
         advance();
@@ -643,6 +670,8 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
         case(Expr::LessEqual):
             return compareValues(exp, tracks, std::less_equal<>());
         case(Expr::All):
+        case(Expr::SortAscending):
+        case(Expr::SortDescending):
             return ScriptResult{.value = {}, .cond = true};
         case(Expr::Null):
         default:
@@ -884,7 +913,7 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     }
 
     m_isQuery = false;
-    m_scanner.setIgnoreWhitespace(false);
+    m_scanner.setSkipWhitespace(false);
 
     if(m_parsedScripts.contains(input)) {
         return m_parsedScripts.at(input);
@@ -916,7 +945,7 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
     }
 
     m_isQuery = true;
-    m_scanner.setIgnoreWhitespace(true);
+    m_scanner.setSkipWhitespace(true);
 
     if(m_parsedScripts.contains(input)) {
         return m_parsedScripts.at(input);
@@ -1024,9 +1053,9 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
         }
     }
 
-    TrackSorter m_sorter;
     const Expression& lastExpr = expressions.back();
     if(lastExpr.type == Expr::SortAscending || lastExpr.type == Expr::SortDescending) {
+        TrackSorter m_sorter;
         filteredTracks
             = m_sorter.calcSortTracks(std::get<QString>(lastExpr.value), filteredTracks,
                                       lastExpr.type == Expr::SortAscending ? Qt::AscendingOrder : Qt::DescendingOrder);

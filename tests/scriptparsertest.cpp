@@ -151,7 +151,7 @@ TEST_F(ScriptParserTest, QueryTest)
     TrackList tracks;
 
     Track track1;
-    track1.setTitle(QStringLiteral("ABC"));
+    track1.setTitle(QStringLiteral("ABC F"));
     track1.setGenres({QStringLiteral("Pop")});
     track1.setDuration(2000);
     track1.setPlayCount(1);
@@ -166,9 +166,10 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size());
     EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>1"), tracks).empty());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:ABC F"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:DE AND genre=rock AND title:D"), tracks).size());
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title:AB"), tracks).size());
-    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title=ABC"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title=\"ABC F\""), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("!(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
 }

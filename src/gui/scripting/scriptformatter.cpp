@@ -143,8 +143,20 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokAnd):
         case(ScriptScanner::TokOr):
         case(ScriptScanner::TokAll):
-        case(ScriptScanner::TokSortAscending):
-        case(ScriptScanner::TokSortDescending):
+        case(ScriptScanner::TokSort):
+        case(ScriptScanner::TokBy):
+        case(ScriptScanner::TokBefore):
+        case(ScriptScanner::TokAfter):
+        case(ScriptScanner::TokSince):
+        case(ScriptScanner::TokDuring):
+        case(ScriptScanner::TokLast):
+        case(ScriptScanner::TokSecond):
+        case(ScriptScanner::TokMinute):
+        case(ScriptScanner::TokHour):
+        case(ScriptScanner::TokDay):
+        case(ScriptScanner::TokWeek):
+        case(ScriptScanner::TokAscending):
+        case(ScriptScanner::TokDescending):
             m_currentBlock.text += m_previous.value;
             break;
         case(ScriptScanner::TokEscape):

@@ -29,29 +29,41 @@ class FYCORE_EXPORT ScriptScanner
 public:
     enum TokenType : uint8_t
     {
-        TokError          = 0,
-        TokEos            = 1,
-        TokVar            = 2,
-        TokLeftAngle      = 3,
-        TokRightAngle     = 4,
-        TokFunc           = 5,
-        TokComma          = 6,
-        TokQuote          = 7,
-        TokLeftParen      = 8,
-        TokRightParen     = 9,
-        TokLeftSquare     = 10,
-        TokRightSquare    = 11,
-        TokSlash          = 12,
-        TokColon          = 13,
-        TokEquals         = 14,
-        TokExclamation    = 15,
-        TokEscape         = 16,
-        TokLiteral        = 17,
-        TokAnd            = 18,
-        TokOr             = 19,
-        TokSortAscending  = 20,
-        TokSortDescending = 21,
-        TokAll            = 22,
+        TokError       = 0,
+        TokEos         = 1,
+        TokVar         = 2,
+        TokLeftAngle   = 3,
+        TokRightAngle  = 4,
+        TokFunc        = 5,
+        TokComma       = 6,
+        TokQuote       = 7,
+        TokLeftParen   = 8,
+        TokRightParen  = 9,
+        TokLeftSquare  = 10,
+        TokRightSquare = 11,
+        TokSlash       = 12,
+        TokColon       = 13,
+        TokEquals      = 14,
+        TokExclamation = 15,
+        TokEscape      = 16,
+        TokLiteral     = 17,
+        TokAnd         = 18,
+        TokOr          = 19,
+        TokSort        = 20,
+        TokAscending   = 21,
+        TokDescending  = 22,
+        TokBy          = 23,
+        TokAll         = 24,
+        TokBefore      = 25,
+        TokAfter       = 26,
+        TokSince       = 27,
+        TokDuring      = 28,
+        TokLast        = 29,
+        TokSecond      = 30,
+        TokMinute      = 31,
+        TokHour        = 32,
+        TokDay         = 33,
+        TokWeek        = 34,
     };
 
     struct Token
@@ -67,27 +79,26 @@ public:
     Token next();
     Token peekNext(int delta = 1);
 
-    void setIgnoreWhitespace(bool enabled);
+    void setSkipWhitespace(bool enabled);
 
 private:
     Token scanNext();
     [[nodiscard]] Token makeToken(TokenType type) const;
     Token literal();
+    Token keyword();
+    Token checkKeyword(int start, int length, const QChar* rest, TokenType type);
 
-    bool currentIsLiteral();
     [[nodiscard]] bool isAtEnd() const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
-
-    bool checkKeyword(const QString& keyword);
-    bool matchKeyword(const QString& keyword, bool advance = true);
 
     QStringView m_input;
     const QChar* m_start;
     const QChar* m_current;
 
     std::vector<Token> m_tokens;
+    Token* m_lastToken;
     int m_currentTokenIndex;
-    bool m_ignoreWhitespace;
+    bool m_skipWhitespace;
 };
 } // namespace Fooyin

@@ -20,7 +20,7 @@
 #include <core/scripting/scriptscanner.h>
 
 namespace {
-bool isLiteral(const QChar ch, bool includeKeywords = true)
+bool isLiteral(QChar ch)
 {
     switch(ch.unicode()) {
         case(u'%'):
@@ -39,21 +39,55 @@ bool isLiteral(const QChar ch, bool includeKeywords = true)
         case(u'!'):
         case(u'\\'):
         case(u'\0'):
-            return false;
         case(u'A'):
+        case(u'B'):
+        case(u'D'):
+        case(u'L'):
         case(u'O'):
         case(u'S'):
-            return !includeKeywords;
+            return false;
         default:
             return true;
     }
 }
 
+bool isStartOfKeyword(QChar ch)
+{
+    switch(ch.unicode()) {
+        case(u'A'):
+        case(u'B'):
+        case(u'D'):
+        case(u'L'):
+        case(u'O'):
+        case(u'S'):
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool isWhitespace(QChar ch)
+{
+    switch(ch.unicode()) {
+        case(u' '):
+        case(u'\r'):
+        case(u'\t'):
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool isKeyword(QChar ch)
+{
+    return (isLiteral(ch) || isStartOfKeyword(ch)) && !isWhitespace(ch);
+}
 } // namespace
 
 namespace Fooyin {
 ScriptScanner::ScriptScanner()
-    : m_ignoreWhitespace{false}
+    : m_lastToken{nullptr}
+    , m_skipWhitespace{false}
 { }
 
 void ScriptScanner::setup(const QString& input)
@@ -64,9 +98,16 @@ void ScriptScanner::setup(const QString& input)
 
     m_tokens.clear();
     m_currentTokenIndex = 0;
+    m_lastToken         = nullptr;
 
     while(!isAtEnd()) {
-        m_tokens.emplace_back(scanNext());
+        const Token token = scanNext();
+        if(m_lastToken && m_lastToken->type == token.type) {
+            m_lastToken->value += token.value;
+        }
+        else {
+            m_lastToken = &m_tokens.emplace_back(token);
+        }
     }
 }
 
@@ -90,9 +131,9 @@ ScriptScanner::Token ScriptScanner::peekNext(int delta)
     return m_tokens.at(next);
 }
 
-void ScriptScanner::setIgnoreWhitespace(bool enabled)
+void ScriptScanner::setSkipWhitespace(bool enabled)
 {
-    m_ignoreWhitespace = enabled;
+    m_skipWhitespace = enabled;
 }
 
 ScriptScanner::Token ScriptScanner::scanNext()
@@ -101,10 +142,15 @@ ScriptScanner::Token ScriptScanner::scanNext()
 
     QChar c = advance();
 
-    if(m_ignoreWhitespace) {
-        while(c.unicode() == u' ') {
-            c = advance();
+    if(m_skipWhitespace) {
+        while(isWhitespace(c)) {
+            m_start = m_current;
+            c       = advance();
         }
+    }
+
+    if(isStartOfKeyword(c)) {
+        return keyword();
     }
 
     switch(c.unicode()) {
@@ -140,40 +186,11 @@ ScriptScanner::Token ScriptScanner::scanNext()
             return makeToken(TokEscape);
         case(u'\0'):
             return makeToken(TokEos);
-        case(u'A'): {
-            if(matchKeyword(QStringLiteral("ND "))) {
-                return makeToken(TokAnd);
-            }
-            if(matchKeyword(QStringLiteral("LL"))) {
-                return makeToken(TokAll);
-            }
-            return literal();
-        }
-        case(u'O'): {
-            if(matchKeyword(QStringLiteral("R "))) {
-                return makeToken(TokOr);
-            }
-            return literal();
-        }
-        case(u'S'):
-            if(matchKeyword(QStringLiteral("ORT "))) {
-                if(matchKeyword(QStringLiteral("BY ")) || matchKeyword(QStringLiteral("ASCENDING BY "))) {
-                    return makeToken(TokSortAscending);
-                }
-                if(matchKeyword(QStringLiteral("DESCENDING BY "))) {
-                    return makeToken(TokSortDescending);
-                }
-            }
-            return literal();
         default:
             break;
     }
 
-    if(isLiteral(c)) {
-        return literal();
-    }
-
-    return makeToken(TokError);
+    return literal();
 }
 
 ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
@@ -187,36 +204,88 @@ ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
 
 ScriptScanner::Token ScriptScanner::literal()
 {
-    while(currentIsLiteral() && !isAtEnd()) {
+    while(isLiteral(peek()) && !isAtEnd()) {
         advance();
     }
 
     return makeToken(TokLiteral);
 }
 
-bool ScriptScanner::currentIsLiteral()
+ScriptScanner::Token ScriptScanner::keyword()
 {
-    const QChar c = *m_current;
-    if(!isLiteral(c, false)) {
-        return false;
+    while(isKeyword(peek()) && !isAtEnd()) {
+        advance();
     }
 
-    switch(c.unicode()) {
-        case(u'A'):
-            return !checkKeyword(QStringLiteral("AND ")) && !checkKeyword(QStringLiteral("ALL"));
-        case(u'O'):
-            return !checkKeyword(QStringLiteral("OR "));
-        case(u'S'):
-            if(!checkKeyword(QStringLiteral("SORT "))) {
-                return true;
+    switch(m_start->unicode()) {
+        case(u'A'): {
+            if(m_current - m_start >= 1) {
+                switch(m_start[1].unicode()) {
+                    case(u'N'):
+                        return checkKeyword(2, 1, QStringLiteral("D").constData(), TokAnd);
+                    case(u'L'):
+                        return checkKeyword(2, 1, QStringLiteral("L").constData(), TokAll);
+                    case(u'F'):
+                        return checkKeyword(2, 3, QStringLiteral("TER").constData(), TokAfter);
+                    case(u'S'):
+                        return checkKeyword(2, 7, QStringLiteral("CENDING").constData(), TokAscending);
+                    default:
+                        break;
+                }
             }
-            return !checkKeyword(QStringLiteral("SORT BY ")) && !checkKeyword(QStringLiteral("SORT ASCENDING BY "))
-                && !checkKeyword(QStringLiteral("SORT DESCENDING BY "));
+            break;
+        }
+        case(u'B'):
+            if(m_current - m_start >= 1) {
+                switch(m_start[1].unicode()) {
+                    case(u'E'):
+                        return checkKeyword(2, 4, QStringLiteral("FORE").constData(), TokBefore);
+                    default:
+                        break;
+                }
+            }
+            return checkKeyword(1, 1, QStringLiteral("Y").constData(), TokBy);
+        case(u'D'):
+            if(m_current - m_start >= 1) {
+                switch(m_start[1].unicode()) {
+                    case(u'E'):
+                        return checkKeyword(2, 8, QStringLiteral("SCENDING").constData(), TokDescending);
+                    case(u'U'):
+                        return checkKeyword(2, 4, QStringLiteral("RING").constData(), TokDuring);
+                    default:
+                        break;
+                }
+            }
+            break;
+        case(u'L'):
+            return checkKeyword(1, 3, QStringLiteral("AST").constData(), TokLast);
+        case(u'O'):
+            return checkKeyword(1, 1, QStringLiteral("R").constData(), TokOr);
+        case(u'S'):
+            if(m_current - m_start >= 1) {
+                switch(m_start[1].unicode()) {
+                    case(u'I'):
+                        return checkKeyword(2, 3, QStringLiteral("NCE").constData(), TokSince);
+                    case(u'O'):
+                        return checkKeyword(2, 2, QStringLiteral("RT").constData(), TokSort);
+                    default:
+                        break;
+                }
+            }
+            break;
         default:
             break;
     }
 
-    return true;
+    return literal();
+}
+
+ScriptScanner::Token ScriptScanner::checkKeyword(int start, int length, const QChar* rest, TokenType type)
+{
+    if(m_current - m_start == start + length && std::memcmp(m_start + start, rest, length) == 0) {
+        return makeToken(type);
+    }
+    return literal();
 }
 
 bool ScriptScanner::isAtEnd() const
@@ -233,26 +302,5 @@ QChar ScriptScanner::advance()
 QChar ScriptScanner::peek() const
 {
     return *m_current;
-}
-
-bool ScriptScanner::checkKeyword(const QString& keyword)
-{
-    return matchKeyword(keyword, false);
-}
-
-bool ScriptScanner::matchKeyword(const QString& keyword, bool advance)
-{
-    const QChar* it = m_current;
-    for(const QChar& ch : keyword) {
-        if(*it == u'\0' || *it != ch) {
-            return false;
-        }
-        ++it;
-    }
-
-    if(advance) {
-        std::advance(m_current, keyword.length());
-    }
-    return true;
 }
 } // namespace Fooyin
