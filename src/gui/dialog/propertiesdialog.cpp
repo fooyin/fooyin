@@ -155,7 +155,6 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     setWindowTitle(tr("Properties"));
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
-    buttonBox->setContentsMargins(0, 0, 5, 5);
 
     QObject::connect(buttonBox->button(QDialogButtonBox::Apply), &QAbstractButton::clicked, this,
                      &PropertiesDialogWidget::apply);
@@ -173,14 +172,18 @@ PropertiesDialogWidget::PropertiesDialogWidget(TrackList tracks, PropertiesDialo
     m_toolsButton->setMenu(m_toolsMenu);
     m_toolsButton->setPopupMode(QToolButton::InstantPopup);
 
-    auto* layout = new QGridLayout(this);
-    layout->setContentsMargins(5, 0, 0, 5);
+    auto* layout = new QVBoxLayout(this);
+    layout->setContentsMargins({});
     layout->setSizeConstraint(QLayout::SetMinimumSize);
 
-    layout->addWidget(tabWidget, 0, 0, 1, 2);
-    layout->addWidget(m_toolsButton, 1, 0);
-    layout->addWidget(buttonBox, 1, 1);
-    layout->setColumnStretch(1, 1);
+    auto* bottomLayout = new QGridLayout();
+    bottomLayout->setContentsMargins(5, 0, 5, 5);
+
+    bottomLayout->addWidget(m_toolsButton, 1, 0);
+    bottomLayout->addWidget(buttonBox, 1, 1);
+
+    layout->addWidget(tabWidget, 1);
+    layout->addLayout(bottomLayout);
 
     for(const auto& tab : m_tabs) {
         tabWidget->insertTab(tab.index(), tab.widget(m_tracks), tab.title());
