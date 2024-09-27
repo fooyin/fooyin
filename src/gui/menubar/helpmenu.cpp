@@ -49,13 +49,15 @@ HelpMenu::HelpMenu(ActionManager* actionManager, QObject* parent)
 
     auto* quickStart = new QAction(tr("&Quick start"), this);
     quickStart->setStatusTip(tr("Open the quick start guide"));
-    QObject::connect(quickStart, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/quick-start")); });
+    QObject::connect(quickStart, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/quick-start/quick-start.html"));
+    });
 
     auto* scripting = new QAction(tr("&Scripting help"), this);
     scripting->setStatusTip(tr("Open the scripting documentation"));
-    QObject::connect(scripting, &QAction::triggered, this,
-                     []() { QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/scripting")); });
+    QObject::connect(scripting, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QStringLiteral("https://docs.fooyin.org/en/latest/scripting/basics.html"));
+    });
 
     auto* faq = new QAction(tr("&Frequently asked questions"), this);
     faq->setStatusTip(tr("Open the FAQ"));
