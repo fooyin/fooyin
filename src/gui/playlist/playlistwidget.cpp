@@ -1663,9 +1663,9 @@ void PlaylistWidget::searchEvent(const QString& search)
     }
 
     p->m_search = search;
-
     if(search.length() < 2) {
         p->m_search.clear();
+        p->m_filteredTracks.clear();
     }
 
     auto selectTracks = [this](const TrackList& tracks) {
