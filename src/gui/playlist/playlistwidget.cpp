@@ -1662,9 +1662,9 @@ void PlaylistWidget::searchEvent(const QString& search)
         p->resetSort(true);
     }
 
-    const auto prevSearch = std::exchange(p->m_search, search);
+    p->m_search = search;
 
-    if(search.length() < 3) {
+    if(search.length() < 2) {
         p->m_search.clear();
     }
 
