@@ -439,7 +439,7 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
         }
     }
     else {
-        const Expression argExpr = expression();
+        const Expression argExpr = currentToken(TokenType::TokLeftParen) ? expression() : checkOperator(expression());
         if(argExpr.type != Expr::Null) {
             args.emplace_back(argExpr);
         }
