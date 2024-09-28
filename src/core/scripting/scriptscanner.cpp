@@ -52,6 +52,7 @@ bool isLiteral(QChar ch)
         case(u'O'):
         case(u'P'):
         case(u'S'):
+        case(u'X'):
             return false;
         default:
             return true;
@@ -74,6 +75,7 @@ bool isStartOfKeyword(QChar ch)
         case(u'O'):
         case(u'P'):
         case(u'S'):
+        case(u'X'):
             return true;
         default:
             return false;
@@ -311,6 +313,8 @@ ScriptScanner::Token ScriptScanner::keyword()
                 }
             }
             break;
+        case(u'X'):
+            return checkKeyword(1, u"OR", TokXOr);
         default:
             break;
     }

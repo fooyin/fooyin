@@ -142,6 +142,7 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokLiteral):
         case(ScriptScanner::TokAnd):
         case(ScriptScanner::TokOr):
+        case(ScriptScanner::TokXOr):
         case(ScriptScanner::TokMissing):
         case(ScriptScanner::TokPresent):
         case(ScriptScanner::TokAll):

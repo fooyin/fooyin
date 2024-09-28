@@ -143,6 +143,7 @@ bool isQueryExpression(Fooyin::Expr::Type type)
         case(Type::Group):
         case(Type::And):
         case(Type::Or):
+        case(Type::XOr):
         case(Type::Equals):
         case(Type::Contains):
         case(Type::Greater):
@@ -202,6 +203,7 @@ public:
     Expression notKeyword(const Expression& key);
     Expression andKeyword(const Expression& key);
     Expression orKeyword(const Expression& key);
+    Expression xorKeyword(const Expression& key);
     Expression missingKeyword(const Expression& key);
     Expression presentKeyword(const Expression& key);
     Expression beforeKeyword(const Expression& key);
@@ -226,6 +228,7 @@ public:
     ScriptResult evalGroup(const Expression& exp, const auto& tracks) const;
     ScriptResult evalAnd(const Expression& exp, const auto& tracks) const;
     ScriptResult evalOr(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalXOr(const Expression& exp, const auto& tracks) const;
     ScriptResult evalMissing(const Expression& exp, const auto& tracks) const;
     ScriptResult evalPresent(const Expression& exp, const auto& tracks) const;
     ScriptResult evalEquals(const Expression& exp, const auto& tracks) const;
@@ -354,6 +357,7 @@ Expression ScriptParserPrivate::expression()
             return m_isQuery ? Expression{Expr::All} : literal();
         case(TokenType::TokAnd):
         case(TokenType::TokOr):
+        case(TokenType::TokXOr):
         case(TokenType::TokMissing):
         case(TokenType::TokPresent):
         case(TokenType::TokColon):
@@ -624,6 +628,25 @@ Expression ScriptParserPrivate::orKeyword(const Expression& key)
     return expr;
 }
 
+Expression ScriptParserPrivate::xorKeyword(const Expression& key)
+{
+    Expression expr{Expr::XOr};
+    ExpressionList args;
+
+    advance();
+    args.emplace_back(key);
+
+    if(!currentToken(TokenType::TokEos)) {
+        const Expression argExpr = checkOperator(expression());
+        if(argExpr.type != Expr::Null) {
+            args.emplace_back(argExpr);
+        }
+    }
+
+    expr.value = args;
+    return expr;
+}
+
 Expression ScriptParserPrivate::missingKeyword(const Expression& key)
 {
     Expression expr{Expr::Missing};
@@ -751,6 +774,11 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
         field.type = Expr::Variable;
     }
     args.emplace_back(field);
+
+    if(currentToken(TokenType::TokLast)) {
+        advance();
+        if(currentToken(TokenType::TokWeek)) { }
+    }
 
     if(!currentToken(TokenType::TokEos)) {
         const Expression argExpr  = expression();
@@ -925,6 +953,8 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return evalAnd(exp, tracks);
         case(Expr::Or):
             return evalOr(exp, tracks);
+        case(Expr::XOr):
+            return evalXOr(exp, tracks);
         case(Expr::Missing):
             return evalMissing(exp, tracks);
         case(Expr::Present):
@@ -1157,6 +1187,21 @@ ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& trac
 
     ScriptResult result;
     result.cond = first.cond | second.cond;
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::evalXOr(const Expression& exp, const auto& tracks) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() < 2) {
+        return {};
+    }
+
+    const ScriptResult first  = evalExpression(args.at(0), tracks);
+    const ScriptResult second = evalExpression(args.at(1), tracks);
+
+    ScriptResult result;
+    result.cond = first.cond ^ second.cond;
     return result;
 }
 
@@ -1497,6 +1542,8 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
             return andKeyword(expr);
         case(TokenType::TokOr):
             return orKeyword(expr);
+        case(TokenType::TokXOr):
+            return xorKeyword(expr);
         case(TokenType::TokMissing):
             return missingKeyword(expr);
         case(TokenType::TokPresent):
