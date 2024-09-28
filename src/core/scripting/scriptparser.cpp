@@ -1482,46 +1482,39 @@ ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const 
 
 Expression ScriptParserPrivate::checkOperator(const Expression& expr)
 {
-    if(m_isQuery) {
-        if(currentToken(TokenType::TokColon)) {
+    if(!m_isQuery) {
+        return expr;
+    }
+
+    switch(m_current.type) {
+        case(TokenType::TokColon):
             return contains(expr);
-        }
-        if(currentToken(TokenType::TokEquals)) {
+        case(TokenType::TokEquals):
             return equals(expr);
-        }
-        if(currentToken(TokenType::TokLeftAngle)) {
-            return less(expr);
-        }
-        if(currentToken(TokenType::TokRightAngle)) {
-            return greater(expr);
-        }
-        if(currentToken(TokenType::TokAnd)) {
-            return andKeyword(expr);
-        }
-        if(currentToken(TokenType::TokOr)) {
-            return orKeyword(expr);
-        }
-        if(currentToken(TokenType::TokNot)) {
+        case(TokenType::TokNot):
             return notKeyword(expr);
-        }
-        if(currentToken(TokenType::TokMissing)) {
+        case(TokenType::TokAnd):
+            return andKeyword(expr);
+        case(TokenType::TokOr):
+            return orKeyword(expr);
+        case(TokenType::TokMissing):
             return missingKeyword(expr);
-        }
-        if(currentToken(TokenType::TokPresent)) {
+        case(TokenType::TokPresent):
             return presentKeyword(expr);
-        }
-        if(currentToken(TokenType::TokBefore)) {
+        case(TokenType::TokLeftAngle):
+            return less(expr);
+        case(TokenType::TokRightAngle):
+            return greater(expr);
+        case(TokenType::TokBefore):
             return beforeKeyword(expr);
-        }
-        if(currentToken(TokenType::TokAfter)) {
+        case(TokenType::TokAfter):
             return afterKeyword(expr);
-        }
-        if(currentToken(TokenType::TokSince)) {
+        case(TokenType::TokSince):
             return sinceKeyword(expr);
-        }
-        if(currentToken(TokenType::TokDuring)) {
+        case(TokenType::TokDuring):
             return duringKeyword(expr);
-        }
+        default:
+            break;
     }
 
     return expr;
