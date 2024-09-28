@@ -22,6 +22,8 @@
 
 #include <gtest/gtest.h>
 
+#include <QDateTime>
+
 namespace Fooyin::Testing {
 class ScriptParserTest : public ::testing::Test
 {

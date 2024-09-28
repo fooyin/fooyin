@@ -94,7 +94,7 @@ bool isWhitespace(QChar ch)
 
 bool isKeyword(QChar ch)
 {
-    return (isLiteral(ch) || isStartOfKeyword(ch)) && !isWhitespace(ch);
+    return ch.isUpper() && (isLiteral(ch) || isStartOfKeyword(ch)) && !isWhitespace(ch);
 }
 } // namespace
 
