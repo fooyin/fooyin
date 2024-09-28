@@ -73,6 +73,10 @@ MetaMap metaMap()
         {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return validNum(track.year()); }},
         {QString::fromLatin1(PlayCount),    [](const Fooyin::Track& track) { return validNum(track.playCount()); }},
+        {QString::fromLatin1(FirstPlayed),  [](const Fooyin::Track& track) { return validNum(track.firstPlayed()); }},
+        {QString::fromLatin1(LastPlayed),   [](const Fooyin::Track& track) { return validNum(track.lastPlayed()); }},
+        {QString::fromLatin1(AddedTime),    [](const Fooyin::Track& track) { return validNum(track.addedTime()); }},
+        {QString::fromLatin1(LastModified), [](const Fooyin::Track& track) { return validNum(track.modifiedTime()); }},
         {QString::fromLatin1(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingEditor), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingStars),  [](const Fooyin::Track& track) { return validNum(track.ratingStars()); }}

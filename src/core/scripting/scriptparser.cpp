@@ -25,11 +25,84 @@
 #include <core/track.h>
 #include <utils/helpers.h>
 
+#include <QDateTime>
 #include <QDebug>
 
 using TokenType = Fooyin::ScriptScanner::TokenType;
 
 namespace {
+constexpr std::array<const char*, 6> dateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
+                                                 "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
+
+QDateTime evalDate(const QString& str)
+{
+    for(const auto& format : dateFormats) {
+        const QDateTime date = QDateTime::fromString(str, QLatin1String{format});
+        if(date.isValid()) {
+            return date;
+        }
+    }
+
+    return {};
+}
+
+QDateTime evalDate(const Fooyin::Expression& expr)
+{
+    if(!std::holds_alternative<QString>(expr.value)) {
+        return {};
+    }
+
+    const QString value = std::get<QString>(expr.value);
+    return evalDate(value);
+}
+
+struct DateRange
+{
+    QDateTime start;
+    QDateTime end;
+};
+
+DateRange calculateDateRange(const Fooyin::Expression& expr)
+{
+    if(!std::holds_alternative<QString>(expr.value)) {
+        return {};
+    }
+
+    const QString dateString = std::get<QString>(expr.value);
+
+    DateRange range;
+
+    for(const auto& format : dateFormats) {
+        const auto date = QDateTime::fromString(dateString, QLatin1String{format});
+        if(!date.isValid()) {
+            continue;
+        }
+
+        range.start = date;
+
+        if(strcmp(format, "yyyy") == 0) {
+            range.end = range.start.addYears(1).addSecs(-1);
+        }
+        else if(strcmp(format, "yyyy-MM") == 0) {
+            range.end = range.start.addMonths(1).addSecs(-1);
+        }
+        else if(strcmp(format, "yyyy-MM-dd") == 0) {
+            range.end = range.start.addDays(1).addSecs(-1);
+        }
+        else if(strcmp(format, "yyyy-MM-dd hh") == 0) {
+            range.end = range.start.addSecs(3600 - 1);
+        }
+        else if(strcmp(format, "yyyy-MM-dd hh:mm") == 0) {
+            range.end = range.start.addSecs(60 - 1);
+        }
+        else if(strcmp(format, "yyyy-MM-dd hh:mm:ss") == 0) {
+            range.end = range.start;
+        }
+    }
+
+    return range;
+}
+
 QStringList evalStringList(const Fooyin::ScriptResult& evalExpr, const QStringList& result)
 {
     QStringList listResult;
@@ -79,6 +152,13 @@ bool isQueryExpression(Fooyin::Expr::Type type)
         case(Type::SortAscending):
         case(Type::SortDescending):
         case(Type::All):
+        case(Type::Missing):
+        case(Type::Present):
+        case(Type::Before):
+        case(Type::After):
+        case(Type::Since):
+        case(Type::During):
+        case(Type::Date):
             return true;
         case(Type::Null):
         case(Type::Literal):
@@ -89,8 +169,6 @@ bool isQueryExpression(Fooyin::Expr::Type type)
         case(Type::FunctionArg):
         case(Type::Conditional):
         case(Type::QuotedLiteral):
-        case(Type::Missing):
-        case(Type::Present):
             break;
     }
 
@@ -126,6 +204,10 @@ public:
     Expression orKeyword(const Expression& key);
     Expression missingKeyword(const Expression& key);
     Expression presentKeyword(const Expression& key);
+    Expression beforeKeyword(const Expression& key);
+    Expression afterKeyword(const Expression& key);
+    Expression sinceKeyword(const Expression& key);
+    Expression duringKeyword(const Expression& key);
     Expression equals(const Expression& key);
     Expression contains(const Expression& key);
     Expression greater(const Expression& key);
@@ -154,8 +236,9 @@ public:
     QString evaluate(const ParsedScript& input, const auto& tracks);
     TrackList evaluateQuery(const ParsedScript& input, const TrackList& tracks);
 
-    ScriptResult compareValues(const Expression& exp, const auto& tracks,
-                               const std::function<bool(double, double)>& comparator) const;
+    ScriptResult compareValues(const Expression& exp, const auto& tracks, const auto& comparator) const;
+    ScriptResult compareDates(const Expression& exp, const auto& tracks, const auto& comparator) const;
+    ScriptResult compareDateRange(const Expression& exp, const auto& tracks) const;
     Expression checkOperator(const Expression& expr);
 
     ScriptParser* m_self;
@@ -575,6 +658,113 @@ Expression ScriptParserPrivate::presentKeyword(const Expression& key)
     return expr;
 }
 
+Expression ScriptParserPrivate::beforeKeyword(const Expression& key)
+{
+    Expression expr{Expr::Before};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    if(!currentToken(TokenType::TokEos)) {
+        Expression argExpr   = expression();
+        const QDateTime date = evalDate(argExpr);
+        if(date.isValid()) {
+            argExpr.type  = Expr::Date;
+            argExpr.value = QString::number(date.toMSecsSinceEpoch());
+            args.emplace_back(argExpr);
+        }
+    }
+
+    expr.value = args;
+    return expr;
+}
+
+Expression ScriptParserPrivate::afterKeyword(const Expression& key)
+{
+    Expression expr{Expr::After};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    if(!currentToken(TokenType::TokEos)) {
+        Expression argExpr   = expression();
+        const QDateTime date = evalDate(argExpr);
+        if(date.isValid()) {
+            argExpr.type  = Expr::Date;
+            argExpr.value = QString::number(date.toMSecsSinceEpoch());
+            args.emplace_back(argExpr);
+        }
+    }
+
+    expr.value = args;
+    return expr;
+}
+
+Expression ScriptParserPrivate::sinceKeyword(const Expression& key)
+{
+    Expression expr{Expr::Since};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    if(!currentToken(TokenType::TokEos)) {
+        Expression argExpr   = expression();
+        const QDateTime date = evalDate(argExpr);
+        if(date.isValid()) {
+            argExpr.type  = Expr::Date;
+            argExpr.value = QString::number(date.toMSecsSinceEpoch());
+            args.emplace_back(argExpr);
+        }
+    }
+
+    expr.value = args;
+    return expr;
+}
+
+Expression ScriptParserPrivate::duringKeyword(const Expression& key)
+{
+    Expression expr{Expr::During};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    if(!currentToken(TokenType::TokEos)) {
+        const Expression argExpr  = expression();
+        const DateRange dateRange = calculateDateRange(argExpr);
+        if(dateRange.start.isValid() && dateRange.end.isValid()) {
+            args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
+            args.emplace_back(Expr::Date, QString::number(dateRange.end.toMSecsSinceEpoch()));
+        }
+    }
+
+    expr.value = args;
+    return expr;
+}
+
 Expression ScriptParserPrivate::equals(const Expression& key)
 {
     Expression expr{Expr::Equals};
@@ -751,6 +941,14 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return compareValues(exp, tracks, std::less<>());
         case(Expr::LessEqual):
             return compareValues(exp, tracks, std::less_equal<>());
+        case(Expr::Before):
+            return compareDates(exp, tracks, std::less<>());
+        case(Expr::After):
+            return compareDates(exp, tracks, std::greater<>());
+        case(Expr::Since):
+            return compareDates(exp, tracks, std::greater_equal<>());
+        case(Expr::During):
+            return compareDateRange(exp, tracks);
         case(Expr::All):
         case(Expr::SortAscending):
         case(Expr::SortDescending):
@@ -1198,8 +1396,7 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
     return filteredTracks;
 }
 
-ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const auto& tracks,
-                                                const std::function<bool(double, double)>& comparator) const
+ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const auto& tracks, const auto& comparator) const
 {
     const auto args = std::get<ExpressionList>(exp.value);
     if(args.size() < 2) {
@@ -1232,6 +1429,57 @@ ScriptResult ScriptParserPrivate::compareValues(const Expression& exp, const aut
     return result;
 }
 
+ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto& tracks, const auto& comparator) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() < 2) {
+        return {};
+    }
+
+    uint64_t first;
+
+    const QString var = std::get<QString>(args.at(0).value);
+    if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+        first = tracks.metaValue(var).toULongLong();
+    }
+    else if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, TrackList>) {
+        first = tracks.front().metaValue(var).toULongLong();
+    }
+
+    const auto second = std::get<QString>(args.at(1).value).toULongLong();
+
+    ScriptResult result;
+    result.cond = comparator(first, second);
+
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const auto& tracks) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() < 3) {
+        return {};
+    }
+
+    uint64_t first;
+
+    const QString var = std::get<QString>(args.at(0).value);
+    if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+        first = tracks.metaValue(var).toULongLong();
+    }
+    else if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, TrackList>) {
+        first = tracks.front().metaValue(var).toULongLong();
+    }
+
+    const auto min = std::get<QString>(args.at(1).value).toULongLong();
+    const auto max = std::get<QString>(args.at(2).value).toULongLong();
+
+    ScriptResult result;
+    result.cond = first > min && first < max;
+
+    return result;
+}
+
 Expression ScriptParserPrivate::checkOperator(const Expression& expr)
 {
     if(m_isQuery) {
@@ -1261,6 +1509,18 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
         }
         if(currentToken(TokenType::TokPresent)) {
             return presentKeyword(expr);
+        }
+        if(currentToken(TokenType::TokBefore)) {
+            return beforeKeyword(expr);
+        }
+        if(currentToken(TokenType::TokAfter)) {
+            return afterKeyword(expr);
+        }
+        if(currentToken(TokenType::TokSince)) {
+            return sinceKeyword(expr);
+        }
+        if(currentToken(TokenType::TokDuring)) {
+            return duringKeyword(expr);
         }
     }
 

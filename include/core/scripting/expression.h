@@ -49,6 +49,11 @@ enum Type : uint8_t
     QuotedLiteral  = 21,
     Missing        = 22,
     Present        = 23,
+    Before         = 24,
+    After          = 25,
+    Since          = 26,
+    During         = 27,
+    Date           = 28,
 };
 }
 
