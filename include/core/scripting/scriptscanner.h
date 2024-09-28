@@ -94,6 +94,7 @@ private:
     [[nodiscard]] bool isAtEnd() const;
     QChar advance();
     [[nodiscard]] QChar peek() const;
+    [[nodiscard]] int currentLength() const;
 
     QStringView m_input;
     const QChar* m_start;

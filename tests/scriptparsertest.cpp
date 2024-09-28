@@ -186,5 +186,7 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed AFTER 2000"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed SINCE 2013"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING 2024"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST 10 MINUTES"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST MINUTE"), tracks).size());
 }
 } // namespace Fooyin::Testing

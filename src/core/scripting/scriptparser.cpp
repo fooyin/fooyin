@@ -777,10 +777,43 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
 
     if(currentToken(TokenType::TokLast)) {
         advance();
-        if(currentToken(TokenType::TokWeek)) { }
-    }
 
-    if(!currentToken(TokenType::TokEos)) {
+        bool valid{false};
+        int count{1};
+        QDateTime date = QDateTime::currentDateTime();
+
+        if(currentToken(TokenType::TokLiteral)) {
+            count = evalLiteral(expression()).value.toInt();
+        }
+
+        if(currentToken(TokenType::TokWeek)) {
+            date  = date.addDays(-7LL * count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokDay)) {
+            date  = date.addDays(-1LL * count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokHour)) {
+            date  = date.addSecs(-3600LL * count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokMinute)) {
+            date  = date.addSecs(-60LL * count);
+            valid = true;
+        }
+        else if(currentToken(TokenType::TokSecond)) {
+            date  = date.addSecs(-1LL * count);
+            valid = true;
+        }
+
+        if(valid) {
+            advance();
+            args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
+            args.emplace_back(Expr::Date, QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+        }
+    }
+    else if(!currentToken(TokenType::TokEos)) {
         const Expression argExpr  = expression();
         const DateRange dateRange = calculateDateRange(argExpr);
         if(dateRange.start.isValid() && dateRange.end.isValid()) {
