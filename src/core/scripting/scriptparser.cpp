@@ -201,19 +201,14 @@ public:
     Expression conditional();
     Expression group();
     Expression notKeyword(const Expression& key);
-    Expression andKeyword(const Expression& key);
-    Expression orKeyword(const Expression& key);
-    Expression xorKeyword(const Expression& key);
+    Expression logicalOperator(const Expression& key, Expr::Type type);
     Expression missingKeyword(const Expression& key);
     Expression presentKeyword(const Expression& key);
-    Expression beforeKeyword(const Expression& key);
-    Expression afterKeyword(const Expression& key);
-    Expression sinceKeyword(const Expression& key);
+    Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
     Expression equals(const Expression& key);
     Expression contains(const Expression& key);
-    Expression greater(const Expression& key);
-    Expression less(const Expression& key);
+    Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType);
     Expression sort();
 
     ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
@@ -589,47 +584,9 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
     return expr;
 }
 
-Expression ScriptParserPrivate::andKeyword(const Expression& key)
+Expression ScriptParserPrivate::logicalOperator(const Expression& key, Expr::Type type)
 {
-    Expression expr{Expr::And};
-    ExpressionList args;
-
-    advance();
-    args.emplace_back(key);
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = checkOperator(expression());
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::orKeyword(const Expression& key)
-{
-    Expression expr{Expr::Or};
-    ExpressionList args;
-
-    advance();
-    args.emplace_back(key);
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = checkOperator(expression());
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::xorKeyword(const Expression& key)
-{
-    Expression expr{Expr::XOr};
+    Expression expr{type};
     ExpressionList args;
 
     advance();
@@ -680,63 +637,9 @@ Expression ScriptParserPrivate::presentKeyword(const Expression& key)
     return expr;
 }
 
-Expression ScriptParserPrivate::beforeKeyword(const Expression& key)
+Expression ScriptParserPrivate::timeKeyword(const Expression& key, Expr::Type type)
 {
-    Expression expr{Expr::Before};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(!currentToken(TokenType::TokEos)) {
-        Expression argExpr   = expression();
-        const QDateTime date = evalDate(argExpr);
-        if(date.isValid()) {
-            argExpr.type  = Expr::Date;
-            argExpr.value = QString::number(date.toMSecsSinceEpoch());
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::afterKeyword(const Expression& key)
-{
-    Expression expr{Expr::After};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(!currentToken(TokenType::TokEos)) {
-        Expression argExpr   = expression();
-        const QDateTime date = evalDate(argExpr);
-        if(date.isValid()) {
-            argExpr.type  = Expr::Date;
-            argExpr.value = QString::number(date.toMSecsSinceEpoch());
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::sinceKeyword(const Expression& key)
-{
-    Expression expr{Expr::Since};
+    Expression expr{type};
     ExpressionList args;
 
     advance();
@@ -890,9 +793,9 @@ Expression ScriptParserPrivate::contains(const Expression& key)
     return expr;
 }
 
-Expression ScriptParserPrivate::greater(const Expression& key)
+Expression ScriptParserPrivate::relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType)
 {
-    Expression expr{Expr::Greater};
+    Expression expr{type};
     ExpressionList args;
 
     advance();
@@ -904,35 +807,7 @@ Expression ScriptParserPrivate::greater(const Expression& key)
     args.emplace_back(field);
 
     if(match(TokenType::TokEquals)) {
-        expr.type = Expr::GreaterEqual;
-    }
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = expression();
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::less(const Expression& key)
-{
-    Expression expr{Expr::Less};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(match(TokenType::TokEquals)) {
-        expr.type = Expr::LessEqual;
+        expr.type = equalsType;
     }
 
     if(!currentToken(TokenType::TokEos)) {
@@ -1588,25 +1463,25 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
         case(TokenType::TokNot):
             return notKeyword(expr);
         case(TokenType::TokAnd):
-            return andKeyword(expr);
+            return logicalOperator(expr, Expr::And);
         case(TokenType::TokOr):
-            return orKeyword(expr);
+            return logicalOperator(expr, Expr::Or);
         case(TokenType::TokXOr):
-            return xorKeyword(expr);
+            return logicalOperator(expr, Expr::XOr);
         case(TokenType::TokMissing):
             return missingKeyword(expr);
         case(TokenType::TokPresent):
             return presentKeyword(expr);
         case(TokenType::TokLeftAngle):
-            return less(expr);
+            return relationalOperator(expr, Expr::Less, Expr::LessEqual);
         case(TokenType::TokRightAngle):
-            return greater(expr);
+            return relationalOperator(expr, Expr::Greater, Expr::GreaterEqual);
         case(TokenType::TokBefore):
-            return beforeKeyword(expr);
+            return timeKeyword(expr, Expr::Before);
         case(TokenType::TokAfter):
-            return afterKeyword(expr);
+            return timeKeyword(expr, Expr::After);
         case(TokenType::TokSince):
-            return sinceKeyword(expr);
+            return timeKeyword(expr, Expr::Since);
         case(TokenType::TokDuring):
             return duringKeyword(expr);
         default:
