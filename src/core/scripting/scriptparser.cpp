@@ -89,6 +89,8 @@ public:
     Expression notKeyword(const Expression& key);
     Expression andKeyword(const Expression& key);
     Expression orKeyword(const Expression& key);
+    Expression missingKeyword(const Expression& key);
+    Expression presentKeyword(const Expression& key);
     Expression equals(const Expression& key);
     Expression contains(const Expression& key);
     Expression greater(const Expression& key);
@@ -99,6 +101,7 @@ public:
     ScriptResult evalLiteral(const Expression& exp) const;
     ScriptResult evalVariable(const Expression& exp, const auto& tracks) const;
     ScriptResult evalVariableList(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalVariableRaw(const Expression& exp, const auto& tracks) const;
     ScriptResult evalFunction(const Expression& exp, const auto& tracks) const;
     ScriptResult evalFunctionArg(const Expression& exp, const auto& tracks) const;
     ScriptResult evalConditional(const Expression& exp, const auto& tracks) const;
@@ -106,6 +109,8 @@ public:
     ScriptResult evalGroup(const Expression& exp, const auto& tracks) const;
     ScriptResult evalAnd(const Expression& exp, const auto& tracks) const;
     ScriptResult evalOr(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalMissing(const Expression& exp, const auto& tracks) const;
+    ScriptResult evalPresent(const Expression& exp, const auto& tracks) const;
     ScriptResult evalEquals(const Expression& exp, const auto& tracks) const;
     ScriptResult evalContains(const Expression& exp, const auto& tracks) const;
 
@@ -225,12 +230,14 @@ Expression ScriptParserPrivate::expression()
             return literal();
         case(TokenType::TokLeftParen):
             return m_isQuery ? group() : literal();
-        case(TokenType::TokExclamation):
+        case(TokenType::TokNot):
             return m_isQuery ? notKeyword({}) : literal();
         case(TokenType::TokAll):
             return m_isQuery ? Expression{Expr::All} : literal();
         case(TokenType::TokAnd):
         case(TokenType::TokOr):
+        case(TokenType::TokMissing):
+        case(TokenType::TokPresent):
         case(TokenType::TokColon):
         case(TokenType::TokEquals):
         case(TokenType::TokLeftAngle):
@@ -427,8 +434,8 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
     Expression expr{Expr::Not};
     ExpressionList args;
 
-    if(currentToken(TokenType::TokExclamation)) {
-        consume(TokenType::TokExclamation, QStringLiteral("Expected '!' after expression"));
+    if(currentToken(TokenType::TokNot)) {
+        consume(TokenType::TokNot, QStringLiteral("Expected '!' after expression"));
 
         if(currentToken(TokenType::TokEquals)) {
             consume(TokenType::TokEquals, QStringLiteral("Expected '=' after expression"));
@@ -466,7 +473,7 @@ Expression ScriptParserPrivate::andKeyword(const Expression& key)
     Expression expr{Expr::And};
     ExpressionList args;
 
-    consume(TokenType::TokAnd, QStringLiteral("Expected 'AND' after expression"));
+    advance();
     args.emplace_back(key);
 
     if(!currentToken(TokenType::TokEos)) {
@@ -485,7 +492,7 @@ Expression ScriptParserPrivate::orKeyword(const Expression& key)
     Expression expr{Expr::Or};
     ExpressionList args;
 
-    consume(TokenType::TokOr, QStringLiteral("Expected 'OR' after expression"));
+    advance();
     args.emplace_back(key);
 
     if(!currentToken(TokenType::TokEos)) {
@@ -499,12 +506,46 @@ Expression ScriptParserPrivate::orKeyword(const Expression& key)
     return expr;
 }
 
+Expression ScriptParserPrivate::missingKeyword(const Expression& key)
+{
+    Expression expr{Expr::Missing};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    expr.value = args;
+    return expr;
+}
+
+Expression ScriptParserPrivate::presentKeyword(const Expression& key)
+{
+    Expression expr{Expr::Present};
+    ExpressionList args;
+
+    advance();
+
+    Expression field{key};
+    if(field.type == Expr::Literal) {
+        field.type = Expr::Variable;
+    }
+    args.emplace_back(field);
+
+    expr.value = args;
+    return expr;
+}
+
 Expression ScriptParserPrivate::equals(const Expression& key)
 {
     Expression expr{Expr::Equals};
     ExpressionList args;
 
-    consume(TokenType::TokEquals, QStringLiteral("Expected '=' after expression"));
+    advance();
 
     Expression field{key};
     if(field.type == Expr::Literal) {
@@ -528,7 +569,7 @@ Expression ScriptParserPrivate::contains(const Expression& key)
     Expression expr{Expr::Contains};
     ExpressionList args;
 
-    consume(TokenType::TokColon, QStringLiteral("Expected ':' after expression"));
+    advance();
 
     Expression field{key};
     if(field.type == Expr::Literal) {
@@ -552,7 +593,7 @@ Expression ScriptParserPrivate::greater(const Expression& key)
     Expression expr{Expr::Greater};
     ExpressionList args;
 
-    consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+    advance();
 
     Expression field{key};
     if(field.type == Expr::Literal) {
@@ -580,7 +621,7 @@ Expression ScriptParserPrivate::less(const Expression& key)
     Expression expr{Expr::Less};
     ExpressionList args;
 
-    consume(TokenType::TokLeftAngle, QStringLiteral("Expected '<' after expression"));
+    advance();
 
     Expression field{key};
     if(field.type == Expr::Literal) {
@@ -643,6 +684,8 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return evalVariable(exp, tracks);
         case(Expr::VariableList):
             return evalVariableList(exp, tracks);
+        case(Expr::VariableRaw):
+            return evalVariableRaw(exp, tracks);
         case(Expr::Function):
             return evalFunction(exp, tracks);
         case(Expr::FunctionArg):
@@ -657,6 +700,10 @@ ScriptResult ScriptParserPrivate::evalExpression(const Expression& exp, const au
             return evalAnd(exp, tracks);
         case(Expr::Or):
             return evalOr(exp, tracks);
+        case(Expr::Missing):
+            return evalMissing(exp, tracks);
+        case(Expr::Present):
+            return evalPresent(exp, tracks);
         case(Expr::Equals):
             return evalEquals(exp, tracks);
         case(Expr::Contains):
@@ -707,6 +754,30 @@ ScriptResult ScriptParserPrivate::evalVariableList(const Expression& exp, const 
 {
     const QString var = std::get<QString>(exp.value);
     return m_registry->value(var.toLower(), tracks);
+}
+
+ScriptResult ScriptParserPrivate::evalVariableRaw(const Expression& exp, const auto& tracks) const
+{
+    const QString var = std::get<QString>(exp.value);
+
+    ScriptResult result;
+    if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
+        result.value = tracks.metaValue(var);
+    }
+    else if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, TrackList>) {
+        result.value = tracks.front().metaValue(var);
+    }
+    result.cond = !result.value.isEmpty();
+
+    if(!result.cond) {
+        return {};
+    }
+
+    if(result.value.contains(QLatin1String{Constants::UnitSeparator})) {
+        result.value = result.value.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+    }
+
+    return result;
 }
 
 ScriptResult ScriptParserPrivate::evalFunction(const Expression& exp, const auto& tracks) const
@@ -853,6 +924,31 @@ ScriptResult ScriptParserPrivate::evalOr(const Expression& exp, const auto& trac
 
     ScriptResult result;
     result.cond = first.cond | second.cond;
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::evalMissing(const Expression& exp, const auto& tracks) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() != 1) {
+        return {};
+    }
+
+    const Expression meta{Expr::VariableRaw, args.front().value};
+    ScriptResult result = evalExpression(meta, tracks);
+    result.cond         = !result.cond;
+    return result;
+}
+
+ScriptResult ScriptParserPrivate::evalPresent(const Expression& exp, const auto& tracks) const
+{
+    const auto args = std::get<ExpressionList>(exp.value);
+    if(args.size() != 1) {
+        return {};
+    }
+
+    const Expression meta{Expr::VariableRaw, args.front().value};
+    ScriptResult result = evalExpression(meta, tracks);
     return result;
 }
 
@@ -1119,8 +1215,14 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
         if(currentToken(TokenType::TokOr)) {
             return orKeyword(expr);
         }
-        if(currentToken(TokenType::TokExclamation)) {
+        if(currentToken(TokenType::TokNot)) {
             return notKeyword(expr);
+        }
+        if(currentToken(TokenType::TokMissing)) {
+            return missingKeyword(expr);
+        }
+        if(currentToken(TokenType::TokPresent)) {
+            return presentKeyword(expr);
         }
     }
 

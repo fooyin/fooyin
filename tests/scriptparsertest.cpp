@@ -164,8 +164,13 @@ TEST_F(ScriptParserTest, QueryTest)
     tracks.push_back(track2);
 
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size());
-    EXPECT_TRUE(m_parser.filter(QStringLiteral("playcount>1"), tracks).empty());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount>1"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount GREATER 1"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount LESS 1"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("NOT playcount>=1"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title PRESENT"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("title MISSING"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:ABC F"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:DE AND genre=rock AND title:D"), tracks).size());
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title:AB"), tracks).size());

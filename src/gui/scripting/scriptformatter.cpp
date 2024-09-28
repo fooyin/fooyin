@@ -138,10 +138,12 @@ void ScriptFormatterPrivate::expression()
         case(ScriptScanner::TokSlash):
         case(ScriptScanner::TokColon):
         case(ScriptScanner::TokEquals):
-        case(ScriptScanner::TokExclamation):
+        case(ScriptScanner::TokNot):
         case(ScriptScanner::TokLiteral):
         case(ScriptScanner::TokAnd):
         case(ScriptScanner::TokOr):
+        case(ScriptScanner::TokMissing):
+        case(ScriptScanner::TokPresent):
         case(ScriptScanner::TokAll):
         case(ScriptScanner::TokSort):
         case(ScriptScanner::TokBy):

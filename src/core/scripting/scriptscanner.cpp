@@ -42,8 +42,15 @@ bool isLiteral(QChar ch)
         case(u'A'):
         case(u'B'):
         case(u'D'):
+        case(u'E'):
+        case(u'G'):
+        case(u'H'):
+        case(u'I'):
         case(u'L'):
+        case(u'M'):
+        case(u'N'):
         case(u'O'):
+        case(u'P'):
         case(u'S'):
             return false;
         default:
@@ -57,8 +64,15 @@ bool isStartOfKeyword(QChar ch)
         case(u'A'):
         case(u'B'):
         case(u'D'):
+        case(u'E'):
+        case(u'G'):
+        case(u'H'):
+        case(u'I'):
         case(u'L'):
+        case(u'M'):
+        case(u'N'):
         case(u'O'):
+        case(u'P'):
         case(u'S'):
             return true;
         default:
@@ -181,7 +195,7 @@ ScriptScanner::Token ScriptScanner::scanNext()
         case(u'='):
             return makeToken(TokEquals);
         case(u'!'):
-            return makeToken(TokExclamation);
+            return makeToken(TokNot);
         case(u'\\'):
             return makeToken(TokEscape);
         case(u'\0'):
@@ -219,16 +233,16 @@ ScriptScanner::Token ScriptScanner::keyword()
 
     switch(m_start->unicode()) {
         case(u'A'): {
-            if(m_current - m_start >= 1) {
+            if(m_current - m_start > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'N'):
-                        return checkKeyword(2, 1, QStringLiteral("D").constData(), TokAnd);
+                        return checkKeyword(2, u"D", TokAnd);
                     case(u'L'):
-                        return checkKeyword(2, 1, QStringLiteral("L").constData(), TokAll);
+                        return checkKeyword(2, u"L", TokAll);
                     case(u'F'):
-                        return checkKeyword(2, 3, QStringLiteral("TER").constData(), TokAfter);
+                        return checkKeyword(2, u"TER", TokAfter);
                     case(u'S'):
-                        return checkKeyword(2, 7, QStringLiteral("CENDING").constData(), TokAscending);
+                        return checkKeyword(2, u"CENDING", TokAscending);
                     default:
                         break;
                 }
@@ -236,38 +250,62 @@ ScriptScanner::Token ScriptScanner::keyword()
             break;
         }
         case(u'B'):
-            if(m_current - m_start >= 1) {
+            if(m_current - m_start > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'E'):
-                        return checkKeyword(2, 4, QStringLiteral("FORE").constData(), TokBefore);
+                        return checkKeyword(2, u"FORE", TokBefore);
                     default:
                         break;
                 }
             }
-            return checkKeyword(1, 1, QStringLiteral("Y").constData(), TokBy);
+            return checkKeyword(1, u"Y", TokBy);
         case(u'D'):
-            if(m_current - m_start >= 1) {
+            if(m_current - m_start > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'E'):
-                        return checkKeyword(2, 8, QStringLiteral("SCENDING").constData(), TokDescending);
+                        return checkKeyword(2, u"SCENDING", TokDescending);
                     case(u'U'):
-                        return checkKeyword(2, 4, QStringLiteral("RING").constData(), TokDuring);
+                        return checkKeyword(2, u"RING", TokDuring);
                     default:
                         break;
                 }
             }
             break;
+        case(u'E'):
+            return checkKeyword(1, u"QUAL", TokEquals);
+        case(u'G'):
+            return checkKeyword(1, u"REATER", TokRightAngle);
+        case(u'H'):
+            return checkKeyword(1, u"AS", TokColon);
+        case(u'I'):
+            return checkKeyword(1, u"S", TokEquals);
         case(u'L'):
-            return checkKeyword(1, 3, QStringLiteral("AST").constData(), TokLast);
+            if(m_current - m_start > 1) {
+                switch(m_start[1].unicode()) {
+                    case(u'A'):
+                        return checkKeyword(2, u"ST", TokLast);
+                    case(u'E'):
+                        return checkKeyword(2, u"SS", TokLeftAngle);
+                    default:
+                        break;
+                }
+            }
+            break;
+        case(u'M'):
+            return checkKeyword(1, u"ISSING", TokMissing);
+        case(u'N'):
+            return checkKeyword(1, u"OT", TokNot);
         case(u'O'):
-            return checkKeyword(1, 1, QStringLiteral("R").constData(), TokOr);
+            return checkKeyword(1, u"R", TokOr);
+        case(u'P'):
+            return checkKeyword(1, u"RESENT", TokPresent);
         case(u'S'):
-            if(m_current - m_start >= 1) {
+            if(m_current - m_start > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'I'):
-                        return checkKeyword(2, 3, QStringLiteral("NCE").constData(), TokSince);
+                        return checkKeyword(2, u"NCE", TokSince);
                     case(u'O'):
-                        return checkKeyword(2, 2, QStringLiteral("RT").constData(), TokSort);
+                        return checkKeyword(2, u"RT", TokSort);
                     default:
                         break;
                 }
@@ -280,9 +318,9 @@ ScriptScanner::Token ScriptScanner::keyword()
     return literal();
 }
 
-ScriptScanner::Token ScriptScanner::checkKeyword(int start, int length, const QChar* rest, TokenType type)
+ScriptScanner::Token ScriptScanner::checkKeyword(int start, QAnyStringView rest, TokenType type)
 {
-    if(m_current - m_start == start + length && std::memcmp(m_start + start, rest, length) == 0) {
+    if(m_current - m_start == start + rest.length() && std::memcmp(m_start + start, rest.data(), rest.length()) == 0) {
         return makeToken(type);
     }
     return literal();

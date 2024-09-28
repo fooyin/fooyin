@@ -44,7 +44,7 @@ public:
         TokSlash       = 12,
         TokColon       = 13,
         TokEquals      = 14,
-        TokExclamation = 15,
+        TokNot         = 15,
         TokEscape      = 16,
         TokLiteral     = 17,
         TokAnd         = 18,
@@ -64,6 +64,8 @@ public:
         TokHour        = 32,
         TokDay         = 33,
         TokWeek        = 34,
+        TokMissing     = 35,
+        TokPresent     = 36,
     };
 
     struct Token
@@ -86,7 +88,7 @@ private:
     [[nodiscard]] Token makeToken(TokenType type) const;
     Token literal();
     Token keyword();
-    Token checkKeyword(int start, int length, const QChar* rest, TokenType type);
+    Token checkKeyword(int start, QAnyStringView rest, TokenType type);
 
     [[nodiscard]] bool isAtEnd() const;
     QChar advance();
