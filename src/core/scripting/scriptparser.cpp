@@ -779,11 +779,23 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
         advance();
 
         bool valid{false};
+        bool validUserCount{true};
         int count{1};
         QDateTime date = QDateTime::currentDateTime();
 
         if(currentToken(TokenType::TokLiteral)) {
-            count = evalLiteral(expression()).value.toInt();
+            const auto countExpr = evalLiteral(expression());
+            if(!countExpr.cond) {
+                return {};
+            }
+
+            const int userCount = countExpr.value.toInt();
+            if(userCount > 0 && userCount < std::numeric_limits<int>::max()) {
+                count = userCount;
+            }
+            else {
+                validUserCount = false;
+            }
         }
 
         if(currentToken(TokenType::TokWeek)) {
@@ -809,8 +821,13 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
 
         if(valid) {
             advance();
-            args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
-            args.emplace_back(Expr::Date, QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+            if(validUserCount) {
+                args.emplace_back(Expr::Date, QString::number(date.toMSecsSinceEpoch()));
+                args.emplace_back(Expr::Date, QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()));
+            }
+            else {
+                return {};
+            }
         }
     }
     else if(!currentToken(TokenType::TokEos)) {
