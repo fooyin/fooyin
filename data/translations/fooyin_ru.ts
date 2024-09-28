@@ -288,7 +288,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="93"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить все поддерживаемые расширения</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="104"/>
@@ -298,7 +298,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="105"/>
         <source>Tag readers</source>
-        <translation type="unfinished"></translation>
+        <translation>Экстракторы тегов</translation>
     </message>
 </context>
 <context>
@@ -442,7 +442,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Elide text</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Пропуск тексте elide</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
@@ -838,12 +838,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Выход</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
         <source>Quit %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выход %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="66"/>
