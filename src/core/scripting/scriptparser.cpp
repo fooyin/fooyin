@@ -202,13 +202,10 @@ public:
     Expression group();
     Expression notKeyword(const Expression& key);
     Expression logicalOperator(const Expression& key, Expr::Type type);
-    Expression missingKeyword(const Expression& key);
-    Expression presentKeyword(const Expression& key);
+    Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType = Expr::Null);
+    Expression metadataKeyword(const Expression& key, Expr::Type type);
     Expression timeKeyword(const Expression& key, Expr::Type type);
     Expression duringKeyword(const Expression& key);
-    Expression equals(const Expression& key);
-    Expression contains(const Expression& key);
-    Expression relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType);
     Expression sort();
 
     ScriptResult evalExpression(const Expression& exp, const auto& tracks) const;
@@ -603,9 +600,9 @@ Expression ScriptParserPrivate::logicalOperator(const Expression& key, Expr::Typ
     return expr;
 }
 
-Expression ScriptParserPrivate::missingKeyword(const Expression& key)
+Expression ScriptParserPrivate::relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType)
 {
-    Expression expr{Expr::Missing};
+    Expression expr{type};
     ExpressionList args;
 
     advance();
@@ -616,13 +613,24 @@ Expression ScriptParserPrivate::missingKeyword(const Expression& key)
     }
     args.emplace_back(field);
 
+    if(equalsType != Expr::Null && match(TokenType::TokEquals)) {
+        expr.type = equalsType;
+    }
+
+    if(!currentToken(TokenType::TokEos)) {
+        const Expression argExpr = expression();
+        if(argExpr.type != Expr::Null) {
+            args.emplace_back(argExpr);
+        }
+    }
+
     expr.value = args;
     return expr;
 }
 
-Expression ScriptParserPrivate::presentKeyword(const Expression& key)
+Expression ScriptParserPrivate::metadataKeyword(const Expression& key, Expr::Type type)
 {
-    Expression expr{Expr::Present};
+    Expression expr{type};
     ExpressionList args;
 
     advance();
@@ -738,82 +746,6 @@ Expression ScriptParserPrivate::duringKeyword(const Expression& key)
         if(dateRange.start.isValid() && dateRange.end.isValid()) {
             args.emplace_back(Expr::Date, QString::number(dateRange.start.toMSecsSinceEpoch()));
             args.emplace_back(Expr::Date, QString::number(dateRange.end.toMSecsSinceEpoch()));
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::equals(const Expression& key)
-{
-    Expression expr{Expr::Equals};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = expression();
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::contains(const Expression& key)
-{
-    Expression expr{Expr::Contains};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = expression();
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
-        }
-    }
-
-    expr.value = args;
-    return expr;
-}
-
-Expression ScriptParserPrivate::relationalOperator(const Expression& key, Expr::Type type, Expr::Type equalsType)
-{
-    Expression expr{type};
-    ExpressionList args;
-
-    advance();
-
-    Expression field{key};
-    if(field.type == Expr::Literal) {
-        field.type = Expr::Variable;
-    }
-    args.emplace_back(field);
-
-    if(match(TokenType::TokEquals)) {
-        expr.type = equalsType;
-    }
-
-    if(!currentToken(TokenType::TokEos)) {
-        const Expression argExpr = expression();
-        if(argExpr.type != Expr::Null) {
-            args.emplace_back(argExpr);
         }
     }
 
@@ -1457,9 +1389,9 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
 
     switch(m_current.type) {
         case(TokenType::TokColon):
-            return contains(expr);
+            return relationalOperator(expr, Expr::Contains);
         case(TokenType::TokEquals):
-            return equals(expr);
+            return relationalOperator(expr, Expr::Equals);
         case(TokenType::TokNot):
             return notKeyword(expr);
         case(TokenType::TokAnd):
@@ -1469,9 +1401,9 @@ Expression ScriptParserPrivate::checkOperator(const Expression& expr)
         case(TokenType::TokXOr):
             return logicalOperator(expr, Expr::XOr);
         case(TokenType::TokMissing):
-            return missingKeyword(expr);
+            return metadataKeyword(expr, Expr::Missing);
         case(TokenType::TokPresent):
-            return presentKeyword(expr);
+            return metadataKeyword(expr, Expr::Present);
         case(TokenType::TokLeftAngle):
             return relationalOperator(expr, Expr::Less, Expr::LessEqual);
         case(TokenType::TokRightAngle):
