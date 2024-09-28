@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.3](https://github.com/fooyin/fooyin/releases/tag/v0.7.3) (2024-09-28)
+
+### Improvements
+
+* Decoding: Support vgm7z
+* Properties: Improve appearance
+
+### Fixes
+
+* Decoding: Resolve crash when restarting playback of some decoders
+* Layout: Resolve crash when leaving layout editing mode
+
 ## [0.7.2](https://github.com/fooyin/fooyin/releases/tag/v0.7.2) (2024-09-26)
 
 ### Improvements
