@@ -153,6 +153,7 @@ TEST_F(ScriptParserTest, QueryTest)
     Track track1;
     track1.setTitle(QStringLiteral("ABC F"));
     track1.setGenres({QStringLiteral("Pop")});
+    track1.setYear(1991);
     track1.setDuration(2000);
     track1.setPlayCount(1);
     tracks.push_back(track1);
@@ -160,6 +161,7 @@ TEST_F(ScriptParserTest, QueryTest)
     Track track2;
     track2.setTitle(QStringLiteral("DEF"));
     track2.setGenres({QStringLiteral("Rock")});
+    track1.setYear(2013);
     track2.setDuration(3000);
     tracks.push_back(track2);
 
@@ -177,5 +179,6 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title=\"ABC F\""), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("!(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed BEFORE 2000"), tracks).size());
 }
 } // namespace Fooyin::Testing
