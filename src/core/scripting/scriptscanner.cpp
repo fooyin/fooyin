@@ -235,6 +235,10 @@ ScriptScanner::Token ScriptScanner::keyword()
         advance();
     }
 
+    const auto isPlural = [this](int pos) {
+        return currentLength() > pos && m_start[pos].unicode() == u'S';
+    };
+
     switch(m_start->unicode()) {
         case(u'A'): {
             if(currentLength() > 1) {
@@ -267,10 +271,7 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'A'):
-                        if(currentLength() > 3 && m_start[3].unicode() == u'S') {
-                            return checkKeyword(2, u"YS", TokDay);
-                        }
-                        return checkKeyword(2, u"Y", TokDay);
+                        return checkKeyword(2, isPlural(3) ? u"YS" : u"Y", TokDay);
                     case(u'E'):
                         return checkKeyword(2, u"SCENDING", TokDescending);
                     case(u'U'):
@@ -290,10 +291,7 @@ ScriptScanner::Token ScriptScanner::keyword()
                     case(u'A'):
                         return checkKeyword(2, u"S", TokColon);
                     case(u'O'):
-                        if(currentLength() > 4 && m_start[4].unicode() == u'S') {
-                            return checkKeyword(2, u"URS", TokHour);
-                        }
-                        return checkKeyword(2, u"UR", TokHour);
+                        return checkKeyword(2, isPlural(4) ? u"URS" : u"UR", TokHour);
                     default:
                         break;
                 }
@@ -320,10 +318,7 @@ ScriptScanner::Token ScriptScanner::keyword()
                         if(currentLength() > 2) {
                             switch(m_start[2].unicode()) {
                                 case(u'N'):
-                                    if(currentLength() > 6 && m_start[6].unicode() == u'S') {
-                                        return checkKeyword(3, u"UTES", TokMinute);
-                                    }
-                                    return checkKeyword(3, u"UTE", TokMinute);
+                                    return checkKeyword(3, isPlural(6) ? u"UTES" : u"UTE", TokMinute);
                                 case(u'S'):
                                     return checkKeyword(3, u"SING", TokMissing);
                                 default:
@@ -345,10 +340,7 @@ ScriptScanner::Token ScriptScanner::keyword()
             if(currentLength() > 1) {
                 switch(m_start[1].unicode()) {
                     case(u'E'):
-                        if(currentLength() > 6 && m_start[6].unicode() == u'S') {
-                            return checkKeyword(2, u"CONDS", TokSecond);
-                        }
-                        return checkKeyword(2, u"COND", TokSecond);
+                        return checkKeyword(2, isPlural(6) ? u"CONDS" : u"COND", TokSecond);
                     case(u'I'):
                         return checkKeyword(2, u"NCE", TokSince);
                     case(u'O'):
@@ -359,10 +351,7 @@ ScriptScanner::Token ScriptScanner::keyword()
             }
             break;
         case(u'W'):
-            if(currentLength() > 4 && m_start[4].unicode() == u'S') {
-                return checkKeyword(1, u"EEKS", TokWeek);
-            }
-            return checkKeyword(1, u"EEK", TokWeek);
+            return checkKeyword(1, isPlural(4) ? u"EEKS" : u"EEK", TokWeek);
         case(u'X'):
             return checkKeyword(1, u"OR", TokXOr);
         default:
