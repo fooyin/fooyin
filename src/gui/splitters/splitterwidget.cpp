@@ -171,7 +171,7 @@ protected:
         m_settings->subscribe<Settings::Gui::ShowSplitterHandles>(handle, &SplitterHandle::showHandle);
         m_settings->subscribe<Settings::Gui::LockSplitterHandles>(handle, &SplitterHandle::setHandleLocked);
         m_settings->subscribe<Settings::Gui::SplitterHandleSize>(handle, &SplitterHandle::setHandleSize);
-        m_settings->subscribe<Settings::Gui::LayoutEditing>(this, [this, handle](const bool enabled) {
+        m_settings->subscribe<Settings::Gui::LayoutEditing>(handle, [this, handle](const bool enabled) {
             handle->showHandle(enabled || m_settings->value<Settings::Gui::ShowSplitterHandles>());
             handle->setHandleLocked(!enabled && m_settings->value<Settings::Gui::LockSplitterHandles>());
         });
