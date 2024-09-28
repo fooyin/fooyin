@@ -61,6 +61,41 @@ bool matchSearch(const Fooyin::Track& track, const QString& search, bool singleS
     const QStringList terms = search.split(u' ', Qt::SkipEmptyParts);
     return std::ranges::all_of(terms, [&track](const QString& term) { return track.hasMatch(term); });
 }
+
+bool isQueryExpression(Fooyin::Expr::Type type)
+{
+    using Type = Fooyin::Expr::Type;
+    switch(type) {
+        case(Type::Not):
+        case(Type::Group):
+        case(Type::And):
+        case(Type::Or):
+        case(Type::Equals):
+        case(Type::Contains):
+        case(Type::Greater):
+        case(Type::GreaterEqual):
+        case(Type::Less):
+        case(Type::LessEqual):
+        case(Type::SortAscending):
+        case(Type::SortDescending):
+        case(Type::All):
+            return true;
+        case(Type::Null):
+        case(Type::Literal):
+        case(Type::Variable):
+        case(Type::VariableList):
+        case(Type::VariableRaw):
+        case(Type::Function):
+        case(Type::FunctionArg):
+        case(Type::Conditional):
+        case(Type::QuotedLiteral):
+        case(Type::Missing):
+        case(Type::Present):
+            break;
+    }
+
+    return false;
+}
 } // namespace
 
 namespace Fooyin {
@@ -1139,6 +1174,9 @@ TrackList ScriptParserPrivate::evaluateQuery(const ParsedScript& input, const Tr
             return Utils::filter(tracks, [&search, &firstExpr](const Track& track) {
                 return matchSearch(track, search, firstExpr.type == Expr::QuotedLiteral);
             });
+        }
+        if(!isQueryExpression(firstExpr.type)) {
+            return {};
         }
     }
 
