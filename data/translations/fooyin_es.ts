@@ -288,7 +288,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="93"/>
         <source>Enable all supported extensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar todas las extensiones compatibles</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/decoderpage.cpp" line="104"/>
@@ -341,17 +341,17 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Ir al directorio principal</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Regresar al directorio anterior</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
         <source>Undo a Go-&gt;Back action</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer una acción Ir-&gt;Atrás</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
