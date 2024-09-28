@@ -355,6 +355,8 @@ Expression ScriptParserPrivate::expression()
             return m_isQuery ? notKeyword({}) : literal();
         case(TokenType::TokAll):
             return m_isQuery ? Expression{Expr::All} : literal();
+        case(TokenType::TokSort):
+            return m_isQuery ? sort() : literal();
         case(TokenType::TokAnd):
         case(TokenType::TokOr):
         case(TokenType::TokXOr):
@@ -366,8 +368,6 @@ Expression ScriptParserPrivate::expression()
         case(TokenType::TokRightAngle):
         case(TokenType::TokRightParen):
         case(TokenType::TokComma):
-        case(TokenType::TokSort):
-            return m_isQuery ? sort() : literal();
         case(TokenType::TokBy):
         case(TokenType::TokBefore):
         case(TokenType::TokAfter):
