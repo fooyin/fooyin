@@ -423,7 +423,7 @@ Expression ScriptParserPrivate::quote()
     }
 
     expr.value = val;
-    consume(TokenType::TokQuote, QString::fromUtf8(R"(Expected '"' after expression)"));
+    consume(TokenType::TokQuote, QObject::tr("Expected %1 to close quote").arg(u"'\"'"));
     return expr;
 }
 
@@ -438,7 +438,7 @@ Expression ScriptParserPrivate::variable()
         advance();
         expr.type = Expr::VariableList;
         value     = QString{m_previous.value}.toLower();
-        consume(TokenType::TokRightAngle, QStringLiteral("Expected '>' after expression"));
+        consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg(u"'>'"));
     }
     else {
         expr.type = Expr::Variable;
@@ -449,7 +449,7 @@ Expression ScriptParserPrivate::variable()
     }
 
     expr.value = value;
-    consume(TokenType::TokVar, QStringLiteral("Expected '%' after expression"));
+    consume(TokenType::TokVar, QObject::tr("Expected %1 to close variable").arg(u"'%'"));
     return expr;
 }
 
@@ -469,7 +469,7 @@ Expression ScriptParserPrivate::function()
         error(QStringLiteral("Function not found"));
     }
 
-    consume(TokenType::TokLeftParen, QStringLiteral("Expected '(' after function call"));
+    consume(TokenType::TokLeftParen, QObject::tr("Expected %1 after function name").arg(u"'('"));
 
     if(!currentToken(TokenType::TokRightParen)) {
         funcExpr.args.emplace_back(functionArgs());
@@ -479,7 +479,7 @@ Expression ScriptParserPrivate::function()
     }
 
     expr.value = funcExpr;
-    consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after function call"));
+    consume(TokenType::TokRightParen, QObject::tr("Expected %1 at end of function").arg(u")"));
     return expr;
 }
 
@@ -513,7 +513,7 @@ Expression ScriptParserPrivate::conditional()
     }
 
     expr.value = condExpr;
-    consume(TokenType::TokRightSquare, QStringLiteral("Expected ']' after expression"));
+    consume(TokenType::TokRightSquare, QObject::tr("Expected %1 to close conditional").arg(u"']'"));
     return expr;
 }
 
@@ -541,13 +541,13 @@ Expression ScriptParserPrivate::group()
         if(firstArg.type == Expr::Literal || firstArg.type == Expr::QuotedLiteral) {
             expr.type  = firstArg.type;
             expr.value = QStringLiteral("(%1)").arg(std::get<QString>(firstArg.value));
-            consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after expression"));
+            consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg(u"')'"));
             return expr;
         }
     }
 
     expr.value = args;
-    consume(TokenType::TokRightParen, QStringLiteral("Expected ')' after expression"));
+    consume(TokenType::TokRightParen, QObject::tr("Expected %1 to close group").arg(u"')'"));
     return expr;
 }
 
@@ -557,10 +557,9 @@ Expression ScriptParserPrivate::notKeyword(const Expression& key)
     ExpressionList args;
 
     if(currentToken(TokenType::TokNot)) {
-        consume(TokenType::TokNot, QStringLiteral("Expected '!' after expression"));
-
+        advance();
         if(currentToken(TokenType::TokEquals)) {
-            consume(TokenType::TokEquals, QStringLiteral("Expected '=' after expression"));
+            advance();
 
             Expression equals{Expr::Equals};
             ExpressionList equalsArgs;
@@ -959,12 +958,12 @@ Expression ScriptParserPrivate::sort()
     else if(currentToken(TokenType::TokAscending)) {
         advance();
         expr.type = Expr::SortAscending;
-        consume(TokenType::TokBy, QStringLiteral("Expected 'BY' after 'ASCENDING'"));
+        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg(u"'BY'", u"'ASCENDING'"));
     }
     else if(currentToken(TokenType::TokDescending)) {
         advance();
         expr.type = Expr::SortDescending;
-        consume(TokenType::TokBy, QStringLiteral("Expected 'BY' after 'DESCENDING'"));
+        consume(TokenType::TokBy, QObject::tr("Expected %1 after %2").arg(u"'BY'", u"'DESCENDING'"));
     }
 
     while(!currentToken(TokenType::TokEos)) {
@@ -973,7 +972,7 @@ Expression ScriptParserPrivate::sort()
     }
 
     expr.value = val;
-    consume(TokenType::TokEos, QString::fromUtf8(R"(Expected EOS after sort expression)"));
+    consume(TokenType::TokEos, QObject::tr("Expected end of script"));
     return expr;
 }
 
@@ -1357,7 +1356,7 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
         }
     }
 
-    consume(TokenType::TokEos, QStringLiteral("Expected end of expression"));
+    consume(TokenType::TokEos, QObject::tr("Expected end of script"));
 
     return script;
 }
@@ -1396,7 +1395,7 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
         }
     }
 
-    consume(TokenType::TokEos, QStringLiteral("Expected end of expression"));
+    consume(TokenType::TokEos, QObject::tr("Expected end of script"));
 
     return script;
 }
