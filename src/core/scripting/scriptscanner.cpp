@@ -39,21 +39,6 @@ bool isLiteral(QChar ch)
         case(u'!'):
         case(u'\\'):
         case(u'\0'):
-        case(u'A'):
-        case(u'B'):
-        case(u'D'):
-        case(u'E'):
-        case(u'G'):
-        case(u'H'):
-        case(u'I'):
-        case(u'L'):
-        case(u'M'):
-        case(u'N'):
-        case(u'O'):
-        case(u'P'):
-        case(u'S'):
-        case(u'W'):
-        case(u'X'):
             return false;
         default:
             return true;
@@ -222,7 +207,7 @@ ScriptScanner::Token ScriptScanner::makeToken(TokenType type) const
 
 ScriptScanner::Token ScriptScanner::literal()
 {
-    while(isLiteral(peek()) && !isAtEnd()) {
+    while(isLiteral(peek()) && !isStartOfKeyword(peek()) && !isAtEnd()) {
         advance();
     }
 
