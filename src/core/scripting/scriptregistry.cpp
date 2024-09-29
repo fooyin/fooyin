@@ -115,9 +115,7 @@ QString formatDateTime(const uint64_t ms)
         return {};
     }
 
-    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(ms));
-    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
-    return formattedDateTime;
+    return Fooyin::Utils::msToDateString(static_cast<int64_t>(ms));
 }
 } // namespace
 

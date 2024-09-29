@@ -24,6 +24,7 @@
 #include <core/scripting/scriptscanner.h>
 #include <core/track.h>
 #include <utils/helpers.h>
+#include <utils/utils.h>
 
 #include <QDateTime>
 #include <QDebug>
@@ -31,21 +32,6 @@
 using TokenType = Fooyin::ScriptScanner::TokenType;
 
 namespace {
-constexpr std::array<const char*, 6> dateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
-                                                 "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
-
-QDateTime evalDate(const QString& str)
-{
-    for(const auto& format : dateFormats) {
-        const QDateTime date = QDateTime::fromString(str, QLatin1String{format});
-        if(date.isValid()) {
-            return date;
-        }
-    }
-
-    return {};
-}
-
 QDateTime evalDate(const Fooyin::Expression& expr)
 {
     if(!std::holds_alternative<QString>(expr.value)) {
@@ -53,7 +39,7 @@ QDateTime evalDate(const Fooyin::Expression& expr)
     }
 
     const QString value = std::get<QString>(expr.value);
-    return evalDate(value);
+    return Fooyin::Utils::dateStringToDate(value);
 }
 
 struct DateRange
@@ -72,7 +58,8 @@ DateRange calculateDateRange(const Fooyin::Expression& expr)
 
     DateRange range;
 
-    for(const auto& format : dateFormats) {
+    const auto formats = Fooyin::Utils::dateFormats();
+    for(const auto& format : formats) {
         const auto date = QDateTime::fromString(dateString, QLatin1String{format});
         if(!date.isValid()) {
             continue;
