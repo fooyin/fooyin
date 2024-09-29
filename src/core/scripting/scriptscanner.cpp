@@ -120,7 +120,7 @@ void ScriptScanner::setup(const QString& input)
 
     while(!isAtEnd()) {
         const Token token = scanNext();
-        if(m_lastToken && m_lastToken->type == token.type) {
+        if(m_lastToken && m_lastToken->type == TokLiteral && token.type == TokLiteral) {
             m_lastToken->value += token.value;
         }
         else {
