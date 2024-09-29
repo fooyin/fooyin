@@ -72,11 +72,6 @@ MetaMap metaMap()
         {QString::fromLatin1(Comment),      [](const Fooyin::Track& track) { return track.comment(); }},
         {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return validNum(track.year()); }},
-        {QString::fromLatin1(PlayCount),    [](const Fooyin::Track& track) { return validNum(track.playCount()); }},
-        {QString::fromLatin1(FirstPlayed),  [](const Fooyin::Track& track) { return validNum(track.firstPlayed()); }},
-        {QString::fromLatin1(LastPlayed),   [](const Fooyin::Track& track) { return validNum(track.lastPlayed()); }},
-        {QString::fromLatin1(AddedTime),    [](const Fooyin::Track& track) { return validNum(track.addedTime()); }},
-        {QString::fromLatin1(LastModified), [](const Fooyin::Track& track) { return validNum(track.modifiedTime()); }},
         {QString::fromLatin1(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingEditor), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingStars),  [](const Fooyin::Track& track) { return validNum(track.ratingStars()); }}
@@ -1098,18 +1093,20 @@ QString Track::techInfo(const QString& name) const
 
     const QString prop = name.toUpper();
 
+    using namespace Constants::MetaData;
+
     // clang-format off
     static const std::unordered_map<QString, std::function<QString(const Track& track)>> infoMap{
-        {QString::fromLatin1(Constants::MetaData::Codec),        [](const Track& track) { return track.codec(); }},
-        {QString::fromLatin1(Constants::MetaData::CodecProfile), [](const Track& track) { return track.codecProfile(); }},
-        {QString::fromLatin1(Constants::MetaData::Tool),         [](const Track& track) { return track.tool(); }},
-        {QString::fromLatin1(Constants::MetaData::Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
-        {QString::fromLatin1(Constants::MetaData::TagType),      [](const Track& track) { return track.encoding(); }},
-        {QString::fromLatin1(Constants::MetaData::SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
-        {QString::fromLatin1(Constants::MetaData::Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
-        {QString::fromLatin1(Constants::MetaData::Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
-        {QString::fromLatin1(Constants::MetaData::BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
-        {QString::fromLatin1(Constants::MetaData::Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
+        {QString::fromLatin1(Codec),        [](const Track& track) { return track.codec(); }},
+        {QString::fromLatin1(CodecProfile), [](const Track& track) { return track.codecProfile(); }},
+        {QString::fromLatin1(Tool),         [](const Track& track) { return track.tool(); }},
+        {QString::fromLatin1(Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
+        {QString::fromLatin1(TagType),      [](const Track& track) { return track.encoding(); }},
+        {QString::fromLatin1(SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
+        {QString::fromLatin1(Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
+        {QString::fromLatin1(Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
+        {QString::fromLatin1(BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
+        {QString::fromLatin1(Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
     };
     // clang-format on
 
@@ -1118,6 +1115,30 @@ QString Track::techInfo(const QString& name) const
     }
 
     return extraTag(prop).join(QLatin1String{Constants::UnitSeparator});
+}
+
+std::optional<int64_t> Track::dateValue(const QString& name) const
+{
+    const QString prop = name.toUpper();
+
+    using namespace Constants::MetaData;
+
+    // clang-format off
+    static const std::unordered_map<QString, std::function<std::optional<int64_t>(const Track& track)>> dateMap{
+        {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return Utils::dateStringToMs(track.date()); }},
+        {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return Utils::dateStringToMs(QString::number(track.year())); }},
+        {QString::fromLatin1(FirstPlayed),  [](const Fooyin::Track& track) { return track.firstPlayed(); }},
+        {QString::fromLatin1(LastPlayed),   [](const Fooyin::Track& track) { return track.lastPlayed(); }},
+        {QString::fromLatin1(AddedTime),    [](const Fooyin::Track& track) { return track.addedTime(); }},
+        {QString::fromLatin1(LastModified), [](const Fooyin::Track& track) { return track.lastModified(); }}
+    };
+    // clang-format on
+
+    if(dateMap.contains(prop)) {
+        return dateMap.at(prop)(*this);
+    }
+
+    return {};
 }
 
 void Track::setCuePath(const QString& path)

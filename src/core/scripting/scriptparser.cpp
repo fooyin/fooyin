@@ -1324,20 +1324,24 @@ ScriptResult ScriptParserPrivate::compareDates(const Expression& exp, const auto
         return {};
     }
 
-    uint64_t first;
+    std::optional<int64_t> first;
 
     const QString var = std::get<QString>(args.at(0).value);
     if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
-        first = tracks.metaValue(var).toULongLong();
+        first = tracks.dateValue(var);
     }
     else if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, TrackList>) {
-        first = tracks.front().metaValue(var).toULongLong();
+        first = tracks.front().dateValue(var);
     }
 
-    const auto second = std::get<QString>(args.at(1).value).toULongLong();
+    if(!first) {
+        return {};
+    }
+
+    const auto second = std::get<QString>(args.at(1).value).toLongLong();
 
     ScriptResult result;
-    result.cond = comparator(first, second);
+    result.cond = comparator(first.value(), second);
 
     return result;
 }
@@ -1349,21 +1353,25 @@ ScriptResult ScriptParserPrivate::compareDateRange(const Expression& exp, const 
         return {};
     }
 
-    uint64_t first;
+    std::optional<int64_t> first;
 
     const QString var = std::get<QString>(args.at(0).value);
     if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, Track>) {
-        first = tracks.metaValue(var).toULongLong();
+        first = tracks.dateValue(var);
     }
     else if constexpr(std::is_same_v<std::decay_t<decltype(tracks)>, TrackList>) {
-        first = tracks.front().metaValue(var).toULongLong();
+        first = tracks.front().dateValue(var);
     }
 
-    const auto min = std::get<QString>(args.at(1).value).toULongLong();
-    const auto max = std::get<QString>(args.at(2).value).toULongLong();
+    if(!first) {
+        return {};
+    }
+
+    const auto min = std::get<QString>(args.at(1).value).toLongLong();
+    const auto max = std::get<QString>(args.at(2).value).toLongLong();
 
     ScriptResult result;
-    result.cond = first > min && first < max;
+    result.cond = first.value() > min && first.value() < max;
 
     return result;
 }
