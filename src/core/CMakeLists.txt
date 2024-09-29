@@ -129,6 +129,8 @@ set(SOURCES
     scripting/functions/timefuncs.h
     scripting/functions/tracklistfuncs.cpp
     scripting/functions/tracklistfuncs.h
+    scripting/scriptcache.cpp
+    scripting/scriptcache.h
     scripting/scriptparser.cpp
     scripting/scriptregistry.cpp
     scripting/scriptscanner.cpp

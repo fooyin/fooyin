@@ -77,6 +77,8 @@ public:
     TrackList filter(const QString& input, const TrackList& tracks);
     TrackList filter(const ParsedScript& input, const TrackList& tracks);
 
+    [[nodiscard]] int cacheLimit() const;
+    void setCacheLimit(int limit);
     void clearCache();
 
 private:

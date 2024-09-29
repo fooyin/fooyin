@@ -19,6 +19,8 @@
 
 #include <core/scripting/scriptparser.h>
 
+#include "scriptcache.h"
+
 #include <core/constants.h>
 #include <core/library/tracksort.h>
 #include <core/scripting/scriptscanner.h>
@@ -233,7 +235,7 @@ public:
 
     bool m_isQuery{false};
     QString m_currentInput;
-    std::unordered_map<QString, ParsedScript> m_parsedScripts;
+    ScriptCache m_cache;
     QStringList m_currentResult;
 };
 
@@ -304,7 +306,7 @@ void ScriptParserPrivate::errorAt(const ScriptScanner::Token& token, const QStri
     currentError.position = token.position;
     currentError.message  = errorMsg;
 
-    m_parsedScripts[m_currentInput].errors.emplace_back(currentError);
+    m_cache[m_currentInput].errors.emplace_back(currentError);
 }
 
 void ScriptParserPrivate::error(const QString& message)
@@ -1132,13 +1134,14 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     m_isQuery = false;
     m_scanner.setSkipWhitespace(false);
 
-    if(m_parsedScripts.contains(input)) {
-        return m_parsedScripts.at(input);
+    if(m_cache.contains(input)) {
+        return m_cache.get(input);
     }
 
     m_currentInput = input;
-    auto& script   = m_parsedScripts[input];
-    script.input   = input;
+    ParsedScript script;
+    script.input = input;
+    m_scanner.setup(input);
 
     m_scanner.setup(input);
 
@@ -1151,6 +1154,7 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     }
 
     consume(TokenType::TokEos, QObject::tr("Expected end of script"));
+    m_cache.insert(input, script);
 
     return script;
 }
@@ -1164,14 +1168,13 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
     m_isQuery = true;
     m_scanner.setSkipWhitespace(true);
 
-    if(m_parsedScripts.contains(input)) {
-        return m_parsedScripts.at(input);
+    if(m_cache.contains(input)) {
+        return m_cache.get(input);
     }
 
     m_currentInput = input;
-    auto& script   = m_parsedScripts[input];
-    script.input   = input;
-
+    ParsedScript script;
+    script.input = input;
     m_scanner.setup(input);
 
     advance();
@@ -1190,6 +1193,7 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
     }
 
     consume(TokenType::TokEos, QObject::tr("Expected end of script"));
+    m_cache.insert(input, script);
 
     return script;
 }
@@ -1528,8 +1532,18 @@ TrackList ScriptParser::filter(const ParsedScript& input, const TrackList& track
     return p->evaluateQuery(input, tracks);
 }
 
+int ScriptParser::cacheLimit() const
+{
+    return p->m_cache.limit();
+}
+
+void ScriptParser::setCacheLimit(int limit)
+{
+    p->m_cache.setLimit(limit);
+}
+
 void ScriptParser::clearCache()
 {
-    p->m_parsedScripts.clear();
+    p->m_cache.clear();
 }
 } // namespace Fooyin
