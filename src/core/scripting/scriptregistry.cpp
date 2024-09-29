@@ -310,7 +310,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
         return getBitrate(track);
     };
     m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
-        return track.sampleRate() > 0 ? QStringLiteral("%1 Hz").arg(track.sampleRate()) : QString{};
+        return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
     };
     m_metadata[QString::fromLatin1(MetaData::BitDepth)] = [](const Track& track) {
         return track.bitDepth() > 0 ? track.bitDepth() : -1;
@@ -375,7 +375,7 @@ QString ScriptRegistryPrivate::getBitrate(const Track& track) const
     if(m_playerController && m_playerController->bitrate() > 0) {
         bitrate = m_playerController->bitrate();
     }
-    return bitrate > 0 ? QStringLiteral("%1 kbps").arg(bitrate) : QString{};
+    return bitrate > 0 ? QString::number(bitrate) : QString{};
 }
 
 ScriptRegistry::ScriptRegistry()

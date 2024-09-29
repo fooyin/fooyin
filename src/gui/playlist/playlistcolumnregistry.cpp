@@ -48,8 +48,8 @@ void PlaylistColumnRegistry::loadDefaults()
     addDefaultItem({.id = 8, .name = tr("Playing"), .field = QString::fromLatin1(PlayingIcon)});
     addDefaultItem({.id = 9, .name = tr("Codec"), .field = QStringLiteral("%codec%[ / %codec_profile%]")});
     addDefaultItem({.id = 10, .name = tr("Extension"), .field = QStringLiteral("%extension%")});
-    addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = QStringLiteral("%bitrate%")});
-    addDefaultItem({.id = 12, .name = tr("Sample Rate"), .field = QStringLiteral("%samplerate%")});
+    addDefaultItem({.id = 11, .name = tr("Bitrate"), .field = QStringLiteral("%bitrate% kbps")});
+    addDefaultItem({.id = 12, .name = tr("Sample Rate"), .field = QStringLiteral("%samplerate% Hz")});
     addDefaultItem({.id = 16, .name = tr("Channels"), .field = QStringLiteral("%channels%")});
     addDefaultItem({.id = 18, .name = tr("Bit Depth"), .field = QStringLiteral("%bitdepth%")});
     addDefaultItem({.id = 17, .name = tr("Last Modified"), .field = QStringLiteral("%lastmodified%")});
