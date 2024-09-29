@@ -38,6 +38,8 @@
 #include <unicode/ucsdet.h>
 
 constexpr auto DefaultIconSize = 20;
+constexpr std::array<const char*, 6> DateFormats{"yyyy-MM-dd hh:mm:ss", "yyyy-MM-dd hh:mm", "yyyy-MM-dd hh",
+                                                 "yyyy-MM-dd",          "yyyy-MM",          "yyyy"};
 
 namespace Fooyin::Utils {
 int randomNumber(int min, int max)
@@ -94,6 +96,39 @@ QString formatTimeMs(uint64_t time)
 {
     const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(time));
     QString formattedDateTime = dateTime.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+    return formattedDateTime;
+}
+
+std::array<const char*, 6> dateFormats()
+{
+    return DateFormats;
+}
+
+QDateTime dateStringToDate(const QString& str)
+{
+    for(const auto& format : DateFormats) {
+        const QDateTime date = QDateTime::fromString(str, QLatin1String{format});
+        if(date.isValid()) {
+            return date;
+        }
+    }
+
+    return {};
+}
+
+std::optional<int64_t> dateStringToMs(const QString& str)
+{
+    const QDateTime date = dateStringToDate(str);
+    if(date.isValid()) {
+        return date.toMSecsSinceEpoch();
+    }
+    return {};
+}
+
+QString msToDateString(int64_t dateMs)
+{
+    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(dateMs));
+    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
     return formattedDateTime;
 }
 

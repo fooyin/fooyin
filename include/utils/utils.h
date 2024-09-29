@@ -21,6 +21,7 @@
 
 #include "fyutils_export.h"
 
+#include <QDateTime>
 #include <QStringList>
 #include <QUrl>
 
@@ -50,6 +51,11 @@ FYUTILS_EXPORT QString elideTextWithBreaks(const QString& text, const QFontMetri
 
 FYUTILS_EXPORT uint64_t currentDateToInt();
 FYUTILS_EXPORT QString formatTimeMs(uint64_t time);
+FYUTILS_EXPORT std::array<const char*, 6> dateFormats();
+FYUTILS_EXPORT QDateTime dateStringToDate(const QString& str);
+FYUTILS_EXPORT std::optional<int64_t> dateStringToMs(const QString& str);
+FYUTILS_EXPORT QString msToDateString(int64_t dateMs);
+
 FYUTILS_EXPORT QString capitalise(const QString& str);
 FYUTILS_EXPORT QByteArray detectEncoding(const QByteArray& content);
 FYUTILS_EXPORT QStringList extensionsToWildcards(const QStringList& extensions);

@@ -78,6 +78,27 @@ void ScriptHighlighter::expression()
         case(ScriptScanner::TokEquals):
         case(ScriptScanner::TokEos):
         case(ScriptScanner::TokError):
+        case(ScriptScanner::TokNot):
+        case(ScriptScanner::TokAscending):
+        case(ScriptScanner::TokDescending):
+        case(ScriptScanner::TokAnd):
+        case(ScriptScanner::TokOr):
+        case(ScriptScanner::TokXOr):
+        case(ScriptScanner::TokMissing):
+        case(ScriptScanner::TokPresent):
+        case(ScriptScanner::TokAll):
+        case(ScriptScanner::TokSort):
+        case(ScriptScanner::TokBy):
+        case(ScriptScanner::TokBefore):
+        case(ScriptScanner::TokAfter):
+        case(ScriptScanner::TokSince):
+        case(ScriptScanner::TokDuring):
+        case(ScriptScanner::TokLast):
+        case(ScriptScanner::TokSecond):
+        case(ScriptScanner::TokMinute):
+        case(ScriptScanner::TokHour):
+        case(ScriptScanner::TokDay):
+        case(ScriptScanner::TokWeek):
             break;
     }
 }

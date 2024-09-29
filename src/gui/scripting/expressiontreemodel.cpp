@@ -114,6 +114,8 @@ QVariant ExpressionTreeModel::data(const QModelIndex& index, int role) const
         case(Expr::Null):
         case(Expr::Conditional):
         case(Expr::VariableList):
+        case(Expr::Equals):
+        case(Expr::Contains):
         default:
             break;
     }

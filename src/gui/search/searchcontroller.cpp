@@ -108,12 +108,13 @@ void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget
     const Id id = widget->id();
 
     if(isConnected(sourceId, id)) {
-        m_connections[sourceId].erase(id);
+        widget->searchEvent({});
+        m_connections.at(sourceId).erase(id);
         overlay->button()->setText(SearchController::tr("Connect"));
         overlay->setColour(m_disconnectedColour);
     }
     else {
-        m_connections[sourceId].emplace(id);
+        m_connections.at(sourceId).emplace(id);
         overlay->button()->setText(SearchController::tr("Disconnect"));
         overlay->setColour(m_connectedColour);
     }

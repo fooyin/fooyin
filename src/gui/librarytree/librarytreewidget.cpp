@@ -31,7 +31,6 @@
 #include <core/coresettings.h>
 #include <core/library/libraryinfo.h>
 #include <core/library/musiclibrary.h>
-#include <core/library/trackfilter.h>
 #include <core/player/playercontroller.h>
 #include <core/player/playerdefs.h>
 #include <core/playlist/playlisthandler.h>
@@ -42,6 +41,7 @@
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
 #include <utils/actions/widgetcontext.h>
+#include <utils/async.h>
 #include <utils/datastream.h>
 #include <utils/fileutils.h>
 #include <utils/signalthrottler.h>
@@ -578,10 +578,13 @@ void LibraryTreeWidgetPrivate::searchChanged(const QString& search)
 
     const TrackList tracksToFilter = !reset && !m_prevSearchTracks.empty() ? m_prevSearchTracks : m_library->tracks();
 
-    const auto tracks = Filter::filterTracks(tracksToFilter, search);
-
-    m_prevSearchTracks = tracks;
-    m_model->reset(tracks);
+    Utils::asyncExec([search, tracksToFilter]() {
+        ScriptParser parser;
+        return parser.filter(search, tracksToFilter);
+    }).then(m_self, [this](const TrackList& filteredTracks) {
+        m_prevSearchTracks = filteredTracks;
+        m_model->reset(filteredTracks);
+    });
 }
 
 void LibraryTreeWidgetPrivate::handlePlayback(const QModelIndexList& indexes, int row)
@@ -714,8 +717,10 @@ void LibraryTreeWidgetPrivate::handleTracksAdded(const TrackList& tracks) const
     }
 
     if(!m_prevSearch.isEmpty()) {
-        const auto filteredTracks = Filter::filterTracks(tracks, m_prevSearch);
-        m_model->addTracks(filteredTracks);
+        Utils::asyncExec([search = m_prevSearch, tracks]() {
+            ScriptParser parser;
+            return parser.filter(search, tracks);
+        }).then(m_self, [this](const TrackList& filteredTracks) { m_model->addTracks(filteredTracks); });
     }
     else {
         m_model->addTracks(tracks);

@@ -41,6 +41,7 @@ constexpr auto Composer        = "COMPOSER";
 constexpr auto Performer       = "PERFORMER";
 constexpr auto Duration        = "DURATION";
 constexpr auto DurationSecs    = "DURATION_S";
+constexpr auto DurationMSecs   = "DURATION_MS";
 constexpr auto Lyrics          = "LYRICS";
 constexpr auto Comment         = "COMMENT";
 constexpr auto Date            = "DATE";

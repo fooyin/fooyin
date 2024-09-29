@@ -26,9 +26,9 @@
 
 #include <core/coresettings.h>
 #include <core/library/musiclibrary.h>
-#include <core/library/trackfilter.h>
 #include <core/library/tracksort.h>
 #include <core/plugins/coreplugincontext.h>
+#include <core/scripting/scriptparser.h>
 #include <gui/coverprovider.h>
 #include <gui/editablelayout.h>
 #include <gui/trackselectioncontroller.h>
@@ -416,13 +416,17 @@ void FilterControllerPrivate::handleTracksAddedUpdated(const TrackList& tracks, 
             }
 
             if(!filterWidget->searchFilter().isEmpty()) {
-                const TrackList filteredTracks = Filter::filterTracks(tracks, filterWidget->searchFilter());
-                if(updated) {
-                    filterWidget->tracksChanged(filteredTracks);
-                }
-                else {
-                    filterWidget->tracksAdded(filteredTracks);
-                }
+                Utils::asyncExec([search = filterWidget->searchFilter(), tracks]() {
+                    ScriptParser parser;
+                    return parser.filter(search, tracks);
+                }).then(m_self, [filterWidget, updated](const TrackList& filteredTracks) {
+                    if(updated) {
+                        filterWidget->tracksChanged(filteredTracks);
+                    }
+                    else {
+                        filterWidget->tracksAdded(filteredTracks);
+                    }
+                });
             }
             else if(activeFilterTracks.empty()) {
                 if(updated) {
@@ -484,8 +488,6 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
         return;
     }
 
-    const FilterGroup& group = m_groups.at(groupId);
-
     if(filter->searchFilter().length() >= 2 && search.length() < 2) {
         filter->reset(m_library->tracks());
         return;
@@ -495,11 +497,10 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
         return;
     }
 
-    const bool reset               = !group.filteredTracks.empty() || filter->searchFilter().length() > search.length();
-    const TrackList tracksToFilter = reset ? m_library->tracks() : filter->tracks();
-
+    const TrackList tracksToFilter = m_library->tracks();
     Utils::asyncExec([search, tracksToFilter]() {
-        return Filter::filterTracks(tracksToFilter, search);
+        ScriptParser parser;
+        return parser.filter(search, tracksToFilter);
     }).then(m_self, [filter](const TrackList& filteredTracks) { filter->reset(filteredTracks); });
 }
 

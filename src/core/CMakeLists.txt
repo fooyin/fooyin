@@ -14,7 +14,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/core/engine/outputplugin.h
     ${CMAKE_SOURCE_DIR}/include/core/library/libraryinfo.h
     ${CMAKE_SOURCE_DIR}/include/core/library/musiclibrary.h
-    ${CMAKE_SOURCE_DIR}/include/core/library/trackfilter.h
     ${CMAKE_SOURCE_DIR}/include/core/library/tracksort.h
     ${CMAKE_SOURCE_DIR}/include/core/network/networkaccessmanager.h
     ${CMAKE_SOURCE_DIR}/include/core/player/playbackqueue.h
@@ -100,7 +99,6 @@ set(SOURCES
     library/sortingregistry.h
     library/trackdatabasemanager.cpp
     library/trackdatabasemanager.h
-    library/trackfilter.cpp
     library/tracksort.cpp
     library/unifiedmusiclibrary.cpp
     library/unifiedmusiclibrary.h

@@ -115,9 +115,7 @@ QString formatDateTime(const uint64_t ms)
         return {};
     }
 
-    const QDateTime dateTime  = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(ms));
-    QString formattedDateTime = dateTime.toString(u"yyyy-MM-dd HH:mm:ss");
-    return formattedDateTime;
+    return Fooyin::Utils::msToDateString(static_cast<int64_t>(ms));
 }
 } // namespace
 
@@ -290,17 +288,15 @@ void ScriptRegistryPrivate::addDefaultMetadata()
     m_metadata[QString::fromLatin1(MetaData::Performer)]  = &Track::performer;
     m_metadata[QString::fromLatin1(MetaData::Duration)]   = [](const Track& track) {
         const auto duration = track.duration();
-        if(duration == 0) {
-            return QString{};
-        }
-        return Utils::msToString(duration);
+        return duration == 0 ? QString{} : Utils::msToString(duration);
     };
     m_metadata[QString::fromLatin1(MetaData::DurationSecs)] = [](const Track& track) {
         const auto duration = track.duration();
-        if(duration == 0) {
-            return QString{};
-        }
-        return QString::number(duration / 1000);
+        return duration == 0 ? QString{} : QString::number(duration / 1000);
+    };
+    m_metadata[QString::fromLatin1(MetaData::DurationMSecs)] = [](const Track& track) {
+        const auto duration = track.duration();
+        return duration == 0 ? QString{} : QString::number(duration);
     };
     m_metadata[QString::fromLatin1(MetaData::Comment)]  = &Track::comment;
     m_metadata[QString::fromLatin1(MetaData::Date)]     = &Track::date;
@@ -310,7 +306,7 @@ void ScriptRegistryPrivate::addDefaultMetadata()
         return getBitrate(track);
     };
     m_metadata[QString::fromLatin1(MetaData::SampleRate)] = [](const Track& track) {
-        return track.sampleRate() > 0 ? QStringLiteral("%1 Hz").arg(track.sampleRate()) : QString{};
+        return track.sampleRate() > 0 ? QString::number(track.sampleRate()) : QString{};
     };
     m_metadata[QString::fromLatin1(MetaData::BitDepth)] = [](const Track& track) {
         return track.bitDepth() > 0 ? track.bitDepth() : -1;
@@ -375,7 +371,7 @@ QString ScriptRegistryPrivate::getBitrate(const Track& track) const
     if(m_playerController && m_playerController->bitrate() > 0) {
         bitrate = m_playerController->bitrate();
     }
-    return bitrate > 0 ? QStringLiteral("%1 kbps").arg(bitrate) : QString{};
+    return bitrate > 0 ? QString::number(bitrate) : QString{};
 }
 
 ScriptRegistry::ScriptRegistry()

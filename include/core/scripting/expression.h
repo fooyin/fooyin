@@ -23,15 +23,38 @@
 
 namespace Fooyin {
 namespace Expr {
-enum Type : int
+enum Type : uint8_t
 {
-    Literal      = 0,
-    Variable     = 1,
-    VariableList = 2,
-    Function     = 3,
-    FunctionArg  = 4,
-    Conditional  = 5,
-    Null         = 6,
+    Null           = 0,
+    Literal        = 1,
+    Variable       = 2,
+    VariableList   = 3,
+    VariableRaw    = 4,
+    Date           = 5,
+    Function       = 6,
+    FunctionArg    = 7,
+    Conditional    = 8,
+    Not            = 9,
+    Group          = 10,
+    And            = 11,
+    Or             = 12,
+    XOr            = 13,
+    Equals         = 14,
+    Contains       = 15,
+    Greater        = 16,
+    GreaterEqual   = 17,
+    Less           = 18,
+    LessEqual      = 19,
+    SortAscending  = 20,
+    SortDescending = 21,
+    All            = 22,
+    QuotedLiteral  = 23,
+    Missing        = 24,
+    Present        = 25,
+    Before         = 26,
+    After          = 27,
+    Since          = 28,
+    During         = 29,
 };
 }
 

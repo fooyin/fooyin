@@ -28,22 +28,14 @@
 #include <QIODevice>
 #include <QRegularExpression>
 
-constexpr auto MaxStarCount = 10;
-constexpr auto YearRegex    = R"lit(\b\d{4}\b)lit";
+#include <chrono>
+
+constexpr auto MaxStarCount   = 10;
+constexpr auto YearRegex      = R"lit(\b\d{4}\b)lit";
+constexpr auto YearMonthRegex = R"lit(\b(\d{4})-(\d{2})\b)lit";
+constexpr auto FullDateRegex  = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
 
 namespace {
-int extractYear(const QString& input)
-{
-    static const QRegularExpression regex(QLatin1String{YearRegex});
-    const QRegularExpressionMatch match = regex.match(input);
-
-    if(match.hasMatch()) {
-        return match.captured(0).toInt();
-    }
-
-    return 0;
-}
-
 QString validNum(auto num)
 {
     if(num > 0) {
@@ -72,7 +64,6 @@ MetaMap metaMap()
         {QString::fromLatin1(Comment),      [](const Fooyin::Track& track) { return track.comment(); }},
         {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.date(); }},
         {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return validNum(track.year()); }},
-        {QString::fromLatin1(PlayCount),    [](const Fooyin::Track& track) { return validNum(track.playCount()); }},
         {QString::fromLatin1(Rating),       [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingEditor), [](const Fooyin::Track& track) { return validNum(track.rating()); }},
         {QString::fromLatin1(RatingStars),  [](const Fooyin::Track& track) { return validNum(track.ratingStars()); }}
@@ -111,6 +102,8 @@ public:
     QString comment;
     QString date;
     int year{-1};
+    int64_t dateSinceEpoch;
+    int64_t yearSinceEpoch;
     Track::ExtraTags extraTags;
     QStringList removedTags;
     Track::ExtraProperties extraProps;
@@ -1019,10 +1012,71 @@ void Track::setComment(const QString& comment)
 void Track::setDate(const QString& date)
 {
     p->date = date;
+    if(date.isEmpty()) {
+        p->year = -1;
+        return;
+    }
 
-    const int year = extractYear(date);
-    if(year > 0) {
-        p->year = year;
+    // TODO: Replace with std::chrono::parse once full compiler support is availble
+
+    static const QRegularExpression fullDateRegex{QLatin1String{FullDateRegex}};
+    static const QRegularExpression yearMonthRegex{QLatin1String{YearMonthRegex}};
+    static const QRegularExpression yearRegex{QLatin1String{YearRegex}};
+
+    auto processDate = [this](const std::chrono::year_month_day& ymd) {
+        const std::chrono::sys_days days{ymd};
+        auto timePoint    = std::chrono::time_point_cast<std::chrono::milliseconds>(days);
+        p->dateSinceEpoch = timePoint.time_since_epoch().count();
+
+        const std::chrono::sys_days startOfYear{ymd.year() / 1 / 1};
+        auto yearTimePoint = std::chrono::time_point_cast<std::chrono::milliseconds>(startOfYear);
+        p->yearSinceEpoch  = yearTimePoint.time_since_epoch().count();
+        p->year            = static_cast<int>(ymd.year());
+    };
+
+    // First try to match the full date
+    QRegularExpressionMatch match = fullDateRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        bool monthOk{false};
+        bool dayOk{false};
+        const int year  = match.captured(1).toInt(&yearOk);
+        const int month = match.captured(2).toInt(&monthOk);
+        const int day   = match.captured(3).toInt(&dayOk);
+
+        if(yearOk && monthOk && dayOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / month / day};
+            processDate(ymd);
+            return;
+        }
+    }
+
+    // Then try to match the year and month
+    match = yearMonthRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        bool monthOk{false};
+        const int year  = match.captured(1).toInt(&yearOk);
+        const int month = match.captured(2).toInt(&monthOk);
+
+        if(yearOk && monthOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / month / 1};
+            processDate(ymd);
+            return;
+        }
+    }
+
+    // Finally, try to match just the year
+    match = yearRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        const int year = match.captured(0).toInt(&yearOk);
+
+        if(yearOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / 1 / 1};
+            processDate(ymd);
+            return;
+        }
     }
 }
 
@@ -1094,18 +1148,20 @@ QString Track::techInfo(const QString& name) const
 
     const QString prop = name.toUpper();
 
+    using namespace Constants::MetaData;
+
     // clang-format off
     static const std::unordered_map<QString, std::function<QString(const Track& track)>> infoMap{
-        {QString::fromLatin1(Constants::MetaData::Codec),        [](const Track& track) { return track.codec(); }},
-        {QString::fromLatin1(Constants::MetaData::CodecProfile), [](const Track& track) { return track.codecProfile(); }},
-        {QString::fromLatin1(Constants::MetaData::Tool),         [](const Track& track) { return track.tool(); }},
-        {QString::fromLatin1(Constants::MetaData::Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
-        {QString::fromLatin1(Constants::MetaData::TagType),      [](const Track& track) { return track.encoding(); }},
-        {QString::fromLatin1(Constants::MetaData::SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
-        {QString::fromLatin1(Constants::MetaData::Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
-        {QString::fromLatin1(Constants::MetaData::Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
-        {QString::fromLatin1(Constants::MetaData::BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
-        {QString::fromLatin1(Constants::MetaData::Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
+        {QString::fromLatin1(Codec),        [](const Track& track) { return track.codec(); }},
+        {QString::fromLatin1(CodecProfile), [](const Track& track) { return track.codecProfile(); }},
+        {QString::fromLatin1(Tool),         [](const Track& track) { return track.tool(); }},
+        {QString::fromLatin1(Encoding),     [](const Track& track) { return track.tagType(QStringLiteral(",")); }},
+        {QString::fromLatin1(TagType),      [](const Track& track) { return track.encoding(); }},
+        {QString::fromLatin1(SampleRate),   [validNum](const Track& track) { return validNum(track.sampleRate()); }},
+        {QString::fromLatin1(Bitrate),      [validNum](const Track& track) { return validNum(track.bitrate()); }},
+        {QString::fromLatin1(Channels),     [validNum](const Track& track) { return validNum(track.channels()); }},
+        {QString::fromLatin1(BitDepth),     [validNum](const Track& track) { return validNum(track.bitDepth()); }},
+        {QString::fromLatin1(Duration),     [validNum](const Track& track) { return validNum(track.duration()); }}
     };
     // clang-format on
 
@@ -1114,6 +1170,30 @@ QString Track::techInfo(const QString& name) const
     }
 
     return extraTag(prop).join(QLatin1String{Constants::UnitSeparator});
+}
+
+std::optional<int64_t> Track::dateValue(const QString& name) const
+{
+    const QString prop = name.toUpper();
+
+    using namespace Constants::MetaData;
+
+    // clang-format off
+    static const std::unordered_map<QString, std::function<std::optional<int64_t>(const Track& track)>> dateMap{
+        {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.p->dateSinceEpoch; }},
+        {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return track.p->yearSinceEpoch; }},
+        {QString::fromLatin1(FirstPlayed),  [](const Fooyin::Track& track) { return track.firstPlayed(); }},
+        {QString::fromLatin1(LastPlayed),   [](const Fooyin::Track& track) { return track.lastPlayed(); }},
+        {QString::fromLatin1(AddedTime),    [](const Fooyin::Track& track) { return track.addedTime(); }},
+        {QString::fromLatin1(LastModified), [](const Fooyin::Track& track) { return track.lastModified(); }}
+    };
+    // clang-format on
+
+    if(dateMap.contains(prop)) {
+        return dateMap.at(prop)(*this);
+    }
+
+    return {};
 }
 
 void Track::setCuePath(const QString& path)
