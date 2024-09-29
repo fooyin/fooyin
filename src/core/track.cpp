@@ -28,22 +28,14 @@
 #include <QIODevice>
 #include <QRegularExpression>
 
-constexpr auto MaxStarCount = 10;
-constexpr auto YearRegex    = R"lit(\b\d{4}\b)lit";
+#include <chrono>
+
+constexpr auto MaxStarCount   = 10;
+constexpr auto YearRegex      = R"lit(\b\d{4}\b)lit";
+constexpr auto YearMonthRegex = R"lit(\b(\d{4})-(\d{2})\b)lit";
+constexpr auto FullDateRegex  = R"lit(\b(\d{4})-(\d{2})-(\d{2})\b)lit";
 
 namespace {
-int extractYear(const QString& input)
-{
-    static const QRegularExpression regex(QLatin1String{YearRegex});
-    const QRegularExpressionMatch match = regex.match(input);
-
-    if(match.hasMatch()) {
-        return match.captured(0).toInt();
-    }
-
-    return 0;
-}
-
 QString validNum(auto num)
 {
     if(num > 0) {
@@ -110,6 +102,8 @@ public:
     QString comment;
     QString date;
     int year{-1};
+    int64_t dateSinceEpoch;
+    int64_t yearSinceEpoch;
     Track::ExtraTags extraTags;
     QStringList removedTags;
     Track::ExtraProperties extraProps;
@@ -1018,10 +1012,71 @@ void Track::setComment(const QString& comment)
 void Track::setDate(const QString& date)
 {
     p->date = date;
+    if(date.isEmpty()) {
+        p->year = -1;
+        return;
+    }
 
-    const int year = extractYear(date);
-    if(year > 0) {
-        p->year = year;
+    // TODO: Replace with std::chrono::parse once full compiler support is availble
+
+    static const QRegularExpression fullDateRegex{QLatin1String{FullDateRegex}};
+    static const QRegularExpression yearMonthRegex{QLatin1String{YearMonthRegex}};
+    static const QRegularExpression yearRegex{QLatin1String{YearRegex}};
+
+    auto processDate = [this](const std::chrono::year_month_day& ymd) {
+        const std::chrono::sys_days days{ymd};
+        auto timePoint    = std::chrono::time_point_cast<std::chrono::milliseconds>(days);
+        p->dateSinceEpoch = timePoint.time_since_epoch().count();
+
+        const std::chrono::sys_days startOfYear{ymd.year() / 1 / 1};
+        auto yearTimePoint = std::chrono::time_point_cast<std::chrono::milliseconds>(startOfYear);
+        p->yearSinceEpoch  = yearTimePoint.time_since_epoch().count();
+        p->year            = static_cast<int>(ymd.year());
+    };
+
+    // First try to match the full date
+    QRegularExpressionMatch match = fullDateRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        bool monthOk{false};
+        bool dayOk{false};
+        const int year  = match.captured(1).toInt(&yearOk);
+        const int month = match.captured(2).toInt(&monthOk);
+        const int day   = match.captured(3).toInt(&dayOk);
+
+        if(yearOk && monthOk && dayOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / month / day};
+            processDate(ymd);
+            return;
+        }
+    }
+
+    // Then try to match the year and month
+    match = yearMonthRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        bool monthOk{false};
+        const int year  = match.captured(1).toInt(&yearOk);
+        const int month = match.captured(2).toInt(&monthOk);
+
+        if(yearOk && monthOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / month / 1};
+            processDate(ymd);
+            return;
+        }
+    }
+
+    // Finally, try to match just the year
+    match = yearRegex.match(date);
+    if(match.hasMatch()) {
+        bool yearOk{false};
+        const int year = match.captured(0).toInt(&yearOk);
+
+        if(yearOk) {
+            const std::chrono::year_month_day ymd{std::chrono::year{year} / 1 / 1};
+            processDate(ymd);
+            return;
+        }
     }
 }
 
@@ -1125,8 +1180,8 @@ std::optional<int64_t> Track::dateValue(const QString& name) const
 
     // clang-format off
     static const std::unordered_map<QString, std::function<std::optional<int64_t>(const Track& track)>> dateMap{
-        {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return Utils::dateStringToMs(track.date()); }},
-        {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return Utils::dateStringToMs(QString::number(track.year())); }},
+        {QString::fromLatin1(Date),         [](const Fooyin::Track& track) { return track.p->dateSinceEpoch; }},
+        {QString::fromLatin1(Year),         [](const Fooyin::Track& track) { return track.p->yearSinceEpoch; }},
         {QString::fromLatin1(FirstPlayed),  [](const Fooyin::Track& track) { return track.firstPlayed(); }},
         {QString::fromLatin1(LastPlayed),   [](const Fooyin::Track& track) { return track.lastPlayed(); }},
         {QString::fromLatin1(AddedTime),    [](const Fooyin::Track& track) { return track.addedTime(); }},

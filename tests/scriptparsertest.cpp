@@ -203,6 +203,7 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount GREATER 1"), tracks).size());
     EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount LESS 1"), tracks).size());
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount>=A"), tracks).size());
 
     // Logical operator tests
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("title=Wandering Horizon AND genre MISSING"), tracks).size());
@@ -228,6 +229,7 @@ TEST_F(ScriptParserTest, QueryTest)
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("date AFTER 2000"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("firstplayed SINCE 2022"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST MINUTE"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("lastplayed DURING 2"), tracks).size());
 
     // Grouping and complex queries
     EXPECT_EQ(2, m_parser.filter(QStringLiteral("(playcount>=1 AND bitrate>500) OR title:Celestial"), tracks).size());
