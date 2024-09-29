@@ -136,7 +136,7 @@ TEST_F(ScriptParserTest, MetaTest)
 
     EXPECT_EQ(u"The Verve", m_parser.evaluate(QStringLiteral("%albumartist%"), track));
     EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(albumartist)"), track));
-    EXPECT_EQ(u"", m_parser.evaluate(QStringLiteral("$meta(%albumartist%)"), track));
+    EXPECT_EQ(u"The Verve", m_parser.evaluate(QStringLiteral("$meta(artist)"), track));
 }
 
 TEST_F(ScriptParserTest, InfoTest)
@@ -153,40 +153,93 @@ TEST_F(ScriptParserTest, QueryTest)
     TrackList tracks;
 
     Track track1;
-    track1.setTitle(QStringLiteral("ABC F"));
-    track1.setGenres({QStringLiteral("Pop")});
-    track1.setYear(1991);
-    track1.setDuration(2000);
-    track1.setPlayCount(1);
+    track1.setId(0);
+    track1.setTitle(QStringLiteral("Wandering Horizon"));
+    track1.setAlbum(QStringLiteral("Electric Dreams"));
+    track1.setAlbumArtists({QStringLiteral("Solar Artist 1"), QStringLiteral("Stellar Artist 2")});
+    track1.setArtists({QStringLiteral("Lunar Sound 1"), QStringLiteral("Galactic Echo 2")});
+    track1.setDate(QStringLiteral("2021-05-17"));
+    track1.setTrackNumber(QStringLiteral("7"));
+    track1.setDiscNumber(QStringLiteral("2"));
+    track1.setBitDepth(24);
+    track1.setSampleRate(44100);
+    track1.setBitrate(1000);
+    track1.setComment(QStringLiteral("Awesome track with deep beats"));
+    track1.setComposers({QStringLiteral("Sound Designer 1"), QStringLiteral("Master Composer 2")});
+    track1.setPerformers({QStringLiteral("Vocalist 1"), QStringLiteral("Instrumentalist 2")});
+    track1.setDuration(210000);
+    track1.setFileSize(45600000);
+    track1.setDate(QStringLiteral("1991-03-29"));
+    track1.setFirstPlayed(QDateTime::currentDateTime().addMonths(-2).toMSecsSinceEpoch());
     track1.setLastPlayed(QDateTime::currentMSecsSinceEpoch());
+    track1.setPlayCount(1);
     tracks.push_back(track1);
 
     Track track2;
-    track2.setTitle(QStringLiteral("DEF"));
-    track2.setGenres({QStringLiteral("Rock")});
-    track1.setYear(2013);
-    track2.setDuration(3000);
+    track2.setId(1);
+    track2.setTitle(QStringLiteral("Celestial Waves"));
+    track2.setAlbum(QStringLiteral("Chasing Light"));
+    track2.setAlbumArtists({QStringLiteral("Horizon Band"), QStringLiteral("Sunset Group")});
+    track2.setArtists({QStringLiteral("Ocean Vibes"), QStringLiteral("Sky Whisper")});
+    track2.setDate(QStringLiteral("2023-11-12"));
+    track2.setTrackNumber(QStringLiteral("4"));
+    track2.setDiscNumber(QStringLiteral("1"));
+    track2.setBitDepth(24);
+    track2.setSampleRate(48000);
+    track2.setBitrate(950);
+    track2.setComment(QStringLiteral("A serene journey through sound"));
+    track2.setComposers({QStringLiteral("Melody Creator 1"), QStringLiteral("Harmony Producer 2")});
+    track2.setDuration(195000);
+    track2.setFileSize(32000000);
+    track2.setDate(QStringLiteral("2010-09-15"));
+    track2.setFirstPlayed(QDateTime::currentDateTime().addYears(-3).toMSecsSinceEpoch());
+    track2.setLastPlayed(QDateTime::currentDateTime().addDays(-3).toMSecsSinceEpoch());
+    track2.setPlayCount(8);
     tracks.push_back(track2);
 
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("$info(duration)=2000"), tracks).size());
-    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount>1"), tracks).size());
-    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount GREATER 1"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount LESS 1"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("NOT playcount>=1"), tracks).size());
-    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title PRESENT"), tracks).size());
-    EXPECT_EQ(0, m_parser.filter(QStringLiteral("title MISSING"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:ABC F"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:DE AND genre=rock AND title:D"), tracks).size());
-    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title:AB"), tracks).size());
-    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:DE OR title=\"ABC F\""), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
-    EXPECT_EQ(2, m_parser.filter(QStringLiteral("!(playcount>0 AND genre=rock) OR title:BC"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed BEFORE 2000"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed AFTER 2000"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed SINCE 2013"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING 2024"), tracks).size());
-    EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST 10 MINUTES"), tracks).size());
+    // Basic operator tests
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("$info(duration)=210000"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount>1"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("playcount GREATER 1"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount LESS 1"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("playcount>=1"), tracks).size());
+
+    // Logical operator tests
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title=Wandering Horizon AND genre MISSING"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("playcount=1 OR playcount=8"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("playcount=1 XOR playcount=8"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("playcount=1 XOR playcount=1"), tracks).size());
+
+    // Negation test
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("!playcount=1"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("NOT playcount>=1"), tracks).size());
+
+    // PRESENT/MISSING keyword tests
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("performer PRESENT"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("performer MISSING"), tracks).size());
+
+    // String matching tests
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("title:wandering hor"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("title=wandering hor"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("title:Wa"), tracks).size());
+
+    // Date comparisons
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("date BEFORE 2000"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("date AFTER 2000"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("firstplayed SINCE 2022"), tracks).size());
     EXPECT_EQ(1, m_parser.filter(QStringLiteral("lastplayed DURING LAST MINUTE"), tracks).size());
+
+    // Grouping and complex queries
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("(playcount>=1 AND bitrate>500) OR title:Celestial"), tracks).size());
+    EXPECT_EQ(2, m_parser.filter(QStringLiteral("(playcount>=1 AND (bitrate>500 OR bitrate=950))"), tracks).size());
+    EXPECT_EQ(1, m_parser.filter(QStringLiteral("(playcount=8 OR (bitrate>950 AND duration>200000))"), tracks).size());
+    EXPECT_EQ(0, m_parser.filter(QStringLiteral("(playcount=8 AND (bitrate<900 OR duration<180000))"), tracks).size());
+
+    QString query = QStringLiteral("(title:Wand AND album:Elec) OR (title:Celest AND playcount=8)");
+    EXPECT_EQ(2, m_parser.filter(query, tracks).size());
+    query = QStringLiteral("(title:Wandering OR (playcount=1 AND bitrate>900))");
+    EXPECT_EQ(1, m_parser.filter(query, tracks).size());
+    query = QStringLiteral("((playcount>=1 AND bitrate>500) OR title:Celest) AND (duration_ms>180000)");
+    EXPECT_EQ(2, m_parser.filter(query, tracks).size());
 }
 } // namespace Fooyin::Testing
