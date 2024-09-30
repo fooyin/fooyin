@@ -1859,11 +1859,13 @@ void PlaylistModel::storeMimeData(const QModelIndexList& indexes, QMimeData* mim
 
         QModelIndexList sortedIndexes{indexes};
         std::ranges::sort(sortedIndexes, Utils::sortModelIndexes);
-        mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
-                          saveIndexes(sortedIndexes, m_currentPlaylist));
         mimeData->setData(QString::fromLatin1(Constants::Mime::TrackIds), saveTracks(sortedIndexes));
-        mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
-                          Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
+        if(m_currentPlaylist) {
+            mimeData->setData(QString::fromLatin1(Constants::Mime::PlaylistItems),
+                              saveIndexes(sortedIndexes, m_currentPlaylist));
+            mimeData->setData(QString::fromLatin1(Constants::Mime::QueueTracks),
+                              Gui::queueTracksToMimeData(savePlaylistTracks(m_currentPlaylist->id(), sortedIndexes)));
+        }
     }
 }
 
