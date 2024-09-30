@@ -27,7 +27,6 @@
 #include <utils/settings/settingsmanager.h>
 
 #include <QButtonGroup>
-#include <QCheckBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -58,6 +57,8 @@ private:
     QRadioButton* m_orderGain;
     DoubleSliderEditor* m_rgPreAmp;
     DoubleSliderEditor* m_preAmp;
+    QRadioButton* m_samplePeak;
+    QRadioButton* m_truePeak;
 };
 
 ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
@@ -71,6 +72,8 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     , m_orderGain{new QRadioButton(tr("Use gain based on playback order"), this)}
     , m_rgPreAmp{new DoubleSliderEditor(this)}
     , m_preAmp{new DoubleSliderEditor(this)}
+    , m_samplePeak{new QRadioButton(tr("Use sample peak filter for calculating peaks"), this)}
+    , m_truePeak{new QRadioButton(tr("Use true peak filter for calculating peaks"), this)}
 {
     m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
     m_albumGain->setToolTip(tr("Base normalisation on album loudness"));
@@ -131,9 +134,17 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     preAmpLayout->addWidget(m_preAmp, 1, 1);
     preAmpLayout->setColumnStretch(1, 1);
 
+    auto* calcGroup  = new QGroupBox(tr("Calculation"), this);
+    auto* calcLayout = new QGridLayout(calcGroup);
+
+    calcLayout->addWidget(m_truePeak, 0, 0);
+    calcLayout->addWidget(m_samplePeak, 1, 0);
+    calcLayout->setColumnStretch(1, 1);
+
     layout->addWidget(modeGroupBox, 0, 0);
     layout->addWidget(typeGroupBox, 1, 0);
     layout->addWidget(preAmpGroup, 2, 0);
+    layout->addWidget(calcGroup, 3, 0);
 
     layout->setRowStretch(layout->rowCount(), 1);
 }
@@ -156,6 +167,10 @@ void ReplayGainPageWidget::load()
     m_rgPreAmp->setValue(rgPreAmp);
     const auto preAmp = static_cast<double>(m_settings->value<Settings::Core::NonRGPreAmp>());
     m_preAmp->setValue(preAmp);
+
+    const auto truePeak = m_settings->value<Settings::Core::RGTruePeak>();
+    m_truePeak->setChecked(truePeak);
+    m_samplePeak->setChecked(!truePeak);
 }
 
 void ReplayGainPageWidget::apply()
@@ -189,6 +204,8 @@ void ReplayGainPageWidget::apply()
 
     m_settings->set<Settings::Core::RGPreAmp>(static_cast<float>(m_rgPreAmp->value()));
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
+
+    m_settings->set<Settings::Core::RGTruePeak>(m_truePeak->isChecked());
 }
 
 void ReplayGainPageWidget::reset()
@@ -197,6 +214,7 @@ void ReplayGainPageWidget::reset()
     m_settings->reset<Settings::Core::RGType>();
     m_settings->reset<Settings::Core::RGPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();
+    m_settings->reset<Settings::Core::RGTruePeak>();
 }
 
 ReplayGainPage::ReplayGainPage(SettingsManager* settings, QObject* parent)

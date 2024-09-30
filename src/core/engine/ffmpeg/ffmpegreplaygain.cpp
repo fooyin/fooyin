@@ -24,7 +24,9 @@
 #include "ffmpegutils.h"
 
 #include <core/constants.h>
+#include <core/coresettings.h>
 #include <core/track.h>
+#include <utils/settings/settingsmanager.h>
 
 #if defined(__GNUG__)
 #pragma GCC diagnostic ignored "-Wold-style-cast"
@@ -100,12 +102,12 @@ bool finishFilter(AVFilterContext* filter)
     return av_buffersrc_add_frame_flags(filter, nullptr, FrameFlags) >= 0;
 }
 
-ReplayGainResult extractRGValues(AVFilterGraph* graph)
+ReplayGainResult extractRGValues(AVFilterGraph* graph, bool truePeak)
 {
     ReplayGainResult result{};
 
     av_opt_get_double(graph->filters[1], "integrated", AV_OPT_SEARCH_CHILDREN, &result.gain);
-    av_opt_get_double(graph->filters[1], "true_peak", AV_OPT_SEARCH_CHILDREN, &result.peak);
+    av_opt_get_double(graph->filters[1], truePeak ? "true_peak" : "sample_peak", AV_OPT_SEARCH_CHILDREN, &result.peak);
     result.gain = -18.0 - result.gain; // TODO - newer standard uses 23.0 as reference. make configurable?
     result.peak = std::pow(10, result.peak / 20.0);
 
@@ -117,7 +119,7 @@ namespace Fooyin {
 class FFmpegReplayGainPrivate
 {
 public:
-    explicit FFmpegReplayGainPrivate(MusicLibrary* library);
+    explicit FFmpegReplayGainPrivate(MusicLibrary* library, SettingsManager* settings);
 
     [[nodiscard]] bool setupTrack(const Track& track, ReplayGainFilter& filter);
     [[nodiscard]] ReplayGainResult handleTrack(bool inAlbum) const;
@@ -131,19 +133,21 @@ public:
     int m_streamIndex{-1};
 
     MusicLibrary* m_library;
+    SettingsManager* m_settings;
 };
 
-FFmpegReplayGain::FFmpegReplayGain(MusicLibrary* library, QObject* parent)
+FFmpegReplayGain::FFmpegReplayGain(MusicLibrary* library, SettingsManager* settings, QObject* parent)
     : Worker{parent}
-    , p{std::make_unique<FFmpegReplayGainPrivate>(library)}
+    , p{std::make_unique<FFmpegReplayGainPrivate>(library, settings)}
 { }
 
 FFmpegReplayGain::~FFmpegReplayGain() = default;
 
-FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(MusicLibrary* library)
+FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(MusicLibrary* library, SettingsManager* settings)
     : m_albumFilter{}
     , m_trackFilter{}
     , m_library{library}
+    , m_settings{settings}
 { }
 
 void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
@@ -176,7 +180,7 @@ void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
     setState(Idle);
 }
 
-ReplayGainFilter initialiseRGFilter(const AudioFormat& format)
+ReplayGainFilter initialiseRGFilter(const AudioFormat& format, bool truePeak)
 {
     int rc{0};
     ReplayGainFilter filter{};
@@ -197,13 +201,12 @@ ReplayGainFilter initialiseRGFilter(const AudioFormat& format)
                           .arg(1)
                           .arg(sampleRate)
                           .arg(QString::fromStdString(sampleFmtName))
-                          .arg(AV_CH_LAYOUT_STEREO, 0, 16)
-                          .toStdString();
+                          .arg(AV_CH_LAYOUT_STEREO, 0, 16);
 
     // Allocate and configure filter
     AVFilterContext* filterCtx{nullptr};
-    rc = avfilter_graph_create_filter(&filterCtx, avfilter_get_by_name("abuffer"), "in", args.c_str(), nullptr,
-                                      filterGraph);
+    rc = avfilter_graph_create_filter(&filterCtx, avfilter_get_by_name("abuffer"), "in", args.toUtf8().constData(),
+                                      nullptr, filterGraph);
     if(rc < 0) {
         Utils::printError(rc);
         return filter;
@@ -223,8 +226,10 @@ ReplayGainFilter initialiseRGFilter(const AudioFormat& format)
     filter.filterOutput = outputs;
 
     AVFilterInOut* inputs = nullptr;
-    rc = avfilter_graph_parse_ptr(filterGraph, "ebur128=peak=true:framelog=quiet,anullsink", &inputs, &outputs,
-                                  nullptr);
+    static const std::array<std::string, 2> peakType{"sample", "true"};
+    const auto filterParams = QString{QStringLiteral("ebur128=peak=%1:framelog=quiet,anullsink")}.arg(
+        QString::fromStdString(peakType[truePeak]));
+    rc = avfilter_graph_parse_ptr(filterGraph, filterParams.toUtf8().constData(), &inputs, &outputs, nullptr);
     if(rc < 0) {
         Utils::printError(rc);
         return filter;
@@ -282,7 +287,7 @@ bool FFmpegReplayGainPrivate::setupTrack(const Track& track, ReplayGainFilter& f
     }
 
     m_format = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
-    filter   = initialiseRGFilter(m_format);
+    filter   = initialiseRGFilter(m_format, m_settings->value<Settings::Core::RGTruePeak>());
 
     return true;
 }
@@ -344,7 +349,7 @@ ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum) const
         return {};
     }
 
-    return extractRGValues(m_trackFilter.filterGraph.get());
+    return extractRGValues(m_trackFilter.filterGraph.get(), m_settings->value<Settings::Core::RGTruePeak>());
 }
 
 void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
@@ -370,7 +375,8 @@ void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
         return;
     }
 
-    const auto albumResult = extractRGValues(m_albumFilter.filterGraph.get());
+    const auto albumResult
+        = extractRGValues(m_albumFilter.filterGraph.get(), m_settings->value<Settings::Core::RGTruePeak>());
     auto albumOutput       = album;
 
     for(size_t i = 0; auto& track : albumOutput) {

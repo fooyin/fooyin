@@ -202,7 +202,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
     , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
-    , m_replayGain{new FFmpegReplayGain(m_library)}
+    , m_replayGain{new FFmpegReplayGain(m_library, m_settings)}
     , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}

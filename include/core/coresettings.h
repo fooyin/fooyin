@@ -67,7 +67,8 @@ enum CoreSettings : uint32_t
     ProxyConfig               = 26 | Type::Variant,
     UseVariousForCompilations = 27 | Type::Bool,
     ShuffleAlbumsGroupScript  = 28 | Type::String,
-    ShuffleAlbumsSortScript   = 29 | Type::String
+    ShuffleAlbumsSortScript   = 29 | Type::String,
+    RGTruePeak                = 30 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

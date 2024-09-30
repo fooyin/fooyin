@@ -80,6 +80,7 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
                                                         QStringLiteral("Playback/ShuffleAlbumsGroupScript"));
     m_settings->createSetting<ShuffleAlbumsSortScript>(QStringLiteral("%disc% - %track% - %title%"),
                                                        QStringLiteral("Playback/ShuffleAlbumsSortScript"));
+    m_settings->createSetting<RGTruePeak>(false, QStringLiteral("Engine/ReplayGainTruePeak"));
 
     m_settings->createSetting<Internal::MonitorLibraries>(true, QStringLiteral("Library/MonitorLibraries"));
     m_settings->createTempSetting<Internal::MuteVolume>(m_settings->value<OutputVolume>());

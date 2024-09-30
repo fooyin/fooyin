@@ -29,13 +29,14 @@ Q_DECLARE_LOGGING_CATEGORY(REPLAYGAIN)
 
 namespace Fooyin {
 class FFmpegReplayGainPrivate;
+class SettingsManager;
 
 class FYCORE_EXPORT FFmpegReplayGain : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit FFmpegReplayGain(MusicLibrary* library, QObject* parent = nullptr);
+    explicit FFmpegReplayGain(MusicLibrary* library, SettingsManager* settings, QObject* parent = nullptr);
     ~FFmpegReplayGain() override;
     void calculate(const TrackList& tracks, bool asAlbum);
 
