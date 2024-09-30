@@ -154,14 +154,15 @@ void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
         p->handleAlbum(tracks);
     }
     else {
-        for(auto track : tracks) {
+        auto tracksOut = tracks;
+        for(auto& track : tracksOut) {
             if(p->setupTrack(track, p->m_trackFilter)) {
                 const auto result = p->handleTrack(false);
                 track.setRGTrackGain(static_cast<float>(result.gain));
                 track.setRGTrackPeak(static_cast<float>(result.peak));
-                p->m_library->writeTrackMetadata({track});
             }
         }
+        p->m_library->writeTrackMetadata(tracksOut);
     }
 
     if(p->m_trackFilter.filterContext) {
@@ -260,7 +261,7 @@ bool FFmpegReplayGainPrivate::setupTrack(const Track& track, ReplayGainFilter& f
     m_decoderCtx.reset(avcodec_alloc_context3(decoder));
     auto* decoderCtx = m_decoderCtx.get();
 
-    const auto stream = findAudioStream(formatCtx);
+    const auto stream = Utils::findAudioStream(formatCtx);
     if(!stream.isValid()) {
         return false;
     }
@@ -359,7 +360,7 @@ void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
 
     std::vector<ReplayGainResult> trackResults;
 
-    for(auto track : album) {
+    for(const auto& track : album) {
         if(setupTrack(track, m_trackFilter)) {
             trackResults.emplace_back(handleTrack(true));
         }
@@ -370,14 +371,15 @@ void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
     }
 
     const auto albumResult = extractRGValues(m_albumFilter.filterGraph.get());
+    auto albumOutput       = album;
 
-    for(size_t i = 0; auto track : album) {
+    for(size_t i = 0; auto& track : albumOutput) {
         track.setRGTrackGain(static_cast<float>(trackResults[i].gain));
         track.setRGTrackPeak(static_cast<float>(trackResults[i].peak));
         track.setRGAlbumPeak(static_cast<float>(albumResult.peak));
         track.setRGAlbumGain(static_cast<float>(albumResult.gain));
-        m_library->writeTrackMetadata({track});
         i++;
     }
+    m_library->writeTrackMetadata(albumOutput);
 }
 } // namespace Fooyin

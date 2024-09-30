@@ -168,4 +168,19 @@ AVSampleFormat sampleFormat(SampleFormat format, bool planar)
     return AV_SAMPLE_FMT_NONE;
 }
 
+Stream findAudioStream(AVFormatContext* context)
+{
+    const auto count = static_cast<int>(context->nb_streams);
+
+    for(int i{0}; i < count; ++i) {
+        AVStream* avStream = context->streams[i];
+        const auto type    = avStream->codecpar->codec_type;
+
+        if(type == AVMEDIA_TYPE_AUDIO) {
+            return Stream{avStream};
+        }
+    }
+
+    return {};
+}
 } // namespace Fooyin::Utils

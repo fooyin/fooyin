@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "ffmpegstream.h"
+
 #include <core/engine/audioformat.h>
 
 #if defined(__GNUG__)
@@ -92,4 +94,5 @@ void printError(const QString& error);
 SampleFormat sampleFormat(AVSampleFormat format, int bps);
 AVSampleFormat sampleFormat(SampleFormat format, bool planar = false);
 AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
+Stream findAudioStream(AVFormatContext* context);
 } // namespace Fooyin::Utils

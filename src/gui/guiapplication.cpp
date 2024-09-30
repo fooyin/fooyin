@@ -601,7 +601,6 @@ void GuiApplicationPrivate::setupUtilitiesMenu() const
     selectionMenu->addMenu(utilitiesMenu);
 }
 
-<<<<<<< HEAD
 void GuiApplicationPrivate::changeVolume(double delta) const
 {
     const double currentVolume = std::max(m_settings->value<Settings::Core::OutputVolume>(), 0.01);
