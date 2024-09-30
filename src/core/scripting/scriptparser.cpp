@@ -418,7 +418,7 @@ Expression ScriptParserPrivate::variable()
     if(m_previous.type == TokenType::TokLeftAngle) {
         advance();
         expr.type = Expr::VariableList;
-        value     = QString{m_previous.value}.toLower();
+        value     = m_previous.value.toLower();
         consume(TokenType::TokRightAngle, QObject::tr("Expected %1 to close variable list").arg(u"'>'"));
     }
     else {
@@ -444,7 +444,7 @@ Expression ScriptParserPrivate::function()
 
     Expression expr{Expr::Function};
     FuncValue funcExpr;
-    funcExpr.name = QString{m_previous.value}.toLower();
+    funcExpr.name = m_previous.value.toLower();
 
     if(!m_registry->isFunction(funcExpr.name)) {
         error(QStringLiteral("Function not found"));
