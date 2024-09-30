@@ -227,6 +227,7 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[QStringLiteral("right")]          = Scripting::right;
     m_funcs[QStringLiteral("insert")]         = Scripting::insert;
     m_funcs[QStringLiteral("substr")]         = Scripting::substr;
+    m_funcs[QStringLiteral("split")]          = Scripting::split;
     m_funcs[QStringLiteral("len")]            = Scripting::len;
     m_funcs[QStringLiteral("longest")]        = Scripting::longest;
     m_funcs[QStringLiteral("strcmp")]         = Scripting::strcmp;

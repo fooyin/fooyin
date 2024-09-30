@@ -33,6 +33,7 @@ QString left(const QStringList& vec);
 QString right(const QStringList& vec);
 QString insert(const QStringList& vec);
 QString substr(const QStringList& vec);
+QString split(const QStringList& vec);
 QString len(const QStringList& vec);
 QString longest(const QStringList& vec);
 ScriptResult strcmp(const QStringList& vec);

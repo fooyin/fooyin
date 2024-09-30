@@ -158,9 +158,7 @@ QString slice(const QStringList& vec)
 
 QString chop(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2 || vec.at(0).isEmpty()) {
+    if(vec.size() != 2 || vec.at(0).isEmpty()) {
         return {};
     }
 
@@ -177,9 +175,7 @@ QString chop(const QStringList& vec)
 
 QString left(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
@@ -199,9 +195,7 @@ QString left(const QStringList& vec)
 
 QString right(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
@@ -221,9 +215,7 @@ QString right(const QStringList& vec)
 
 QString insert(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 3) {
+    if(vec.size() != 3) {
         return {};
     }
 
@@ -241,9 +233,7 @@ QString insert(const QStringList& vec)
 
 QString substr(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 3) {
+    if(vec.size() != 3) {
         return {};
     }
 
@@ -257,6 +247,19 @@ QString substr(const QStringList& vec)
     }
 
     return {};
+}
+
+QString split(const QStringList& vec)
+{
+    if(vec.size() != 2) {
+        return {};
+    }
+
+    if(vec.front().isEmpty()) {
+        return {};
+    }
+
+    return vec.front().split(vec.at(1), Qt::SkipEmptyParts).join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString len(const QStringList& vec)
@@ -279,9 +282,7 @@ QString longest(const QStringList& vec)
 
 ScriptResult strcmp(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
@@ -290,9 +291,7 @@ ScriptResult strcmp(const QStringList& vec)
 
 ScriptResult stricmp(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
@@ -301,9 +300,7 @@ ScriptResult stricmp(const QStringList& vec)
 
 ScriptResult longer(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
@@ -446,9 +443,7 @@ QString padRight(const QStringList& vec)
 
 QString repeat(const QStringList& vec)
 {
-    const qsizetype count = vec.size();
-
-    if(count != 2) {
+    if(vec.size() != 2) {
         return {};
     }
 
