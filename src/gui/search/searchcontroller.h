@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <gui/fywidget.h>
 #include <utils/id.h>
 
 #include <QObject>
@@ -36,11 +37,15 @@ public:
     ~SearchController() override;
 
     void setupWidgetConnections(const Id& id);
-    IdSet connectedWidgets(const Id& id);
+    WidgetList connectedWidgets(const Id& id);
+    IdSet connectedWidgetIds(const Id& id);
     void setConnectedWidgets(const Id& id, const IdSet& widgets);
     void removeConnectedWidgets(const Id& id);
 
     void changeSearch(const Id& id, const QString& search);
+
+signals:
+    void connectionChanged(const Id& id);
 
 private:
     std::unique_ptr<SearchControllerPrivate> p;

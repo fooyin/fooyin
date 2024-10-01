@@ -105,6 +105,10 @@ bool SearchControllerPrivate::isConnectedToOther(const Id& sourceId, const Id& w
 
 void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget* widget, OverlayWidget* overlay)
 {
+    if(!m_connections.contains(sourceId)) {
+        return;
+    }
+
     const Id id = widget->id();
 
     if(isConnected(sourceId, id)) {
@@ -120,6 +124,7 @@ void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget
     }
 
     updateDialog(sourceId);
+    emit m_self->connectionChanged(sourceId);
 }
 
 void SearchControllerPrivate::setupWidgetOverlay(const Id& sourceId, FyWidget* widget)
@@ -233,7 +238,32 @@ void SearchController::setupWidgetConnections(const Id& id)
     p->setupWidgetConnections(id);
 }
 
-IdSet SearchController::connectedWidgets(const Id& id)
+WidgetList SearchController::connectedWidgets(const Id& id)
+{
+    if(!p->m_connections.contains(id)) {
+        return {};
+    }
+
+    WidgetList widgets;
+
+    const auto connections = p->m_connections.at(id);
+    for(const auto& widgetId : connections) {
+        if(p->m_searchableWidgets.contains(widgetId)) {
+            if(auto* widget = p->m_searchableWidgets.at(widgetId)) {
+                widgets.emplace_back(widget);
+            }
+        }
+        else if(auto* widget = p->m_editableLayout->findWidget(widgetId)) {
+            QObject::connect(widget, &QObject::destroyed, this, [this, widgetId]() { p->removeWidget(widgetId); });
+            p->m_searchableWidgets.emplace(widgetId, widget);
+            widgets.emplace_back(widget);
+        }
+    }
+
+    return widgets;
+}
+
+IdSet SearchController::connectedWidgetIds(const Id& id)
 {
     if(!p->m_connections.contains(id)) {
         return {};
@@ -258,7 +288,8 @@ void SearchController::changeSearch(const Id& id, const QString& search)
         return;
     }
 
-    for(const auto& widgetId : p->m_connections[id]) {
+    const auto connections = p->m_connections.at(id);
+    for(const auto& widgetId : connections) {
         if(p->m_searchableWidgets.contains(widgetId)) {
             if(auto* widget = p->m_searchableWidgets.at(widgetId)) {
                 widget->searchEvent(search);

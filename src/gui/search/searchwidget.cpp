@@ -98,7 +98,7 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
         layout[u"Placeholder"] = placeholderText;
     }
 
-    const auto connectedWidgets = m_searchController->connectedWidgets(id());
+    const auto connectedWidgets = m_searchController->connectedWidgetIds(id());
 
     if(connectedWidgets.empty()) {
         return;
