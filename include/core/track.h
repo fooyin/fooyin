@@ -248,6 +248,7 @@ public:
     void clearWasModified();
 
     static QString findCommonField(const TrackList& tracks);
+    static TrackIds trackIdsForTracks(const TrackList& tracks);
 
     static QStringList supportedMimeTypes();
 

@@ -1669,11 +1669,7 @@ void PlaylistWidget::searchEvent(const QString& search)
     }
 
     auto selectTracks = [this](const TrackList& tracks) {
-        std::vector<int> trackIds;
-        for(const Track& track : tracks) {
-            trackIds.emplace_back(track.id());
-        }
-        p->selectTrackIds(trackIds);
+        p->selectTrackIds(Track::trackIdsForTracks(tracks));
     };
 
     auto handleFilteredTracks = [this, selectTracks](const TrackList& filteredTracks) {

@@ -1457,6 +1457,15 @@ QString Track::findCommonField(const TrackList& tracks)
     return name;
 }
 
+TrackIds Track::trackIdsForTracks(const TrackList& tracks)
+{
+    TrackIds trackIds;
+    for(const auto& track : tracks) {
+        trackIds.emplace_back(track.id());
+    }
+    return trackIds;
+}
+
 QStringList Track::supportedMimeTypes()
 {
     static const QStringList supportedTypes = {QStringLiteral("audio/ogg"),
