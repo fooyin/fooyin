@@ -25,7 +25,7 @@ namespace Fooyin {
 class Application;
 class CoverProvider;
 class FyWidget;
-struct GuiPluginContext;
+class GuiApplication;
 class LibraryTreeController;
 class MainWindow;
 class PlaylistController;
@@ -41,7 +41,7 @@ class Widgets : public QObject
     Q_OBJECT
 
 public:
-    Widgets(Application* core, MainWindow* window, const GuiPluginContext& gui, PlaylistInteractor* playlistInteractor,
+    Widgets(Application* core, MainWindow* window, GuiApplication* gui, PlaylistInteractor* playlistInteractor,
             QObject* parent = nullptr);
 
     void registerWidgets();
@@ -54,10 +54,9 @@ private:
     void showScanProgress(const ScanProgress& progress) const;
 
     Application* m_core;
-    const GuiPluginContext& m_gui;
+    GuiApplication* m_gui;
 
     MainWindow* m_window;
-    WidgetProvider* m_provider;
     SettingsManager* m_settings;
 
     CoverProvider* m_coverProvider;

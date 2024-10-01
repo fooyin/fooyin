@@ -94,6 +94,7 @@ class GuiApplicationPrivate
 public:
     explicit GuiApplicationPrivate(GuiApplication* self_, Application* core_);
 
+    void initialise();
     void setupConnections();
     void initialisePlugins();
 
@@ -211,7 +212,10 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
                          m_searchController,     m_propertiesDialog, &m_widgetProvider,
                          m_editableLayout.get(), m_windowController, m_themeRegistry}
     , m_logWidget{std::make_unique<LogWidget>(m_settings)}
-    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_guiPluginContext, &m_playlistInteractor, m_self)}
+    , m_widgets{new Widgets(m_core, m_mainWindow.get(), m_self, &m_playlistInteractor, m_self)}
+{ }
+
+void GuiApplicationPrivate::initialise()
 {
     setupConnections();
     registerActions();
@@ -1021,6 +1025,11 @@ GuiApplication::GuiApplication(Application* core)
     });
 }
 
+void GuiApplication::startup()
+{
+    p->initialise();
+}
+
 GuiApplication::~GuiApplication() = default;
 
 void GuiApplication::shutdown()
@@ -1047,6 +1056,51 @@ void GuiApplication::openFiles(const QList<QUrl>& files)
     QObject::connect(
         p->m_playlistController.get(), &PlaylistController::playlistsLoaded, this,
         [this, files]() { p->openFiles(files); }, Qt::SingleShotConnection);
+}
+
+ActionManager* GuiApplication::actionManager() const
+{
+    return p->m_actionManager;
+}
+
+LayoutProvider* GuiApplication::layoutProvider() const
+{
+    return &p->m_layoutProvider;
+}
+
+PlaylistController* GuiApplication::playlistController() const
+{
+    return p->m_playlistController.get();
+}
+
+TrackSelectionController* GuiApplication::trackSelection() const
+{
+    return &p->m_selectionController;
+}
+
+SearchController* GuiApplication::searchController() const
+{
+    return p->m_searchController;
+}
+
+PropertiesDialog* GuiApplication::propertiesDialog() const
+{
+    return p->m_propertiesDialog;
+}
+
+EditableLayout* GuiApplication::editableLayout() const
+{
+    return p->m_editableLayout.get();
+}
+
+WidgetProvider* GuiApplication::widgetProvider() const
+{
+    return &p->m_widgetProvider;
+}
+
+ThemeRegistry* GuiApplication::themeRegistry() const
+{
+    return p->m_themeRegistry;
 }
 } // namespace Fooyin
 

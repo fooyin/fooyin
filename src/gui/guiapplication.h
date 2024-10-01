@@ -24,8 +24,17 @@
 #include <QObject>
 
 namespace Fooyin {
+class ActionManager;
 class Application;
+class EditableLayout;
 class GuiApplicationPrivate;
+class LayoutProvider;
+class PlaylistController;
+class PropertiesDialog;
+class SearchController;
+class ThemeRegistry;
+class TrackSelectionController;
+class WidgetProvider;
 
 class FYGUI_EXPORT GuiApplication : public QObject
 {
@@ -35,10 +44,21 @@ public:
     explicit GuiApplication(Application* core);
     ~GuiApplication() override;
 
+    void startup();
     void shutdown();
 
     void raise();
     void openFiles(const QList<QUrl>& files);
+
+    [[nodiscard]] ActionManager* actionManager() const;
+    [[nodiscard]] LayoutProvider* layoutProvider() const;
+    [[nodiscard]] PlaylistController* playlistController() const;
+    [[nodiscard]] TrackSelectionController* trackSelection() const;
+    [[nodiscard]] SearchController* searchController() const;
+    [[nodiscard]] PropertiesDialog* propertiesDialog() const;
+    [[nodiscard]] EditableLayout* editableLayout() const;
+    [[nodiscard]] WidgetProvider* widgetProvider() const;
+    [[nodiscard]] ThemeRegistry* themeRegistry() const;
 
 private:
     std::unique_ptr<GuiApplicationPrivate> p;

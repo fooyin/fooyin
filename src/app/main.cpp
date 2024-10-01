@@ -117,7 +117,9 @@ int main(int argc, char** argv)
 
     // Startup
     Fooyin::Application coreApp;
+    coreApp.startup();
     Fooyin::GuiApplication guiApp{&coreApp};
+    guiApp.startup();
 
     if(!commandLine.empty()) {
         parseCmdOptions(coreApp, guiApp, commandLine);

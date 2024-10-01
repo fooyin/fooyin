@@ -19,8 +19,10 @@
 
 #include "searchwidget.h"
 
+#include "playlist/playlistcontroller.h"
 #include "searchcontroller.h"
 
+#include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/popuplineedit.h>
@@ -35,9 +37,12 @@
 #include <QStyleOptionFrame>
 
 namespace Fooyin {
-SearchWidget::SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent)
+SearchWidget::SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
+                           SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
     , m_searchController{controller}
+    , m_playlistController{playlistController}
+    , m_library{library}
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
     , m_defaultPlaceholder{tr("Search library…")}

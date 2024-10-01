@@ -33,6 +33,8 @@ class SearchWidget : public FyWidget
 
 public:
     explicit SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent = nullptr);
+    SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
+                 SettingsManager* settings, QWidget* parent = nullptr);
     ~SearchWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -47,7 +49,10 @@ private:
     void showOptionsMenu();
 
     SearchController* m_searchController;
+    PlaylistController* m_playlistController;
+    MusicLibrary* m_library;
     SettingsManager* m_settings;
+
     QLineEdit* m_searchBox;
     QString m_defaultPlaceholder;
 };

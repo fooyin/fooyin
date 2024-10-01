@@ -48,6 +48,7 @@ public:
     explicit Application(QObject* parent = nullptr);
     ~Application() override;
 
+    void startup();
     void shutdown();
     static void quit();
     static void restart();

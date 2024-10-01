@@ -85,6 +85,7 @@ class ApplicationPrivate
 public:
     explicit ApplicationPrivate(Application* self_);
 
+    void initialise();
     void registerPlaylistParsers();
     void registerInputs();
 
@@ -141,6 +142,9 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_pluginManager{m_settings}
     , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
                           m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
+{ }
+
+void ApplicationPrivate::initialise()
 {
     registerTypes();
     registerInputs();
@@ -150,6 +154,9 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
 
     m_audioLoader->restoreState();
     m_settingsSaveTimer.start(SettingsSaveInterval, m_self);
+
+    m_library->loadAllTracks();
+    m_engine.setup();
 }
 
 void ApplicationPrivate::registerPlaylistParsers()
@@ -402,9 +409,11 @@ Application::Application(QObject* parent)
                              p->m_playerController->pause();
                          }
                      });
+}
 
-    p->m_library->loadAllTracks();
-    p->m_engine.setup();
+void Application::startup()
+{
+    p->initialise();
 }
 
 Application::~Application() = default;
