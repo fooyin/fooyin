@@ -44,7 +44,7 @@ class FYGUI_EXPORT FyWidget : public QWidget
     Q_OBJECT
 
 public:
-    enum Feature
+    enum Feature : uint8_t
     {
         None = 0,
         /*!
