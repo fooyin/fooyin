@@ -20,18 +20,23 @@
 #include "searchwidget.h"
 
 #include "playlist/playlistcontroller.h"
+#include "playlist/playlistwidget.h"
 #include "searchcontroller.h"
 
 #include <core/library/musiclibrary.h>
+#include <core/playlist/playlisthandler.h>
+#include <core/scripting/scriptparser.h>
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
 #include <gui/widgets/popuplineedit.h>
 #include <utils/actions/actioncontainer.h>
+#include <utils/async.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QMenu>
 #include <QStyleOptionFrame>
@@ -46,6 +51,9 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     , m_settings{settings}
     , m_searchBox{new QLineEdit(this)}
     , m_defaultPlaceholder{tr("Search library…")}
+    , m_mode{SearchMode::Library}
+    , m_unconnected{true}
+    , m_autoSearch{false}
 {
     setObjectName(SearchWidget::name());
 
@@ -57,8 +65,16 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     m_searchBox->setPlaceholderText(m_defaultPlaceholder);
     m_searchBox->setClearButtonEnabled(true);
 
-    QObject::connect(m_searchBox, &QLineEdit::textChanged, this,
-                     [this](const QString& search) { m_searchController->changeSearch(id(), search); });
+    QObject::connect(m_searchBox, &QLineEdit::textChanged, this, [this]() {
+        if(m_autoSearch) {
+            searchChanged();
+        }
+    });
+    QObject::connect(m_searchController, &SearchController::connectionChanged, this, [this](const Id& widgetId) {
+        if(widgetId == id()) {
+            updateConnectedState();
+        }
+    });
 
     auto* selectReceiver = new QAction(Utils::iconFromTheme(Constants::Icons::Options), tr("Options"), this);
     QObject::connect(selectReceiver, &QAction::triggered, this, [this]() { showOptionsMenu(); });
@@ -93,6 +109,9 @@ void SearchWidget::layoutEditingMenu(QMenu* menu)
 
 void SearchWidget::saveLayoutData(QJsonObject& layout)
 {
+    layout[u"AutoSearch"] = m_autoSearch;
+    layout[u"SearchMode"] = static_cast<quint8>(m_mode);
+
     const QString placeholderText = m_searchBox->placeholderText();
     if(!placeholderText.isEmpty() && placeholderText != m_defaultPlaceholder) {
         layout[u"Placeholder"] = placeholderText;
@@ -112,6 +131,14 @@ void SearchWidget::saveLayoutData(QJsonObject& layout)
 
 void SearchWidget::loadLayoutData(const QJsonObject& layout)
 {
+    if(layout.contains(u"AutoSearch")) {
+        m_autoSearch = layout.value(u"AutoSearch").toBool();
+    }
+
+    if(layout.contains(u"SearchMode")) {
+        m_mode = static_cast<SearchMode>(layout.value(u"SearchMode").toVariant().value<quint8>());
+    }
+
     if(layout.contains(u"Placeholder")) {
         m_searchBox->setPlaceholderText(layout.value(u"Placeholder").toString());
     }
@@ -133,6 +160,52 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
     }
 
     m_searchController->setConnectedWidgets(id(), connectedWidgets);
+}
+
+void SearchWidget::showEvent(QShowEvent* event)
+{
+    updateConnectedState();
+    FyWidget::showEvent(event);
+}
+
+void SearchWidget::keyPressEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        searchChanged();
+    }
+
+    FyWidget::keyPressEvent(event);
+}
+
+void SearchWidget::updateConnectedState()
+{
+    const auto widgets = m_searchController->connectedWidgets(id());
+    m_unconnected      = widgets.empty() || (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
+}
+
+void SearchWidget::searchChanged()
+{
+    if(!m_unconnected) {
+        m_searchController->changeSearch(id(), m_searchBox->text());
+        return;
+    }
+
+    const TrackList tracks = m_mode == SearchMode::PlaylistInline && m_playlistController->currentPlaylist()
+                               ? m_playlistController->currentPlaylist()->tracks()
+                               : m_library->tracks();
+
+    Utils::asyncExec([search = m_searchBox->text(), tracks]() {
+        ScriptParser parser;
+        return parser.filter(search, tracks);
+    }).then(this, [this](const TrackList& filteredTracks) {
+        if(m_mode == SearchMode::PlaylistInline) {
+            m_playlistController->selectTrackIds(Track::trackIdsForTracks(filteredTracks));
+        }
+        else if(auto* playlist = m_playlistController->playlistHandler()->createPlaylist(
+                    QStringLiteral("Search Results"), filteredTracks)) {
+            m_playlistController->changeCurrentPlaylist(playlist);
+        }
+    });
 }
 
 void SearchWidget::changePlaceholderText()
@@ -159,6 +232,31 @@ void SearchWidget::showOptionsMenu()
 {
     auto* menu = new QMenu(tr("Options"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    auto* autoSearch = new QAction(tr("Autosearch"), this);
+    autoSearch->setCheckable(true);
+    autoSearch->setChecked(m_autoSearch);
+    QObject::connect(autoSearch, &QAction::triggered, this, [this](const bool checked) { m_autoSearch = checked; });
+    menu->addAction(autoSearch);
+
+    if(m_unconnected) {
+        auto* searchInMenu = menu->addMenu(tr("Search in"));
+
+        auto* searchLibrary = new QAction(tr("Library"), this);
+        searchLibrary->setCheckable(true);
+        searchLibrary->setChecked(m_mode == SearchMode::Library);
+        QObject::connect(searchLibrary, &QAction::triggered, this, [this]() { m_mode = SearchMode::Library; });
+        searchInMenu->addAction(searchLibrary);
+
+        auto* searchPlaylistInline = new QAction(tr("Playlist (Inline)"), this);
+        searchPlaylistInline->setCheckable(true);
+        searchPlaylistInline->setChecked(m_mode == SearchMode::PlaylistInline);
+        QObject::connect(searchPlaylistInline, &QAction::triggered, this,
+                         [this]() { m_mode = SearchMode::PlaylistInline; });
+        searchInMenu->addAction(searchPlaylistInline);
+    }
+
+    menu->addSeparator();
 
     auto* changePlaceholder = new QAction(tr("Change placeholder text"), this);
     QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);

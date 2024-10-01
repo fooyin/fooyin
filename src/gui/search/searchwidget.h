@@ -24,6 +24,8 @@
 class QLineEdit;
 
 namespace Fooyin {
+class MusicLibrary;
+class PlaylistController;
 class SettingsManager;
 class SearchController;
 
@@ -32,7 +34,14 @@ class SearchWidget : public FyWidget
     Q_OBJECT
 
 public:
-    explicit SearchWidget(SearchController* controller, SettingsManager* settings, QWidget* parent = nullptr);
+    enum class SearchMode : uint8_t
+    {
+        Library = 0,
+        Playlist, // Not implemented
+        PlaylistInline,
+        AllPlaylists, // Not implemented
+    };
+
     SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
                  SettingsManager* settings, QWidget* parent = nullptr);
     ~SearchWidget() override;
@@ -44,7 +53,13 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
+protected:
+    void showEvent(QShowEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+
 private:
+    void updateConnectedState();
+    void searchChanged();
     void changePlaceholderText();
     void showOptionsMenu();
 
@@ -55,5 +70,8 @@ private:
 
     QLineEdit* m_searchBox;
     QString m_defaultPlaceholder;
+    SearchMode m_mode;
+    bool m_unconnected;
+    bool m_autoSearch;
 };
 } // namespace Fooyin
