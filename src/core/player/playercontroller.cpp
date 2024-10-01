@@ -151,7 +151,7 @@ void PlayerController::next()
 {
     if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
         p->m_settings->set<Settings::Core::StopAfterCurrent>(false);
-        stop();
+        reset();
         return;
     }
 
