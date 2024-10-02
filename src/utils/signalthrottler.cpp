@@ -34,6 +34,11 @@ SignalThrottler::~SignalThrottler()
     maybeEmitTriggered();
 }
 
+bool SignalThrottler::isActive() const
+{
+    return m_pendingEmit || m_timer.isActive();
+}
+
 int SignalThrottler::timeout() const
 {
     return m_timeout;

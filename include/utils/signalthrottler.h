@@ -33,6 +33,8 @@ public:
     explicit SignalThrottler(QObject* parent = nullptr);
     ~SignalThrottler() override;
 
+    [[nodiscard]] bool isActive() const;
+
     [[nodiscard]] int timeout() const;
     void setTimeout(int timeout);
     void setTimeout(std::chrono::milliseconds timeout);
