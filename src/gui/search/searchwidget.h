@@ -22,6 +22,8 @@
 #include <core/track.h>
 #include <gui/fywidget.h>
 
+#include <QBasicTimer>
+
 class QLineEdit;
 
 namespace Fooyin {
