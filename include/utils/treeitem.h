@@ -72,7 +72,7 @@ public:
 
     virtual void removeChild(int index)
     {
-        if(index < 0 && index >= childCount()) {
+        if(index < 0 || index >= childCount()) {
             return;
         }
         m_children.erase(m_children.cbegin() + index);
