@@ -69,7 +69,8 @@ QSize SpecialValueSpinBox::sizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            width = std::max(width, fm.horizontalAdvance(specialText));
+            text  = specialText + fixedContent + u"   ";
+            width = std::max(width, fm.horizontalAdvance(text));
         }
 
         width += 2; // cursor blinking space
@@ -104,7 +105,8 @@ QSize SpecialValueSpinBox::minimumSizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            width = std::max(width, fm.horizontalAdvance(specialText));
+            text  = specialText + fixedContent + u"   ";
+            width = std::max(width, fm.horizontalAdvance(text));
         }
 
         width += 2; // cursor blinking space
@@ -205,7 +207,8 @@ QSize SpecialValueDoubleSpinBox::sizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            width = std::max(width, fm.horizontalAdvance(specialText));
+            text  = specialText + fixedContent + u"   ";
+            width = std::max(width, fm.horizontalAdvance(text));
         }
 
         width += 2; // cursor blinking space
@@ -240,7 +243,8 @@ QSize SpecialValueDoubleSpinBox::minimumSizeHint() const
         width = std::max(width, fm.horizontalAdvance(text));
 
         for(const auto& [_, specialText] : m_specialValues) {
-            width = std::max(width, fm.horizontalAdvance(specialText));
+            text  = specialText + fixedContent + u"   ";
+            width = std::max(width, fm.horizontalAdvance(text));
         }
 
         width += 2; // cursor blinking space
