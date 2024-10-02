@@ -105,20 +105,16 @@ bool SearchControllerPrivate::isConnectedToOther(const Id& sourceId, const Id& w
 
 void SearchControllerPrivate::addOrRemoveConnection(const Id& sourceId, FyWidget* widget, OverlayWidget* overlay)
 {
-    if(!m_connections.contains(sourceId)) {
-        return;
-    }
-
     const Id id = widget->id();
 
     if(isConnected(sourceId, id)) {
         widget->searchEvent({});
-        m_connections.at(sourceId).erase(id);
+        m_connections[sourceId].erase(id);
         overlay->button()->setText(SearchController::tr("Connect"));
         overlay->setColour(m_disconnectedColour);
     }
     else {
-        m_connections.at(sourceId).emplace(id);
+        m_connections[sourceId].emplace(id);
         overlay->button()->setText(SearchController::tr("Disconnect"));
         overlay->setColour(m_connectedColour);
     }
