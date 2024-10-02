@@ -399,12 +399,14 @@ void SplitterWidget::saveLayoutData(QJsonObject& layout)
 
 void SplitterWidget::loadLayoutData(const QJsonObject& layout)
 {
-    const auto state    = QByteArray::fromBase64(layout[u"State"].toString().toUtf8());
-    const auto children = layout[u"Widgets"].toArray();
+    if(layout.contains(u"Widgets")) {
+        const auto children = layout.value(u"Widgets").toArray();
+        WidgetContainer::loadWidgets(children);
+    }
 
-    WidgetContainer::loadWidgets(children);
-
-    restoreState(state);
+    if(layout.contains(u"State")) {
+        restoreState(QByteArray::fromBase64(layout.value(u"State").toString().toUtf8()));
+    }
 }
 
 void SplitterWidget::finalise()

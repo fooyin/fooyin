@@ -167,9 +167,10 @@ void PlaylistTabs::saveLayoutData(QJsonObject& layout)
 
 void PlaylistTabs::loadLayoutData(const QJsonObject& layout)
 {
-    const auto children = layout[u"Widgets"].toArray();
-
-    WidgetContainer::loadWidgets(children);
+    if(layout.contains(u"Widgets")) {
+        const auto children = layout[u"Widgets"].toArray();
+        WidgetContainer::loadWidgets(children);
+    }
 }
 
 bool PlaylistTabs::canAddWidget() const

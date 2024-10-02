@@ -95,16 +95,19 @@ void TabStackWidget::loadLayoutData(const QJsonObject& layout)
         changeTabPosition(position.value());
     }
 
-    const auto widgets = layout.value(u"Widgets").toArray();
+    if(layout.contains(u"Widgets")) {
+        const auto widgets = layout.value(u"Widgets").toArray();
+        WidgetContainer::loadWidgets(widgets);
+    }
 
-    WidgetContainer::loadWidgets(widgets);
+    if(layout.contains(u"State")) {
+        const auto state         = layout.value(u"State").toString();
+        const QStringList titles = state.split(QLatin1String{Constants::UnitSeparator});
 
-    const auto state         = layout.value(u"State").toString();
-    const QStringList titles = state.split(QLatin1String{Constants::UnitSeparator});
-
-    for(int i{0}; const QString& title : titles) {
-        if(i < m_tabs->count()) {
-            m_tabs->setTabText(i++, title);
+        for(int i{0}; const QString& title : titles) {
+            if(i < m_tabs->count()) {
+                m_tabs->setTabText(i++, title);
+            }
         }
     }
 }

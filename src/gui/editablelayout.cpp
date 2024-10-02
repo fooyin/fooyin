@@ -715,8 +715,9 @@ bool EditableLayout::loadLayout(const FyLayout& layout)
 
     p->m_root->addWidget(topWidget);
 
-    if(rootObject.constBegin()->isObject()) {
-        const QJsonObject options = rootObject.constBegin()->toObject();
+    const auto optionsIt = rootObject.constBegin();
+    if(optionsIt->isObject()) {
+        const QJsonObject options = optionsIt->toObject();
         topWidget->loadLayout(options);
     }
 
