@@ -26,6 +26,7 @@ class QLineEdit;
 
 namespace Fooyin {
 class MusicLibrary;
+class Playlist;
 class PlaylistController;
 class SettingsManager;
 class SearchController;
@@ -57,13 +58,15 @@ public:
 protected:
     void showEvent(QShowEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void timerEvent(QTimerEvent* event) override;
 
 private:
+    [[nodiscard]] Playlist* findOrAddPlaylist(const TrackList& tracks) const;
     [[nodiscard]] TrackList getTracksToSearch() const;
-    void handleFilteredTracks(const TrackList& tracks);
+    bool handleFilteredTracks(const TrackList& tracks);
 
     void updateConnectedState();
-    void searchChanged();
+    void searchChanged(bool enterKey = false);
     void changePlaceholderText();
     void showOptionsMenu();
 
@@ -72,6 +75,7 @@ private:
     MusicLibrary* m_library;
     SettingsManager* m_settings;
 
+    QBasicTimer m_searchTimer;
     QLineEdit* m_searchBox;
     QString m_defaultPlaceholder;
     SearchMode m_mode;

@@ -70,6 +70,12 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<LockSplitterHandles>(false, QStringLiteral("Interface/LockSplitterHandles"));
     m_settings->createSetting<SplitterHandleSize>(-1, QStringLiteral("Interface/SplitterHandleSize"));
     m_settings->createSetting<VolumeStep>(0.05, QStringLiteral("Controls/VolumeStep"));
+    m_settings->createSetting<SearchSuccessClear>(true, QStringLiteral("Searching/ClearOnSuccess"));
+    m_settings->createSetting<SearchAutoDelay>(1, QStringLiteral("Searching/AutoDelay"));
+    m_settings->createSetting<SearchPlaylistName>(QObject::tr("Search Results"),
+                                                  QStringLiteral("Searching/PlaylistName"));
+    m_settings->createSetting<SearchPlaylistAppendSearch>(false, QStringLiteral("Searching/AppendSearchToPlaylist"));
+    m_settings->createSetting<SearchSuccessFocus>(true, QStringLiteral("Searching/FocusOnSuccess"));
 
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));

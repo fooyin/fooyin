@@ -183,6 +183,7 @@ public:
     bool m_sorting;
     bool m_sortingColumn;
     bool m_showPlaying;
+    bool m_pendingFocus;
 
     QString m_search;
     TrackList m_filteredTracks;

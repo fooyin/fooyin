@@ -75,7 +75,8 @@ public:
 
     void startPlayback() const;
     void showNowPlaying();
-    void selectTrackIds(const std::vector<int>& ids);
+    void selectTrackIds(const TrackIds& ids);
+    void focusPlaylist();
 
     [[nodiscard]] bool currentIsActive() const;
     [[nodiscard]] Playlist* currentPlaylist() const;
@@ -114,7 +115,8 @@ signals:
     void playlistHistoryChanged();
     void playingTrackChanged(const Fooyin::PlaylistTrack& track);
     void showCurrentTrack();
-    void selectTracks(const std::vector<int>& ids);
+    void selectTracks(const TrackIds& ids);
+    void requestPlaylistFocus();
 
 public slots:
     void handleTrackSelectionAction(TrackAction action);

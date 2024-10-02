@@ -635,9 +635,14 @@ void PlaylistController::showNowPlaying()
     emit showCurrentTrack();
 }
 
-void PlaylistController::selectTrackIds(const std::vector<int>& ids)
+void PlaylistController::selectTrackIds(const TrackIds& ids)
 {
     emit selectTracks(ids);
+}
+
+void PlaylistController::focusPlaylist()
+{
+    emit requestPlaylistFocus();
 }
 
 bool PlaylistController::currentIsActive() const

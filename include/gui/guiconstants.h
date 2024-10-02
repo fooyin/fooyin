@@ -192,6 +192,7 @@ constexpr auto InterfaceGeneral   = "Fooyin.Page.Interface.General";
 constexpr auto InterfaceTheme     = "Fooyin.Page.Interface.Theme";
 constexpr auto Artwork            = "Fooyin.Page.Interface.Artwork";
 constexpr auto LibraryGeneral     = "Fooyin.Page.Library.General";
+constexpr auto LibrarySearching   = "Fooyin.Page.Library.Searching";
 constexpr auto LibrarySorting     = "Fooyin.Page.Library.Sorting";
 constexpr auto PlaylistGeneral    = "Fooyin.Page.Playlist.General";
 constexpr auto PlaylistInterface  = "Fooyin.Page.Playlist.Interface";

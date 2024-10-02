@@ -57,6 +57,7 @@
 #include "settings/playlist/playlistgeneralpage.h"
 #include "settings/playlist/playlistpresetspage.h"
 #include "settings/plugins/pluginspage.h"
+#include "settings/searchpage.h"
 #include "settings/shellintegrationpage.h"
 #include "settings/shortcuts/shortcutspage.h"
 #include "settings/widgets/playbackqueuepage.h"
@@ -255,6 +256,7 @@ void Widgets::registerPages()
     new DecoderPage(m_core->audioLoader().get(), m_settings, this);
     new ReplayGainPage(m_settings, this);
     new NetworkPage(m_settings, this);
+    new SearchPage(m_settings, this);
     new DirBrowserPage(m_settings, this);
     new LibraryTreePage(m_settings, this);
     new LibraryTreeGroupPage(m_gui->actionManager(), m_libraryTreeController->groupRegistry(), m_settings, this);

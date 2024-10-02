@@ -192,6 +192,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_sorting{false}
     , m_sortingColumn{false}
     , m_showPlaying{false}
+    , m_pendingFocus{false}
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -260,6 +261,14 @@ void PlaylistWidgetPrivate::setupConnections()
         QObject::connect(m_playlistController, &PlaylistController::playStateChanged, m_model, &PlaylistModel::playStateChanged);
         QObject::connect(m_playlistController, &PlaylistController::currentPlaylistTracksAdded, this, &PlaylistWidgetPrivate::playlistTracksAdded);
         QObject::connect(m_playlistController, &PlaylistController::selectTracks, this, &PlaylistWidgetPrivate::selectTrackIds);
+        QObject::connect(m_playlistController, &PlaylistController::requestPlaylistFocus, m_model, [this]() {
+            if(m_playlistView->playlistLoaded() && !m_resetThrottler->isActive()) {
+                m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
+                m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false, false));
+            } else {
+                m_pendingFocus = true;
+            }
+        });
         QObject::connect(m_playlistController, &PlaylistController::showCurrentTrack, m_self, [this]() {
             if(m_playlistController->currentIsActive()) {
                 followCurrentTrack();
@@ -468,6 +477,12 @@ void PlaylistWidgetPrivate::resetTree()
     resetSort();
     restoreState(m_playlistController->currentPlaylist());
     m_clearAction->setEnabled(m_model->rowCount({}) > 0);
+
+    if(m_pendingFocus) {
+        m_pendingFocus = false;
+        m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
+        m_playlistView->setCurrentIndex(m_model->indexAtPlaylistIndex(0, false, false));
+    }
 }
 
 PlaylistViewState PlaylistWidgetPrivate::getState(Playlist* playlist) const

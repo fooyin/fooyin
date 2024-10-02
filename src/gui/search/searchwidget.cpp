@@ -67,7 +67,7 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
 
     QObject::connect(m_searchBox, &QLineEdit::textChanged, this, [this]() {
         if(m_autoSearch) {
-            searchChanged();
+            m_searchTimer.start((m_settings->value<Settings::Gui::SearchAutoDelay>() + 1) * 30, this);
         }
     });
     QObject::connect(m_searchController, &SearchController::connectionChanged, this, [this](const Id& widgetId) {
@@ -171,10 +171,49 @@ void SearchWidget::showEvent(QShowEvent* event)
 void SearchWidget::keyPressEvent(QKeyEvent* event)
 {
     if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-        searchChanged();
+        searchChanged(true);
     }
 
     FyWidget::keyPressEvent(event);
+}
+
+void SearchWidget::timerEvent(QTimerEvent* event)
+{
+    if(event->timerId() == m_searchTimer.timerId()) {
+        m_searchTimer.stop();
+        searchChanged();
+    }
+    FyWidget::timerEvent(event);
+}
+
+Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks) const
+{
+    QString playlistName = m_settings->value<Settings::Gui::SearchPlaylistName>();
+
+    const auto playlists = m_playlistController->playlistHandler()->playlists();
+    for(auto* playlist : playlists) {
+        if(playlist->name().startsWith(playlistName)) {
+            if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
+                playlistName.append(QStringLiteral(" [%1]").arg(m_searchBox->text()));
+            }
+            if(playlistName != playlist->name()) {
+                m_playlistController->playlistHandler()->renamePlaylist(playlist->id(), playlistName);
+            }
+            m_playlistController->playlistHandler()->replacePlaylistTracks(playlist->id(), tracks);
+            return playlist;
+        }
+    }
+
+    if(auto* playlist = m_playlistController->playlistHandler()->createPlaylist(playlistName, tracks)) {
+        if(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>()) {
+            playlistName.append(QStringLiteral(" (%1)").arg(m_searchBox->text()));
+            m_playlistController->playlistHandler()->renamePlaylist(playlist->id(), playlistName);
+        }
+        m_playlistController->changeCurrentPlaylist(playlist);
+        return playlist;
+    }
+
+    return nullptr;
 }
 
 TrackList SearchWidget::getTracksToSearch() const
@@ -187,19 +226,29 @@ TrackList SearchWidget::getTracksToSearch() const
     return m_library->tracks();
 }
 
-void SearchWidget::handleFilteredTracks(const TrackList& tracks)
+bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
 {
     if(tracks.empty()) {
-        return;
+        return false;
     }
 
     if(m_mode == SearchMode::PlaylistInline) {
         m_playlistController->selectTrackIds(Track::trackIdsForTracks(tracks));
     }
-    else if(auto* playlist
-            = m_playlistController->playlistHandler()->createPlaylist(QStringLiteral("Search Results"), tracks)) {
-        m_playlistController->changeCurrentPlaylist(playlist);
+    else {
+        if(auto* playlist = findOrAddPlaylist(tracks)) {
+            m_playlistController->changeCurrentPlaylist(playlist);
+        }
     }
+
+    if(!m_autoSearch && m_settings->value<Settings::Gui::SearchSuccessClear>()) {
+        m_searchBox->clear();
+    }
+    if(!m_autoSearch && m_settings->value<Settings::Gui::SearchSuccessFocus>()) {
+        m_playlistController->focusPlaylist();
+    }
+
+    return true;
 }
 
 void SearchWidget::updateConnectedState()
@@ -208,7 +257,7 @@ void SearchWidget::updateConnectedState()
     m_unconnected      = widgets.empty() || (widgets.size() == 1 && qobject_cast<PlaylistWidget*>(widgets.front()));
 }
 
-void SearchWidget::searchChanged()
+void SearchWidget::searchChanged(bool enterKey)
 {
     if(!m_unconnected) {
         m_searchController->changeSearch(id(), m_searchBox->text());
@@ -218,7 +267,13 @@ void SearchWidget::searchChanged()
     Utils::asyncExec([search = m_searchBox->text(), tracks = getTracksToSearch()]() {
         ScriptParser parser;
         return parser.filter(search, tracks);
-    }).then(this, [this](const TrackList& filteredTracks) { handleFilteredTracks(filteredTracks); });
+    }).then(this, [this, enterKey](const TrackList& filteredTracks) {
+        if(handleFilteredTracks(filteredTracks) && enterKey) {
+            if(m_settings->value<Settings::Gui::SearchSuccessClear>()) {
+                m_searchBox->clear();
+            }
+        }
+    });
 }
 
 void SearchWidget::changePlaceholderText()
