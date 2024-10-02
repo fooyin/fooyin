@@ -187,6 +187,21 @@ TrackList SearchWidget::getTracksToSearch() const
     return m_library->tracks();
 }
 
+void SearchWidget::handleFilteredTracks(const TrackList& tracks)
+{
+    if(tracks.empty()) {
+        return;
+    }
+
+    if(m_mode == SearchMode::PlaylistInline) {
+        m_playlistController->selectTrackIds(Track::trackIdsForTracks(tracks));
+    }
+    else if(auto* playlist
+            = m_playlistController->playlistHandler()->createPlaylist(QStringLiteral("Search Results"), tracks)) {
+        m_playlistController->changeCurrentPlaylist(playlist);
+    }
+}
+
 void SearchWidget::updateConnectedState()
 {
     const auto widgets = m_searchController->connectedWidgets(id());
@@ -203,15 +218,7 @@ void SearchWidget::searchChanged()
     Utils::asyncExec([search = m_searchBox->text(), tracks = getTracksToSearch()]() {
         ScriptParser parser;
         return parser.filter(search, tracks);
-    }).then(this, [this](const TrackList& filteredTracks) {
-        if(m_mode == SearchMode::PlaylistInline) {
-            m_playlistController->selectTrackIds(Track::trackIdsForTracks(filteredTracks));
-        }
-        else if(auto* playlist = m_playlistController->playlistHandler()->createPlaylist(
-                    QStringLiteral("Search Results"), filteredTracks)) {
-            m_playlistController->changeCurrentPlaylist(playlist);
-        }
-    });
+    }).then(this, [this](const TrackList& filteredTracks) { handleFilteredTracks(filteredTracks); });
 }
 
 void SearchWidget::changePlaceholderText()

@@ -60,6 +60,8 @@ protected:
 
 private:
     [[nodiscard]] TrackList getTracksToSearch() const;
+    void handleFilteredTracks(const TrackList& tracks);
+
     void updateConnectedState();
     void searchChanged();
     void changePlaceholderText();
