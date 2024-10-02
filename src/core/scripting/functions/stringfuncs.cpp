@@ -259,7 +259,12 @@ QString split(const QStringList& vec)
         return {};
     }
 
-    return vec.front().split(vec.at(1), Qt::SkipEmptyParts).join(QLatin1String{Constants::UnitSeparator});
+    QStringList parts = vec.front().split(vec.at(1), Qt::SkipEmptyParts);
+    for(QString& part : parts) {
+        part = part.trimmed();
+    }
+
+    return parts.join(QLatin1String{Constants::UnitSeparator});
 }
 
 QString len(const QStringList& vec)
