@@ -162,6 +162,18 @@ void SearchWidget::loadLayoutData(const QJsonObject& layout)
     m_searchController->setConnectedWidgets(id(), connectedWidgets);
 }
 
+QSize SearchWidget::sizeHint() const
+{
+    QSize size = m_searchBox->sizeHint();
+    size.rwidth() += 400;
+    return size;
+}
+
+QSize SearchWidget::minimumSizeHint() const
+{
+    return m_searchBox->minimumSizeHint();
+}
+
 void SearchWidget::showEvent(QShowEvent* event)
 {
     updateConnectedState();
@@ -332,14 +344,17 @@ void SearchWidget::showOptionsMenu()
 
     menu->addSeparator();
 
-    auto* changePlaceholder = new QAction(tr("Change placeholder text"), this);
-    QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
-    menu->addAction(changePlaceholder);
+    if(parentWidget()) {
+        // Don't allow changing persistent settings if we're quick search
+        auto* changePlaceholder = new QAction(tr("Change placeholder text"), this);
+        QObject::connect(changePlaceholder, &QAction::triggered, this, &SearchWidget::changePlaceholderText);
+        menu->addAction(changePlaceholder);
 
-    auto* manageConnections = new QAction(tr("Manage connections"), this);
-    QObject::connect(manageConnections, &QAction::triggered, this,
-                     [this]() { m_searchController->setupWidgetConnections(id()); });
-    menu->addAction(manageConnections);
+        auto* manageConnections = new QAction(tr("Manage connections"), this);
+        QObject::connect(manageConnections, &QAction::triggered, this,
+                         [this]() { m_searchController->setupWidgetConnections(id()); });
+        menu->addAction(manageConnections);
+    }
 
     QStyleOptionFrame opt;
     opt.initFrom(m_searchBox);

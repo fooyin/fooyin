@@ -33,6 +33,7 @@
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
 #include "search/searchcontroller.h"
+#include "search/searchwidget.h"
 #include "systemtrayicon.h"
 #include "utils/audioutils.h"
 #include "widgets.h"
@@ -124,6 +125,7 @@ public:
 
     void showSearchPlaylistDialog();
     void showSearchLibraryDialog();
+    void showQuickSearch() const;
     void showPropertiesDialog() const;
     void showEngineError(const QString& error) const;
     void showMessage(const QString& title, const Track& track) const;
@@ -289,6 +291,7 @@ void GuiApplicationPrivate::setupConnections()
     QObject::connect(m_fileMenu, &FileMenu::requestSaveAllPlaylists, m_self, [this]() { saveAllPlaylist(); });
     QObject::connect(m_editMenu, &EditMenu::requestSearch, m_self, [this]() { showSearchPlaylistDialog(); });
     QObject::connect(m_libraryMenu, &LibraryMenu::requestSearch, m_self, [this]() { showSearchLibraryDialog(); });
+    QObject::connect(m_libraryMenu, &LibraryMenu::requestQuickSearch, m_self, [this]() { showQuickSearch(); });
     QObject::connect(m_viewMenu, &ViewMenu::openQuickSetup, m_editableLayout.get(), &EditableLayout::showQuickSetup);
     QObject::connect(m_viewMenu, &ViewMenu::openLog, m_logWidget.get(), &LogWidget::show);
     QObject::connect(m_viewMenu, &ViewMenu::openScriptEditor, m_self, [this]() {
@@ -781,6 +784,14 @@ void GuiApplicationPrivate::showSearchLibraryDialog()
     coverProvider->setParent(search);
 
     search->show();
+}
+
+void GuiApplicationPrivate::showQuickSearch() const
+{
+    auto* searchBar = new SearchWidget(m_searchController, m_playlistController.get(), m_library, m_settings);
+    searchBar->setAttribute(Qt::WA_DeleteOnClose);
+    searchBar->setWindowTitle(SearchWidget::tr("Quick Search"));
+    searchBar->show();
 }
 
 void GuiApplicationPrivate::showPropertiesDialog() const

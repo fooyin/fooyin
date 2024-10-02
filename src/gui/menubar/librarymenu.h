@@ -36,6 +36,7 @@ public:
 
 signals:
     void requestSearch();
+    void requestQuickSearch();
 
 private:
     void optimiseDatabase();
