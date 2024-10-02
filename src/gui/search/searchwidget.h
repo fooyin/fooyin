@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/track.h>
 #include <gui/fywidget.h>
 
 class QLineEdit;
@@ -37,7 +38,7 @@ public:
     enum class SearchMode : uint8_t
     {
         Library = 0,
-        Playlist, // Not implemented
+        Playlist,
         PlaylistInline,
         AllPlaylists, // Not implemented
     };
@@ -58,6 +59,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    [[nodiscard]] TrackList getTracksToSearch() const;
     void updateConnectedState();
     void searchChanged();
     void changePlaceholderText();

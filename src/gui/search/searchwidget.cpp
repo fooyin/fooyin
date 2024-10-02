@@ -177,6 +177,16 @@ void SearchWidget::keyPressEvent(QKeyEvent* event)
     FyWidget::keyPressEvent(event);
 }
 
+TrackList SearchWidget::getTracksToSearch() const
+{
+    if(m_mode == SearchMode::Playlist || m_mode == SearchMode::PlaylistInline) {
+        if(m_playlistController->currentPlaylist()) {
+            return m_playlistController->currentPlaylist()->tracks();
+        }
+    }
+    return m_library->tracks();
+}
+
 void SearchWidget::updateConnectedState()
 {
     const auto widgets = m_searchController->connectedWidgets(id());
@@ -190,11 +200,7 @@ void SearchWidget::searchChanged()
         return;
     }
 
-    const TrackList tracks = m_mode == SearchMode::PlaylistInline && m_playlistController->currentPlaylist()
-                               ? m_playlistController->currentPlaylist()->tracks()
-                               : m_library->tracks();
-
-    Utils::asyncExec([search = m_searchBox->text(), tracks]() {
+    Utils::asyncExec([search = m_searchBox->text(), tracks = getTracksToSearch()]() {
         ScriptParser parser;
         return parser.filter(search, tracks);
     }).then(this, [this](const TrackList& filteredTracks) {
@@ -247,6 +253,12 @@ void SearchWidget::showOptionsMenu()
         searchLibrary->setChecked(m_mode == SearchMode::Library);
         QObject::connect(searchLibrary, &QAction::triggered, this, [this]() { m_mode = SearchMode::Library; });
         searchInMenu->addAction(searchLibrary);
+
+        auto* searchPlaylist = new QAction(tr("Playlist"), this);
+        searchPlaylist->setCheckable(true);
+        searchPlaylist->setChecked(m_mode == SearchMode::Playlist);
+        QObject::connect(searchPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::Playlist; });
+        searchInMenu->addAction(searchPlaylist);
 
         auto* searchPlaylistInline = new QAction(tr("Playlist (Inline)"), this);
         searchPlaylistInline->setCheckable(true);
