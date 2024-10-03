@@ -46,6 +46,8 @@ public:
 
     SettingsCategory* data() const;
 
+    void sort();
+
 private:
     SettingsCategory* m_data;
 };

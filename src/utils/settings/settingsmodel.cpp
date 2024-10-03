@@ -36,19 +36,35 @@ SettingsItem::SettingsItem(SettingsCategory* data, SettingsItem* parent)
 
 bool SettingsItem::operator<(const SettingsItem& other) const
 {
-    QCollator collator;
-    collator.setNumericMode(true);
-
-    const auto cmp = collator.compare(m_data->name, other.m_data->name);
-    if(cmp == 0) {
-        return false;
-    }
-    return cmp < 0;
+    return m_data->index < other.m_data->index;
 }
 
 SettingsCategory* SettingsItem::data() const
 {
     return m_data;
+}
+
+void SettingsItem::sort()
+{
+    for(SettingsItem* child : m_children) {
+        child->sort();
+        child->resetRow();
+    }
+
+    if(!m_parent) {
+        return;
+    }
+
+    QCollator collator;
+    collator.setNumericMode(true);
+
+    std::ranges::sort(m_children, [collator](const SettingsItem* lhs, const SettingsItem* rhs) {
+        const auto cmp = collator.compare(lhs->m_data->name, rhs->m_data->name);
+        if(cmp == 0) {
+            return false;
+        }
+        return cmp < 0;
+    });
 }
 
 SettingsModel::SettingsModel(QObject* parent)
@@ -116,7 +132,7 @@ void SettingsModel::setPages(const PageList& pages)
         }
     }
 
-    rootItem()->sortChildren();
+    rootItem()->sort();
     endResetModel();
 }
 
