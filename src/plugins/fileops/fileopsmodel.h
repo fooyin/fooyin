@@ -58,6 +58,7 @@ signals:
 private:
     void populate(const FileOperations& operations);
     void operationFinished(const FileOpsItem& operation);
+    QString operationToString(Operation op) const;
 
     QThread m_workerThread;
     FileOpsWorker m_worker;

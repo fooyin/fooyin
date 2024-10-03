@@ -31,4 +31,9 @@ LibraryTreeGroupRegistry* LibraryTreeController::groupRegistry() const
 {
     return m_groupRegistry;
 }
+
+QString LibraryTreeController::defaultPlaylistName()
+{
+    return tr("Library Selection");
+}
 } // namespace Fooyin

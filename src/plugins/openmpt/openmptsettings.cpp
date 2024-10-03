@@ -19,6 +19,8 @@
 
 #include "openmptsettings.h"
 
+#include "openmptdefs.h"
+
 #include <gui/widgets/doubleslidereditor.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>

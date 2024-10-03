@@ -50,6 +50,8 @@ public:
                  SettingsManager* settings, QWidget* parent = nullptr);
     ~SearchWidget() override;
 
+    static QString defaultPlaylistName();
+
     [[nodiscard]] QString name() const override;
     [[nodiscard]] QString layoutName() const override;
 

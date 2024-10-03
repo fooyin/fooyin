@@ -19,6 +19,7 @@
 
 #include "openmptplugin.h"
 
+#include "openmptdefs.h"
 #include "openmptinput.h"
 #include "openmptsettings.h"
 

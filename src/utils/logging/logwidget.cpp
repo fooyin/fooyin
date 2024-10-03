@@ -56,10 +56,10 @@ LogWidget::LogWidget(SettingsManager* settings, QWidget* parent)
     buttonBox->addButton(clearButton, QDialogButtonBox::ResetRole);
     buttonBox->addButton(saveButton, QDialogButtonBox::ApplyRole);
 
-    m_level->addItem(QStringLiteral("Debug"), QtMsgType::QtDebugMsg);
-    m_level->addItem(QStringLiteral("Info"), QtMsgType::QtInfoMsg);
-    m_level->addItem(QStringLiteral("Warning"), QtMsgType::QtWarningMsg);
-    m_level->addItem(QStringLiteral("Critical"), QtMsgType::QtCriticalMsg);
+    m_level->addItem(tr("Debug"), QtMsgType::QtDebugMsg);
+    m_level->addItem(tr("Info"), QtMsgType::QtInfoMsg);
+    m_level->addItem(tr("Warning"), QtMsgType::QtWarningMsg);
+    m_level->addItem(tr("Critical"), QtMsgType::QtCriticalMsg);
 
     m_level->setCurrentIndex(m_level->findData(MessageHandler::level()));
 

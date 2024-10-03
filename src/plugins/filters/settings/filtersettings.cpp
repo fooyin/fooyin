@@ -19,6 +19,8 @@
 
 #include "filtersettings.h"
 
+#include "filtercontroller.h"
+
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -39,7 +41,7 @@ FiltersSettings::FiltersSettings(SettingsManager* settingsManager)
     m_settings->createSetting<FilterMiddleClick>(0, QStringLiteral("Filters/MiddleClickBehaviour"));
     m_settings->createSetting<FilterPlaylistEnabled>(true, QStringLiteral("Filters/SelectionPlaylistEnabled"));
     m_settings->createSetting<FilterAutoSwitch>(true, QStringLiteral("Filters/AutoSwitchSelectionPlaylist"));
-    m_settings->createSetting<FilterAutoPlaylist>(QStringLiteral("Filter Results"),
+    m_settings->createSetting<FilterAutoPlaylist>(FilterController::defaultPlaylistName(),
                                                   QStringLiteral("Filters/SelectionPlaylistName"));
     m_settings->createSetting<FilterRowHeight>(0, QStringLiteral("Filters/RowHeight"));
     m_settings->createSetting<FilterSendPlayback>(true, QStringLiteral("Filters/StartPlaybackOnSend"));

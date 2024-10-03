@@ -2,39 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="pt" sourcelanguage="en_GB">
 <context>
-    <name></name>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="34"/>
-        <source>Copy</source>
-        <translation>Copiar</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="36"/>
-        <source>Move</source>
-        <translation>Mover</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="38"/>
-        <source>Rename</source>
-        <translation>Renomear</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="40"/>
-        <source>Create</source>
-        <translation>Criar</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="42"/>
-        <source>Remove</source>
-        <translation>Remover</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="44"/>
-        <source>Unknown</source>
-        <translation>Desconhecido</translation>
-    </message>
-</context>
-<context>
     <name>Fooyin::AboutDialog</name>
     <message>
         <location filename="../../src/gui/dialog/aboutdialog.cpp" line="83"/>
@@ -1007,19 +974,49 @@
 <context>
     <name>Fooyin::FileOps::FileOpsModel</name>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="113"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="91"/>
         <source>Operation</source>
         <translation>Operação</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="115"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="93"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="117"/>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="95"/>
         <source>Destination</source>
         <translation>Destino</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
+        <source>Copy</source>
+        <translation type="unfinished">Copiar</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="174"/>
+        <source>Move</source>
+        <translation type="unfinished">Mover</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="176"/>
+        <source>Rename</source>
+        <translation type="unfinished">Renomear</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
+        <source>Create</source>
+        <translation type="unfinished">Criar</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
+        <source>Remove</source>
+        <translation type="unfinished">Remover</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
+        <source>Unknown</source>
+        <translation type="unfinished">Desconhecido</translation>
     </message>
 </context>
 <context>
@@ -1071,6 +1068,14 @@
         <location filename="../../src/plugins/filters/filtercolumnregistry.cpp" line="41"/>
         <source>Date</source>
         <translation>Data</translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::Filters::FilterController</name>
+    <message>
+        <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
+        <source>Filter Results</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2730,6 +2735,14 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::LibraryTreeController</name>
+    <message>
+        <location filename="../../src/gui/librarytree/librarytreecontroller.cpp" line="37"/>
+        <source>Library Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::LibraryTreeGroupModel</name>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreegroupmodel.cpp" line="163"/>
@@ -2998,7 +3011,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="916"/>
+        <location filename="../../src/gui/librarytree/librarytreewidget.cpp" line="909"/>
         <source>Library Tree</source>
         <translation>Árvore da biblioteca</translation>
     </message>
@@ -3018,6 +3031,26 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
         <source>&amp;Save Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="59"/>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="60"/>
+        <source>Info</source>
+        <translation type="unfinished">Info</translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
+        <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3105,6 +3138,70 @@
     <message>
         <location filename="../../src/gui/settings/networkpage.cpp" line="111"/>
         <source>Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::OpenMpt::OpenMptSettings</name>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="40"/>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="41"/>
+        <source>Separation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="42"/>
+        <source>Volume ramping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
+        <source>Use Amiga resampler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
+        <source>%1 Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="64"/>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
+        <source>Default</source>
+        <translation type="unfinished">Padrão</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="65"/>
+        <source>Off</source>
+        <translation type="unfinished">Desligado</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
+        <source>Interpolation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
+        <source>Cubic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
+        <source>Sinc</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4441,6 +4538,29 @@
     </message>
 </context>
 <context>
+    <name>Fooyin::PresetRegistry</name>
+    <message>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="39"/>
+        <source>Track Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="47"/>
+        <source>Album/Disc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="64"/>
+        <source>Disc Albums</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/presetregistry.cpp" line="71"/>
+        <source>Simple Artist/Album/Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
         <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="151"/>
@@ -5053,48 +5173,58 @@
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="79"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="313"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="337"/>
         <source>Options</source>
         <translation>Opções</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="94"/>
+        <source>Search Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="99"/>
         <source>Search Bar</source>
         <translation>Barra de pesquisa</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="316"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="340"/>
         <source>Autosearch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="323"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="347"/>
         <source>Search in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="325"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="349"/>
         <source>Library</source>
         <translation type="unfinished">Biblioteca</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="331"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="355"/>
         <source>Playlist</source>
         <translation type="unfinished">Lista de reprodução</translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="337"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="361"/>
         <source>Playlist (Inline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="349"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="368"/>
+        <source>All Playlists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="379"/>
         <source>Change placeholder text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="104"/>
-        <location filename="../../src/gui/search/searchwidget.cpp" line="353"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="109"/>
+        <location filename="../../src/gui/search/searchwidget.cpp" line="383"/>
         <source>Manage connections</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5497,32 +5627,32 @@
         <translation type="unfinished">Artista do álbum</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="51"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
         <source>Track Number</source>
         <translation type="unfinished">Número da faixa</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="52"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
         <source>Total Tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="53"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
         <source>Disc Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="54"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
         <source>Total Discs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="55"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
         <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="56"/>
+        <location filename="../../src/plugins/tageditor/settings/tageditorfieldregistry.cpp" line="57"/>
         <source>Rating</source>
         <translation type="unfinished">Classificação</translation>
     </message>
@@ -5623,6 +5753,94 @@
         <location filename="../../src/gui/theme/themeregistry.cpp" line="44"/>
         <source>Dark mode</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Fooyin::TrackSelectionControllerPrivate</name>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
+        <source>Add to current playlist</source>
+        <translation type="unfinished">Adicionar à lista de reprodução atual</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="123"/>
+        <source>Add to active playlist</source>
+        <translation type="unfinished">Adicionar à lista de reprodução ativa</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="124"/>
+        <source>Send to current playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="125"/>
+        <source>Send to new playlist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="126"/>
+        <source>Add to playback queue</source>
+        <translation type="unfinished">Adicionar à fila de reprodução</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="127"/>
+        <source>Remove from playback queue</source>
+        <translation type="unfinished">Remover da fila de reprodução</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="128"/>
+        <source>Open containing folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="129"/>
+        <source>Properties</source>
+        <translation type="unfinished">Propriedades</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="139"/>
+        <source>Append selected tracks to the current playlist</source>
+        <translation type="unfinished">Acrescentar faixa selecionada a lista de reprodução atual</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
+        <source>Append selected tracks to the active playlist</source>
+        <translation type="unfinished">Acrescentar faixa selecionada a lista de reprodução ativa</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="147"/>
+        <source>Replace contents of the current playlist with the selected tracks</source>
+        <translation type="unfinished">Substituir conteúdo da lista de reprodução atual pelas faixas selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="156"/>
+        <source>Create a new playlist containing the selected tracks</source>
+        <translation type="unfinished">Criar uma nova playlist contendo as faixas selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="170"/>
+        <source>Add the selected tracks to the playback queue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="180"/>
+        <source>Remove the selected tracks from the playback queue</source>
+        <translation type="unfinished">Remover as faixas selecionadas da fila de reprodução</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="191"/>
+        <source>Open the directory containing the selected tracks</source>
+        <translation type="unfinished">Abrir diretório contendo as faixas selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="208"/>
+        <source>Open the properties dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/trackselectioncontroller.cpp" line="331"/>
+        <source>Playback</source>
+        <translation type="unfinished">Reprodução</translation>
     </message>
 </context>
 <context>
@@ -6291,70 +6509,6 @@ mais precisa e detalhada, ao custo de usar mais espaço em disco no cache.</tran
     </message>
 </context>
 <context>
-    <name>OpenMptSettings</name>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="38"/>
-        <source>Gain</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="39"/>
-        <source>Separation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="40"/>
-        <source>Volume ramping</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="41"/>
-        <source>Use Amiga resampler</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="44"/>
-        <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="62"/>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
-        <source>Default</source>
-        <translation type="unfinished">Padrão</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="63"/>
-        <source>Off</source>
-        <translation type="unfinished">Desligado</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="65"/>
-        <source>Interpolation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="68"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
-        <source>Linear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
-        <source>Cubic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
-        <source>Sinc</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
         <location filename="../../src/app/commandline.cpp" line="73"/>
@@ -6479,99 +6633,6 @@ mais precisa e detalhada, ao custo de usar mais espaço em disco no cache.</tran
         <location filename="../../src/core/scripting/scriptparser.cpp" line="1195"/>
         <source>Expected end of script</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/internalguisettings.cpp" line="75"/>
-        <source>Search Results</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TrackSelectionController</name>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="119"/>
-        <source>Add to current playlist</source>
-        <translation type="unfinished">Adicionar à lista de reprodução atual</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="120"/>
-        <source>Add to active playlist</source>
-        <translation type="unfinished">Adicionar à lista de reprodução ativa</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="121"/>
-        <source>Send to current playlist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
-        <source>Send to new playlist</source>
-        <translation>Enviar para nova lista de reprodução</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="123"/>
-        <source>Add to playback queue</source>
-        <translation type="unfinished">Adicionar à fila de reprodução</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="124"/>
-        <source>Remove from playback queue</source>
-        <translation>Remover da fila de reprodução</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="125"/>
-        <source>Open containing folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="126"/>
-        <source>Properties</source>
-        <translation type="unfinished">Propriedades</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="136"/>
-        <source>Append selected tracks to the current playlist</source>
-        <translation>Acrescentar faixa selecionada a lista de reprodução atual</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="140"/>
-        <source>Append selected tracks to the active playlist</source>
-        <translation>Acrescentar as faixas selecionadas a lista de reprodução ativa</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="145"/>
-        <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished">Substituir conteúdo da lista de reprodução atual pelas faixas selecionadas</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="154"/>
-        <source>Create a new playlist containing the selected tracks</source>
-        <translation>Criar uma nova lista de reprodução com as faixas selecionadas</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="168"/>
-        <source>Add the selected tracks to the playback queue</source>
-        <translation>Adicionar as faixas selecionadas à fila de reprodução</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="178"/>
-        <source>Remove the selected tracks from the playback queue</source>
-        <translation>Remover as faixas selecionadas da fila de reprodução</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="189"/>
-        <source>Open the directory containing the selected tracks</source>
-        <translation>Abrir diretório contendo as faixas selecionadas</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="206"/>
-        <source>Open the properties dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/trackselectioncontroller.cpp" line="330"/>
-        <source>Playback</source>
-        <translation type="unfinished">Reprodução</translation>
     </message>
 </context>
 </TS>

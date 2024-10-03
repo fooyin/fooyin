@@ -524,6 +524,11 @@ FilterColumnRegistry* FilterController::columnRegistry() const
     return p->m_columnRegistry;
 }
 
+QString FilterController::defaultPlaylistName()
+{
+    return tr("Filter Results");
+}
+
 FilterWidget* FilterController::createFilter()
 {
     auto* widget = new FilterWidget(p->m_columnRegistry, p->m_libraryManager, &p->m_coverProvider, p->m_settings);

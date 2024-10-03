@@ -58,6 +58,7 @@ public:
     ~FilterController() override;
 
     [[nodiscard]] FilterColumnRegistry* columnRegistry() const;
+    static QString defaultPlaylistName();
 
     FilterWidget* createFilter();
 

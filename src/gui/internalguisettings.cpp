@@ -19,6 +19,9 @@
 
 #include "internalguisettings.h"
 
+#include "librarytree/librarytreecontroller.h"
+#include "search/searchwidget.h"
+
 #include <gui/guisettings.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -72,7 +75,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
     m_settings->createSetting<VolumeStep>(0.05, QStringLiteral("Controls/VolumeStep"));
     m_settings->createSetting<SearchSuccessClear>(true, QStringLiteral("Searching/ClearOnSuccess"));
     m_settings->createSetting<SearchAutoDelay>(1, QStringLiteral("Searching/AutoDelay"));
-    m_settings->createSetting<SearchPlaylistName>(QObject::tr("Search Results"),
+    m_settings->createSetting<SearchPlaylistName>(SearchWidget::defaultPlaylistName(),
                                                   QStringLiteral("Searching/PlaylistName"));
     m_settings->createSetting<SearchPlaylistAppendSearch>(false, QStringLiteral("Searching/AppendSearchToPlaylist"));
     m_settings->createSetting<SearchSuccessFocus>(true, QStringLiteral("Searching/FocusOnSuccess"));
@@ -100,7 +103,7 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                                 QStringLiteral("LibraryTree/SelectionPlaylistEnabled"));
     m_settings->createSetting<Internal::LibTreeAutoSwitch>(true,
                                                            QStringLiteral("LibraryTree/SelectionPlaylistAutoSwitch"));
-    m_settings->createSetting<Internal::LibTreeAutoPlaylist>(QStringLiteral("Library Selection"),
+    m_settings->createSetting<Internal::LibTreeAutoPlaylist>(LibraryTreeController::defaultPlaylistName(),
                                                              QStringLiteral("LibraryTree/SelectionPlaylistName"));
     m_settings->createSetting<Internal::LibTreeScrollBar>(true, QStringLiteral("LibraryTree/Scrollbar"));
     m_settings->createSetting<Internal::LibTreeAltColours>(false, QStringLiteral("LibraryTree/AlternatingColours"));

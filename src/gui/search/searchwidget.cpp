@@ -89,6 +89,11 @@ SearchWidget::~SearchWidget()
     m_searchController->removeConnectedWidgets(id());
 }
 
+QString SearchWidget::defaultPlaylistName()
+{
+    return tr("Search Results");
+}
+
 QString SearchWidget::name() const
 {
     return tr("Search Bar");

@@ -36,7 +36,7 @@ void PresetRegistry::loadDefaults()
 {
     PlaylistPreset preset;
 
-    preset.name = QStringLiteral("Track Table");
+    preset.name = tr("Track Table");
 
     preset.track.leftText.script  = QStringLiteral(" $padright(,$mul($sub(%depth%,1),5))[\\[%queueindexes%\\]  ]"
                                                     "[$num(%track%,2).  ]%title%[<alpha=180>  ▪  %uniqueartist%]");
@@ -44,7 +44,7 @@ void PresetRegistry::loadDefaults()
 
     addDefaultItem(preset);
 
-    preset.name = QStringLiteral("Album/Disc");
+    preset.name = tr("Album/Disc");
 
     preset.header.title.script    = QStringLiteral("<b><sized=2>$if2(%albumartist%,Unknown Artist)");
     preset.header.subtitle.script = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)");
@@ -61,14 +61,14 @@ void PresetRegistry::loadDefaults()
 
     preset.subHeaders.clear();
 
-    preset.name = QStringLiteral("Disc Albums");
+    preset.name = tr("Disc Albums");
 
     preset.header.subtitle.script
         = QStringLiteral("<sized=1>$if2(%album%,Unknown Album)$ifgreater(%disctotal%,1, ▪ Disc #%disc%)");
 
     addDefaultItem(preset);
 
-    preset.name = QStringLiteral("Simple Artist/Album/Year");
+    preset.name = tr("Simple Artist/Album/Year");
 
     preset.header.simple = true;
     preset.header.subtitle.script.clear();

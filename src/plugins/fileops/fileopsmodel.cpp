@@ -23,28 +23,6 @@
 #include <utils/enum.h>
 #include <utils/fileutils.h>
 
-namespace {
-QString operationToString(Fooyin::FileOps::Operation op)
-{
-    using Operation    = Fooyin::FileOps::Operation;
-    using FileOpsModel = Fooyin::FileOps::FileOpsModel;
-
-    switch(op) {
-        case(Operation::Copy):
-            return FileOpsModel::tr("Copy");
-        case(Operation::Move):
-            return FileOpsModel::tr("Move");
-        case(Operation::Rename):
-            return FileOpsModel::tr("Rename");
-        case(Operation::Create):
-            return FileOpsModel::tr("Create");
-        case(Operation::Remove):
-            return FileOpsModel::tr("Remove");
-    }
-    return FileOpsModel::tr("Unknown");
-}
-} // namespace
-
 namespace Fooyin::FileOps {
 FileOpsModel::FileOpsModel(MusicLibrary* library, TrackList tracks, SettingsManager* settings, QObject* parent)
     : QAbstractItemModel{parent}
@@ -185,5 +163,22 @@ void FileOpsModel::operationFinished(const FileOpsItem& /*operation*/)
     beginRemoveRows({}, 0, 0);
     m_operations.pop_front();
     endRemoveRows();
+}
+
+QString FileOpsModel::operationToString(Operation op) const
+{
+    switch(op) {
+        case(Operation::Copy):
+            return tr("Copy");
+        case(Operation::Move):
+            return tr("Move");
+        case(Operation::Rename):
+            return tr("Rename");
+        case(Operation::Create):
+            return tr("Create");
+        case(Operation::Remove):
+            return tr("Remove");
+    }
+    return tr("Unknown");
 }
 } // namespace Fooyin::FileOps

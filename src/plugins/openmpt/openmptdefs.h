@@ -16,40 +16,23 @@
  * along with Fooyin.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #pragma once
 
-#include <QDialog>
+#include <core/coresettings.h>
 
-class QCheckBox;
-class QComboBox;
+#include <QObject>
 
 namespace Fooyin {
-class DoubleSliderEditor;
-class SettingsManager;
-class SliderEditor;
-
-namespace OpenMpt {
-class OpenMptSettings : public QDialog
+namespace Settings::OpenMpt {
+Q_NAMESPACE
+enum OpenMptSettings : uint32_t
 {
-    Q_OBJECT
-
-public:
-    explicit OpenMptSettings(SettingsManager* settings, QWidget* parent = nullptr);
-
-    void accept() override;
-
-private:
-    void load();
-    void reset();
-
-    SettingsManager* m_settings;
-
-    DoubleSliderEditor* m_gain;
-    SliderEditor* m_separation;
-    SliderEditor* m_volRamping;
-    QCheckBox* m_amigaResampler;
-    QComboBox* m_interpolationFilter;
+    Gain                = 1 | Type::Double,
+    Separation          = 2 | Type::Int,
+    VolumeRamping       = 3 | Type::Int,
+    InterpolationFilter = 4 | Type::Int,
+    EmulateAmiga        = 5 | Type::Bool,
 };
-} // namespace OpenMpt
+Q_ENUM_NS(OpenMptSettings)
+} // namespace Settings::OpenMpt
 } // namespace Fooyin

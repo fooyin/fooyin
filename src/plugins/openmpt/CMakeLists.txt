@@ -10,7 +10,8 @@ create_fooyin_plugin_internal(
     DEPENDS Fooyin::Core
             Fooyin::Gui
             ${OPENMPT_LIBRARIES}
-    SOURCES openmptinput.cpp
+    SOURCES openmptdefs.h
+            openmptinput.cpp
             openmptinput.h
             openmptplugin.cpp
             openmptplugin.h

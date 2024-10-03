@@ -19,7 +19,7 @@
 
 #include "openmptinput.h"
 
-#include "openmptsettings.h"
+#include "openmptdefs.h"
 
 #include <utils/settings/settingsmanager.h>
 

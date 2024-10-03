@@ -33,6 +33,7 @@ public:
     explicit LibraryTreeController(SettingsManager* settings, QObject* parent = nullptr);
 
     [[nodiscard]] LibraryTreeGroupRegistry* groupRegistry() const;
+    static QString defaultPlaylistName();
 
 private:
     LibraryTreeGroupRegistry* m_groupRegistry;
