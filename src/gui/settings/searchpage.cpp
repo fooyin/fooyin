@@ -109,7 +109,7 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     layout->addWidget(resultsGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
 
-    QObject::connect(m_failBg, &QCheckBox::toggled, m_failBgColour, &SearchPageWidget::setEnabled);
+    QObject::connect(m_failBg, &QCheckBox::toggled, m_failBgColour, &QWidget::setEnabled);
     QObject::connect(m_failFg, &QCheckBox::toggled, m_failFgColour, &QWidget::setEnabled);
 }
 
@@ -165,6 +165,8 @@ void SearchPageWidget::loadColours()
 {
     const auto failBg = m_settings->value<Settings::Gui::SearchErrorBg>();
     m_failBg->setChecked(!failBg.isNull());
+    m_failBgColour->setEnabled(m_failBg->isChecked());
+
     if(!failBg.isNull()) {
         m_failBgColour->setColour(failBg.value<QColor>());
     }
@@ -174,6 +176,8 @@ void SearchPageWidget::loadColours()
 
     const auto failFg = m_settings->value<Settings::Gui::SearchErrorFg>();
     m_failFg->setChecked(!failFg.isNull());
+    m_failFgColour->setEnabled(m_failFg->isChecked());
+
     if(!failFg.isNull()) {
         m_failFgColour->setColour(failFg.value<QColor>());
     }
