@@ -149,13 +149,9 @@ PlaylistOrganiser::PlaylistOrganiser(ActionManager* actionManager, PlaylistInter
 
     actionManager->addContextObject(m_context);
 
-    m_removePlaylist->setStatusTip(tr("Remove the selected playlist(s)"));
-    m_removeCmd->setAttribute(ProxyAction::UpdateText);
     m_removeCmd->setDefaultShortcut(QKeySequence::Delete);
-
-    m_renamePlaylist->setStatusTip(tr("Rename the selected playlist"));
-    m_renameCmd->setAttribute(ProxyAction::UpdateText);
     m_renameCmd->setDefaultShortcut(Qt::Key_F2);
+    m_renameCmd->setAttribute(ProxyAction::UpdateText);
 
     m_newGroup->setStatusTip(tr("Create a new empty group"));
     m_newGroupCmd->setAttribute(ProxyAction::UpdateText);
@@ -258,8 +254,35 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     const QPoint point      = m_organiserTree->viewport()->mapFrom(this, event->pos());
     const QModelIndex index = m_organiserTree->indexAt(point);
 
+    int playlistCount{0};
+    int groupCount{0};
+
+    const auto selected = m_organiserTree->selectionModel()->selectedRows();
+    for(const auto& selectedIndex : selected) {
+        if(selectedIndex.data(PlaylistOrganiserItem::ItemType).toInt() == PlaylistOrganiserItem::PlaylistItem) {
+            ++playlistCount;
+        }
+        else {
+            ++groupCount;
+        }
+    }
+
+    if(playlistCount > 0 && groupCount == 0) {
+        m_renamePlaylist->setStatusTip(playlistCount == 1 ? tr("Rename the selected playlist") : QString{});
+        m_removePlaylist->setStatusTip(playlistCount == 1 ? tr("Remove the selected playlist")
+                                                          : tr("Remove the selected playlists"));
+    }
+    else if(groupCount > 0 && playlistCount == 0) {
+        m_renamePlaylist->setStatusTip(playlistCount == 1 ? tr("Rename the selected group") : QString{});
+        m_removePlaylist->setStatusTip(groupCount == 1 ? tr("Remove the selected group")
+                                                       : tr("Remove the selected groups"));
+    }
+    else if(playlistCount > 0 && groupCount > 0) {
+        m_removePlaylist->setStatusTip(tr("Remove the selected playlists and groups"));
+    }
+
     m_removePlaylist->setEnabled(index.isValid());
-    m_renamePlaylist->setEnabled(index.isValid());
+    m_renamePlaylist->setEnabled(selected.size() == 1 && index.isValid());
 
     menu->addAction(m_newPlaylistCmd->action());
     menu->addAction(m_newGroupCmd->action());
