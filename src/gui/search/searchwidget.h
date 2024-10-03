@@ -46,6 +46,12 @@ public:
         AllPlaylists,
     };
 
+    struct SearchColours
+    {
+        std::optional<QColor> failBg;
+        std::optional<QColor> failFg;
+    };
+
     SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
                  SettingsManager* settings, QWidget* parent = nullptr);
     ~SearchWidget() override;
@@ -71,6 +77,10 @@ private:
     [[nodiscard]] Playlist* findOrAddPlaylist(const TrackList& tracks) const;
     [[nodiscard]] TrackList getTracksToSearch() const;
     bool handleFilteredTracks(const TrackList& tracks);
+    void handleSearchFailed();
+
+    void loadColours();
+    void resetColours();
 
     void updateConnectedState();
     void searchChanged(bool enterKey = false);
@@ -88,5 +98,6 @@ private:
     SearchMode m_mode;
     bool m_unconnected;
     bool m_autoSearch;
+    SearchColours m_colours;
 };
 } // namespace Fooyin

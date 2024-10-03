@@ -19,6 +19,7 @@
 
 #include "searchwidget.h"
 
+#include "internalguisettings.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistwidget.h"
 #include "searchcontroller.h"
@@ -65,6 +66,8 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
     m_searchBox->setPlaceholderText(m_defaultPlaceholder);
     m_searchBox->setClearButtonEnabled(true);
 
+    loadColours();
+
     QObject::connect(m_searchBox, &QLineEdit::textChanged, this, [this]() {
         if(m_autoSearch) {
             m_searchTimer.start((m_settings->value<Settings::Gui::SearchAutoDelay>() + 1) * 30, this);
@@ -82,6 +85,8 @@ SearchWidget::SearchWidget(SearchController* controller, PlaylistController* pla
 
     m_settings->subscribe<Settings::Gui::IconTheme>(
         this, [selectReceiver]() { selectReceiver->setIcon(Utils::iconFromTheme(Constants::Icons::Options)); });
+    m_settings->subscribe<Settings::Gui::SearchErrorBg>(this, &SearchWidget::loadColours);
+    m_settings->subscribe<Settings::Gui::SearchErrorFg>(this, &SearchWidget::loadColours);
 }
 
 SearchWidget::~SearchWidget()
@@ -265,8 +270,13 @@ TrackList SearchWidget::getTracksToSearch() const
 bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
 {
     if(tracks.empty()) {
+        if(!m_searchBox->text().isEmpty()) {
+            handleSearchFailed();
+        }
         return false;
     }
+
+    resetColours();
 
     if(m_mode == SearchMode::PlaylistInline) {
         m_playlistController->selectTrackIds(Track::trackIdsForTracks(tracks));
@@ -285,6 +295,45 @@ bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
     }
 
     return true;
+}
+
+void SearchWidget::handleSearchFailed()
+{
+    if(m_colours.failBg) {
+        QPalette palette = m_searchBox->palette();
+        palette.setColor(QPalette::Base, m_colours.failBg.value());
+        m_searchBox->setPalette(palette);
+    }
+    if(m_colours.failFg) {
+        QPalette palette = m_searchBox->palette();
+        palette.setColor(QPalette::Text, m_colours.failFg.value());
+        m_searchBox->setPalette(palette);
+    }
+}
+
+void SearchWidget::loadColours()
+{
+    const auto failBg = m_settings->value<Settings::Gui::SearchErrorBg>();
+    if(failBg.isNull()) {
+        m_colours.failBg = {};
+    }
+    else {
+        m_colours.failBg = failBg.value<QColor>();
+    }
+
+    const auto failFg = m_settings->value<Settings::Gui::SearchErrorFg>();
+    if(failFg.isNull()) {
+        m_colours.failFg = {};
+    }
+    else {
+        m_colours.failFg = failFg.value<QColor>();
+    }
+}
+
+void SearchWidget::resetColours()
+{
+    const QPalette defaultPalette = m_searchBox->style()->standardPalette();
+    m_searchBox->setPalette(defaultPalette);
 }
 
 void SearchWidget::updateConnectedState()

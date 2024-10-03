@@ -79,7 +79,8 @@ GuiSettings::GuiSettings(SettingsManager* settingsManager)
                                                   QStringLiteral("Searching/PlaylistName"));
     m_settings->createSetting<SearchPlaylistAppendSearch>(false, QStringLiteral("Searching/AppendSearchToPlaylist"));
     m_settings->createSetting<SearchSuccessFocus>(true, QStringLiteral("Searching/FocusOnSuccess"));
-
+    m_settings->createSetting<SearchErrorBg>(QVariant{}, QStringLiteral("Searching/ErrorBgColour"));
+    m_settings->createSetting<SearchErrorFg>(QVariant{}, QStringLiteral("Searching/ErrorFgColour"));
     m_settings->createSetting<Internal::EditingMenuLevels>(2, QStringLiteral("Interface/EditingMenuLevels"));
     m_settings->createSetting<Internal::PlaylistAltColours>(true, QStringLiteral("PlaylistWidget/AlternatingColours"));
     m_settings->createSetting<Internal::PlaylistHeader>(true, QStringLiteral("PlaylistWidget/Header"));

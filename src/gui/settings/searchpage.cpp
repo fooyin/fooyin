@@ -21,6 +21,7 @@
 
 #include <gui/guiconstants.h>
 #include <gui/guisettings.h>
+#include <gui/widgets/colourbutton.h>
 #include <gui/widgets/slidereditor.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -29,6 +30,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QStyle>
 
 namespace Fooyin {
 class SearchPageWidget : public SettingsPageWidget
@@ -43,6 +45,8 @@ public:
     void reset() override;
 
 private:
+    void loadColours();
+
     SettingsManager* m_settings;
 
     QCheckBox* m_clearOnSuccess;
@@ -50,6 +54,11 @@ private:
     QLineEdit* m_playlistName;
     QCheckBox* m_appendSearchString;
     QCheckBox* m_focusOnSuccess;
+
+    QCheckBox* m_failBg;
+    ColourButton* m_failBgColour;
+    QCheckBox* m_failFg;
+    ColourButton* m_failFgColour;
 };
 
 SearchPageWidget::SearchPageWidget(SettingsManager* settings)
@@ -59,6 +68,10 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     , m_playlistName{new QLineEdit(this)}
     , m_appendSearchString{new QCheckBox(tr("Append search string to the playlist name"), this)}
     , m_focusOnSuccess{new QCheckBox(tr("Switch focus to playlist on successful search"), this)}
+    , m_failBg{new QCheckBox(tr("Error background") + u":", this)}
+    , m_failBgColour{new ColourButton(this)}
+    , m_failFg{new QCheckBox(tr("Error foreground") + u":", this)}
+    , m_failFgColour{new ColourButton(this)}
 {
     auto* searchGroup       = new QGroupBox(tr("Search"), this);
     auto* searchGroupLayout = new QGridLayout(searchGroup);
@@ -70,9 +83,13 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     m_autosearchDelay->addSpecialValue(3, tr("Slow"));
 
     int row{0};
-    searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0);
-    searchGroupLayout->addWidget(m_autosearchDelay, row++, 0);
-    searchGroupLayout->setColumnStretch(1, 1);
+    searchGroupLayout->addWidget(m_clearOnSuccess, row++, 0, 1, 3);
+    searchGroupLayout->addWidget(m_autosearchDelay, row++, 0, 1, 3);
+    searchGroupLayout->addWidget(m_failBg, row, 0);
+    searchGroupLayout->addWidget(m_failBgColour, row++, 1, 1, 2);
+    searchGroupLayout->addWidget(m_failFg, row, 0);
+    searchGroupLayout->addWidget(m_failFgColour, row++, 1, 1, 2);
+    searchGroupLayout->setColumnStretch(2, 1);
 
     auto* resultsGroup       = new QGroupBox(tr("Search Results"), this);
     auto* resultsGroupLayout = new QGridLayout(resultsGroup);
@@ -91,12 +108,17 @@ SearchPageWidget::SearchPageWidget(SettingsManager* settings)
     layout->addWidget(searchGroup, row++, 0);
     layout->addWidget(resultsGroup, row++, 0);
     layout->setRowStretch(layout->rowCount(), 1);
+
+    QObject::connect(m_failBg, &QCheckBox::toggled, m_failBgColour, &SearchPageWidget::setEnabled);
+    QObject::connect(m_failFg, &QCheckBox::toggled, m_failFgColour, &QWidget::setEnabled);
 }
 
 void SearchPageWidget::load()
 {
     m_clearOnSuccess->setChecked(m_settings->value<Settings::Gui::SearchSuccessClear>());
     m_autosearchDelay->setValue(m_settings->value<Settings::Gui::SearchAutoDelay>());
+
+    loadColours();
 
     m_playlistName->setText(m_settings->value<Settings::Gui::SearchPlaylistName>());
     m_appendSearchString->setChecked(m_settings->value<Settings::Gui::SearchPlaylistAppendSearch>());
@@ -110,6 +132,21 @@ void SearchPageWidget::apply()
     m_settings->set<Settings::Gui::SearchPlaylistName>(m_playlistName->text());
     m_settings->set<Settings::Gui::SearchPlaylistAppendSearch>(m_appendSearchString->isChecked());
     m_settings->set<Settings::Gui::SearchSuccessFocus>(m_focusOnSuccess->isChecked());
+
+    if(m_failBg->isChecked()) {
+        m_settings->set<Settings::Gui::SearchErrorBg>(m_failBgColour->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::SearchErrorBg>();
+    }
+    if(m_failFg->isChecked()) {
+        m_settings->set<Settings::Gui::SearchErrorFg>(m_failFgColour->colour());
+    }
+    else {
+        m_settings->reset<Settings::Gui::SearchErrorFg>();
+    }
+
+    loadColours();
 }
 
 void SearchPageWidget::reset()
@@ -119,6 +156,30 @@ void SearchPageWidget::reset()
     m_settings->reset<Settings::Gui::SearchPlaylistName>();
     m_settings->reset<Settings::Gui::SearchPlaylistAppendSearch>();
     m_settings->reset<Settings::Gui::SearchSuccessFocus>();
+
+    m_settings->reset<Settings::Gui::SearchErrorBg>();
+    m_settings->reset<Settings::Gui::SearchErrorFg>();
+}
+
+void SearchPageWidget::loadColours()
+{
+    const auto failBg = m_settings->value<Settings::Gui::SearchErrorBg>();
+    m_failBg->setChecked(!failBg.isNull());
+    if(!failBg.isNull()) {
+        m_failBgColour->setColour(failBg.value<QColor>());
+    }
+    else {
+        m_failBgColour->setColour(m_playlistName->style()->standardPalette().color(QPalette::Base));
+    }
+
+    const auto failFg = m_settings->value<Settings::Gui::SearchErrorFg>();
+    m_failFg->setChecked(!failFg.isNull());
+    if(!failFg.isNull()) {
+        m_failFgColour->setColour(failFg.value<QColor>());
+    }
+    else {
+        m_failFgColour->setColour(m_playlistName->style()->standardPalette().color(QPalette::Text));
+    }
 }
 
 SearchPage::SearchPage(SettingsManager* settings, QObject* parent)

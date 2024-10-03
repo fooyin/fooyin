@@ -28,7 +28,7 @@
 namespace Fooyin::Settings::Gui {
 Q_NAMESPACE_EXPORT(FYGUI_EXPORT)
 
-enum ToolButtonOption : uint32_t
+enum ToolButtonOption : uint8_t
 {
     None    = 0,
     Raise   = 1 << 0,
@@ -61,6 +61,8 @@ enum GuiSettings : uint32_t
     SearchPlaylistName         = 21 | Type::String,
     SearchPlaylistAppendSearch = 22 | Type::Bool,
     SearchSuccessFocus         = 23 | Type::Bool,
+    SearchErrorBg              = 24 | Type::Variant,
+    SearchErrorFg              = 25 | Type::Variant,
 };
 Q_ENUM_NS(GuiSettings)
 } // namespace Fooyin::Settings::Gui
