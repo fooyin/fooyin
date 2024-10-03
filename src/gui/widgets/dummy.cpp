@@ -61,6 +61,7 @@ Dummy::Dummy(QString name, SettingsManager* settings, QWidget* parent)
 
 QString Dummy::name() const
 {
+    //: Represents a dummy/placeholder widget
     return tr("Dummy");
 }
 

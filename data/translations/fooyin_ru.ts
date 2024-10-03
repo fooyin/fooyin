@@ -321,11 +321,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
-        <source>Start playback of the selected files(s)</source>
-        <translation>Воспроизвести выделенные файлы</translation>
-    </message>
-    <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="300"/>
         <source>Append selected tracks to the current playlist</source>
         <translation>Добавить выбранные треки в текущий плейлист</translation>
@@ -369,6 +364,11 @@
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="240"/>
         <source>Go forwards</source>
         <translation>Вперёд</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
+        <source>Start playback of the selected files</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="698"/>
@@ -516,22 +516,23 @@
 <context>
     <name>Fooyin::Dummy</name>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="64"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="65"/>
         <source>Dummy</source>
+        <extracomment>Represents a dummy/placeholder widget</extracomment>
         <translation>Пустышка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="96"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="97"/>
         <source>Missing Widget</source>
         <translation>Отсутствующий виджет</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="99"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="100"/>
         <source>Right-click to add a new widget</source>
         <translation>Кликните правой кнопкой для добавления нового виджета</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dummy.cpp" line="102"/>
+        <location filename="../../src/gui/widgets/dummy.cpp" line="103"/>
         <source>Enter layout editing mode to edit</source>
         <translation>Зайдите в режим редактирования оформления для изменения</translation>
     </message>
@@ -1627,152 +1628,152 @@
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="511"/>
-        <location filename="../../src/gui/guiapplication.cpp" line="542"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="541"/>
         <source>Tagging</source>
         <translation>Тэги</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="545"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="514"/>
+        <source>Reload tags from files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="515"/>
+        <source>Reload tags from modified files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="517"/>
+        <source>Replace tags in selected tracks with tags from the files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="519"/>
+        <source>Replace tags in selected tracks with tags from the files if modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="544"/>
         <source>Rate 0</source>
         <translation>0 баллов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="546"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="545"/>
         <source>Rate 1</source>
         <translation>1 балл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="547"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="546"/>
         <source>Rate 2</source>
         <translation>2 балла</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="548"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="547"/>
         <source>Rate 3</source>
         <translation>3 балла</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="549"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="548"/>
         <source>Rate 4</source>
         <translation>4 балла</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="550"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="549"/>
         <source>Rate 5</source>
         <translation>5 баллов</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="583"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="582"/>
         <source>Rating</source>
         <translation>Рейтинг</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="748"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="747"/>
         <source>Reload Required</source>
         <translation>Необходима перезагрузка</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="749"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="748"/>
         <source>Due to a database change, tracks should be reloaded from disk to update their saved metadata.</source>
         <translation>Из-за изменения базы данных треки необходимо перезагрузить с диска, чтобы обновить сохраненные метаданные.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="754"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="753"/>
         <source>Reload Now</source>
         <translation>Перечитать сейчас</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="756"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="755"/>
         <source>OK</source>
         <translation type="unfinished">ОК</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="813"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="812"/>
         <source>Playback Error</source>
         <translation>Ошибка воспроизведения</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="866"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="865"/>
         <source>Track Not Found</source>
         <translation>Трек не найден</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="838"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="837"/>
         <source>Continue</source>
         <translation>Продолжить</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="514"/>
-        <source>Reload tags from file(s)</source>
-        <translation>Перечитать тэги для файла(ов)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="516"/>
-        <source>Reload tags from modified file(s)</source>
-        <translation>Перечитать тэги для изменённого(ых) файла(ов)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="518"/>
-        <source>Replace tags in selected tracks with tags from the file(s)</source>
-        <translation>Заменить теги в выбранных треках тегами из файла(ов)</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="520"/>
-        <source>Replace tags in selected tracks with tags from the file(s) if modified</source>
-        <translation>Заменить теги в выбранных треках тегами из файла(ов), если они были изменены</translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="600"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="599"/>
         <source>Utilities</source>
         <translation>Утилиты</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="840"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="839"/>
         <source>Stop</source>
         <translation>Стоп</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="844"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="843"/>
         <source>Always continue playing if a track is unavailable</source>
         <translation>Всегда продолжать проигрывание, если трек недоступен</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="871"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="870"/>
         <source>No Decoder Available</source>
         <translation>Не удалось декодировать файл</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="880"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="879"/>
         <source>All Supported Media Files (%1)</source>
         <translation>Все поддерживаемые медиафайлы (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="881"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="880"/>
         <source>Audio Files (%1)</source>
         <translation>Аудио файлы (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="892"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="891"/>
         <source>Add Files</source>
         <translation>Добавить файлы</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="906"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="905"/>
         <source>Add Folders</source>
         <translation>Добавить папки</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="933"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="932"/>
         <source>All Supported Playlists (%1)</source>
         <translation>Все поддерживаемые плейлисты (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="943"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="942"/>
         <source>Load Playlist</source>
         <translation>Загрузить плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="975"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="974"/>
         <source>Save Playlist</source>
         <translation>Сохранить плейлист</translation>
     </message>
@@ -4014,27 +4015,42 @@
         <translation>Создать плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="152"/>
-        <source>Remove the selected playlist(s)</source>
-        <translation>Удалить выделенный(е) плейлист(ы)</translation>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="272"/>
+        <source>Remove the selected playlists</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="156"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="275"/>
+        <source>Rename the selected group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="276"/>
+        <source>Remove the selected groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="279"/>
+        <source>Remove the selected playlists and groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="271"/>
         <source>Rename the selected playlist</source>
         <translation>Переименовать выделенный плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="156"/>
         <source>Create a new empty group</source>
         <translation>Создать новую группу</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="164"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="160"/>
         <source>Create a new empty playlist</source>
         <translation>Создать новый плейлист</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="240"/>
+        <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="236"/>
         <source>Playlist Organiser</source>
         <translation>Менеджер плейлистов</translation>
     </message>
@@ -5229,7 +5245,7 @@
         <translation>Управление подключениями</translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="793"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="792"/>
         <source>Quick Search</source>
         <translation type="unfinished"></translation>
     </message>
