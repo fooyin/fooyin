@@ -182,8 +182,12 @@ void SearchWidget::showEvent(QShowEvent* event)
 
 void SearchWidget::keyPressEvent(QKeyEvent* event)
 {
-    if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+    const int key = event->key();
+    if(key == Qt::Key_Enter || key == Qt::Key_Return) {
         searchChanged(true);
+    }
+    else if(key == Qt::Key_Escape && !parentWidget()) {
+        close();
     }
 
     FyWidget::keyPressEvent(event);
