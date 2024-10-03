@@ -2948,7 +2948,7 @@
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="173"/>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="181"/>
         <source>Send to playback queue</source>
-        <translation>发送到至播放队列</translation>
+        <translation>发送到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/librarytree/librarytreepage.cpp" line="166"/>
@@ -3439,7 +3439,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="168"/>
         <source>Playback Queue</source>
-        <translation>至播放队列</translation>
+        <translation>播放队列</translation>
     </message>
 </context>
 <context>
@@ -6156,7 +6156,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="146"/>
         <source>Playback Queue</source>
-        <translation>至播放队列</translation>
+        <translation>播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets.cpp" line="151"/>
