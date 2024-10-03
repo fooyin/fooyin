@@ -26,7 +26,7 @@
 namespace Fooyin {
 DirTree::DirTree(QWidget* parent)
     : QTreeView{parent}
-    , m_elideText{true}
+    , m_showHorizontalScrollbar{true}
 {
     setUniformRowHeights(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -44,7 +44,7 @@ DirTree::DirTree(QWidget* parent)
 
 void DirTree::resizeView()
 {
-    if(!m_elideText) {
+    if(m_showHorizontalScrollbar) {
         resizeColumnToContents(0);
     }
     else {
@@ -52,9 +52,9 @@ void DirTree::resizeView()
     }
 }
 
-void DirTree::setElideText(bool enabled)
+void DirTree::setShowHorizontalScrollbar(bool enabled)
 {
-    if(std::exchange(m_elideText, enabled) != enabled) {
+    if(std::exchange(m_showHorizontalScrollbar, enabled) != enabled) {
         resizeView();
     }
 }

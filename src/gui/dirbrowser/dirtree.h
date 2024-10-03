@@ -30,7 +30,7 @@ public:
     explicit DirTree(QWidget* parent = nullptr);
 
     void resizeView();
-    void setElideText(bool enabled);
+    void setShowHorizontalScrollbar(bool enabled);
 
 signals:
     void backClicked();
@@ -43,6 +43,6 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent* event) override;
 
 private:
-    bool m_elideText;
+    bool m_showHorizontalScrollbar;
 };
 } // namespace Fooyin
