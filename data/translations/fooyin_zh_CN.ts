@@ -991,32 +991,32 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="172"/>
         <source>Copy</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="174"/>
         <source>Move</source>
-        <translation type="unfinished">移动</translation>
+        <translation>移动</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="176"/>
         <source>Rename</source>
-        <translation type="unfinished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="178"/>
         <source>Create</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
@@ -3041,7 +3041,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="60"/>
         <source>Info</source>
-        <translation type="unfinished">信息文本</translation>
+        <translation>信息文本</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
@@ -3146,22 +3146,22 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="40"/>
         <source>Gain</source>
-        <translation type="unfinished">增益</translation>
+        <translation>增益</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="41"/>
         <source>Separation</source>
-        <translation type="unfinished">分割</translation>
+        <translation>分割</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="42"/>
         <source>Volume ramping</source>
-        <translation type="unfinished">音量倾斜</translation>
+        <translation>音量倾斜</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="43"/>
         <source>Use Amiga resampler</source>
-        <translation type="unfinished">使用Amiga再取样器</translation>
+        <translation>使用Amiga再取样器</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
@@ -3172,37 +3172,37 @@
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="64"/>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="69"/>
         <source>Default</source>
-        <translation type="unfinished">默认</translation>
+        <translation>默认</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="65"/>
         <source>Off</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="67"/>
         <source>Interpolation</source>
-        <translation type="unfinished">插值</translation>
+        <translation>插值</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="70"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="71"/>
         <source>Linear</source>
-        <translation type="unfinished">线性</translation>
+        <translation>线性</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="72"/>
         <source>Cubic</source>
-        <translation type="unfinished">立方</translation>
+        <translation>立方</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="73"/>
         <source>Sinc</source>
-        <translation type="unfinished">正弦</translation>
+        <translation>正弦</translation>
     </message>
 </context>
 <context>
@@ -5180,7 +5180,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="94"/>
         <source>Search Results</source>
-        <translation type="unfinished">搜索结果</translation>
+        <translation>搜索结果</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="99"/>
@@ -5760,87 +5760,87 @@
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="122"/>
         <source>Add to current playlist</source>
-        <translation type="unfinished">添加到当前播放列表</translation>
+        <translation>添加到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="123"/>
         <source>Add to active playlist</source>
-        <translation type="unfinished">添加到活动播放列表</translation>
+        <translation>添加到活动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="124"/>
         <source>Send to current playlist</source>
-        <translation type="unfinished">发送到当前播放列表</translation>
+        <translation>发送到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="125"/>
         <source>Send to new playlist</source>
-        <translation type="unfinished">发送到新播放列表</translation>
+        <translation>发送到新播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="126"/>
         <source>Add to playback queue</source>
-        <translation type="unfinished">添加到播放队列</translation>
+        <translation>添加到播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="127"/>
         <source>Remove from playback queue</source>
-        <translation type="unfinished">从播放队列中删除</translation>
+        <translation>从播放队列中删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="128"/>
         <source>Open containing folder</source>
-        <translation type="unfinished">打开包含的目录</translation>
+        <translation>打开包含的目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="129"/>
         <source>Properties</source>
-        <translation type="unfinished">属性</translation>
+        <translation>属性</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="139"/>
         <source>Append selected tracks to the current playlist</source>
-        <translation type="unfinished">追加选中的音轨到当前播放列表</translation>
+        <translation>追加选中的音轨到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="143"/>
         <source>Append selected tracks to the active playlist</source>
-        <translation type="unfinished">追加选中的音轨到活动播放列表</translation>
+        <translation>追加选中的音轨到活动播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="147"/>
         <source>Replace contents of the current playlist with the selected tracks</source>
-        <translation type="unfinished">用选中的音轨替换当前播放列表</translation>
+        <translation>用选中的音轨替换当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="156"/>
         <source>Create a new playlist containing the selected tracks</source>
-        <translation type="unfinished">用选中的音轨新建播放列表</translation>
+        <translation>用选中的音轨新建播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="170"/>
         <source>Add the selected tracks to the playback queue</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的音轨加入播放队列</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="180"/>
         <source>Remove the selected tracks from the playback queue</source>
-        <translation type="unfinished">从播放队列中删除选中的音轨</translation>
+        <translation>从播放队列中删除选中的音轨</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="191"/>
         <source>Open the directory containing the selected tracks</source>
-        <translation type="unfinished">打开选中音轨所在的目录</translation>
+        <translation>打开选中音轨所在的目录</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="208"/>
         <source>Open the properties dialog</source>
-        <translation type="unfinished">打开属性对话框</translation>
+        <translation>打开属性对话框</translation>
     </message>
     <message>
         <location filename="../../src/gui/trackselectioncontroller.cpp" line="331"/>
         <source>Playback</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
 </context>
 <context>
