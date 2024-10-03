@@ -40,19 +40,20 @@ TagEditorFieldRegistry::TagEditorFieldRegistry(SettingsManager* settings, QObjec
 
 void TagEditorFieldRegistry::loadDefaultFields()
 {
-    addItem({.name = tr("Artist Name"), .scriptField = QStringLiteral("artist"), .multivalue = true});
-    addItem({.name = tr("Track Title"), .scriptField = QStringLiteral("title")});
-    addItem({.name = tr("Album Title"), .scriptField = QStringLiteral("album")});
-    addItem({.name = tr("Date"), .scriptField = QStringLiteral("date")});
-    addItem({.name = tr("Genre"), .scriptField = QStringLiteral("genre"), .multivalue = true});
-    addItem({.name = tr("Composer"), .scriptField = QStringLiteral("composer"), .multivalue = true});
-    addItem({.name = tr("Performer"), .scriptField = QStringLiteral("performer"), .multivalue = true});
-    addItem({.name = tr("Album Artist"), .scriptField = QStringLiteral("albumartist"), .multivalue = true});
-    addItem({.name = tr("Track Number"), .scriptField = QStringLiteral("track")});
-    addItem({.name = tr("Total Tracks"), .scriptField = QStringLiteral("tracktotal")});
-    addItem({.name = tr("Disc Number"), .scriptField = QStringLiteral("disc")});
-    addItem({.name = tr("Total Discs"), .scriptField = QStringLiteral("disctotal")});
-    addItem({.name = tr("Comment"), .scriptField = QStringLiteral("comment")});
-    addItem({.name = tr("Rating"), .scriptField = QStringLiteral("rating_editor")});
+    addDefaultItem({.name = tr("Artist Name"), .scriptField = QStringLiteral("artist"), .multivalue = true}, true);
+    addDefaultItem({.name = tr("Track Title"), .scriptField = QStringLiteral("title")}, true);
+    addDefaultItem({.name = tr("Album Title"), .scriptField = QStringLiteral("album")}, true);
+    addDefaultItem({.name = tr("Date"), .scriptField = QStringLiteral("date")}, true);
+    addDefaultItem({.name = tr("Genre"), .scriptField = QStringLiteral("genre"), .multivalue = true}, true);
+    addDefaultItem({.name = tr("Composer"), .scriptField = QStringLiteral("composer"), .multivalue = true}, true);
+    addDefaultItem({.name = tr("Performer"), .scriptField = QStringLiteral("performer"), .multivalue = true}, true);
+    addDefaultItem({.name = tr("Album Artist"), .scriptField = QStringLiteral("albumartist"), .multivalue = true},
+                   true);
+    addDefaultItem({.name = tr("Track Number"), .scriptField = QStringLiteral("track")}, true);
+    addDefaultItem({.name = tr("Total Tracks"), .scriptField = QStringLiteral("tracktotal")}, true);
+    addDefaultItem({.name = tr("Disc Number"), .scriptField = QStringLiteral("disc")}, true);
+    addDefaultItem({.name = tr("Total Discs"), .scriptField = QStringLiteral("disctotal")}, true);
+    addDefaultItem({.name = tr("Comment"), .scriptField = QStringLiteral("comment")}, true);
+    addDefaultItem({.name = tr("Rating"), .scriptField = QStringLiteral("rating_editor")}, true);
 }
 } // namespace Fooyin::TagEditor

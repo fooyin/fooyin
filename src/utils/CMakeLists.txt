@@ -46,6 +46,7 @@ set(SOURCES
     datastream.cpp
     fileutils.cpp
     id.cpp
+    itemregistry.cpp
     modelutils.cpp
     modelutils.h
     paths.cpp

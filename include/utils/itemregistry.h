@@ -44,9 +44,7 @@ class FYUTILS_EXPORT RegistryBase : public QObject
     Q_OBJECT
 
 public:
-    explicit RegistryBase(QObject* parent = nullptr)
-        : QObject{parent}
-    { }
+    explicit RegistryBase(QObject* parent = nullptr);
 
 signals:
     void itemAdded(int id);
@@ -89,6 +87,8 @@ public:
 
     void reset()
     {
+        m_itemsChanged = false;
+        m_settings->fileRemove(m_settingKey);
         m_items.clear();
         loadDefaults();
     }
@@ -101,6 +101,7 @@ public:
         newItem.index = static_cast<int>(m_items.size());
         m_items.push_back(newItem);
 
+        m_itemsChanged = true;
         emit itemAdded(newItem.id);
         saveItems();
         return newItem;
@@ -124,6 +125,7 @@ public:
         }
         *itemIt = changedItem;
 
+        m_itemsChanged = true;
         sortByIndex();
         emit itemChanged(changedItem.id);
         saveItems();
@@ -178,6 +180,7 @@ public:
             return false;
         }
 
+        m_itemsChanged = true;
         emit itemRemoved(id);
         saveItems();
         return true;
@@ -185,6 +188,11 @@ public:
 
     void saveItems() const
     {
+        if(!m_itemsChanged) {
+            m_settings->fileRemove(m_settingKey);
+            return;
+        }
+
         QByteArray byteArray;
         QDataStream stream(&byteArray, QIODevice::WriteOnly);
         stream.setVersion(QDataStream::Qt_6_0);
@@ -235,6 +243,8 @@ public:
 
                 m_items.push_back(item);
             }
+
+            m_itemsChanged = true;
         }
 
         // If we add new default items but the user has added custom items, there will be an id conflict.
@@ -254,10 +264,10 @@ public:
 protected:
     virtual void loadDefaults() { }
 
-    void addDefaultItem(const Item& item)
+    void addDefaultItem(const Item& item, bool isEditable = false)
     {
         Item defaultItem{item};
-        defaultItem.isDefault = true;
+        defaultItem.isDefault = !isEditable;
 
         if(defaultItem.name.isEmpty()) {
             defaultItem.name = findUniqueName(defaultItem.name);
@@ -303,5 +313,6 @@ private:
     SettingsManager* m_settings;
     QString m_settingKey;
     ItemList m_items;
+    bool m_itemsChanged{false};
 };
 } // namespace Fooyin
