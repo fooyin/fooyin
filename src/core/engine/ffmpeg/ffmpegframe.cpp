@@ -65,7 +65,7 @@ int Frame::channelCount() const
     }
 
 #if OLD_CHANNEL_LAYOUT
-    return m_frame->channels;
+    return p->frame->channels;
 #else
     return p->frame->ch_layout.nb_channels;
 #endif
@@ -103,7 +103,7 @@ uint64_t Frame::durationMs() const
         return 0;
     }
 #if OLD_FRAME
-    return av_rescale_q(m_frame->pkt_duration, m_timeBase, {1, 1000});
+    return av_rescale_q(p->frame->pkt_duration, p->timeBase, {1, 1000});
 #else
     return av_rescale_q(p->frame->duration, p->timeBase, {1, 1000});
 #endif
@@ -115,7 +115,7 @@ uint64_t Frame::end() const
         return 0;
     }
 #if OLD_FRAME
-    return m_frame->pts + m_frame->pkt_duration;
+    return p->frame->pts + p->frame->pkt_duration;
 #else
     return p->frame->pts + p->frame->duration;
 #endif
