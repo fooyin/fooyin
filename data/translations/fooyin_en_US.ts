@@ -368,7 +368,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Start playback of the selected files</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="698"/>
@@ -1635,22 +1635,22 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="514"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Reload tags from files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="515"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>Reload tags from modified files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace tags in selected tracks with tags from the files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Replace tags in selected tracks with tags from the files if modified</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="544"/>
@@ -4017,22 +4017,22 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="272"/>
         <source>Remove the selected playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected playlists</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="275"/>
         <source>Rename the selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>Rename the selected group</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="276"/>
         <source>Remove the selected groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected groups</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="279"/>
         <source>Remove the selected playlists and groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected playlists and groups</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="271"/>
