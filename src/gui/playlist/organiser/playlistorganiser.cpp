@@ -268,14 +268,12 @@ void PlaylistOrganiser::contextMenuEvent(QContextMenuEvent* event)
     }
 
     if(playlistCount > 0 && groupCount == 0) {
-        m_renamePlaylist->setStatusTip(playlistCount == 1 ? tr("Rename the selected playlist") : QString{});
-        m_removePlaylist->setStatusTip(playlistCount == 1 ? tr("Remove the selected playlist")
-                                                          : tr("Remove the selected playlists"));
+        m_renamePlaylist->setStatusTip(tr("Rename the selected playlist"));
+        m_removePlaylist->setStatusTip(tr("Remove the selected playlists"));
     }
     else if(groupCount > 0 && playlistCount == 0) {
-        m_renamePlaylist->setStatusTip(playlistCount == 1 ? tr("Rename the selected group") : QString{});
-        m_removePlaylist->setStatusTip(groupCount == 1 ? tr("Remove the selected group")
-                                                       : tr("Remove the selected groups"));
+        m_renamePlaylist->setStatusTip(tr("Rename the selected group"));
+        m_removePlaylist->setStatusTip(tr("Remove the selected groups"));
     }
     else if(playlistCount > 0 && groupCount > 0) {
         m_removePlaylist->setStatusTip(tr("Remove the selected playlists and groups"));

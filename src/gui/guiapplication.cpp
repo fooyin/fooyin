@@ -511,13 +511,12 @@ void GuiApplicationPrivate::setupScanMenu()
     taggingMenu->menu()->setTitle(GuiApplication::tr("Tagging"));
     selectionMenu->addMenu(taggingMenu);
 
-    auto* rescanAction = new QAction(GuiApplication::tr("Reload tags from file(s)"), m_mainWindow.get());
-    auto* rescanChangedAction
-        = new QAction(GuiApplication::tr("Reload tags from modified file(s)"), m_mainWindow.get());
+    auto* rescanAction        = new QAction(GuiApplication::tr("Reload tags from files"), m_mainWindow.get());
+    auto* rescanChangedAction = new QAction(GuiApplication::tr("Reload tags from modified files"), m_mainWindow.get());
 
-    rescanAction->setStatusTip(GuiApplication::tr("Replace tags in selected tracks with tags from the file(s)"));
+    rescanAction->setStatusTip(GuiApplication::tr("Replace tags in selected tracks with tags from the files"));
     rescanChangedAction->setStatusTip(
-        GuiApplication::tr("Replace tags in selected tracks with tags from the file(s) if modified"));
+        GuiApplication::tr("Replace tags in selected tracks with tags from the files if modified"));
 
     auto rescan = [this](const bool onlyModified) {
         if(m_selectionController.hasTracks()) {

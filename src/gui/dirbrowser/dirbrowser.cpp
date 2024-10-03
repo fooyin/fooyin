@@ -294,7 +294,7 @@ DirBrowserPrivate::DirBrowserPrivate(DirBrowser* self, const QStringList& suppor
     });
     m_actionManager->registerAction(m_goForward, "Directory Browser.GoForward", m_context->context());
 
-    m_playAction->setStatusTip(DirBrowser::tr("Start playback of the selected files(s)"));
+    m_playAction->setStatusTip(DirBrowser::tr("Start playback of the selected files"));
     QObject::connect(m_playAction, &QAction::triggered, m_self, [this]() { handleAction(TrackAction::Play, false); });
 
     m_addCurrent->setStatusTip(DirBrowser::tr("Append selected tracks to the current playlist"));
