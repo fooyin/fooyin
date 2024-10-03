@@ -1654,11 +1654,7 @@ void PlaylistWidget::finalise()
     p->m_header->setSectionsClickable(!p->m_singleMode);
     p->m_header->setSortIndicatorShown(!p->m_singleMode);
 
-    if(!p->m_singleMode && !p->m_columns.empty() && !p->m_headerState.isEmpty()) {
-        p->m_header->restoreHeaderState(p->m_headerState);
-    }
-
-    if(!p->m_singleMode && p->m_columns.empty()) {
+    if(!p->m_singleMode) {
         p->setSingleMode(false);
         p->m_model->reset({});
     }
