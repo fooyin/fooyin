@@ -24,6 +24,10 @@
 
 Q_LOGGING_CATEGORY(SND_FILE, "fy.sndfile")
 
+// SF_FORMAT_MP3 was changed to SF_FORMAT_MPEG in v1.1.0
+// Use this for compatibility with older versions
+constexpr auto SndFileFormatMpeg = 0x230000;
+
 namespace {
 QStringList fileExtensions()
 {
@@ -250,7 +254,7 @@ bool SndFileReader::readTrack(const AudioSource& source, Track& track)
 
     bool lossless{true};
     switch(info.format & SF_FORMAT_TYPEMASK) {
-        case(SF_FORMAT_MPEG):
+        case(SndFileFormatMpeg):
         case(SF_FORMAT_OGG):
         case(SF_FORMAT_VOC):
             lossless = false;
