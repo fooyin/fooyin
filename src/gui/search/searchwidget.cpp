@@ -230,12 +230,27 @@ Playlist* SearchWidget::findOrAddPlaylist(const TrackList& tracks) const
 
 TrackList SearchWidget::getTracksToSearch() const
 {
-    if(m_mode == SearchMode::Playlist || m_mode == SearchMode::PlaylistInline) {
-        if(m_playlistController->currentPlaylist()) {
-            return m_playlistController->currentPlaylist()->tracks();
+    switch(m_mode) {
+        case(SearchMode::AllPlaylists): {
+            const auto playlists = m_playlistController->playlistHandler()->playlists();
+            TrackList allTracks;
+            for(const Playlist* playlist : playlists) {
+                const TrackList playlistTracks = playlist->tracks();
+                allTracks.insert(allTracks.end(), playlistTracks.cbegin(), playlistTracks.cend());
+            }
+            return allTracks;
         }
+        case(SearchMode::Library):
+            return m_library->tracks();
+        case(SearchMode::Playlist):
+        case(SearchMode::PlaylistInline):
+            if(m_playlistController->currentPlaylist()) {
+                return m_playlistController->currentPlaylist()->tracks();
+            }
+            [[fallthrough]];
+        default:
+            return {};
     }
-    return m_library->tracks();
 }
 
 bool SearchWidget::handleFilteredTracks(const TrackList& tracks)
@@ -340,6 +355,12 @@ void SearchWidget::showOptionsMenu()
         QObject::connect(searchPlaylistInline, &QAction::triggered, this,
                          [this]() { m_mode = SearchMode::PlaylistInline; });
         searchInMenu->addAction(searchPlaylistInline);
+
+        auto* searchAllPlaylist = new QAction(tr("All Playlists"), this);
+        searchAllPlaylist->setCheckable(true);
+        searchAllPlaylist->setChecked(m_mode == SearchMode::AllPlaylists);
+        QObject::connect(searchAllPlaylist, &QAction::triggered, this, [this]() { m_mode = SearchMode::AllPlaylists; });
+        searchInMenu->addAction(searchAllPlaylist);
     }
 
     menu->addSeparator();

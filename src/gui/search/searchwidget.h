@@ -43,7 +43,7 @@ public:
         Library = 0,
         Playlist,
         PlaylistInline,
-        AllPlaylists, // Not implemented
+        AllPlaylists,
     };
 
     SearchWidget(SearchController* controller, PlaylistController* playlistController, MusicLibrary* library,
