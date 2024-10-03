@@ -32,7 +32,7 @@ class ReplayGainResultsModel;
 class ReplayGainResults : public QDialog
 {
 public:
-    ReplayGainResults(MusicLibrary* library, TrackList tracks);
+    ReplayGainResults(MusicLibrary* library, TrackList tracks, QWidget* parent = nullptr);
 
     void accept() override;
 

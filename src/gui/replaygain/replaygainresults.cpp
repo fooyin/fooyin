@@ -30,12 +30,15 @@
 #include <QTableView>
 
 namespace Fooyin {
-ReplayGainResults::ReplayGainResults(MusicLibrary* library, TrackList tracks)
-    : m_library{library}
+ReplayGainResults::ReplayGainResults(MusicLibrary* library, TrackList tracks, QWidget* parent)
+    : QDialog{parent}
+    , m_library{library}
     , m_tracks{std::move(tracks)}
     , m_resultsView{new QTableView(this)}
     , m_resultsModel{new ReplayGainResultsModel(m_tracks, this)}
 {
+    setWindowTitle(tr("ReplayGain Scan Results"));
+
     auto* layout = new QGridLayout(this);
 
     m_resultsView->setModel(m_resultsModel);
