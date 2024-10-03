@@ -83,7 +83,14 @@ ScriptResult iflonger(const ScriptValueList& vec)
     if(size != 4) {
         return {};
     }
-    if(vec.at(0).value.size() > vec.at(1).value.size()) {
+
+    bool ok{false};
+    const auto length = vec.at(1).value.toLongLong(&ok);
+    if(!ok) {
+        return {};
+    }
+
+    if(vec.at(0).value.size() >= length) {
         return vec.at(2);
     }
     return vec.at(3);
