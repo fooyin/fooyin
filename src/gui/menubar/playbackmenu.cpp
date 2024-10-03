@@ -42,10 +42,10 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
     , m_settings{settings}
     , m_playIcon{Utils::iconFromTheme(Constants::Icons::Play)}
     , m_pauseIcon{Utils::iconFromTheme(Constants::Icons::Pause)}
-    , m_stop{new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("Stop"), this)}
+    , m_stop{new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("&Stop"), this)}
     , m_playPause{new QAction(m_playIcon, tr("&Play"), this)}
-    , m_previous{new QAction(Utils::iconFromTheme(Constants::Icons::Prev), tr("Previous"), this)}
-    , m_next{new QAction(Utils::iconFromTheme(Constants::Icons::Next), tr("Next"), this)}
+    , m_previous{new QAction(Utils::iconFromTheme(Constants::Icons::Prev), tr("P&revious"), this)}
+    , m_next{new QAction(Utils::iconFromTheme(Constants::Icons::Next), tr("&Next"), this)}
     , m_defaultPlayback{new QAction(tr("&Default"), this)}
     , m_repeatTrack{new QAction(tr("Repeat &track"), this)}
     , m_repeatAlbum{new QAction(tr("Repeat &album"), this)}
@@ -194,11 +194,11 @@ PlaybackMenu::PlaybackMenu(ActionManager* actionManager, PlayerController* playe
 void PlaybackMenu::updatePlayPause(Player::PlayState state) const
 {
     if(state == Player::PlayState::Playing) {
-        m_playPause->setText(tr("Pause"));
+        m_playPause->setText(tr("&Pause"));
         m_playPause->setIcon(m_pauseIcon);
     }
     else {
-        m_playPause->setText(tr("Play"));
+        m_playPause->setText(tr("&Play"));
         m_playPause->setIcon(m_playIcon);
     }
 }

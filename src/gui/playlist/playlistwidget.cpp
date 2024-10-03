@@ -181,14 +181,14 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_playAction{new QAction(Utils::iconFromTheme(Constants::Icons::Play), tr("&Play"), m_self)}
     , m_cropAction{new QAction(tr("&Crop"), m_self)}
     , m_stopAfter{new QAction(Utils::iconFromTheme(Constants::Icons::Stop), tr("&Stop after this"), m_self)}
-    , m_cutAction{new QAction(tr("Cut"), m_self)}
-    , m_copyAction{new QAction(tr("Copy"), m_self)}
-    , m_pasteAction{new QAction(tr("Paste"), m_self)}
-    , m_clearAction{new QAction(tr("&Clear"), m_self)}
-    , m_removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("Remove"), m_self)}
-    , m_addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to playback queue"), m_self)}
+    , m_cutAction{new QAction(tr("Cu&t"), m_self)}
+    , m_copyAction{new QAction(tr("&Copy"), m_self)}
+    , m_pasteAction{new QAction(tr("&Paste"), m_self)}
+    , m_clearAction{new QAction(tr("C&lear"), m_self)}
+    , m_removeTrackAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove), tr("&Remove"), m_self)}
+    , m_addToQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Add), tr("Add to playback &queue"), m_self)}
     , m_removeFromQueueAction{new QAction(Utils::iconFromTheme(Constants::Icons::Remove),
-                                          tr("Remove from playback queue"), m_self)}
+                                          tr("Remove from playback q&ueue"), m_self)}
     , m_sorting{false}
     , m_sortingColumn{false}
     , m_showPlaying{false}
@@ -311,7 +311,7 @@ void PlaylistWidgetPrivate::setupActions()
 
         m_actionManager->addContextObject(m_playlistContext);
 
-        auto* undoAction = new QAction(tr("Undo"), this);
+        auto* undoAction = new QAction(tr("&Undo"), this);
         undoAction->setStatusTip(tr("Undo the previous playlist change"));
         auto* undoCmd
             = m_actionManager->registerAction(undoAction, Constants::Actions::Undo, m_playlistContext->context());
@@ -323,7 +323,7 @@ void PlaylistWidgetPrivate::setupActions()
                          [this, undoAction]() { undoAction->setEnabled(m_playlistController->canUndo()); });
         undoAction->setEnabled(m_playlistController->canUndo());
 
-        auto* redoAction = new QAction(tr("Redo"), this);
+        auto* redoAction = new QAction(tr("&Redo"), this);
         redoAction->setStatusTip(tr("Redo the previous playlist change"));
         auto* redoCmd
             = m_actionManager->registerAction(redoAction, Constants::Actions::Redo, m_playlistContext->context());
@@ -378,7 +378,7 @@ void PlaylistWidgetPrivate::setupActions()
         m_clearAction->setEnabled(m_model->rowCount({}) > 0);
     }
 
-    auto* selectAllAction = new QAction(tr("&Select all"), m_self);
+    auto* selectAllAction = new QAction(tr("Select &all"), m_self);
     selectAllAction->setStatusTip(tr("Select all tracks in the current playlist"));
     auto* selectAllCmd
         = m_actionManager->registerAction(selectAllAction, Constants::Actions::SelectAll, m_playlistContext->context());

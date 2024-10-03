@@ -546,7 +546,7 @@ void EditableLayout::initialise()
 {
     auto* editMenu = p->m_actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* undo    = new QAction(tr("Undo"), this);
+    auto* undo    = new QAction(tr("&Undo"), this);
     auto* undoCmd = p->m_actionManager->registerAction(undo, Constants::Actions::Undo, p->m_editingContext->context());
     undoCmd->setDefaultShortcut(QKeySequence::Undo);
     editMenu->addAction(undoCmd);
@@ -555,7 +555,7 @@ void EditableLayout::initialise()
                      [undo](bool canUndo) { undo->setEnabled(canUndo); });
     undo->setEnabled(p->m_layoutHistory->canUndo());
 
-    auto* redo    = new QAction(tr("Redo"), this);
+    auto* redo    = new QAction(tr("&Redo"), this);
     auto* redoCmd = p->m_actionManager->registerAction(redo, Constants::Actions::Redo, p->m_editingContext->context());
     redoCmd->setDefaultShortcut(QKeySequence::Redo);
     editMenu->addAction(redoCmd);

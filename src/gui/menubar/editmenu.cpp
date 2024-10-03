@@ -37,7 +37,7 @@ EditMenu::EditMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* editMenu = m_actionManager->actionContainer(Constants::Menus::Edit);
 
-    auto* search = new QAction(tr("Sear&ch"), this);
+    auto* search = new QAction(tr("S&earch"), this);
     search->setStatusTip(tr("Search the current playlist"));
     auto* searchCommand = actionManager->registerAction(search, Constants::Actions::SearchPlaylist);
     searchCommand->setDefaultShortcut({{QKeySequence::Find}, {QKeySequence{Qt::Key_F3}}});

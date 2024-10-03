@@ -60,7 +60,7 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
     rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
-    auto* search = new QAction(tr("Sear&ch"), this);
+    auto* search = new QAction(tr("S&earch"), this);
     search->setStatusTip(tr("Search all libraries"));
     QObject::connect(search, &QAction::triggered, this, &LibraryMenu::requestSearch);
 
