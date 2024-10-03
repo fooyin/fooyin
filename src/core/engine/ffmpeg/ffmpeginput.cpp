@@ -296,48 +296,6 @@ void interleave(uint8_t** in, Fooyin::AudioBuffer& buffer)
     }
 }
 
-struct AVIOContextDeleter
-{
-    void operator()(AVIOContext* context) const
-    {
-        if(context) {
-            if(context->buffer) {
-                av_freep(static_cast<void*>(&context->buffer));
-            }
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 80, 100)
-            avio_context_free(&context);
-#else
-            av_free(context);
-#endif
-        }
-    }
-};
-
-using AVIOContextPtr = std::unique_ptr<AVIOContext, AVIOContextDeleter>;
-
-struct FormatContextDeleter
-{
-    void operator()(AVFormatContext* context) const
-    {
-        if(context) {
-            avformat_close_input(&context);
-            avformat_free_context(context);
-        }
-    }
-};
-using FormatContextPtr = std::unique_ptr<AVFormatContext, FormatContextDeleter>;
-
-struct PacketDeleter
-{
-    void operator()(AVPacket* packet) const
-    {
-        if(packet) {
-            av_packet_free(&packet);
-        }
-    }
-};
-using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
-
 int ffRead(void* data, uint8_t* buffer, int size)
 {
     auto* device        = static_cast<QIODevice*>(data);
@@ -375,12 +333,6 @@ int64_t ffSeek(void* data, int64_t offset, int whence)
 
     return device->seek(seekPos);
 }
-
-struct FormatContext
-{
-    FormatContextPtr formatContext;
-    AVIOContextPtr ioContext;
-};
 
 FormatContext createAVFormatContext(QIODevice* source)
 {
@@ -422,22 +374,6 @@ FormatContext createAVFormatContext(QIODevice* source)
     // av_dump_format(avContext, 0, source.toUtf8().constData(), 0);
 
     return fc;
-}
-
-Fooyin::Stream findStream(AVFormatContext* context)
-{
-    const auto count = static_cast<int>(context->nb_streams);
-
-    for(int i{0}; i < count; ++i) {
-        AVStream* avStream = context->streams[i];
-        const auto type    = avStream->codecpar->codec_type;
-
-        if(type == AVMEDIA_TYPE_AUDIO) {
-            return Fooyin::Stream{avStream};
-        }
-    }
-
-    return {};
 }
 
 QByteArray findCover(AVFormatContext* context, Fooyin::Track::Cover type)
@@ -497,7 +433,7 @@ public:
     FFmpegDecoder* m_self;
     SettingsManager* m_settings;
 
-    AVIOContextPtr m_ioContext;
+    IOContextPtr m_ioContext;
     FormatContextPtr m_context;
     Stream m_stream;
     Codec m_codec;
@@ -553,7 +489,7 @@ bool FFmpegInputPrivate::setup(QIODevice* source)
 
     m_isSeekable = !(m_context->ctx_flags & AVFMTCTX_UNSEEKABLE);
 
-    m_stream = findStream(m_context.get());
+    m_stream = Utils::findAudioStream(m_context.get());
     if(!m_stream.isValid()) {
         return false;
     }
@@ -900,7 +836,7 @@ bool FFmpegReader::readTrack(const AudioSource& source, Track& track)
         return false;
     }
 
-    const Stream stream = findStream(context.formatContext.get());
+    const Stream stream = Utils::findAudioStream(context.formatContext.get());
     if(!stream.isValid()) {
         return false;
     }

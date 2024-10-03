@@ -52,10 +52,12 @@ public:
     [[nodiscard]] int sampleRate() const;
     [[nodiscard]] int channelCount() const;
     [[nodiscard]] SampleFormat sampleFormat() const;
+    [[nodiscard]] bool sampleFormatIsPlanar() const;
 
     void setSampleRate(int sampleRate);
     void setChannelCount(int channelCount);
     void setSampleFormat(SampleFormat format);
+    void setSampleFormatIsPlanar(bool planar);
 
     [[nodiscard]] int bytesForDuration(uint64_t ms) const;
     [[nodiscard]] uint64_t durationForBytes(int byteCount) const;
@@ -74,6 +76,7 @@ public:
 
 private:
     SampleFormat m_sampleFormat;
+    bool m_sampleFormatPlanar;
     int m_channelCount;
     int m_sampleRate;
 };

@@ -21,14 +21,58 @@
 
 #include <core/engine/audiobuffer.h>
 
+#if defined(__GNUG__)
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#elif defined(__clang__)
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif
+
 extern "C"
 {
+#include <libavformat/avformat.h>
+#include <libavformat/avio.h>
 #include <libavutil/frame.h>
 }
 
 #include <QDebug>
 
 Q_LOGGING_CATEGORY(FFMPEG, "fy.ffmpeg")
+
+void IOContextDeleter::operator()(AVIOContext* context) const
+{
+    if(context) {
+        if(context->buffer) {
+            av_freep(static_cast<void*>(&context->buffer));
+        }
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 80, 100)
+        avio_context_free(&context);
+#else
+        av_free(context);
+#endif
+    }
+}
+
+void FormatContextDeleter::operator()(AVFormatContext* context) const
+{
+    if(context) {
+        avformat_close_input(&context);
+        avformat_free_context(context);
+    }
+}
+
+void FrameDeleter::operator()(AVFrame* frame) const
+{
+    if(frame != nullptr) {
+        av_frame_free(&frame);
+    }
+}
+
+void PacketDeleter::operator()(AVPacket* packet) const
+{
+    if(packet) {
+        av_packet_free(&packet);
+    }
+}
 
 namespace Fooyin::Utils {
 void printError(int error)
@@ -47,8 +91,10 @@ AudioFormat audioFormatFromCodec(AVCodecParameters* codec)
 {
     AudioFormat format;
 
-    const auto sampleFmt = sampleFormat(static_cast<AVSampleFormat>(codec->format), codec->bits_per_raw_sample);
+    const auto avFmt     = static_cast<AVSampleFormat>(codec->format);
+    const auto sampleFmt = sampleFormat(avFmt, codec->bits_per_raw_sample);
     format.setSampleFormat(sampleFmt);
+    format.setSampleFormatIsPlanar(av_sample_fmt_is_planar(avFmt) == 1);
     format.setSampleRate(codec->sample_rate);
 #if OLD_CHANNEL_LAYOUT
     format.setChannelCount(codec->channels);
@@ -83,24 +129,58 @@ SampleFormat sampleFormat(AVSampleFormat format, int bps)
     }
 }
 
-AVSampleFormat sampleFormat(SampleFormat format)
+AVSampleFormat sampleFormat(SampleFormat format, bool planar)
 {
-    switch(format) {
-        case(SampleFormat::U8):
-            return AV_SAMPLE_FMT_U8;
-        case(SampleFormat::S16):
-            return AV_SAMPLE_FMT_S16;
-        case(SampleFormat::S24):
-        case(SampleFormat::S32):
-            return AV_SAMPLE_FMT_S32;
-        case(SampleFormat::F32):
-            return AV_SAMPLE_FMT_FLT;
-        case(SampleFormat::F64):
-            return AV_SAMPLE_FMT_DBL;
-        case(SampleFormat::Unknown):
-        default:
-            return AV_SAMPLE_FMT_NONE;
+    if(planar) {
+        switch(format) {
+            case SampleFormat::U8:
+                return AV_SAMPLE_FMT_U8P;
+            case SampleFormat::S16:
+                return AV_SAMPLE_FMT_S16P;
+            case SampleFormat::S24:
+            case SampleFormat::S32:
+                return AV_SAMPLE_FMT_S32P;
+            case SampleFormat::F32:
+                return AV_SAMPLE_FMT_FLTP;
+            case SampleFormat::F64:
+                return AV_SAMPLE_FMT_DBLP;
+            case SampleFormat::Unknown:
+                break;
+        }
     }
+    else {
+        switch(format) {
+            case(SampleFormat::U8):
+                return AV_SAMPLE_FMT_U8;
+            case(SampleFormat::S16):
+                return AV_SAMPLE_FMT_S16;
+            case(SampleFormat::S24):
+            case(SampleFormat::S32):
+                return AV_SAMPLE_FMT_S32;
+            case(SampleFormat::F32):
+                return AV_SAMPLE_FMT_FLT;
+            case(SampleFormat::F64):
+                return AV_SAMPLE_FMT_DBL;
+            case(SampleFormat::Unknown):
+                break;
+        }
+    }
+    return AV_SAMPLE_FMT_NONE;
 }
 
+Stream findAudioStream(AVFormatContext* context)
+{
+    const auto count = static_cast<int>(context->nb_streams);
+
+    for(int i{0}; i < count; ++i) {
+        AVStream* avStream = context->streams[i];
+        const auto type    = avStream->codecpar->codec_type;
+
+        if(type == AVMEDIA_TYPE_AUDIO) {
+            return Stream{avStream};
+        }
+    }
+
+    return {};
+}
 } // namespace Fooyin::Utils

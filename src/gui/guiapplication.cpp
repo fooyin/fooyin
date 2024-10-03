@@ -43,6 +43,7 @@
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
+#include <core/engine/ffmpeg/ffmpegreplaygain.h>
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -72,6 +73,7 @@
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
+#include <utils/worker.h>
 
 #include <QAction>
 #include <QApplication>
@@ -111,7 +113,8 @@ public:
 
     void setupScanMenu();
     void setupRatingMenu();
-    void setupUtilitesMenu() const;
+    void setupUtilitiesMenu() const;
+    void setupReplayGainMenu();
 
     void changeVolume(double delta) const;
     void mute() const;
@@ -161,6 +164,8 @@ public:
     PlaylistInteractor m_playlistInteractor;
     TrackSelectionController m_selectionController;
     SearchController* m_searchController;
+    FFmpegReplayGain* m_replayGain;
+    QThread m_replayGainThread;
 
     FileMenu* m_fileMenu;
     EditMenu* m_editMenu;
@@ -200,6 +205,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
     , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
+    , m_replayGain{new FFmpegReplayGain(m_library, m_settings)}
     , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
@@ -223,7 +229,8 @@ void GuiApplicationPrivate::initialise()
     registerActions();
     setupScanMenu();
     setupRatingMenu();
-    setupUtilitesMenu();
+    setupUtilitiesMenu();
+    setupReplayGainMenu();
     setStyle();
     setIconTheme();
     registerLayouts();
@@ -592,7 +599,7 @@ void GuiApplicationPrivate::setupRatingMenu()
                      [this, ratingMenu]() { ratingMenu->setEnabled(m_selectionController.selectedTrackCount() == 1); });
 }
 
-void GuiApplicationPrivate::setupUtilitesMenu() const
+void GuiApplicationPrivate::setupUtilitiesMenu() const
 {
     auto* selectionMenu = m_actionManager->actionContainer(::Fooyin::Constants::Menus::Context::TrackSelection);
     auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
@@ -607,6 +614,46 @@ void GuiApplicationPrivate::changeVolume(double delta) const
     const double newVolume     = Audio::dbToVolume(currentDb + delta);
 
     m_settings->set<Settings::Core::OutputVolume>(newVolume);
+}
+
+void GuiApplicationPrivate::setupReplayGainMenu()
+{
+    auto* selectionMenu  = m_actionManager->actionContainer(Constants::Menus::Context::TrackSelection);
+    auto* replayGainMenu = m_actionManager->createMenu(Constants::Menus::Context::ReplayGain);
+    replayGainMenu->menu()->setTitle(GuiApplication::tr("ReplayGain"));
+    selectionMenu->addMenu(replayGainMenu);
+
+    auto* replayGainTrackAction
+        = new QAction(GuiApplication::tr("Calculate ReplayGain track values"), m_mainWindow.get());
+    auto* replayGainAlbumAction
+        = new QAction(GuiApplication::tr("Calculate ReplayGain album values"), m_mainWindow.get());
+    replayGainTrackAction->setStatusTip(
+        GuiApplication::tr("Calculate ReplayGain values for selected file(s), considering each file individually"));
+    replayGainAlbumAction->setStatusTip(GuiApplication::tr(
+        "Calculate ReplayGain values for selected files, considering all files as part of one album"));
+
+    QObject::connect(m_replayGain, &Worker::finished, [this]() {
+        m_replayGain->closeThread();
+        m_replayGainThread.quit();
+    });
+
+    const auto calcGain = [this](bool asAlbum) {
+        m_replayGain->moveToThread(&m_replayGainThread);
+        m_replayGainThread.start();
+        QMetaObject::invokeMethod(
+            m_replayGain,
+            [this, asAlbum]() { m_replayGain->calculate(m_selectionController.selectedTracks(), asAlbum); },
+            Qt::QueuedConnection);
+    };
+    QObject::connect(replayGainTrackAction, &QAction::triggered, m_mainWindow.get(), [calcGain] { calcGain(false); });
+    QObject::connect(replayGainAlbumAction, &QAction::triggered, m_mainWindow.get(), [calcGain] { calcGain(true); });
+    QObject::connect(&m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
+                     [this, replayGainAlbumAction] {
+                         replayGainAlbumAction->setEnabled(m_selectionController.selectedTrackCount() > 1);
+                     });
+
+    replayGainMenu->menu()->addAction(replayGainTrackAction);
+    replayGainMenu->menu()->addAction(replayGainAlbumAction);
 }
 
 void GuiApplicationPrivate::mute() const

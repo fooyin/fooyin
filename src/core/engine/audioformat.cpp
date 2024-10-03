@@ -63,6 +63,11 @@ SampleFormat AudioFormat::sampleFormat() const
     return m_sampleFormat;
 }
 
+bool AudioFormat::sampleFormatIsPlanar() const
+{
+    return m_sampleFormatPlanar;
+}
+
 void AudioFormat::setSampleRate(int sampleRate)
 {
     m_sampleRate = sampleRate;
@@ -76,6 +81,11 @@ void AudioFormat::setChannelCount(int channelCount)
 void AudioFormat::setSampleFormat(SampleFormat format)
 {
     m_sampleFormat = format;
+}
+
+void AudioFormat::setSampleFormatIsPlanar(bool planar)
+{
+    m_sampleFormatPlanar = planar;
 }
 
 int AudioFormat::bytesForDuration(uint64_t ms) const

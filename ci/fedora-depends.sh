@@ -17,6 +17,7 @@ dnf -y install \
      qt6-qtsvg-devel \
      qt6-qttools-devel \
      libavcodec-free-devel \
+     libavfilter-free-devel \
      libavformat-free-devel \
      libavutil-free-devel \
      libswresample-free-devel \

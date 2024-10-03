@@ -21,6 +21,10 @@
 
 #include <core/engine/audioinput.h>
 
+#include "ffmpegstream.h"
+
+struct AVFormatContext;
+
 namespace Fooyin {
 class AudioFormat;
 class AudioBuffer;
