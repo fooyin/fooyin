@@ -42,9 +42,9 @@
 
 using namespace std::chrono_literals;
 
-constexpr auto AutoSelect    = "Search/AutoSelect";
-constexpr auto PlaylistState = "Search/PlaylistState";
-constexpr auto LibraryState  = "Search/LibraryState";
+constexpr auto AutoSelect    = "Searching/AutoSelect";
+constexpr auto PlaylistState = "Searching/PlaylistState";
+constexpr auto LibraryState  = "Searching/LibraryState";
 
 namespace Fooyin {
 SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor,
