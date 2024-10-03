@@ -446,8 +446,11 @@ public:
     bool m_eof{false};
     bool m_isDecoding{false};
     bool m_isVbr{false};
+    bool m_returnFrame{false};
 
+    AudioDecoder::DecoderOptions m_options;
     AudioBuffer m_buffer;
+    Frame m_frame;
     int m_bufferPos{0};
     int64_t m_seekPos{0};
     uint64_t m_currentPos{0};
@@ -595,8 +598,8 @@ int FFmpegInputPrivate::receiveAVFrames()
         return -1;
     }
 
-    const Frame frame{m_timeBase};
-    const int result = avcodec_receive_frame(m_codec.context(), frame.avFrame());
+    m_frame          = Frame{m_timeBase};
+    const int result = avcodec_receive_frame(m_codec.context(), m_frame.avFrame());
 
     if(result == AVERROR_EOF) {
         m_draining = true;
@@ -614,33 +617,37 @@ int FFmpegInputPrivate::receiveAVFrames()
         return result;
     }
 
-    const auto sampleCount   = m_audioFormat.bytesPerFrame() * frame.sampleCount();
-    const uint64_t startTime = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : frame.ptsMs();
+    if(!m_returnFrame) {
+        const auto sampleCount   = m_audioFormat.bytesPerFrame() * m_frame.sampleCount();
+        const uint64_t startTime = m_codec.context()->codec_id == AV_CODEC_ID_APE ? m_currentPos : m_frame.ptsMs();
 
-    if(m_codec.isPlanar()) {
-        m_buffer = {m_audioFormat, startTime};
-        m_buffer.resize(static_cast<size_t>(sampleCount));
-        interleave(frame.avFrame()->data, m_buffer);
-    }
-    else {
-        m_buffer = {frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, startTime};
-    }
-
-    // Handle seeking of APE files
-    if(m_skipBytes > 0) {
-        const auto len = std::min(sampleCount, m_skipBytes);
-        m_skipBytes -= len;
-
-        if(sampleCount - len == 0) {
-            m_buffer.clear();
+        if(m_codec.isPlanar()) {
+            m_buffer = {m_audioFormat, startTime};
+            m_buffer.resize(static_cast<size_t>(sampleCount));
+            interleave(m_frame.avFrame()->data, m_buffer);
         }
         else {
-            std::memmove(m_buffer.data(), m_buffer.data() + len, sampleCount - len);
-            m_buffer.resize(sampleCount - len);
+            m_buffer = {m_frame.avFrame()->data[0], static_cast<size_t>(sampleCount), m_audioFormat, startTime};
         }
-    }
 
-    m_currentPos += m_audioFormat.durationForBytes(m_buffer.byteCount());
+        if(!(m_options & AudioDecoder::NoSeeking)) {
+            // Handle seeking of APE files
+            if(m_skipBytes > 0) {
+                const auto len = std::min(sampleCount, m_skipBytes);
+                m_skipBytes -= len;
+
+                if(sampleCount - len == 0) {
+                    m_buffer.clear();
+                }
+                else {
+                    std::memmove(m_buffer.data(), m_buffer.data() + len, sampleCount - len);
+                    m_buffer.resize(sampleCount - len);
+                }
+            }
+        }
+
+        m_currentPos += m_audioFormat.durationForBytes(m_buffer.byteCount());
+    }
 
     return result;
 }
@@ -740,9 +747,10 @@ int FFmpegDecoder::bitrate() const
     return p->m_bitrate;
 }
 
-std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track,
-                                               DecoderOptions /*options*/)
+std::optional<AudioFormat> FFmpegDecoder::init(const AudioSource& source, const Track& track, DecoderOptions options)
 {
+    p->m_options = options;
+
     if(p->setup(source.device)) {
         p->checkIsVbr(track);
         return p->m_audioFormat;
@@ -770,6 +778,22 @@ bool FFmpegDecoder::isSeekable() const
 void FFmpegDecoder::seek(uint64_t pos)
 {
     p->seek(pos);
+}
+
+Frame FFmpegDecoder::readFrame()
+{
+    if(!p->m_isDecoding || p->m_error || !p->m_context) {
+        return {};
+    }
+
+    p->m_returnFrame = true;
+
+    if(!p->m_eof && !p->m_error) {
+        p->readNext();
+        return p->m_frame;
+    }
+
+    return {};
 }
 
 AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)

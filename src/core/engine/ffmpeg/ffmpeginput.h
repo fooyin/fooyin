@@ -21,6 +21,7 @@
 
 #include <core/engine/audioinput.h>
 
+#include "ffmpegframe.h"
 #include "ffmpegstream.h"
 
 struct AVFormatContext;
@@ -47,6 +48,7 @@ public:
     [[nodiscard]] bool isSeekable() const override;
     void seek(uint64_t pos) override;
 
+    Frame readFrame();
     AudioBuffer readBuffer(size_t bytes) override;
 
 private:

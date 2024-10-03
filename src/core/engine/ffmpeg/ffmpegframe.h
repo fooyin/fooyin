@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <QSharedDataPointer>
+
 #if defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
@@ -38,14 +40,19 @@ extern "C"
 #pragma clang diagnostic pop
 #endif
 
-#include "ffmpegutils.h"
-
 namespace Fooyin {
+class FramePrivate;
+
 class Frame
 {
 public:
+    Frame();
     explicit Frame(AVRational timeBase);
     ~Frame();
+
+    Frame(const Frame& other);
+    Frame& operator=(const Frame& other);
+    Frame(Frame&& other) noexcept;
 
     [[nodiscard]] bool isValid() const;
 
@@ -63,7 +70,6 @@ public:
     [[nodiscard]] uint64_t end() const;
 
 private:
-    FramePtr m_frame;
-    AVRational m_timeBase;
+    QSharedDataPointer<FramePrivate> p;
 };
 } // namespace Fooyin

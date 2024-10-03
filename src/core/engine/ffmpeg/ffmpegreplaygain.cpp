@@ -18,9 +18,7 @@
  */
 
 #include "ffmpegreplaygain.h"
-#include "ffmpegcodec.h"
 #include "ffmpeginput.h"
-#include "ffmpegstream.h"
 #include "ffmpegutils.h"
 
 #include <core/constants.h>
@@ -86,14 +84,14 @@ using FilterInOutPtr = std::unique_ptr<AVFilterInOut, FilterInOutDeleter>;
 
 struct ReplayGainResult
 {
-    double gain;
-    double peak;
+    double gain{Fooyin::Constants::InvalidGain};
+    double peak{Fooyin::Constants::InvalidPeak};
 };
 
 struct ReplayGainFilter
 {
-    AVFilterContext* filterContext;
-    AVFilterInOut* filterOutput;
+    AVFilterContext* filterContext{nullptr};
+    AVFilterInOut* filterOutput{nullptr};
     FilterGraphPtr filterGraph;
 };
 
@@ -104,7 +102,7 @@ bool finishFilter(AVFilterContext* filter)
 
 ReplayGainResult extractRGValues(AVFilterGraph* graph, bool truePeak)
 {
-    ReplayGainResult result{};
+    ReplayGainResult result;
 
     av_opt_get_double(graph->filters[1], "integrated", AV_OPT_SEARCH_CHILDREN, &result.gain);
     av_opt_get_double(graph->filters[1], truePeak ? "true_peak" : "sample_peak", AV_OPT_SEARCH_CHILDREN, &result.peak);
@@ -117,7 +115,7 @@ ReplayGainResult extractRGValues(AVFilterGraph* graph, bool truePeak)
 ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool truePeak)
 {
     int rc{0};
-    ReplayGainFilter filter{};
+    ReplayGainFilter filter;
 
     AVFilterGraph* filterGraph = avfilter_graph_alloc();
     if(!filterGraph) {
@@ -185,24 +183,24 @@ public:
     explicit FFmpegReplayGainPrivate(SettingsManager* settings);
 
     [[nodiscard]] bool setupTrack(const Track& track, ReplayGainFilter& filter);
-    [[nodiscard]] ReplayGainResult handleTrack(bool inAlbum) const;
+    [[nodiscard]] ReplayGainResult handleTrack(bool inAlbum);
     void handleAlbum();
+
+    void cleanup();
+
+    SettingsManager* m_settings;
 
     TrackList m_tracks;
     AudioFormat m_format;
-    FormatContextPtr m_formatCtx;
-    CodecContextPtr m_decoderCtx;
+    std::unique_ptr<QFile> m_file;
+    FFmpegDecoder m_decoder;
     ReplayGainFilter m_albumFilter;
     ReplayGainFilter m_trackFilter;
-    int m_streamIndex{-1};
-
-    SettingsManager* m_settings;
 };
 
 FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(SettingsManager* settings)
-    : m_albumFilter{}
-    , m_trackFilter{}
-    , m_settings{settings}
+    : m_settings{settings}
+    , m_decoder{m_settings}
 { }
 
 FFmpegReplayGain::FFmpegReplayGain(SettingsManager* settings, QObject* parent)
@@ -212,103 +210,48 @@ FFmpegReplayGain::FFmpegReplayGain(SettingsManager* settings, QObject* parent)
 
 bool FFmpegReplayGainPrivate::setupTrack(const Track& track, ReplayGainFilter& filter)
 {
-    int rc{0};
-    m_formatCtx.reset(avformat_alloc_context());
-    auto* formatCtx = m_formatCtx.get();
-
-    if(rc = avformat_open_input(&formatCtx, track.filepath().toUtf8().constData(), nullptr, nullptr); rc < 0) {
+    if(track.isInArchive()) {
         return false;
     }
 
-    if(rc = avformat_find_stream_info(formatCtx, nullptr); rc < 0) {
+    AudioSource source;
+    m_file = std::make_unique<QFile>(track.filepath());
+    if(!m_file->open(QIODevice::ReadOnly)) {
+        return false;
+    }
+    source.device   = m_file.get();
+    source.filepath = track.filepath();
+
+    const auto format = m_decoder.init(source, track, AudioDecoder::NoSeeking | AudioDecoder::NoLooping);
+    if(!format) {
         return false;
     }
 
-#if(LIBAVFORMAT_VERSION_INT > AV_VERSION_INT(58, 79, 100))
-    const AVCodec* decoder{};
-#else
-    AVCodec* decoder{};
-#endif
-    m_decoderCtx.reset(avcodec_alloc_context3(decoder));
-    auto* decoderCtx = m_decoderCtx.get();
-
-    const auto stream = Utils::findAudioStream(formatCtx);
-    if(!stream.isValid()) {
-        return false;
-    }
-
-    m_streamIndex = av_find_best_stream(formatCtx, AVMEDIA_TYPE_AUDIO, stream.index(), -1, &decoder, 0);
-    if(m_streamIndex < 0) {
-        return false;
-    }
-
-    if(rc = avcodec_parameters_to_context(decoderCtx, stream.avStream()->codecpar); rc < 0) {
-        Utils::printError(rc);
-        return false;
-    }
-
-    if(rc = avcodec_open2(decoderCtx, decoder, nullptr); rc < 0) {
-        Utils::printError(rc);
-        return false;
-    }
-
-    m_format = Utils::audioFormatFromCodec(stream.avStream()->codecpar);
+    m_format = format.value();
     filter   = initialiseRGFilter(m_format, m_settings->value<Settings::Core::RGTruePeak>());
+    m_decoder.start();
 
     return true;
 }
 
-ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum) const
+ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum)
 {
     int rc{0};
-    const FramePtr framePtr{av_frame_alloc()};
-    const PacketPtr packetPtr{av_packet_alloc()};
-    auto* frame  = framePtr.get();
-    auto* packet = packetPtr.get();
-
-    while(rc == 0) {
-        rc = av_read_frame(m_formatCtx.get(), packet);
-        if(rc < 0) {
-            break;
-        }
-
-        if(packet->stream_index != m_streamIndex) {
-            av_packet_unref(packet);
-            continue;
-        }
-
-        rc = avcodec_send_packet(m_decoderCtx.get(), packet);
+    Frame frame = m_decoder.readFrame();
+    while(frame.isValid()) {
+        rc = av_buffersrc_add_frame_flags(m_trackFilter.filterContext, frame.avFrame(), FrameFlags);
         if(rc < 0) {
             Utils::printError(rc);
             break;
         }
-
-        while(rc >= 0) {
-            rc = avcodec_receive_frame(m_decoderCtx.get(), frame);
-            if(rc == AVERROR_EOF || rc == AVERROR(EAGAIN)) {
-                rc = 0;
-                break;
-            }
+        if(inAlbum) {
+            rc = av_buffersrc_add_frame_flags(m_albumFilter.filterContext, frame.avFrame(), FrameFlags);
             if(rc < 0) {
                 Utils::printError(rc);
                 break;
             }
-            rc = av_buffersrc_add_frame_flags(m_trackFilter.filterContext, frame, FrameFlags);
-            if(rc < 0) {
-                Utils::printError(rc);
-                break;
-            }
-            if(inAlbum) {
-                rc = av_buffersrc_add_frame_flags(m_albumFilter.filterContext, frame, FrameFlags);
-                if(rc < 0) {
-                    Utils::printError(rc);
-                    break;
-                }
-            }
-            av_frame_unref(frame);
         }
-
-        av_packet_unref(packet);
+        frame = m_decoder.readFrame();
     }
 
     if(!finishFilter(m_trackFilter.filterContext)) {
@@ -350,6 +293,19 @@ void FFmpegReplayGainPrivate::handleAlbum()
     }
 }
 
+void FFmpegReplayGainPrivate::cleanup()
+{
+    m_decoder.stop();
+    if(m_trackFilter.filterContext) {
+        avfilter_free(m_trackFilter.filterContext);
+        m_trackFilter.filterContext = nullptr;
+    }
+    if(m_albumFilter.filterContext) {
+        avfilter_free(m_albumFilter.filterContext);
+        m_albumFilter.filterContext = nullptr;
+    }
+}
+
 FFmpegReplayGain::~FFmpegReplayGain() = default;
 
 void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
@@ -371,17 +327,9 @@ void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
         }
     }
 
-    if(p->m_trackFilter.filterContext) {
-        avfilter_free(p->m_trackFilter.filterContext);
-        p->m_trackFilter.filterContext = nullptr;
-    }
-    if(p->m_albumFilter.filterContext) {
-        avfilter_free(p->m_albumFilter.filterContext);
-        p->m_albumFilter.filterContext = nullptr;
-    }
+    p->cleanup();
 
     emit rgCalculated(p->m_tracks);
-
     emit finished();
     setState(Idle);
 }
