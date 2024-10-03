@@ -457,7 +457,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示水平滚动条</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
@@ -598,7 +598,7 @@
         <location filename="../../src/gui/editablelayout.cpp" line="352"/>
         <location filename="../../src/gui/editablelayout.cpp" line="359"/>
         <source>&amp;Insert</source>
-        <translation>插入</translation>
+        <translation>插入(&amp;I)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="375"/>
@@ -757,7 +757,7 @@
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="63"/>
         <source>&amp;Browse…</source>
-        <translation>浏览…</translation>
+        <translation>浏览(&amp;B)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/exportlayoutdialog.cpp" line="70"/>
@@ -818,12 +818,12 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="44"/>
         <source>Add &amp;files…</source>
-        <translation>添加文件(&amp;F)...</translation>
+        <translation>添加文件(&amp;F)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="50"/>
         <source>Ad&amp;d folders…</source>
-        <translation>添加目录(&amp;D)...</translation>
+        <translation>添加目录(&amp;D)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="51"/>
@@ -843,17 +843,17 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="65"/>
         <source>&amp;Load playlist…</source>
-        <translation>加载播放列表...</translation>
+        <translation>加载播放列表(&amp;L)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="71"/>
         <source>&amp;Save playlist…</source>
-        <translation>保存播放列表...</translation>
+        <translation>保存播放列表(&amp;S)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="85"/>
         <source>&amp;Quit</source>
-        <translation>退出</translation>
+        <translation>退出(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="86"/>
@@ -873,7 +873,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="77"/>
         <source>Save &amp;all playlists…</source>
-        <translation>保存所有播放列表...</translation>
+        <translation>保存所有播放列表(&amp;A)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="78"/>
@@ -921,7 +921,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="427"/>
         <source>Determining operations…</source>
-        <translation>正在确定操作...</translation>
+        <translation>正在确定操作…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsdialog.cpp" line="451"/>
@@ -1420,7 +1420,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="93"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation>在小部件中使用%1也可以改变大小</translation>
+        <translation>在小部件中使用%1也可以改变大小。</translation>
     </message>
 </context>
 <context>
@@ -1618,7 +1618,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="482"/>
         <source>Reading tracks…</source>
-        <translation>正在读取音轨...</translation>
+        <translation>正在读取音轨…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="511"/>
@@ -2134,7 +2134,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="50"/>
         <source>&amp;Quick start</source>
-        <translation>快速入门</translation>
+        <translation>快速入门(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="51"/>
@@ -2154,7 +2154,7 @@
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="62"/>
         <source>&amp;Frequently asked questions</source>
-        <translation>常见问题</translation>
+        <translation>常见问题(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/helpmenu.cpp" line="63"/>
@@ -2451,7 +2451,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="77"/>
         <source>&amp;Import layout…</source>
-        <translation>导入布局(&amp;I)</translation>
+        <translation>导入布局(&amp;I)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="78"/>
@@ -2461,7 +2461,7 @@
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="80"/>
         <source>E&amp;xport layout…</source>
-        <translation>导出布局(&amp;X)</translation>
+        <translation>导出布局(&amp;X)…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/layoutmenu.cpp" line="81"/>
@@ -2638,12 +2638,12 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="67"/>
         <source>&amp;Quick Search</source>
-        <translation type="unfinished"></translation>
+        <translation>快速搜索(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="68"/>
         <source>Show quick search popup</source>
-        <translation type="unfinished"></translation>
+        <translation>显示快速搜索弹窗</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="71"/>
@@ -2658,7 +2658,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="89"/>
         <source>Optimising database…</source>
-        <translation>正在优化数据库...</translation>
+        <translation>正在优化数据库…</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="99"/>
@@ -2962,7 +2962,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreeview.cpp" line="86"/>
         <source>Loading Library…</source>
-        <translation>加载媒体库...</translation>
+        <translation>加载媒体库…</translation>
     </message>
 </context>
 <context>
@@ -3013,7 +3013,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="50"/>
         <source>&amp;Clear</source>
-        <translation>清除</translation>
+        <translation>清除(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="52"/>
@@ -3209,7 +3209,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="56"/>
         <source>Stop &amp;after current</source>
-        <translation>播放一曲后停止</translation>
+        <translation>播放一曲后停止(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="67"/>
@@ -3310,7 +3310,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation>重放播放列表</translation>
+        <translation>重放播放列表(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="72"/>
@@ -3497,7 +3497,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation>在小部件中使用%1更改大小</translation>
+        <translation>在小部件中使用%1更改大小。</translation>
     </message>
 </context>
 <context>
@@ -3886,12 +3886,12 @@
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="41"/>
         <source>Reading tracks…</source>
-        <translation>正在读取音轨...</translation>
+        <translation>正在读取音轨…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="75"/>
         <source>Loading playlist…</source>
-        <translation>正在加载播放列表...</translation>
+        <translation>正在加载播放列表…</translation>
     </message>
 </context>
 <context>
@@ -4247,7 +4247,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="417"/>
         <source>Loading playlist…</source>
-        <translation>正在加载播放列表...</translation>
+        <translation>正在加载播放列表…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="420"/>
@@ -4259,7 +4259,7 @@
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="421"/>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="425"/>
         <source>Searching…</source>
-        <translation>搜索中...</translation>
+        <translation>搜索中…</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1446"/>
@@ -4756,17 +4756,17 @@
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="108"/>
         <source>Malformed login callback.</source>
-        <translation>登录故障回调</translation>
+        <translation>登录故障回调。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="114"/>
         <source>No login token in callback.</source>
-        <translation>无登录令牌回调</translation>
+        <translation>无登录令牌回调。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/scrobbler/scrobblerauthsession.cpp" line="125"/>
         <source>The application has successfully logged in. This window can now be closed.</source>
-        <translation>当前应用已成功登录，此窗口现在可以关闭</translation>
+        <translation>当前应用已成功登录，此窗口现在可以关闭。</translation>
     </message>
 </context>
 <context>
@@ -4973,17 +4973,17 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="128"/>
         <source>General</source>
-        <translation type="unfinished">常规设置</translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="129"/>
         <source>Searching</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索中</translation>
     </message>
 </context>
 <context>
@@ -4991,57 +4991,57 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="57"/>
         <source>Clear search string when successful</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索成功后清空搜索字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="58"/>
         <source>Autosearch delay</source>
-        <translation type="unfinished"></translation>
+        <translation>自动搜索延迟</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="60"/>
         <source>Append search string to the playlist name</source>
-        <translation type="unfinished"></translation>
+        <translation>在播放列表名称后追加搜索字符串</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="61"/>
         <source>Switch focus to playlist on successful search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索成功后切换焦点至播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="63"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="67"/>
         <source>Very fast</source>
-        <translation type="unfinished"></translation>
+        <translation>非常快</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="68"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>快速</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="69"/>
         <source>Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>适中</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="70"/>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>慢速</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="77"/>
         <source>Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索结果</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="80"/>
         <source>Playlist name</source>
-        <translation type="unfinished">播放列表名称</translation>
+        <translation>播放列表名称</translation>
     </message>
 </context>
 <context>
@@ -5065,27 +5065,27 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="316"/>
         <source>Autosearch</source>
-        <translation type="unfinished"></translation>
+        <translation>自动搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="323"/>
         <source>Search in</source>
-        <translation type="unfinished"></translation>
+        <translation>在...中搜索</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="325"/>
         <source>Library</source>
-        <translation type="unfinished">媒体库</translation>
+        <translation>媒体库</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="331"/>
         <source>Playlist</source>
-        <translation type="unfinished">播放列表</translation>
+        <translation>播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="337"/>
         <source>Playlist (Inline)</source>
-        <translation type="unfinished"></translation>
+        <translation>播放列表（内联）</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="349"/>
@@ -5101,7 +5101,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="793"/>
         <source>Quick Search</source>
-        <translation type="unfinished"></translation>
+        <translation>快速搜索</translation>
     </message>
 </context>
 <context>
@@ -5594,7 +5594,7 @@
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="59"/>
         <source>&amp;Change default fields…</source>
-        <translation>更改默认字段(&amp;C)...</translation>
+        <translation>更改默认字段(&amp;C)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/tageditor/tageditorwidget.cpp" line="195"/>
@@ -5691,7 +5691,7 @@
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="95"/>
         <source>&amp;Browse…</source>
-        <translation>浏览...</translation>
+        <translation>浏览(&amp;B)…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/libvgm/vgminputsettings.cpp" line="138"/>
@@ -5724,7 +5724,7 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="49"/>
         <source>&amp;Script editor</source>
-        <translation>脚本编辑器</translation>
+        <translation>脚本编辑器(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="50"/>
@@ -5896,7 +5896,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="151"/>
         <source>Generating waveform data…</source>
-        <translation>生成波形数据中...</translation>
+        <translation>生成波形数据中…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarplugin.cpp" line="151"/>
@@ -6035,7 +6035,9 @@
 for waveform data. Higher values will result 
 in a more accurate and detailed waveform at the 
 cost of using more disk space in the cache.</source>
-        <translation type="unfinished"></translation>
+        <translation>用作波形数据的样本数量（基于每一轨道）。
+更高的值将生成更准确和详细的波形。
+但是会使用更多的磁盘缓存空间。</translation>
     </message>
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="314"/>
@@ -6108,7 +6110,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/plugins/wavebar/wavebarwidget.cpp" line="241"/>
         <source>Settings…</source>
-        <translation>设置...</translation>
+        <translation>设置…</translation>
     </message>
 </context>
 <context>
@@ -6480,7 +6482,7 @@ cost of using more disk space in the cache.</source>
     <message>
         <location filename="../../src/gui/internalguisettings.cpp" line="75"/>
         <source>Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索结果</translation>
     </message>
 </context>
 <context>
