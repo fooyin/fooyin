@@ -1420,7 +1420,7 @@
     <message>
         <location filename="../../src/plugins/filters/settings/filtersguipage.cpp" line="93"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation>在小部件中使用%1也可以改变大小。</translation>
+        <translation>在小部件中使用 %1 也可以改变大小。</translation>
     </message>
 </context>
 <context>
@@ -3189,7 +3189,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
         <source>Repeat &amp;playlist</source>
-        <translation>播放列表循环(&amp;P)</translation>
+        <translation>循环播放列表(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="53"/>
@@ -3310,7 +3310,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="51"/>
         <source>Repeat &amp;album</source>
-        <translation>重放播放列表(&amp;A)</translation>
+        <translation>重放整个专辑(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="72"/>
@@ -3497,7 +3497,7 @@
     <message>
         <location filename="../../src/gui/settings/widgets/playbackqueuepage.cpp" line="102"/>
         <source>Size can also be changed using %1 in the widget.</source>
-        <translation>在小部件中使用%1更改大小。</translation>
+        <translation>在小部件中也可以使用 %1 更改大小。</translation>
     </message>
 </context>
 <context>
@@ -3689,7 +3689,7 @@
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="104"/>
         <source>Repeat playlist</source>
-        <translation>播放列表循环</translation>
+        <translation>循环播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/controls/playlistcontrol.cpp" line="105"/>
@@ -4960,7 +4960,7 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="124"/>
         <source>%1 results</source>
-        <translation>%1的结果</translation>
+        <translation>%1 个结果</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="135"/>
@@ -5734,12 +5734,12 @@
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="56"/>
         <source>Show playing &amp;track</source>
-        <translation>显示正在播放的歌曲(&amp;T)</translation>
+        <translation>显示播放中的曲目(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/viewmenu.cpp" line="57"/>
         <source>Show the currently playing track in the playlist</source>
-        <translation>显示当前播放中的曲目</translation>
+        <translation>在播放列表中高亮选中当前播放中的曲目</translation>
     </message>
 </context>
 <context>
