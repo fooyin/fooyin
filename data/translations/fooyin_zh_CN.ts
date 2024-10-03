@@ -1076,7 +1076,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
         <source>Filter Results</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤结果</translation>
     </message>
 </context>
 <context>
@@ -1635,22 +1635,22 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="514"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>从文件中重新加载标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="515"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>从已修改的文件中重新加载标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="517"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>重新加载选中音轨的标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>重新加载选中音轨中已修改的标签</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="544"/>
@@ -2740,7 +2740,7 @@
     <message>
         <location filename="../../src/gui/librarytree/librarytreecontroller.cpp" line="37"/>
         <source>Library Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>媒体库选项</translation>
     </message>
 </context>
 <context>
@@ -3037,7 +3037,7 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="59"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>调试</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="60"/>
@@ -3047,12 +3047,12 @@
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="61"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="62"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>严重</translation>
     </message>
     <message>
         <location filename="../../src/utils/logging/logwidget.cpp" line="102"/>
@@ -3167,7 +3167,7 @@
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="46"/>
         <source>%1 Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>%1配置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/openmpt/openmptsettings.cpp" line="64"/>
@@ -4017,22 +4017,22 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="272"/>
         <source>Remove the selected playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>删除选中的播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="275"/>
         <source>Rename the selected group</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名选中的分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="276"/>
         <source>Remove the selected groups</source>
-        <translation type="unfinished"></translation>
+        <translation>删除选中的分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="279"/>
         <source>Remove the selected playlists and groups</source>
-        <translation type="unfinished"></translation>
+        <translation>删除选中的播放列表和分组</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="271"/>
@@ -4558,22 +4558,22 @@
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="39"/>
         <source>Track Table</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="47"/>
         <source>Album/Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑/唱片</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="64"/>
         <source>Disc Albums</source>
-        <translation type="unfinished"></translation>
+        <translation>唱片专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/presetregistry.cpp" line="71"/>
         <source>Simple Artist/Album/Year</source>
-        <translation type="unfinished"></translation>
+        <translation>简单的艺术家/专辑/年份</translation>
     </message>
 </context>
 <context>
@@ -5231,7 +5231,7 @@
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="368"/>
         <source>All Playlists</source>
-        <translation type="unfinished"></translation>
+        <translation>所有播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/search/searchwidget.cpp" line="379"/>
