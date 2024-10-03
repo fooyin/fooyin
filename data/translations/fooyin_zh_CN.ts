@@ -542,7 +542,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="41"/>
@@ -646,12 +646,12 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="558"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>重做(&amp;R)</translation>
     </message>
 </context>
 <context>
@@ -1690,27 +1690,27 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="624"/>
         <source>ReplayGain</source>
-        <translation type="unfinished"></translation>
+        <translation>回放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Calculate ReplayGain track values</source>
-        <translation type="unfinished"></translation>
+        <translation>计算回放增益音轨数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="630"/>
         <source>Calculate ReplayGain album values</source>
-        <translation type="unfinished"></translation>
+        <translation>计算回放增益专辑数据</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="632"/>
         <source>Calculate ReplayGain values for selected file(s), considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>给选中的文件计算回放增益，每个文件单独计算</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="633"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished"></translation>
+        <translation>给选中的文件计算回放增益，所有文件整体记为一个专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="800"/>
@@ -2659,7 +2659,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索(&amp;E)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
@@ -3307,7 +3307,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>停止(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -3318,12 +3318,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished"></translation>
+        <translation>上一首(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一首(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
@@ -3424,7 +3424,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="197"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
@@ -4296,47 +4296,47 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>剪切(&amp;T)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>复制(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>粘贴(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>清除(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>删除(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">添加到播放队列(&amp;Q)</translation>
+        <translation>添加到播放队列(&amp;Q)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>从播放队列中删除(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="314"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="326"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>重做(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="327"/>
@@ -4366,7 +4366,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="381"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished"></translation>
+        <translation>全选(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="382"/>
@@ -4770,12 +4770,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="75"/>
         <source>Use sample peak filter for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>为计算峰值使用样本峰值过滤器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="76"/>
         <source>Use true peak filter for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>为计算峰值使用真实峰值过滤器</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
@@ -4830,7 +4830,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="137"/>
         <source>Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>计算</translation>
     </message>
 </context>
 <context>
@@ -4883,12 +4883,12 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainresults.cpp" line="40"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>回放增益检索结果</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresults.cpp" line="54"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>更新文件标签(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -4896,27 +4896,27 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="44"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="46"/>
         <source>Track Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="48"/>
         <source>Album Gain</source>
-        <translation type="unfinished">专辑增益</translation>
+        <translation>专辑增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="50"/>
         <source>Track Peak</source>
-        <translation type="unfinished">音轨峰值</translation>
+        <translation>音轨峰值</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="52"/>
         <source>Album Peak</source>
-        <translation type="unfinished">专辑峰值</translation>
+        <translation>专辑峰值</translation>
     </message>
 </context>
 <context>
@@ -5224,12 +5224,12 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="71"/>
         <source>Error background</source>
-        <translation type="unfinished"></translation>
+        <translation>错误背景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Error foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>错误前景</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="76"/>
