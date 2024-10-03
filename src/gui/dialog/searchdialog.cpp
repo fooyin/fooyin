@@ -91,15 +91,15 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
     loadState();
 }
 
+void SearchDialog::done(int value)
+{
+    saveState();
+    QDialog::done(value);
+}
+
 QSize SearchDialog::sizeHint() const
 {
     return {800, 480};
-}
-
-void SearchDialog::closeEvent(QCloseEvent* event)
-{
-    saveState();
-    QDialog::closeEvent(event);
 }
 
 void SearchDialog::keyPressEvent(QKeyEvent* event)

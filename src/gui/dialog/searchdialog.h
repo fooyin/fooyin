@@ -42,10 +42,11 @@ public:
     SearchDialog(ActionManager* actionManager, PlaylistInteractor* playlistInteractor, CoverProvider* coverProvider,
                  Application* core, PlaylistWidget::Mode mode, QWidget* parent = nullptr);
 
+    void done(int value) override;
+
     [[nodiscard]] QSize sizeHint() const override;
 
 protected:
-    void closeEvent(QCloseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
