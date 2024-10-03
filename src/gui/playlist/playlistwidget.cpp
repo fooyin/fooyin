@@ -579,15 +579,19 @@ void PlaylistWidgetPrivate::resetModel() const
 
     switch(m_mode) {
         case(PlaylistWidget::Mode::Playlist):
+            if(auto* playlist = m_playlistController->currentPlaylist()) {
+                m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, playlist,
+                               playlist->tracks());
+            }
+            break;
         case(PlaylistWidget::Mode::DetachedPlaylist):
             if(auto* playlist = m_playlistController->currentPlaylist()) {
                 m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, playlist,
-                               !m_filteredTracks.empty() ? m_filteredTracks : playlist->tracks());
+                               m_filteredTracks);
             }
             break;
         case(PlaylistWidget::Mode::DetachedLibrary):
-            m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, nullptr,
-                           !m_filteredTracks.empty() ? m_filteredTracks : m_library->tracks());
+            m_model->reset(m_currentPreset, m_singleMode ? PlaylistColumnList{} : m_columns, nullptr, m_filteredTracks);
             break;
     }
 }
