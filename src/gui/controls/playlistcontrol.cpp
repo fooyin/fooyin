@@ -110,21 +110,6 @@ void PlaylistControl::setupMenus()
     repeatAlbum->setCheckable(true);
     repeatTrack->setCheckable(true);
 
-    auto playMode = m_playerController->playMode();
-
-    if(playMode & Playlist::RepeatPlaylist) {
-        repeatPlaylist->setChecked(true);
-    }
-    else if(playMode & Playlist::RepeatAlbum) {
-        repeatAlbum->setChecked(true);
-    }
-    else if(playMode & Playlist::RepeatTrack) {
-        repeatTrack->setChecked(true);
-    }
-    else {
-        defaultAction->setChecked(true);
-    }
-
     const auto setRepeatMode = [this](Playlist::PlayModes newMode) {
         const auto pMode = m_playerController->playMode();
         m_playerController->setPlayMode(
@@ -160,19 +145,6 @@ void PlaylistControl::setupMenus()
     shuffleAlbums->setCheckable(true);
     random->setCheckable(true);
 
-    if(playMode & Playlist::ShuffleTracks) {
-        shuffleTracks->setChecked(true);
-    }
-    else if(playMode & Playlist::ShuffleAlbums) {
-        shuffleAlbums->setChecked(true);
-    }
-    else if(playMode & Playlist::Random) {
-        random->setChecked(true);
-    }
-    else {
-        offAction->setChecked(true);
-    }
-
     const auto clearShuffleMode = [this]() {
         const auto pMode = m_playerController->playMode();
         m_playerController->setPlayMode(pMode
@@ -197,6 +169,39 @@ void PlaylistControl::setupMenus()
     shuffleMenu->addAction(random);
 
     m_shuffle->setMenu(shuffleMenu);
+
+    const auto updateActions = [repeatPlaylist, repeatAlbum, repeatTrack, defaultAction, shuffleTracks, shuffleAlbums,
+                                random, offAction, this]() {
+        auto playMode = m_playerController->playMode();
+
+        if(playMode & Playlist::RepeatPlaylist) {
+            repeatPlaylist->setChecked(true);
+        }
+        else if(playMode & Playlist::RepeatAlbum) {
+            repeatAlbum->setChecked(true);
+        }
+        else if(playMode & Playlist::RepeatTrack) {
+            repeatTrack->setChecked(true);
+        }
+        else {
+            defaultAction->setChecked(true);
+        }
+
+        if(playMode & Playlist::ShuffleTracks) {
+            shuffleTracks->setChecked(true);
+        }
+        else if(playMode & Playlist::ShuffleAlbums) {
+            shuffleAlbums->setChecked(true);
+        }
+        else if(playMode & Playlist::Random) {
+            random->setChecked(true);
+        }
+        else {
+            offAction->setChecked(true);
+        }
+    };
+
+    QObject::connect(m_playerController, &PlayerController::playModeChanged, this, updateActions);
 }
 
 void PlaylistControl::setMode(Playlist::PlayModes mode) const
