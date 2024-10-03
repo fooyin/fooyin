@@ -84,20 +84,18 @@ private:
     template <typename T>
     bool setGainOrPeak(T& currentValue, float value, float trackValue, float invalidValue)
     {
-        if(currentValue == value) {
+        if(currentValue != invalidValue && currentValue == value) {
             return false;
         }
 
         if(value == trackValue) {
             setStatus(None);
-            if(std::exchange(currentValue, invalidValue) == invalidValue) {
-                return false;
-            }
+            currentValue = {};
         }
         else {
             currentValue     = value;
             m_multipleValues = false;
-            if(!m_summaryItem) {
+            if(!m_summaryItem || (m_track.isValid() && (m_type >= TrackGain && m_type <= AlbumPeak))) {
                 setStatus(Changed);
             }
         }
@@ -113,9 +111,9 @@ private:
     bool m_multipleValues;
     SummaryFunc m_func;
 
-    float m_trackGain;
-    float m_trackPeak;
-    float m_albumGain;
-    float m_albumPeak;
+    std::optional<float> m_trackGain;
+    std::optional<float> m_trackPeak;
+    std::optional<float> m_albumGain;
+    std::optional<float> m_albumPeak;
 };
 } // namespace Fooyin

@@ -33,16 +33,24 @@ ReplayGainItem::ReplayGainItem(ItemType type, QString name, float value, const T
 
     switch(type) {
         case(TrackGain):
-            m_trackGain = value;
+            if(value != Constants::InvalidGain) {
+                m_trackGain = value;
+            }
             break;
         case(TrackPeak):
-            m_trackPeak = value;
+            if(value != Constants::InvalidPeak) {
+                m_trackPeak = value;
+            }
             break;
         case(AlbumGain):
-            m_albumGain = value;
+            if(value != Constants::InvalidGain) {
+                m_albumGain = value;
+            }
             break;
         case(AlbumPeak):
-            m_albumPeak = value;
+            if(value != Constants::InvalidPeak) {
+                m_albumPeak = value;
+            }
             break;
         case(Header):
         case(Entry):
@@ -62,10 +70,6 @@ ReplayGainItem::ReplayGainItem(ItemType type, QString name, const Track& track, 
     , m_summaryItem{false}
     , m_isEditable{true}
     , m_multipleValues{false}
-    , m_trackGain{Constants::InvalidGain}
-    , m_trackPeak{Constants::InvalidPeak}
-    , m_albumGain{Constants::InvalidGain}
-    , m_albumPeak{Constants::InvalidPeak}
 { }
 
 bool ReplayGainItem::operator<(const ReplayGainItem& /*other*/) const
@@ -90,22 +94,22 @@ Track ReplayGainItem::track() const
 
 float ReplayGainItem::trackGain() const
 {
-    return m_trackGain == Constants::InvalidGain ? m_track.rgTrackGain() : m_trackGain;
+    return m_trackGain ? m_trackGain.value() : m_track.rgTrackGain();
 }
 
 float ReplayGainItem::trackPeak() const
 {
-    return m_trackPeak == Constants::InvalidPeak ? m_track.rgTrackPeak() : m_trackPeak;
+    return m_trackPeak ? m_trackPeak.value() : m_track.rgTrackPeak();
 }
 
 float ReplayGainItem::albumGain() const
 {
-    return m_albumGain == Constants::InvalidGain ? m_track.rgAlbumGain() : m_albumGain;
+    return m_albumGain ? m_albumGain.value() : m_track.rgAlbumGain();
 }
 
 float ReplayGainItem::albumPeak() const
 {
-    return m_albumPeak == Constants::InvalidPeak ? m_track.rgAlbumPeak() : m_albumPeak;
+    return m_albumPeak ? m_albumPeak.value() : m_track.rgAlbumPeak();
 }
 
 bool ReplayGainItem::isSummary() const
@@ -169,17 +173,21 @@ bool ReplayGainItem::applyChanges()
         return false;
     }
 
-    if(m_trackGain != Constants::InvalidGain) {
-        m_track.setRGTrackGain(m_trackGain);
+    if(m_trackGain) {
+        m_track.setRGTrackGain(m_trackGain.value());
+        m_trackGain = {};
     }
-    if(m_trackPeak != Constants::InvalidPeak) {
-        m_track.setRGTrackPeak(m_trackPeak);
+    if(m_trackPeak) {
+        m_track.setRGTrackPeak(m_trackPeak.value());
+        m_trackPeak = {};
     }
-    if(m_albumGain != Constants::InvalidGain) {
-        m_track.setRGAlbumGain(m_albumGain);
+    if(m_albumGain) {
+        m_track.setRGAlbumGain(m_albumGain.value());
+        m_albumGain = {};
     }
-    if(m_albumPeak != Constants::InvalidPeak) {
-        m_track.setRGAlbumPeak(m_albumPeak);
+    if(m_albumPeak) {
+        m_track.setRGAlbumPeak(m_albumPeak.value());
+        m_albumPeak = {};
     }
 
     setStatus(None);
