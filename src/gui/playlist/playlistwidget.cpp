@@ -1678,7 +1678,7 @@ void PlaylistWidget::searchEvent(const QString& search)
     }
 
     p->m_search = search;
-    if(search.length() < 2) {
+    if(search.length() < 1) {
         p->m_search.clear();
         p->m_filteredTracks.clear();
     }

@@ -93,7 +93,7 @@ public:
     void removeLibraryTracks(int libraryId);
     void handleTracksAddedUpdated(const TrackList& tracks, bool updated = false);
     void refreshFilters(const Id& groupId);
-    void searchChanged(FilterWidget* filter, const QString& search);
+    void searchChanged(FilterWidget* filter, const QString& search) const;
 
     FilterController* m_self;
 
@@ -480,7 +480,7 @@ void FilterControllerPrivate::refreshFilters(const Id& groupId)
     }
 }
 
-void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString& search)
+void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString& search) const
 {
     const Id groupId = filter->group();
 
@@ -488,12 +488,8 @@ void FilterControllerPrivate::searchChanged(FilterWidget* filter, const QString&
         return;
     }
 
-    if(filter->searchFilter().length() >= 2 && search.length() < 2) {
+    if(search.length() < 1) {
         filter->reset(m_library->tracks());
-        return;
-    }
-
-    if(search.length() < 2) {
         return;
     }
 

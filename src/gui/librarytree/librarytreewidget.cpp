@@ -228,8 +228,8 @@ public:
     TrackAction m_doubleClickAction;
     TrackAction m_middleClickAction;
 
-    QString m_prevSearch;
-    TrackList m_prevSearchTracks;
+    QString m_currentSearch;
+    TrackList m_filteredTracks;
 
     bool m_updating{false};
     QByteArray m_pendingState;
@@ -563,27 +563,20 @@ void LibraryTreeWidgetPrivate::dequeueSelectedTracks() const
 
 void LibraryTreeWidgetPrivate::searchChanged(const QString& search)
 {
-    const bool reset   = m_prevSearch.length() > search.length();
-    const QString prev = std::exchange(m_prevSearch, search);
+    m_currentSearch = search;
 
-    if(prev.length() >= 2 && search.length() < 2) {
-        m_prevSearchTracks.clear();
+    if(search.length() < 1) {
+        m_filteredTracks.clear();
         m_model->reset(m_library->tracks());
         return;
     }
 
-    if(search.length() < 2) {
-        return;
-    }
-
-    const TrackList tracksToFilter = !reset && !m_prevSearchTracks.empty() ? m_prevSearchTracks : m_library->tracks();
-
-    Utils::asyncExec([search, tracksToFilter]() {
+    Utils::asyncExec([search, tracks = m_library->tracks()]() {
         ScriptParser parser;
-        return parser.filter(search, tracksToFilter);
+        return parser.filter(search, tracks);
     }).then(m_self, [this](const TrackList& filteredTracks) {
-        m_prevSearchTracks = filteredTracks;
-        m_model->reset(filteredTracks);
+        m_filteredTracks = filteredTracks;
+        m_model->reset(m_filteredTracks);
     });
 }
 
@@ -716,8 +709,8 @@ void LibraryTreeWidgetPrivate::handleTracksAdded(const TrackList& tracks) const
         return;
     }
 
-    if(!m_prevSearch.isEmpty()) {
-        Utils::asyncExec([search = m_prevSearch, tracks]() {
+    if(!m_currentSearch.isEmpty()) {
+        Utils::asyncExec([search = m_currentSearch, tracks]() {
             ScriptParser parser;
             return parser.filter(search, tracks);
         }).then(m_self, [this](const TrackList& filteredTracks) { m_model->addTracks(filteredTracks); });
