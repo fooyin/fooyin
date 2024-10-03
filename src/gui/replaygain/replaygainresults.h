@@ -19,34 +19,31 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/track.h>
-#include <utils/worker.h>
 
-#include <QFile>
-#include <QLoggingCategory>
+#include <QDialog>
 
-Q_DECLARE_LOGGING_CATEGORY(REPLAYGAIN)
+class QTableView;
 
 namespace Fooyin {
-class FFmpegReplayGainPrivate;
-class SettingsManager;
+class MusicLibrary;
+class ReplayGainResultsModel;
 
-class FYCORE_EXPORT FFmpegReplayGain : public Worker
+class ReplayGainResults : public QDialog
 {
-    Q_OBJECT
-
 public:
-    explicit FFmpegReplayGain(SettingsManager* settings, QObject* parent = nullptr);
-    ~FFmpegReplayGain() override;
+    ReplayGainResults(MusicLibrary* library, TrackList tracks);
 
-    void calculate(const TrackList& tracks, bool asAlbum);
+    void accept() override;
 
-signals:
-    void rgCalculated(const TrackList& tracks);
+    [[nodiscard]] QSize sizeHint() const override;
+    [[nodiscard]] QSize minimumSizeHint() const override;
 
 private:
-    std::unique_ptr<FFmpegReplayGainPrivate> p;
+    MusicLibrary* m_library;
+    TrackList m_tracks;
+
+    QTableView* m_resultsView;
+    ReplayGainResultsModel* m_resultsModel;
 };
 } // namespace Fooyin

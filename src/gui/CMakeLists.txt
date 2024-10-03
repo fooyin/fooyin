@@ -208,6 +208,10 @@ set(SOURCES
     replaygain/replaygainmodel.h
     replaygain/replaygainpopulator.cpp
     replaygain/replaygainpopulator.h
+    replaygain/replaygainresults.cpp
+    replaygain/replaygainresults.h
+    replaygain/replaygainresultsmodel.cpp
+    replaygain/replaygainresultsmodel.h
     replaygain/replaygainview.cpp
     replaygain/replaygainview.h
     replaygain/replaygainwidget.cpp

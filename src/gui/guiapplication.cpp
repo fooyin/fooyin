@@ -32,6 +32,7 @@
 #include "menubar/viewmenu.h"
 #include "playlist/playlistcontroller.h"
 #include "playlist/playlistinteractor.h"
+#include "replaygain/replaygainresults.h"
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
@@ -205,7 +206,7 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
     , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
-    , m_replayGain{new FFmpegReplayGain(m_library, m_settings)}
+    , m_replayGain{new FFmpegReplayGain(m_settings)}
     , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
@@ -632,7 +633,12 @@ void GuiApplicationPrivate::setupReplayGainMenu()
     replayGainAlbumAction->setStatusTip(GuiApplication::tr(
         "Calculate ReplayGain values for selected files, considering all files as part of one album"));
 
-    QObject::connect(m_replayGain, &Worker::finished, [this]() {
+    QObject::connect(m_replayGain, &FFmpegReplayGain::rgCalculated, m_self, [this](const TrackList& tracks) {
+        auto* rgResults = new ReplayGainResults(m_library, tracks);
+        rgResults->setAttribute(Qt::WA_DeleteOnClose);
+        rgResults->show();
+    });
+    QObject::connect(m_replayGain, &Worker::finished, m_replayGain, [this]() {
         m_replayGain->closeThread();
         m_replayGainThread.quit();
     });

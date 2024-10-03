@@ -48,6 +48,8 @@ extern "C"
 
 Q_LOGGING_CATEGORY(REPLAYGAIN, "fy.replaygain")
 
+constexpr auto FrameFlags = AV_BUFFERSRC_FLAG_KEEP_REF | AV_BUFFERSRC_FLAG_NO_CHECK_FORMAT | AV_BUFFERSRC_FLAG_PUSH;
+
 namespace {
 struct FilterContextDeleter
 {
@@ -95,8 +97,6 @@ struct ReplayGainFilter
     FilterGraphPtr filterGraph;
 };
 
-constexpr auto FrameFlags = AV_BUFFERSRC_FLAG_KEEP_REF | AV_BUFFERSRC_FLAG_NO_CHECK_FORMAT | AV_BUFFERSRC_FLAG_PUSH;
-
 bool finishFilter(AVFilterContext* filter)
 {
     return av_buffersrc_add_frame_flags(filter, nullptr, FrameFlags) >= 0;
@@ -113,74 +113,8 @@ ReplayGainResult extractRGValues(AVFilterGraph* graph, bool truePeak)
 
     return result;
 }
-} // namespace
 
-namespace Fooyin {
-class FFmpegReplayGainPrivate
-{
-public:
-    explicit FFmpegReplayGainPrivate(MusicLibrary* library, SettingsManager* settings);
-
-    [[nodiscard]] bool setupTrack(const Track& track, ReplayGainFilter& filter);
-    [[nodiscard]] ReplayGainResult handleTrack(bool inAlbum) const;
-    void handleAlbum(const TrackList& album);
-
-    AudioFormat m_format;
-    FormatContextPtr m_formatCtx;
-    CodecContextPtr m_decoderCtx;
-    ReplayGainFilter m_albumFilter;
-    ReplayGainFilter m_trackFilter;
-    int m_streamIndex{-1};
-
-    MusicLibrary* m_library;
-    SettingsManager* m_settings;
-};
-
-FFmpegReplayGain::FFmpegReplayGain(MusicLibrary* library, SettingsManager* settings, QObject* parent)
-    : Worker{parent}
-    , p{std::make_unique<FFmpegReplayGainPrivate>(library, settings)}
-{ }
-
-FFmpegReplayGain::~FFmpegReplayGain() = default;
-
-FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(MusicLibrary* library, SettingsManager* settings)
-    : m_albumFilter{}
-    , m_trackFilter{}
-    , m_library{library}
-    , m_settings{settings}
-{ }
-
-void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
-{
-    setState(Running);
-
-    if(asAlbum) {
-        p->handleAlbum(tracks);
-    }
-    else {
-        auto tracksOut = tracks;
-        for(auto& track : tracksOut) {
-            if(p->setupTrack(track, p->m_trackFilter)) {
-                const auto result = p->handleTrack(false);
-                track.setRGTrackGain(static_cast<float>(result.gain));
-                track.setRGTrackPeak(static_cast<float>(result.peak));
-            }
-        }
-        p->m_library->writeTrackMetadata(tracksOut);
-    }
-
-    if(p->m_trackFilter.filterContext) {
-        avfilter_free(p->m_trackFilter.filterContext);
-    }
-    if(p->m_albumFilter.filterContext) {
-        avfilter_free(p->m_albumFilter.filterContext);
-    }
-
-    emit finished();
-    setState(Idle);
-}
-
-ReplayGainFilter initialiseRGFilter(const AudioFormat& format, bool truePeak)
+ReplayGainFilter initialiseRGFilter(const Fooyin::AudioFormat& format, bool truePeak)
 {
     int rc{0};
     ReplayGainFilter filter{};
@@ -196,7 +130,7 @@ ReplayGainFilter initialiseRGFilter(const AudioFormat& format, bool truePeak)
     const auto sampleRate = format.sampleRate();
 
     const auto sampleFmtName
-        = std::string{av_get_sample_fmt_name(Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar()))};
+        = std::string{av_get_sample_fmt_name(Fooyin::Utils::sampleFormat(sampleFmt, format.sampleFormatIsPlanar()))};
     const auto args = QString{QStringLiteral("time_base=%1/%2:sample_rate=%2:sample_fmt=%3:channel_layout=0x%4")}
                           .arg(1)
                           .arg(sampleRate)
@@ -208,7 +142,7 @@ ReplayGainFilter initialiseRGFilter(const AudioFormat& format, bool truePeak)
     rc = avfilter_graph_create_filter(&filterCtx, avfilter_get_by_name("abuffer"), "in", args.toUtf8().constData(),
                                       nullptr, filterGraph);
     if(rc < 0) {
-        Utils::printError(rc);
+        Fooyin::Utils::printError(rc);
         return filter;
     }
     filter.filterContext = filterCtx;
@@ -226,23 +160,55 @@ ReplayGainFilter initialiseRGFilter(const AudioFormat& format, bool truePeak)
     filter.filterOutput = outputs;
 
     AVFilterInOut* inputs = nullptr;
-    static const std::array<std::string, 2> peakType{"sample", "true"};
-    const auto filterParams = QString{QStringLiteral("ebur128=peak=%1:framelog=quiet,anullsink")}.arg(
-        QString::fromStdString(peakType[truePeak]));
+    const auto filterParams
+        = QString{QStringLiteral("ebur128=peak=%1:framelog=quiet,anullsink")}.arg(truePeak ? u"true" : u"sample");
     rc = avfilter_graph_parse_ptr(filterGraph, filterParams.toUtf8().constData(), &inputs, &outputs, nullptr);
     if(rc < 0) {
-        Utils::printError(rc);
+        Fooyin::Utils::printError(rc);
         return filter;
     }
 
     rc = avfilter_graph_config(filterGraph, nullptr);
     if(rc < 0) {
-        Utils::printError(rc);
+        Fooyin::Utils::printError(rc);
         return filter;
     }
 
     return filter;
 }
+} // namespace
+
+namespace Fooyin {
+class FFmpegReplayGainPrivate
+{
+public:
+    explicit FFmpegReplayGainPrivate(SettingsManager* settings);
+
+    [[nodiscard]] bool setupTrack(const Track& track, ReplayGainFilter& filter);
+    [[nodiscard]] ReplayGainResult handleTrack(bool inAlbum) const;
+    void handleAlbum();
+
+    TrackList m_tracks;
+    AudioFormat m_format;
+    FormatContextPtr m_formatCtx;
+    CodecContextPtr m_decoderCtx;
+    ReplayGainFilter m_albumFilter;
+    ReplayGainFilter m_trackFilter;
+    int m_streamIndex{-1};
+
+    SettingsManager* m_settings;
+};
+
+FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(SettingsManager* settings)
+    : m_albumFilter{}
+    , m_trackFilter{}
+    , m_settings{settings}
+{ }
+
+FFmpegReplayGain::FFmpegReplayGain(SettingsManager* settings, QObject* parent)
+    : Worker{parent}
+    , p{std::make_unique<FFmpegReplayGainPrivate>(settings)}
+{ }
 
 bool FFmpegReplayGainPrivate::setupTrack(const Track& track, ReplayGainFilter& filter)
 {
@@ -352,10 +318,10 @@ ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum) const
     return extractRGValues(m_trackFilter.filterGraph.get(), m_settings->value<Settings::Core::RGTruePeak>());
 }
 
-void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
+void FFmpegReplayGainPrivate::handleAlbum()
 {
     // FIXME
-    if(!setupTrack(album[0], m_albumFilter)) {
+    if(!setupTrack(m_tracks.front(), m_albumFilter)) {
         return;
     }
 
@@ -363,11 +329,11 @@ void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
         return;
     }
 
-    std::vector<ReplayGainResult> trackResults;
-
-    for(const auto& track : album) {
+    for(Track& track : m_tracks) {
         if(setupTrack(track, m_trackFilter)) {
-            trackResults.emplace_back(handleTrack(true));
+            const ReplayGainResult trackResult = handleTrack(true);
+            track.setRGTrackGain(static_cast<float>(trackResult.gain));
+            track.setRGTrackPeak(static_cast<float>(trackResult.peak));
         }
     }
 
@@ -377,15 +343,46 @@ void FFmpegReplayGainPrivate::handleAlbum(const TrackList& album)
 
     const auto albumResult
         = extractRGValues(m_albumFilter.filterGraph.get(), m_settings->value<Settings::Core::RGTruePeak>());
-    auto albumOutput       = album;
 
-    for(size_t i = 0; auto& track : albumOutput) {
-        track.setRGTrackGain(static_cast<float>(trackResults[i].gain));
-        track.setRGTrackPeak(static_cast<float>(trackResults[i].peak));
+    for(Track& track : m_tracks) {
         track.setRGAlbumPeak(static_cast<float>(albumResult.peak));
         track.setRGAlbumGain(static_cast<float>(albumResult.gain));
-        i++;
     }
-    m_library->writeTrackMetadata(albumOutput);
+}
+
+FFmpegReplayGain::~FFmpegReplayGain() = default;
+
+void FFmpegReplayGain::calculate(const TrackList& tracks, bool asAlbum)
+{
+    setState(Running);
+
+    p->m_tracks = tracks;
+
+    if(asAlbum) {
+        p->handleAlbum();
+    }
+    else {
+        for(Track& track : p->m_tracks) {
+            if(p->setupTrack(track, p->m_trackFilter)) {
+                const auto result = p->handleTrack(false);
+                track.setRGTrackGain(static_cast<float>(result.gain));
+                track.setRGTrackPeak(static_cast<float>(result.peak));
+            }
+        }
+    }
+
+    if(p->m_trackFilter.filterContext) {
+        avfilter_free(p->m_trackFilter.filterContext);
+        p->m_trackFilter.filterContext = nullptr;
+    }
+    if(p->m_albumFilter.filterContext) {
+        avfilter_free(p->m_albumFilter.filterContext);
+        p->m_albumFilter.filterContext = nullptr;
+    }
+
+    emit rgCalculated(p->m_tracks);
+
+    emit finished();
+    setState(Idle);
 }
 } // namespace Fooyin
