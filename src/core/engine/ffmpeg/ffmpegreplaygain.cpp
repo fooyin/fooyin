@@ -237,8 +237,8 @@ bool FFmpegReplayGainPrivate::setupTrack(const Track& track, ReplayGainFilter& f
 ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum)
 {
     int rc{0};
-    Frame frame = m_decoder.readFrame();
-    while(frame.isValid()) {
+    Frame frame;
+    while((frame = m_decoder.readFrame()).isValid()) {
         rc = av_buffersrc_add_frame_flags(m_trackFilter.filterContext, frame.avFrame(), FrameFlags);
         if(rc < 0) {
             Utils::printError(rc);
@@ -251,7 +251,6 @@ ReplayGainResult FFmpegReplayGainPrivate::handleTrack(bool inAlbum)
                 break;
             }
         }
-        frame = m_decoder.readFrame();
     }
 
     if(!finishFilter(m_trackFilter.filterContext)) {
