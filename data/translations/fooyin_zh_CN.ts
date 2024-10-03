@@ -368,7 +368,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>播放选中的文件</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="698"/>
