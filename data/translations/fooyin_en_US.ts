@@ -542,7 +542,7 @@
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="40"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;earch</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/editmenu.cpp" line="41"/>
@@ -646,12 +646,12 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Undo</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="558"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Redo</translation>
     </message>
 </context>
 <context>
@@ -1629,7 +1629,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Abort</source>
-        <translation type="unfinished">Abort</translation>
+        <translation>Abort</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
@@ -1695,27 +1695,27 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="624"/>
         <source>ReplayGain</source>
-        <translation type="unfinished">ReplayGain</translation>
+        <translation>ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="628"/>
         <source>Calculate ReplayGain track values</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain track values</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="630"/>
         <source>Calculate ReplayGain album values</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain album values</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="632"/>
         <source>Calculate ReplayGain values for selected file(s), considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values for selected file(s), considering each file individually</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="633"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values for selected files, considering all files as part of one album</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="800"/>
@@ -2664,7 +2664,7 @@
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="63"/>
         <source>S&amp;earch</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;earch</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/librarymenu.cpp" line="64"/>
@@ -3312,7 +3312,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="45"/>
         <source>&amp;Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stop</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="46"/>
@@ -3323,12 +3323,12 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="47"/>
         <source>P&amp;revious</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;revious</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="48"/>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Next</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="52"/>
@@ -3429,7 +3429,7 @@
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="197"/>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pause</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/playbackmenu.cpp" line="49"/>
@@ -4016,7 +4016,7 @@
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="43"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="78"/>
         <source>Abort</source>
-        <translation type="unfinished">Abort</translation>
+        <translation>Abort</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
@@ -4307,47 +4307,47 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="184"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Cu&amp;t</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="185"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copy</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="186"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Paste</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="187"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>C&amp;lear</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="188"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Remove</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="189"/>
         <source>Add to playback &amp;queue</source>
-        <translation type="unfinished">Add to playback &amp;queue</translation>
+        <translation>Add to playback &amp;queue</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="191"/>
         <source>Remove from playback q&amp;ueue</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove from playback q&amp;ueue</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="314"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Undo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="326"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Redo</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="327"/>
@@ -4377,7 +4377,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="381"/>
         <source>Select &amp;all</source>
-        <translation type="unfinished"></translation>
+        <translation>Select &amp;all</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistwidget.cpp" line="382"/>
@@ -4781,12 +4781,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="75"/>
         <source>Use sample peak filter for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Use sample peak filter for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="76"/>
         <source>Use true peak filter for calculating peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Use true peak filter for calculating peaks</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="78"/>
@@ -4841,7 +4841,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="137"/>
         <source>Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculation</translation>
     </message>
 </context>
 <context>
@@ -4894,12 +4894,12 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainresults.cpp" line="40"/>
         <source>ReplayGain Scan Results</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Scan Results</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresults.cpp" line="54"/>
         <source>&amp;Update File Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Update File Tags</translation>
     </message>
 </context>
 <context>
@@ -4907,27 +4907,27 @@
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="44"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="46"/>
         <source>Track Gain</source>
-        <translation type="unfinished">Track Gain</translation>
+        <translation>Track Gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="48"/>
         <source>Album Gain</source>
-        <translation type="unfinished">Album Gain</translation>
+        <translation>Album Gain</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="50"/>
         <source>Track Peak</source>
-        <translation type="unfinished">Track Peak</translation>
+        <translation>Track Peak</translation>
     </message>
     <message>
         <location filename="../../src/gui/replaygain/replaygainresultsmodel.cpp" line="52"/>
         <source>Album Peak</source>
-        <translation type="unfinished">Album Peak</translation>
+        <translation>Album Peak</translation>
     </message>
 </context>
 <context>
@@ -5184,20 +5184,20 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation type="unfinished"></translation>
+        <translation>Start typing to search</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln result</numerusform>
+            <numerusform>%Ln results</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="129"/>
         <source>No results</source>
-        <translation type="unfinished">No results</translation>
+        <translation>No results</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="140"/>
@@ -5248,12 +5248,12 @@
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="71"/>
         <source>Error background</source>
-        <translation type="unfinished"></translation>
+        <translation>Error background</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="73"/>
         <source>Error foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>Error foreground</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/searchpage.cpp" line="76"/>
