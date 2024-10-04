@@ -1629,7 +1629,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="490"/>
         <source>Abort</source>
-        <translation type="unfinished">Abort</translation>
+        <translation>Abort</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
@@ -4016,7 +4016,7 @@
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="43"/>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="78"/>
         <source>Abort</source>
-        <translation type="unfinished">Abort</translation>
+        <translation>Abort</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
@@ -5184,20 +5184,20 @@
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
         <source>Start typing to search</source>
-        <translation type="unfinished"></translation>
+        <translation>Start typing to search</translation>
     </message>
     <message numerus="yes">
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln result</numerusform>
+            <numerusform>%Ln results</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="129"/>
         <source>No results</source>
-        <translation type="unfinished">No results</translation>
+        <translation>No results</translation>
     </message>
     <message>
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="140"/>
