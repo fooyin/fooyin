@@ -5190,7 +5190,7 @@
         <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
         <source>%Ln result(s)</source>
         <translation>
-            <numerusform>个结果</numerusform>
+            <numerusform>%Ln个结果</numerusform>
         </translation>
     </message>
     <message>
