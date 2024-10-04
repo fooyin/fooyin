@@ -70,7 +70,7 @@ QVariant ReplayGainResultsModel::data(const QModelIndex& index, int role) const
         const Track& track = m_tracks.at(row);
         switch(index.column()) {
             case(0):
-                return !track.title().isEmpty() ? track.title() : track.filename();
+                return track.effectiveTitle();
             case(1):
                 return track.hasTrackGain() ? QStringLiteral("%1 dB").arg(QString::number(track.rgTrackGain(), 'f', 2))
                                             : QString{};

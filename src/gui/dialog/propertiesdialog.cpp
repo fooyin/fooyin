@@ -237,10 +237,8 @@ void PropertiesDialogWidget::currentTabChanged(int index)
     }
 
     tabIt->setVisited(true);
-    const Track firstTrack = m_tracks.front();
-    const QString title    = !firstTrack.title().isEmpty() ? firstTrack.title() : firstTrack.filename();
     const QString subtitle = m_tracks.size() == 1
-                               ? QStringLiteral(" (%1): %2").arg(title, tabIt->title())
+                               ? QStringLiteral(" (%1): %2").arg(m_tracks.front().effectiveTitle(), tabIt->title())
                                : QStringLiteral(" (%1 tracks): %2").arg(m_tracks.size()).arg(tabIt->title());
 
     setWindowTitle(tr("Properties") + subtitle);
