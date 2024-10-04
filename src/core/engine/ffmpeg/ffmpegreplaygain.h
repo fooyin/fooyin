@@ -19,21 +19,16 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
-#include <core/track.h>
-#include <utils/worker.h>
+#include "engine/replaygainscanner.h"
 
 #include <QFile>
 #include <QLoggingCategory>
-
-Q_DECLARE_LOGGING_CATEGORY(REPLAYGAIN)
 
 namespace Fooyin {
 class FFmpegReplayGainPrivate;
 class SettingsManager;
 
-class FYCORE_EXPORT FFmpegReplayGain : public Worker
+class FFmpegReplayGain : public ReplayGainWorker
 {
     Q_OBJECT
 
@@ -41,13 +36,9 @@ public:
     explicit FFmpegReplayGain(SettingsManager* settings, QObject* parent = nullptr);
     ~FFmpegReplayGain() override;
 
-    void calculatePerTrack(const TrackList& tracks);
-    void calculateAsAlbum(const TrackList& tracks);
-    void calculateByAlbumTags(const TrackList& tracks);
-
-signals:
-    void calculationFinished(const TrackList& tracks);
-    void rgCalculated(const QString& filepath);
+    void calculatePerTrack(const TrackList& tracks) override;
+    void calculateAsAlbum(const TrackList& tracks) override;
+    void calculateByAlbumTags(const TrackList& tracks) override;
 
 private:
     std::unique_ptr<FFmpegReplayGainPrivate> p;

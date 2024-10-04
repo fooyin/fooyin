@@ -69,6 +69,8 @@ set(SOURCES
     engine/enginehandler.cpp
     engine/enginehandler.h
     engine/audioloader.cpp
+    engine/replaygainscanner.cpp
+    engine/replaygainscanner.h
     engine/tagdefs.h
     engine/taglibparser.cpp
     engine/taglibparser.h

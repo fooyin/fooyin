@@ -47,7 +47,7 @@ extern "C"
 
 #include <ranges>
 
-Q_LOGGING_CATEGORY(REPLAYGAIN, "fy.replaygain")
+Q_LOGGING_CATEGORY(REPLAYGAIN, "fy.ffmpegscanner")
 
 constexpr auto FrameFlags = AV_BUFFERSRC_FLAG_KEEP_REF | AV_BUFFERSRC_FLAG_NO_CHECK_FORMAT | AV_BUFFERSRC_FLAG_PUSH;
 
@@ -274,11 +274,12 @@ void FFmpegReplayGainPrivate::scanAlbum(TrackList& tracks)
         if(!m_self->mayRun()) {
             return;
         }
+        emit m_self->startingCalculation(track.prettyFilepath());
+
         if(setupTrack(track, m_trackFilter)) {
             const ReplayGainResult trackResult = handleTrack(true);
             track.setRGTrackGain(static_cast<float>(trackResult.gain));
             track.setRGTrackPeak(static_cast<float>(trackResult.peak));
-            emit m_self->rgCalculated(track.prettyFilepath());
         }
     }
 
@@ -309,7 +310,7 @@ void FFmpegReplayGainPrivate::cleanup()
 }
 
 FFmpegReplayGain::FFmpegReplayGain(SettingsManager* settings, QObject* parent)
-    : Worker{parent}
+    : ReplayGainWorker{parent}
     , p{std::make_unique<FFmpegReplayGainPrivate>(this, settings)}
 { }
 
@@ -325,11 +326,12 @@ void FFmpegReplayGain::calculatePerTrack(const TrackList& tracks)
         if(!mayRun()) {
             return;
         }
+        emit startingCalculation(track.prettyFilepath());
+
         if(p->setupTrack(track, p->m_trackFilter)) {
             const ReplayGainResult result = p->handleTrack(false);
             track.setRGTrackGain(static_cast<float>(result.gain));
             track.setRGTrackPeak(static_cast<float>(result.peak));
-            emit rgCalculated(track.prettyFilepath());
         }
     }
 

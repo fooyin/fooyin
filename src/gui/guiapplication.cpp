@@ -44,7 +44,7 @@
 #include <core/coresettings.h>
 #include <core/database/database.h>
 #include <core/engine/enginehandler.h>
-#include <core/engine/ffmpeg/ffmpegreplaygain.h>
+#include <core/engine/replaygainscanner.h>
 #include <core/internalcoresettings.h>
 #include <core/library/librarymanager.h>
 #include <core/library/musiclibrary.h>
@@ -193,8 +193,7 @@ public:
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
 
-    QPointer<FFmpegReplayGain> m_rgScanner{nullptr};
-    QPointer<QThread> m_rgThread{nullptr};
+    QPointer<ReplayGainScanner> m_rgScanner;
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -678,29 +677,6 @@ void GuiApplicationPrivate::setupReplayGainMenu()
 
 void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 {
-    if(!m_rgThread) {
-        m_rgThread = new QThread(m_self);
-
-        QObject::connect(m_rgThread, &QThread::finished, m_self, [this]() {
-            m_rgScanner->deleteLater();
-            m_rgScanner = nullptr;
-            m_rgThread->deleteLater();
-            m_rgThread = nullptr;
-        });
-    }
-    if(!m_rgScanner) {
-        m_rgScanner = new FFmpegReplayGain(m_settings);
-        m_rgScanner->moveToThread(m_rgThread);
-
-        QObject::connect(m_rgScanner, &FFmpegReplayGain::calculationFinished, m_self, [this](const TrackList& tracks) {
-            auto* rgResults = new ReplayGainResults(m_library, tracks);
-            rgResults->setAttribute(Qt::WA_DeleteOnClose);
-            rgResults->show();
-        });
-    }
-
-    m_rgThread->start();
-
     const auto tracks = m_selectionController.selectedTracks();
 
     const auto total = static_cast<int>(tracks.size());
@@ -718,11 +694,15 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
     progressLabel->setElideMode(Qt::ElideMiddle);
     progress->setLabel(progressLabel);
 
-    QObject::connect(progress, &QObject::destroyed, m_self, [this]() {
-        m_rgScanner->closeThread();
-        m_rgThread->quit();
+    m_rgScanner = new ReplayGainScanner(m_settings, progress);
+    QObject::connect(m_rgScanner, &ReplayGainScanner::calculationFinished, m_self, [this](const TrackList& tracks) {
+        auto* rgResults = new ReplayGainResults(m_library, tracks);
+        rgResults->setAttribute(Qt::WA_DeleteOnClose);
+        rgResults->show();
     });
-    QObject::connect(m_rgScanner, &FFmpegReplayGain::rgCalculated, progress,
+
+    QObject::connect(progress, &QObject::destroyed, m_self, [this]() { m_rgScanner->deleteLater(); });
+    QObject::connect(m_rgScanner, &ReplayGainScanner::startingCalculation, progress,
                      [progress, progressLabel, total](const QString& filepath) {
                          if(progress->wasCanceled()) {
                              progress->close();
@@ -738,13 +718,13 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 
     switch(type) {
         case(RGScanType::Track):
-            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculatePerTrack(tracks); });
+            m_rgScanner->calculatePerTrack(tracks);
             break;
         case(RGScanType::SingleAlbum):
-            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculateAsAlbum(tracks); });
+            m_rgScanner->calculateAsAlbum(tracks);
             break;
         case(RGScanType::Album):
-            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculateByAlbumTags(tracks); });
+            m_rgScanner->calculateByAlbumTags(tracks);
             break;
     }
 }
