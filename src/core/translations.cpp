@@ -60,12 +60,6 @@ void Translations::initialiseTranslations()
         return;
     }
 
-    if(locale.language() == QLocale::English
-       && (locale.territory() == QLocale::UnitedKingdom || locale.territory() == QLocale::AnyCountry)) {
-        qCDebug(TRANSLATIONS) << "Skipping loading of translations for locale" << locale.name();
-        return;
-    }
-
     installTranslations(locale, QStringLiteral("qt"), QLibraryInfo::path(QLibraryInfo::TranslationsPath), false);
 
     const QString translationsPath = Core::translationsPath();
