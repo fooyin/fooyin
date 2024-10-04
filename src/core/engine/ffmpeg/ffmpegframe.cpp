@@ -50,7 +50,7 @@ Frame::Frame(Frame&& other) noexcept        = default;
 
 bool Frame::isValid() const
 {
-    return p->frame != nullptr;
+    return p && p->frame != nullptr;
 }
 
 AVFrame* Frame::avFrame() const

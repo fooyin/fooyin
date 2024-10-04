@@ -573,6 +573,9 @@ void FFmpegInputPrivate::decodeAudio(const PacketPtr& packet)
     if(result == 0) {
         receiveAVFrames();
     }
+    else if(result < 0) {
+        m_frame = {};
+    }
 }
 
 int FFmpegInputPrivate::sendAVPacket(const PacketPtr& packet) const
