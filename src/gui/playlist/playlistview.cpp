@@ -52,11 +52,13 @@ PlaylistView::PlaylistView(QWidget* parent)
 void PlaylistView::setEmptyText(const QString& text)
 {
     m_emptyText = text;
+    viewport()->update();
 }
 
 void PlaylistView::setLoadingText(const QString& text)
 {
     m_loadingText = text;
+    viewport()->update();
 }
 
 void PlaylistView::setupRatingDelegate()

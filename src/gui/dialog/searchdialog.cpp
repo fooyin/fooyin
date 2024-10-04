@@ -72,8 +72,8 @@ SearchDialog::SearchDialog(ActionManager* actionManager, PlaylistInteractor* pla
 
     QObject::connect(m_view->view()->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                      &SearchDialog::selectInPlaylist);
-    QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, &SearchDialog::updateTitle);
     QObject::connect(m_view->model(), &PlaylistModel::modelReset, this, [this]() {
+        updateTitle();
         if(m_autoSelect && m_mode == PlaylistWidget::Mode::DetachedPlaylist) {
             m_view->view()->selectAll();
         }
@@ -121,8 +121,12 @@ void SearchDialog::updateTitle()
 {
     QString title = (m_mode == PlaylistWidget::Mode::DetachedLibrary) ? tr("Search Library") : tr("Search Playlist");
 
-    if(!m_searchBar->text().isEmpty()) {
-        title += u" (" + tr("%1 results").arg(m_view->trackCount()) + u")";
+    if(m_searchBar->text().isEmpty()) {
+        m_view->view()->setEmptyText(tr("Start typing to search"));
+    }
+    else {
+        title += u" (" + tr("%Ln result(s)", "", m_view->trackCount()) + u")";
+        m_view->view()->setEmptyText(tr("No results"));
     }
 
     setWindowTitle(title);
