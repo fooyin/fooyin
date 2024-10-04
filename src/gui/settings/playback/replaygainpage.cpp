@@ -24,6 +24,7 @@
 #include <core/internalcoresettings.h>
 #include <gui/guiconstants.h>
 #include <gui/widgets/doubleslidereditor.h>
+#include <gui/widgets/scriptlineedit.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QButtonGroup>
@@ -59,6 +60,7 @@ private:
     DoubleSliderEditor* m_preAmp;
     QRadioButton* m_samplePeak;
     QRadioButton* m_truePeak;
+    ScriptLineEdit* m_albumGroupScript;
 };
 
 ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
@@ -74,6 +76,7 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     , m_preAmp{new DoubleSliderEditor(this)}
     , m_samplePeak{new QRadioButton(tr("Use sample peak filter for calculating peaks"), this)}
     , m_truePeak{new QRadioButton(tr("Use true peak filter for calculating peaks"), this)}
+    , m_albumGroupScript{new ScriptLineEdit(this)}
 {
     m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
     m_albumGain->setToolTip(tr("Base normalisation on album loudness"));
@@ -137,8 +140,16 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     auto* calcGroup  = new QGroupBox(tr("Calculation"), this);
     auto* calcLayout = new QGridLayout(calcGroup);
 
-    calcLayout->addWidget(m_truePeak, 0, 0);
-    calcLayout->addWidget(m_samplePeak, 1, 0);
+    auto* albumGroupLabel = new QLabel(tr("Album grouping pattern") + u":", this);
+
+    const auto albumGroupToolTip = tr("Used with the %1 action").arg(u"'Calculate as albums (by tags)'");
+    albumGroupLabel->setToolTip(albumGroupToolTip);
+    m_albumGroupScript->setToolTip(albumGroupToolTip);
+
+    calcLayout->addWidget(m_truePeak, 0, 0, 1, 2);
+    calcLayout->addWidget(m_samplePeak, 1, 0, 1, 2);
+    calcLayout->addWidget(albumGroupLabel, 2, 0);
+    calcLayout->addWidget(m_albumGroupScript, 2, 1);
     calcLayout->setColumnStretch(1, 1);
 
     layout->addWidget(modeGroupBox, 0, 0);
@@ -171,6 +182,8 @@ void ReplayGainPageWidget::load()
     const auto truePeak = m_settings->value<Settings::Core::RGTruePeak>();
     m_truePeak->setChecked(truePeak);
     m_samplePeak->setChecked(!truePeak);
+
+    m_albumGroupScript->setText(m_settings->value<Settings::Core::RGAlbumGroupScript>());
 }
 
 void ReplayGainPageWidget::apply()
@@ -206,6 +219,7 @@ void ReplayGainPageWidget::apply()
     m_settings->set<Settings::Core::NonRGPreAmp>(static_cast<float>(m_preAmp->value()));
 
     m_settings->set<Settings::Core::RGTruePeak>(m_truePeak->isChecked());
+    m_settings->set<Settings::Core::RGAlbumGroupScript>(m_albumGroupScript->text());
 }
 
 void ReplayGainPageWidget::reset()
@@ -215,6 +229,7 @@ void ReplayGainPageWidget::reset()
     m_settings->reset<Settings::Core::RGPreAmp>();
     m_settings->reset<Settings::Core::NonRGPreAmp>();
     m_settings->reset<Settings::Core::RGTruePeak>();
+    m_settings->reset<Settings::Core::RGAlbumGroupScript>();
 }
 
 ReplayGainPage::ReplayGainPage(SettingsManager* settings, QObject* parent)

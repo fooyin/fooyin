@@ -18,6 +18,7 @@
  */
 
 #include "guiapplication.h"
+
 #include "dialog/saveplaylistsdialog.h"
 #include "dialog/searchdialog.h"
 #include "internalguisettings.h"
@@ -36,7 +37,6 @@
 #include "search/searchcontroller.h"
 #include "search/searchwidget.h"
 #include "systemtrayicon.h"
-#include "utils/audioutils.h"
 #include "widgets.h"
 
 #include <core/application.h>
@@ -66,10 +66,12 @@
 #include <gui/theme/themeregistry.h>
 #include <gui/trackselectioncontroller.h>
 #include <gui/widgetprovider.h>
+#include <gui/widgets/elidedlabel.h>
 #include <gui/windowcontroller.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/actions/command.h>
+#include <utils/audioutils.h>
 #include <utils/logging/logwidget.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -117,6 +119,13 @@ public:
     void setupUtilitiesMenu() const;
     void setupReplayGainMenu();
 
+    enum class RGScanType : uint8_t
+    {
+        Track = 0,
+        SingleAlbum,
+        Album
+    };
+    void calculateReplayGain(RGScanType type);
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
@@ -165,8 +174,6 @@ public:
     PlaylistInteractor m_playlistInteractor;
     TrackSelectionController m_selectionController;
     SearchController* m_searchController;
-    FFmpegReplayGain* m_replayGain;
-    QThread m_replayGainThread;
 
     FileMenu* m_fileMenu;
     EditMenu* m_editMenu;
@@ -185,6 +192,9 @@ public:
     std::unique_ptr<LogWidget> m_logWidget;
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
+
+    FFmpegReplayGain* m_rgScanner{nullptr};
+    QThread* m_rgThread{nullptr};
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -206,7 +216,6 @@ GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application*
     , m_playlistInteractor{m_core->playlistHandler(), m_playlistController.get(), m_library}
     , m_selectionController{m_actionManager, m_settings, m_playlistController.get()}
     , m_searchController{new SearchController(m_editableLayout.get(), m_self)}
-    , m_replayGain{new FFmpegReplayGain(m_settings)}
     , m_fileMenu{new FileMenu(m_actionManager, m_settings, m_self)}
     , m_editMenu{new EditMenu(m_actionManager, m_settings, m_self)}
     , m_viewMenu{new ViewMenu(m_actionManager, m_settings, m_self)}
@@ -624,35 +633,21 @@ void GuiApplicationPrivate::setupReplayGainMenu()
     replayGainMenu->menu()->setTitle(GuiApplication::tr("ReplayGain"));
     selectionMenu->addMenu(replayGainMenu);
 
-    auto* replayGainTrackAction
-        = new QAction(GuiApplication::tr("Calculate ReplayGain values per-file"), m_mainWindow.get());
-    auto* replayGainAlbumAction
+    auto* rgTrackAction = new QAction(GuiApplication::tr("Calculate ReplayGain values per-file"), m_mainWindow.get());
+    auto* rgSingleAlbumAction
         = new QAction(GuiApplication::tr("Calculate ReplayGain values as a single album"), m_mainWindow.get());
-    auto* removeReplayGainAction
+    auto* rgAlbumAction
+        = new QAction(GuiApplication::tr("Calculate ReplayGain values as albums (by tags)"), m_mainWindow.get());
+    auto* rgRemoveAction
         = new QAction(GuiApplication::tr("Remove ReplayGain information from files"), m_mainWindow.get());
-    replayGainTrackAction->setStatusTip(
+    rgTrackAction->setStatusTip(
         GuiApplication::tr("Calculate ReplayGain values for selected files, considering each file individually"));
-    replayGainAlbumAction->setStatusTip(GuiApplication::tr(
+    rgSingleAlbumAction->setStatusTip(GuiApplication::tr(
         "Calculate ReplayGain values for selected files, considering all files as part of one album"));
-    replayGainAlbumAction->setStatusTip(GuiApplication::tr("Remove ReplayGain values from the selected files"));
+    rgAlbumAction->setStatusTip(
+        GuiApplication::tr("Calculate ReplayGain values for selected files, dividing into albums by tags"));
+    rgRemoveAction->setStatusTip(GuiApplication::tr("Remove ReplayGain values from the selected files"));
 
-    QObject::connect(m_replayGain, &FFmpegReplayGain::rgCalculated, m_self, [this](const TrackList& tracks) {
-        auto* rgResults = new ReplayGainResults(m_library, tracks);
-        rgResults->setAttribute(Qt::WA_DeleteOnClose);
-        rgResults->show();
-    });
-    QObject::connect(m_replayGain, &Worker::finished, m_replayGain, [this]() {
-        m_replayGain->closeThread();
-        m_replayGainThread.quit();
-    });
-
-    const auto calcGain = [this](bool asAlbum) {
-        m_replayGain->moveToThread(&m_replayGainThread);
-        m_replayGainThread.start();
-        QMetaObject::invokeMethod(m_replayGain, [this, asAlbum]() {
-            m_replayGain->calculate(m_selectionController.selectedTracks(), asAlbum);
-        });
-    };
     const auto removeInfo = [this]() {
         TrackList tracks = m_selectionController.selectedTracks();
         for(Track& track : tracks) {
@@ -661,20 +656,92 @@ void GuiApplicationPrivate::setupReplayGainMenu()
         m_library->writeTrackMetadata(tracks);
     };
 
-    QObject::connect(replayGainTrackAction, &QAction::triggered, m_mainWindow.get(), [calcGain] { calcGain(false); });
-    QObject::connect(replayGainAlbumAction, &QAction::triggered, m_mainWindow.get(), [calcGain] { calcGain(true); });
-    QObject::connect(removeReplayGainAction, &QAction::triggered, m_mainWindow.get(), removeInfo);
+    QObject::connect(rgTrackAction, &QAction::triggered, m_self, [this] { calculateReplayGain(RGScanType::Track); });
+    QObject::connect(rgSingleAlbumAction, &QAction::triggered, m_self,
+                     [this] { calculateReplayGain(RGScanType::SingleAlbum); });
+    QObject::connect(rgAlbumAction, &QAction::triggered, m_self, [this] { calculateReplayGain(RGScanType::Album); });
+    QObject::connect(rgRemoveAction, &QAction::triggered, m_mainWindow.get(), removeInfo);
+
     QObject::connect(&m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
-                     [this, replayGainAlbumAction, removeReplayGainAction] {
-                         replayGainAlbumAction->setEnabled(m_selectionController.selectedTrackCount() > 1);
-                         removeReplayGainAction->setEnabled(
+                     [this, rgSingleAlbumAction, rgRemoveAction] {
+                         rgSingleAlbumAction->setEnabled(m_selectionController.selectedTrackCount() > 1);
+                         rgRemoveAction->setEnabled(
                              std::ranges::any_of(m_selectionController.selectedTracks(),
                                                  [](const Track& track) { return track.hasRGInfo(); }));
                      });
 
-    replayGainMenu->menu()->addAction(replayGainTrackAction);
-    replayGainMenu->menu()->addAction(replayGainAlbumAction);
-    replayGainMenu->menu()->addAction(removeReplayGainAction);
+    replayGainMenu->menu()->addAction(rgTrackAction);
+    replayGainMenu->menu()->addAction(rgSingleAlbumAction);
+    replayGainMenu->menu()->addAction(rgAlbumAction);
+    replayGainMenu->menu()->addAction(rgRemoveAction);
+}
+
+void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
+{
+    if(!m_rgThread) {
+        m_rgThread = new QThread(m_self);
+        QObject::connect(m_rgThread, &QThread::finished, m_rgThread, [this]() {
+            m_rgThread->deleteLater();
+            m_rgScanner->deleteLater();
+            m_rgThread  = nullptr;
+            m_rgScanner = nullptr;
+        });
+    }
+    if(!m_rgScanner) {
+        m_rgScanner = new FFmpegReplayGain(m_settings);
+        m_rgScanner->moveToThread(m_rgThread);
+    }
+
+    m_rgThread->start();
+
+    QObject::connect(m_rgScanner, &FFmpegReplayGain::calculationFinished, m_self, [this](const TrackList& tracks) {
+        auto* rgResults = new ReplayGainResults(m_library, tracks);
+        rgResults->setAttribute(Qt::WA_DeleteOnClose);
+        rgResults->show();
+    });
+
+    const auto tracks = m_selectionController.selectedTracks();
+
+    const auto total = static_cast<int>(tracks.size());
+    auto* progress
+        = new QProgressDialog(GuiApplication::tr("Scanning tracks…"), GuiApplication::tr("Abort"), 0, total, nullptr);
+    progress->setAttribute(Qt::WA_DeleteOnClose);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setMinimumDuration(5);
+    progress->setMinimumWidth(400);
+    progress->setMaximumWidth(400);
+    progress->setValue(0);
+    progress->setWindowTitle(GuiApplication::tr("ReplayGain Scan Progress"));
+
+    auto* progressLabel = new ElidedLabel(progress);
+    progressLabel->setElideMode(Qt::ElideMiddle);
+    progress->setLabel(progressLabel);
+
+    QObject::connect(progress, &QObject::destroyed, m_self, [this]() {
+        m_rgScanner->closeThread();
+        m_rgThread->quit();
+    });
+    QObject::connect(m_rgScanner, &FFmpegReplayGain::rgCalculated, progress,
+                     [progress, progressLabel](const QString& filepath) {
+                         if(progress->wasCanceled()) {
+                             progress->close();
+                             return;
+                         }
+                         progress->setValue(progress->value() + 1);
+                         progressLabel->setText(filepath);
+                     });
+
+    switch(type) {
+        case(RGScanType::Track):
+            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculatePerTrack(tracks); });
+            break;
+        case(RGScanType::SingleAlbum):
+            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculateAsAlbum(tracks); });
+            break;
+        case(RGScanType::Album):
+            QMetaObject::invokeMethod(m_rgScanner, [this, tracks]() { m_rgScanner->calculateByAlbumTags(tracks); });
+            break;
+    }
 }
 
 void GuiApplicationPrivate::mute() const

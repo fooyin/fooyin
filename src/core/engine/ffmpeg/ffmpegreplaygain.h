@@ -41,10 +41,13 @@ public:
     explicit FFmpegReplayGain(SettingsManager* settings, QObject* parent = nullptr);
     ~FFmpegReplayGain() override;
 
-    void calculate(const TrackList& tracks, bool asAlbum);
+    void calculatePerTrack(const TrackList& tracks);
+    void calculateAsAlbum(const TrackList& tracks);
+    void calculateByAlbumTags(const TrackList& tracks);
 
 signals:
-    void rgCalculated(const TrackList& tracks);
+    void calculationFinished(const TrackList& tracks);
+    void rgCalculated(const QString& filepath);
 
 private:
     std::unique_ptr<FFmpegReplayGainPrivate> p;
