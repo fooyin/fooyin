@@ -4877,7 +4877,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="143"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">专辑分组模式</translation>
+        <translation>专辑分组模式</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="145"/>
