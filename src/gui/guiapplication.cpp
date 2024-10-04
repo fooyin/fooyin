@@ -629,7 +629,7 @@ void GuiApplicationPrivate::setupReplayGainMenu()
     auto* replayGainAlbumAction
         = new QAction(GuiApplication::tr("Calculate ReplayGain album values"), m_mainWindow.get());
     replayGainTrackAction->setStatusTip(
-        GuiApplication::tr("Calculate ReplayGain values for selected file(s), considering each file individually"));
+        GuiApplication::tr("Calculate ReplayGain values for selected files, considering each file individually"));
     replayGainAlbumAction->setStatusTip(GuiApplication::tr(
         "Calculate ReplayGain values for selected files, considering all files as part of one album"));
 

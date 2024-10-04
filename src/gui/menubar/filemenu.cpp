@@ -42,7 +42,7 @@ FileMenu::FileMenu(ActionManager* actionManager, SettingsManager* settings, QObj
     auto* fileMenu = m_actionManager->actionContainer(Constants::Menus::File);
 
     auto* addFiles = new QAction(tr("Add &files…"), this);
-    addFiles->setStatusTip(tr("Add the specified file(s) to the current playlist"));
+    addFiles->setStatusTip(tr("Add the specified files to the current playlist"));
     auto* addFilesCommand = m_actionManager->registerAction(addFiles, Constants::Actions::AddFiles);
     fileMenu->addAction(addFilesCommand, Actions::Groups::One);
     QObject::connect(addFiles, &QAction::triggered, this, &FileMenu::requestAddFiles);
