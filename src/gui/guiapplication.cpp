@@ -678,10 +678,13 @@ void GuiApplicationPrivate::setupReplayGainMenu()
 void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 {
     const auto tracksToScan = m_selectionController.selectedTracks();
+    if(tracksToScan.empty()) {
+        return;
+    }
 
     const auto total = static_cast<int>(tracksToScan.size());
-    auto* progress
-        = new QProgressDialog(GuiApplication::tr("Scanning tracks…"), GuiApplication::tr("Abort"), 0, total, nullptr);
+    auto* progress   = new QProgressDialog(GuiApplication::tr("Scanning tracks…"), GuiApplication::tr("Abort"), 0,
+                                           total + 1, nullptr);
     progress->setAttribute(Qt::WA_DeleteOnClose);
     progress->setWindowModality(Qt::WindowModal);
     progress->setMinimumDuration(5);
@@ -694,22 +697,21 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
     progressLabel->setElideMode(Qt::ElideMiddle);
     progress->setLabel(progressLabel);
 
-    m_rgScanner = new ReplayGainScanner(m_settings, progress);
-    QObject::connect(m_rgScanner, &ReplayGainScanner::calculationFinished, m_self, [this](const TrackList& tracks) {
-        auto* rgResults = new ReplayGainResults(m_library, tracks);
-        rgResults->setAttribute(Qt::WA_DeleteOnClose);
-        rgResults->show();
-    });
+    m_rgScanner = new ReplayGainScanner(m_settings, m_self);
+    QObject::connect(m_rgScanner, &ReplayGainScanner::calculationFinished, m_self,
+                     [this, progress](const TrackList& tracks) {
+                         progress->close();
+                         auto* rgResults = new ReplayGainResults(m_library, tracks);
+                         rgResults->setAttribute(Qt::WA_DeleteOnClose);
+                         rgResults->show();
+                         m_rgScanner->deleteLater();
+                     });
 
-    QObject::connect(progress, &QObject::destroyed, m_self, [this]() { m_rgScanner->deleteLater(); });
     QObject::connect(m_rgScanner, &ReplayGainScanner::startingCalculation, progress,
-                     [progress, progressLabel, total](const QString& filepath) {
+                     [this, progress, progressLabel](const QString& filepath) {
                          if(progress->wasCanceled()) {
                              progress->close();
-                             return;
-                         }
-                         if(progress->value() + 1 == total) {
-                             progress->close();
+                             m_rgScanner->deleteLater();
                              return;
                          }
                          progress->setValue(progress->value() + 1);
