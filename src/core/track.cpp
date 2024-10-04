@@ -535,6 +535,11 @@ int Track::ratingStars() const
     return static_cast<int>(std::floor(p->rating * MaxStarCount));
 }
 
+bool Track::hasRGInfo() const
+{
+    return hasTrackGain() || hasAlbumGain() || hasTrackPeak() || hasAlbumPeak();
+}
+
 bool Track::hasTrackGain() const
 {
     return p->rgTrackGain != Constants::InvalidGain;
@@ -1123,6 +1128,14 @@ void Track::setRGTrackPeak(float peak)
 void Track::setRGAlbumPeak(float peak)
 {
     p->rgAlbumPeak = peak;
+}
+
+void Track::clearRGInfo()
+{
+    p->rgTrackGain = Constants::InvalidGain;
+    p->rgAlbumGain = Constants::InvalidGain;
+    p->rgTrackPeak = Constants::InvalidPeak;
+    p->rgAlbumPeak = Constants::InvalidPeak;
 }
 
 QString Track::metaValue(const QString& name) const

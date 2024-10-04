@@ -123,6 +123,7 @@ public:
     [[nodiscard]] float rating() const;
     [[nodiscard]] int ratingStars() const;
 
+    [[nodiscard]] bool hasRGInfo() const;
     [[nodiscard]] bool hasTrackGain() const;
     [[nodiscard]] bool hasAlbumGain() const;
     [[nodiscard]] bool hasTrackPeak() const;
@@ -203,6 +204,7 @@ public:
     void setRGAlbumGain(float gain);
     void setRGTrackPeak(float peak);
     void setRGAlbumPeak(float peak);
+    void clearRGInfo();
 
     [[nodiscard]] QString metaValue(const QString& name) const;
     [[nodiscard]] QString techInfo(const QString& name) const;
