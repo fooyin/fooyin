@@ -677,9 +677,9 @@ void GuiApplicationPrivate::setupReplayGainMenu()
 
 void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 {
-    const auto tracks = m_selectionController.selectedTracks();
+    const auto tracksToScan = m_selectionController.selectedTracks();
 
-    const auto total = static_cast<int>(tracks.size());
+    const auto total = static_cast<int>(tracksToScan.size());
     auto* progress
         = new QProgressDialog(GuiApplication::tr("Scanning tracks…"), GuiApplication::tr("Abort"), 0, total, nullptr);
     progress->setAttribute(Qt::WA_DeleteOnClose);
@@ -718,13 +718,13 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 
     switch(type) {
         case(RGScanType::Track):
-            m_rgScanner->calculatePerTrack(tracks);
+            m_rgScanner->calculatePerTrack(tracksToScan);
             break;
         case(RGScanType::SingleAlbum):
-            m_rgScanner->calculateAsAlbum(tracks);
+            m_rgScanner->calculateAsAlbum(tracksToScan);
             break;
         case(RGScanType::Album):
-            m_rgScanner->calculateByAlbumTags(tracks);
+            m_rgScanner->calculateByAlbumTags(tracksToScan);
             break;
     }
 }
