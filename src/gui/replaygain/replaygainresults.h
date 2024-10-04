@@ -31,6 +31,8 @@ class ReplayGainResultsModel;
 
 class ReplayGainResults : public QDialog
 {
+    Q_OBJECT
+
 public:
     ReplayGainResults(MusicLibrary* library, TrackList tracks, QWidget* parent = nullptr);
 
