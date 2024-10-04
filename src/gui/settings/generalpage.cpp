@@ -173,7 +173,6 @@ void GeneralPageWidget::reset()
 void GeneralPageWidget::loadLanguage()
 {
     m_languageMap.clear();
-    m_languageMap[QStringLiteral("British English (en_GB)")] = QStringLiteral("en_GB");
 
     const QDir translationDir{Core::translationsPath()};
     const QStringList translations = translationDir.entryList(QStringList{} << QStringLiteral("*.qm"));
