@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <QIODevice>
 #include <QMainWindow>
+#include <QSettings>
 
 constexpr auto DialogGeometry = "SettingsDialog/Geometry";
 constexpr auto LastOpenPage   = "SettingsDialog/LastPage";
