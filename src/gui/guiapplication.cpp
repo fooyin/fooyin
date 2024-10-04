@@ -193,8 +193,8 @@ public:
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
 
-    FFmpegReplayGain* m_rgScanner{nullptr};
-    QThread* m_rgThread{nullptr};
+    QPointer<FFmpegReplayGain> m_rgScanner{nullptr};
+    QPointer<QThread> m_rgThread{nullptr};
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -680,25 +680,26 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 {
     if(!m_rgThread) {
         m_rgThread = new QThread(m_self);
-        QObject::connect(m_rgThread, &QThread::finished, m_rgThread, [this]() {
-            m_rgThread->deleteLater();
+
+        QObject::connect(m_rgThread, &QThread::finished, m_self, [this]() {
             m_rgScanner->deleteLater();
-            m_rgThread  = nullptr;
             m_rgScanner = nullptr;
+            m_rgThread->deleteLater();
+            m_rgThread = nullptr;
         });
     }
     if(!m_rgScanner) {
         m_rgScanner = new FFmpegReplayGain(m_settings);
         m_rgScanner->moveToThread(m_rgThread);
+
+        QObject::connect(m_rgScanner, &FFmpegReplayGain::calculationFinished, m_self, [this](const TrackList& tracks) {
+            auto* rgResults = new ReplayGainResults(m_library, tracks);
+            rgResults->setAttribute(Qt::WA_DeleteOnClose);
+            rgResults->show();
+        });
     }
 
     m_rgThread->start();
-
-    QObject::connect(m_rgScanner, &FFmpegReplayGain::calculationFinished, m_self, [this](const TrackList& tracks) {
-        auto* rgResults = new ReplayGainResults(m_library, tracks);
-        rgResults->setAttribute(Qt::WA_DeleteOnClose);
-        rgResults->show();
-    });
 
     const auto tracks = m_selectionController.selectedTracks();
 
@@ -722,8 +723,12 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
         m_rgThread->quit();
     });
     QObject::connect(m_rgScanner, &FFmpegReplayGain::rgCalculated, progress,
-                     [progress, progressLabel](const QString& filepath) {
+                     [progress, progressLabel, total](const QString& filepath) {
                          if(progress->wasCanceled()) {
+                             progress->close();
+                             return;
+                         }
+                         if(progress->value() + 1 == total) {
                              progress->close();
                              return;
                          }
