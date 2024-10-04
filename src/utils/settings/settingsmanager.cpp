@@ -37,7 +37,6 @@ SettingsManager::SettingsManager(const QString& settingsPath, QObject* parent)
 void SettingsManager::createSettingsDialog(QMainWindow* mainWindow)
 {
     m_settingsDialog = new SettingsDialogController(this, mainWindow);
-    m_settingsDialog->restoreState();
 }
 
 SettingsDialogController* SettingsManager::settingsDialog() const
@@ -249,10 +248,6 @@ void SettingsManager::saveSettings(bool onlyChanged)
                 m_settingsFile->setValue(keyString, setting->value());
             }
         }
-    }
-
-    if(m_settingsDialog) {
-        m_settingsDialog->saveState();
     }
 
     m_settingsFile->sync();

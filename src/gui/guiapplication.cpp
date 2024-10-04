@@ -931,11 +931,12 @@ void GuiApplicationPrivate::addFiles() const
 
     const QString allFilter   = GuiApplication::tr("All Supported Media Files (%1)").arg(allExtensions);
     const QString filesFilter = GuiApplication::tr("Audio Files (%1)").arg(audioExtensions);
-
     const QStringList filters{allFilter, filesFilter};
 
+    FyStateSettings stateSettings;
+
     QUrl dir = QUrl::fromLocalFile(QDir::homePath());
-    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+    if(const auto lastPath = stateSettings.value(QLatin1String{Settings::Gui::Internal::LastFilePath}).toString();
        !lastPath.isEmpty()) {
         dir = lastPath;
     }
@@ -947,7 +948,7 @@ void GuiApplicationPrivate::addFiles() const
         return;
     }
 
-    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, files.front());
+    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, files.front());
 
     m_playlistInteractor.filesToCurrentPlaylist(files);
 }
@@ -1030,7 +1031,8 @@ void GuiApplicationPrivate::savePlaylist() const
         return;
     }
 
-    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, file);
+    FyStateSettings stateSettings;
+    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, file);
 
     const QString extension = Utils::extensionFromFilter(selectedFilter);
     if(extension.isEmpty()) {

@@ -36,7 +36,8 @@
 
 Q_LOGGING_CATEGORY(PL_HANDLER, "fy.playlisthandler")
 
-constexpr auto ActiveIndex = "Player/ActivePlaylistIndex";
+constexpr auto ActiveId    = "Playlist/ActiveId";
+constexpr auto ActiveIndex = "Playlist/ActiveTrackIndex";
 
 namespace Fooyin {
 class PlaylistHandlerPrivate
@@ -221,19 +222,21 @@ void PlaylistHandlerPrivate::savePlaylists()
         return;
     }
 
+    FyStateSettings stateSettings;
+
     if(m_activePlaylist->isTemporary()) {
-        m_settings->reset<Settings::Core::ActivePlaylistId>();
+        stateSettings.remove(QLatin1String{ActiveId});
     }
     else {
-        m_settings->set<Settings::Core::ActivePlaylistId>(m_activePlaylist->dbId());
+        stateSettings.setValue(QLatin1String{ActiveId}, m_activePlaylist->dbId());
     }
 
     if(!m_activePlaylist->isTemporary()
        && m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
-        m_settings->fileSet(ActiveIndex, m_activePlaylist->currentTrackIndex());
+        stateSettings.setValue(QLatin1String{ActiveIndex}, m_activePlaylist->currentTrackIndex());
     }
     else {
-        m_settings->fileRemove(ActiveIndex);
+        stateSettings.remove(QLatin1String{ActiveIndex});
     }
 }
 
@@ -293,7 +296,9 @@ bool PlaylistHandlerPrivate::validIndex(int index) const
 
 void PlaylistHandlerPrivate::restoreActivePlaylist()
 {
-    const int lastId = m_settings->value<Settings::Core::ActivePlaylistId>();
+    const FyStateSettings stateSettings;
+
+    const int lastId = stateSettings.value(QLatin1String{ActiveId}).toInt();
     if(lastId < 0) {
         return;
     }
@@ -308,7 +313,7 @@ void PlaylistHandlerPrivate::restoreActivePlaylist()
     emit m_self->activePlaylistChanged(m_activePlaylist);
 
     if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState).toBool()) {
-        const int lastIndex = m_settings->fileValue(ActiveIndex).toInt();
+        const int lastIndex = stateSettings.value(QLatin1String{ActiveIndex}).toInt();
         m_activePlaylist->changeCurrentIndex(lastIndex);
         m_playerController->changeCurrentTrack({m_activePlaylist->currentTrack(), m_activePlaylist->id(), lastIndex});
     }

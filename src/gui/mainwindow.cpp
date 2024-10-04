@@ -30,6 +30,7 @@
 #include <gui/guisettings.h>
 #include <utils/actions/actionmanager.h>
 #include <utils/enum.h>
+#include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -58,7 +59,10 @@ MainWindow::MainWindow(ActionManager* actionManager, MainMenuBar* menubar, Setti
     setMenuBar(m_mainMenu->menuBar());
     m_settings->createSettingsDialog(this);
 
-    if(auto prevState = m_settings->fileValue(MainWindowPrevState).toString(); !prevState.isEmpty()) {
+    const FyStateSettings stateSettings;
+    m_settings->settingsDialog()->restoreState(stateSettings);
+
+    if(auto prevState = stateSettings.value(QLatin1String{MainWindowPrevState}).toString(); !prevState.isEmpty()) {
         if(auto state = Utils::Enum::fromString<WindowState>(prevState)) {
             m_prevState = state.value();
         }
@@ -218,9 +222,11 @@ MainWindow::WindowState MainWindow::currentState()
 
 void MainWindow::restoreState(WindowState state)
 {
+    const FyStateSettings stateSettings;
+
     switch(state) {
         case(Normal):
-            restoreGeometry(m_settings->fileValue(MainWindowGeometry).toByteArray());
+            restoreGeometry(stateSettings.value(QLatin1String{MainWindowGeometry}).toByteArray());
             show();
             break;
         case(Maximised):
@@ -257,8 +263,11 @@ void MainWindow::exit()
     if(!m_hasQuit) {
         m_hasQuit = true;
 
-        m_settings->fileSet(MainWindowGeometry, saveGeometry());
-        m_settings->fileSet(MainWindowPrevState, Utils::Enum::toString(currentState()));
+        FyStateSettings stateSettings;
+        m_settings->settingsDialog()->saveState(stateSettings);
+
+        stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
+        stateSettings.setValue(QLatin1String{MainWindowPrevState}, Utils::Enum::toString(currentState()));
 
         m_settings->set<Settings::Core::Shutdown>(true);
     }

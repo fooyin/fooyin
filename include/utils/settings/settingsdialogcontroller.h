@@ -24,6 +24,7 @@
 #include <QObject>
 
 class QMainWindow;
+class QSettings;
 
 namespace Fooyin {
 class SettingsDialogControllerPrivate;
@@ -44,8 +45,8 @@ public:
 
     void addPage(SettingsPage* page);
 
-    void saveState();
-    void restoreState();
+    void saveState(QSettings& settings) const;
+    void restoreState(const QSettings& settings);
 
 signals:
     void opening();

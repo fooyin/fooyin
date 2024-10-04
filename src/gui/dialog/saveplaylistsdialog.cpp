@@ -22,6 +22,7 @@
 #include "internalguisettings.h"
 
 #include <core/application.h>
+#include <core/coresettings.h>
 #include <core/internalcoresettings.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/playlist/playlistparser.h>
@@ -62,8 +63,10 @@ SavePlaylistsDialog::SavePlaylistsDialog(Application* core, QWidget* parent)
 
 void SavePlaylistsDialog::accept()
 {
+    FyStateSettings stateSettings;
+
     QString dir{QDir::homePath()};
-    if(const auto lastPath = m_settings->fileValue(Settings::Gui::Internal::LastFilePath).toString();
+    if(const auto lastPath = stateSettings.value(QLatin1String{Settings::Gui::Internal::LastFilePath}).toString();
        !lastPath.isEmpty()) {
         dir = lastPath;
     }
@@ -77,7 +80,7 @@ void SavePlaylistsDialog::accept()
         return;
     }
 
-    m_settings->fileSet(Settings::Gui::Internal::LastFilePath, saveDir);
+    stateSettings.setValue(QLatin1String{Settings::Gui::Internal::LastFilePath}, saveDir);
 
     const QString extension = m_formats->currentText();
     if(extension.isEmpty()) {

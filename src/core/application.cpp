@@ -21,6 +21,7 @@
 
 #include "corepaths.h"
 #include "database/database.h"
+#include "database/settingsdatabase.h"
 #include "engine/archiveinput.h"
 #include "engine/enginehandler.h"
 #include "engine/ffmpeg/ffmpeginput.h"
@@ -43,6 +44,7 @@
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/plugins/coreplugin.h>
+#include <utils/database/dbconnectionprovider.h>
 #include <utils/enum.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -99,6 +101,9 @@ public:
     void savePlaybackState() const;
     void loadPlaybackState() const;
 
+    void loadDatabaseSettings() const;
+    void saveDatabaseSettings() const;
+
     Application* m_self;
 
     SettingsManager* m_settings;
@@ -142,7 +147,9 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
     , m_pluginManager{m_settings}
     , m_corePluginContext{&m_engine,  m_playerController, m_libraryManager,  m_library,       m_playlistHandler,
                           m_settings, m_audioLoader,      m_sortingRegistry, m_networkManager}
-{ }
+{
+    loadDatabaseSettings();
+}
 
 void ApplicationPrivate::initialise()
 {
@@ -319,25 +326,30 @@ void ApplicationPrivate::exportAllPlaylists()
 
 void ApplicationPrivate::savePlaybackState() const
 {
-    if(m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
+    FyStateSettings stateSettings;
+
+    if(stateSettings.value(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
-        m_settings->fileSet(LastPlaybackPosition, lastPos);
-        m_settings->fileSet(LastPlaybackState, Utils::Enum::toString(m_playerController->playState()));
+        stateSettings.setValue(QLatin1String{LastPlaybackPosition}, lastPos);
+        stateSettings.setValue(QLatin1String{LastPlaybackState},
+                               Utils::Enum::toString(m_playerController->playState()));
     }
     else {
-        m_settings->fileRemove(LastPlaybackPosition);
-        m_settings->fileRemove(LastPlaybackState);
+        stateSettings.remove(QLatin1String{LastPlaybackPosition});
+        stateSettings.remove(QLatin1String{LastPlaybackState});
     }
 }
 
 void ApplicationPrivate::loadPlaybackState() const
 {
-    if(!m_settings->fileValue(Settings::Core::Internal::SavePlaybackState, false).toBool()) {
+    const FyStateSettings stateSettings;
+
+    if(!stateSettings.value(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
         return;
     }
 
-    const auto lastPos = m_settings->fileValue(LastPlaybackPosition).value<uint64_t>();
+    const auto lastPos = stateSettings.value(QLatin1String{LastPlaybackPosition}).value<uint64_t>();
 
     auto seek = [this, lastPos]() {
         if(lastPos > 0) {
@@ -347,7 +359,7 @@ void ApplicationPrivate::loadPlaybackState() const
     };
 
     if(const auto state
-       = Utils::Enum::fromString<Player::PlayState>(m_settings->fileValue(LastPlaybackState).toString())) {
+       = Utils::Enum::fromString<Player::PlayState>(stateSettings.value(QLatin1String{LastPlaybackState}).toString())) {
         switch(state.value()) {
             case(Player::PlayState::Paused):
                 qCDebug(APP) << "Restoring paused state…";
@@ -365,6 +377,27 @@ void ApplicationPrivate::loadPlaybackState() const
                 break;
         }
     }
+}
+
+void ApplicationPrivate::loadDatabaseSettings() const
+{
+    const DbConnectionProvider dbProvider{m_database->connectionPool()};
+    SettingsDatabase settingsDb;
+    settingsDb.initialise(dbProvider);
+
+    const QString version = settingsDb.value(QStringLiteral("Version"), {});
+    if(!version.isEmpty()) {
+        m_settings->set<Settings::Core::Version>(version);
+    }
+}
+
+void ApplicationPrivate::saveDatabaseSettings() const
+{
+    const DbConnectionProvider dbProvider{m_database->connectionPool()};
+    SettingsDatabase settingsDb;
+    settingsDb.initialise(dbProvider);
+
+    settingsDb.set(QStringLiteral("Version"), QString::fromLatin1(VERSION));
 }
 
 Application::Application(QObject* parent)
@@ -438,7 +471,7 @@ void Application::timerEvent(QTimerEvent* event)
 
 void Application::shutdown()
 {
-    p->m_settings->fileSet("Version", QString::fromLatin1(VERSION));
+    p->saveDatabaseSettings();
 
     if(p->m_settings->fileValue(Settings::Core::Internal::AutoExportPlaylists).toBool()) {
         p->exportAllPlaylists();

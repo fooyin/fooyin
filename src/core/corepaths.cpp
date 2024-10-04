@@ -33,6 +33,11 @@ QString settingsPath()
     return QDir::cleanPath(Utils::configPath().append(QStringLiteral("/fooyin.conf")));
 }
 
+QString statePath()
+{
+    return QDir::cleanPath(Utils::statePath().append(QStringLiteral("/fooyin.state")));
+}
+
 QString playlistsPath()
 {
     return QDir::cleanPath(Utils::sharePath().append(QStringLiteral("/playlists")));

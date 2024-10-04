@@ -22,6 +22,7 @@
 #include "playlistcolumnregistry.h"
 #include "presetregistry.h"
 
+#include <core/coresettings.h>
 #include <core/player/playercontroller.h>
 #include <core/playlist/playlisthandler.h>
 #include <core/track.h>
@@ -33,6 +34,7 @@
 #include <QMenu>
 #include <QUndoStack>
 
+constexpr auto LastPlaylistId = "PlaylistWidget/LastPlaylistId";
 constexpr auto PlaylistStates = "PlaylistWidget/PlaylistStates";
 
 namespace Fooyin {
@@ -117,7 +119,8 @@ PlaylistControllerPrivate::PlaylistControllerPrivate(PlaylistController* self, P
 
 void PlaylistControllerPrivate::restoreLastPlaylist()
 {
-    const int lastId = m_settings->value<Settings::Gui::LastPlaylistId>();
+    FyStateSettings stateSettings;
+    const int lastId = stateSettings.value(QLatin1String{LastPlaylistId}).toInt();
 
     if(lastId >= 0) {
         m_currentPlaylist = m_handler->playlistByDbId(lastId);
@@ -332,12 +335,15 @@ void PlaylistControllerPrivate::saveStates() const
 
     out = qCompress(out, 9);
 
-    m_settings->fileSet(PlaylistStates, out);
+    FyStateSettings stateSettings;
+    stateSettings.setValue(QLatin1String{PlaylistStates}, out);
+    stateSettings.setValue(QLatin1String{LastPlaylistId}, m_currentPlaylist->dbId());
 }
 
 void PlaylistControllerPrivate::restoreStates()
 {
-    QByteArray in = m_settings->fileValue(PlaylistStates).toByteArray();
+    const FyStateSettings stateSettings;
+    QByteArray in = stateSettings.value(QLatin1String{PlaylistStates}).toByteArray();
 
     if(in.isEmpty()) {
         return;
@@ -378,7 +384,6 @@ PlaylistController::PlaylistController(PlaylistHandler* handler, PlayerControlle
 PlaylistController::~PlaylistController()
 {
     if(p->m_currentPlaylist) {
-        p->m_settings->set<Settings::Gui::LastPlaylistId>(p->m_currentPlaylist->dbId());
         p->saveStates();
     }
 }

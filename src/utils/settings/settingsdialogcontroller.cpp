@@ -28,8 +28,8 @@
 #include <QIODevice>
 #include <QMainWindow>
 
-constexpr auto DialogSize   = "Interface/SettingsDialogSize";
-constexpr auto LastOpenPage = "Interface/SettingsDialogLastPage";
+constexpr auto DialogGeometry = "SettingsDialog/Geometry";
+constexpr auto LastOpenPage   = "SettingsDialog/LastPage";
 
 namespace Fooyin {
 class SettingsDialogControllerPrivate
@@ -43,7 +43,7 @@ public:
     SettingsManager* settings;
     QMainWindow* mainWindow;
 
-    QSize size;
+    QByteArray geometry;
     PageList pages;
     Id lastOpenPage;
     bool isOpen{false};
@@ -70,7 +70,7 @@ void SettingsDialogController::openAtPage(const Id& page)
     auto* settingsDialog = new SettingsDialog{p->pages, p->mainWindow};
 
     QObject::connect(settingsDialog, &QDialog::finished, this, [this, settingsDialog]() {
-        p->size         = settingsDialog->size();
+        p->geometry     = settingsDialog->saveGeometry();
         p->lastOpenPage = settingsDialog->currentPage();
         p->isOpen       = false;
         emit closing();
@@ -79,8 +79,8 @@ void SettingsDialogController::openAtPage(const Id& page)
     QObject::connect(settingsDialog, &SettingsDialog::resettingAll, this,
                      [this]() { p->settings->resetAllSettings(); });
 
-    if(p->size.isValid()) {
-        settingsDialog->resize(p->size);
+    if(!p->geometry.isEmpty()) {
+        settingsDialog->restoreGeometry(p->geometry);
     }
     else {
         settingsDialog->resize({800, 500});
@@ -101,23 +101,23 @@ void SettingsDialogController::addPage(SettingsPage* page)
     p->pages.push_back(page);
 }
 
-void SettingsDialogController::saveState()
+void SettingsDialogController::saveState(QSettings& settings) const
 {
-    p->settings->fileSet(DialogSize, p->size);
-    p->settings->fileSet(LastOpenPage, p->lastOpenPage.name());
+    settings.setValue(QLatin1String{DialogGeometry}, p->geometry);
+    settings.setValue(QLatin1String{LastOpenPage}, p->lastOpenPage.name());
 }
 
-void SettingsDialogController::restoreState()
+void SettingsDialogController::restoreState(const QSettings& settings)
 {
-    if(p->settings->fileContains(DialogSize)) {
-        const QSize size = p->settings->fileValue(DialogSize).toSize();
-        if(size.isValid()) {
-            p->size = size;
+    if(settings.contains(QLatin1String{DialogGeometry})) {
+        const auto geometry = settings.value(QLatin1String{DialogGeometry}).toByteArray();
+        if(!geometry.isEmpty()) {
+            p->geometry = geometry;
         }
     }
 
-    if(p->settings->fileContains(LastOpenPage)) {
-        const Id lastPage{p->settings->fileValue(LastOpenPage).toString()};
+    if(settings.contains(QLatin1String{LastOpenPage})) {
+        const Id lastPage{settings.value(QLatin1String{LastOpenPage}).toString()};
         if(lastPage.isValid()) {
             p->lastOpenPage = lastPage;
         }

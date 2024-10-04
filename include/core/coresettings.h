@@ -34,6 +34,12 @@ public:
     explicit FySettings(QObject* parent = nullptr);
 };
 
+class FYCORE_EXPORT FyStateSettings : public QSettings
+{
+public:
+    explicit FyStateSettings(QObject* parent = nullptr);
+};
+
 namespace Settings::Core {
 Q_NAMESPACE_EXPORT(FYCORE_EXPORT)
 
@@ -44,31 +50,30 @@ enum CoreSettings : uint32_t
     PlayMode                  = 3 | Type::Int,
     AutoRefresh               = 4 | Type::Bool,
     LibrarySortScript         = 5 | Type::String,
-    ActivePlaylistId          = 6 | Type::Int,
-    AudioOutput               = 7 | Type::String,
-    OutputVolume              = 8 | Type::Double,
-    RewindPreviousTrack       = 9 | Type::Bool,
-    GaplessPlayback           = 10 | Type::Bool,
-    Language                  = 11 | Type::String,
-    BufferLength              = 12 | Type::Int,
-    OpenFilesPlaylist         = 13 | Type::String,
-    OpenFilesSendTo           = 14 | Type::Bool,
-    SaveRatingToMetadata      = 15 | Type::Bool,
-    SavePlaycountToMetadata   = 16 | Type::Bool,
-    PlayedThreshold           = 17 | Type::Double,
-    ExternalSortScript        = 18 | Type::String,
-    Shutdown                  = 19 | Type::Bool,
-    StopAfterCurrent          = 20 | Type::Bool,
-    RGMode                    = 21 | Type::Int,
-    RGType                    = 22 | Type::Int,
-    RGPreAmp                  = 23 | Type::Float,
-    NonRGPreAmp               = 24 | Type::Float,
-    ProxyMode                 = 25 | Type::Int,
-    ProxyConfig               = 26 | Type::Variant,
-    UseVariousForCompilations = 27 | Type::Bool,
-    ShuffleAlbumsGroupScript  = 28 | Type::String,
-    ShuffleAlbumsSortScript   = 29 | Type::String,
-    RGTruePeak                = 30 | Type::Bool,
+    AudioOutput               = 6 | Type::String,
+    OutputVolume              = 7 | Type::Double,
+    RewindPreviousTrack       = 8 | Type::Bool,
+    GaplessPlayback           = 9 | Type::Bool,
+    Language                  = 10 | Type::String,
+    BufferLength              = 11 | Type::Int,
+    OpenFilesPlaylist         = 12 | Type::String,
+    OpenFilesSendTo           = 13 | Type::Bool,
+    SaveRatingToMetadata      = 14 | Type::Bool,
+    SavePlaycountToMetadata   = 15 | Type::Bool,
+    PlayedThreshold           = 16 | Type::Double,
+    ExternalSortScript        = 17 | Type::String,
+    Shutdown                  = 18 | Type::Bool,
+    StopAfterCurrent          = 19 | Type::Bool,
+    RGMode                    = 20 | Type::Int,
+    RGType                    = 21 | Type::Int,
+    RGPreAmp                  = 22 | Type::Float,
+    NonRGPreAmp               = 23 | Type::Float,
+    ProxyMode                 = 24 | Type::Int,
+    ProxyConfig               = 25 | Type::Variant,
+    UseVariousForCompilations = 26 | Type::Bool,
+    ShuffleAlbumsGroupScript  = 27 | Type::String,
+    ShuffleAlbumsSortScript   = 28 | Type::String,
+    RGTruePeak                = 29 | Type::Bool,
 };
 Q_ENUM_NS(CoreSettings)
 } // namespace Settings::Core

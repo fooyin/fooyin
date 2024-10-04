@@ -36,6 +36,10 @@ FySettings::FySettings(QObject* parent)
     : QSettings{Core::settingsPath(), QSettings::IniFormat, parent}
 { }
 
+FyStateSettings::FyStateSettings(QObject* parent)
+    : QSettings{Core::statePath(), QSettings::IniFormat, parent}
+{ }
+
 CoreSettings::CoreSettings(SettingsManager* settingsManager)
     : m_settings{settingsManager}
 {
@@ -44,13 +48,12 @@ CoreSettings::CoreSettings(SettingsManager* settingsManager)
     qRegisterMetaType<FadingIntervals>("FadingIntervals");
 
     m_settings->createTempSetting<FirstRun>(true);
-    m_settings->createSetting<Version>(QString::fromLatin1(VERSION), QStringLiteral("Version"));
+    m_settings->createTempSetting<Version>(QString::fromLatin1(VERSION));
     m_settings->createSetting<PlayMode>(0, QStringLiteral("Player/PlayMode"));
     m_settings->createSetting<AutoRefresh>(true, QStringLiteral("Library/AutoRefresh"));
     m_settings->createSetting<LibrarySortScript>(
         QStringLiteral("%albumartist% - %year% - %album% - $num(%disc%,5) - $num(%track%,5) - %title%"),
         QStringLiteral("Library/SortScript"));
-    m_settings->createSetting<ActivePlaylistId>(-1, QStringLiteral("Playlist/ActivePlaylistId"));
     m_settings->createSetting<AudioOutput>(QString{}, QStringLiteral("Engine/AudioOutput"));
     m_settings->createSetting<OutputVolume>(1.0, QStringLiteral("Engine/OutputVolume"));
     m_settings->createSetting<RewindPreviousTrack>(false, QStringLiteral("Playlist/RewindPreviousTrack"));

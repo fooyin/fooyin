@@ -62,6 +62,22 @@ QString configPath(const QString& appendPath)
     return createPath(path, appendPath);
 }
 
+QString statePath(const QString& appendPath)
+{
+    QString stateHome = QFile::decodeName(qgetenv("XDG_STATE_HOME"));
+    if(!stateHome.startsWith(u'/')) {
+        // Relative paths should be ignored
+        stateHome.clear();
+    }
+    if(stateHome.isEmpty()) {
+        stateHome = QDir::homePath() + u"/.local/state";
+    }
+
+    stateHome += u"/fooyin";
+
+    return createPath(stateHome, appendPath);
+}
+
 QString sharePath(const QString& appendPath)
 {
     static const auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);

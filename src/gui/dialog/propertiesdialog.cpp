@@ -19,6 +19,7 @@
 
 #include "qdialog.h"
 
+#include <core/coresettings.h>
 #include <gui/propertiesdialog.h>
 #include <utils/settings/settingsmanager.h>
 
@@ -31,7 +32,7 @@
 
 #include <ranges>
 
-constexpr auto DialogSize = "Interface/PropertiesDialogSize";
+constexpr auto DialogGeometry = "Interface/PropertiesDialogGeometry";
 
 namespace Fooyin {
 bool PropertiesTabWidget::canApply() const
@@ -114,17 +115,19 @@ class PropertiesDialogWidget : public QDialog
 public:
     explicit PropertiesDialogWidget(TrackList tracks, PropertiesDialog::TabList tabs);
 
-    void saveState(SettingsManager* settings)
+    void saveState()
     {
-        settings->fileSet(DialogSize, size());
+        FyStateSettings stateSettings;
+        stateSettings.setValue(QLatin1String{DialogGeometry}, saveGeometry());
     }
 
-    void restoreState(SettingsManager* settings)
+    void restoreState()
     {
-        if(settings->fileContains(DialogSize)) {
-            const QSize size = settings->fileValue(DialogSize).toSize();
-            if(size.isValid()) {
-                resize(size);
+        const FyStateSettings stateSettings;
+        if(stateSettings.contains(QLatin1String{DialogGeometry})) {
+            const auto geometry = stateSettings.value(QLatin1String{DialogGeometry}).toByteArray();
+            if(!geometry.isEmpty()) {
+                restoreGeometry(geometry);
             }
         }
     }
@@ -296,12 +299,12 @@ void PropertiesDialog::show(const TrackList& tracks)
     auto* dialog = new PropertiesDialogWidget(tracks, m_tabs);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
 
-    QObject::connect(dialog, &QDialog::finished, this, [this, dialog]() { dialog->saveState(m_settings); });
+    QObject::connect(dialog, &QDialog::finished, dialog, &PropertiesDialogWidget::saveState);
 
     dialog->resize(600, 700);
     dialog->show();
 
-    dialog->restoreState(m_settings);
+    dialog->restoreState();
 }
 } // namespace Fooyin
 
