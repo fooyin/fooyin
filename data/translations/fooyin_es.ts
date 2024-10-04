@@ -1627,6 +1627,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/gui/guiapplication.cpp" line="490"/>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../src/gui/guiapplication.cpp" line="519"/>
         <location filename="../../src/gui/guiapplication.cpp" line="549"/>
         <source>Tagging</source>
@@ -1778,27 +1783,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="944"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="945"/>
         <source>Add Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="958"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="959"/>
         <source>Add Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="985"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="986"/>
         <source>All Supported Playlists (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="995"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="996"/>
         <source>Load Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/guiapplication.cpp" line="1027"/>
+        <location filename="../../src/gui/guiapplication.cpp" line="1028"/>
         <source>Save Playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3096,7 +3101,7 @@
 <context>
     <name>Fooyin::MainWindow</name>
     <message>
-        <location filename="../../src/gui/mainwindow.cpp" line="140"/>
+        <location filename="../../src/gui/mainwindow.cpp" line="144"/>
         <source>Layout Editing Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3849,7 +3854,7 @@
 <context>
     <name>Fooyin::PlaylistController</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="447"/>
+        <location filename="../../src/gui/playlist/playlistcontroller.cpp" line="452"/>
         <source>Playlists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4003,12 +4008,18 @@
 <context>
     <name>Fooyin::PlaylistInteractor</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="41"/>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="42"/>
         <source>Reading tracks…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="75"/>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="43"/>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="78"/>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/playlist/playlistinteractor.cpp" line="77"/>
         <source>Loading playlist…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4256,17 +4267,17 @@
 <context>
     <name>Fooyin::PlaylistWidget</name>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1395"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1390"/>
         <source>Sort</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1426"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1421"/>
         <source>Presets</source>
         <translation type="unfinished">Ajustes preestablecidos</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1556"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1551"/>
         <source>Playlist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4411,17 +4422,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1450"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1445"/>
         <source>Columns</source>
         <translation type="unfinished">Columnas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1488"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1483"/>
         <source>More…</source>
         <translation type="unfinished">Más …</translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1197"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1192"/>
         <source>Reset columns to default</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4441,7 +4452,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1206"/>
+        <location filename="../../src/gui/playlist/playlistwidget.cpp" line="1201"/>
         <source>Single-column mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4600,14 +4611,14 @@
 <context>
     <name>Fooyin::PropertiesDialogWidget</name>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="151"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="171"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="154"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="174"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="155"/>
-        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="243"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="158"/>
+        <location filename="../../src/gui/dialog/propertiesdialog.cpp" line="246"/>
         <source>Properties</source>
         <translation type="unfinished">Propiedades</translation>
     </message>
@@ -4930,12 +4941,12 @@
 <context>
     <name>Fooyin::SavePlaylistsDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="51"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="52"/>
         <source>Playlist file format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="73"/>
+        <location filename="../../src/gui/dialog/saveplaylistsdialog.cpp" line="76"/>
         <source>Select Directory</source>
         <translation type="unfinished">Seleccionar directorio</translation>
     </message>
@@ -5155,28 +5166,41 @@
 <context>
     <name>Fooyin::SearchDialog</name>
     <message>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="67"/>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="132"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="68"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="137"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="121"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Playlist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="121"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="122"/>
         <source>Search Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="124"/>
-        <source>%1 results</source>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="125"/>
+        <source>Start typing to search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="128"/>
+        <source>%Ln result(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="129"/>
+        <source>No results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/dialog/searchdialog.cpp" line="135"/>
+        <location filename="../../src/gui/dialog/searchdialog.cpp" line="140"/>
         <source>Auto-select on search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6240,7 +6264,7 @@
     <message>
         <location filename="../../src/plugins/wavebar/settings/wavebarsettingspage.cpp" line="322"/>
         <source>WaveBar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Barra de ondas</translation>
     </message>
 </context>
 <context>
