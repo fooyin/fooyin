@@ -89,6 +89,8 @@ public:
 
     std::deque<LibraryScanRequest> m_scanRequests;
     int m_currentRequestId{-1};
+    bool m_currentRequestFinished{false};
+    bool m_tracksAddedToLibrary{false};
 };
 
 LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* self, DbConnectionPoolPtr dbPool,
@@ -109,7 +111,8 @@ LibraryThreadHandlerPrivate::LibraryThreadHandlerPrivate(LibraryThreadHandler* s
     m_trackDatabaseManager.moveToThread(&m_thread);
 
     QObject::connect(m_library, &MusicLibrary::tracksScanned, m_self, [this]() {
-        if(!m_scanRequests.empty()) {
+        m_tracksAddedToLibrary = true;
+        if(m_currentRequestFinished) {
             execNextRequest();
         }
     });
@@ -299,8 +302,10 @@ void LibraryThreadHandlerPrivate::execNextRequest()
         return;
     }
 
-    const auto& request = m_scanRequests.front();
-    m_currentRequestId  = request.id;
+    const auto& request      = m_scanRequests.front();
+    m_currentRequestId       = request.id;
+    m_currentRequestFinished = false;
+    m_tracksAddedToLibrary   = false;
 
     switch(request.type) {
         case(ScanRequest::Files):
@@ -346,7 +351,9 @@ void LibraryThreadHandlerPrivate::finishScanRequest()
         std::erase_if(m_scanRequests,
                       [this](const auto& pendingRequest) { return pendingRequest.id == m_currentRequestId; });
 
-        if(request->type == ScanRequest::Tracks) {
+        m_currentRequestFinished = true;
+
+        if((request->type == ScanRequest::Files || request->type == ScanRequest::Playlist) && !m_tracksAddedToLibrary) {
             // Next request (if any) will be started after tracksScanned is emitted from MusicLibrary
             return;
         }
@@ -443,21 +450,6 @@ ScanRequest LibraryThreadHandler::loadPlaylist(const QList<QUrl>& files)
     return p->addPlaylistRequest(files);
 }
 
-void LibraryThreadHandler::libraryRemoved(int id)
-{
-    if(p->m_scanRequests.empty()) {
-        return;
-    }
-
-    const auto request = p->currentRequest();
-    if(request && request->type == ScanRequest::Library && request->library.id == id) {
-        p->m_scanner.stopThread();
-    }
-    else {
-        std::erase_if(p->m_scanRequests, [id](const auto& pendingRequest) { return pendingRequest.library.id == id; });
-    }
-}
-
 void LibraryThreadHandler::saveUpdatedTracks(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager,
@@ -479,6 +471,21 @@ void LibraryThreadHandler::saveUpdatedTrackStats(const TrackList& track)
 void LibraryThreadHandler::cleanupTracks()
 {
     QMetaObject::invokeMethod(&p->m_trackDatabaseManager, &TrackDatabaseManager::cleanupTracks);
+}
+
+void LibraryThreadHandler::libraryRemoved(int id)
+{
+    if(p->m_scanRequests.empty()) {
+        return;
+    }
+
+    const auto request = p->currentRequest();
+    if(request && request->type == ScanRequest::Library && request->library.id == id) {
+        p->m_scanner.stopThread();
+    }
+    else {
+        std::erase_if(p->m_scanRequests, [id](const auto& pendingRequest) { return pendingRequest.library.id == id; });
+    }
 }
 } // namespace Fooyin
 
