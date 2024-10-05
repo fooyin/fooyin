@@ -18,7 +18,7 @@ This document outlines the upcoming features for fooyin.
 | Scrobbling                                    | ✅ 0.7.0  |
 | ReplayGain support                            | ✅ 0.7.0  |
 | Calculating ReplayGain                        | 🔄 0.8.0 |
-| Query-based language for advanced searching   | 🔄 0.8.0 |
+| Query-based language for advanced searching   | ✅ 0.8.0  |
 | Smart playlists                               | ❓ TBD    |
 | Album artwork downloading/saving              | ❓ TBD    |
 | Synchronised lyric support                    | ❓ TBD    |
@@ -46,6 +46,6 @@ This document outlines the upcoming features for fooyin.
 | Directory browser     | ✅ 0.4.0  |
 | Waveform seekbar      | ✅ 0.4.0  |
 | Playback queue viewer | ✅ 0.5.2  |
-| VU meter              | ❓ TBD    |
+| VU meter              | 🔄 0.8.0 |
 | Musical spectrum      | ❓ TBD    |
 | Spectrogram           | ❓ TBD    |
