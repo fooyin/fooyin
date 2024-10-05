@@ -235,6 +235,7 @@ public:
 
     bool m_isQuery{false};
     QString m_currentInput;
+    ParsedScript m_currentScript;
     ScriptCache m_cache;
     QStringList m_currentResult;
 };
@@ -306,7 +307,7 @@ void ScriptParserPrivate::errorAt(const ScriptScanner::Token& token, const QStri
     currentError.position = token.position;
     currentError.message  = errorMsg;
 
-    m_cache[m_currentInput].errors.emplace_back(currentError);
+    m_currentScript.errors.emplace_back(currentError);
 }
 
 void ScriptParserPrivate::error(const QString& message)
@@ -1133,14 +1134,14 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
 
     m_isQuery = false;
     m_scanner.setSkipWhitespace(false);
+    m_currentScript = {};
 
     if(m_cache.contains(input)) {
         return m_cache.get(input);
     }
 
-    m_currentInput = input;
-    ParsedScript script;
-    script.input = input;
+    m_currentInput        = input;
+    m_currentScript.input = input;
     m_scanner.setup(input);
 
     m_scanner.setup(input);
@@ -1149,14 +1150,14 @@ ParsedScript ScriptParserPrivate::parse(const QString& input)
     while(m_current.type != TokenType::TokEos) {
         const Expression expr = expression();
         if(expr.type != Expr::Null) {
-            script.expressions.emplace_back(expr);
+            m_currentScript.expressions.emplace_back(expr);
         }
     }
 
     consume(TokenType::TokEos, QObject::tr("Expected end of script"));
-    m_cache.insert(input, script);
+    m_cache.insert(input, m_currentScript);
 
-    return script;
+    return m_currentScript;
 }
 
 ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
@@ -1167,14 +1168,14 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
 
     m_isQuery = true;
     m_scanner.setSkipWhitespace(true);
+    m_currentScript = {};
 
     if(m_cache.contains(input)) {
         return m_cache.get(input);
     }
 
-    m_currentInput = input;
-    ParsedScript script;
-    script.input = input;
+    m_currentInput        = input;
+    m_currentScript.input = input;
     m_scanner.setup(input);
 
     advance();
@@ -1188,14 +1189,14 @@ ParsedScript ScriptParserPrivate::parseQuery(const QString& input)
         }
 
         if(expr.type != Expr::Null) {
-            script.expressions.emplace_back(expr);
+            m_currentScript.expressions.emplace_back(expr);
         }
     }
 
     consume(TokenType::TokEos, QObject::tr("Expected end of script"));
-    m_cache.insert(input, script);
+    m_cache.insert(input, m_currentScript);
 
-    return script;
+    return m_currentScript;
 }
 
 QString ScriptParserPrivate::evaluate(const ParsedScript& input, const auto& tracks)
