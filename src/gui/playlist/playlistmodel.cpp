@@ -1791,7 +1791,7 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
     keyPositionMap.reserve(data.containerOrder.size());
     const size_t containerCount = data.containerOrder.size();
     for(size_t i{0}; i < containerCount; ++i) {
-        keyPositionMap[data.containerOrder[i]] = i;
+        keyPositionMap[data.containerOrder.at(i)] = i;
     }
 
     auto cmpParentKeys = [keyPositionMap](const UId& key1, const UId& key2) {
