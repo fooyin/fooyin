@@ -52,8 +52,7 @@ public:
     void fillRemainingWithSilence()
     {
         const bool unsignedFormat = m_format.sampleFormat() == SampleFormat::U8;
-        std::fill(m_buffer.begin() + static_cast<long>(m_buffer.size()),
-                  m_buffer.begin() + static_cast<long>(m_buffer.capacity()),
+        std::fill(m_buffer.begin() + static_cast<long>(m_buffer.size()), m_buffer.end(),
                   unsignedFormat ? std::byte{0x80} : std::byte{0});
     }
 
