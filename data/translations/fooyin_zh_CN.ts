@@ -786,7 +786,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>添加指定文件到当前播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="50"/>
@@ -1746,47 +1746,47 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="635"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished"></translation>
+        <translation>每个文件独立计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="637"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished"></translation>
+        <translation>所有文件作为一张专辑整体计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="639"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>按标签拆分专辑后计算回放增益</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="641"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>从文件中删除回放增益信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="643"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>给选中的文件计算回放增益，每个文件独立计算</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="647"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>给选中的文件计算回放增益，按标签拆分专辑</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="648"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>从选中的文件中删除回放增益信息</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="684"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>正在检索音轨…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="691"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>回放增益扫描进度</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="959"/>
@@ -4882,7 +4882,7 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="145"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished"></translation>
+        <translation>与%1一起使用</translation>
     </message>
 </context>
 <context>
