@@ -185,6 +185,7 @@ public:
     bool m_showPlaying;
     bool m_pendingFocus;
 
+    int m_dropIndex;
     QString m_search;
     TrackList m_filteredTracks;
 };

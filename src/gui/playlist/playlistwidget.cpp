@@ -193,6 +193,7 @@ PlaylistWidgetPrivate::PlaylistWidgetPrivate(PlaylistWidget* self, ActionManager
     , m_sortingColumn{false}
     , m_showPlaying{false}
     , m_pendingFocus{false}
+    , m_dropIndex{-1}
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
 
@@ -840,13 +841,18 @@ void PlaylistWidgetPrivate::scanDroppedTracks(const QList<QUrl>& urls, int index
         return;
     }
 
+    m_dropIndex = index;
+
     m_playlistView->setFocus(Qt::ActiveWindowFocusReason);
 
     if(m_playlistInteractor) {
-        m_playlistInteractor->filesToTracks(urls, [this, index](const TrackList& tracks) {
+        m_playlistInteractor->filesToTracks(urls, [this](const TrackList& tracks) {
             auto* insertCmd = new InsertTracks(m_playerController, m_model,
-                                               m_playlistController->currentPlaylist()->id(), {{index, tracks}});
+                                               m_playlistController->currentPlaylist()->id(), {{m_dropIndex, tracks}});
             m_playlistController->addToHistory(insertCmd);
+            if(m_dropIndex >= 0) {
+                m_dropIndex += static_cast<int>(tracks.size());
+            }
         });
     }
 }

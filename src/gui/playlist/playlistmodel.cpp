@@ -1787,12 +1787,20 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
 {
     updateTrackIndexes();
 
-    auto cmpParentKeys = [data](const UId& key1, const UId& key2) {
+    std::unordered_map<UId, size_t, UId::UIdHash> keyPositionMap;
+    keyPositionMap.reserve(data.containerOrder.size());
+    const size_t containerCount = data.containerOrder.size();
+    for(size_t i{0}; i < containerCount; ++i) {
+        keyPositionMap[data.containerOrder[i]] = i;
+    }
+
+    auto cmpParentKeys = [keyPositionMap](const UId& key1, const UId& key2) {
         if(key1 == key2) {
             return false;
         }
-        return std::ranges::find(data.containerOrder, key1) < std::ranges::find(data.containerOrder, key2);
+        return keyPositionMap.at(key1) < keyPositionMap.at(key2);
     };
+
     using ParentItemMap = std::map<UId, PlaylistItemList, decltype(cmpParentKeys)>;
     std::map<int, ParentItemMap> itemData;
 
@@ -1800,8 +1808,9 @@ void PlaylistModel::handleTrackGroup(PendingData& data)
         if(key.isNull()) {
             return rootItem();
         }
-        if(data.items.contains(key)) {
-            return &data.items.at(key);
+        auto it = data.items.find(key);
+        if(it != data.items.end()) {
+            return &it->second;
         }
         return nullptr;
     };
