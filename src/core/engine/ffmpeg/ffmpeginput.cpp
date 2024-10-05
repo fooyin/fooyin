@@ -68,54 +68,13 @@ QStringList fileExtensions(bool allSupported)
         }
     }
 
-    static constexpr std::array extensionBlacklist{"ans",
-                                                   "apc",
-                                                   "aqt",
-                                                   "aqtitle",
-                                                   "art",
-                                                   "asc",
-                                                   "ass",
-                                                   "bin"
-                                                   "bmp_pipe",
-                                                   "bmp",
-                                                   "dds_pipe",
-                                                   "diz",
-                                                   "dpx_pipe",
-                                                   "dss",
-                                                   "dvbsub",
-                                                   "exr_pipe",
-                                                   "exr",
-                                                   "ffmetadata"
-                                                   "gif",
-                                                   "ice",
-                                                   "ico",
-                                                   "ilbc",
-                                                   "image2pipe",
-                                                   "jacosub",
-                                                   "jpeg_pipe",
-                                                   "jpeg",
-                                                   "jpg",
-                                                   "mpl2",
-                                                   "mpsub",
-                                                   "nfo",
-                                                   "pjs",
-                                                   "png_pipe",
-                                                   "png",
-                                                   "sami",
-                                                   "smi",
-                                                   "srt",
-                                                   "stl",
-                                                   "sub",
-                                                   "sub",
-                                                   "subviewer1",
-                                                   "sup",
-                                                   "tif",
-                                                   "tiff_pipe",
-                                                   "tiff",
-                                                   "txt",
-                                                   "vt",
-                                                   "vtt",
-                                                   "webvtt"};
+    static constexpr std::array extensionBlacklist{
+        "ans",       "apc",        "aqt",       "aqtitle", "art",      "asc",  "ass",        "bin",
+        "bmp_pipe",  "bmp",        "dds_pipe",  "diz",     "dpx_pipe", "dss",  "dvbsub",     "exr_pipe",
+        "exr",       "ffmetadata", "gif",       "ice",     "ico",      "ilbc", "image2pipe", "jacosub",
+        "jpeg_pipe", "jpeg",       "jpg",       "mpl2",    "mpsub",    "nfo",  "pjs",        "png_pipe",
+        "png",       "sami",       "smi",       "srt",     "stl",      "sub",  "sub",        "subviewer1",
+        "sup",       "tif",        "tiff_pipe", "tiff",    "txt",      "vt",   "vtt",        "webvtt"};
 
     for(const auto* ext : extensionBlacklist) {
         extensions.removeAll(QLatin1String{ext});
