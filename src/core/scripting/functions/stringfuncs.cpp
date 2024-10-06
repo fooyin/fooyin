@@ -215,20 +215,24 @@ QString right(const QStringList& vec)
 
 QString insert(const QStringList& vec)
 {
-    if(vec.size() != 3) {
+    const qsizetype count = vec.size();
+
+    if(count < 2 || count > 3) {
         return {};
     }
 
-    bool numSuccess{false};
-    const int index = vec.at(2).toInt(&numSuccess);
-
-    if(numSuccess) {
-        QString ret{vec.front()};
-        ret.insert(index, vec.at(1));
-        return ret;
+    qsizetype index = vec.at(0).size();
+    if(count == 3) {
+        bool numSuccess{false};
+        index = vec.at(2).toInt(&numSuccess);
+        if(!numSuccess) {
+            return {};
+        }
     }
 
-    return {};
+    QString ret{vec.front()};
+    ret.insert(index, vec.at(1));
+    return ret;
 }
 
 QString substr(const QStringList& vec)
@@ -520,6 +524,51 @@ QString abbr(const QStringList& vec)
     }
 
     return abbreviated;
+}
+
+QString elide_end(const QStringList& vec)
+{
+    if(vec.size() != 3) {
+        return {};
+    }
+
+    bool ok{false};
+    const auto limit = vec.at(1).toLongLong(&ok);
+    if(!ok || limit < 1) {
+        return {};
+    }
+
+    const auto length = vec.at(0).size();
+    if(length > limit) {
+        return vec.at(0).first(limit) + vec.at(2);
+    }
+
+    return vec.at(0);
+}
+
+QString elide_mid(const QStringList& vec)
+{
+    if(vec.size() != 3) {
+        return {};
+    }
+
+    bool ok{false};
+    const auto limit = vec.at(1).toLongLong(&ok);
+    if(!ok || limit < 2) {
+        return {};
+    }
+
+    const auto length = vec.at(0).size();
+    if(length > limit) {
+        auto left        = limit / 2;
+        const auto right = left;
+        if(limit & 1) {
+            ++left;
+        }
+        return vec.at(0).first(left) + vec.at(2) + vec.at(0).last(right);
+    }
+
+    return vec.at(0);
 }
 
 QString caps(const QStringList& vec)

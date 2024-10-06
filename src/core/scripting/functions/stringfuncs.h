@@ -54,6 +54,8 @@ QString abbr(const QStringList& vec);
 QString caps(const QStringList& vec);
 QString directory(const QStringList& vec);
 QString directoryPath(const QStringList& vec);
+QString elide_end(const QStringList& vec);
+QString elide_mid(const QStringList& vec);
 QString ext(const QStringList& vec);
 QString filename(const QStringList& vec);
 QString progress(const QStringList& vec);

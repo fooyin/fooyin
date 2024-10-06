@@ -248,6 +248,8 @@ void ScriptRegistryPrivate::addDefaultFunctions()
     m_funcs[QStringLiteral("caps")]           = Scripting::caps;
     m_funcs[QStringLiteral("directory")]      = Scripting::directory;
     m_funcs[QStringLiteral("directory_path")] = Scripting::directoryPath;
+    m_funcs[QStringLiteral("elide_end")]      = Scripting::elide_end;
+    m_funcs[QStringLiteral("elide_mid")]      = Scripting::elide_mid;
     m_funcs[QStringLiteral("ext")]            = Scripting::ext;
     m_funcs[QStringLiteral("filename")]       = Scripting::filename;
     m_funcs[QStringLiteral("progress")]       = Scripting::progress;
