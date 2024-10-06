@@ -328,7 +328,7 @@ void ApplicationPrivate::savePlaybackState() const
 {
     FyStateSettings stateSettings;
 
-    if(stateSettings.value(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
+    if(m_settings->fileValue(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
         const auto lastPos = static_cast<quint64>(m_playerController->currentPosition());
 
         stateSettings.setValue(QLatin1String{LastPlaybackPosition}, lastPos);
@@ -345,7 +345,7 @@ void ApplicationPrivate::loadPlaybackState() const
 {
     const FyStateSettings stateSettings;
 
-    if(!stateSettings.value(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
+    if(!m_settings->fileValue(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
         return;
     }
 
