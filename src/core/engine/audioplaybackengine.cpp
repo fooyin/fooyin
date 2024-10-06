@@ -686,6 +686,10 @@ int AudioPlaybackEngine::calculateFadeLength(int initialValue) const
         return 0;
     }
 
+    if(m_duration == 0) {
+        return 0;
+    }
+
     if(m_duration == std::numeric_limits<uint64_t>::max()) {
         return initialValue;
     }
