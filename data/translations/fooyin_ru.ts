@@ -308,12 +308,12 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="277"/>
         <source>Go up to the parent directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти в родительский каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="281"/>
         <source>Return to the previous directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуться в предыдущий каталог</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="289"/>
@@ -368,7 +368,7 @@
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="297"/>
         <source>Start playback of the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать воспроизведение выбранных файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/dirbrowser/dirbrowser.cpp" line="698"/>
@@ -424,7 +424,7 @@
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="78"/>
         <source>Show horizontal scrollbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать горизонтальную полосу прокрутки</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/dirbrowser/dirbrowserpage.cpp" line="79"/>
@@ -786,7 +786,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить указанные файлы в текущий плейлист</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="50"/>
@@ -1076,7 +1076,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtercontroller.cpp" line="529"/>
         <source>Filter Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтровать результаты</translation>
     </message>
 </context>
 <context>
@@ -1604,12 +1604,12 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="452"/>
         <source>Volume up</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="458"/>
         <source>Volume down</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить громкость</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="464"/>
@@ -1624,7 +1624,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="498"/>
         <source>Reading tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Чтение треков…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="498"/>
@@ -1641,22 +1641,22 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="530"/>
         <source>Reload tags from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезагрузить теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="531"/>
         <source>Reload tags from modified files</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезагрузить теги из измененных файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="533"/>
         <source>Replace tags in selected tracks with tags from the files</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить теги в выбранных треках на теги из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="535"/>
         <source>Replace tags in selected tracks with tags from the files if modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Заменить теги в выбранных треках тегами из файлов, если они были изменены</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="560"/>
@@ -1701,7 +1701,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="644"/>
         <source>Calculate ReplayGain values for selected files, considering all files as part of one album</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитать значения ReplayGain для выбранных файлов, считая все файлы частью одного альбома</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="867"/>
@@ -1746,47 +1746,47 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="635"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитать значения ReplayGain для каждого файла</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="637"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитайте значения ReplayGain как один альбом</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="639"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитать значения ReplayGain как альбомы (по тегам)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="641"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить информацию ReplayGain из файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="643"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитать значения ReplayGain для выбранных файлов, рассматривая каждый файл по отдельности</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="647"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассчитать значения ReplayGain для выбранных файлов, разделив их на альбомы по тегам</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="648"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить значения ReplayGain из выбранных файлов</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="684"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканирование треков…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="691"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Прогресс сканирования ReplayGain</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="959"/>
