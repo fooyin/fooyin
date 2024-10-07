@@ -122,7 +122,7 @@ public:
 
     VuMeterWidget::Type m_type{VuMeterWidget::Type::Peak};
     Qt::Orientation m_orientation{Qt::Horizontal};
-    bool m_showPeaks;
+    bool m_showPeaks{false};
     float m_channelSpacing;
     bool m_showLegend;
     float m_barSize;
