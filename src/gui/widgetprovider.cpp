@@ -42,6 +42,32 @@ struct FactoryWidget
     int limit{0};
     int count{0};
 };
+
+std::vector<FactoryWidget> sortBySubMenu(const std::map<QString, FactoryWidget>& widgets)
+{
+    std::vector<FactoryWidget> sortedWidgets;
+    sortedWidgets.reserve(widgets.size());
+    for(const auto& [_, widget] : widgets) {
+        sortedWidgets.push_back(widget);
+    }
+
+    std::ranges::sort(sortedWidgets, [](const auto& a, const auto& b) {
+        const QStringList& aSubMenus = a.subMenus;
+        const QStringList& bSubMenus = b.subMenus;
+
+        if(std::ranges::lexicographical_compare(aSubMenus, bSubMenus)) {
+            return true;
+        }
+
+        if(std::ranges::lexicographical_compare(bSubMenus, aSubMenus)) {
+            return false;
+        }
+
+        return a.name < b.name;
+    });
+
+    return sortedWidgets;
+}
 } // namespace
 
 namespace Fooyin {
@@ -68,7 +94,9 @@ public:
 
         std::map<QString, QMenu*> menuCache;
 
-        for(const auto& [key, widget] : m_widgets) {
+        const auto widgets = sortBySubMenu(m_widgets);
+
+        for(const auto& widget : widgets) {
             if(widget.isHidden) {
                 continue;
             }
@@ -95,8 +123,8 @@ public:
 
             if(canInclude) {
                 auto* addWidgetAction = new QAction(widget.name, parentMenu);
-                addWidgetAction->setEnabled(canCreateWidget(key));
-                QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, key] { func(key); });
+                addWidgetAction->setEnabled(canCreateWidget(widget.key));
+                QObject::connect(addWidgetAction, &QAction::triggered, menu, [func, widget] { func(widget.key); });
 
                 parentMenu->addAction(addWidgetAction);
             }
