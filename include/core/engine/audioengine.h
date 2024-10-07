@@ -92,6 +92,7 @@ signals:
     void positionChanged(const Fooyin::Track& track, uint64_t ms);
     void bitrateChanged(int bitrate);
 
+    void bufferPlayed(const Fooyin::AudioBuffer& buffer);
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
     void finished();
