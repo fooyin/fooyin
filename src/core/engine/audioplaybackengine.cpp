@@ -710,14 +710,14 @@ void AudioPlaybackEngine::onBufferProcessed(const AudioBuffer& buffer)
 
 void AudioPlaybackEngine::onRendererFinished()
 {
-    m_decoder = nullptr;
-
     if(m_pauseNextTrack) {
         m_pauseNextTrack = false;
         if(playbackState() == PlaybackState::FadingOut) {
             return;
         }
     }
+
+    m_decoder = nullptr;
 
     if(m_currentTrack.hasCue()) {
         return;
