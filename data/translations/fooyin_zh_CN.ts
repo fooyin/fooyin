@@ -641,7 +641,7 @@
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="482"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/editablelayout.cpp" line="549"/>
@@ -763,7 +763,7 @@
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="140"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/extendabletableview.cpp" line="180"/>
@@ -1012,7 +1012,7 @@
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="180"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/fileops/fileopsmodel.cpp" line="182"/>
@@ -1095,7 +1095,7 @@
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="170"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/plugins/filters/filtermanager.cpp" line="184"/>
@@ -1619,7 +1619,7 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="486"/>
         <source>Remove Playlist</source>
-        <translation>移除播放列表</translation>
+        <translation>删除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="498"/>
@@ -4060,7 +4060,7 @@
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="122"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/organiser/playlistorganiser.cpp" line="124"/>
@@ -4262,7 +4262,7 @@
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="299"/>
         <source>Remove playlist</source>
-        <translation>移除播放列表</translation>
+        <translation>删除播放列表</translation>
     </message>
     <message>
         <location filename="../../src/gui/playlist/playlisttabs.cpp" line="314"/>
@@ -4659,7 +4659,7 @@
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="56"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../src/gui/queueviewer/queueviewer.cpp" line="58"/>
@@ -5748,7 +5748,7 @@
     <message>
         <location filename="../../src/gui/splitters/tabstackwidget.cpp" line="310"/>
         <source>Re&amp;move</source>
-        <translation>移除(&amp;M)</translation>
+        <translation>删除(&amp;M)</translation>
     </message>
 </context>
 <context>
