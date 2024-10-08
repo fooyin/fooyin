@@ -125,6 +125,7 @@ public:
 
     QBasicTimer m_playlistSaveTimer;
     QBasicTimer m_settingsSaveTimer;
+    QMetaObject::Connection m_trackLoadedConnection;
 };
 
 ApplicationPrivate::ApplicationPrivate(Application* self_)
@@ -347,6 +348,10 @@ void ApplicationPrivate::loadPlaybackState() const
 {
     const FyStateSettings stateSettings;
 
+    if(!m_playerController->currentTrack().isValid()) {
+        return;
+    }
+
     if(!m_settings->fileValue(QLatin1String{Settings::Core::Internal::SavePlaybackState}, false).toBool()) {
         return;
     }
@@ -360,24 +365,27 @@ void ApplicationPrivate::loadPlaybackState() const
         }
     };
 
-    if(const auto state
-       = Utils::Enum::fromString<Player::PlayState>(stateSettings.value(QLatin1String{LastPlaybackState}).toString())) {
-        switch(state.value()) {
-            case(Player::PlayState::Paused):
-                qCDebug(APP) << "Restoring paused state…";
-                QMetaObject::invokeMethod(m_playerController, &PlayerController::pause, Qt::QueuedConnection);
-                seek();
-                break;
-            case(Player::PlayState::Playing):
-                qCDebug(APP) << "Restoring playing state…";
-                QMetaObject::invokeMethod(m_playerController, &PlayerController::play, Qt::QueuedConnection);
-                seek();
-                break;
-            case(Player::PlayState::Stopped):
-                qCDebug(APP) << "Restoring stopped state…";
-                QMetaObject::invokeMethod(m_playerController, &PlayerController::stop, Qt::QueuedConnection);
-                break;
-        }
+    const QString savedState = stateSettings.value(QLatin1String{LastPlaybackState}).toString();
+    const auto state         = Utils::Enum::fromString<Player::PlayState>(savedState);
+    if(!state) {
+        return;
+    }
+
+    switch(state.value()) {
+        case(Player::PlayState::Paused):
+            qCDebug(APP) << "Restoring paused state…";
+            QMetaObject::invokeMethod(m_playerController, &PlayerController::pause, Qt::QueuedConnection);
+            seek();
+            break;
+        case(Player::PlayState::Playing):
+            qCDebug(APP) << "Restoring playing state…";
+            QMetaObject::invokeMethod(m_playerController, &PlayerController::play, Qt::QueuedConnection);
+            seek();
+            break;
+        case(Player::PlayState::Stopped):
+            qCDebug(APP) << "Restoring stopped state…";
+            QMetaObject::invokeMethod(m_playerController, &PlayerController::stop, Qt::QueuedConnection);
+            break;
     }
 }
 
@@ -416,9 +424,13 @@ Application::Application(QObject* parent)
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksChanged, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksUpdated, this, startPlaylistTimer);
     QObject::connect(p->m_playlistHandler, &PlaylistHandler::tracksRemoved, this, startPlaylistTimer);
-    QObject::connect(
-        p->m_playlistHandler, &PlaylistHandler::playlistsPopulated, this, [this]() { p->loadPlaybackState(); },
-        Qt::QueuedConnection);
+    p->m_trackLoadedConnection = QObject::connect(&p->m_engine, &EngineHandler::trackStatusChanged, this,
+                                                  [this](const AudioEngine::TrackStatus status) {
+                                                      if(status == AudioEngine::TrackStatus::Loaded) {
+                                                          QObject::disconnect(p->m_trackLoadedConnection);
+                                                          p->loadPlaybackState();
+                                                      }
+                                                  });
 
     QObject::connect(p->m_playerController, &PlayerController::trackPlayed, p->m_library,
                      &UnifiedMusicLibrary::trackWasPlayed);

@@ -57,9 +57,13 @@ public:
 signals:
     void outputChanged(const QString& output, const QString& device);
     void deviceChanged(const QString& device);
+
     void engineError(const QString& error);
+    void engineStateChanged(AudioEngine::PlaybackState state);
     void trackStatusChanged(AudioEngine::TrackStatus status);
+
     void bufferPlayed(const Fooyin::AudioBuffer& buffer);
+
     void trackChanged(const Fooyin::Track& track);
     void trackAboutToFinish();
     void finished();

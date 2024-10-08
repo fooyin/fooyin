@@ -113,6 +113,8 @@ void EngineHandlerPrivate::handleStateChange(AudioEngine::PlaybackState state) c
         case(AudioEngine::PlaybackState::FadingOut):
             break;
     }
+
+    emit m_self->engineStateChanged(state);
 }
 
 void EngineHandlerPrivate::handleTrackChange(const Track& track)
