@@ -566,8 +566,7 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
             const float barDb = MinDb + static_cast<float>(row) * dbStep;
 
             if(channelLevel > barDb) {
-                const float barY
-                    = (row == 0) ? m_meterHeight - m_barSize : m_meterHeight - (static_cast<float>(row) * barSize);
+                const float barY = m_meterHeight - (static_cast<float>(row) * barSize);
 
                 for(int column{0}; column < m_barSections; ++column) {
                     const float barX = x + static_cast<float>(column) * (barWidth + m_sectionSpacing);
