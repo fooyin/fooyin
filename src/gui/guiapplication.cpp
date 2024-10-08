@@ -655,19 +655,28 @@ void GuiApplicationPrivate::setupReplayGainMenu()
         m_library->writeTrackMetadata(tracks);
     };
 
+    const auto canWriteInfo = [this]() -> bool {
+        return std::ranges::any_of(m_selectionController.selectedTracks(),
+                                   [](const Track& track) { return !track.isInArchive(); });
+    };
+
     QObject::connect(rgTrackAction, &QAction::triggered, m_self, [this] { calculateReplayGain(RGScanType::Track); });
     QObject::connect(rgSingleAlbumAction, &QAction::triggered, m_self,
                      [this] { calculateReplayGain(RGScanType::SingleAlbum); });
     QObject::connect(rgAlbumAction, &QAction::triggered, m_self, [this] { calculateReplayGain(RGScanType::Album); });
     QObject::connect(rgRemoveAction, &QAction::triggered, m_mainWindow.get(), removeInfo);
 
-    QObject::connect(&m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
-                     [this, rgSingleAlbumAction, rgRemoveAction] {
-                         rgSingleAlbumAction->setEnabled(m_selectionController.selectedTrackCount() > 1);
-                         rgRemoveAction->setEnabled(
-                             std::ranges::any_of(m_selectionController.selectedTracks(),
-                                                 [](const Track& track) { return track.hasRGInfo(); }));
-                     });
+    QObject::connect(
+        &m_selectionController, &TrackSelectionController::selectionChanged, m_mainWindow.get(),
+        [this, replayGainMenu, rgSingleAlbumAction, rgAlbumAction, rgRemoveAction, canWriteInfo] {
+            const bool tracksWritable = canWriteInfo();
+            replayGainMenu->menu()->setEnabled(tracksWritable);
+            rgAlbumAction->setEnabled(tracksWritable && m_selectionController.selectedTrackCount() > 1);
+            rgSingleAlbumAction->setEnabled(tracksWritable && m_selectionController.selectedTrackCount() > 1);
+            rgRemoveAction->setEnabled(tracksWritable
+                                       && std::ranges::any_of(m_selectionController.selectedTracks(),
+                                                              [](const Track& track) { return track.hasRGInfo(); }));
+        });
 
     replayGainMenu->menu()->addAction(rgTrackAction);
     replayGainMenu->menu()->addAction(rgSingleAlbumAction);
