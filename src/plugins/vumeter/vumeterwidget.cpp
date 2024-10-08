@@ -283,7 +283,7 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel, QRect updateRect)
             width += (2 * barSize);
         }
 
-        const QRect channelUpdateRect{snappedMinX, y, width, static_cast<int>(channelSize())};
+        const QRect channelUpdateRect{snappedMinX, y, width, static_cast<int>(channelSize()) + 1};
         updateRect = updateRect.united(channelUpdateRect);
     }
     else {
@@ -305,7 +305,7 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel, QRect updateRect)
             height += (2 * barSize);
         }
 
-        const QRect channelUpdateRect{x, snappedMinY, static_cast<int>(channelSize()), height};
+        const QRect channelUpdateRect{x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
         updateRect = updateRect.united(channelUpdateRect);
     }
 
@@ -508,18 +508,20 @@ void VuMeterWidgetPrivate::drawHorizontalBars(QPainter& painter, float x, float 
     const float barHeight   = totalHeight / sections;
 
     if(barCount == 1) {
-        for(int row = 0; row < m_barSections; ++row) {
+        for(int row{0}; row < m_barSections; ++row) {
             const float barY = y + static_cast<float>(row) * (barHeight + m_barSpacing);
             painter.fillRect(QRectF{x, barY, dbToSize(channelLevel), barHeight}, m_gradient);
         }
     }
     else {
         const auto first = static_cast<int>(std::max(0.0F, (((start - m_labelsSize) / m_meterWidth) * bars)));
+
         for(int column = first; column < barCount; ++column) {
             const float barDb = MinDb + static_cast<float>(column) * dbStep;
             if(channelLevel > barDb) {
                 const float barX = x + (static_cast<float>(column) * barSize);
-                for(int row = 0; row < m_barSections; ++row) {
+
+                for(int row{0}; row < m_barSections; ++row) {
                     const float barY = y + static_cast<float>(row) * (barHeight + m_sectionSpacing);
                     painter.fillRect(QRectF{barX, barY, m_barSize, barHeight}, m_gradient);
                 }
@@ -541,7 +543,7 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
     const float barWidth   = totalWidth / sections;
 
     if(barCount == 1) {
-        for(int column = 0; column < m_barSections; ++column) {
+        for(int column{0}; column < m_barSections; ++column) {
             const float barX = x + static_cast<float>(column) * (barWidth + m_barSpacing);
             const float barY = dbToPos(channelLevel) - m_labelsSize;
             painter.fillRect(QRectF{barX, barY, barWidth, m_meterHeight - barY}, m_gradient);
@@ -549,12 +551,14 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
     }
     else {
         const auto first = static_cast<int>(std::max(0.0F, bars - ((start / m_meterHeight) * bars) - 1));
-        for(int row = first; row < barCount; ++row) {
+        for(int row{first}; row < barCount; ++row) {
             const float barDb = MinDb + static_cast<float>(row) * dbStep;
+
             if(channelLevel > barDb) {
                 const float barY
                     = (row == 0) ? m_meterHeight - m_barSize : m_meterHeight - (static_cast<float>(row) * barSize);
-                for(int column = 0; column < m_barSections; ++column) {
+
+                for(int column{0}; column < m_barSections; ++column) {
                     const float barX = x + static_cast<float>(column) * (barWidth + m_sectionSpacing);
                     painter.fillRect(QRectF{barX, barY, barWidth, m_barSize}, m_gradient);
                 }
