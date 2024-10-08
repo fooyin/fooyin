@@ -93,7 +93,7 @@ public:
     void updateSize();
     void calculatePeak();
     void updateChannelLevels(int channel, qint64 elapsedTime, qint64 peakTime, float falloff, bool& zeroLevel);
-    QRect calculateUpdateRect(int channel, QRect updateRect);
+    QRect calculateUpdateRect(int channel);
     void createGradient();
 
     [[nodiscard]] float channelSize() const;
@@ -220,7 +220,7 @@ void VuMeterWidgetPrivate::calculatePeak()
     for(int channel{0}; channel < channels; ++channel) {
         updateChannelLevels(channel, elapsedTime, peakTime, falloff, m_zeroLevel);
         if(m_barSize > 0) {
-            updateRect = calculateUpdateRect(channel, updateRect);
+            updateRect = updateRect.united(calculateUpdateRect(channel));
         }
     }
 
@@ -259,7 +259,7 @@ void VuMeterWidgetPrivate::updateChannelLevels(int channel, qint64 elapsedTime, 
     }
 }
 
-QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel, QRect updateRect)
+QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
 {
     const auto labelSize = static_cast<int>(m_labelsSize);
     const auto barSize   = static_cast<int>(m_barSize + m_barSpacing);
@@ -283,8 +283,7 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel, QRect updateRect)
             width += (2 * barSize);
         }
 
-        const QRect channelUpdateRect{snappedMinX, y, width, static_cast<int>(channelSize()) + 1};
-        updateRect = updateRect.united(channelUpdateRect);
+        return {snappedMinX, y, width, static_cast<int>(channelSize()) + 1};
     }
     else {
         const int x        = static_cast<int>(channelX(channel));
@@ -305,11 +304,8 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel, QRect updateRect)
             height += (2 * barSize);
         }
 
-        const QRect channelUpdateRect{x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
-        updateRect = updateRect.united(channelUpdateRect);
+        return {x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
     }
-
-    return updateRect;
 }
 
 void VuMeterWidgetPrivate::createGradient()
