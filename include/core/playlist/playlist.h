@@ -30,6 +30,20 @@ namespace Fooyin {
 class PlaylistPrivate;
 class SettingsManager;
 
+struct FYCORE_EXPORT PlaylistTrack
+{
+    Track track;
+    UId playlistId;
+    int indexInPlaylist{-1};
+
+    [[nodiscard]] bool isValid() const;
+    [[nodiscard]] bool isInPlaylist() const;
+
+    bool operator==(const PlaylistTrack& other) const;
+    bool operator!=(const PlaylistTrack& other) const;
+    bool operator<(const PlaylistTrack& other) const;
+};
+
 /*!
  * Represents a list of tracks for playback.
  * Playlists are saved to the database and restored

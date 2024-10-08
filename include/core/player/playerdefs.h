@@ -35,38 +35,4 @@ enum class PlayState : uint8_t
 };
 Q_ENUM_NS(PlayState)
 } // namespace Player
-
-struct PlaylistTrack
-{
-    Track track;
-    UId playlistId;
-    int indexInPlaylist{-1};
-
-    [[nodiscard]] bool isValid() const
-    {
-        return track.isValid();
-    }
-
-    [[nodiscard]] bool isInPlaylist() const
-    {
-        return playlistId.isValid();
-    }
-
-    bool operator==(const PlaylistTrack& other) const
-    {
-        return std::tie(track, playlistId, indexInPlaylist)
-            == std::tie(other.track, other.playlistId, other.indexInPlaylist);
-    }
-
-    bool operator!=(const PlaylistTrack& other) const
-    {
-        return !(*this == other);
-    }
-
-    bool operator<(const PlaylistTrack& other) const
-    {
-        return std::tie(track, playlistId, indexInPlaylist)
-             < std::tie(other.track, other.playlistId, other.indexInPlaylist);
-    }
-};
 } // namespace Fooyin

@@ -50,11 +50,8 @@ public:
     bool noConcretePlaylists();
 
     void startNextTrack(const Track& track, int index) const;
-    void nextTrackChange(int delta);
-    Track nextTrack(int delta);
-
-    void next();
-    void previous();
+    PlaylistTrack nextTrackChange(int delta);
+    PlaylistTrack nextTrack(int delta);
 
     void resetShuffleOrder();
     void updateIndices();
@@ -131,7 +128,7 @@ void PlaylistHandlerPrivate::startNextTrack(const Track& track, int index) const
     m_playerController->play();
 }
 
-void PlaylistHandlerPrivate::nextTrackChange(int delta)
+PlaylistTrack PlaylistHandlerPrivate::nextTrackChange(int delta)
 {
     if(m_scheduledPlaylist) {
         m_activePlaylist    = m_scheduledPlaylist;
@@ -139,26 +136,28 @@ void PlaylistHandlerPrivate::nextTrackChange(int delta)
     }
 
     if(!m_activePlaylist) {
-        m_playerController->stop();
-        return;
+        return {};
     }
 
-    const Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
-
+    Track nextTrk = m_activePlaylist->nextTrackChange(delta, m_playerController->playMode());
     if(!nextTrk.isValid()) {
-        m_playerController->reset();
-        return;
+        return {};
     }
 
-    startNextTrack(nextTrk, m_activePlaylist->currentTrackIndex());
+    if(!nextTrk.metadataWasRead()) {
+        if(m_audioLoader->readTrackMetadata(nextTrk)) {
+            nextTrk.generateHash();
+            m_activePlaylist->updateTrackAtIndex(m_activePlaylist->currentTrackIndex(), nextTrk);
+        }
+    }
+
+    return {nextTrk, m_activePlaylist->id(), m_activePlaylist->currentTrackIndex()};
 }
 
-Track PlaylistHandlerPrivate::nextTrack(int delta)
+PlaylistTrack PlaylistHandlerPrivate::nextTrack(int delta)
 {
     auto* playlist = m_scheduledPlaylist ? m_scheduledPlaylist : m_activePlaylist;
-
     if(!playlist) {
-        m_playerController->stop();
         return {};
     }
 
@@ -172,22 +171,7 @@ Track PlaylistHandlerPrivate::nextTrack(int delta)
         }
     }
 
-    return nextTrk;
-}
-
-void PlaylistHandlerPrivate::next()
-{
-    nextTrackChange(1);
-}
-
-void PlaylistHandlerPrivate::previous()
-{
-    if(m_settings->value<Settings::Core::RewindPreviousTrack>() && m_playerController->currentPosition() > 5000) {
-        m_playerController->seek(0);
-    }
-    else {
-        nextTrackChange(-1);
-    }
+    return {nextTrk, m_activePlaylist->id(), m_activePlaylist->nextIndex(delta, m_playerController->playMode())};
 }
 
 void PlaylistHandlerPrivate::resetShuffleOrder()
@@ -357,9 +341,6 @@ PlaylistHandler::PlaylistHandler(DbConnectionPoolPtr dbPool, std::shared_ptr<Aud
     if(p->noConcretePlaylists()) {
         PlaylistHandler::createPlaylist(QStringLiteral("Default"), {});
     }
-
-    QObject::connect(p->m_playerController, &PlayerController::nextTrack, this, [this]() { p->next(); });
-    QObject::connect(p->m_playerController, &PlayerController::previousTrack, this, [this]() { p->previous(); });
 
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsGroupScript>(this, [this]() { p->resetShuffleOrder(); });
     p->m_settings->subscribe<Settings::Core::ShuffleAlbumsSortScript>(this, [this]() { p->resetShuffleOrder(); });
@@ -657,14 +638,24 @@ void PlaylistHandler::clearSchedulePlaylist()
     p->m_scheduledPlaylist = nullptr;
 }
 
-Track PlaylistHandler::nextTrack()
+PlaylistTrack PlaylistHandler::nextTrack()
 {
     return p->nextTrack(1);
 }
 
-Track PlaylistHandler::previousTrack()
+PlaylistTrack PlaylistHandler::changeNextTrack()
+{
+    return p->nextTrackChange(1);
+}
+
+PlaylistTrack PlaylistHandler::previousTrack()
 {
     return p->nextTrack(-1);
+}
+
+PlaylistTrack PlaylistHandler::changePreviousTrack()
+{
+    return p->nextTrackChange(-1);
 }
 
 void PlaylistHandler::renamePlaylist(const UId& id, const QString& name)

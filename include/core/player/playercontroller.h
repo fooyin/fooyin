@@ -29,6 +29,7 @@
 
 namespace Fooyin {
 class PlayerControllerPrivate;
+class PlaylistHandler;
 class SettingsManager;
 
 /*!
@@ -95,6 +96,8 @@ public:
     void updateCurrentTrackPlaylist(const UId& playlistId);
     void updateCurrentTrackIndex(int index);
 
+    [[nodiscard]] Track upcomingTrack() const;
+
     [[nodiscard]] PlaybackQueue playbackQueue() const;
 
     /** Queues the @p track to be played at the end of the current track. */
@@ -114,12 +117,11 @@ public:
     void clearPlaylistQueue(const UId& playlistId);
     void clearQueue();
 
+    void setPlaylistHandler(PlaylistHandler* handler);
+
 signals:
     void playStateChanged(Player::PlayState state);
     void playModeChanged(Fooyin::Playlist::PlayModes mode);
-
-    void nextTrack();
-    void previousTrack();
 
     void positionChanged(uint64_t ms);
     void positionMoved(uint64_t ms);

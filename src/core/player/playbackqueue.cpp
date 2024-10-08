@@ -78,7 +78,16 @@ PlaylistTrackIndexes PlaybackQueue::indexesForPlaylist(const UId& id) const
     return indexes;
 }
 
-PlaylistTrack PlaybackQueue::nextTrack()
+PlaylistTrack PlaybackQueue::nextTrack() const
+{
+    if(m_tracks.empty()) {
+        return {};
+    }
+
+    return m_tracks.front();
+}
+
+PlaylistTrack PlaybackQueue::nextTrackChange()
 {
     if(m_tracks.empty()) {
         return {};

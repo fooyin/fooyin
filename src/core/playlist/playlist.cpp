@@ -51,6 +51,33 @@ struct TrackIndex
 } // namespace
 
 namespace Fooyin {
+bool PlaylistTrack::isValid() const
+{
+    return track.isValid();
+}
+
+bool PlaylistTrack::isInPlaylist() const
+{
+    return playlistId.isValid();
+}
+
+bool PlaylistTrack::operator==(const PlaylistTrack& other) const
+{
+    return std::tie(track, playlistId, indexInPlaylist)
+        == std::tie(other.track, other.playlistId, other.indexInPlaylist);
+}
+
+bool PlaylistTrack::operator!=(const PlaylistTrack& other) const
+{
+    return !(*this == other);
+}
+
+bool PlaylistTrack::operator<(const PlaylistTrack& other) const
+{
+    return std::tie(track, playlistId, indexInPlaylist)
+         < std::tie(other.track, other.playlistId, other.indexInPlaylist);
+}
+
 struct Playlist::PrivateKey
 {
     PrivateKey() { }

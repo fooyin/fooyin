@@ -42,7 +42,8 @@ public:
                                  QObject* parent = nullptr);
     ~AudioPlaybackEngine() override;
 
-    void changeTrack(const Track& track) override;
+    void loadTrack(const Track& track) override;
+    void prepareNextTrack(const Track& track) override;
 
     void play() override;
     void pause() override;
@@ -60,6 +61,8 @@ protected:
     PlaybackState updateState(PlaybackState state) override;
 
 private:
+    void resetNextTrack();
+    AudioFormat loadPreparedTrack();
     void resetWorkers();
     void stopWorkers(bool full = false);
 
@@ -69,7 +72,6 @@ private:
     void setupDuration();
     void updateFormat(const AudioFormat& nextFormat, const std::function<void(bool)>& callback);
     bool checkReadyToDecode();
-    bool waitForTrackLoaded(PlaybackState state);
 
     void readNextBuffer();
     void updatePosition();
@@ -83,7 +85,6 @@ private:
     [[nodiscard]] int calculateFadeLength(int initialValue) const;
 
     std::shared_ptr<AudioLoader> m_audioLoader;
-    AudioDecoder* m_decoder;
     SettingsManager* m_settings;
 
     AudioClock m_clock;
@@ -103,14 +104,23 @@ private:
     bool m_decoding;
     bool m_updatingTrack;
     bool m_pauseNextTrack;
+    std::optional<PlaybackState> m_pendingState;
+
+    AudioDecoder* m_decoder;
+    AudioDecoder* m_nextDecoder;
+    AudioFormat m_format;
+    AudioFormat m_nextFormat;
 
     Track m_currentTrack;
+    Track m_nextTrack;
     AudioSource m_source;
+    AudioSource m_nextSource;
     std::unique_ptr<QFile> m_file;
-    AudioFormat m_format;
+    std::unique_ptr<QFile> m_nextFile;
 
     QThread* m_outputThread;
     AudioRenderer m_renderer;
+    QMetaObject::Connection m_pausedConnection;
 
     QBasicTimer m_posTimer;
     QBasicTimer m_bitrateTimer;

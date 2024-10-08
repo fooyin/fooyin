@@ -268,11 +268,6 @@ void AudioRenderer::updateVolume(double volume)
     }
 }
 
-QString AudioRenderer::deviceError() const
-{
-    return m_lastDeviceError;
-}
-
 void AudioRenderer::timerEvent(QTimerEvent* event)
 {
     if(event->timerId() == m_writeTimer.timerId()) {

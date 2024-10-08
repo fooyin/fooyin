@@ -71,7 +71,8 @@ public:
     [[nodiscard]] PlaybackState playbackState() const;
     [[nodiscard]] TrackStatus trackStatus() const;
 
-    virtual void changeTrack(const Track& track) = 0;
+    virtual void loadTrack(const Track& track)        = 0;
+    virtual void prepareNextTrack(const Track& track) = 0;
 
     virtual void play()  = 0;
     virtual void pause() = 0;

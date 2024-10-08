@@ -25,6 +25,7 @@
 #include "playlistpreset.h"
 
 #include <core/player/playerdefs.h>
+#include <core/playlist/playlist.h>
 #include <utils/treemodel.h>
 
 #include <QPixmap>

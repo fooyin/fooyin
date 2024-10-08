@@ -60,8 +60,6 @@ public:
     void updateDevice(const QString& device);
     void updateVolume(double volume);
 
-    [[nodiscard]] QString deviceError() const;
-
 signals:
     void initialised(bool success);
     void paused(uint64_t delay);

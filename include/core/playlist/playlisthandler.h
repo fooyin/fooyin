@@ -99,9 +99,13 @@ public:
     /** Clears any scheduled playlist. */
     void clearSchedulePlaylist();
     /** Returns the next track to be played, or an invalid track if the playlist will end. */
-    Track nextTrack();
+    PlaylistTrack nextTrack();
+    /** Returns the next track to be played, or an invalid track if the playlist will end. */
+    PlaylistTrack changeNextTrack();
     /** Returns the previous track to be played, or an invalid track if the playlist will end. */
-    Track previousTrack();
+    PlaylistTrack previousTrack();
+    /** Returns the previous track to be played, or an invalid track if the playlist will end. */
+    PlaylistTrack changePreviousTrack();
 
     void renamePlaylist(const UId& id, const QString& name);
     void removePlaylist(const UId& id);

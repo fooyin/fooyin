@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <core/player/playerdefs.h>
+#include <core/playlist/playlist.h>
 #include <utils/treeitem.h>
 
 namespace Fooyin {

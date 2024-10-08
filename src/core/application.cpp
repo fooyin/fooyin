@@ -153,6 +153,8 @@ ApplicationPrivate::ApplicationPrivate(Application* self_)
 
 void ApplicationPrivate::initialise()
 {
+    m_playerController->setPlaylistHandler(m_playlistHandler);
+
     registerTypes();
     registerInputs();
     registerPlaylistParsers();
@@ -428,8 +430,10 @@ Application::Application(QObject* parent)
                      &PlaylistHandler::handleTracksChanged);
     QObject::connect(p->m_library, &MusicLibrary::tracksUpdated, p->m_playlistHandler,
                      &PlaylistHandler::handleTracksUpdated);
-    QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, p->m_playlistHandler,
-                     &PlaylistHandler::trackAboutToFinish);
+    QObject::connect(&p->m_engine, &EngineHandler::trackAboutToFinish, this, [this]() {
+        p->m_playlistHandler->trackAboutToFinish();
+        p->m_engine.prepareNextTrack(p->m_playerController->upcomingTrack());
+    });
     QObject::connect(&p->m_engine, &EngineHandler::trackChanged, p->m_library, [this](const Track& track) {
         p->m_library->updateTrackMetadata({track});
         auto currentTrack  = p->m_playerController->currentPlaylistTrack();

@@ -41,6 +41,7 @@ public:
     ~EngineHandler() override;
 
     void setup();
+    void prepareNextTrack(const Track& track);
 
     [[nodiscard]] AudioEngine::PlaybackState engineState() const override;
 

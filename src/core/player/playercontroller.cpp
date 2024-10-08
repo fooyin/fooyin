@@ -17,6 +17,7 @@
  *
  */
 
+#include "core/playlist/playlisthandler.h"
 #include <core/player/playercontroller.h>
 
 #include <core/player/playbackqueue.h>
@@ -61,6 +62,7 @@ public:
 
     PlayerController* m_self;
     SettingsManager* m_settings;
+    PlaylistHandler* m_playlistHandler{nullptr};
 
     Player::PlayState m_playStatus{Player::PlayState::Stopped};
     Playlist::PlayModes m_playMode;
@@ -106,7 +108,7 @@ void PlayerController::reset()
 void PlayerController::play()
 {
     if(!p->m_currentTrack.isValid() && !p->m_queue.empty()) {
-        changeCurrentTrack(p->m_queue.nextTrack());
+        changeCurrentTrack(p->m_queue.nextTrackChange());
         emit tracksDequeued({p->m_currentTrack});
     }
 
@@ -115,8 +117,12 @@ void PlayerController::play()
             emit playStateChanged(p->m_playStatus);
         }
     }
+    else if(p->m_playlistHandler) {
+        const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
+        changeCurrentTrack(track);
+    }
     else {
-        emit nextTrack();
+        p->m_currentTrack = {};
     }
 }
 
@@ -144,7 +150,16 @@ void PlayerController::pause()
 
 void PlayerController::previous()
 {
-    emit previousTrack();
+    if(p->m_settings->value<Settings::Core::RewindPreviousTrack>() && currentPosition() > 5000) {
+        seek(0);
+    }
+    else if(p->m_playlistHandler) {
+        const PlaylistTrack track = p->m_playlistHandler->changePreviousTrack();
+        changeCurrentTrack(track);
+    }
+    else {
+        p->m_currentTrack = {};
+    }
 }
 
 void PlayerController::next()
@@ -155,9 +170,10 @@ void PlayerController::next()
         return;
     }
 
-    if(p->m_queue.empty()) {
-        p->m_isQueueTrack = false;
-        emit nextTrack();
+    if(p->m_queue.empty() && p->m_playlistHandler) {
+        p->m_isQueueTrack         = false;
+        const PlaylistTrack track = p->m_playlistHandler->changeNextTrack();
+        changeCurrentTrack(track);
     }
     else {
         p->m_currentTrack = {};
@@ -202,6 +218,11 @@ void PlayerController::changeCurrentTrack(const Track& track)
 
 void PlayerController::changeCurrentTrack(const PlaylistTrack& track)
 {
+    if(!track.isValid()) {
+        reset();
+        stop();
+    }
+
     p->changeTrack(track);
 
     emit currentTrackChanged(p->m_currentTrack.track);
@@ -220,6 +241,19 @@ void PlayerController::updateCurrentTrackIndex(int index)
     if(std::exchange(p->m_currentTrack.indexInPlaylist, index) != index) {
         emit playlistTrackChanged(p->m_currentTrack);
     }
+}
+
+Track PlayerController::upcomingTrack() const
+{
+    if(p->m_settings->value<Settings::Core::StopAfterCurrent>()) {
+        return {};
+    }
+
+    if(p->m_queue.empty() && p->m_playlistHandler) {
+        return p->m_playlistHandler->nextTrack().track;
+    }
+
+    return p->m_queue.nextTrack().track;
 }
 
 PlaybackQueue PlayerController::playbackQueue() const
@@ -449,6 +483,11 @@ void PlayerController::clearQueue()
     if(!removedTracks.empty()) {
         emit tracksDequeued(removedTracks);
     }
+}
+
+void PlayerController::setPlaylistHandler(PlaylistHandler* handler)
+{
+    p->m_playlistHandler = handler;
 }
 } // namespace Fooyin
 

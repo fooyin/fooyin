@@ -117,7 +117,7 @@ void EngineHandlerPrivate::handleStateChange(AudioEngine::PlaybackState state) c
 
 void EngineHandlerPrivate::handleTrackChange(const Track& track)
 {
-    QMetaObject::invokeMethod(m_engine, [this, track]() { m_engine->changeTrack(track); }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_engine, [this, track]() { m_engine->loadTrack(track); }, Qt::QueuedConnection);
     if(m_playerController->playState() == Player::PlayState::Playing) {
         playStateChanged(Player::PlayState::Playing);
     }
@@ -244,6 +244,11 @@ EngineHandler::~EngineHandler()
 void EngineHandler::setup()
 {
     p->changeOutput(p->m_settings->value<Settings::Core::AudioOutput>());
+}
+
+void EngineHandler::prepareNextTrack(const Track& track)
+{
+    QMetaObject::invokeMethod(p->m_engine, [this, track]() { p->m_engine->prepareNextTrack(track); });
 }
 
 AudioEngine::PlaybackState EngineHandler::engineState() const

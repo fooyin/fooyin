@@ -21,7 +21,7 @@
 
 #include "fycore_export.h"
 
-#include <core/player/playerdefs.h>
+#include <core/playlist/playlist.h>
 #include <core/track.h>
 
 #include <map>
@@ -47,7 +47,8 @@ public:
     [[nodiscard]] PlaylistIndexes playlistIndexes() const;
     [[nodiscard]] PlaylistTrackIndexes indexesForPlaylist(const UId& id) const;
 
-    PlaylistTrack nextTrack();
+    [[nodiscard]] PlaylistTrack nextTrack() const;
+    PlaylistTrack nextTrackChange();
 
     void addTracks(const QueueTracks& tracks);
     void replaceTracks(const QueueTracks& tracks);
