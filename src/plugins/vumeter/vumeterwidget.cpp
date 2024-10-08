@@ -650,7 +650,7 @@ void VuMeterWidget::renderBuffer(const AudioBuffer& buffer)
         const int totalSamples = normalisedBuffer.sampleCount();
         const int bps          = normalisedBuffer.format().bytesPerSample();
 
-        std::array<float, MaxChannels> peaks{MinDb};
+        std::array<float, MaxChannels> peaks{0.0F};
         std::array<int, MaxChannels> sampleCounts{0};
 
         for(int i{0}; i < totalSamples; ++i) {
