@@ -24,6 +24,7 @@
 
 #include <core/engine/audiobuffer.h>
 #include <core/engine/audioconverter.h>
+#include <core/player/playercontroller.h>
 #include <utils/async.h>
 #include <utils/settings/settingsdialogcontroller.h>
 #include <utils/settings/settingsmanager.h>
@@ -87,7 +88,8 @@ namespace Fooyin::VuMeter {
 class VuMeterWidgetPrivate
 {
 public:
-    explicit VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type, SettingsManager* settings);
+    explicit VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type, PlayerController* playerController,
+                                  SettingsManager* settings);
 
     void reset();
     void updateSize();
@@ -112,7 +114,10 @@ public:
                             float start) const;
     void drawVerticalBars(QPainter& painter, float x, float channelLevel, float channelSize, float start) const;
 
+    void playStateChanged(Player::PlayState state);
+
     VuMeterWidget* m_self;
+    PlayerController* m_playerController;
     SettingsManager* m_settings;
 
     AudioFormat m_format;
@@ -147,8 +152,10 @@ public:
     std::vector<float> m_previousChannelPeaks;
 };
 
-VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type, SettingsManager* settings)
+VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type,
+                                           PlayerController* playerController, SettingsManager* settings)
     : m_self{self}
+    , m_playerController{playerController}
     , m_settings{settings}
     , m_type{type}
     , m_channelSpacing{static_cast<float>(m_settings->value<Settings::VuMeter::ChannelSpacing>())}
@@ -159,6 +166,14 @@ VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::T
     , m_colours{m_settings->value<Settings::VuMeter::MeterColours>().value<Colours>()}
 {
     m_format.setSampleFormat(SampleFormat::F32);
+
+    playStateChanged(m_playerController->playState());
+
+    QObject::connect(m_playerController, &PlayerController::playStateChanged, m_self,
+                     [this]() { playStateChanged(m_playerController->playState()); });
+    QObject::connect(m_playerController, &PlayerController::currentTrackChanged, m_self,
+                     [this]() { playStateChanged(m_playerController->playState()); });
+
     reset();
     updateSize();
 }
@@ -563,9 +578,30 @@ void VuMeterWidgetPrivate::drawVerticalBars(QPainter& painter, float x, float ch
     }
 }
 
-VuMeterWidget::VuMeterWidget(Type type, SettingsManager* settings, QWidget* parent)
+void VuMeterWidgetPrivate::playStateChanged(Player::PlayState state)
+{
+    m_changingTrack = true;
+    updateSize();
+
+    switch(state) {
+        case(Player::PlayState::Playing):
+            m_updateTimer.start(UpdateInterval, m_self);
+            m_elapsedTimer.start();
+            break;
+        case(Player::PlayState::Paused):
+            m_updateTimer.stop();
+            break;
+        case(Player::PlayState::Stopped):
+            if(m_updateTimer.isActive()) {
+                m_stopping = true;
+            }
+            break;
+    }
+}
+
+VuMeterWidget::VuMeterWidget(Type type, PlayerController* playerController, SettingsManager* settings, QWidget* parent)
     : FyWidget{parent}
-    , p{std::make_unique<VuMeterWidgetPrivate>(this, type, settings)}
+    , p{std::make_unique<VuMeterWidgetPrivate>(this, type, playerController, settings)}
 {
     setObjectName(VuMeterWidget::name());
 
@@ -610,27 +646,6 @@ void VuMeterWidget::loadLayoutData(const QJsonObject& layout)
     }
     if(layout.contains(u"ShowPeaks")) {
         p->m_showPeaks = layout.value(u"ShowPeaks").toBool();
-    }
-}
-
-void VuMeterWidget::playStateChanged(Player::PlayState state)
-{
-    p->m_changingTrack = true;
-    p->updateSize();
-
-    switch(state) {
-        case(Player::PlayState::Playing):
-            p->m_updateTimer.start(UpdateInterval, this);
-            p->m_elapsedTimer.start();
-            break;
-        case(Player::PlayState::Paused):
-            p->m_updateTimer.stop();
-            break;
-        case(Player::PlayState::Stopped):
-            if(p->m_updateTimer.isActive()) {
-                p->m_stopping = true;
-            }
-            break;
     }
 }
 

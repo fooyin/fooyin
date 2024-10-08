@@ -27,6 +27,7 @@
 
 namespace Fooyin {
 class AudioBuffer;
+class PlayerController;
 class SettingsManager;
 
 namespace VuMeter {
@@ -43,7 +44,8 @@ public:
         Rms
     };
 
-    explicit VuMeterWidget(Type type, SettingsManager* settings, QWidget* parent = nullptr);
+    explicit VuMeterWidget(Type type, PlayerController* playerController, SettingsManager* settings,
+                           QWidget* parent = nullptr);
     ~VuMeterWidget() override;
 
     [[nodiscard]] QString name() const override;
@@ -51,7 +53,6 @@ public:
     void saveLayoutData(QJsonObject& layout) override;
     void loadLayoutData(const QJsonObject& layout) override;
 
-    void playStateChanged(Player::PlayState state);
     void renderBuffer(const AudioBuffer& buffer);
 
     void setOrientation(Qt::Orientation orientation);

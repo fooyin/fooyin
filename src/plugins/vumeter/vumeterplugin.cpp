@@ -47,10 +47,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         QStringLiteral("VUMeter"),
         [this]() {
-            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_settings);
-            meter->playStateChanged(m_playerController->playState());
-            QObject::connect(m_playerController, &PlayerController::playStateChanged, meter,
-                             &VuMeterWidget::playStateChanged);
+            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Rms, m_playerController, m_settings);
             QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
             return meter;
         },
@@ -60,10 +57,7 @@ void VuMeterPlugin::initialise(const GuiPluginContext& context)
     m_widgetProvider->registerWidget(
         QStringLiteral("PeakMeter"),
         [this]() {
-            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_settings);
-            meter->playStateChanged(m_playerController->playState());
-            QObject::connect(m_playerController, &PlayerController::playStateChanged, meter,
-                             &VuMeterWidget::playStateChanged);
+            auto* meter = new VuMeterWidget(VuMeterWidget::Type::Peak, m_playerController, m_settings);
             QObject::connect(m_engine, &EngineController::bufferPlayed, meter, &VuMeterWidget::renderBuffer);
             return meter;
         },
