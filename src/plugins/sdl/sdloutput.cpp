@@ -55,7 +55,7 @@ Fooyin::SampleFormat findSampleFormat(SDL_AudioFormat format)
 
 namespace Fooyin::Sdl {
 SdlOutput::SdlOutput()
-    : m_bufferSize{4096}
+    : m_bufferSize{8192}
     , m_initialised{false}
     , m_device{QStringLiteral("default")}
     , m_volume{1.0}
