@@ -148,8 +148,8 @@ public:
     QBasicTimer m_updateTimer;
     QElapsedTimer m_elapsedTimer;
 
-    std::vector<float> m_previousChannelDbLevels;
-    std::vector<float> m_previousChannelPeaks;
+    std::array<float, MaxChannels> m_previousChannelDbLevels{0.0F};
+    std::array<float, MaxChannels> m_previousChannelPeaks{0.0F};
 };
 
 VuMeterWidgetPrivate::VuMeterWidgetPrivate(VuMeterWidget* self, VuMeterWidget::Type type,
@@ -300,27 +300,26 @@ QRect VuMeterWidgetPrivate::calculateUpdateRect(int channel)
 
         return {snappedMinX, y, width, static_cast<int>(channelSize()) + 1};
     }
-    else {
-        const int x        = static_cast<int>(channelX(channel));
-        const int oldY     = static_cast<int>(dbToPos(m_previousChannelDbLevels.at(channel))) - labelSize;
-        const int oldPeakY = static_cast<int>(dbToPos(m_previousChannelPeaks.at(channel))) - labelSize;
-        const int levelY   = static_cast<int>(dbToPos(m_channelDbLevels.at(channel))) - labelSize;
-        const int peakY    = static_cast<int>(dbToPos(m_channelPeaks.at(channel))) - labelSize;
 
-        const int minY = std::min({oldY, oldPeakY, levelY, peakY});
-        const int maxY = std::max({oldY, oldPeakY, levelY, peakY});
+    const int x        = static_cast<int>(channelX(channel));
+    const int oldY     = static_cast<int>(dbToPos(m_previousChannelDbLevels.at(channel))) - labelSize;
+    const int oldPeakY = static_cast<int>(dbToPos(m_previousChannelPeaks.at(channel))) - labelSize;
+    const int levelY   = static_cast<int>(dbToPos(m_channelDbLevels.at(channel))) - labelSize;
+    const int peakY    = static_cast<int>(dbToPos(m_channelPeaks.at(channel))) - labelSize;
 
-        int snappedMinY       = (minY / barSize) * barSize;
-        const int snappedMaxY = ((maxY + barSize - 1) / barSize) * barSize;
-        int height            = snappedMaxY - snappedMinY;
+    const int minY = std::min({oldY, oldPeakY, levelY, peakY});
+    const int maxY = std::max({oldY, oldPeakY, levelY, peakY});
 
-        if(snappedMinY - barSize > labelSize) {
-            snappedMinY -= barSize;
-            height += (2 * barSize);
-        }
+    int snappedMinY       = (minY / barSize) * barSize;
+    const int snappedMaxY = ((maxY + barSize - 1) / barSize) * barSize;
+    int height            = snappedMaxY - snappedMinY;
 
-        return {x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
+    if(snappedMinY - barSize > labelSize) {
+        snappedMinY -= barSize;
+        height += (2 * barSize);
     }
+
+    return {x, snappedMinY, static_cast<int>(channelSize()) + 1, height};
 }
 
 void VuMeterWidgetPrivate::createGradient()
@@ -481,8 +480,8 @@ void VuMeterWidgetPrivate::drawChannel(QPainter& painter, float start, int chann
     const float channelLevel = m_channelDbLevels.at(channel);
     const float channelPeak  = m_channelPeaks.at(channel);
 
-    m_previousChannelDbLevels[channel] = channelLevel;
-    m_previousChannelPeaks[channel]    = channelPeak;
+    m_previousChannelDbLevels.at(channel) = channelLevel;
+    m_previousChannelPeaks.at(channel)    = channelPeak;
 
     if(isHorizontal()) {
         drawHorizontalBars(painter, x, y, channelLevel, channelSize, start);
@@ -657,8 +656,6 @@ void VuMeterWidget::renderBuffer(const AudioBuffer& buffer)
     const AudioBuffer normalisedBuffer = Audio::convert(buffer, p->m_format);
 
     p->m_lastPeakTimers.resize(channels);
-    p->m_previousChannelDbLevels.resize(channels, MinDb);
-    p->m_previousChannelPeaks.resize(channels, MinDb);
 
     auto calculatePeaks = Utils::asyncExec([this, normalisedBuffer, channels]() {
         const int totalSamples = normalisedBuffer.sampleCount();
