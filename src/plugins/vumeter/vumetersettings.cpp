@@ -19,6 +19,8 @@
 
 #include "vumetersettings.h"
 
+#include "vumetercolours.h"
+
 #include <utils/settings/settingsmanager.h>
 
 #include <QApplication>
@@ -30,6 +32,8 @@ VuMeterSettings::VuMeterSettings(SettingsManager* settings)
     : m_settings{settings}
 {
     using namespace Settings::VuMeter;
+
+    qRegisterMetaType<Fooyin::VuMeter::Colours>("Fooyin::VuMeter::Colours");
 
     m_settings->createSetting<PeakHoldTime>(1.5, QStringLiteral("VuMeter/PeakHoldTime"));
     m_settings->createSetting<FalloffTime>(13.0, QStringLiteral("VuMeter/FalloffTime"));
