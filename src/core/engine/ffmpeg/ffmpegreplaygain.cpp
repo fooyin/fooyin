@@ -337,7 +337,7 @@ void FFmpegReplayGain::calculatePerTrack(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
 
-    p->m_future = new QFutureWatcher<void>;
+    p->m_future = new QFutureWatcher<void>(this);
 
     p->m_tracks        = tracks;
     p->m_scannedTracks = tracks;
