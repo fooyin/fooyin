@@ -130,7 +130,7 @@ void DecoderPageWidget::load()
 {
     m_decoderModel->setup(m_audioLoader->decoders());
     m_readerModel->setup(m_audioLoader->readers());
-    m_ffmpegAllExts->setChecked(m_settings->value<Settings::Core::Internal::FFmpegAllExtensions>());
+    m_ffmpegAllExts->setChecked(m_settings->fileValue(Settings::Core::Internal::FFmpegAllExtensions).toBool());
 }
 
 void DecoderPageWidget::apply()
@@ -145,14 +145,18 @@ void DecoderPageWidget::apply()
         [this](const QString& name, int index) { m_audioLoader->changeReaderIndex(name, index); },
         [this](const QString& name, bool enabled) { m_audioLoader->setReaderEnabled(name, enabled); });
 
-    m_settings->set<Settings::Core::Internal::FFmpegAllExtensions>(m_ffmpegAllExts->isChecked());
+    if(m_settings->fileSet(Settings::Core::Internal::FFmpegAllExtensions, m_ffmpegAllExts->isChecked())) {
+        m_audioLoader->reloadDecoderExtensions(QStringLiteral("FFmpeg"));
+        m_audioLoader->reloadReaderExtensions(QStringLiteral("FFmpeg"));
+    }
+
     load();
 }
 
 void DecoderPageWidget::reset()
 {
     m_audioLoader->reset();
-    m_settings->reset<Settings::Core::Internal::FFmpegAllExtensions>();
+    m_settings->fileRemove(Settings::Core::Internal::FFmpegAllExtensions);
 }
 
 DecoderPage::DecoderPage(AudioLoader* audioLoader, SettingsManager* settings, QObject* parent)

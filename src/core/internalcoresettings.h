@@ -82,15 +82,15 @@ constexpr auto LibraryRestrictTypes    = "Library/RestrictTypes";
 constexpr auto LibraryExcludeTypes     = "Library/ExcludeTypes";
 constexpr auto ExternalRestrictTypes   = "Library/ExternalRestrictTypes";
 constexpr auto ExternalExcludeTypes    = "Library/ExternalExcludeTypes";
+constexpr auto FFmpegAllExtensions     = "Engine/FFmpegAllExtensions";
 
 enum CoreInternalSettings : uint32_t
 {
-    MonitorLibraries    = 0 | Type::Bool,
-    MuteVolume          = 1 | Type::Double,
-    DisabledPlugins     = 2 | Type::StringList,
-    EngineFading        = 3 | Type::Bool,
-    FadingIntervals     = 4 | Type::Variant,
-    FFmpegAllExtensions = 5 | Type::Bool,
+    MonitorLibraries = 0 | Type::Bool,
+    MuteVolume       = 1 | Type::Double,
+    DisabledPlugins  = 2 | Type::StringList,
+    EngineFading     = 3 | Type::Bool,
+    FadingIntervals  = 4 | Type::Variant,
 };
 Q_ENUM_NS(CoreInternalSettings)
 } // namespace Settings::Core::Internal

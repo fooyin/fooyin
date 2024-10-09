@@ -37,9 +37,9 @@ class FYCORE_EXPORT ReplayGainWorker : public Worker
 public:
     explicit ReplayGainWorker(QObject* parent = nullptr);
 
-    virtual void calculatePerTrack(const TrackList& tracks)    = 0;
-    virtual void calculateAsAlbum(const TrackList& tracks)     = 0;
-    virtual void calculateByAlbumTags(const TrackList& tracks) = 0;
+    virtual void calculatePerTrack(const TrackList& tracks, bool truePeak)                                = 0;
+    virtual void calculateAsAlbum(const TrackList& tracks, bool truePeak)                                 = 0;
+    virtual void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) = 0;
 
 signals:
     void startingCalculation(const QString& filepath);

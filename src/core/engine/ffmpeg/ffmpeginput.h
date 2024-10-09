@@ -30,12 +30,11 @@ namespace Fooyin {
 class AudioFormat;
 class AudioBuffer;
 class FFmpegInputPrivate;
-class SettingsManager;
 
 class FFmpegDecoder : public AudioDecoder
 {
 public:
-    explicit FFmpegDecoder(SettingsManager* settings);
+    FFmpegDecoder();
     ~FFmpegDecoder() override;
 
     [[nodiscard]] QStringList extensions() const override;
@@ -58,8 +57,6 @@ private:
 class FFmpegReader : public AudioReader
 {
 public:
-    explicit FFmpegReader(SettingsManager* settings);
-
     [[nodiscard]] QStringList extensions() const override;
     [[nodiscard]] bool canReadCover() const override;
     [[nodiscard]] bool canWriteMetaData() const override;
@@ -67,8 +64,5 @@ public:
     [[nodiscard]] bool readTrack(const AudioSource& source, Track& track) override;
     [[nodiscard]] QByteArray readCover(const AudioSource& source, const Track& track, Track::Cover cover) override;
     [[nodiscard]] bool writeTrack(const AudioSource& source, const Track& track, WriteOptions options) override;
-
-private:
-    SettingsManager* m_settings;
 };
 } // namespace Fooyin

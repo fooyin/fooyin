@@ -192,8 +192,6 @@ public:
     std::unique_ptr<LogWidget> m_logWidget;
     Widgets* m_widgets;
     ScriptParser m_scriptParser;
-
-    QPointer<ReplayGainScanner> m_rgScanner;
 };
 
 GuiApplicationPrivate::GuiApplicationPrivate(GuiApplication* self_, Application* core_)
@@ -706,21 +704,21 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
     progressLabel->setElideMode(Qt::ElideMiddle);
     progress->setLabel(progressLabel);
 
-    m_rgScanner = new ReplayGainScanner(m_settings, m_self);
-    QObject::connect(m_rgScanner, &ReplayGainScanner::calculationFinished, m_self,
-                     [this, progress](const TrackList& tracks) {
+    auto* scanner = new ReplayGainScanner(m_settings, m_self);
+    QObject::connect(scanner, &ReplayGainScanner::calculationFinished, m_self,
+                     [this, scanner, progress](const TrackList& tracks) {
                          progress->close();
                          auto* rgResults = new ReplayGainResults(m_library, tracks);
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
                          rgResults->show();
-                         m_rgScanner->deleteLater();
+                         scanner->deleteLater();
                      });
 
-    QObject::connect(m_rgScanner, &ReplayGainScanner::startingCalculation, progress,
-                     [this, progress, progressLabel](const QString& filepath) {
+    QObject::connect(scanner, &ReplayGainScanner::startingCalculation, progress,
+                     [scanner, progress, progressLabel](const QString& filepath) {
                          if(progress->wasCanceled()) {
                              progress->close();
-                             m_rgScanner->deleteLater();
+                             scanner->deleteLater();
                              return;
                          }
                          progress->setValue(progress->value() + 1);
@@ -729,13 +727,13 @@ void GuiApplicationPrivate::calculateReplayGain(RGScanType type)
 
     switch(type) {
         case(RGScanType::Track):
-            m_rgScanner->calculatePerTrack(tracksToScan);
+            scanner->calculatePerTrack(tracksToScan);
             break;
         case(RGScanType::SingleAlbum):
-            m_rgScanner->calculateAsAlbum(tracksToScan);
+            scanner->calculateAsAlbum(tracksToScan);
             break;
         case(RGScanType::Album):
-            m_rgScanner->calculateByAlbumTags(tracksToScan);
+            scanner->calculateByAlbumTags(tracksToScan);
             break;
     }
 }

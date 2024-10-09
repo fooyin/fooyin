@@ -21,6 +21,9 @@
 
 #include "ffmpeg/ffmpegreplaygain.h"
 
+#include <core/coresettings.h>
+#include <utils/settings/settingsmanager.h>
+
 namespace Fooyin {
 ReplayGainWorker::ReplayGainWorker(QObject* parent)
     : Worker{parent}
@@ -29,7 +32,7 @@ ReplayGainWorker::ReplayGainWorker(QObject* parent)
 ReplayGainScanner::ReplayGainScanner(SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
-    , m_worker{std::make_unique<FFmpegReplayGain>(m_settings)}
+    , m_worker{std::make_unique<FFmpegReplayGain>()}
 {
     m_worker->moveToThread(&m_scanThread);
     m_scanThread.start();
@@ -49,17 +52,24 @@ ReplayGainScanner::~ReplayGainScanner()
 
 void ReplayGainScanner::calculatePerTrack(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() { m_worker->calculatePerTrack(tracks); });
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+        m_worker->calculatePerTrack(tracks, m_settings->value<Settings::Core::RGTruePeak>());
+    });
 }
 
 void ReplayGainScanner::calculateAsAlbum(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() { m_worker->calculateAsAlbum(tracks); });
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+        m_worker->calculateAsAlbum(tracks, m_settings->value<Settings::Core::RGTruePeak>());
+    });
 }
 
 void ReplayGainScanner::calculateByAlbumTags(const TrackList& tracks)
 {
-    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() { m_worker->calculateByAlbumTags(tracks); });
+    QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
+        m_worker->calculateByAlbumTags(tracks, m_settings->value<Settings::Core::RGAlbumGroupScript>(),
+                                       m_settings->value<Settings::Core::RGTruePeak>());
+    });
 }
 } // namespace Fooyin
 

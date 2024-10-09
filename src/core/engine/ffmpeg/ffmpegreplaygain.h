@@ -26,19 +26,20 @@
 
 namespace Fooyin {
 class FFmpegReplayGainPrivate;
-class SettingsManager;
 
 class FFmpegReplayGain : public ReplayGainWorker
 {
     Q_OBJECT
 
 public:
-    explicit FFmpegReplayGain(SettingsManager* settings, QObject* parent = nullptr);
+    explicit FFmpegReplayGain(QObject* parent = nullptr);
     ~FFmpegReplayGain() override;
 
-    void calculatePerTrack(const TrackList& tracks) override;
-    void calculateAsAlbum(const TrackList& tracks) override;
-    void calculateByAlbumTags(const TrackList& tracks) override;
+    void closeThread() override;
+
+    void calculatePerTrack(const TrackList& tracks, bool truePeak) override;
+    void calculateAsAlbum(const TrackList& tracks, bool truePeak) override;
+    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) override;
 
 private:
     std::unique_ptr<FFmpegReplayGainPrivate> p;

@@ -25,8 +25,8 @@
 #include "ffmpegutils.h"
 #include "internalcoresettings.h"
 
+#include <core/coresettings.h>
 #include <core/engine/audiobuffer.h>
-#include <utils/settings/settingsmanager.h>
 #include <utils/worker.h>
 
 #include <QDebug>
@@ -371,9 +371,8 @@ namespace Fooyin {
 class FFmpegInputPrivate
 {
 public:
-    explicit FFmpegInputPrivate(FFmpegDecoder* self, SettingsManager* settings)
+    explicit FFmpegInputPrivate(FFmpegDecoder* self)
         : m_self{self}
-        , m_settings{settings}
     { }
 
     void reset();
@@ -390,7 +389,6 @@ public:
     void seek(uint64_t pos);
 
     FFmpegDecoder* m_self;
-    SettingsManager* m_settings;
 
     IOContextPtr m_ioContext;
     FormatContextPtr m_context;
@@ -693,15 +691,16 @@ void FFmpegInputPrivate::seek(uint64_t pos)
     m_currentPos = pos;
 }
 
-FFmpegDecoder::FFmpegDecoder(SettingsManager* settings)
-    : p{std::make_unique<FFmpegInputPrivate>(this, settings)}
+FFmpegDecoder::FFmpegDecoder()
+    : p{std::make_unique<FFmpegInputPrivate>(this)}
 { }
 
 FFmpegDecoder::~FFmpegDecoder() = default;
 
 QStringList FFmpegDecoder::extensions() const
 {
-    return fileExtensions(p->m_settings->value<Settings::Core::Internal::FFmpegAllExtensions>());
+    FySettings settings;
+    return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
 }
 
 int FFmpegDecoder::bitrate() const
@@ -796,13 +795,10 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
     return buffer;
 }
 
-FFmpegReader::FFmpegReader(SettingsManager* settings)
-    : m_settings{settings}
-{ }
-
 QStringList FFmpegReader::extensions() const
 {
-    return fileExtensions(m_settings->value<Settings::Core::Internal::FFmpegAllExtensions>());
+    FySettings settings;
+    return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
 }
 
 bool FFmpegReader::canReadCover() const
