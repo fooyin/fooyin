@@ -2,6 +2,7 @@ create_fooyin_plugin_internal(
     rgscanner
     DEPENDS Fooyin::CorePrivate
             Fooyin::Gui
+            ${FFMPEG_LIBRARIES}
     SOURCES ffmpegscanner.cpp
             ffmpegscanner.h
             rgscanner.cpp
@@ -12,4 +13,8 @@ create_fooyin_plugin_internal(
             rgscanresultsmodel.h
             rgscannerplugin.cpp
             rgscannerplugin.h
+)
+
+target_include_directories(
+    rgscanner PRIVATE ${FFMPEG_INCLUDE_DIRS}
 )
