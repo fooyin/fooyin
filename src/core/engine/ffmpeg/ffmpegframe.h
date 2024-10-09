@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <QSharedDataPointer>
 
 #if defined(__GNUG__)
@@ -43,7 +45,7 @@ extern "C"
 namespace Fooyin {
 class FramePrivate;
 
-class Frame
+class FYCORE_EXPORT Frame
 {
 public:
     Frame();

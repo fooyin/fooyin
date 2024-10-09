@@ -19,24 +19,26 @@
 
 #pragma once
 
-#include <core/track.h>
+#include "rgscanner.h"
 
-#include <QAbstractTableModel>
+namespace Fooyin::RGScanner {
+class FFmpegReplayGainPrivate;
 
-namespace Fooyin {
-class ReplayGainResultsModel : public QAbstractTableModel
+class FFmpegScanner : public RGWorker
 {
     Q_OBJECT
 
 public:
-    explicit ReplayGainResultsModel(TrackList tracks, QObject* parent = nullptr);
+    explicit FFmpegScanner(QObject* parent = nullptr);
+    ~FFmpegScanner() override;
 
-    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
-    [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
-    [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
+    void closeThread() override;
+
+    void calculatePerTrack(const TrackList& tracks, bool truePeak) override;
+    void calculateAsAlbum(const TrackList& tracks, bool truePeak) override;
+    void calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak) override;
 
 private:
-    TrackList m_tracks;
+    std::unique_ptr<FFmpegReplayGainPrivate> p;
 };
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner

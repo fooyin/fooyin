@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "fycore_export.h"
-
 #include <core/track.h>
 #include <utils/worker.h>
 
@@ -30,12 +28,13 @@
 namespace Fooyin {
 class SettingsManager;
 
-class FYCORE_EXPORT ReplayGainWorker : public Worker
+namespace RGScanner {
+class RGWorker : public Worker
 {
     Q_OBJECT
 
 public:
-    explicit ReplayGainWorker(QObject* parent = nullptr);
+    explicit RGWorker(QObject* parent = nullptr);
 
     virtual void calculatePerTrack(const TrackList& tracks, bool truePeak)                                = 0;
     virtual void calculateAsAlbum(const TrackList& tracks, bool truePeak)                                 = 0;
@@ -46,13 +45,13 @@ signals:
     void calculationFinished(const TrackList& tracks);
 };
 
-class FYCORE_EXPORT ReplayGainScanner : public QObject
+class RGScanner : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ReplayGainScanner(SettingsManager* settings, QObject* parent = nullptr);
-    ~ReplayGainScanner() override;
+    explicit RGScanner(SettingsManager* settings, QObject* parent = nullptr);
+    ~RGScanner() override;
 
     void calculatePerTrack(const TrackList& tracks);
     void calculateAsAlbum(const TrackList& tracks);
@@ -65,6 +64,7 @@ signals:
 private:
     SettingsManager* m_settings;
     QThread m_scanThread;
-    std::unique_ptr<ReplayGainWorker> m_worker;
+    std::unique_ptr<RGWorker> m_worker;
 };
+} // namespace RGScanner
 } // namespace Fooyin

@@ -69,8 +69,6 @@ set(SOURCES
     engine/enginehandler.cpp
     engine/enginehandler.h
     engine/audioloader.cpp
-    engine/replaygainscanner.cpp
-    engine/replaygainscanner.h
     engine/tagdefs.h
     engine/taglibparser.cpp
     engine/taglibparser.h
@@ -80,8 +78,6 @@ set(SOURCES
     engine/ffmpeg/ffmpeginput.h
     engine/ffmpeg/ffmpegframe.cpp
     engine/ffmpeg/ffmpegframe.h
-    engine/ffmpeg/ffmpegreplaygain.cpp
-    engine/ffmpeg/ffmpegreplaygain.h
     engine/ffmpeg/ffmpegresampler.cpp
     engine/ffmpeg/ffmpegresampler.h
     engine/ffmpeg/ffmpegstream.cpp

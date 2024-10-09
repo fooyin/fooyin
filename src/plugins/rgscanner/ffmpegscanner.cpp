@@ -17,12 +17,12 @@
  *
  */
 
-#include "ffmpegreplaygain.h"
-#include "ffmpeginput.h"
-#include "ffmpegutils.h"
+#include "ffmpegscanner.h"
 
 #include <core/constants.h>
 #include <core/coresettings.h>
+#include <core/engine/ffmpeg/ffmpeginput.h>
+#include <core/engine/ffmpeg/ffmpegutils.h>
 #include <core/scripting/scriptparser.h>
 #include <core/track.h>
 #include <utils/settings/settingsmanager.h>
@@ -45,6 +45,7 @@ extern "C"
 #include <QFile>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QLoggingCategory>
 #include <QString>
 #include <QtConcurrentMap>
 
@@ -262,15 +263,15 @@ ReplayGainResult handleTrack(FFmpegContext& context, bool inAlbum)
 }
 } // namespace
 
-namespace Fooyin {
+namespace Fooyin::RGScanner {
 class FFmpegReplayGainPrivate
 {
 public:
-    explicit FFmpegReplayGainPrivate(FFmpegReplayGain* self);
+    explicit FFmpegReplayGainPrivate(FFmpegScanner* self);
 
     void scanAlbum(FFmpegContext& context, TrackList& tracks) const;
 
-    FFmpegReplayGain* m_self;
+    FFmpegScanner* m_self;
 
     TrackList m_tracks;
     TrackList m_scannedTracks;
@@ -278,7 +279,7 @@ public:
     QFutureWatcher<void>* m_future{nullptr};
 };
 
-FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegReplayGain* self)
+FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegScanner* self)
     : m_self{self}
 { }
 
@@ -317,23 +318,23 @@ void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& track
     }
 }
 
-FFmpegReplayGain::FFmpegReplayGain(QObject* parent)
-    : ReplayGainWorker{parent}
+FFmpegScanner::FFmpegScanner(QObject* parent)
+    : RGWorker{parent}
     , p{std::make_unique<FFmpegReplayGainPrivate>(this)}
 { }
 
-void FFmpegReplayGain::closeThread()
+void FFmpegScanner::closeThread()
 {
-    ReplayGainWorker::closeThread();
+    RGWorker::closeThread();
     if(p->m_future) {
         p->m_future->cancel();
         p->m_future->waitForFinished();
     }
 }
 
-FFmpegReplayGain::~FFmpegReplayGain() = default;
+FFmpegScanner::~FFmpegScanner() = default;
 
-void FFmpegReplayGain::calculatePerTrack(const TrackList& tracks, bool truePeak)
+void FFmpegScanner::calculatePerTrack(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
 
@@ -370,7 +371,7 @@ void FFmpegReplayGain::calculatePerTrack(const TrackList& tracks, bool truePeak)
     });
 }
 
-void FFmpegReplayGain::calculateAsAlbum(const TrackList& tracks, bool truePeak)
+void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 {
     setState(Running);
 
@@ -387,7 +388,7 @@ void FFmpegReplayGain::calculateAsAlbum(const TrackList& tracks, bool truePeak)
     setState(Idle);
 }
 
-void FFmpegReplayGain::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
+void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString& groupScript, bool truePeak)
 {
     setState(Running);
 
@@ -416,4 +417,4 @@ void FFmpegReplayGain::calculateByAlbumTags(const TrackList& tracks, const QStri
 
     setState(Idle);
 }
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner

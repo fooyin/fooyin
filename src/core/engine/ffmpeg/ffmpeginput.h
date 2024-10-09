@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include <core/engine/audioinput.h>
 
 #include "ffmpegframe.h"
@@ -31,7 +33,7 @@ class AudioFormat;
 class AudioBuffer;
 class FFmpegInputPrivate;
 
-class FFmpegDecoder : public AudioDecoder
+class FYCORE_EXPORT FFmpegDecoder : public AudioDecoder
 {
 public:
     FFmpegDecoder();

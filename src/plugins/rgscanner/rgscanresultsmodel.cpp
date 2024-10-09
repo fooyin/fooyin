@@ -17,15 +17,15 @@
  *
  */
 
-#include "replaygainresultsmodel.h"
+#include "rgscanresultsmodel.h"
 
-namespace Fooyin {
-ReplayGainResultsModel::ReplayGainResultsModel(TrackList tracks, QObject* parent)
+namespace Fooyin::RGScanner {
+RGScanResultsModel::RGScanResultsModel(TrackList tracks, QObject* parent)
     : QAbstractTableModel{parent}
     , m_tracks{std::move(tracks)}
 { }
 
-QVariant ReplayGainResultsModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RGScanResultsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(orientation == Qt::Orientation::Vertical) {
         return {};
@@ -55,7 +55,7 @@ QVariant ReplayGainResultsModel::headerData(int section, Qt::Orientation orienta
     }
 }
 
-QVariant ReplayGainResultsModel::data(const QModelIndex& index, int role) const
+QVariant RGScanResultsModel::data(const QModelIndex& index, int role) const
 {
     if(!checkIndex(index, CheckIndexOption::IndexIsValid)) {
         return {};
@@ -89,13 +89,13 @@ QVariant ReplayGainResultsModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-int ReplayGainResultsModel::rowCount(const QModelIndex& /*parent*/) const
+int RGScanResultsModel::rowCount(const QModelIndex& /*parent*/) const
 {
     return static_cast<int>(m_tracks.size());
 }
 
-int ReplayGainResultsModel::columnCount(const QModelIndex& /*parent*/) const
+int RGScanResultsModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 5;
 }
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner

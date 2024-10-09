@@ -699,7 +699,7 @@ FFmpegDecoder::~FFmpegDecoder() = default;
 
 QStringList FFmpegDecoder::extensions() const
 {
-    FySettings settings;
+    const FySettings settings;
     return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
 }
 
@@ -797,7 +797,7 @@ AudioBuffer FFmpegDecoder::readBuffer(size_t bytes)
 
 QStringList FFmpegReader::extensions() const
 {
-    FySettings settings;
+    const FySettings settings;
     return fileExtensions(settings.value(QLatin1String{Settings::Core::Internal::FFmpegAllExtensions}).toBool());
 }
 

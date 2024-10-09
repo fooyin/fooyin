@@ -17,9 +17,9 @@
  *
  */
 
-#include "replaygainresults.h"
+#include "rgscanresults.h"
 
-#include "replaygainresultsmodel.h"
+#include "rgscanresultsmodel.h"
 
 #include <core/library/musiclibrary.h>
 
@@ -29,13 +29,13 @@
 #include <QPushButton>
 #include <QTableView>
 
-namespace Fooyin {
-ReplayGainResults::ReplayGainResults(MusicLibrary* library, TrackList tracks, QWidget* parent)
+namespace Fooyin::RGScanner {
+RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* parent)
     : QDialog{parent}
     , m_library{library}
     , m_tracks{std::move(tracks)}
     , m_resultsView{new QTableView(this)}
-    , m_resultsModel{new ReplayGainResultsModel(m_tracks, this)}
+    , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
 {
     setWindowTitle(tr("ReplayGain Scan Results"));
 
@@ -59,13 +59,13 @@ ReplayGainResults::ReplayGainResults(MusicLibrary* library, TrackList tracks, QW
     layout->addWidget(buttonBox);
 }
 
-void ReplayGainResults::accept()
+void RGScanResults::accept()
 {
     m_library->writeTrackMetadata(m_tracks);
     QDialog::accept();
 }
 
-QSize ReplayGainResults::sizeHint() const
+QSize RGScanResults::sizeHint() const
 {
     QSize size = m_resultsView->sizeHint();
     size.rheight() += 200;
@@ -73,8 +73,8 @@ QSize ReplayGainResults::sizeHint() const
     return size;
 }
 
-QSize ReplayGainResults::minimumSizeHint() const
+QSize RGScanResults::minimumSizeHint() const
 {
     return QDialog::minimumSizeHint();
 }
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner

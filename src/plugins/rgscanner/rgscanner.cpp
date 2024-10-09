@@ -17,60 +17,58 @@
  *
  */
 
-#include "replaygainscanner.h"
+#include "rgscanner.h"
 
-#include "ffmpeg/ffmpegreplaygain.h"
+#include "ffmpegscanner.h"
 
 #include <core/coresettings.h>
 #include <utils/settings/settingsmanager.h>
 
-namespace Fooyin {
-ReplayGainWorker::ReplayGainWorker(QObject* parent)
+namespace Fooyin::RGScanner {
+RGWorker::RGWorker(QObject* parent)
     : Worker{parent}
 { }
 
-ReplayGainScanner::ReplayGainScanner(SettingsManager* settings, QObject* parent)
+RGScanner::RGScanner(SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
-    , m_worker{std::make_unique<FFmpegReplayGain>()}
+    , m_worker{std::make_unique<FFmpegScanner>()}
 {
     m_worker->moveToThread(&m_scanThread);
     m_scanThread.start();
 
-    QObject::connect(m_worker.get(), &ReplayGainWorker::startingCalculation, this,
-                     &ReplayGainScanner::startingCalculation);
-    QObject::connect(m_worker.get(), &ReplayGainWorker::calculationFinished, this,
-                     &ReplayGainScanner::calculationFinished);
+    QObject::connect(m_worker.get(), &RGWorker::startingCalculation, this, &RGScanner::startingCalculation);
+    QObject::connect(m_worker.get(), &RGWorker::calculationFinished, this, &RGScanner::calculationFinished);
 }
 
-ReplayGainScanner::~ReplayGainScanner()
+RGScanner::~RGScanner()
 {
     m_worker->closeThread();
     m_scanThread.quit();
     m_scanThread.wait();
 }
 
-void ReplayGainScanner::calculatePerTrack(const TrackList& tracks)
+void RGScanner::calculatePerTrack(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         m_worker->calculatePerTrack(tracks, m_settings->value<Settings::Core::RGTruePeak>());
     });
 }
 
-void ReplayGainScanner::calculateAsAlbum(const TrackList& tracks)
+void RGScanner::calculateAsAlbum(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         m_worker->calculateAsAlbum(tracks, m_settings->value<Settings::Core::RGTruePeak>());
     });
 }
 
-void ReplayGainScanner::calculateByAlbumTags(const TrackList& tracks)
+void RGScanner::calculateByAlbumTags(const TrackList& tracks)
 {
     QMetaObject::invokeMethod(m_worker.get(), [this, tracks]() {
         m_worker->calculateByAlbumTags(tracks, m_settings->value<Settings::Core::RGAlbumGroupScript>(),
                                        m_settings->value<Settings::Core::RGTruePeak>());
     });
 }
-} // namespace Fooyin
+} // namespace Fooyin::RGScanner
 
-#include "moc_replaygainscanner.cpp"
+#include "moc_rgscanner.cpp"

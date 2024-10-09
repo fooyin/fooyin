@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "fycore_export.h"
+
 #include "ffmpegstream.h"
 
 #include <core/engine/audioformat.h>
@@ -88,11 +90,11 @@ struct PacketDeleter
 using PacketPtr = std::unique_ptr<AVPacket, PacketDeleter>;
 
 namespace Fooyin::Utils {
-void printError(int error);
-void printError(const QString& error);
+FYCORE_EXPORT void printError(int error);
+FYCORE_EXPORT void printError(const QString& error);
 
-SampleFormat sampleFormat(AVSampleFormat format, int bps);
-AVSampleFormat sampleFormat(SampleFormat format, bool planar = false);
-AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
-Stream findAudioStream(AVFormatContext* context);
+FYCORE_EXPORT SampleFormat sampleFormat(AVSampleFormat format, int bps);
+FYCORE_EXPORT AVSampleFormat sampleFormat(SampleFormat format, bool planar = false);
+FYCORE_EXPORT AudioFormat audioFormatFromCodec(AVCodecParameters* codec);
+FYCORE_EXPORT Stream findAudioStream(AVFormatContext* context);
 } // namespace Fooyin::Utils

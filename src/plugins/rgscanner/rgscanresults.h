@@ -27,14 +27,16 @@ class QTableView;
 
 namespace Fooyin {
 class MusicLibrary;
-class ReplayGainResultsModel;
 
-class ReplayGainResults : public QDialog
+namespace RGScanner {
+class RGScanResultsModel;
+
+class RGScanResults : public QDialog
 {
     Q_OBJECT
 
 public:
-    ReplayGainResults(MusicLibrary* library, TrackList tracks, QWidget* parent = nullptr);
+    RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* parent = nullptr);
 
     void accept() override;
 
@@ -46,6 +48,7 @@ private:
     TrackList m_tracks;
 
     QTableView* m_resultsView;
-    ReplayGainResultsModel* m_resultsModel;
+    RGScanResultsModel* m_resultsModel;
 };
+} // namespace RGScanner
 } // namespace Fooyin
