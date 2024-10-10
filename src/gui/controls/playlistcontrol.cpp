@@ -201,6 +201,8 @@ void PlaylistControl::setupMenus()
         }
     };
 
+    updateActions();
+
     QObject::connect(m_playerController, &PlayerController::playModeChanged, this, updateActions);
 }
 
