@@ -25,12 +25,13 @@
 #include <core/library/musiclibrary.h>
 #include <gui/guiconstants.h>
 #include <gui/trackselectioncontroller.h>
-#include <gui/widgets/elidedlabel.h>
+#include <gui/widgets/elapsedprogressdialog.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/utils.h>
 
+#include <QMainWindow>
 #include <QMenu>
-#include <QProgressDialog>
 
 namespace Fooyin::RGScanner {
 void RGScannerPlugin::initialise(const CorePluginContext& context)
@@ -55,18 +56,12 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     }
 
     const auto total = static_cast<int>(tracksToScan.size());
-    auto* progress   = new QProgressDialog(tr("Scanning tracks…"), tr("Abort"), 0, total + 1, nullptr);
+    auto* progress
+        = new ElapsedProgressDialog(tr("Scanning tracks…"), tr("Abort"), 0, total + 1, Utils::getMainWindow());
     progress->setAttribute(Qt::WA_DeleteOnClose);
     progress->setWindowModality(Qt::WindowModal);
-    progress->setMinimumDuration(5);
-    progress->setMinimumWidth(400);
-    progress->setMaximumWidth(400);
     progress->setValue(0);
     progress->setWindowTitle(tr("ReplayGain Scan Progress"));
-
-    auto* progressLabel = new ElidedLabel(progress);
-    progressLabel->setElideMode(Qt::ElideMiddle);
-    progress->setLabel(progressLabel);
 
     auto* scanner = new RGScanner(m_settings, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
@@ -78,16 +73,15 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
                          scanner->deleteLater();
                      });
 
-    QObject::connect(scanner, &RGScanner::startingCalculation, progress,
-                     [scanner, progress, progressLabel](const QString& filepath) {
-                         if(progress->wasCanceled()) {
-                             progress->close();
-                             scanner->deleteLater();
-                             return;
-                         }
-                         progress->setValue(progress->value() + 1);
-                         progressLabel->setText(filepath);
-                     });
+    QObject::connect(scanner, &RGScanner::startingCalculation, progress, [scanner, progress](const QString& filepath) {
+        if(progress->wasCancelled()) {
+            progress->close();
+            scanner->deleteLater();
+            return;
+        }
+        progress->setValue(progress->value() + 1);
+        progress->setText(tr("Current file") + u": " + filepath);
+    });
 
     switch(type) {
         case(RGScanType::Track):
@@ -157,3 +151,5 @@ void RGScannerPlugin::setupReplayGainMenu()
     replayGainMenu->menu()->addAction(rgRemoveAction);
 }
 } // namespace Fooyin::RGScanner
+
+#include "moc_rgscannerplugin.cpp"
