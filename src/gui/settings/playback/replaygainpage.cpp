@@ -74,8 +74,8 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
     , m_orderGain{new QRadioButton(tr("Use gain based on playback order"), this)}
     , m_rgPreAmp{new DoubleSliderEditor(this)}
     , m_preAmp{new DoubleSliderEditor(this)}
-    , m_samplePeak{new QRadioButton(tr("Use sample peak filter for calculating peaks"), this)}
-    , m_truePeak{new QRadioButton(tr("Use true peak filter for calculating peaks"), this)}
+    , m_samplePeak{new QRadioButton(tr("Use sample peak for calculating peaks"), this)}
+    , m_truePeak{new QRadioButton(tr("Use true peak for calculating peaks"), this)}
     , m_albumGroupScript{new ScriptLineEdit(this)}
 {
     m_trackGain->setToolTip(tr("Base normalisation on track loudness"));
@@ -142,7 +142,7 @@ ReplayGainPageWidget::ReplayGainPageWidget(SettingsManager* settings)
 
     auto* albumGroupLabel = new QLabel(tr("Album grouping pattern") + u":", this);
 
-    const auto albumGroupToolTip = tr("Used with the %1 action").arg(u"'Calculate as albums (by tags)'");
+    const auto albumGroupToolTip = tr("Used with the %1 action").arg(u"'" + tr("Calculate as albums (by tags)") + u"'");
     albumGroupLabel->setToolTip(albumGroupToolTip);
     m_albumGroupScript->setToolTip(albumGroupToolTip);
 
