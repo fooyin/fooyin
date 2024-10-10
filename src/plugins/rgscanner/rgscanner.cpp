@@ -39,13 +39,18 @@ RGScanner::RGScanner(SettingsManager* settings, QObject* parent)
 
     QObject::connect(m_worker.get(), &RGWorker::startingCalculation, this, &RGScanner::startingCalculation);
     QObject::connect(m_worker.get(), &RGWorker::calculationFinished, this, &RGScanner::calculationFinished);
+    QObject::connect(m_worker.get(), &RGWorker::finished, this, &RGScanner::deleteLater);
 }
 
 RGScanner::~RGScanner()
 {
-    m_worker->closeThread();
     m_scanThread.quit();
     m_scanThread.wait();
+}
+
+void RGScanner::stop()
+{
+    m_worker->closeThread();
 }
 
 void RGScanner::calculatePerTrack(const TrackList& tracks)

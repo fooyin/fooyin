@@ -43,6 +43,7 @@ public:
 signals:
     void startingCalculation(const QString& filepath);
     void calculationFinished(const TrackList& tracks);
+    void calculationFinished(const Fooyin::TrackList& tracks);
 };
 
 class RGScanner : public QObject
@@ -53,13 +54,15 @@ public:
     explicit RGScanner(SettingsManager* settings, QObject* parent = nullptr);
     ~RGScanner() override;
 
+    void stop();
+
     void calculatePerTrack(const TrackList& tracks);
     void calculateAsAlbum(const TrackList& tracks);
     void calculateByAlbumTags(const TrackList& tracks);
 
 signals:
     void startingCalculation(const QString& filepath);
-    void calculationFinished(const TrackList& tracks);
+    void calculationFinished(const Fooyin::TrackList& tracks);
 
 private:
     SettingsManager* m_settings;

@@ -66,17 +66,19 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     auto* scanner = new RGScanner(m_settings, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
                      [this, scanner, progress](const TrackList& tracks) {
+                         scanner->stop();
+                         scanner->deleteLater();
                          progress->close();
+
                          auto* rgResults = new RGScanResults(m_library, tracks);
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
                          rgResults->show();
-                         scanner->deleteLater();
                      });
 
     QObject::connect(scanner, &RGScanner::startingCalculation, progress, [scanner, progress](const QString& filepath) {
         if(progress->wasCancelled()) {
+            scanner->stop();
             progress->close();
-            scanner->deleteLater();
             return;
         }
         progress->setValue(progress->value() + 1);
