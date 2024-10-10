@@ -28,4 +28,5 @@ dnf -y install \
      libopenmpt-devel \
      game-music-emu-devel \
      libarchive-devel \
-     libsndfile-devel
+     libsndfile-devel \
+     libebur128-devel

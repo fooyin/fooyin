@@ -21,4 +21,5 @@ $SUDO pacman -S --noconfirm --needed \
        libopenmpt \
        libgme \
        libarchive \
-       libsndfile
+       libsndfile \
+       libebur128

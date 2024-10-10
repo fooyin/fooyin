@@ -44,7 +44,8 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS
         libgme0,
         libopenmpt0,
         libarchive13,
-        libsndfile1"
+        libsndfile1,
+        libebur128-1"
 )
 
 set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")

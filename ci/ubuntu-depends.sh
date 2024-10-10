@@ -36,4 +36,5 @@ $SUDO apt-get install -y \
         libopenmpt-dev \
         libgme-dev \
         libarchive-dev \
-        libsndfile1-dev
+        libsndfile1-dev \
+        libebur128-dev
