@@ -42,7 +42,6 @@ public:
 
 signals:
     void startingCalculation(const QString& filepath);
-    void calculationFinished(const TrackList& tracks);
     void calculationFinished(const Fooyin::TrackList& tracks);
 };
 
