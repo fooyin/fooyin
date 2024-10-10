@@ -68,6 +68,9 @@ public:
     void setDescription(const QString& text);
     [[nodiscard]] QString description() const;
 
+    void setCategories(const QStringList& text);
+    [[nodiscard]] QStringList categories() const;
+
     void setCurrentContext(const Context& newContext);
     void addOverrideAction(QAction* actionToAdd, const Context& context, bool changeContext = true);
 

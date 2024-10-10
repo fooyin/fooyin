@@ -56,6 +56,7 @@ public:
     Context m_context;
     ShortcutList m_defaultKeys;
     QString m_defaultText;
+    QStringList m_categories;
 
     bool m_active{false};
     bool m_shortcutIsInitialised{false};
@@ -208,6 +209,16 @@ QString Command::description() const
         }
     }
     return id().name();
+}
+
+void Command::setCategories(const QStringList& text)
+{
+    p->m_categories = text;
+}
+
+QStringList Command::categories() const
+{
+    return p->m_categories;
 }
 
 void Command::setCurrentContext(const Context& context)
