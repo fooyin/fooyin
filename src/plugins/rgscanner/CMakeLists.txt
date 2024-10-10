@@ -10,8 +10,6 @@ create_fooyin_plugin_internal(
     rgscanner
     DEPENDS Fooyin::CorePrivate
             Fooyin::Gui
-            $<$<NOT:$<BOOL:${HAVE_EBUR128}>>:${FFMPEG_LIBRARIES}>
-            $<$<BOOL:${HAVE_EBUR128}>:Ebur128::Ebur128>
     SOURCES rgscanner.cpp
             rgscanner.h
             rgscanresults.cpp
@@ -23,9 +21,11 @@ create_fooyin_plugin_internal(
 )
 
 if(HAVE_EBUR128)
+    target_link_libraries(rgscanner PRIVATE Ebur128::Ebur128)
     target_sources(rgscanner PRIVATE ebur128scanner.cpp ebur128scanner.h)
     target_compile_definitions(rgscanner PRIVATE HAVE_EBUR128)
 else()
+    target_link_libraries(rgscanner PRIVATE ${FFMPEG_LIBRARIES})
     target_sources(rgscanner PRIVATE ffmpegscanner.cpp ffmpegscanner.h)
     target_include_directories(rgscanner PRIVATE ${FFMPEG_INCLUDE_DIRS})
 endif()
