@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <core/engine/audioloader.h>
 #include <core/track.h>
 #include <utils/worker.h>
 
@@ -50,10 +51,9 @@ class RGScanner : public QObject
     Q_OBJECT
 
 public:
-    explicit RGScanner(SettingsManager* settings, QObject* parent = nullptr);
+    explicit RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings,
+                       QObject* parent = nullptr);
     ~RGScanner() override;
-
-    void stop();
 
     void calculatePerTrack(const TrackList& tracks);
     void calculateAsAlbum(const TrackList& tracks);

@@ -19,7 +19,11 @@
 
 #include "rgscanner.h"
 
+#ifdef HAVE_EBUR128
+#include "ebur128scanner.h"
+#else
 #include "ffmpegscanner.h"
+#endif
 
 #include <core/coresettings.h>
 #include <utils/settings/settingsmanager.h>
@@ -29,28 +33,27 @@ RGWorker::RGWorker(QObject* parent)
     : Worker{parent}
 { }
 
-RGScanner::RGScanner(SettingsManager* settings, QObject* parent)
+RGScanner::RGScanner(const std::shared_ptr<AudioLoader>& audioLoader, SettingsManager* settings, QObject* parent)
     : QObject{parent}
     , m_settings{settings}
+#ifdef HAVE_EBUR128
+    , m_worker{std::make_unique<Ebur128Scanner>(audioLoader)}
+#else
     , m_worker{std::make_unique<FFmpegScanner>()}
+#endif
 {
     m_worker->moveToThread(&m_scanThread);
     m_scanThread.start();
 
     QObject::connect(m_worker.get(), &RGWorker::startingCalculation, this, &RGScanner::startingCalculation);
     QObject::connect(m_worker.get(), &RGWorker::calculationFinished, this, &RGScanner::calculationFinished);
-    QObject::connect(m_worker.get(), &RGWorker::finished, this, &RGScanner::deleteLater);
 }
 
 RGScanner::~RGScanner()
 {
+    m_worker->closeThread();
     m_scanThread.quit();
     m_scanThread.wait();
-}
-
-void RGScanner::stop()
-{
-    m_worker->closeThread();
 }
 
 void RGScanner::calculatePerTrack(const TrackList& tracks)

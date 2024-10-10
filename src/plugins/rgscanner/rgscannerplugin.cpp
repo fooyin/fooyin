@@ -36,8 +36,9 @@
 namespace Fooyin::RGScanner {
 void RGScannerPlugin::initialise(const CorePluginContext& context)
 {
-    m_library  = context.library;
-    m_settings = context.settingsManager;
+    m_audioLoader = context.audioLoader;
+    m_library     = context.library;
+    m_settings    = context.settingsManager;
 }
 
 void RGScannerPlugin::initialise(const GuiPluginContext& context)
@@ -59,16 +60,15 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     auto* progress
         = new ElapsedProgressDialog(tr("Scanning tracks…"), tr("Abort"), 0, total + 1, Utils::getMainWindow());
     progress->setAttribute(Qt::WA_DeleteOnClose);
-    progress->setWindowModality(Qt::WindowModal);
+    progress->setWindowModality(Qt::ApplicationModal);
     progress->setValue(0);
     progress->setWindowTitle(tr("ReplayGain Scan Progress"));
 
-    auto* scanner = new RGScanner(m_settings, this);
+    auto* scanner = new RGScanner(m_audioLoader, m_settings, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
                      [this, scanner, progress](const TrackList& tracks) {
-                         scanner->stop();
                          scanner->deleteLater();
-                         progress->close();
+                         progress->deleteLater();
 
                          auto* rgResults = new RGScanResults(m_library, tracks);
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
@@ -77,7 +77,7 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
 
     QObject::connect(scanner, &RGScanner::startingCalculation, progress, [scanner, progress](const QString& filepath) {
         if(progress->wasCancelled()) {
-            scanner->stop();
+            scanner->deleteLater();
             progress->close();
             return;
         }

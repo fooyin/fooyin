@@ -48,6 +48,7 @@ private:
     void calculateReplayGain(RGScanType type);
     void setupReplayGainMenu();
 
+    std::shared_ptr<AudioLoader> m_audioLoader;
     MusicLibrary* m_library;
     SettingsManager* m_settings;
     ActionManager* m_actionManager;
