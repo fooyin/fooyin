@@ -29,6 +29,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/doubleslidereditor.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabbar.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/editabletabwidget.h
+    ${CMAKE_SOURCE_DIR}/include/gui/widgets/elapsedprogressdialog.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/elidedlabel.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandableinputbox.h
     ${CMAKE_SOURCE_DIR}/include/gui/widgets/expandingcombobox.h
@@ -304,6 +305,7 @@ set(SOURCES
     widgets/elidedlabel.cpp
     widgets/editabletabbar.cpp
     widgets/editabletabwidget.cpp
+    widgets/elapsedprogressdialog.cpp
     widgets/expandableinputbox.cpp
     widgets/expandedtreeview.cpp
     widgets/expandingcombobox.cpp
