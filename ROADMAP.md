@@ -17,11 +17,11 @@ This document outlines the upcoming features for fooyin.
 | Archive support (Adding to library, playback) | ✅ 0.6.0  |
 | Scrobbling                                    | ✅ 0.7.0  |
 | ReplayGain support                            | ✅ 0.7.0  |
-| Calculating ReplayGain                        | 🔄 0.8.0 |
+| Calculating ReplayGain                        | ✅ 0.8.0  |
 | Query-based language for advanced searching   | ✅ 0.8.0  |
-| Smart playlists                               | ❓ TBD    |
-| Album artwork downloading/saving              | ❓ TBD    |
-| Synchronised lyric support                    | ❓ TBD    |
+| Smart playlists                               | 🔄 0.9.0 |
+| Album artwork downloading/saving              | 🔄 0.9.0 |
+| Synchronised lyric support                    | 🔄 0.9.0 |
 | Audio conversion                              | ❓ TBD    |
 | Metadata lookup                               | ❓ TBD    |
 | Internet radio support                        | ❓ TBD    |
@@ -41,11 +41,11 @@ This document outlines the upcoming features for fooyin.
 
 ## Widgets
 
-| Widget                | Release  |
-|-----------------------|----------|
-| Directory browser     | ✅ 0.4.0  |
-| Waveform seekbar      | ✅ 0.4.0  |
-| Playback queue viewer | ✅ 0.5.2  |
-| VU meter              | 🔄 0.8.0 |
-| Musical spectrum      | ❓ TBD    |
-| Spectrogram           | ❓ TBD    |
+| Widget                | Release |
+|-----------------------|---------|
+| Directory browser     | ✅ 0.4.0 |
+| Waveform seekbar      | ✅ 0.4.0 |
+| Playback queue viewer | ✅ 0.5.2 |
+| VU meter              | ✅ 0.8.0 |
+| Musical spectrum      | ❓ TBD   |
+| Spectrogram           | ❓ TBD   |
