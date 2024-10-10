@@ -26,6 +26,7 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/async.h>
 #include <utils/database/dbconnectionhandler.h>
 #include <utils/settings/settingsdialogcontroller.h>
@@ -42,6 +43,8 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 {
     auto* libraryMenu = actionManager->actionContainer(Constants::Menus::Library);
 
+    const QStringList libraryCategory = {tr("Library")};
+
     auto* dbMenu = actionManager->createMenu(Constants::Menus::Database);
     dbMenu->menu()->setTitle(tr("&Database"));
 
@@ -52,36 +55,46 @@ LibraryMenu::LibraryMenu(Application* core, ActionManager* actionManager, QObjec
 
     auto* refreshLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Scan for changes"), this);
+    auto* refreshLibraryCmd = actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh);
+    refreshLibraryCmd->setCategories(libraryCategory);
     refreshLibrary->setStatusTip(tr("Update tracks in libraries which have been modified on disk"));
     QObject::connect(refreshLibrary, &QAction::triggered, core->library(), &MusicLibrary::refreshAll);
 
     auto* rescanLibrary
         = new QAction(Utils::iconFromTheme(Constants::Icons::RescanLibrary), tr("&Reload tracks"), this);
+    auto* rescanLibraryCmd = actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan);
+    rescanLibraryCmd->setCategories(libraryCategory);
     rescanLibrary->setStatusTip(tr("Reload metadata from files for all tracks in libraries"));
     QObject::connect(rescanLibrary, &QAction::triggered, core->library(), &MusicLibrary::rescanAll);
 
-    auto* search = new QAction(tr("S&earch"), this);
+    auto* search    = new QAction(tr("S&earch"), this);
+    auto* searchCmd = actionManager->registerAction(search, Constants::Actions::SearchLibrary);
+    searchCmd->setCategories(libraryCategory);
     search->setStatusTip(tr("Search all libraries"));
     QObject::connect(search, &QAction::triggered, this, &LibraryMenu::requestSearch);
 
-    auto* quickSearch = new QAction(tr("&Quick Search"), this);
+    auto* quickSearch    = new QAction(tr("&Quick Search"), this);
+    auto* quickSearchCmd = actionManager->registerAction(quickSearch, Constants::Actions::QuickSearch);
+    quickSearchCmd->setCategories(libraryCategory);
     quickSearch->setStatusTip(tr("Show quick search popup"));
     QObject::connect(quickSearch, &QAction::triggered, this, &LibraryMenu::requestQuickSearch);
 
-    auto* openSettings = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
+    auto* openSettings    = new QAction(Utils::iconFromTheme(Constants::Icons::Settings), tr("&Configure"), this);
+    auto* openSettingsCmd = actionManager->registerAction(openSettings, "Library.Configure");
+    openSettingsCmd->setCategories(libraryCategory);
     openSettings->setStatusTip(tr("Open the library page in the settings dialog"));
     QObject::connect(openSettings, &QAction::triggered, this, [core]() {
         core->settingsManager()->settingsDialog()->openAtPage(Constants::Page::LibraryGeneral);
     });
 
-    libraryMenu->addAction(actionManager->registerAction(refreshLibrary, Constants::Actions::Refresh));
-    libraryMenu->addAction(actionManager->registerAction(rescanLibrary, Constants::Actions::Rescan));
+    libraryMenu->addAction(refreshLibraryCmd);
+    libraryMenu->addAction(rescanLibraryCmd);
     libraryMenu->addSeparator();
     libraryMenu->addMenu(dbMenu);
-    libraryMenu->addAction(actionManager->registerAction(search, Constants::Actions::SearchLibrary));
-    libraryMenu->addAction(actionManager->registerAction(quickSearch, Constants::Actions::QuickSearch));
+    libraryMenu->addAction(searchCmd);
+    libraryMenu->addAction(quickSearchCmd);
     libraryMenu->addSeparator();
-    libraryMenu->addAction(actionManager->registerAction(openSettings, "Library.Configure"));
+    libraryMenu->addAction(openSettingsCmd);
 }
 
 void LibraryMenu::optimiseDatabase()

@@ -22,6 +22,7 @@
 #include <gui/guiconstants.h>
 #include <utils/actions/actioncontainer.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 #include <utils/utils.h>
 
@@ -35,27 +36,36 @@ ViewMenu::ViewMenu(ActionManager* actionManager, SettingsManager* settings, QObj
 {
     auto* viewMenu = m_actionManager->actionContainer(Constants::Menus::View);
 
+    const QStringList viewCategory = {tr("View")};
+
     auto* openQuickSetup = new QAction(Utils::iconFromTheme(Constants::Icons::QuickSetup), tr("&Quick setup"), this);
+    auto* quickSetupCmd  = m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup);
+    quickSetupCmd->setCategories(viewCategory);
     openQuickSetup->setStatusTip(tr("Open the quick setup dialog"));
-    viewMenu->addAction(m_actionManager->registerAction(openQuickSetup, Constants::Actions::QuickSetup),
-                        Actions::Groups::One);
+    viewMenu->addAction(quickSetupCmd, Actions::Groups::One);
     QObject::connect(openQuickSetup, &QAction::triggered, this, &ViewMenu::openQuickSetup);
 
-    auto* showLog = new QAction(Utils::iconFromTheme(Constants::Icons::Log), tr("&Log"), this);
+    auto* showLog    = new QAction(Utils::iconFromTheme(Constants::Icons::Log), tr("&Log"), this);
+    auto* showLogCmd = m_actionManager->registerAction(showLog, Constants::Actions::Log);
+    showLogCmd->setCategories(viewCategory);
     showLog->setStatusTip(tr("Open the log dialog"));
-    viewMenu->addAction(m_actionManager->registerAction(showLog, Constants::Actions::Log));
+    viewMenu->addAction(showLogCmd);
     QObject::connect(showLog, &QAction::triggered, this, &ViewMenu::openLog);
 
-    auto* showEditor = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("&Script editor"), this);
+    auto* showEditor    = new QAction(Utils::iconFromTheme(Constants::Icons::ScriptEditor), tr("&Script editor"), this);
+    auto* showEditorCmd = m_actionManager->registerAction(showEditor, Constants::Actions::ScriptEditor);
+    showEditorCmd->setCategories(viewCategory);
     showEditor->setStatusTip(tr("Open the script editor dialog"));
-    viewMenu->addAction(m_actionManager->registerAction(showEditor, Constants::Actions::ScriptEditor));
+    viewMenu->addAction(showEditorCmd);
     QObject::connect(showEditor, &QAction::triggered, this, &ViewMenu::openScriptEditor);
 
     viewMenu->addSeparator();
 
-    auto* showNowPlaying = new QAction(tr("Show playing &track"), this);
+    auto* showNowPlaying    = new QAction(tr("Show playing &track"), this);
+    auto* showNowPlayingCmd = m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying);
+    showNowPlayingCmd->setCategories(viewCategory);
     showNowPlaying->setStatusTip(tr("Show the currently playing track in the playlist"));
-    viewMenu->addAction(m_actionManager->registerAction(showNowPlaying, Constants::Actions::ShowNowPlaying));
+    viewMenu->addAction(showNowPlayingCmd);
     QObject::connect(showNowPlaying, &QAction::triggered, this, &ViewMenu::showNowPlaying);
 }
 } // namespace Fooyin

@@ -436,21 +436,26 @@ void GuiApplicationPrivate::removeExpiredCovers(const TrackList& tracks)
 
 void GuiApplicationPrivate::registerActions()
 {
-    auto* volumeUp = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeHigh), GuiApplication::tr("Volume up"),
-                                 m_mainWindow.get());
-    m_actionManager->registerAction(volumeUp, Constants::Actions::VolumeUp);
+    const QStringList volumeCategory = {GuiApplication::tr("Volume")};
+
+    auto* volumeUp    = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeHigh), GuiApplication::tr("Volume up"),
+                                    m_mainWindow.get());
+    auto* volumeUpCmd = m_actionManager->registerAction(volumeUp, Constants::Actions::VolumeUp);
+    volumeUpCmd->setCategories(volumeCategory);
     QObject::connect(volumeUp, &QAction::triggered, m_mainWindow.get(),
                      [this]() { changeVolume(m_settings->value<Settings::Gui::VolumeStep>()); });
 
     auto* volumeDown = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeLow), GuiApplication::tr("Volume down"),
                                    m_mainWindow.get());
-    m_actionManager->registerAction(volumeDown, Constants::Actions::VolumeDown);
+    auto* volumeDownCmd = m_actionManager->registerAction(volumeDown, Constants::Actions::VolumeDown);
+    volumeDownCmd->setCategories(volumeCategory);
     QObject::connect(volumeDown, &QAction::triggered, m_mainWindow.get(),
                      [this]() { changeVolume(-m_settings->value<Settings::Gui::VolumeStep>()); });
 
     auto* muteAction = new QAction(Utils::iconFromTheme(Constants::Icons::VolumeMute), GuiApplication::tr("Mute"),
                                    m_mainWindow.get());
-    m_actionManager->registerAction(muteAction, Constants::Actions::Mute);
+    auto* muteCmd    = m_actionManager->registerAction(muteAction, Constants::Actions::Mute);
+    muteCmd->setCategories(volumeCategory);
     QObject::connect(muteAction, &QAction::triggered, m_mainWindow.get(), [this]() { mute(); });
 
     auto setSavePlaylistState = [this]() {
@@ -472,6 +477,7 @@ void GuiApplicationPrivate::registerActions()
 
     auto* removePlaylist = new QAction(GuiApplication::tr("Remove Playlist"), m_mainWindow.get());
     auto* removeCmd      = m_actionManager->registerAction(removePlaylist, Constants::Actions::RemovePlaylist);
+    removeCmd->setCategories({GuiApplication::tr("File")});
     removeCmd->setDefaultShortcut(QKeySequence{Qt::CTRL | Qt::Key_W});
     QObject::connect(removePlaylist, &QAction::triggered, m_mainWindow.get(), [this]() {
         if(auto* currentPlaylist = m_playlistController->currentPlaylist()) {
@@ -551,12 +557,14 @@ void GuiApplicationPrivate::setupRatingMenu()
     auto* rate4 = new QAction(GuiApplication::tr("Rate 4"), m_mainWindow.get());
     auto* rate5 = new QAction(GuiApplication::tr("Rate 5"), m_mainWindow.get());
 
-    m_actionManager->registerAction(rate0, Constants::Actions::Rate0);
-    m_actionManager->registerAction(rate1, Constants::Actions::Rate1);
-    m_actionManager->registerAction(rate2, Constants::Actions::Rate2);
-    m_actionManager->registerAction(rate3, Constants::Actions::Rate3);
-    m_actionManager->registerAction(rate4, Constants::Actions::Rate4);
-    m_actionManager->registerAction(rate5, Constants::Actions::Rate5);
+    const QStringList rateCategory = {GuiApplication::tr("Rating")};
+
+    m_actionManager->registerAction(rate0, Constants::Actions::Rate0)->setCategories(rateCategory);
+    m_actionManager->registerAction(rate1, Constants::Actions::Rate1)->setCategories(rateCategory);
+    m_actionManager->registerAction(rate2, Constants::Actions::Rate2)->setCategories(rateCategory);
+    m_actionManager->registerAction(rate3, Constants::Actions::Rate3)->setCategories(rateCategory);
+    m_actionManager->registerAction(rate4, Constants::Actions::Rate4)->setCategories(rateCategory);
+    m_actionManager->registerAction(rate5, Constants::Actions::Rate5)->setCategories(rateCategory);
 
     auto setRating = [this](const int rating) {
         if(m_selectionController.selectedTrackCount() == 1) {

@@ -52,10 +52,13 @@ void LayoutMenu::setup()
     m_layoutMenu = m_actionManager->actionContainer(Constants::Menus::Layout);
     m_layoutMenu->clear();
 
+    const QStringList layoutCategory = {tr("Layout")};
+
     if(!m_layoutEditing) {
         m_layoutEditing = new QAction(tr("&Editing mode"), this);
         m_layoutEditing->setStatusTip(tr("Toggle layout editing mode"));
         m_layoutEditingCmd = m_actionManager->registerAction(m_layoutEditing, Constants::Actions::LayoutEditing);
+        m_layoutEditingCmd->setCategories(layoutCategory);
         m_layoutEditing->setCheckable(true);
         m_layoutEditing->setChecked(m_settings->value<Settings::Gui::LayoutEditing>());
         QObject::connect(m_layoutEditing, &QAction::triggered, this,
@@ -67,6 +70,7 @@ void LayoutMenu::setup()
         m_lockSplitters = new QAction(tr("Loc&k splitters"), this);
         m_lockSplitters->setStatusTip(tr("Prevent manual resizing of splitters when not in layout editing mode"));
         m_lockSplittersCmd = m_actionManager->registerAction(m_lockSplitters, Constants::Actions::LockSplitters);
+        m_lockSplittersCmd->setCategories(layoutCategory);
         m_lockSplitters->setCheckable(true);
         m_lockSplitters->setChecked(m_settings->value<Settings::Gui::LockSplitterHandles>());
         QObject::connect(m_lockSplitters, &QAction::triggered, this,
@@ -104,6 +108,8 @@ void LayoutMenu::addLayout(const FyLayout& layout)
     auto* layoutAction = new QAction(name, m_layoutMenu->menu());
     layoutAction->setStatusTip(tr("Replace the current layout"));
     auto* layoutCmd = m_actionManager->registerAction(layoutAction, Id{QStringLiteral("Layout.Switch.%1").arg(name)});
+    layoutCmd->setCategories({tr("Layout"), tr("Switch")});
+
     QObject::connect(layoutAction, &QAction::triggered, this, [this, name]() {
         const auto fyLayout = m_layoutProvider->layoutByName(name);
         if(fyLayout.isValid()) {

@@ -118,11 +118,9 @@ void ShortcutsModel::populate(ActionManager* actionManager)
             continue;
         }
 
-        const auto parts      = command->id().name().split(QStringLiteral("."));
-        const auto categories = parts | std::views::take(parts.size() - 1);
-
         ShortcutItem* parent = rootItem();
 
+        const auto categories = command->categories();
         for(const QString& category : categories) {
             if(!sections.contains(category)) {
                 auto* categoryItem

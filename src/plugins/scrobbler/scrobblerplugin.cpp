@@ -26,6 +26,7 @@
 
 #include <gui/widgetprovider.h>
 #include <utils/actions/actionmanager.h>
+#include <utils/actions/command.h>
 #include <utils/settings/settingsmanager.h>
 
 #include <QAction>
@@ -50,7 +51,8 @@ void ScrobblerPlugin::initialise(const GuiPluginContext& context)
         m_settings->set<Settings::Scrobbler::ScrobblingEnabled>(
             !m_settings->value<Settings::Scrobbler::ScrobblingEnabled>());
     });
-    m_actionManager->registerAction(toggleScrobble, "Scrobbler.Toggle");
+    auto* toggleCmd = m_actionManager->registerAction(toggleScrobble, "Scrobbler.Toggle");
+    toggleCmd->setCategories({tr("Scrobbler")});
 
     context.widgetProvider->registerWidget(
         QStringLiteral("ScrobbleToggle"), [this]() { return new ScrobblerToggle(m_actionManager, m_settings); },
