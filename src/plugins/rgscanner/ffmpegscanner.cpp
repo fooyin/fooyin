@@ -277,6 +277,9 @@ public:
     TrackList m_scannedTracks;
     ScriptParser m_parser;
     QFutureWatcher<void>* m_future{nullptr};
+
+    using Albums = std::unordered_map<QString, TrackList>;
+    Albums m_albums;
 };
 
 FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegScanner* self)
@@ -285,6 +288,10 @@ FFmpegReplayGainPrivate::FFmpegReplayGainPrivate(FFmpegScanner* self)
 
 void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& tracks) const
 {
+    if(!m_self->mayRun()) {
+        return;
+    }
+
     if(!setupTrack(context, tracks.front(), context.albumFilter)) {
         return;
     }
@@ -297,7 +304,8 @@ void FFmpegReplayGainPrivate::scanAlbum(FFmpegContext& context, TrackList& track
         if(!m_self->mayRun()) {
             return;
         }
-        emit m_self->startingCalculation(track.prettyFilepath());
+        QMetaObject::invokeMethod(
+            m_self, [this, filepath = track.prettyFilepath()]() { emit m_self->startingCalculation(filepath); });
 
         if(setupTrack(context, track, context.trackFilter)) {
             const ReplayGainResult trackResult = handleTrack(context, true);
@@ -382,9 +390,9 @@ void FFmpegScanner::calculateAsAlbum(const TrackList& tracks, bool truePeak)
 
     if(mayRun()) {
         emit calculationFinished(scannedTracks);
-        emit finished();
     }
 
+    emit finished();
     setState(Idle);
 }
 
@@ -392,29 +400,30 @@ void FFmpegScanner::calculateByAlbumTags(const TrackList& tracks, const QString&
 {
     setState(Running);
 
-    std::unordered_map<QString, TrackList> albums;
+    p->m_future = new QFutureWatcher<void>(this);
+
     for(const auto& track : tracks) {
         const QString album = p->m_parser.evaluate(groupScript, track);
-        albums[album].push_back(track);
+        p->m_albums[album].push_back(track);
     }
 
-    TrackList scannedTracks;
+    auto future = QtConcurrent::map(p->m_albums, [this, truePeak](auto& album) {
+        FFmpegContext context{truePeak};
+        p->scanAlbum(context, album.second);
+    });
 
-    FFmpegContext context{truePeak};
+    p->m_future->setFuture(future);
 
-    for(TrackList& album : albums | std::views::values) {
-        if(!mayRun()) {
-            return;
+    future.then(this, [this]() {
+        if(mayRun()) {
+            for(const auto& [_, album] : p->m_albums) {
+                p->m_scannedTracks.insert(p->m_scannedTracks.end(), album.cbegin(), album.cend());
+            }
+            emit calculationFinished(p->m_scannedTracks);
         }
-        p->scanAlbum(context, album);
-        scannedTracks.insert(scannedTracks.end(), album.cbegin(), album.cend());
-    }
 
-    if(mayRun()) {
-        emit calculationFinished(scannedTracks);
         emit finished();
-    }
-
-    setState(Idle);
+        setState(Idle);
+    });
 }
 } // namespace Fooyin::RGScanner
