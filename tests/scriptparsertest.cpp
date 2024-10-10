@@ -81,7 +81,7 @@ TEST_F(ScriptParserTest, ConditionalTest)
 {
     EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$ifequal(1,1,true,false)")));
     EXPECT_EQ(u"false", m_parser.evaluate(QStringLiteral("$ifgreater(23,32,true,false)")));
-    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$iflonger(aaa,bb,true,false)")));
+    EXPECT_EQ(u"true", m_parser.evaluate(QStringLiteral("$iflonger(aaa,2,true,false)")));
 }
 
 TEST_F(ScriptParserTest, MetadataTest)
