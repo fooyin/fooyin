@@ -209,7 +209,7 @@ void VuMeterWidgetPrivate::updateSize()
                 m_meterWidth  = width - m_labelsSize;
             }
         }
-        else if(height > 150) {
+        else if(width > 100 && height > 150) {
             m_drawLegend  = true;
             m_legendSize  = static_cast<float>(textRect.width() + LegendPadding);
             m_labelsSize  = static_cast<float>(textRect.height() + 5);
