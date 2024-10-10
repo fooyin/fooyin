@@ -23,14 +23,18 @@
 #include <sstream>
 
 namespace Fooyin {
+Timer::Timer()
+    : m_start{std::chrono::steady_clock::now()}
+{ }
+
 void Timer::reset()
 {
-    m_start = Clock::now();
+    m_start = std::chrono::steady_clock::now();
 }
 
 std::chrono::milliseconds Timer::elapsed() const
 {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - m_start);
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_start);
 }
 
 QString Timer::elapsedFormatted() const

@@ -28,16 +28,15 @@
 namespace Fooyin {
 class FYUTILS_EXPORT Timer
 {
-    using Clock     = std::chrono::steady_clock;
-    using TimePoint = Clock::time_point;
-
 public:
+    Timer();
+
     void reset();
 
     [[nodiscard]] std::chrono::milliseconds elapsed() const;
     [[nodiscard]] QString elapsedFormatted() const;
 
 private:
-    TimePoint m_start{Clock::now()};
+    std::chrono::steady_clock::time_point m_start;
 };
 } // namespace Fooyin
