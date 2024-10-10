@@ -55,35 +55,51 @@ int randomNumber(int min, int max)
     return QRandomGenerator::global()->bounded(min, max + 1);
 }
 
-QString msToString(uint64_t ms)
+QString msToString(std::chrono::milliseconds ms, bool includeMs)
 {
-    static constexpr auto msPerSecond = 1000;
-    static constexpr auto msPerMinute = msPerSecond * 60;
-    static constexpr auto msPerHour   = msPerMinute * 60;
-    static constexpr auto msPerDay    = msPerHour * 24;
-    static constexpr auto msPerWeek   = msPerDay * 7;
+    const auto weeks = duration_cast<std::chrono::weeks>(ms);
+    ms -= duration_cast<std::chrono::milliseconds>(weeks);
 
-    const uint64_t weeks   = ms / msPerWeek;
-    const uint64_t days    = (ms % msPerWeek) / msPerDay;
-    const uint64_t hours   = (ms % msPerDay) / msPerHour;
-    const uint64_t minutes = (ms % msPerHour) / msPerMinute;
-    const uint64_t seconds = (ms % msPerMinute) / msPerSecond;
+    const auto days = duration_cast<std::chrono::days>(ms);
+    ms -= duration_cast<std::chrono::milliseconds>(days);
+
+    const auto hours = duration_cast<std::chrono::hours>(ms);
+    ms -= duration_cast<std::chrono::milliseconds>(hours);
+
+    const auto minutes = duration_cast<std::chrono::minutes>(ms);
+    ms -= duration_cast<std::chrono::milliseconds>(minutes);
+
+    const auto seconds = duration_cast<std::chrono::seconds>(ms);
+    ms -= duration_cast<std::chrono::milliseconds>(seconds);
+
+    const auto milliseconds = ms.count();
 
     QString formattedTime;
 
-    if(weeks > 0) {
-        formattedTime = formattedTime + QString::number(weeks) + QStringLiteral("wk ");
+    if(weeks.count() > 0) {
+        formattedTime += QStringLiteral("%1wk ").arg(weeks.count());
     }
-    if(days > 0) {
-        formattedTime = formattedTime + QString::number(days) + QStringLiteral("d ");
+    if(days.count() > 0) {
+        formattedTime += QStringLiteral("%1d ").arg(days.count());
     }
-    if(hours > 0) {
-        formattedTime = formattedTime + addLeadingZero(static_cast<int>(hours), 2) + QStringLiteral(":");
+    if(hours.count() > 0) {
+        formattedTime += QStringLiteral("%1:").arg(hours.count(), 2, 10, QLatin1Char{'0'});
     }
 
-    formattedTime = formattedTime + addLeadingZero(static_cast<int>(minutes), 2) + QStringLiteral(":")
-                  + addLeadingZero(static_cast<int>(seconds), 2);
+    formattedTime += QStringLiteral("%1:%2")
+                         .arg(minutes.count(), 2, 10, QLatin1Char{'0'})
+                         .arg(seconds.count(), 2, 10, QLatin1Char{'0'});
+
+    if(includeMs) {
+        formattedTime += QStringLiteral(".%1").arg(milliseconds, 3, 10, QLatin1Char{'0'});
+    }
+
     return formattedTime;
+}
+
+QString msToString(uint64_t ms)
+{
+    return msToString(static_cast<std::chrono::milliseconds>(ms), false);
 }
 
 uint64_t currentDateToInt()
@@ -163,7 +179,7 @@ QString formatFileSize(uint64_t bytes, bool includeBytes)
 
 QString addLeadingZero(int number, int leadingCount)
 {
-    return QStringLiteral("%1").arg(number, leadingCount, 10, QChar::fromLatin1('0'));
+    return QStringLiteral("%1").arg(number, leadingCount, 10, QLatin1Char{'0'});
 }
 
 QString appendShortcut(const QString& str, const QKeySequence& shortcut)

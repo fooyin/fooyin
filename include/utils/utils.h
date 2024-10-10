@@ -42,6 +42,7 @@ class QWidget;
 
 namespace Fooyin::Utils {
 FYUTILS_EXPORT int randomNumber(int min, int max);
+FYUTILS_EXPORT QString msToString(std::chrono::milliseconds ms, bool includeMs);
 FYUTILS_EXPORT QString msToString(uint64_t ms);
 FYUTILS_EXPORT QString formatFileSize(uint64_t bytes, bool includeBytes = false);
 FYUTILS_EXPORT QString addLeadingZero(int number, int leadingCount);

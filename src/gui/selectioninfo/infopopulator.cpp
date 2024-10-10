@@ -201,7 +201,9 @@ void InfoPopulatorPrivate::addTrackGeneral(int total, const Track& track)
     }
 
     checkAddEntryNode(QStringLiteral("Duration"), InfoPopulator::tr("Duration"), ItemParent::General, track.duration(),
-                      InfoItem::Total, InfoItem::FormatUIntFunc{Utils::msToString});
+                      InfoItem::Total, InfoItem::FormatUIntFunc{[](uint64_t ms) {
+                          return Utils::msToString(ms);
+                      }});
     checkAddEntryNode(QStringLiteral("Channels"), InfoPopulator::tr("Channels"), ItemParent::General, track.channels(),
                       InfoItem::Percentage);
     checkAddEntryNode(QStringLiteral("BitDepth"), InfoPopulator::tr("Bit Depth"), ItemParent::General, track.bitDepth(),
