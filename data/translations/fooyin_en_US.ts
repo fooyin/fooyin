@@ -786,7 +786,7 @@
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="45"/>
         <source>Add the specified files to the current playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Add the specified files to the current playlist</translation>
     </message>
     <message>
         <location filename="../../src/gui/menubar/filemenu.cpp" line="50"/>
@@ -1746,47 +1746,47 @@
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="635"/>
         <source>Calculate ReplayGain values per-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values per-file</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="637"/>
         <source>Calculate ReplayGain values as a single album</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values as a single album</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="639"/>
         <source>Calculate ReplayGain values as albums (by tags)</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values as albums (by tags)</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="641"/>
         <source>Remove ReplayGain information from files</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove ReplayGain information from files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="643"/>
         <source>Calculate ReplayGain values for selected files, considering each file individually</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values for selected files, considering each file individually</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="647"/>
         <source>Calculate ReplayGain values for selected files, dividing into albums by tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculate ReplayGain values for selected files, dividing into albums by tags</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="648"/>
         <source>Remove ReplayGain values from the selected files</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove ReplayGain values from the selected files</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="684"/>
         <source>Scanning tracks…</source>
-        <translation type="unfinished"></translation>
+        <translation>Scanning tracks…</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="691"/>
         <source>ReplayGain Scan Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>ReplayGain Scan Progress</translation>
     </message>
     <message>
         <location filename="../../src/gui/guiapplication.cpp" line="959"/>
@@ -4877,12 +4877,12 @@
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="143"/>
         <source>Album grouping pattern</source>
-        <translation type="unfinished">Album grouping pattern</translation>
+        <translation>Album grouping pattern</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/playback/replaygainpage.cpp" line="145"/>
         <source>Used with the %1 action</source>
-        <translation type="unfinished"></translation>
+        <translation>Used with the %1 action</translation>
     </message>
 </context>
 <context>
