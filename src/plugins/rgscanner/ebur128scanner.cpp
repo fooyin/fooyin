@@ -220,11 +220,26 @@ void Ebur128Scanner::scanTrack(Track& track, bool truePeak, const QString& album
     }
 
     double trackPeak{Constants::InvalidPeak};
-    if((truePeak ? ebur128_true_peak(state.get(), 0, &trackPeak) : ebur128_sample_peak(state.get(), 0, &trackPeak))
-       == EBUR128_SUCCESS) {
-        trackPeak = std::pow(10, trackPeak / 20.0);
-        track.setRGTrackPeak(static_cast<float>(trackPeak));
+    const auto channels = static_cast<unsigned int>(format->channelCount());
+
+    if(truePeak) {
+        for(unsigned i{0}; i < channels; ++i) {
+            double channelPeak{Constants::InvalidPeak};
+            if(ebur128_true_peak(state.get(), i, &channelPeak) == EBUR128_SUCCESS) {
+                trackPeak = std::max(trackPeak, channelPeak);
+            }
+        }
     }
+    else {
+        for(unsigned i{0}; i < channels; ++i) {
+            double channelPeak{Constants::InvalidPeak};
+            if(ebur128_sample_peak(state.get(), i, &channelPeak) == EBUR128_SUCCESS) {
+                trackPeak = std::max(trackPeak, channelPeak);
+            }
+        }
+    }
+
+    track.setRGTrackPeak(static_cast<float>(trackPeak));
 
     if(!album.isEmpty()) {
         const std::scoped_lock lock{m_mutex};
