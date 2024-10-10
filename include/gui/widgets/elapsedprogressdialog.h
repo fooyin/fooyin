@@ -45,6 +45,7 @@ public:
     void setText(const QString& text);
 
     [[nodiscard]] bool wasCancelled() const;
+    [[nodiscard]] std::chrono::milliseconds elapsedTime() const;
 
     [[nodiscard]] QSize sizeHint() const override;
 

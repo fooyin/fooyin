@@ -22,15 +22,18 @@
 #include "rgscanresultsmodel.h"
 
 #include <core/library/musiclibrary.h>
+#include <utils/utils.h>
 
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QHeaderView>
+#include <QLabel>
 #include <QPushButton>
 #include <QTableView>
 
 namespace Fooyin::RGScanner {
-RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* parent)
+RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, std::chrono::milliseconds timeTaken,
+                             QWidget* parent)
     : QDialog{parent}
     , m_library{library}
     , m_tracks{std::move(tracks)}
@@ -38,8 +41,6 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* p
     , m_resultsModel{new RGScanResultsModel(m_tracks, this)}
 {
     setWindowTitle(tr("ReplayGain Scan Results"));
-
-    auto* layout = new QGridLayout(this);
 
     m_resultsView->setModel(m_resultsModel);
     m_resultsView->verticalHeader()->hide();
@@ -55,8 +56,13 @@ RGScanResults::RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* p
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    layout->addWidget(m_resultsView);
-    layout->addWidget(buttonBox);
+    auto* timeLabel = new QLabel(tr("Time taken") + u": " + Utils::msToString(timeTaken, false), this);
+
+    auto* layout = new QGridLayout(this);
+    layout->addWidget(m_resultsView, 0, 0, 1, 2);
+    layout->addWidget(timeLabel, 1, 0);
+    layout->addWidget(buttonBox, 1, 1);
+    layout->setColumnStretch(1, 1);
 }
 
 void RGScanResults::accept()

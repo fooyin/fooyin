@@ -93,6 +93,11 @@ bool ElapsedProgressDialog::wasCancelled() const
     return m_wasCancelled;
 }
 
+std::chrono::milliseconds ElapsedProgressDialog::elapsedTime() const
+{
+    return m_elapsedTimer.elapsed();
+}
+
 QSize ElapsedProgressDialog::sizeHint() const
 {
     return {400, 150};

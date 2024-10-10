@@ -67,10 +67,11 @@ void RGScannerPlugin::calculateReplayGain(RGScanType type)
     auto* scanner = new RGScanner(m_audioLoader, m_settings, this);
     QObject::connect(scanner, &RGScanner::calculationFinished, this,
                      [this, scanner, progress](const TrackList& tracks) {
+                         const auto finishTime = progress->elapsedTime();
                          scanner->deleteLater();
                          progress->deleteLater();
 
-                         auto* rgResults = new RGScanResults(m_library, tracks);
+                         auto* rgResults = new RGScanResults(m_library, tracks, finishTime);
                          rgResults->setAttribute(Qt::WA_DeleteOnClose);
                          rgResults->show();
                      });

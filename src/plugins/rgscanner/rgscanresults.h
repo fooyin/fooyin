@@ -36,7 +36,8 @@ class RGScanResults : public QDialog
     Q_OBJECT
 
 public:
-    RGScanResults(MusicLibrary* library, TrackList tracks, QWidget* parent = nullptr);
+    RGScanResults(MusicLibrary* library, TrackList tracks, std::chrono::milliseconds timeTaken,
+                  QWidget* parent = nullptr);
 
     void accept() override;
 
