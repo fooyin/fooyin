@@ -265,13 +265,14 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
         return;
     }
 
-    m_tracks = m_currentAlbum->second;
+    const auto album = m_currentAlbum->first;
+    m_tracks         = m_currentAlbum->second;
 
-    auto albumFuture = QtConcurrent::map(
-        m_currentAlbum->second, [this, truePeak](Track& track) { scanTrack(track, truePeak, m_currentAlbum->first); });
+    auto albumFuture = QtConcurrent::map(m_currentAlbum->second,
+                                         [this, truePeak, album](Track& track) { scanTrack(track, truePeak, album); });
 
     auto* albumWatcher = new QFutureWatcher<void>(this);
-    m_albumWatchers.emplace(m_currentAlbum->first, albumWatcher);
+    m_albumWatchers.emplace(album, albumWatcher);
 
     QObject::connect(albumWatcher, &QFutureWatcher<void>::progressValueChanged, this, [this](const int val) {
         if(val >= 0 && std::cmp_less(val, m_tracks.size())) {
@@ -279,8 +280,8 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
         }
     });
 
-    QObject::connect(albumWatcher, &QFutureWatcher<void>::finished, this, [this, truePeak]() {
-        const auto albumState = m_albumStates.find(m_currentAlbum->first);
+    QObject::connect(albumWatcher, &QFutureWatcher<void>::finished, this, [this, truePeak, album]() {
+        const auto albumState = m_albumStates.find(album);
         if(albumState != m_albumStates.cend()) {
             const auto& trackStates = albumState->second;
             std::vector<ebur128_state*> states;
@@ -292,12 +293,13 @@ void Ebur128Scanner::scanAlbum(bool truePeak)
                 albumGain = ReferenceLUFS - albumGain;
             }
 
-            const float albumPeak
-                = std::ranges::max_element(m_currentAlbum->second, [](const Track& track1, const Track& track2) {
-                      return track1.rgTrackPeak() < track2.rgTrackPeak();
-                  })->rgTrackPeak();
+            auto& albumTracks = m_currentAlbum->second;
 
-            for(Track& track : m_currentAlbum->second) {
+            const float albumPeak = std::ranges::max_element(albumTracks, [](const Track& track1, const Track& track2) {
+                                        return track1.rgTrackPeak() < track2.rgTrackPeak();
+                                    })->rgTrackPeak();
+
+            for(Track& track : albumTracks) {
                 track.setRGAlbumGain(static_cast<float>(albumGain));
                 track.setRGAlbumPeak(albumPeak);
             }
