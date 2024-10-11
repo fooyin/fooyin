@@ -33,6 +33,11 @@
 #include <taglib/asfpicture.h>
 #include <taglib/asftag.h>
 #include <taglib/attachedpictureframe.h>
+#if(TAGLIB_MAJOR_VERSION >= 2)
+#include <taglib/dsdifffile.h>
+#include <taglib/dsffile.h>
+#endif
+#include <taglib/fileref.h>
 #include <taglib/flacfile.h>
 #include <taglib/id3v2framefactory.h>
 #include <taglib/id3v2tag.h>
@@ -564,6 +569,9 @@ QString codecForMime(const QString& mimeType)
     }
     if(mimeType == u"audio/opus" || mimeType == u"audio/x-opus+ogg") {
         return QStringLiteral("Opus");
+    }
+    if(mimeType == u"audio/x-dsf" || mimeType == u"audio/x-dff") {
+        return QStringLiteral("DSD");
     }
 
     return {};
@@ -1787,7 +1795,11 @@ QStringList TagLibReader::extensions() const
                                         QStringLiteral("oga"), QStringLiteral("m4a"),  QStringLiteral("wav"),
                                         QStringLiteral("wv"),  QStringLiteral("flac"), QStringLiteral("wma"),
                                         QStringLiteral("asf"), QStringLiteral("mpc"),  QStringLiteral("aiff"),
-                                        QStringLiteral("ape"), QStringLiteral("mp4")};
+                                        QStringLiteral("ape"), QStringLiteral("mp4"),
+#if(TAGLIB_MAJOR_VERSION >= 2)
+                                        QStringLiteral("dsf"), QStringLiteral("dff")
+#endif
+    };
     return extensions;
 }
 
@@ -2225,6 +2237,39 @@ bool TagLibReader::readTrack(const AudioSource& source, Track& track)
             }
         }
     }
+#if(TAGLIB_MAJOR_VERSION >= 2)
+    else if(mimeType == u"audio/x-dsf") {
+        const TagLib::DSF::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
+
+            if(file.tag()) {
+                readId3Tags(file.tag(), track);
+                track.setTagTypes({QStringLiteral("ID3v2.%1").arg(file.tag()->header()->majorVersion())});
+            }
+        }
+    }
+    else if(mimeType == u"audio/x-dff") {
+        const TagLib::DSDIFF::File file(&stream, true, style);
+        if(file.isValid()) {
+            readProperties(file);
+            track.setEncoding(QStringLiteral("Lossless"));
+
+            if(const int bps = file.audioProperties()->bitsPerSample(); bps > 0) {
+                track.setBitDepth(bps);
+            }
+            if(file.hasID3v2Tag()) {
+                readId3Tags(file.ID3v2Tag(), track);
+                track.setTagTypes({QStringLiteral("ID3v2.%1").arg(file.ID3v2Tag()->header()->majorVersion())});
+            }
+        }
+    }
+#endif
     else {
         qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
         return false;
@@ -2327,6 +2372,20 @@ QByteArray TagLibReader::readCover(const AudioSource& source, const Track& track
             return readAsfCover(file.tag(), cover);
         }
     }
+#if(TAGLIB_MAJOR_VERSION >= 2)
+    else if(mimeType == u"audio/x-dsf") {
+        const TagLib::DSF::File file(&stream, true);
+        if(file.isValid() && file.tag()) {
+            return readId3Cover(file.tag(), cover);
+        }
+    }
+    else if(mimeType == u"audio/x-dff") {
+        const TagLib::DSDIFF::File file(&stream, true);
+        if(file.isValid() && file.hasID3v2Tag()) {
+            return readId3Cover(file.ID3v2Tag(), cover);
+        }
+    }
+#endif
     else {
         qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
         return {};
@@ -2472,6 +2531,28 @@ bool TagLibReader::writeTrack(const AudioSource& source, const Track& track, Aud
             file.save();
         }
     }
+#if(TAGLIB_MAJOR_VERSION >= 2)
+    else if(mimeType == u"audio/x-dsf") {
+        TagLib::DSF::File file(&stream, false);
+        if(file.isValid()) {
+            writeProperties(file);
+            if(file.tag()) {
+                writeID3v2Tags(file.tag(), track, options);
+            }
+            file.save();
+        }
+    }
+    else if(mimeType == u"audio/x-dff") {
+        TagLib::DSDIFF::File file(&stream, false);
+        if(file.isValid()) {
+            writeProperties(file);
+            if(file.hasID3v2Tag()) {
+                writeID3v2Tags(file.ID3v2Tag(), track, options);
+            }
+            file.save();
+        }
+    }
+#endif
     else {
         qCInfo(TAGLIB) << "Unsupported mime type:" << mimeType;
         return false;
