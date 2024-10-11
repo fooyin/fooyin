@@ -29,6 +29,7 @@
 #include <QRegularExpression>
 
 #include <chrono>
+#include <ranges>
 
 constexpr auto MaxStarCount   = 10;
 constexpr auto YearRegex      = R"lit(\b\d{4}\b)lit";
@@ -1429,42 +1430,48 @@ QString Track::findCommonField(const TrackList& tracks)
         if(name.isEmpty()) {
             name = tracks.front().filename();
         }
+        return name;
     }
-    else {
-        const QString primaryGenre  = tracks.front().genre();
-        const QString primaryArtist = tracks.front().effectiveAlbumArtist();
-        const QString primaryAlbum  = tracks.front().album();
-        const QString primaryDir    = tracks.front().directory();
 
-        const bool sameGenre  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryGenre](const Track& track) {
-            return track.genre() == primaryGenre;
-        });
-        const bool sameArtist = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryArtist](const Track& track) {
-            return track.effectiveAlbumArtist() == primaryArtist;
-        });
-        const bool sameAlbum  = std::all_of(tracks.cbegin(), tracks.cend(), [&primaryAlbum](const Track& track) {
-            return track.album() == primaryAlbum;
-        });
-        const bool sameDir    = std::all_of(tracks.cbegin(), tracks.cend(),
-                                            [&primaryDir](const Track& track) { return track.directory() == primaryDir; });
+    QString primaryArtist       = tracks.front().effectiveAlbumArtist();
+    const QString primaryAlbum  = tracks.front().album();
+    const QString primaryGenre  = tracks.front().genre();
+    const QString primaryDir    = tracks.front().directory();
 
-        if(sameArtist && sameAlbum) {
+    const bool sameArtist = std::ranges::all_of(tracks, [&primaryArtist](const Track& track) {
+        return track.effectiveAlbumArtist() == primaryArtist;
+    });
+    const bool sameAlbum  = std::ranges::all_of(tracks, [&primaryAlbum](const Track& track) {
+        return track.album() == primaryAlbum;
+    });
+
+    if(sameAlbum) {
+        if(sameArtist) {
             if(!primaryArtist.isEmpty() && !primaryAlbum.isEmpty()) {
-                name = QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
-            }
+                if(primaryArtist.contains(QLatin1String{Constants::UnitSeparator})) {
+                    primaryArtist.replace(QLatin1String{Constants::UnitSeparator}, QStringLiteral(", "));
+                }
+                return QStringLiteral("%1 - %2").arg(primaryArtist, primaryAlbum);
+            }   
         }
-        else if(sameAlbum) {
-            name = primaryAlbum;
-        }
-        else if(sameArtist) {
-            name = primaryArtist;
-        }
-        else if(sameGenre) {
-            name = primaryGenre;
-        }
-        else if(sameDir) {
-            name = primaryDir;
-        }
+        return primaryAlbum;
+    }
+
+    if(sameArtist) {
+        return primaryArtist;
+    }
+
+    const bool sameGenre = std::ranges::all_of(tracks, [&primaryGenre](const Track& track) {
+        return track.genre() == primaryGenre;
+    });
+
+    if(sameGenre) {
+        return primaryGenre;
+    }
+
+    const bool sameDir = std::ranges::all_of(tracks, [&primaryDir](const Track& track) { return track.directory() == primaryDir; });
+    if(sameDir) {
+        return primaryDir;
     }
 
     return name;
