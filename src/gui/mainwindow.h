@@ -58,6 +58,7 @@ public:
     void open();
     void raiseWindow();
     void toggleVisibility();
+    void exit();
 
     void setTitle(const QString& title);
     void resetTitle();
@@ -73,7 +74,6 @@ private:
     WindowState currentState();
     void restoreState(WindowState state);
     void hideToTray(bool hide);
-    void exit();
 
     MainMenuBar* m_mainMenu;
     SettingsManager* m_settings;

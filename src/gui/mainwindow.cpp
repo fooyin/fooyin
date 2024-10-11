@@ -137,6 +137,21 @@ void MainWindow::toggleVisibility()
     }
 }
 
+void MainWindow::exit()
+{
+    if(!m_hasQuit) {
+        m_hasQuit = true;
+
+        FyStateSettings stateSettings;
+        m_settings->settingsDialog()->saveState(stateSettings);
+
+        stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
+        stateSettings.setValue(QLatin1String{MainWindowPrevState}, Utils::Enum::toString(currentState()));
+
+        m_settings->set<Settings::Core::Shutdown>(true);
+    }
+}
+
 void MainWindow::setTitle(const QString& title)
 {
     QString windowTitle{title};
@@ -255,21 +270,6 @@ void MainWindow::hideToTray(bool hide)
             m_state = Normal;
             show();
         }
-    }
-}
-
-void MainWindow::exit()
-{
-    if(!m_hasQuit) {
-        m_hasQuit = true;
-
-        FyStateSettings stateSettings;
-        m_settings->settingsDialog()->saveState(stateSettings);
-
-        stateSettings.setValue(QLatin1String{MainWindowGeometry}, saveGeometry());
-        stateSettings.setValue(QLatin1String{MainWindowPrevState}, Utils::Enum::toString(currentState()));
-
-        m_settings->set<Settings::Core::Shutdown>(true);
     }
 }
 } // namespace Fooyin

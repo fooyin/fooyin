@@ -116,6 +116,7 @@ public:
     void setupRatingMenu();
     void setupUtilitiesMenu() const;
 
+    void close();
     void changeVolume(double delta) const;
     void mute() const;
     void setStyle() const;
@@ -286,7 +287,7 @@ void GuiApplicationPrivate::setupConnections()
             m_playlistController->changeCurrentPlaylist(playlist);
         }
     });
-    QObject::connect(m_fileMenu, &FileMenu::requestExit, m_mainWindow.get(), &QMainWindow::close);
+    QObject::connect(m_fileMenu, &FileMenu::requestExit, m_self, [this]() { close(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFiles, m_self, [this]() { addFiles(); });
     QObject::connect(m_fileMenu, &FileMenu::requestAddFolders, m_self, [this]() { addFolders(); });
     QObject::connect(m_fileMenu, &FileMenu::requestLoadPlaylist, m_self, [this]() { loadPlaylist(); });
@@ -609,6 +610,16 @@ void GuiApplicationPrivate::setupUtilitiesMenu() const
     auto* utilitiesMenu = m_actionManager->createMenu(::Fooyin::Constants::Menus::Context::Utilities);
     utilitiesMenu->menu()->setTitle(GuiApplication::tr("Utilities"));
     selectionMenu->addMenu(utilitiesMenu);
+}
+
+void GuiApplicationPrivate::close()
+{
+    if(m_mainWindow->isVisible()) {
+        m_mainWindow->close();
+    }
+    else {
+        m_mainWindow->exit();
+    }
 }
 
 void GuiApplicationPrivate::changeVolume(double delta) const
